@@ -199,11 +199,6 @@ class PropelPager {
 	/**
 	 * Get the paged resultset 
 	 * 
-	 * Main method which creates a paged result set based on the criteria 
-	 * and the requested peer select method.
-	 * the eval is needed here because something like {$class::$method}();
-	 * just doesn't work
-	 * 
 	 * @return mixed $rs 
 	 */
 	public function getResult()
@@ -215,6 +210,13 @@ class PropelPager {
 		return $this->rs;
 	}
 	
+	/**
+	 * Get the paged resultset 
+	 * 
+	 * Main method which creates a paged result set based on the criteria 
+	 * and the requested peer select method.
+	 * 
+	 */
 	private function doRs()
 	{   
 		$this->criteria->setOffset($this->start);
@@ -332,7 +334,7 @@ class PropelPager {
 	/**
 	 * Returns whether last page is complete
 	 *
-	 * @return bool Last age complete or not
+	 * @return bool Last page complete or not
 	 */
 	public function isLastPageComplete()
 	{
@@ -345,7 +347,6 @@ class PropelPager {
 	 * @return mixed $prev
 	 */
 	public function getPrev() {
-		// Prev link
 		if($this->getPage() != $this->getFirstPage()) {
 				$prev = $this->getPage() - 1;
 		} else {
@@ -360,7 +361,6 @@ class PropelPager {
 	 * @return mixed $next
 	 */
 	public function getNext() {
-		// Prev link
 		if($this->getPage() != $this->getLastPage()) {
 				$next = $this->getPage() + 1;
 		} else {
@@ -420,12 +420,11 @@ class PropelPager {
 	}
 	
 	/**
-	 * Gets the total number (un-LIMITed) of records.
+	 * Gets the total number of (un-LIMITed) records.
 	 * 
 	 * This method will perform a query that executes un-LIMITed query. 
 	 *
 	 * @return int Total number of records - disregarding page, maxrows, etc.
-	 * should @throw SQLException
 	 */
 	public function getTotalRecordCount()
 	{	
