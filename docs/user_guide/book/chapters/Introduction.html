@@ -1,0 +1,261 @@
+<!--
+-File         $Id: Introduction.html,v 1.3 2004/07/15 02:57:48 hlellelid Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2003, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Propel Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" charset="iso-8859-1"/>
+</head>
+<body>
+
+<h1>Introduction</h1>
+
+<h2><a name="Introduction.What"></a>What Propel Provides</h2>
+<p>Propel is an object persistence and query service -- which means that Propel 
+  provides a system for storing objects to a database and a system for searching 
+  for and restoring the objects from the database. Propel enables you to perform 
+  complex queries and database manipulations without writing a single SQL clause. 
+  Propel makes applications easier to write, easier to deploy, and a lot easier 
+  to migrate if ever the need should arise.</p>
+<p>Propel can be described as an object-relational mapping, a DAO layer, or an 
+  object persistence layer. Propel is a port of <a href="Bibliography.html#bib.torque">Apache 
+  Torque</a>. Based on proven approaches developed by the Torque project and optimized 
+  for PHP, Propel hopes to provide a smart and comprehensive data management service 
+  at minimal performance cost to your PHP application.</p>
+<p>For those familiar with O/R patterns, Propel primarily implements the Row Data 
+  Gateway pattern, as <a href="Bibliography.html#bib.martinfowler">described by 
+  Martin Fowler</a>, for representing the database. To quote Fowler:</p>
+<blockquote>A Row Data Gateway gives you objects that look exactly like the record 
+  in your record structure but can be accessed with the regular mechanisms of 
+  your programming language. All details of data source access are hidden behind 
+  this interface. </blockquote>
+<p>However, Propel also generates classes for each table which exhibit some of 
+  the properties of the Table Data Gateway pattern:</p>
+<blockquote>A Table Data Gateway holds all the SQL for accessing a single table or view: 
+  selects, inserts, updates, and deletes. Other code calls its methods for all 
+  interaction with the database.</blockquote>
+<p>In Propel the Table Data Gateway classes are called <em>Peer</em> classes, 
+  while the Row Data Gateway classes are called <em>entity</em> or <em>object</em> 
+  classes.</p>
+<p>As an application, Propel has two main (and now formally separate) components:</p>
+<ol>
+  <li>A generator engine for building your classes and SQL files (<em>propel-generator</em>)</li>
+  <li>A runtime environment that provides tools for building SQL queries, executing 
+    compiled queries, and tools for managing connections to multiple databases 
+    simultaneously (<em>propel)</em></li>
+</ol>
+<p>The runtime environment provides a layer of database abstraction and encapsulation 
+  for business logic rules. The Propel classes represent the model layer of the 
+  traditional MVC, designed to encapsulate any data -level validation needed by 
+  your application. The diagram below illustrates how Propel exists in relationship 
+  to Creole and the underlying databases. (Note that the top-level is meant to 
+  embody any PHP application, and may well involve many additional layers).</p>
+<p><img src="../images/diagramonwhite.gif" width="663" height="586" /></p>
+<h2><a name="Introduction.Approach"></a>Approach</h2>
+<p>There are a number of object persistence implementations -- providing different 
+  levels of abstraction, some are abstracted to the point where objects may also 
+  be persisted to non-SQL backends. Propel is a very literal object persistence 
+  layer: the XML data model corresponds very closely to the structure of the database. 
+  Entities in Propel are always tables; relationships are specified using foreign 
+  keys; and the Propel column types correspond almost directly with database-level 
+  <a href="Bibliography.html#bib.creole">(Creole)</a> column types. </p>
+<p>What does this mean in practical terms for users of Propel? On one hand it 
+  means that Propel is quite easy to learn and also quite flexible -- in that 
+  you can be confident when designing your inter-related table structure that 
+  it will work as expected in Propel. Performance is also maximized by using a 
+  minimally abstract system. On the other hand, because Propel's entities are 
+  always tables, it has an efficient yet basic inheritance model -- mapping all 
+  subclasses to a single database table. Also, some operations in Propel require 
+  additional middle steps -- for example, handling many-to-many relationships 
+  requires explicit use of the cross-reference table in your PHP scripts.</p>
+<p>While, some elegance is sacrificed for a literal persistence model, we feel 
+  that the benefits in learning curve, flexibility, and performance outweigh any 
+  drawbacks in this system. The aim with Propel is to provide a tool that greatly 
+  increases developer productivity, while still being lightweight enough to be 
+  useful in a PHP environment.</p>
+<h2><a name="Introduction.Motivations"></a>Motivations</h2>
+<p>There are quite a number of object persistence layers for Java (Torque, Hibernate, 
+  Castor, and OJB to name a few); however, there are very few solutions that even 
+  provide very basic O/R mapping for PHP. As PHP is being used increasingly in 
+  large-scale deployments, O/R tools for PHP are becoming ever more prevalent. 
+  Here is a look at some similar projects that currently exist in various stages 
+  of development for PHP (some having come into existence after Propel):</p>
+<ul>
+  <li> <a href="bibliography.html#bib.alyoop">ALYOOP</a> - A simple PHP5 DAO framework</li>
+  <li><a href="Bibliography.html#bib.db_datacontainer">DB_DataContainer</a> - 
+    A PEAR-compliant O/R solution.</li>
+  <li><a href="bibliography.html#bib.db_dataobject">DB_DataObject</a> - Official 
+    PEAR O/R mapping solution with PHP code generation.</li>
+  <li><a href="Bibliography.html#bib.db_table">DB_Table</a> - Paul M. Jones' tool 
+    for abstracting a database table.</li>
+  <li><a href="bib.easyorm">EasyORM</a> - A MySQL-only object persistence solution.</li>
+  <li><a href="Bibliography.html#bib.metastorage">Metastorage</a> - One of the 
+    most comprehensive persistence layers for PHP, includes PHP class generation</li>
+</ul>
+<p>In short, we decided to create Propel because we wanted something that was 
+  going to make complex database applications significantly easier without sacrificing 
+  flexibility. Rather than look at why we didn't like some of these solutions, 
+  here's a brief description of how some of these differ. We'll try to keep it 
+  fairly object -- and let you make the final value judgments about these other 
+  solutions.</p>
+<p><strong>ALYOOP</strong></p>
+<p>ALYOOP is a simple PHP5 DAO framework. May or may not still be under development. 
+</p>
+<p>Some differences:</p>
+<ul>
+  <li>It uses PEAR::DB, and hence PEAR_Error, etc.</li>
+  <li>Simple runtime environment handles object query &amp; persistence.</li>
+  <li>No description files used for auto-generation (class generation creates 
+    empty subclasses as starting point).</li>
+  <li>No Criteria-based OO query system; instead filters are used which represent 
+    additions to the SQL WHERE clause.</li>
+</ul>
+<p><strong>DB_DataContainer</strong></p>
+<p>DB_DataContainer is a PEAR-compliant package that provides a simple DAO framework.</p>
+<p>Some differences:</p>
+<ul>
+  <li>It's a PEAR-compliant class, so it uses PEAR::DB, PEAR_Error, etc.</li>
+  <li>DB_DataContainer does not generate PHP classes, although apparently it does 
+    generate accessor methods(?)</li>
+  <li>Similar in design (Row Data Gateway) to DB_DataObject; however this class 
+    has a simpler API and does not use INI files.</li>
+  <li>Integrates with DB_DataContainer_Form</li>
+  <li>No Criteria-based OO query system.</li>
+</ul>
+<p><strong>DB_DataObject</strong></p>
+<p>DB_DataObject is a PEAR package that does do some basic code generation and 
+  has basic support for relationships.</p>
+<p>Some differences:</p>
+<ul>
+  <li>It's a PEAR class, so it uses PEAR::DB, PEAR_Error, etc.</li>
+  <li>DB_DataObject uses only the Row Data Gateway pattern [<a href="Bibliography.html#bib.martinfowler">see 
+    EAA Patterns</a>]. As such, the design if far simpler: there's essentially 
+    one [big] class that all table rows extend.</li>
+  <li>DB_DataObject requires the database already exist; it then creates INI files 
+    that describe the database for internal reference.</li>
+  <li>DB_DataObject does not use getter/setter functions, but rather exposes the 
+    column properties as public. Alan Knowles feels strongly about the merits 
+    of this design; it certainly has performance benefits.</li>
+  <li>No Criteria-based query system, rather methods like <em>whereAdd() </em> 
+    can construct SQL manually and searches can also can also be performed using 
+    a <em>find() </em>method which constructs SQL based on values in the current 
+    object.</li>
+  <li>Has integration with HTML_Quickform PEAR package.</li>
+</ul>
+<p><strong>DB_Table</strong></p>
+<p>DB_Table is another PEAR package that provides a table-level of DB abstraction.</p>
+<p>Some differences:</p>
+<ul>
+  <li>It's a PEAR class, so it uses PEAR::DB, PEAR_Error, etc.</li>
+  <li>DB_Table provides only a Table Data Gateway pattern [<a href="Bibliography.html#bib.martinfowler">see 
+    EAA Patterns</a>].</li>
+  <li>DB_Table uses solves RDBMS-specific implementation issues, by essentially 
+    not using RDBMS native types -- e.g. for dates a VARCHAR column is used instead 
+    of DATE/TIME/TIMESTAMP.</li>
+</ul>
+<p><strong>EasyORM</strong></p>
+<p>We did not examine EasyORM in more detail as it is a MySQL-only solution.</p>
+<p><strong>Metastorage</strong></p>
+<p>Metastorage is probably the most complete of the other solutions, and rather 
+  similar to Propel in terms of using XML for the model description and requiring 
+  a build phase to create PHP classes.</p>
+<p>Some differences:</p>
+<ul>
+  <li>Metastorage uses XML for customization of class behavior; Propel uses class 
+    extension / method override. Customization in Metastorage requires some knowledge 
+    of MetaL a very interesting (to say the least) XML meta-language for creating 
+    code. </li>
+  <li>Metastorage uses Metabase as the DB abstraction layer, and as such supports 
+    a wider array of databases than the Propel+Creole combination.</li>
+  <li>Theoretically Metastorage could create persistence objects for any language 
+    (Java), although in practice it is only generating PHP classes. Propel could 
+    in theory probably also be extended to create objects in other languages (the 
+    way it has been extended to create PHP4 persistence objects), but a new runtime 
+    environment would have to be created in the target language.</li>
+  <li>It seems correct to say that Metastorage does not have a runtime environment; 
+    everything is stored in the generated objects. Propel uses some core classes 
+    to manage database connections, and store common code for building queries, 
+    etc.</li>
+  <li>Metastorage does not provide a Criteria-based query building system; instead 
+    it generates methods that fully encapsulate queries -- e.g. getBooksByName().</li>
+</ul>
+<p>&nbsp;</p>
+<h2><a name="Introduction.ShowMe"></a>Show Me!</h2>
+<p>Propel is really quite simple to use. Basically, you need to define your data 
+  model in XML, specify any build properties (e.g. which db you are building for) 
+  and then &quot;build&quot; your object model. Building your object model will 
+  create SQL definition files and - most importantly- the PHP classes you need 
+  to use your database from your application.</p>
+<p>This isn't meant as a quickstart guide (that's coming later), but rather as 
+  a brief walkthrough of what it means to use Propel.</p>
+<p>To start with, here's a very simple example of a data model definition:</p>
+<pre title="simple data definition">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;database name=&quot;bookstore&quot;&gt;
+  &lt;table name=&quot;book&quot;&gt;
+    &lt;column name=&quot;book_id&quot; type=&quot;INTEGER&quot; required=&quot;true&quot; primaryKey=&quot;true&quot;/&gt;
+	   &lt;column name=&quot;title&quot; type=&quot;VARCHAR&quot; size=&quot;50&quot; required=&quot;true&quot; /&gt;
+  &lt;/table&gt;
+&lt;/database&gt;</pre>
+<p>Building this datamodel will create several PHP classes that you will use to 
+  add and find data in the &quot;book&quot; table. Propel will also generate a 
+  couple of empty subclasses so that you can customize the behavior without making 
+  changes to the generated code (which would get overwritten when you re-generate 
+  your object model later).</p>
+<table>
+  <thead>
+    <tr> 
+      <th>Class</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>BaseBook, Book</td>
+      <td>BaseBook represents the base class for a row from the book table. Book 
+        is the empty subclass where customizations can be added; queries will 
+        return arrays of objects of type Book. </td>
+    </tr>
+    <tr> 
+      <td>BaseBookPeer, BookPeer</td>
+      <td>The Peer class is a class with only static methods that perform queries 
+        and manipulations against the book table. All references must be to BookPeer 
+        which is an empty subclass (for customization) of BaseBookPeer. </td>
+    </tr>
+    <tr> 
+      <td>BookMap</td>
+      <td>This contains a database map for the book table. Rather than having 
+        to perform slow metadata queries at runtime (e.g. to know which cols are 
+        primary keys, foreign keys, etc.), Propel compiles a map class that can 
+        quickly return relevant information about the table structure.</td>
+    </tr>
+  </tbody>
+</table>
+<p>In your PHP application, you can include and use this new Book class just like 
+  any other PHP class. Behind the scenes, Propel will handle all SQL and native 
+  database function calls (e.g. mysql_query()).</p>
+<pre title="using it">// example using business objects
+$b = new Book();
+$b-&gt;setTitle(&quot;War &amp; Peace&quot;);
+$b-&gt;save();
+
+// &quot;peer&quot; class is static class that handles things like queries
+$c = new Criteria();
+$c-&gt;add(BookPeer::TITLE, &quot;War%&quot;, Criteria::LIKE);
+$c-&gt;setLimit(10);
+
+$books = BookPeer::doSelect($c);
+
+foreach($books as $book) {
+  print &quot;&lt;br/&gt;&quot; . $book-&gt;getTitle();
+}</pre>
+<p>Of course there's a little more involved -- and most databases are a little 
+  more complex than our &quot;book&quot; example -- but that gives you a basic 
+  idea of how it really is pretty simple to integrate Propel into your PHP application.</p>
+</body>
+</html>

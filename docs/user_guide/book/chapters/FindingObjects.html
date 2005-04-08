@@ -1,0 +1,262 @@
+<!--
+-File         $Id: FindingObjects.html,v 1.3 2005/02/12 13:05:55 micha Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2003, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Propel Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" charset="iso-8859-1"/>
+</head>
+<body>
+
+<h1>Finding Persisted Objects</h1>
+
+<p>Once your objects have been stored in the database, you need a way to get them back out.  
+You've alredy seen a brief example of how to find objects using Propel Criteria objects.  In this
+chapter we're going to look at other methods of retrieving objects and examine the Criteria/Criterion
+system in more detail.</p>
+
+<h2><a name="FindingRecords.byPK"></a>Getting a Specific Record</h2>
+
+<p>You can find a specific object (record) by using the <strong>retrieveByPK()</strong> method of the Peer class.  
+As the name implies, this method will search for a specific record based on the simple or composite 
+primary key provided.</p>
+
+<pre title="retrieveByPk() simple key">
+// The book table has a single primary key column: book_id
+// Assuming that War &amp; Peace was first book added to the table:
+$warAndPeace = BookPeer::retrieveByPK(1);
+</pre>
+
+<p>Of course, in some cases you may have a table where the primary key is actually defined by
+the values of several columns.  Take for example, the following cross reference table for many-to-many 
+relationships:</p>
+
+<pre title="xref schema">
+&lt;table name=&quot;book_author_xref&quot; 
+      description=&quot;Book-Author Crossreference Table&quot;&gt;
+  &lt;column
+    name=&quot;book_id&quot;
+    required=&quot;true&quot;
+    primaryKey=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Book Id&quot;/&gt;
+  &lt;column
+    name=&quot;author_id&quot;
+    required=&quot;true&quot;
+    primaryKey=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Author Id&quot;/&gt;
+&lt;/table&gt;	
+</pre>
+
+<p>In this case, retrieving a specific reference (clearly a less useful exercise), would be accomplished
+by passing an array to the <strong>retreiveByPK()</strong> method.  <strong>Note that the order of keys is critical
+and must correspond to the order in which the columns are defined in the XML.</strong></p>
+<pre title="retriveByPK() composite">
+// Gets the book_id=1,author_id=2 record
+$obj = BookAuthorXrefPeer::retrieveByPK(array(1,2));
+</pre>
+
+<h2><a name="FindingRecods.Criteria"></a>Select Using Criteria</h2>
+
+<p><strong>Note: </strong>some of the ideas and examples for this section came 
+  from the <em>Criteria HOWTO</em> on the <a href="Bibliography.html#bib.torque">Torque</a> 
+  website.</p>
+<p>To find records meeting specified criteria, you will use a Criteria object 
+  in conjunction with the Peer's <strong>doSelect()</strong> method. This is a 
+  very powerful means of locating records, as you can construct almost any SQL 
+  query using the Criteria/Criterion system. The <strong>doSelect()</strong> method 
+  will return an array of objects of the appropriate type.</p>
+<pre title="doSelect() example">$c = new Criteria();
+$c-&gt;add(AuthorPeer::FIRST_NAME, &quot;Leo&quot;);
+
+
+$results = AuthorPeer::doSelect($c);
+foreach($results as $author) {
+  print &quot;Author: &quot; . $author-&gt;getLastName() . &quot;, &quot; . $author-&gt;getFirstName() . &quot;\n&quot;;
+
+} </pre>
+
+<p>Getting the select results is easy, and you'll find that with a bit of practice 
+  representing even very complicated queries is quite simple using the Criteria 
+  approach.</p>
+<h3>Simple Criteria</h3>
+
+<p> In the simplest form, the Criteria system is where you control the conditions 
+  for selecting records:</p>
+
+<pre title="Criteria: simple">
+$c = new Criteria();
+// Find all authors with first name Karl but
+// last name is _not_ Marx.
+$c-&gt;add(AuthorPeer::FIRST_NAME, &quot;Karl&quot;);
+$c-&gt;add(AuthorPeer::LAST_NAME, &quot;Marx&quot;, Criteria::NOT_EQUAL);
+
+// Find all authors with last name of Tolstoy, Dostoevsky, or Bakhtin
+$c2 = new Criteria();
+$c2-&gt;add(AuthorPeer::LAST_NAME, array(&quot;Tolstoy&quot;, &quot;Dostoevsky&quot;, &quot;Bakhtin&quot;), Criteria::IN);
+
+</pre>
+
+<h3>Combining Criteria</h3>
+
+<p>You cannot combine Criteria objects directly, but you can combine Criterion objects in order
+to specify logical relationships between clauses.</p>
+
+<pre title="Criteria: combining">
+// Find all authors with first name &quot;Leo&quot; OR last name of
+// &quot;Tolstoy&quot;, &quot;Dostoevsky&quot;, or &quot;Bakhtin&quot;
+ 
+$c = new Criteria();
+$cton1 = $c-&gt;getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
+$cton2 = $c-&gt;getNewCriterion(AuthorPeer::LAST_NAME, 
+                      array(&quot;Tolstoy&quot;, &quot;Dostoevsky&quot;, &quot;Bakhtin&quot;), Criteria::IN);
+ 
+// combine them
+$cton1-&gt;addOr($cton2);
+ 
+// add to Criteria
+$c-&gt;add($cton1);
+</pre>
+
+<h3>Specyfing Multiple Conditions for a Column</h3>
+
+<p>In the examples above we see how to specifying single conditions for a column (e.g. author.FIRST_NAME = "Leo"). 
+Importantly, specifying multiple conditions for a single column, is more complicated because Propel stores
+criteria in a hashtable (for performance reasons).</p>
+
+<p><strong>This is WRONG:</strong></p>
+<pre title="Criteria: WRONG use of multiple conditions">
+$c = new Criteria();
+$c-&gt;add(AuthorPeer::FIRST_NAME, &quot;Leo%&quot;, Criteria::LIKE);
+$c-&gt;add(AuthorPeer::FIRST_NAME, &quot;Leonardo&quot;, Criteria::NOT_EQUAL);
+// second add() just overwrote the LIKE condition already in place!
+</pre>
+
+<p>The correct way to do this involves creating <em>Criterion</em> objects and using the
+<strong>Criterion::addOr()</strong> method to relate them:</p>
+
+<pre title="Criteria: CORRECT use of multiple conditions">
+$c = new Criteria();
+$criterion = $c-&gt;getNewCriterion(AuthorPeer::FIRST_NAME, &quot;Leo%&quot;, Criteria::LIKE);
+$criterion-&gt;addOr($c->getNewCriterion(AuthorPeer::FIRST_NAME, &quot;Leonardo&quot;, Criteria::NOT_EQUAL));
+
+$c->add($criterion);
+</pre>
+
+
+<h3>Controlling Other Aspects of Query</h3>
+
+<p>The Criteria object can do more than simply control the conditions expressed in the SQL query.  The other 
+aspects of the query that can be controlled include: the number of records returned, case-sensitivty, and 
+the ordering of records.</p>
+
+<pre title="">
+// find first 10 authors, alphabetically
+$c = new Criteria();
+$c-&gt;setLimit(10);
+$c-&gt;addAscendingOrderByColumn(AuthorPeer::LAST_NAME);
+
+// find all authors named &quot;max&quot;, case-insensitive
+$c = new Criteria();
+$c-&gt;add(AuthorPeer::FIRST_NAME, &quot;max&quot;);
+$c-&gt;setIgnoreCase(true);
+</pre>
+
+<p><strong>Note: </strong>some databases support limiting queries in the SQL (e.g. MySQL and PostgreSQL support 
+the LIMIT keyword); in these cases the BasePeer class will use native limiting, while in other cases
+emulating the limit support (by fetching entire recordset but only adding specified limit to result array).</p>
+
+<h3>Advanced Criteria Features</h3>
+
+<p>The Criteria object can come in handy even if you want to write code that returns raw query results
+(rather than instantiating objects).  For example, if you needed some very efficient code that would
+return a list of all ISBNs in the database, filtered on specific criteria:</p>
+
+<pre title="Specyfing select columns in criteria">
+class BookPeer extends BaseBookPeer {
+  .
+  .
+  .
+  /**
+   * Get just the ISBN numbers for books.
+   * @param Criteria $c Criteria to filter results.
+   * @return array Array of ISBN numbers.
+   */
+  function getJustISBN(Criteria $c) {
+    $c-&gt;clearSelectColumns()-&gt;addSelectColumn(self::ISBN);
+    $rs = BasePeer::doSelectRS($c);
+    $isbns = array();
+    while($rs-&gt;next()) {
+      $isbns[] = $rs-&gt;get(1);
+    }
+    return $isbns;
+  }
+</pre>
+<h2><a name="WritingSQL"></a>Select Using SQL</h2>
+<p>The Criteria class is able to build commonly used queries, but it does not 
+  pretend to be capable of building any query. In cases where you need to perform 
+  particularly complex queries you will need to write your own SQL statements. 
+  The recommended way to do this is to use your stubclass. To ensure that your 
+  query will not break if table columns are renamed you may also want to use the 
+  Peer::COLUMN_NAME and Peer::TABLENAME constants.</p>
+<pre title="Writing SQL example">
+class BookPeer extends BaseBookPeer {
+  .
+  .
+  .
+  /**
+   * Get just the Books that have not been reviewed.
+   * @return array Book[]
+   */
+  function getUnreviewedBooks() {
+    $con = Propel::getConnection(DATABASE_NAME);
+	
+    // if not using a driver that supports sub-selects
+    // you must do a cross join (left join w/ NULL)
+    $sql = "SELECT books.* FROM books WHERE ".
+           "NOT EXISTS (SELECT id FROM review WHERE book_id = book.id)";
+    
+    $stmt = $con->createStatement();
+    $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
+    
+    return parent::populateObjects($rs);	
+  }</pre>
+<p><em>Note: in the example above it is assumed that the column in your table 
+  are defined in the same order as the columns in your XML schema. This will generally 
+  be the case if you have not modified the table. You can use the <strong>Peer::addSelectColumns(Criteria)</strong> 
+  and<strong> Criteria-&gt;getSelectColumns()</strong> to remove this dependency.</em></p>
+<p>In our example we did not use the column constants (to keep it simple), but 
+    you could easily do so to the SQL above to avoid needing to change your SQL 
+    if you change the column or table names:</p>
+<pre title="SQL example using constants">$sql = &quot;SELECT b.* FROM &quot;.BookPeer::TABLE_NAME.&quot; b WHERE &quot;.
+       &quot;NOT EXISTS (SELECT r.&quot;.ReviewPeer::ID.&quot; FROM &quot;.ReviewPeer::TABLE_NAME.&quot; r &quot;.
+       &quot;            WHERE r.&quot;.ReviewPeer::BOOK_ID.&quot; = b.&quot;.BookPeer::ID.&quot;)&quot;;</pre>
+<p>It's clearly your decision whether the flexibility of the SQL above is worth 
+  the additional readability challenges it introduces.</p>
+<h2><a name="PopulatingSingleObjects"></a>Fetching Large Result Sets</h2>
+<p>In some cases you will not want the Peer to populate all objects and return 
+  them in an array. In particular, when fetching large result sets PHP may run 
+  out of memory if you ask it to return an array of hydrated objects. To get around 
+  this issue, you can iterate through the resultset and populate single objects 
+  using the <strong>Entity-&gt;hydrate() </strong>method, disposing of them when 
+  you are finished.</p>
+<pre title="populate single object">// fetch entire list of books (we'll pretend this is huge)
+$rs = BookPeer::doSelectRS(new Criteria());
+while($rs-&gt;next()) { // use Creole ResultSet methods to iterate over resultset
+  $book = new Book();
+  $book-&gt;hydrate($rs);
+  
+  // read $book values, save $book, etc.
+  ...
+}</pre>
+<p>Of course this works whether using Criteria to perform the SELECT (as in example) 
+  or using custom SQL. The important thing to note is that the results are only 
+  retrieved from the database and the object hydrated when requested.</p>
+</body>
+</html>

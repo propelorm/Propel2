@@ -1,0 +1,122 @@
+
+  P R O P E L    C H A N G E S
+  ============================
+
+ April 7, 2005 - 1.1.0
+	
+  Big Changes:
+  *** Changed retrieveByPK() to return NULL instead of throw Exception if no row
+      was matched. (Dave Lawson)
+  *** New PHP runtime conf format has changed (must regenerate conf file).
+  *** Dropped support for deprecated ini-format runtime properties file. (Hans)
+  *** Cleanup of build properties files, removal of deprecated properties. (Hans)
+  
+  New Features:  
+  - Schema attributes are no longer case-sensitive.
+  - New <vendor> tag allows specifying vendor-specific attributes. (Pavel)
+  - MySQL identifiers escaping added to SQL generation templates. (Pavel)
+  - MySQL unique indexes SQL generation added. (Pavel)
+  - Added support for interface="" attribute of <table> tag; defaults to Persistent. (Hans)
+  - Added doSelectJoinAll() to generated peer classes. (Hans)
+  - Added doDeleteAll() method to remove all rows from specified table. (Hans)
+  - Added support for returning affected rows from update methods in peer classes. (Hans)
+  - Added PHPUnit2-based unit testing framework to replace old bookstore-test.php
+  - Added schema validation / error throwing to schema parser. (Pavel)
+  - Logging is now optional (no log section means no logger used).  (David Zülke) 
+  - Added TIMESTAMP_BU, DATE_BU types for "before-unix" (pre 1970) dates. (Hans)
+  
+  Bug Fixes:  
+  - Fixed E_STRICT error in generated Peer doCount() method (Hans)
+  - Fixed bug when using doSelectJoin*() methods with tables that have lazyload columns. (Hans)
+  - Fixed logic bugs in doSelectJoinExcept*() method generation. (Hans)
+  - Fixed support for temporal (date/time) default values. (Hans)
+  - Fixed bug where setting only default values in object would result in no save. (Hans)
+  - Fixes to PropelSQLExecTask to handle non-typical queries (Dominik, Hans).
+  - Fixed bug in enumerated inheritance when using string coltype (Kaspars)
+  - Fixes to charset / encoding in schema creation. (Joe Cai, Pavel)
+  - Fixed nested external schema bug. (Pavel)
+  - Fixed unexpected results bug in NodePeer::buildFamilyCriteria(). (Dave Lawson)
+  - Fixed clearSelectColumns() to also clear $asColumns. (Fabien Potencier)
+
+  Oct. 24, 2004 - 1.0.0
+
+    Big Changes:
+  - Removed Transaction class, refactoring functionality into Creole
+    Connection classes (Dave Lawson)
+  - New NodePeer for handling hierarchies (Dave Lawson)
+  - Propel has a new default directory layout for projects.  All project
+      files are now located in one directory.
+
+    projects/
+         |- bookstore/
+         |   |- build/
+         |   |- schema.xml
+         |   |- runtime.properties  <-- deprecated
+         |   |- runtime-conf.xml    <-- new standard
+
+    - Added new default XML format for setting Propel's runtime properties.
+      (see dir layout above).
+
+    - Added new build.xml to wrap build-propel.xml.  New file is preferred
+      way to build projects, as it allows for inclusion of project-specific
+      build.properties files. Propel is finally fully multi-project friendly.
+
+  - Support for specifying "lazy-load" columns in schema XML.  Lazy load
+    columns will only be populated on demand.  This means that by default
+    object hyradtion will not include these columns (so smaller, faster
+    objects), but also that an additional query is executed when data is
+    needed.  (This is particularly useful for BLOB/CLOB columns.)
+
+    Minor Changes:
+    [Generated Classes]
+    - Peer::populateObject() method deprecated (will remove in Propel 1.1) in
+    favor of Object->hydrate()
+    - Removed Peer::buildCriteria() method in favor of Object->buildCriteria()
+    and Object->buildPkeyCriteria()
+    - Peer doSelect*() family of methods now [consistently] only takes
+    Criteria objects for parameter.
+    - No more support in generated Peer classes for using Criteria with
+    different DB name.
+    - Date/time setter methods now perform a strtotime() conversion on passed
+    data and throw a PropelException is such a conversion cannot be performed.
+  - New copy() method replaces non-working __clone() impl.  __clone() unused due
+    to desire to have a way to copy objects w/o necessarying copying rows.
+
+    [Default Properties]
+    - The schema include pattern changed to *schema.xml (instead of
+    *-schema.xml), for added flexibility in layout.
+
+  [SQL Generator]
+  - Updated model classes to recognize boolean values in case-insensitive
+    manner (allow "TRUE" & "true").
+  - Updated model classes to recognize Propel types in case-insensitive
+    manner (allow "integer" & "INTEGER").
+
+  June 8, 2003 - 1.0.0-beta1
+
+    Bug Fixes:
+    - Fixed 'creole' target to include database name in generated schema XML
+    - Fixed Propel to work correctly with tables that have pkey, but no
+    autoIncrement cols
+    - Fixed Criteria toString() method to work [for SELECT clauses only]
+    - TIMESTAMP defaults to DATETIME for MySQL
+    - Added support for COMMENT keyword (for descriptions from schema) in
+    MySQL table definitions
+    - Fixed Table->containsColumn() method in propel-generator
+    - Fixed insert-sql to work with multi-line & complex SQL statements (Dominik del Bondio)
+
+  May 2, 2004 - 1.0.0-alpha2
+
+  Bug Fixes:
+  - LONGVARCHAR no longer considered LOB column (HL)
+  - Added INDEX for MySQL/InnoDB foreign keys
+  - Removed old references to BOOLEANINT/BOOLEANCHAR from platform classes (HL)
+  - Allow missing autoIncrement column w/o requiring idMethod="none" (HL)
+  - Fixed parse errors in generated classes w/ multi-column primary key (HL)
+
+  New Features:
+  - Added column validator framework and validator suite (MA)
+  - Added doCount() method to generated peers (MA)
+
+
+--$Id: CHANGELOG,v 1.11 2005/04/07 22:25:52 hlellelid Exp $

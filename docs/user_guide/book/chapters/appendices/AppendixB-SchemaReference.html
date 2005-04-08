@@ -1,0 +1,465 @@
+<!--
+-File         $Id: AppendixB-SchemaReference.html,v 1.1 2004/07/08 01:17:06 hlellelid Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2002, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Propel Guide</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="Stylesheet" rev="Stylesheet" href="../../css/Documentation.css" type="text/css" media="All" charset="iso-8859-1" />
+</head>
+<body>
+<h1>Appendix B - Schema Reference</h1>
+<h2><a name="AppendixB.Database"></a>Database</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>defaultIdMethod</td>
+      <td>&quot;native&quot;, &quot;none&quot;</td>
+      <td>&quot;none&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>package</td>
+      <td>n/a</td>
+      <td><em>project name</em></td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>baseClass</td>
+      <td>n/a</td>
+      <td>propel.om.BaseObject</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr> 
+      <td>basePeer</td>
+      <td>n/a</td>
+      <td>propel.util.BasePeer</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr> 
+      <td>defaultPhpNamingMethod</td>
+      <td>&quot;nochange&quot;, &quot;underscore&quot;, &quot;phpname&quot;</td>
+      <td>&quot;underscore&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>heavyIndexing</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;table&gt;</li>
+  <li>&lt;external-schema&gt;</li>
+</ul>
+<h2><a name="AppendixB.ExternalSchema"></a>External Schema</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>filename</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
+<h2><a name="AppendixB.Table"></a>Table</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>idMethod</td>
+      <td>&quot;native&quot;, &quot;none&quot;</td>
+      <td>&quot;none&quot; (or defaultIdMethod attrib of &lt;database&gt;)</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>phpName</td>
+      <td>n/a</td>
+      <td>&nbsp;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>skipSql</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>abstract</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>phpNamingMethod</td>
+      <td>&quot;nochange&quot;, &quot;underscore&quot;, &quot;phpname&quot;</td>
+      <td>&quot;underscore&quot; (or defaultPhpNamingMethod of &lt;database&gt;)</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>baseClass</td>
+      <td>n/a</td>
+      <td>baseClass attribute of &lt;database&gt;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr> 
+      <td>basePeer</td>
+      <td>n/a</td>
+      <td> basePeer attribute of &lt;database&gt;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr> 
+      <td>description</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>heavyIndexing</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>heavyIndexing attribute of &lt;database&gt;</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;column&gt;</li>
+  <li>&lt;foreign-key&gt;</li>
+  <li>&lt;index&gt;</li>
+  <li>&lt;unique&gt;</li>
+</ul>
+<h2><a name="AppendixB.Column"></a>Column</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>phpName</td>
+      <td>n/a</td>
+      <td>(transformed name)</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>peerName</td>
+      <td>n/a</td>
+      <td>(uppercase name)</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>primaryKey</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>required</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>type</td>
+      <td> &quot;BOOLEAN&quot;<br /> &quot;TINYINT&quot;<br /> &quot;SMALLINT&quot;<br /> 
+        &quot;INTEGER&quot;<br /> &quot;BIGINT&quot;<br /> &quot;DOUBLE&quot; 
+        <br /> &quot;FLOAT&quot;<br /> &quot;REAL&quot;<br /> &quot;DECIMAL&quot;<br /> 
+        &quot;CHAR&quot;<br /> &quot;VARCHAR&quot;<br /> &quot;LONGVARCHAR&quot;<br /> 
+        &quot;DATE&quot;<br /> &quot;TIME&quot;<br /> &quot;TIMESTAMP&quot;<br /> 
+        &quot;BLOB&quot;<br /> &quot;CLOB&quot;<br /> </td>
+      <td>&quot;VARCHAR&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>size</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>scale</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>default</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>autoIncrement</td>
+      <td>&quot;true&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr> 
+      <td>description</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>phpNamingMethod</td>
+      <td>&quot;nochange&quot;, &quot;underscore&quot;, &quot;phpname&quot;</td>
+      <td>phpNamingMethod attribute of &lt;table&gt;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>inheritance</td>
+      <td>&quot;single&quot;, &quot;false&quot;</td>
+      <td>&quot;false&quot;</td>
+      <td>No</td>
+    </tr>
+    <tr> 
+      <td>inputValidator</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;inheritance&gt;</li>
+</ul>
+<h3>Inheritance</h3>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>key</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>class</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>extends</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<h2><a name="AppendixB.ForeignKey"></a>Foreign-Key</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>foreignTable</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td>onDelete</td>
+      <td>&quot;cascade&quot;,&quot;setnull&quot;, &quot;restrict&quot;</td>
+      <td>&quot;restrict&quot;</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;reference&gt;</li>
+</ul>
+<h3>Reference</h3>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>local</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>foreign</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<h2><a name="AppendixB.Index"></a>Index</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;index-column&gt;</li>
+</ul>
+<h3>Index-Column</h3>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+    <tr> 
+      <td>size</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<h2><a name="AppendixB.Unique"></a>Unique</h2>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>No</td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p>Nested Tags:</p>
+<ul>
+  <li>&lt;unique-column&gt;</li>
+</ul>
+<h3>Unique-Column</h3>
+<table>
+  <thead>
+    <tr> 
+      <th>Attribute</th>
+      <th>Available Values</th>
+      <th>Default</th>
+      <th>Required</th>
+    </tr>
+    <tr> 
+      <td>name</td>
+      <td>n/a</td>
+      <td>n/a</td>
+      <td>Yes</td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

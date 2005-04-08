@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../dtd/database.dtd">
+
+<database name="bookstore" defaultIdMethod="native">
+
+  <table name="book" description="Book Table">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Book Id"/>
+    <column
+      name="title"
+      required="true"
+      type="VARCHAR"
+      size="255"
+      description="Book Title"/>
+    <column
+      name="isbn"
+      required="true"
+      type="VARCHAR"
+      size="24"
+      phpName="ISBN"
+      description="ISBN Number"/>
+    <column
+      name="publisher_id"
+      required="false"
+      type="INTEGER"
+      description="Foreign Key Publisher"/>
+    <column
+      name="author_id"
+      required="false"
+      type="INTEGER"
+      description="Foreign Key Author"/>	
+    <foreign-key foreignTable="publisher" onDelete="SETNULL">
+      <reference
+        local="publisher_id"
+        foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="author" onDelete="SETNULL">
+      <reference
+        local="author_id"
+        foreign="id"/>
+    </foreign-key>
+    <validator column="title" translate="none">
+      <rule
+        name="unique"
+        message="Book title already in database." />      
+      <rule
+        name="minLength"
+        value="10"
+        message="Book title must be more than ${value} characters long."/>
+    </validator>
+  </table>
+  <table name="publisher" description="Publisher Table">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Publisher Id"/>
+    <column
+      name="name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+	  default="Penguin"
+      description="Publisher Name"/>
+  </table>
+  <table name="author" description="Author Table">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Author Id"/>
+    <column
+      name="first_name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+      description="First Name"/>
+    <column
+      name="last_name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+      description="Last Name"/>
+	<validator column="last_name" translate="none">
+		<rule
+			name="required"	
+			message="The last name field is required."/>
+	</validator>
+
+  </table>
+  <table name="review" description="Book Review">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Author Id"/>
+    <column
+      name="reviewed_by"
+      required="true"
+      type="VARCHAR"
+      size="128"
+      description="Reviewer Name"/>
+	<column
+      name="review_date"
+      required="true"
+      type="DATE"
+	  default="01/01/2001"
+      description="Date of Review"/>
+	<column
+      name="recommended"
+      required="true"
+      type="BOOLEAN"
+      description="Does reviewer recommend book?"/>
+	<column
+	  name="book_id"
+	  required="true"
+	  type="INTEGER"
+	  description="Book ID for this review"/>
+	<foreign-key foreignTable="book" onDelete="CASCADE">
+      <reference
+        local="book_id"
+        foreign="id"/>
+    </foreign-key>	
+	<validator column="reviewed_by" translate="none">
+		<rule
+			name="required"				
+			message="The reviewed by field is required."/>
+	</validator>  
+  </table>
+  
+  <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->  	
+  <table name="media">
+   <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Media Id"/>
+    <column
+      name="cover_image"
+      type="BLOB"
+      lazyLoad="true"
+      description="The image of the book cover."/>
+	<column
+      name="excerpt"
+      type="CLOB"
+      lazyLoad="true"
+      description="An excerpt from the book."/>	
+	<column
+	  name="book_id"
+	  required="true"
+	  type="INTEGER"
+	  description="Book ID for this media collection."/>
+	<foreign-key foreignTable="book" onDelete="CASCADE">
+      <reference
+        local="book_id"
+        foreign="id"/>
+    </foreign-key>	  
+  </table>
+  
+  <!-- this table exists to test the many-to-many -->
+  <table name="book_club_list" description="Reading list for a book club.">
+	<column
+	  name="id"
+	  required="true"
+	  primaryKey="true"
+	  type="INTEGER"
+	  description="Unique ID for a school reading list."/>
+	<column
+	  name="group_leader"
+	  required="true"
+	  type="VARCHAR"
+	  size="100"
+	  description="The name of the teacher in charge of summer reading."/>
+	<column
+	  name="theme"
+	  required="false"
+	  type="VARCHAR"
+	  size="50"
+	  description="The theme, if applicable, for the reading list."/>
+  </table>
+  
+  <table name="book_x_list" phpName="BookListRel" description="Cross-reference table for many-to-many relationship between book rows and book_club_list rows.">
+	<column
+	  name="book_id"
+	  primaryKey="true"
+	  type="INTEGER"
+	  description="Fkey to book.id"/>
+	<column
+	  name="book_club_list_id"
+	  primaryKey="true"
+	  type="INTEGER"
+	  description="Fkey to book_club_list.id"/>
+	<foreign-key foreignTable="book" onDelete="CASCADE">
+	  <reference local="book_id" foreign="id"/>
+	</foreign-key>
+	<foreign-key foreignTable="book_club_list" onDelete="CASCADE">
+	  <reference local="book_club_list_id" foreign="id"/>
+	</foreign-key>
+  </table>
+  
+</database>

@@ -1,0 +1,5 @@
+This directory contains PHP templates which are used to build SQL files and object 
+model (OM) classes.  The PHP templates are called from the 
+propel.phing.PropelDataModelTask class.  The templates are managed by the Capsule 
+engine, which simply provides a mechanism for placing values in the template context 
+and buffering output, etc.

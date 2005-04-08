@@ -1,0 +1,113 @@
+<!--
+    Use this file to faciliate easy per-project building.
+    
+    Simply create a build.properties file in your project directory,
+    for example ./projects/bookstore/build.properties, that contains
+    any needed (i.e. to override) values for that project.
+    
+    Call this build script and specify the name of the project and
+    (optionally) the name of the target you wish to execute (default is
+    'main' target) of build-propel.xml.
+
+    Normal use:
+    $> phing   -Dproject=bookstore
+    
+    Specific target: 
+    $> phing -Dproject=bookstore -Dtarget=insert-sql
+
+-->
+<project name="propel-project-builder" default="main" basedir=".">
+
+<!-- in case ${project} was specified on command line, we set the project.dir
+     property here.  If it wasn't set, then this will be bogus, but it will
+     be overridden by the "projectcheck" target. -->    
+<property name="project.dir" value="./projects/${project}"/>
+
+<!-- set a default target if none provided -->
+<property name="target" value="main"/>
+
+<target name="buildpropescheck">
+  <available file="${project.dir}/build.properties" property="projBuildPopertiesExists"/>  
+</target>
+
+<target name="projectcheck" unless="project">
+		<echo message="====================================================="/>
+		<echo message="Project not specified. You must enter a project name. "/>
+		<echo message="In the future you can enter it on the command line: "/>
+		<echo message=" "/>
+		<echo message="-Dproject=bookstore"/>
+		<echo message="====================================================="/>	
+		<input propertyname="project" promptChar=":">Project name</input>
+		<property name="project.dir" value="./projects/${project}" override="true"/>        
+</target>
+
+<target name="configure" depends="projectcheck">
+	<echo msg="Loading project-specific props from ${project.dir}/build.properties"/>
+	<property file="${project.dir}/build.properties"/>
+</target>
+
+<target name="main" depends="configure" 
+  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
+
+ <!--<property file="${project.dir}/build.properties"/>-->
+ <phing phingfile="./build-propel.xml" target="${target}"/>
+ 
+</target>
+
+
+<!-- 
+ Convenience mappings to build-propel.xml main targets 
+ 
+ This makes it possible to use this buildfile w/o needing to specify
+ target as a property, e.g.:
+ 
+ $> phing -Dproject=bookstore insert-sql
+ 
+ The main reason for this is just consistency w/ old build-propel.xml file
+ (primarily for documentation & user confusion avoidance reasons).  There are relatively
+ few & infrequently changing main targets of build-propel.xml, so it's a non-
+ issue as far as maintenance is concerned.
+-->
+
+<target name="convert-props" depends="configure">
+	<phing phingfile="build-propel.xml" target="convert-props"/>
+</target>
+
+<target name="create-db" depends="configure">
+	<phing phingfile="build-propel.xml" target="create-db"/>
+</target>
+
+<target name="creole" depends="configure">
+	<phing phingfile="build-propel.xml" target="creole"/>
+</target>
+
+<target name="datadtd" depends="configure">
+	<phing phingfile="build-propel.xml" target="datadtd"/>
+</target>
+
+<target name="datadump" depends="configure">
+	<phing phingfile="build-propel.xml" target="datadump"/>
+</target>
+
+<target name="datasql" depends="configure">
+	<phing phingfile="build-propel.xml" target="datasql"/>
+</target>
+
+<target name="insert-sql" depends="configure">
+	<phing phingfile="build-propel.xml" target="insert-sql"/>
+</target>
+
+<target name="om" depends="configure">
+	<phing phingfile="build-propel.xml" target="om"/>
+</target>
+
+<target name="sql" depends="configure">
+	<phing phingfile="build-propel.xml" target="sql"/>
+</target>
+
+<target name="graphviz" depends="configure">
+	<phing phingfile="build-propel.xml" target="graphviz"/>
+</target>
+
+
+</project>

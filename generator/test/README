@@ -1,0 +1,32 @@
+This directory contains scripts and unit test classes for testing a Propel
+generator AND runtime environments.  In particular, the bookstore-test.php 
+script is a good way to test whether everything is *basically* working.  You 
+can run the bookstore test by performing a few simple tasks.
+
+(Assumes a vanilla install of Propel)
+
+(1) Use the default top-level build.properties file (copy/rename 
+build.properties-sample to build.properties).  Built the SQL + OM using the
+default bookstore build.properties and runtime-conf.xml:
+
+$> cd /path/to/propel-generator
+$> phing -f build-propel.xml
+   ....
+   
+(2) Execute the insert-sql target to initialize the sqlite database using the 
+SQL files that were built in previous step:
+
+$> phing -f build-propel.xml insert-sql
+ 
+(3) From the top-level directory (it's important where you are) run the 
+bookstore-test.php script like this:
+
+$> php -qC test/bookstore-test.php
+
+That's it.  You should see a bunch of test descriptions and a return status.  
+If you get an error about not being able to find a table, make sure that the 
+insert-sql step (2) completed successfully, and also that you are using the 
+default proeprty files which should be set to use a sqlite database.
+
+Take a look at the bookstore-test.php script to see some examples of how to 
+use generated Propel objects.

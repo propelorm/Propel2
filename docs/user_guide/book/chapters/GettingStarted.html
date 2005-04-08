@@ -1,0 +1,550 @@
+<!--
+-File         $Id: GettingStarted.html,v 1.6 2005/03/24 00:26:41 hlellelid Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2003, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Propel Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" charset="iso-8859-1"/>
+</head>
+<body>
+
+<h1>Getting Started</h1>
+
+<p>In this chapter, we're going to walkthrough all the steps necessary to set 
+  up and use the provided &quot;bookstore&quot; application. We'll start with 
+  an overview of the directory layout, so that you know where you can expect to 
+  find files.</p>
+<h2><a name="GettingStarted.Structure"></a> Structure of propel/generator</h2>
+<p>Before we begin with our &quot;build a bookstore&quot; example, you should 
+  take a moment to familiarize yourself with the Propel generator directory structure. 
+  To get started, you should note the<tt> projects/bookstore/</tt> directory, 
+  as you will want to customize files in this directory. Also, after you've completed 
+  the build, there will be a <tt>projects/bookstore/build/</tt> directory which 
+  will contain generated files that you'll need.</p>
+<pre title="DistributionFileLayout">
+propel/generator  
+  |-- classes
+  |    +-- propel
+  |         |-- engine
+  |         |    |-- database
+  |         |    |    |-- model
+  |         |    |    +-- transform
+  |         |    +-- sql
+  |         +-- phing    
+  |-- dtd
+  |-- projects
+  |    +-- bookstore
+  |-- templates
+  +-- test
+       |-- classes
+       |    +-- propel
+       +-- etc
+</pre>
+<p> The following table briefly describes the contents of the major directories: 
+</p>
+<a name="tables.PropelSourceTreeDirectories"></a> 
+<table>
+  <caption>
+  Propel source tree directories 
+  </caption>
+  <thead>
+    <tr> 
+      <th>Directory</th>
+      <th>Contents</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr> 
+      <td><p>classes</p></td>
+      <td><p>Repository of all the classes used by Propel. These include the Creole 
+          classes, which provide a lightweight unified DB API.</p></td>
+    </tr>
+    <tr> 
+      <td><p>dtd</p></td>
+      <td> <p>This holds a single DTD file for validating database XML schema 
+          files.</p></td>
+    </tr>
+    <tr> 
+      <td><p>projects</p></td>
+      <td> <p>This is a repository for all project files (one directory per project). 
+          Propel reads schema &amp; config files from this directory and creates 
+          all output in this directory.</p></td>
+    </tr>
+    <tr> 
+      <td><p>templates</p></td>
+      <td> <p>These are PHP templates (Capsule) that create the PHP classes and 
+          SQL dump files based on the datamodel.</p></td>
+    </tr>
+    <tr> 
+      <td height="37"><p>test</p></td>
+      <td> <p>PHPUnit2 testcases and the bookstore-test.php script which you can 
+          run after completing this installation excercise.</p></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2><a name="GettingStarted.XMLSchema"></a>Describing Your Database in XML</h2>
+<p>In order to create classes that accurately represent your tables -- and the 
+  relationships between tables in your database -- you need to provide an XML 
+  representation of your database. We will walk through the <tt>projects/bookstore/schema.xml</tt> 
+  file, which you will find in your Propel distribution.</p>
+<p><strong>Note:</strong> if you would like to use Propel with an already existing 
+  database, you can have Propel use the Creole metadata classes to construct the 
+  XML file for you. You will still - most likely - need to tweak the XML that 
+  Propel produces (e.g. to specify autoincrement for columns, or customize the 
+  PHP names for columns, add foreign key relationships for unsupporting DBs, etc.). 
+  See <a href="appendices/AppendixA-PropelOperations.html">AppendixA - Propel 
+  Operations</a> to find out more.</p>
+<p>Here's a part of the provided <tt>schema.xml</tt> file. As you can see, Propel 
+  datamodel definitions are very closely tied to the actual structure of the database. 
+  (We're contantly adding things, so the version in your code may look a little 
+  different.)</p>
+<pre title="bookstore-schema.xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot; standalone=&quot;no&quot;?&gt;
+&lt;database name=&quot;bookstore&quot; defaultIdMethod=&quot;native&quot;&gt;
+ &lt;table name=&quot;book&quot; description=&quot;Book Table&quot;&gt;
+  &lt;column
+    name=&quot;book_id&quot;
+    required=&quot;true&quot;
+    primaryKey=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Book Id&quot;/&gt;
+  &lt;column
+    name=&quot;title&quot;
+    required=&quot;true&quot;
+    type=&quot;VARCHAR&quot;
+    size=&quot;255&quot;
+    description=&quot;Book Title&quot;/&gt;
+  &lt;column
+    name=&quot;isbn&quot;
+    required=&quot;true&quot;
+    type=&quot;VARCHAR&quot;
+    size=&quot;24&quot;
+    phpName=&quot;ISBN&quot;
+    description=&quot;ISBN Number&quot;/&gt;
+  &lt;column
+    name=&quot;publisher_id&quot;
+    required=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Foreign Key Publisher&quot;/&gt;
+  &lt;column
+    name=&quot;author_id&quot;
+    required=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Foreign Key Author&quot;/&gt;
+  &lt;foreign-key foreignTable=&quot;publisher&quot;&gt;
+   &lt;reference
+     local=&quot;publisher_id&quot;
+     foreign=&quot;publisher_id&quot;/&gt;
+  &lt;/foreign-key&gt;
+  &lt;foreign-key foreignTable=&quot;author&quot;&gt;
+   &lt;reference
+     local=&quot;author_id&quot;
+     foreign=&quot;author_id&quot;/&gt;
+  &lt;/foreign-key&gt;
+ &lt;/table&gt;
+
+ &lt;table name=&quot;publisher&quot; description=&quot;Publisher Table&quot;&gt;
+  &lt;column
+    name=&quot;publisher_id&quot;
+    required=&quot;true&quot;
+    primaryKey=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Publisher Id&quot;/&gt;
+  &lt;column
+    name=&quot;name&quot;
+    required=&quot;true&quot;
+    type=&quot;VARCHAR&quot;
+    size=&quot;128&quot;
+    description=&quot;Publisher Name&quot;/&gt;
+ &lt;/table&gt;
+
+ &lt;table name=&quot;author&quot; description=&quot;Author Table&quot;&gt;
+  &lt;column
+    name=&quot;author_id&quot;
+    required=&quot;true&quot;
+    primaryKey=&quot;true&quot;
+    type=&quot;INTEGER&quot;
+    description=&quot;Author Id&quot;/&gt;
+  &lt;column
+    name=&quot;first_name&quot;
+    required=&quot;true&quot;
+    type=&quot;VARCHAR&quot;
+    size=&quot;128&quot;
+    description=&quot;First Name&quot;/&gt;
+  &lt;column
+    name=&quot;last_name&quot;
+    required=&quot;true&quot;
+    type=&quot;VARCHAR&quot;
+    size=&quot;128&quot;
+    description=&quot;Last Name&quot;/&gt;
+ &lt;/table&gt;
+&lt;/database&gt;</pre>
+<p>The XML above should be fairly self-explanatory, but we'll discuss some of 
+  the attributes in a little more detail. For a full reference of allowed attributes 
+  see <a href="appendices/AppendixB-SchemaReference.html">AppendixB - Schema Reference.</a></p>
+<h3>&lt;table idMethod=&quot;&quot; ... &gt;, &lt;database defaultIdMethod=&quot;&quot; 
+  ... &gt;</h3>
+<p>The <strong>&lt;table&gt;</strong> element supports the <strong>idMethod</strong> 
+  attribute; if none is provided then the <strong>defaultIdMethod</strong> attribute 
+  of the <strong>&lt;database&gt;<em> </em></strong>element is checked. The valid 
+  <strong>idMethod</strong> values are &quot;native&quot; or &quot;none&quot;. 
+  Setting this value to &quot;native&quot; implies that the databases native method 
+  of generating IDs will be used -- e.g. autoincrement for MySQL, sequences for 
+  PostgreSQL. </p>
+<p><strong>Note:</strong> in Torque, there is also an &quot;id-broker&quot; option 
+  which uses a database table to emulate sequences (akin to PEAR::DB or MDB sequence 
+  emulation). At this point Propel does not support the id-broker method, as all 
+  supported databases have built-in support for either autoincrement or sequence 
+  columns (at much less performance cost than emulation).</p>
+<h4>&lt;column type=&quot;&quot;&gt;</h4>
+<p>The <strong>type</strong> attribute in the <strong>&lt;column&gt;</strong> 
+  tag is used to specify a Propel <em>metatype</em>. These metatypes look like 
+  SQL types, but they do not correspond directly. These types are generic types 
+  that are converted by Propel to the best match for your RDBMS. For example, 
+  the &quot;TIMESTAMP&quot; Propel type would be rendered as &quot;DATETIME&quot; 
+  for MySQL (because MySQL's native TIMESTAMP type is idiosyncratic and a pain 
+  to read and parse). See the <a href="ColumnTypes.html">Propel Column Types</a> 
+  chapter for more information. </p>
+<h4>&lt;column phpName=&quot;&quot; ... /&gt;</h4>
+<p>When creating classes, Propel automatically &quot;PEAR-ifies&quot; the names 
+  of the columns when creating the object model classes. The default naming scheme 
+  converts &quot;underscore&quot; column names to PEAR standard class method names, 
+  such that <strong>book.my_column_name</strong> creates methods <strong>Book::getMyColumnName()</strong>, 
+  <strong>Book::setMyColumnName()</strong>, etc.</p>
+<p>You can override the converted name behavior by specifying your own name using 
+  the <strong>phpName</strong> attribute.</p>
+<h2><a name="GettingStarted.BuildProps"></a>Setting Build Properties</h2>
+<p>There's an important distinction to be made between <em>build</em> properties 
+  and <em>runtime</em> properties. The build properties contain information about 
+  your project that propel needs in order to build your classes and SQL. Not all 
+  properties are required: for example, Propel doesn't need to know how to connect 
+  to your database unless you want to use Propel to create the database or export 
+  data from an existing database. </p>
+<p>Propel will look for the build properties in <tt>build.properties</tt> and<tt> 
+  default.properties</tt> in the base Propel directory and in the directory of the current
+  project being built. <em><strong>For those using Propel from CVS:</strong> You will need to rename 
+  the <tt>build.properties-sample</tt> that is provided to <tt>build.properties</tt>.</em> You may wish to
+  customize the contents, but it is recommended that project-specific changes are made in the <tt>build.properties</tt>
+  file in the project directory (e.g. <tt>projects/bookstore/build.properties</tt>). Here's a sample project 
+  <tt>build.properties</tt> file:</p>
+<pre title="sample build.properties">
+# The name of the project 
+propel.project = bookstore
+ 
+# The database driver 
+propel.database = mssql
+
+# The connection parameters (optional)
+propel.database.url = mssql://localhost/bookstore
+</pre>
+
+<h2><a name="GettingStarted.RuntimeProps"></a>Setting Runtime Properties</h2>
+<p>Runtime properties may often be the same as your build db connection properties, 
+  but they are not assumed to be. This means that you will need to edit the <tt>runtime-conf.xml</tt> 
+  file to specify your settings. Note that for runtime properties you must specify 
+  database connection information. Also note that currently you must specify the 
+  connection information in a way that conforms to the PEAR-style DSN array, rather 
+  than the DSN URL used for build.properties connection parameters.</p>
+<pre title="sample bookstore.properties">&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+
+&lt;config&gt;
+ &lt;log&gt;
+  &lt;ident&gt;propel-bookstore&lt;/ident&gt;<br />  &lt;level&gt;7&lt;/level&gt;
+ &lt;/log&gt;
+ &lt;propel&gt;
+  &lt;datasources default=&quot;bookstore&quot;&gt;
+   &lt;datasource id=&quot;bookstore&quot;&gt;
+    &lt;!-- the Propel adapter (usually same as phptype of connection DSN) --&gt;
+    &lt;adapter&gt;sqlite&lt;/adapter&gt;
+    &lt;connection&gt;
+     &lt;phptype&gt;sqlite&lt;/phptype&gt;
+     &lt;hostspec&gt;localhost&lt;/hostspec&gt;
+     &lt;database&gt;./test/bookstore.db&lt;/database&gt;
+     &lt;username&gt;&lt;/username&gt;
+     &lt;password&gt;&lt;/password&gt;
+    &lt;/connection&gt;
+   &lt;/datasource&gt;
+  &lt;/datasources&gt;
+ &lt;/propel&gt;
+&lt;/config&gt;</pre>
+<p>During the build process this file will be converted into a PHP array in <tt>projects/bookstore/build/conf/runtime-conf.php 
+  </tt>, so that no runtime parsing is necessary. Note that currently the generated 
+  array does not match the format of the XML file. This is for backwards compatibility 
+  with the old .properties file format.</p>
+<pre>&lt;?php
+return array (
+  'propel' => 
+  array (
+    'database' => 
+    array (
+      'default' => 'bookstore',
+      'bookstore' => 
+      array (
+        'adapter' => 'mssql',
+      ),
+    ),
+    'dsfactory' => 
+    array (
+      'bookstore' => 
+      array (
+        'connection' => 
+        array (
+          'phptype' => 'mssql',
+          'database' => 'bookstore',
+          'hostspec' => 'localhost',
+          'username' => 'sa',
+          'password' => '',
+        ),
+      ),
+    ),
+  ),
+  'log' => 
+  array (
+    'name' => '/var/log/propel/propel.log',
+    'ident' => 'propel-bookstore',
+  ),
+);</pre>
+<p>The Propel classes can now read properties from this file with minimal overhead. 
+  You will see later that you pass the path to this file to <strong>Propel::init()</strong> 
+  to get the whole thing started. </p>
+<h2><a name="GettingStarted.Building"></a>Building</h2>
+<p>At this point Propel has already been installed, all configuration options 
+  have been set and you are ready to build. <em>Building requires that you have 
+  already installed and configured <a href="Bibliography.html#bib.phing">Phing</a>.</em></p>
+<p>To build your classes and SQL, simply run Phing using the<tt> build-propel.xml</tt> 
+  file:</p>
+<pre title="build propel (Unix)">
+$&gt; cd /usr/local/propel-generator<br />
+$&gt; phing -Dproject=bookstore
+</pre>
+<p>The procedure on Windows is exactly the same:</p>
+<pre title="build propel (Windows)">
+C:\&gt; cd C:\PHP\apps\propel-generator<br />
+C:\PHP\apps\propel-generator&gt; phing -Dproject=bookstore
+</pre>
+<p>The <tt>build.xml</tt> file provides a convenient wrapper for the <tt>build-propel.xml</tt> workhorse
+script, and also allows you to use per-project <tt>build.properties</tt> files.  If you prefer to call
+the <tt>build-propel.xml</tt> script directly, you must make sure that all your project properties are 
+specified in the top-level <tt>build.properties</tt> file.</p>
+<p>This will build the SQL files and the object &amp; peer classes based on any 
+  XML schemas in the <tt>projects/bookstore/</tt> directory -- in this case, there 
+  is just one <tt>schema.xml</tt> file.</p>
+<p>The resulting files will be placed in the <tt>projects/bookstore/build</tt> 
+  directory.</p>
+<p>Your output should look something like this (with your paths, of course, and 
+  maybe with a faster build time than my slow laptop):</p>
+<pre title="build output">
+C:\sandbox\propel-generator>phing -Dproject=bookstore
+Buildfile: C:\sandbox\propel-generator\build.xml
+
+propel-project-builder &gt; projectcheck:
+
+propel-project-builder &gt; main:
+    [phing] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'main'
+
+propel &gt; main:
+[phingcall] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'sql'
+
+propel &gt; check-run-only-on-schema-change:
+
+propel &gt; sql-check:
+
+propel &gt; sql:
+     [echo] +------------------------------------------+
+     [echo] |                                          |
+     [echo] | Generating SQL for YOUR Propel project!  |
+     [echo] |                                          |
+     [echo] +------------------------------------------+
+[phingcall] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'sql-template'
+
+propel &gt; sql-template:
+[propel-sql] Processing: schema.xml
+[propel-sql] Target database type: sqlite
+[propel-sql] Target package:
+[propel-sql] Using template path: C:\sandbox\propel-generator\templates
+[propel-sql] Output directory: C:\sandbox\propel-generator\projects\bookstore\bu
+ild\sql
+[propel-sql] Generating SQL tables for database: bookstore
+[propel-sql] Writing to SQL file: C:\sandbox\propel-generator\projects\bookstore
+\build\sql\schema.sql
+[propel-sql]     + book
+[propel-sql]     + publisher
+[propel-sql]     + author
+[propel-sql]     + review
+[propel-sql]     + media
+[phingcall] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'om'
+
+propel &gt; check-run-only-on-schema-change:
+
+propel &gt; om-check:
+
+propel &gt; om:
+     [echo] +------------------------------------------+
+     [echo] |                                          |
+     [echo] | Generating Peer-based Object Model for   |
+     [echo] | YOUR Propel project!                     |
+     [echo] |                                          |
+     [echo] +------------------------------------------+
+[phingcall] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'om-template'
+
+propel &gt; om-template:
+[propel-om] Target database type: sqlite
+[propel-om] Target package: bookstore
+[propel-om] Using template path: C:\sandbox\propel-generator\templates
+[propel-om] Output directory: C:\sandbox\propel-generator\projects\bookstore\bui
+ld\classes
+[propel-om] Processing: schema.xml
+[propel-om] Processing Datamodel : schema.xml
+[propel-om]   - processing database : bookstore
+[propel-om]     + book
+[propel-om]             -&gt; BaseBookPeer
+[propel-om]             -&gt; BaseBook
+[propel-om]             -&gt; BookMapBuilder
+[propel-om]             -&gt; BookPeer
+[propel-om]             -&gt; Book
+[propel-om]     + publisher
+[propel-om]             -&gt; BasePublisherPeer
+[propel-om]             -&gt; BasePublisher
+[propel-om]             -&gt; PublisherMapBuilder
+[propel-om]             -&gt; PublisherPeer
+[propel-om]             -&gt; Publisher
+[propel-om]     + author
+[propel-om]             -&gt; BaseAuthorPeer
+[propel-om]             -&gt; BaseAuthor
+[propel-om]             -&gt; AuthorMapBuilder
+[propel-om]             -&gt; AuthorPeer
+[propel-om]             -&gt; Author
+[propel-om]     + review
+[propel-om]             -&gt; BaseReviewPeer
+[propel-om]             -&gt; BaseReview
+[propel-om]             -&gt; ReviewMapBuilder
+[propel-om]             -&gt; ReviewPeer
+[propel-om]             -&gt; Review
+[propel-om]     + media
+[propel-om]             -&gt; BaseMediaPeer
+[propel-om]             -&gt; BaseMedia
+[propel-om]             -&gt; MediaMapBuilder
+[propel-om]             -&gt; MediaPeer
+[propel-om]             -&gt; Media
+[phingcall] Calling Buildfile 'C:\sandbox\propel-generator\build-propel.xml' wit
+h target 'convert-props'
+
+propel &gt; convert-props:
+     [echo] +------------------------------------------+
+     [echo] |                                          |
+     [echo] | Converting project properties file to an |
+     [echo] | array dump for run-time performance.     |
+     [echo] |                                          |
+     [echo] +------------------------------------------+
+  [capsule] Using templatePath: C:\sandbox\propel-generator\templates
+  [capsule] Generating to file C:\sandbox\propel-generator\projects\bookstore\bu
+ild\conf\bookstore-conf.php
+  [capsule] Parsing control template: conf/Control.tpl
+
+BUILD FINISHED
+
+Total time: 5.9279 seconds
+</pre>
+<p><strong>Note:</strong> if you encounter any problems, try adding <em>-verbose</em> 
+  or <em>-debug</em> options to get more output from the Phing build process.</p>
+<h2><a name="GettingStarted.UsingSQL"></a>Using the SQL Files</h2>
+<p>The SQL definition file that we just created can be found at <tt>projects/bookstore/build/schema.sql</tt>. 
+  This file contains the SQL to create tables (and other objects) in an already-created 
+  database. You can also use the &quot;create-db&quot; task to create the database, 
+  but be advised that some drivers, e.g. MS SQL Server, don't support this.</p>
+<p>For example, to create and populate database using MySQL:</p>
+<pre title="manual db creation">% mysqladmin -u root create bookstore
+% mysql -u root bookstore &lt; projects/bookstore/build/sql/schema.sql</pre>
+<p>Or, have Propel/Phing do it for you:</p>
+<pre title="propel db creation">% phing -Dproject=bookstore -Dtarget=create-db
+% phing -Dproject=bookstore -Dtarget=insert-sql</pre>
+<h2><a name="GettingStarted.UsingOM"></a>Using the Object Model</h2>
+<p>Now for the interesting part -- how to use these classes in your PHP application. 
+  The classes have been created in the <tt>build/classes/bookstore</tt> directory; 
+  you should either add the<tt> build/classes</tt> directory to your path or move 
+  the <em>entire</em><tt> build/classes/bookstore</tt> directory to a location 
+  on your path. </p>
+<p>For demonstration purposes, let's assume that you're using a Unix system and 
+  have <tt>/var/www/bookstore_app/classes</tt> on your PHP include_path:</p>
+<pre title="build propel (Unix)">
+$&gt; cd /usr/local/propel-generator
+$&gt; mv projects/bookstore/build/classes/bookstore /var/www/bookstore_app/classes</pre>
+<p>On Windows, of course, you could use that mouse thingy to click and drag the 
+  bookstore folder ... :)</p>
+<p>Now you also want to move the &quot;compiled&quot; properties file to some 
+  location in your application:</p>
+<pre title="build propel (Unix)">$&gt; mv projects/bookstore/conf/runtime-conf.php /var/www/bookstore_app/conf/</pre>
+<p>Windows: click .... drag ... drop.</p>
+<p>Now, initialize Propel and include the classes you need -- and get on with 
+  worrying about more important things:</p>
+<pre title="sample use">&lt;?php
+
+// Initialize Propel using path to the converted
+// property file that was created with the convert-props phing target
+require_once 'propel/Propel.php';
+Propel::init('/var/www/bookstore_app/conf/runtime-conf.php');
+
+// these are in the build/classes subdir of your project, so 
+// that needs to be on your include_path
+include_once 'bookstore/Author.php';
+include_once 'bookstore/Publisher.php';
+include_once 'bookstore/Book.php';
+
+$author = new Author();
+$author-&gt;setFirstName(&quot;Leo&quot;);
+$author-&gt;setLastName(&quot;Tolstoy&quot;);
+
+$pub = new Publisher();
+$pub-&gt;setName(&quot;Viking Press&quot;);
+
+$book = new Book();
+$book-&gt;setTitle(&quot;War &amp; Peace&quot;);
+$book-&gt;setIsbn(&quot;0140444173&quot;);
+$book-&gt;setPublisher($pub);
+$book-&gt;setAuthor($author);
+
+// save (insert, in this case) the new object
+$book-&gt;save(); 
+
+// $book-&gt;save() will automatically trigger $author-&gt;save()
+// and $publisher-&gt;save() since those objects don't yet exist in the db.
+
+// -------------------------------------
+
+// Now FIND that book!
+
+// &quot;peer&quot; class is static class that handles things like queries
+$c = new Criteria();
+$c-&gt;add(BookPeer::TITLE, &quot;War%&quot;, Criteria::LIKE);
+$c-&gt;setLimit(10); // just in case we keep running this script :)
+
+$books = BookPeer::doSelect($c);
+
+if ($books) {
+  print &quot;&lt;p&gt;&lt;strong&gt;Found books!&lt;/strong&gt;&lt;/p&gt;&quot;;
+
+
+  foreach($books as $book) {
+    print &quot;&lt;br/&gt;&quot; . $book-&gt;getTitle() . &quot;, by &quot; . 
+          $book-&gt;getAuthor()-&gt;getFirstName();<br />  }
+} else {
+  print &quot;&lt;p&gt;&lt;strong&gt;Did NOT find books!&lt;/strong&gt;&lt;/p&gt;&quot;;
+} 
+?&gt;</pre>
+<p>Hopefully at this point you understand the basics of how to build and use Propel 
+  classes. The next chapters will look at more complicated -- and probably more 
+  common -- scenarios and how Propel can make even very complicated things look 
+  pretty simple.</p>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!--
+-File         $Id: ManipulatingObjects.html,v 1.1 2004/07/08 01:17:06 hlellelid Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2003, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Propel Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" charset="iso-8859-1"/>
+</head>
+<body>
+
+<h1>Persisting Objects</h1>
+
+<p>This chapter looks at the details of adding, updating, and deleting objects 
+  from the datastore.</p>
+
+<h2><a name="ManipulatingObjects.Inserting"></a>Adding Objects</h2>
+
+<h3>Simple Inserts</h3>
+<p>Adding objects to your datastore is in effect inserting rows into your table. 
+  This is quite easily done in Propel by simply creating a new instance of the 
+  appropriate class and invoking the <strong>save()</strong> method.</p>
+
+<pre title="retrieveByPk() simple key">// Create new Author
+$a = new Author();
+$a-&gt;setFirstName(&quot;Leo&quot;);
+$a-&gt;setLastName(&quot;Tolstoy&quot;);
+ 
+$a-&gt;save();
+// now pkey is set
+$author_id = $a-&gt;getAuthorId();</pre>
+
+<h3>&quot;Cascading&quot; Inserts</h3>
+<p>In the example above a single row is being inserted in the database. In many 
+  cases, however, you will be working with inter-related records, and a single 
+  <strong>save()</strong> call may result in writing more than one record to the 
+  database.</p>
+<pre title="retrieveByPk() simple key">
+// Create Author
+$author = new Author();
+$author-&gt;setFirstName(&quot;John&quot;);
+$author-&gt;setLastName(&quot;Smith&quot;);
+ 
+// Create Publisher
+$publisher = new Publisher();
+$publisher-&gt;setName(&quot;Penguin&quot;);
+
+// Create J.Smith's book
+$book = new Book();
+$book-&gt;setISBN(&quot;111-2222-3333&quot;);
+$book-&gt;setTitle(&quot;Fake Title&quot;);
+$book-&gt;setPublisher($publisher);
+$book-&gt;setAuthor($author);
+
+// Saving the book will result in save of 
+// author and publisher records
+$book-&gt;save(); // will add 3 records to the db</pre>
+<p>That's the easy way to add objects and have them automatically when the related 
+  item is saved. You can also manually specify the foreign keys, which means that 
+  you'd need to add a few steps to the code above:</p>
+<pre title="INSERT: manual fkey setting">
+// Create Author
+$author = new Author();
+$author-&gt;setFirstName(&quot;John&quot;);
+$author-&gt;setLastName(&quot;Smith&quot;);
+$author-&gt;save();
+ .
+ .
+$book = new Book();
+$book-&gt;setAuthorId($author-&gt;getAuthorId());
+ .
+ .</pre>
+<h2><a name="ManipulatingObjects.Updating"></a>Updating Objects</h2>
+
+<p>A simple update is accomplished when an object is modified (using set*() methods) 
+  and the <strong>save()</strong> method is invoked. In your code this looks the 
+  same as the code to insert a new record; the only difference is that the object 
+  being modified will have a primary key already set.</p>
+
+<pre title="Criteria: simple">
+$obj = AuthorPeer::retrieveByPK(1); // get Author where pkey is 1
+$obj-&gt;setFirstName($obj-&gt;getFirstName() . &quot;-modiified&quot;);
+$obj-&gt;save();  // performs UPDATE
+ 
+// UPDATE author 
+//        SET author.FIRST_NAME = '&quot;.$obj-&gt;getFirstName().&quot;-modified' 
+//        WHERE author.AUTHOR_ID = 1
+</pre>
+<h2><a name="ManipulatingObjects.Deleting"></a>Deleting Objects</h2>
+
+<p>To delete records you can either call the object's <strong>delete()</strong> 
+  method or use the Peer's <strong>doDelete()</strong> method. </p>
+<p>The object <strong>delete()</strong> method deletes the object from the database 
+  (by primary key). It also sets the object state to &quot;delete&quot;. You can 
+  still retrieve properties of deleted objects, but you cannot save deleted objects.</p>
+<pre title="Using Object->delete()">$author = AuthorPeer::retrieveByPk(1);
+$author-&gt;delete();
+
+// DELETE FROM author WHERE author.AUTHOR_ID = 1</pre>
+
+<p>When using the Peer <strong>doDelete()</strong> method, you can specify whatever 
+  criteria you wish when performing the delete; in this example we are deleting 
+  a single record from the <em>author</em> table.</p>
+
+<pre title="Using Peer::doDelete()">$crit = new Criteria();
+$crit-&gt;add(AuthorPeer::AUTHOR_ID, 1);
+AuthorPeer::doDelete($crit);
+// DELETE FROM author WHERE author.AUTHOR_ID = 1</pre>
+ 
+
+<p>Propel also supports cascading deletes (including emulation for databases that 
+  don't support them natively), which are described in more detail in the Relationships 
+  chapter [<a href="Relationships.html#Relationships.CascadingDelete">Cascading 
+  Delete</a>].</p>
+<p>&nbsp;</p>
+</body>
+</html>

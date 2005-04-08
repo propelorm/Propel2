@@ -1,0 +1,89 @@
+
+  P R O P E L  R E A D M E
+  ========================
+
+  This is Propel's php4 version 1.1.0beta1.
+
+  1. Requirements
+  2. Supported RDBMS
+  3. Differences to Propel-5
+  3.1 Error handling
+  3.2 Accessing constants
+  3.3 Optional parameters
+
+  1. Requirements
+
+  The backport of Propel does only include the runtime classes.
+  Propel's generator framework has not been backported yet - basically because of its
+  dependency on Phing. So, for generating your OM classes for php4 you need a recent php5
+  commandline executable, unfortunately.
+
+  Further requirements:
+
+    - Phing: project build system based on Apache Ant used by Propel's generator framework.
+      Download version 2.0.0 from http://phing.info/wiki/index.php?node=2
+    - Creole-5: database abstraction layer used by Propel.
+      You'll need to download a version >= 1.0.1 from http://creole.tigris.org.
+    - Propel-5: for generating the om classes.
+      You'll need to download a version >= 1.1.0 from http://propel.tigris.org.
+
+  See the INSTALL file for a quick guide for installing Propel-5 and building your
+  om classes.
+
+  2. Supported RDBMS
+  ==================
+
+  Propel-4 currently supports
+    - MySQL,
+    - PostgreSQL
+    - SQLite
+    - MS SQL Server
+
+
+  3. Differences to Propel-5
+  ==========================
+
+  Propel-4 tries to be as equal as possible to Propel-5.
+  Due to major changes in php5 this is not always possible, though.
+  Below is a list of main differences between both implementations.
+
+  3.1 Error handling
+  ------------------
+
+  Propel-4 uses the same exception classes which are known from Propel-5.
+  The difference in Propel-4 is that exceptions are returned instead of thrown.
+  This means that all class methods throwing an exception in Propel-5 return an exception class in Propel-4.
+  Creole-4 and Propel-4 have a static method called isError, respectively.
+  This method is used to check whether a return value is an exception.
+
+  - Creole::isError($value) checks for exceptions returned by the creole layer (e.g. SQLException)
+  - Propel::isError($value) checks for exceptions returned by propel itself (e.g. PropelException)
+
+  Example:  $criteria = new Criteria();
+            $criteria->addAscendingOrderByColumn(AuthorPeer::LAST_NAME());
+      
+            $rs =& AuthorPeer::doSelect($criteria);
+            if(Propel::isError($rs)) { die($rs->getMessage()); }
+
+  3.2 Accessing constants
+  -----------------------
+
+  Propel-5 constants like in the generated Peer classes or Criteria are static class methods in Propel-4.
+
+  Example:  $criteria = new Criteria();
+            $criteria->add(AuthorPeer::LAST_NAME(), "John", Criteria::EQUAL());
+
+  3.3 Optional parameters
+  -----------------------
+
+  Optional parameters in Propel-5 are most likely used for passing a different Connection object to a
+  class method. Since those Connection objects have to be passed as reference in Propel-4 this is not
+  possible offhand. Therefore a new class Param has been introduced which is used to pass the
+  connection as reference to the appropriate method.
+
+  Example:  $con =& Propel::getConnection();
+            $rs =& AuthorPeer::doSelect(new Criteria(), Param::set($con));
+
+  With Param::set() a reference to $con is stored inside the Param object.
+  The Param object itself is passed by value. However, php keeps the reference to the connection
+  and inside doSave this reference is retrieved using the Param::get() method.

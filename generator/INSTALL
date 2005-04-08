@@ -1,0 +1,175 @@
+
+  I N S T A L L I N G    P R O P E L
+  ==================================
+
+  This is a quick guide for installing Propel and building the provided sample
+  bookstore application.  For more information on installation / configuration
+  see the online user guide available from main site: http://propel.phpdb.org
+  
+  
+  Prerequisites
+  -------------
+
+  Before you can install and run Propel you will need to have the following:
+  
+    * PHP >= 5.0.0
+	  Propel will only work with PHP5.  Additionally, you must have a command-
+	  line version of PHP5 in order to use PHING to build the classes and SQL
+	  files for your data model.  PHP must also have compiled in XML (libxml2, xsl)
+	  support in order to take advantage of all build options.
+
+  	* PHING >= 2.0.0
+	  Propel uses the PHING build system to build the classes and SQL definition
+	  files for your data model.  PHING is an open-source project build system
+	  based on Apache ANT.  PHING 2 is the (development) version built for PHP5.
+	  See http://phing.tigris.org/ to learn how to install Phing (it's easy).
+	  
+    * Creole >- 1.0.0	  
+	  Creole is a Uniform DB API framework for PHP5. Creole is available as a PEAR 
+	  package or can be installed in a more traditional manner. See 
+	  http://creole.phpdb.org/ to get a copy of the Creole classes.
+	
+	* A supported RDBMS
+	  Creole currently supports MySQL, MS SQL Server, PostgreSQL, and SQLite.  We 
+	  are working on support for Oracle and the new MySQLi drivers but this should 
+	  be considered alpha, at best.
+
+  Quick Install (PEAR)
+  --------------------
+  
+  It is now possible to install both the Propel runtime and the generator classes as
+  PEAR packages.  This is the quickest way to get up and running with Propel, but may
+  not be quite as easy to configure as the traditional installation method.
+  
+  * Propel Generator:
+  
+    % pear install http://propel.phpdb.org/pear/propel_generator-current.tgz
+  
+  To use the generator to build sql, php classes, etc. simply use the propel-gen shell 
+  script:
+    
+	% propel-gen /path/to/my/projectdir
+	
+  (See the sample bookstore project directory in your PEAR data directory for a sample 
+  projectdir.)
+	
+  * Propel Runtime:
+  
+    %  pear install http://propel.phpdb.org/pear/propel_runtime-current.tgz
+  
+  It is recommended that you read over the traditional install guide also, so that you
+  understand the roles of some of the various files.  In the PEAR install these files
+  (e.g. the main build.properties and the sample bookstore project) are stored in the
+  PEAR data dir (e.g. /usr/local/lib/php/data, C:\PHP\PEAR\data).
+  
+  
+  Traditional Installation
+  ------------------------
+  
+  Installation of Propel involves a few steps because Propel is composed of a generator
+  and runtime classes which are (now) packaged separately.
+  
+  Begin installation of Propel by choosing a base directory and unpacking the archive. 
+  
+  For the sake of simplicity, we'll assume that you are installing from a package 
+  (instead of CVS) into /var/www/php/.
+
+    % cd /var/www/php
+    % tar zxf /path/to/propel-x.x.x.tar.gz
+    % ln -s propel-x.x.x propel  
+  
+  A. Propel Generator
+  
+  The Propel generator classes don't need any special setup.  The classes and Phing 
+  scripts are located in the propel-generator/ directory (which in our example is
+  /var/www/php/propel/generator).
+  
+  B. Runtime Classes 
+
+  The runtime classes were unpacked to the propel/ directory (in this example, 
+  /var/www/php/propel). In order to use these classes in runtime applications, you will 
+  need to make sure that they are on the PHP include_path.  In our example, the 
+  following directory would need to be added to your PHP include_path: 
+  /var/www/php/propel/classes.  You could also copy the 
+  /var/www/php/propel/classes/propel directory to a location that is already on your 
+  include_path, e.g. the directory where PEAR classes are located:
+  
+    % cp -r /var/www/php/propel/runtime/classes/propel /usr/local/lib/php/
+  
+  Another option on *nix systems is to create a symlink:
+  
+    % ln -s /var/www/php/propel/runtime/classes/propel /usr/local/lib/php/propel  
+  
+  
+  Quick Test
+  ----------
+  
+  If you want to quickly test & see whether your installation is working, you can use 
+  the default configuration which will build the example application using SQLite.
+  
+  Here is how to run the simple test on Unix (use corresponding commands for Windows).
+  If you  run into trouble, don't panic -- just continue reading the INSTALL guide and 
+  consult the  Installation chapter of the online user guide at http://propel.phpdb.org.
+  
+  Change to your propel-generator dir (e.g.)
+  $> cd /var/www/php/propel/generator
+  
+  If using Propel from CVS, copy/rename the build.properties-sample file:
+  $> cp build.properties-sample build.properties
+  
+  Run Phing to build the classes and SQL files, specifying the bookstore project
+  $> phing -Dproject=bookstore
+  
+  Run the 'insert-sql' target which will add the tables to the SQLite db
+  $> phing -Dproject=bookstore -Dtarget=insert-sql
+  
+  Run the test script that uses the generated classes against the bookstore db:
+  $> php -qC test/bookstore-test.php
+  
+  You should see a bunch of output as it tests use cases.  Hopefully there aren't any 
+  "FAILED" messages. If you get a failed message immediately indicating that it can't 
+  find one of the tables make sure that you a) ran the 'insert'-sql' target and that 
+  you are running the bookstore-test.php script from the main propel directory *and* 
+  that you call PHP with the -qC options so that it won't chdir() into the scripts 
+  directory.  (The path for the bookstore.db is ./test/bookstore.db so you can see 
+  that you need to be in the main propel directory for that to work.)
+  
+    
+  Configure
+  ---------
+  
+  To get Propel to work with your own db setup, create a new project (easiest way is 
+  to use the bookstore project directory as a template). Create your datamodel schema, 
+  modify the build.properties for that project to specify database connection 
+  information, and set the db connection runtime properties in runtime-conf.xml.
+  
+  
+  Build
+  -----
+  
+  This assumes that you have already installed and configured a copy of PHING 2.
+
+    % cd /var/www/php/propel/generator  
+    % phing -Dproject=mykillerapp    
+
+  This will build the SQL files and the object & peer classes based on your datamodel 
+  schema XML file.
+
+  The resulting files will be placed in: 
+    /var/www/php/propel/generator/projects/mykillerapp/build
+
+  If you encounter any problems, try adding -verbose or -debug to get more output 
+  from the PHING build process.
+  
+
+  You're Done!
+  ------------
+  
+  At this point hopefully you have successfully built the classes and SQL definitions 
+  for the sample bookstore application.  If you encountered problems, please visit 
+  http://propel.phpdb.org to read additional documention, browse through the users 
+  mailing list, or add a bug report.
+  
+  Enjoy!
+  
+  --$Id: INSTALL,v 1.4 2005/03/24 00:24:07 hlellelid Exp $

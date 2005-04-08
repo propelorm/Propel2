@@ -1,0 +1,105 @@
+<!--
+-File         $Id: AdvancedObjectModel.html,v 1.2 2005/03/22 02:47:50 hlellelid Exp $
+-License      GNU FDL (http://www.gnu.org/copyleft/fdl.html)
+-Copyright    2003, Propel project
+-Author       Hans Lellelid, hans@xmpl.org
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Propel Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="Stylesheet" rev="Stylesheet" href="../css/Documentation.css" type="text/css" charset="iso-8859-1"/>
+</head>
+<body>
+
+<h1>Advanced Object Model</h1>
+
+<p>This chapter looks at some of the advanced options for the Propel object model.</p>
+<h2><a name="AdvancedOM.OverridingBaseClasses"></a>Overriding 
+  Base Classes</h2>
+<h3>For Objects</h3>
+<p>By default all Base object classes extend the <strong>propel.om.BaseObject</strong> 
+  class, which provides a shared set of methods and properties that the objects 
+  use to track their modification state. In some cases you may wish specify a 
+  <strong>BaseObject</strong> subclass to use instead; you can do this from your 
+  XML data definition:</p>
+<pre title="Overriding base object class">&lt;table name=&quot;book&quot; idMethod=&quot;native&quot; baseClass=&quot;bookstore.BookstoreComponent&quot;&gt;</pre>
+<p>Note that you must use the dot-path notation when specifying the new base class, 
+  as the class must be included before it can be referenced. The dot-path notation 
+  specifies a path relative to a location on the PHP <em>include_path</em>. Now 
+  the generated BaseBook class will extend BookstoreComponent. Note that <strong>BookstoreComponent</strong> 
+  must extend <strong>BaseObject</strong>, or PHP will generate fatal errors when 
+  you attempt to use your generated object / peer classes. </p>
+<pre title="overriding base object class PHP code">require_once 'bookstore/BookstoreComponent.php';
+ 
+class BaseBook extends BookstoreComponent {</pre>
+<h3>For Peers</h3>
+<p>By default all Base peer classes do not have any super class. You may wish to specify 
+  a base peer class -- e.g. to provide some additional shared functionality used by your
+  object model.</p>
+<p>As with the base object class, changing the base peer class is possible in 
+  the XML definition:</p>
+<pre title="Overriding base object class">&lt;table name=&quot;book&quot; idMethod=&quot;native&quot; basePeer=&quot;BookstorePeer&quot;&gt;</pre>
+<p>As you'd expect, the <strong>BaseBookPeer</strong> class now extends <strong>BookstorePeer</strong> 
+  instead of <strong>BasePeer</strong>. This class must provide all public/protected 
+  methods of <strong>BasePeer</strong>.</p>
+<h2><a name="AdvancedOM.Inheritance"></a>Inheritance</h2>
+
+<p>Propel provides basic support for implementing object-oriented inheritance 
+  (subclassing) your object model. There are several implementation options for 
+  mapping entity classes and subclasses to database tables. Propel uses the most 
+  efficient model from a SQL and query performance perspective: one table is used 
+  for all subclasses. This has the implication that your table must have all columns 
+  needed by main class and subclasses. Propel will create stub subclasses, but 
+  you must add logic to the peer class if you require that subclasses only contain 
+  a subset of the information -- i.e. by default all subclasses will be populated 
+  with the entire column row.</p>
+<p>You must define a column in your table that will serve to identify which class 
+  should be used to represent the table row; do this using the <strong>inheritance=&quot;single&quot; 
+  </strong>attribute (currently &quot;single&quot; is the only option other than 
+  the default, &quot;false&quot;). Also if the inheritance tree is known, you 
+  should use the <strong>&lt;inheritance&gt;</strong> tag to specify the class 
+  hierarchy. <em>Note that this 'key' column must be a real column in your table.</em></p>
+  
+<pre title="example of inheritance definition">&lt;table name=&quot;publication&quot;&gt;
+ &lt;column name=&quot;id&quot; type=&quot;INTEGER&quot; primaryKey=&quot;true&quot;/&gt;
+ &lt;column name=&quot;class&quot; type=&quot;INTEGER&quot; inheritance=&quot;single&quot;&gt;
+   &lt;inheritance key=&quot;1&quot; class=&quot;Journal&quot; extends=&quot;bookstore.Publication&quot;/&gt;
+   &lt;inheritance key=&quot;2&quot; class=&quot;Magazine&quot; extends=&quot;bookstore.Journal&quot;/&gt;
+ &lt;/column&gt;
+ &lt;column name=&quot;title&quot; type=&quot;VARCHAR&quot; size=&quot;100&quot;/&gt;
+&lt;/table&gt;</pre>
+<p><em><strong>Important:</strong> you must specify the package prefix when indicating 
+  the parent classes (extends=&quot;package.ClassName&quot;) so that these clases 
+  can be properly included at the top of the subclass definitions; however, you 
+  cannot specify a package for the subclasses, because Propel only builds one 
+  package at at time (the one specified by the ${propel.targetPackage} property 
+  in <tt>build.properties</tt>) and it is required that the subclasses be part 
+  of the package you are currently buildling. Conceivably, the parent classes 
+  could be part of a separate package.</em></p>
+<p>This code above will result in creation of 2 base classes -- <strong>BasePublicationPeer</strong> 
+  and <strong>BasePublication</strong><em> </em>-- and 4 stub classes -- <strong>PublicationPeer</strong>, 
+  <strong>Publication</strong>, <strong>Journal</strong><em> </em>(extends <strong>Publication</strong><em>)</em>, 
+  and <strong>Magazine</strong> (extends <strong>Journal</strong><em>).</em></p>
+<p align="center"><img src="../images/inheritance.gif" width="113" height="385" /></p>
+<p>Notice that only one base peer class is created. If you want to ensure that 
+  your subclasses only work with a subset of the columns from each row, you should 
+  override the <strong>BasePublicationPeer::populateObject()</strong> 
+  method to provide custom population based on object class. In many cases, however, 
+  the fact that objects of the correct class are returned may be sufficient in 
+  and of itself for your application needs.</p>
+<p>If the inheritance tree is dynamic -- or unknown -- you may omit the <strong>&lt;inheritance&gt;</strong> 
+  tag and it is assumed that the key column will contain a classname -- using 
+  dot-path notation (e.g. &quot;bookstore.Journal&quot;, &quot;myapp.entity.MyClassName&quot;). 
+  Also, you may override the base peer's <strong>getOMClass()</strong> to return 
+  the classname to use based on more complex logic (or query).</p>
+<h3>Abstract Entities</h3>
+<p>If you wish to enforce using subclasses of an entity, you may declare a table 
+  &quot;abstract&quot; in your XML data model.</p>
+<pre title="abstract table example">&lt;table name=&quot;publication&quot; abstract=&quot;true&quot;&gt;</pre>
+<p>Specifying that a table is abstract will generate abstract object stub classes, 
+  and will also require that you implement the <strong>getOMClass()</strong> method 
+  in your peer stub class (exception will be thrown if you do not).</p>
+</body>
+</html>
