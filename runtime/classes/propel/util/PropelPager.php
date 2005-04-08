@@ -125,9 +125,12 @@ class PropelPager {
 	 * @param int $page
 	 * @param int $rowsPerPage
 	 */
-	public function __construct(Criteria $c, $peerClass, $peerMethod, $page = 1, $rowsPerPage = 25)
+	public function __construct($c = null, $peerClass = null, $peerMethod = null, $page = 1, $rowsPerPage = 25)
 	{
-		$this->setCriteria($c);
+        if(!isset($c)) { 
+            $c = new Criteria;
+        }
+        $this->setCriteria($c);
 		$this->setPeerClass($peerClass);
 		$this->setPeerMethod($peerMethod);
 		$this->setPage($page);
@@ -139,7 +142,7 @@ class PropelPager {
 	 * @param Criteria $c
 	 * @return void
 	 */
-	public function setCriteria($c)
+	public function setCriteria(Criteria $c)
 	{
 		$this->criteria = $c;
 	}
