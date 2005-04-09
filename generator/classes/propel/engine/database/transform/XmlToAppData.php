@@ -385,6 +385,11 @@ class XmlToAppData extends AbstractHandler {
     }
 }
 
+/**
+ * Utility class used for objects with vendor data.
+ * 
+ * @package propel.engine.database.transform
+ */
 class ObjectWithVendorSpecificData
 {
     protected $object;
