@@ -64,7 +64,7 @@ class ValidatorMap
 
     public function getColumnName()
     {
-        return $this->column->getName();
+        return $this->column->getColumnName();
     }
     
     public function setName($name)
