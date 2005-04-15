@@ -1,6 +1,7 @@
 <?php
+
 /*
- *  $Id: PeerBuilder.php,v 1.1 2004/07/08 00:22:57 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,24 +20,269 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/engine/database/model/Column.php';
- 
- /**
-  * Static class used to help encapsulate logic from the om-building templates.
-  * 
-  * @author Hans Lellelid <hans@xmpl.org>
-  * @version $Revision: 1.1 $
-  * @package propel.engine.builder.om
-  */
-class PeerBuilder {
+require_once 'propel/engine/builder/om/OMBuilder.php';
 
-    /**
-     * Get the column constant name (e.g. PeerName::COLUMN_NAME).
+/**
+ * Base class for Peer-building classes.
+ * 
+ * This class is designed so that it can be extended by a PHP4PeerBuilder in addition
+ * to the "standard" PHP5PeerBuilder and PHP5ComplexOMPeerBuilder.  Hence, this class
+ * should not have any actual template code in it -- simply basic logic & utility 
+ * methods.
+ * 
+ * @author Hans Lellelid <hans@xmpl.org>
+ */
+abstract class PeerBuilder extends OMBuilder {
+
+	protected $basePeerClass;
+	protected $basePeerClassname;
+	
+	/**
+	 * The name of the PHP class being built.
+	 * @var string
+	 */
+	protected $classname;
+	
+	/**
+	 * Constructs a new PeerBuilder subclass.
+	 */
+	public function __construct(Table $table) {
+		parent::__construct($table);
+		$this->basePeerClass = $this->getBasePeer($table);
+		$this->basePeerClassname = $this->classname($this->basePeerClass);
+	}
+	
+	/**
+	 * Builds the PHP source for current class and returns it as a string.
+	 * 
+	 * This is the main entry point and defines a basic structure that classes should follow. 
+	 * In most cases this method will not need to be overridden by subclasses.  This method 
+	 * does assume that the output language is PHP code, so it will need to be overridden if 
+	 * this is not the case.
+	 * 
+	 * @return string The resulting PHP sourcecode.
+	 */
+	public function build()
+	{
+		$script = "<" . "?php\n"; // intentional concatenation		
+		$this->addIncludes($script);
+		$this->addClassOpen($script);
+		$this->addClassBody($script);		
+		$this->addClassClose($script);		
+		$script .= "?" . ">";		
+		return $script;
+	}
+	
+	/**
+	 * Adds the addSelectColumns(), doCount(), etc. methods.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addSelectMethods(&$script)
+	{
+		$this->addAddSelectColumns($script);
+		
+		$this->addCountConstants($script);
+		$this->addDoCount($script);
+		
+		// consider refactoring the doSelect stuff
+		// into a top-level method
+		$this->addDoSelectOne($script);
+		$this->addDoSelect($script);
+		$this->addDoSelectRS($script);	 // <-- there's Creole code in here
+		$this->addPopulateObjects($script); // <-- there's Creole code in here						
+
+	}
+	
+	/**
+	 * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetOMClassMethod(&$script)
+	{
+		$table = $this->getTable();
+		if ($table->getChildrenColumn()) {
+			if ($table->isAbstract()) {
+			    $this->addGetOMClass_Inheritance_Abstract($script);
+			} else {
+				$this->addGetOMClass_Inheritance($script);
+			}
+		} else {
+			if ($table->isAbstract()) {
+			    $this->addGetOMClass_NoInheritance_Abstract($script);
+			} else {
+				$this->addGetOMClass_NoInheritance($script);
+			}
+		}
+	}
+	
+	/**
+	 * Adds the doInsert(), doUpdate(), doDeleteAll(), doValidate(), etc. methods.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addUpdateMethods(&$script)
+	{
+		$this->addDoInsert($script);
+		$this->addDoUpdate($script);
+		$this->addDoDeleteAll($script);
+		$this->addDoDelete($script);
+		if ($this->isDeleteCascadeEmulationNeeded()) {
+			$this->addDoOnDeleteCascade($script);
+		}
+		if ($this->isDeleteSetNullEmulationNeeded()) {
+			$this->addDoOnDeleteSetNull($script);
+		}
+		$this->addDoValidate($script);
+	}
+	
+	/**
+	 * Adds the retrieveByPK() (and possibly retrieveByPKs()) method(s) appropriate for this class.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addRetrieveByPKMethods(&$script)
+	{
+	    if (count($this->getTable()->getPrimaryKey()) === 1) {
+			$this->addRetrieveByPK_SinglePK($script);
+	        $this->addRetrieveByPKs_SinglePK($script);
+	    } else {
+			$this->addRetrieveByPK_MultiPK($script);
+		}
+	}
+	
+	/**
+	 * This method adds the contents of the generated class to the script.
+	 * 
+	 * This method contains the high-level logic that determines which methods
+	 * get generated.
+	 * 
+	 * Hint: Override this method in your subclass if you want to reorganize or
+	 * drastically change the contents of the generated peer class.
+	 * 
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addClassBody(&$script)
+	{
+
+		$table = $this->getTable();
+
+		if (!$table->isAlias()) {
+			$this->addConstantsAndAttributes($script);
+		}
+
+		$this->addGetMapBuilder($script);		
+		$this->addGetPhpNameMap($script);
+		
+		if (!$table->isAlias()) {
+			$this->addAlias($script); // alias() utility method (deprecated?)
+			$this->addSelectMethods($script);
+		}
+		
+		$this->addGetOMClassMethod($script);
+				
+		// add the insert, update, delete, validate etc. methods
+		if (!$table->isAlias() && !$table->isReadOnly()) {
+			$this->addUpdateMethods($script);
+		}
+		
+		if (count($table->getPrimaryKey()) > 0) {
+			$this->addRetrieveByPKMethods($script);		
+		}
+	}
+	
+	/**
+	 * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
+	 * @return boolean
+	 */
+	protected function isDeleteCascadeEmulationNeeded()
+	{				
+		$table = $this->getTable();
+		if (!$this->getPlatform()->supportsNativeDeleteTrigger() && count($table->getReferrers()) > 0) {		
+			foreach ($table->getReferrers() as $fk) {
+				if ($fk->getOnDelete() == ForeignKey::CASCADE) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
+	 * @return boolean
+	 */
+	protected function isDeleteSetNullEmulationNeeded()
+	{	
+		$table = $this->getTable();
+		if (!$this->getPlatform()->supportsNativeDeleteTrigger() && count($table->getReferrers()) > 0) {		
+			foreach ($table->getReferrers() as $fk) {
+				if ($fk->getOnDelete() == ForeignKey::SETNULL) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}	
+	
+	/** 
+	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
      * 
      * @param Column $col The column we need a name for.
      * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
      * 
+     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, then uses current table COLUMN_NAME.
+     */
+    public function getColumnConstant(Column $col, $phpName = null)
+	{
+		$classname = $this->getPeerClassname($phpName);
+		
+        // was it overridden in schema.xml ?
+        if ($col->getPeerName()) {
+            $const = strtoupper($col->getPeerName());
+        } else {
+            $const = strtoupper($col->getName());
+        }
+		return $classname.'::'.$const;
+    }
+	
+	/**
+	 * Returns the peer name for current table.
+	 * @return string (e.g. 'MyPeer')
+	 */
+	protected function getPeerClassname($phpName = null) {
+		if ($phpName === null) {
+		    $phpName = $this->getTable()->getPhpName();
+		}
+		return $phpName . 'Peer';
+	}
+	
+	/**
+	 * Returns the retrieveByPK method name to use for this table.
+	 * If the table is an alias then the method name looks like "retrieveTablenameByPK"
+	 * otherwise simply "retrieveByPK".
+	 * @return string
+	 */
+	protected function getRetrieveMethodName()
+	{
+		if ($this->getTable()->isAlias()) { 
+			$retrieveMethod = "retrieve" . $this->getTable()->getPhpName() . "ByPK";
+		} else {
+			$retrieveMethod = "retrieveByPK";
+		}
+		return $retrieveMethod;
+	}
+	
+		
+	/**
+     * COMPATIBILITY: Get the column constant name (e.g. PeerName::COLUMN_NAME).
+	 * 
+     * This method exists simply because it belonged to the 'PeerBuilder' that this
+	 * class is replacing (because of name conflict more than actual functionality overlap).
+	 * When the new builder model is finished this method will be removed.
+	 * 
+     * @param Column $col The column we need a name for.
+     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+     * 
      * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
+	 * @deprecated
      */
     public static function getColumnName(Column $col, $phpName = null) {
         // was it overridden in schema.xml ?
@@ -51,5 +297,4 @@ class PeerBuilder {
             return $const;
         }
     }
-
 }

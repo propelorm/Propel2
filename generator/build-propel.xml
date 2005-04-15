@@ -36,6 +36,9 @@
     name="propel-om"
     classname="propel.phing.PropelOMTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-new-om"
+    classname="propel.phing.PropelNewOMTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-data-dtd"
     classname="propel.phing.PropelDataDTDTask" classpathRef="propelclasses"/>
   <taskdef
@@ -361,6 +364,40 @@
     </propel-om>
   </target>
 
+  <!-- the new OM tasks -->
+  
+  <target
+    name="new-om"
+    depends="om-check"
+    unless="propel.internal.om.uptodate"
+    description="==> generates the NEW Peer-based object model for your project">
+
+    <echo message="+------------------------------------------+"/>
+    <echo message="|                                          |"/>
+    <echo message="| Generating Peer-based Object Model for   |"/>
+    <echo message="| YOUR Propel project (NEW OM BUILDERS)!   |"/>
+    <echo message="|                                          |"/>
+    <echo message="+------------------------------------------+"/>
+
+    <phingcall target="new-om-template"/>
+    <!--<phingcall target="om-tar"/>-->
+  </target>
+
+  <target name="new-om-template">
+    <propel-new-om
+      outputDirectory="${propel.php.dir}"
+      targetDatabase="${propel.database}"
+      targetPackage="${propel.targetPackage}"
+      templatePath="${propel.templatePath}"
+      targetPlatform="${propel.targetPlatform}">
+      <schemafileset dir="${propel.schema.dir}"
+        includes="${propel.schema.om.includes}"
+        excludes="${propel.schema.om.excludes}"
+      />
+    </propel-new-om>
+  </target>
+  
+  
   <!-- ================================================================== -->
   <!-- P R O P S   T O   P H P   A R R A Y                                -->
   <!-- ================================================================== -->

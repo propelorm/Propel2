@@ -101,6 +101,10 @@
 	<phing phingfile="build-propel.xml" target="om"/>
 </target>
 
+<target name="new-om" depends="configure">
+	<phing phingfile="build-propel.xml" target="new-om"/>
+</target>
+
 <target name="sql" depends="configure">
 	<phing phingfile="build-propel.xml" target="sql"/>
 </target>
