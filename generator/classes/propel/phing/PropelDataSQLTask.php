@@ -189,20 +189,20 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
                     $context->parse("sql/load/$targetDatabase/row.tpl", $outFile->getAbsolutePath(), $append);
                     if ($append == false) $append = true;
                 }
-
+				
+				// Place the generated SQL file(s)
+	            $p = new Properties();
+	            if ($this->getSqlDbMap()->exists()) {
+	                $p->load($this->getSqlDbMap());
+	            }
+	
+	            $p->setProperty($outFile->getName(), $db->getName());
+	            $p->store($this->getSqlDbMap(), "Sqlfile -> Database map");
+				
             } else {
                 $this->log("File '" . $dataXMLFile->getAbsolutePath()
                         . "' in datadbmap does not exist, so skipping it.", PROJECT_MSG_WARN);
-            }
-
-            // Place the generated SQL file(s)
-            $p = new Properties();
-            if ($this->getSqlDbMap()->exists()) {
-                $p->load($this->getSqlDbMap());
-            }
-
-            $p->setProperty($outFile->getName(), $db->getName());
-            $p->store($this->getSqlDbMap(), "Sqlfile -> Database map");
+            }            
 
         } // foreach data xml file
 
