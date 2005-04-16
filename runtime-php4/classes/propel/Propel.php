@@ -381,7 +381,7 @@ class Propel
         case PROPEL_LOG_CRIT:
           return $self->logger->crit($message);
         case PROPEL_LOG_ERR:
-          return $self->logger->err($mesage);
+          return $self->logger->err($message);
         case PROPEL_LOG_WARNING:
           return $self->logger->warning($message);
         case PROPEL_LOG_NOTICE:
