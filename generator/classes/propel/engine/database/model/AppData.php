@@ -152,10 +152,7 @@ class AppData {
     public function addDatabase($db)
     {
         if ($db instanceof Database) {
-            $db->setAppData($this);
-            if ($db->getName() === null) {
-                $db->setName(Propel::getDefaultDB());
-            }
+            $db->setAppData($this);            
             if ($db->getDatabaseType() === null) {
                 $db->setDatabaseType($this->databaseType);
             }
