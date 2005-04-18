@@ -412,7 +412,7 @@ foreach ($table->getColumns() as $col) {
 	 *
 	 * @param ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
 	 * @param int $startcol 1-based offset column which indicates which restultset column to start with.
-	 * @return void
+	 * @return int next starting column
 	 * @throws PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
 	public function hydrate(ResultSet $rs, $startcol = 1)
@@ -446,7 +446,9 @@ foreach ($table->getColumns() as $col) {
 			$this->resetModified();
 <?php	   } ?>
 			$this->setNew(false);
-		
+
+      return $startcol + <?php echo $n; ?>;
+      
 		} catch (Exception $e) {
 			throw new PropelException("Error populating <?php echo $table->getPhpName()?> object", $e);
 		}		

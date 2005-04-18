@@ -470,7 +470,7 @@ if (! $table->isAlias())
   *
   * @param ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
   * @param int $startcol 1-based offset column which indicates which restultset column to start with.
-  * @return void
+  * @return int next starting column
   * @throws PropelException  - Any caught Exception will be rewrapped as a PropelException.
   */
   function hydrate(&$rs, $startcol = 1)
@@ -519,7 +519,7 @@ if (! $table->isAlias())
   } /* if ($addSaveMethod) */
 ?>
     $this->setNew(false);
-    return true;
+    return $startcol + <?php echo $n; ?>;
   }
     
   /**
