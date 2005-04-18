@@ -44,9 +44,13 @@ class MaxValueValidator extends BasicValidator
   /**
   * @see BasicValidator::isValid()
   */
-  function isValid (&$map, $str)
+  function isValid (&$map, $value)
   {
-    return intval($str) <= intval($map->getValue());
+    if(is_null($value) == false && is_numeric($value) == true) {
+      return intval($value) <= intval($map->getValue());
+    }
+
+    return false;
   }
 
 }
