@@ -32,142 +32,140 @@ include_once 'propel/engine/database/model/AppData.php';
  */
 class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
-	/**
-	 * The properties file that maps an SQL file to a particular database.
-	 * @var File
-	 */
-	private $sqldbmap;
-	
-	/**
-	 * Name of the database.
-	 */
-	private $database;
+    /**
+     * The properties file that maps an SQL file to a particular database.
+     * @var File
+     */
+    private $sqldbmap;
+    
+    /**
+     * Name of the database.
+     */
+    private $database;
 
-	/**
-	 * Name of the output directory.
-	 */
-	private $outDir;
-	
+    /**
+     * Name of the output directory.
+     */
+    private $outDir;
+    
 
-	/**
-	 * Set the sqldbmap.
-	 * @param File $sqldbmap The db map.
-	 */
-	public function setOutputDirectory(File $out)
-	{
-		$this->outDir = $out;
-	}
-
-
-	/**
-	 * Set the sqldbmap.
-	 * @param File $sqldbmap The db map.
-	 */
-	public function setSqlDbMap(File $sqldbmap)
-	{
-		$this->sqldbmap = $sqldbmap;
-	}
-
-	/**
-	 * Get the sqldbmap.
-	 * @return File $sqldbmap.
-	 */
-	public function getSqlDbMap()
-	{
-		return $this->sqldbmap;
-	}
-	
-	/**
-	 * Set the database name.
-	 * @param string $database
-	 */
-	public function setDatabase($database)
-	{
-		$this->database = $database;
-	}
-
-	/**
-	 * Get the database name.
-	 * @return string
-	 */
-	public function getDatabase()
-	{
-		return $this->database;
-	}
+    /**
+     * Set the sqldbmap.
+     * @param File $sqldbmap The db map.
+     */
+    public function setOutputDirectory(File $out)
+    {
+        $this->outDir = $out;
+    }
 
 
-	public function main()
-	{
+    /**
+     * Set the sqldbmap.
+     * @param File $sqldbmap The db map.
+     */
+    public function setSqlDbMap(File $sqldbmap)
+    {
+        $this->sqldbmap = $sqldbmap;
+    }
+
+    /**
+     * Get the sqldbmap.
+     * @return File $sqldbmap.
+     */
+    public function getSqlDbMap()
+    {
+        return $this->sqldbmap;
+    }
+    
+    /**
+     * Set the database name.
+     * @param string $database
+     */
+    public function setDatabase($database)
+    {
+        $this->database = $database;
+    }
+
+    /**
+     * Get the database name.
+     * @return string
+     */
+    public function getDatabase()
+    {
+        return $this->database;
+    }
+
+
+    public function main()
+    {
 
 		$count = 0;
 
-		$dotSyntax = '';
+        $dotSyntax = '';
 
-		// file we are going to create
+        // file we are going to create
 
-		foreach ($this->getDataModels() as $dataModel) {
+        $dbMaps = $this->getDataModelDbMap();
+        foreach ($this->getDataModels() as $dataModel) {
 
-			echo "Processing datamodel...\n";
+            echo "Processing datamodel...\n";
 
-			$dotSyntax .= "digraph G {\n";
-			foreach ($dataModel->getDatabases() as $database) {
-				echo "Processing database..." . $database->getName() . "\n";
+            $dotSyntax .= "digraph G {\n";
+            foreach ($dataModel->getDatabases() as $database) {
+                echo "Processing database..." . $database->getName() . "\n";
 
-				//print the tables
-				foreach($database->getTables() as $tbl) {		
-					echo "Processing table..." . $tbl->getName() . "\n";
-					++$count;
-					$dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
+                //print the tables
+                foreach($database->getTables() as $tbl) {        
+                    echo "Processing table..." . $tbl->getName() . "\n";
+                    ++$count;
+                    $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
 
-					foreach ($tbl->getColumns() as $col) {
-						$dotSyntax .= $col->getName();
-						if ($col->getForeignKey() != null ) {
-							$dotSyntax .= ' (FK)';
-						} elseif ($col->isPrimaryKey()) {
-							$dotSyntax .= ' (PK)';
-						}
-						$dotSyntax .= '\l';
-					}
-					$dotSyntax .= '}", shape=record];';
-					$dotSyntax .= "\n";
+                    foreach ($tbl->getColumns() as $col) {
+                        $dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
+                        if ($col->getForeignKey() != null ) {
+                            $dotSyntax .= ' [FK]';
+                        } elseif ($col->isPrimaryKey()) {
+                            $dotSyntax .= ' [PK]';
+                        }
+                        $dotSyntax .= '\l';
+                    }
+                    $dotSyntax .= '}", shape=record];';
+                    $dotSyntax .= "\n";
 
-				}
+                }
 
-				//print the relations
+                //print the relations
 
-				$count = 0;
-				$dotSyntax .= "\n";
-				foreach($database->getTables() as $tbl) {		
-					++$count;
+                $count = 0;
+                $dotSyntax .= "\n";
+                foreach($database->getTables() as $tbl) {        
+                    ++$count;
 
-					foreach ($tbl->getColumns() as $col) {
-						$fk = $col->getForeignKey();
-						if ( $fk == null ) continue;
-						$dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . $fk->getForeignColumnNames() . ' "];';
-						$dotSyntax .= "\n";
-					}
-				}
-
-
-
-			} // foreach database		
-			$dotSyntax .= "}\n";
-
-			$this->writePNG($dotSyntax,$this->outDir->toString(),"schema.png");
-		} //foreach datamodels			
-		
-	} // main()
+                    foreach ($tbl->getColumns() as $col) {
+                        $fk = $col->getForeignKey();
+                        if ( $fk == null ) continue;
+                        $dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . $fk->getForeignColumnNames() . ' "];';
+                        $dotSyntax .= "\n";
+                    }
+                }
 
 
-	/**
-	 * probably insecure 
-	 */
-	function writePNG($dotSyntax, $outputDir, $filename) {
-		print "Writing file...\n$dotSyntax\n\n";
-		$dot = fopen($outputDir.'/schema.dot','w');
-		fputs($dot,$dotSyntax);
-		fclose($dot);
-		exec('dot '.$outputDir.'/schema.dot -Tpng -o '.$outputDir.'/schema.png');
-	}
+
+            } // foreach database        
+            $dotSyntax .= "}\n";
+
+            $this->writeDot($dotSyntax,$this->outDir->toString());
+        } //foreach datamodels            
+        
+    } // main()
+
+
+    /**
+     * probably insecure 
+     */
+    function writeDot($dotSyntax, $outputDir) {
+        print "Writing dot file to {$outputDir}/schema.dot\n";
+        file_put_contents($outputDir.'/schema.dot', $dotSyntax);
+    }
 
 }
