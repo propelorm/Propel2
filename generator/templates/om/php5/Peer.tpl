@@ -526,7 +526,8 @@ if (!$table->isAlias() && !$table->isReadOnly()) {
 <?php
 	foreach ($table->getColumns() as $col) {		 
 		if($col->isPrimaryKey()) { ?>
-			$selectCriteria->put(self::<?php echo PeerBuilder::getColumnName($col) ?>, $criteria->remove(self::<?php echo PeerBuilder::getColumnName($col) ?>));
+			$comparison = $criteria->getComparison(self::<?php echo PeerBuilder::getColumnName($col) ?>);
+			$selectCriteria->add(self::<?php echo PeerBuilder::getColumnName($col) ?>, $criteria->remove(self::<?php echo PeerBuilder::getColumnName($col) ?>), $comparison);
 <?php 
 		}  /* if col is prim key */
 	 } /* foreach */
