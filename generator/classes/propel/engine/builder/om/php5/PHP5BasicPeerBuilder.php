@@ -34,7 +34,7 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5PeerBuilder extends PeerBuilder {		
+class PHP5BasicPeerBuilder extends PeerBuilder {		
 	
 // Bugs that are being fixed while porting Peer.tpl to this class:
 //	- ability to override the constants
@@ -1230,4 +1230,4 @@ abstract class ".$this->classname." {
 	}";
 	}
 	
-} // PeerBuilder
+} // PHP5BasicPeerBuilder
