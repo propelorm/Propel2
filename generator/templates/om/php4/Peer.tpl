@@ -614,7 +614,7 @@ if (!$table->isAlias() && ! $table->isReadOnly())
       $pn = $table->getPhpName() . 'Peer';
       $cn = PeerBuilder::getColumnName($col);
 ?>
-      $comparison = $criteria->getComparison(<?php echo $pn?>::<?php echo $cn?>);
+      $comparison = $criteria->getComparison(<?php echo $pn?>::<?php echo $cn?>());
       $selectCriteria->add(<?php echo $pn?>::<?php echo $cn ?>(), $criteria->remove(<?php echo $pn ?>::<?php echo $cn ?>()), $comparison);
 <?php 
     }  /* if col is prim key */
