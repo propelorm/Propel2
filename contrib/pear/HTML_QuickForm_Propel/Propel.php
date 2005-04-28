@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -101,7 +101,7 @@ define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
  * TODO: map all creoleTypes to usefull formelements
  *
  * @author  Rob Halff <info@rhalff.com>
- * @version   0.1 
+ * @version   $rev$ 
  * @copyright Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
  * @package   propel.contrib
  */
