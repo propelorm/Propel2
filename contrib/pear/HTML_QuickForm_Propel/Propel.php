@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id$
+ *  $Id
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -103,10 +103,10 @@ define('PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN', 5);
  * @author  Rob Halff <info@rhalff.com>
  * @version   0.1 
  * @copyright Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
- * @package   propel.util
+ * @package   propel.contrib
  */
 
-class PropelQuickForm extends HTML_QuickForm {
+class HTML_QuickForm_Propel extends HTML_QuickForm {
 
         private $id;
         private $columnVisibility = array();
