@@ -99,7 +99,7 @@ class ClassTools {
      */
     public static function getInterface(Table $table) {
         $interface = $table->getInterface();
-        if ($interface === null) {
+        if ($interface === null && !$table->isReadOnly()) {
             $interface = "propel.om.Persistent";
         }
         return $interface;
