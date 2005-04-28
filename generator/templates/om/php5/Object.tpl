@@ -1599,7 +1599,8 @@ if (!$table->isAlias()) {
 	 */
 	public function copy(<?php if ($complexObjectModel) { ?>$deepCopy = false<?php } ?>)
 	{
-		$copyObj = new <?php echo $table->getPhpName() ?>();
+		$clazz = get_class($this);
+		$copyObj = new $clazz();
 <?php
 
 		$pkcols = array();
