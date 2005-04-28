@@ -101,7 +101,7 @@ define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
  * TODO: map all creoleTypes to usefull formelements
  *
  * @author  Rob Halff <info@rhalff.com>
- * @version   $rev$ 
+ * @version   $Rev$ 
  * @copyright Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
  * @package   propel.contrib
  */
