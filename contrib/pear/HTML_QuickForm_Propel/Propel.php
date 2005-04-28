@@ -37,17 +37,17 @@ require_once 'HTML/QuickForm.php';
 #require_once 'propel/validator/ValidValuesValidator.php';
 #require_once 'propel/validator/ValidationFailed.php';
 
-define('PROPEL_QUICKFORM_NO_COLUMNS', 2);
-define('PROPEL_QUICKFORM_ALL_COLUMNS', 3);
-define('PROPEL_QUICKFORM_COLUMN_MADE_VISIBLE', 4);
-define('PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN', 5);
+define('HTML_QUICKFORM_PROPEL_NO_COLUMNS', 2);
+define('HTML_QUICKFORM_PROPEL_ALL_COLUMNS', 3);
+define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE', 4);
+define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
 
 /* On large foreign table resultsets propel choked */
 # ini_set('memory_limit', '50M');
 
 /**
  *
- *  NOTE: PropelQuickForm extends HTML_QuickForm, so all QuickForm functionality is available.
+ *  NOTE: HTML_QuickForm_Propel extends HTML_QuickForm, so all QuickForm functionality is available.
  *
  *  A fictive example:
  *
@@ -55,9 +55,9 @@ define('PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN', 5);
  *  $id = '7'; // existing item 
  *  $id = null; // when no id is passed, it's assumed we are creating a new item
  *
- *  $quickForm = new PropelQuickForm($className, $id); // optionally pass it to the constructor
+ *  $quickForm = new HTML_QuickForm_Propel($className, $id); // optionally pass it to the constructor
  *  $quickForm->setAction('/Bookstore/Form');
- *  $quickForm->addElement('header', '', 'PropelQuickForm');
+ *  $quickForm->addElement('header', '', 'HTML_QuickForm_Propel');
  *  $quickForm->setId($id);
  *  $quickForm->setClassName($className);
  *  $quickForm->setTarget('_self');
@@ -70,11 +70,11 @@ define('PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN', 5);
  *  $quickForm->joinColumn(bookPeer::PUBLISHER_ID,UserPeer::UNAME);
  *
  *  // default to all columns shown
- *  $quickForm->setColumnMode(PROPEL_QUICKFORM_ALL_COLUMNS);
+ *  $quickForm->setColumnMode(HTML_QUICKFORM_PROPEL_ALL_COLUMNS);
  *  $quickForm->hideColumn('PASS');
  *
  *  // or default to no columns shown 
- *  $quickForm->setColumnMode(PROPEL_QUICKFORM_NO_COLUMNS);
+ *  $quickForm->setColumnMode(HTML_QUICKFORM_PROPEL_NO_COLUMNS);
  *  $quickForm->showColumn('NAME'); // column name without table prefix.
  *  $quickForm->showColumn('UNAME');
  *  $quickForm->showColumn('USER_INFO');
@@ -173,7 +173,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          *
          * The Constructor 
          *
-         * Classname and id are specific to propelQuickForm
+         * Classname and id are specific to HTML_QuickForm_Propel
          *
          * The other parameters are needed to construct the parent QuickForm Class.
          *
@@ -187,7 +187,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          * @param boolean trackSubmit 
          *
          */
-        public function __construct($className = null, $id = null, $formName='PropelQuickForm', $method='post', $action='', $target='_self', $attributes=null, $trackSubmit = false)
+        public function __construct($className = null, $id = null, $formName='HTML_QuickForm_Propel', $method='post', $action='', $target='_self', $attributes=null, $trackSubmit = false)
         {
                 $this->setClassName($className);
                 $this->setPeerName($className.'Peer'); // Is this always true ?
@@ -195,7 +195,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                 parent::HTML_QuickForm($formName, $method, $action, $target, $attributes, $trackSubmit);
 
                 // set the default column policy 
-                $this->setColumnMode(PROPEL_QUICKFORM_ALL_COLUMNS);
+                $this->setColumnMode(HTML_QUICKFORM_PROPEL_ALL_COLUMNS);
         }
 
         /**
@@ -332,7 +332,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                         // find the object.
                         if(!$this->obj = call_user_func(array($this->peerName, 'retrieveByPK'), $this->id)) {
                                 // for help me god..  what to do ?
-                                throw new PropelException("PropelQuickForm::build(): $this->peerName::retrieveByPK($this->id) failed.");
+                                throw new PropelException("HTML_QuickForm_Propel::build(): $this->peerName::retrieveByPK($this->id) failed.");
                         }
 
                 }
@@ -377,7 +377,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                         if($col->isPrimaryKey()) {
                                 // create a hidden field with primary key 
-                                if(!$this->checkColumn($colName, PROPEL_QUICKFORM_COLUMN_MADE_VISIBLE)) {
+                                if(!$this->checkColumn($colName, HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE)) {
                                         $this->addElement('hidden', $col->getColumnName(), $col->getColumnName());
                                         continue;
                                 }
@@ -416,7 +416,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                                                 $relatedColConstant = $this->joinMap[$colConstant];
                                                 if(!$relatedTable->containsColumn($relatedColConstant)) {
                                                         // throw exception, there is no such column
-                                                        throw new PropelException('PropelQuickForm::build(): there is no column named '.$relatedTable->normalizeColName($relatedConstant).'in '.$relatedTable->getTableName().' while trying to build the select list');
+                                                        throw new PropelException('HTML_QuickForm_Propel::build(): there is no column named '.$relatedTable->normalizeColName($relatedConstant).'in '.$relatedTable->getTableName().' while trying to build the select list');
                                                 }
                                                 $nameColumn = $relatedTable->getColumn($relatedColConstant);
                                                 $relatedGetter = 'get'.$nameColumn->getPhpName(); 
@@ -531,7 +531,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                         }
                 }
 
-                // should PropelQuickForm add this ?
+                // should HTML_QuickForm_Propel add this ?
                 $this->addElement('submit', 'submit', 'Submit');
 
                 // do this for the developer, can't think of any case where this is unwanted.
@@ -565,7 +565,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                 if(!isset($this->cols)) {
                         // throw some error, form cannot be saved before it is build.
-                        throw new PropelException('PropelQuickForm::save(): form cannot be saved before it is build.');
+                        throw new PropelException('HTML_QuickForm_Propel::save(): form cannot be saved before it is build.');
                 }
 
                 foreach($this->cols as $colName=>$col) {
@@ -637,11 +637,11 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
         public function isColumnHidden($column)
         {
-                if($this->checkColumn($column, PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN) && $this->columnMode == PROPEL_QUICKFORM_ALL_COLUMNS) {
+                if($this->checkColumn($column, HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN) && $this->columnMode == HTML_QUICKFORM_PROPEL_ALL_COLUMNS) {
                         return true;
                 }
 
-                if(!$this->checkColumn($column, PROPEL_QUICKFORM_COLUMN_MADE_VISIBLE) && $this->columnMode == PROPEL_QUICKFORM_NO_COLUMNS) {
+                if(!$this->checkColumn($column, HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE) && $this->columnMode == HTML_QUICKFORM_PROPEL_NO_COLUMNS) {
                         return true;
                 }
 
@@ -662,8 +662,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          * Sets the default visibility mode
          *
          * This must be either:
-         * PROPEL_QUICKFORM_NO_COLUMNS or
-         * PROPEL_QUICKFORM_ALL_COLUMNS
+         * HTML_QUICKFORM_PROPEL_NO_COLUMNS or
+         * HTML_QUICKFORM_PROPEL_ALL_COLUMNS
          *
          * @param string $column column name 
          * @return void
@@ -672,9 +672,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
         public function setColumnMode($mode)
         {
 
-                if($mode != PROPEL_QUICKFORM_NO_COLUMNS && $mode != PROPEL_QUICKFORM_ALL_COLUMNS) {
+                if($mode != HTML_QUICKFORM_PROPEL_NO_COLUMNS && $mode != HTML_QUICKFORM_PROPEL_ALL_COLUMNS) {
 
-                        throw new PropelException('PropelQuickForm::setColumnMode(): invalid mode passed.');
+                        throw new PropelException('HTML_QuickForm_Propel::setColumnMode(): invalid mode passed.');
 
                 }
 
@@ -683,7 +683,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
         /**
          *
-         * Tell PropelQuickForm it should hide this column 
+         * Tell HTML_QuickForm_Propel it should hide this column 
          * It is now passed like ID instead of somePeer::ID
          * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
          *
@@ -694,12 +694,12 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
         public function hideColumn($column)
         {
-                $this->columnVisibility[$column] = PROPEL_QUICKFORM_COLUMN_MADE_HIDDEN;
+                $this->columnVisibility[$column] = HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN;
         }
 
         /**
          *
-         * Tell PropelQuickForm it should show this column 
+         * Tell HTML_QuickForm_Propel it should show this column 
          *
          * It is now passed like ID instead of somePeer::ID
          * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
@@ -709,7 +709,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          */
         public function showColumn($column)
         {
-                $this->columnVisibility[$column] = PROPEL_QUICKFORM_COLUMN_MADE_VISIBLE;
+                $this->columnVisibility[$column] = HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE;
         }
 
         /**
