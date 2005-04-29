@@ -968,7 +968,8 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	/**
 	 * Convenience method to export the object as an array.
 	 *
-	 * @return an associative array containing the field names (as keys) and field values
+	 * @return array An associative array containing the field (php)names
+	 *               as keys and field values as values
 	 */
 	public function toArray()
 	{
@@ -976,7 +977,7 @@ if (!$table->isAlias() && $addGenericAccessors) {
 <?php
 	foreach ($table->getColumns() as $col) {
 ?>
-			'<?php echo $col->getName() ?>' => $this->get<?php echo $col->getPhpName(); ?>(),
+			'<?php echo $col->getPhpName() ?>' => $this->get<?php echo $col->getPhpName(); ?>(),
 <?php
 	} /* foreach */
 ?>
