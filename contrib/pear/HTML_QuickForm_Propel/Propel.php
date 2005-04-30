@@ -21,22 +21,6 @@
 
 require_once 'HTML/QuickForm.php';
 
-// NOTE: are not used yet.
-// Validators are translated to the ones shipped with QuickForm
-// offcourse propel does use the validators after QuickForm has done
-// the validation, probably these includes aren't needed period.
-
-#require_once 'propel/validator/BasicValidator.php';
-#require_once 'propel/validator/MaskValidator.php';
-#require_once 'propel/validator/MaxLengthValidator.php';
-#require_once 'propel/validator/MaxValueValidator.php';
-#require_once 'propel/validator/MinLengthValidator.php';
-#require_once 'propel/validator/MinValueValidator.php';
-#require_once 'propel/validator/RequiredValidator.php';
-#require_once 'propel/validator/UniqueValidator.php';
-#require_once 'propel/validator/ValidValuesValidator.php';
-#require_once 'propel/validator/ValidationFailed.php';
-
 define('HTML_QUICKFORM_PROPEL_NO_COLUMNS', 2);
 define('HTML_QUICKFORM_PROPEL_ALL_COLUMNS', 3);
 define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE', 4);
@@ -108,22 +92,103 @@ define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
 
 class HTML_QuickForm_Propel extends HTML_QuickForm {
 
+        /**
+         * ID of the Propel Object.
+         * @var integer 
+         * @access private
+         */
         private $id;
+
+        /**
+         * Contains column visibility information.
+         * @var array 
+         * @access private
+         */
         private $columnVisibility = array();
+
+        /**
+         * The Column visibility mode either.
+         * Possible values:
+         *
+         * HTML_QUICKFORM_PROPEL_ALL_COLUMNS
+         * HTML_QUICKFORM_PROPEL_NO_COLUMNS
+         *
+         * @var integer 
+         * @access private
+         */
         private $columnMode;
+
+        /**
+         * String containing the peerName.
+         * @var string
+         * @access private
+         */
         private $peerName;
+
+        /**
+         * String containing the className of the propel Object.
+         * @var string
+         * @access private
+         */
         private $className;
-        private $cols; // the column objects
+
+        /**
+         * The Column objects.
+         *
+         * @var array 
+         * @access private
+         */
+        private $cols;
+
+        /**
+         * The Object being operated on.
+         * @var object 
+         * @access private
+         */
         private $obj;
+
+        /**
+         * Seperator value.
+         *
+         * In case the option list will be build by multiple values 
+         * This is the value these fields will be seperated with
+         *
+         * @var string
+         * @access private
+         */
         private $seperator = ' ';
+
+        /**
+         *
+         * Not used yet. 
+         *
+         * @var array 
+         * @access private
+         */
         private $joinMap = array();
+
+        /**
+         * The default QuickForm rule type to use.
+         * Either server or client
+         *
+         * @var string
+         * @access private
+         */
         private $defaultRuleType = 'server';
 
-        // this is used in the QuickForm DateElement
+
+        /**
+         * This is used in the QuickForm DateElement
+         * @var string
+         * @access private
+         */
         private $lang = 'en';
 
-        /*
+        /**
          * Rulemapping should cover all available propel rules
+         *
+         * @var array 
+         * @access private
          */
         private $ruleMapping =  array(
                         'mask'=>'regex',
@@ -140,6 +205,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          *
          * CreoleType to QuickForm element mapping
          *
+         * @var array 
+         * @access private
          */
         private $typeMapping = array(
                         CreoleTypes::BOOLEAN    =>'radio',
