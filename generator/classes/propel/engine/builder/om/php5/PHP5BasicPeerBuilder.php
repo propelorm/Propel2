@@ -1230,4 +1230,25 @@ abstract class ".$this->classname." {
 	}";
 	}
 	
+	/**
+	 * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetTableMap(&$script)
+	{
+		$script .= "
+	/**
+	 * Returns the TableMap related to this peer.
+	 * This method is not needed for general use but a specific application could have a need.
+	 * @return TableMap
+	 * @throws PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	protected static function getTableMap()
+	{
+		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
+	}
+";
+	
+	}
 } // PHP5BasicPeerBuilder
