@@ -19,10 +19,10 @@ function __autoload($classname) {
 
 
 // change these according to your propel settings
-require_once 'bookstore/propel/BookPeer.php';
-Propel::init('bookstore/propel/conf/propel.bookstore.php');
+require_once 'bookstore/BookPeer.php';
+Propel::init('conf/bookstore-conf.php');
 $object = BookPeer::retrieveByPK(1);
-$path = './res';
+$path = './patForms/res';
 
 
 // the rest should work out of the box if you don't have any unusal

@@ -32,6 +32,15 @@ class patForms_Datasource_Propel {
 			}
 		}
 
+		if (isset($this->label['initial']) OR isset($this->value['initial'])) {
+			$label = isset($this->label['initial']) ? $this->label['initial'] : '';
+			$value = isset($this->value['initial']) ? $this->value['initial'] : '';
+			$result[] = array(
+				'value' => $value,
+				'label' => $label
+			);
+		}
+
 		$rs = AuthorPeer::doSelectRs($c);
 		$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 		while ($rs->next()) {

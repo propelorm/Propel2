@@ -40,7 +40,9 @@ class patForms_Definition_Propel extends patForms_Definition {
 
 		extract($conf);
 
-		$definition = new patForms_Definition_Propel($name);
+		$autoValidate = isset($autoValidate) ? $autoValidate : 'save';
+
+		$definition = new patForms_Definition_Propel($name, $autoValidate);
 
 		if (file_exists($filename)) {
 			// load definition from definition file
@@ -112,6 +114,7 @@ class patForms_Definition_Propel extends patForms_Definition {
 					'name' => 'patForms_Datasource_Propel',
 					'peername' => $relTablename . 'Peer',
 					'label' => array(
+						'initial' => 'Please select one ...',
 						'members' => array($relColPhpname),
 						'mask' => '%s',
 					),
@@ -123,8 +126,12 @@ class patForms_Definition_Propel extends patForms_Definition {
 				$elementType = 'Enum';
 			}
 
+
 			if($col->hasValidators()) {
 				// TODO implement this
+				// foreach ($col->getValidators() as $validator) {
+				//	$name = $validator->getName();
+				// }
 			}
 
 			$definition->addElement($phpname, $elementType, $elementAttributes);

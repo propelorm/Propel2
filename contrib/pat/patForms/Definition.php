@@ -4,10 +4,13 @@ class patForms_Definition {
 
 	private $data = array();
 
-	public function __construct($name) {
+	public function __construct($name, $autoValidate = '') {
 
 		$this->data['name'] = $name;
 		$this->data['mtime'] = time();
+		if ($autoValidate) {
+			$this->data['autoValidate'] = $autoValidate;
+		}
 	}
 
 	static public function create($conf) {
