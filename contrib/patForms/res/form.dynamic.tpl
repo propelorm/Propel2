@@ -45,7 +45,7 @@
 			</div>
 		</patTemplate:sub>
 	</patTemplate:tmpl>
-	<div class="buttons"
+	<div class="buttons">
 		<input type="submit" name="save" value="Save form"/>
 	</div>
 	{END}
