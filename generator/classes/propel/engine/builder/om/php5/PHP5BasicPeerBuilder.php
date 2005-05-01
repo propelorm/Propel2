@@ -42,6 +42,12 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 //	-
 
 	/**
+	 * The name of the PHP class being built.
+	 * @var string
+	 */
+	protected $classname;
+	
+	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
@@ -55,7 +61,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 		$script .= "
 require_once '$basePeerFile';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by ".$table->getPhpName().".Peer::getOMClass()
+// actual class may be a subclass -- as returned by ".$this->getPeerClassname()."::getOMClass()
 include_once '$objectFile';";
 				
 		foreach ($table->getForeignKeys() as $fk) {
@@ -65,7 +71,7 @@ include_once '$objectFile';";
 	   
 			if (!$tblFK->isForReferenceOnly()) {
 				$fkObjectFile = $this->getFilePath($tblFKPackage, $tblFK->getPhpName());
-				$fkPeerFile = $this->getFilePath($tblFKPackage, $tblFK->getPhpName() . 'Peer');
+				$fkPeerFile = $this->getFilePath($tblFKPackage, $this->getPeerClassname($tblFK->getPhpName()));
 				$script .= "
 include_once '$fkObjectFile';
 include_once '$fkPeerFile';";
@@ -86,7 +92,7 @@ include_once '$fkPeerFile';";
 		$tableName = $this->getTable()->getName();
 		$tableDesc = $this->getTable()->getDescription();
 		
-		$this->classname = $this->getBuildProperty('basePrefix') . $this->getTable()->getPhpName() . 'Peer';
+		$this->classname = $this->getBuildProperty('basePrefix') . $this->getPeerClassname();
 		
 		$script .= "
 /**

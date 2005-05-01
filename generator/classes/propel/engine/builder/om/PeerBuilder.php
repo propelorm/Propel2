@@ -38,12 +38,6 @@ abstract class PeerBuilder extends OMBuilder {
 	protected $basePeerClassname;
 	
 	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-	
-	/**
 	 * Constructs a new PeerBuilder subclass.
 	 */
 	public function __construct(Table $table) {
@@ -51,28 +45,7 @@ abstract class PeerBuilder extends OMBuilder {
 		$this->basePeerClass = $this->getBasePeer($table);
 		$this->basePeerClassname = $this->classname($this->basePeerClass);
 	}
-	
-	/**
-	 * Builds the PHP source for current class and returns it as a string.
-	 * 
-	 * This is the main entry point and defines a basic structure that classes should follow. 
-	 * In most cases this method will not need to be overridden by subclasses.  This method 
-	 * does assume that the output language is PHP code, so it will need to be overridden if 
-	 * this is not the case.
-	 * 
-	 * @return string The resulting PHP sourcecode.
-	 */
-	public function build()
-	{
-		$script = "<" . "?php\n"; // intentional concatenation		
-		$this->addIncludes($script);
-		$this->addClassOpen($script);
-		$this->addClassBody($script);		
-		$this->addClassClose($script);		
-		$script .= "?" . ">";		
-		return $script;
-	}
-	
+		
 	/**
 	 * Adds the addSelectColumns(), doCount(), etc. methods.
 	 * @param string &$script The script will be modified in this method.
@@ -174,6 +147,7 @@ abstract class PeerBuilder extends OMBuilder {
 		if (!$table->isAlias()) {
 			$this->addAlias($script); // alias() utility method (deprecated?)
 			$this->addSelectMethods($script);
+			$this->addGetTableMap($script);
 		}
 		
 		$this->addGetOMClassMethod($script);

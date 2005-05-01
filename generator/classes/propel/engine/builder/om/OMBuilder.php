@@ -35,6 +35,26 @@ require_once 'propel/engine/builder/om/DataModelBuilder.php';
 abstract class OMBuilder extends DataModelBuilder {	
 
 	/**
+	 * Builds the PHP source for current class and returns it as a string.
+	 * 
+	 * This is the main entry point and defines a basic structure that classes should follow. 
+	 * In most cases this method will not need to be overridden by subclasses.  This method 
+	 * does assume that the output language is PHP code, so it will need to be overridden if 
+	 * this is not the case.
+	 * 
+	 * @return string The resulting PHP sourcecode.
+	 */
+	public function build()
+	{
+		$script = "<" . "?php\n"; // intentional concatenation		
+		$this->addIncludes($script);
+		$this->addClassOpen($script);
+		$this->addClassBody($script);	
+		$this->addClassClose($script);
+		return $script;
+	}
+
+	/**
 	 * Gets package name for this table.
 	 * @return string
 	 */
@@ -83,34 +103,6 @@ abstract class OMBuilder extends DataModelBuilder {
             $class = "propel.util.BasePeer";
         }
         return $class;
-    }
-    
-    /**
-     * Gets the baseClass path if specified for table/db.  
-     * If not, will return 'propel.om.BaseObject'
-     * @return string
-     */
-    public function getBaseClass(Table $table) {
-        $class = $table->getBaseClass();
-        if ($class === null) {
-            $class = "propel.om.BaseObject";
-        }
-        return $class;
-    }
-	        
-    /**
-     * Gets the interface path if specified for table.
-     * If not, will return 'propel.om.Persistent'.
-     * @return string
-     */
-    public function getInterface(Table $table) {
-        $interface = $table->getInterface();
-        if ($interface === null) {
-            $interface = "propel.om.Persistent";
-        }
-        return $interface;
-    }
-
-	
+    }	
 		
 }
