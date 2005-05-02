@@ -33,7 +33,7 @@
       name="author_id"
       required="false"
       type="INTEGER"
-      description="Foreign Key Author"/>	
+      description="Foreign Key Author"/>
     <foreign-key foreignTable="publisher" onDelete="SETNULL">
       <reference
         local="publisher_id"
@@ -47,11 +47,21 @@
     <validator column="title" translate="none">
       <rule
         name="unique"
-        message="Book title already in database." />      
+        message="Book title already in database." />
       <rule
         name="minLength"
         value="10"
         message="Book title must be more than ${value} characters long."/>
+      <rule
+        name="maxLength"
+        value="255"
+        message="Book title must not be longer than ${value} characters."/>
+    </validator>
+    <validator column="isbn" translate="none">
+      <rule
+         name="mask"
+         value="/[^\d-]+/"
+         message="The ISBN contains invalid characters." />
     </validator>
   </table>
   <table name="publisher" description="Publisher Table">
@@ -70,6 +80,7 @@
 	  default="Penguin"
       description="Publisher Name"/>
   </table>
+
   <table name="author" description="Author Table">
     <column
       name="id"
@@ -90,10 +101,24 @@
       type="VARCHAR"
       size="128"
       description="Last Name"/>
+    <column
+      name="age"
+      type="INTEGER"
+      description="The authors age"/>
 	<validator column="last_name" translate="none">
 		<rule
-			name="required"	
+			name="required"
 			message="The last name field is required."/>
+	</validator>
+	<validator column="age" translate="none">
+      <rule
+         name="minValue"
+         value="0"
+         message="Please enter a positive number." />
+      <rule
+         name="maxValue"
+         value="100"
+         message="Impressive age! Just kidding, hm?" />
 	</validator>
 
   </table>
@@ -123,6 +148,12 @@
       type="BOOLEAN"
       description="Does reviewer recommend book?"/>
 	<column
+      name="status"
+      required="true"
+      type="VARCHAR"
+      size="8"
+      description="The status of this review."/>
+	<column
 	  name="book_id"
 	  required="true"
 	  type="INTEGER"
@@ -131,15 +162,21 @@
       <reference
         local="book_id"
         foreign="id"/>
-    </foreign-key>	
+    </foreign-key>
 	<validator column="reviewed_by" translate="none">
 		<rule
-			name="required"				
+			name="required"
 			message="The reviewed by field is required."/>
-	</validator>  
+	</validator>
+   <validator column="status" translate="none">
+      <rule
+         name="validValues"
+         value="new|reviewed|archived"
+         message="Invalid status. (new, reviewed, archived)" />
+	</validator>
   </table>
-  
-  <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->  	
+
+  <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
   <table name="media">
    <column
       name="id"
@@ -157,7 +194,7 @@
       name="excerpt"
       type="CLOB"
       lazyLoad="true"
-      description="An excerpt from the book."/>	
+      description="An excerpt from the book."/>
 	<column
 	  name="book_id"
 	  required="true"
@@ -167,9 +204,9 @@
       <reference
         local="book_id"
         foreign="id"/>
-    </foreign-key>	  
+    </foreign-key>
   </table>
-  
+
   <!-- this table exists to test the many-to-many -->
   <table name="book_club_list" description="Reading list for a book club.">
 	<column
@@ -191,7 +228,7 @@
 	  size="50"
 	  description="The theme, if applicable, for the reading list."/>
   </table>
-  
+
   <table name="book_x_list" phpName="BookListRel" description="Cross-reference table for many-to-many relationship between book rows and book_club_list rows.">
 	<column
 	  name="book_id"
@@ -210,5 +247,5 @@
 	  <reference local="book_club_list_id" foreign="id"/>
 	</foreign-key>
   </table>
-  
+
 </database>
