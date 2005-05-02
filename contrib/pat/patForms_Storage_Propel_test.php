@@ -26,11 +26,8 @@ function __autoload($classname) {
 // change these according to your setup
 
 $pathToBookstore = 'f:/test/propel'; // omit bookstore/ here
-$pathToBookstore = 'f:/q/lib/mod';
 $pathToPear = 'f:/pear';
 $pathToPat = 'f:/pear/pat';
-
-require 'F:\Evolos\evolos-0.0.2h\util\var\dump.php';
 
 $path = PATH_SEPARATOR . $pathToBookstore . PATH_SEPARATOR . $pathToPat;
 set_include_path(get_include_path() . $path);
