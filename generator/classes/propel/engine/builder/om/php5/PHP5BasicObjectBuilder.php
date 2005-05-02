@@ -513,6 +513,241 @@ abstract class ".$this->classname." {
 ";
 		$this->addMutatorClose($script, $col);
 	}
+	
+	
+	protected function addHydrate(&$script)
+	{
+		$script .= "
+	/**
+	 * Hydrates (populates) the object variables with values from the database resultset.
+	 *
+	 * An offset (1-based \"start column\") is specified so that objects can be hydrated
+	 * with a subset of the columns in the resultset rows.  This is needed, for example,
+	 * for results of JOIN queries where the resultset row includes columns from two or
+	 * more tables.
+	 *
+	 * @param ResultSet \$rs The ResultSet class with cursor advanced to desired record pos.
+	 * @param int \$startcol 1-based offset column which indicates which restultset column to start with.
+	 * @return int next starting column
+	 * @throws PropelException  - Any caught Exception will be rewrapped as a PropelException.
+	 */
+	public function hydrate(ResultSet \$rs, \$startcol = 1)
+	{
+		try {
+";
+			$n = 0;
+			foreach($table->getColumns() as $col) {
+				if(!$col->isLazyLoad()) {
+					$affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
+					$clo = strtolower($col->getName());
+					switch($col->getType()) {
 
+						case PropelTypes::DATE:
+						case PropelTypes::TIME:
+						case PropelTypes::TIMESTAMP:
+							$script .= "
+			\$this->$clo = \$rs->get$affix(\$startcol + $n, null);
+";
+							break;
+						default:
+							$script .= "
+			\$this->$clo = \$rs->get$affix(\$startcol + $n);
+";
+					}
+					$n++;
+				} // if col->isLazyLoad()
+			} /* foreach */
+			
+			if ($this->addSaveMethod) {
+				$script .= "
+			\$this->resetModified();
+";
+			}
+			 
+			$script .= "
+			\$this->setNew(false);
+						
+			// FIXME - using \$numColumns may be clearer.
+			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::\$numColumns - ".$this->getPeerClassname()."::\$numLazyLoadColumns).
+
+		} catch (Exception \$e) {
+			throw new PropelException(\"Error populating ".$table->getPhpName()." object\", \$e);
+		}
+	}
+";
+	
+	} // addHydrate()
+
+	
+	/**
+	 * 
+	 */
+	protected function addBuildPkeyCriteria(&$script) {
+		
+		
+		$script .= "
+	/**
+	 * Builds a Criteria object containing the primary key for this object.
+	 *
+	 * Unlike buildCriteria() this method includes the primary key values regardless
+	 * of whether or not they have been modified.
+	 *
+	 * @return Criteria The Criteria object containing value(s) for primary key(s).
+	 */
+	public function buildPkeyCriteria()
+	{
+		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
+";
+		foreach ($table->getColumns() as $col) {
+			$clo = strtolower($col->getName());
+			if ($col->isPrimaryKey()) {
+				$script .= "
+		\$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
+";
+			}
+		}
+		
+		$script .= "
+		return \$criteria;
+	}
+";
+
+	}
+	
+	/**
+	 * 
+	 */
+	protected function addBuildCriteria(&$script)
+	{
+		$script .= "
+	/**
+	 * Build a Criteria object containing the values of all modified columns in this object.
+	 *
+	 * @return Criteria The Criteria object containing all modified values.
+	 */
+	public function buildCriteria()
+	{
+		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
+";
+		foreach ($table->getColumns() as $col) {
+			$clo = strtolower($col->getName());
+			$script .= "
+		if (\$this->isColumnModified(".$this->getColumnConstant($col).")) \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
+";
+		}
+		$script .= "
+		return \$criteria;
+	}
+";
+	} // addBuildCriteria()
+	
+	
+	protected function addToArray(&$script)
+	{
+		$script .= "
+	/**
+	 * Convenience method to export the object as an array.
+	 *
+	 * @return array An associative array containing the field (php)names
+	 *               as keys and field values as values
+	 */
+	public function toArray()
+	{
+		$result = array(
+<?php
+	foreach ($table->getColumns() as $col) {
+?>
+			'<?php echo $col->getPhpName() ?>' => $this->get<?php echo $col->getPhpName(); ?>(),
+<?php
+	} /* foreach */
+?>
+		);
+		return $result;
+	}
+";
+	}
+	
+	protected function addGetFieldNames(&$script)
+	{
+		$script .= "
+	private $fieldNames;
+
+	/**
+	 * Generate a list of field names.
+	 *
+	 * @return array A list of field names
+	 */
+	public function getFieldNames()
+	{
+		if ($this->fieldNames === null) {
+			$this->fieldNames = array(<?php foreach ($table->getColumns() as $col) { ?>'<?php echo $col->getName() ?>', <?php } ?>);
+		}
+		return $this->fieldNames;
+	}";
+	
+	}
+	
+	protected function addGetByName(&$script)
+	{
+		$script .= "
+	/**
+	 * Retrieves a field from the object by name passed in as a string.
+	 * The string must be one of the static strings defined in this Class' Peer.
+	 *
+	 * @param string $name peer name
+	 * @return mixed Value of field.
+	 */
+	public function getByName($name)
+	{
+		switch($name) {
+<?php
+	foreach ($table->getColumns() as $col) {
+	  $cfc = $col->getPhpName();
+	  $cptype = $col->getPhpNative(); // not safe to use it because some methods may return objects (Blob)
+?>
+			case <?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>:
+				return $this->get<?php echo $cfc ?>();
+				break;
+	<?php } ?>
+			default:
+				return null;
+
+		} // switch()
+	}
+";
+	}
+	
+	protected function addGetByPosition(&$script)
+	{
+		$script .= "
+	/**
+	 * Retrieves a field from the object by Position as specified in the xml schema.
+	 * Zero-based.
+	 *
+	 * @param int $pos position in xml schema
+	 * @return mixed Value of field at $pos
+	 */
+	public function getByPosition($pos)
+	{
+		switch($pos) {
+<?php
+	$i = 0;
+	foreach ($table->getColumns() as $col) {
+		$cfc = $col->getPhpName();
+		$cptype = $col->getPhpNative();// not safe to use it because some methods may return objects (Blob)
+?>
+			case <?php echo $i ?>:
+				return $this->get<?php echo $cfc ?>();
+				break;
+<?php
+		$i++;
+	} /* foreach */
+?>
+			default:
+				return null;
+		} // switch()
+	}
+";
+	}
 	
 } // PHP5BasicPeerBuilder
