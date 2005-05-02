@@ -24,29 +24,22 @@ class patForms_Definition {
 		}
 	}
 
-	public function addElement($name, $type, $attributes = null) {
+	// TODO change protocol to addElement(array $element)
+	public function addElement($name, $type, $attributes = array(), $rules = array()) {
 
 		if (is_array($type)) {
 			extract($type);
 		}
 
-		if (!isset($this->data['elements'][$name])) {
-			if (isset($attributes)) {
-				foreach ($attributes as $key => $attr) {
-					$attributes[$key] = $this->cast($attr);
-				}
-			}
-			$this->data['elements'][$name] = array (
-				'name' => $name,
-				'type' => $type,
-				'attributes' => $attributes
-			);
-		} else {
-			$this->data['elements'][$name]['type'] = $type;
-			foreach ($attributes as $key => $value) {
-				$value = $this->cast($value);
-				$this->data['elements'][$name]['attributes'][$key] = $value;
-			}
+		$this->data['elements'][$name]['name'] = $name;
+		$this->data['elements'][$name]['type'] = $type;
+
+		foreach ($attributes as $key => $value) {
+			$value = $this->cast($value);
+			$this->data['elements'][$name]['attributes'][$key] = $value;
+		}
+		foreach ($rules as $key => $rule) {
+			$this->data['elements'][$name]['rules'][$key] = $rule;
 		}
 	}
 

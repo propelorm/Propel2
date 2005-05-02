@@ -26,20 +26,22 @@ function __autoload($classname) {
 // change these according to your setup
 
 $pathToBookstore = 'f:/test/propel'; // omit bookstore/ here
+$pathToBookstore = 'f:/q/lib/mod';
 $pathToPear = 'f:/pear';
 $pathToPat = 'f:/pear/pat';
+
+require 'F:\Evolos\evolos-0.0.2h\util\var\dump.php';
 
 $path = PATH_SEPARATOR . $pathToBookstore . PATH_SEPARATOR . $pathToPat;
 set_include_path(get_include_path() . $path);
 
 // change these according to your propel settings
-require_once 'bookstore/BookPeer.php';
-Propel::init('conf/bookstore-conf.php');
-$path = './patForms/res';
 $classname = 'book';
+$path = './patForms/res';
+$propelConfFilename = 'conf/bookstore-conf.php';
 
 // uncomment this to edit an existing record
-// $pk = array('Id' => 1);
+$pk = array('Id' => 2);
 
 
 /**
@@ -47,8 +49,8 @@ $classname = 'book';
  * types in your database schema.xml (strings, int etc. should work)
  */
 
-// this is necessary to use the "patched" version of patForms.php
-define('PATFORMS_INCLUDE_PATH', $pathToPear . '/pat/patForms');
+require_once 'bookstore/' . $classname . '.php';
+Propel::init($propelConfFilename);
 
 // create a form definition
 
@@ -86,8 +88,11 @@ $tpl->addRows('elements', $form->renderForm());
 if ($errors = $form->getValidationErrors()) {
 	foreach ($errors as $field => $error) {
 		$tpl->addVar('error', 'field', $field);
-		$tpl->addRows('error', $error);
-		$tpl->parseTemplate('error', 'a' );
+		foreach ($error as $line) {
+			$tpl->addVar('error', 'message', $line['message']);
+			$tpl->addVar('error', 'code', $line['code']);
+			$tpl->parseTemplate('error', 'a');
+		}
 	}
 	$tpl->setAttribute('errors', 'visibility', 'visible');
 }

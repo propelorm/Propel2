@@ -66,7 +66,7 @@
 		<p>Sorry, your input could not be saved for the following reasons:</p>
 		<ul>
 		<pattemplate:tmpl name="error">
-		<li><b>{FIELD}:</b> {MESSAGE} (Error #{CODE})</li>
+		<li><b>{FIELD}:</b> {MESSAGE}</li>
 		</pattemplate:tmpl>
 		</ul>
 	</div>

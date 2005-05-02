@@ -1054,9 +1054,11 @@ class patForms
 			}
 		}
 
-		$result = $this->triggerEvent('Validate');
-		if ($result === false) {
-			$valid = false;
+		if ($valid === true) {
+			$result = $this->triggerEvent('Validate');
+			if ($result === false) {
+				$valid = false;
+			}
 		}
 
 		/**
@@ -2693,6 +2695,20 @@ class patForms
 	*/
 	function getScripts()
 	{
+		foreach ($this->elements as $element) {
+			$element->registerJavascripts($this);
+		}
+
+		$globalJavascript = implode ("", $this->javascripts['global']);
+		$instances = implode ("", $this->javascripts['instance']);
+
+		$script	= '<script type="text/javascript" language="Javascript1.3">' . "\n"
+				. $globalJavascript . "\n\n" . $instances . "\n"
+				. '</script>';
+
+		return $script;
+
+		/*
 		$globalJavascript	=	'';
 		$instances			=	'';
 
@@ -2731,6 +2747,22 @@ class patForms
 				.	'</script>';
 
 		return $script;
+		*/
+	}
+
+	private $javascripts = array(
+		'global' => array(),
+		'instance' => array()
+	);
+
+	function registerGlobalJavascript($type, $script) {
+
+		$this->javascripts['global'][$type] = $script;
+	}
+
+	function registerInstanceJavascript($script) {
+
+		$this->javascripts['instance'][] = $script;
 	}
 
    /**

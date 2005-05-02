@@ -22,6 +22,11 @@ class patForms_Creator_Definition {
 					$element->setAttribute($name, $value);
 				}
 			}
+			if (isset($el['rules'])) {
+				foreach($el['rules'] as $rule) {
+					$element->addRule(new $rule['type']($rule));
+				}
+			}
 			$form->addElement($element);
 		}
 		if (!is_null($object)) {

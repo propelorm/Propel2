@@ -2,38 +2,50 @@
 
 class patForms_Definition_Propel extends patForms_Definition {
 
-	private static $creoleTypeMapping = array(
-		CreoleTypes::BOOLEAN    	=>'Switch',		// BOOLEAN 			= 1;
-		CreoleTypes::BIGINT     	=>'String',		// BIGINT 			= 2;
-		CreoleTypes::SMALLINT   	=>'String',		// SMALLINT 		= 3;
-		CreoleTypes::TINYINT    	=>'String',		// TINYINT 			= 4;
-		CreoleTypes::INTEGER    	=>'String',		// INTEGER 			= 5;
-		CreoleTypes::CHAR       	=>'String',		// CHAR 			= 6;
-		CreoleTypes::VARCHAR    	=>'String',		// VARCHAR 			= 7;
-		CreoleTypes::FLOAT      	=>'String',		// FLOAT 			= 8;
-		CreoleTypes::DOUBLE     	=>'String',		// DOUBLE 			= 9;
-		CreoleTypes::DATE       	=>'Date',		// DATE 			= 10;
-		CreoleTypes::TIME       	=>'String',		// TIME 			= 11;
-		CreoleTypes::TIMESTAMP  	=>'Date',		// TIMESTAMP 		= 12;
-		CreoleTypes::VARBINARY  	=>'String',		// VARBINARY 		= 13;
-		CreoleTypes::NUMERIC    	=>'String',		// NUMERIC 			= 14;
-		CreoleTypes::BLOB       	=>'Text',		// BLOB 			= 15;
-		CreoleTypes::CLOB       	=>'Text',		// CLOB 			= 16;
-		CreoleTypes::TEXT       	=>'Text',		// TEXT 			= 17;
-		CreoleTypes::LONGVARCHAR	=>'Text',		// LONGVARCHAR 		= 17;
-		CreoleTypes::DECIMAL    	=>'String',		// DECIMAL 			= 18;
-		CreoleTypes::REAL       	=>'String',		// REAL 			= 19;
-		CreoleTypes::BINARY     	=>'String',		// BINARY 			= 20;
-		CreoleTypes::LONGVARBINARY	=>'Text',		// LONGVARBINARY 	= 21;
-		CreoleTypes::YEAR       	=>'String',		// YEAR 			= 22;
-		CreoleTypes::ARR   	    	=>'String',
-		CreoleTypes::OTHER      	=>'String'
+	private static $creoleTypeMap = array(
+		CreoleTypes::BOOLEAN    	=> 'Switch',	// BOOLEAN 			= 1;
+		CreoleTypes::BIGINT     	=> 'String',	// BIGINT 			= 2;
+		CreoleTypes::SMALLINT   	=> 'String',	// SMALLINT 		= 3;
+		CreoleTypes::TINYINT    	=> 'String',	// TINYINT 			= 4;
+		CreoleTypes::INTEGER    	=> 'String',	// INTEGER 			= 5;
+		CreoleTypes::CHAR       	=> 'String',	// CHAR 			= 6;
+		CreoleTypes::VARCHAR    	=> 'String',	// VARCHAR 			= 7;
+		CreoleTypes::FLOAT      	=> 'String',	// FLOAT 			= 8;
+		CreoleTypes::DOUBLE     	=> 'String',	// DOUBLE 			= 9;
+		CreoleTypes::DATE       	=> 'String',		// DATE 			= 10;
+		CreoleTypes::TIME       	=> 'String',	// TIME 			= 11;
+		CreoleTypes::TIMESTAMP  	=> 'Date',		// TIMESTAMP 		= 12;
+		CreoleTypes::VARBINARY  	=> 'String',	// VARBINARY 		= 13;
+		CreoleTypes::NUMERIC    	=> 'String',	// NUMERIC 			= 14;
+		CreoleTypes::BLOB       	=> 'Text',		// BLOB 			= 15;
+		CreoleTypes::CLOB       	=> 'Text',		// CLOB 			= 16;
+		CreoleTypes::TEXT       	=> 'Text',		// TEXT 			= 17;
+		CreoleTypes::LONGVARCHAR	=> 'Text',		// LONGVARCHAR 		= 17;
+		CreoleTypes::DECIMAL    	=> 'String',	// DECIMAL 			= 18;
+		CreoleTypes::REAL       	=> 'String',	// REAL 			= 19;
+		CreoleTypes::BINARY     	=> 'String',	// BINARY 			= 20;
+		CreoleTypes::LONGVARBINARY	=> 'Text',		// LONGVARBINARY 	= 21;
+		CreoleTypes::YEAR       	=> 'String',	// YEAR 			= 22;
+		CreoleTypes::ARR   	    	=> 'String',
+		CreoleTypes::OTHER      	=> 'String'
+	);
+
+	private static $validatorTypeMap = array(
+		'unique' 		=> null,
+		'minLength' 	=> 'patForms_Rule_MinLength',
+		'maxLength' 	=> 'patForms_Rule_MaxLength',
+		'minValue' 		=> 'patForms_Rule_MinValue',
+		'maxValue' 		=> 'patForms_Rule_MaxValue',
+		'match'			=> 'patForms_Rule_Match',
+		'notMatch'		=> 'patForms_Rule_NotMatch',
+		'required' 		=> null, // will be done by the elements "required" attribute
+		'validValues'	=> 'patForms_Rule_ValidValues',
 	);
 
 	/**
 	 * @param array $conf an assoc array of parameters. these are:
-	 *     + string name => $name of the propel object class
-	 *     + string filename => $filename of the form definition xml file
+	 *     - string name => $name of the propel object class
+	 *     - string filename => $filename of the form definition xml file
 	 */
 
 	static public function create($conf) {
@@ -44,11 +56,11 @@ class patForms_Definition_Propel extends patForms_Definition {
 
 		$definition = new patForms_Definition_Propel($name, $autoValidate);
 
-		if (file_exists($filename)) {
-			// load definition from definition file
+		if (0 AND file_exists($filename)) {
+			// load definition from xml file
 			$definition->load($filename);
 		} else {
-			// populate definition from table map and save it to xml
+			// populate definition from table map and save it to xml file
 			$definition = self::populateFromTableMap($definition, $conf);
 			$definition->save($filename);
 		}
@@ -74,7 +86,7 @@ class patForms_Definition_Propel extends patForms_Definition {
 			// $elementName = $tablename . '[' . $phpname . ']';
 			$elementName = $phpname;
 
-			$elementType = self::$creoleTypeMapping[$col->getCreoleType()];
+			$elementType = self::$creoleTypeMap[$col->getCreoleType()];
 
 			// TODO somehow retrieve element type specific default values?
 			$elementAttributes = array(
@@ -96,8 +108,8 @@ class patForms_Definition_Propel extends patForms_Definition {
 				}
 				case CreoleTypes::DATE: {
 					// TODO doesn't seem to work for some reason
-					$elementAttributes['format'] = 'date';
-					$elementAttributes['dateformat'] = 'Ymd';
+					// $elementAttributes['format'] = 'date';
+					// $elementAttributes['dateformat'] = 'Ymd';
 					break;
 				}
 			}
@@ -126,15 +138,26 @@ class patForms_Definition_Propel extends patForms_Definition {
 				$elementType = 'Enum';
 			}
 
-
+			$rules = array();
 			if($col->hasValidators()) {
-				// TODO implement this
-				// foreach ($col->getValidators() as $validator) {
-				//	$name = $validator->getName();
-				// }
+				foreach ($col->getValidators() as $validator) {
+					$name = $validator->getName();
+					$type = self::$validatorTypeMap[$name];
+					if (!is_null($type)) {
+						$rules[$name] = array (
+							'table' => $col->getTablename(),
+							'col' => $col->getColumnName(),
+							'name' => $name,
+							'type' => self::$validatorTypeMap[$name],
+							'value' => $validator->getValue(),
+							'class' => $validator->getClass(),
+							'message' => $validator->getMessage(),
+						);
+					}
+				}
 			}
 
-			$definition->addElement($phpname, $elementType, $elementAttributes);
+			$definition->addElement($phpname, $elementType, $elementAttributes, $rules);
 		}
 
 		return $definition;

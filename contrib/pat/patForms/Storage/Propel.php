@@ -5,8 +5,7 @@ class patForms_Storage_Propel extends patForms_Storage
 	private $peer;
 	private $peername;
 
-	function setStorageLocation($peername)
-	{
+	public function setStorageLocation($peername) {
 
 		$this->peer = new $peername();
 		$this->peername = $peername;
@@ -18,20 +17,9 @@ class patForms_Storage_Propel extends patForms_Storage
 	private function getCriteria($values) {
 
 		$object = new $this->classname();
-		//TODO use a workaround until we'll get phpNamed keys in populateFromArray()
-		//$object->populateFromArray($values);
+		//$object->populateFromArray($values); //TODO use a workaround until we'll get phpNamed keys in populateFromArray()
 		$object = $this->populateObjectFromArray($object, $values);
 		return $object->buildPkeyCriteria();
-	}
-
-	private function populateObjectFromArray($object, $values) {
-
-		foreach(array_keys($object->toArray()) as $key) {
-			if(array_key_exists($key, $values)) {
-				$object->{'set' . $key}($values[$key]);
-			}
-		}
-		return $object;
 	}
 
    /**
@@ -46,8 +34,8 @@ class patForms_Storage_Propel extends patForms_Storage
 	* @param	object patForms		patForms object that should be stored
 	* @return	boolean				true on success
 	*/
-	function loadEntry(&$form)
-	{
+	public function loadEntry(&$form) {
+
 		if(!$object = $this->_entryExists($form->getValues())) {
 			// entry does not exists (why return an array here??)
 			return array();
@@ -62,7 +50,8 @@ class patForms_Storage_Propel extends patForms_Storage
 		if (!$object = $this->_entryExists($form->getValues())) {
 			$object = new $this->classname();
 		}
-		$object->populateFromArray($form->getValues());
+		//$object->populateFromArray($form->getValues()); //TODO use a workaround until we'll get phpNamed keys in populateFromArray()
+		$object = $this->populateObjectFromArray($object, $form->getValues());
 		$result = $object->validate();
 
 		if ($result !== true) {
@@ -73,11 +62,8 @@ class patForms_Storage_Propel extends patForms_Storage
 				$column = $dbMap->getTable($tablename)->getColumn($colname);
 				$element = $form->getElement($column->getPhpName());
 				$element->addValidatorErrorCodes(array(
-					'de' => array(
-						1 => 'de: ' . $error->getMessage(),
-					),
 					'C' => array(
-						1 => 'C: ' . $error->getMessage(),
+						1 => $error->getMessage() . ' (occured in Storage)',
 					),
 				), 1000);
 				$element->addValidationError(1001);
@@ -89,16 +75,14 @@ class patForms_Storage_Propel extends patForms_Storage
    /**
 	* adds an entry to the storage
 	*
-	* The entry will be appended at the end of the file.
-	*
-	* @abstract
 	* @param	object patForms		patForms object that should be stored
 	* @return	boolean				true on success
 	*/
-	function _addEntry(&$form)
-	{
+	public function _addEntry(&$form) {
+
 		$object = new $this->classname();
-		$object->populateFromArray($form->getValues());
+		//$object->populateFromArray($form->getValues()); //TODO use a workaround until we'll get phpNamed keys in populateFromArray()
+		$object = $this->populateObjectFromArray($object, $form->getValues());
 		$object->save();
 		return true;
 	}
@@ -106,16 +90,14 @@ class patForms_Storage_Propel extends patForms_Storage
    /**
 	* updates an entry in the storage
 	*
-	* Implement this in the concrete storage container.
-	*
-	* @abstract
 	* @param	object patForms		patForms object that should be stored
 	* @return	boolean				true on success
 	*/
-	function _updateEntry(&$form, $primary)
-	{
+	public function _updateEntry(&$form, $primary) {
+
 		$object = $this->_entryExists($form->getValues());
-		$object->populateFromArray($form->getValues());
+		//$object->populateFromArray($form->getValues()); //TODO use a workaround until we'll get phpNamed keys in populateFromArray()
+		$object = $this->populateObjectFromArray($object, $form->getValues());
 		$object->save();
 		return true;
 	}
@@ -126,14 +108,37 @@ class patForms_Storage_Propel extends patForms_Storage
 	* @access	private
 	* @param	array
 	*/
-	function _entryExists($values)
-	{
+	public function _entryExists($values) {
+
+		// This method gets called multiple times, e.g. when an existing
+		// object gets updated. We'll therefor cache results locally using
+		// a criteria string representation as hash.
+
+		static $objects;
 		$criteria = $this->getCriteria($values);
-		$object = $this->peer->doSelectOne($criteria);
+		$hash = $criteria->toString();
 
-		if(empty($object))
+		if (isset($objects[$hash])) {
+			return $objects[$hash];
+		}
+
+		$objects[$hash] = $this->peer->doSelectOne($criteria);
+
+		if(empty($objects[$hash])) {
 			return false;
+		}
+		return $objects[$hash];
+	}
 
+	// this method is just a workaround
+
+	private function populateObjectFromArray($object, $values) {
+
+		foreach(array_keys($object->toArray()) as $key) {
+			if(array_key_exists($key, $values)) {
+				$object->{'set' . $key}($values[$key]);
+			}
+		}
 		return $object;
 	}
 }
