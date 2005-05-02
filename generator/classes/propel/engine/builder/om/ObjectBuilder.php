@@ -62,13 +62,43 @@ abstract class ObjectBuilder extends OMBuilder {
 		}
 	}
 	
-	protected function addAccessorMethods()
+	/**
+	 * Adds the getter methods for the column values.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addColumnAccessorMethods(&$script)
 	{
-	
+		$table = $this->getTable();
+		
+		foreach ($table->getColumns() as $col) {
+			
+			if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) { 
+				$this->addTemporalAccessor($script, $col);
+			} else {
+				$this->addGenericAccessor($script, $col);
+			}
+			if ($col->isLazyLoad()) {
+			    $this->addLazyLoader($script, $col);
+			}
+						
+		}
 	}
 	
 	protected function addMutatorMethods()
 	{
+	
+		foreach ($table->getColumns() as $col) {
+			
+			if ($col->isLob()) {
+				$this->addLobMutator($script, $col);
+			} elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+				$this->addTemporalMutator($script, $col);
+			} else {
+				$this->addDefaultMutator($script, $col);
+			}
+						
+		}
+	
 	
 	}
 	

@@ -23,24 +23,19 @@
 require_once 'propel/engine/builder/om/PeerBuilder.php';
 
 /**
- * Generates a PHP5 base Peer class for user object model (OM).
+ * Generates a PHP5 base Object class for user object model (OM).
  * 
- * This class produces the base peer class (e.g. BaseMyPeer) which contains all
- * the custom-built query and manipulator methods.
+ * This class produces the base object class (e.g. BaseMy) which contains all
+ * the custom-built accessor and setter methods.
  * 
- * This class replaces the Peer.tpl, with the intent of being easier for users
+ * This class replaces the Object.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  * 
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5BasicPeerBuilder extends PeerBuilder {		
+class PHP5BasicObjectBuilder extends ObjectBuilder {		
 	
-// Bugs that are being fixed while porting Peer.tpl to this class:
-//	- ability to override the constants
-//	- ability to have emulation for both CASCADE and SETNULL
-//	-
-
 	/**
 	 * The name of the PHP class being built.
 	 * @var string
@@ -51,7 +46,8 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addIncludes(&$script) {
+	protected function addIncludes(&$script)
+	{
 		
 		$table = $this->getTable();		
 				
@@ -97,15 +93,16 @@ include_once 'propel/util/Criteria.php';
 ";	
 
 		$script .= "
-include_once '".$this->getFilePath($package, $table->getPhpName() . 'Peer') ?>';
-	
+include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
+";
 	} // addIncludes()
 	
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addClassOpen(&$script) {
+	protected function addClassOpen(&$script)
+	{
 		
 		$tableName = $this->getTable()->getName();
 		$tableDesc = $this->getTable()->getDescription();
@@ -137,10 +134,28 @@ abstract class ".$this->classname." {
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
 	 */	
-	protected function addClassClose(&$script) {
+	protected function addClassClose(&$script)
+	{
 		$script .= "
 } // " . $this->classname . "
 ";
+	}
+	
+	protected function addAttributes(&$script)
+	{
+		$script .= "
+	/** 
+	 * The Peer class.
+	 * Instance provides a convenient way of calling static methods on a class
+	 * that calling code may not be able to identify.
+	 * @var ".$this->getPeerClassname()."
+	 */
+	protected static $peer;
+";
+		if (!$this->getTable()->isAlias()) {
+		    $this->addColumnAttributes($script);
+		}
+		
 	}
 	
 	/**
@@ -150,6 +165,354 @@ abstract class ".$this->classname." {
 	 */
 	protected function addColumnAttributes(&$script) {
 		
-				
-	}	
+		$table = $this->getTable();
+		
+		foreach ($table->getColumns() as $col) {
+		
+			$cptype = $col->getPhpNative();
+			$clo=strtolower($col->getName());
+			$defVal = "";
+			if (($val = $col->getDefaultValue()) !== null) {				
+				settype($val, $cptype);
+				$defaultValue = var_export($val, true);
+				$defVal = " = " . $defaultValue;
+			}
+			
+			$script .= "
+
+	/**
+	 * The value for the $clo field.
+	 * @var $cptype
+	 */
+	protected \$" . $clo . $defVal . ";
+";
+
+			if ($col->isLazyLoad()) {
+				$script .= "
+	/**
+	 * Whether the lazy-loaded $clo value has been loaded from database.
+	 * This is necessary to avoid repeated lookups if $clo column is NULL in the db.
+	 * @var boolean
+	 */
+	protected \$".$clo."_isLoaded = false;
+";
+			}
+			
+		}  // foreach col
+		
+	} // addColumnAttributes()
+	
+	/**
+	 * Adds a date/time/timestamp getter method.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnAccessors()
+	 */
+	protected function addTemporalAccessor(&$script, $col)
+	{
+		$cfc=$col->getPhpName();
+		$clo=strtolower($col->getName());
+		
+		// these default values are based on the Creole defaults
+		// the date and time default formats are locale-sensitive
+		if ($col->getType() === PropelTypes::DATE) {
+			$defaultfmt = '%x';
+		} elseif ($col->getType() === PropelTypes::TIME) {
+			$defaultfmt = '%X';
+		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+			$defaultfmt = 'Y-m-d H:i:s';
+		}
+		
+		$script .= "
+	/**
+	 * Get the [optionally formatted] [$clo] column value.
+	 * ".$col->getDescription()."
+	 * @param string \$format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function get$cfc(\$format = '$defaultfmt'";
+		if ($col->isLazyLoad()) $script .= ", \$con = null";
+		$script .= ")
+	{
+";
+		if ($col->isLazyLoad()) {
+			$script .= "
+		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
+			\$this->load$cfc(\$con);
+		}
+";
+		}
+		$script .= "
+		if (\$this->$clo === null || \$this->$clo === '') {
+			return null;
+		} elseif (!is_int(\$this->$clo)) {
+			// a non-timestamp value was set externally, so we convert it
+			\$ts = strtotime(\$this->$clo);
+			if (\$ts === -1) {
+				throw new PropelException(\"Unable to parse value of [$clo] as date/time value: \" . var_export(\$this->$clo, true));
+			}
+		} else {
+			\$ts = \$this->$clo;
+		}
+		if (\$format === null) {
+			return \$ts;
+		} elseif (strpos(\$format, '%') !== false) {
+			return strftime(\$format, \$ts);
+		} else {
+			return date(\$format, \$ts);
+		}
+	}
+";	
+	} // addTemporalAccessor
+	
+	/**
+	 * Adds a normal (non-temporal) getter method.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnAccessors()
+	 */
+	protected function addGenericAccessor(&$script, $col)
+	{
+		$cfc=$col->getPhpName();
+		$clo=strtolower($col->getName());
+		
+		$script .= "
+	/**
+	 * Get the [$clo] column value.
+	 * ".$col->getDescription()."
+	 * @return ".$col->getPhpNative()."
+	 */
+	public function get$cfc(";
+		if ($col->isLazyLoad()) $script .= "\$con = null"; 
+		$script .= ")
+	{
+";
+		if ($col->isLazyLoad()) {
+			$script .= "
+		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
+			\$this->load$cfc(\$con);
+		}
+";
+		}
+		$script .= "
+		return \$this->$clo;
+	}
+";
+	}
+	
+	/**
+	 * Adds the lazy loader method.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnAccessors()
+	 */
+	protected function addLazyLoader(&$script, $col)
+	{
+		$cfc=$col->getPhpName();
+		$clo=strtolower($col->getName());
+		
+		$script .= "
+	/**
+	 * Load the value for the lazy-loaded [$clo] column.
+	 *
+	 * This method performs an additional query to return the value for
+	 * the [$clo] column, since it is not populated by
+	 * the hydrate() method.
+	 *
+	 * @param \$con Connection
+	 * @return void
+	 * @throws PropelException - any underlying error will be wrapped and re-thrown.
+	 */
+	protected function load$cfc(\$con = null)
+	{
+		\$c = \$this->buildPkeyCriteria();
+		\$c->addSelectColumn(".$this->getColumnConstant($col).");
+		try {
+			\$rs = ".$this->getPeerClassname()."::doSelectRS(\$c, \$con);
+			\$rs->next();
+";
+		$affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));									
+		$clo = strtolower($col->getName());
+		switch($col->getType()) {
+			 case PropelTypes::DATE:					
+			 case PropelTypes::TIME:
+			 case PropelTypes::TIMESTAMP:
+			 	$script .= "
+			\$this->$clo = \$rs->get$affix(1, null);
+";
+				break;
+			default:
+				$script .= "
+			\$this->$clo = \$rs->get$affix(1);
+";
+		} // switch
+		$script .= "
+			\$this->".$clo."_isLoaded = true;
+		} catch (Exception \$e) {
+			throw new PropelException(\"Error loading value for [$clo] column on demand.\", \$e);
+		}
+	}
+";
+	
+	} // addLazyLoader()
+	
+	
+	
+	
+	// -------------------------------
+	// MUTATOR METHODS
+	// -------------------------------
+	
+	/**
+	 *
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 */
+	protected function addMutatorOpen(&$script, Column $col)
+	{
+		$cfc=$col->getPhpName();
+		$clo=strtolower($col->getName());
+		
+		$script .= "
+	/**
+	 * Set the value of [$clo] column.	  
+	 * ".$col->getDescription()."
+	 * @param ".$col->getPhpNative()." \$v new value
+	 * @return void
+	 * $throwsClause
+	 */
+	public function set$cfc(\$v)
+	{
+";
+		if ($col->isLazyLoad()) {
+			$script .= "
+		// explicitly set the is-loaded flag to true for this lazy load col; 
+		// it doesn't matter if the value is actually set or not (logic below) as
+		// any attempt to set the value means that no db lookup should be performed
+		// when the get$cfc() method is called. 
+		\$this->".$clo."_isLoaded = true;
+";
+		}
+
+	}
+	
+	/**
+	 * Closing of mutator method.
+	 * This has been refactored to facilitate the fact that the complex object model
+	 * mutator methods have additional referential checks to perform.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 */
+	protected function addMutatorClose(&$script, $col)
+	{
+		$cfc = $col->getPhpName();
+		$script .= "
+	} // set$cfc()
+";
+	}
+	
+	/**
+	 * Adds a setter for date/time/timestamp columns.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnMutators()
+	 */
+	protected function addLobMutator(&$script, Column $col)
+	{
+		$this->addMutatorOpen($script, $col);
+		
+		// Setting of LOB columns gets some special handling
+		
+		if ($col->getPropelType() === PropelTypes::BLOB || $col->getPropelType() === PropelTypes::LONGVARBINARY ) {
+			$lobClass = 'Blob';
+		} else {
+			$lobClass = 'Clob';
+		}
+		$script .= "
+		// if the passed in parameter is the *same* object that
+		// is stored internally then we use the Lob->isModified() 
+		// method to know whether contents changed.
+		if (\$v instanceof Lob && \$v === \$this->$clo) {
+			\$changed = \$v->isModified();
+		} else {
+			\$changed = (\$this->$clo !== \$v);
+		}				
+		if (\$changed) {
+			if ( !(\$v instanceof Lob) ) {
+				\$obj = new $lobClass();
+				\$obj->setContents(\$v);
+			} else {
+				\$obj = \$v;
+			}
+			\$this->$clo = \$obj;
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+		
+	} // addLobMutatorSnippet
+	
+	
+	/**
+	 * Adds a setter method for date/time/timestamp columns.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnMutators()
+	 */
+	protected function addTemporalMutator(&$script, Column $col)
+	{
+		$defaultValue = null;
+		if (($val = $col->getDefaultValue()) !== null) {
+			settype($val, $col->getPhpNative());
+			$defaultValue = var_export($val, true);
+		}
+		
+		$this->addMutatorOpen($script, $col);
+		
+		$script .= "
+		if (\$v !== null && !is_int(\$v)) {
+			\$ts = strtotime(\$v);
+			if (\$ts === -1) {
+				throw new PropelException(\"Unable to parse date/time value for [$clo] from input: \" . var_export(\$v, true));
+			}
+		} else {
+			\$ts = \$v;
+		}
+		if (\$this->$clo !== \$ts";
+		if ($defaultValue !== null) {
+			$script .= " || \$ts === $defaultValue";
+		}
+		$script .= ") {
+			\$this->$clo = \$ts;
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
+	
+	/**
+	 * Adds setter method for "normal" columns.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 * @see parent::addColumnMutators()
+	 */
+	protected function addDefaultMutator(&$script, Column $col)
+	{
+		$this->addMutatorOpen($script, $col);
+		$script .= "
+		if (\$this->$clo !== \$v";
+		if ($defaultValue !== null) {
+			$script .= " || \$v === $defaultValue";
+		}
+		$script .= ") {
+			\$this->$clo = \$v;
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
+
+	
 } // PHP5BasicPeerBuilder
