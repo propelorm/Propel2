@@ -88,7 +88,7 @@
 		<echo message="| GENERATE STD TABLE OF CONTENTS   |"/>
 		<echo message="\----------------------------------/"/>		
 		
-		<append to="book/toc/ToC.html">					
+		<append destFile="book/toc/ToC.html">					
 			<filterchain>
 				<xsltfilter style="../docsystem/xsl/Toc.xsl" html="yes">
 					<param name="mode" expression="standard"/>
@@ -99,7 +99,7 @@
 		</append>
 		
 		
-		<append file="../docsystem/html/StandardToCBottom.html" to="book/toc/ToC.html"/>				
+		<append file="../docsystem/html/StandardToCBottom.html" destFile="book/toc/ToC.html"/>				
 		 
 	</target>
 	
@@ -117,9 +117,9 @@
 		<echo message="| GENERATE FRAME TABLE OF CONTENTS |"/>
 		<echo message="\----------------------------------/"/>
 		
-		<append file="../docsystem/html/FrameToCTop.html" to="book/toc/FrameToC.html"/>
+		<append file="../docsystem/html/FrameToCTop.html" destFile="book/toc/FrameToC.html"/>
 			
-		<append to="book/toc/FrameToC.html">					
+		<append destFile="book/toc/FrameToC.html">					
 			<filterchain>
 				<xsltfilter style="../docsystem/xsl/Toc.xsl" html="yes">
 					<param name="mode" expression="frame"/>
@@ -129,7 +129,7 @@
 			<filelist dir="book/" listfile="book/UserGuide.book"/>			
 		</append>
 									
-		<append file="../docsystem/html/FrameToCBottom.html" to="book/toc/FrameToC.html"/>				
+		<append file="../docsystem/html/FrameToCBottom.html" destFile="book/toc/FrameToC.html"/>				
 	
 	</target>
 	
@@ -147,9 +147,9 @@
 		<echo message="| GENERATE CHAPTER JAVASCRIPT      |"/>
 		<echo message="\----------------------------------/"/>
 		
-		<append text="var Chapters = new Array(" to="book/js/Chapters.js"/>
+		<append text="var Chapters = new Array(" destFile="book/js/Chapters.js"/>
 		
-		<append to="book/js/Chapters.js">					
+		<append destFile="book/js/Chapters.js">					
 			<filterchain>
 				<xsltfilter style="../docsystem/xsl/Chapters.xsl" html="yes">
 					<param name="mode" expression="${process.xslt.mode}"/>
@@ -159,7 +159,7 @@
 			<filelist dir="book/" listfile="book/UserGuide.book"/>			
 		</append>
 		
-		<append text=");" to="book/js/Chapters.js"/>				
+		<append text=");" destFile="book/js/Chapters.js"/>				
 		
 		<!-- remove the trailing ',' because the XSLT does not (and this will trigger jscript errors) -->
 		<reflexive file="book/js/Chapters.js">
