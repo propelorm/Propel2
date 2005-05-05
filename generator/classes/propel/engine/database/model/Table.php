@@ -997,6 +997,12 @@ class Table extends XMLElement implements IDMethod {
                   . '"';
         }
 
+        if ($this->isTree) {
+            $result .= " isTree=\""
+                  . ($this->isTree ? "true" : "false")
+                  . '"';
+        }
+
         if ($this->abstractValue) {
             $result .= " abstract=\""
                   . ($abstractValue ? "true" : "false")
