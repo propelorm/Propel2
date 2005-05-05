@@ -1015,6 +1015,12 @@ class Table extends XMLElement implements IDMethod {
                   . '"';
         }
 
+        if ($this->description !== null) {
+            $result .= " description=\""
+                  . $this->description
+                  . '"';
+        }
+
         if ($this->baseClass !== null) {
             $result .= " baseClass=\""
                   . $this->baseClass
