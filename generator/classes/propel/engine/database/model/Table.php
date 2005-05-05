@@ -997,6 +997,12 @@ class Table extends XMLElement implements IDMethod {
                   . '"';
         }
 
+        if ($this->readOnly) {
+            $result .= " readOnly=\""
+                  . ($this->readOnly ? "true" : "false")
+                  . '"';
+        }
+
         if ($this->isTree) {
             $result .= " isTree=\""
                   . ($this->isTree ? "true" : "false")
@@ -1012,6 +1018,12 @@ class Table extends XMLElement implements IDMethod {
         if ($this->abstractValue) {
             $result .= " abstract=\""
                   . ($abstractValue ? "true" : "false")
+                  . '"';
+        }
+
+        if ($this->enterface !== null) {
+            $result .= " interface=\""
+                  . $this->enterface
                   . '"';
         }
 
