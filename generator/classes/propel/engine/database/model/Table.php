@@ -1003,6 +1003,12 @@ class Table extends XMLElement implements IDMethod {
                   . '"';
         }
 
+        if ($this->forReferenceOnly) {
+            $result .= " forReferenceOnly=\""
+                  . ($this->forReferenceOnly ? "true" : "false")
+                  . '"';
+        }
+
         if ($this->abstractValue) {
             $result .= " abstract=\""
                   . ($abstractValue ? "true" : "false")
