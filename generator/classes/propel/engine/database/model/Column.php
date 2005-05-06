@@ -678,6 +678,13 @@ class Column extends XMLElement {
 				. '"';
 		}
 
+        if ($this->isNodeKey()) {
+                $result .= " nodeKey=\"true\"";
+                if ($this->getNodeKeySep() !== null) {
+                        $result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
+                }
+        }
+
 		// Close the column.
 		$result .= " />\n";
 
