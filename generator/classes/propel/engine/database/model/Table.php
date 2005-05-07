@@ -1053,6 +1053,12 @@ class Table extends XMLElement implements IDMethod {
             }
         }
 
+        if ($this->validatorList !== null) {
+            for($i=0,$_i=count($this->validatorList); $i < $_i; $i++) {
+                $result .= $this->validatorList[$i]->toString();
+            }
+        }
+
         if ($this->foreignKeys !== null) {
             for($i=0,$_i=count($this->foreignKeys); $i < $_i; $i++) {
                 $result .= $this->foreignKeys[$i]->toString();
