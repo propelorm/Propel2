@@ -850,6 +850,35 @@ if ($complexObjectModel)
   */
   var $last<?php echo $relCol ?>Criteria = null;
 
+	/**
+	 * Returns the number of related <?php echo $relCol ?>
+	 *
+	 * @param Criteria $criteria
+	 * @throws PropelException
+	 */
+	public function count<?php echo $relCol ?>($criteria = null)
+	{
+		// include the Peer class
+		include_once '<?php echo $tblFKPackagePath . $className ?>Peer.php';
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+<?php
+	foreach ($fk->getForeignColumns() as $columnName) {
+		$column = $table->getColumn($columnName);
+		// used to be getLocalForeignMapping() but that didn't seem to work
+		// (maybe a problem in translation of HashTable code to PHP).
+		$flmap = $fk->getForeignLocalMapping();
+		$colFKName = $flmap[$columnName];
+		$colFK = $tblFK->getColumn($colFKName);
+?>
+		$criteria->add(<?php echo PeerBuilder::getColumnName($colFK, $className) ?>(), $this->get<?php echo $column->getPhpName() ?>() );
+<?php
+	} // end foreach ($fk->getForeignColumns()
+?>
+		return <?php echo $className ?>Peer::doCount($criteria);
+	}
+
   /**
   * If this collection has already been initialized with
   * an identical criteria, it returns the collection.
