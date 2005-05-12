@@ -996,63 +996,109 @@ if (!$table->isAlias() && $addGenericAccessors) {
 ?>
 
 	/**
-	 * Convenience method to export the object as an array.
-	 *
-	 * @return array An associative array containing the field (php)names
-	 *               as keys and field values as values
+	 * phpname type
+	 * e.g. 'AuthorId'
 	 */
-	public function toArray()
-	{
-		$result = array(
-<?php
-	foreach ($table->getColumns() as $col) {
-?>
-			'<?php echo $col->getPhpName() ?>' => $this->get<?php echo $col->getPhpName(); ?>(),
-<?php
-	} /* foreach */
-?>
-		);
-		return $result;
-	}
-
-	private $fieldNames;
+	const TYPE_PHPNAME = 'phpName';
 
 	/**
-	 * Generate a list of field names.
+	 * column (peer) name type
+	 * e.g. 'book.AUTHOR_ID'
+	 */
+	const TYPE_COLNAME = 'colName';
+
+	/**
+	 * column fieldname type
+	 * e.g. 'author_id'
+	 */
+	const TYPE_FIELDNAME = 'fieldName';
+
+	/**
+	 * num type
+	 * simply the numerical array index, e.g. 4
+	 */
+	const TYPE_NUM = 'num';
+
+<?php
+	$tableColumns = $table->getColumns();
+	$tablePhpname = $table->getPhpName();
+?>
+	/**
+	 * holds an array of fieldnames
 	 *
+	 * first dimension keys are the type constants
+	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
+	 */
+	private static $fieldNames = array (
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_PHPNAME => array (<?php foreach ($tableColumns as $col) { ?>'<?php echo $col->getPhpName(); ?>', <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_COLNAME => array (<?php foreach ($tableColumns as $col) { ?><?php echo PeerBuilder::getColumnName($col, $tablePhpname); ?>, <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_FIELDNAME => array (<?php foreach ($tableColumns as $col) { ?>'<?php echo $col->getName(); ?>', <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_NUM => array (<?php foreach ($tableColumns as $num => $col) { echo $num; ?>, <?php } ?>)
+	);
+
+	/**
+	 * holds an array of keys for quick access to the fieldnames array
+	 *
+	 * first dimension keys are the type constants
+	 * e.g. self::$fieldNames[self::TYPE_PHPNAME]['Id'] = 0
+	 */
+	private static $fieldKeys = array (
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_PHPNAME => array (<?php foreach ($tableColumns as $num => $col) { ?>'<?php echo $col->getPhpName(); ?>' => <?php echo $num; ?>, <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_COLNAME => array (<?php foreach ($tableColumns as $num => $col) { ?><?php echo PeerBuilder::getColumnName($col, $tablePhpname); ?> => <?php echo $num; ?>, <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_FIELDNAME => array (<?php foreach ($tableColumns as $num => $col) { ?>'<?php echo $col->getName(); ?>' => <?php echo $num; ?>, <?php } ?>),
+		<?php echo $basePrefix . $table->getPhpName() ?>::TYPE_NUM => array (<?php foreach ($tableColumns as $num => $col) { echo $num; ?>, <?php } ?>)
+	);
+
+	/**
+	 * Returns an array of of field names.
+	 *
+	 * @param  string $type The type of fieldnames to return:
+	 *                      One of the class type constants TYPE_PHPNAME,
+	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return array A list of field names
 	 */
-	public function getFieldNames()
+
+	static public function getFieldNames($type = self::TYPE_FIELDNAME)
 	{
-		if ($this->fieldNames === null) {
-			$this->fieldNames = array(<?php foreach ($table->getColumns() as $col) { ?>"<?php echo $col->getName() ?>", <?php } ?>);
+		if (!isset(self::$fieldNames[$type])) {
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
 		}
-		return $this->fieldNames;
+		return self::$fieldNames[$type];
+	}
+
+	/**
+	 * Translates a fieldname to another type
+	 *
+	 * @param string $name field name
+	 * @param string $fromType One of the class type constants TYPE_PHPNAME,
+	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param string $toType   One of the class type constants
+	 * @return string translated name of the field.
+	 */
+	static public function translateFieldName($name, $fromType, $toType)
+	{
+		$toNames = self::getFieldNames($toType);
+		$key = self::$fieldKeys[$fromType][$name];
+		if ($key === false) {
+			throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r($fromNames, true));
+		}
+		return $toNames[$key];
 	}
 
 	/**
 	 * Retrieves a field from the object by name passed in as a string.
-	 * The string must be one of the static strings defined in this Class' Peer.
 	 *
-	 * @param string $name peer name
+	 * @param string $name name
+	 * @param string $type The type of fieldname the $name is of:
+	 *                     one of the class type constants TYPE_PHPNAME,
+	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return mixed Value of field.
 	 */
-	public function getByName($name)
+	public function getByName($name, $type = self::TYPE_COLNAME)
 	{
-		switch($name) {
-<?php
-	foreach ($table->getColumns() as $col) {
-	  $cfc = $col->getPhpName();
-	  $cptype = $col->getPhpNative(); // not safe to use it because some methods may return objects (Blob)
-?>
-			case <?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>:
-				return $this->get<?php echo $cfc ?>();
-				break;
-	<?php } ?>
-			default:
-				return null;
-
-		} // switch()
+		$names = self::getFieldNames($type);
+		$pos = self::translateFieldName($name, $type, self::TYPE_NUM);
+		return $this->getByPosition($pos);
 	}
 
 	/**
@@ -1083,55 +1129,51 @@ if (!$table->isAlias() && $addGenericAccessors) {
 		} // switch()
 	}
 
+	/**
+	 * Exports the object as an array.
+	 *
+	 * You can specify the key type of the array by passing one of the class
+	 * type constants.
+	 *
+	 * @param string $keyType One of the class type constants TYPE_PHPNAME,
+	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @return an associative array containing the field names (as keys) and field values
+	 */
+	public function toArray($keyType = self::TYPE_PHPNAME)
+	{
+		$keys = self::getFieldNames($keyType);
+		$result = array(
+<?php
+	foreach ($table->getColumns() as $num => $col) {
+?>
+			$keys[<?php echo $num; ?>] => $this->get<?php echo $col->getPhpName(); ?>(),
+<?php
+	} /* foreach */
+?>
+		);
+		return $result;
+	}
+
 <?php } /* ends the if(addGetByNameMethod) */ ?>
 
 
 <?php if (!$table->isAlias() && $addGenericMutators && !$table->isReadOnly()) { ?>
 
 	/**
-	 * Convenience method to populate the object using an array.
-	 * This is particularly useful when populating an object from one of the request arrays (e.g. $_POST).  This method
-	 * goest through the column (peer) names, checking to see whether a matching key exists in populated array. If
-	 * so the setByName() method is called for that column.
-	 * @param array $arr An array where keys are column names.
-	 * @return void
-	 */
-	public function populateFromArray($arr)
-	{
-<?php
-	foreach ($table->getColumns() as $col) {
-	  $cfc = $col->getPhpName();
-	  $cptype = $col->getPhpNative();
-?>
-		if (array_key_exists(<?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>, $arr)) $this->set<?php echo $cfc ?>($arr[<?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>]);
-<?php
-	} /* foreach */
-?>
-	}
-
-	/**
 	 * Sets a field from the object by name passed in as a string.
-	 * The string must be one of the static strings defined in this Class' Peer.
 	 *
 	 * @param string $name peer name
 	 * @param mixed $value field value
+	 * @param string $type The type of fieldname the $name is of:
+	 *                     one of the class type constants TYPE_PHPNAME,
+	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return void
 	 */
-	public function setByName($name, $value)
+	public function setByName($name, $value, $type = self::TYPE_COLNAME)
 	{
-		switch($name) {
-<?php
-	foreach ($table->getColumns() as $col) {
-	  $cfc = $col->getPhpName();
-	  $cptype = $col->getPhpNative();
-?>
-			case <?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>:
-				$this->set<?php echo $cfc ?>($value);
-				break;
-<?php
-	} /* foreach */
-?>
-		} // switch()
+		$names = $this->getFieldnames($type);
+		$pos = array_search($name, $names);
+		return $this->setByPosition($pos, $name);
 	}
 
 	/**
@@ -1159,6 +1201,53 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	} /* foreach */
 ?>
 		} // switch()
+	}
+
+	/**
+	 * Populates the object using an array.
+	 *
+	 * This method is just an alias for populateFromArray()
+	 *
+	 * @param array  $arr     An array to populate the object from.
+	 * @param string $keyType The type of keys the array uses:
+	 *                        one of the class type constants TYPE_PHPNAME,
+	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @return void
+	 */
+	public function fromArray($arr, $keyType = self::TYPE_COLNAME)
+	{
+		return $this->populateFromArray($arr, $keyType);
+	}
+
+	/**
+	 * Populates the object using an array.
+	 *
+	 * This is particularly useful when populating an object from one of the
+	 * request arrays (e.g. $_POST).  This method goes through the column
+	 * names, checking to see whether a matching key exists in populated
+	 * array. If so the setByName() method is called for that column.
+	 *
+	 * You can specify the key type of the array by additionally passing one
+	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
+	 * TYPE_NUM. The default key type is the (peer) column name (e.g.
+	 * 'book.AUTHOR_ID')
+	 *
+	 * @param array  $arr     An array to populate the object from.
+	 * @param string $keyType The type of keys the array uses.
+	 * @return void
+	 */
+	public function populateFromArray($arr, $keyType = self::TYPE_COLNAME)
+	{
+		$keys = self::getFieldNames($keyType);
+<?php
+	foreach ($table->getColumns() as $num => $col) {
+	  $cfc = $col->getPhpName();
+	  $cptype = $col->getPhpNative();
+?>
+		if (array_key_exists($keys[<?php echo $num ?>], $arr)) $this->set<?php echo $cfc ?>($arr[$keys[<?php echo $num ?>]]);
+<?php
+	} /* foreach */
+?>
 	}
 
 <?php } /* ends the if($addGenericMutators) */ ?>
