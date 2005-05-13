@@ -84,6 +84,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				
 					// FIXME - look into removing this next condition; it may not
 					// be necessary:
+					// --- IT is necessary because there needs to be a system for 
+					// aliasing the table if it is the same table.
 					if ( $fk->getForeignTableName() != $table->getName() ) {
 						
 						// check to see if we need to add something to the method name.

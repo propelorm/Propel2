@@ -653,16 +653,16 @@ abstract class ".$this->classname." {
 	 */
 	public function toArray()
 	{
-		$result = array(
-<?php
-	foreach ($table->getColumns() as $col) {
-?>
-			'<?php echo $col->getPhpName() ?>' => $this->get<?php echo $col->getPhpName(); ?>(),
-<?php
-	} /* foreach */
-?>
+		\$result = array(
+";
+		foreach ($table->getColumns() as $col) {
+			$script .= "
+			'".$col->getPhpName()."' => \$this->get".$col->getPhpName()."(),
+";
+		} /* foreach */
+		$script .= "
 		);
-		return $result;
+		return \$result;
 	}
 ";
 	}
@@ -670,7 +670,7 @@ abstract class ".$this->classname." {
 	protected function addGetFieldNames(&$script)
 	{
 		$script .= "
-	private $fieldNames;
+	private \$fieldNames;
 
 	/**
 	 * Generate a list of field names.
@@ -679,10 +679,14 @@ abstract class ".$this->classname." {
 	 */
 	public function getFieldNames()
 	{
-		if ($this->fieldNames === null) {
-			$this->fieldNames = array(<?php foreach ($table->getColumns() as $col) { ?>'<?php echo $col->getName() ?>', <?php } ?>);
+		if (\$this->fieldNames === null) {
+			\$this->fieldNames = array(";
+		foreach ($table->getColumns() as $col) { 
+			$script .= "'".$col->getName()."', ";
 		}
-		return $this->fieldNames;
+		$script .= ");
+		}
+		return \$this->fieldNames;
 	}";
 	
 	}
@@ -694,21 +698,23 @@ abstract class ".$this->classname." {
 	 * Retrieves a field from the object by name passed in as a string.
 	 * The string must be one of the static strings defined in this Class' Peer.
 	 *
-	 * @param string $name peer name
+	 * @param string \$name peer name
 	 * @return mixed Value of field.
 	 */
-	public function getByName($name)
+	public function getByName(\$name)
 	{
-		switch($name) {
-<?php
-	foreach ($table->getColumns() as $col) {
-	  $cfc = $col->getPhpName();
-	  $cptype = $col->getPhpNative(); // not safe to use it because some methods may return objects (Blob)
-?>
-			case <?php echo PeerBuilder::getColumnName($col,$table->getPhpName()) ?>:
-				return $this->get<?php echo $cfc ?>();
+		switch(\$name) {
+";
+		foreach ($this->getTable()->getColumns() as $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpNative(); // not safe to use it because some methods may return objects (Blob)
+			$script .= "
+			case ".$this->getColumnConstant($col).":
+				return \$this->get$cfc();
 				break;
-	<?php } ?>
+";
+		}
+		$script .= "
 			default:
 				return null;
 
@@ -719,30 +725,31 @@ abstract class ".$this->classname." {
 	
 	protected function addGetByPosition(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Retrieves a field from the object by Position as specified in the xml schema.
 	 * Zero-based.
 	 *
-	 * @param int $pos position in xml schema
-	 * @return mixed Value of field at $pos
+	 * @param int \$pos position in xml schema
+	 * @return mixed Value of field at \$pos
 	 */
-	public function getByPosition($pos)
+	public function getByPosition(\$pos)
 	{
-		switch($pos) {
-<?php
+		switch(\$pos) {
+";
 	$i = 0;
 	foreach ($table->getColumns() as $col) {
 		$cfc = $col->getPhpName();
 		$cptype = $col->getPhpNative();// not safe to use it because some methods may return objects (Blob)
-?>
-			case <?php echo $i ?>:
-				return $this->get<?php echo $cfc ?>();
+$script .= "
+			case $i:
+				return \$this->get$cfc();
 				break;
-<?php
+";
 		$i++;
 	} /* foreach */
-?>
+$script .= "
 			default:
 				return null;
 		} // switch()
