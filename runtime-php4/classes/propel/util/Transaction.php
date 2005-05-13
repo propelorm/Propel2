@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Transaction.php,v 1.4 2005/03/29 16:35:53 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Stephen Haberman <stephenh@chase3000.com> (Torque)
- * @version $Revision: 1.4 $
+ * @version $Revision$
  * @package propel.util
  */
 class Transaction

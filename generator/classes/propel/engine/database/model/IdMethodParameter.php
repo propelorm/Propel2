@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: IdMethodParameter.php,v 1.2 2005/03/16 03:57:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'propel/engine/database/model/XMLElement.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class IdMethodParameter extends XMLElement {

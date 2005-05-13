@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ValidValuesValidator.php,v 1.5 2005/04/04 10:22:40 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -33,7 +33,7 @@ require_once 'propel/validator/BasicValidator.php';
  * </code>
  *
  * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision: 1.5 $
+ * @version $Revision$
  * @package propel.validator
  */
 class ValidValuesValidator implements BasicValidator

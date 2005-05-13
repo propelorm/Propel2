@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ValidValuesValidator.php,v 1.3 2005/04/04 10:24:14 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ require_once 'propel/validator/BasicValidator.php';
  * A validator for valid values (e.g. for enum fields)
  *
  * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision: 1.3 $
+ * @version $Revision$
  */
 class ValidValuesValidator extends BasicValidator
 {

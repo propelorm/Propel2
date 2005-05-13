@@ -3,7 +3,7 @@
  * patForms form manager class - serialize form elements into any given output format
  * using element classes, and build the output via renderer classes.
  *
- * $Id: patForms.php,v 1.37 2004/11/17 16:19:19 argh Exp $
+ * $Id$
  *
  * @package		patForms
  * @author		Sebastian Mordziol <argh@php-tools.net>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: DBOracle.php,v 1.8 2004/09/01 14:25:28 dlawson_mi Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ require_once 'propel/adapter/DBAdapter.php';
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author Bill Schneider <bschneider@vecna.com> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.8 $
+ * @version $Revision$
  * @package propel.adapter
  */
 class DBOracle extends DBAdapter {

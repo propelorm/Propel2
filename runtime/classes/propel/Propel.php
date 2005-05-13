@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: Propel.php,v 1.50 2005/03/31 17:49:10 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,7 +37,7 @@ include_once 'propel/adapter/DBAdapter.php';
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author Kurt Schrader <kschrader@karmalab.org> (Torque)
- * @version $Revision: 1.50 $
+ * @version $Revision$
  * @package propel
  */
 class Propel {

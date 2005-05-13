@@ -9,7 +9,7 @@ include_once 'propel/util/BasePeer.php';
  *
  * @author <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
  * @author <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
- * @version $Id: CriteriaTest.php,v 1.1 2004/07/14 01:35:35 hlellelid Exp $
+ * @version $Id$
  */
 class CriteriaTest extends BaseTestCase {
 

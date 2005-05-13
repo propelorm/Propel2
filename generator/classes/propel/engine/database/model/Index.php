@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: Index.php,v 1.5 2005/03/19 13:56:54 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ include_once 'propel/engine/EngineException.php';
  *
  * @author Jason van Zyl <vanzyl@apache.org>
  * @author Daniel Rall <dlr@finemaltcoding.com>
- * @version $Revision: 1.5 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Index extends XMLElement {

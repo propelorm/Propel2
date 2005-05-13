@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: CriteriaTest.php,v 1.2 2004/11/29 16:03:17 micha Exp $
+ * $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ include_once 'propel/util/BasePeer.php';
  *
  * @author <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
  * @author <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
- * @version $Revision: 1.2 $
+ * @version $Revision$
  */
 class CriteriaTest extends BaseTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: XMLElement.php,v 1.1 2005/03/16 03:57:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,7 +23,7 @@
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
  *
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 abstract class XMLElement {

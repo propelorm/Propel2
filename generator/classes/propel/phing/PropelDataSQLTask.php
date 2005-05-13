@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: PropelDataSQLTask.php,v 1.3 2005/03/29 11:28:39 pachanga Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,7 +32,7 @@ include_once 'propel/engine/database/transform/XmlToData.php';
  * @author  Jason van Zyl  <jvanzyl@periapt.com> (Torque)
  * @author  John McNally  <jmcnally@collab.net> (Torque)
  * @author  Fedor Karpelevitch  <fedor.karpelevitch@home.com> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.phing
  */
 class PropelDataSQLTask extends AbstractPropelDataModelTask {

@@ -2,7 +2,7 @@
 /**
  * patForms rule base class
  *
- * $Id: Rule.php,v 1.2 2004/11/05 15:56:26 schst Exp $
+ * $Id$
  *
  * @access		protected
  * @package		patForms

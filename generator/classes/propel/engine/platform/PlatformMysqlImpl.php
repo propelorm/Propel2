@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PlatformMysqlImpl.php,v 1.3 2005/02/21 16:50:33 pachanga Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'propel/engine/platform/PlatformDefaultImpl.php';
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.engine.platform
  */
 class PlatformMysqlImpl extends PlatformDefaultImpl {

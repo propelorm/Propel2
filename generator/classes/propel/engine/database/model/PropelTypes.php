@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PropelTypes.php,v 1.4 2005/03/26 04:56:55 joe_cai Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'creole/CreoleTypes.php';
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @version $Revision: 1.4 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class PropelTypes {

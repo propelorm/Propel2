@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: MojaviLogAdapter.php,v 1.2 2004/08/11 13:21:07 bkeepers Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once('propel/logger/BasicLogger.php');
  * Mojavi logging adapter for propel
  * 
  * @author Brandon Keepers <brandon@opensoul.org>
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.logger
  */
 class MojaviLogAdapter implements BasicLogger {

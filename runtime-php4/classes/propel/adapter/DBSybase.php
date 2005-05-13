@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: DBSybase.php,v 1.2 2005/02/13 12:23:52 micha Exp $
+ * $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,7 +32,7 @@ require_once 'propel/adapter/DBAdapter.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Michael Aichler <aichler@mediacluster.de> (Propel)
  * @author Jeff Brekke <ekkerbj@netscape.net> (Torque)
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.adapter
  */
 class DBSybase extends DBAdapter

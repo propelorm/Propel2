@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Domain.php,v 1.3 2005/03/17 01:16:41 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
  *
  * @author  Hans Lellelid <hans@xmpl.org> (Propel)
  * @author  Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Domain extends XMLElement {

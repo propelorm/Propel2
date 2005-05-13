@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: BaseTestCase.php,v 1.1 2004/11/20 17:48:26 micha Exp $
+ * $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@ require_once 'PHPUnit/TestCase.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Christopher Elkins <celkins@scardini.com> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 class BaseTestCase extends PHPUnit_TestCase
 {

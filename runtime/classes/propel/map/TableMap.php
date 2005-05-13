@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: TableMap.php,v 1.19 2004/11/16 13:51:24 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,7 +41,7 @@ include_once 'propel/map/ValidatorMap.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.19 $
+ * @version $Revision$
  * @package propel.map
  */
 class TableMap {

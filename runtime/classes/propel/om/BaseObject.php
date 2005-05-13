@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: BaseObject.php,v 1.17 2005/04/04 10:52:26 dlawson_mi Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,7 +29,7 @@ require_once 'propel/om/Persistent.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @version $Revision: 1.17 $
+ * @version $Revision$
  * @package propel.om
  */
 abstract class BaseObject {

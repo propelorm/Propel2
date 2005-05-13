@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: MapBuilder.php,v 1.2 2004/06/14 16:42:20 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -47,7 +47,7 @@
  * @author Michael Aichler <aichler@mediacluster.de> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Hans Lellelid <hans@xmpl.org> (Torque)
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.map
  */
 class MapBuilder

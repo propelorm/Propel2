@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: NameGenerator.php,v 1.1 2004/07/08 00:22:57 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 interface NameGenerator {

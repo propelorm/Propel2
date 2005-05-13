@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Criteria.php,v 1.62 2005/03/31 01:56:44 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@
  * @author Eric Dobbs <eric@dobbse.net> (Torque)
  * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author Sam Joseph <sam@neurogrid.com> (Torque)
- * @version $Revision: 1.62 $
+ * @version $Revision$
  * @package propel.util
  */
 class Criteria implements IteratorAggregate {

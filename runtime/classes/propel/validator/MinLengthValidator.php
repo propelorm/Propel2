@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: MinLengthValidator.php,v 1.4 2004/12/04 14:00:38 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -33,7 +33,7 @@ require_once 'propel/validator/BasicValidator.php';
  * </code>
  *
  * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision: 1.4 $
+ * @version $Revision$
  * @package propel.validator
  */
 class MinLengthValidator implements BasicValidator

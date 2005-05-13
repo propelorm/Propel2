@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: DBMySQL.php,v 1.3 2004/10/30 17:48:49 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,7 +29,7 @@ require_once 'propel/adapter/DBAdapter.php';
  * @author Jon S. Stevens <jon@clearink.com> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  */
 class DBMySQL extends DBAdapter
 {

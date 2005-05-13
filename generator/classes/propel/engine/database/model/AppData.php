@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: AppData.php,v 1.2 2004/07/28 16:26:30 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,7 +29,7 @@ include_once 'propel/engine/database/model/Database.php';
  * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
  * @author John McNally <jmcnally@collab.net> (Torque) 
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class AppData {

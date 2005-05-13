@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: TableTest.php,v 1.1 2004/07/08 00:23:00 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@ include_once 'propel/engine/database/transform/XmlToAppData.php';
  * Tests for package handling.
  *
  * @author <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version $Id: TableTest.php,v 1.1 2004/07/08 00:23:00 hlellelid Exp $
+ * @version $Id$
  */
 class TableTest extends PHPUnit2_Framework_TestCase {
 

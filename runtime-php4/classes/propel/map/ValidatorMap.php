@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ValidatorMap.php,v 1.3 2004/12/04 13:55:42 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -36,7 +36,7 @@
  * together.
  * 
  * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.map
  */
 class ValidatorMap

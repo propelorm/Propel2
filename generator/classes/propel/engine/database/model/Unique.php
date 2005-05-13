@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Unique.php,v 1.1 2004/07/08 00:22:57 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ include_once 'propel/engine/database/model/Index.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Unique extends Index {

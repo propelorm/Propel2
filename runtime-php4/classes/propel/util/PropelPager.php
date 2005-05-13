@@ -94,7 +94,7 @@
  * 
  * @author	Rob Halff <info@rhalff.com>
  * @author	Steve Lianoglou [inital port to php4] <lists@arachnedesign.net>
- * @version   $Revision: 1.1 $
+ * @version   $Revision$
  * @copyright Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
  * @package   propel.util 
  */

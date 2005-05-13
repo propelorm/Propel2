@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: PropelCreoleTransformTask.php,v 1.10 2005/03/29 11:28:39 pachanga Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@ require_once 'phing/Task.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jason van Zyl <jvanzyl@periapt.com> (Torque)
  * @author Fedor Karpelevitch <fedor.karpelevitch@barra.com> (Torque)
- * @version $Revision: 1.10 $
+ * @version $Revision$
  * @package propel.phing
  */
 class PropelCreoleTransformTask extends Task {

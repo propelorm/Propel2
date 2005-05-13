@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: PropelDataDumpTask.php,v 1.3 2005/03/29 11:28:39 pachanga Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,7 +37,7 @@ include_once 'creole/Creole.php';
  * @author Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
  * @author Jason van Zyl <jvanzyl@zenplex.com> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.phing
  */
 class PropelDataDumpTask extends AbstractPropelDataModelTask {

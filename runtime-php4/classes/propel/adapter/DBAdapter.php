@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: DBAdapter.php,v 1.6 2004/11/29 14:08:08 micha Exp $
+ * $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -44,7 +44,7 @@ include_once 'creole/Connection.php';
  * @author Jon S. Stevens <jon@latchkey.com> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.6 $
+ * @version $Revision$
  */
 class DBAdapter
 {

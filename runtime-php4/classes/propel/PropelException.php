@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PropelException.php,v 1.3 2004/03/29 21:21:10 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@ include_once 'creole/Exception.php';
 /**
  * The base class of all exceptions thrown by Propel.
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision: 1.3 $
+ * @version $Revision$
  */
 class PropelException extends Exception
 {

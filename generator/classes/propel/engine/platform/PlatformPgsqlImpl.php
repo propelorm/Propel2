@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PlatformPgsqlImpl.php,v 1.1 2004/07/08 00:22:57 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'propel/engine/platform/PlatformDefaultImpl.php';
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.engine.platform
  */
 class PlatformPgsqlImpl extends PlatformDefaultImpl {

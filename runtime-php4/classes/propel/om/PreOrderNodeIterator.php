@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PreOrderNodeIterator.php,v 1.1 2004/10/30 17:51:09 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
  *
  * @author Kaspars Jaudzems <kasparsj@navigators.lv> (Propel)
  * @author Dave Lawson <dlawson@masterytech.com>
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.om
  */
 class PreOrderNodeIterator

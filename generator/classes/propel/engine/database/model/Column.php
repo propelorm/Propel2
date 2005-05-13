@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Column.php,v 1.11 2005/03/24 14:54:14 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,7 +34,7 @@ include_once 'propel/engine/database/model/Domain.php';
  * @author Jon S. Stevens <jon@latchkey.com> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision: 1.11 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Column extends XMLElement {

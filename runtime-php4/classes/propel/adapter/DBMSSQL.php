@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: DBMSSQL.php,v 1.1 2004/11/29 14:08:08 micha Exp $
+ * $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'propel/adapter/DBSybase.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Michael Aichler <aichler@mediacluster.de> (Propel)
  * @author Gonzalo Diethelm <gonzalo.diethelm@sonda.com> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.adapter
  */
 class DBMSSQL extends DBSybase

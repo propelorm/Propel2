@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: PropelSQLExec.php,v 1.8 2004/11/03 18:51:41 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -36,7 +36,7 @@ include_once 'creole/Connection.php';
  * @author Tim Stephenson <tim.stephenson@sybase.com> (Torque)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision: 1.8 $
+ * @version $Revision$
  * @package propel.phing
  */
 class PropelSQLExec extends Task {

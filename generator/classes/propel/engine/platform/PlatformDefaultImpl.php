@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PlatformDefaultImpl.php,v 1.2 2005/02/03 04:18:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ include_once 'propel/engine/database/model/Domain.php';
  * Default implementation for the Platform interface.
  *
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.engine.platform
  */
 class PlatformDefaultImpl implements Platform {

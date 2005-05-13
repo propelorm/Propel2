@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ForeignKey.php,v 1.4 2005/03/16 03:57:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@ require_once 'propel/engine/database/model/XMLElement.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @author Fedor <fedor.karpelevitch@home.com>
  * @author Daniel Rall <dlr@finemaltcoding.com>
- * @version $Revision: 1.4 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class ForeignKey extends XMLElement {

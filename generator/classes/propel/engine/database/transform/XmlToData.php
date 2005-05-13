@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: XmlToData.php,v 1.3 2005/02/24 10:53:20 pachanga Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ require_once 'phing/parser/AbstractHandler.php';
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.engine.database.transform
  */
 class XmlToData extends AbstractHandler {

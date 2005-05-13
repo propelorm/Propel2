@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Persistent.php,v 1.11 2004/06/01 04:26:22 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Fedor K. <fedor@apache.org> (Torque)
- * @version $Revision: 1.11 $
+ * @version $Revision$
  * @package propel.om
  */
 interface Persistent {

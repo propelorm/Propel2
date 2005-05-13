@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: BasicLogger.php,v 1.1 2004/08/13 16:05:07 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@
  * and Jon Parise <jon@php.net>.
  * 
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.logger
  */
 class BasicLogger 

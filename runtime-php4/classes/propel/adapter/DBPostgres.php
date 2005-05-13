@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: DBPostgres.php,v 1.2 2004/10/30 17:48:49 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@ require_once 'propel/adapter/DBAdapter.php';
  * <a href="http://www.pgsql.org">http://www.pgsql.org</a>
  *
  * @author <a href="mailto:hakan42@gmx.de">Hakan Tandogan</a>
- * @version $Id: DBPostgres.php,v 1.2 2004/10/30 17:48:49 micha Exp $
+ * @version $Id$
  */
 class DBPostgres extends DBAdapter 
 {

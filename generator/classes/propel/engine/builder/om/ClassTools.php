@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ClassTools.php,v 1.3 2004/12/20 18:42:27 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
   * Tools to support class & package inclusion and referencing.
   * 
   * @author Hans Lellelid <hans@xmpl.org>
-  * @version $Revision: 1.3 $
+  * @version $Revision$
   * @package propel.engine.builder.om
   */
 class ClassTools {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: Database.php,v 1.6 2005/03/16 03:57:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -35,7 +35,7 @@ include_once 'propel/engine/platform/PlatformFactory.php';
  * @author Martin Poeschl<mpoeschl@marmot.at> (Torque)
  * @author Daniel Rall<dlr@collab.net> (Torque)
  * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision: 1.6 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Database extends XMLElement {

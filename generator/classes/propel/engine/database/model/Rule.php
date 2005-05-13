@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Rule.php,v 1.3 2005/03/16 03:57:54 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'propel/engine/database/model/XMLElement.php';
  *
  * @author Michael Aichler <aichler@mediacluster.de> (Propel)
  * @author John McNally <jmcnally@collab.net> (Intake)
- * @version $Revision: 1.3 $
+ * @version $Revision$
  * @package propel.engine.database.model
  */
 class Rule extends XMLElement {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: DBAdapter.php,v 1.5 2004/11/18 16:52:17 dlawson_mi Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,7 +41,7 @@ include_once 'creole/Connection.php';
  * @author Jon S. Stevens <jon@latchkey.com> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision: 1.5 $
+ * @version $Revision$
  * @package propel.adapter
  */
 abstract class DBAdapter {

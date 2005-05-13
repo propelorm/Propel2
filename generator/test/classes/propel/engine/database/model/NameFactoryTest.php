@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: NameFactoryTest.php,v 1.1 2004/07/08 00:23:00 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -36,7 +36,7 @@ include_once 'propel/engine/database/model/NameFactory.php';
  * characters.</p>
  *
  * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>
- * @version $Id: NameFactoryTest.php,v 1.1 2004/07/08 00:23:00 hlellelid Exp $
+ * @version $Id$
  */
 class NameFactoryTest extends BaseTestCase {
 

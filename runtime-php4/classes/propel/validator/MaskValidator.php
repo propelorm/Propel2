@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: MaskValidator.php,v 1.2 2004/12/04 14:00:42 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,7 +37,7 @@ require_once 'propel/validator/BasicValidator.php';
  *
  * @author Michael Aichler <aichler@mediacluster.de>
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision: 1.2 $
+ * @version $Revision$
  * @package propel.validator
  */
 class MaskValidator extends BasicValidator

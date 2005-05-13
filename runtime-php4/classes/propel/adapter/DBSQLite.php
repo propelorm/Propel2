@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: DBSQLite.php,v 1.1 2004/11/29 14:08:08 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'propel/adapter/DBAdapter.php';
  *
  * @author Hans Lellelid <hans@xmpl.org>
  * @author Michael Aichler <aichler@mediacluster.de> (Propel)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  * @package propel.adapter
  */
 class DBSQLite extends DBAdapter

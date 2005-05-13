@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: Propel.php,v 1.22 2005/03/29 16:35:52 micha Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -56,7 +56,7 @@ define('PROPEL_ERROR_INVALID', -6);
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author Kurt Schrader <kschrader@karmalab.org> (Torque)
- * @version $Revision: 1.22 $
+ * @version $Revision$
  * @package propel
  */
 class Propel

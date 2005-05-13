@@ -10,7 +10,7 @@ require_once 'PHPUnit2/Framework/TestCase.php';
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author Christopher Elkins <celkins@scardini.com> (Torque)
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 abstract class BaseTestCase extends PHPUnit2_Framework_TestCase {
 
