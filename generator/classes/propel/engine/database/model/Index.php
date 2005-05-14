@@ -79,7 +79,13 @@ class Index extends XMLElement {
             $inputs[] = "I";
         }
         // ASSUMPTION: This Index not yet added to the list.
-        $inputs[] = count($table->getIndices()) + 1;
+        if ($this->isUnique()) {
+            // UNICES cannot be counted, so they store their number inside themselves
+            $inputs[] = $this->getNumber();
+        } else {
+            $inputs[] = count($table->getIndices()) + 1;
+        }
+
         $this->indexName = NameFactory::generateName(
                 NameFactory::CONSTRAINT_GENERATOR, $inputs);
     }

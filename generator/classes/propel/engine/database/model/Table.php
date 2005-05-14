@@ -530,7 +530,7 @@ class Table extends XMLElement implements IDMethod {
             $this->unices[] = $unique;
             return $unique;
         } else {
-            $unique = new Unique();
+            $unique = new Unique($this);
             $unique->loadFromXML($unqdata);
             return $this->addUnique($unique);
         }

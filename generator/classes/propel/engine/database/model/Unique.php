@@ -36,19 +36,41 @@ include_once 'propel/engine/database/model/Index.php';
  */
 class Unique extends Index {
 
+		private $number;
+
     /**
      * Default constructor.
      */
-    function __construct()
-    {    
+    public function __construct(Table $table, $indexColumns = array())
+    {
+      // when uniques' names are generated, all uniques are already in place
+      // this is why a number has to be generated to be able to generate
+      // different names for multiple uniques in one table if no name is given
+      $this->setNumber(count($table->getUnices()) + 1);
     }
-    
+
     /**
      * Returns <code>true</code>.
      */
     public function isUnique()
     {
         return true;
+    }
+
+    /**
+     * Sets a number for this unique that is used to identify the unique
+     */
+    public function setNumber($number)
+    {
+      $this->number = $number;
+    }
+
+    /**
+     * Retrieves the identification number for this unique
+     */
+    public function getNumber()
+    {
+      return $this->number;
     }
 
     /**
