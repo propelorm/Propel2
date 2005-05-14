@@ -1,4 +1,25 @@
-<?php $counter = 0;
+<?php 
+
+	$_tables = $table->getDatabase()->getTables();
+	foreach($_tables as $_table)
+	{
+		foreach($_table->getForeignKeys() as $_foreignKey)
+		{
+			if($_foreignKey->getForeignTableName() == $table->getName())
+			{
+				foreach($_foreignKey->getForeignColumns() as $_foreignColumn)
+				{
+					if(!$table->getDatabase()->getTable($_foreignKey->getForeignTableName())->getColumn($_foreignColumn)->isPrimaryKey())
+					{
+						?>    INDEX `I_<?php echo $_foreignKey->getName(); ?>_to_<?php echo $_foreignColumn; ?>` (`<?php echo $_foreignColumn; ?>`),
+<?php
+					}
+				}
+			}
+		}
+	}
+
+      $counter = 0;
       foreach ($table->getForeignKeys() as $fk) {
         $counter++;
         $fnames = array();
@@ -13,5 +34,6 @@
 
         $constraintName = "`" . $table->getName() . "_ibfk_{$counter}`";
 ?>
+    INDEX (<?php echo implode(',', $lnames); ?>),
     CONSTRAINT <?php echo $constraintName ?> FOREIGN KEY (<?php echo implode(',', $lnames); ?>) REFERENCES <?php echo "`" . $fk->getForeignTableName() . "`" ?> (<?php echo implode(',', $fnames); ?>),
 <?php } ?>
