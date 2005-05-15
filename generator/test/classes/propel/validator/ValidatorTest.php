@@ -17,21 +17,21 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 require_once 'bookstore/BookstoreTestBase.php';
 
 /**
  * Tests the validator classes.
  *
- * This test uses generated Bookstore classes to test the behavior of various 
+ * This test uses generated Bookstore classes to test the behavior of various
  * validator operations.
- * 
+ *
  * The database is relaoded before every test and flushed after every test.  This
- * means that you can always rely on the contents of the databases being the same 
- * for each test method in this class.  See the BookstoreDataPopulator::populate() 
+ * means that you can always rely on the contents of the databases being the same
+ * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
- * 
+ *
  * @see BookstoreDataPopulator
  * @author Michael Aichler <aichler@mediacluster.de>
  */
@@ -72,21 +72,27 @@ class ValidatorTest extends BookstoreTestBase
     $book->setTitle("12345"); // min length is 10
 
     $author = new Author();
-    $author->setFirstName("Hans"); // last name required; will fail
-    
+    $author->setFirstName("Hans"); // last name required, valid email format, age > 0
+
     $review = new Review();
-    $review->setReviewDate("08/09/2001"); // will fail: reviewed_by column required
-     
+    $review->setReviewDate("08/09/2001"); // reviewed_by column required, invalid status (new, reviewed, archived)
+
     $book->setAuthor($author);
     $book->addReview($review);
-    
+
     $ret = $book->validate();
-    
     /* Make sure 3 validation messages were returned */
-    $this->assertEquals(3, count($ret), "");
-    
+    $this->assertEquals(6, count($ret), "");
+
     /* Make sure correct columns failed */
-    $expectedCols = array(AuthorPeer::LAST_NAME, BookPeer::TITLE, ReviewPeer::REVIEWED_BY);
+    $expectedCols = array(
+		AuthorPeer::LAST_NAME,
+		AuthorPeer::EMAIL,
+		AuthorPeer::AGE,
+		BookPeer::TITLE,
+		ReviewPeer::REVIEWED_BY,
+		ReviewPeer::STATUS
+	);
     $returnedCols = array_keys($ret);
 
     /* implode for readability */
