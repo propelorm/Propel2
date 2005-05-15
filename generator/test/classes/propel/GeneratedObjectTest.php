@@ -93,6 +93,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testGetFieldNames (){
 
+		if (!defined('Book::TYPE_FIELDNAME')) {
+			return;
+		}
+
 		$defaultType = Book::TYPE_FIELDNAME;
 		$types = array(
 			Book::TYPE_PHPNAME,
@@ -149,6 +153,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testTranslateFieldName (){
 
+		if (!defined('Book::TYPE_FIELDNAME')) {
+			return;
+		}
+
 		$types = array(
 			Book::TYPE_PHPNAME,
 			Book::TYPE_COLNAME,
@@ -178,6 +186,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testGetByName(){
 
+		if (!defined('Book::TYPE_FIELDNAME')) {
+			return;
+		}
+
 		$types = array(
 			Book::TYPE_PHPNAME => 'Title',
 			Book::TYPE_COLNAME => 'book.TITLE',
@@ -201,6 +213,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
 	 */
 	public function testToArray(){
+
+		if (!defined('Book::TYPE_FIELDNAME')) {
+			return;
+		}
 
 		$types = array(
 			Book::TYPE_PHPNAME,
@@ -253,6 +269,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
 	 */
 	public function testFromArray(){
+
+		if (!defined('Book::TYPE_FIELDNAME')) {
+			return;
+		}
 
 		$types = array(
 			Book::TYPE_PHPNAME,
