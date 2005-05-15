@@ -160,7 +160,6 @@
       description="Does reviewer recommend book?"/>
 	<column
       name="status"
-      required="true"
       type="VARCHAR"
       size="8"
       description="The status of this review."/>
