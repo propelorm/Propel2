@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'PHPUnit2/Framework/TestCase.php';
 include_once 'propel/engine/database/transform/XmlToAppData.php';
 
@@ -36,16 +36,27 @@ class TableTest extends PHPUnit2_Framework_TestCase {
 
     /**
      * test if the tables get the package name from the properties file
-     * 
+     *
      */
     public function testIdMethodHandling() {
         $this->xmlToAppData = new XmlToAppData("mysql", "defaultpackage", null);
-        $this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
+
+        //$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
+        $this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
+
         $db = $this->appData->getDatabase("iddb");
-        $this->assertEquals(IDMethod::NATIVE, $db->getDefaultIdMethod());
-        $table = $db->getTable("table_none");
-        $this->assertEquals(IDMethod::NO_ID_METHOD, $table->getIdMethod());
+        $expected = IDMethod::NATIVE;
+        $result = $db->getDefaultIdMethod();
+        $this->assertEquals($expected, $result);
+
         $table2 = $db->getTable("table_native");
-        $this->assertEquals(IDMethod::NATIVE, $table2->getIdMethod());
+        $expected = IDMethod::NATIVE;
+        $result = $table2->getIdMethod();
+        $this->assertEquals($expected, $result);
+
+        $table = $db->getTable("table_none");
+        $expected = IDMethod::NO_ID_METHOD;
+        $result = $table->getIdMethod();
+        $this->assertEquals($expected, $result);
     }
 }

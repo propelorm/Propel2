@@ -1,6 +1,6 @@
 <?php
 
-require_once 'propel/BaseTestCase.php';
+require_once 'classes/propel/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 include_once 'propel/util/BasePeer.php';
 
@@ -29,11 +29,11 @@ class CriteriaTest extends BaseTestCase {
      * Test basic adding of strings.
      */
     public function testAddString() {
-    
+
         $table = "myTable";
         $column = "myColumn";
-        $value = "myValue";    
-        
+        $value = "myValue";
+
         // Add the string
         $this->c->add($table . '.' . $column, $value);
 
@@ -53,22 +53,22 @@ class CriteriaTest extends BaseTestCase {
         $column2 = "myColumn2";
         $value2 = "myValue2";
         $key2 = "$table2.$column2";
-        
+
         $table3 = "myTable3";
         $column3 = "myColumn3";
         $value3 = "myValue3";
         $key3 = "$table3.$column3";
-        
+
         $table4 = "myTable4";
         $column4 = "myColumn4";
         $value4 = "myValue4";
         $key4 = "$table4.$column4";
-        
+
         $table5 = "myTable5";
         $column5 = "myColumn5";
         $value5 = "myValue5";
         $key5 = "$table5.$column5";
-        
+
         $crit2 = $this->c->getNewCriterion($key2, $value2, Criteria::EQUAL);
         $crit3 = $this->c->getNewCriterion($key3, $value3, Criteria::EQUAL);
         $crit4 = $this->c->getNewCriterion($key4, $value4, Criteria::EQUAL);
@@ -80,19 +80,19 @@ class CriteriaTest extends BaseTestCase {
                 . "AND myTable3.myColumn3=?) "
             . "OR (myTable4.myColumn4=? "
                 . "AND myTable5.myColumn5=?))";
-                
+
         $crit2->appendPsTo($sb="", $params=array());
-        
-        $expect_params = array(   
+
+        $expect_params = array(
                                     array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
                                     array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
                                     array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
                                     array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
                                 );
-        
+
         $this->assertEquals($expect, $sb);
         $this->assertEquals($expect_params, $params);
-        
+
         $crit6 = $this->c->getNewCriterion($key2, $value2, Criteria::EQUAL);
         $crit7 = $this->c->getNewCriterion($key3, $value3, Criteria::EQUAL);
         $crit8 = $this->c->getNewCriterion($key4, $value4, Criteria::EQUAL);
@@ -104,19 +104,19 @@ class CriteriaTest extends BaseTestCase {
                     . "AND myTable3.myColumn3=?) "
                 . "OR myTable4.myColumn4=?) "
                     . "AND myTable5.myColumn5=?)";
-                    
+
         $crit6->appendPsTo($sb="", $params=array());
-        
-        $expect_params = array(   
+
+        $expect_params = array(
                                     array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
                                     array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
                                     array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
                                     array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
                                 );
-                                
+
         $this->assertEquals($expect, $sb);
         $this->assertEquals($expect_params, $params);
-        
+
         // should make sure we have tests for all possibilities
 
         $crita = $crit2->getAttachedCriterion();
@@ -134,7 +134,7 @@ class CriteriaTest extends BaseTestCase {
         $this->assertEquals($crit5->getTable(), $tables[3]);
 
         // simple confirmations that equality operations work
-        $this->assertTrue($crit2->hashCode() === $crit2->hashCode());        
+        $this->assertTrue($crit2->hashCode() === $crit2->hashCode());
     }
 
     /**
@@ -146,7 +146,7 @@ class CriteriaTest extends BaseTestCase {
                 "INVOICE.COST",
                 1000,
                 Criteria::GREATER_EQUAL);
-                
+
         $cn2 = $this->c->getNewCriterion(
                 "INVOICE.COST",
                 5000,
@@ -155,11 +155,11 @@ class CriteriaTest extends BaseTestCase {
         $expect =
             "SELECT  FROM INVOICE WHERE "
             . "(INVOICE.COST>=? AND INVOICE.COST<=?)";
-        
+
         $expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => 1000),
                                 array('table' => 'INVOICE', 'column' => 'COST', 'value' => 5000),
                                );
-                                        
+
         try {
             $result = BasePeer::createSelectSql($this->c, $params=array());
         } catch (PropelException $e) {
@@ -186,7 +186,7 @@ class CriteriaTest extends BaseTestCase {
             "SELECT  FROM INVOICE WHERE "
             . "((INVOICE.COST>=? AND INVOICE.COST<=?) "
             . "OR (INVOICE.COST>=? AND INVOICE.COST<=?))";
-        
+
         $expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
                                 array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
                                 array('table' => 'INVOICE', 'column' => 'COST', 'value' => '8000'),
@@ -194,7 +194,7 @@ class CriteriaTest extends BaseTestCase {
                                );
 
         try {
-            $result = BasePeer::createSelectSql($this->c, $params=array());                    
+            $result = BasePeer::createSelectSql($this->c, $params=array());
         } catch (PropelException $e) {
             $this->fail("PropelException thrown in BasePeer::createSelectSql()");
         }
@@ -232,7 +232,7 @@ class CriteriaTest extends BaseTestCase {
 
         $expect = "SELECT  FROM TABLE WHERE TABLE.COLUMN=?";
         $expect_params = array( array('table' => 'TABLE', 'column' => 'COLUMN', 'value' => true),
-                               );                               
+                               );
         try {
             $result = BasePeer::createSelectSql($this->c, $params=array());
         } catch (PropelException $e) {
@@ -241,17 +241,17 @@ class CriteriaTest extends BaseTestCase {
 
         $this->assertEquals($expect, $result, "Boolean test failed.");
         $this->assertEquals($expect_params, $params);
-        
+
     }
 
     public function testCurrentDate()
     {
         $this->c = new Criteria();
         $this->c->add("TABLE.TIME_COLUMN", Criteria::CURRENT_TIME);
-        $this->c->add("TABLE.DATE_COLUMN", Criteria::CURRENT_DATE);    
+        $this->c->add("TABLE.DATE_COLUMN", Criteria::CURRENT_DATE);
 
         $expect = "SELECT  FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE";
-        
+
         $result = null;
         try {
             $result = BasePeer::createSelectSql($this->c, $params=array());
@@ -267,10 +267,10 @@ class CriteriaTest extends BaseTestCase {
     public function testCountAster()
     {
         $this->c = new Criteria();
-        $this->c->addSelectColumn("COUNT(*)");        
+        $this->c->addSelectColumn("COUNT(*)");
         $this->c->add("TABLE.TIME_COLUMN", Criteria::CURRENT_TIME);
         $this->c->add("TABLE.DATE_COLUMN", Criteria::CURRENT_DATE);
-        
+
         $expect = "SELECT COUNT(*) FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE";
 
         $result = null;
@@ -284,5 +284,5 @@ class CriteriaTest extends BaseTestCase {
         $this->assertEquals($expect, $result);
 
     }
-   
+
 }

@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/BaseTestCase.php';
+require_once 'classes/propel/BaseTestCase.php';
 include_once 'propel/engine/database/model/NameFactory.php';
 
 /**
@@ -54,7 +54,7 @@ class NameFactoryTest extends BaseTestCase {
      * Two dimensional arrays of inputs for each algorithm.
      */
     private static $INPUTS = array();
-    
+
 
     /**
      * Given the known inputs, the expected name outputs.
@@ -68,12 +68,12 @@ class NameFactoryTest extends BaseTestCase {
 
     /**
      * Creates a new instance.
-     * 
+     *
      */
     public function __construct() {
-    
-        self::$INPUTS = array( 
-                array( array(self::makeString(61), "I", 1), 
+
+        self::$INPUTS = array(
+                array( array(self::makeString(61), "I", 1),
                         array(self::makeString(61), "I", 2),
                         array(self::makeString(65), "I", 3),
                         array(self::makeString(4), "FK", 1),
@@ -86,7 +86,7 @@ class NameFactoryTest extends BaseTestCase {
                     )
                 );
 
-                
+
         self::$OUTPUTS = array(
                         array(
                             self::makeString(60) . "_I_1",
@@ -95,15 +95,15 @@ class NameFactoryTest extends BaseTestCase {
                             self::makeString(4) . "_FK_1",
                             self::makeString(5) . "_FK_2"),
                         array("MyUser", "MYUSER", "MY_USER")
-                    );                        
-                        
+                    );
+
     }
 
     /**
      * Creates a string of the specified length consisting entirely of
      * the character <code>A</code>.  Useful for simulating table
      * names, etc.
-     * 
+     *
      * @param int $len the number of characters to include in the string
      * @return a string of length <code>len</code> with every character an 'A'
      */

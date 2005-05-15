@@ -4,7 +4,14 @@
 <database name="iddb" defaultIdMethod="native">
 
   <table name="table_native">
-    <column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
+  	<!--
+  		Added the autoIncrement attribute to get run-tests.php running.
+  		Without autoIncrement=true the idMethod will get reset to
+  		IDMethod::NO_ID_METHOD in Table::doFinalInitialization() and
+  		the test (expecting IDMethod::NATIVE) will fail.
+  		Hope this makes sense.
+  	-->
+    <column name="table_a_id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
     <column name="col_a" type="CHAR" size="5" />
   </table>
 
@@ -12,7 +19,7 @@
     <column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
     <column name="col_a" type="CHAR" size="5" />
   </table>
-  
-  
+
+
 </database>
 
