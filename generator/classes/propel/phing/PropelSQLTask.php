@@ -166,7 +166,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
                 	$name = $dataModel->getName();
 				} else {
 					// this assumes that schema files always are named this way :(
-					$name = $package . '.schema.xml';
+					$name = ($package ? $package . '.' : '') . 'schema.xml';
 				}
                 $outFile = $this->getMappedFile($name);
 

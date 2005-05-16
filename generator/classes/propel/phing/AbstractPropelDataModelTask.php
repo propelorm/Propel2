@@ -191,7 +191,7 @@ abstract class AbstractPropelDataModelTask extends Task {
      */
     public function setPackageObjectModel($v)
     {
-        $this->packageObjectModel = (boolean) $v;
+        $this->packageObjectModel = ($v === '1' ? true : false);
     }
 
     /**
