@@ -100,19 +100,29 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
             $sqldbmap->load($this->getSqlDbMap());
         }
 
-        $dmMap = $this->getDataModelDbMap();
-        foreach(array_keys($dmMap) as $dataModelName) {
-
-            $sqlFile = $this->getMappedFile($dataModelName);
-
-            if ($this->getDatabase() === null) {
-                $databaseName = $dmMap[$dataModelName];
-            } else {
-                $databaseName = $this->getDatabase();
-            }
-
-            $sqldbmap->setProperty($sqlFile->getName(), $databaseName);
-        }
+		if ($this->packageObjectModel) {
+			// in this case we'll get the sql file name from the package attribute
+			$dataModels = $this->packageDataModels();
+			foreach ($dataModels as $package => $dataModel) {
+				foreach ($dataModel->getDatabases() as $database) {
+					$name = ($package ? $package . '.' : '') . 'schema.xml';
+                	$sqlFile = $this->getMappedFile($name);
+					$sqldbmap->setProperty($sqlFile->getName(), $database->getName());
+				}
+			}
+		} else {
+			// the traditional way is to map the schema.xml filenames
+			$dmMap = $this->getDataModelDbMap();
+			foreach(array_keys($dmMap) as $dataModelName) {
+				$sqlFile = $this->getMappedFile($dataModelName);
+				if ($this->getDatabase() === null) {
+					$databaseName = $dmMap[$dataModelName];
+				} else {
+					$databaseName = $this->getDatabase();
+				}
+				$sqldbmap->setProperty($sqlFile->getName(), $databaseName);
+			}
+		}
 
         try {
             $sqldbmap->store($this->getSqlDbMap(), "Sqlfile -> Database map");
@@ -165,7 +175,6 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 				if (!$this->packageObjectModel) {
                 	$name = $dataModel->getName();
 				} else {
-					// this assumes that schema files always are named this way :(
 					$name = ($package ? $package . '.' : '') . 'schema.xml';
 				}
                 $outFile = $this->getMappedFile($name);
@@ -216,27 +225,41 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
     } // main()
 
+    /**
+     * Packages the datamodels to one datamodel per package
+     *
+     * This applies only when the the packageObjectModel option is set. We need to
+     * re-package the datamodels to allow the database package attribute to control
+     * which tables go into which SQL file.
+     *
+     * @return array The packaged datamodels
+     */
     protected function packageDataModels() {
 
-		$dataModel = array_shift($this->getDataModels());
-		$result = array();
+		static $packagedDataModels;
 
-		foreach ($dataModel->getDatabases() as $db) {
-			foreach ($db->getTables() as $table) {
-				$package = $table->getPackage();
-				if (!isset($result[$package])) {
-					$dbClone = $this->cloneDatabase($db);
-					$dbClone->setPackage($package);
-					$ad = new AppData($db->getDatabaseType());
-					$ad->setName($dataModel->getName());
-					$ad->addDatabase($dbClone);
-					$result[$package] = $ad;
+		if (is_null($packagedDataModels)) {
+
+			$dataModel = array_shift($this->getDataModels());
+			$packagedDataModels = array();
+
+			foreach ($dataModel->getDatabases() as $db) {
+				foreach ($db->getTables() as $table) {
+					$package = $table->getPackage();
+					if (!isset($packagedDataModels[$package])) {
+						$dbClone = $this->cloneDatabase($db);
+						$dbClone->setPackage($package);
+						$ad = new AppData($db->getDatabaseType());
+						$ad->setName($dataModel->getName());
+						$ad->addDatabase($dbClone);
+						$packagedDataModels[$package] = $ad;
+					}
+					$packagedDataModels[$package]->getDatabase($db->getName())->addTable($table);
 				}
-				$result[$package]->getDatabase($db->getName())->addTable($table);
 			}
 		}
 
-		return $result;
+		return $packagedDataModels;
 	}
 
 	protected function cloneDatabase($db) {

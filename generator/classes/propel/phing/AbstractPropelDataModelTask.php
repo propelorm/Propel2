@@ -357,6 +357,15 @@ abstract class AbstractPropelDataModelTask extends Task {
         $this->dataModelsLoaded = true;
     }
 
+    /**
+     * Joins the datamodels collected from schema.xml files into one big datamodel
+     *
+     * This applies only when the the packageObjectModel option is set. We need to
+     * join the datamodels in this case to allow for foreign keys that point to
+     * tables in different packages.
+     *
+     * @param array $ads The datamodels to join
+     */
     protected function joinDatamodels($ads) {
 
 		foreach($ads as $ad) {
