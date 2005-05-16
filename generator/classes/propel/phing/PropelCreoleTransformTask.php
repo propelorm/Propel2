@@ -231,12 +231,14 @@ class PropelCreoleTransformTask extends Task {
      * @param string $v The propel.addValidators property
      * @return void
      */
-    public function setValidators($v)
+    public function setAddValidators($v)
     {
 		// lowercase input
 		$v = strtolower($v);
 		// make it a bit expression
-		$v = str_replace(array_keys(self::$validatorBitMap), self::$validatorBitMap, $v);
+		$v = str_replace(
+			array_keys(self::$validatorBitMap), self::$validatorBitMap, $v);
+		// check if it's a valid boolean expression
 		if (!preg_match('/[^\d|&~ ]/', $v)) {
 			// eval the expression
 			eval("\$v = $v;");

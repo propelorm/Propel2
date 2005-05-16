@@ -83,6 +83,11 @@ propel.home = .
 #   Sets whether Propel is building classes for php5 (default) 
 #   or php4 (experimental).
 #
+# packageObjectModel
+#   Sets whether Propel is packaging ObjectModel fro several 
+#   [package].schema.xml files. The <database package="packageName">
+#   attribute has to be set then. (warning: this is experimental!)
+#
 # -------------------------------------------------------------------
 
 # classes will be put in (and  included from) this directory
@@ -98,6 +103,7 @@ propel.addTimeStamp = true
 propel.basePrefix = Base
 propel.complexObjectModel = true
 propel.targetPlatform = php5
+propel.packageObjectModel = false
 
 # -------------------------------------------------------------------
 #
@@ -132,11 +138,44 @@ propel.targetPlatform = php5
 # propel.database.createUrl = mysql://root@localhost/
 
 
-#   This only applies to the 'creole' target.  If true, the Creole 
-#   task will set the phpName attribute for the tables and columns 
-#   to be the same as SQL name.
+# -------------------------------------------------------------------
+#
+# C R E O L E  TO  X M L
+#
+# -------------------------------------------------------------------
+# These settings only applies to the 'creole' target.  
+# -------------------------------------------------------------------
+#
+# samePhpName 
+#   If true, the Creole task will set the phpName attribute for the 
+#   tables and columns to be the same as SQL name.
+#
+# addVendorInfo 
+#   If true, the Creole task will add vendor specific information 
+#   to the database schema
+#
+# addValidators 
+#   Bitfield like option to turn on/off addition of Validator and 
+#   Rule tags to the schema. Uses a boolean syntax like in php.ini.
+#   Allowed tokens are: 
+#      none       add no validators)
+#      all        add all validators)
+#      maxlength  add maxlengths for string type columns)
+#      maxvalue   add maxvalue for numeric columns)
+#      type       add notmatch validators for numeric columns)
+#      required   add required validators for required columns)
+#      unique     add unique validators for unique indexes)
+#   Allowed operators are: 
+#      &          bitwise AND 
+#      |          bitwise OR
+#      ~          bitwise NOT
+#
+# -------------------------------------------------------------------
 
 # propel.samePhpName = false
+# propel.addVendorInfo=true
+# propel.addValidators=none
+
 
 # -------------------------------------------------------------------
 #

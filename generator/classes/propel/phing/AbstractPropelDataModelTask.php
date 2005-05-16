@@ -67,7 +67,7 @@ abstract class AbstractPropelDataModelTask extends Task {
      * Hashtable containing the names of all the databases
      * in our collection of schemas.
      */
-    protected $databaseNames;
+    protected $databaseNames; // doesn't seem to be used anywhere
 
     /**
      * The target database(s) we are generating SQL
@@ -103,6 +103,12 @@ abstract class AbstractPropelDataModelTask extends Task {
      * @var File
      */
     protected $templatePath;
+
+    /**
+     * Whether to package the datamodels or not
+     * @var File
+     */
+    protected $packageObjectModel;
 
     /**
      * Return the data models that have been
@@ -176,6 +182,16 @@ abstract class AbstractPropelDataModelTask extends Task {
     public function setTargetPackage($v)
     {
         $this->targetPackage = $v;
+    }
+
+    /**
+     * Set the packageObjectModel switch on/off
+     *
+     * @param string $v The build.property packageObjectModel
+     */
+    public function setPackageObjectModel($v)
+    {
+        $this->packageObjectModel = (boolean) $v;
     }
 
     /**
@@ -299,7 +315,6 @@ abstract class AbstractPropelDataModelTask extends Task {
      */
     protected function loadDataModels()
     {
-
         // Get all matched files from schemaFilesets
         foreach($this->schemaFilesets as $fs) {
             $ds = $fs->getDirectoryScanner($this->project);
@@ -316,24 +331,67 @@ abstract class AbstractPropelDataModelTask extends Task {
                                               $this->dbEncoding);
                 $ad = $xmlParser->parseFile($f->__toString());
                 $ad->setName($f->getName());
-                $this->dataModels[] = $ad;
+                $ads[] = $ad;
             }
         }
 
-        $this->databaseNames = array();
-        $this->dataModelDbMap = array();
+		if (!$this->packageObjectModel) {
 
-        // Different datamodels may state the same database
-        // names, we just want the unique names of databases.
-        foreach($this->dataModels as $dm) {
-            $database = $dm->getDatabase();
-            $this->databaseNames[$database->getName()] = $database->getName(); // making list of *unique* dbnames.
-            $this->dataModelDbMap[$dm->getName()] = $database->getName();
-        }
+			$this->dataModels = $ads;
+			$this->databaseNames = array(); // doesn't seem to be used anywhere
+			$this->dataModelDbMap = array();
+
+			// Different datamodels may state the same database
+			// names, we just want the unique names of databases.
+			foreach($this->dataModels as $dm) {
+				$database = $dm->getDatabase();
+				$this->dataModelDbMap[$dm->getName()] = $database->getName();
+				$this->databaseNames[$database->getName()] = $database->getName(); // making list of *unique* dbnames.
+			}
+		} else {
+
+			$this->joinDatamodels($ads);
+			$this->dataModels[0]->getDatabases(); // calls doFinalInitialization()
+		}
 
         $this->dataModelsLoaded = true;
-
     }
+
+    protected function joinDatamodels($ads) {
+
+		foreach($ads as $ad) {
+			$db = $ad->getDatabase(null, false);
+			$this->dataModelDbMap[$ad->getName()] = $db->getName();
+		}
+
+		foreach ($ads as $addAd) {
+
+			$ad = &$this->dataModels[0];
+			if (!isset($ad)) {
+				$addAd->setName('JoinedDataModel');
+				$ad = $addAd;
+				continue;
+			}
+			foreach ($addAd->getDatabases(false) as $addDb) {
+				$addDbName = $addDb->getName();
+				if (!$package = $addDb->getPackage()) {
+					throw new BuildException('No package found for database "' . $addDbName . '" in ' . $addAd->getName() . '. The propel.packageObjectModel property requires the package attribute to be set for each database.');
+				}
+				$db = $ad->getDatabase($addDbName, false);
+				if (!$db) {
+					$ad->addDatabase($addDb);
+					continue;
+				}
+				foreach ($addDb->getTables() as $addTable) {
+					$table = $db->getTable($addTable->getName());
+					if ($table) {
+						throw new BuildException('Duplicate table found: ' . $addDbName . '.');
+					}
+					$db->addTable($addTable);
+				}
+			}
+		}
+	}
 
     /**
      * Creates a new Capsule context with some basic properties set.

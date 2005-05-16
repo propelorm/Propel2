@@ -132,7 +132,9 @@
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
-      templatePath="${propel.templatePath}">
+      templatePath="${propel.templatePath}"
+      packageObjectModel="${propel.packageObjectModel}"
+      >
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"
@@ -166,7 +168,9 @@
       outputFile="create-db.sql"
       targetDatabase="${propel.database}"
       dbEncoding="${propel.database.encoding}"
-      templatePath="${propel.templatePath}">
+      templatePath="${propel.templatePath}"
+      packageObjectModel="${propel.packageObjectModel}"
+      >
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.create-db.includes}"
         excludes="${propel.schema.create-db.excludes}"
@@ -223,6 +227,8 @@
       dbUrl="${propel.database.url}"
       outputFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
       samePhpName="${propel.samePhpName}"
+      addVendorInfo="${propel.addVendorInfo}"
+      addValidators="${propel.addValidators}"
     />
   </target>
 
@@ -247,7 +253,8 @@
       targetDatabase="${propel.database}"
       templatePath="${propel.templatePath}"
       datadbmap="${propel.schema.dir}/datadb.map"
-      srcDir="${propel.schema.dir}">
+      srcDir="${propel.schema.dir}"
+      >
       <mapper type="glob" from="${propel.datasql.mapper.from}" to="${propel.datasql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.datadtd.includes}"
@@ -356,7 +363,9 @@
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
       templatePath="${propel.templatePath}"
-      targetPlatform="${propel.targetPlatform}">
+      targetPlatform="${propel.targetPlatform}"
+      packageObjectModel="${propel.packageObjectModel}"
+      >
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.om.includes}"
         excludes="${propel.schema.om.excludes}"
@@ -365,7 +374,7 @@
   </target>
 
   <!-- the new OM tasks -->
-  
+
   <target
     name="new-om"
     depends="om-check"
@@ -396,8 +405,8 @@
       />
     </propel-new-om>
   </target>
-  
-  
+
+
   <!-- ================================================================== -->
   <!-- P R O P S   T O   P H P   A R R A Y                                -->
   <!-- ================================================================== -->

@@ -27,7 +27,7 @@ include_once 'propel/engine/database/model/Database.php';
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author John McNally <jmcnally@collab.net> (Torque) 
+ * @author John McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @version $Revision$
  * @package propel.engine.database.model
@@ -39,7 +39,7 @@ class AppData {
      * @var array Database[]
      */
     private $dbList = array();
-  
+
     /**
      * The type for our databases.
      * @var string
@@ -52,8 +52,8 @@ class AppData {
      */
     private $name;
 
-    /** 
-     * Flag to ensure that initialization is performed only once. 
+    /**
+     * Flag to ensure that initialization is performed only once.
      * @var boolean
      */
     private $isInitialized = false;
@@ -68,7 +68,7 @@ class AppData {
     {
         $this->databaseType = $databaseType;
     }
-    
+
     /**
      * Set the name of the database.
      *
@@ -104,9 +104,13 @@ class AppData {
      *
      * @return Array of Database objects
      */
-    public function getDatabases()
+    public function getDatabases($doFinalInit = true)
     {
-        $this->doFinalInitialization();
+		// this is temporary until we'll have a clean solution
+		// for packaging datamodels/requiring schemas
+        if ($doFinalInit) {
+        	$this->doFinalInitialization();
+		}
         return $this->dbList;
     }
 
@@ -126,14 +130,18 @@ class AppData {
      * @param name database name
      * @return A Database object.  If it does not exist it returns null
      */
-    public function getDatabase($name = null)
+    public function getDatabase($name = null, $doFinalInit = true)
     {
-        $this->doFinalInitialization();
-        
+		// this is temporary until we'll have a clean solution
+		// for packaging datamodels/requiring schemas
+        if ($doFinalInit) {
+        	$this->doFinalInitialization();
+		}
+
         if ($name === null) {
             return $this->dbList[0];
         }
-        
+
         for($i=0,$size=count($this->dbList); $i < $size; $i++) {
             $db = $this->dbList[$i];
             if ($db->getName() === $name) {
@@ -152,7 +160,7 @@ class AppData {
     public function addDatabase($db)
     {
         if ($db instanceof Database) {
-            $db->setAppData($this);            
+            $db->setAppData($this);
             if ($db->getDatabaseType() === null) {
                 $db->setDatabaseType($this->databaseType);
             }
@@ -164,11 +172,11 @@ class AppData {
             $d->loadFromXML($db);
             return $this->addDatabase($d); // calls self w/ different param type
         }
-        
+
     }
-    
+
     /**
-     * 
+     *
      * @return void
      */
     private function doFinalInitialization()
@@ -190,7 +198,7 @@ class AppData {
     public function toString()
     {
         $result = "<app-data>\n";
-        for ($i=0,$size=count($this->dbList); $i < $size; $i++) {       
+        for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
             $result .= $this->dbList[$i]->toString();
         }
         $result .= "</app-data>";
