@@ -18,7 +18,7 @@
  * functionality into class & provide ability to subclass.
  *
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
+ * @version $Revision: 71 $
  */
 
 // Setup configuration.  It is expected that the bookstore-conf.php file exists in ../build/conf
@@ -26,9 +26,9 @@
 
 error_reporting(E_ALL);
 
-$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore/build/conf/bookstore-conf.php');
+$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore-packaged/build/conf/bookstore-packaged-conf.php');
 if (!file_exists($conf_path)) {
-    print "Make sure that you specify properties in conf/bookstore.properties and "
+    print "Make sure that you specify properties in conf/bookstore-packaged.properties and "
     ."build propel before running this script.";
     exit;
 }
@@ -40,20 +40,21 @@ if (!file_exists($conf_path)) {
  // Add build/classes/ and classes/ to path
  set_include_path(
  			//realpath(dirname(__FILE__) . '/../classes') . PATH_SEPARATOR .
-			realpath(dirname(__FILE__) . '/../projects/bookstore/build/classes') . PATH_SEPARATOR .
+			realpath(dirname(__FILE__) . '/../projects/bookstore-packaged/build/classes') . PATH_SEPARATOR .
 			get_include_path()
  );
 
 
  // Require classes.
  require_once 'propel/Propel.php';
- require_once 'bookstore/Author.php';
- require_once 'bookstore/Publisher.php';
- require_once 'bookstore/Book.php';
- require_once 'bookstore/Review.php';
- include_once 'bookstore/Media.php';
- include_once 'bookstore/BookClubList.php';
- include_once 'bookstore/BookListRel.php';
+ require_once 'author/Author.php';
+ require_once 'publisher/Publisher.php';
+ require_once 'book/Book.php';
+ require_once 'review/Review.php';
+ include_once 'media/Media.php';
+ include_once 'log/BookstoreLog.php';
+ include_once 'book_club_list/BookClubList.php';
+ include_once 'book_club_list/BookListRel.php';
 
  include_once 'Benchmark/Timer.php';
 
@@ -209,8 +210,6 @@ try {
     $phoenix = new Book();
     $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
     $phoenix->setISBN("043935806X");
-
-
 
     print "Trying cascading save (Harry Potter): ";
     $phoenix->setAuthor($rowling);
@@ -561,6 +560,7 @@ try {
     die("Error doing validation tests: " . $e->__toString());
 }
 
+
 // Test doCount()
 //
 try {
@@ -658,6 +658,29 @@ try {
 
 } catch (Exception $e) {
     die("Error doing many-to-many relationships tests: " . $e->__toString());
+}
+
+// Test multiple databases
+// ---------------
+
+try {
+
+    print "\nTesting multiple databases\n";
+    print "-----------------------------\n\n";
+
+    $line = new BookstoreLog();
+    $line->setIdent('bookstore-packaged-test');
+    $line->setTime(time());
+    $line->setMessage('We are testing to write something to the log database ...');
+    $line->setPriority('debug');
+    $line->save();
+
+    $line_id = $line->getId();
+    print "Making sure BookstoreLog was saved: ";
+    print boolTest(!empty($line_id));
+
+} catch (Exception $e) {
+    die("Error doing multiple databases tests: " . $e->__toString());
 }
 
 // Cleanup (tests DELETE)
