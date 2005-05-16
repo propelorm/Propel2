@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../dtd/database.dtd">
+
+<database package="log" name="bookstore-log" defaultIdMethod="native">
+
+  <table name="log" phpName="BookstoreLog" description="Used to test multiple databases support">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Id"/>
+	<column
+      name="time"
+      required="true"
+      type="TIMESTAMP"
+      description="Log time"/>
+	<column
+      name="ident"
+      required="true"
+      type="CHAR"
+      size="24"
+      description="Log priority"/>
+	<column
+      name="priority"
+      required="true"
+      type="INTEGER"
+      description="Log priority"/>
+    <column
+      name="message"
+      required="true"
+      type="LONGVARCHAR"
+      description="Log message"/>
+  </table>
+
+</database>

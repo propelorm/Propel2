@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../dtd/database.dtd">
+
+<database package="publisher" name="bookstore" defaultIdMethod="native">
+
+  <table name="publisher" description="Publisher Table">
+    <column
+      name="id"
+      required="true"
+      primaryKey="true"
+	  autoIncrement="true"
+      type="INTEGER"
+      description="Publisher Id"/>
+    <column
+      name="name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+	  default="Penguin"
+      description="Publisher Name"/>
+  </table>
+
+</database>
