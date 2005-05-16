@@ -223,6 +223,7 @@
 	  name="id"
 	  required="true"
 	  primaryKey="true"
+	  autoIncrement="true"
 	  type="INTEGER"
 	  description="Unique ID for a school reading list."/>
 	<column
