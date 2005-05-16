@@ -76,7 +76,7 @@ class PropelCreoleTransformTask extends Task {
     protected $samePhpName;
 
     /** whether to add vendor info or not */
-	protected $addVendorInfo = true;
+	protected $addVendorInfo;
 
     /**
      * Bitfield to switch on/off which validators will be created.
@@ -585,9 +585,8 @@ class PropelCreoleTransformTask extends Task {
      * @return boolean
      */
     protected function isValidatorRequired($type) {
-
 		$type = strtolower($type);
-		return ($this->validatorBits & self::$validatorBitMap[$type]);
+		return ($this->validatorBits & self::$validatorBitMap[$type] ? true : false);
 	}
 
     /**
@@ -636,7 +635,7 @@ class PropelCreoleTransformTask extends Task {
 		}
 		$isPrimarykeyCol = in_array($colName, $this->getTablePkCols($table));
 		if ($this->isValidatorRequired('unique') && $isPrimarykeyCol) {
-			$rule = array('type' => 'unique');
+			$ruleInfo = array('type' => 'unique');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('maxLength') &&
@@ -644,7 +643,7 @@ class PropelCreoleTransformTask extends Task {
 					CreoleTypes::CHAR,
 					CreoleTypes::VARCHAR,
 					CreoleTypes::LONGVARCHAR))) {
-			$rule = array('type' => 'maxLength', 'value' => $colSize);
+			$ruleInfo = array('type' => 'maxLength', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('maxValue') &&
@@ -661,7 +660,7 @@ class PropelCreoleTransformTask extends Task {
 
 			// TODO: how to evaluate the appropriate size??
             $this->log("WARNING: maxValue validator added for column $colName. You will have to adjust the size value manually.", PROJECT_MSG_WARN);
-			$rule = array('type' => 'maxValue', 'value' => $colSize);
+			$ruleInfo = array('type' => 'maxValue', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('type') &&
@@ -670,7 +669,7 @@ class PropelCreoleTransformTask extends Task {
 					CreoleTypes::TINYINT,
 					CreoleTypes::INTEGER,
 					CreoleTypes::TIMESTAMP))) {
-			$rule = array('type' => 'type', 'value' => '[^\d]+');
+			$ruleInfo = array('type' => 'type', 'value' => '[^\d]+');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('type') &&
@@ -681,7 +680,7 @@ class PropelCreoleTransformTask extends Task {
 					CreoleTypes::DECIMAL,
 					CreoleTypes::REAL))) {
 			// TODO: is this always true??
-			$rule = array('type' => 'type', 'value' => '[^\d\.]+');
+			$ruleInfo = array('type' => 'type', 'value' => '[^\d\.]+');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 	}
