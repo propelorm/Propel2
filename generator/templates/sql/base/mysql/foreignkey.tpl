@@ -33,7 +33,8 @@
         }
 
         $constraintName = "`" . $table->getName() . "_ibfk_{$counter}`";
+				$indexName = "`" . $table->getName() . "_ibfk_{$counter}_I`";
 ?>
-    INDEX (<?php echo implode(',', $lnames); ?>),
+    INDEX <?php echo $indexName; ?> (<?php echo implode(',', $lnames); ?>),
     CONSTRAINT <?php echo $constraintName ?> FOREIGN KEY (<?php echo implode(',', $lnames); ?>) REFERENCES <?php echo "`" . $fk->getForeignTableName() . "`" ?> (<?php echo implode(',', $fnames); ?>),
 <?php } ?>
