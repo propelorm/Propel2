@@ -3,6 +3,5 @@
             foreach ($table->getPrimaryKey() as $column) {
                 $values[] = "`" . $column->getName() . "`";
             }
-?>
-    PRIMARY KEY(<?php echo implode(',', $values) ?>),
-<?php } ?>
+?> 
+    PRIMARY KEY(<?php echo implode(',', $values) ?>)<?php } 

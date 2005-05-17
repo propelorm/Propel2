@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------
-# <?php echo $table->getName() ?>
+# <?php echo $table->getName() ?> 
 # -----------------------------------------------------------------------
 <?php echo $generator->parse("$basepath/drop.tpl") ?>
 
@@ -12,33 +12,25 @@ CREATE TABLE <?php echo "`" . $table->getName() . "`" ?>
     $unique = $generator->parse("$basepath/unique.tpl");
     $index = $generator->parse("$basepath/index.tpl");
 
-    if (empty($pk) && empty($fk) && empty($unique) && empty($index)) {
-        echo preg_replace('/[,]+[\s]*$/', '', $cols);
-    } else {
-        echo $cols;
-    }
+		$output = array();
+		if(!empty($cols)) {
+		  $output[] = $cols;
+		}
+		if(!empty($pk)) {
+		  $output[] = $pk;
+		}
+		if(!empty($unique)) {
+		  $output[] = $unique;
+		}
+		if(!empty($index)) {
+		  $output[] = $index;
+		}
+		if(!empty($fk)) {
+		  $output[] = $fk;
+		}
 
-    if (empty($fk) && empty($unique) && empty($index) && !empty($pk)) {
-        echo preg_replace('/[,]+[\s]*$/', '', $pk);
-    } else {
-        echo $pk;
-    }
+		echo implode(", ", $output);
 
-    if (empty($unique) && empty($index) && !empty($fk)) {
-        echo preg_replace('/[,]+[\s]*$/', '', $fk);
-    } else {
-        echo $fk;
-    }
-
-    if (empty($index) && !empty($unique)) {
-        echo preg_replace('/[,]+[\s]*$/', '', $unique);
-    } else {
-        echo $unique;
-    }
-
-    if (!empty($index)) {
-        echo preg_replace('/[,]+[\s]*$/', '', $index);
-    }
 ?>
 )<?php if (!isset($mysqlTableType)) {
             $vendorSpecific = $table->getVendorSpecificInfo();
