@@ -32,9 +32,9 @@
  */
 abstract class DataModelBuilder {
 	
-	protected $table;	
+	private $table;	
 	
-	protected $buildProperties;
+	private $buildProperties;
 	
 	public function __construct(Table $table)
 	{

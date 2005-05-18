@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/engine/builder/om/PeerBuilder.php';
+require_once 'propel/engine/builder/om/ObjectBuilder.php';
 
 /**
  * Generates a PHP5 base Object class for user object model (OM).
@@ -141,6 +141,13 @@ abstract class ".$this->classname." {
 ";
 	}
 	
+	protected function addConstants(&$script)
+	{
+		if ($this->addGenericAccessors() || $this->addGenericMutators()) {
+			$this->addFieldnameTypeConstants($script);
+		}
+	}
+	
 	protected function addAttributes(&$script)
 	{
 		$script .= "
@@ -156,6 +163,10 @@ abstract class ".$this->classname." {
 		    $this->addColumnAttributes($script);
 		}
 		
+		if ($this->addGenericAccessors() || $this->addGenericMutators()) {
+		    $this->addFieldNamesAttribute($script);
+			$this->addFieldKeysAttribute($script);
+		}
 	}
 	
 	/**
@@ -172,7 +183,7 @@ abstract class ".$this->classname." {
 			$cptype = $col->getPhpNative();
 			$clo=strtolower($col->getName());
 			$defVal = "";
-			if (($val = $col->getDefaultValue()) !== null) {				
+			if (($val = $col->getPhpDefaultValue()) !== null) {				
 				settype($val, $cptype);
 				$defaultValue = var_export($val, true);
 				$defVal = " = " . $defaultValue;
@@ -464,7 +475,7 @@ abstract class ".$this->classname." {
 	protected function addTemporalMutator(&$script, Column $col)
 	{
 		$defaultValue = null;
-		if (($val = $col->getDefaultValue()) !== null) {
+		if (($val = $col->getPhpDefaultValue()) !== null) {
 			settype($val, $col->getPhpNative());
 			$defaultValue = var_export($val, true);
 		}
@@ -642,83 +653,214 @@ abstract class ".$this->classname." {
 	} // addBuildCriteria()
 	
 	
+	protected function addFieldnameTypeConstants(&$script)
+	{
+		$script .= "
+	/**
+	 * phpname type
+	 * e.g. 'AuthorId'
+	 */
+	const TYPE_PHPNAME = 'phpName';
+
+	/**
+	 * column (peer) name type
+	 * e.g. 'book.AUTHOR_ID'
+	 */
+	const TYPE_COLNAME = 'colName';
+
+	/**
+	 * column fieldname type
+	 * e.g. 'author_id'
+	 */
+	const TYPE_FIELDNAME = 'fieldName';
+
+	/**
+	 * num type
+	 * simply the numerical array index, e.g. 4
+	 */
+	const TYPE_NUM = 'num';
+";
+	}
+	
+	protected function addFieldNamesAttribute(&$script)
+	{
+		$table = $this->getTable();
+		
+		$tableColumns = $table->getColumns();
+		$tablePhpname = $table->getPhpName();
+	
+		$script .= "
+	/**
+	 * holds an array of fieldnames
+	 *
+	 * first dimension keys are the type constants
+	 * e.g. self::\$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
+	 */
+	private static \$fieldNames = array (
+		".$table->getPhpName()."::TYPE_PHPNAME => array (";
+		foreach ($tableColumns as $col) {
+			$script .= "'".$col->getPhpName()."', ";
+		} 
+		$script .= "),
+		".$table->getPhpName()."::TYPE_COLNAME => array (";
+		foreach ($tableColumns as $col) {
+			$script .= $this->getColumnConstant($col).", ";
+		}
+		$script .= "),
+		
+		".$table->getPhpName()."::TYPE_FIELDNAME => array (";
+		
+		foreach ($tableColumns as $col) {
+			$script .= "'".$col->getName()."', ";
+		}
+		$script .= "),
+		
+		".$table->getPhpName()."::TYPE_NUM => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= "$num, ";
+		}
+		$script .= ")
+	);
+";
+	}
+	
+	protected function addFieldKeysAttribute(&$script)
+	{
+		$table = $this->getTable();
+		
+		$tableColumns = $table->getColumns();
+		$tablePhpname = $table->getPhpName();
+	
+		$script .= "
+	/**
+	 * holds an array of keys for quick access to the fieldnames array
+	 *
+	 * first dimension keys are the type constants
+	 * e.g. self::\$fieldNames[self::TYPE_PHPNAME]['Id'] = 0
+	 */
+	private static \$fieldKeys = array (
+		".$table->getPhpName()."::TYPE_PHPNAME => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= "'".$col->getPhpName()."' => $num, ";
+		} 
+		$script .= "),
+		".$table->getPhpName()."::TYPE_COLNAME => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= $this->getColumnConstant($col)." => $num, ";
+		}
+		$script .= "),
+		
+		".$table->getPhpName()."::TYPE_FIELDNAME => array (";
+		
+		foreach ($tableColumns as $num => $col) {
+			$script .= "'".$col->getName()."' => $num, ";
+		}
+		$script .= "),
+		
+		".$table->getPhpName()."::TYPE_NUM => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= "$num, ";
+		}
+		$script .= ")
+	);
+";
+	} // addFielKeysAttribute
+	
 	protected function addToArray(&$script)
 	{
 		$script .= "
 	/**
-	 * Convenience method to export the object as an array.
+	 * Exports the object as an array.
 	 *
-	 * @return array An associative array containing the field (php)names
-	 *               as keys and field values as values
+	 * You can specify the key type of the array by passing one of the class
+	 * type constants.
+	 *
+	 * @param string \$keyType One of the class type constants TYPE_PHPNAME,
+	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @return an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray()
+	public function toArray(\$keyType = self::TYPE_PHPNAME)
 	{
+		\$keys = self::getFieldNames(\$keyType);
 		\$result = array(
 ";
-		foreach ($table->getColumns() as $col) {
+		foreach ($table->getColumns() as $num => $col) {
 			$script .= "
-			'".$col->getPhpName()."' => \$this->get".$col->getPhpName()."(),
+			\$keys[$num] => \$this->get".$col->getPhpName()."(),
 ";
-		} /* foreach */
+		}
 		$script .= "
 		);
 		return \$result;
 	}
 ";
-	}
+	} // addToArray()
 	
 	protected function addGetFieldNames(&$script)
 	{
 		$script .= "
-	private \$fieldNames;
-
 	/**
-	 * Generate a list of field names.
+	 * Returns an array of of field names.
 	 *
+	 * @param  string \$type The type of fieldnames to return:
+	 *                      One of the class type constants TYPE_PHPNAME,
+	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return array A list of field names
 	 */
-	public function getFieldNames()
+
+	static public function getFieldNames($type = self::TYPE_FIELDNAME)
 	{
-		if (\$this->fieldNames === null) {
-			\$this->fieldNames = array(";
-		foreach ($table->getColumns() as $col) { 
-			$script .= "'".$col->getName()."', ";
+		if (!isset(self::\$fieldNames[\$type])) {
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
 		}
-		$script .= ");
-		}
-		return \$this->fieldNames;
-	}";
-	
+		return self::\$fieldNames[\$type];
 	}
+";
+	
+	} // addGetFieldNames()
+	
+	protected function addTranslateFieldName(&$script)
+	{
+		$script .= "
+	/**
+	 * Translates a fieldname to another type
+	 *
+	 * @param string \$name field name
+	 * @param string \$fromType One of the class type constants TYPE_PHPNAME,
+	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param string \$toType   One of the class type constants
+	 * @return string translated name of the field.
+	 */
+	static public function translateFieldName(\$name, \$fromType, \$toType)
+	{
+		\$toNames = self::getFieldNames(\$toType);
+		\$key = self::\$fieldKeys[\$fromType][\$name];
+		if (\$key === false) {
+			throw new PropelException(\"'\$name' could not be found in the field names of type '\$fromType'. These are: \" . print_r(\$fromNames, true));
+		}
+		return \$toNames[\$key];
+	}
+";
+	} // addTranslateFieldName()
+	
 	
 	protected function addGetByName(&$script)
 	{
 		$script .= "
 	/**
 	 * Retrieves a field from the object by name passed in as a string.
-	 * The string must be one of the static strings defined in this Class' Peer.
 	 *
-	 * @param string \$name peer name
+	 * @param string \$name name
+	 * @param string \$type The type of fieldname the \$name is of:
+	 *                     one of the class type constants TYPE_PHPNAME,
+	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return mixed Value of field.
 	 */
-	public function getByName(\$name)
+	public function getByName(\$name, \$type = self::TYPE_COLNAME)
 	{
-		switch(\$name) {
-";
-		foreach ($this->getTable()->getColumns() as $col) {
-			$cfc = $col->getPhpName();
-			$cptype = $col->getPhpNative(); // not safe to use it because some methods may return objects (Blob)
-			$script .= "
-			case ".$this->getColumnConstant($col).":
-				return \$this->get$cfc();
-				break;
-";
-		}
-		$script .= "
-			default:
-				return null;
-
-		} // switch()
+		\$names = self::getFieldNames(\$type);
+		\$pos = self::translateFieldName(\$name, \$type, self::TYPE_NUM);
+		return \$this->getByPosition(\$pos);
 	}
 ";
 	}
@@ -756,5 +898,178 @@ $script .= "
 	}
 ";
 	}
+	
+	protected function addSetByName(&$script)
+	{
+		$script .= "
+	/**
+	 * Sets a field from the object by name passed in as a string.
+	 *
+	 * @param string \$name peer name
+	 * @param mixed \$value field value
+	 * @param string \$type The type of fieldname the \$name is of:
+	 *                     one of the class type constants TYPE_PHPNAME,
+	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @return void
+	 */
+	public function setByName(\$name, \$value, \$type = self::TYPE_COLNAME)
+	{
+		\$names = \$this->getFieldnames(\$type);
+		\$pos = array_search(\$name, \$names);
+		return \$this->setByPosition(\$pos, \$name);
+	}
+";
+	}
+	
+	protected function addSetByPosition(&$script)
+	{
+		$script .= "
+	/**
+	 * Sets a field from the object by Position as specified in the xml schema.
+	 * Zero-based.
+	 *
+	 * @param int \$pos position in xml schema
+	 * @param mixed \$value field value
+	 * @return void
+	 */
+	public function setByPosition(\$pos, \$value)
+	{
+		switch(\$pos) {
+";
+		$i = 0;
+		foreach ($table->getColumns() as $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpNative();
+			$script .= "
+			case $i:
+				\$this->set$cfc(\$value);
+				break;
+		";
+			$i++;
+		} /* foreach */
+		$script .= "
+		} // switch()
+	}
+";
+	} // addSetByPosition()
+
+	protected function addFromArray(&$script)
+	{
+		$script .= "
+	/**
+	 * Populates the object using an array.
+	 *
+	 * This is particularly useful when populating an object from one of the
+	 * request arrays (e.g. \$_POST).  This method goes through the column
+	 * names, checking to see whether a matching key exists in populated
+	 * array. If so the setByName() method is called for that column.
+	 *
+	 * You can specify the key type of the array by additionally passing one
+	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
+	 * TYPE_NUM. The default key type is the (peer) column name (e.g.
+	 * 'book.AUTHOR_ID')
+	 *
+	 * @param array  \$arr     An array to populate the object from.
+	 * @param string \$keyType The type of keys the array uses.
+	 * @return void
+	 */
+	public function fromArray(\$arr, \$keyType = self::TYPE_COLNAME)
+	{
+		\$keys = self::getFieldNames(\$keyType);
+";
+		foreach ($table->getColumns() as $num => $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpNative();
+			$script .= "
+		if (array_key_exists(\$keys[$num], \$arr)) \$this->set$cfc(\$arr[\$keys[$num]]);
+";
+		} /* foreach */
+		$script .= "
+	}
+";
+	} // addFromArray
+	
+	
+	
+	protected function addDelete(&$script)
+	{
+		$script .= "
+	/**
+	 * Removes this object from datastore and sets delete attribute.
+	 *
+	 * @param Connection \$con
+	 * @return void
+	 * @throws PropelException
+	 * @see BaseObject::setDeleted()
+	 * @see BaseObject::isDeleted()
+	 */
+	public function delete(\$con = null)
+	{
+		if (\$this->isDeleted()) {
+			throw new PropelException(\"This object has already been deleted.\");
+		}
+
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+		}
+		
+		try {
+			\$con->begin();
+			".$this->getPeerClassname()."::doDelete(\$this, \$con);
+			\$this->setDeleted(true);
+			\$con->commit();
+		} catch (PropelException \$e) {
+			\$con->rollback();
+			throw \$e;
+		}
+	}
+";
+	} // addDelete()
+	
+	protected function addSave(&$script)
+	{
+		$script .= "
+	/**
+	 * Stores the object in the database.
+	 *
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 *
+	 * @param Connection \$con
+	 * @return void
+	 * @throws PropelException
+	 */
+	public function save($con = null)<?php
+	{
+		// If this object has been modified, then save it to the database.
+		if (\$this->isModified()) {
+			if (\$this->isNew()) {
+				\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
+";
+		if ($table->getIdMethod() != "none") {
+			if (count($pks = $table->getPrimaryKey())) {
+				foreach ($pks as $pk) {
+					if ($pk->isAutoIncrement()) {
+						$script .= "
+					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
+";
+					}
+				}
+			}
+		}
+		$script .= "
+					\$this->setNew(false);
+			} else {
+						".$this->getPeerClassname()."::doUpdate(\$this, \$con);
+			}
+				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+		} // if \$this->isModified()
+		
+	} // save() 
+";
+	
+	} // addSave()
+	
+	
+	// Next: add the validate() method
 	
 } // PHP5BasicPeerBuilder

@@ -60,6 +60,10 @@ abstract class ObjectBuilder extends OMBuilder {
 		if (!$table->isAlias()) {
 			$this->addAttributes($script);
 		}
+		
+		$this->addColumnAccessorMethods($script);
+		$this->addColumnMutatorMethods($script);
+		
 	}
 	
 	/**
@@ -84,7 +88,7 @@ abstract class ObjectBuilder extends OMBuilder {
 		}
 	}
 	
-	protected function addMutatorMethods()
+	protected function addColumnMutatorMethods()
 	{
 	
 		foreach ($table->getColumns() as $col) {
@@ -128,5 +132,27 @@ abstract class ObjectBuilder extends OMBuilder {
         }
         return $interface;
     }
+	
+	/**
+	 * Whether to add the generic mutator methods (setByName(), setByPosition(), fromArray()).
+	 * This is based on the build property propel.addGenericMutators, and also whether the
+	 * table is read-only or an alias.
+	 */
+	protected function isAddGenericMutators()
+	{
+		$table = $this->getTable();		
+		return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
+	}
+	
+	/**
+	 * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
+	 * This is based on the build property propel.addGenericAccessors, and also whether the
+	 * table is an alias.
+	 */
+	protected function isAddGenericAccessors()
+	{
+		$table = $this->getTable();		
+		return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
+	}
 	
 }
