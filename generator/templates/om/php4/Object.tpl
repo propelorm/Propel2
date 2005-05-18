@@ -856,7 +856,7 @@ if ($complexObjectModel)
 	 * @param Criteria $criteria
 	 * @throws PropelException
 	 */
-	public function count<?php echo $relCol ?>($criteria = null)
+	function count<?php echo $relCol ?>($criteria = null)
 	{
 		// include the Peer class
 		include_once '<?php echo $tblFKPackagePath . $className ?>Peer.php';
