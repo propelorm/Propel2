@@ -221,10 +221,23 @@ class Domain extends XMLElement {
     }
     
     /**
+	 * Gets the "raw" default value, suitable for use in SQL.
      * @return string Returns the defaultValue.
      */
     public function getDefaultValue()
     {
+		if ($this->defaultValue !== null) {
+			return $this->defaultValue;
+		}
+    }
+    
+	/**
+	 * Gets the default value, type-casted for use in PHP OM.
+	 * @return mixed
+	 * @see getDefaultValue()
+	 */
+	public function getPhpDefaultValue()
+	{
 		if ($this->defaultValue === null) {
 			return null;
 		} elseif ($this->propelType === PropelTypes::BOOLEAN) {
@@ -240,8 +253,8 @@ class Domain extends XMLElement {
 		} else {
 			return $this->defaultValue;
 		}
-    }
-     
+	}
+	
     /**
      * @param defaultValue The defaultValue to set.
      */

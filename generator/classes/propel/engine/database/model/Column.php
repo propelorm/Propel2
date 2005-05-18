@@ -765,11 +765,23 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Get a string that will give this column a default value.
+	 * Get the raw string that will give this column a default value.
+	 * @return string
+	 * @see Domain::getDefaultValue()
 	 */
 	public function getDefaultValue()
 	{
 		return $this->domain->getDefaultValue();
+	}
+	
+	/**
+	 * Get the default value suitable for use in PHP.
+	 * @return mixed
+	 * @see Domain::getPhpDefaultValue()
+	 */
+	public function getPhpDefaultValue()
+	{		
+		return $this->domain->getPhpDefaultValue();
 	}
 
 	/**

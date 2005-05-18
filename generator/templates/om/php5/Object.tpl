@@ -108,7 +108,7 @@ abstract class <?php echo $basePrefix . $table->getPhpName() ?> extends <?php ec
 			$cptype = $col->getPhpNative();
 			$clo=strtolower($col->getName());
 			$defVal = "";
-			if (($val = $col->getDefaultValue()) !== null) {
+			if (($val = $col->getPhpDefaultValue()) !== null) {
 				settype($val, $cptype);
 				$defaultValue = var_export($val, true);
 				$defVal = " = " . $defaultValue;
@@ -139,7 +139,7 @@ foreach ($table->getColumns() as $col) {
 	$cptype = $col->getPhpNative();
 
 	$defaultValue = null;
-	if (($val = $col->getDefaultValue()) !== null) {
+	if (($val = $col->getPhpDefaultValue()) !== null) {
 		settype($val, $cptype);
 		$defaultValue = var_export($val, true);
 	}
@@ -558,7 +558,7 @@ if ($complexObjectModel) {
 			$colFK = $tblFK->getColumn($colFKName); ?>
 
 		if ($v === null) {
-			$this->set<?php echo $column->getPhpName() ?>(<?php var_export($column->getDefaultValue()) ?>);
+			$this->set<?php echo $column->getPhpName() ?>(<?php var_export($column->getPhpDefaultValue()) ?>);
 		} else {
 			$this->set<?php echo $column->getPhpName() ?>($v->get<?php echo $colFK->getPhpName() ?>());
 		}
@@ -1794,7 +1794,7 @@ if (!$table->isAlias()) {
 // the $pkcols array  we created above
 		foreach ($table->getColumns() as $col) {
 			if ($col->isPrimaryKey()) {
-					$coldefval = $col->getDefaultValue();
+					$coldefval = $col->getPhpDefaultValue();
 
 					// This seems to work pretty well for getting
 					// the right value (including NULL)

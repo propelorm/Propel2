@@ -109,7 +109,7 @@ if (! $table->isAlias())
     $cptype = $col->getPhpNative();
     $clo=strtolower($col->getName());
     $defVal = "";
-    if (($val = $col->getDefaultValue()) !== null) {
+    if (($val = $col->getPhpDefaultValue()) !== null) {
       settype($val, $cptype);
       $defaultValue = var_export($val, true);
       $defVal = " = " . $defaultValue;
@@ -142,7 +142,7 @@ if (! $table->isAlias())
     $cptype = $col->getPhpNative();
 
     $defaultValue = null;
-    if (($val = $col->getDefaultValue()) !== null) {
+    if (($val = $col->getPhpDefaultValue()) !== null) {
       settype($val, $cptype);
       $defaultValue = var_export($val, true);
     }
@@ -632,7 +632,7 @@ if ($complexObjectModel)
       $colFK = $tblFK->getColumn($colFKName);
 ?>
     if ($v === null) {
-      $this->set<?php echo $column->getPhpName() ?>(<?php echo var_export($column->getDefaultValue()) ?>);
+      $this->set<?php echo $column->getPhpName() ?>(<?php echo var_export($column->getPhpDefaultValue()) ?>);
     } else {
       $this->set<?php echo $column->getPhpName() ?>($v->get<?php echo $colFK->getPhpName() ?>());
     }
