@@ -214,6 +214,32 @@ abstract class ".$this->classname." {
 	} // addColumnAttributes()
 	
 	/**
+	 * Adds the getPeer() method.
+	 * This is a convenient, non introspective way of getting the Peer class for a particular object.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetPeer(&$script)
+	{
+		$script .= "
+	/**
+	 * Returns a peer instance associated with this om.
+	 *
+	 * Since Peer classes are not to have any instance attributes, this method returns the
+	 * same instance for all member of this class. The method could therefore
+	 * be static, but this would prevent one from overriding the behavior.
+	 * 
+	 * @return ".$this->getPeerClassname()."
+	 */
+	public function getPeer()
+	{
+		if (self::\$peer === null) {
+			self::\$peer = new ".$this->getPeerClassname()."();
+		}
+		return self::\$peer;
+	}
+";
+	}
+	/**
 	 * Adds a date/time/timestamp getter method.
 	 * @param string &$script The script will be modified in this method.
 	 * @param Column $col The current column.
@@ -1026,6 +1052,10 @@ $script .= "
 ";
 	} // addDelete()
 	
+	/**
+	 * Adds the save() method.
+	 * @param string &$script The script will be modified in this method.
+	 */
 	protected function addSave(&$script)
 	{
 		$script .= "
@@ -1038,7 +1068,7 @@ $script .= "
 	 * @return void
 	 * @throws PropelException
 	 */
-	public function save($con = null)<?php
+	public function save($con = null)
 	{
 		// If this object has been modified, then save it to the database.
 		if (\$this->isModified()) {
@@ -1069,7 +1099,226 @@ $script .= "
 	
 	} // addSave()
 	
+	/**
+	 * Adds the validate() method.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addValidate(&$script)
+	{
+		$script .= "
+	/**
+	 * Validates the objects modified field values.
+	 *
+	 * If \$columns is either a column name or an array of column names
+	 * only those columns are validated.
+	 *
+	 * @param mixed \$columns Column name or an array of column names.
+	 *
+	 * @return mixed <code>true</code> if all columns pass validation
+	 *			  or an array of <code>ValidationFailed</code> objects for columns that fail.
+	 */
+	public function validate(\$columns = null)
+	{
+		if (\$columns) {
+			return ".$this->getPeerClassname()."::doValidate(\$this, \$columns);
+		}
+		return ".$this->getPeerClassname()."::doValidate(\$this);
+	}
+";
 	
-	// Next: add the validate() method
+	} // addValidate()
+	
+	/**
+	 * Adds the correct getPrimaryKey() method for this object.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetPrimaryKey(&$script)
+	{
+		$pkeys = $this->getTable()->getPrimaryKey();
+		if (count($pkeys) == 1) {
+		    $this->addGetPrimaryKey_SinglePK($script);
+		} elseif () {
+			$this->addGetPrimaryKey_MultiPK($script);
+		} else {
+			// no primary key -- this is deprecated, since we don't *need* this method anymore
+			$this->addGetPrimaryKey_NoPK($script);
+		}
+	}
+	
+	/**
+	 * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetPrimaryKey_SingleFK(&$script)
+	{
+		$table = $this->getTable();
+		$pkeys = $table->getPrimaryKey();
+		$cptype = $pkeys[0]->getPhpType();
+		
+		$script .= "
+	/**
+	 * Returns the primary key for this object (row).
+	 * @return $cptype 
+	 */
+	public function getPrimaryKey()
+	{
+		return \$this->get".$pkeys[0]->getPhpName()."();
+	}
+";
+	} // addetPrimaryKey_SingleFK
+	
+	/**
+	 * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetPrimaryKey_MultiFK(&$script)
+	{
+		
+		$script .= "
+	/**
+	 * Returns the composite primary key for this object.
+	 * The array elements will be in same order as specified in XML.
+	 * @return array
+	 */
+	public function getPrimaryKey()
+	{
+		\$pks = array();
+";
+		$i = 0;
+		foreach ($table->getPrimaryKey() as $pk) {
+			$script .= "
+		\$pks[$i] = \$this->get".$pk->getPhpName()."();
+";
+			$i++;
+		} /* foreach */
+		$script .= "
+		return \$pks;
+	}
+";
+	} // addGetPrimaryKey_MultiFK()
+	
+	/**
+	 * Adds the getPrimaryKey() method for objects that have no primary key.
+	 * This "feature" is dreprecated, since the getPrimaryKey() method is not required
+	 * by the Persistent interface (or used by the templates).  Hence, this method is also 
+	 * deprecated.
+	 * @param string &$script The script will be modified in this method.
+	 * @deprecated
+	 */
+	protected function addGetPrimaryKey_NoFK(&$script)
+	{
+		$script .= "
+	/**
+	 * Returns NULL since this table doesn't have a primary key.
+	 * This method exists only for BC and is deprecated!
+	 * @return null
+	 */
+	public function getPrimaryKey()
+	{
+		return null;
+	}
+";
+	}
+	/**
+	 * Adds the correct setPrimaryKey() method for this object.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addSetPrimaryKey(&$script)
+	{
+		$pkeys = $this->getTable()->getPrimaryKey();
+		if (count($pkeys) == 1) {
+		    $this->addSetPrimaryKey_SinglePK($script);
+		} elseif () {
+			$this->addSetPrimaryKey_MultiPK($script);
+		} else {
+			// no primary key -- this is deprecated, since we don't *need* this method anymore
+			$this->addSetPrimaryKey_NoPK($script);
+		}
+	}
+	
+	/**
+	 * Adds the setPrimaryKey() method for tables that contain a single-column primary key.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addSetPrimaryKey_SinglePK(&$script)
+	{
+		
+		$pkeys = $this->getTable()->getPrimaryKey();
+		$col = $pkeys[0];
+		$clo=strtolower($col->getName());
+		$ctype = $col->getPhpNative();
+		
+		$script .= "
+	/**
+	 * Generic method to set the primary key ($clo column).
+	 *
+	 * @param $ctype \$key Primary key.
+	 * @return void
+	 */
+	public function setPrimaryKey(\$key)
+	{
+		$this->set".$col->getPhpName()."(\$key);
+	}
+";
+	} // addSetPrimaryKey_SinglePK
+	
+	/**
+	 * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addSetPrimaryKey_MultiPK(&$script)
+	{
+		
+		$script .="
+	/**
+	 * Set the [composite] primary key.
+	 *
+	 * @param array \$keys The elements of the composite key (order must match the order in XML file).
+	 * @return void
+	 */
+	public function setPrimaryKey(\$keys)
+	{
+";
+			$i = 0;
+			foreach ($table->getPrimaryKey() as $pk) {
+				$pktype = $pk->getPhpNative();
+				$script .= "
+		\$this->set".$pk->getPhpName()."(\$keys[$i]);
+";
+				$i++;
+			} /* foreach ($table->getPrimaryKey() */
+			$script .= "
+	}
+";
+	} // addSetPrimaryKey_MultiPK
+	
+	/**
+	 * Adds the setPrimaryKey() method for objects that have no primary key.
+	 * This "feature" is dreprecated, since the setPrimaryKey() method is not required
+	 * by the Persistent interface (or used by the templates).  Hence, this method is also 
+	 * deprecated.
+	 * @param string &$script The script will be modified in this method.
+	 * @deprecated
+	 */
+	protected function addSetPrimaryKey_NoPK(&$script)
+	{
+		$script .="
+	/**
+	 * Dummy primary key setter.
+	 * 
+	 * This function only exists to preserve backwards compatibility.  It is no longer
+	 * needed or required by the Persistent interface.  It will be removed in next BC-breaking
+	 * release of Propel.
+	 *
+	 * @deprecated
+	 */
+	 public function setPrimaryKey(\$pk)
+	 {
+		 // do nothing, because this object doesn't have any primary keys
+	 }
+";
+	}
+	
+	// Next (and last?): add copy() method.
 	
 } // PHP5BasicPeerBuilder

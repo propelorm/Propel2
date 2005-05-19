@@ -44,6 +44,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$this->addFKAttributes($script, $fk);
 		}
 		$this->addAlreadyInSaveAttribute($script);
+		$this->addAlreadyInValidationAttribute($script);
 	}
 	
 	/**
@@ -802,6 +803,9 @@ $script .= "
 	private \$alreadyInSave = false;
 ";
 	}
+	
+	
+	
 	protected function addSave(&$script)
 	{
 		$script .= "
@@ -838,7 +842,120 @@ $script .= "
 	
 	}
 	
+	protected function addAlreadyInValidationAttribute(&$script)
+	{
+		$script .= "
+	/**
+	 * Flag to prevent endless validation loop, if this object is referenced
+	 * by another object which falls in this transaction.
+	 * @var boolean
+	 */
+	private \$alreadyInValidation = false;
+";
+	}
 	
-	// NEXT: add the validate()/doValidate() methods
+	/**
+	 * Adds the validate() method.
+	 */
+	protected function addValidate(&$script)
+	{
+		$script .= "
+	/**
+	 * Validates the objects modified field values and all objects related to this table.
+	 *
+	 * If \$columns is either a column name or an array of column names
+	 * only those columns are validated.
+	 *
+	 * @param mixed \$columns Column name or an array of column names.
+	 *
+	 * @return mixed <code>true</code> if all columns pass validation
+	 *			  or an array of <code>ValidationFailed</code> objects for columns that fail.
+	 * @see doValidate()
+	 */
+	public function validate(\$columns = null)
+	{
+	  if (\$columns) {
+		return ".$this->getPeerClassname()."::doValidate(\$this, \$columns);
+	  }
+		return \$this->doValidate();
+	}
+";
+	} // addValidate()
+	
+	
+	protected function addDoValidate(&$script)
+	{
+		$script .= "
+	/**
+	 * This function performs the validation work for complex object models.
+	 *
+	 * In addition to checking the current object, all related objects will
+	 * also be validated.  If all pass then <code>true</code> is returned; otherwise
+	 * an aggreagated array of ValidationFailed objects will be returned.
+	 *
+	 * @return mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
+	 */
+	protected function doValidate()
+	{
+		if (!\$this->alreadyInValidation) {
+			\$this->alreadyInValidation = true;
+			\$retval = null;
+
+			\$failureMap = array();
+";
+		if (count($table->getForeignKeys()) != 0) {
+			$script .= "
+
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+";
+			foreach($table->getForeignKeys() as $fk) {
+				$aVarName = $this->getFKVarName($fk);
+				$script .= "
+			if (\$this->$aVarName !== null) {
+				if ((\$retval = \$this->$aVarName->validate()) !== true) {
+					\$failureMap = array_merge(\$failureMap, \$retval);
+				}
+			}
+";
+			} /* for() */
+		} /* if count(fkeys) */
 		
+		$script .= "
+
+			if ((\$retval = ".$this->getPeerClassname()."::doValidate(\$this)) !== true) {
+				\$failureMap = array_merge(\$failureMap, \$retval);
+			}
+
+";
+
+		foreach ($table->getReferrers() as $fk) {
+			$collName = $this->getRefFKCollVarName($fk);
+			$script .= "
+			if (\$this->$collName !== null) {
+				foreach(\$this->$collName as \$referrerFK) {
+					if ((\$retval = \$referrerFK->validate()) !== true) {
+						\$failureMap = array_merge(\$failureMap, \$retval);
+					}
+				}
+			}
+";
+			} /* if tableFK !+ table */
+		} /* foreach getReferrers() */
+		
+		$script .= "
+
+			\$this->alreadyInValidation = false;
+		}
+
+		return (!empty(\$failureMap) ? \$failureMap : true);
+	}
+";
+	} // addDoValidate()
+	
+	
+	// Next (and last?): add copy() method.
+	
 } // PHP5BasicPeerBuilder
