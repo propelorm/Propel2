@@ -186,15 +186,15 @@ class Rule extends XMLElement {
      */
     public function toString()
     {
-      $result = "<rule name=\"" . $this->name . "\" ";
+      $result = "<rule name=\"" . $this->getName() . "\" ";
 
-      if ($this->value !== null) {
-        $result .= "value=\"" . $this->value . "\" ";
+      if ($this->getValue() !== null) {
+        $result .= "value=\"" . $this->getValue(). "\" ";
       }
-      if ($this->classname !== null) {
-          $result .= "class=\"".$this->classname."\" ";
+      if ($this->getClass() !== null) {
+          $result .= "class=\"".$this->getClass()."\" ";
       }
-      $result .= "message=\"" . $this->message . "\" ";
+      $result .= "message=\"" . $this->getMessage() . "\" ";
       $result .= "/>\n";
 
       return $result;
