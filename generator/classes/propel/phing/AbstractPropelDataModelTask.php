@@ -315,6 +315,8 @@ abstract class AbstractPropelDataModelTask extends Task {
      */
     protected function loadDataModels()
     {
+		$ads = array();
+		
         // Get all matched files from schemaFilesets
         foreach($this->schemaFilesets as $fs) {
             $ds = $fs->getDirectoryScanner($this->project);
@@ -334,7 +336,11 @@ abstract class AbstractPropelDataModelTask extends Task {
                 $ads[] = $ad;
             }
         }
-
+		
+		if (empty($ads)) {
+		    throw new BuildException("No schema files were found (matching your schema fileset definition).");
+		}
+		
 		if (!$this->packageObjectModel) {
 
 			$this->dataModels = $ads;
