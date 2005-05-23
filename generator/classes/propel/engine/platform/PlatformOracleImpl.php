@@ -41,7 +41,6 @@ class PlatformOracleImpl extends PlatformDefaultImpl {
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "NUMBER", "3", "0"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "NUMBER", "5", "0"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEANINT, "NUMBER", "1", "0"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "NUMBER", "20", "0"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "NUMBER"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
