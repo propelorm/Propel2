@@ -16,5 +16,4 @@ PRIMARY KEY (<?php
 		$delim = ",";
 	}
 ?>);
-
 <?php } ?>

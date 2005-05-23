@@ -1,12 +1,9 @@
 # -----------------------------------------------------------------------
-# <?php echo $table->getName() ?>
+# <?php echo $table->getName() ?> 
 # -----------------------------------------------------------------------
-
 <?php echo $generator->parse("$basepath/drop.tpl") ?>
-
 CREATE TABLE <?php echo $table->getName() ?> 
-(
-<?php
+(<?php
 
 	$cols    = $generator->parse("$basepath/columns.tpl");
 	$unique  = $generator->parse("$basepath/unique.tpl");
@@ -23,12 +20,9 @@ CREATE TABLE <?php echo $table->getName() ?>
                 echo $unique;
         }
 
-?>
-
+?> 
 );
-
 <?php echo $generator->parse("$basepath/primarykey.tpl")?>
-
 <?php echo $generator->parse("$basepath/index.tpl")?>
-
 <?php echo $generator->parse("$basepath/sequence.tpl")?>
+
