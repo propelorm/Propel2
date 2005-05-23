@@ -42,8 +42,8 @@
 				if(!in_array(implode(',', $_foreignColumns), $_indices))
 				{
 					// no matching index defined in the schema, so we have to create one
-					if($counter > 1): ?>,<?php endif; 
 					$counter++;
+					if($counter > 1): ?>,<?php endif; 
 					?> 
     INDEX `I_referenced_<?php echo $_foreignKey->getName(); ?>_<?php echo $counter; ?>` (<?php echo implode(',',$_foreignColumns); ?>)<?php
 				}
@@ -51,9 +51,10 @@
 		}
 	}
 
+			$hasReferencedColumns = $counter > 0;
       $counter = 0;
       foreach ($table->getForeignKeys() as $fk) {
-        if($counter > 0): ?>,<?php endif;
+        if($counter > 0 || $hasReferencedColumns): ?>,<?php endif;
         $counter++;
         $fnames = array();
         foreach ($fk->getForeignColumns() as $column) {
