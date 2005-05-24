@@ -485,8 +485,7 @@ class PropelSQLExec extends Task {
                     $sqlBacklog = "";
                 }
 
-                $sql .= " " . $line;
-                $sql = trim($sql);
+                $sql .= " " . $line . "\n";
 
                 // SQL defines "--" as a comment to EOL
                 // and in Oracle it may contain a hint
@@ -502,7 +501,6 @@ class PropelSQLExec extends Task {
 
                     $sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
                     $sqlBacklog = "";
-                    
                     foreach($sqlParts as $sqlPart) {
                         // we always want to append, even if it's a delim (which will be stripped off later)
                         $sqlBacklog .= $sqlPart; 
