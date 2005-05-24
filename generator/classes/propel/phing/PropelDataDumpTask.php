@@ -319,14 +319,14 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
                             Creole::registerDriver($dsn['phptype'], $this->databaseDriver);
                         }
 
-                        $this->conn = Creole::getConnection($dsn);
+                        $this->conn = Creole::getConnection($dsn, Creole::NO_ASSOC_LOWER);
 
                         $doc = $this->createXMLDoc($database);
                         $doc->save($outFile->getAbsolutePath());
 
                     } catch (SQLException $se) {
                         $this->log("SQLException while connecting to DB: ". $se->getMessage(), PROJECT_MSG_ERR);
-                        throw new PropelException($se);
+                        throw new BuildException($se);
                     }
                 } // if databaseName && database->getName == databaseName
             } // foreach database
