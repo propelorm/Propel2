@@ -239,6 +239,13 @@ abstract class ".$this->classname." {
 	}
 ";
 	}
+	
+	// --------------------------------------------------------------
+	//
+	// M U T A T O R    M E T H O D S
+	//
+	// --------------------------------------------------------------
+	
 	/**
 	 * Adds a date/time/timestamp getter method.
 	 * @param string &$script The script will be modified in this method.
@@ -397,17 +404,18 @@ abstract class ".$this->classname." {
 	
 	
 	
-	
-	// -------------------------------
-	// MUTATOR METHODS
-	// -------------------------------
+	// --------------------------------------------------------------
+	//
+	// M U T A T O R    M E T H O D S
+	//
+	// --------------------------------------------------------------
 	
 	/**
-	 *
+	 * Adds the mutator (setter) method for a column.
 	 * @param string &$script The script will be modified in this method.
 	 * @param Column $col The current column.
 	 */
-	protected function addMutatorOpen(&$script, Column $col)
+	protected function addMutator(&$script, Column $col)
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
@@ -432,22 +440,11 @@ abstract class ".$this->classname." {
 		\$this->".$clo."_isLoaded = true;
 ";
 		}
-
-	}
-	
-	/**
-	 * Closing of mutator method.
-	 * This has been refactored to facilitate the fact that the complex object model
-	 * mutator methods have additional referential checks to perform.
-	 * @param string &$script The script will be modified in this method.
-	 * @param Column $col The current column.
-	 */
-	protected function addMutatorClose(&$script, $col)
-	{
-		$cfc = $col->getPhpName();
+		
 		$script .= "
 	} // set$cfc()
 ";
+
 	}
 	
 	/**
@@ -551,7 +548,9 @@ abstract class ".$this->classname." {
 		$this->addMutatorClose($script, $col);
 	}
 	
-	
+	/**
+	 * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
+	 */
 	protected function addHydrate(&$script)
 	{
 		$script .= "
@@ -1319,6 +1318,64 @@ $script .= "
 ";
 	}
 	
-	// Next (and last?): add copy() method.
+	/**
+	 * Adds the copy() method.
+	 */
+	protected function addCopy(&$script)
+	{
+		
+		$script .= "
+	/**
+	 * Makes a copy of this object that will be inserted as a new row in table when saved.
+	 * It creates a new object filling in the simple attributes, but skipping any primary
+	 * keys that are defined for the table.
+	 * 
+	 * If desired, this method can also make copies of all associated (fkey referrers)
+	 * objects.
+	 *
+	 * @return ".$table->getPhpName()." Clone of current object.
+	 * @throws PropelException
+	 */
+	public function copy()
+	{
+		// we use get_class(), because this might be a subclass
+		\$clazz = get_class(\$this);
+		\$copyObj = new \$clazz();
+";
+
+		$pkcols = array();
+		foreach ($table->getColumns() as $pkcol) {
+			if ($pkcol->isPrimaryKey()) {
+				$pkcols[] = $pkcol->getName();
+			}
+		}
+
+		foreach ($table->getColumns() as $col) {
+			if (!in_array($col->getName(), $pkcols)) {
+				$script .= "
+		\$copyObj->set<?php echo $col->getPhpName()?>($this-><?php echo strtolower($col->getName()) ?>);
+";
+			}
+		} // foreach
+			
+		$script .= "
+
+		\$copyObj->setNew(true);
+";
+
+		foreach ($table->getColumns() as $col) {
+			if ($col->isPrimaryKey()) {
+				$coldefval = $col->getPhpDefaultValue();
+				$coldefval = var_export($coldefval, true);
+				$script .= "
+		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a pkey column, so set to default value
+";
+			} // if col->isPrimaryKey
+		} // foreach
+		$script .= "
+		return \$copyObj;
+	}
+";
+	} // addCopy()
 	
 } // PHP5BasicPeerBuilder

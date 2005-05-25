@@ -88,5 +88,19 @@ abstract class DataModelBuilder {
         }
     }
     
+	public static function getNewPeerBuilder(Table $table)
+	{
+		// FIXME: get the property, load the file, return the class ....
+		include_once 'propel/engine/builder/om/php5/PHP5ComplexPeerBuilder.php';
+		return new PHP5ComplexPeerBuilder($table);
+	}
+	
+	public static function getNewObjectBuilder(Table $table)
+	{
+		// FIXME: get the property, load the file, return the class ....
+		include_once 'propel/engine/builder/om/php5/PHP5ComplexObjectBuilder.php';
+		return new PHP5ComplexObjectBuilder($table);
+	}	
 
+	
 }
