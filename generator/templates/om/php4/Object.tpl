@@ -854,9 +854,10 @@ if ($complexObjectModel)
 	 * Returns the number of related <?php echo $relCol ?>
 	 *
 	 * @param Criteria $criteria
+	 * @param boolean $distinct
 	 * @throws PropelException
 	 */
-	function count<?php echo $relCol ?>($criteria = null)
+	function count<?php echo $relCol ?>($criteria = null, $distinct = false)
 	{
 		// include the Peer class
 		include_once '<?php echo $tblFKPackagePath . $className ?>Peer.php';
@@ -876,7 +877,7 @@ if ($complexObjectModel)
 <?php
 	} // end foreach ($fk->getForeignColumns()
 ?>
-		return <?php echo $className ?>Peer::doCount($criteria);
+		return <?php echo $className ?>Peer::doCount($criteria, $distinct);
 	}
 
   /**
