@@ -28,27 +28,27 @@
  * files, input forms, etc.
  * 
  * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om
+ * @package propel.engine.builder
  */
 abstract class DataModelBuilder {
 	
 	private $table;	
 	
-	private $buildProperties;
+	private static $buildProperties = array();
 	
 	public function __construct(Table $table)
 	{
 		$this->table = $table;
 	}
 	
-	public function setBuildProperties($props)
+	public static function setBuildProperties($props)
 	{
-		$this->buildProperties = $props;
+		self::$buildProperties = $props;
 	}
 	
-	protected function getBuildProperty($name)
+	public static function getBuildProperty($name)
 	{
-		return isset($this->buildProperties[$name]) ? $this->buildProperties[$name] : null;
+		return isset(self::$buildProperties[$name]) ? self::$buildProperties[$name] : null;
 	}
 
 	protected function getPlatform()

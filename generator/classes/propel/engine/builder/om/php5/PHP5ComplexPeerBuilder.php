@@ -40,8 +40,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	protected function addSelectMethods(&$script)
 	{
+		$table = $this->getTable();
+		
 		parent::addSelectMethods($script);
-		$this->addDoSelectJoinSingle($script);
+		$this->addDoSelectJoin($script);
 		
 		$countFK = count($table->getForeignKeys());
 		
@@ -71,11 +73,12 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	protected function addDoSelectJoin(&$script)
 	{
-		 $className = $table->getPhpName();
-		 $countFK = count($table->getForeignKeys());
+		$table = $this->getTable();
+		$className = $table->getPhpName();
+		$countFK = count($table->getForeignKeys());
 		
-		 if ($countFK >= 1) {
-		 
+		if ($countFK >= 1) {
+		
 			foreach ($table->getForeignKeys() as $fk) {
 			
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
@@ -88,6 +91,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					// aliasing the table if it is the same table.
 					if ( $fk->getForeignTableName() != $table->getName() ) {
 						
+						/*
+						REPLACED BY USING THE ObjectBuilder objects below
+						
 						// check to see if we need to add something to the method name.
 						// For example if there are multiple columns that reference the same
 						// table, then we have to have a methd name like doSelectJoinBooksByBookId
@@ -99,6 +105,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 								$partJoinName = $partJoinName . $column->getPhpName();
 							}
 						}
+						
 						
 						$joinClassName = $joinTable->getPhpName();
 						
@@ -119,7 +126,14 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 							$collThisTable = $className . "sRelatedBy" . $partJoinName;
 							$collThisTableMs = $className . "RelatedBy" . $partJoinName;
 						}
-		
+						*/
+						
+						$joinClassName = $joinTable->getPhpName();
+						
+						$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
+						$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
+						$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+						
 						$script .= "
 	/**
 	 * Selects a collection of $className objects pre-filled with their $joinClassName objects.
@@ -128,7 +142,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 * @throws PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoin$joinColumnId(Criteria \$c, \$con = null)
+	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
 	{
 	
 		// Set the correct dbName if it has not been overridden
@@ -138,15 +152,15 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
 		\$startcol = (self::\$numColumns - self::\$numLazyLoadColumns) + 1;
-		".$this->getPeerClassname($joinClassName)."::addSelectColumns(\$c);
+		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
 ";
 		
 						$lfMap = $fk->getLocalForeignMapping();
 						foreach ($fk->getLocalColumns() as $columnName ) {
 							$column = $table->getColumn($columnName);
-							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
+							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		$c->addJoin(".$this->getColumnConstant($column).", ".$this->getColumnConstant($columnFk, $joinClassName).");";
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");"; //CHECKME
 						}
 						$script .= "
 		\$rs = ".$this->basePeerClassname."::doSelect(\$c, \$con);
@@ -170,13 +184,14 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						if ($joinTable->getChildrenColumn()) {
 							$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass(\$rs, \$startcol);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol);
 ";
 						} else { 
 							$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass();
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 						}
+						
 						$script .= "
 			\$cls = Propel::import(\$omClass);
 			\$obj2 = new \$cls();
@@ -184,16 +199,17 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 			\$newObject = true;
 			foreach(\$results as \$temp_obj1) {
-				\$temp_obj2 = \$temp_obj1->get$joinInterface();
+				\$temp_obj2 = \$temp_obj1->get".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(); //CHECKME
 				if (\$temp_obj2->getPrimaryKey() === \$obj2->getPrimaryKey()) {
 					\$newObject = false;
-					\$temp_obj2->add$collThisTableMs(\$obj1);
+					// e.g. \$author->addBookRelatedByBookId()
+					\$temp_obj2->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1); //CHECKME
 					break;
 				}
 			}
 			if (\$newObject) {
-				\$obj2->init$collThisTable();
-				\$obj2->add$collThisTableMs(\$obj1);
+				\$obj2->init".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = true)."();
+				\$obj2->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1); //CHECKME
 			}
 			\$results[] = \$obj1;
 		}
@@ -213,24 +229,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	protected function addDoSelectJoinAll(&$script)
 	{
-
-		$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-		
-		$relatedByCol = "";
-		foreach ($fk->getLocalColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
-			if ($column->isMultipleFK()) {
-				$relatedByCol .= $column->getPhpName();
-			}
-		}
-		
-		if ($relatedByCol == "") {
-			$collThisTable = "${className}s";
-			$collThisTableMs = $className;
-		} else {
-			$collThisTable = $className . "sRelatedBy" . $relatedByCol;
-			$collThisTableMs = $className . "RelatedBy" . $relatedByCol;
-		}
+		$table = $this->getTable();
+		$className = $table->getPhpName();
 		
 		$script .= "
 
@@ -259,9 +259,12 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 				$joinClassName = $joinTable->getPhpName();
 				$new_index = $index + 1;
+				
+				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+						
 				$script .= "
-		".$this->getPeerClassname($joinClassName)."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$this->getPeerClassname($joinClassName)."::\$numColumns;
+		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::\$numColumns;
 ";
 			$index = $new_index;
 			
@@ -273,13 +276,15 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			// want to cover this case, but the code is not there yet.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+				
 				$joinClassName = $joinTable->getPhpName();
 				$lfMap = $fk->getLocalForeignMapping();
 				foreach ($fk->getLocalColumns() as $columnName ) {
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$this->getColumnConstant($columnFk, $joinClassName).");
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
 ";
 	  			} 
 			} 
@@ -313,9 +318,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		foreach ($table->getForeignKeys() as $fk ) {
 			
 			// want to cover this case, but the code is not there yet.
-			// FIXME -- why not?
+			// FIXME -- why not? -because we'd have to alias the tables in the JOIN
 			if ( $fk->getForeignTableName() != $table->getName() ) {
-			
+				
+				/*
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 				$joinClassName = $joinTable->getPhpName();
 				$interfaceName = $joinTable->getPhpName();
@@ -340,6 +346,12 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$collThisTable= $className . "sRelatedBy" . $partJoinName;
 					$collThisTableMs= $className . "RelatedBy" . $partJoinName;
 				}
+				*/
+				
+				$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
+				$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
+				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+				
 				
 				$index++;
 				
@@ -349,34 +361,34 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	";
 				if ($joinTable->getChildrenColumn()) {
 					$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass($rs, $startcol<?php echo $index ?>);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol$index);
 ";
 				} else {
 					$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass();
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 				} /* $joinTable->getChildrenColumn() */
 			
 				$script .= "
 	
 			\$cls = Propel::import(\$omClass);
-			\$obj$index = new \$cls();
-			\$obj$index->hydrate(\$rs, \$startcol$index);
+			\$obj".$index." = new \$cls();
+			\$obj".$index."->hydrate(\$rs, \$startcol$index);
 			
 			\$newObject = true;
 			for (\$j=0, \$resCount=count(\$results); \$j < \$resCount; \$j++) {
 				\$temp_obj1 = \$results[\$j];
-				\$temp_obj$index = \$temp_obj1->get$joinString();
-				if (\$temp_obj$index->getPrimaryKey() === \$obj$index->getPrimaryKey()) {
+				\$temp_obj$index = \$temp_obj1->get".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(); // CHECKME
+				if (\$temp_obj".$index."->getPrimaryKey() === \$obj".$index."->getPrimaryKey()) {
 					\$newObject = false;
-					\$temp_obj$index->add$collThisTableMs(\$obj1);
+					\$temp_obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1); // CHECKME
 					break;
 				}
 			}
 			
 			if (\$newObject) {
-				\$obj$index->init$collThisTable();
-				\$obj$index->add$collThisTableMs(\$obj1);
+				\$obj".$index."->init".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = true)."();
+				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
 			}
 ";
 
@@ -398,7 +410,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	protected function addDoSelectJoinAllExcept(&$script) {
 	
-	
+		$table = $this->getTable();
+		
 		// ------------------------------------------------------------------------
 		// doSelectJoinAllExcept*()
 		// ------------------------------------------------------------------------
@@ -412,9 +425,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
 
-			$excludeTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-			$excludeClassName = $excludeTable->getPhpName();
-
+			$excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+			$excludedClassName = $excludedTable->getPhpName();
+			
+			/*
 			$relatedByCol = "";
 			foreach ($fk->getLocalColumns() as $columnName) {
 				$column = $table->getColumn($columnName);
@@ -422,26 +436,31 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$relatedByCol .= $column->getPhpName();
 				}
 			}
-
+			
 			if ($relatedByCol == "") {
-				$excludeString = $excludeClassName;
+				$excludeString = $excludedClassName;
 				$collThisTable = "${className}s";
 				$collThisTableMs = $className;
 			} else {
-				$excludeString = $excludeClassName . "RelatedBy" . $relatedByCol;
+				$excludeString = $excludedClassName . "RelatedBy" . $relatedByCol;
 				$collThisTable = $className . "sRelatedBy" . $relatedByCol;
 				$collThisTableMs = $className . "RelatedBy" . $relatedByCol;
 			}
+			*/
 			
+			$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
+			$excludedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($excludedTable);
+			$excludedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($excludedTable);
+				
 		$script .= "
 	/**
-	 * Selects a collection of $className objects pre-filled with all related objects except $excludeString.
+	 * Selects a collection of ".$table->getPhpName()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
 	 *
-	 * @return array Array of $className objects.
+	 * @return array Array of ".$table->getPhpName()." objects.
 	 * @throws PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExcept$excludeString(Criteria \$c, \$con = null)
+	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
 	{
 		// Set the correct dbName if it has not been overridden
 		// \$c->getDbName() will return the same object if not set to another value
@@ -461,11 +480,11 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 					$joinClassName = $joinTable->getPhpName();
 		
-					if ($joinClassName != $excludeClassName) {
+					if ($joinClassName != $excludedClassName) {
 						$new_index = $index + 1;
 						$script .= "
-		".$this->getPeerClassname($joinClassName)."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$this->getPeerClassname($joinClassName)."::\$numColumns;
+		".$excludedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		\$startcol$new_index = \$startcol$index + ".$excludedTablePeerBuilder->getPeerClassname()."::\$numColumns;
 ";
 					$index = $new_index;
 					} // if joinClassName not excludeClassName 
@@ -477,14 +496,14 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				if ( $subfk->getForeignTableName() != $table->getName() ) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 					$joinClassName = $joinTable->getPhpName();
-					if($joinClassName != $excludeClassName)
+					if($joinClassName != $excludedClassName)
 					{
 						$lfMap = $subfk->getLocalForeignMapping();
 						foreach ($subfk->getLocalColumns() as $columnName ) {
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$this->getColumnConstant($columnFk, $joinClassName).");
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$excludedTablePeerBuilder->getColumnConstant($columnFk).");
 ";
 						}
 					} 
@@ -499,7 +518,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 			if ($table->getChildrenColumn()) {
 				$script .= "
-			\$omClass = ".$this->getPeerClassname()."::getOMClass($rs, 1);
+			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$rs, 1);
 ";
 			} else {
 				$script .= "
@@ -525,8 +544,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$interfaceName = $joinTable->getInterface();
 				}
 	
-				if ($joinClassName != $excludeClassName) {
-				
+				if ($joinClassName != $excludedClassName) {
+					
+					/*
 					$partJoinName = "";
 					foreach ($subfk->getLocalColumns() as $columnName ) {
 						$column = $table->getColumn($columnName);
@@ -544,16 +564,20 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						$collThisTable= $className . "sRelatedBy" . $partJoinName;
 						$collThisTableMs= $className . "RelatedBy" . $partJoinName;
 					}
-	
+					*/
+					
+					$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
+					$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+					
 					$index++;
 				
 					if ($joinTable->getChildrenColumn()) {
 						$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass(\$rs, \$startcol$index);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol$index);
 ";
 					} else {
 						$script .= "
-			\$omClass = ".$this->getPeerClassname($joinClassName)."::getOMClass();
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 					} /* $joinTable->getChildrenColumn() */
 	
@@ -561,25 +585,25 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 			\$cls = Propel::import(\$omClass);
 			\$obj$index  = new \$cls();
-			\$obj$index->hydrate(\$rs, \$startcol$index);
+			\$obj".$index."->hydrate(\$rs, \$startcol$index);
 			
 			\$newObject = true;
 			for (\$j=0, \$resCount=count(\$results); \$j < \$resCount; \$j++) {
 				\$temp_obj1 = \$results[\$j];
-				\$temp_obj$index = \$temp_obj1->get$joinString();
-				if (\$temp_obj$index->getPrimaryKey() === \$obj$index->getPrimaryKey()) {
+				\$temp_obj$index = \$temp_obj1->get".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural=false)."(); //CHECKME
+				if (\$temp_obj".$index."->getPrimaryKey() === \$obj".$index."->getPrimaryKey()) {
 					\$newObject = false;
-					\$temp_obj$index->add$collThisTableMs(\$obj1);
+					\$temp_obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=false)."(\$obj1);
 					break;
 				}
 			}
 			
 			if (\$newObject) {
-				\$obj$index->init$collThisTable();
-				\$obj$index->add$collThisTableMs(\$obj1);
+				\$obj".$index."->init".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=true)."();
+				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=false)."(\$obj1);
 			}
 ";
-					} // if ($joinClassName != $excludeClassName) {
+					} // if ($joinClassName != $excludedClassName) {
 			} // $subfk->getForeignTableName() != $table->getName()
 		} // foreach  
 		$script .= "

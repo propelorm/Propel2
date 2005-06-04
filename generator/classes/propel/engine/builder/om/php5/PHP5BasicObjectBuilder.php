@@ -50,8 +50,9 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		
 		$table = $this->getTable();		
-				
+		$package = $this->getPackage();		
 		$parentClass = $this->getBaseClass();
+		
 		$script .= "
 require_once '".$this->getFilePath($parentClass)."';
 ";
@@ -104,8 +105,9 @@ include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
 	protected function addClassOpen(&$script)
 	{
 		
-		$tableName = $this->getTable()->getName();
-		$tableDesc = $this->getTable()->getDescription();
+		$table = $this->getTable();
+		$tableName = $table->getName();
+		$tableDesc = $table->getDescription();
 		
 		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
 		
@@ -157,13 +159,13 @@ abstract class ".$this->classname." {
 	 * that calling code may not be able to identify.
 	 * @var ".$this->getPeerClassname()."
 	 */
-	protected static $peer;
+	protected static \$peer;
 ";
 		if (!$this->getTable()->isAlias()) {
 		    $this->addColumnAttributes($script);
 		}
 		
-		if ($this->addGenericAccessors() || $this->addGenericMutators()) {
+		if ($this->isAddGenericAccessors() || $this->isAddGenericMutators()) {
 		    $this->addFieldNamesAttribute($script);
 			$this->addFieldKeysAttribute($script);
 		}
@@ -411,11 +413,11 @@ abstract class ".$this->classname." {
 	// --------------------------------------------------------------
 	
 	/**
-	 * Adds the mutator (setter) method for a column.
+	 * Adds the open of the mutator (setter) method for a column.
 	 * @param string &$script The script will be modified in this method.
 	 * @param Column $col The current column.
 	 */
-	protected function addMutator(&$script, Column $col)
+	protected function addMutatorOpen(&$script, Column $col)
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
@@ -426,7 +428,6 @@ abstract class ".$this->classname." {
 	 * ".$col->getDescription()."
 	 * @param ".$col->getPhpNative()." \$v new value
 	 * @return void
-	 * $throwsClause
 	 */
 	public function set$cfc(\$v)
 	{
@@ -440,11 +441,20 @@ abstract class ".$this->classname." {
 		\$this->".$clo."_isLoaded = true;
 ";
 		}
-		
-		$script .= "
-	} // set$cfc()
-";
 
+	}
+	
+	/**
+	 * Adds the close of the mutator (setter) method for a column.
+	 * This can be overridden (e.g. by PHP5ComplexObjectBuilder) if additional functionality is needed.
+	 * @param string &$script The script will be modified in this method.
+	 * @param Column $col The current column.
+	 */
+	protected function addMutatorClose(&$script, Column $col)
+	{	
+				$script .= "
+	} // set".$col->getPhpName()."()
+";
 	}
 	
 	/**
@@ -456,7 +466,7 @@ abstract class ".$this->classname." {
 	protected function addLobMutator(&$script, Column $col)
 	{
 		$this->addMutatorOpen($script, $col);
-		
+		$clo = strtolower($col->getPhpName());
 		// Setting of LOB columns gets some special handling
 		
 		if ($col->getPropelType() === PropelTypes::BLOB || $col->getPropelType() === PropelTypes::LONGVARBINARY ) {
@@ -497,6 +507,8 @@ abstract class ".$this->classname." {
 	 */
 	protected function addTemporalMutator(&$script, Column $col)
 	{
+		$clo = strtolower($col->getPhpName());
+		
 		$defaultValue = null;
 		if (($val = $col->getPhpDefaultValue()) !== null) {
 			settype($val, $col->getPhpNative());
@@ -534,6 +546,15 @@ abstract class ".$this->classname." {
 	 */
 	protected function addDefaultMutator(&$script, Column $col)
 	{
+		$clo = strtolower($col->getName());
+		
+		// FIXME: refactor this
+		$defaultValue = null;
+		if (($val = $col->getPhpDefaultValue()) !== null) {
+			settype($val, $col->getPhpNative());
+			$defaultValue = var_export($val, true);
+		}
+		
 		$this->addMutatorOpen($script, $col);
 		$script .= "
 		if (\$this->$clo !== \$v";
@@ -1136,7 +1157,7 @@ $script .= "
 		$pkeys = $this->getTable()->getPrimaryKey();
 		if (count($pkeys) == 1) {
 		    $this->addGetPrimaryKey_SinglePK($script);
-		} elseif () {
+		} elseif (count($pkeys) > 1) {
 			$this->addGetPrimaryKey_MultiPK($script);
 		} else {
 			// no primary key -- this is deprecated, since we don't *need* this method anymore
@@ -1227,7 +1248,7 @@ $script .= "
 		$pkeys = $this->getTable()->getPrimaryKey();
 		if (count($pkeys) == 1) {
 		    $this->addSetPrimaryKey_SinglePK($script);
-		} elseif () {
+		} elseif (count($pkeys) > 1) {
 			$this->addSetPrimaryKey_MultiPK($script);
 		} else {
 			// no primary key -- this is deprecated, since we don't *need* this method anymore

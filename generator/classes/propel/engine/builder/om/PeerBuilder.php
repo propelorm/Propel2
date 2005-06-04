@@ -195,39 +195,7 @@ abstract class PeerBuilder extends OMBuilder {
 		}
 		return false;
 	}	
-	
-	/** 
-	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
-     * 
-     * @param Column $col The column we need a name for.
-     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
-     * 
-     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, then uses current table COLUMN_NAME.
-     */
-    public function getColumnConstant(Column $col, $phpName = null)
-	{
-		$classname = $this->getPeerClassname($phpName);
 		
-        // was it overridden in schema.xml ?
-        if ($col->getPeerName()) {
-            $const = strtoupper($col->getPeerName());
-        } else {
-            $const = strtoupper($col->getName());
-        }
-		return $classname.'::'.$const;
-    }
-	
-	/**
-	 * Returns the peer name for current table.
-	 * @return string (e.g. 'MyPeer')
-	 */
-	protected function getPeerClassname($phpName = null) {
-		if ($phpName === null) {
-		    $phpName = $this->getTable()->getPhpName();
-		}
-		return $phpName . 'Peer';
-	}
-	
 	/**
 	 * Returns the retrieveByPK method name to use for this table.
 	 * If the table is an alias then the method name looks like "retrieveTablenameByPK"

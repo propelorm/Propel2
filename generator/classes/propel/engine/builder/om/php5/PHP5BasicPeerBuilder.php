@@ -63,20 +63,24 @@ require_once '$basePeerFile';
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by ".$this->getPeerClassname()."::getOMClass()
 include_once '$objectFile';";
-				
+		
+		/*
 		foreach ($table->getForeignKeys() as $fk) {
 		
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
 			$tblFKPackage = ($tblFK->getPackage() ? $tblFK->getPackage() : $this->getPackage()); 
-	   
+	   		
+			$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
+			
 			if (!$tblFK->isForReferenceOnly()) {
 				$fkObjectFile = $this->getFilePath($tblFKPackage, $tblFK->getPhpName());
-				$fkPeerFile = $this->getFilePath($tblFKPackage, $this->getPeerClassname($tblFK->getPhpName()));
+				$fkPeerFile = $this->getFilePath($tblFKPackage, $joinedTablePeerBuilder->getPeerClassname());
 				$script .= "
 include_once '$fkObjectFile';
 include_once '$fkPeerFile';";
 			}
-		}	
+		}
+		*/	
 		
 		$script .= "
 ";
@@ -149,11 +153,11 @@ abstract class ".$this->classname." {
 	 */
 	protected function addColumnNameConstants(&$script)
 	{		
-		foreach ($this->table->getColumns() as $col) {
+		foreach ($this->getTable()->getColumns() as $col) {
 			
 			$script .= "
 	/** the column name for the ".strtoupper($col->getName()) ." field */
-	const ".$this->getColumnName($col) ." = '".$this->table->getName().".".strtoupper($col->getName())."';
+	const ".$this->getColumnName($col) ." = '".$this->getTable()->getName().".".strtoupper($col->getName())."';
 ";
 		} // foreach
 	}
@@ -900,48 +904,50 @@ abstract class ".$this->classname." {
 ";
 
 		foreach ($table->getReferrers() as $fk) {
-
-		// $fk is the foreign key in the other table, so localTableName will
-		// actually be the table name of other table
-		$tblFK = $fk->getTable();
-		$tblFKPackage = ($tblFK->getPackage() ? $tblFK->getPackage() : $this->getPackage());
-		
-		if (!$tblFK->isForReferenceOnly()) {
-			// we can't perform operations on tables that are
-			// not within the schema (i.e. that we have no map for, etc.)
 			
-			$fkClassName = $tblFK->getPhpName();
+			// $fk is the foreign key in the other table, so localTableName will
+			// actually be the table name of other table
+			$tblFK = $fk->getTable();
+			$tblFKPackage = ($tblFK->getPackage() ? $tblFK->getPackage() : $this->getPackage());
 			
-			// i'm not sure whether we can allow delete cascade for foreign keys
-			// within the same table?  perhaps we can?
-			if ( $fk->getOnDelete() == ForeignKey::CASCADE && $tblFK->getName() != $table->getName()) {
+			$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
+			
+			if (!$tblFK->isForReferenceOnly()) {
+				// we can't perform operations on tables that are
+				// not within the schema (i.e. that we have no map for, etc.)
 				
-				// backwards on purpose
-				$columnNamesF = $fk->getLocalColumns();
-				$columnNamesL = $fk->getForeignColumns();
+				$fkClassName = $tblFK->getPhpName();
 				
-				$script .= "
+				// i'm not sure whether we can allow delete cascade for foreign keys
+				// within the same table?  perhaps we can?
+				if ( $fk->getOnDelete() == ForeignKey::CASCADE && $tblFK->getName() != $table->getName()) {
+					
+					// backwards on purpose
+					$columnNamesF = $fk->getLocalColumns();
+					$columnNamesL = $fk->getForeignColumns();
+					
+					$script .= "
 
 			include_once '".$this->getFilePath($tblFKPackage, $tblFK->getPhpName())."';
  
 			// delete related $fkClassName objects
 			\$c = new Criteria();
 			";
-				for($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
-					$columnFK = $tblFK->getColumn($columnNamesF[$x]);
-					$columnL = $table->getColumn($columnNamesL[$x]);
-														
-					$script .= "
-			\$c->add(".$this->getColumnConstant($columnFK, $fkClassName) .", \$obj->get".$columnL->getPhpName()."());";
-				}
+					for($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
+						$columnFK = $tblFK->getColumn($columnNamesF[$x]);
+						$columnL = $table->getColumn($columnNamesL[$x]);
+															
+						$script .= "
+			\$c->add(".$joinedTablePeerBuilder->getColumnConstant($columnFK) .", \$obj->get".$columnL->getPhpName()."());";
+					}
 				
-				$script .= "
-			\$affectedRows += ".$this->getPeerClassname($fkClassName)."::doDelete(\$c, \$con);";
+					$script .= "
+			\$affectedRows += ".$joinedTablePeerBuilder->getPeerClassname()."::doDelete(\$c, \$con);";
 
-					} // if cascade && fkey table name != curr table name
+				} // if cascade && fkey table name != curr table name
 					
-				} // if not for ref only														
-			} // foreach foreign keys
+			} // if not for ref only														
+		} // foreach foreign keys
 			$script .= "
 		}
 		return \$affectedRows;
@@ -987,7 +993,8 @@ abstract class ".$this->classname." {
 			// $fk is the foreign key in the other table, so localTableName will
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
-					
+			$refTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
+			
 			if (!$tblFK->isForReferenceOnly()) {
 				// we can't perform operations on tables that are
 				// not within the schema (i.e. that we have no map for, etc.)
@@ -1011,8 +1018,8 @@ abstract class ".$this->classname." {
 						$columnFK = $tblFK->getColumn($columnNamesF[$x]);
 						$columnL = $table->getColumn($columnNamesL[$x]);
 						$script .= "
-			\$selectCriteria->add(".$this->getColumnConstant($columnFK, $fkClassName).", \$obj->get".$columnL->getPhpName()."());	
-			\$updateValues->add(".$this->getColumnConstant($columnFK, $fkClassName).", null);
+			\$selectCriteria->add(".$refTablePeerBuilder->getColumnConstant($columnFK).", \$obj->get".$columnL->getPhpName()."());	
+			\$updateValues->add(".$refTablePeerBuilder->getColumnConstant($columnFK).", null);
 ";
 					}
 				

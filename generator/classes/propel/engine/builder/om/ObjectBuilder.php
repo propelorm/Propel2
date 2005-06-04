@@ -88,10 +88,12 @@ abstract class ObjectBuilder extends OMBuilder {
 		}
 	}
 	
+	/**
+	 * Adds the mutator (setter) methods for setting column values.
+	 */
 	protected function addColumnMutatorMethods()
 	{
-	
-		foreach ($table->getColumns() as $col) {
+		foreach ($this->getTable()->getColumns() as $col) {
 			
 			if ($col->isLob()) {
 				$this->addLobMutator($script, $col);
@@ -100,10 +102,7 @@ abstract class ObjectBuilder extends OMBuilder {
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}
-						
 		}
-	
-	
 	}
 	
 	
@@ -112,7 +111,7 @@ abstract class ObjectBuilder extends OMBuilder {
      * If not, will return 'propel.om.BaseObject'
      * @return string
      */
-    public static function getBaseClass() {
+    protected function getBaseClass() {
         $class = $this->getTable()->getBaseClass();
         if ($class === null) {
             $class = "propel.om.BaseObject";
@@ -121,12 +120,12 @@ abstract class ObjectBuilder extends OMBuilder {
     }
 	
 	/**
-     * Gets the interface path if specified for table.
+     * Gets the interface path if specified for current table.
      * If not, will return 'propel.om.Persistent'.
      * @return string
      */
-    public static function getInterface(Table $table) {
-        $interface = $table->getInterface();
+    protected function getInterface() {
+        $interface = $this->getTable()->getInterface();
         if ($interface === null && !$table->isReadOnly()) {
             $interface = "propel.om.Persistent";
         }

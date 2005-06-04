@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/engine/builder/om/DataModelBuilder.php';
+require_once 'propel/engine/builder/DataModelBuilder.php';
 
 /**
  * Baseclass for OM-building classes.
@@ -76,6 +76,48 @@ abstract class OMBuilder extends DataModelBuilder {
 	{
 		return $this->getPackage() . ".om";
 	}
+	
+	/**
+	 * Returns the peer classname for current table.
+	 * @return string (e.g. 'MyPeer')
+	 */
+	public function getPeerClassname($phpName = null) {
+		if ($phpName !== null) {
+			$e = new Exception("getPeerClassname() called with param.");
+			print $e;
+			throw $e;
+		}
+		return $this->getTable()->getPhpName() . 'Peer';
+	}
+	
+	/**
+	 * Returns the object classname for current table.
+	 * @return string (e.g. 'MyPeer')
+	 */
+	public function getObjectClassname() {
+		return $this->getTable()->getPhpName();
+	}
+	
+	/** 
+	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
+     * 
+     * @param Column $col The column we need a name for.
+     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+     * 
+     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, then uses current table COLUMN_NAME.
+     */
+    public function getColumnConstant(Column $col, $phpName = null)
+	{
+		$classname = $this->getPeerClassname($phpName);
+		
+        // was it overridden in schema.xml ?
+        if ($col->getPeerName()) {
+            $const = strtoupper($col->getPeerName());
+        } else {
+            $const = strtoupper($col->getName());
+        }
+		return $classname.'::'.$const;
+    }
 	
 	/**
      * Gets just classname, given a dot-path to class.
