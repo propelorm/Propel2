@@ -11,6 +11,9 @@ if($table->getPackage()) {
 } else {
     $package = $targetPackage;
 }
+
+$interface = ClassTools::getInterface($table);
+
 ?>
 
 
@@ -23,9 +26,8 @@ if($table->getPackage()) {
  * <?php } ?> 
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- * @package <?php echo $package ?> 
+ * long as it does not already exist in the output directory. 
  */
-interface <?php echo $table->getInterface() ?> {
+interface <?php echo ClassTools::classname($interface) ?> {
 
 }

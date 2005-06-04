@@ -1652,14 +1652,16 @@ if (!$table->isAlias()) {
 
 	/**
 	 * Dummy primary key setter.
-	 * For now this function needs to exist because it's mandated in the Persistent
-	 * interface, and because other methods will attempt to set the primary key.
+	 * 
+	 * This function only exists to preserve backwards compatibility.  It is no longer
+	 * needed or required by the Persistent interface.  It will be removed in next BC-breaking
+	 * release of Propel.
 	 *
-	 * This should be removed in favor of more complex template work.
+	 * @deprecated
 	 */
 	 public function setPrimaryKey($pk)
 	 {
-		 // do nothing, because this doesn't support primary keys
+		 // do nothing, because this object doesn't have any primary keys
 	 }
 <?php
 		} /* if(count($table->getPrimaryKey()) == 1) */

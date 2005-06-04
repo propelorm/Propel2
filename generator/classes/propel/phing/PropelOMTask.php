@@ -186,11 +186,16 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
                         // Create [empty] interface if it does not already exist
                         if ($table->getInterface()) {
-                            $path = ClassTools::getFilePath($package, $table->getInterface());
+                            $path = ClassTools::getFilePath($table->getInterface());
                             $_f = new File($basepath, $path);
                             if (!$_f->exists()) {
+							
+								$_dir = new File(dirname($_f->getAbsolutePath()));
+								$_dir->mkdirs();
+								
                                 $this->log("\t\t-> " . $table->getInterface());
                                 $generator->parse("om/$targetPlatform/Interface.tpl", $path);
+								
                             } else {
                                 $this->log("\t\t-> (exists) " . $table->getInterface());
                             }

@@ -6,9 +6,15 @@
 
 echo '<' . '?' . 'php';
 
-$interface = "";
-if ($table->getInterface()) {
-	$interface = $table->getInterface();
+
+$interface = ClassTools::getInterface($table);
+
+if (!empty($interface)) {
+?>
+
+require_once '<?php echo ClassTools::getFilePath($interface) ?>';
+
+<?php
 }
 
 $db = $table->getDatabase();
@@ -38,6 +44,6 @@ require_once '<?php echo ClassTools::getFilePath($pkbase, $basePrefix . $table->
  *
  * @package <?php echo $package ?> 
  */
-<?php echo $abstract ?>class <?php echo $table->getPhpName() ?> extends <?php echo $basePrefix . $table->getPhpName() ?><?php if ($interface != "") { ?> implements <?php echo $interface ?><?php } ?> {
+<?php echo $abstract ?>class <?php echo $table->getPhpName() ?> extends <?php echo $basePrefix . $table->getPhpName() ?><?php if (!empty($interface)) { ?> implements <?php echo ClassTools::classname($interface) ?><?php } ?> {
 
 }
