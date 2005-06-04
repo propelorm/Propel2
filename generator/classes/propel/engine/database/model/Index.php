@@ -80,8 +80,7 @@ class Index extends XMLElement {
         }
         // ASSUMPTION: This Index not yet added to the list.
         if ($this->isUnique()) {
-            // UNICES cannot be counted, so they store their number inside themselves
-            $inputs[] = $this->getNumber();
+            $inputs[] = count($table->getUnices()) + 1;
         } else {
             $inputs[] = count($table->getIndices()) + 1;
         }

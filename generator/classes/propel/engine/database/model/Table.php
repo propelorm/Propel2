@@ -230,6 +230,15 @@ class Table extends XMLElement implements IDMethod {
                 }
             }
 
+            for ($i = 0, $size = count($this->unices); $i < $size; $i++) {
+                $index = $this->unices[$i];
+                $name = $index->getName();
+                if (empty($name)) {
+                    $name = $this->acquireConstraintName("U", $i + 1);
+                    $index->setName($name);
+                }
+            }
+
             // NOTE: Most RDBMSes can apparently name unique column
             // constraints/indices themselves (using MySQL and Oracle
             // as test cases), so we'll assume that we needn't add an
@@ -527,6 +536,7 @@ class Table extends XMLElement implements IDMethod {
         if ($unqdata instanceof Unique) {
             $unique = $unqdata;
             $unique->setTable($this);
+            $unique->getName(); // we call this method so that the name is created now if it doesn't already exist.
             $this->unices[] = $unique;
             return $unique;
         } else {
@@ -805,11 +815,24 @@ class Table extends XMLElement implements IDMethod {
      */
     public function getSequenceName()
     {
+        static $longNamesMap = array();
         $result = null;
         if ($this->getIdMethod() == self::NATIVE) {
             $idMethodParams = $this->getIdMethodParameters();
             if ($idMethodParams === null) {
-                $result = $this->getName() . "_SEQ";
+                $maxIdentifierLength = $this->getDatabase()->getPlatform()->getMaxColumnNameLength();
+                if(strlen($this->getName() . "_SEQ") > $maxIdentifierLength)
+                {
+                  if(!isset($longNamesMap[$this->getName()]))
+                  {
+                    $longNamesMap[$this->getName()] = strval(count($longNamesMap) + 1);
+                  }
+                  $result = substr($this->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$this->getName()])) . "_SEQ_" . $longNamesMap[$this->getName()];
+                }
+                else
+                {
+                  $result = $this->getName() . "_SEQ";
+                }
             } else {
                 $result = $idMethodParams[0]->getValue();
             }

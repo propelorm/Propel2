@@ -57,7 +57,7 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
      */
     public function getMaxColumnNameLength()
     {
-        return 30;
+        return 128;
     }
     
     /**

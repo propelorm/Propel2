@@ -57,6 +57,14 @@ class PlatformMysqlImpl extends PlatformDefaultImpl {
     }
 
     /**
+     * @see Platform#getMaxColumnNameLength()
+     */
+    public function getMaxColumnNameLength()
+    {
+        return 64;
+    }
+    
+    /**
      * @see Platform#hasSize(String)
      */
     public function hasSize($sqlType) {

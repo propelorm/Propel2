@@ -66,8 +66,8 @@
             $lnames[] = "`" . $column . "`";
         }
 
-        $constraintName = "`" . $table->getName() . "_ibfk_{$counter}`";
-				$indexName = "`" . $table->getName() . "_ibfk_{$counter}_I`";
+        $constraintName = "`" . $fk->getName() . "`";
+				$indexName = "`" . substr_replace($fk->getName(), 'FI_',  strrpos($fk->getName(), 'FK_'), 3) . "`";
 				if(!in_array(implode(',', $lnames), $_indices))
 				{
 					// no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2

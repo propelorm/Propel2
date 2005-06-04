@@ -68,6 +68,14 @@ class PlatformPgsqlImpl extends PlatformDefaultImpl {
     }
     
     /**
+     * @see Platform#getMaxColumnNameLength()
+     */
+    public function getMaxColumnNameLength()
+    {
+        return 32;
+    }
+    
+    /**
      * Escape the string for RDBMS.
      * @param string $text
      * @return string

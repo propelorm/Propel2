@@ -55,6 +55,14 @@ class PlatformSqliteImpl extends PlatformDefaultImpl {
     }
 
     /**
+     * @see Platform#getMaxColumnNameLength()
+     */
+    public function getMaxColumnNameLength()
+    {
+        return 1024;
+    }
+    
+    /**
      * @see Platform#hasSize(String)
      */
     public function hasSize($sqlType) {
