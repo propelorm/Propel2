@@ -36,6 +36,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	
 	/**
 	 * Adds additional attributes used for complex object model.
+	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addAttributes(&$script)
 	{
@@ -49,6 +50,23 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		}
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
+	}
+	
+	/**
+	 * Specifies the methods that are added as part of the basic OM class.
+	 * This can be overridden by subclasses that wish to add more methods.
+	 * @param string &$script The script will be modified in this method.
+	 * @see PHP5BasicObjectBuilder::addClassBody()
+	 */
+	protected function addClassBody(&$script)
+	{
+		$table = $this->getTable();
+		parent::addClassBody($script);
+		
+		
+		$this->addFKMethods($script);
+		$this->addRefFKMethods($script);
+		
 	}
 	
 	/**
@@ -108,26 +126,30 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	} // addMutatorClose()
 	
 	/**
-	 * Gets the Table object for the foreign key.
-	 * @return string
+	 * Adds the methods related to saving and deleting the object.
 	 */
-	protected function getFKTable(ForeignKey $fk)
+	protected function addManipulationMethods(&$script)
+	{
+		$this->addDelete(&$script);
+		
+		$this->addSave(&$script);
+		$this->addDoSave(&$script);
+	}
+	
+	/**
+	 * Convenience method to get the foreign Table object for an fkey.
+	 * @return Table
+	 */
+	protected function getForeignTable(ForeignKey $fk)
 	{
 		return $this->getTable()->getDatabase()->getTable($fk->getForeignTableName());
 	}
 	
 	/**
-	 * Returns the PHP class name (phpName) for the foreign key table.
-	 * @return string
-	 */
-	protected function getFKClassname(ForeignKey $fk)
-	{
-		$tblFK = $this->getTable()->getDatabase()->getTable($fk->getForeignTableName());
-		return $tblFK->getPhpName();
-	}
-	
-	/**
-	 * Gets the PHP method name affix to be used for local foreign keys methods and variable names (e.g. set????(), $coll???).
+	 * Gets the PHP method name affix to be used for fkeys for the current table (not referrers to this table).
+	 * 
+	 * The difference between this method and the getRefFKPhpNameAffix() method is that in this method the
+	 * classname in the affix is the foreign table classname.
 	 * 
 	 * @param ForeignKey $fk The local FK that we need a name for.
 	 * @param boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
@@ -135,13 +157,15 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
 	{
-		$tblFK = $this->getFKTable($fk);
-		$className = $tblFK->getPhpName();				
+		$className = $this->getForeignTable($fk)->getPhpName();				
 		return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk);
 	}
 	
 	/**
 	 * Gets the PHP method name affix to be used for referencing foreign key methods and variable names (e.g. set????(), $coll???).
+	 * 
+	 * The difference between this method and the getFKPhpNameAffix() method is that in this method the
+	 * classname in the affix is the classname of the local fkey table.
 	 * 
 	 * @param ForeignKey $fk The referrer FK that we need a name for.
 	 * @param boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
@@ -149,59 +173,30 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
 	{
-		$className = $this->getTable()->getPhpName();
-		return $className . ($plural ? 's' : '') . $this->getRefFKRelatedBySuffix($fk);
+		$className = $fk->getTable()->getPhpName();
+		return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk);
 	}
 	
 	/**
 	 * Gets the "RelatedBy*" suffix (if needed) that is attached to method and variable names.
-	 * @return string
-	 */
-	protected function getRefFKRelatedBySuffix(ForeignKey $fk)
-	{
-		
-		$table = $this->getTable();
-		$relCol = "";
-		foreach ($fk->getForeignColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
-			if (!$column) {
-			    $e = new Exception("Could not fetch column: $columnName in table " . $table->getName());
-				print $e;
-				throw $e;
-			}
-			if ($column->isMultipleFK() || $fk->getForeignTableName() == $table->getName()) {
-				// if there are seeral foreign keys that point to the same table
-				// then we need to generate methods like getAuthorRelatedByColName()
-				// instead of just getAuthor().  Currently we are doing the same
-				// for self-referential foreign keys, to avoid confusion.
-				$relCol .= $column->getPhpName();
-			}
-		}
-
-		if ($relCol != "") {
-			$relCol = "RelatedBy" . $relCol;
-		}
-		
-		return $relCol;
-	}	
-	
-	/**
-	 * Gets the "RelatedBy*" suffix (if needed) that is attached to method and variable names.
+	 * 
+	 * The related by suffix is based on the local columns of the foreign key.  If there is more than
+	 * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix 
+	 * will be appended.
+	 * 
 	 * @return string
 	 */
 	protected function getRelatedBySuffix(ForeignKey $fk)
 	{
-		
-		$table = $this->getTable();
 		$relCol = "";
 		foreach ($fk->getLocalColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
+			$column = $fk->getTable()->getColumn($columnName);
 			if (!$column) {
-			    $e = new Exception("Could not fetch column: $columnName in table " . $table->getName());
+			    $e = new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
 				print $e;
 				throw $e;
 			}
-			if ($column->isMultipleFK() || $fk->getForeignTableName() == $table->getName()) {
+			if ($column->isMultipleFK() || $fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// if there are seeral foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
 				// instead of just getAuthor().  Currently we are doing the same
@@ -243,13 +238,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addFKMethods(&$script)
-	{
-	
-		foreach ($table->getForeignKeys() as $fk) {
+	{	
+		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			$this->addFKMutator($script, $fk);
 			$this->addFKAccessor($script, $fk);
 		} // foreach fk
-	
 	}
 	
 	/**
@@ -258,7 +251,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addFKAttributes(&$script, ForeignKey $fk)
 	{
-		$className = $this->getFKClassname($fk);
+		$className = $this->getForeignTable($fk)->getPhpName();
 		$varName = $this->getFKVarName($fk);
 		
 		$script .= "
@@ -275,7 +268,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addFKMutator(&$script, ForeignKey $fk)
 	{
-		$className = $this->getFKClassname($fk);
+		$table = $this->getTable();
+		$tblFK = $this->getForeignTable($fk);
+		$className = $this->getForeignTable($fk)->getPhpName();
 		$varName = $this->getFKVarName($fk);
 		
 		$script .= "
@@ -318,9 +313,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addFKAccessor(&$script, ForeignKey $fk)
 	{
-	
-		$className = $this->getFKClassname($fk);
-		$relatedBySuffix = $this->getRelatedBySuffix($fk);
+		$table = $this->getTable();
+		
+		$className = $this->getForeignTable($fk)->getPhpName();
 		$varName = $this->getFKVarName($fk);
 		
 		$and = "";
@@ -350,7 +345,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 		
 		// FIXME, if we are allowng user to specify class, this should be dynamic
-		$fkPeerBuilder = new PHP5ComplexPeerBuilder($this->getFKTable($fk));
+		$fkPeerBuilder = new PHP5ComplexPeerBuilder($this->getForeignTable($fk));
 		
 		$script .= "
 
@@ -369,7 +364,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		if (\$this->$varName === null && ($conditional)) {
 ";		
 		$script .= "
-			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::".$fkPeerBuilder->getRetrieveMethodName()."(<?php echo $arglist ?>, \$con);
+			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::".$fkPeerBuilder->getRetrieveMethodName()."($arglist, \$con);
 					
 			/* The following can be used instead of the line above to
 			   guarantee the related object contains a reference
@@ -397,7 +392,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	{
 		$table = $this->getTable();
 		
-		#$className = $this->getFKClassname($fk);
+		#$className = $this->getForeignTable($fk)->getPhpName();
 		$methodAffix = $this->getFKPhpNameAffix($fk);
 		#$varName = $this->getFKVarName($fk);
 		
@@ -447,18 +442,19 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	} // addFKByKeyMutator()
 	
 	/**
-	 * Adds the method that fetches fkey related objects but also joins in data from another table.
+	 * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addFKAccessorJoinMethods(&$script, ForeignKey $fk)
+	protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
 	{
 		$table = $this->getTable();
-		$tableFK = $this->getFKTable($fk);
+		$tblFK = $refFK->getTable();
 		
-		$relCol = $this->getFKPhpNameAffix($fk, $plural=false);
-		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($fk);
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural=false);
+		$collName = $this->getRefFKCollVarName($refFK);
+		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 		
-		$fkPeerBuilder = new PHP5ComplexPeerBuilder($this->getFKTable($fk));
+		$fkPeerBuilder = new PHP5ComplexPeerBuilder($tblFK);
 		
 		$lastTable = "";
 		foreach ($tblFK->getForeignKeys() as $fk2) {
@@ -479,21 +475,19 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				}
 			}
 
-			$tblFK2 = $this->getFKTable($fk2);
+			$tblFK2 = $this->getForeignTable($fk2);
 			$doJoinGet = !$tblFK2->isForReferenceOnly();
 
-			$fkClassName = $tblFK2->getPhpName();
-
-			// do not generate code for self-referencing fk's, it would be
-			// good to do, but it is just not implemented yet.
-			if ($className == $fkClassName) {
-				// $doJoinGet = false;  -- SELF REFERENCING FKs UNDER TESTING
+			// it doesn't make sense to join in rows from the curent table, since we are fetching
+			// objects related to *this* table (i.e. the joined rows will all be the same row as current object)
+			if ($this->getTable()->getPhpName() == $tblFK2->getPhpName()) {
+				$doJoinGet = false;
 			}
 			
 			$relCol2 = $this->getFKPhpNameAffix($fk2, $plural = false);
 
-			if ( $this->getRelatedBySuffix($fk) != "" && 
-							($this->getRelatedBySuffix($fk) == $this->getRelatedBySuffix($fk2))) {
+			if ( $this->getRelatedBySuffix($refFK) != "" && 
+							($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
 				$doJoinGet = false;
 			}
 
@@ -524,11 +518,16 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				\$this->$collName = array();
 			} else {
 ";
-				foreach ($fk->getForeignColumns() as $columnName) {
+				foreach ($refFK->getForeignColumns() as $columnName) {
 					$column = $table->getColumn($columnName);
-					$flMap = $fk->getForeignLocalMapping();
+					$flMap = $refFK->getForeignLocalMapping();
 					$colFKName = $flMap[$columnName];
 					$colFK = $tblFK->getColumn($colFKName);
+					if ($colFK === null) {
+					    $e = new Exception("Column $colFKName not found in " . $tblFK->getName());
+						print $e;
+						throw $e;
+					}
 					$script .= "
 				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
 ";
@@ -542,9 +541,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 ";
-				foreach ($fk->getForeignColumns() as $columnName) {
+				foreach ($refFK->getForeignColumns() as $columnName) {
 					$column = $table->getColumn($columnName);
-					$flMap = $fk->getForeignLocalMapping();
+					$flMap = $refFK->getForeignLocalMapping();
 					$colFKName = $flMap[$columnName];
 					$colFK = $tblFK->getColumn($colFKName);
 					$script .= "
@@ -553,7 +552,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				} /* end foreach ($fk->getForeignColumns() */
 			
 				$script .= "
-			if (!isset(\$this->$lastCriteriaName) || !\$this->$lastCriteriaName->equals(\$criteria)) {
+			if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
 				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelectJoin$relCol2(\$criteria, \$con);
 			}
 		}
@@ -607,11 +606,12 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addRefFKMethods(&$script)
 	{
-		foreach($this->getTable()->getReferrers() as $fk) {
-			$this->addRefFKInit($script, $fk);
-			$this->addRefFKGet($script, $fk);
-			$this->addRefFKCount($script, $fk);
-			$this->addRefFKAdd($script, $fk);
+		foreach($this->getTable()->getReferrers() as $refFK) {
+			$this->addRefFKInit($script, $refFK);
+			$this->addRefFKGet($script, $refFK);
+			$this->addRefFKCount($script, $refFK);
+			$this->addRefFKAdd($script, $refFK);
+			$this->addRefFKGetJoinMethods($script, $refFK);
 		}
 	}
 	
@@ -619,10 +619,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Adds the method that initializes the referrer fkey collection.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addRefFKInit(&$script, ForeignKey $fk) {
+	protected function addRefFKInit(&$script, ForeignKey $refFK) {
 	
-		$relCol = $this->getFKPhpNameAffix($fk, $plural = true);
-		$collName = $this->getRefFKCollVarName($fk);
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+		$collName = $this->getRefFKCollVarName($refFK);
 		
 		$script .= "
 	/**
@@ -644,13 +644,12 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Adds the method that adds an object into the referrer fkey collection.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addRefFKAdd(&$script, ForeignKey $fk)
+	protected function addRefFKAdd(&$script, ForeignKey $refFK)
 	{
+		$tblFK = $refFK->getTable();
+		$className = $refFK->getTable()->getPhpName();
 		
-		$tblFK = $this->getFKTable($fk);
-		$className = $fk->getPhpName();
-
-		$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($fk->getTable());
+		$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($refFK->getTable());
 		
 		$script .= "
 	/**
@@ -661,10 +660,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * @return void
 	 * @throws PropelException
 	 */
-	public function add".$this->getFKPhpNameAffix($fk, $plural = false)."($className \$l)
+	public function add".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$l)
 	{
-		\$this->coll".$this->getFKPhpNameAffix($fk, $plural = true)."[] = \$l;
-		\$l->set".$joinedTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(\$this);
+		\$this->coll".$this->getRefFKPhpNameAffix($refFK, $plural = true)."[] = \$l;
+		\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 	}
 ";
 	} // addRefererAdd
@@ -673,11 +672,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Adds the method that returns the size of the referrer fkey collection.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addRefFKCount(&$script, ForeignKey $fk)
+	protected function addRefFKCount(&$script, ForeignKey $refFK)
 	{
-		$relCol = $this->getFKPhpNameAffix($fk, $plural = true);
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 		
-		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($this->getFKTable($fk));
+		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($refFK->getTable());
 		
 		$script .= "
 	/**
@@ -695,15 +694,13 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			\$criteria = new Criteria();
 		}
 ";
-		foreach ($fk->getForeignColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
-			// used to be getLocalForeignMapping() but that didn't seem to work
-			// (maybe a problem in translation of HashTable code to PHP).
-			$flmap = $fk->getForeignLocalMapping();
+		foreach ($refFK->getForeignColumns() as $columnName) {
+			$column = $this->getTable()->getColumn($columnName);
+			$flmap = $refFK->getForeignLocalMapping();
 			$colFKName = $flmap[$columnName];
-			$colFK = $tblFK->getColumn($colFKName);
+			$colFK = $refFK->getTable()->getColumn($colFKName);
 			$script .= "
-		\$criteria->add(".$this->getColumnConstant($colFK, $className).", \$this->get".$column->getPhpName()."());
+		\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
 ";
 		} // end foreach ($fk->getForeignColumns()
 		$script .="
@@ -716,14 +713,16 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Adds the method that returns the referrer fkey collection.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addRefFKGet(&$script, ForeignKey $fk) 
+	protected function addRefFKGet(&$script, ForeignKey $refFK) 
 	{
 		$table = $this->getTable();
-		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($this->getFKTable($fk));
-		$relCol = $this->getFKPhpNameAffix($fk, $plural = true);
+		$tblFK = $refFK->getTable();
 		
-		$collName = $this->getRefFKCollVarName($fk);
-		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($fk);
+		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($refFK->getTable());
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+		
+		$collName = $this->getRefFKCollVarName($refFK);
+		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 		
 		$script .= "
 	/**
@@ -752,17 +751,17 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			   \$this->$collName = array();
 			} else {
 ";	
-		foreach ($fk->getForeignColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
-			// used to be getLocalForeignMapping() but that didn't seem to work
-			// (maybe a problem in translation of HashTable code to PHP).
-			$flmap = $fk->getForeignLocalMapping();
-			$colFKName = $flmap[$columnName];
-			$colFK = $tblFK->getColumn($colFKName);
+		foreach ($refFK->getLocalColumns() as $colFKName) {
+			// $colFKName is local to the referring table (i.e. foreign to this table)
+			$lfmap = $refFK->getLocalForeignMapping();
+			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);			
+			$colFK = $refFK->getTable()->getColumn($colFKName);
+			
 			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
 ";
 		} // end foreach ($fk->getForeignColumns()
+		
 		$script .= "
 				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
 			}
@@ -773,14 +772,14 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				// called for.  If the criteria is the same as the last
 				// one, just return the collection.
 ";
-		foreach ($fk->getForeignColumns() as $columnName) {
-			$column = $table->getColumn($columnName);
-			$flmap = $fk->getForeignLocalMapping();
-			$colFKName = $flmap[$columnName];
-			$colFK = $tblFK->getColumn($colFKName);
+		foreach ($refFK->getLocalColumns() as $colFKName) {
+			// $colFKName is local to the referring table (i.e. foreign to this table)
+			$lfmap = $refFK->getLocalForeignMapping();
+			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);			
+			$colFK = $refFK->getTable()->getColumn($colFKName);
 			$script .= "
 
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", $this->get".$column->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
 ";
 	} // foreach ($fk->getForeignColumns()
 $script .= "
@@ -810,6 +809,8 @@ $script .= "
 	 */
 	protected function addDoSave(&$script)
 	{
+		$table = $this->getTable();
+		
 		$script .= "
 	/**
 	 * Stores the object in the database.
@@ -843,8 +844,8 @@ $script .= "
 			$aVarName = $this->getFKVarName($fk);
 			$script .= "
 			if (\$this->$aVarName !== null) {
-				if (\$this->$aVarName->isModified()) \$this->$aVarName->save(\$con);
-				$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);
+				if (\$this->".$aVarName."->isModified()) \$this->".$aVarName."->save(\$con);
+				\$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);
 			}
 ";
 		}
@@ -852,9 +853,9 @@ $script .= "
 		$script .= "	
 
 			// If this object has been modified, then save it to the database.
-			if ($this->isModified()) {
-				if ($this->isNew()) {
-					$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
+			if (\$this->isModified()) {
+				if (\$this->isNew()) {
+					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
 ";
 		if ($table->getIdMethod() != "none") {
 	
@@ -880,7 +881,7 @@ $script .= "
 
 		foreach ($table->getReferrers() as $fk) {
 			$collName = $this->getRefFKCollVarName($fk);
-			$scrpt .= "
+			$script .= "
 			if (\$this->$collName !== null) {
 				foreach(\$this->$collName as \$referrerFK) {
 					\$referrerFK->save(\$con);
@@ -1115,7 +1116,7 @@ $script .= "
 		foreach ($table->getColumns() as $col) {
 			if (!in_array($col->getName(), $pkcols)) {
 				$script .= "
-		\$copyObj->set<?php echo $col->getPhpName()?>($this-><?php echo strtolower($col->getName()) ?>);
+		\$copyObj->set".$col->getPhpName()."(\$this->".strtolower($col->getName()).");
 ";
 			}
 		} // foreach

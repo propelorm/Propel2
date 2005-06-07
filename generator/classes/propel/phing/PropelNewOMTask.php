@@ -22,6 +22,7 @@
  
 require_once 'propel/phing/AbstractPropelDataModelTask.php';
 include_once 'propel/engine/builder/om/ClassTools.php';
+require_once 'propel/engine/builder/DataModelBuilder.php';
 
 /**
  * This is a temporary task that creates the OM classes based on the XML schema file using NEW builder framework.
@@ -114,17 +115,34 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                         
                         $generator->put("table", $table);
                         
+						DataModelBuilder::setBuildProperties($this->getPropelProperties());
+						
+						$peerBuilder = DataModelBuilder::getNewPeerBuilder($table);
+						
                         // Create the Base Peer class
-                        $this->log("\t\t-> " . $basePrefix . $table->getPhpName() . "Peer");
-                        $path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName() . "Peer");  
+                        $this->log("\t\t-> " . $basePrefix . $peerBuilder->getPeerClassname());						
+                        $path = ClassTools::getFilePath($pkbase, $basePrefix . $peerBuilder->getPeerClassname());  
+																		
+						$script = $peerBuilder->build();
 						
-						require_once 'propel/engine/builder/om/php5/PHP5PeerBuilder.php';
-						$peer = new PHP5PeerBuilder($table);
-						$peer->setBuildProperties($this->getPropelProperties());
-						
-						$script = $peer->build();
 						$_f = new File($basepath, $path);
-						file_put_contents($_f->getAbsolutePath(),$script);
+						file_put_contents($_f->getAbsolutePath(), $script);
+						
+						// Build Object classes
+						// --------------------
+						
+						
+						
+						$this->log("\t\t-> " . $basePrefix . $table->getPhpName());
+						
+						$objectBuilder = DataModelBuilder::getNewObjectBuilder($table);		
+						$path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName()); 	
+						
+						$script = $objectBuilder->build();
+						
+						$_f = new File($basepath, $path);
+						file_put_contents($_f->getAbsolutePath(), $script);
+						
                         #$generator->parse("om/$targetPlatform/Peer.tpl", $path);
 						
 						/*

@@ -139,10 +139,13 @@ abstract class ".$this->classname." {
 		$dbName = $this->getDatabase()->getName();
 		$script .= "		
 	/** the default database name for this class */
-	const DATABASE_NAME = '$tableName';
+	const DATABASE_NAME = '$dbName';
 
 	/** the table name for this class */
-	const TABLE_NAME = '$dbName';
+	const TABLE_NAME = '$tableName';
+	
+	/** A class that can be returned by this peer. */
+	const CLASS_DEFAULT = '".$this->getPackage().".".$this->getTable()->getPhpName()."';
 ";
 		$this->addColumnNameConstants($script);
 	}

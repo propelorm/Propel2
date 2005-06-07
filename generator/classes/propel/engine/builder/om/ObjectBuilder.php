@@ -44,30 +44,19 @@ abstract class ObjectBuilder extends OMBuilder {
 	/**
 	 * This method adds the contents of the generated class to the script.
 	 * 
-	 * This method contains the high-level logic that determines which methods
-	 * get generated.
+	 * This method is abstract and should be overridden by the subclasses.
 	 * 
 	 * Hint: Override this method in your subclass if you want to reorganize or
 	 * drastically change the contents of the generated peer class.
 	 * 
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addClassBody(&$script)
-	{
-
-		$table = $this->getTable();
-
-		if (!$table->isAlias()) {
-			$this->addAttributes($script);
-		}
-		
-		$this->addColumnAccessorMethods($script);
-		$this->addColumnMutatorMethods($script);
-		
-	}
+	abstract protected function addClassBody(&$script);
 	
 	/**
 	 * Adds the getter methods for the column values.
+	 * This is here because it is probably generic enough to apply to templates being generated
+	 * in different langauges (e.g. PHP4 and PHP5).
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addColumnAccessorMethods(&$script)
@@ -84,14 +73,16 @@ abstract class ObjectBuilder extends OMBuilder {
 			if ($col->isLazyLoad()) {
 			    $this->addLazyLoader($script, $col);
 			}
-						
 		}
 	}
 	
 	/**
 	 * Adds the mutator (setter) methods for setting column values.
+	 * This is here because it is probably generic enough to apply to templates being generated
+	 * in different langauges (e.g. PHP4 and PHP5).
+	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addColumnMutatorMethods()
+	protected function addColumnMutatorMethods(&$script)
 	{
 		foreach ($this->getTable()->getColumns() as $col) {
 			
@@ -126,7 +117,7 @@ abstract class ObjectBuilder extends OMBuilder {
      */
     protected function getInterface() {
         $interface = $this->getTable()->getInterface();
-        if ($interface === null && !$table->isReadOnly()) {
+        if ($interface === null && !$this->getTable()->isReadOnly()) {
             $interface = "propel.om.Persistent";
         }
         return $interface;

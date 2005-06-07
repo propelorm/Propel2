@@ -34,6 +34,15 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
+/**
+ * PHP5BasicObjectBuilder
+ * 
+ * @package 
+ * @author hans
+ * @copyright Copyright (c) 2005
+ * @version $Id$
+ * @access public
+ **/
 class PHP5BasicObjectBuilder extends ObjectBuilder {		
 	
 	/**
@@ -52,12 +61,13 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 		$table = $this->getTable();		
 		$package = $this->getPackage();		
 		$parentClass = $this->getBaseClass();
+		$interface = $this->getInterface();
 		
 		$script .= "
 require_once '".$this->getFilePath($parentClass)."';
 ";
 		
-		$interface = ClassTools::getInterface($table);
+		
 
 		if (!empty($interface)) {
 			$script .= "
@@ -108,6 +118,7 @@ include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
+		$interface = $this->getInterface();
 		
 		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
 		
@@ -128,8 +139,42 @@ include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
 		$script .= "
  * @package ".$this->getPackage()."
  */	
-abstract class ".$this->classname." {
+abstract class ".$this->classname." extends ".ClassTools::classname($this->getBaseClass())." ";
+
+		$interface = ClassTools::getInterface($table);
+		if ($interface) {
+		    $script .= " implements " . ClassTools::classname($interface);
+		}
+
+		$script .= " {
+
 ";
+	}
+	
+	/**
+	 * Specifies the methods that are added as part of the basic OM class.
+	 * This can be overridden by subclasses that wish to add more methods.
+	 * @see ObjectBuilder::addClassBody()
+	 */
+	protected function addClassBody(&$script)
+	{
+		$table = $this->getTable();
+		if (!$table->isAlias()) {
+			$this->addAttributes($script);
+		}
+		$this->addColumnAccessorMethods($script);
+		$this->addColumnMutatorMethods($script);
+		
+		$this->addManipulationMethods($script);
+		
+		
+		$this->addValidate($script);
+		
+		$this->addBuildCriteria($script);
+		$this->addBuildPkeyCriteria($script);
+		$this->addGetPrimaryKey($script);
+		$this->addSetPrimaryKey($script);
+		
 	}
 	
 	/**
@@ -655,7 +700,7 @@ abstract class ".$this->classname." {
 	{
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
-		foreach ($table->getColumns() as $col) {
+		foreach ($this->getTable()->getColumns() as $col) {
 			$clo = strtolower($col->getName());
 			if ($col->isPrimaryKey()) {
 				$script .= "
@@ -686,7 +731,7 @@ abstract class ".$this->classname." {
 	{
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
-		foreach ($table->getColumns() as $col) {
+		foreach ($this->getTable()->getColumns() as $col) {
 			$clo = strtolower($col->getName());
 			$script .= "
 		if (\$this->isColumnModified(".$this->getColumnConstant($col).")) \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
@@ -1073,6 +1118,15 @@ $script .= "
 	} // addDelete()
 	
 	/**
+	 * Adds the methods related to saving and deleting the object.
+	 */
+	protected function addManipulationMethods(&$script)
+	{
+		$this->addDelete(&$script);
+		$this->addSave(&$script);
+	}
+	
+	/**
 	 * Adds the save() method.
 	 * @param string &$script The script will be modified in this method.
 	 */
@@ -1169,7 +1223,7 @@ $script .= "
 	 * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addGetPrimaryKey_SingleFK(&$script)
+	protected function addGetPrimaryKey_SinglePK(&$script)
 	{
 		$table = $this->getTable();
 		$pkeys = $table->getPrimaryKey();
@@ -1191,7 +1245,7 @@ $script .= "
 	 * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addGetPrimaryKey_MultiFK(&$script)
+	protected function addGetPrimaryKey_MultiPK(&$script)
 	{
 		
 		$script .= "
@@ -1205,7 +1259,7 @@ $script .= "
 		\$pks = array();
 ";
 		$i = 0;
-		foreach ($table->getPrimaryKey() as $pk) {
+		foreach ($this->getTable()->getPrimaryKey() as $pk) {
 			$script .= "
 		\$pks[$i] = \$this->get".$pk->getPhpName()."();
 ";
@@ -1225,7 +1279,7 @@ $script .= "
 	 * @param string &$script The script will be modified in this method.
 	 * @deprecated
 	 */
-	protected function addGetPrimaryKey_NoFK(&$script)
+	protected function addGetPrimaryKey_NoPK(&$script)
 	{
 		$script .= "
 	/**
@@ -1277,7 +1331,7 @@ $script .= "
 	 */
 	public function setPrimaryKey(\$key)
 	{
-		$this->set".$col->getPhpName()."(\$key);
+		\$this->set".$col->getPhpName()."(\$key);
 	}
 ";
 	} // addSetPrimaryKey_SinglePK
@@ -1300,7 +1354,7 @@ $script .= "
 	{
 ";
 			$i = 0;
-			foreach ($table->getPrimaryKey() as $pk) {
+			foreach ($this->getTable()->getPrimaryKey() as $pk) {
 				$pktype = $pk->getPhpNative();
 				$script .= "
 		\$this->set".$pk->getPhpName()."(\$keys[$i]);

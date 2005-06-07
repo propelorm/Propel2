@@ -106,8 +106,13 @@ abstract class OMBuilder extends DataModelBuilder {
      * 
      * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, then uses current table COLUMN_NAME.
      */
-    public function getColumnConstant(Column $col, $phpName = null)
-	{
+    public function getColumnConstant($col, $phpName = null)
+	{	
+		if ($col === null) {
+		    $e = new Exception("No col specified.");
+			print $e;
+			throw $e;
+		}
 		$classname = $this->getPeerClassname($phpName);
 		
         // was it overridden in schema.xml ?

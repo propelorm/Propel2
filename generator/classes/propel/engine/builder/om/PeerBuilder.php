@@ -202,7 +202,7 @@ abstract class PeerBuilder extends OMBuilder {
 	 * otherwise simply "retrieveByPK".
 	 * @return string
 	 */
-	protected function getRetrieveMethodName()
+	public function getRetrieveMethodName()
 	{
 		if ($this->getTable()->isAlias()) { 
 			$retrieveMethod = "retrieve" . $this->getTable()->getPhpName() . "ByPK";
