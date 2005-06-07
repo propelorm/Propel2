@@ -38,6 +38,7 @@ include_once 'propel/Propel.php';
  * the implementation of concrete Peers.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
  * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
@@ -603,14 +604,14 @@ class BasePeer
         // handle RIGHT (straight) joins
         // This adds tables to the FROM clause and adds WHERE clauses.  Not sure if this shouldn't
         // be changed to use INNER JOIN
-        $join = $criteria->getJoinL();
-        if ($join !== null) {
-            $joinR = $criteria->getJoinR();
-            for ($i=0, $joinSize=count($join); $i < $joinSize; $i++) {
-                $join1 = (string) $join[$i];
-                $join2 = (string) $joinR[$i];
-                
-                $tableName = substr($join1, 0, strpos($join1,'.'));
+        $joins =& $criteria->getJoins();
+        if (!empty($joins)) {
+            for ($i=0, $joinSize=count($joins); $i < $joinSize; $i++) {
+	  	        $join =& $joins[$i];
+                $join1 = $join->getLeftColumn();
+                $join2 = $join->getRightColumn();
+
+                $tableName = substr($join1, 0, strpos($join1, '.'));
                 $table = $criteria->getTableForAlias($tableName);
                 if ($table !== null) {
                     $fromClause[] = $table . ' ' . $tableName;
@@ -636,6 +637,24 @@ class BasePeer
                 } else {
                     $whereClause[] = $join1 . '=' . $join2;
                 }
+				
+                if ($join->getJoinType())
+		        {
+		            $leftTable = $fromClause[count($fromClause) - 2];
+		            $rightTable = $fromClause[count($fromClause) - 1];
+		            
+		            $onClause = $whereClause[count($whereClause) - 1];
+		            unset($whereClause[count($whereClause) - 1]);
+		            
+		            $fromClause [] = $leftTable . ' ' . $join->getJoinType() . ' ' . $rightTable . ' ON ' . $onClause;
+		            
+		            // remove all references to joinTables made by selectColumns, criteriaColumns
+                    for ($i = 0, $fromClauseSize=count($fromClause); $i < $fromClauseSize; $i++) {
+		  	            if ($fromClause[$i] == $leftTable || $fromClause[$i] == $rightTable) {
+			                unset($fromClause[$i]);
+			            }
+		            }
+		        }
             }
         }                                    
         

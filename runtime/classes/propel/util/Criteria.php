@@ -25,6 +25,7 @@
  * BasePeer constructs SQL statements based on the values in this class.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
  * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
@@ -107,6 +108,15 @@ class Criteria implements IteratorAggregate {
     
     /** "CURRENT_TIMESTAMP" ANSI SQL function */
     const CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
+	
+    /** "LEFT JOIN" SQL statement */
+    const LEFT_JOIN = "LEFT JOIN";
+
+    /** "RIGHT JOIN" SQL statement */
+    const RIGHT_JOIN = "RIGHT JOIN";
+
+    /** "INNER JOIN" SQL statement */
+    const INNER_JOIN = "INNER JOIN";
     
     private $ignoreCase = false;
     private $singleRecord = false;
@@ -116,10 +126,7 @@ class Criteria implements IteratorAggregate {
     private $groupByColumns = array();
     private $having = null;
     private $asColumns = array();
-    private $joinL = null;
-    private $joinR = null;
-
-    private $leftJoinL = null;
+    private $joins = array();
 
     /** The name of the database. */
     private $dbName;
@@ -196,8 +203,7 @@ class Criteria implements IteratorAggregate {
         $this->groupByColumns = array();
         $this->having = null;
         $this->asColumns = array();
-        $this->joinL = null;
-        $this->joinR = null;
+        $this->joins = array();
         $this->dbName = $this->originalDbName;
         $this->offset = 0;
         $this->limit = -1;
@@ -516,8 +522,7 @@ class Criteria implements IteratorAggregate {
             }
             
         } elseif ($t instanceof Criteria) {
-            $this->joinL = $t->joinL;
-            $this->joinR = $t->joinR;
+            $this->joins = $t->joins;
         }       
     }
 
@@ -572,38 +577,47 @@ class Criteria implements IteratorAggregate {
      *
      * @param string $left A String with the left side of the join.
      * @param string $right A String with the right side of the join.
+	 * @param string $operator A String with the join operator e.g. LEFT JOIN, ...
      * @return Criteria A modified Criteria object.
      */
-    public function addJoin($left, $right)
+    public function addJoin($left, $right, $operator = null)
     {
-        if ($this->joinL === null) {
-            $this->joinL = array();
-            $this->joinR = array();
-        }
-        $this->joinL[] = $left;
-        $this->joinR[] = $right;
+        $this->joins [] = new Join($left, $right, $operator);
 
         return $this;
-    }   
+    }
+	
+    /**
+     * Get the array of Joins.  This method is meant to
+     * be called by BasePeer.
+     * @return an array which contains objects of type Join,
+     *         or an empty array if the criteria does not contains any joins
+     */
+    function & getJoins()
+    {
+        return $this->joins;
+    }
     
     /**
      * get one side of the set of possible joins.  This method is meant to
      * be called by BasePeer.
      * @return array
+     * @deprecated This method is no longer used by BasePeer.
      */
     public function getJoinL()
     {
-        return $this->joinL;
+        throw new PropelException("getJoinL() in Criteria is no longer supported!");
     }
 
     /**
      * get one side of the set of possible joins.  This method is meant to
      * be called by BasePeer.
      * @return array
+	 * @deprecated This method is no longer used by BasePeer.
      */
     public function getJoinR()
     {
-        return $this->joinR;
+        throw new PropelException("getJoinL() in Criteria is no longer supported!");
     }    
     
     /**
@@ -1593,5 +1607,82 @@ class Criterion  {
         for($i=0; $i < $clausesLength; $i++) {
             $this->traverseCriterion($clauses[$i], $a);
         }        
+    }
+}
+
+/**
+* Data object to describe a join between two tables, for example
+* <pre>
+* table_a LEFT JOIN table_b ON table_a.id = table_b.a_id
+* </pre>
+*/
+class Join
+{
+    /** the left column of the join condition */
+    private $leftColumn = null;
+
+    /** the right column of the join condition */
+    private $rightColumn = null;
+
+    /** the type of the join (LEFT JOIN, ...), or null */
+    private $joinType = null;
+
+    /**
+     * Constructor
+     * @param leftColumn the left column of the join condition;
+     *        might contain an alias name
+     * @param rightColumn the right column of the join condition
+     *        might contain an alias name
+     * @param joinType the type of the join. Valid join types are
+     *        null (adding the join condition to the where clause),
+     *        Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
+     */
+    function Join($leftColumn, $rightColumn, $joinType)
+    {
+	    $this->leftColumn = $leftColumn;
+	    $this->rightColumn = $rightColumn;
+	    $this->joinType = $joinType;
+    }
+
+    /**
+     * @return the type of the join, i.e. Criteria::LEFT_JOIN(), ...,
+     *         or null for adding the join condition to the where Clause
+     */
+    function getJoinType()
+    {
+	    return $this->joinType;
+    }
+
+    /**
+     * @return the left column of the join condition
+     */
+    function getLeftColumn()
+    {
+	    return $this->leftColumn;
+    }
+
+    /**
+     * @return the right column of the join condition
+     */
+    function getRightColumn()
+    {
+	    return $this->rightColumn;
+    }
+
+    /**
+     * returns a String representation of the class,
+     * mainly for debugging purposes
+     * @return a String representation of the class
+     */
+    function toString()
+    {
+        $result = "";
+        if ($this->joinType != null)
+        {
+            $result .= $this->joinType . " : ";
+        }
+        $result .= $this->leftColumn . "=" . $this->rightColumn . " (ignoreCase not considered)";
+
+        return $result;
     }
 }
