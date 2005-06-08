@@ -164,7 +164,10 @@ class Propel {
 				// prefixes stripped.
 				self::$configuration = $originalConf;
 		}
-
+		
+		// reset the connection map (this should enable runtime changes of connection params)
+		self::$connectionMap = array();
+		
 		self::initAdapters(self::$configuration);
 
 		self::$isInit = true;
