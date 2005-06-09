@@ -30,11 +30,10 @@ define('STRUCTURES_DATAGRID_PROPEL_COLUMN_MADE_HIDDEN', 5);
  *
  * NOTE: Structures_DataGrid_Propel extends Structures_DataGrid, so all Datagrid functionality is available.
  *
- * A fictive example:
  * // Propel and Propel project classes must be in the include_path
  *
- * // Propel Class name : Report
- * $dg =& new Structures_DataGrid_Propel('Report');
+ * // Propel Class name : User
+ * $dg =& new Structures_DataGrid_Propel('User');
  * // DO NOT OVERLOOK THE & IN =& ABOVE!!
  * 			if you do, you'll spend a few hours figuring out why the $dg->render() method is spitting 
  *			out a blank table when everything seems just right ... like I just did.
@@ -47,25 +46,44 @@ define('STRUCTURES_DATAGRID_PROPEL_COLUMN_MADE_HIDDEN', 5);
  *
  * // choose what columns must be displayed
  * $dg->setColumnMode(STRUCTURES_DATAGRID_PROPEL_NO_COLUMNS);
- * $dg->showColumn('ACTIVE');
- * $dg->showColumn('TITLE', 'Report Title'); // this prints the column header as 'Report Title', not as 'TITLE'
- * $dg->showColumn('ID');
+ * $dg->showColumn('FirstName');				// column header will be 'FirstName' when set like this
+ * $dg->showColumn('LastName', 'Last Name'); 	// now column header will be 'Last Name' : Nice and friednly
+ * $dg->showColumn('FullName', 'Full Name'); 	// will call the Propel Objects ->getFullName() method to fill this in
+ *												// since you may want to print a value that is not just a column in
+ *												// the table your Propel object represnets
+ *
+ * // for convenience, the showColumn method can also be used to preset params for the 
+ * // Structures_DataGrid_Column that will be built for the outputted GridColumn when the build()
+ * // method is finally called
+ * $dg->showColumn('Email', 'Email', null, null, null, 'printGridEmailLink($emailIndex=Email )');
+ * 
+ * // so, when the Email column is being printed for the row, it will use the printGridEmailLink function
+ * // to output the value for the column and make it a mailto link like the function below would:
+ * // refer to: http://pear.php.net/manual/en/package.structures.structures-datagrid.formatter.php for mor info on that
+ * function printGridEmailLink($params) {
+ * 		extract($params);
+ * 		return "<a href=\"mailto:{$record[$emailIndex]}\">{$record[$emailIndex]}</a>";
+ * }
  *
  * // generate the datagrid
  * $dg->build();
  *
- * // add two columns to edit the row and checkbox for further operations
- * $dg->addColumn(new Structures_DataGrid_Column('', null, null, array('width' => '4%'), null, 'printEditLink()'));
- * $dg->addColumn(new Structures_DataGrid_Column('', null, null, array('width' => '1%'), null, 'printCheckbox()'));
- *
  * // Display the datagrid
  * $dg->render();
  *
- * @author Marc <therebel@free.fr> 
- * @author Steve Lianoglou <steve@arachnedesign.net> : port to php4
- * @version $Rev$
- * @copyright Copyright (c) 2005: LGPL - See LICENCE
- * @package propel.contrib
+ * NOTE:	The functionality of this version differs from that of the PHP5 one
+ *		 	We are using the phpName of the variable to show/hide/etc instead of the in the build() methods and
+ *			the showColumn( ... ) methods, so instead of doing this: 
+ *
+ *			$dg->showColumn('FIRST_NAME') 	to pull the FIRST_NAME column from the 
+ *											creole result set in the build() method, we do
+ *			$dg->showColumn('FirstName') 	to pull the value returned from the $propelObj->getFirstName() method
+ *
+ * @author 		Marc <therebel@free.fr> : PHP5 version
+ * @author 		Steve Lianoglou <steve@arachnedesign.net> : PHP4 Version
+ * @version 	$Revision$
+ * @copyright 	Copyright (c) 2005: LGPL - See LICENCE
+ * @package 	propel.contrib-php4
  */
 
 class Structures_DataGrid_Propel extends Structures_DataGrid {
@@ -80,13 +98,25 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	
 	
 	/**
-	 * Overrides the default COLUMN_HEADING to a user friendly label
+	 * Store the column properties to use in the Structures_DataGrid_Column constructor
+	 * for each column that we will print
+	 *
+	 * each propel column name will have an array of values
+	 * $columnProperties[COLUMN_NAME]
+	 *		['label']
+	 *		['orderBy']
+	 * 		['attribs'] => array()
+	 *		['autoFillValue']
+	 *		['formatter']
 	 * @var array
 	 * @access private
-	 * @see Structures_DataGrid_Propel::showColumn
-	 */
-	var $columnLabels = array();
-
+	 */	
+	var $columnProperties = array();
+	
+	// maybe there are some other properties on the propel object that you want to fetch
+	// not just the basic instance vars of the object -- like some helper methods
+	var $extraColumns = array();
+	
 	/**
 	 * The Column visibility mode.
 	 * Possible values:
@@ -171,8 +201,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	/**
 	 * Set the class
 	 *
-	 * @param string className
-	 * @return void
+	 * @param 	string className
+	 * @return 	void
 	 */
 	/* public */
 	function setClassName($className) {
@@ -182,7 +212,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	/**
 	 * Get the class name
 	 *
-	 * @return string className
+	 * @return 	string	className
 	 */
 	/* public */ 
 	function getClassName() {
@@ -193,8 +223,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	/**
 	 * Set the peerName
 	 * 
-	 * @param string peerName
-	 * @return void
+	 * @param 	string 	peerName
+	 * @return 	void
 	 */
 	/* private */
 	function setPeerName($peerName) {
@@ -214,8 +244,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	/**
 	 * Get the visibility of a column
 	 *
-	 * @param string column name to check for
-	 * @return boolean true if column is set to hidden
+	 * @param 	string 	column name to check for
+	 * @return 	boolean	true if column is set to hidden
 	 */
 	/* public */
 	function isColumnHidden($column) {
@@ -253,8 +283,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	 * STRUCTURES_DATAGRID_PROPEL_NO_COLUMNS or
 	 * STRUCTURES_DATAGRID_PROPEL_ALL_COLUMNS
 	 *
-	 * @param string $column column name
-	 * @return void
+	 * @param	string	$column column name
+	 * @return 	void
 	 */
 	/* public */
 	function setColumnMode($mode) {
@@ -268,124 +298,212 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 
 	/**
 	 * Tell Structures_Datagrid_Propel it should hide this column
-	 * It is now passed like ID instead of somePeer::ID
-	 * The latter is better, but the array_keys of the columns are
-	 * in ID format and not somePeer::ID
+	 * <code>$column</code> is now passed as the phpName of the column, not the Peer name
 	 *
-	 * @param string $column column name
-	 * @return void
+	 * @param 	string	$column phpName of the column
+	 * @return 	void
 	 */
 	/* public */
 	function hideColumn($column) {
 		$this->columnVisibility[$column] = STRUCTURES_DATAGRID_PROPEL_COLUMN_MADE_HIDDEN;
 	} // function hideColumn
 
+
 	/**
 	 * Tell Structures_Datagrid_Propel it should show this column,
-	 * optionaly sets the label name for this column to a 'friendly' label.
+	 * optionaly can set all the other values that will be generated during the 
+	 * new Structures_DataGrid_Column all for this column during the build() process, which looks like:
+	 *		 void Structures_DataGrid_Column (
+	 *   	 		string $columnName, 
+	 *   	 		string $fieldName 
+	 *   	 		[, string $orderBy = null 
+	 *   	 		[, array $attribs = array() 
+	 *   	 		[, string $autoFillValue = null 
+	 *   	 		[, string $formatter = null]]]])
 	 *
-	 * It is now passed like ID instead of somePeer::ID
-	 * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
+	 * <code>$column</code> is now passed as the phpName of the column, not the Peer name
 	 *
-	 * @param string $column column name
-	 * @param string $label optional label to use for this column that we are showing
-	 * @return void
+	 * @param	string 	$column column name
+	 * @param 	string 	$columnName optional label to use for this column that we are showing
+	 * @param 	string 	the column to order this sucker by
+	 * @param	array 	attributes to tack on to this column header
+	 * @param 	string 	the value to fill in if the value in the row's column is null/empty
+	 * @param	string	the callback function to use to write the row's element in this column
+	 * @param 	array 	optional array to set the attribs for the DataGrid_Column for this column
+	 * @return 	void
 	 */
 	/* public */ 
-	function showColumn($column, $label = '') {
+	function showColumn($column, $columnName = null, $orderBy = null, $attribs = null, $autoFillValue = null,$formatter = null) {
 		$this->columnVisibility[$column] = STRUCTURES_DATAGRID_PROPEL_COLUMN_MADE_VISIBLE;
-		$this->setColumnLabel($column, $label);
+		
+		// set default columName, and orderBy, and makde $fieldName = $column for now
+		$columnName = ( is_null($columnName) ) ? $column : $columnName;
+		$orderBy = ( is_null($orderBy) ) ? $column : $orderBy;
+		$this->setColumnPropertyValues($column, $columnName, $column, $orderBy, $attribs, $autoFillValue, $formatter);
 	} // function showColumn
-
-
-	/**
-	 * Sets the column name to $label to render a table with 'friendly' column names
-	 *
-	 * @param string $labelName set this to a friendly column title, for instance:
-	 *				 if $column is 'FIRST_NAME', set $labelName to 'First Name'
-	 *				 so the column heading will be 'First Name' as opposed to 'FIRST_NAME'
-	 * @return void
-	 */
-	function setColumnLabel($column, $label = '') {
-		$this->columnLabels[$column] = ( $label == '' ) ? $column : $label;
-	} // function setColumnLabel
+	
 	
 	/**
-	 * Retrieve the friendly colum name for $column
-	 * if there is none, just return $column
+	 * Quickly set the the column attributes for the DataGrid_Column that will be generated during
+	 * the build() method
+	 * 		Note that if the value of any of these vars is null, it won't reset the property in 
+	 * 		$this->columnProperties[$column] to null, just in case it was set to something else
+	 *		(somewhere else) 
+	 *
+ 	 * @param	string 	$column phpName of the column
+	 * @param 	string 	$columnName optional label to use for this column that we are showing
+	 * @param 	string 	the column to order this sucker by
+	 * @param	array 	attributes to tack on to this column header
+	 * @param 	string 	the value to fill in if the value in the row's column is null/empty
+	 * @param	string	the callback function to use to write the row's element in this column
+	 * @param 	array 	optional array to set the attribs for the DataGrid_Column for this column
+	 * @return 	void
+	 */
+	function setColumnPropertyValues($column, $columnName = null, $fieldName, $orderBy = null, $attribs = null, $autoFillValue = null, $formatter = null) {
+		if ( !is_null($columnName) ) 	{ $this->columnProperties[$column]['columnName']	= $columnName; }
+		if ( !is_null($fieldName) ) 	{ $this->columnProperties[$column]['fieldName']		= $fieldName; }
+		if ( !is_null($orderBy) ) 		{ $this->columnProperties[$column]['orderBy'] 		= $orderBy; }
+		if ( !is_null($attribs) ) 		{ $this->columnProperties[$column]['attribs'] 		= $attribs; }
+		if ( !is_null($autoFillValue) ) { $this->columnProperties[$column]['autoFillValue'] = $autoFillValue; }
+		if ( !is_null($formatter) ) 	{ $this->columnProperties[$column]['formatter'] 	= $formatter; }
+	}
+	
+	
+	/**
+	 * Set a particular property for the Structures_DataGrid_Column object that will be created
+	 * during the build() method for the <code>$column</code> entry
 	 * 
-	 * @param string the column to get the friendly name for
-	 * @return string the name to use for this column
-	 */
-	function getColumnLabel($column) {
-		return ( isset($this->columnLabels[$column]) ) ? $this->columnLabels[$column] : $column;
-	} // function getColumnLabel
-	
-	/**
-	 * Build the datagrid
-	 *
+	 * @param string 	phpName of column to set property for
+	 * @param string	name of parameter to set, should only be element of:
+	 *					{columnName | fieldName | orderBy | attribs | autoFillValue | formatter } 
+	 *					(maybe we should check that, but leave that for later, a different propert than
+	 *					 can't really hurt)
+	 * @param mixed		value to set the property to
 	 * @return void
 	 */
-	/* public */
-	function build() {
-		$mapBuilder = call_user_func(array($this->getPeerName(), 'getMapBuilder'));
-		$dbMap = $mapBuilder->getDatabaseMap();
+	function setColumnProperty($column, $property, $value = null) {
+		$this->columnProperties[$column][$property] = value;
+	}
+	
+	
+	/**
+	 * Returns the specified property to retrieve for a particular column
+	 *
+	 * @param string	phpName of column in the datagrid
+	 * @param string	name of property to fetch from said column
+	 * @return mixed	whatever the property is set to, or if that particulary property
+	 *						hasn't been set, will return null
+	 */
+	function getColumnProperty($column, $property) {
+		$value = ( isset($this->columnProperties[$column][$property]) ) ? $this->columnProperties[$column][$property] : null;
 		
-		// -----
-		// $cols = $dbMap->getTable(constant($this->getPeerName()."::TABLE_NAME"))->getColumns(); --> PHP5 version
-		$evalString = '$tableName = ' . $this->getPeerName() . '::TABLE_NAME();';
-		eval($evalString);
-		$table =& $dbMap->getTable($tableName);
-		$cols =& $table->getColumns();
-		// ---- php5 one-liner turns to a php4/4-liner :-)
+		switch ( $property ) {
+			case 'attribs':
+			/* Note:	this method *WILL ALWAYS* return at least an 'class' attribute
+			 *			so the header and table cells can be selected/formated with css
+			 *			like: 
+			 *				th.COLUMN_NAME-cell { .. put header formatting here .. }
+			 *				td.COLUMN_NAME-cell { .. put normal td formatting for column here .. }
+			 *
+			 *			If there are no attribs, it will just make an array w/ the class attrib
+			 *			If there is an attrib array and no 'class' attribute, then it will add a default
+			 *				one of the form <code>COLUMN_NAME-cell</code>
+			 *			If there is an attrib array, with the 'class' attrib, it will leave it untouched
+			 */
+				$value = ( is_array($value) ) ? $value : array();
+				if ( !isset($value['class']) ) {
+					$value['class'] = $column . '-cell';
+				}
+				break;
+			
+			default:
+				break;
+		}
 		
-		$rs =& call_user_func(array( $this->getPeerName(), 'doSelectRS'), $this->criteria);
+		return $value;
+	} // function getColumnProperty
 
+		
+	/* this version of build actually instantiates the Propel Objects w/ the peer's doSelect method */
+	function build() {
+		$objs =& call_user_func(array($this->getPeerName(), 'doSelect'), $this->criteria);
+		$this->primaryKeys = array();
+		$instanceVars = array();
+		
+		// ------------------- getting instance vars
+		$map =& call_user_func(array($this->getPeerName(), 'getTableMap'));
+		foreach ($map->columns as $key => $col) {
+			$instanceVars[] = $col->phpName;
+			if ( $col->isPrimaryKey() ) {
+				$this->primaryKeys[$col->phpName] = $col->phpName;
+			} // $col->isPrimaryKey()
+		} // for-each
+		// ------------------------------------------
+		
+		$limit = count($objs);
+		
 		$dataset = array();
 		$columns = array();
-		$this->primaryKeys = array();
-		$class = $this->getClassName();
 
-		while ( $rs->next() ) { // use Creole ResultSet methods to iterate over resultset
-			$obj = new $class();
-			$obj->hydrate($rs);
-
+		for ( $n = 0; $n < $limit; $n++ ) { 
+			$obj =& $objs[$n];
 			$row = array();
-			foreach($cols as $tmp_id => $col) {
-		        // save the PK in an array
-		        if($col->isPrimaryKey()) {
-		                $this->primaryKeys[$col->getColumnName()] = $col->getColumnName();
-		        }
-
-		        $value = $obj->{'get'.$col->getPhpName()}(null);
-		        // save the row value
-
-		        $row[$col->getColumnName()] = $value;
-		        // save the list of propel header column name
-		        $columns[$col->getColumnName()] = $col->getColumnName();
-			}
-			// add the row to dataset
+			
+			foreach( $instanceVars as $key => $varName ) {
+				// save the row value
+				$row[$varName] = $obj->{'get'.$varName}();
+				
+				// save the list of propel header column name
+				$columns[$varName] = $varName;
+			} // foreach instanceVars as 
+			
+			// add any other visible columns (set w/ the showColumn() method)
+			// and are not instanceVars of the Propel object, but rather an additional
+			// method that is defined in your subclass of your TableBase.php classes
+			foreach( $this->columnVisibility as $column => $visibility ) {
+				if ( !($this->isColumnHidden($column)) && !(isset($row[$column])) ) {
+					$row[$column] = $obj->{'get'.$column}();
+				} // !(this->isColumnHidden($column)) && !(isset($row[$column]))
+			} // foreach this->columnVisibility as column
+			
 			$dataset[] = $row;
-		} // while
+		} // for n < $limit
 
-		$this->bind($dataset);
+		// Explicitly set the data source to an Array type because if the resultset was empty
+		// the bind method (for some reason) tries to bind this w/ a DB_DataObject driver
+		$this->bind($dataset, null, 'Array'); 
 
 		if ($this->columnMode == STRUCTURES_DATAGRID_PROPEL_ALL_COLUMNS) {
 			foreach($columns as $tmp_id => $column) {
 				if (!$this->isColumnHidden($column)) {
-					$this->addColumn(new Structures_DataGrid_Column($this->getColumnLabel($column), $column, $column, null));
+					$this->addColumn(
+						new Structures_DataGrid_Column(
+								$this->getColumnProperty($column, 'columnName'),
+								$this->getColumnProperty($column, 'fieldName'),
+								$this->getColumnProperty($column, 'orderBy'),
+								$this->getColumnProperty($column, 'attribs'),
+								$this->getColumnProperty($column, 'autoFillValue'),
+								$this->getColumnProperty($column, 'formatter') 
+							));
 				}
 			}
 		} else {
 			foreach($this->columnVisibility as $column => $visibility) {
+
 				if (!$this->isColumnHidden($column)) {
-					// $this->addColumn(new Structures_DataGrid_Column($column, $column, $column, null));
-					$this->addColumn(new Structures_DataGrid_Column($this->getColumnLabel($column), $column, $column, null));
+					$this->addColumn(
+						new Structures_DataGrid_Column(
+								$this->getColumnProperty($column, 'columnName'),
+								$this->getColumnProperty($column, 'fieldName'),
+								$this->getColumnProperty($column, 'orderBy'),
+								$this->getColumnProperty($column, 'attribs'),
+								$this->getColumnProperty($column, 'autoFillValue'),
+								$this->getColumnProperty($column, 'formatter') 
+							));
 				}
 			}
 		}
-	} // function build
-
+	}
 } // class Structures_DataGrid_Propel
 
 ?>
