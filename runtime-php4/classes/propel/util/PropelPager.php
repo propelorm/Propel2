@@ -122,7 +122,8 @@ class PropelPager {
 	 * @param int $page
 	 * @param int $rowsPerPage
 	 */
-	/* public */ function PropelPager($c, $peerClass, $peerMethod, $page = 1, $rowsPerPage = 25)
+	/* public */ 
+	function PropelPager($c, $peerClass, $peerMethod, $page = 1, $rowsPerPage = 25)
 	{
 		$this->setCriteria($c);
 		$this->setPeerClass($peerClass);
@@ -136,7 +137,8 @@ class PropelPager {
 	 * @param Criteria $c
 	 * @return void
 	 */
-	/* public */ function setCriteria($c)
+	/* public */ 
+	function setCriteria($c)
 	{
 		$this->criteria = $c;
 	}
@@ -145,7 +147,8 @@ class PropelPager {
 	 * Return the Criteria object for this pager.
 	 * @return Criteria
 	 */
-	/* public */ function getCriteria()
+	/* public */ 
+	function getCriteria()
 	{
 		return $this->criteria;
 	}
@@ -156,7 +159,8 @@ class PropelPager {
 	 * @param string $class
 	 * @return void
 	 */
-	/* public */ function setPeerClass($class)
+	/* public */ 
+	function setPeerClass($class)
 	{
 		$this->peerClass = $class;
 	}
@@ -165,7 +169,8 @@ class PropelPager {
 	 * Return the Peer Classname.
 	 * @return string
 	 */
-	/* public */ function getPeerClass()
+	/* public */ 
+	function getPeerClass()
 	{
 		return $this->peerClass;
 	}
@@ -176,7 +181,8 @@ class PropelPager {
 	 * @param string $class
 	 * @return void
 	 */
-	/* public */ function setPeerMethod($method)
+	/* public */ 
+	function setPeerMethod($method)
 	{
 		$this->peerMethod = $method;
 	}
@@ -185,7 +191,8 @@ class PropelPager {
 	 * Return the Peer Method.
 	 * @return string
 	 */
-	/* public */ function getPeerMethod()
+	/* public */ 
+	function getPeerMethod()
 	{
 		return $this->peerMethod;
 	}
@@ -200,7 +207,8 @@ class PropelPager {
 	 * 
 	 * @return mixed $rs 
 	 */
-	/* public */ function getResult()
+	/* public */ 
+	function & getResult()
 	{
 		if(!isset($this->rs)) {
 			$this->doRs();
@@ -209,11 +217,12 @@ class PropelPager {
 		return $this->rs;
 	}
 	
-	/* private */ function doRs()
+	/* private */ 
+	function doRs()
 	{   
 		$this->criteria->setOffset($this->start);
 		$this->criteria->setLimit($this->max);
-		$this->rs = call_user_func(array($this->peerClass, $this->peerMethod), $this->criteria);
+		$this->rs =& call_user_func(array($this->peerClass, $this->peerMethod), $this->criteria);
 	}
 	
 	/**
@@ -224,7 +233,8 @@ class PropelPager {
 	 * 
 	 * @return int 1 
 	 */
-	/* public */ function getFirstPage()
+	/* public */ 
+	function getFirstPage()
 	{
 		return '1';
 	}
@@ -234,7 +244,8 @@ class PropelPager {
 	 * 
 	 * @return boolean
 	 */
-	/* public */ function atFirstPage()
+	/* public */ 
+	function atFirstPage()
 	{
 		return ( $this->getPage() == $this->getFirstPage() );
 	}
@@ -244,7 +255,8 @@ class PropelPager {
 	 * 
 	 * @return int $lastPage 
 	 */
-	/* public */ function getLastPage()
+	/* public */ 
+	function getLastPage()
 	{
 		$lastPage = $this->getTotalPages();
 		return $lastPage;
@@ -255,7 +267,8 @@ class PropelPager {
 	 * 
 	 * @return boolean
 	 */
-	/* public */ function atLastPage()
+	/* public */ 
+	function atLastPage()
 	{
 		return ( $this->getPage() == $this->getLastPage() );
 	}
@@ -265,7 +278,8 @@ class PropelPager {
 	 * 
 	 * @return int $this->pages
 	 */
-	/* public */ function getTotalPages() {
+	/* public */ 
+	function getTotalPages() {
 		if(!isset($this->pages)) {
 			$recordCount = $this->getTotalRecordCount();
 			if($this->max > 0) {
@@ -283,7 +297,8 @@ class PropelPager {
 	 * @param int $range
 	 * @return array $links
 	 */
-	/* public */ function getPrevLinks($range = 5)
+	/* public */ 
+	function getPrevLinks($range = 5)
 	{
 		$total = $this->getTotalPages();
 		$start = $this->getPage() - 1;
@@ -306,7 +321,8 @@ class PropelPager {
 	 * @param int $range
 	 * @return array $links
 	 */
-	/* public */ function getNextLinks($range = 5)
+	/* public */ 
+	function getNextLinks($range = 5)
 	{
 		$total = $this->getTotalPages();
 		$start = $this->getPage() + 1;
@@ -328,7 +344,8 @@ class PropelPager {
 	 *
 	 * @return bool Last age complete or not
 	 */
-	/* public */ function isLastPageComplete()
+	/* public */ 
+	function isLastPageComplete()
 	{
 		return !($this->getTotalRecordCount() % $this->max);
 	}
@@ -338,7 +355,8 @@ class PropelPager {
 	 * 
 	 * @return mixed $prev
 	 */
-	/* public */ function getPrev() {
+	/* public */ 
+	function getPrev() {
 		// Prev link
 		if($this->getPage() != $this->getFirstPage()) {
 				$prev = $this->getPage() - 1;
@@ -353,7 +371,8 @@ class PropelPager {
 	 * 
 	 * @return mixed $next
 	 */
-	/* public */ function getNext() {
+	/* public */ 
+	function getNext() {
 		// Prev link
 		if($this->getPage() != $this->getLastPage()) {
 				$next = $this->getPage() + 1;
@@ -368,7 +387,8 @@ class PropelPager {
 	 * @param int $page
 	 * @return void
 	 */
-	/* public */ function setPage($page)
+	/* public */ 
+	function setPage($page)
 	{
 		$this->page = $page;
 		// (re-)calculate start rec
@@ -379,7 +399,8 @@ class PropelPager {
 	 * Get current page.
 	 * @return int
 	 */
-	/* public */ function getPage()
+	/* public */ 
+	function getPage()
 	{
 		return $this->page;
 	}
@@ -388,7 +409,8 @@ class PropelPager {
 	 * Set the number of rows per page.
 	 * @param int $r
 	 */
-	/* public */ function setRowsPerPage($r)
+	/* public */ 
+	function setRowsPerPage($r)
 	{
 		$this->max = $r;
 		// (re-)calculate start rec
@@ -399,7 +421,8 @@ class PropelPager {
 	 * Get number of rows per page.
 	 * @return int
 	 */
-	/* public */ function getRowsPerPage()
+	/* public */ 
+	function getRowsPerPage()
 	{
 		return $this->max;
 	}
@@ -408,7 +431,8 @@ class PropelPager {
 	 * Calculate startrow / max rows based on current page and rows-per-page.
 	 * @return void
 	 */
-	/* private */ function calculateStart()
+	/* private */ 
+	function calculateStart()
 	{
 		$this->start = ( ($this->page - 1) * $this->max );
 	}
@@ -421,7 +445,8 @@ class PropelPager {
 	 * @return int Total number of records - disregarding page, maxrows, etc.
 	 * should @throw SQLException
 	 */
-	/* public */ function getTotalRecordCount()
+	/* public */ 
+	function getTotalRecordCount()
 	{	
 		if(!isset($this->rs)) {
 			$this->doRs();
@@ -449,7 +474,8 @@ class PropelPager {
 	 * Sets the start row or offset.
 	 * @param int $v
 	 */
-	/* public */ function setStart($v)
+	/* public */ 
+	function setStart($v)
 	{
 		$this->start = $v;
 	}
@@ -459,7 +485,8 @@ class PropelPager {
 	 * @param int $v
 	 * @return void
 	 */
-	/* public */ function setMax($v)
+	/* public */ 
+	function setMax($v)
 	{
 		$this->max = $v;
 	}
