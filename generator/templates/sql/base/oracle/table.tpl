@@ -15,9 +15,7 @@ CREATE TABLE <?php echo $table->getName() ?>
         }
 
         if (!empty($unique)) {
-                echo preg_replace('/[ ,]+[\s]*$/', '', $unique);
-        } else {
-                echo $unique;
+                echo "\n" . preg_replace('/[ ,]+[\s]*$/', '', $unique);
         }
 
 ?> 
