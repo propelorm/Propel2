@@ -113,9 +113,6 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 	 */	
 	var $columnProperties = array();
 	
-	// maybe there are some other properties on the propel object that you want to fetch
-	// not just the basic instance vars of the object -- like some helper methods
-	var $extraColumns = array();
 	
 	/**
 	 * The Column visibility mode.
