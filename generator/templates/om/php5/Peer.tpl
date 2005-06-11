@@ -1476,6 +1476,9 @@ if (!$table->isAlias()) {
 <?php } /* !table->isalias */ ?>
 }
 
+
+include_once 'propel/Propel.php';
+
 // static code to register the map builder for this Peer with the main Propel class
 if (Propel::isInit()) {
 	// the MapBuilder classes register themselves with Propel during initialization

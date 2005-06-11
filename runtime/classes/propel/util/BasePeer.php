@@ -26,7 +26,6 @@ include_once 'propel/map/MapBuilder.php';
 include_once 'propel/map/TableMap.php';
 include_once 'propel/map/ValidatorMap.php';
 include_once 'propel/validator/ValidationFailed.php';
-include_once 'propel/Propel.php';
 
 /**
  * This is a utility class for all generated Peer classes in the system.
