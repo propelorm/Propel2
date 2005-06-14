@@ -43,10 +43,10 @@ class ForeignKey extends XMLElement {
 
     // the uppercase equivalent of the onDelete/onUpdate values in the dtd
     const NONE     = "";            // No "ON [ DELETE | UPDATE]" behaviour specified.
-    const CASCADE  = "NO ACTION";
+    const NOACTION  = "NO ACTION";
     const CASCADE  = "CASCADE";
     const RESTRICT = "RESTRICT";
-    const SETNULL  = "SET DEFAULT";
+    const SETDEFAULT  = "SET DEFAULT";
     const SETNULL  = "SET NULL";
 
     /**
