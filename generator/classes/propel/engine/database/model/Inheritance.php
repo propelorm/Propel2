@@ -34,6 +34,7 @@ class Inheritance extends XMLElement {
 
     private $key;
     private $className;
+	private $pkg;
     private $ancestor;
     private $parent;
 
@@ -43,9 +44,10 @@ class Inheritance extends XMLElement {
      */
     protected function setupObject()
     {
-        $this->setKey($this->getAttribute("key"));
-        $this->setClassName($this->getAttribute("class"));
-        $this->setAncestor($this->getAttribute("extends"));
+        $this->key = $this->getAttribute("key");
+        $this->className = $this->getAttribute("class");
+		$this->pkg = $this->getAttribute("package");
+        $this->ancestor = $this->getAttribute("extends");
     }
 
     /**
@@ -100,6 +102,24 @@ class Inheritance extends XMLElement {
     public function setClassName($v)
     {
         $this->className = $v;
+    }
+
+    /**
+     * Get the value of package.
+     * @return value of package.
+     */
+    public function getPackage()
+    {
+        return $this->pkg;
+    }
+
+    /**
+     * Set the value of package.
+     * @param v  Value to assign to package.
+     */
+    public function setPackage($v)
+    {
+        $this->pkg = $v;
     }
 
     /**

@@ -96,6 +96,7 @@ PHP class or method name.
 <!ATTLIST inheritance
   key CDATA #REQUIRED
   class CDATA #REQUIRED
+  package CDATA #IMPLIED
   extends CDATA #IMPLIED
 >
 

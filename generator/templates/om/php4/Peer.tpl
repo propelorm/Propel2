@@ -160,12 +160,13 @@ if (!$table->isAlias()) {
       else $quote = '"';
 
       foreach ($col->getChildren() as $child) {
+	    $childpkg = ($child->getPackage() ? $child->getPackage() : $package);
 ?>
   /** A key representing a particular subclass */
   function CLASSKEY_<?php echo strtoupper($child->getKey()) ?>() { return <?php echo $quote . $child->getKey() . $quote ?>; }
 
   /** A class that can be returned by this peer. */
-  function CLASSNAME_<?php echo strtoupper($child->getKey()) ?>() { return "<?php echo $package . '.' . $child->getClassName() ?>"; }
+  function CLASSNAME_<?php echo strtoupper($child->getKey()) ?>() { return "<?php echo $childpkg . '.' . $child->getClassName() ?>"; }
 <?php
       } /* foreach children */
     } /* if col->isenumerated...() */

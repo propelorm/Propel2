@@ -207,8 +207,10 @@ class PropelOMTask extends AbstractPropelDataModelTask {
                             $col = $table->getChildrenColumn();
                             if ($col->isEnumeratedClasses()) {
                                 foreach ($col->getChildren() as $child) {
+									$childpkg = ($child->getPackage() ? $child->getPackage() : $package);
                                     $generator->put("child", $child);
-                                    $path = ClassTools::getFilePath($package, $child->getClassName());
+									$generator->put("package", $childpkg);
+                                    $path = ClassTools::getFilePath($childpkg, $child->getClassName());
                                     $_f = new File($basepath, $path);
                                     if (!$_f->exists()) {
                                         $this->log("\t\t-> " . $child->getClassName());

@@ -145,12 +145,13 @@ if (!$table->isAlias()) {
 			else $quote = '"';
 			
 			foreach ($col->getChildren() as $child) {
+				$childpkg = ($child->getPackage() ? $child->getPackage() : $package);
 ?> 
 	/** A key representing a particular subclass */
 	const CLASSKEY_<?php echo strtoupper($child->getKey()) ?> = <?php echo $quote . $child->getKey() . $quote ?>;
 
 	/** A class that can be returned by this peer. */
-	const CLASSNAME_<?php echo strtoupper($child->getKey()) ?> = "<?php echo $package . '.' . $child->getClassName() ?>";
+	const CLASSNAME_<?php echo strtoupper($child->getKey()) ?> = "<?php echo $childpkg . '.' . $child->getClassName() ?>";
 <?php	
 			} /* foreach children */
 		} /* if col->isenumerated...() */
