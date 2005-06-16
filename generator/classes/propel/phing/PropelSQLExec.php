@@ -342,7 +342,7 @@ class PropelSQLExec extends Task {
                     $transaction->setSrc($file);
                     $transactions[] = $transaction;
                 } else {
-                    $this->log("File '" . $fileName
+                    $this->log("File '" . $file->__toString()
                             . "' in sqldbmap does not exist, so skipping it.");
                 }
             }
