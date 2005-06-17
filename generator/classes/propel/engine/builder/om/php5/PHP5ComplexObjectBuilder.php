@@ -126,14 +126,17 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	} // addMutatorClose()
 	
 	/**
-	 * Adds the methods related to saving and deleting the object.
+	 * Adds the methods related to validating, saving and deleting the object.
 	 */
 	protected function addManipulationMethods(&$script)
 	{
-		$this->addDelete(&$script);
+		$this->addDelete($script);
 		
-		$this->addSave(&$script);
-		$this->addDoSave(&$script);
+		$this->addSave($script);
+		$this->addDoSave($script);
+		
+		$this->addValidate($script);
+		$this->addDoValidate($script);
 	}
 	
 	/**
@@ -839,17 +842,18 @@ $script .= "
 			// foreign key reference.
 ";
 		
-		foreach($table->getForeignKeys() as $fk)
-		{
-			$aVarName = $this->getFKVarName($fk);
-			$script .= "
+			foreach($table->getForeignKeys() as $fk)
+			{
+				$aVarName = $this->getFKVarName($fk);
+				$script .= "
 			if (\$this->$aVarName !== null) {
 				if (\$this->".$aVarName."->isModified()) \$this->".$aVarName."->save(\$con);
 				\$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);
 			}
 ";
-		}
-	
+			} // foreach foreign k
+		} // if (count(foreign keys))
+		
 		$script .= "	
 
 			// If this object has been modified, then save it to the database.
@@ -888,7 +892,7 @@ $script .= "
 				}
 			}
 ";
-			} /* if tableFK !+ table */
+			// } /* if tableFK !+ table */
 		} /* foreach getReferrers() */
 		$script .= "
 			\$this->alreadyInSave = false;
@@ -1006,6 +1010,8 @@ $script .= "
 	 */
 	protected function addDoValidate(&$script)
 	{
+		$table = $this->getTable();
+		
 		$script .= "
 	/**
 	 * This function performs the validation work for complex object models.
@@ -1036,7 +1042,7 @@ $script .= "
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
 			if (\$this->$aVarName !== null) {
-				if ((\$retval = \$this->$aVarName->validate()) !== true) {
+				if ((\$retval = \$this->".$aVarName."->validate()) !== true) {
 					\$failureMap = array_merge(\$failureMap, \$retval);
 				}
 			}

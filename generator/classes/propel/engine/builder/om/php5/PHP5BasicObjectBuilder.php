@@ -25,7 +25,7 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 /**
  * Generates a PHP5 base Object class for user object model (OM).
  * 
- * This class produces the base object class (e.g. BaseMy) which contains all
+ * This class produces the base object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
  * 
  * This class replaces the Object.tpl, with the intent of being easier for users
@@ -34,15 +34,6 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-/**
- * PHP5BasicObjectBuilder
- * 
- * @package 
- * @author hans
- * @copyright Copyright (c) 2005
- * @version $Id$
- * @access public
- **/
 class PHP5BasicObjectBuilder extends ObjectBuilder {		
 	
 	/**
@@ -165,10 +156,9 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
 		
+		$this->addHydrate($script);
+		
 		$this->addManipulationMethods($script);
-		
-		
-		$this->addValidate($script);
 		
 		$this->addBuildCriteria($script);
 		$this->addBuildPkeyCriteria($script);
@@ -289,7 +279,7 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 	
 	// --------------------------------------------------------------
 	//
-	// M U T A T O R    M E T H O D S
+	// A C C E S S O R    M E T H O D S
 	//
 	// --------------------------------------------------------------
 	
@@ -511,7 +501,7 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 	protected function addLobMutator(&$script, Column $col)
 	{
 		$this->addMutatorOpen($script, $col);
-		$clo = strtolower($col->getPhpName());
+		$clo = strtolower($col->getName());
 		// Setting of LOB columns gets some special handling
 		
 		if ($col->getPropelType() === PropelTypes::BLOB || $col->getPropelType() === PropelTypes::LONGVARBINARY ) {
@@ -552,7 +542,7 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 	 */
 	protected function addTemporalMutator(&$script, Column $col)
 	{
-		$clo = strtolower($col->getPhpName());
+		$clo = strtolower($col->getName());
 		
 		$defaultValue = null;
 		if (($val = $col->getPhpDefaultValue()) !== null) {
@@ -619,6 +609,8 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 	 */
 	protected function addHydrate(&$script)
 	{
+		$table = $this->getTable();
+		
 		$script .= "
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
@@ -660,7 +652,7 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 				} // if col->isLazyLoad()
 			} /* foreach */
 			
-			if ($this->addSaveMethod) {
+			if ($this->getBuildProperty("addSaveMethod")) {
 				$script .= "
 			\$this->resetModified();
 ";
@@ -1122,8 +1114,9 @@ $script .= "
 	 */
 	protected function addManipulationMethods(&$script)
 	{
-		$this->addDelete(&$script);
-		$this->addSave(&$script);
+		$this->addDelete($script);
+		$this->addSave($script);
+		$this->addValidate($script);
 	}
 	
 	/**

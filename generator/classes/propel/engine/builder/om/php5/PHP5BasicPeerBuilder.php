@@ -123,9 +123,39 @@ abstract class ".$this->classname." {
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
 	 */	
-	protected function addClassClose(&$script) {
+	protected function addClassClose(&$script)
+	{
 		$script .= "
 } // " . $this->classname . "
+";
+		$this->addStaticMapBuilderRegistration($script);
+	}
+	
+	/**
+	 * Adds the static map builder registraction code.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addStaticMapBuilderRegistration(&$script)
+	{
+		$table = $this->getTable();
+		$mapBuilderFile = $this->getFilePath($this->getPackage() . '.map', $table->getPhpName() . 'MapBuilder');
+		
+		$script .= "
+// static code to register the map builder for this Peer with the main Propel class
+if (Propel::isInit()) {
+	// the MapBuilder classes register themselves with Propel during initialization
+	// so we need to load them here.
+	try {
+		".$this->getPeerClassname()."::getMapBuilder();
+	} catch (Exception \$e) {
+		Propel::log('Could not initialize Peer: ' . \$e->getMessage(), Propel::LOG_ERR);
+	}
+} else {
+	// even if Propel is not yet initialized, the map builder class can be registered
+	// now and then it will be loaded when Propel initializes.
+	require_once '$mapBuilderFile';
+	Propel::registerMapBuilder(".$table->getPhpName()."MapBuilder::CLASS_NAME);
+}
 ";
 	}
 	
@@ -134,7 +164,8 @@ abstract class ".$this->classname." {
 	 * @param string &$script The script will be modified in this method.
 	 * @see addColumnNameConstants()
 	 */
-	protected function addConstantsAndAttributes(&$script) {
+	protected function addConstantsAndAttributes(&$script)
+	{
 		$tableName = $this->getTable()->getName();
 		$dbName = $this->getDatabase()->getName();
 		$script .= "		
@@ -318,15 +349,16 @@ abstract class ".$this->classname." {
 		$table = $this->getTable();
 		$count_col = "*";
 		/*
-		* [HL] removing this because AFAIK count(*) is generally
+		* FIXME
+		* (HL) wanted to remove this because AFAIK count(*) is generally
 		* optimized in databases, and furthermore the code below isn't correct
-		* (multi-pkey needs to be accounted for).
-		* 
-		if ($table->hasPrimaryKey()) {
-			$pk = $table->getPrimaryKey();			
-			$count_col = constant($this->getColumnConstant($pk[0]));
-		}
+		* (multi-pkey needs to be accounted for)....
 		*/
+		if ($table->hasPrimaryKey()) {
+			$pk = $table->getPrimaryKey();
+			$count_col = $table->getName().".".strtoupper($pk[0]->getName());
+		}
+		
 		$script .= "
 	const COUNT = 'COUNT($count_col)';
 	const COUNT_DISTINCT = 'COUNT(DISTINCT $count_col)';
