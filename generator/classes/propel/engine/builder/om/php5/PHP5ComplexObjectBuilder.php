@@ -37,17 +37,26 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	/**
 	 * Adds additional attributes used for complex object model.
 	 * @param string &$script The script will be modified in this method.
+	 * @see addFKAttributes()
+	 * @see addRefFKAttributes()
+	 * @see addAlreadyInSaveAttribute()
+	 * @see addAlreadyInValidationAttribute()
 	 */
 	protected function addAttributes(&$script)
 	{
 		$table = $this->getTable();
 		parent::addAttributes($script);
+		
 		foreach ($table->getForeignKeys() as $fk) {
 			$this->addFKAttributes($script, $fk);
 		}
+		
 		foreach($table->getReferrers() as $refFK) {
-			$this->addRefFKAttributes($script, $refFK);
+			if ($refFK->getTable()->getName() != $table->getName()) {
+				$this->addRefFKAttributes($script, $refFK);
+			}
 		}
+		
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
 	}
@@ -610,11 +619,13 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKMethods(&$script)
 	{
 		foreach($this->getTable()->getReferrers() as $refFK) {
-			$this->addRefFKInit($script, $refFK);
-			$this->addRefFKGet($script, $refFK);
-			$this->addRefFKCount($script, $refFK);
-			$this->addRefFKAdd($script, $refFK);
-			$this->addRefFKGetJoinMethods($script, $refFK);
+			if ( $refFK->getTable()->getName() != $this->getTable()->getName() ) {
+				$this->addRefFKInit($script, $refFK);
+				$this->addRefFKGet($script, $refFK);
+				$this->addRefFKCount($script, $refFK);
+				$this->addRefFKAdd($script, $refFK);
+				$this->addRefFKGetJoinMethods($script, $refFK);
+			}
 		}
 	}
 	
@@ -885,14 +896,15 @@ $script .= "
 
 		foreach ($table->getReferrers() as $fk) {
 			$collName = $this->getRefFKCollVarName($fk);
-			$script .= "
+			if ( $fk->getTable()->getName() != $table->getName() ) {
+				$script .= "
 			if (\$this->$collName !== null) {
 				foreach(\$this->$collName as \$referrerFK) {
 					\$referrerFK->save(\$con);
 				}
 			}
 ";
-			// } /* if tableFK !+ table */
+			} /* if tableFK != table */
 		} /* foreach getReferrers() */
 		$script .= "
 			\$this->alreadyInSave = false;
@@ -1070,7 +1082,7 @@ $script .= "
 						}
 					}
 				}
-	";
+";
 			} /* if tableFK !+ table */
 		} /* foreach getReferrers() */
 		
@@ -1138,8 +1150,7 @@ $script .= "
 			\$copyObj->setNew(false);
 ";
 			foreach ($table->getReferrers() as $fk) {
-				$tblFK = $fk->getTable();
-				if ( $tblFK->getName() != $table->getName() ) {
+				if ( $fk->getTable()->getName() != $table->getName() ) {
 					$script .= "
 			foreach(\$this->get".$this->getFKPhpNameAffix($fk)."() as \$relObj) {
 				\$copyObj->add".$pCollNameNoS."(\$relObj->copy());
