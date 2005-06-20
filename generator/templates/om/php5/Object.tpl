@@ -991,9 +991,10 @@ if ($complexObjectModel) {
 } /* the if(complexObjectModel) */
 
 //
-// getByName code
+// add GenericAccessors or GenericMutators?
 //
-if (!$table->isAlias() && $addGenericAccessors) {
+if (!$table->isAlias() && ($addGenericAccessors || ($addGenericMutators && !$table->isReadOnly())))
+{
 ?>
 
 	/**
@@ -1019,11 +1020,11 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	 * simply the numerical array index, e.g. 4
 	 */
 	const TYPE_NUM = 'num';
-
 <?php
 	$tableColumns = $table->getColumns();
 	$tablePhpname = $table->getPhpName();
 ?>
+
 	/**
 	 * holds an array of fieldnames
 	 *
@@ -1085,6 +1086,7 @@ if (!$table->isAlias() && $addGenericAccessors) {
 		}
 		return $toNames[$key];
 	}
+<?php if ($addGenericAccessors) { ?>
 
 	/**
 	 * Retrieves a field from the object by name passed in as a string.
@@ -1113,17 +1115,17 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	{
 		switch($pos) {
 <?php
-	$i = 0;
-	foreach ($table->getColumns() as $col) {
-		$cfc = $col->getPhpName();
-		$cptype = $col->getPhpNative();// not safe to use it because some methods may return objects (Blob)
+		$i = 0;
+		foreach ($table->getColumns() as $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpNative();// not safe to use it because some methods may return objects (Blob)
 ?>
 			case <?php echo $i ?>:
 				return $this->get<?php echo $cfc ?>();
 				break;
 <?php
-		$i++;
-	} /* foreach */
+			$i++;
+		} /* foreach */
 ?>
 			default:
 				return null;
@@ -1145,20 +1147,19 @@ if (!$table->isAlias() && $addGenericAccessors) {
 		$keys = self::getFieldNames($keyType);
 		$result = array(
 <?php
-	foreach ($table->getColumns() as $num => $col) {
+		foreach ($table->getColumns() as $num => $col) {
 ?>
 			$keys[<?php echo $num; ?>] => $this->get<?php echo $col->getPhpName(); ?>(),
 <?php
-	} /* foreach */
+		} /* foreach */
 ?>
 		);
 		return $result;
 	}
+<?php } /* ends the if($addGenericAccessors) */ ?>
 
-<?php } /* ends the if(addGetByNameMethod) */ ?>
 
-
-<?php if (!$table->isAlias() && $addGenericMutators && !$table->isReadOnly()) { ?>
+<?php if ($addGenericMutators && !$table->isReadOnly()) { ?>
 
 	/**
 	 * Sets a field from the object by name passed in as a string.
@@ -1174,7 +1175,7 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	{
 		$names = $this->getFieldnames($type);
 		$pos = array_search($name, $names);
-		return $this->setByPosition($pos, $name);
+		return $this->setByPosition($pos, $value);
 	}
 
 	/**
@@ -1189,17 +1190,17 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	{
 		switch($pos) {
 <?php
-	$i = 0;
-	foreach ($table->getColumns() as $col) {
-		$cfc = $col->getPhpName();
-		$cptype = $col->getPhpNative();
+		$i = 0;
+		foreach ($table->getColumns() as $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpNative();
 ?>
 			case <?php echo $i ?>:
 				$this->set<?php echo $cfc ?>($value);
 				break;
 <?php
-	$i++;
-	} /* foreach */
+			$i++;
+		} /* foreach */
 ?>
 		} // switch()
 	}
@@ -1241,19 +1242,22 @@ if (!$table->isAlias() && $addGenericAccessors) {
 	{
 		$keys = self::getFieldNames($keyType);
 <?php
-	foreach ($table->getColumns() as $num => $col) {
-	  $cfc = $col->getPhpName();
-	  $cptype = $col->getPhpNative();
+		foreach ($table->getColumns() as $num => $col) {
+			$cfc = $col->getPhpName();
+	  		$cptype = $col->getPhpNative();
 ?>
 		if (array_key_exists($keys[<?php echo $num ?>], $arr)) $this->set<?php echo $cfc ?>($arr[$keys[<?php echo $num ?>]]);
 <?php
-	} /* foreach */
+		} /* foreach */
 ?>
 	}
 
-<?php } /* ends the if($addGenericMutators) */ ?>
+<?php } /* ends the if($addGenericMutators) */
+	} /* ends the if($addGenericAccessors || $addGenericMutators) */
+?>
 
 <?php if (!$table->isAlias() && isset($addSaveMethod) && $addSaveMethod && !$table->isReadOnly()) { ?>
+
 	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *

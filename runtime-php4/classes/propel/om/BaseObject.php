@@ -22,6 +22,30 @@
 require_once 'propel/om/Persistent.php';
 
 /**
+* phpname type
+* e.g. 'AuthorId'
+*/
+define('TYPE_PHPNAME', 'phpName');
+
+/**
+* column (peer) name type
+* e.g. 'book.AUTHOR_ID'
+*/
+define('TYPE_COLNAME', 'colName');
+
+/**
+* column fieldname type
+* e.g. 'author_id'
+*/
+define('TYPE_FIELDNAME', 'fieldName');
+
+/**
+* num type
+* simply the numerical array index, e.g. 4
+*/
+define('TYPE_NUM', 'num');
+
+/**
  * This class contains attributes and methods that are used by all
  * business objects within the system.
  *
@@ -31,6 +55,7 @@ require_once 'propel/om/Persistent.php';
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @version $Revision$
  */
+
 class BaseObject extends Persistent
 {
 

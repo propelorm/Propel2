@@ -594,6 +594,7 @@ class Criteria /*implements IteratorAggregate */
   *
   * @param string $left A String with the left side of the join.
   * @param string $right A String with the right side of the join.
+  * @param string $operator A String with the join operator e.g. LEFT JOIN, ...
   * @return Criteria A modified Criteria object.
   */
   function & addJoin($left, $right, $operator = null)

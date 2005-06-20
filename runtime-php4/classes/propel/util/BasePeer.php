@@ -26,7 +26,6 @@ include_once 'propel/map/MapBuilder.php';
 include_once 'propel/map/TableMap.php';
 include_once 'propel/map/ValidatorMap.php';
 include_once 'propel/validator/ValidationFailed.php';
-include_once 'propel/Propel.php';
 
 /**
  * This is a utility class for all generated Peer classes in the system.  
@@ -714,10 +713,8 @@ class BasePeer
     // This adds tables to the FROM clause and adds WHERE clauses.  Not sure if this shouldn't
     // be changed to use INNER JOIN
     $joins =& $criteria->getJoins();
-    if (!empty($joins))
-    {
-      for ($i=0, $joinSize=count($joins); $i < $joinSize; $i++)
-      {
+    if (!empty($joins)) {
+      for ($i=0, $joinSize=count($joins); $i < $joinSize; $i++) {
 	  	$join =& $joins[$i];
         $join1 = $join->getLeftColumn();
         $join2 = $join->getRightColumn();
