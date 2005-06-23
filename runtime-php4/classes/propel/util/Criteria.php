@@ -19,8 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'Log.php';
-
 /**
  * This is a utility class for holding criteria information for a query.
  *
