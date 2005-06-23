@@ -1490,7 +1490,7 @@ class Criterion
             if ($this->comparison === Criteria::LIKE()) {
               $this->comparison = Criteria::ILIKE();
             }
-            elseif ($comparison === Criteria::NOT_LIKE()) {
+            elseif ($this->comparison === Criteria::NOT_LIKE()) {
               $this->comparison = Criteria::NOT_ILIKE();
             }
           }
