@@ -636,7 +636,7 @@ class Propel
   {
     $self =& Propel::getInstance();
 
-    foreach($self->$connectionMap as $conn) {
+    foreach($self->connectionMap as $conn) {
       $conn->close();
     }
   }
