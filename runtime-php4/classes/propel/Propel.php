@@ -211,7 +211,7 @@ class Propel
         {
           $db =& DBAdapter::factory($properties['adapter']);
           if (Propel::isError($db)) {
-            return new PropelException(PROPEL_ERROR_NOT_FOUND, "Unable to initialize adapters.", $e);
+            return new PropelException(PROPEL_ERROR_NOT_FOUND, "Unable to initialize adapters.");
           }
           // register the adapter for this name
           $self->adapterMap["$handle"] =& $db;
