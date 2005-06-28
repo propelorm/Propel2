@@ -353,6 +353,72 @@ try {
     die("Error retrieving nodes: " . $e->__toString());
 }
 
+try {
+
+    echo "\nCreating new tree:\n";
+    echo "-------------------------------------\n";
+
+    $a = new Test();
+    $a->setLabel("a");
+    $a = TestNodePeer::createNewRootNode($a);
+    echo "Created 'a' as new root\n";
+
+    echo "\nAdding 10 child nodes:\n";
+    echo "-------------------------------------\n";
+
+    $b = new TestNode();
+    $b->setLabel('b');
+    $a->addChildNode($b);
+
+    $c = new TestNode();
+    $c->setLabel('c');
+    $a->addChildNode($c);
+    
+    $d = new TestNode();
+    $d->setLabel('d');
+    $a->addChildNode($d);
+    
+    $e = new TestNode();
+    $e->setLabel('e');
+    $a->addChildNode($e);
+    
+    $f = new TestNode();
+    $f->setLabel('f');
+    $a->addChildNode($f);
+    
+    $g = new TestNode();
+    $g->setLabel('g');
+    $a->addChildNode($g);
+    
+    $h = new TestNode();
+    $h->setLabel('h');
+    $a->addChildNode($h);
+    
+    $i = new TestNode();
+    $i->setLabel('i');
+    $a->addChildNode($i);
+    
+    $j = new TestNode();
+    $j->setLabel('j');
+    $a->addChildNode($j);
+    
+    $k = new TestNode();
+    $k->setLabel('k');
+    $a->addChildNode($k);
+
+    echo "\ndescendants:\n";
+    dumpTree($a);
+    
+    echo "\nRetrieving last node:\n";
+    echo "-------------------------------------\n";
+
+    $last = $a->getLastChildNode(true);
+    echo "Last child node is '" . $last->getLabel() . "' (" . $last->getNodePath() . ")\n";
+    
+} catch (Exception $e) {
+    die("Error creating tree with > 10 nodes: " . $e->__toString());
+}
+
 if (!isset($argc)) echo "</pre>";
 
 ?>
