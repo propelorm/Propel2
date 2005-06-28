@@ -675,36 +675,46 @@ class BasePeer
 
             foreach($orderBy as $orderByColumn) {
                 
-                $dotPos = strpos($orderByColumn, '.');
-                $tableName = substr($orderByColumn,0, $dotPos);
-
-                $table = $criteria->getTableForAlias($tableName);
-                if ($table === null) $table = $tableName;
+                // Split orderByColumn (i.e. "table.column DESC")
                 
-                // See if there's a space (between the column list and sort
-                // order in ORDER BY table.column DESC).
-                $spacePos = strpos($orderByColumn, ' ');
-
-                if ($spacePos === false) {
-                    $columnName = substr($orderByColumn, $dotPos + 1);
-                } else {
-                    $columnName = substr($orderByColumn, $dotPos + 1, $spacePos - ($dotPos + 1));
+                $dotPos = strpos($orderByColumn, '.');
+                
+                if ($dotPos !== false) {
+                    $tableName = substr($orderByColumn, 0, $dotPos);
+                    $columnName = substr($orderByColumn, $dotPos+1);
                 }
-				
-                $actualColumn = $criteria->getColumnForAs($columnName);
-				if ($actualColumn === null) {
-				    $actualColumn = $columnName;
-				}
-				
-                $column = $dbMap->getTable($table)->getColumn($actualColumn);
-                if ($column->getType() == "string") {
-                    if ($spacePos === false) {
-                        $orderByClause[] = $db->ignoreCaseInOrderBy($orderByColumn);
-                    } else {
-                        $orderByClause[] = $db->ignoreCaseInOrderBy(substr($orderByColumn, 0, $spacePos)) . substr($orderByColumn, $spacePos);
-                    }
-                    $selectClause[] = $db->ignoreCaseInOrderBy($tableName . '.' . $columnName);
-                } else {
+                else {
+                    $tableName = '';
+                    $columnName = $orderByColumn;
+                }
+
+                $spacePos = strpos($columnName, ' ');
+
+                if ($spacePos !== false) {
+                    $direction = substr($columnName, $spacePos);
+                    $columnName = substr($columnName, 0, $spacePos);
+                }
+                else {
+                    $direction = '';
+                }
+                
+                $tableAlias = $tableName;
+                if ($aliasTableName = $criteria->getTableForAlias($tableName)) {
+                    $tableName = $aliasTableName;
+                }
+
+                $columnAlias = $columnName;
+                if ($asColumnName = $criteria->getColumnForAs($columnName)) {
+                    $columnName = $asColumnName;
+                }
+
+                $column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
+                
+                if ($column && $column->getType() == 'string') {
+                    $orderByClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias") . $direction;
+                    $selectClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
+                }
+                else {
                     $orderByClause[] = $orderByColumn;
                 }
             }
