@@ -252,9 +252,12 @@ class <?php echo $basePrefix . $table->getPhpName() ?>Node implements IteratorAg
         }
         else if ($querydb)
         {
+            $db = Propel::getDb(<?php echo $table->getPhpName() ?>Peer::DATABASE_NAME);
             $criteria = new Criteria(<?php echo $table->getPhpName() ?>Peer::DATABASE_NAME);
             $criteria->add(<?php echo $table->getPhpName() ?>NodePeer::NPATH_COLNAME, $this->getNodePath() . <?php echo $table->getPhpName() ?>NodePeer::NPATH_SEP . '%', Criteria::LIKE);
-            $criteria->addAnd(<?php echo $table->getPhpName() ?>NodePeer::NPATH_COLNAME, $this->getNodePath() . <?php echo $table->getPhpName() ?>NodePeer::NPATH_SEP . '%' . <?php echo $table->getPhpName() ?>NodePeer::NPATH_SEP . '%', Criteria::NOT_LIKE);            
+            $criteria->addAnd(<?php echo $table->getPhpName() ?>NodePeer::NPATH_COLNAME, $this->getNodePath() . <?php echo $table->getPhpName() ?>NodePeer::NPATH_SEP . '%' . <?php echo $table->getPhpName() ?>NodePeer::NPATH_SEP . '%', Criteria::NOT_LIKE);
+            $criteria->addAsColumn('npathlen', $db->strLength(<?php echo $table->getPhpName() ?>NodePeer::NPATH_COLNAME));
+            $criteria->addDescendingOrderByColumn('npathlen');
             $criteria->addDescendingOrderByColumn(<?php echo $table->getPhpName() ?>NodePeer::NPATH_COLNAME);
           
             $lastObj = <?php echo $table->getPhpName() ?>Peer::doSelectOne($criteria, $con);
@@ -578,6 +581,7 @@ class <?php echo $basePrefix . $table->getPhpName() ?>Node implements IteratorAg
      * This method is used internally when constructing the tree structure 
      * from the database. To set the parent of a node, you should call 
      * addChildNode() on the parent.
+     *
      * @param <?php echo $table->getPhpName() ?>Node Parent node to attach.
      * @return void
      * @throws PropelException

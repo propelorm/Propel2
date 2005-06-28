@@ -336,6 +336,8 @@ class <?php echo $basePrefix . $table->getPhpName() ?>NodePeer
         if (!$criteria->getSelectColumns())
             <?php echo $table->getPhpName() ?>Peer::addSelectColumns($criteria);
 
+        $db = Propel::getDb($criteria->getDbName());
+
         if (($ancestors || $descendants) && $criteria->size())
         {
             // If we are retrieving ancestors/descendants, we need to do a 
@@ -364,8 +366,6 @@ class <?php echo $basePrefix . $table->getPhpName() ?>NodePeer
             foreach ($selectColumns as $colName)
                 $criteria->addSelectColumn(str_replace(<?php echo $table->getPhpName() ?>Peer::TABLE_NAME, 'L', $colName));
 
-            $db = Propel::getDb($criteria->getDbName());
-            
             $a = null;
             $d = null;
             
@@ -405,6 +405,8 @@ class <?php echo $basePrefix . $table->getPhpName() ?>NodePeer
             $criteria->addSelectColumn($npathR);
             
             // Sort by node path to speed up tree construction in populateNodes()
+            $criteria->addAsColumn('npathlen', $db->strLength($npathL));
+            $criteria->addAscendingOrderByColumn('npathlen');
             $criteria->addAscendingOrderByColumn($npathL);
         }
         else
@@ -413,6 +415,8 @@ class <?php echo $basePrefix . $table->getPhpName() ?>NodePeer
             $criteria->addSelectColumn(self::NPATH_COLNAME);
 
             // Sort by node path to speed up tree construction in populateNodes()
+            $criteria->addAsColumn('npathlen', $db->strLength(self::NPATH_COLNAME));
+            $criteria->addAscendingOrderByColumn('npathlen');
             $criteria->addAscendingOrderByColumn(self::NPATH_COLNAME);
         }
         
