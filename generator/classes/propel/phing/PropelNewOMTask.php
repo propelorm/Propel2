@@ -84,38 +84,37 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                 
                     if (!$table->isForReferenceOnly()) {
                     
-                        if ($table->getPackage()) {
-                            $package = $table->getPackage();
-                        } else {
-                            $package = $this->targetPackage;
-                        }
-
-                        $pkbase = "$package.om";
-                        $pkpeer = "$package";
-                        $pkmap = "$package.map";
-                        
-                        // make these available
-                        $generator->put("package", $package); 
-                        $generator->put("pkbase", $pkbase);
-                        //$generator->put("pkpeer", $pkpeer); -- we're not using this yet
-                        $generator->put("pkmap", $pkmap);
-                
-                        foreach(array($pkpeer, $pkmap, $pkbase) as $pk) {
-                            $path = strtr($pk, '.', '/');
+						DataModelBuilder::setBuildProperties($this->getPropelProperties());
+						
+                        $this->log("\t+ " . $table->getName());
+						
+						$targets = array('peer', 'object', 'peerstub', 'objectstub', 'mapbuilder');
+						
+						foreach($targets as $target) {
+						
+							$builder = DataModelBuilder::builderFactory($target);
+							
+							// make sure path (from package) exists:
+							$path = strtr($builder->getPackage(), '.', '/');
                             $f = new File($this->getOutputDirectory(), $path);
                             if (!$f->exists()) {
                                 if (!$f->mkdirs()) {
                                     throw new Exception("Error creating directories: ". $f->getPath());
                                 }
-                            }        
-                        } // for each package 
-        
-
-                        $this->log("\t+ " . $table->getName());
+                            }
+							
+							// Create the Base Peer class
+	                        $this->log("\t\t-> " . $builder->getClassname());
+	                        $path = ClassTools::getFilePath($builder->getPackage(), $builder->getClassname());  
+							
+							$script = $builder->build();
+							
+							$_f = new File($basepath, $path);
+							file_put_contents($_f->getAbsolutePath(), $script);
+							
+						}
                         
-                        $generator->put("table", $table);
-                        
-						DataModelBuilder::setBuildProperties($this->getPropelProperties());
+						
 						
 						$peerBuilder = DataModelBuilder::getNewPeerBuilder($table);
 						
