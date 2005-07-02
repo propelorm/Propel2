@@ -1,0 +1,11 @@
+
+- Make the getPackage() methods always return the current package of the class being built.
+This will mean we'll probably need a getBasePackage() which is the package that the user
+specifies in the schema or in ${propel.targetPackage} prop.
+
+- Investigate whether to make some convience methods for factory:  getNewPeerBuilder() rather than factoryBuilder('peer').
+If not, then at least make some constants (e.g. DataModelBuilder::PEER_BUILDER) so we don't have to rely on raw strings
+to instnatiate classes. 
+
+- Add error handling to the builderFactory() method so we can properly flag failures to load those files.
+

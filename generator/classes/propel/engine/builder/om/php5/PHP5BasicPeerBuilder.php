@@ -47,6 +47,21 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 */
 	protected $classname;
 	
+	public function __construct(Table $table)
+	{
+		parent::__construct($table);
+		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
+	}
+	
+	/**
+	 * Returns the name of the current class being built.
+	 * @return string
+	 */
+	public function getClassname()
+	{
+		return $this->classname;
+	}
+	
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.

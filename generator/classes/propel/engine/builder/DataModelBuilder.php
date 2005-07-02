@@ -87,20 +87,17 @@ abstract class DataModelBuilder {
             return $path . $extension;
         }
     }
-    
-	public static function getNewPeerBuilder(Table $table)
-	{
-		// FIXME: get the property, load the file, return the class ....
-		include_once 'propel/engine/builder/om/php5/PHP5ComplexPeerBuilder.php';
-		return new PHP5ComplexPeerBuilder($table);
-	}
-	
-	public static function getNewObjectBuilder(Table $table)
-	{
-		// FIXME: get the property, load the file, return the class ....
-		include_once 'propel/engine/builder/om/php5/PHP5ComplexObjectBuilder.php';
-		return new PHP5ComplexObjectBuilder($table);
-	}	
 
+	/**
+	 * Factory method to load a new builder instance based on specified type.
+	 * @param Table $table
+	 * @param $type
+	 */
+	public static function builderFactory(Table $table, $type)
+	{
+		$propname = 'propel.builder.' . strtolower($type);
+		$classname = Phing::import($clazz);
+		return new $classname($table);
+	}
 	
 }

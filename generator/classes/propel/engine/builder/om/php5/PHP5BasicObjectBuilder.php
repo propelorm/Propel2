@@ -42,6 +42,21 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	 */
 	protected $classname;
 	
+	public function __construct(Table $table)
+	{
+		parent::__construct($table);
+		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
+	}
+	
+	/**
+	 * Returns the name of the current class being built.
+	 * @return string
+	 */
+	public function getClassname()
+	{
+		return $this->classname;
+	}
+	
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
@@ -110,8 +125,6 @@ include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		$interface = $this->getInterface();
-		
-		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
 		
 		$script .= "
 /**
@@ -1446,4 +1459,4 @@ $script .= "
 ";
 	} // addCopy()
 	
-} // PHP5BasicPeerBuilder
+} // PHP5BasicObjectBuilder

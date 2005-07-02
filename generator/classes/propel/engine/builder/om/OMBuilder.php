@@ -53,7 +53,13 @@ abstract class OMBuilder extends DataModelBuilder {
 		$this->addClassClose($script);
 		return $script;
 	}
-
+	
+	/**
+	 * Returns the name of the current class being built.
+	 * @return string
+	 */
+	abstract public function getClassname();
+	
 	/**
 	 * Gets package name for this table.
 	 * @return string

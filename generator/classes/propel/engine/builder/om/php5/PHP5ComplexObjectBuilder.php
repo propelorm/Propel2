@@ -1184,4 +1184,4 @@ $script .= "
 ";
 	} // addCopy()
 	
-} // PHP5BasicPeerBuilder
+} // PHP5ComplexObjectBuilder
