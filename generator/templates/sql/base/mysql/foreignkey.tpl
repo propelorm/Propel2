@@ -75,4 +75,12 @@
     INDEX <?php echo $indexName; ?> (<?php echo implode(',', $lnames); ?>),<?php
 				}
 ?> 
-    CONSTRAINT <?php echo $constraintName ?> FOREIGN KEY (<?php echo implode(',', $lnames); ?>) REFERENCES <?php echo "`" . $fk->getForeignTableName() . "`" ?> (<?php echo implode(',', $fnames); ?>)<?php } 
+    CONSTRAINT <?php echo $constraintName ?> 
+      FOREIGN KEY (<?php echo implode(',', $lnames); ?>)
+      REFERENCES <?php echo "`" . $fk->getForeignTableName() . "`" ?> (<?php echo implode(',', $fnames); ?>)
+<?php if ($fk->hasOnUpdate()) { ?>
+      ON UPDATE <?php echo $fk->getOnUpdate(); ?> 
+<?php } if ($fk->hasOnDelete()) { ?>
+      ON DELETE <?php echo $fk->getOnDelete();
+	}
+}
