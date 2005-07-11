@@ -44,8 +44,10 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));  
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATETIME"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, "DATETIME"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATETIME"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BINARY(7132)"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "IMAGE"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "IMAGE"));
