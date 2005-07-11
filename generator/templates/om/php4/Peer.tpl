@@ -255,6 +255,11 @@ if (!$table->isAlias()) {
     } else {
       $criteria->addSelectColumn(<?php echo $table->getPhpName()?>Peer::COUNT());
     }
+    // just in case we're grouping: add those columns to the select statement
+    foreach($criteria->getGroupByColumns() as $column)
+    {
+      $criteria->addSelectColumn($column);
+    }
 
     $rs =& <?php echo $table->getPhpName()?>Peer::doSelectRS($criteria, $con);
     if (Propel::isError($rs)) { return $rs; }

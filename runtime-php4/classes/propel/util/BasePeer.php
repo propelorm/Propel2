@@ -30,8 +30,7 @@ include_once 'propel/validator/ValidationFailed.php';
 /**
  * This is a utility class for all generated Peer classes in the system.  
  *
- * Peer
- * classes are responsible for isolating all of the database access
+ * Peer classes are responsible for isolating all of the database access
  * for a specific business object.  They execute all of the SQL
  * against the database.  Over time this class has grown to include
  * utility methods which ease execution of cross-database queries and
@@ -721,7 +720,7 @@ class BasePeer
 
 		$tableName = substr($join1, 0, strpos($join1, '.'));
         $table = $criteria->getTableForAlias($tableName);
-        if ($table != null) {
+        if ($table !== null) {
             $fromClause[] = $table . ' ' . $tableName;
         } else {
             $fromClause[] = $tableName;
@@ -736,7 +735,7 @@ class BasePeer
             $fromClause[] = $tableName;
             $table = $tableName;
         }
-
+        
         $t =& $dbMap->getTable($table);
         $col =& $t->getColumn(substr($join2, $dot + 1));
         $type =& $col->getType();
@@ -792,46 +791,55 @@ class BasePeer
       foreach($orderBy as $orderByColumn)
       {
         $dotPos = strpos($orderByColumn, '.');
-        $tableName = substr($orderByColumn,0, $dotPos);
-
-        $table = $criteria->getTableForAlias($tableName);
-        if ($table === null) $table = $tableName;
-                
-        // See if there's a space (between the column list and sort
-        // order in ORDER BY table.column DESC).
-        $spacePos = strpos($orderByColumn, ' ');
-
-        if ($spacePos === false) {
-          $columnName = substr($orderByColumn, $dotPos + 1);
-        } else {
-          $columnName = substr($orderByColumn, $dotPos + 1, $spacePos - ($dotPos + 1));
+        
+        if ($dotPos !== false) {
+          $tableName = substr($orderByColumn, 0, $dotPos);
+          $columnName = substr($orderByColumn, $dotPos+1);
         }
-
-        $actualColumn = $criteria->getColumnForAs($columnName);
-
-        if ($actualColumn === null) {
-          $actualColumn = $columnName;
+        else {
+          $tableName = '';
+          $columnName = $orderByColumn;
         }
         
-        $t =& $dbMap->getTable($table);
-        $column = $t->getColumn($actualColumn);
+        $spacePos = strpos($columnName, ' ');
 
-        if ($column->getType() == "string") {
-            if ($spacePos === false) {
-                $orderByClause[] = $db->ignoreCaseInOrderBy($orderByColumn);
-            } else {
-                $orderByClause[] = $db->ignoreCaseInOrderBy(substr($orderByColumn, 0, $spacePos)) . substr($orderByColumn, $spacePos);
-            }
-            $selectClause[] = $db->ignoreCaseInOrderBy($tableName . '.' . $columnName);
-        } else {
-            $orderByClause[] = $orderByColumn;
+        if ($spacePos !== false) {
+          $direction = substr($columnName, $spacePos);
+          $columnName = substr($columnName, 0, $spacePos);
+        }
+        else {
+          $direction = '';
+        }
+        
+        $tableAlias = $tableName;
+        if ($aliasTableName = $criteria->getTableForAlias($tableName)) {
+          $tableName = $aliasTableName;
+        }
+
+        $columnAlias = $columnName;
+        if ($asColumnName = $criteria->getColumnForAs($columnName)) {
+          $columnName = $asColumnName;
+        }
+        
+        $column = null;
+        if ($tableName) {
+          $table = $dbMap->getTable($tableName);
+          $column = $table->getColumn($columnName);
+        }
+        
+        if ($column && $column->getType() == 'string') {
+          $orderByClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias") . $direction;
+          $selectClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
+        }
+        else {
+          $orderByClause[] = $orderByColumn;
         }
       }
     }
 
     // Build the SQL from the arrays we compiled
     $sql = "SELECT "
-         . ($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
+         .($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
          .implode(", ", $selectClause)
          ." FROM ".implode(", ", $fromClause)
          .($whereClause   ? " WHERE ".implode(" AND ", $whereClause) : "")
@@ -899,8 +907,11 @@ class BasePeer
   }
 
   /**
+  * This function searches for the given validator $name under propel/validator/$name.php,
+  * imports and caches it.
+  *
   * @param string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
-  * @return mixed Validator object or PropelException if not able to instantiate validator class.
+  * @return Validator or PropelException if not able to instantiate validator class.
   */
   function & getValidator($classname)
   {
@@ -932,6 +943,7 @@ class BasePeer
    * myapp.propel.MyMapMapBuilder.  The MapBuilder instances are cached in
    * this class for speed.
    *
+   * @param string $classname The dot-path name of class (e.g. myapp.propel.MyMapBuilder)
    * @return MapBuilder or PropelException (and logs the error) if the MapBuilder was not found.
    * @todo -cBasePeer Consider adding app-level caching support for map builders.
    */

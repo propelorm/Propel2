@@ -347,6 +347,66 @@ foreach ($nodes as $node)
 	echo "\n";
 }
 
+echo "\nCreating new tree:\n";
+echo "-------------------------------------\n";
+
+$a =& new Test();
+$a->setLabel("a");
+$a =& TestNodePeer::createNewRootNode($a);
+echo "Created 'a' as new root\n";
+
+echo "\nAdding 10 child nodes:\n";
+echo "-------------------------------------\n";
+
+$b =& new TestNode();
+$b->callObjMethod('setLabel', 'b');
+$a->addChildNode($b);
+
+$c =& new TestNode();
+$c->callObjMethod('setLabel', 'c');
+$a->addChildNode($c);
+
+$d =& new TestNode();
+$d->callObjMethod('setLabel', 'd');
+$a->addChildNode($d);
+
+$e =& new TestNode();
+$e->callObjMethod('setLabel', 'e');
+$a->addChildNode($e);
+
+$f =& new TestNode();
+$f->callObjMethod('setLabel', 'f');
+$a->addChildNode($f);
+
+$g =& new TestNode();
+$g->callObjMethod('setLabel', 'g');
+$a->addChildNode($g);
+
+$h =& new TestNode();
+$h->callObjMethod('setLabel', 'h');
+$a->addChildNode($h);
+
+$i =& new TestNode();
+$i->callObjMethod('setLabel', 'i');
+$a->addChildNode($i);
+
+$j =& new TestNode();
+$j->callObjMethod('setLabel', 'j');
+$a->addChildNode($j);
+
+$k =& new TestNode();
+$k->callObjMethod('setLabel', 'k');
+$a->addChildNode($k);
+
+echo "\ndescendants:\n";
+dumpTree($a);
+
+echo "\nRetrieving last node:\n";
+echo "-------------------------------------\n";
+
+$last =& $a->getLastChildNode(true);
+echo "Last child node is '" . $last->callObjMethod('getLabel') . "' (" . $last->getNodePath() . ")\n";
+
 if (!isset($argc)) echo "</pre>";
 
 ?>
