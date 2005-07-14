@@ -94,19 +94,19 @@ abstract class AbstractPropelDataModelTask extends Task {
 
     /**
      * Destination directory for results of template scripts.
-     * @var File
+     * @var PhingFile
      */
     protected $outputDirectory;
 
     /**
      * Path where Capsule looks for templates.
-     * @var File
+     * @var PhingFile
      */
     protected $templatePath;
 
     /**
      * Whether to package the datamodels or not
-     * @var File
+     * @var PhingFile
      */
     protected $packageObjectModel;
 
@@ -235,11 +235,11 @@ abstract class AbstractPropelDataModelTask extends Task {
     /**
      * [REQUIRED] Set the output directory. It will be
      * created if it doesn't exist.
-     * @param File $outputDirectory
+     * @param PhingFile $outputDirectory
      * @return void
      * @throws Exception
      */
-    public function setOutputDirectory(File $outputDirectory) {
+    public function setOutputDirectory(PhingFile $outputDirectory) {
         try {
             if (!$outputDirectory->exists()) {
                 $this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),PROJECT_MSG_VERBOSE);
@@ -288,7 +288,7 @@ abstract class AbstractPropelDataModelTask extends Task {
     /**
      * Maps the passed in name to a new filename & returns resolved File object.
      * @param string $from
-     * @return File Resolved File object.
+     * @return PhingFile Resolved File object.
      * @throws BuilException    - if no Mapper element se
      *                          - if unable to map new filename.
      */
@@ -305,7 +305,7 @@ abstract class AbstractPropelDataModelTask extends Task {
         }
         // Mappers always return arrays since it's possible for some mappers to map to multiple names.
         $outFilename = array_shift($mapped);
-        $outFile = new File($this->getOutputDirectory(), $outFilename);
+        $outFile = new PhingFile($this->getOutputDirectory(), $outFilename);
         return $outFile;
     }
 
@@ -327,7 +327,7 @@ abstract class AbstractPropelDataModelTask extends Task {
             // Make a transaction for each file
             foreach($dataModelFiles as $dmFilename) {
                 $this->log("Processing: ".$dmFilename);
-                $f = new File($srcDir, $dmFilename);
+                $f = new PhingFile($srcDir, $dmFilename);
                 $xmlParser = new XmlToAppData($this->getTargetDatabase(),
                                               $this->getTargetPackage(),
                                               $this->dbEncoding);
@@ -419,7 +419,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
         // Make sure the output directory exists, if it doesn't
         // then create it.
-        $outputDir = new File($this->outputDirectory);
+        $outputDir = new PhingFile($this->outputDirectory);
         if (!$outputDir->exists()) {
             $this->log("Output directory does not exist, creating: " . $outputDir->getAbsolutePath());
             $outputDir->mkdirs();

@@ -13,7 +13,7 @@
  //		$propertiesFile - path to xml/ini file.
 
 
-$pfile = new File($propertiesFile);
+$pfile = new PhingFile($propertiesFile);
 if (!$pfile->exists()) {	
     throw new BuildException("Property file does not exist: $propertiesFile");
 }

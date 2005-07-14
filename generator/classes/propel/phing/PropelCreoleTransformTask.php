@@ -278,7 +278,7 @@ class PropelCreoleTransformTask extends Task {
         try {
             $this->generateXML();
             $this->log("Writing XML to file: " . $this->xmlSchema);
-            $outFile = new File($this->xmlSchema);
+            $outFile = new PhingFile($this->xmlSchema);
             $out = new FileWriter($outFile);
             $xmlstr = $this->doc->saveXML();
             $out->write($xmlstr);

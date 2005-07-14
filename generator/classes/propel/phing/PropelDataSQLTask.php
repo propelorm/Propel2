@@ -39,29 +39,29 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * Properties file that maps an SQL file to a particular database.
-     * @var File
+     * @var PhingFile
      */
     private $sqldbmap;
 
     /**
      * Properties file that maps a data XML file to a particular database.
-     * @var File
+     * @var PhingFile
      */
     private $datadbmap;
 
     /**
      * The base directory in which to find data XML files.
-     * @var File
+     * @var PhingFile
      */
     private $srcDir;
 
     /**
      * Set the file that maps between SQL files and databases.
      *
-     * @param File $sqldbmap the sql -> db map.
+     * @param PhingFile $sqldbmap the sql -> db map.
      * @return void
      */
-    public function setSqlDbMap(File $sqldbmap)
+    public function setSqlDbMap(PhingFile $sqldbmap)
     {
         $this->sqldbmap = $sqldbmap;
     }
@@ -69,7 +69,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
     /**
      * Get the file that maps between SQL files and databases.
      *
-     * @return File sqldbmap.
+     * @return PhingFile sqldbmap.
      */
     public function getSqlDbMap()
     {
@@ -79,10 +79,10 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
     /**
      * Set the file that maps between data XML files and databases.
      *
-     * @param File $sqldbmap the db map
+     * @param PhingFile $sqldbmap the db map
      * @return void
      */
-    public function setDataDbMap(File $datadbmap)
+    public function setDataDbMap(PhingFile $datadbmap)
     {
         $this->datadbmap = $datadbmap;
     }
@@ -90,7 +90,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
     /**
      * Get the file that maps between data XML files and databases.
      *
-     * @return File $datadbmap.
+     * @return PhingFile $datadbmap.
      */
     public function getDataDbMap()
     {
@@ -99,9 +99,9 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * Set the src directory for the data xml files listed in the datadbmap file.
-     * @param File $srcDir data xml source directory
+     * @param PhingFile $srcDir data xml source directory
      */
-    public function setSrcDir(File $srcDir)
+    public function setSrcDir(PhingFile $srcDir)
     {
         $this->srcDir = $srcDir;
     }
@@ -109,7 +109,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
     /**
      * Get the src directory for the data xml files listed in the datadbmap file.
      *
-     * @return File data xml source directory
+     * @return PhingFile data xml source directory
      */
     public function getSrcDir()
     {
@@ -157,7 +157,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
         foreach($map->keys() as $dataXMLFilename) {
 
-            $dataXMLFile = new File($this->srcDir, $dataXMLFilename);
+            $dataXMLFile = new PhingFile($this->srcDir, $dataXMLFilename);
 
             // if file exists then proceed
             if ($dataXMLFile->exists()) {

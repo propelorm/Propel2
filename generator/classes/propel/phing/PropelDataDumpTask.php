@@ -75,7 +75,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
     /**
      * Properties file that maps a data XML file to a particular database.
-     * @var File
+     * @var PhingFile
      */
     private $datadbmap;
 
@@ -93,10 +93,10 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
     /**
      * Set the file that maps between data XML files and databases.
      *
-     * @param File $sqldbmap the db map
+     * @param PhingFile $sqldbmap the db map
      * @return void
      */
-    public function setDataDbMap(File $datadbmap)
+    public function setDataDbMap(PhingFile $datadbmap)
     {
         $this->datadbmap = $datadbmap;
     }
@@ -104,7 +104,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
     /**
      * Get the file that maps between data XML files and databases.
      *
-     * @return File $datadbmap.
+     * @return PhingFile $datadbmap.
      */
     public function getDataDbMap()
     {

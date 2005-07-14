@@ -71,7 +71,7 @@ class XmlToData extends AbstractHandler {
             try {
                 $fr = new FileReader($xmlFile);
             } catch (Exception $e) {
-                $f = new File($xmlFile);
+                $f = new PhingFile($xmlFile);
                 throw new BuildException("XML File not found: " . $f->getAbsolutePath());
             }
 

@@ -105,7 +105,7 @@ class XmlToAppData extends AbstractHandler {
         try {
             $fr = new FileReader($xmlFile);
         } catch (Exception $e) {
-            $f = new File($xmlFile);
+            $f = new PhingFile($xmlFile);
             throw new Exception("XML File not found: " . $f->getAbsolutePath());
         }
 
@@ -177,8 +177,8 @@ class XmlToAppData extends AbstractHandler {
                         }
 
                         if ($xmlFile{0} != '/') {
-                            $f = new File($this->currentXmlFile);
-                            $xf = new File($f->getParent(), $xmlFile);
+                            $f = new PhingFile($this->currentXmlFile);
+                            $xf = new PhingFile($f->getParent(), $xmlFile);
                             $xmlFile = $xf->getPath();
                         }
 

@@ -36,7 +36,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * The properties file that maps an SQL file to a particular database.
-     * @var File
+     * @var PhingFile
      */
     private $sqldbmap;
 
@@ -47,16 +47,16 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * Set the sqldbmap.
-     * @param File $sqldbmap The db map.
+     * @param PhingFile $sqldbmap The db map.
      */
-    public function setSqlDbMap(File $sqldbmap)
+    public function setSqlDbMap(PhingFile $sqldbmap)
     {
         $this->sqldbmap = $sqldbmap;
     }
 
     /**
      * Get the sqldbmap.
-     * @return File $sqldbmap.
+     * @return PhingFile $sqldbmap.
      */
     public function getSqlDbMap()
     {
@@ -164,8 +164,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
     	$fnamekeys= "sql/base/$targetDatabase/tablefk.tpl";
 	    //$generator->put("fnamekeys", $fnamekeys); // make available to sub-templates
 
-        $ddlStartFile = new File($this->getTemplatePath(), "sql/base/$targetDatabase/database-start.tpl");
-        $ddlEndFile = new File($this->getTemplatePath(), "sql/base/$targetDatabase/database-end.tpl");
+        $ddlStartFile = new PhingFile($this->getTemplatePath(), "sql/base/$targetDatabase/database-start.tpl");
+        $ddlEndFile = new PhingFile($this->getTemplatePath(), "sql/base/$targetDatabase/database-end.tpl");
 
 	    foreach ($dataModels as $package => $dataModel) {
 

@@ -96,7 +96,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 							
 							// make sure path (from package) exists:
 							$path = strtr($builder->getPackage(), '.', '/');
-                            $f = new File($this->getOutputDirectory(), $path);
+                            $f = new PhingFile($this->getOutputDirectory(), $path);
                             if (!$f->exists()) {
                                 if (!$f->mkdirs()) {
                                     throw new Exception("Error creating directories: ". $f->getPath());
@@ -109,7 +109,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 							
 							$script = $builder->build();
 							
-							$_f = new File($basepath, $path);
+							$_f = new PhingFile($basepath, $path);
 							file_put_contents($_f->getAbsolutePath(), $script);
 							
 						}
@@ -124,7 +124,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 																		
 						$script = $peerBuilder->build();
 						
-						$_f = new File($basepath, $path);
+						$_f = new PhingFile($basepath, $path);
 						file_put_contents($_f->getAbsolutePath(), $script);
 						
 						// Build Object classes
@@ -139,7 +139,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						$script = $objectBuilder->build();
 						
-						$_f = new File($basepath, $path);
+						$_f = new PhingFile($basepath, $path);
 						file_put_contents($_f->getAbsolutePath(), $script);
 						
                         #$generator->parse("om/$targetPlatform/Peer.tpl", $path);
@@ -172,7 +172,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 
                         // Create [empty] stub Peer class if it does not already exist        
                         $path = ClassTools::getFilePath($package, $table->getPhpName() . "Peer");
-                        $_f = new File($basepath, $path);
+                        $_f = new PhingFile($basepath, $path);
                         if (!$_f->exists()) {
                             $this->log("\t\t-> " . $table->getPhpName() . "Peer");
                             #$generator->parse("om/$targetPlatform/ExtensionPeer.tpl", $path);
@@ -182,7 +182,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                 
                         // Create [empty] stub object class if it does not already exist
                         $path = ClassTools::getFilePath($package, $table->getPhpName());
-                        $_f = new File($basepath, $path);
+                        $_f = new PhingFile($basepath, $path);
                         if (!$_f->exists()) {
                             $this->log("\t\t-> " . $table->getPhpName());
                             #$generator->parse("om/$targetPlatform/ExtensionObject.tpl", $path);
@@ -193,7 +193,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                         if ($table->isTree()) {                        
                             // Create [empty] stub Node Peer class if it does not already exist        
                             $path = ClassTools::getFilePath($package, $table->getPhpName() . "NodePeer");
-                            $_f = new File($basepath, $path);
+                            $_f = new PhingFile($basepath, $path);
                             if (!$_f->exists()) {
                                 $this->log("\t\t-> " . $table->getPhpName() . "NodePeer");
                                 #$generator->parse("om/$targetPlatform/ExtensionNodePeer.tpl", $path);
@@ -203,7 +203,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                             
                             // Create [empty] stub Node class if it does not already exist        
                             $path = ClassTools::getFilePath($package, $table->getPhpName() . "Node");
-                            $_f = new File($basepath, $path);
+                            $_f = new PhingFile($basepath, $path);
                             if (!$_f->exists()) {
                                 $this->log("\t\t-> " . $table->getPhpName() . "Node");
                                 #$generator->parse("om/$targetPlatform/ExtensionNode.tpl", $path);
@@ -215,7 +215,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                         // Create [empty] interface if it does not already exist
                         if ($table->getInterface()) {            
                             $path = ClassTools::getFilePath($package, $table->getInterface());
-                            $_f = new File($basepath, $path);
+                            $_f = new PhingFile($basepath, $path);
                             if (!$_f->exists()) {
                                 $this->log("\t\t-> " . $table->getInterface());
                                 #$generator->parse("om/$targetPlatform/Interface.tpl", $path);
@@ -232,7 +232,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                                 foreach ($col->getChildren() as $child) {
                                     #$generator->put("child", $child);                    
                                     $path = ClassTools::getFilePath($package, $child->getClassName());
-                                    $_f = new File($basepath, $path); 
+                                    $_f = new PhingFile($basepath, $path); 
                                     if (!$_f->exists()) {
                                         $this->log("\t\t-> " . $child->getClassName());
                                         #$generator->parse("om/$targetPlatform/MultiExtendObject.tpl", $path);

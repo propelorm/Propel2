@@ -34,7 +34,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
     /**
      * The properties file that maps an SQL file to a particular database.
-     * @var File
+     * @var PhingFile
      */
     private $sqldbmap;
     
@@ -51,9 +51,9 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
     /**
      * Set the sqldbmap.
-     * @param File $sqldbmap The db map.
+     * @param PhingFile $sqldbmap The db map.
      */
-    public function setOutputDirectory(File $out)
+    public function setOutputDirectory(PhingFile $out)
     {
         $this->outDir = $out;
     }
@@ -61,16 +61,16 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
     /**
      * Set the sqldbmap.
-     * @param File $sqldbmap The db map.
+     * @param PhingFile $sqldbmap The db map.
      */
-    public function setSqlDbMap(File $sqldbmap)
+    public function setSqlDbMap(PhingFile $sqldbmap)
     {
         $this->sqldbmap = $sqldbmap;
     }
 
     /**
      * Get the sqldbmap.
-     * @return File $sqldbmap.
+     * @return PhingFile $sqldbmap.
      */
     public function getSqlDbMap()
     {

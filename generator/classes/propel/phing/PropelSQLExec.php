@@ -136,9 +136,9 @@ class PropelSQLExec extends Task {
     /**
      * Set the src directory for the sql files listed in the sqldbmap file.
      * 
-     * @param File $srcDir sql source directory
+     * @param PhingFile $srcDir sql source directory
      */
-    public function setSrcDir(File $srcDir)
+    public function setSrcDir(PhingFile $srcDir)
     {
         $this->srcDir = $srcDir;
     }
@@ -146,7 +146,7 @@ class PropelSQLExec extends Task {
     /**
      * Get the src directory for the sql files listed in the sqldbmap file.
      *
-     * @return File SQL Source directory
+     * @return PhingFile SQL Source directory
      */
     public function getSrcDir()
     {
@@ -264,9 +264,9 @@ class PropelSQLExec extends Task {
     /**
      * Set the output file.
      *
-     * @param File $output
+     * @param PhingFile $output
      */
-    public function setOutput(File $output)
+    public function setOutput(PhingFile $output)
     {
         $this->output = $output;
     }   
@@ -334,7 +334,7 @@ class PropelSQLExec extends Task {
             
             foreach($files as $fileName) {
 
-                $file = new File($this->srcDir, $fileName);
+                $file = new PhingFile($this->srcDir, $fileName);
 
                 if ($file->exists()) {
                     $this->log("Executing statements in file: " . $file->__toString());
@@ -650,7 +650,7 @@ class PropelSQLExecTransaction {
         $this->parent = $parent;
     }
     
-    public function setSrc(File $src)
+    public function setSrc(PhingFile $src)
     {
         $this->tSrcFile = $src;
     }
