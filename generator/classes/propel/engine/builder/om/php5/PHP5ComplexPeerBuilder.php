@@ -130,9 +130,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						
 						$joinClassName = $joinTable->getPhpName();
 						
-						$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
-						$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
-						$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+						$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
+						$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
+						$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 						
 						$script .= "
 	/**
@@ -260,7 +260,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				$joinClassName = $joinTable->getPhpName();
 				$new_index = $index + 1;
 				
-				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 						
 				$script .= "
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
@@ -276,7 +276,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			// want to cover this case, but the code is not there yet.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 				
 				$joinClassName = $joinTable->getPhpName();
 				$lfMap = $fk->getLocalForeignMapping();
@@ -348,9 +348,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				}
 				*/
 				
-				$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
-				$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
-				$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+				$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
+				$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
+				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 				
 				
 				$index++;
@@ -448,9 +448,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			}
 			*/
 			
-			$thisTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($table);
-			$excludedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($excludedTable);
-			$excludedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($excludedTable);
+			$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
+			$excludedTableObjectBuilder = OMBuilder::getNewObjectBuilder($excludedTable);
+			$excludedTablePeerBuilder = OMBuilder::getNewPeerBuilder($excludedTable);
 				
 		$script .= "
 	/**

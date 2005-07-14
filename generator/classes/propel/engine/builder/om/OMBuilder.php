@@ -33,7 +33,123 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
  * @package propel.engine.builder.om
  */
 abstract class OMBuilder extends DataModelBuilder {	
+	
+	/**
+	 * Peer builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $peerBuilder;
+	
+	/**
+	 * Stub Peer builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $stubPeerBuilder;
+	
+	/**
+	 * Object builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $objectBuilder;
 
+	/**
+	 * Stub Object builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $stubObjectBuilder;
+	
+	/**
+	 * MapBuilder builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $mapBuilderBuilder;
+	
+	
+	/**
+	 * Returns new or existing Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getPeerBuilder()
+	{
+		if (!isset($this->peerBuilder)) {
+			$this->peerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'peer');
+		}
+		return $this->peerBuilder;
+	}
+	
+	/**
+	 * Returns new or existing stub Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getStubPeerBuilder()
+	{
+		if (!isset($this->stubPeerBuilder)) {
+			$this->stubPeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'stubpeer');
+		}
+		return $this->stubPeerBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing Object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getObjectBuilder()
+	{
+		if (!isset($this->objectBuilder)) {
+			$this->objectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'object');
+		}
+		return $this->objectBuilder;
+	
+	}
+	
+	/**
+	 * Returns new or existing stub Object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getStubObjectBuilder()
+	{
+		if (!isset($this->stubObjectBuilder)) {
+			$this->stubObjectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'stubobject');
+		}
+		return $this->stubObjectBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing stub Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getMapBuilderBuilder()
+	{
+		if (!isset($this->mapBuilderBuilder)) {
+			$this->mapBuilderBuilder = DataModelBuilder::builderFactory($this->getTable(), 'mapbuilder');
+		}
+		return $this->mapBuilderBuilder;	
+	}
+
+	/**
+	 * Convenience method to return a NEW Peer class builder instance.
+	 * This is used very frequently from the peer and object builders to get
+	 * a peer builder for a RELATED table.
+	 * @param Table $table
+	 * @return PeerBuilder
+	 */
+	public static function getNewPeerBuilder(Table $table)
+	{
+		return DataModelBuilder::builderFactory($table, 'peer');
+	}
+	
+	/**
+	 * Convenience method to return a NEW Object class builder instance.
+	 * This is used very frequently from the peer and object builders to get
+	 * an object builder for a RELATED table.
+	 * @param Table $table
+	 * @return ObjectBuilder
+	 */
+	public static function getNewObjectBuilder(Table $table)
+	{
+		return DataModelBuilder::builderFactory($table, 'object');
+	}
+	
 	/**
 	 * Builds the PHP source for current class and returns it as a string.
 	 * 
@@ -61,7 +177,31 @@ abstract class OMBuilder extends DataModelBuilder {
 	abstract public function getClassname();
 	
 	/**
+	 * Gets the dot-path representation of current class being built.
+	 * @return string
+	 */
+	public function getClasspath()
+	{
+		if ($this->getPackage()) {
+		    $path = $this->getPackage() . '.' . $this->getClassname();
+		} else {
+			$path = $this->getClassname();
+		}
+		return $path;
+	}
+	
+	/**
+	 * Gets the full path to the file for the current class.
+	 * @return string
+	 */
+	public function getClassFilePath()
+	{
+		return parent::getFilePath($this->getPackage(), $this->getClassname());
+	}
+
+	/**
 	 * Gets package name for this table.
+	 * This is overridden by child classes that have different packages.
 	 * @return string
 	 */
 	protected function getPackage()
@@ -73,32 +213,21 @@ abstract class OMBuilder extends DataModelBuilder {
 		return $pkg;
 	}
 	
-	protected function getMapPackage()
-	{
-		return $this->getPackage() . ".map";
-	}
-	
-	protected function getBasePackage()
-	{
-		return $this->getPackage() . ".om";
-	}
-	
 	/**
-	 * Returns the peer classname for current table.
+	 * Shortcut method to return the [stub] peer classname for current table.
+	 * This is the classname that is used whenever object or peer classes want
+	 * to invoke methods of the peer classes.
 	 * @return string (e.g. 'MyPeer')
 	 */
-	public function getPeerClassname($phpName = null) {
-		if ($phpName !== null) {
-			$e = new Exception("getPeerClassname() called with param.");
-			print $e;
-			throw $e;
-		}
+	public function getPeerClassname() {
 		return $this->getTable()->getPhpName() . 'Peer';
 	}
-	
+		
 	/**
 	 * Returns the object classname for current table.
-	 * @return string (e.g. 'MyPeer')
+	 * This is the classname that is used whenever object or peer classes want
+	 * to invoke methods of the object classes.
+	 * @return string (e.g. 'My')
 	 */
 	public function getObjectClassname() {
 		return $this->getTable()->getPhpName();
@@ -157,5 +286,5 @@ abstract class OMBuilder extends DataModelBuilder {
         }
         return $class;
     }	
-		
+	
 }

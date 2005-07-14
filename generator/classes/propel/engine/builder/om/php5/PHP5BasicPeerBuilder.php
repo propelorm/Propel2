@@ -47,10 +47,24 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 */
 	protected $classname;
 	
+	/**
+	 * A builder for the stub "Peer" classes.
+	 * @var OMBuilder
+	 */
+	protected $stubPeerBuilder;
+	
+	/**
+	 * A builder for the stub "Object" classes.
+	 * @var OMBuilder
+	 */
+	protected $stubObjectBuilder;
+	
 	public function __construct(Table $table)
 	{
 		parent::__construct($table);
 		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
+		$this->stubPeerBuilder = DataModelBuilder::builderFactory('peerstub');
+		$this->stubObjectBuilder = DataModelBuilder::builderFactory('objectstub');
 	}
 	
 	/**
@@ -63,6 +77,15 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	}
 	
 	/**
+	 * Gets the package for the [base] peer classes.
+	 * @return string
+	 */
+	protected function getPackage()
+	{
+		return $this->getPackage() . ".om";
+	}
+		
+	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
@@ -71,32 +94,14 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 		$table = $this->getTable();		
 
 		$basePeerFile = $this->getFilePath($this->basePeerClass);
-		$objectFile = $this->getFilePath($this->getPackage(), $table->getPhpName());
+		$objectFile = $this->stubObjectBuilder->getClassFilePath();
 		
 		$script .= "
 require_once '$basePeerFile';
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by ".$this->getPeerClassname()."::getOMClass()
 include_once '$objectFile';";
-		
-		/*
-		foreach ($table->getForeignKeys() as $fk) {
-		
-			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
-			$tblFKPackage = ($tblFK->getPackage() ? $tblFK->getPackage() : $this->getPackage()); 
-	   		
-			$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
-			
-			if (!$tblFK->isForReferenceOnly()) {
-				$fkObjectFile = $this->getFilePath($tblFKPackage, $tblFK->getPhpName());
-				$fkPeerFile = $this->getFilePath($tblFKPackage, $joinedTablePeerBuilder->getPeerClassname());
-				$script .= "
-include_once '$fkObjectFile';
-include_once '$fkPeerFile';";
-			}
-		}
-		*/	
-		
+
 		$script .= "
 ";
 		
@@ -153,7 +158,7 @@ abstract class ".$this->classname." {
 	protected function addStaticMapBuilderRegistration(&$script)
 	{
 		$table = $this->getTable();
-		$mapBuilderFile = $this->getFilePath($this->getPackage() . '.map', $table->getPhpName() . 'MapBuilder');
+		$mapBuilderFile = $this->getMapBuilderBuilder()->getClassFilePath();
 		
 		$script .= "
 // static code to register the map builder for this Peer with the main Propel class
@@ -169,7 +174,7 @@ if (Propel::isInit()) {
 	// even if Propel is not yet initialized, the map builder class can be registered
 	// now and then it will be loaded when Propel initializes.
 	require_once '$mapBuilderFile';
-	Propel::registerMapBuilder(".$table->getPhpName()."MapBuilder::CLASS_NAME);
+	Propel::registerMapBuilder('".$this->getMapBuilderBuilder()->getClasspath()."');
 }
 ";
 	}
@@ -191,7 +196,7 @@ if (Propel::isInit()) {
 	const TABLE_NAME = '$tableName';
 	
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = '".$this->getPackage().".".$this->getTable()->getPhpName()."';
+	const CLASS_DEFAULT = '".$this->stubObjectBuilder->getClasspath()."';
 ";
 		$this->addColumnNameConstants($script);
 	}
@@ -225,8 +230,8 @@ if (Propel::isInit()) {
 	 */
 	public static function getMapBuilder()		
 	{
-		include_once '" . $this->getFilePath($this->getMapPackage(), $this->getTable()->getPhpName() . 'MapBuilder') ."';
-		return ".$this->basePeerClassname."::getMapBuilder(".$this->getTable()->getPhpName() ."MapBuilder::CLASS_NAME);
+		include_once '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
+		return ".$this->basePeerClassname."::getMapBuilder('". $this->getMapBuilderBuilder()->getClasspath() ."');
 	}";
 	}
 	
@@ -958,9 +963,9 @@ if (Propel::isInit()) {
 			// $fk is the foreign key in the other table, so localTableName will
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
-			$tblFKPackage = ($tblFK->getPackage() ? $tblFK->getPackage() : $this->getPackage());
 			
-			$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
+			$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);			
+			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 			
 			if (!$tblFK->isForReferenceOnly()) {
 				// we can't perform operations on tables that are
@@ -1043,7 +1048,7 @@ if (Propel::isInit()) {
 			// $fk is the foreign key in the other table, so localTableName will
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
-			$refTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($tblFK);
+			$refTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
 			
 			if (!$tblFK->isForReferenceOnly()) {
 				// we can't perform operations on tables that are

@@ -77,7 +77,7 @@ abstract class DataModelBuilder {
      * @param string $classname class name
      * @return string
      */
-    public function getFilePath($path, $classname = null, $extension = '.php')
+    public static function getFilePath($path, $classname = null, $extension = '.php')
     {
         $path = strtr(ltrim($path, '.'), '.', '/');
         if ($classname !== null) {
@@ -92,6 +92,7 @@ abstract class DataModelBuilder {
 	 * Factory method to load a new builder instance based on specified type.
 	 * @param Table $table
 	 * @param $type
+	 * @throws BuildException if specified class cannot be found / loaded.
 	 */
 	public static function builderFactory(Table $table, $type)
 	{

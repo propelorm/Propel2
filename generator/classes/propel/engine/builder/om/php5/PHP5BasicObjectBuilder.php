@@ -110,7 +110,7 @@ include_once 'propel/util/Criteria.php';
 ";	
 
 		$script .= "
-include_once '".$this->getFilePath($package, $this->getPeerClassname())."';
+include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
 ";
 	} // addIncludes()
 	

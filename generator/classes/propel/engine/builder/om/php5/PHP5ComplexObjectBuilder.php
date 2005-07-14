@@ -371,7 +371,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(\$con = null)
 	{
 		// include the related Peer class
-		include_once '".$this->getFilePath($fkPeerBuilder->getPackage(), $fkPeerBuilder->getPeerClassname())."';
+		include_once '".$fkPeerBuilder->getClassFilePath()."';
 
 		if (\$this->$varName === null && ($conditional)) {
 ";		
@@ -520,7 +520,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null)
 	{
 		// include the Peer class
-		include_once '".$this->getFilePath($fkPeerBuilder->getPackage(), $fkPeerBuilder->getPeerClassname())."';
+		include_once '".$fkPeerBuilder->getClassFilePath()."';
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -663,7 +663,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$tblFK = $refFK->getTable();
 		$className = $refFK->getTable()->getPhpName();
 		
-		$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($refFK->getTable());
+		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
 		
 		$script .= "
 	/**
@@ -690,7 +690,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	{
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 		
-		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($refFK->getTable());
+		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($refFK->getTable());
 		
 		$script .= "
 	/**
@@ -703,7 +703,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function count$relCol(\$criteria = null, \$con = null)
 	{
 		// include the Peer class
-		include_once '".$this->getFilePath($fkPeerBuilder->getPackage(), $fkPeerBuilder->getPeerClassname())."';
+		include_once '".$fkPeerBuilder->getClassFilePath()."';
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -732,7 +732,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$table = $this->getTable();
 		$tblFK = $refFK->getTable();
 		
-		$fkPeerBuilder = DataModelBuilder::getNewPeerBuilder($refFK->getTable());
+		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 		
 		$collName = $this->getRefFKCollVarName($refFK);
@@ -755,7 +755,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get$relCol(\$criteria = null, \$con = null)
 	{
 		// include the Peer class
-		include_once '".$this->getFilePath($fkPeerBuilder->getPackage(), $fkPeerBuilder->getPeerClassname())."';
+		include_once '".$fkPeerBuilder->getClassFilePath()."';
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}

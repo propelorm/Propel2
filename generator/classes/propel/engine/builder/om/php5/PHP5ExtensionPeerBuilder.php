@@ -63,23 +63,13 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-		
-		$table = $this->getTable();		
-		$package = $this->getPackage();		
-		$parentClass = $this->getBasePackage() . '.' . $this->getBuildProperty('basePrefix') . $this->getPeerClassname();
-		$objectClass = $this->getPackage() . '.' . $table->getPhpName();
-		
-		$interface = $this->getInterface();
-		
 		$script .= "
   // include base peer class
-  require_once '".$this->getFilePath($parentClass)."';
+  require_once '".$this->getPeerBuilder()->getClassFilePath()."';
   
   // include object class
-  include_once '".$this->getFilePath($objectClass)."';
+  include_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
 ";
-		
-		
 	} // addIncludes()
 	
 	/**

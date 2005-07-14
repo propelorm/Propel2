@@ -95,7 +95,7 @@ include_once 'creole/CreoleTypes.php';
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive 
  * (i.e. if it's a text column type).
  *
- * @package ".$this->getMapPackage()."
+ * @package ".$this->getPackage()."
  */	
 class ".$this->classname." {
 ";
@@ -126,7 +126,7 @@ class ".$this->classname." {
 		/**
 		 * The (dot-path) name of this class
 		 */
-		const CLASS_NAME = '".$this->getMapPackage() . '.' . $this->classname ."';	
+		const CLASS_NAME = '".$this->getClasspath()."';	
 ";
 	}
 	

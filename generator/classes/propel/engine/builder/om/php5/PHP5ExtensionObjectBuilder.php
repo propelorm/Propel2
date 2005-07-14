@@ -42,10 +42,17 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 	 */
 	protected $classname;
 
+	/**
+	 * The builder class for the parent (base peer) class.
+	 * @var PeerBuilder
+	 */
+	protected $parentBuilder;
+	
 	public function __construct(Table $table)
 	{
 		parent::__construct($table);
 		$this->classname = $table->getPhpName();
+		$this->parentBuilder = OMBuilder::getNewPeerBuilder($table);
 	}
 	
 	/**
@@ -63,14 +70,8 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-		
-		$table = $this->getTable();		
-		$package = $this->getPackage();		
-		$parentClass = $this->getPackage() . '.' . $this->getBuildProperty('basePrefix') . $table->getPhpName();
-		$interface = $this->getInterface();
-		
 		$script .= "
-require_once '".$this->getFilePath($parentClass)."';
+require_once '".$this->getObjectBuilder()->getClassFilePath()."';
 ";
 		
 	} // addIncludes()
