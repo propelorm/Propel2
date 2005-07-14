@@ -105,7 +105,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 							
 							// Create the Base Peer class
 	                        $this->log("\t\t-> " . $builder->getClassname());
-	                        $path = ClassTools::getFilePath($builder->getPackage(), $builder->getClassname());  
+	                        $path = $builder->getClassFilePath();
 							
 							$script = $builder->build();
 							
@@ -116,7 +116,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                         
 						
 						
-						$peerBuilder = DataModelBuilder::getNewPeerBuilder($table);
+						$peerBuilder = OMBuilder::getNewPeerBuilder($table);
 						
                         // Create the Base Peer class
                         $this->log("\t\t-> " . $basePrefix . $peerBuilder->getPeerClassname());						
@@ -134,7 +134,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						$this->log("\t\t-> " . $basePrefix . $table->getPhpName());
 						
-						$objectBuilder = DataModelBuilder::getNewObjectBuilder($table);		
+						$objectBuilder = OMBuilder::getNewObjectBuilder($table);		
 						$path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName()); 	
 						
 						$script = $objectBuilder->build();

@@ -96,8 +96,9 @@ abstract class DataModelBuilder {
 	 */
 	public static function builderFactory(Table $table, $type)
 	{
-		$propname = 'propel.builder.' . strtolower($type);
-		$classname = Phing::import($clazz);
+		$propname = 'propel.builder.classes.' . strtolower($type);
+		$classpath = $this->getBuildProperty($propname);
+		$classname = Phing::import($classpath);
 		return new $classname($table);
 	}
 	
