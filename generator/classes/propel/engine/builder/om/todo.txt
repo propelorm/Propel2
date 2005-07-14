@@ -9,3 +9,4 @@ the builder family.
 - Add error handling to the builderFactory() method so we can properly flag failures to load those files.
 *** There is currently error handling in Phing::import() to flag inability to load classes.  We may need to 
 add some better error messages in the builderFactor() specifically.
+*** builderFactory is broken anyway since it's using Phing::import($clazz); with $clazz not being defined anywhere [David]
