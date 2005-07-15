@@ -1,12 +1,3 @@
-- Make the getPackage() methods always return the current package of the class being built.
-This will mean we'll probably need a getBasePackage() which is the package that the user
-specifies in the schema or in ${propel.targetPackage} prop.
-*** This should now be done, but has not been tested.  Instead of getBasePackage() we now have methods
-like getPeerBuilder() that will return the [base] peer builder class and getStubPeerBuilder() which will
-return a stub peer builder.  That way we can quickly get classnames, packages, etc. from other members of
-the builder family.
-
-- Add error handling to the builderFactory() method so we can properly flag failures to load those files.
-*** There is currently error handling in Phing::import() to flag inability to load classes.  We may need to 
-add some better error messages in the builderFactor() specifically.
-*** builderFactory is broken anyway since it's using Phing::import($clazz); with $clazz not being defined anywhere [David]
+- Make sure that we're using class methods instead of properties in all the builder
+classes.   Using methods makes customization far easier -- and we're not worried at
+all about performance in the generator classes.
