@@ -37,24 +37,12 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 class PHP5BasicObjectBuilder extends ObjectBuilder {		
 	
 	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-	
-	public function __construct(Table $table)
-	{
-		parent::__construct($table);
-		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
-	}
-	
-	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
 	public function getClassname()
 	{
-		return $this->classname;
+		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname();
 	}
 	
 	/**
@@ -143,7 +131,7 @@ include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
 		$script .= "
  * @package ".$this->getPackage()."
  */	
-abstract class ".$this->classname." extends ".ClassTools::classname($this->getBaseClass())." ";
+abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->getBaseClass())." ";
 
 		$interface = ClassTools::getInterface($table);
 		if ($interface) {
@@ -187,7 +175,7 @@ abstract class ".$this->classname." extends ".ClassTools::classname($this->getBa
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->classname . "
+} // " . $this->getClassname() . "
 ";
 	}
 	

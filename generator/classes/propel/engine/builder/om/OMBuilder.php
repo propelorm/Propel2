@@ -84,7 +84,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	public function getStubPeerBuilder()
 	{
 		if (!isset($this->stubPeerBuilder)) {
-			$this->stubPeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'stubpeer');
+			$this->stubPeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'peerstub');
 		}
 		return $this->stubPeerBuilder;	
 	}
@@ -109,7 +109,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	public function getStubObjectBuilder()
 	{
 		if (!isset($this->stubObjectBuilder)) {
-			$this->stubObjectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'stubobject');
+			$this->stubObjectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'objectstub');
 		}
 		return $this->stubObjectBuilder;	
 	}
@@ -204,7 +204,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * This is overridden by child classes that have different packages.
 	 * @return string
 	 */
-	protected function getPackage()
+	public function getPackage()
 	{
 		$pkg = $this->getDatabase()->getPackage();
 		if (!$pkg) {

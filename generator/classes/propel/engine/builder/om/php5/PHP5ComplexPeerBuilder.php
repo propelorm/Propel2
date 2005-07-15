@@ -566,8 +566,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					}
 					*/
 					
-					$joinedTableObjectBuilder = DataModelBuilder::getNewObjectBuilder($joinTable);
-					$joinedTablePeerBuilder = DataModelBuilder::getNewPeerBuilder($joinTable);
+					$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
+					$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 					
 					$index++;
 				

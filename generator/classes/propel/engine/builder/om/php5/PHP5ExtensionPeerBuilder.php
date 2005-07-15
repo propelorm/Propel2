@@ -37,24 +37,12 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
 class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	
 	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-	
-	public function __construct(Table $table)
-	{
-		parent::__construct($table);
-		$this->classname = $this->getPeerClassname();
-	}
-	
-	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
 	public function getClassname()
 	{
-		return $this->classname;
+		return $this->getTable()->getPhpName() . 'Peer';
 	}
 
 	/**
@@ -83,9 +71,7 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$this->classname = $table->getPhpName();
-		
-		$baseClassname = $this->getBuildProperty('basePrefix') . $this->getPeerClassname();
+		$baseClassname = $this->getPeerBuilder()->getClassname();
 		
 		$script .= "
 
@@ -109,7 +95,7 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->classname." extends $baseClassname {
+class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 	
@@ -134,7 +120,7 @@ class ".$this->classname." extends $baseClassname {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->classname . "
+} // " . $this->getClassname() . "
 ";
 	}
 	

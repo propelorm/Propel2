@@ -42,47 +42,21 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 //	-
 
 	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-	
-	/**
-	 * A builder for the stub "Peer" classes.
-	 * @var OMBuilder
-	 */
-	protected $stubPeerBuilder;
-	
-	/**
-	 * A builder for the stub "Object" classes.
-	 * @var OMBuilder
-	 */
-	protected $stubObjectBuilder;
-	
-	public function __construct(Table $table)
-	{
-		parent::__construct($table);
-		$this->classname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
-		$this->stubPeerBuilder = DataModelBuilder::builderFactory('peerstub');
-		$this->stubObjectBuilder = DataModelBuilder::builderFactory('objectstub');
-	}
-	
-	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
 	public function getClassname()
 	{
-		return $this->classname;
+		return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getClassname();
 	}
 	
 	/**
 	 * Gets the package for the [base] peer classes.
 	 * @return string
 	 */
-	protected function getPackage()
+	public function getPackage()
 	{
-		return $this->getPackage() . ".om";
+		return parent::getPackage() . ".om";
 	}
 		
 	/**
@@ -94,7 +68,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 		$table = $this->getTable();		
 
 		$basePeerFile = $this->getFilePath($this->basePeerClass);
-		$objectFile = $this->stubObjectBuilder->getClassFilePath();
+		$objectFile = $this->getStubObjectBuilder()->getClassFilePath();
 		
 		$script .= "
 require_once '$basePeerFile';
@@ -116,8 +90,6 @@ include_once '$objectFile';";
 		$tableName = $this->getTable()->getName();
 		$tableDesc = $this->getTable()->getDescription();
 		
-		$this->classname = $this->getBuildProperty('basePrefix') . $this->getPeerClassname();
-		
 		$script .= "
 /**
  * Base static class for performing query and update operations on the '$tableName' table.
@@ -135,7 +107,7 @@ include_once '$objectFile';";
 		$script .= "
  * @package ".$this->getPackage()."
  */	
-abstract class ".$this->classname." {
+abstract class ".$this->getClassname()." {
 ";
 	}
 	
@@ -146,7 +118,7 @@ abstract class ".$this->classname." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->classname . "
+} // " . $this->getClassname() . "
 ";
 		$this->addStaticMapBuilderRegistration($script);
 	}
@@ -196,7 +168,7 @@ if (Propel::isInit()) {
 	const TABLE_NAME = '$tableName';
 	
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = '".$this->stubObjectBuilder->getClasspath()."';
+	const CLASS_DEFAULT = '".$this->getStubObjectBuilder()->getClasspath()."';
 ";
 		$this->addColumnNameConstants($script);
 	}

@@ -37,31 +37,12 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 class PHP5ExtensionObjectBuilder extends ObjectBuilder {		
 	
 	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-
-	/**
-	 * The builder class for the parent (base peer) class.
-	 * @var PeerBuilder
-	 */
-	protected $parentBuilder;
-	
-	public function __construct(Table $table)
-	{
-		parent::__construct($table);
-		$this->classname = $table->getPhpName();
-		$this->parentBuilder = OMBuilder::getNewPeerBuilder($table);
-	}
-	
-	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
 	public function getClassname()
 	{
-		return $this->classname;
+		return $this->getTable()->getPhpName();
 	}
 	
 	/**
@@ -87,9 +68,7 @@ require_once '".$this->getObjectBuilder()->getClassFilePath()."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$this->classname = $table->getPhpName();
-		
-		$baseClassname = $this->getBuildProperty('basePrefix') . $table->getPhpName();
+		$baseClassname = $this->getPeerBuilder()->getClassname();
 		
 		$script .= "
 
@@ -113,7 +92,7 @@ require_once '".$this->getObjectBuilder()->getClassFilePath()."';
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->classname." extends $baseClassname {
+class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 	
@@ -137,7 +116,7 @@ class ".$this->classname." extends $baseClassname {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->classname . "
+} // " . $this->getClassname() . "
 ";
 	}
 	

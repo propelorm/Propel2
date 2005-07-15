@@ -32,17 +32,6 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
  * @package propel.engine.builder.om.php5
  */
 class PHP5MapBuilderBuilder extends OMBuilder {
-	
-	/**
-	 * The name of the PHP class being built.
-	 * @var string
-	 */
-	protected $classname;
-	
-	public function __construct(Table $table) {
-		parent::__construct($table);
-		$this->classname = $table->getPhpName() . 'MapBuilder';
-	}
 
 	/**
 	 * Returns the name of the current class being built.
@@ -50,7 +39,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 */
 	public function getClassname()
 	{
-		return $this->classname;
+		return $this->getTable()->getPhpName() . 'MapBuilder';
 	}
 
 	/**
@@ -97,7 +86,7 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->classname." {
+class ".$this->getClassname()." {
 ";
 	}
 	
@@ -151,7 +140,7 @@ class ".$this->classname." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->classname . "
+} // " . $this->getClassname() . "
 ";
 	}
 	
@@ -202,6 +191,7 @@ class ".$this->classname." {
 	{
 	
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 		
 		$script .= "
     /**

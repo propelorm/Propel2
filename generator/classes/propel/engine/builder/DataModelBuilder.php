@@ -32,35 +32,65 @@
  */
 abstract class DataModelBuilder {
 	
+	/**
+	 * The current table.
+	 * @var Table
+	 */
 	private $table;	
 	
+	/**
+	 * Build properties (after they've been transformed from "propel.some.name" => "someName").
+	 * @var array string[]
+	 */
 	private static $buildProperties = array();
 	
+	/**
+	 * Creates new instance of DataModelBuilder subclass.
+	 * @param Table $table The Table which we are using to build [OM, DDL, etc.].
+	 */
 	public function __construct(Table $table)
 	{
 		$this->table = $table;
 	}
 	
+	/**
+	 * Sets the [name transformed] build properties to use.
+	 * @param array Property values keyed by [transformed] prop names.
+	 */
 	public static function setBuildProperties($props)
 	{
 		self::$buildProperties = $props;
 	}
 	
+	/**
+	 * Get a specific [name transformed] build property.
+	 * @param string $name
+	 * @return string
+	 */
 	public static function getBuildProperty($name)
 	{
 		return isset(self::$buildProperties[$name]) ? self::$buildProperties[$name] : null;
 	}
-
+	
+	/**
+	 * 
+	 */
 	protected function getPlatform()
 	{
 		return $this->getTable()->getDatabase()->getPlatform();
 	}
 	
+	/**
+	 * 
+	 */
 	protected function getDatabase()
 	{
 		return $this->getTable()->getDatabase();
 	}
 	
+	/**
+	 * 
+	 */
 	protected function getTable()
 	{
 		return $this->table;
@@ -96,8 +126,11 @@ abstract class DataModelBuilder {
 	 */
 	public static function builderFactory(Table $table, $type)
 	{
-		$propname = 'propel.builder.classes.' . strtolower($type);
-		$classpath = $this->getBuildProperty($propname);
+		$propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
+		$classpath = self::getBuildProperty($propname);
+		if (empty($classpath)) {
+			throw new BuildException("Unable to find class path for '$propname' property.");
+		}
 		$classname = Phing::import($classpath);
 		return new $classname($table);
 	}

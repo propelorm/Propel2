@@ -92,7 +92,7 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						foreach($targets as $target) {
 						
-							$builder = DataModelBuilder::builderFactory($target);
+							$builder = DataModelBuilder::builderFactory($table, $target);
 							
 							// make sure path (from package) exists:
 							$path = strtr($builder->getPackage(), '.', '/');
@@ -116,133 +116,6 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
                         
 						
 						
-						$peerBuilder = OMBuilder::getNewPeerBuilder($table);
-						
-                        // Create the Base Peer class
-                        $this->log("\t\t-> " . $basePrefix . $peerBuilder->getPeerClassname());						
-                        $path = ClassTools::getFilePath($pkbase, $basePrefix . $peerBuilder->getPeerClassname());  
-																		
-						$script = $peerBuilder->build();
-						
-						$_f = new PhingFile($basepath, $path);
-						file_put_contents($_f->getAbsolutePath(), $script);
-						
-						// Build Object classes
-						// --------------------
-						
-						
-						
-						$this->log("\t\t-> " . $basePrefix . $table->getPhpName());
-						
-						$objectBuilder = OMBuilder::getNewObjectBuilder($table);		
-						$path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName()); 	
-						
-						$script = $objectBuilder->build();
-						
-						$_f = new PhingFile($basepath, $path);
-						file_put_contents($_f->getAbsolutePath(), $script);
-						
-                        #$generator->parse("om/$targetPlatform/Peer.tpl", $path);
-						
-						/*
-                        
-                        // Create the Base object class
-                        $this->log("\t\t-> " . $basePrefix . $table->getPhpName());
-                        $path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName());
-                        #$generator->parse("om/$targetPlatform/Object.tpl", $path);
-
-                        if ($table->isTree()) {
-                            // Create the Base NodePeer class
-                            $this->log("\t\t-> " . $basePrefix . $table->getPhpName() . "NodePeer");
-                            $path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName() . "NodePeer");
-                            #$generator->parse("om/$targetPlatform/NodePeer.tpl", $path);
-                            
-                            // Create the Base Node class if the table is a tree
-                            $this->log("\t\t-> " . $basePrefix . $table->getPhpName() . "Node");
-                            $path = ClassTools::getFilePath($pkbase, $basePrefix . $table->getPhpName() . "Node");
-                            #$generator->parse("om/$targetPlatform/Node.tpl", $path);
-                        }
-                        
-                        // Create MapBuilder class if this table is not an alias
-                        if (!$table->isAlias()) {
-                            $this->log("\t\t-> " . $table->getPhpName() . "MapBuilder");
-                            $path = ClassTools::getFilePath($pkmap, $table->getPhpName() . "MapBuilder");
-                            #$generator->parse("om/$targetPlatform/MapBuilder.tpl", $path);
-                        } // if !$table->isAlias()
-
-                        // Create [empty] stub Peer class if it does not already exist        
-                        $path = ClassTools::getFilePath($package, $table->getPhpName() . "Peer");
-                        $_f = new PhingFile($basepath, $path);
-                        if (!$_f->exists()) {
-                            $this->log("\t\t-> " . $table->getPhpName() . "Peer");
-                            #$generator->parse("om/$targetPlatform/ExtensionPeer.tpl", $path);
-                        } else {
-                            $this->log("\t\t-> (exists) " . $table->getPhpName() . "Peer");
-                        }
-                
-                        // Create [empty] stub object class if it does not already exist
-                        $path = ClassTools::getFilePath($package, $table->getPhpName());
-                        $_f = new PhingFile($basepath, $path);
-                        if (!$_f->exists()) {
-                            $this->log("\t\t-> " . $table->getPhpName());
-                            #$generator->parse("om/$targetPlatform/ExtensionObject.tpl", $path);
-                        } else {
-                            $this->log("\t\t-> (exists) " . $table->getPhpName());
-                        }
-
-                        if ($table->isTree()) {                        
-                            // Create [empty] stub Node Peer class if it does not already exist        
-                            $path = ClassTools::getFilePath($package, $table->getPhpName() . "NodePeer");
-                            $_f = new PhingFile($basepath, $path);
-                            if (!$_f->exists()) {
-                                $this->log("\t\t-> " . $table->getPhpName() . "NodePeer");
-                                #$generator->parse("om/$targetPlatform/ExtensionNodePeer.tpl", $path);
-                            } else {
-                                $this->log("\t\t-> (exists) " . $table->getPhpName() . "NodePeer");
-                            }
-                            
-                            // Create [empty] stub Node class if it does not already exist        
-                            $path = ClassTools::getFilePath($package, $table->getPhpName() . "Node");
-                            $_f = new PhingFile($basepath, $path);
-                            if (!$_f->exists()) {
-                                $this->log("\t\t-> " . $table->getPhpName() . "Node");
-                                #$generator->parse("om/$targetPlatform/ExtensionNode.tpl", $path);
-                            } else {
-                                $this->log("\t\t-> (exists) " . $table->getPhpName() . "Node");
-                            }
-                        }
-
-                        // Create [empty] interface if it does not already exist
-                        if ($table->getInterface()) {            
-                            $path = ClassTools::getFilePath($package, $table->getInterface());
-                            $_f = new PhingFile($basepath, $path);
-                            if (!$_f->exists()) {
-                                $this->log("\t\t-> " . $table->getInterface());
-                                #$generator->parse("om/$targetPlatform/Interface.tpl", $path);
-                            } else {
-                                $this->log("\t\t-> (exists) " . $table->getInterface());
-                            }
-                        }
-                        
-                        // If table has enumerated children (uses inheritance) then create the empty child stub classes 
-                        // if they don't already exist.
-                        if ($table->getChildrenColumn()) {
-                            $col = $table->getChildrenColumn();
-                            if ($col->isEnumeratedClasses()) {
-                                foreach ($col->getChildren() as $child) {
-                                    #$generator->put("child", $child);                    
-                                    $path = ClassTools::getFilePath($package, $child->getClassName());
-                                    $_f = new PhingFile($basepath, $path); 
-                                    if (!$_f->exists()) {
-                                        $this->log("\t\t-> " . $child->getClassName());
-                                        #$generator->parse("om/$targetPlatform/MultiExtendObject.tpl", $path);
-                                    } else {
-                                        $this->log("\t\t-> (exists) " . $child->getClassName());
-                                    }
-                                } // foreach
-                            } // if col->is enumerated
-                        } // if tbl->getChildrenCol
-                    	*/
 						
                     } // if !$table->isForReferenceOnly()                    					
 					
