@@ -37,6 +37,15 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 class PHP5BasicObjectBuilder extends ObjectBuilder {		
 	
 	/**
+	 * Gets the package for the [base] object classes.
+	 * @return string
+	 */
+	public function getPackage()
+	{
+		return parent::getPackage() . ".om";
+	}
+	
+	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */

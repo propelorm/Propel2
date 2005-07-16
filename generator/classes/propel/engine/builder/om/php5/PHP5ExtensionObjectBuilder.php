@@ -68,7 +68,7 @@ require_once '".$this->getObjectBuilder()->getClassFilePath()."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getPeerBuilder()->getClassname();
+		$baseClassname = $this->getObjectBuilder()->getClassname();
 		
 		$script .= "
 
