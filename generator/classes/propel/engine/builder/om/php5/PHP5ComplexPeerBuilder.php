@@ -151,7 +151,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 	
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol = (self::\$numColumns - self::\$numLazyLoadColumns) + 1;
+		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
 ";
 		
@@ -249,7 +249,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol2 = (self::\$numColumns - self::\$numLazyLoadColumns) + 1;
+		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
 ";
 		$index = 2;
 		foreach ($table->getForeignKeys() as $fk) {
@@ -264,7 +264,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						
 				$script .= "
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::\$numColumns;
+		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
 ";
 			$index = $new_index;
 			
@@ -470,7 +470,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol2 = (self::\$numColumns - self::\$numLazyLoadColumns) + 1;
+		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
 ";	
 			$index = 2;
 			foreach ($table->getForeignKeys() as $subfk) {
@@ -484,7 +484,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						$new_index = $index + 1;
 						$script .= "
 		".$excludedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$excludedTablePeerBuilder->getPeerClassname()."::\$numColumns;
+		\$startcol$new_index = \$startcol$index + ".$excludedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
 ";
 					$index = $new_index;
 					} // if joinClassName not excludeClassName 

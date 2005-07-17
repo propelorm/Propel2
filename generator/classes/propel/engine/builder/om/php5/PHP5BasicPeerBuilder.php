@@ -138,7 +138,7 @@ if (Propel::isInit()) {
 	// the MapBuilder classes register themselves with Propel during initialization
 	// so we need to load them here.
 	try {
-		".$this->getPeerClassname()."::getMapBuilder();
+		".$this->getClassname()."::getMapBuilder();
 	} catch (Exception \$e) {
 		Propel::log('Could not initialize Peer: ' . \$e->getMessage(), Propel::LOG_ERR);
 	}
@@ -169,6 +169,13 @@ if (Propel::isInit()) {
 	
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = '".$this->getStubObjectBuilder()->getClasspath()."';
+	
+	/** The total number of columns. */
+	const NUM_COLUMNS = ".$this->getTable()->getNumColumns().";
+	
+	/** The number of lazy-loaded columns. */
+	const NUM_LAZY_LOAD_COLUMNS = ".$this->getTable()->getNumLazyLoadColumns().";
+
 ";
 		$this->addColumnNameConstants($script);
 	}

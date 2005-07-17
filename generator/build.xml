@@ -54,6 +54,14 @@
  
 </target>
 
+<target name="new-build" depends="configure" 
+  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
+
+ <!--<property file="${project.dir}/build.properties"/>-->
+ <phing phingfile="./build-propel.xml" target="new-build"/>
+ 
+</target>
+
 
 <!-- 
  Convenience mappings to build-propel.xml main targets 

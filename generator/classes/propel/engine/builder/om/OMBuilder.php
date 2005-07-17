@@ -218,9 +218,10 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * This is the classname that is used whenever object or peer classes want
 	 * to invoke methods of the peer classes.
 	 * @return string (e.g. 'MyPeer')
+	 * @see StubPeerBuilder::getClassname()
 	 */
 	public function getPeerClassname() {
-		return $this->getTable()->getPhpName() . 'Peer';
+		return $this->getStubPeerBuilder()->getClassname();
 	}
 		
 	/**
@@ -228,9 +229,10 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * This is the classname that is used whenever object or peer classes want
 	 * to invoke methods of the object classes.
 	 * @return string (e.g. 'My')
+	 * @see StubPeerBuilder::getClassname()
 	 */
 	public function getObjectClassname() {
-		return $this->getTable()->getPhpName();
+		return $this->getStubObjectBuilder()->getClassname();
 	}
 	
 	/** 

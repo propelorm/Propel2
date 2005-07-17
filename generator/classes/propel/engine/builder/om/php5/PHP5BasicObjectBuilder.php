@@ -671,8 +671,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 			\$this->setNew(false);
 						
-			// FIXME - using \$numColumns may be clearer.
-			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::\$numColumns - ".$this->getPeerClassname()."::\$numLazyLoadColumns).
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error populating ".$table->getPhpName()." object\", \$e);

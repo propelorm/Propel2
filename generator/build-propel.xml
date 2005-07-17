@@ -79,6 +79,15 @@
     <phingcall target="convert-props"/>
   </target>
 
+  <target
+    name="new-build"
+    description="==> generates sql + [new] om classes">
+
+    <phingcall target="sql"/>
+    <phingcall target="new-om"/>
+    <phingcall target="convert-props"/>
+  </target>
+
   <!-- ================================================================ -->
   <!-- C H E C K  R U N  O N L Y  O N  S C H E M A  C H A N G E         -->
   <!-- ================================================================ -->
