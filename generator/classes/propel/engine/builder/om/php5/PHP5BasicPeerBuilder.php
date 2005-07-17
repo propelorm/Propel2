@@ -757,7 +757,9 @@ if (Propel::isInit()) {
 		foreach ($table->getColumns() as $col) {		 
 			if($col->isPrimaryKey()) {
 				$script .= "
-			\$selectCriteria->put(".$this->getColumnConstant($col).", \$criteria->remove(".$this->getColumnConstant($col)."));";
+			\$comparison = \$criteria->getComparison(".$this->getColumnConstant($col).");
+			\$selectCriteria->add(".$this->getColumnConstant($col).", \$criteria->remove(".$this->getColumnConstant($col)."), \$comparison);
+";
 			}  /* if col is prim key */
 	 	} /* foreach */
 		
