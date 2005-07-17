@@ -36,11 +36,6 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
  */
 class PHP5BasicPeerBuilder extends PeerBuilder {		
 	
-// Bugs that are being fixed while porting Peer.tpl to this class:
-//	- ability to override the constants
-//	- ability to have emulation for both CASCADE and SETNULL
-//	-
-
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
@@ -113,7 +108,9 @@ abstract class ".$this->getClassname()." {
 	
 	/**
 	 * Closes class.
+	 * Adds closing brace at end of class and the static map builder registration code.
 	 * @param string &$script The script will be modified in this method.
+	 * @see addStaticMapBuilderRegistration()
 	 */	
 	protected function addClassClose(&$script)
 	{
@@ -390,6 +387,12 @@ if (Propel::isInit()) {
 			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
 		} else {
 			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);	
+		}
+		
+		// just in case we're grouping: add those columns to the select statement
+		foreach(\$criteria->getGroupByColumns() as \$column)
+		{
+			\$criteria->addSelectColumn(\$column);
 		}
 		
 		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);		
