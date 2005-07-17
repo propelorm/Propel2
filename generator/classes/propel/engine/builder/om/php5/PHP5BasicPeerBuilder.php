@@ -260,12 +260,13 @@ if (Propel::isInit()) {
 				else $quote = '"';
 				
 				foreach ($col->getChildren() as $child) {
+					$childpkg = ($child->getPackage() ? $child->getPackage() : $this->getPackage());
 					$script .= " 
 	/** A key representing a particular subclass */
 	const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 
 	/** A class that can be returned by this peer. */
-	const CLASSNAME_".strtoupper($child->getKey())." = '". $package . '.' . $child->getClassName() . "';
+	const CLASSNAME_".strtoupper($child->getKey())." = '". $childpkg . '.' . $child->getClassName() . "';
 ";
 				} /* foreach children */
 			} /* if col->isenumerated...() */
