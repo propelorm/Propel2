@@ -361,17 +361,20 @@ class XmlToAppData extends AbstractHandler {
 
     protected function peekCurrentSchemaTag()
     {
-        return end($this->schemasTagsStack[end(array_keys($this->schemasTagsStack))]);
+				$keys = array_keys($this->schemasTagsStack);
+        return end($this->schemasTagsStack[end($keys)]);
     }
 
     protected function popCurrentSchemaTag()
     {
-        array_pop($this->schemasTagsStack[end(array_keys($this->schemasTagsStack))]);
+				$keys = array_keys($this->schemasTagsStack);
+        array_pop($this->schemasTagsStack[end($keys)]);
     }
 
     protected function pushCurrentSchemaTag($tag)
     {
-        $this->schemasTagsStack[end(array_keys($this->schemasTagsStack))][] = $tag;
+				$keys = array_keys($this->schemasTagsStack);
+        $this->schemasTagsStack[end($keys)][] = $tag;
     }
 
     protected function isExternalSchema()
