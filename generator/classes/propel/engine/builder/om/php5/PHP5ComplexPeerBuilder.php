@@ -43,6 +43,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		$table = $this->getTable();
 		
 		parent::addSelectMethods($script);
+
+		$this->addDoCountJoin($script);
 		$this->addDoSelectJoin($script);
 		
 		$countFK = count($table->getForeignKeys());
@@ -58,10 +60,12 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		if ($includeJoinAll) {
 			if($countFK > 0) {
+				$this->addDoCountJoinAll($script);
 				$this->addDoSelectJoinAll($script);
 			}
 			if ($countFK > 1) {
-			    $this->addDoSelectJoinAllExcept($script);
+				$this->addDoCountJoinAllExcept($script);
+				$this->addDoSelectJoinAllExcept($script);
 			}
 		}
 		
@@ -135,6 +139,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 						
 						$script .= "
+
 	/**
 	 * Selects a collection of $className objects pre-filled with their $joinClassName objects.
 	 *
@@ -222,6 +227,86 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		} // if count(fk) > 1
 		
 	} // addDoSelectJoin()
+	
+	/**
+	 * Adds the doCountJoin*() methods.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addDoCountJoin(&$script)
+	{
+		$table = $this->getTable();
+		$className = $table->getPhpName();
+		$countFK = count($table->getForeignKeys());
+		
+		if ($countFK >= 1) {
+		
+			foreach ($table->getForeignKeys() as $fk) {
+			
+				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+				
+				if (!$joinTable->isForReferenceOnly()) {
+				
+					if ( $fk->getForeignTableName() != $table->getName() ) {
+						
+						$joinClassName = $joinTable->getPhpName();
+						
+						$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
+						$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
+						$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+						
+						$script .= "
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
+	 *
+	 * @param Criteria \$c
+	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param Connection \$con
+	 * @return int Number of matching rows.
+	 */
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, \$con = null)
+	{
+		// we're going to modify criteria, so copy it first
+		\$criteria = clone \$criteria;
+		
+		// clear out anything that might confuse the ORDER BY clause
+		\$criteria->clearSelectColumns()->clearOrderByColumns();
+		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
+		} else {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		}
+		
+		// just in case we're grouping: add those columns to the select statement
+		foreach(\$criteria->getGroupByColumns() as \$column)
+		{
+			\$criteria->addSelectColumn(\$column);
+		}
+";
+						$lfMap = $fk->getLocalForeignMapping();
+						foreach ($fk->getLocalColumns() as $columnName ) {
+							$column = $table->getColumn($columnName);
+							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
+							$script .= "
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
+";
+						}
+						$script .= "
+		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$rs->next()) {
+			return \$rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+";
+					} // if fk table name != this table name
+				} // if ! is reference only
+			} // foreach column
+		} // if count(fk) > 1
+		
+	} // addDoCountJoin()
 	
 	/**
 	 * Adds the doSelectJoinAll() method.
@@ -405,11 +490,79 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	} // end addDoSelectJoinAll()
 	
 	/**
+	 * Adds the doCountJoinAll() method.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addDoCountJoinAll(&$script)
+	{
+		$table = $this->getTable();
+		$className = $table->getPhpName();
+		
+		$script .= "
+
+	/**
+	 * Returns the number of rows matching criteria, joining all related tables
+	 *
+	 * @param Criteria \$c
+	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param Connection \$con
+	 * @return int Number of matching rows.
+	 */
+	public static function doCountJoinAll(Criteria \$c, \$distinct = false, \$con = null)
+	{
+		\$criteria = clone \$c;
+
+		// clear out anything that might confuse the ORDER BY clause
+		\$criteria->clearSelectColumns()->clearOrderByColumns();
+		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
+		} else {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		}
+		
+		// just in case we're grouping: add those columns to the select statement
+		foreach(\$criteria->getGroupByColumns() as \$column)
+		{
+			\$criteria->addSelectColumn(\$column);
+		}
+";
+
+		foreach ($table->getForeignKeys() as $fk) {
+			// want to cover this case, but the code is not there yet.
+			if ( $fk->getForeignTableName() != $table->getName() ) {
+				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+				
+				$joinClassName = $joinTable->getPhpName();
+				$lfMap = $fk->getLocalForeignMapping();
+				foreach ($fk->getLocalColumns() as $columnName ) {
+					$column = $table->getColumn($columnName);
+					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
+					$script .= "
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
+";
+				}
+			} // if fk->getForeignTableName != table->getName		
+		} // foreach [sub] foreign keys
+
+		$script .= "
+		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$rs->next()) {
+			return \$rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+";
+	} // end addDoCountJoinAll()
+	
+	/**
 	 * Adds the doSelectJoinAllExcept*() methods.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addDoSelectJoinAllExcept(&$script) {
-	
+	protected function addDoSelectJoinAllExcept(&$script)
+	{
 		$table = $this->getTable();
 		
 		// ------------------------------------------------------------------------
@@ -453,6 +606,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			$excludedTablePeerBuilder = OMBuilder::getNewPeerBuilder($excludedTable);
 				
 		$script .= "
+
 	/**
 	 * Selects a collection of ".$table->getPhpName()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
 	 *
@@ -615,5 +769,88 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		} // foreach fk
 
 	} // addDoSelectJoinAllExcept
+	
+	/**
+	 * Adds the doCountJoinAllExcept*() methods.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addDoCountJoinAllExcept(&$script)
+	{
+		$table = $this->getTable();
+		
+		$fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over 
+											// getForeignKeys() will cause this to only execute one time.
+		foreach ($fkeys as $fk ) {
+
+			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+
+			$excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+			$excludedClassName = $excludedTable->getPhpName();
+
+			$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
+			$excludedTableObjectBuilder = OMBuilder::getNewObjectBuilder($excludedTable);
+			$excludedTablePeerBuilder = OMBuilder::getNewPeerBuilder($excludedTable);
+				
+		$script .= "
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
+	 *
+	 * @param Criteria \$c
+	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param Connection \$con
+	 * @return int Number of matching rows.
+	 */
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, \$con = null)
+	{
+		// we're going to modify criteria, so copy it first
+		\$criteria = clone \$criteria;
+		
+		// clear out anything that might confuse the ORDER BY clause
+		\$criteria->clearSelectColumns()->clearOrderByColumns();
+		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
+		} else {
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		}
+		
+		// just in case we're grouping: add those columns to the select statement
+		foreach(\$criteria->getGroupByColumns() as \$column)
+		{
+			\$criteria->addSelectColumn(\$column);
+		}
+";	
+
+			foreach ($table->getForeignKeys() as $subfk) {
+				// want to cover this case, but the code is not there yet.
+				if ( $subfk->getForeignTableName() != $table->getName() ) {
+					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
+					$joinClassName = $joinTable->getPhpName();
+					if($joinClassName != $excludedClassName)
+					{
+						$lfMap = $subfk->getLocalForeignMapping();
+						foreach ($subfk->getLocalColumns() as $columnName ) {
+							$column = $table->getColumn($columnName);
+							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
+							$script .= "
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$excludedTablePeerBuilder->getColumnConstant($columnFk).");
+";
+						}
+					} 
+				}
+			} // foreach fkeys 
+			$script .= "
+		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$rs->next()) {
+			return \$rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+";
+		} // foreach fk
+
+	} // addDoCountJoinAllExcept
 	
 } // PHP5ComplexPeerBuilder
