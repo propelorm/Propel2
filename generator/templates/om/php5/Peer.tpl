@@ -1090,7 +1090,7 @@ if ($complexObjectModel) {
  
 // ===========================================================
 
-  if ($countFK > 2) {
+  if ($countFK >= 2) {
   
 	$includeJoinAll = true;
 	foreach ($table->getForeignKeys() as $fk) {
