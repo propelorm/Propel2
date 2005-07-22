@@ -65,6 +65,19 @@ class PlatformMysqlImpl extends PlatformDefaultImpl {
     }
     
     /**
+     * @see Platform::supportsNativeDeleteTrigger()
+     */
+    public function supportsNativeDeleteTrigger()
+    {
+        $usingInnoDB = false;
+        if(class_exists('DataModelBuilder', false))
+        {
+            $usingInnoDB = strtolower(DataModelBuilder::getBuildProperty('mysqlTableType')) == 'innodb';
+        }
+        return $usingInnoDB || false;
+    }
+    
+    /**
      * @see Platform#hasSize(String)
      */
     public function hasSize($sqlType) {

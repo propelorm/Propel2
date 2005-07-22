@@ -167,9 +167,9 @@ abstract class PeerBuilder extends OMBuilder {
 	 * @return boolean
 	 */
 	protected function isDeleteCascadeEmulationNeeded()
-	{				
+	{
 		$table = $this->getTable();
-		if (!$this->getPlatform()->supportsNativeDeleteTrigger() && count($table->getReferrers()) > 0) {		
+		if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
 			foreach ($table->getReferrers() as $fk) {
 				if ($fk->getOnDelete() == ForeignKey::CASCADE) {
 					return true;
@@ -184,9 +184,9 @@ abstract class PeerBuilder extends OMBuilder {
 	 * @return boolean
 	 */
 	protected function isDeleteSetNullEmulationNeeded()
-	{	
+	{
 		$table = $this->getTable();
-		if (!$this->getPlatform()->supportsNativeDeleteTrigger() && count($table->getReferrers()) > 0) {		
+		if ((!$this->getPlatform()->supportsNativeDeleteTrigger() || $this->getBuildProperty('emulateForeignKeyConstraints')) && count($table->getReferrers()) > 0) {
 			foreach ($table->getReferrers() as $fk) {
 				if ($fk->getOnDelete() == ForeignKey::SETNULL) {
 					return true;
