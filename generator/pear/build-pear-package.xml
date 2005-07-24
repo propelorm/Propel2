@@ -171,7 +171,7 @@
 			
 			<mapping name="platformexceptions">
 				<element key="pear/pear-propel-gen.bat" value="windows"/>
-				<element key="pear/pear-propel-gen" value="(*ix|*ux|darwin*|SunOS*)"/>
+				<element key="pear/pear-propel-gen" value="(*ix|*ux|darwin*|*BSD|SunOS*)"/>
 			</mapping>
 			
 			<mapping name="replacements">				
