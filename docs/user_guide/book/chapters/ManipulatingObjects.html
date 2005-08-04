@@ -26,13 +26,13 @@
   appropriate class and invoking the <strong>save()</strong> method.</p>
 
 <pre title="retrieveByPk() simple key">// Create new Author
-$a = new Author();
-$a-&gt;setFirstName(&quot;Leo&quot;);
-$a-&gt;setLastName(&quot;Tolstoy&quot;);
+$author = new Author();
+$author-&gt;setFirstName(&quot;Leo&quot;);
+$author-&gt;setLastName(&quot;Tolstoy&quot;);
  
-$a-&gt;save();
+$author-&gt;save();
 // now pkey is set
-$author_id = $a-&gt;getAuthorId();</pre>
+$author_id = $author-&gt;getId();</pre>
 
 <h3>&quot;Cascading&quot; Inserts</h3>
 <p>In the example above a single row is being inserted in the database. In many 
@@ -71,7 +71,7 @@ $author-&gt;save();
  .
  .
 $book = new Book();
-$book-&gt;setAuthorId($author-&gt;getAuthorId());
+$book-&gt;setAuthorId($author-&gt;getId());
  .
  .</pre>
 <h2><a name="ManipulatingObjects.Updating"></a>Updating Objects</h2>
