@@ -1346,7 +1346,7 @@ if ($complexObjectModel) {
 
 // ===========================================================
 
-  if ($countFK > 2) {
+  if ($countFK > 1) {
     $includeJoinAll = true;
     foreach ($table->getForeignKeys() as $fk) {
       $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
