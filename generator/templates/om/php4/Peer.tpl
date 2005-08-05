@@ -1457,7 +1457,7 @@ if ($complexObjectModel) {
       $obj1 = new $cls();
       
       $e =& $obj1->hydrate($rs);
-      if (Propel::isError()) { return $e; }
+      if (Propel::isError($e)) { return $e; }
 <?php
     $index = 1;
     foreach ($table->getForeignKeys() as $fk ) {
@@ -1654,7 +1654,7 @@ if ($complexObjectModel) {
       
       $obj1 = new $cls();
       $e = $obj1->hydrate($rs);
-      if (Propel::isError()) { return $e; }
+      if (Propel::isError($e)) { return $e; }
       
 <?php
     $index = 1;
