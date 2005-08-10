@@ -175,6 +175,7 @@ if (Propel::isInit()) {
 
 ";
 		$this->addColumnNameConstants($script);
+		$this->addInheritanceColumnConstants($script);
 	}
 	
 	/**
@@ -246,7 +247,7 @@ if (Propel::isInit()) {
 	 * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	public static function addInheritanceColumnConstants(&$script)
+	public function addInheritanceColumnConstants(&$script)
 	{
 		if ($this->getTable()->getChildrenColumn()) { 
 	
@@ -260,13 +261,15 @@ if (Propel::isInit()) {
 				else $quote = '"';
 				
 				foreach ($col->getChildren() as $child) {
-					$childpkg = ($child->getPackage() ? $child->getPackage() : $this->getPackage());
+					$childBuilder = $this->getMultiExtendObjectBuilder();
+					$childBuilder->setChild($child);
+					
 					$script .= " 
 	/** A key representing a particular subclass */
 	const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 
 	/** A class that can be returned by this peer. */
-	const CLASSNAME_".strtoupper($child->getKey())." = '". $childpkg . '.' . $child->getClassName() . "';
+	const CLASSNAME_".strtoupper($child->getKey())." = '". $childBuilder->getClasspath() . "';
 ";
 				} /* foreach children */
 			} /* if col->isenumerated...() */
@@ -552,7 +555,7 @@ if (Propel::isInit()) {
 	 * Adds a getOMClass() for non-abstract tables that have inheritance.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addGetOMClass_Inheritance()
+	protected function addGetOMClass_Inheritance(&$script)
 	{
 		$col = $this->getTable()->getChildrenColumn();
 		$script .= "

@@ -52,9 +52,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		}
 		
 		foreach($table->getReferrers() as $refFK) {
-			if ($refFK->getTable()->getName() != $table->getName()) {
+			// if ($refFK->getTable()->getName() != $table->getName()) {
 				$this->addRefFKAttributes($script, $refFK);
-			}
+			// }
 		}
 		
 		$this->addAlreadyInSaveAttribute($script);
@@ -356,8 +356,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 		
-		// FIXME, if we are allowng user to specify class, this should be dynamic
-		$fkPeerBuilder = new PHP5ComplexPeerBuilder($this->getForeignTable($fk));
+		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
 		
 		$script .= "
 
@@ -466,7 +465,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 		
-		$fkPeerBuilder = new PHP5ComplexPeerBuilder($tblFK);
+		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
 		
 		$lastTable = "";
 		foreach ($tblFK->getForeignKeys() as $fk2) {
@@ -619,13 +618,13 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKMethods(&$script)
 	{
 		foreach($this->getTable()->getReferrers() as $refFK) {
-			if ( $refFK->getTable()->getName() != $this->getTable()->getName() ) {
+			// if ( $refFK->getTable()->getName() != $this->getTable()->getName() ) {
 				$this->addRefFKInit($script, $refFK);
 				$this->addRefFKGet($script, $refFK);
 				$this->addRefFKCount($script, $refFK);
 				$this->addRefFKAdd($script, $refFK);
 				$this->addRefFKGetJoinMethods($script, $refFK);
-			}
+			// }
 		}
 	}
 	

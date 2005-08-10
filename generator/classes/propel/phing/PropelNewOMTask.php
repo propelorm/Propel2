@@ -32,80 +32,91 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
  */
 class PropelNewOMTask extends AbstractPropelDataModelTask {
 
-    /**
-     * The platform (php4, php5, etc.) for which the om is being built.
-     * @var string
-     */
-    private $targetPlatform;
-    
-    /**
-     * Sets the platform (php4, php5, etc.) for which the om is being built.
-     * @param string $v
-     */
-    public function setTargetPlatform($v) {
-        $this->targetPlatform = $v;
-    }
-    
-    /**
-     * Gets the platform (php4, php5, etc.) for which the om is being built.
-     * @return string
-     */
-    public function getTargetPlatform() {
-        return $this->targetPlatform;
-    }
-    
-    public function main() {
-        
-        // check to make sure task received all correct params
-        $this->validate();        
-        
-        $basepath = $this->getOutputDirectory();        
-        
-        // Get new Capsule context
-        $generator = $this->createContext();
-        $generator->put("basepath", $basepath); // make available to other templates
-        
-        $targetPlatform = $this->getTargetPlatform(); // convenience for embedding in strings below
-                
-        // we need some values that were loaded into the template context
-        $basePrefix = $generator->get('basePrefix');
-        $project = $generator->get('project');
-        
-        foreach ($this->getDataModels() as $dataModel) {
-            $this->log("Processing Datamodel : " . $dataModel->getName());
-            
-            foreach ($dataModel->getDatabases() as $database) {
-                
-                $this->log("  - processing database : " . $database->getName());
-                $generator->put("platform", $database->getPlatform());
-                
-                            
-                foreach ($database->getTables() as $table) {                    
-                
-                    if (!$table->isForReferenceOnly()) {
-                    
+	/**
+	 * The platform (php4, php5, etc.) for which the om is being built.
+	 * @var string
+	 */
+	private $targetPlatform;
+	
+	/**
+	 * Sets the platform (php4, php5, etc.) for which the om is being built.
+	 * @param string $v
+	 */
+	public function setTargetPlatform($v) {
+		$this->targetPlatform = $v;
+	}
+	
+	/**
+	 * Gets the platform (php4, php5, etc.) for which the om is being built.
+	 * @return string
+	 */
+	public function getTargetPlatform() {
+		return $this->targetPlatform;
+	}
+	
+	/**
+	 * Utility method to create directory for package if it doesn't already exist.
+	 * @param string $path The [relative] package path.
+	 * @throws BuildException - if there is an error creating directories
+	 */
+	protected function ensureDirExists($path)
+	{
+		$f = new PhingFile($this->getOutputDirectory(), $path);
+		if (!$f->exists()) {
+			if (!$f->mkdirs()) {
+				throw new BuildException("Error creating directories: ". $f->getPath());
+			}
+		}
+	}
+	
+	public function main()
+	{		
+		// check to make sure task received all correct params
+		$this->validate();		
+		
+		$basepath = $this->getOutputDirectory();		
+		
+		// Get new Capsule context
+		$generator = $this->createContext();
+		$generator->put("basepath", $basepath); // make available to other templates
+		
+		$targetPlatform = $this->getTargetPlatform(); // convenience for embedding in strings below
+				
+		// we need some values that were loaded into the template context
+		$basePrefix = $generator->get('basePrefix');
+		$project = $generator->get('project');
+		
+		foreach ($this->getDataModels() as $dataModel) {
+			$this->log("Processing Datamodel : " . $dataModel->getName());
+			
+			foreach ($dataModel->getDatabases() as $database) {
+				
+				$this->log("  - processing database : " . $database->getName());
+				$generator->put("platform", $database->getPlatform());
+				
+							
+				foreach ($database->getTables() as $table) {					
+				
+					if (!$table->isForReferenceOnly()) {
+					
 						DataModelBuilder::setBuildProperties($this->getPropelProperties());
 						
-                        $this->log("\t+ " . $table->getName());
+						$this->log("\t+ " . $table->getName());
 						
 						$targets = array('peer', 'object', 'peerstub', 'objectstub', 'mapbuilder');
 						
-						foreach($targets as $target) {
+						// -----------------------------------------------------------------------------------------
+						// Create Peer, Object, and MapBuilder classes
+						// -----------------------------------------------------------------------------------------
+						
+						// these files are always created / overwrite any existing files
+						foreach(array('peer', 'object', 'mapbuilder') as $target) {
 						
 							$builder = DataModelBuilder::builderFactory($table, $target);
+							$this->ensureDirExists($builder->getPackagePath());
 							
-							// make sure path (from package) exists:
-							$path = strtr($builder->getPackage(), '.', '/');
-                            $f = new PhingFile($this->getOutputDirectory(), $path);
-                            if (!$f->exists()) {
-                                if (!$f->mkdirs()) {
-                                    throw new Exception("Error creating directories: ". $f->getPath());
-                                }
-                            }
-							
-							// Create the Base Peer class
-	                        $this->log("\t\t-> " . $builder->getClassname());
-	                        $path = $builder->getClassFilePath();
+							$this->log("\t\t-> " . $builder->getClassname());
+							$path = $builder->getClassFilePath();
 							
 							$script = $builder->build();
 							
@@ -113,18 +124,129 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 							file_put_contents($_f->getAbsolutePath(), $script);
 							
 						}
-                        
+						
+						// -----------------------------------------------------------------------------------------
+						// Create [empty] stub Peer and Object classes if they don't exist
+						// -----------------------------------------------------------------------------------------
+						
+						// these classes are only generated if they don't already exist
+						foreach(array('peerstub', 'objectstub') as $target) {
+							
+							$builder = DataModelBuilder::builderFactory($table, $target);
+							$this->ensureDirExists($builder->getPackagePath());
+							
+							$_f = new PhingFile($basepath, $path);
+							if (!$_f->exists()) {
+								$this->log("\t\t-> " . $builder->getClassname());
+								$script = $builder->build();							
+								$_f = new PhingFile($basepath, $path);
+								file_put_contents($_f->getAbsolutePath(), $script);
+							} else {
+								$this->log("\t\t-> (exists) " . $builder->getClassname());
+							}
+							
+						}
 						
 						
+						// -----------------------------------------------------------------------------------------
+						// Create [empty] stub child Object classes if they don't exist
+						// -----------------------------------------------------------------------------------------
 						
-                    } // if !$table->isForReferenceOnly()                    					
-					
-                } // foreach table    
-        
-            } // foreach database
-        
-        } // foreach dataModel
+						// If table has enumerated children (uses inheritance) then create the empty child stub classes if they don't already exist.
+						if ($table->getChildrenColumn()) {
+							$col = $table->getChildrenColumn();
+							if ($col->isEnumeratedClasses()) {
+								foreach ($col->getChildren() as $child) {
+									
+									$builder = DataModelBuilder::builderFactory($table, 'objectmultiextend');
+									$builder->setChild($child);
+									
+									// Create the Base Peer class
+									$this->log("\t\t-> " . $builder->getClassname());
+									$path = $builder->getClassFilePath();
+									
+									$_f = new PhingFile($basepath, $path);
+									if (!$_f->exists()) {
+										$this->log("\t\t-> " . $builder->getClassname());
+										$script = $builder->build();							
+										$_f = new PhingFile($basepath, $path);
+										file_put_contents($_f->getAbsolutePath(), $script);
+									} else {
+										$this->log("\t\t-> (exists) " . $builder->getClassname());
+									}
+									
+								} // foreach
+							} // if col->is enumerated
+						} // if tbl->getChildrenCol
+						
+						
+						// -----------------------------------------------------------------------------------------
+						// Create [empty] Interface if it doesn't exist
+						// -----------------------------------------------------------------------------------------
+						
+						// Create [empty] interface if it does not already exist
+						if ($table->getInterface()) {
+						
+							$builder = DataModelBuilder::builderFactory($table, 'interface');
 
-    
-    } // main()
+							$path = $builder->getClassFilePath();
+							$this->ensureDirExists(dirname($path));
+							
+							$_f = new PhingFile($basepath, $path);
+							
+							if (!$_f->exists()) {
+								$this->log("\t\t-> " . $table->getInterface());
+								$script = $builder->build();
+								file_put_contents($_f->getAbsolutePath(), $script);
+							} else {
+								$this->log("\t\t-> (exists) " . $table->getInterface());
+							}
+							
+						}
+						
+						// -----------------------------------------------------------------------------------------
+						// Create tree Node classes
+						// -----------------------------------------------------------------------------------------
+						
+						if ($table->isTree()) {
+							$this->log("\t\t-> TREE CLASSES NOT YET SUPPORTED BY NEW OM (skipping generation of Node/NodePeer for " . $table->getPhpName() . ")");
+						}
+						
+						/*
+						if ($table->isTree()) {
+							// Create [empty] stub Node Peer class if it does not already exist
+							$path = ClassTools::getFilePath($package, $table->getPhpName() . "NodePeer");
+							$_f = new PhingFile($basepath, $path);
+							if (!$_f->exists()) {
+								$this->log("\t\t-> " . $table->getPhpName() . "NodePeer");
+								$generator->parse("om/$targetPlatform/ExtensionNodePeer.tpl", $path);
+							} else {
+								$this->log("\t\t-> (exists) " . $table->getPhpName() . "NodePeer");
+							}
+
+							// Create [empty] stub Node class if it does not already exist
+							$path = ClassTools::getFilePath($package, $table->getPhpName() . "Node");
+							$_f = new PhingFile($basepath, $path);
+							if (!$_f->exists()) {
+								$this->log("\t\t-> " . $table->getPhpName() . "Node");
+								$generator->parse("om/$targetPlatform/ExtensionNode.tpl", $path);
+							} else {
+								$this->log("\t\t-> (exists) " . $table->getPhpName() . "Node");
+							}
+						}
+						*/
+						
+
+						
+						
+					} // if !$table->isForReferenceOnly()										
+					
+				} // foreach table	
+		
+			} // foreach database
+		
+		} // foreach dataModel
+
+	
+	} // main()
 }

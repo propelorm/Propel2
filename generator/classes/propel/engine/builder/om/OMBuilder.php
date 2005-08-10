@@ -64,6 +64,17 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	private $mapBuilderBuilder;
 	
+	/**
+	 * Stub Interface builder class for current table.
+	 * @var DataModelBuilder
+	 */
+	private $interfaceBuilder;
+	
+	/**
+	 * Stub child object for current table.
+	 * @var DataModelBuilder
+	 */
+	private $multiExtendObjectBuilder;
 	
 	/**
 	 * Returns new or existing Peer builder class for this table.
@@ -115,7 +126,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	}
 	
 	/**
-	 * Returns new or existing stub Peer builder class for this table.
+	 * Returns new or existing MapBuilder builder class for this table.
 	 * @return DataModelBuilder
 	 */
 	public function getMapBuilderBuilder()
@@ -125,7 +136,31 @@ abstract class OMBuilder extends DataModelBuilder {
 		}
 		return $this->mapBuilderBuilder;	
 	}
-
+	
+	/**
+	 * Returns new or existing stub Interface builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getInterfaceBuilder()
+	{
+		if (!isset($this->interfaceBuilder)) {
+			$this->interfaceBuilder = DataModelBuilder::builderFactory($this->getTable(), 'interface');
+		}
+		return $this->interfaceBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing stub child object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getMultiExtendObjectBuilder()
+	{
+		if (!isset($this->multiExtendObjectBuilder)) {
+			$this->multiExtendObjectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'objectmultiextend');
+		}
+		return $this->multiExtendObjectBuilder;	
+	}
+	
 	/**
 	 * Convenience method to return a NEW Peer class builder instance.
 	 * This is used very frequently from the peer and object builders to get
@@ -206,11 +241,20 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	public function getPackage()
 	{
-		$pkg = $this->getDatabase()->getPackage();
+		$pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
 		if (!$pkg) {
 		    $pkg = $this->getBuildProperty('targetPackage');
 		}
 		return $pkg;
+	}
+	
+	/**
+	 * Returns filesystem path for current package.
+	 * @return string
+	 */
+	public function getPackagePath()
+	{
+		return strtr($this->getPackage(), '.', '/');
 	}
 	
 	/**

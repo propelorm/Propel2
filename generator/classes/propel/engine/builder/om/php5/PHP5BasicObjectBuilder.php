@@ -161,14 +161,31 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$table = $this->getTable();
 		if (!$table->isAlias()) {
+			$this->addConstants($script);
 			$this->addAttributes($script);
 		}
+		
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
 		
 		$this->addHydrate($script);
 		
 		$this->addManipulationMethods($script);
+		
+		$this->addTranslateFieldName($script);
+		$this->addGetFieldNames($script);
+		
+		if ($this->isAddGenericAccessors()) {
+			$this->addGetByName($script);
+			$this->addGetByPosition($script);
+			$this->addToArray($script);
+		}
+		
+		if ($this->isAddgenericMutators()) {
+		    $this->addSetByName($script);
+			$this->addSetByPosition($script);
+			$this->addFromArray($script);
+		}
 		
 		$this->addBuildCriteria($script);
 		$this->addBuildPkeyCriteria($script);
@@ -188,13 +205,21 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 	}
 	
+	/**
+	 * Adds any constants to the class.
+	 * @param string &$script The script will be modified in this method.
+	 */
 	protected function addConstants(&$script)
 	{
-		if ($this->addGenericAccessors() || $this->addGenericMutators()) {
+		if ($this->isAddGenericAccessors() || $this->isAddGenericMutators()) {
 			$this->addFieldnameTypeConstants($script);
 		}
 	}
 	
+	/**
+	 * Adds class attributes.
+	 * @param string &$script The script will be modified in this method.
+	 */
 	protected function addAttributes(&$script)
 	{
 		$script .= "
@@ -877,7 +902,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$keys = self::getFieldNames(\$keyType);
 		\$result = array(
 ";
-		foreach ($table->getColumns() as $num => $col) {
+		foreach ($this->getTable()->getColumns() as $num => $col) {
 			$script .= "
 			\$keys[$num] => \$this->get".$col->getPhpName()."(),
 ";
@@ -901,10 +926,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return array A list of field names
 	 */
 
-	static public function getFieldNames($type = self::TYPE_FIELDNAME)
+	static public function getFieldNames(\$type = self::TYPE_FIELDNAME)
 	{
 		if (!isset(self::\$fieldNames[\$type])) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . \$type . ' was given.');
 		}
 		return self::\$fieldNames[\$type];
 	}
