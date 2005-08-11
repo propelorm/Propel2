@@ -20,21 +20,21 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/engine/builder/om/PeerBuilder.php';
+require_once 'propel/engine/builder/om/ObjectBuilder.php';
 
 /**
- * Generates the empty PHP5 stub peer class for user object model (OM).
+ * Generates the empty PHP5 stub node object class for user object model (OM).
  * 
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
  * 
- * This class replaces the ExtensionPeer.tpl, with the intent of being easier for users
+ * This class replaces the ExtensionNode.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  * 
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5ExtensionPeerBuilder extends PeerBuilder {
+class PHP5ExtensionNodeBuilder extends ObjectBuilder {		
 	
 	/**
 	 * Returns the name of the current class being built.
@@ -42,22 +42,20 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	 */
 	public function getClassname()
 	{
-		return $this->getStubObjectBuilder()->getClassname() . 'Peer';
+		return $this->getTable()->getPhpName() . 'Node';
 	}
-
+	
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
+	
 		$script .= "
-  // include base peer class
-  require_once '".$this->getPeerBuilder()->getClassFilePath()."';
-  
-  // include object class
-  include_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
+require_once '".$this->getNodeBuilder()->getClassFilePath()."';
 ";
+		
 	} // addIncludes()
 	
 	/**
@@ -71,12 +69,12 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getPeerBuilder()->getClassname();
+		$baseClassname = $this->getNodeBuilder()->getClassname();
 		
 		$script .= "
 
 /**
- * Skeleton subclass for performing query and update operations on the '$tableName' table.
+ * Skeleton subclass for representing a node from the '$tableName' table.
  *
  * $tableDesc
  *";
@@ -99,15 +97,14 @@ class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 	
-		/**
-	 * Specifies the methods that are added as part of the stub peer class.
+	/**
+	 * Specifies the methods that are added as part of the stub object class.
 	 * 
 	 * By default there are no methods for the empty stub classes; override this method
 	 * if you want to change that behavior.
 	 * 
 	 * @see ObjectBuilder::addClassBody()
 	 */
-
 	protected function addClassBody(&$script)
 	{
 		// there is no class body
@@ -124,4 +121,4 @@ class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 	
-} // PHP5ExtensionPeerBuilder
+} // PHP5ExtensionObjectBuilder

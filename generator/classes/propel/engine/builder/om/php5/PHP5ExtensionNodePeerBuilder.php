@@ -23,18 +23,18 @@
 require_once 'propel/engine/builder/om/PeerBuilder.php';
 
 /**
- * Generates the empty PHP5 stub peer class for user object model (OM).
+ * Generates the empty PHP5 stub node peer class for user object model (OM).
  * 
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
  * 
- * This class replaces the ExtensionPeer.tpl, with the intent of being easier for users
+ * This class replaces the ExtensionNodePeer.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  * 
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5ExtensionPeerBuilder extends PeerBuilder {
+class PHP5ExtensionNodePeerBuilder extends PeerBuilder {
 	
 	/**
 	 * Returns the name of the current class being built.
@@ -42,7 +42,7 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	 */
 	public function getClassname()
 	{
-		return $this->getStubObjectBuilder()->getClassname() . 'Peer';
+		return $this->getStubNodeBuilder()->getClassname() . 'Peer';
 	}
 
 	/**
@@ -52,11 +52,11 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	protected function addIncludes(&$script)
 	{
 		$script .= "
-  // include base peer class
-  require_once '".$this->getPeerBuilder()->getClassFilePath()."';
+  // include base nodepeer class
+  require_once '".$this->getNodePeerBuilder()->getClassFilePath()."';
   
-  // include object class
-  include_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
+  // include node class
+  include_once '".$this->getStubNodeBuilder()->getClassFilePath()."';
 ";
 	} // addIncludes()
 	
@@ -71,12 +71,12 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getPeerBuilder()->getClassname();
+		$baseClassname = $this->getNodePeerBuilder()->getClassname();
 		
 		$script .= "
 
 /**
- * Skeleton subclass for performing query and update operations on the '$tableName' table.
+ * Skeleton subclass for performing query and update operations on nodes of the '$tableName' table.
  *
  * $tableDesc
  *";

@@ -69,6 +69,32 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 		}
 	}
 	
+	/**
+	 * Uses a builder class to create the output class.
+	 * This method assumes that the DataModelBuilder class has been initialized with the build properties.
+	 * @param DataModelBuilder $builder
+	 * @param boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
+	 */
+	protected function build(DataModelBuilder $builder, $overwrite = true)
+	{
+		
+		$path = $builder->getClassFilePath();
+		$this->ensureDirExists(dirname($path));
+		
+		$_f = new PhingFile($this->getOutputDirectory(), $path);
+		if ($overwrite || !$_f->exists()) {
+			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
+			$script = $builder->build();
+			file_put_contents($_f->getAbsolutePath(), $script);
+		} else {
+			$this->log("\t\t-> (exists) " . $builder->getClassname());
+		}
+		
+	}
+	
+	/**
+	 * Main method builds all the targets for a typical propel project.
+	 */
 	public function main()
 	{		
 		// check to make sure task received all correct params
@@ -103,26 +129,14 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						$this->log("\t+ " . $table->getName());
 						
-						$targets = array('peer', 'object', 'peerstub', 'objectstub', 'mapbuilder');
-						
 						// -----------------------------------------------------------------------------------------
 						// Create Peer, Object, and MapBuilder classes
 						// -----------------------------------------------------------------------------------------
 						
 						// these files are always created / overwrite any existing files
 						foreach(array('peer', 'object', 'mapbuilder') as $target) {
-						
 							$builder = DataModelBuilder::builderFactory($table, $target);
-							$this->ensureDirExists($builder->getPackagePath());
-							
-							$this->log("\t\t-> " . $builder->getClassname());
-							$path = $builder->getClassFilePath();
-							
-							$script = $builder->build();
-							
-							$_f = new PhingFile($basepath, $path);
-							file_put_contents($_f->getAbsolutePath(), $script);
-							
+							$this->build($builder);
 						}
 						
 						// -----------------------------------------------------------------------------------------
@@ -131,22 +145,9 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						// these classes are only generated if they don't already exist
 						foreach(array('peerstub', 'objectstub') as $target) {
-							
 							$builder = DataModelBuilder::builderFactory($table, $target);
-							$this->ensureDirExists($builder->getPackagePath());
-							
-							$_f = new PhingFile($basepath, $path);
-							if (!$_f->exists()) {
-								$this->log("\t\t-> " . $builder->getClassname());
-								$script = $builder->build();							
-								$_f = new PhingFile($basepath, $path);
-								file_put_contents($_f->getAbsolutePath(), $script);
-							} else {
-								$this->log("\t\t-> (exists) " . $builder->getClassname());
-							}
-							
+							$this->build($builder, $overwrite=false);
 						}
-						
 						
 						// -----------------------------------------------------------------------------------------
 						// Create [empty] stub child Object classes if they don't exist
@@ -157,24 +158,9 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 							$col = $table->getChildrenColumn();
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
-									
 									$builder = DataModelBuilder::builderFactory($table, 'objectmultiextend');
 									$builder->setChild($child);
-									
-									// Create the Base Peer class
-									$this->log("\t\t-> " . $builder->getClassname());
-									$path = $builder->getClassFilePath();
-									
-									$_f = new PhingFile($basepath, $path);
-									if (!$_f->exists()) {
-										$this->log("\t\t-> " . $builder->getClassname());
-										$script = $builder->build();							
-										$_f = new PhingFile($basepath, $path);
-										file_put_contents($_f->getAbsolutePath(), $script);
-									} else {
-										$this->log("\t\t-> (exists) " . $builder->getClassname());
-									}
-									
+									$this->build($builder, $overwrite=false);
 								} // foreach
 							} // if col->is enumerated
 						} // if tbl->getChildrenCol
@@ -186,22 +172,8 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						
 						// Create [empty] interface if it does not already exist
 						if ($table->getInterface()) {
-						
 							$builder = DataModelBuilder::builderFactory($table, 'interface');
-
-							$path = $builder->getClassFilePath();
-							$this->ensureDirExists(dirname($path));
-							
-							$_f = new PhingFile($basepath, $path);
-							
-							if (!$_f->exists()) {
-								$this->log("\t\t-> " . $table->getInterface());
-								$script = $builder->build();
-								file_put_contents($_f->getAbsolutePath(), $script);
-							} else {
-								$this->log("\t\t-> (exists) " . $table->getInterface());
-							}
-							
+							$this->build($builder, $overwrite=false);
 						}
 						
 						// -----------------------------------------------------------------------------------------
@@ -209,34 +181,18 @@ class PropelNewOMTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 						
 						if ($table->isTree()) {
-							$this->log("\t\t-> TREE CLASSES NOT YET SUPPORTED BY NEW OM (skipping generation of Node/NodePeer for " . $table->getPhpName() . ")");
-						}
-						
-						/*
-						if ($table->isTree()) {
-							// Create [empty] stub Node Peer class if it does not already exist
-							$path = ClassTools::getFilePath($package, $table->getPhpName() . "NodePeer");
-							$_f = new PhingFile($basepath, $path);
-							if (!$_f->exists()) {
-								$this->log("\t\t-> " . $table->getPhpName() . "NodePeer");
-								$generator->parse("om/$targetPlatform/ExtensionNodePeer.tpl", $path);
-							} else {
-								$this->log("\t\t-> (exists) " . $table->getPhpName() . "NodePeer");
+							
+							foreach(array('nodepeer', 'node') as $target) {							
+								$builder = DataModelBuilder::builderFactory($table, $target);
+								$this->build($builder);							
 							}
-
-							// Create [empty] stub Node class if it does not already exist
-							$path = ClassTools::getFilePath($package, $table->getPhpName() . "Node");
-							$_f = new PhingFile($basepath, $path);
-							if (!$_f->exists()) {
-								$this->log("\t\t-> " . $table->getPhpName() . "Node");
-								$generator->parse("om/$targetPlatform/ExtensionNode.tpl", $path);
-							} else {
-								$this->log("\t\t-> (exists) " . $table->getPhpName() . "Node");
+							
+							foreach(array('nodepeerstub', 'nodestub') as $target) {
+								$builder = DataModelBuilder::builderFactory($table, $target);
+								$this->build($builder, $overwrite=false);							
 							}
-						}
-						*/
-						
-
+							
+						} // if Table->isTree()
 						
 						
 					} // if !$table->isForReferenceOnly()										

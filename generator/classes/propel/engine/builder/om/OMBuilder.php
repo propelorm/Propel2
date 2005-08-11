@@ -77,6 +77,31 @@ abstract class OMBuilder extends DataModelBuilder {
 	private $multiExtendObjectBuilder;
 	
 	/**
+	 * Node object builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $nodeBuilder;
+	
+	/**
+	 * Node peer builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $nodePeerBuilder;
+	
+	/**
+	 * Stub node object builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $stubNodeBuilder;
+
+	/**
+	 * Stub node peer builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $stubNodePeerBuilder;
+	
+	
+	/**
 	 * Returns new or existing Peer builder class for this table.
 	 * @return DataModelBuilder
 	 */
@@ -159,6 +184,54 @@ abstract class OMBuilder extends DataModelBuilder {
 			$this->multiExtendObjectBuilder = DataModelBuilder::builderFactory($this->getTable(), 'objectmultiextend');
 		}
 		return $this->multiExtendObjectBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing node Object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getNodeBuilder()
+	{
+		if (!isset($this->nodeBuilder)) {
+			$this->nodeBuilder = DataModelBuilder::builderFactory($this->getTable(), 'node');
+		}
+		return $this->nodeBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing node Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getNodePeerBuilder()
+	{
+		if (!isset($this->nodePeerBuilder)) {
+			$this->nodePeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nodepeer');
+		}
+		return $this->nodePeerBuilder;	
+	}
+	
+	/**
+	 * Returns new or existing stub node Object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getStubNodeBuilder()
+	{
+		if (!isset($this->stubNodeBuilder)) {
+			$this->stubNodeBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nodestub');
+		}
+		return $this->stubNodeBuilder;	
+	}
+
+	/**
+	 * Returns new or existing stub node Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getStubNodePeerBuilder()
+	{
+		if (!isset($this->stubNodePeerBuilder)) {
+			$this->stubNodePeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nodepeerstub');
+		}
+		return $this->stubNodePeerBuilder;	
 	}
 	
 	/**
