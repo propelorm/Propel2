@@ -461,7 +461,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$table = $this->getTable();
 		$tblFK = $refFK->getTable();
 		
-		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural=false);
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural=true);
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 		
