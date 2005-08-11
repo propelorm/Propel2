@@ -834,7 +834,8 @@ if (Propel::isInit()) {
 	/**
 	 * Method perform a DELETE on the database, given a ".$table->getPhpName()." or Criteria object OR a primary key value.
 	 *
-	 * @param mixed \$values Criteria or ".$table->getPhpName()." object or primary key which is used to create the DELETE statement 
+	 * @param mixed \$values Criteria or ".$table->getPhpName()." object or primary key or array of primary keys 
+	 *              which is used to create the DELETE statement 
 	 * @param Connection \$con the connection to use
 	 * @return int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
@@ -867,7 +868,7 @@ if (Propel::isInit()) {
 		if (count($table->getPrimaryKey()) === 1) { 
 			$col = array_shift($table->getPrimaryKey()); 
 			$script .= "
-			\$criteria->add(".$this->getColumnConstant($col).", \$values);";
+			\$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
 		} else {
 			$script .= "
 			// primary key is composite; we therefore, expect
