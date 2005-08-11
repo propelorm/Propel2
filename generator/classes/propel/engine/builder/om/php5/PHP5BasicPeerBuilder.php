@@ -886,7 +886,7 @@ if (Propel::isInit()) {
 			$i=0;
 			foreach($table->getPrimaryKey() as $col) {
 				$script .= "
-			\$vals[$i][] = \$value[$i];";
+				\$vals[$i][] = \$value[$i];";
 				$i++; 
 			}
 			$script .= "
