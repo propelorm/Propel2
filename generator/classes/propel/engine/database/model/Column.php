@@ -141,59 +141,63 @@ class Column extends XMLElement {
 	 */
 	protected function setupObject()
 	{
-		$dom = $this->getAttribute("domain");
-		if ($dom)  {
-			$this->domain = new Domain();
-			$this->domain->copy($this->getTable()->getDatabase()->getDomain($dom));
-		} else {
-			$this->domain = new Domain();			
-			$this->domain->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
-			$this->setType(strtoupper($this->getAttribute("type")));
+		try {
+			$dom = $this->getAttribute("domain");
+			if ($dom)  {
+				$this->domain = new Domain();
+				$this->domain->copy($this->getTable()->getDatabase()->getDomain($dom));
+			} else {
+				$this->domain = new Domain();			
+				$this->domain->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
+				$this->setType(strtoupper($this->getAttribute("type")));
+			}
+			
+			//Name
+			$this->name = $this->getAttribute("name");
+	
+			$this->phpName = $this->getAttribute("phpName");
+			$this->phpType = $this->getAttribute("phpType");
+			$this->peerName = $this->getAttribute("peerName");
+			
+			if (empty($this->phpType)) {
+				$this->phpType = null;
+			}
+	
+			// retrieves the method for converting from specified name to
+			// a PHP name.
+			$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
+		   
+			$this->isPrimaryKey = $this->booleanValue($this->getAttribute("primaryKey"));
+	
+			$this->isNodeKey = $this->booleanValue($this->getAttribute("nodeKey"));
+			$this->nodeKeySep = $this->getAttribute("nodeKeySep", ".");
+			
+			$this->isNotNull = $this->booleanValue($this->getAttribute("required"), false);
+			
+			// Regardless of above, if this column is a primary key then it can't be null.
+			if ($this->isPrimaryKey) {
+				$this->isNotNull = true;
+			}
+			
+			//AutoIncrement/Sequences
+			$this->isAutoIncrement = $this->booleanValue($this->getAttribute("autoIncrement"));
+			$this->isLazyLoad = $this->booleanValue($this->getAttribute("lazyLoad"));
+	
+			//Default column value.
+			$this->domain->replaceDefaultValue($this->getAttribute("default"));
+			$this->domain->replaceSize($this->getAttribute("size"));
+			$this->domain->replaceScale($this->getAttribute("scale"));				
+					
+			$this->inheritanceType = $this->getAttribute("inheritance");
+			$this->isInheritance = ($this->inheritanceType !== null
+					&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
+															// use boleanValue()
+	
+			$this->inputValidator = $this->getAttribute("inputValidator");
+			$this->description = $this->getAttribute("description");
+		} catch (Exception $e) {
+			throw new EngineException("Error setting up column " . var_export($this->getAttribute("name"), true) . ": " . $e->getMessage());
 		}
-		
-		//Name
-		$this->name = $this->getAttribute("name");
-
-		$this->phpName = $this->getAttribute("phpName");
-		$this->phpType = $this->getAttribute("phpType");
-		$this->peerName = $this->getAttribute("peerName");
-		
-		if (empty($this->phpType)) {
-			$this->phpType = null;
-		}
-
-		// retrieves the method for converting from specified name to
-		// a PHP name.
-		$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
-	   
-		$this->isPrimaryKey = $this->booleanValue($this->getAttribute("primaryKey"));
-
-		$this->isNodeKey = $this->booleanValue($this->getAttribute("nodeKey"));
-		$this->nodeKeySep = $this->getAttribute("nodeKeySep", ".");
-		
-		$this->isNotNull = $this->booleanValue($this->getAttribute("required"), false);
-		
-		// Regardless of above, if this column is a primary key then it can't be null.
-		if ($this->isPrimaryKey) {
-			$this->isNotNull = true;
-		}
-		
-		//AutoIncrement/Sequences
-		$this->isAutoIncrement = $this->booleanValue($this->getAttribute("autoIncrement"));
-		$this->isLazyLoad = $this->booleanValue($this->getAttribute("lazyLoad"));
-
-		//Default column value.
-		$this->domain->replaceDefaultValue($this->getAttribute("default"));
-		$this->domain->replaceSize($this->getAttribute("size"));
-		$this->domain->replaceScale($this->getAttribute("scale"));				
-				
-		$this->inheritanceType = $this->getAttribute("inheritance");
-		$this->isInheritance = ($this->inheritanceType !== null
-				&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
-														// use boleanValue()
-
-		$this->inputValidator = $this->getAttribute("inputValidator");
-		$this->description = $this->getAttribute("description");
 	}
 
 	/**
