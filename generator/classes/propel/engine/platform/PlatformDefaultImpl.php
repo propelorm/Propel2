@@ -78,6 +78,9 @@ class PlatformDefaultImpl implements Platform {
      */
     public function getDomainForType($propelType) 
     {
+		if (!isset($this->schemaDomainMap[$propelType])) {
+			throw new EngineException("Cannot map unknwon Propel type " . var_export($propelType, true) . " to native database type.");
+		}
         return $this->schemaDomainMap[$propelType];
     }
 
