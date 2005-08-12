@@ -1019,6 +1019,7 @@ $script .= "
 	
 	protected function addSetByName(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Sets a field from the object by name passed in as a string.
@@ -1041,6 +1042,7 @@ $script .= "
 	
 	protected function addSetByPosition(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Sets a field from the object by Position as specified in the xml schema.
@@ -1073,6 +1075,7 @@ $script .= "
 
 	protected function addFromArray(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Populates the object using an array.
@@ -1160,6 +1163,7 @@ $script .= "
 	 */
 	protected function addSave(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Stores the object in the database.
