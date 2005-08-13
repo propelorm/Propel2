@@ -874,13 +874,13 @@ if (Propel::isInit()) {
 			// primary key is composite; we therefore, expect
 			// the primary key passed to be an array of pkey
 			// values
-			if(count($values) == count($values, COUNT_RECURSIVE))
+			if(count(\$values) == count(\$values, COUNT_RECURSIVE))
 			{
 				// array is not multi-dimensional
-				$values = array($values);
+				\$values = array(\$values);
 			}
-			$vals = array();
-			foreach($values as $value)
+			\$vals = array();
+			foreach(\$values as \$value)
 			{
 ";
 			$i=0;
