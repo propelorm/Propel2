@@ -633,12 +633,13 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				if ( !($subfk->getForeignTableName() == $table->getName())) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 					$joinClassName = $joinTable->getPhpName();
+					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 		
 					if ($joinClassName != $excludedClassName) {
 						$new_index = $index + 1;
 						$script .= "
-		".$excludedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$excludedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
+		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		\$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
 ";
 					$index = $new_index;
 					} // if joinClassName not excludeClassName 
@@ -650,6 +651,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				if ( $subfk->getForeignTableName() != $table->getName() ) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 					$joinClassName = $joinTable->getPhpName();
+					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+
 					if($joinClassName != $excludedClassName)
 					{
 						$lfMap = $subfk->getLocalForeignMapping();
@@ -657,7 +660,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$excludedTablePeerBuilder->getColumnConstant($columnFk).");
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).");
 ";
 						}
 					} 
@@ -826,6 +829,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				if ( $subfk->getForeignTableName() != $table->getName() ) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 					$joinClassName = $joinTable->getPhpName();
+					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+
 					if($joinClassName != $excludedClassName)
 					{
 						$lfMap = $subfk->getLocalForeignMapping();
@@ -833,7 +838,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$excludedTablePeerBuilder->getColumnConstant($columnFk).");
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).");
 ";
 						}
 					} 
