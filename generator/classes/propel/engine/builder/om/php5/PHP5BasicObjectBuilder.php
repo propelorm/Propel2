@@ -193,7 +193,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addSetPrimaryKey($script);
 
 		$this->addCopy($script);
-		$this->addGetPeer($script);
+
+		if (!$table->isAlias()) {
+			$this->addGetPeer($script);
+		}
 	}
 	
 	/**
@@ -1463,7 +1466,7 @@ $script .= "
 		foreach ($table->getColumns() as $col) {
 			if (!in_array($col->getName(), $pkcols)) {
 				$script .= "
-		\$copyObj->set<?php echo $col->getPhpName()?>($this-><?php echo strtolower($col->getName()) ?>);
+		\$copyObj->set<?php echo $col->getPhpName()?>(\$this-><?php echo strtolower($col->getName()) ?>);
 ";
 			}
 		} // foreach

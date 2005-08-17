@@ -1102,7 +1102,8 @@ $script .= "
 	 */
 	protected function addCopy(&$script)
 	{
-		
+		$table = $this->getTable();
+
 		$script .= "
 	/**
 	 * Makes a copy of this object that will be inserted as a new row in table when saved.
@@ -1112,7 +1113,7 @@ $script .= "
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+	 * @param boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @return ".$table->getPhpName()." Clone of current object.
 	 * @throws PropelException
 	 */
@@ -1151,8 +1152,8 @@ $script .= "
 			foreach ($table->getReferrers() as $fk) {
 				if ( $fk->getTable()->getName() != $table->getName() ) {
 					$script .= "
-			foreach(\$this->get".$this->getFKPhpNameAffix($fk)."() as \$relObj) {
-				\$copyObj->add".$pCollNameNoS."(\$relObj->copy());
+			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
+				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy());
 			}
 ";
 				} /* if tblFK != table */
