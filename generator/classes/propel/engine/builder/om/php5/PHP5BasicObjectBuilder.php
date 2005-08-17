@@ -1432,7 +1432,8 @@ $script .= "
 	 */
 	protected function addCopy(&$script)
 	{
-		
+		$table = $this->getTable();
+
 		$script .= "
 	/**
 	 * Makes a copy of this object that will be inserted as a new row in table when saved.
