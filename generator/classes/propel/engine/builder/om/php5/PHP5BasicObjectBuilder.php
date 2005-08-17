@@ -191,7 +191,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addBuildPkeyCriteria($script);
 		$this->addGetPrimaryKey($script);
 		$this->addSetPrimaryKey($script);
-		
+
+		$this->addCopy($script);
+		$this->addGetPeer($script);
 	}
 	
 	/**
