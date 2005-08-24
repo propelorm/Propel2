@@ -54,11 +54,11 @@
  
 </target>
 
-<target name="new-build" depends="configure" 
+<target name="old-build" depends="configure" 
   description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
 
  <!--<property file="${project.dir}/build.properties"/>-->
- <phing phingfile="./build-propel.xml" target="new-build"/>
+ <phing phingfile="./build-propel.xml" target="old-build"/>
  
 </target>
 

@@ -33,11 +33,11 @@
     name="propel-data-model"
     classname="propel.phing.PropelDataModelTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-old-om"
+    classname="propel.phing.PropelOldOMTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask" classpathRef="propelclasses"/>
-  <taskdef
-    name="propel-new-om"
-    classname="propel.phing.PropelNewOMTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-data-dtd"
     classname="propel.phing.PropelDataDTDTask" classpathRef="propelclasses"/>
@@ -80,11 +80,11 @@
   </target>
 
   <target
-    name="new-build"
+    name="old-build"
     description="==> generates sql + [new] om classes">
 
     <phingcall target="sql"/>
-    <phingcall target="new-om"/>
+    <phingcall target="old-om"/>
     <phingcall target="convert-props"/>
   </target>
 
@@ -358,7 +358,7 @@
     <echo message="+------------------------------------------+"/>
     <echo message="|                                          |"/>
     <echo message="| Generating Peer-based Object Model for   |"/>
-    <echo message="| YOUR Propel project!                     |"/>
+    <echo message="| YOUR Propel project! (NEW OM BUILDERS)!  |"/>
     <echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
 
@@ -385,24 +385,24 @@
   <!-- the new OM tasks -->
 
   <target
-    name="new-om"
+    name="old-om"
     depends="om-check"
     unless="propel.internal.om.uptodate"
-    description="==> generates the NEW Peer-based object model for your project">
+    description="==> generates the OLD Peer-based object model for your project">
 
     <echo message="+------------------------------------------+"/>
     <echo message="|                                          |"/>
     <echo message="| Generating Peer-based Object Model for   |"/>
-    <echo message="| YOUR Propel project (NEW OM BUILDERS)!   |"/>
+    <echo message="| YOUR Propel project (OLD OM TEMPLATES).  |"/>
     <echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
 
-    <phingcall target="new-om-template"/>
+    <phingcall target="old-om-template"/>
     <!--<phingcall target="om-tar"/>-->
   </target>
 
-  <target name="new-om-template">
-    <propel-new-om
+  <target name="old-om-template">
+    <propel-old-om
       outputDirectory="${propel.php.dir}"
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
@@ -412,7 +412,7 @@
         includes="${propel.schema.om.includes}"
         excludes="${propel.schema.om.excludes}"
       />
-    </propel-new-om>
+    </propel-old-om>
   </target>
 
 
