@@ -25,12 +25,12 @@ include_once 'propel/engine/builder/om/ClassTools.php';
 require_once 'propel/engine/builder/DataModelBuilder.php';
 
 /**
- * This is a temporary task that creates the OM classes based on the XML schema file using NEW builder framework.
+ * This Task creates the OM classes based on the XML schema file.
  * 
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
  */
-class PropelNewOMTask extends AbstractPropelDataModelTask {
+class PropelOMTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * The platform (php4, php5, etc.) for which the om is being built.

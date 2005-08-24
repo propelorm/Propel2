@@ -24,12 +24,13 @@ require_once 'propel/phing/AbstractPropelDataModelTask.php';
 include_once 'propel/engine/builder/om/ClassTools.php';
 
 /**
- * This Task creates the OM classes based on the XML schema file.
+ * This Task creates the OM classes based on the XML schema file using the legacy templates.
  *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
+ * @deprecated
  */
-class PropelOMTask extends AbstractPropelDataModelTask {
+class PropelOldOMTask extends AbstractPropelDataModelTask {
 
     /**
      * The platform (php4, php5, etc.) for which the om is being built.
