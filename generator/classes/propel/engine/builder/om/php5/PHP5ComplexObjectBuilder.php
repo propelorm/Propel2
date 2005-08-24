@@ -1094,14 +1094,15 @@ $script .= "
 	}
 ";
 	} // addDoValidate()
-	
-	
+
 	/**
 	 * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addCopy(&$script)
 	{
+		$this->addCopyInto($script);
+		
 		$table = $this->getTable();
 
 		$script .= "
@@ -1122,6 +1123,34 @@ $script .= "
 		// we use get_class(), because this might be a subclass
 		\$clazz = get_class(\$this);
 		\$copyObj = new \$clazz();
+		\$this->copyInto(\$copyObj, \$deepCopy);
+		return \$copyObj;
+	}
+";
+	} // addCopy()
+	
+	/**
+	 * Adds the copyInto() method, which takes an object and sets contents to match current object.
+	 * In complex OM this method includes the $deepCopy param for making copies of related objects.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addCopyInto(&$script)
+	{
+		$table = $this->getTable();
+
+		$script .= "
+	/**
+	 * Sets contents of passed object to values from current object.
+	 * 
+	 * If desired, this method can also make copies of all associated (fkey referrers)
+	 * objects.
+	 *
+	 * @param object \$copyObj An object of ".$table->getPhpName()." (or compatible) type.
+	 * @param boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+	 * @throws PropelException
+	 */
+	public function copyInto(\$copyObj, \$deepCopy = false)
+	{
 ";
 
 		$pkcols = array();
@@ -1179,9 +1208,8 @@ $script .= "
 			} // if col->isPrimaryKey
 		} // foreach
 		$script .= "
-		return \$copyObj;
 	}
 ";
-	} // addCopy()
+	} // addCopyInto()
 	
 } // PHP5ComplexObjectBuilder

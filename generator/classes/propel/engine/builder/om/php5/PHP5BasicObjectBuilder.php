@@ -1429,12 +1429,15 @@ $script .= "
 	 }
 ";
 	}
-	
+
 	/**
-	 * Adds the copy() method.
+	 * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
+	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addCopy(&$script)
 	{
+		$this->addCopyInto($script);
+		
 		$table = $this->getTable();
 
 		$script .= "
@@ -1442,9 +1445,6 @@ $script .= "
 	 * Makes a copy of this object that will be inserted as a new row in table when saved.
 	 * It creates a new object filling in the simple attributes, but skipping any primary
 	 * keys that are defined for the table.
-	 * 
-	 * If desired, this method can also make copies of all associated (fkey referrers)
-	 * objects.
 	 *
 	 * @return ".$table->getPhpName()." Clone of current object.
 	 * @throws PropelException
@@ -1454,6 +1454,29 @@ $script .= "
 		// we use get_class(), because this might be a subclass
 		\$clazz = get_class(\$this);
 		\$copyObj = new \$clazz();
+		\$this->copyInto(\$copyObj);
+		return \$copyObj;
+	}
+";
+	} // addCopy()
+	
+	/**
+	 * Adds the copy() method.
+	 */
+	protected function addCopyInto(&$script)
+	{
+		$table = $this->getTable();
+
+		$script .= "
+	/**
+	 * Sets contents of passed object to values from current object.
+	 * 
+	 * @param object \$copyObj An object of ".$table->getPhpName()." (or compatible) type.
+	 * @return ".$table->getPhpName()." Clone of current object.
+	 * @throws PropelException
+	 */
+	public function copyInto(\$copyObj)
+	{
 ";
 
 		$pkcols = array();
