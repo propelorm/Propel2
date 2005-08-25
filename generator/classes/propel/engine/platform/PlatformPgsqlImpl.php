@@ -102,4 +102,13 @@ class PlatformPgsqlImpl extends PlatformDefaultImpl {
     {
         return true;
     }
+	
+	/**
+     * @see Platform::hasSize(String)
+     * TODO collect info for all platforms
+     */
+    public function hasSize($sqlType)
+    {
+		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);
+    }
 }
