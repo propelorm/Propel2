@@ -611,7 +611,7 @@ if (Propel::isInit()) {
 	 * Adds a getOMClass() signature for abstract tables that have inheritance.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addGetOMClass_Inheritance_Abstract()
+	protected function addGetOMClass_Inheritance_Abstract(&$script)
 	{
 		$script .= "
 	/**
