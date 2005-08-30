@@ -899,7 +899,9 @@ $script .= "
 				$script .= "
 			if (\$this->$collName !== null) {
 				foreach(\$this->$collName as \$referrerFK) {
-					\$referrerFK->save(\$con);
+					if (!\$referrerFK->isDeleted()) {
+						\$referrerFK->save(\$con);
+					}
 				}
 			}
 ";
