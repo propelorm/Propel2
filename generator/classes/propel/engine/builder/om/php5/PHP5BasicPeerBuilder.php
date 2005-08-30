@@ -866,7 +866,8 @@ if (Propel::isInit()) {
 			\$criteria = new Criteria(self::DATABASE_NAME);";
 			
 		if (count($table->getPrimaryKey()) === 1) { 
-			$col = array_shift($table->getPrimaryKey()); 
+			$pkey = $table->getPrimaryKey();
+			$col = array_shift($pkey); 
 			$script .= "
 			\$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
 		} else {
@@ -1179,7 +1180,8 @@ if (Propel::isInit()) {
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
 		if (count($table->getPrimaryKey()) === 1) { 
-			$col = array_shift($table->getPrimaryKey());
+			$pkey = $table->getPrimaryKey();
+			$col = array_shift($pkey);
 			$script .= "
 		\$criteria->add(".$this->getColumnConstant($col).", \$pk);
 ";

@@ -18,7 +18,8 @@ if (!$pfile->exists()) {
     throw new BuildException("Property file does not exist: $propertiesFile");
 }
 
-$format = array_pop(explode('.', $pfile->getName()));
+$pfileName = explode('.', $pfile->getName());
+$format = array_pop($pfileName);
 
 switch($format) {
     case 'xml':

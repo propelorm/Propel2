@@ -608,7 +608,8 @@ if (!$table->isAlias() && !$table->isReadOnly()) {
 			// it must be the primary key
 			$criteria = new Criteria(self::DATABASE_NAME);
 <?php	   if (count($table->getPrimaryKey()) == 1) { 
-					$col = array_shift($table->getPrimaryKey()); ?>
+					$pkey = $table->getPrimaryKey();
+					$col = array_shift($pkey); ?>
 			$criteria->add(self::<?php echo PeerBuilder::getColumnName($col) ?>, $values);
 <?php	   } else { ?>
 			// primary key is composite; we therefore, expect
@@ -867,7 +868,8 @@ if (count($table->getPrimaryKey()) === 1) {  ?>
 		
 		$criteria = new Criteria(self::DATABASE_NAME);
 <?php if (count($table->getPrimaryKey()) === 1) { 
-	$col = array_shift($table->getPrimaryKey()); ?>
+	$pkey = $table->getPrimaryKey();
+	$col = array_shift($pkey); ?>
 		$criteria->add(self::<?php echo PeerBuilder::getColumnName($col) ?>, $pk);
 <?php } else { ?>
 
