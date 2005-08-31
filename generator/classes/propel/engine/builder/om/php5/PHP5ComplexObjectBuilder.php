@@ -776,6 +776,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		} // end foreach ($fk->getForeignColumns()
 		
 		$script .= "
+				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
 			}
 		} else {
@@ -796,7 +797,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 ";
 	} // foreach ($fk->getForeignColumns()
 $script .= "
-
+				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 				if (!isset(\$this->last".$relCol."Criteria) || !\$this->last".$relCol."Criteria->equals(\$criteria)) {
 					\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
 				}
