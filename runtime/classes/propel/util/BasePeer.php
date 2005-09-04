@@ -789,7 +789,7 @@ class BasePeer
     public static function getValidator($classname)
     {
         try {
-            $v = @self::$validatorMap[$classname];
+            $v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
             if ($v === null) {
                 $cls = Propel::import($classname);    
                 $v = new $cls();
@@ -814,7 +814,7 @@ class BasePeer
     public static function getMapBuilder($classname)
     {
         try {
-            $mb = @self::$mapBuilders[$classname];
+            $mb = isset(self::$mapBuilders[$classname]) ? self::$mapBuilders[$classname] : null;
             if ($mb === null) {
                 $cls = Propel::import($classname);
                 $mb = new $cls();
