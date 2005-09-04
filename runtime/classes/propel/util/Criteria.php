@@ -1165,6 +1165,9 @@ class Criterion  {
 
     /** Table name. */
     private $table;
+    
+    /** Real table name */
+    private $realtable;
 
     /** Column name. */
     private $column;
@@ -1196,13 +1199,36 @@ class Criterion  {
      * @param string $comparison
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = null)
-    {
-        $this->outer = $outer;        
+    {              
         list($this->table, $this->column) = explode('.', $column);        
         $this->value = $value;
         $this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
+        $this->init($outer);
     }
         
+    /**
+    * Init some properties with the help of outer class
+    * @param Criteria $criteria The outer class
+    */
+    public function init(Criteria $criteria)
+    {
+        //init $this->db
+        try {
+            $db = Propel::getDB($criteria->getDbName());
+            $this->setDB($db);
+        } catch (Exception $e) {
+            // we are only doing this to allow easier debugging, so
+            // no need to throw up the exception, just make note of it.
+            Propel::log("Could not get a DBAdapter, so sql may be wrong", Propel::LOG_ERR);
+        }
+        
+        //init $this->realtable
+        $realtable = $criteria->getTableForAlias($this->table);
+        if(!$realtable) $realtable = $this->table;
+        $this->realtable = $realtable;                
+        
+    }
+    
     /**
      * Get the column name.
      *
@@ -1262,22 +1288,7 @@ class Criterion  {
      */
     public function getDB()
     {
-        $db = null;
-        if ($this->db === null) {
-            // db may not be set if generating preliminary sql for
-            // debugging.
-            try {
-                $db = Propel::getDB($this->outer->getDbName());
-            } catch (Exception $e) {
-                // we are only doing this to allow easier debugging, so
-                // no need to throw up the exception, just make note of it.
-                Propel::log("Could not get a DBAdapter, so sql may be wrong", Propel::LOG_ERR);
-            }
-        } else {
-            $db = $this->db;
-        }
-
-        return $db;
+        return $this->db;
     }
 
     /**
@@ -1392,8 +1403,7 @@ class Criterion  {
 
             // Check to see if table is an alias & store real name, if so
             // (real table name is needed for the returned $params array)
-            $realtable = $this->outer->getTableForAlias($this->table);
-            if(!$realtable) $realtable = $this->table;
+            $realtable = $this->realtable;
             
             // There are several different types of expressions that need individual handling:
             // IN/NOT IN, LIKE/NOT LIKE, and traditional expressions.
