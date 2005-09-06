@@ -798,7 +798,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	} // foreach ($fk->getForeignColumns()
 $script .= "
 				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-				if (!isset(\$this->last".$relCol."Criteria) || !\$this->last".$relCol."Criteria->equals(\$criteria)) {
+				if (!isset(\$this->$lastCriteriaName) || !\$this->$lastCriteriaName->equals(\$criteria)) {
 					\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
 				}
 			}
