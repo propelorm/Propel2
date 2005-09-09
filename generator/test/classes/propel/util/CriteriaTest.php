@@ -284,5 +284,43 @@ class CriteriaTest extends BaseTestCase {
         $this->assertEquals($expect, $result);
 
     }
+	
+	public function testIn()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->add("TABLE.SOME_COLUMN", array(), Criteria::IN);
+		$c->add("TABLE.OTHER_COLUMN", array(1, 2, 3), Criteria::IN);
+		
+		$expect = "SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (?,?,?)";
+		try {
+            $result = BasePeer::createSelectSql($c, $params=array());
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+        }
+		$this->assertEquals($expect, $result);
+		
+		
+		// ----------------------------------------------------------------------------------
+		// now do a nested logic test, just for sanity (not that this should be any surprise)
+		
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$myCriterion = $c->getNewCriterion("TABLE.COLUMN", array(), Criteria::IN);
+		$myCriterion->addOr($c->getNewCriterion("TABLE.COLUMN2", array(1,2), Criteria::IN));
+		$c->add($myCriterion);
+		
+		$expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (?,?))";
+		try {
+            $result = BasePeer::createSelectSql($c, $params=array());
+			print "\n" . $result;
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+        }
+		$this->assertEquals($expect, $result);
+		
+	}
 
 }
