@@ -747,17 +747,17 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			\$newObject = true;
 			for (\$j=0, \$resCount=count(\$results); \$j < \$resCount; \$j++) {
 				\$temp_obj1 = \$results[\$j];
-				\$temp_obj$index = \$temp_obj1->get".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural=false)."(); //CHECKME
+				\$temp_obj$index = \$temp_obj1->get".$thisTableObjectBuilder->getFKPhpNameAffix($subfk, $plural=false)."(); //CHECKME
 				if (\$temp_obj".$index."->getPrimaryKey() === \$obj".$index."->getPrimaryKey()) {
 					\$newObject = false;
-					\$temp_obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=false)."(\$obj1);
+					\$temp_obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, $plural=false)."(\$obj1);
 					break;
 				}
 			}
 			
 			if (\$newObject) {
-				\$obj".$index."->init".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=true)."();
-				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural=false)."(\$obj1);
+				\$obj".$index."->init".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, $plural=true)."();
+				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($subfk, $plural=false)."(\$obj1);
 			}
 ";
 					} // if ($joinClassName != $excludedClassName) {
