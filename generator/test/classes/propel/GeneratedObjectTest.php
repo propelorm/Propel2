@@ -60,7 +60,54 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
 
 	}
+	
+	/**
+	 * Test saving an object and getting correct number of affected rows from save().
+	 * This includes tests of cascading saves to fk-related objects.
+	 */
+	public function testSaveReturnValues()
+	{
 
+	    $author = new Author();
+	    $author->setFirstName("Mark");
+	    $author->setLastName("Kurlansky");
+		// do not save
+		
+		$pub = new Publisher();
+	    $pub->setName("Penguin Books");
+	    // do not save
+		
+		$book = new Book();
+	    $book->setTitle("Salt: A World History");
+	    $book->setISBN("0142001619");
+		$book->setAuthor($author);
+		$book->setPublisher($pub);
+		
+		$affected = $book->save();
+		$this->assertEquals(3, $affected, "Expected 3 affected rows when saving book + publisher + author.");
+		
+		// change nothing ...
+		$affected = $book->save();
+		$this->assertEquals(0, $affected, "Expected 0 affected rows when saving already-saved book.");
+		
+		// modify the book (UPDATE)
+		$book->setTitle("Salt A World History");
+		$affected = $book->save();		
+		$this->assertEquals(1, $affected, "Expected 1 affected row when saving modified book.");
+		
+		// modify the related author
+		$author->setLastName("Kurlanski");
+  		$affected = $book->save();
+		$this->assertEquals(1, $affected, "Expected 1 affected row when saving book with updated author.");
+		
+		// modify both the related author and the book
+		$author->setLastName("Kurlansky");
+		$book->setTitle("Salt: A World History");
+  		$affected = $book->save();
+		$this->assertEquals(2, $affected, "Expected 2 affected rows when saving updated book with updated author.");
+		
+	}
+	
 	/**
 	 * Test deleting an object using the delete() method.
 	 */

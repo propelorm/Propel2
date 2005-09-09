@@ -1176,15 +1176,20 @@ $script .= "
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 *
 	 * @param Connection \$con
-	 * @return void
+	 * @return int The number of rows affected by this insert/update operation (for non-complex OM this will be at most 1).
 	 * @throws PropelException
 	 */
-	public function save($con = null)
+	public function save(\$con = null)
 	{
+		\$affectedRows = 0; // initialize var to track total num of affected rows	
+		
 		// If this object has been modified, then save it to the database.
 		if (\$this->isModified()) {
 			if (\$this->isNew()) {
 				\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
+				\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which 
+									 // should always be true here (even though technically 
+									 // BasePeer::doInsert() can insert multiple rows).
 ";
 		if ($table->getIdMethod() != "none") {
 			if (count($pks = $table->getPrimaryKey())) {
@@ -1200,11 +1205,12 @@ $script .= "
 		$script .= "
 					\$this->setNew(false);
 			} else {
-						".$this->getPeerClassname()."::doUpdate(\$this, \$con);
+					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 			}
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 		} // if \$this->isModified()
 		
+		return \$affectedRows;
 	} // save() 
 ";
 	

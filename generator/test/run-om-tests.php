@@ -24,14 +24,14 @@
 	require_once 'propel/Propel.php';
 	Propel::init(BOOKSTORE_CONF);
 	
-  require_once 'propel/GeneratedObjectTest.php';
+	require_once 'propel/GeneratedObjectTest.php';
 	require_once 'propel/GeneratedPeerTest.php';
-  require_once 'propel/validator/ValidatorTest.php';
+	require_once 'propel/validator/ValidatorTest.php';
 	
 	$suite = new PHPUnit2_Framework_TestSuite('OM Tests');	
 	$suite->addTestSuite(new ReflectionClass('GeneratedObjectTest'));
-  $suite->addTestSuite(new ReflectionClass('GeneratedPeerTest'));
-  $suite->addTestSuite(new ReflectionClass('ValidatorTest'));
+	$suite->addTestSuite(new ReflectionClass('GeneratedPeerTest'));
+	$suite->addTestSuite(new ReflectionClass('ValidatorTest'));
     
     // Run it!
     PHPUnit2_TextUI_TestRunner::run($suite);

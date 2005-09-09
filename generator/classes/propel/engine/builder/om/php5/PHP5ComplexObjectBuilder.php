@@ -833,12 +833,13 @@ $script .= "
 	 * All related objects are also updated in this method.
 	 *
 	 * @param Connection \$con
-	 * @return void
+	 * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws PropelException
 	 * @see save()
 	 */
 	protected function doSave(\$con)
 	{
+		\$affectedRows = 0; // initialize var to track total num of affected rows	
 		if (!\$this->alreadyInSave) {
 			\$this->alreadyInSave = true;
 ";
@@ -858,7 +859,9 @@ $script .= "
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
 			if (\$this->$aVarName !== null) {
-				if (\$this->".$aVarName."->isModified()) \$this->".$aVarName."->save(\$con);
+				if (\$this->".$aVarName."->isModified()) {
+					\$affectedRows += \$this->".$aVarName."->save(\$con);
+				}
 				\$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);
 			}
 ";
@@ -871,6 +874,9 @@ $script .= "
 			if (\$this->isModified()) {
 				if (\$this->isNew()) {
 					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
+					\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which 
+										 // should always be true here (even though technically 
+										 // BasePeer::doInsert() can insert multiple rows).
 ";
 		if ($table->getIdMethod() != "none") {
 	
@@ -883,12 +889,12 @@ $script .= "
 					}
 				}
 			}
-		}
+		} // if (id method != "none")
 	
 		$script .= "
 					\$this->setNew(false);
 				} else {
-					".$this->getPeerClassname()."::doUpdate(\$this, \$con);
+					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
@@ -901,7 +907,7 @@ $script .= "
 			if (\$this->$collName !== null) {
 				foreach(\$this->$collName as \$referrerFK) {
 					if (!\$referrerFK->isDeleted()) {
-						\$referrerFK->save(\$con);
+						\$affectedRows += \$referrerFK->save(\$con);
 					}
 				}
 			}
@@ -911,7 +917,7 @@ $script .= "
 		$script .= "
 			\$this->alreadyInSave = false;
 		}
-		
+		return \$affectedRows;
 	} // doSave()
 ";
 	
@@ -946,7 +952,7 @@ $script .= "
 	 * wraps the doSave() worker method in a transaction.
 	 *
 	 * @param Connection \$con
-	 * @return void
+	 * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws PropelException
 	 * @see doSave()
 	 */
@@ -962,8 +968,9 @@ $script .= "
 		
 		try {
 			\$con->begin();
-			\$this->doSave(\$con);
+			\$affectedRows = \$this->doSave(\$con);
 			\$con->commit();
+			return \$affectedRows;
 		} catch (PropelException \$e) {
 			\$con->rollback();
 			throw \$e;
