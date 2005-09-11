@@ -173,19 +173,19 @@ class Criteria implements IteratorAggregate {
      * you to foreach() over a Criteria object.
      */
     public function getIterator()
-	{
+		{
         return new CriterionIterator($this);
     }
     
-	/**
-	 * Get the criteria map.
-	 * @return array
-	 */
-	public function getMap()
-	{
-		return $this->map;
-	}
-	
+		/**
+		 * Get the criteria map.
+		 * @return array
+		 */
+		public function getMap()
+		{
+			return $this->map;
+		}
+		
     /**
      * Brings this criteria back to its initial state, so that it
      * can be reused as if it was new. Except if the criteria has grown in
@@ -244,7 +244,7 @@ class Criteria implements IteratorAggregate {
         return $this->asColumns;
     }
 
-	/**
+		/**
      * Returns the column name associated with an alias (AS-column).
      *
      * @param string $alias
@@ -334,14 +334,14 @@ class Criteria implements IteratorAggregate {
     /**
      * Method to return criteria related to columns in a table.
      *
-	 * @param string $column Column name.
+		 * @param string $column Column name.
      * @return A Criterion or null if $column is invalid.
      */
     public function getCriterion($column)
     {
-		if (isset($this->map[$column])) {
+			if (isset($this->map[$column])) {
 		    return $this->map[$column];
-		}
+			}
     }
 
     /**
@@ -577,7 +577,7 @@ class Criteria implements IteratorAggregate {
      *
      * @param string $left A String with the left side of the join.
      * @param string $right A String with the right side of the join.
-	 * @param string $operator A String with the join operator e.g. LEFT JOIN, ...
+		 * @param string $operator A String with the join operator e.g. LEFT JOIN, ...
      * @return Criteria A modified Criteria object.
      */
     public function addJoin($left, $right, $operator = null)
@@ -613,7 +613,7 @@ class Criteria implements IteratorAggregate {
      * get one side of the set of possible joins.  This method is meant to
      * be called by BasePeer.
      * @return array
-	 * @deprecated This method is no longer used by BasePeer.
+		 * @deprecated This method is no longer used by BasePeer.
      */
     public function getJoinR()
     {
@@ -762,8 +762,8 @@ class Criteria implements IteratorAggregate {
      * @return Criteria A modified Criteria object.
      */
     public function clearSelectColumns() {
-        $this->selectColumns = array();
-		$this->asColumns= array();
+				$this->selectColumns = array();
+				$this->asColumns = array();
         return $this;
     }
 
@@ -908,7 +908,7 @@ class Criteria implements IteratorAggregate {
      * Returns the size (count) of this criteria.
      * @return int
      */
-    function size()
+    public function size()
     {
         return count($this->map);
     }
@@ -1654,7 +1654,7 @@ class Join
      *        null (adding the join condition to the where clause),
      *        Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
      */
-    function Join($leftColumn, $rightColumn, $joinType)
+    public function __construct($leftColumn, $rightColumn, $joinType = null)
     {
 	    $this->leftColumn = $leftColumn;
 	    $this->rightColumn = $rightColumn;
@@ -1665,7 +1665,7 @@ class Join
      * @return the type of the join, i.e. Criteria::LEFT_JOIN(), ...,
      *         or null for adding the join condition to the where Clause
      */
-    function getJoinType()
+    public function getJoinType()
     {
 	    return $this->joinType;
     }
@@ -1673,25 +1673,45 @@ class Join
     /**
      * @return the left column of the join condition
      */
-    function getLeftColumn()
+    public function getLeftColumn()
     {
 	    return $this->leftColumn;
     }
 
+		public function getLeftColumnName()
+		{
+			return substr($this->leftColumn, strpos($this->leftColumn, '.') + 1);
+		}
+		
+		public function getLeftTableName()
+		{
+			return substr($this->leftColumn, 0, strpos($this->leftColumn, '.'));
+		}
+		
     /**
      * @return the right column of the join condition
      */
-    function getRightColumn()
+    public function getRightColumn()
     {
 	    return $this->rightColumn;
     }
+		
+		public function getRightColumnName()
+		{
+			return substr($this->rightColumn, strpos($this->rightColumn, '.') + 1);
+		}
+		
+		public function getRightTableName()
+		{
+			return substr($this->rightColumn, 0, strpos($this->rightColumn, '.'));
+		}
 
     /**
      * returns a String representation of the class,
      * mainly for debugging purposes
      * @return a String representation of the class
      */
-    function toString()
+    public function toString()
     {
         $result = "";
         if ($this->joinType != null)

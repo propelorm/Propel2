@@ -323,4 +323,172 @@ class CriteriaTest extends BaseTestCase {
 		
 	}
 
+	public function testJoinObject ()
+	{
+		$j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_2');
+		$this->assertEquals(null, $j->getJoinType());
+		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
+		$this->assertEquals('TABLE_A', $j->getLeftTableName());
+		$this->assertEquals('COL_1', $j->getLeftColumnName());
+		$this->assertEquals('TABLE_B.COL_2', $j->getRightColumn());
+		$this->assertEquals('TABLE_B', $j->getRightTableName());
+		$this->assertEquals('COL_2', $j->getRightColumnName());
+		
+		$j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::LEFT_JOIN);
+		$this->assertEquals('LEFT JOIN', $j->getJoinType());
+		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
+		$this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
+		
+		$j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::RIGHT_JOIN);
+		$this->assertEquals('RIGHT JOIN', $j->getJoinType());
+		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
+		$this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
+		
+		$j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
+		$this->assertEquals('INNER JOIN', $j->getJoinType());
+		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
+		$this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
+	}
+	
+	public function testAddingJoin ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1'); // straight join
+		
+		$expect = "SELECT * FROM TABLE_A, TABLE_B WHERE TABLE_A.COL_1=TABLE_B.COL_1";
+		try {
+            $result = BasePeer::createSelectSql($c, $params=array());
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+        }
+		$this->assertEquals($expect, $result);
+	}
+
+	public function testAddingMultipleJoins ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1'); 
+		$c->addJoin('TABLE_B.COL_X', 'TABLE_D.COL_X'); 
+		
+		$expect = 'SELECT * FROM TABLE_A, TABLE_B, TABLE_D '
+		         .'WHERE TABLE_A.COL_1=TABLE_B.COL_1 AND TABLE_B.COL_X=TABLE_D.COL_X';
+		try {
+            $result = BasePeer::createSelectSql($c, $params=array());
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+        }
+		$this->assertEquals($expect, $result);
+	}
+
+	public function testAddingLeftJoin ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("TABLE_A.*");
+		$c->addSelectColumn("TABLE_B.*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_2', Criteria::LEFT_JOIN);
+		
+		$expect = "SELECT TABLE_A.*, TABLE_B.* FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
+
+	public function testAddingMultipleLeftJoins ()
+	{
+		// Fails.. Suspect answer in the chunk starting at BasePeer:605
+		$c = new Criteria();
+		$c->addSelectColumn('*');
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::LEFT_JOIN);
+		$c->addJoin('TABLE_A.COL_2', 'TABLE_C.COL_2', Criteria::LEFT_JOIN);
+		
+		$expect = 'SELECT * FROM TABLE_A '
+		         .'LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+						 .'LEFT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
+
+	public function testAddingRightJoin ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_2', Criteria::RIGHT_JOIN);
+		
+		$expect = "SELECT * FROM TABLE_A RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
+	
+	public function testAddingMultipleRightJoins ()
+	{
+		// Fails.. Suspect answer in the chunk starting at BasePeer:605
+		$c = new Criteria();
+		$c->addSelectColumn('*');
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::RIGHT_JOIN);
+		$c->addJoin('TABLE_A.COL_2', 'TABLE_C.COL_2', Criteria::RIGHT_JOIN);
+		
+		$expect = 'SELECT * FROM TABLE_A '
+		         .'RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+						 .'RIGHT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
+
+	public function testAddingInnerJoin ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
+		
+		$expect = "SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)";
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
+	
+	public function testAddingMultipleInnerJoin ()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("*");
+		$c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
+		$c->addJoin('TABLE_B.COL_1', 'TABLE_C.COL_1', Criteria::INNER_JOIN);
+		
+		$expect = 'SELECT * FROM TABLE_A '
+		         .'INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+						 .'INNER JOIN TABLE_C ON (TABLE_B.COL_1=TABLE_C.COL_1)';
+		try {
+			$result = BasePeer::createSelectSql($c, $params=array());
+		} catch (PropelException $e) {
+			print $e->getTraceAsString();
+			$this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+		}
+		$this->assertEquals($expect, $result);
+	}
 }
