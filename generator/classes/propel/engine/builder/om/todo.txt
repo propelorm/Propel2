@@ -1,3 +1,0 @@
-- Make sure that we're using class methods instead of properties in all the builder
-classes.   Using methods makes customization far easier -- and we're not worried at
-all about performance in the generator classes.
