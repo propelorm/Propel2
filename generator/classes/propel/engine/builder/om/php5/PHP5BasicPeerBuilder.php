@@ -176,6 +176,12 @@ if (Propel::isInit()) {
 ";
 		$this->addColumnNameConstants($script);
 		$this->addInheritanceColumnConstants($script);
+		
+		$script .= "
+	/** The PHP to DB Name Mapping */
+	private static \$phpNameMap = null;
+	
+";
 	}
 	
 	/**
