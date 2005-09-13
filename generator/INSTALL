@@ -121,10 +121,11 @@
   $> phing -Dproject=bookstore
   
   Run the 'insert-sql' target which will add the tables to the SQLite db
-  $> phing -Dproject=bookstore -Dtarget=insert-sql
+  $> phing -Dproject=bookstore insert-sql
   
   Run the test script that uses the generated classes against the bookstore db:
-  $> php -qC test/bookstore-test.php
+  $> cd test/
+  $> php -f bookstore-test.php
   
   You should see a bunch of output as it tests use cases.  Hopefully there aren't any 
   "FAILED" messages. If you get a failed message immediately indicating that it can't 
