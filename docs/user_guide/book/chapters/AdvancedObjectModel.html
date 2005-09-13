@@ -64,7 +64,7 @@ class BaseBook extends BookstoreComponent {</pre>
   
 <pre title="example of inheritance definition">&lt;table name=&quot;publication&quot;&gt;
  &lt;column name=&quot;id&quot; type=&quot;INTEGER&quot; primaryKey=&quot;true&quot;/&gt;
- &lt;column name=&quot;class&quot; type=&quot;INTEGER&quot; inheritance=&quot;single&quot;&gt;
+ &lt;column name=&quot;class_key&quot; type=&quot;INTEGER&quot; inheritance=&quot;single&quot;&gt;
    &lt;inheritance key=&quot;1&quot; class=&quot;Journal&quot; extends=&quot;bookstore.Publication&quot;/&gt;
    &lt;inheritance key=&quot;2&quot; class=&quot;Magazine&quot; extends=&quot;bookstore.Journal&quot;/&gt;
  &lt;/column&gt;
