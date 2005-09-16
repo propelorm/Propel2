@@ -246,7 +246,7 @@ class Domain extends XMLElement {
 		} elseif ($this->propelType === PropelTypes::DATE || $this->propelType === PropelTypes::TIME || $this->propelType === PropelTypes::TIMESTAMP) {
 			// DATE/TIME vals need to be converted to integer timestamp
 			$ts = strtotime($this->defaultValue);
-			if ($ts === -1) {
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
 				throw new EngineException("Unable to parse default value for ".$table->getName().".".$col->getName()." as date/time value: " . var_export($val, true));
 			}
 			return $ts;

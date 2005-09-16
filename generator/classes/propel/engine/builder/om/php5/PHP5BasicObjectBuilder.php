@@ -371,7 +371,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} elseif (!is_int(\$this->$clo)) {
 			// a non-timestamp value was set externally, so we convert it
 			\$ts = strtotime(\$this->$clo);
-			if (\$ts === -1) {
+			if (\$ts === -1 || \$ts === false) { // in PHP 5.1 return value changes to FALSE
 				throw new PropelException(\"Unable to parse value of [$clo] as date/time value: \" . var_export(\$this->$clo, true));
 			}
 		} else {
@@ -595,7 +595,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 		if (\$v !== null && !is_int(\$v)) {
 			\$ts = strtotime(\$v);
-			if (\$ts === -1) {
+			if (\$ts === -1 || \$ts === false) { // in PHP 5.1 return value changes to FALSE
 				throw new PropelException(\"Unable to parse date/time value for [$clo] from input: \" . var_export(\$v, true));
 			}
 		} else {
