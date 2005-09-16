@@ -282,9 +282,29 @@ propel.database.url = mssql://localhost/bookstore
   You will see later that you pass the path to this file to <strong>Propel::init()</strong> 
   to get the whole thing started. </p>
 <h2><a name="GettingStarted.Building"></a>Building</h2>
+
 <p>At this point Propel has already been installed, all configuration options 
   have been set and you are ready to build. <em>Building requires that you have 
   already installed and configured <a href="Bibliography.html#bib.phing">Phing</a>.</em></p>
+
+<hr/>
+  
+<h3>Building for PEAR-installed Propel</h3>
+
+<p>To build your classes and SQL, simply run the packaged <tt>propel-gen</tt> script:</p>
+<pre title="build propel (Unix)">
+$&gt; propel-gen /path/to/bookstore 
+</pre>
+
+<p>The procedure on Windows is exactly the same:</p>
+<pre title="build propel (Windows)">
+C:\&gt; propel-gen C:\path\to\bookstore
+</pre>
+
+<em>The bookstore sample application is in your PEAR <tt>data</tt> directory, which will depend on your platform/setup.</em>
+
+<h3>Building for traditional-installed (or SVN) Propel</h3>
+
 <p>To build your classes and SQL, simply run Phing using the<tt> build-propel.xml</tt> 
   file:</p>
 <pre title="build propel (Unix)">
@@ -300,13 +320,17 @@ C:\PHP\apps\propel\generator&gt; phing -Dproject=bookstore
 script, and also allows you to use per-project <tt>build.properties</tt> files.  If you prefer to call
 the <tt>build-propel.xml</tt> script directly, you must make sure that all your project properties are 
 specified in the top-level <tt>build.properties</tt> file.</p>
+
+<hr/>
+  
 <p>This will build the SQL files and the object &amp; peer classes based on any 
   XML schemas in the <tt>projects/bookstore/</tt> directory -- in this case, there 
   is just one <tt>schema.xml</tt> file.</p>
 <p>The resulting files will be placed in the <tt>projects/bookstore/build</tt> 
   directory.</p>
-<p>Your output should look something like this (with your paths, of course, and 
-  maybe with a faster build time than my slow laptop):</p>
+  
+<p>Your output should look <em>something</em> like this (with your paths, of course, and some other differences related to newer Propel and Phing versions):</p>
+
 <pre title="build output">
 C:\sandbox\propel-generator>phing -Dproject=bookstore
 Buildfile: C:\sandbox\propel\generator\build.xml
