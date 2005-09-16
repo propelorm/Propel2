@@ -22,7 +22,7 @@
  
 require_once 'propel/phing/AbstractPropelDataModelTask.php';
 include_once 'propel/engine/builder/om/ClassTools.php';
-require_once 'propel/engine/builder/DataModelBuilder.php';
+require_once 'propel/engine/builder/om/OMBuilder.php';
 
 /**
  * This Task creates the OM classes based on the XML schema file.
@@ -72,10 +72,11 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	/**
 	 * Uses a builder class to create the output class.
 	 * This method assumes that the DataModelBuilder class has been initialized with the build properties.
-	 * @param DataModelBuilder $builder
+	 * @param OMBuilder $builder
 	 * @param boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
+	 * @todo -cPropelOMTask Consider refactoring build() method into AbstractPropelDataModelTask (would need to be more generic).
 	 */
-	protected function build(DataModelBuilder $builder, $overwrite = true)
+	protected function build(OMBuilder $builder, $overwrite = true)
 	{
 		
 		$path = $builder->getClassFilePath();

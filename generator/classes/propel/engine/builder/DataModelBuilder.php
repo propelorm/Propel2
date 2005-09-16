@@ -72,22 +72,40 @@ abstract class DataModelBuilder {
 	}
 	
 	/**
+	 * Imports and returns the classname of the builder class for specified 'type'.
+	 * @param $type The "key" for class to load.
+	 * @return string
+	 */
+	public static function getBuilderClass($type)
+	{
+		if (empty(self::$buildProperties)) {
+		    throw new BuildException("Cannot determine builder class when no build properties have been loaded (hint: Did you call DataModelBuilder::setBuildProperties(\$props) first?)");
+		}
+		$propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
+		$classpath = self::getBuildProperty($propname);
+				
+		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
+		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
+		$lastdotpos = strrpos($classpath, '.');
+		if ($lastdotpos) $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
+		else ucfirst($classpath);
+		
+		if (empty($classpath)) {
+			throw new BuildException("Unable to find class path for '$propname' property.");
+		}
+		
+		return Phing::import($classpath);
+	}
+	
+	/**
 	 * Factory method to load a new builder instance based on specified type.
 	 * @param Table $table
-	 * @param $type
+	 * @param $type The "key" for class to load.
 	 * @throws BuildException if specified class cannot be found / loaded.
 	 */
 	public static function builderFactory(Table $table, $type)
 	{
-		if (empty(self::$buildProperties)) {
-		    throw new BuildException("Cannot call builderFactory() method when no build properties have been loaded (hint: Did you call DataModelBuilder::setBuildProperties(\$props) first?)");
-		}
-		$propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
-		$classpath = self::getBuildProperty($propname);
-		if (empty($classpath)) {
-			throw new BuildException("Unable to find class path for '$propname' property.");
-		}
-		$classname = Phing::import($classpath);
+		$classname = self::getBuilderClass($type);
 		return new $classname($table);
 	}
 	
