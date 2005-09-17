@@ -12,13 +12,14 @@
 
   <property name="build.properties" value="build.properties"/>
   <property name="propel.contextProperties" value="./${build.properties}"/>
-  <property file="./build.properties"/>
+  <property name="propel.home" value="."/>
+  <property file="${propel.home}/build.properties"/>
 
   <!--
     The default.properties file will map old properties to the new ones along
     with setting the corret defaults.
   -->
-  <property file="default.properties"/>
+  <property file="${propel.home}/default.properties"/>
 
   <!--
     Do forward declarations of all of our tasks to
@@ -26,7 +27,7 @@
   -->
 
   <path id="propelclasses">
-    <pathelement dir="classes/"/>
+    <pathelement dir="${propel.home}/classes/"/>
   </path>
 
   <taskdef
