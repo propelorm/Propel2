@@ -523,6 +523,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
+		elseif (\$criteria instanceof Criteria)
+		{
+			\$criteria = clone \$criteria;
+		}
 
 		if (\$this->$collName === null) {
 			if (\$this->isNew()) {
@@ -706,6 +710,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
+		elseif (\$criteria instanceof Criteria)
+		{
+			\$criteria = clone \$criteria;
+		}
 ";
 		foreach ($refFK->getForeignColumns() as $columnName) {
 			$column = $this->getTable()->getColumn($columnName);
@@ -757,6 +765,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
+		}
+		elseif (\$criteria instanceof Criteria)
+		{
+			\$criteria = clone \$criteria;
 		}
 
 		if (\$this->$collName === null) {

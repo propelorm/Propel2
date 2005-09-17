@@ -494,6 +494,7 @@ if (Propel::isInit()) {
 		}				
 
 		if (!\$criteria->getSelectColumns()) {
+			\$criteria = clone \$criteria;
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 	
@@ -700,7 +701,7 @@ if (Propel::isInit()) {
 		}
 		
 		if (\$values instanceof Criteria) {
-			\$criteria = \$values; // rename for clarity
+			\$criteria = clone \$values; // rename for clarity
 		} else {
 			\$criteria = \$values->buildCriteria(); // build Criteria from ".$table->getPhpName()." object
 		}
@@ -761,7 +762,7 @@ if (Propel::isInit()) {
 		\$selectCriteria = new Criteria(self::DATABASE_NAME);
 				
 		if (\$values instanceof Criteria) {
-			\$criteria = \$values; // rename for clarity
+			\$criteria = clone \$values; // rename for clarity
 ";
 		foreach ($table->getColumns() as $col) {		 
 			if($col->isPrimaryKey()) {
@@ -855,7 +856,7 @@ if (Propel::isInit()) {
 		}
 		
 		if (\$values instanceof Criteria) {
-			\$criteria = \$values; // rename for clarity
+			\$criteria = clone \$values; // rename for clarity
 		} elseif (\$values instanceof ".$table->getPhpName().") {
 ";
 		if (count($table->getPrimaryKey()) > 0) {

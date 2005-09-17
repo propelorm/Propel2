@@ -149,12 +149,13 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
 	{
-	
+		\$c = clone \$c;
+
 		// Set the correct dbName if it has not been overridden
 		if (\$c->getDbName() == Propel::getDefaultDB()) {
 			\$c->setDbName(self::DATABASE_NAME);
 		}
-	
+
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
 		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
@@ -328,6 +329,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	public static function doSelectJoinAll(Criteria \$c, \$con = null)
 	{
+		\$c = clone \$c;
+
 		// Set the correct dbName if it has not been overridden
 		if (\$c->getDbName() == Propel::getDefaultDB()) {
 			\$c->setDbName(self::DATABASE_NAME);
@@ -616,6 +619,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 */
 	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
 	{
+		\$c = clone \$c;
+
 		// Set the correct dbName if it has not been overridden
 		// \$c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
