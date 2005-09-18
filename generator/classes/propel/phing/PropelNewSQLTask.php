@@ -23,12 +23,11 @@
 include_once 'propel/engine/database/model/AppData.php';
 
 /**
+ * The task for building SQL DDL based on the XML datamodel.
  * 
- *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jason van Zyl <jvanzyl@periapt.com> (Torque)
- * @author John McNally <jmcnally@collab.net> (Torque)
- * @version $Revision: 180 $
+ * This class uses the new DDLBuilder classes instead of the Capsule PHP templates.
+ * 
+ * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
  */
 class PropelNewSQLTask extends AbstractPropelDataModelTask {
@@ -178,6 +177,9 @@ class PropelNewSQLTask extends AbstractPropelDataModelTask {
 						$builder = DataModelBuilder::builderFactory($table, 'ddl');
 						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
 						$ddl .= $builder->build();
+						foreach($builder->getWarnings() as $warning) {
+							$this->log($warning, PROJECT_MSG_WARN);
+						}
                     } else {
                         $this->log("\t + (skipping) " . $table->getName());
                     }

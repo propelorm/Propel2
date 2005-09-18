@@ -74,7 +74,7 @@ abstract class DataModelBuilder {
 	/**
 	 * Imports and returns the classname of the builder class for specified 'type'.
 	 * @param $type The "key" for class to load.
-	 * @return string
+	 * @return string The unqualified classname.
 	 */
 	public static function getBuilderClass($type)
 	{
@@ -142,6 +142,12 @@ abstract class DataModelBuilder {
 	private $table;	
 
 	/**
+	 * An array of warning messages that can be retrieved for display (e.g. as part of phing build process).
+	 * @var array string[]
+	 */
+	private $warnings = array();
+	
+	/**
 	 * Creates new instance of DataModelBuilder subclass.
 	 * @param Table $table The Table which we are using to build [OM, DDL, etc.].
 	 */
@@ -177,4 +183,21 @@ abstract class DataModelBuilder {
 		return $this->table;
 	}	
 	
+	/**
+	 * Pushes a message onto the stack of warnings.
+	 * @param string $msg The warning message.
+	 */
+	protected function warn($msg)
+	{
+		$this->warnings[] = $msg;
+	}
+	
+	/**
+	 * Gets array of warning messages.
+	 * @return array string[]
+	 */
+	public function getWarnings()
+	{
+		return $this->warnings;
+	}
 }

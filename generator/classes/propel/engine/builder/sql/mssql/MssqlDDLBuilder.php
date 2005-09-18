@@ -151,10 +151,21 @@ CREATE ";
 BEGIN
 ALTER TABLE ".$table->getName()." ADD CONSTRAINT ".$fk->getName()." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
-				$script .= " ON UPDATE ".$fk->getOnUpdate();
+				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
+				    // we have to skip this because it's unsupported.
+					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$fk->getLocalColumnNames()." fk).");
+				} else {
+					$script .= " ON UPDATE ".$fk->getOnUpdate();
+				}
+				
 			}
 			if ($fk->hasOnDelete()) { 
-				$script .= " ON DELETE ".$fk->getOnDelete();
+				if ($fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
+				    // we have to skip this because it's unsupported.
+					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$fk->getLocalColumnNames()." fk).");
+				} else {
+					$script .= " ON DELETE ".$fk->getOnDelete();
+				}
 			}
 			$script .= "
 END

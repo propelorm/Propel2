@@ -87,6 +87,9 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
 			$script = $builder->build();
 			file_put_contents($_f->getAbsolutePath(), $script);
+			foreach($builder->getWarnings() as $warning) {
+				$this->log($warning, PROJECT_MSG_WARN);
+			}
 		} else {
 			$this->log("\t\t-> (exists) " . $builder->getClassname());
 		}
