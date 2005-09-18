@@ -79,5 +79,13 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
     {
         return true;
     }
+	
+	/**
+     * @see Platform::hasSize(String)
+     */
+    public function hasSize($sqlType)
+    {
+        return !("INT" == $sqlType || "TEXT" == $sqlType);
+    }
 
 }
