@@ -38,7 +38,16 @@
 <target name="checkhome" unless="propel.home">
     <fail msg="Build failed. Please make sure that propel.home is set to the propel-generator-dir in local build.properties"/>
 </target>
-<target name="configure" depends="init,checkproject,checkhome">
+<target name="checkschemadir" unless="propel.schema.dir">
+    <fail msg="Build failed. Please make sure that propel.schema.dir is set to '.' in local build.properties"/>
+</target>
+<target name="checkconfdir" unless="propel.conf.dir">
+    <fail msg="Build failed. Please make sure that propel.conf.dir is set to '.' in local build.properties"/>
+</target>
+<target name="checkoutputdir" unless="propel.output.dir">
+    <fail msg="Build failed. Please make sure that propel.output.dir is set to a directory of your choice (e.g. './build/') local build.properties"/>
+</target>
+<target name="configure" depends="init,checkproject,checkhome,checkschemadir,checkconfdir,checkoutputdir">
     <property name="project" value="{$propel.project}"/>
 </target>
 
