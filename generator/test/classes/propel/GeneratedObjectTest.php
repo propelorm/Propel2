@@ -60,7 +60,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
 
 	}
-	
+
 	/**
 	 * Test saving an object and getting correct number of affected rows from save().
 	 * This includes tests of cascading saves to fk-related objects.
@@ -72,42 +72,42 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	    $author->setFirstName("Mark");
 	    $author->setLastName("Kurlansky");
 		// do not save
-		
+
 		$pub = new Publisher();
 	    $pub->setName("Penguin Books");
 	    // do not save
-		
+
 		$book = new Book();
 	    $book->setTitle("Salt: A World History");
 	    $book->setISBN("0142001619");
 		$book->setAuthor($author);
 		$book->setPublisher($pub);
-		
+
 		$affected = $book->save();
 		$this->assertEquals(3, $affected, "Expected 3 affected rows when saving book + publisher + author.");
-		
+
 		// change nothing ...
 		$affected = $book->save();
 		$this->assertEquals(0, $affected, "Expected 0 affected rows when saving already-saved book.");
-		
+
 		// modify the book (UPDATE)
 		$book->setTitle("Salt A World History");
-		$affected = $book->save();		
+		$affected = $book->save();
 		$this->assertEquals(1, $affected, "Expected 1 affected row when saving modified book.");
-		
+
 		// modify the related author
 		$author->setLastName("Kurlanski");
   		$affected = $book->save();
 		$this->assertEquals(1, $affected, "Expected 1 affected row when saving book with updated author.");
-		
+
 		// modify both the related author and the book
 		$author->setLastName("Kurlansky");
 		$book->setTitle("Salt: A World History");
   		$affected = $book->save();
 		$this->assertEquals(2, $affected, "Expected 2 affected rows when saving updated book with updated author.");
-		
+
 	}
-	
+
 	/**
 	 * Test deleting an object using the delete() method.
 	 */
@@ -131,237 +131,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$book = BookPeer::retrieveByPK($bookId);
 		$this->assertNull($book, "Expect NULL from retrieveByPK on deleted Book.");
 
-	}
-
-	/**
-	 * Tests the getFieldNames() method
-	 *
-	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
-	 */
-	public function testGetFieldNames (){
-
-		if (!defined('Book::TYPE_FIELDNAME')) {
-			return;
-		}
-
-		$defaultType = Book::TYPE_FIELDNAME;
-		$types = array(
-			Book::TYPE_PHPNAME,
-			Book::TYPE_COLNAME,
-			Book::TYPE_FIELDNAME,
-			Book::TYPE_NUM
-		);
-		$expecteds = array (
-			Book::TYPE_PHPNAME => array(
-				0 => 'Id',
-				1 => 'Title',
-				2 => 'ISBN',
-				3 => 'PublisherId',
-				4 => 'AuthorId'
-			),
-			Book::TYPE_COLNAME => array(
-				0 => 'book.ID',
-				1 => 'book.TITLE',
-				2 => 'book.ISBN',
-				3 => 'book.PUBLISHER_ID',
-				4 => 'book.AUTHOR_ID'
-			),
-			Book::TYPE_FIELDNAME => array(
-				0 => 'id',
-				1 => 'title',
-				2 => 'isbn',
-				3 => 'publisher_id',
-				4 => 'author_id'
-			),
-			Book::TYPE_NUM => array(
-				0 => 0,
-				1 => 1,
-				2 => 2,
-				3 => 3,
-				4 => 4
-			)
-		);
-
-		foreach($types as $type) {
-			$results[$type] = Book::getFieldnames($type);
-			$this->assertEquals(
-				$expecteds[$type],
-				$results[$type],
-				'expected was: ' . print_r($expected, 1) .
-				'but getFieldnames() returned ' . print_r($result, 1)
-			);
-		}
-	}
-
-	/**
-	 * Tests the translateFieldName() method
-	 *
-	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
-	 */
-	public function testTranslateFieldName (){
-
-		if (!defined('Book::TYPE_FIELDNAME')) {
-			return;
-		}
-
-		$types = array(
-			Book::TYPE_PHPNAME,
-			Book::TYPE_COLNAME,
-			Book::TYPE_FIELDNAME,
-			Book::TYPE_NUM
-		);
-		$expecteds = array (
-			Book::TYPE_PHPNAME => 'AuthorId',
-			Book::TYPE_COLNAME => 'book.AUTHOR_ID',
-			Book::TYPE_FIELDNAME => 'author_id',
-			Book::TYPE_NUM => 4,
-		);
-		foreach($types as $fromType) {
-			foreach($types as $toType) {
-				$name = $expecteds[$fromType];
-				$expected = $expecteds[$toType];
-				$result = Book::translateFieldName($name, $fromType, $toType);
-				$this->assertEquals($expected, $result);
-			}
-		}
-	}
-
-	/**
-	 * Tests the getByName() method
-	 *
-	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
-	 */
-	public function testGetByName(){
-
-		if (!defined('Book::TYPE_FIELDNAME')) {
-			return;
-		}
-
-		$types = array(
-			Book::TYPE_PHPNAME => 'Title',
-			Book::TYPE_COLNAME => 'book.TITLE',
-			Book::TYPE_FIELDNAME => 'title',
-			Book::TYPE_NUM => 1
-		);
-		$criteria = new Criteria();
-		$criteria->add(BookPeer::ISBN, '043935806X');
-		$book = BookPeer::doSelectOne($criteria);
-
-		$expected = 'Harry Potter and the Order of the Phoenix';
-		foreach($types as $type => $name) {
-			$result = $book->getByName($name, $type);
-			$this->assertEquals($expected, $result);
-		}
-	}
-
-	/**
-	 * Tests the toArray() method
-	 *
-	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
-	 */
-	public function testToArray(){
-
-		if (!defined('Book::TYPE_FIELDNAME')) {
-			return;
-		}
-
-		$types = array(
-			Book::TYPE_PHPNAME,
-			Book::TYPE_COLNAME,
-			Book::TYPE_FIELDNAME,
-			Book::TYPE_NUM
-		);
-		$expecteds = array (
-			Book::TYPE_PHPNAME => array (
-				'Title' => 'Harry Potter and the Order of the Phoenix',
-				'ISBN' => '043935806X'
-			),
-			Book::TYPE_COLNAME => array (
-				'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
-				'book.ISBN' => '043935806X'
-			),
-			Book::TYPE_FIELDNAME => array (
-				'title' => 'Harry Potter and the Order of the Phoenix',
-				'isbn' => '043935806X'
-			),
-			Book::TYPE_NUM => array (
-				'1' => 'Harry Potter and the Order of the Phoenix',
-				'2' => '043935806X'
-			)
-		);
-
-		$criteria = new Criteria();
-		$criteria->add(BookPeer::ISBN, '043935806X');
-		$book = BookPeer::doSelectOne($criteria);
-
-		foreach($types as $type) {
-			$expected = $expecteds[$type];
-			$result = $book->toArray($type);
-			// remove ID since its autoincremented at each test iteration
-			$result = array_slice($result, 1, 2, true);
-			$this->assertEquals(
-				$expected,
-				$result,
-				'expected was: ' . print_r($expected, 1) .
-				'but toArray() returned ' . print_r($result, 1)
-			);
-		}
-	}
-
-	/**
-	 * Tests the fromArray() method
-	 *
-	 * this also tests populateFromArray() because that's an alias
-	 *
-	 * @author Sven Fuchs <svenfuchs@artweb-design.de>
-	 */
-	public function testFromArray(){
-
-		if (!defined('Book::TYPE_FIELDNAME')) {
-			return;
-		}
-
-		$types = array(
-			Book::TYPE_PHPNAME,
-			Book::TYPE_COLNAME,
-			Book::TYPE_FIELDNAME,
-			Book::TYPE_NUM
-		);
-		$expecteds = array (
-			Book::TYPE_PHPNAME => array (
-				'Title' => 'Harry Potter and the Order of the Phoenix',
-				'ISBN' => '043935806X'
-			),
-			Book::TYPE_COLNAME => array (
-				'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
-				'book.ISBN' => '043935806X'
-			),
-			Book::TYPE_FIELDNAME => array (
-				'title' => 'Harry Potter and the Order of the Phoenix',
-				'isbn' => '043935806X'
-			),
-			Book::TYPE_NUM => array (
-				'1' => 'Harry Potter and the Order of the Phoenix',
-				'2' => '043935806X'
-			)
-		);
-
-		$book = new Book();
-
-		foreach($types as $type) {
-			$expected = $expecteds[$type];
-			$book->fromArray($expected, $type);
-			$result = array();
-			foreach (array_keys($expected) as $key) {
-				$result[$key] = $book->getByName($key, $type);
-			}
-			$this->assertEquals(
-				$expected,
-				$result,
-				'expected was: ' . print_r($expected, 1) .
-				'but fromArray() returned ' . print_r($result, 1)
-			);
-		}
 	}
 
 }
