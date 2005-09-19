@@ -24,18 +24,18 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 
 /**
  * Generates a PHP5 base Object class for user object model (OM).
- * 
+ *
  * This class produces the base object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
- * 
+ *
  * This class replaces the Object.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5BasicObjectBuilder extends ObjectBuilder {		
-	
+class PHP5BasicObjectBuilder extends ObjectBuilder {
+
 	/**
 	 * Gets the package for the [base] object classes.
 	 * @return string
@@ -44,7 +44,7 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		return parent::getPackage() . ".om";
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
@@ -53,38 +53,38 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
-		
-		$table = $this->getTable();		
-		$package = $this->getPackage();		
+
+		$table = $this->getTable();
+		$package = $this->getPackage();
 		$parentClass = $this->getBaseClass();
 		$interface = $this->getInterface();
-		
+
 		$script .= "
 require_once '".$this->getFilePath($parentClass)."';
 ";
-		
-		
+
+
 
 		if (!empty($interface)) {
 			$script .= "
 require_once '".$this->getFilePath($interface)."';
 ";
 		}
-	
-		
+
+
 		if (!$table->isAlias()) {
 
 			// If any columns in table are BLOB or CLOB then we need to make
-			// sure those classes are included so we can do things like 
+			// sure those classes are included so we can do things like
 			// if ($v instanceof Lob) etc.
-	
+
 			$includes_lobs = false;
 			foreach ($table->getColumns() as $col) {
 				if ($col->isLob()) {
@@ -92,7 +92,7 @@ require_once '".$this->getFilePath($interface)."';
 					break;
 				}
 			}
-			
+
 			if($includes_lobs) {
 				$script .= "
 include_once 'creole/util/Clob.php';
@@ -104,25 +104,25 @@ include_once 'creole/util/Blob.php';
 		$script .= "
 
 include_once 'propel/util/Criteria.php';
-";	
+";
 
 		$script .= "
 include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
 ";
 	} // addIncludes()
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
-		
+
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		$interface = $this->getInterface();
-		
+
 		$script .= "
 /**
  * Base class that represents a row from the '$tableName' table.
@@ -139,7 +139,7 @@ include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
 		}
 		$script .= "
  * @package ".$this->getPackage()."
- */	
+ */
 abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->getBaseClass())." ";
 
 		$interface = ClassTools::getInterface($table);
@@ -151,7 +151,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 ";
 	}
-	
+
 	/**
 	 * Specifies the methods that are added as part of the basic OM class.
 	 * This can be overridden by subclasses that wish to add more methods.
@@ -164,29 +164,26 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addConstants($script);
 			$this->addAttributes($script);
 		}
-		
+
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
-		
+
 		$this->addHydrate($script);
-		
+
 		$this->addManipulationMethods($script);
-		
-		$this->addTranslateFieldName($script);
-		$this->addGetFieldNames($script);
-		
+
 		if ($this->isAddGenericAccessors()) {
 			$this->addGetByName($script);
 			$this->addGetByPosition($script);
 			$this->addToArray($script);
 		}
-		
-		if ($this->isAddgenericMutators()) {
+
+		if ($this->isAddGenericMutators()) {
 		    $this->addSetByName($script);
 			$this->addSetByPosition($script);
 			$this->addFromArray($script);
 		}
-		
+
 		$this->addBuildCriteria($script);
 		$this->addBuildPkeyCriteria($script);
 		$this->addGetPrimaryKey($script);
@@ -198,29 +195,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addGetPeer($script);
 		}
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
 } // " . $this->getClassname() . "
 ";
 	}
-	
+
 	/**
 	 * Adds any constants to the class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addConstants(&$script)
 	{
-		if ($this->isAddGenericAccessors() || $this->isAddGenericMutators()) {
-			$this->addFieldnameTypeConstants($script);
-		}
+		// nothing to do here any more
+		// fieldnameTypeConstants have been moved to class BasePeer [sv]
 	}
-	
+
 	/**
 	 * Adds class attributes.
 	 * @param string &$script The script will be modified in this method.
@@ -228,7 +224,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addAttributes(&$script)
 	{
 		$script .= "
-	/** 
+	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
@@ -239,33 +235,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (!$this->getTable()->isAlias()) {
 		    $this->addColumnAttributes($script);
 		}
-		
-		if ($this->isAddGenericAccessors() || $this->isAddGenericMutators()) {
-		    $this->addFieldNamesAttribute($script);
-			$this->addFieldKeysAttribute($script);
-		}
 	}
-	
+
 	/**
 	 * Adds variables that store column values.
 	 * @param string &$script The script will be modified in this method.
 	 * @see addColumnNameConstants()
 	 */
 	protected function addColumnAttributes(&$script) {
-		
+
 		$table = $this->getTable();
-		
+
 		foreach ($table->getColumns() as $col) {
-		
+
 			$cptype = $col->getPhpNative();
 			$clo=strtolower($col->getName());
 			$defVal = "";
-			if (($val = $col->getPhpDefaultValue()) !== null) {				
+			if (($val = $col->getPhpDefaultValue()) !== null) {
 				settype($val, $cptype);
 				$defaultValue = var_export($val, true);
 				$defVal = " = " . $defaultValue;
 			}
-			
+
 			$script .= "
 
 	/**
@@ -285,11 +276,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected \$".$clo."_isLoaded = false;
 ";
 			}
-			
+
 		}  // foreach col
-		
+
 	} // addColumnAttributes()
-	
+
 	/**
 	 * Adds the getPeer() method.
 	 * This is a convenient, non introspective way of getting the Peer class for a particular object.
@@ -304,7 +295,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Since Peer classes are not to have any instance attributes, this method returns the
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
-	 * 
+	 *
 	 * @return ".$this->getPeerClassname()."
 	 */
 	public function getPeer()
@@ -316,13 +307,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
-	
+
 	// --------------------------------------------------------------
 	//
 	// A C C E S S O R    M E T H O D S
 	//
 	// --------------------------------------------------------------
-	
+
 	/**
 	 * Adds a date/time/timestamp getter method.
 	 * @param string &$script The script will be modified in this method.
@@ -333,7 +324,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
-		
+
 		// these default values are based on the Creole defaults
 		// the date and time default formats are locale-sensitive
 		if ($col->getType() === PropelTypes::DATE) {
@@ -343,7 +334,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
 			$defaultfmt = 'Y-m-d H:i:s';
 		}
-		
+
 		$script .= "
 	/**
 	 * Get the [optionally formatted] [$clo] column value.
@@ -385,9 +376,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			return date(\$format, \$ts);
 		}
 	}
-";	
+";
 	} // addTemporalAccessor
-	
+
 	/**
 	 * Adds a normal (non-temporal) getter method.
 	 * @param string &$script The script will be modified in this method.
@@ -398,7 +389,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
-		
+
 		$script .= "
 	/**
 	 * Get the [$clo] column value.
@@ -406,7 +397,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return ".$col->getPhpNative()."
 	 */
 	public function get$cfc(";
-		if ($col->isLazyLoad()) $script .= "\$con = null"; 
+		if ($col->isLazyLoad()) $script .= "\$con = null";
 		$script .= ")
 	{
 ";
@@ -422,7 +413,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
-	
+
 	/**
 	 * Adds the lazy loader method.
 	 * @param string &$script The script will be modified in this method.
@@ -433,7 +424,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
-		
+
 		$script .= "
 	/**
 	 * Load the value for the lazy-loaded [$clo] column.
@@ -454,10 +445,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$rs = ".$this->getPeerClassname()."::doSelectRS(\$c, \$con);
 			\$rs->next();
 ";
-		$affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));									
+		$affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
 		$clo = strtolower($col->getName());
 		switch($col->getType()) {
-			 case PropelTypes::DATE:					
+			 case PropelTypes::DATE:
 			 case PropelTypes::TIME:
 			 case PropelTypes::TIMESTAMP:
 			 	$script .= "
@@ -476,17 +467,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 	}
 ";
-	
+
 	} // addLazyLoader()
-	
-	
-	
+
+
+
 	// --------------------------------------------------------------
 	//
 	// M U T A T O R    M E T H O D S
 	//
 	// --------------------------------------------------------------
-	
+
 	/**
 	 * Adds the open of the mutator (setter) method for a column.
 	 * @param string &$script The script will be modified in this method.
@@ -496,10 +487,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
-		
+
 		$script .= "
 	/**
-	 * Set the value of [$clo] column.	  
+	 * Set the value of [$clo] column.
 	 * ".$col->getDescription()."
 	 * @param ".$col->getPhpNative()." \$v new value
 	 * @return void
@@ -509,16 +500,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		if ($col->isLazyLoad()) {
 			$script .= "
-		// explicitly set the is-loaded flag to true for this lazy load col; 
+		// explicitly set the is-loaded flag to true for this lazy load col;
 		// it doesn't matter if the value is actually set or not (logic below) as
 		// any attempt to set the value means that no db lookup should be performed
-		// when the get$cfc() method is called. 
+		// when the get$cfc() method is called.
 		\$this->".$clo."_isLoaded = true;
 ";
 		}
 
 	}
-	
+
 	/**
 	 * Adds the close of the mutator (setter) method for a column.
 	 * This can be overridden (e.g. by PHP5ComplexObjectBuilder) if additional functionality is needed.
@@ -526,12 +517,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param Column $col The current column.
 	 */
 	protected function addMutatorClose(&$script, Column $col)
-	{	
+	{
 				$script .= "
 	} // set".$col->getPhpName()."()
 ";
 	}
-	
+
 	/**
 	 * Adds a setter for date/time/timestamp columns.
 	 * @param string &$script The script will be modified in this method.
@@ -543,7 +534,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addMutatorOpen($script, $col);
 		$clo = strtolower($col->getName());
 		// Setting of LOB columns gets some special handling
-		
+
 		if ($col->getPropelType() === PropelTypes::BLOB || $col->getPropelType() === PropelTypes::LONGVARBINARY ) {
 			$lobClass = 'Blob';
 		} else {
@@ -551,13 +542,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 		// if the passed in parameter is the *same* object that
-		// is stored internally then we use the Lob->isModified() 
+		// is stored internally then we use the Lob->isModified()
 		// method to know whether contents changed.
 		if (\$v instanceof Lob && \$v === \$this->$clo) {
 			\$changed = \$v->isModified();
 		} else {
 			\$changed = (\$this->$clo !== \$v);
-		}				
+		}
 		if (\$changed) {
 			if ( !(\$v instanceof Lob) ) {
 				\$obj = new $lobClass();
@@ -570,10 +561,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 ";
 		$this->addMutatorClose($script, $col);
-		
+
 	} // addLobMutatorSnippet
-	
-	
+
+
 	/**
 	 * Adds a setter method for date/time/timestamp columns.
 	 * @param string &$script The script will be modified in this method.
@@ -583,15 +574,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addTemporalMutator(&$script, Column $col)
 	{
 		$clo = strtolower($col->getName());
-		
+
 		$defaultValue = null;
 		if (($val = $col->getPhpDefaultValue()) !== null) {
 			settype($val, $col->getPhpNative());
 			$defaultValue = var_export($val, true);
 		}
-		
+
 		$this->addMutatorOpen($script, $col);
-		
+
 		$script .= "
 		if (\$v !== null && !is_int(\$v)) {
 			\$ts = strtotime(\$v);
@@ -612,7 +603,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		$this->addMutatorClose($script, $col);
 	}
-	
+
 	/**
 	 * Adds setter method for "normal" columns.
 	 * @param string &$script The script will be modified in this method.
@@ -622,14 +613,14 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addDefaultMutator(&$script, Column $col)
 	{
 		$clo = strtolower($col->getName());
-		
+
 		// FIXME: refactor this
 		$defaultValue = null;
 		if (($val = $col->getPhpDefaultValue()) !== null) {
 			settype($val, $col->getPhpNative());
 			$defaultValue = var_export($val, true);
 		}
-		
+
 		$this->addMutatorOpen($script, $col);
 		$script .= "
 		if (\$this->$clo !== \$v";
@@ -643,14 +634,14 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		$this->addMutatorClose($script, $col);
 	}
-	
+
 	/**
 	 * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
 	 */
 	protected function addHydrate(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		$script .= "
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
@@ -691,16 +682,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					$n++;
 				} // if col->isLazyLoad()
 			} /* foreach */
-			
+
 			if ($this->getBuildProperty("addSaveMethod")) {
 				$script .= "
 			\$this->resetModified();
 ";
 			}
-			 
+
 			$script .= "
 			\$this->setNew(false);
-						
+
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
 
@@ -709,16 +700,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 	}
 ";
-	
+
 	} // addHydrate()
 
-	
+
 	/**
-	 * 
+	 *
 	 */
 	protected function addBuildPkeyCriteria(&$script) {
-		
-		
+
+
 		$script .= "
 	/**
 	 * Builds a Criteria object containing the primary key for this object.
@@ -736,20 +727,20 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$clo = strtolower($col->getName());
 			if ($col->isPrimaryKey()) {
 				$script .= "
-		\$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
-";
+		\$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
 			}
 		}
-		
+
 		$script .= "
+
 		return \$criteria;
 	}
 ";
 
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	protected function addBuildCriteria(&$script)
 	{
@@ -766,129 +757,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($this->getTable()->getColumns() as $col) {
 			$clo = strtolower($col->getName());
 			$script .= "
-		if (\$this->isColumnModified(".$this->getColumnConstant($col).")) \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
-";
+		if (\$this->isColumnModified(".$this->getColumnConstant($col).")) \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
 		}
 		$script .= "
+
 		return \$criteria;
 	}
 ";
 	} // addBuildCriteria()
-	
-	
-	protected function addFieldnameTypeConstants(&$script)
-	{
-		$script .= "
-	/**
-	 * phpname type
-	 * e.g. 'AuthorId'
-	 */
-	const TYPE_PHPNAME = 'phpName';
 
-	/**
-	 * column (peer) name type
-	 * e.g. 'book.AUTHOR_ID'
-	 */
-	const TYPE_COLNAME = 'colName';
-
-	/**
-	 * column fieldname type
-	 * e.g. 'author_id'
-	 */
-	const TYPE_FIELDNAME = 'fieldName';
-
-	/**
-	 * num type
-	 * simply the numerical array index, e.g. 4
-	 */
-	const TYPE_NUM = 'num';
-";
-	}
-	
-	protected function addFieldNamesAttribute(&$script)
-	{
-		$table = $this->getTable();
-		
-		$tableColumns = $table->getColumns();
-		$tablePhpname = $table->getPhpName();
-	
-		$script .= "
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::\$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
-	private static \$fieldNames = array (
-		".$table->getPhpName()."::TYPE_PHPNAME => array (";
-		foreach ($tableColumns as $col) {
-			$script .= "'".$col->getPhpName()."', ";
-		} 
-		$script .= "),
-		".$table->getPhpName()."::TYPE_COLNAME => array (";
-		foreach ($tableColumns as $col) {
-			$script .= $this->getColumnConstant($col).", ";
-		}
-		$script .= "),
-		
-		".$table->getPhpName()."::TYPE_FIELDNAME => array (";
-		
-		foreach ($tableColumns as $col) {
-			$script .= "'".$col->getName()."', ";
-		}
-		$script .= "),
-		
-		".$table->getPhpName()."::TYPE_NUM => array (";
-		foreach ($tableColumns as $num => $col) {
-			$script .= "$num, ";
-		}
-		$script .= ")
-	);
-";
-	}
-	
-	protected function addFieldKeysAttribute(&$script)
-	{
-		$table = $this->getTable();
-		
-		$tableColumns = $table->getColumns();
-		$tablePhpname = $table->getPhpName();
-	
-		$script .= "
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::\$fieldNames[self::TYPE_PHPNAME]['Id'] = 0
-	 */
-	private static \$fieldKeys = array (
-		".$table->getPhpName()."::TYPE_PHPNAME => array (";
-		foreach ($tableColumns as $num => $col) {
-			$script .= "'".$col->getPhpName()."' => $num, ";
-		} 
-		$script .= "),
-		".$table->getPhpName()."::TYPE_COLNAME => array (";
-		foreach ($tableColumns as $num => $col) {
-			$script .= $this->getColumnConstant($col)." => $num, ";
-		}
-		$script .= "),
-		
-		".$table->getPhpName()."::TYPE_FIELDNAME => array (";
-		
-		foreach ($tableColumns as $num => $col) {
-			$script .= "'".$col->getName()."' => $num, ";
-		}
-		$script .= "),
-		
-		".$table->getPhpName()."::TYPE_NUM => array (";
-		foreach ($tableColumns as $num => $col) {
-			$script .= "$num, ";
-		}
-		$script .= ")
-	);
-";
-	} // addFielKeysAttribute
-	
 	protected function addToArray(&$script)
 	{
 		$script .= "
@@ -902,15 +779,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray(\$keyType = self::TYPE_PHPNAME)
+	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME)
 	{
-		\$keys = self::getFieldNames(\$keyType);
-		\$result = array(
-";
+		\$keys = ".$this->getPeerClassname()."::getFieldNames(\$keyType);
+		\$result = array(";
 		foreach ($this->getTable()->getColumns() as $num => $col) {
 			$script .= "
-			\$keys[$num] => \$this->get".$col->getPhpName()."(),
-";
+			\$keys[$num] => \$this->get".$col->getPhpName()."(),";
 		}
 		$script .= "
 		);
@@ -918,55 +793,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	} // addToArray()
-	
-	protected function addGetFieldNames(&$script)
-	{
-		$script .= "
-	/**
-	 * Returns an array of of field names.
-	 *
-	 * @param  string \$type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return array A list of field names
-	 */
 
-	static public function getFieldNames(\$type = self::TYPE_FIELDNAME)
-	{
-		if (!isset(self::\$fieldNames[\$type])) {
-			throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . \$type . ' was given.');
-		}
-		return self::\$fieldNames[\$type];
-	}
-";
-	
-	} // addGetFieldNames()
-	
-	protected function addTranslateFieldName(&$script)
-	{
-		$script .= "
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param string \$name field name
-	 * @param string \$fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @param string \$toType   One of the class type constants
-	 * @return string translated name of the field.
-	 */
-	static public function translateFieldName(\$name, \$fromType, \$toType)
-	{
-		\$toNames = self::getFieldNames(\$toType);
-		\$key = self::\$fieldKeys[\$fromType][\$name];
-		if (\$key === false) {
-			throw new PropelException(\"'\$name' could not be found in the field names of type '\$fromType'. These are: \" . print_r(\$fromNames, true));
-		}
-		return \$toNames[\$key];
-	}
-";
-	} // addTranslateFieldName()
-	
-	
 	protected function addGetByName(&$script)
 	{
 		$script .= "
@@ -979,15 +806,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return mixed Value of field.
 	 */
-	public function getByName(\$name, \$type = self::TYPE_COLNAME)
+	public function getByName(\$name, \$type = BasePeer::TYPE_PHPNAME)
 	{
-		\$names = self::getFieldNames(\$type);
-		\$pos = self::translateFieldName(\$name, \$type, self::TYPE_NUM);
+		\$names = ".$this->getPeerClassname()."::getFieldNames(\$type);
+		\$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
 		return \$this->getByPosition(\$pos);
 	}
 ";
 	}
-	
+
 	protected function addGetByPosition(&$script)
 	{
 		$table = $this->getTable();
@@ -1001,8 +828,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	public function getByPosition(\$pos)
 	{
-		switch(\$pos) {
-";
+		switch(\$pos) {";
 	$i = 0;
 	foreach ($table->getColumns() as $col) {
 		$cfc = $col->getPhpName();
@@ -1010,18 +836,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 $script .= "
 			case $i:
 				return \$this->get$cfc();
-				break;
-";
+				break;";
 		$i++;
 	} /* foreach */
 $script .= "
 			default:
 				return null;
+				break;
 		} // switch()
 	}
 ";
 	}
-	
+
 	protected function addSetByName(&$script)
 	{
 		$table = $this->getTable();
@@ -1036,15 +862,15 @@ $script .= "
 	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
 	 * @return void
 	 */
-	public function setByName(\$name, \$value, \$type = self::TYPE_COLNAME)
+	public function setByName(\$name, \$value, \$type = BasePeer::TYPE_PHPNAME)
 	{
-		\$names = \$this->getFieldnames(\$type);
+		\$names = ".$this->getPeerClassname()."::getFieldNames(\$type);
 		\$pos = array_search(\$name, \$names);
-		return \$this->setByPosition(\$pos, \$name);
+		return \$this->setByPosition(\$pos, \$value);
 	}
 ";
 	}
-	
+
 	protected function addSetByPosition(&$script)
 	{
 		$table = $this->getTable();
@@ -1059,8 +885,7 @@ $script .= "
 	 */
 	public function setByPosition(\$pos, \$value)
 	{
-		switch(\$pos) {
-";
+		switch(\$pos) {";
 		$i = 0;
 		foreach ($table->getColumns() as $col) {
 			$cfc = $col->getPhpName();
@@ -1068,8 +893,7 @@ $script .= "
 			$script .= "
 			case $i:
 				\$this->set$cfc(\$value);
-				break;
-		";
+				break;";
 			$i++;
 		} /* foreach */
 		$script .= "
@@ -1092,31 +916,29 @@ $script .= "
 	 *
 	 * You can specify the key type of the array by additionally passing one
 	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the (peer) column name (e.g.
-	 * 'book.AUTHOR_ID')
+	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
 	 *
 	 * @param array  \$arr     An array to populate the object from.
 	 * @param string \$keyType The type of keys the array uses.
 	 * @return void
 	 */
-	public function fromArray(\$arr, \$keyType = self::TYPE_COLNAME)
+	public function fromArray(\$arr, \$keyType = BasePeer::TYPE_PHPNAME)
 	{
-		\$keys = self::getFieldNames(\$keyType);
+		\$keys = ".$this->getPeerClassname()."::getFieldNames(\$keyType);
 ";
 		foreach ($table->getColumns() as $num => $col) {
 			$cfc = $col->getPhpName();
 			$cptype = $col->getPhpNative();
 			$script .= "
-		if (array_key_exists(\$keys[$num], \$arr)) \$this->set$cfc(\$arr[\$keys[$num]]);
-";
+		if (array_key_exists(\$keys[$num], \$arr)) \$this->set$cfc(\$arr[\$keys[$num]]);";
 		} /* foreach */
 		$script .= "
 	}
 ";
 	} // addFromArray
-	
-	
-	
+
+
+
 	protected function addDelete(&$script)
 	{
 		$script .= "
@@ -1138,7 +960,7 @@ $script .= "
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
 		}
-		
+
 		try {
 			\$con->begin();
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);
@@ -1151,7 +973,7 @@ $script .= "
 	}
 ";
 	} // addDelete()
-	
+
 	/**
 	 * Adds the methods related to saving and deleting the object.
 	 */
@@ -1161,7 +983,7 @@ $script .= "
 		$this->addSave($script);
 		$this->addValidate($script);
 	}
-	
+
 	/**
 	 * Adds the save() method.
 	 * @param string &$script The script will be modified in this method.
@@ -1181,14 +1003,14 @@ $script .= "
 	 */
 	public function save(\$con = null)
 	{
-		\$affectedRows = 0; // initialize var to track total num of affected rows	
-		
+		\$affectedRows = 0; // initialize var to track total num of affected rows
+
 		// If this object has been modified, then save it to the database.
 		if (\$this->isModified()) {
 			if (\$this->isNew()) {
 				\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
-				\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which 
-									 // should always be true here (even though technically 
+				\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+									 // should always be true here (even though technically
 									 // BasePeer::doInsert() can insert multiple rows).
 ";
 		if ($table->getIdMethod() != "none") {
@@ -1209,13 +1031,13 @@ $script .= "
 			}
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 		} // if \$this->isModified()
-		
+
 		return \$affectedRows;
-	} // save() 
+	} // save()
 ";
-	
+
 	} // addSave()
-	
+
 	/**
 	 * Adds the validate() method.
 	 * @param string &$script The script will be modified in this method.
@@ -1242,9 +1064,9 @@ $script .= "
 		return ".$this->getPeerClassname()."::doValidate(\$this);
 	}
 ";
-	
+
 	} // addValidate()
-	
+
 	/**
 	 * Adds the correct getPrimaryKey() method for this object.
 	 * @param string &$script The script will be modified in this method.
@@ -1261,7 +1083,7 @@ $script .= "
 			$this->addGetPrimaryKey_NoPK($script);
 		}
 	}
-	
+
 	/**
 	 * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
 	 * @param string &$script The script will be modified in this method.
@@ -1271,11 +1093,11 @@ $script .= "
 		$table = $this->getTable();
 		$pkeys = $table->getPrimaryKey();
 		$cptype = $pkeys[0]->getPhpType();
-		
+
 		$script .= "
 	/**
 	 * Returns the primary key for this object (row).
-	 * @return $cptype 
+	 * @return $cptype
 	 */
 	public function getPrimaryKey()
 	{
@@ -1283,14 +1105,14 @@ $script .= "
 	}
 ";
 	} // addetPrimaryKey_SingleFK
-	
+
 	/**
 	 * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addGetPrimaryKey_MultiPK(&$script)
 	{
-		
+
 		$script .= "
 	/**
 	 * Returns the composite primary key for this object.
@@ -1313,11 +1135,11 @@ $script .= "
 	}
 ";
 	} // addGetPrimaryKey_MultiFK()
-	
+
 	/**
 	 * Adds the getPrimaryKey() method for objects that have no primary key.
 	 * This "feature" is dreprecated, since the getPrimaryKey() method is not required
-	 * by the Persistent interface (or used by the templates).  Hence, this method is also 
+	 * by the Persistent interface (or used by the templates).  Hence, this method is also
 	 * deprecated.
 	 * @param string &$script The script will be modified in this method.
 	 * @deprecated
@@ -1352,19 +1174,19 @@ $script .= "
 			$this->addSetPrimaryKey_NoPK($script);
 		}
 	}
-	
+
 	/**
 	 * Adds the setPrimaryKey() method for tables that contain a single-column primary key.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addSetPrimaryKey_SinglePK(&$script)
 	{
-		
+
 		$pkeys = $this->getTable()->getPrimaryKey();
 		$col = $pkeys[0];
 		$clo=strtolower($col->getName());
 		$ctype = $col->getPhpNative();
-		
+
 		$script .= "
 	/**
 	 * Generic method to set the primary key ($clo column).
@@ -1378,14 +1200,14 @@ $script .= "
 	}
 ";
 	} // addSetPrimaryKey_SinglePK
-	
+
 	/**
 	 * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addSetPrimaryKey_MultiPK(&$script)
 	{
-		
+
 		$script .="
 	/**
 	 * Set the [composite] primary key.
@@ -1408,11 +1230,11 @@ $script .= "
 	}
 ";
 	} // addSetPrimaryKey_MultiPK
-	
+
 	/**
 	 * Adds the setPrimaryKey() method for objects that have no primary key.
 	 * This "feature" is dreprecated, since the setPrimaryKey() method is not required
-	 * by the Persistent interface (or used by the templates).  Hence, this method is also 
+	 * by the Persistent interface (or used by the templates).  Hence, this method is also
 	 * deprecated.
 	 * @param string &$script The script will be modified in this method.
 	 * @deprecated
@@ -1422,7 +1244,7 @@ $script .= "
 		$script .="
 	/**
 	 * Dummy primary key setter.
-	 * 
+	 *
 	 * This function only exists to preserve backwards compatibility.  It is no longer
 	 * needed or required by the Persistent interface.  It will be removed in next BC-breaking
 	 * release of Propel.
@@ -1443,7 +1265,7 @@ $script .= "
 	protected function addCopy(&$script)
 	{
 		$this->addCopyInto($script);
-		
+
 		$table = $this->getTable();
 
 		$script .= "
@@ -1465,7 +1287,7 @@ $script .= "
 	}
 ";
 	} // addCopy()
-	
+
 	/**
 	 * Adds the copy() method.
 	 */
@@ -1476,7 +1298,7 @@ $script .= "
 		$script .= "
 	/**
 	 * Sets contents of passed object to values from current object.
-	 * 
+	 *
 	 * @param object \$copyObj An object of ".$table->getPhpName()." (or compatible) type.
 	 * @return ".$table->getPhpName()." Clone of current object.
 	 * @throws PropelException
@@ -1495,23 +1317,20 @@ $script .= "
 		foreach ($table->getColumns() as $col) {
 			if (!in_array($col->getName(), $pkcols)) {
 				$script .= "
-		\$copyObj->set<?php echo $col->getPhpName()?>(\$this-><?php echo strtolower($col->getName()) ?>);
-";
+		\$copyObj->set<?php echo $col->getPhpName()?>(\$this-><?php echo strtolower($col->getName()) ?>);";
 			}
 		} // foreach
-			
+
 		$script .= "
 
-		\$copyObj->setNew(true);
-";
+		\$copyObj->setNew(true);";
 
 		foreach ($table->getColumns() as $col) {
 			if ($col->isPrimaryKey()) {
 				$coldefval = $col->getPhpDefaultValue();
 				$coldefval = var_export($coldefval, true);
 				$script .= "
-		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a pkey column, so set to default value
-";
+		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a pkey column, so set to default value";
 			} // if col->isPrimaryKey
 		} // foreach
 		$script .= "
@@ -1519,5 +1338,5 @@ $script .= "
 	}
 ";
 	} // addCopy()
-	
+
 } // PHP5BasicObjectBuilder
