@@ -281,7 +281,7 @@ class ".$this->getClassname()." {
 			foreach($val->getRules() as $rule) {
 				if ($val->getTranslate() !== Validator::TRANSLATE_NONE) {
 					$script .= "
-		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".$rule->getValue()."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."');
+		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".$rule->getValue()."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));
 ";
 				} else {
 					$script .= "
