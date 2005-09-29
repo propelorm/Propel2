@@ -24,19 +24,19 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
 
 /**
  * Base class for Peer-building classes.
- *
+ * 
  * This class is designed so that it can be extended by a PHP4PeerBuilder in addition
  * to the "standard" PHP5PeerBuilder and PHP5ComplexOMPeerBuilder.  Hence, this class
- * should not have any actual template code in it -- simply basic logic & utility
+ * should not have any actual template code in it -- simply basic logic & utility 
  * methods.
- *
+ * 
  * @author Hans Lellelid <hans@xmpl.org>
  */
 abstract class PeerBuilder extends OMBuilder {
 
 	protected $basePeerClass;
 	protected $basePeerClassname;
-
+	
 	/**
 	 * Constructs a new PeerBuilder subclass.
 	 */
@@ -45,7 +45,7 @@ abstract class PeerBuilder extends OMBuilder {
 		$this->basePeerClass = $this->getBasePeer($table);
 		$this->basePeerClassname = $this->classname($this->basePeerClass);
 	}
-
+		
 	/**
 	 * Adds the addSelectColumns(), doCount(), etc. methods.
 	 * @param string &$script The script will be modified in this method.
@@ -53,19 +53,19 @@ abstract class PeerBuilder extends OMBuilder {
 	protected function addSelectMethods(&$script)
 	{
 		$this->addAddSelectColumns($script);
-
+		
 		$this->addCountConstants($script);
 		$this->addDoCount($script);
-
+		
 		// consider refactoring the doSelect stuff
 		// into a top-level method
 		$this->addDoSelectOne($script);
 		$this->addDoSelect($script);
 		$this->addDoSelectRS($script);	 // <-- there's Creole code in here
-		$this->addPopulateObjects($script); // <-- there's Creole code in here
+		$this->addPopulateObjects($script); // <-- there's Creole code in here						
 
 	}
-
+	
 	/**
 	 * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
 	 * @param string &$script The script will be modified in this method.
@@ -87,7 +87,7 @@ abstract class PeerBuilder extends OMBuilder {
 			}
 		}
 	}
-
+	
 	/**
 	 * Adds the doInsert(), doUpdate(), doDeleteAll(), doValidate(), etc. methods.
 	 * @param string &$script The script will be modified in this method.
@@ -106,7 +106,7 @@ abstract class PeerBuilder extends OMBuilder {
 		}
 		$this->addDoValidate($script);
 	}
-
+	
 	/**
 	 * Adds the retrieveByPK() (and possibly retrieveByPKs()) method(s) appropriate for this class.
 	 * @param string &$script The script will be modified in this method.
@@ -120,16 +120,16 @@ abstract class PeerBuilder extends OMBuilder {
 			$this->addRetrieveByPK_MultiPK($script);
 		}
 	}
-
+	
 	/**
 	 * This method adds the contents of the generated class to the script.
-	 *
+	 * 
 	 * This method contains the high-level logic that determines which methods
 	 * get generated.
-	 *
+	 * 
 	 * Hint: Override this method in your subclass if you want to reorganize or
 	 * drastically change the contents of the generated peer class.
-	 *
+	 * 
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassBody(&$script)
@@ -141,30 +141,27 @@ abstract class PeerBuilder extends OMBuilder {
 			$this->addConstantsAndAttributes($script);
 		}
 
-		$this->addGetMapBuilder($script);
+		$this->addGetMapBuilder($script);		
 		$this->addGetPhpNameMap($script);
-
-		$this->addTranslateFieldName($script);
-		$this->addGetFieldNames($script);
-
+		
 		if (!$table->isAlias()) {
 			$this->addAlias($script); // alias() utility method (deprecated?)
 			$this->addSelectMethods($script);
 			$this->addGetTableMap($script);
 		}
-
+		
 		$this->addGetOMClassMethod($script);
-
+				
 		// add the insert, update, delete, validate etc. methods
 		if (!$table->isAlias() && !$table->isReadOnly()) {
 			$this->addUpdateMethods($script);
 		}
-
+		
 		if (count($table->getPrimaryKey()) > 0) {
-			$this->addRetrieveByPKMethods($script);
+			$this->addRetrieveByPKMethods($script);		
 		}
 	}
-
+	
 	/**
 	 * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
 	 * @return boolean
@@ -181,7 +178,7 @@ abstract class PeerBuilder extends OMBuilder {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
 	 * @return boolean
@@ -197,32 +194,8 @@ abstract class PeerBuilder extends OMBuilder {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Whether to add the generic mutator methods (setByName(), setByPosition(), fromArray()).
-	 * This is based on the build property propel.addGenericMutators, and also whether the
-	 * table is read-only or an alias.
-	 * @return boolean
-	 */
-	protected function isAddGenericMutators()
-	{
-		$table = $this->getTable();
-		return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
-	}
-
-	/**
-	 * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
-	 * This is based on the build property propel.addGenericAccessors, and also whether the
-	 * table is an alias.
-	 * @return boolean
-	 */
-	protected function isAddGenericAccessors()
-	{
-		$table = $this->getTable();
-		return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
-	}
-
+	}	
+		
 	/**
 	 * Returns the retrieveByPK method name to use for this table.
 	 * If the table is an alias then the method name looks like "retrieveTablenameByPK"
@@ -231,25 +204,25 @@ abstract class PeerBuilder extends OMBuilder {
 	 */
 	public function getRetrieveMethodName()
 	{
-		if ($this->getTable()->isAlias()) {
+		if ($this->getTable()->isAlias()) { 
 			$retrieveMethod = "retrieve" . $this->getTable()->getPhpName() . "ByPK";
 		} else {
 			$retrieveMethod = "retrieveByPK";
 		}
 		return $retrieveMethod;
 	}
-
-
+	
+		
 	/**
      * COMPATIBILITY: Get the column constant name (e.g. PeerName::COLUMN_NAME).
-	 *
+	 * 
      * This method exists simply because it belonged to the 'PeerBuilder' that this
 	 * class is replacing (because of name conflict more than actual functionality overlap).
 	 * When the new builder model is finished this method will be removed.
-	 *
+	 * 
      * @param Column $col The column we need a name for.
      * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
-     *
+     * 
      * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
 	 * @deprecated
      */
