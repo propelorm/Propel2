@@ -409,7 +409,6 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			// FIXME -- why not? -because we'd have to alias the tables in the JOIN
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				
-				/*
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 				$joinClassName = $joinTable->getPhpName();
 				$interfaceName = $joinTable->getPhpName();
@@ -417,6 +416,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$interfaceName = $joinTable->getInterface();
 				}
 				
+				/*
 				$partJoinName = "";
 				foreach ($fk->getLocalColumns() as $columnName ) {
 					$column = $table->getColumn($columnName);
