@@ -947,7 +947,7 @@ $script .= "
 	 * by another object which falls in this transaction.
 	 * @var boolean
 	 */
-	private \$alreadyInSave = false;
+	protected \$alreadyInSave = false;
 ";
 	}
 	
@@ -1004,7 +1004,7 @@ $script .= "
 	 * by another object which falls in this transaction.
 	 * @var boolean
 	 */
-	private \$alreadyInValidation = false;
+	protected \$alreadyInValidation = false;
 ";
 	}
 	
