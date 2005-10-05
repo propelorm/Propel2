@@ -94,9 +94,6 @@ class Criteria implements IteratorAggregate {
     /** Binary math operator: OR */
     const BINARY_OR = "|";
 
-    /** Binary math operator: NOT */
-    const BINARY_NOT = "~";		 
-
     /** "Order by" qualifier - ascending */
     const ASC = "ASC";
 
