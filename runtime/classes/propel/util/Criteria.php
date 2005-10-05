@@ -88,6 +88,15 @@ class Criteria implements IteratorAggregate {
     /** Comparison type. */
     const JOIN = "JOIN";
 
+    /** Binary math operator: AND */
+    const BINARY_AND = "&";
+
+    /** Binary math operator: OR */
+    const BINARY_OR = "|";
+
+    /** Binary math operator: NOT */
+    const BINARY_NOT = "~";		 
+
     /** "Order by" qualifier - ascending */
     const ASC = "ASC";
 
