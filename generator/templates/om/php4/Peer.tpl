@@ -847,7 +847,7 @@ if (!$table->isAlias() && ! $table->isReadOnly())
       include_once '<?php echo ClassTools::getFilePath($tblFKPackage, $tblFK->getPhpName()); ?>';
 
       // delete related <?php echo $fkClassName ?> objects
-      $c = new Criteria();
+      $c =& new Criteria();
 <?php
           for($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
             $columnFK = $tblFK->getColumn($columnNamesF[$x]);
@@ -1454,7 +1454,7 @@ if ($complexObjectModel) {
       $cls = Propel::import($omClass);
       if (Propel::isError($cls)) { return $cls; }
       
-      $obj1 = new $cls();
+      $obj1 =& new $cls();
       
       $e =& $obj1->hydrate($rs);
       if (Propel::isError($e)) { return $e; }
@@ -1505,7 +1505,7 @@ if ($complexObjectModel) {
       $cls = Propel::import($omClass);
       if (Propel::isError($cls)) { return $cls; }
       
-      $obj<?php echo $index ?> = new $cls();
+      $obj<?php echo $index ?> =& new $cls();
       
       $e = $obj<?php echo $index ?>->hydrate($rs, $startcol<?php echo $index ?>);
       if (Propel::isError($e)) { return $e; }
@@ -1652,7 +1652,7 @@ if ($complexObjectModel) {
       $cls = Propel::import($omClass);
       if (Propel::isError($cls)) { return $cls; }
       
-      $obj1 = new $cls();
+      $obj1 =& new $cls();
       $e = $obj1->hydrate($rs);
       if (Propel::isError($e)) { return $e; }
       
@@ -1702,7 +1702,7 @@ if ($complexObjectModel) {
       $cls = Propel::import($omClass);
       if (Propel::isError($cls)) { return $cls; }
       
-      $obj<?php echo $index ?>  = new $cls();
+      $obj<?php echo $index ?>  =& new $cls();
       
       $e = $obj<?php echo $index ?>->hydrate($rs, $startcol<?php echo $index ?>);
       if (Propel::isError($e)) { return $e; }
