@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!-- XML Schema for the Propel schema file
+		  This is just the first draft derived from the existing DTD
+		  and some additional restrictions have been included
+
+		  Comments are a quite rare, I guess most things are pretty
+		  readable. An additional xml schema: custom_datatypes.xsd is
+		  also included. For now this file is unused, but that will
+		  change; don't worry.
+
+		  Ron -->
+
+	<xs:include schemaLocation='custom_datatypes.xsd'/>
+
+	<xs:element name='database' type='database'/>
+
+	<xs:simpleType name='file'>
+		<xs:restriction base='xs:string'>
+			<xs:pattern value='[^a-zA-Z\_\.]*'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='default_datatypes'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='BIT'/>
+			<xs:enumeration value='TINYINT'/>
+			<xs:enumeration value='SMALLINT'/>
+			<xs:enumeration value='INTEGER'/>
+			<xs:enumeration value='BIGINT'/>
+			<xs:enumeration value='FLOAT'/>
+			<xs:enumeration value='REAL'/>
+			<xs:enumeration value='NUMERIC'/>
+			<xs:enumeration value='DECIMAL'/>
+			<xs:enumeration value='CHAR'/>
+			<xs:enumeration value='VARCHAR'/>
+			<xs:enumeration value='LONGVARCHAR'/>
+			<xs:enumeration value='DATE'/>
+			<xs:enumeration value='TIME'/>
+			<xs:enumeration value='TIMESTAMP'/>
+			<xs:enumeration value='BINARY'/>
+			<xs:enumeration value='VARBINARY'/>
+			<xs:enumeration value='LONGVARBINARY'/>
+			<xs:enumeration value='NULL'/>
+			<xs:enumeration value='OTHER'/>
+			<xs:enumeration value='PHP_OBJECT'/>
+			<xs:enumeration value='DISTINCT'/>
+			<xs:enumeration value='STRUCT'/>
+			<xs:enumeration value='ARRAY'/>
+			<xs:enumeration value='BLOB'/>
+			<xs:enumeration value='CLOB'/>
+			<xs:enumeration value='REF'/>
+			<xs:enumeration value='BOOLEANINT'/>
+			<xs:enumeration value='BOOLEANCHAR'/>
+			<xs:enumeration value='DOUBLE'/>
+			<xs:enumeration value='BOOLEAN'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='datatype'>
+		<xs:union memberTypes='default_datatypes custom_datatypes'/>
+	</xs:simpleType>
+
+	<xs:simpleType name='dbidmethod'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='native'/>
+			<xs:enumeration value='none'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='tbidmethod'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='autoincrement'/>
+			<xs:enumeration value='sequence'/>
+			<xs:enumeration value='null'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='idmethod'>
+		<xs:union memberTypes='dbidmethod tbidmethod'/>
+	</xs:simpleType>
+
+	<xs:simpleType name='phpnamingmethod'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='nochange'/>
+			<xs:enumeration value='underscore'/>
+			<xs:enumeration value='phpname'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='delete'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='cascade'/>
+			<xs:enumeration value='setnull'/>
+			<xs:enumeration value='restrict'/>
+			<xs:enumeration value='none'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='rulename'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='mask'/>
+			<xs:enumeration value='maxLength'/>
+			<xs:enumeration value='maxValue'/>
+			<xs:enumeration value='minLength'/>
+			<xs:enumeration value='minValue'/>
+			<xs:enumeration value='required'/>
+			<xs:enumeration value='unique'/>
+			<xs:enumeration value='validValues'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='inh_option'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='single'/>
+			<xs:enumeration value='false'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name='php_type'>
+		<xs:restriction base='xs:string'>
+			<xs:enumeration value='primitive'/>
+			<xs:enumeration value='object'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Restrict column name to letters (upper- and lowercase), numbers and the _ -->
+	<xs:simpleType name='column_name'>
+		<xs:restriction base='xs:string'>
+			<xs:pattern value='[a-z|A-Z|1-9|\_]*'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Restrict php name to letters (upper- and lowercase), numbers and the _ -->
+	<xs:simpleType name='php_name'>
+		<xs:restriction base='xs:string'>
+			<xs:pattern value='[a-z|A-Z|1-9|\_]*'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Restrict php class name to letters (upper- and lowercase), numbers and the _ -->
+	<xs:simpleType name='php_class'>
+		<xs:restriction base='xs:string'>
+			<xs:pattern value='[a-z|A-Z|1-9|\_]*'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Restrict table name to letters (upper- and lowercase), numbers and the _ -->
+	<xs:simpleType name='table_name'>
+		<xs:restriction base='xs:string'>
+			<xs:pattern value='[a-z|A-Z|1-9|\_]*'/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name='parameter'>
+		<xs:attribute name='name' type='xs:string'/>
+		<xs:attribute name='value' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='validator'>
+		<xs:attribute name='column' type='xs:string'/>
+		<xs:attribute name='translate' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='vendor'>
+		<xs:sequence>
+			<xs:element name='parameter' type='parameter' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='type'/>
+	</xs:complexType>
+
+	<xs:complexType name='rule'>
+		<xs:attribute name='name' type='rulename'/>
+		<xs:attribute name='value' type='xs:string'/>
+		<xs:attribute name='size' type='xs:positiveInteger'/>
+		<xs:attribute name='message' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='id-method-parameter'>
+		<xs:sequence>
+			<xs:element name='rule' type='rule' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='column' type='xs:string'/>
+		<xs:attribute name='translate' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='index'>
+		<xs:attribute name='name' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='unique'>
+		<xs:attribute name='name' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='index-column'>
+		<xs:sequence>
+			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='name' type='xs:string'/>
+		<xs:attribute name='size' type='xs:string'/>
+	</xs:complexType>
+
+
+	<xs:complexType name='inheritance'>
+		<xs:attribute name='key' type='xs:string'/>
+		<xs:attribute name='class' type='xs:string'/>
+		<xs:attribute name='package' type='xs:string'/>
+		<xs:attribute name='extends' type='xs:string'/>
+	</xs:complexType>
+
+
+	<xs:complexType name='reference'>
+		<xs:attribute name='local' type='column_name'/>
+		<xs:attribute name='foreign' type='column_name'/>
+	</xs:complexType>
+
+	<xs:complexType name='column'>
+		<xs:sequence>
+			<xs:element name='inheritance' type='inheritance' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='vendor' type='inheritance' minOccurs='0' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='name' type='column_name'/>
+		<xs:attribute name='phpName' type='php_name'/>
+		<xs:attribute name='peerName' type='php_class'/>
+		<xs:attribute name='primaryKey' type='xs:boolean'/>
+		<xs:attribute name='required' type='xs:boolean'/>
+		<xs:attribute name='type' type='datatype' default='VARCHAR'/>
+		<xs:attribute name='phpType' type='php_type'/>
+		<xs:attribute name='size' type='xs:string'/>
+		<xs:attribute name='scale' type='xs:string'/>
+		<xs:attribute name='default' type='xs:string'/>
+		<xs:attribute name='autoIncrement' type='xs:boolean'/>
+		<xs:attribute name='inheritance' type='inh_option'/>
+		<xs:attribute name='inputValidator' type='xs:string'/>
+		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore'/>
+		<xs:attribute name='description' type='xs:string'/>
+		<xs:attribute name='lazyLoad' type='xs:boolean'/>
+	</xs:complexType>
+
+	<xs:complexType name='foreign-key'>
+		<xs:sequence>
+			<xs:element name='reference' type='reference'/>
+			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='foreignTable' type='xs:string'/>
+		<xs:attribute name='name' type='xs:string'/>
+		<xs:attribute name='onDelete' type='delete'/>
+	</xs:complexType>
+
+	<xs:complexType name='external-schema'>
+		<xs:attribute name='filename' type='file'/>
+	</xs:complexType>
+
+	<xs:complexType name='table'>
+		<xs:sequence>
+			<xs:element name='column' type='column' maxOccurs='unbounded'/>
+			<xs:element name='foreign-key' type='foreign-key' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='index' type='index' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='unique' type='unique' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='id-method-parameter' type='id-method-parameter' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='validator' type='validator' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='name' type='table_name'/>
+		<xs:attribute name='phpName' type='php_class'/>
+		<xs:attribute name='IdMethod' type='idmethod'/>
+		<xs:attribute name='skipSql' type='xs:boolean'/>
+		<xs:attribute name='abstract' type='xs:string'/>
+		<xs:attribute name='baseClass' type='php_class'/>
+		<xs:attribute name='basePeer' type='php_class'/>
+		<xs:attribute name='alias' type='table_name'/>
+		<xs:attribute name='interface' type='xs:string'/>
+		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore'/>
+		<xs:attribute name='heavyIndexing' type='xs:boolean'/>
+		<xs:attribute name='description' type='xs:string'/>
+	</xs:complexType>
+
+	<xs:complexType name='database'>
+		<xs:sequence>
+			<xs:element name='external-schema' type='external-schema' minOccurs='0' maxOccurs='unbounded'/>
+			<xs:element name='table' type='table' minOccurs='1' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='name' type='xs:string'/>
+		<xs:attribute name='defaultIdMethod' type='dbidmethod'/>
+		<xs:attribute name='defaultTranslateMethod' type='xs:string'/>
+		<xs:attribute name='package' type='php_class'/>
+		<xs:attribute name='baseClass' type='php_class'/>
+		<xs:attribute name='basePeer' type='php_class'/>
+		<xs:attribute name='defaultPhpNamingMethod' type='phpnamingmethod' default='underscore'/>
+		<xs:attribute name='heavyIndexing' type='xs:boolean'/>
+	</xs:complexType>
+</xs:schema>
