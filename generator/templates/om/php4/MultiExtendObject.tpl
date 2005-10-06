@@ -23,7 +23,8 @@ if ($child->getAncestor()) {
 require_once '<?php echo strtr($parent, '.', '/') ?>.php';
 
 <?php
-  $parentClass = array_pop(explode('.', $parent));
+  $parts = explode('.', $parent);
+  $parentClass = array_pop($parts);
 } else {
   $parentClass = $table->getPhpName();
 ?> 

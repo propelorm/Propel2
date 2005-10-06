@@ -9,7 +9,9 @@ class patForms_Storage_Propel extends patForms_Storage
 
 		$this->peer = new $peername();
 		$this->peername = $peername;
-		$this->classname = array_pop(explode('.', $this->peer->getOMClass()));
+		
+		$parts = explode('.', explode('.', $this->peer->getOMClass()));
+		$this->classname = array_pop($parts);
 
 		$this->setPrimaryField('Id');
 	}
