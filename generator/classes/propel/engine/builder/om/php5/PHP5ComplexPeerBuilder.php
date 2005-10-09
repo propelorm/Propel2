@@ -265,7 +265,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 * @param Connection \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, \$con = null)
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -511,9 +511,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 * @param Connection \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria \$c, \$distinct = false, \$con = null)
+	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, \$con = null)
 	{
-		\$criteria = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// clear out anything that might confuse the ORDER BY clause
 		\$criteria->clearSelectColumns()->clearOrderByColumns();
@@ -809,7 +809,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 * @param Connection \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, \$con = null)
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
