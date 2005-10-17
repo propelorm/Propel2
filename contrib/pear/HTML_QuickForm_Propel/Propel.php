@@ -629,6 +629,19 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          */
         public function save()
         {
+                $this->copyToObj();
+                $this->obj->save();
+        }
+
+        /**
+         *
+         * Copy form values to Obj.
+         *
+         * @return void
+         *
+         */
+        public function copyToObj()
+        {
                 // TODO: check what process does, if we leave out anything important.
 
                 if(!isset($this->cols)) {
@@ -682,10 +695,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                         $this->obj->{'set'.$col->getPhpName()}($value);
                 }
-
-                $this->obj->save();
-
-        } 
+        }
 
         /**
          *
