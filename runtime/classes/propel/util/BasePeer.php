@@ -646,62 +646,70 @@ class BasePeer
             $whereClause[] = $sb;
 
         }
-
+        
         // handle RIGHT (straight) joins
-				// Loop through the joins,
-				// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
-				// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
-				// New Code.
-				foreach ((array) $criteria->getJoins() as $join) { // we'll only loop if there's actually something here
-					// The join might have been established using an alias name
-					$realLeftTable = $criteria->getTableForAlias($join->getLeftTableName());
-					$leftTable = $realLeftTable ? $realLeftTable : $join->getLeftTableName();
+        // Loop through the joins, 
+        // joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
+        // joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause 
+        // New Code.
+        foreach ((array) $criteria->getJoins() as $join) { // we'll only loop if there's actually something here
 
-					// setup the right table name, possibly aliased.
-					$realRightTable = $criteria->getTableForAlias($join->getRightTableName());
-					$rightTable = $realRightTable ? $rightLeftTable : $join->getRightTableName();
+            // The join might have been established using an alias name
 
-					// determine if casing is relevant.
-					if ($ignoreCase = $criteria->isIgnoreCase()) {
-						$leftColType = $dbMap->getTable($leftTable)->getColumn($join->getLeftColumnName())->getType();
-						$rightColType = $dbMap->getTable($rightTable)->getColumn($join->getRightColumnName())->getType();
-						$ignoreCase = ($leftColType == 'string' || $rightColType == 'string');
-					}
+            $leftTable = $join->getLeftTableName();
+            $leftTableAlias = '';
+            if ($realTable = $criteria->getTableForAlias($leftTable)) {
+                $leftTableAlias = " $leftTable";
+                $leftTable = $realTable;
+            }
+            
+            $rightTable = $join->getRightTableName();
+            $rightTableAlias = '';
+            if ($realTable = $criteria->getTableForAlias($rightTable)) {
+                $rightTableAlias = " $rightTable";
+                $rightTable = $realTable;
+            }
+					
+            // determine if casing is relevant.
+            if ($ignoreCase = $criteria->isIgnoreCase()) {
+                $leftColType = $dbMap->getTable($leftTable)->getColumn($join->getLeftColumnName())->getType();
+                $rightColType = $dbMap->getTable($rightTable)->getColumn($join->getRightColumnName())->getType();
+                $ignoreCase = ($leftColType == 'string' || $rightColType == 'string');
+            }
 
-					// build the condition
-					if ($ignoreCase) {
-						$condition = $db->ignoreCase($join->getLeftColumn()) . '=' . $db->ignoreCase($join->getRightColumn());
-					} else {
-						$condition = $join->getLeftColumn() . '=' . $join->getRightColumn();
-					}
-
-					// add 'em to the queues..
-					if ($joinType = $join->getJoinType()) {
-						if (!$fromClause) {
-							$fromClause[] = $leftTable;
-						}
-						$joinTables[] = $rightTable;
-						$joinClause[] = $join->getJoinType() . " $rightTable ON ($condition)";
-					} else {
-						$fromClause[] = $leftTable;
-						$fromClause[] = $rightTable;
-						$whereClause[] = $condition;
-					}
-				}
-
-				// Unique from clause elements
+            // build the condition
+            if ($ignoreCase) {
+                $condition = $db->ignoreCase($join->getLeftColumn()) . '=' . $db->ignoreCase($join->getRightColumn());
+            } else {
+                $condition = $join->getLeftColumn() . '=' . $join->getRightColumn();
+            }
+					
+            // add 'em to the queues..  
+            if ($joinType = $join->getJoinType()) { 
+                if (!$fromClause) {
+                    $fromClause[] = $leftTable . $leftTableAlias;
+                }
+                $joinTables[] = $rightTable . $rightTableAlias;
+                $joinClause[] = $join->getJoinType() . ' ' . $rightTable . $rightTableAlias . " ON ($condition)";
+            } else { 
+                $fromClause[] = $leftTable . $leftTableAlias;
+                $fromClause[] = $rightTable . $rightTableAlias;
+                $whereClause[] = $condition;
+            }
+        }
+        
+        // Unique from clause elements
         $fromClause = array_unique($fromClause);
-
-				// tables should exist in both the from and join clauses
-				if ($joinTables && $fromClause) {
-					foreach ($fromClause as $fi => $ftable) {
-						if (in_array($ftable, $joinTables)) {
-							unset($fromClause[$fi]);
-						}
-					}
-				}
+				
+        // tables should not exist in both the from and join clauses
+        if ($joinTables && $fromClause) {
+            foreach ($fromClause as $fi => $ftable) {
+                if (in_array($ftable, $joinTables)) {
+                    unset($fromClause[$fi]);
+                }
+            }
+        }
 /*
-
 				// Old Code.
 				$joins =& $criteria->getJoins();
 				if (!empty($joins)) {
@@ -750,9 +758,7 @@ class BasePeer
 					} // Join for loop
 				} // If Joins
 */
-
-
-
+        
         // Add the GROUP BY columns
         $groupByClause = $groupBy;
 
@@ -767,7 +773,14 @@ class BasePeer
          if (!empty($orderBy)) {
 
             foreach($orderBy as $orderByColumn) {
-
+                
+                // Add function expression as-is.
+                
+                if (strpos($orderByColumn, '(') !== false) {
+                    $orderByClause[] = $orderByColumn;
+                    continue;
+                }
+                
                 // Split orderByColumn (i.e. "table.column DESC")
 
                 $dotPos = strpos($orderByColumn, '.');
