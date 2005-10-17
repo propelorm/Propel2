@@ -638,7 +638,18 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                 foreach($this->cols as $colName=>$col) {
 
+                        // Has the form got this element?
+                        if($this->isColumnHidden($colName))
+                        {
+                            continue;
+                        }
+                        
                         $value = $this->getElementValue($colName);
+                        if ($value instanceof HTML_QuickForm_Error)
+                        {
+                            // TODO: What should we do if an error has occured?
+                            continue;
+                        }
                         $elementType = $this->typeMapping[$col->getCreoleType()];
 
                         // quickform doesn't seem to give back a timestamp, so calculate the date manually.
