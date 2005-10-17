@@ -96,23 +96,22 @@ class <?php echo $table->getPhpName() ?>MapBuilder implements MapBuilder {
 	$tfc=$table->getPhpName();
 	$cfc=$col->getPhpName();
 	$cup=strtoupper($col->getName());
+	if (!$col->getSize()) {
+		$size = "null";
+	} else {
+		$size = $col->getSize();
+	}
 	if($col->isPrimaryKey()) {
 		if($col->isForeignKey()) { ?>
-		$tMap->addForeignPrimaryKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType() ?>" , CreoleTypes::<?php echo $col->getType() ?>, "<?php echo $col->getRelatedTableName()?>", "<?php echo strtoupper($col->getRelatedColumnName()) ?>", <?php echo $col->isNotNull() ? 'true' : 'false' ?>);
+		$tMap->addForeignPrimaryKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType() ?>" , CreoleTypes::<?php echo $col->getType() ?>, "<?php echo $col->getRelatedTableName()?>", "<?php echo strtoupper($col->getRelatedColumnName()) ?>", <?php echo $col->isNotNull() ? 'true' : 'false' ?>, <?php echo $size ?>);
 <?php	} else { ?>
-		$tMap->addPrimaryKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType() ?>", CreoleTypes::<?php echo $col->getType() ?>, <?php echo $col->isNotNull() ? 'true' : 'false' ?>);
+		$tMap->addPrimaryKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType() ?>", CreoleTypes::<?php echo $col->getType() ?>, <?php echo $col->isNotNull() ? 'true' : 'false' ?>, <?php echo $size ?>);
 <?php } 
 
 	} else {
 		if($col->isForeignKey()) { ?>
-		$tMap->addForeignKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType()?>", CreoleTypes::<?php echo $col->getType() ?>, "<?php echo $col->getRelatedTableName() ?>" , "<?php echo strtoupper($col->getRelatedColumnName()) ?>", <?php echo $col->isNotNull() ? 'true' : 'false' ?>);
-<?php	} else { 
-		if (!$col->getSize()) {
-			$size = "null";
-		} else {
-			$size = $col->getSize();
-		}
-                ?>
+		$tMap->addForeignKey("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType()?>", CreoleTypes::<?php echo $col->getType() ?>, "<?php echo $col->getRelatedTableName() ?>" , "<?php echo strtoupper($col->getRelatedColumnName()) ?>", <?php echo $col->isNotNull() ? 'true' : 'false' ?>, <?php echo $size ?>);
+<?php	} else { ?>
 		$tMap->addColumn("<?php echo $cup ?>", "<?php echo $cfc?>", "<?php echo $col->getPhpType()?>", CreoleTypes::<?php echo $col->getType() ?>, <?php echo $col->isNotNull() ? 'true' : 'false' ?>, <?php echo $size ?>);
 <?php 	} 
 	} // if col-is prim key
