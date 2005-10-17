@@ -461,10 +461,6 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                         // element's title
                         $colTitle = $this->getColumnTitle($colName);
 
-                        if($col->isNotNull()) {
-                                // something special to do ?
-                        }
-
                         if($col->isForeignKey()) {
 
                                 // TODO: check if user created an optional method for populating the select form 
@@ -592,6 +588,14 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                                 //$el->setValue($value);
 
+                                // required rule for NOT NULL columns
+                                if($col->isNotNull()) {
+                                    // TODO: What error message should we use?
+                                    $this->addRule($colName,
+                                        $this->getColumnTitle($colName) . ' is required',
+                                        'required');
+                                }
+                                
                                 if($col->hasValidators()) {
 
                                         foreach($col->getValidators() as $validatorMap) {
