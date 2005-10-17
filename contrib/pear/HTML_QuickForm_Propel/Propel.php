@@ -85,6 +85,7 @@ define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
  * TODO: map all creoleTypes to usefull formelements
  *
  * @author  Rob Halff <info@rhalff.com>
+ *   some improvements by Zoltan Nagy (sunshine@freemail.hu)
  * @version   $Rev$ 
  * @copyright Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
  * @package   propel.contrib
@@ -577,7 +578,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
                                 }
                                 // add an html id to the element
-                                $this->addElementId($el);
+                                $this->addElementId($el, $colName);
 
                                 //$el->setValue($value);
 
@@ -794,8 +795,12 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
         /**
          * Override this if you don't like the (strtolower) default
+         *
+         * @param HTML_QuickForm_Element $el
+         * @param string $colName
+         * @return void
          */
-        protected function addElementId($el)
+        protected function addElementId($el, $colName)
         {
                 $el->updateAttributes(array('id'=>strtolower($colName)));
         }
