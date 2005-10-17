@@ -108,6 +108,13 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
         private $columnVisibility = array();
 
         /**
+         * Contains titles of columns.
+         * @var array 
+         * @access private
+         */
+        private $columnTitle = array();
+
+        /**
          * The Column visibility mode either.
          * Possible values:
          *
@@ -451,6 +458,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                                 }
                         }
 
+                        // element's title
+                        $colTitle = $this->getColumnTitle($colName);
+
                         if($col->isNotNull()) {
                                 // something special to do ?
                         }
@@ -519,10 +529,10 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                                         }
 
                                         if(count($selectList) > 1) { // value of 1 depends on select message being set.
-                                                $select =& $this->addElement('select', $colName, $colName, $selectList);
+                                                $select =& $this->addElement('select', $colName, $colTitle, $selectList);
                                         } else {
                                                 // what to do if no records exists in the foreign table ?
-                                                $this->addElement('static', $colName, $colName, _('No Records'));
+                                                $this->addElement('static', $colName, $colTitle, _('No Records'));
                                         }
 
                                 }
@@ -547,7 +557,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
                                         $el = $this->addElement(
                                                         $elementType,
                                                         $colName,
-                                                        $colName);
+                                                        $colTitle);
 
                                         if($elementType == 'text') {
                                                 $el->setMaxLength($col->getSize());
@@ -794,11 +804,44 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
          * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
          *
          * @param string $column column name 
+         * @param string $title Title for the column, not required
          * @return void
          */
-        public function showColumn($column)
+        public function showColumn($column, $title = NULL)
         {
                 $this->columnVisibility[$column] = HTML_QUICKFORM_PROPEL_COLUMN_MADE_VISIBLE;
+                if ($title !== NULL)
+                {
+                    $this->setColumnTitle($column, $title);
+                }
+        }
+
+        /**
+         *
+         * assign a title to the column
+         *
+         * @param string $column
+         * @param string $title
+         * @return void
+         */
+        public function setColumnTitle($column, $title)
+        {
+            $this->columnTitles[$column] = $title;
+        }
+
+        /**
+         *
+         * returns column's title
+         *
+         * @param string $column
+         * @return void
+         */
+        public function getColumnTitle($column)
+        {
+            // TODO: check if $column exists
+            return (array_key_exists($column, $this->columnTitles))
+                ? $this->columnTitles[$column]
+                : $column;
         }
 
         /**
