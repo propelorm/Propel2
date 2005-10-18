@@ -914,7 +914,9 @@ $script .= "
 
 		foreach ($table->getReferrers() as $fk) {
 			$collName = $this->getRefFKCollVarName($fk);
-			if ( $fk->getTable()->getName() != $table->getName() ) {
+			//HL: commenting out self-referrential check below
+			//		it seems to work as expected and is desireable since we are also enabling the copy()ing of these related rows
+			//if ( $fk->getTable()->getName() != $table->getName() ) {
 				$script .= "
 			if (\$this->$collName !== null) {
 				foreach(\$this->$collName as \$referrerFK) {
@@ -924,7 +926,8 @@ $script .= "
 				}
 			}
 ";
-			} /* if tableFK != table */
+			//HL: commenting out close of self-referrential check
+			//} /* if tableFK != table */
 		} /* foreach getReferrers() */
 		$script .= "
 			\$this->alreadyInSave = false;
@@ -1201,13 +1204,16 @@ $script .= "
 			\$copyObj->setNew(false);
 ";
 			foreach ($table->getReferrers() as $fk) {
-				if ( $fk->getTable()->getName() != $table->getName() ) {
+				//HL: commenting out self-referrential check below
+				//		it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
+				//if ( $fk->getTable()->getName() != $table->getName() ) {
 					$script .= "
 			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
-				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy());
+				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
 			}
 ";
-				} /* if tblFK != table */
+				// HL: commenting out close of self-referential check
+				// } /* if tblFK != table */
 			} /* foreach */
 			$script .= "
 		} // if (\$deepCopy)
