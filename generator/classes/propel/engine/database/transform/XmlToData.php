@@ -77,8 +77,9 @@ class XmlToData extends AbstractHandler {
 
 				$domDocument = new DomDocument();
 				$domDocument->load($xmlFile);
-				if (!$domDocument->schemaValidate("xsd/database.xsd"))
-					throw new EngineException("XML schema does not validate, sorry...");
+				if ($domDocument->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
+					if (!$domDocument->schemaValidate("xsd/database.xsd"))
+						throw new EngineException("XML schema does not validate, sorry...");
 
             $br = new BufferedReader($fr);
 
