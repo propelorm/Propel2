@@ -247,7 +247,7 @@ class Domain extends XMLElement {
 			// DATE/TIME vals need to be converted to integer timestamp
 			$ts = strtotime($this->defaultValue);
 			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new EngineException("Unable to parse default value as date/time value: " . var_export($val, true));
+				throw new EngineException("Unable to parse default value as date/time value: " . var_export($this->defaultValue, true));
 			}
 			return $ts;
 		} else {
