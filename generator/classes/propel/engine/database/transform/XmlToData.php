@@ -68,18 +68,18 @@ class XmlToData extends AbstractHandler {
 
             $this->data = array();
 
+            $domDocument = new DomDocument();
+				$domDocument->load($xmlFile);
+				if ($domDocument->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
+					if (!$domDocument->schemaValidate("xsd/database.xsd"))
+						throw new EngineException("XML schema does not validate, sorry...");
+
             try {
                 $fr = new FileReader($xmlFile);
             } catch (Exception $e) {
                 $f = new PhingFile($xmlFile);
                 throw new BuildException("XML File not found: " . $f->getAbsolutePath());
             }
-
-				$domDocument = new DomDocument();
-				$domDocument->load($xmlFile);
-				if ($domDocument->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
-					if (!$domDocument->schemaValidate("xsd/database.xsd"))
-						throw new EngineException("XML schema does not validate, sorry...");
 
             $br = new BufferedReader($fr);
 
