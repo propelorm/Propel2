@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <!DOCTYPE database SYSTEM "../dtd/database.dtd">
 
-<database name="treetest" defaultIdMethod="none">
+<database name="treetest" defaultIdMethod="none" noxsd="true">
 
   <table name="test" isTree="true" description="Test">
     <column

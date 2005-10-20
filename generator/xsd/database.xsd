@@ -65,6 +65,8 @@
 		<xs:restriction base='xs:string'>
 			<xs:enumeration value='native'/>
 			<xs:enumeration value='none'/>
+			<xs:enumeration value='NATIVE'/>
+			<xs:enumeration value='NONE'/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -73,6 +75,9 @@
 			<xs:enumeration value='autoincrement'/>
 			<xs:enumeration value='sequence'/>
 			<xs:enumeration value='null'/>
+			<xs:enumeration value='AUTOINCREMENT'/>
+			<xs:enumeration value='SEQUENCE'/>
+			<xs:enumeration value='NULL'/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -85,6 +90,9 @@
 			<xs:enumeration value='nochange'/>
 			<xs:enumeration value='underscore'/>
 			<xs:enumeration value='phpname'/>
+			<xs:enumeration value='NOCHANGE'/>
+			<xs:enumeration value='UNDERSCORE'/>
+			<xs:enumeration value='PHPNAME'/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -94,6 +102,10 @@
 			<xs:enumeration value='setnull'/>
 			<xs:enumeration value='restrict'/>
 			<xs:enumeration value='none'/>
+			<xs:enumeration value='CASCADE'/>
+			<xs:enumeration value='SETNULL'/>
+			<xs:enumeration value='RESTRICT'/>
+			<xs:enumeration value='NONE'/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -107,6 +119,8 @@
 			<xs:enumeration value='required'/>
 			<xs:enumeration value='unique'/>
 			<xs:enumeration value='validValues'/>
+			<xs:enumeration value='notMatch'/>
+			<xs:enumeration value='match'/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -153,65 +167,75 @@
 	</xs:simpleType>
 
 	<xs:complexType name='parameter'>
-		<xs:attribute name='name' type='xs:string'/>
-		<xs:attribute name='value' type='xs:string'/>
+		<xs:attribute name='name' type='xs:string' use='required'/>
+		<xs:attribute name='value' type='xs:string' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='validator'>
-		<xs:attribute name='column' type='xs:string'/>
-		<xs:attribute name='translate' type='xs:string'/>
+		<xs:sequence>
+			<xs:element name='rule' type='rule' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='column' type='xs:string' use='required'/>
+		<xs:attribute name='translate' type='xs:string' use='optional'/>
 	</xs:complexType>
 
 	<xs:complexType name='vendor'>
 		<xs:sequence>
 			<xs:element name='parameter' type='parameter' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='type'/>
+		<xs:attribute name='type' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='rule'>
-		<xs:attribute name='name' type='rulename'/>
-		<xs:attribute name='value' type='xs:string'/>
-		<xs:attribute name='size' type='xs:positiveInteger'/>
-		<xs:attribute name='message' type='xs:string'/>
+		<xs:attribute name='name' type='rulename' use='required'/>
+		<xs:attribute name='value' type='xs:string' use='optional'/>
+		<xs:attribute name='size' type='xs:positiveInteger' use='optional'/>
+		<xs:attribute name='message' type='xs:string' use='optional'/>
 	</xs:complexType>
 
 	<xs:complexType name='id-method-parameter'>
 		<xs:sequence>
 			<xs:element name='rule' type='rule' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='column' type='xs:string'/>
-		<xs:attribute name='translate' type='xs:string'/>
+		<xs:attribute name='column' type='xs:string' default='default'/>
+		<xs:attribute name='translate' type='xs:string' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='index'>
-		<xs:attribute name='name' type='xs:string'/>
+		<xs:attribute name='name' type='xs:string' use='optional'/>
+	</xs:complexType>
+
+	<xs:complexType name='unique-column'>
+		<xs:attribute name='name' type='xs:string' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='unique'>
-		<xs:attribute name='name' type='xs:string'/>
+		<xs:sequence>
+			<xs:element name='unique-column' type='unique-column' minOccurs='0' maxOccurs='unbounded'/>
+		</xs:sequence>
+		<xs:attribute name='name' type='xs:string' use='optional'/>
 	</xs:complexType>
 
 	<xs:complexType name='index-column'>
 		<xs:sequence>
 			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='name' type='xs:string'/>
-		<xs:attribute name='size' type='xs:string'/>
+		<xs:attribute name='name' type='xs:string' use='required'/>
+		<xs:attribute name='size' type='xs:string' use='optional'/>
 	</xs:complexType>
 
 
 	<xs:complexType name='inheritance'>
-		<xs:attribute name='key' type='xs:string'/>
-		<xs:attribute name='class' type='xs:string'/>
-		<xs:attribute name='package' type='xs:string'/>
-		<xs:attribute name='extends' type='xs:string'/>
+		<xs:attribute name='key' type='xs:string' use='required'/>
+		<xs:attribute name='class' type='xs:string' use='required'/>
+		<xs:attribute name='package' type='xs:string' use='optional'/>
+		<xs:attribute name='extends' type='xs:string' use='optional'/>
 	</xs:complexType>
 
 
 	<xs:complexType name='reference'>
-		<xs:attribute name='local' type='column_name'/>
-		<xs:attribute name='foreign' type='column_name'/>
+		<xs:attribute name='local' type='column_name' use='required'/>
+		<xs:attribute name='foreign' type='column_name' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='column'>
@@ -219,22 +243,24 @@
 			<xs:element name='inheritance' type='inheritance' minOccurs='0' maxOccurs='unbounded'/>
 			<xs:element name='vendor' type='inheritance' minOccurs='0' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='name' type='column_name'/>
-		<xs:attribute name='phpName' type='php_name'/>
-		<xs:attribute name='peerName' type='php_class'/>
-		<xs:attribute name='primaryKey' type='xs:boolean'/>
-		<xs:attribute name='required' type='xs:boolean'/>
+		<xs:attribute name='name' type='column_name' use='required'/>
+		<xs:attribute name='phpName' type='php_name' use='optional'/>
+		<xs:attribute name='peerName' type='php_class' use='optional'/>
+		<xs:attribute name='primaryKey' type='xs:boolean' default='false'/>
+		<xs:attribute name='required' type='xs:boolean' default='false'/>
 		<xs:attribute name='type' type='datatype' default='VARCHAR'/>
-		<xs:attribute name='phpType' type='php_type'/>
-		<xs:attribute name='size' type='xs:string'/>
-		<xs:attribute name='scale' type='xs:string'/>
-		<xs:attribute name='default' type='xs:string'/>
-		<xs:attribute name='autoIncrement' type='xs:boolean'/>
-		<xs:attribute name='inheritance' type='inh_option'/>
-		<xs:attribute name='inputValidator' type='xs:string'/>
-		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore'/>
-		<xs:attribute name='description' type='xs:string'/>
-		<xs:attribute name='lazyLoad' type='xs:boolean'/>
+		<xs:attribute name='phpType' type='php_type' use='optional'/>
+		<xs:attribute name='size' type='xs:string' use='optional'/>
+		<xs:attribute name='scale' type='xs:string' use='optional'/>
+		<xs:attribute name='default' type='xs:string' use='optional'/>
+		<xs:attribute name='autoIncrement' type='xs:boolean' default='false'/>
+		<xs:attribute name='inheritance' type='inh_option' default='false'/>
+		<xs:attribute name='inputValidator' type='xs:string' use='optional'/>
+		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore' use='optional'/>
+		<xs:attribute name='description' type='xs:string' use='optional'/>
+		<xs:attribute name='lazyLoad' type='xs:boolean' default='false'/>
+		<xs:attribute name='nodeKeySep' type='xs:string' use='optional'/> <!-- missing in the old DTD, but required to keep the treetest example working -->
+		<xs:attribute name='nodeKey' type='xs:string' use='optional'/> <!-- missing in the old DTD, but required to keep the treetest example working -->
 	</xs:complexType>
 
 	<xs:complexType name='foreign-key'>
@@ -242,13 +268,13 @@
 			<xs:element name='reference' type='reference'/>
 			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='foreignTable' type='xs:string'/>
-		<xs:attribute name='name' type='xs:string'/>
-		<xs:attribute name='onDelete' type='delete'/>
+		<xs:attribute name='foreignTable' type='xs:string' use='required'/>
+		<xs:attribute name='name' type='xs:string' use='optional'/>
+		<xs:attribute name='onDelete' type='delete' default='none'/>
 	</xs:complexType>
 
 	<xs:complexType name='external-schema'>
-		<xs:attribute name='filename' type='file'/>
+		<xs:attribute name='filename' type='file' use='required'/>
 	</xs:complexType>
 
 	<xs:complexType name='table'>
@@ -261,18 +287,19 @@
 			<xs:element name='validator' type='validator' minOccurs='0' maxOccurs='unbounded'/>
 			<xs:element name='vendor' type='vendor' minOccurs='0' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='name' type='table_name'/>
-		<xs:attribute name='phpName' type='php_class'/>
-		<xs:attribute name='IdMethod' type='idmethod'/>
-		<xs:attribute name='skipSql' type='xs:boolean'/>
-		<xs:attribute name='abstract' type='xs:string'/>
-		<xs:attribute name='baseClass' type='php_class'/>
-		<xs:attribute name='basePeer' type='php_class'/>
-		<xs:attribute name='alias' type='table_name'/>
-		<xs:attribute name='interface' type='xs:string'/>
-		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore'/>
-		<xs:attribute name='heavyIndexing' type='xs:boolean'/>
-		<xs:attribute name='description' type='xs:string'/>
+		<xs:attribute name='name' type='table_name' use='required'/>
+		<xs:attribute name='phpName' type='php_class' use='optional'/>
+		<xs:attribute name='IdMethod' type='idmethod' default='null'/>
+		<xs:attribute name='skipSql' type='xs:boolean' default='false'/>
+		<xs:attribute name='abstract' type='xs:string' default='false'/>
+		<xs:attribute name='baseClass' type='php_class' use='optional'/>
+		<xs:attribute name='basePeer' type='php_class' use='optional'/>
+		<xs:attribute name='alias' type='table_name' use='optional'/>
+		<xs:attribute name='interface' type='xs:string' use='optional'/>
+		<xs:attribute name='phpNamingMethod' type='phpnamingmethod' default='underscore' use='optional'/>
+		<xs:attribute name='heavyIndexing' type='xs:boolean' use='optional'/>
+		<xs:attribute name='description' type='xs:string' use='optional'/>
+		<xs:attribute name='isTree' type='xs:string' use='optional'/> <!-- missing in the old DTD, but required to keep the treetest example working -->
 	</xs:complexType>
 
 	<xs:complexType name='database'>
@@ -280,13 +307,13 @@
 			<xs:element name='external-schema' type='external-schema' minOccurs='0' maxOccurs='unbounded'/>
 			<xs:element name='table' type='table' minOccurs='1' maxOccurs='unbounded'/>
 		</xs:sequence>
-		<xs:attribute name='name' type='xs:string'/>
-		<xs:attribute name='defaultIdMethod' type='dbidmethod'/>
-		<xs:attribute name='defaultTranslateMethod' type='xs:string'/>
-		<xs:attribute name='package' type='php_class'/>
-		<xs:attribute name='baseClass' type='php_class'/>
-		<xs:attribute name='basePeer' type='php_class'/>
+		<xs:attribute name='name' type='xs:string' use='optional'/>
+		<xs:attribute name='defaultIdMethod' type='dbidmethod' default='none'/>
+		<xs:attribute name='defaultTranslateMethod' type='xs:string' use='optional'/>
+		<xs:attribute name='package' type='php_class' use='optional'/>
+		<xs:attribute name='baseClass' type='php_class' use='optional'/>
+		<xs:attribute name='basePeer' type='php_class' use='optional'/>
 		<xs:attribute name='defaultPhpNamingMethod' type='phpnamingmethod' default='underscore'/>
-		<xs:attribute name='heavyIndexing' type='xs:boolean'/>
+		<xs:attribute name='heavyIndexing' type='xs:boolean' default='false'/>
 	</xs:complexType>
 </xs:schema>

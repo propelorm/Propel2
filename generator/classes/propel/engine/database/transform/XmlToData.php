@@ -75,6 +75,11 @@ class XmlToData extends AbstractHandler {
                 throw new BuildException("XML File not found: " . $f->getAbsolutePath());
             }
 
+				$domDocument = new DomDocument();
+				$domDocument->load($xmlFile);
+				if (!$domDocument->schemaValidate("xsd/database.xsd"))
+					throw new EngineException("XML schema does not validate, sorry...");
+
             $br = new BufferedReader($fr);
 
             $this->parser = new ExpatParser($br);

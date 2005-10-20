@@ -102,6 +102,13 @@ class XmlToAppData extends AbstractHandler {
 
         $this->currentXmlFile = $xmlFile;
 
+			$domDocument = new DomDocument();
+				$domDocument->load($xmlFile);
+
+			if ($domDocument->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
+				if (!$domDocument->schemaValidate("xsd/database.xsd"))
+					throw new EngineException("XML schema does not validate, sorry...");
+
         try {
             $fr = new FileReader($xmlFile);
         } catch (Exception $e) {
@@ -390,7 +397,7 @@ class XmlToAppData extends AbstractHandler {
 
 /**
  * Utility class used for objects with vendor data.
- * 
+ *
  * @package propel.engine.database.transform
  */
 class ObjectWithVendorSpecificData
