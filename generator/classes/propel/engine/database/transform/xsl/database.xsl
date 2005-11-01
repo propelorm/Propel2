@@ -77,7 +77,6 @@
 			<xsl:apply-templates select='id-method-parameter'/>
 			<xsl:apply-templates select='validator'/>
 			<xsl:apply-templates select='vendor'/>
-			<xsl:apply-templates select='@*'/>
 		</table>
 	</xsl:template>
 
