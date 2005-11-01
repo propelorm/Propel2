@@ -58,7 +58,6 @@
 	<xsl:template match='external-schema'>
 		<external-schema>
 			<xsl:apply-templates select='@*'/>
-			<xsl:attribute name='file'><xsl:value-of select='@file'/></xsl:attribute>
 		</external-schema>
 	</xsl:template>
 
