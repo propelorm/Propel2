@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<!DOCTYPE database SYSTEM "../dtd/database.dtd">
-
 <database name="bookstore" defaultIdMethod="native">
 
   <table name="book" description="Book Table">
@@ -14,7 +12,6 @@
     <column
       name="title"
       required="true"
-      type="VARCHAR"
       size="255"
       description="Book Title"/>
     <column

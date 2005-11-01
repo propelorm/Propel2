@@ -66,8 +66,6 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="native"/>
 			<xs:enumeration value="none"/>
-			<xs:enumeration value="NATIVE"/>
-			<xs:enumeration value="NONE"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -76,9 +74,6 @@
 			<xs:enumeration value="autoincrement"/>
 			<xs:enumeration value="sequence"/>
 			<xs:enumeration value="null"/>
-			<xs:enumeration value="AUTOINCREMENT"/>
-			<xs:enumeration value="SEQUENCE"/>
-			<xs:enumeration value="NULL"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -91,9 +86,6 @@
 			<xs:enumeration value="nochange"/>
 			<xs:enumeration value="underscore"/>
 			<xs:enumeration value="phpname"/>
-			<xs:enumeration value="NOCHANGE"/>
-			<xs:enumeration value="UNDERSCORE"/>
-			<xs:enumeration value="PHPNAME"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -103,10 +95,6 @@
 			<xs:enumeration value="setnull"/>
 			<xs:enumeration value="restrict"/>
 			<xs:enumeration value="none"/>
-			<xs:enumeration value="CASCADE"/>
-			<xs:enumeration value="SETNULL"/>
-			<xs:enumeration value="RESTRICT"/>
-			<xs:enumeration value="NONE"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -116,10 +104,6 @@
 			<xs:enumeration value="setnull"/>
 			<xs:enumeration value="restrict"/>
 			<xs:enumeration value="none"/>
-			<xs:enumeration value="CASCADE"/>
-			<xs:enumeration value="SETNULL"/>
-			<xs:enumeration value="RESTRICT"/>
-			<xs:enumeration value="NONE"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -289,7 +273,7 @@
 		<xs:attribute name="autoIncrement" type="xs:boolean" default="false"/>
 		<xs:attribute name="inheritance" type="inh_option" default="false"/>
 		<xs:attribute name="inputValidator" type="xs:string" use="optional"/>
-		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" default="underscore" use="optional"/>
+		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use="optional"/>
 		<xs:attribute name="description" type="xs:string" use="optional"/>
 		<xs:attribute name="lazyLoad" type="xs:boolean" default="false"/>
 		<xs:attribute name="nodeKeySep" type="xs:string" use="optional"/> <!-- missing in the old DTD, but required to keep the treetest example working -->
@@ -323,14 +307,14 @@
 		</xs:sequence>
 		<xs:attribute name="name" type="table_name" use="required"/>
 		<xs:attribute name="phpName" type="php_class" use="optional"/>
-		<xs:attribute name="IdMethod" type="idmethod" default="null"/>
+		<xs:attribute name="idMethod" type="idmethod" use='optional'/>
 		<xs:attribute name="skipSql" type="xs:boolean" default="false"/>
 		<xs:attribute name="abstract" type="xs:boolean" default="false"/>
 		<xs:attribute name="baseClass" type="php_class" use="optional"/>
 		<xs:attribute name="basePeer" type="php_class" use="optional"/>
 		<xs:attribute name="alias" type="table_name" use="optional"/>
 		<xs:attribute name="interface" type="xs:string" use="optional"/>
-		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" default="underscore"/>
+		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use='optional'/>
 		<xs:attribute name="heavyIndexing" type="xs:boolean" use="optional"/>
 		<xs:attribute name="description" type="xs:string"/>
 		<xs:attribute name="isTree" type="xs:boolean" use="optional"/> <!-- missing in the old DTD, but required to keep the treetest example working -->
