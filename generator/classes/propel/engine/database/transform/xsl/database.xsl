@@ -118,10 +118,10 @@
 	</xsl:template>
 
 	<xsl:template match='index-column'>
-		<unique-column>
+		<index-column>
 			<xsl:apply-templates select='@*'/>
 			<xsl:apply-templates select='vendor'/>
-		</unique-column>
+		</index-column>
 	</xsl:template>
 
 	<xsl:template match='id-method-parameter'>
