@@ -86,7 +86,7 @@ PHP class or method name.
   default CDATA #IMPLIED
   autoIncrement (true|false) "false"
   inheritance (single|false) "false"
-  inputValidator CDATA #IMPLIED
+<!--   inputValidator CDATA #IMPLIED -->
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"

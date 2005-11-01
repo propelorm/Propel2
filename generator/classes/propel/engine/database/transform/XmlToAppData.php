@@ -106,7 +106,7 @@ class XmlToAppData extends AbstractHandler {
 				$domDocument->load($xmlFile);
 
 			if ($domDocument->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
-				if (!$domDocument->schemaValidate("xsd/database.xsd"))
+				if (!$domDocument->schemaValidate(realpath(dirname(__FILE__) . "/xsd/database.xsd")))
 					throw new EngineException("XML schema does not validate, sorry...");
 
         try {
