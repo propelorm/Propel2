@@ -1,15 +1,8 @@
 <?php 
 
 	foreach ($table->getColumns() as $col) {
-		 $type = $col->getDomain()->getSqlType();
-         if ($col->isAutoIncrement()) {
-			$entry = $col->getName() . " " . $col->getAutoIncrementString();
-         } else {
-	         $size = $col->printSize();
-    	     $default = $col->getDefaultSetting();
-        	 $entry = $col->getName() . " $type $size $default " . $col->getNotNullString() . " " . $col->getAutoIncrementString();
-		}			 
-
+		$entry = $col->getSqlString();
+		
 		// collapse spaces
 		$entry = preg_replace('/[\s]+/', ' ', $entry);
 		
