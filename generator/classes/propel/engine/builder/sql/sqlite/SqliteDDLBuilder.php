@@ -38,8 +38,10 @@ class SqliteDDLBuilder extends DDLBuilder {
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
-DROP TABLE ".$table->getName().";
+DROP TABLE ".$platform->quoteIdentifier($table->getName()).";
 ";
 	}
 	
@@ -50,6 +52,8 @@ DROP TABLE ".$table->getName().";
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
 -----------------------------------------------------------------------------
 -- ".$table->getName()."
@@ -60,7 +64,7 @@ DROP TABLE ".$table->getName().";
 
 		$script .= "
 
-CREATE TABLE ".$table->getName()." 
+CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
 (
 	";
 	
@@ -89,13 +93,15 @@ CREATE TABLE ".$table->getName()."
 	protected function addIndices(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$index->getName() ." ON ".$table->getName()." (".$index->getColumnList().");
+			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
 ";
 		}
 	}
@@ -107,6 +113,8 @@ CREATE ";
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 -- SQLite does not support foreign keys; this is just for reference

@@ -114,7 +114,7 @@ class Column extends XMLElement {
 	 * @param columns Either a list of <code>Column</code> objects, or
 	 * a list of <code>String</code> objects with column names.
 	 */
-	public function makeList($columns)
+	public static function makeList($columns, Platform $platform)
 	{
 		$obj = $columns[0];
 		$isColumnList = ($obj instanceof Column);
@@ -122,14 +122,14 @@ class Column extends XMLElement {
 			$obj = $obj->getName();
 		}
 
-		$buf = $obj;
+		$buf = $platform->quoteIdentifier($obj);
 
 		for ($i=1, $size=count($columns); $i < $size; $i++) {
 			$obj = $columns[$i];
 			if ($isColumnList) {
 				$obj = $obj->getName();
 			}
-			$buf .= ", " . $this->getPlatform()->quoteIdentifier($obj);
+			$buf .= ", " . $platform->quoteIdentifier($obj);
 		}
 		return $buf;
 	}

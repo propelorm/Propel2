@@ -57,6 +57,7 @@ DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
 	{
 		$table = $this->getTable();
 		$script .= "
+		
 /* -----------------------------------------------------------------------
    ".$table->getName()."
    ----------------------------------------------------------------------- */
@@ -125,8 +126,7 @@ CREATE TABLE ".$table->getName()."
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
-			$script .= "
-CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+			$script .= "CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}
 	}
@@ -141,8 +141,7 @@ CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName())." INCREM
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		foreach ($table->getIndices() as $index) {
-			$script .= "
-CREATE ";
+			$script .= "CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}

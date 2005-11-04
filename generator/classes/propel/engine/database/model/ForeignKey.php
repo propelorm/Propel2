@@ -66,7 +66,7 @@ class ForeignKey extends XMLElement {
      */
     private function normalizeFKey($attrib)
     {
-        if ($attrib === null) {
+        if ($attrib === null  || strtoupper($attrib) == "NONE") {
             $attrib = self::NONE;
         }
         $attrib = strtoupper($attrib);
@@ -198,7 +198,7 @@ class ForeignKey extends XMLElement {
      */
     public function getLocalColumnNames()
     {
-        return Column::makeList($this->getLocalColumns());
+        return Column::makeList($this->getLocalColumns(), $this->getTable()->getDatabase()->getPlatform());
     }
 
     /**
@@ -206,7 +206,7 @@ class ForeignKey extends XMLElement {
      */
     public function getForeignColumnNames()
     {
-        return Column::makeList($this->getForeignColumns());
+        return Column::makeList($this->getForeignColumns(), $this->getTable()->getDatabase()->getPlatform());
     }
 
     /**

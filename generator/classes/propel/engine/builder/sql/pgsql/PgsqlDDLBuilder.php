@@ -38,12 +38,14 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
-DROP TABLE ".$table->getName()." CASCADE;
+DROP TABLE ".$platform->quoteIdentifier($table->getName())." CASCADE;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$table->getSequenceName().";
+DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
 ";
 		}
 	}
@@ -55,6 +57,8 @@ DROP SEQUENCE ".$table->getSequenceName().";
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
 -----------------------------------------------------------------------------
 -- ".$table->getName()."
@@ -66,7 +70,7 @@ DROP SEQUENCE ".$table->getSequenceName().";
 
 		$script .= "
 
-CREATE TABLE ".$table->getName()." 
+CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
 (
 	";
 	
@@ -81,7 +85,7 @@ CREATE TABLE ".$table->getName()."
 		}
 		
 		foreach ($table->getUnices() as $unique ) { 
-			$lines[] = "CONSTRAINT ".$unique->getName()." UNIQUE (".$unique->getColumnList().")";
+			$lines[] = "CONSTRAINT ".$platform->quoteIdentifier($unique->getName())." UNIQUE (".$unique->getColumnList().")";
     	}
 
 		$sep = ",
@@ -90,7 +94,7 @@ CREATE TABLE ".$table->getName()."
 		$script .= "
 );
 
-COMMENT ON TABLE ".$table->getName()." IS '" . $this->getPlatform()->escapeText($table->getDescription())."';
+COMMENT ON TABLE ".$platform->quoteIdentifier($table->getName())." IS '" . $platform->escapeText($table->getDescription())."';
 
 ";
 
@@ -103,10 +107,13 @@ COMMENT ON TABLE ".$table->getName()." IS '" . $this->getPlatform()->escapeText(
 	 */
 	protected function addColumnComments(&$script)
 	{
+		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($this->getTable()->getColumns() as $col) {
     		if( $col->getDescription() != '' ) {
 				$script .= "
-COMMENT ON COLUMN ".$this->getTable()->getName().".".$col->getName()." IS '".$this->getPlatform()->escapeText($col->getDescription()) ."';
+COMMENT ON COLUMN ".$platform->quoteIdentifier($table->getName()).".".$platform->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
 ";
 			}
 		}
@@ -119,9 +126,11 @@ COMMENT ON COLUMN ".$this->getTable()->getName().".".$col->getName()." IS '".$th
 	protected function addSequences(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$table->getSequenceName().";
+CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
 ";
 		}
 	}
@@ -134,13 +143,15 @@ CREATE SEQUENCE ".$table->getSequenceName().";
 	protected function addIndices(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$index->getName() ." ON ".$table->getName()." (".$index->getColumnList().");
+			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
 ";
 		}
 	}
@@ -152,9 +163,11 @@ CREATE ";
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$table->getName()." ADD CONSTRAINT ".$fk->getName()." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
 				$script .= " ON UPDATE ".$fk->getOnUpdate();
 			}

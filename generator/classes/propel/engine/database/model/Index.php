@@ -228,7 +228,7 @@ class Index extends XMLElement {
      */
     public function getColumnList()
     {
-        return Column::makeList($this->getColumns());
+        return Column::makeList($this->getColumns(), $this->getTable()->getDatabase()->getPlatform());
     }
 
     /**

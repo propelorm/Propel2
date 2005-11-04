@@ -1148,7 +1148,7 @@ class Table extends XMLElement implements IDMethod {
         for($i=0,$_i=count($list); $i < $_i; $i++) {
             $col = $list[$i];
             if ($col->isPrimaryKey()) {
-                $result .= ($comma++ ? ',' : '') . $col->getName();
+                $result .= ($comma++ ? ',' : '') . $this->getDatabase()->getPlatform()->quoteIdentifier($col->getName());
             }
         }
         return $result;

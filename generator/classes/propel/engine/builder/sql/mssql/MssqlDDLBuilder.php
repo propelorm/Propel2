@@ -40,10 +40,12 @@ class MssqlDDLBuilder extends DDLBuilder {
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-    ALTER TABLE ".$table->getName()." DROP CONSTRAINT ".$fk->getName().";
+    ALTER TABLE ".$platform->quoteIdentifier($table->getName())." DROP CONSTRAINT ".$platform->quoteIdentifier($fk->getName()).";
 ";
 		}
 		
@@ -73,7 +75,7 @@ BEGIN
      END
      CLOSE refcursor
      DEALLOCATE refcursor
-     DROP TABLE ".$table->getName()."
+     DROP TABLE ".$platform->quoteIdentifier($table->getName())."
 END
 ";
 	}
@@ -84,6 +86,8 @@ END
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
 /* ---------------------------------------------------------------------- */
 /* ".$table->getName()."											*/
@@ -95,7 +99,7 @@ END
 
 		$script .= "
 
-CREATE TABLE ".$table->getName()." 
+CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
 (
 	";
 	
@@ -106,7 +110,7 @@ CREATE TABLE ".$table->getName()."
 		}
 		
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "CONSTRAINT ".$table->getName()."_PK PRIMARY KEY (".$table->printPrimaryKey().")";
+			$lines[] = "CONSTRAINT ".$platform->quoteIdentifier($table->getName())."_PK PRIMARY KEY (".$table->printPrimaryKey().")";
 		}
 		
 		foreach ($table->getUnices() as $unique ) { 
@@ -128,13 +132,15 @@ CREATE TABLE ".$table->getName()."
 	protected function addIndices(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$index->getName() ." ON ".$table->getName()." (".$index->getColumnList().");
+			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
 ";
 		}
 	}
@@ -146,10 +152,12 @@ CREATE ";
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 BEGIN
-ALTER TABLE ".$table->getName()." ADD CONSTRAINT ".$fk->getName()." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
 				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
 				    // we have to skip this because it's unsupported.
