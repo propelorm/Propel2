@@ -91,6 +91,13 @@ interface Platform {
      */ 
     public function escapeText($text);
     
+	/**
+	 * Quotes identifiers used in database SQL.
+	 * @param string $text
+	 * @return string Quoted identifier.
+	 */
+	public function quoteIdentifier($text);
+	
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
      * @return boolean

@@ -23,13 +23,13 @@
 require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
- * The SQL DDL-building class for PostgreSQL.
+ * The SQL DDL-building class for Oracle.
  * 
  * 
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql.pgsql
  */
-class PgsqlDDLBuilder extends DDLBuilder {
+class OracleDDLBuilder extends DDLBuilder {
 		
 	/**
 	 * 
@@ -38,12 +38,13 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 		$script .= "
-DROP TABLE ".$table->getName()." CASCADE;
+DROP TABLE ".$platform->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$table->getSequenceName().";
+DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
 ";
 		}
 	}
@@ -56,13 +57,12 @@ DROP SEQUENCE ".$table->getSequenceName().";
 	{
 		$table = $this->getTable();
 		$script .= "
------------------------------------------------------------------------------
--- ".$table->getName()."
------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------
+   ".$table->getName()."
+   ----------------------------------------------------------------------- */
 ";
 
 		$this->addDropStatements($script);
-		$this->addSequences($script);
 
 		$script .= "
 
@@ -76,39 +76,43 @@ CREATE TABLE ".$table->getName()."
 			$lines[] = $col->getSqlString();
 		}
 		
-		if ($table->hasPrimaryKey()) {
-			$lines[] = "PRIMARY KEY (".$table->printPrimaryKey().")";
-		}
-		
-		foreach ($table->getUnices() as $unique ) { 
-			$lines[] = "CONSTRAINT ".$unique->getName()." UNIQUE (".$unique->getColumnList().")";
-    	}
-
 		$sep = ",
 	";
 		$script .= implode($sep, $lines);
 		$script .= "
 );
-
-COMMENT ON TABLE ".$table->getName()." IS '" . $this->getPlatform()->escapeText($table->getDescription())."';
-
 ";
-
-		$this->addColumnComments($script);
+		$this->addPrimaryKey($script);
+		$this->addIndices($script);
+		$this->addSequences($script);
+		
 	}
 	
 	/**
-	 * Adds comments for the columns.
+	 *
 	 * 
 	 */
-	protected function addColumnComments(&$script)
+	protected function addPrimaryKey(&$script)
 	{
-		foreach ($this->getTable()->getColumns() as $col) {
-    		if( $col->getDescription() != '' ) {
-				$script .= "
-COMMENT ON COLUMN ".$this->getTable()->getName().".".$col->getName()." IS '".$this->getPlatform()->escapeText($col->getDescription()) ."';
-";
+		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		$tableName = $table->getName();
+		$length = strlen($tableName);
+		if ($length > 27) {
+			$length = 27;
+		}
+		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
+			$script .= "
+	ALTER TABLE ".$platform->quoteIdentifier($table->getName())."
+	    ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
+	PRIMARY KEY (";
+			$delim = "";
+			foreach ($table->getPrimaryKey() as $col) {
+				echo $delim . $col->getName();
+				$delim = ",";
 			}
+	$script .= ");
+";
 		}
 	}
 	
@@ -119,9 +123,10 @@ COMMENT ON COLUMN ".$this->getTable()->getName().".".$col->getName()." IS '".$th
 	protected function addSequences(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$table->getSequenceName().";
+CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}
 	}
@@ -134,13 +139,14 @@ CREATE SEQUENCE ".$table->getSequenceName().";
 	protected function addIndices(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$index->getName() ." ON ".$table->getName()." (".$index->getColumnList().");
+			$script .= "INDEX ".$platform->quoteIdentifier($index->getName()) ." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
 ";
 		}
 	}
@@ -152,11 +158,13 @@ CREATE ";
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$table->getName()." ADD CONSTRAINT ".$fk->getName()." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
-				$script .= " ON UPDATE ".$fk->getOnUpdate();
+				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$fk->getLocalColumnNames()." fk).");
+				//$script .= " ON UPDATE ".$fk->getOnUpdate();
 			}
 			if ($fk->hasOnDelete()) { 
 				$script .= " ON DELETE ".$fk->getOnDelete();
@@ -165,5 +173,6 @@ ALTER TABLE ".$table->getName()." ADD CONSTRAINT ".$fk->getName()." FOREIGN KEY 
 ";
 		}
 	}
+	
 	
 }

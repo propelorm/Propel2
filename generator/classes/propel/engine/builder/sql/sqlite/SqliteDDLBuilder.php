@@ -23,7 +23,7 @@
 require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
- * 
+ * The SQL DDL-building class for SQLite.
  * 
  * 
  * @author Hans Lellelid <hans@xmpl.org>
@@ -67,17 +67,7 @@ CREATE TABLE ".$table->getName()."
 		$lines = array();
 		
 		foreach ($table->getColumns() as $col) {
-			$type = $col->getDomain()->getSqlType();
-			if ($col->isAutoIncrement()) {
-				$entry = $col->getName() . " " . $col->getAutoIncrementString();
-			} else {
-				$size = $col->printSize();
-				$default = $col->getDefaultSetting();
-				$entry = $col->getName() . " $type $size $default " . $col->getNotNullString() . " " . $col->getAutoIncrementString();
-			}
-			
-			$lines[] = trim($entry);
-			
+			$lines[] = $col->getSqlString();
 		}
 
 		foreach ($table->getUnices() as $unique ) { 

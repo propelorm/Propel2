@@ -94,4 +94,12 @@ class PlatformMysqlImpl extends PlatformDefaultImpl {
     public function escapeText($text) {
         return mysql_escape_string($text);
     }
+	
+	/**
+	 * @see Platform::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '`' . $text . '`';
+	}
 }

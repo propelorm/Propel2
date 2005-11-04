@@ -87,5 +87,13 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
     {
         return !("INT" == $sqlType || "TEXT" == $sqlType);
     }
+	
+	/**
+	 * @see Platform::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '[' . $text . ']';
+	}
 
 }

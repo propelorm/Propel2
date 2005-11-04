@@ -23,7 +23,7 @@
 require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
- * 
+ * The SQL DDL-building class for MS SQL Server.
  * 
  * 
  * @author Hans Lellelid <hans@xmpl.org>
@@ -102,7 +102,7 @@ CREATE TABLE ".$table->getName()."
 		$lines = array();
 		
 		foreach ($table->getColumns() as $col) {
-			$lines[] = trim($col->getSqlString());
+			$lines[] = $col->getSqlString();
 		}
 		
 		if ($table->hasPrimaryKey()) {

@@ -47,11 +47,13 @@ class PlatformSqliteImpl extends PlatformDefaultImpl {
     }
 
     /**
-     * @see Platform#getAutoIncrement()
+	 * @see Platform#getAutoIncrement()
+	 * @link http://www.sqlite.org/autoinc.html
      */
     public function getAutoIncrement()
     {
-        return "INTEGER PRIMARY KEY";
+		
+        return "PRIMARY KEY";
     }
 
     /**

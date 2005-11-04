@@ -130,6 +130,14 @@ class PlatformDefaultImpl implements Platform {
         return str_replace("'", "''", $text);
     }
     
+	/**
+	 * @see Platform::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '"' . $text . '"';
+	}
+	
     /**
      * @see Platform::supportsNativeDeleteTrigger()
      */

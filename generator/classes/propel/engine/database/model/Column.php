@@ -129,9 +129,8 @@ class Column extends XMLElement {
 			if ($isColumnList) {
 				$obj = $obj->getName();
 			}
-			$buf .= ", " . $obj;
+			$buf .= ", " . $this->getPlatform()->quoteIdentifier($obj);
 		}
-
 		return $buf;
 	}
 
@@ -939,7 +938,7 @@ class Column extends XMLElement {
 	public function getSqlString()
 	{
 		$sb = "";
-		$sb .= $this->getName() . " ";
+		$sb .= $this->getPlatform()->quoteIdentifier($this->getName()) . " ";
 		$sb .= $this->getDomain()->getSqlType();
 		if ($this->getPlatform()->hasSize($this->getDomain()->getSqlType())) {
 			$sb .= $this->getDomain()->printSize();
@@ -948,6 +947,6 @@ class Column extends XMLElement {
 		$sb .= $this->getDefaultSetting() . " ";
 		$sb .= $this->getNotNullString() . " ";
 		$sb .= $this->getAutoIncrementString();
-		return $sb;
+		return trim($sb);
 	}
 }
