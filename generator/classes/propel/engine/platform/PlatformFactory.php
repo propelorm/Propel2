@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/engine/platform/PlatformDefaultImpl.php';
+include_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
  * Factory class responsible to create Platform objects that
