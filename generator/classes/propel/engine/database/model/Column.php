@@ -640,7 +640,7 @@ class Column extends XMLElement {
 	 */
 	public function isString()
 	{
-		return (is_string($this->columnType));
+		return PropelTypes::isTextxType($this->propelType);
 	}
 
 	/**
