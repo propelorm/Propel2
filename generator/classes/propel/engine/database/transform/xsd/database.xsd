@@ -309,10 +309,12 @@
 		<xs:attribute name="phpName" type="php_class" use="optional"/>
 		<xs:attribute name="idMethod" type="idmethod" use='optional'/>
 		<xs:attribute name="skipSql" type="xs:boolean" default="false"/>
+		<xs:attribute name="readOnly" type="xs:boolean" default="false"/>
 		<xs:attribute name="abstract" type="xs:boolean" default="false"/>
 		<xs:attribute name="baseClass" type="php_class" use="optional"/>
 		<xs:attribute name="basePeer" type="php_class" use="optional"/>
 		<xs:attribute name="alias" type="table_name" use="optional"/>
+		<xs:attribute name="package" type="xs:string" use="optional"/>
 		<xs:attribute name="interface" type="xs:string" use="optional"/>
 		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use='optional'/>
 		<xs:attribute name="heavyIndexing" type="xs:boolean" use="optional"/>

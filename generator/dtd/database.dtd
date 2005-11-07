@@ -48,7 +48,9 @@ PHP class or method name.
   phpName CDATA #IMPLIED
   idMethod (native|autoincrement|sequence|none|null) "null"
   skipSql (true|false) "false"
+  readOnly (true|false) "false"
   abstract (true|false) "false"
+  package CDATA #IMPLIED
   baseClass CDATA #IMPLIED
   basePeer CDATA #IMPLIED
   alias CDATA #IMPLIED
