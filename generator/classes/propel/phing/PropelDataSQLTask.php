@@ -141,10 +141,10 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
     {
         $this->validate();
 
-        $context = $this->createContext();
-
         $targetDatabase = $this->getTargetDatabase();
-
+		
+		$platform = $this->getPlatformForTargetDatabase();
+		
         // Load the Data XML -> DB Name properties
         $map = new Properties();
         try {
@@ -153,6 +153,8 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
             throw new BuildException("Cannot open and process the datadbmap!", $ioe);
         }
 
+		DataModelBuilder::setBuildProperties($this->getPropelProperties());
+		
         // Parse each file in teh data -> db map
 
         foreach($map->keys() as $dataXMLFilename) {
@@ -165,16 +167,16 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
                 $dbname = $map->get($dataXMLFilename);
 
                 $db = $this->getDatabase($dbname);
+				
                 if (!$db) {
                     throw new BuildException("Cannot find instantiated Database for name '$dbname' from datadbmap file.");
                 }
-
-                $context->put("platform", $db->getPlatform());
-                $context->put("targetDatabase", $this->getTargetDatabase());
-
+				
+				$db->setPlatform($platform);
+				
                 $outFile = $this->getMappedFile($dataXMLFilename);
 
-                $this->log("Creating SQL from XML data dump file: " . $dataXMLFile->__toString());
+                $this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
 
                 try {
                     $dataXmlParser = new XmlToData($db, $this->dbEncoding);
@@ -182,13 +184,20 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
                 } catch (Exception $e) {
                     throw new Exception("Exception parsing data XML: " . $e->getMessage());
                 }
-
-                $append = false; // because we first want to overwrite & then append on second iteration
-                foreach ($data as $r) {
-                    $context->put("row", $r);
-                    $context->parse("sql/load/$targetDatabase/row.tpl", $outFile->getAbsolutePath(), $append);
-                    if ($append == false) $append = true;
+				
+				$fp = fopen($outFile->getAbsolutePath(), 'w');
+				
+				$currTable = null;
+                foreach ($data as $dataRow) {
+					if ($currTable !== $dataRow->getTable()) {
+					    $currTable = $dataRow->getTable();
+						$builder = DataModelBuilder::builderFactory($currTable, 'datasql');
+					}
+					$sql = $builder->buildRowSql($dataRow);
+					fwrite($fp, $sql);
                 }
+				
+				fclose($fp);
 				
 				// Place the generated SQL file(s)
 	            $p = new Properties();
