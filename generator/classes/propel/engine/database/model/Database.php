@@ -250,20 +250,28 @@ class Database extends XMLElement {
 
     /**
      * Return the table with the specified name.
-     * @return A Table object.  If it does not exist it returns null
+	 * @param string $name The name of the table (e.g. 'my_table')
+     * @return Table a Table object or null if it doesn't exist
      */
     public function getTable($name)
     {
-        return @$this->tablesByName[$name];
+		if (isset($this->tablesByName[$name])) {
+		    return $this->tablesByName[$name];
+		}
+		return null; // just to be explicit
     }
 
     /**
      * Return the table with the specified phpName.
-     * @return A Table object.  If it does not exist it returns null
+	 * @param string $phpName the PHP Name of the table (e.g. 'MyTable')
+     * @return Table a Table object or null if it doesn't exist
      */
     public function getTableByPhpName($phpName)
     {
-        return @$this->tablesByPhpName[$phpName];
+		if (isset($this->tablesByPhpName[$phpName])) {
+		    return $this->tablesByPhpName[$phpName];
+		}
+        return null; // just to be explicit
     }
 
     /**
