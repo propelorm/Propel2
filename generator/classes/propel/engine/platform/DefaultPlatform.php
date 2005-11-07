@@ -57,6 +57,18 @@ class DefaultPlatform implements Platform {
         $this->schemaDomainMap[$domain->getType()] = $domain;
     }
     
+	/**
+	 * Returns the short name of the database type that this platform represents.
+	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
+	 * @return string
+	 */
+	public function getDatabaseType()
+	{
+		$clazz = get_class($this);
+		$pos = strpos($clazz, 'Platform');
+		return strtolower(substr($clazz,0,$pos));
+	}
+	
     /**
      * @see Platform::getMaxColumnNameLength()
      */

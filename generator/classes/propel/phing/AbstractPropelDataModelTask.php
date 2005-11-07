@@ -308,7 +308,33 @@ abstract class AbstractPropelDataModelTask extends Task {
         $outFile = new PhingFile($this->getOutputDirectory(), $outFilename);
         return $outFile;
     }
-
+	
+	/**
+	 * Get the Platform class based on the target database type.
+	 * @return Platform Class that implements the Platform interface.
+	 */
+	protected function getPlatformForTargetDatabase()
+	{
+	
+		$classpath = $this->getPropelProperty("platformClass");
+		if (empty($classpath)) {
+			throw new BuildException("Unable to find class path for '$propname' property.");
+		}
+		
+		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
+		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
+		$lastdotpos = strrpos($classpath, '.');
+		if ($lastdotpos) $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
+		else ucfirst($classpath);
+		
+		if (empty($classpath)) {
+			throw new BuildException("Unable to find class path for '$propname' property.");
+		}
+		
+		$clazz = Phing::import($classpath);
+		return new $clazz();
+	}
+	
     /**
      * Gets all matching XML schema files and loads them into data models for class.
      * @return void
@@ -323,15 +349,15 @@ abstract class AbstractPropelDataModelTask extends Task {
             $srcDir = $fs->getDir($this->project);
 
             $dataModelFiles = $ds->getIncludedFiles();
-
+			
+			$platform = $this->getPlatformForTargetDatabase();
+			
             // Make a transaction for each file
             foreach($dataModelFiles as $dmFilename) {
                 $this->log("Processing: ".$dmFilename);
                 $f = new PhingFile($srcDir, $dmFilename);
-                $xmlParser = new XmlToAppData($this->getTargetDatabase(),
-                                              $this->getTargetPackage(),
-                                              $this->dbEncoding);
-                $ad = $xmlParser->parseFile($f->__toString());
+                $xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
+                $ad = $xmlParser->parseFile($f->getAbsolutePath());
                 $ad->setName($f->getName());
                 $ads[] = $ad;
             }
@@ -444,30 +470,45 @@ abstract class AbstractPropelDataModelTask extends Task {
         return $context;
     }
 
-  /**
-   * Fetches the propel.xxx properties from project, renaming the propel.xxx properties to just xxx.
-   *
-   * Also, renames any xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-   *
-   * @return array Assoc array of properties.
-   */
-  protected function getPropelProperties()
-  {
-    $allProps = $this->getProject()->getProperties();
-    $renamedPropelProps = array();
-        foreach ($allProps as $key => $propValue) {
-            if (strpos($key, "propel.") === 0) {
-                $newKey = substr($key, strlen("propel."));
-                $j = strpos($newKey, '.');
-                while ($j !== false) {
-                    $newKey =  substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
-                    $j = strpos($newKey, '.');
-                }
-        $renamedPropelProps[$newKey] = $propValue;
-            }
-        }
-    return $renamedPropelProps;
-  }
+	/**
+	 * Fetches the propel.xxx properties from project, renaming the propel.xxx properties to just xxx.
+	 *
+	 * Also, renames any xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
+	 *
+	 * @return array Assoc array of properties.
+	 */
+	protected function getPropelProperties()
+	{
+		$allProps = $this->getProject()->getProperties();
+		$renamedPropelProps = array();
+		foreach ($allProps as $key => $propValue) {
+			if (strpos($key, "propel.") === 0) {
+				$newKey = substr($key, strlen("propel."));
+				$j = strpos($newKey, '.');
+				while ($j !== false) {
+					$newKey =  substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
+					$j = strpos($newKey, '.');
+				}
+				$renamedPropelProps[$newKey] = $propValue;
+			}
+		}
+		return $renamedPropelProps;
+	}
+	
+	/**
+	 * Fetches a single propel.xxx property from project, using "converted" property names.
+	 * @see getPropelProperties()
+	 * @param string $name Name of property to fetch (in converted CamelCase)
+	 * @return string The value of the property (or NULL if not set)
+	 */
+	protected function getPropelProperty($name)
+	{
+		$props = $this->getPropelProperties();
+		if (isset($props[$name])) {
+		    return $props[$name];
+		}
+		return null; // just to be explicit
+	}
 
     /**
      * Adds the propel.xxx properties to the passed Capsule context, changing names to just xxx.
@@ -475,13 +516,13 @@ abstract class AbstractPropelDataModelTask extends Task {
      * Also, move xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
      *
      * @param Capsule $context
-   * @see getPropelProperties()
+	 * @see getPropelProperties()
      */
     public function populateContextProperties(Capsule $context)
     {
-        foreach ($this->getPropelProperties() as $key => $propValue) {
-      $this->log('Adding property ${' . $key . '} to context', PROJECT_MSG_DEBUG);
-      $context->put($key, $propValue);
+		foreach ($this->getPropelProperties() as $key => $propValue) {
+			$this->log('Adding property ${' . $key . '} to context', PROJECT_MSG_DEBUG);
+			$context->put($key, $propValue);
         }
     }
 

@@ -35,6 +35,13 @@ interface Platform {
     /** constant for native id method */
     const SEQUENCE = "sequence";
     
+	/**
+	 * Returns the short name of the database type that this platform represents.
+	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
+	 * @return string
+	 */
+	public function getDatabaseType();
+	
     /**
      * Returns the native IdMethod (sequence|identity)
      *

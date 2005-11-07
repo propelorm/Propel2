@@ -44,7 +44,7 @@ class XmlToAppData extends AbstractHandler {
     const DEBUG = false;
 
     private $app;
-    private $databaseType;
+    private $platform;
     private $currDB;
     private $currTable;
     private $currColumn;
@@ -71,13 +71,14 @@ class XmlToAppData extends AbstractHandler {
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param string $databaseType The type of database for the application.
+     * @param Platform $platform The type of database for the application.
      * @param string $defaultPackage the default PHP package used for the om
+	 * @param string $encoding The database encoding.
      */
-    public function __construct($databaseType, $defaultPackage, $encoding = 'iso-8859-1')
+    public function __construct(Platform $platform, $defaultPackage, $encoding = 'iso-8859-1')
     {
-        $this->app = new AppData($databaseType);
-        $this->databaseType = $databaseType;
+        $this->app = new AppData($platform);
+        $this->platform = $platform;
         $this->defaultPackage = $defaultPackage;
         $this->firstPass = true;
         $this->encoding = $encoding;
@@ -326,7 +327,7 @@ class XmlToAppData extends AbstractHandler {
 
                 switch($name) {
                     case "parameter":
-                        if($this->currVendorObject->isCompatible($this->databaseType)) {
+                        if($this->currVendorObject->isCompatible($this->platform->getDatabaseType())) {
                             $this->currVendorObject->setVendorParameter($attributes['name'], iconv('utf-8',$this->encoding, $attributes['value']));
                         }
                     break;

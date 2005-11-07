@@ -116,6 +116,8 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 		$basePrefix = $generator->get('basePrefix');
 		$project = $generator->get('project');
 		
+		DataModelBuilder::setBuildProperties($this->getPropelProperties());
+		
 		foreach ($this->getDataModels() as $dataModel) {
 			$this->log("Processing Datamodel : " . $dataModel->getName());
 			
@@ -128,8 +130,6 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 				foreach ($database->getTables() as $table) {					
 				
 					if (!$table->isForReferenceOnly()) {
-					
-						DataModelBuilder::setBuildProperties($this->getPropelProperties());
 						
 						$this->log("\t+ " . $table->getName());
 						

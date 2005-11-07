@@ -243,14 +243,16 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 			$dataModels = $this->getDataModels();
 			$dataModel = array_shift($dataModels);
 			$packagedDataModels = array();
-
+			
+			$platform = $this->getPlatformForTargetDatabase();
+			
 			foreach ($dataModel->getDatabases() as $db) {
 				foreach ($db->getTables() as $table) {
 					$package = $table->getPackage();
 					if (!isset($packagedDataModels[$package])) {
 						$dbClone = $this->cloneDatabase($db);
 						$dbClone->setPackage($package);
-						$ad = new AppData($db->getDatabaseType());
+						$ad = new AppData($platform);
 						$ad->setName($dataModel->getName());
 						$ad->addDatabase($dbClone);
 						$packagedDataModels[$package] = $ad;

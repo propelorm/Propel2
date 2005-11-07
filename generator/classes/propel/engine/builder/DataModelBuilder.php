@@ -83,16 +83,16 @@ abstract class DataModelBuilder {
 		}
 		$propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
 		$classpath = self::getBuildProperty($propname);
-				
+			
+		if (empty($classpath)) {
+			throw new BuildException("Unable to find class path for '$propname' property.");
+		}
+			
 		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
 		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
 		$lastdotpos = strrpos($classpath, '.');
 		if ($lastdotpos) $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
 		else ucfirst($classpath);
-		
-		if (empty($classpath)) {
-			throw new BuildException("Unable to find class path for '$propname' property.");
-		}
 		
 		return Phing::import($classpath);
 	}

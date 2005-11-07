@@ -41,10 +41,10 @@ class AppData {
     private $dbList = array();
 
     /**
-     * The type for our databases.
+     * The platform class for our database(s).
      * @var string
      */
-    private $databaseType;
+    private $platform;
 
     /**
      * Name of the database. Only one database definition
@@ -61,12 +61,11 @@ class AppData {
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param databaseType The default type for any databases added to
-     * this application model.
+     * @param Platform $platform The platform class to use for any databases added to this application model.
      */
-    public function __construct($databaseType)
+    public function __construct(Platform $platform)
     {
-        $this->databaseType = $databaseType;
+        $this->platform = $platform;
     }
 
     /**
@@ -161,8 +160,8 @@ class AppData {
     {
         if ($db instanceof Database) {
             $db->setAppData($this);
-            if ($db->getDatabaseType() === null) {
-                $db->setDatabaseType($this->databaseType);
+            if ($db->getPlatform() === null) {
+                $db->setPlatform($this->platform);
             }
             $this->dbList[] = $db;
             return $db;

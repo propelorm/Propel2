@@ -24,7 +24,6 @@ require_once 'propel/engine/database/model/XMLElement.php';
 include_once 'propel/engine/database/model/IDMethod.php';
 include_once 'propel/engine/database/model/NameGenerator.php';
 include_once 'propel/engine/database/model/Table.php';
-include_once 'propel/engine/platform/PlatformFactory.php';
 
 /**
  * A class for holding application data structures.
@@ -40,7 +39,7 @@ include_once 'propel/engine/platform/PlatformFactory.php';
  */
 class Database extends XMLElement {
 
-    private $databaseType = null;
+	private $platform;
     private $tableList = array();
     private $curColumn;
     private $name;
@@ -84,7 +83,17 @@ class Database extends XMLElement {
      */
     public function getPlatform()
     {
-        return PlatformFactory::getPlatformFor($this->databaseType);
+        return $this->platform;
+    }
+
+    /**
+     * Sets the Platform implementation for this database.
+     *
+     * @param Platform $platform A Platform implementation
+     */
+    public function setPlatform($platform)
+    {
+        $this->platform = $platform;
     }
 
     /**
@@ -294,16 +303,6 @@ class Database extends XMLElement {
     public function getAppData()
     {
         return $this->dbParent;
-    }
-
-    public function getDatabaseType()
-    {
-        return $this->databaseType;
-    }
-
-    public function setDatabaseType($databaseType)
-    {
-        $this->databaseType = $databaseType;
     }
 	
 	/**
