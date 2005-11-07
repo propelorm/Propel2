@@ -255,21 +255,21 @@ class ".$this->getClassname()." {
 			if($col->isPrimaryKey()) {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."' , CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
+		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."' , CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", ".var_export($col->getDefaultValue(), true).");
 ";
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
+		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".$size.", ".var_export($col->getDefaultValue(), true).");
 ";
 				} 
 			} else {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
+		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", ".var_export($col->getDefaultValue(), true).");
 ";
             } else { 
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".($col->isNotNull() ? 'true' : 'false' ).", ".$size .");
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".var_export($col->getDefaultValue(), true).");
 ";
 				} 
 			} // if col-is prim key

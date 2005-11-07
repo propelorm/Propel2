@@ -224,11 +224,12 @@ class TableMap {
      * @param int $creoleType The integer representing the Creole type.
      * @param boolean $isNotNull Whether column does not allow NULL values.
      * @param $size An int specifying the size.
+	 * @param string $defaultValue The default val for the column.
      * @return ColumnMap Newly added PrimaryKey column.
      */
-    public function addPrimaryKey($columnName, $phpName, $type, $creoleType, $isNotNull = false, $size = null)
+    public function addPrimaryKey($columnName, $phpName, $type, $creoleType, $isNotNull = false, $size = null, $defaultValue = null)
     {
-        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, null, null);
+        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, null, null, $defaultValue);
     }
 
     /**
@@ -241,9 +242,10 @@ class TableMap {
      * @param string $fkColumn A String with the foreign key column name.
      * @param boolean $isNotNull Whether column does not allow NULL values.
      * @param int $size An int specifying the size.
+	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap Newly added ForeignKey column.
      */
-    public function addForeignKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
+    public function addForeignKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue = null)
     {
         return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, false, $fkTable, $fkColumn);
     }
@@ -258,9 +260,10 @@ class TableMap {
      * @param string $fkColumn A String with the foreign key column name.
      * @param boolean $isNotNull Whether column does not allow NULL values.
      * @param int $size An int specifying the size.
+	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap Newly created foreign pkey column.
      */
-    public function addForeignPrimaryKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
+    public function addForeignPrimaryKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue)
     {
         return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, $fkTable, $fkColumn);
     }
@@ -289,9 +292,10 @@ class TableMap {
      * @param boolean $pk True if column is a primary key.
      * @param string $fkTable A String with the foreign key table name.
      * @param $fkColumn A String with the foreign key column name.
+	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap The newly created column.
      */
-    public function addColumn($name, $phpName, $type, $creoleType, $isNotNull = false, $size = null, $pk = null, $fkTable = null, $fkColumn = null)
+    public function addColumn($name, $phpName, $type, $creoleType, $isNotNull = false, $size = null, $pk = null, $fkTable = null, $fkColumn = null, $defaultValue = null)
     {
 
         $col = new ColumnMap($name, $this);
@@ -309,6 +313,8 @@ class TableMap {
         $col->setSize($size);
         $col->setPhpName($phpName);
         $col->setNotNull($isNotNull);
+		$col->setDefaultValue($defaultValue);
+		
         $this->columns[$name] = $col;
 
         return $this->columns[$name];
