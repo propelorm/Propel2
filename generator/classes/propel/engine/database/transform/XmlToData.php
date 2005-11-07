@@ -67,21 +67,23 @@ class XmlToData extends AbstractHandler {
         try {
 
             $this->data = array();
-
+			
+			/*
 			$domDocument = new DomDocument('1.0', 'UTF-8');
 			$domDocument->load($xmlFile);
-
+			
+			
 			$xsl = new XsltProcessor();
 			$xsl->importStyleSheet(DomDocument::load(realpath(dirname(__FILE__) . "/xsl/database.xsl")));
 			$transformed = $xsl->transformToDoc($domDocument);
 
 			$xmlFile = $xmlFile . "transformed.xml";
 			$transformed->save($xmlFile);
-
+			
 			if ($transformed->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
 				if (!$transformed->schemaValidate(realpath(dirname(__FILE__) . "/xsd/database.xsd")))
 					throw new EngineException("XML schema does not validate, sorry...");
-
+			*/
             try {
                 $fr = new FileReader($xmlFile);
             } catch (Exception $e) {
