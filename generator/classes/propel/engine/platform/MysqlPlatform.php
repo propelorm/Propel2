@@ -18,19 +18,18 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
-require_once 'propel/engine/platform/PlatformDefaultImpl.php';
-include_once 'propel/engine/database/model/Domain.php';
+
+require_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
- * MS SQL Platform implementation.
- * 
+ * MySql Platform implementation.
+ *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @version $Revision$
  * @package propel.engine.platform
  */
-class PlatformMssqlImpl extends PlatformDefaultImpl {    
+class MysqlPlatform extends DefaultPlatform {
 
     /**
      * Initializes db specific domain mapping.
@@ -38,38 +37,31 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
     protected function initialize()
     {
         parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "INT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "INT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "DECIMAL"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));  
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATETIME"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BINARY(7132)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "IMAGE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "IMAGE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "IMAGE"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BLOB"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "MEDIUMBLOB"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONGBLOB"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
     }
-    
+
+    /**
+     * @see Platform#getAutoIncrement()
+     */
+    public function getAutoIncrement()
+    {
+        return "AUTO_INCREMENT";
+    }
+
     /**
      * @see Platform#getMaxColumnNameLength()
      */
     public function getMaxColumnNameLength()
     {
-        return 128;
-    }
-    
-    /**
-     * @return Explicitly returns <code>NULL</code> if null values are
-     * allowed (as recomended by Microsoft).
-     * @see Platform#getNullString(boolean)
-     */
-    public function getNullString($notNull) 
-    {
-        return ($notNull ? "NOT NULL" : "NULL");
+        return 64;
     }
     
     /**
@@ -77,15 +69,30 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
      */
     public function supportsNativeDeleteTrigger()
     {
-        return true;
+        $usingInnoDB = false;
+        if(class_exists('DataModelBuilder', false))
+        {
+            $usingInnoDB = strtolower(DataModelBuilder::getBuildProperty('mysqlTableType')) == 'innodb';
+        }
+        return $usingInnoDB || false;
     }
-	
-	/**
-     * @see Platform::hasSize(String)
+    
+    /**
+     * @see Platform#hasSize(String)
      */
-    public function hasSize($sqlType)
-    {
-        return !("INT" == $sqlType || "TEXT" == $sqlType);
+    public function hasSize($sqlType) {
+        return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
+                || "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
+                || "LONGBLOB" == $sqlType);
+    }
+
+    /**
+     * Escape the string for RDBMS.
+     * @param string $text
+     * @return string
+     */
+    public function escapeText($text) {
+        return mysql_escape_string($text);
     }
 	
 	/**
@@ -93,7 +100,6 @@ class PlatformMssqlImpl extends PlatformDefaultImpl {
 	 */
 	public function quoteIdentifier($text)
 	{
-		return '[' . $text . ']';
+		return '`' . $text . '`';
 	}
-
 }

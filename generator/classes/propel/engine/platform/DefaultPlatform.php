@@ -29,7 +29,7 @@ include_once 'propel/engine/database/model/Domain.php';
  * @version $Revision$
  * @package propel.engine.platform
  */
-class PlatformDefaultImpl implements Platform {
+class DefaultPlatform implements Platform {
 
     private $schemaDomainMap;
     

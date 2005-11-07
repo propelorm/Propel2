@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/engine/platform/PlatformDefaultImpl.php';
+require_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
  * SQLite Platform implementation.
@@ -28,7 +28,7 @@ require_once 'propel/engine/platform/PlatformDefaultImpl.php';
  * @version $Revision$
  * @package propel.engine.platform
  */
-class PlatformSqliteImpl extends PlatformDefaultImpl {
+class SqlitePlatform extends DefaultPlatform {
 
     /**
      * Initializes db specific domain mapping.

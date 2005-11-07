@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
  
-require_once 'propel/engine/platform/PlatformDefaultImpl.php';
+require_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
  * Postgresql Platform implementation.
@@ -29,7 +29,7 @@ require_once 'propel/engine/platform/PlatformDefaultImpl.php';
  * @version $Revision$
  * @package propel.engine.platform
  */
-class PlatformPgsqlImpl extends PlatformDefaultImpl {
+class PgsqlPlatform extends DefaultPlatform {
 
     /**
      * Initializes db specific domain mapping.

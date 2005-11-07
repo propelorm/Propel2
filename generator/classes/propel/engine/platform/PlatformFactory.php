@@ -40,10 +40,10 @@ class PlatformFactory {
      *
      * @param dbms name of the platform
      */
-    public static function getPlatformFor($dbms) {        
+    public static function getPlatformFor($dbms) {
         $result = @self::$platforms[$dbms];        
         if ($result === null) {
-            $cls = 'Platform' . ucfirst($dbms) . 'Impl';
+            $cls = ucfirst($dbms) . 'Platform';
             include_once 'propel/engine/platform/' . $cls . '.php';
             if (!class_exists($cls)) {
                 throw new PropelException("Class $cls does not exist.");
