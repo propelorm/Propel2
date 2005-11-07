@@ -157,7 +157,13 @@
 			<xsl:apply-templates select='parameter'/>
 		</vendor>
 	</xsl:template>
-
+	
+	<xsl:template match='inheritance'>
+		<inheritance>
+			<xsl:apply-templates select='@*'/>
+		</inheritance>
+	</xsl:template>
+	
 	<xsl:template match='column'>
 		<column>
 			<xsl:if test='not(boolean(@primaryKey))'>
@@ -171,9 +177,6 @@
 			</xsl:if>
 			<xsl:if test='not(boolean(@autoIncrement))'>
 				<xsl:attribute name='autoIncrement'>false</xsl:attribute>
-			</xsl:if>
-			<xsl:if test='not(boolean(@inheritance))'>
-				<xsl:attribute name='inheritance'>false</xsl:attribute>
 			</xsl:if>
 			<xsl:if test='not(boolean(@lazyLoad))'>
 				<xsl:attribute name='lazyLoad'>false</xsl:attribute>
