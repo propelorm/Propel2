@@ -163,6 +163,7 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 		}		
 		
 		foreach ($table->getIndices() as $index ) {
+			$vendor = $index->getVendorSpecificInfo();
 			$lines[] .= (($vendor && $vendor['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $platform->quoteIdentifier($index->getName()) . "(" . $index->getColumnList() . ")";
 		}
 		
@@ -227,13 +228,15 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 				$lines[] = "INDEX $indexName (".$fk->getLocalColumnNames().")";
 			}
 			$str = "CONSTRAINT ".$platform->quoteIdentifier($fk->getName())."
-		      FOREIGN KEY (".$fk->getLocalColumnNames().")
-		      REFERENCES ".$platform->quoteIdentifier($fk->getForeignTableName()) . " (".$fk->getForeignColumnNames().")";
+		FOREIGN KEY (".$fk->getLocalColumnNames().")
+		REFERENCES ".$platform->quoteIdentifier($fk->getForeignTableName()) . " (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
-				$str .= " ON UPDATE ".$fk->getOnUpdate();
+				$str .= "
+		ON UPDATE ".$fk->getOnUpdate();
 			}
 			if ($fk->hasOnDelete()) {
-				$str .= " ON DELETE ".$fk->getOnDelete();
+				$str .= "
+		ON DELETE ".$fk->getOnDelete();
 			}
 			$lines[] = $str;
 		}
