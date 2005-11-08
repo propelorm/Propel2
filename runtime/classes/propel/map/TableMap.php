@@ -228,7 +228,7 @@ class TableMap {
      */
     public function addPrimaryKey($columnName, $phpName, $type, $creoleType, $isNotNull = false, $size = null)
     {
-        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, null, null, $defaultValue);
+        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, null, null);
     }
 
     /**
