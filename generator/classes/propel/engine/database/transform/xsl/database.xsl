@@ -32,19 +32,47 @@
 	</xsl:template>
 
 	<xsl:template match='@onDelete'>
-		<xsl:attribute name='onDelete'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+		<xsl:choose>
+			<xsl:when test='.=""'>
+				<xsl:attribute name='onDelete'>none</xsl:attribute>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:attribute name='onDelete'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match='@OnDelete'>
-		<xsl:attribute name='onDelete'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+		<xsl:choose>
+			<xsl:when test='.=""'>
+				<xsl:attribute name='onDelete'>none</xsl:attribute>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:attribute name='onDelete'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match='@onUpdate'>
-		<xsl:attribute name='onUpdate'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+		<xsl:choose>
+			<xsl:when test='.=""'>
+				<xsl:attribute name='onUpdate'>none</xsl:attribute>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:attribute name='onUpdate'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match='@OnUpdate'>
-		<xsl:attribute name='onUpdate'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+		<xsl:choose>
+			<xsl:when test='.=""'>
+				<xsl:attribute name='onUpdate'>none</xsl:attribute>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:attribute name='onUpdate'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match='@IdMethod'>
@@ -157,13 +185,13 @@
 			<xsl:apply-templates select='parameter'/>
 		</vendor>
 	</xsl:template>
-	
+
 	<xsl:template match='inheritance'>
 		<inheritance>
 			<xsl:apply-templates select='@*'/>
 		</inheritance>
 	</xsl:template>
-	
+
 	<xsl:template match='column'>
 		<column>
 			<xsl:if test='not(boolean(@primaryKey))'>
