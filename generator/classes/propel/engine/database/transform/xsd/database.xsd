@@ -92,9 +92,11 @@
 	<xs:simpleType name="delete">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="cascade"/>
+			<xs:enumeration value="set null"/>
 			<xs:enumeration value="setnull"/>
 			<xs:enumeration value="restrict"/>
 			<xs:enumeration value="none"/>
+			<xs:enumeration value=""/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -102,8 +104,10 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="cascade"/>
 			<xs:enumeration value="setnull"/>
+			<xs:enumeration value="set null"/>
 			<xs:enumeration value="restrict"/>
 			<xs:enumeration value="none"/>
+			<xs:enumeration value=""/>
 		</xs:restriction>
 	</xs:simpleType>
 
