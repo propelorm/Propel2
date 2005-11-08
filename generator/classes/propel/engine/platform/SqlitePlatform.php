@@ -81,4 +81,12 @@ class SqlitePlatform extends DefaultPlatform {
     public function escapeText($text) {
         return sqlite_escape_string($text);
     }
+
+	/**
+	 * @see Platform::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '[' . $text . ']';
+	}
 }
