@@ -78,9 +78,6 @@ class ColumnMap {
     /** validators for this column */
     private $validators = array();
 	
-	/** The default value for the column. */
-	private $defaultValue = null;
-
     /**
      * Constructor.
      *
@@ -207,15 +204,6 @@ class ColumnMap {
     {
         $this->notNull = $nn;
     }
-	
-	/**
-	 * Sets the default value for this column.
-	 * @param string $value
-	 */
-	public function setDefaultValue($value)
-	{
-		$this->defaultValue = $value;
-	}
 	
 	/**
 	 * Gets the default value for this column.

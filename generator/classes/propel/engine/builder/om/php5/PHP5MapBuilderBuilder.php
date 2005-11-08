@@ -255,21 +255,21 @@ class ".$this->getClassname()." {
 			if($col->isPrimaryKey()) {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."' , CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", ".var_export($col->getDefaultValue(), true).");
+		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."' , CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".$size.", ".var_export($col->getDefaultValue(), true).");
+		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".$size.");
 ";
 				} 
 			} else {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", ".var_export($col->getDefaultValue(), true).");
+		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
             } else { 
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".var_export($col->getDefaultValue(), true).");
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).");
 ";
 				} 
 			} // if col-is prim key
