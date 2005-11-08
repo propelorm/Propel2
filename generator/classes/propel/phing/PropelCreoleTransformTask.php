@@ -404,6 +404,26 @@ class PropelCreoleTransformTask extends Task {
 			$indexNode = $this->createIndexNode($index);
 			$node->appendChild($indexNode);
 		}
+		
+		// add an id-method-parameter if we have a sequence that matches table_colname_seq
+		// 
+		// 
+		$pkey = $table->getPrimaryKey();
+		if ($pkey) {
+		    $cols = $pkey->getColumns();
+			if (count($cols) === 1) {
+				$col = array_shift($cols);
+				if ($col->isAutoIncrement()) {
+					$seq_name = $table->getName().'_'.$col->getName().'_seq';					
+					if ($table->getDatabase()->isSequence($seq_name)) {
+						$idMethodParameterNode = $this->doc->createElement("id-method-parameter");
+						$idMethodParameterNode->setAttribute("name", $seq_name);
+						$node->appendChild($idMethodParameterNode);
+					}
+				}
+			}
+		}
+		
 
 		// Create and add validator and rule nodes.
 		$nodes = array();
