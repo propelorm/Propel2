@@ -680,7 +680,7 @@ abstract class ".$this->getClassname()." {
             // Scan other nodes for parent.
             foreach (\$nodes as \$pnode)
             {
-                if (\$pnode->getNodePath() == \$parentPath)
+                if (\$pnode->getNodePath() === \$parentPath)
                 {
                     \$parentNode = \$pnode;
                     break;
@@ -760,7 +760,7 @@ abstract class ".$this->getClassname()." {
 
             \$node = \$nodes[\$rs->getString(1)];
             
-            if (\$node->getNodePath() == \$rs->getString(\$targetfld))
+            if (\$node->getNodePath() === \$rs->getString(\$targetfld))
                 \$targets[\$node->getNodePath()] = \$node;
         }
 
