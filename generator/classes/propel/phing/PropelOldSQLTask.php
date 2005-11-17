@@ -23,16 +23,18 @@
 include_once 'propel/engine/database/model/AppData.php';
 
 /**
- * An extended Capsule task used for generating SQL source from
- * an XML schema describing a database structure.
+ * An extended Capsule task used for generating SQL source from an XML schema describing a database structure.
+ * 
+ * This is deprecated; the new PropelSQLTask should be used instead.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jason van Zyl <jvanzyl@periapt.com> (Torque)
  * @author John McNally <jmcnally@collab.net> (Torque)
  * @version $Revision$
  * @package propel.phing
+ * @deprecated
  */
-class PropelSQLTask extends AbstractPropelDataModelTask {
+class PropelOldSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * The properties file that maps an SQL file to a particular database.
