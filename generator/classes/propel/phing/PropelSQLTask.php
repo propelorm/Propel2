@@ -30,7 +30,7 @@ include_once 'propel/engine/database/model/AppData.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
  */
-class PropelNewSQLTask extends AbstractPropelDataModelTask {
+class PropelSQLTask extends AbstractPropelDataModelTask {
 
     /**
      * The properties file that maps an SQL file to a particular database.

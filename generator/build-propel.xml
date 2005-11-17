@@ -55,8 +55,8 @@
     name="propel-sql"
     classname="propel.phing.PropelSQLTask" classpathRef="propelclasses"/>
   <taskdef
-    name="propel-new-sql"
-    classname="propel.phing.PropelNewSQLTask" classpathRef="propelclasses"/>
+    name="propel-old-sql"
+    classname="propel.phing.PropelOldSQLTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-sql-exec"
     classname="propel.phing.PropelSQLExec" classpathRef="propelclasses"/>
@@ -158,7 +158,7 @@
 
   
   <target
-    name="new-sql"
+    name="old-sql"
     depends="sql-check"
     unless="propel.internal.sql.uptodate"
     description="==> generates the SQL for your project">
@@ -166,15 +166,16 @@
     <echo message="+------------------------------------------+"/>
     <echo message="|                                          |"/>
     <echo message="| Generating SQL for YOUR Propel project!  |"/>
-    <echo message="|                                          |"/>
+    <echo message="| (using deprecated legacy SQL template)   |"/>
+	<echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
 
-    <phingcall target="new-sql-template"/>
+    <phingcall target="old-sql-template"/>
 
   </target>
 
-  <target name="new-sql-template">
-    <propel-new-sql
+  <target name="old-sql-template">
+    <propel-old-sql
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
@@ -186,7 +187,7 @@
         includes="${propel.schema.sql.includes}"
         excludes="${propel.schema.sql.excludes}"
       />
-    </propel-new-sql>
+    </propel-old-sql>
   </target>
   
   <!-- ================================================================ -->
