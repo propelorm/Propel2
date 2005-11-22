@@ -112,8 +112,8 @@
 	<phing phingfile="${propel.home}/build-propel.xml" target="sql"/>
 </target>
 
-<target name="new-sql" depends="configure">
-	<phing phingfile="${propel.home}/build-propel.xml" target="new-sql"/>
+<target name="old-sql" depends="configure">
+	<phing phingfile="${propel.home}/build-propel.xml" target="old-sql"/>
 </target>
 
 <target name="graphviz" depends="configure">
