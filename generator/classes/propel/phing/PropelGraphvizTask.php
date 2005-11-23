@@ -55,6 +55,9 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
      */
     public function setOutputDirectory(PhingFile $out)
     {
+		if (!$out->exists()) {
+			$out->mkdirs();
+		}
         $this->outDir = $out;
     }
 
@@ -106,17 +109,19 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
         // file we are going to create
 
         $dbMaps = $this->getDataModelDbMap();
+		
         foreach ($this->getDataModels() as $dataModel) {
-
-            echo "Processing datamodel...\n";
 
             $dotSyntax .= "digraph G {\n";
             foreach ($dataModel->getDatabases() as $database) {
-                echo "Processing database..." . $database->getName() . "\n";
+			
+				$this->log("db: " . $database->getName());
 
                 //print the tables
                 foreach($database->getTables() as $tbl) {        
-                    echo "Processing table..." . $tbl->getName() . "\n";
+					
+					$this->log("\t+ " . $tbl->getName());
+					
                     ++$count;
                     $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
 
@@ -131,7 +136,6 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
                     }
                     $dotSyntax .= '}", shape=record];';
                     $dotSyntax .= "\n";
-
                 }
 
                 //print the relations
@@ -154,7 +158,8 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
             } // foreach database        
             $dotSyntax .= "}\n";
 
-            $this->writeDot($dotSyntax,$this->outDir->toString());
+            $this->writeDot($dotSyntax,$this->outDir);
+			
         } //foreach datamodels            
         
     } // main()
@@ -163,9 +168,10 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
     /**
      * probably insecure 
      */
-    function writeDot($dotSyntax, $outputDir) {
-        print "Writing dot file to {$outputDir}/schema.dot\n";
-        file_put_contents($outputDir.'/schema.dot', $dotSyntax);
+    function writeDot($dotSyntax, PhingFile $outputDir) {
+		$file = new PhingFile($outputDir, 'schema.dot');
+		$this->log("Writing dot file to " . $file->getAbsolutePath());		
+        file_put_contents($file->getAbsolutePath(), $dotSyntax);
     }
 
 }
