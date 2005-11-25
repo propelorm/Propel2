@@ -50,6 +50,7 @@ PHP class or method name.
   skipSql (true|false) "false"
   readOnly (true|false) "false"
   abstract (true|false) "false"
+  isTree (true|false) "false"
   package CDATA #IMPLIED
   baseClass CDATA #IMPLIED
   basePeer CDATA #IMPLIED
@@ -88,7 +89,7 @@ PHP class or method name.
   default CDATA #IMPLIED
   autoIncrement (true|false) "false"
   inheritance (single|false) "false"
-<!--   inputValidator CDATA #IMPLIED -->
+  inputValidator CDATA #IMPLIED
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"
@@ -106,7 +107,8 @@ PHP class or method name.
 <!ATTLIST foreign-key
   foreignTable CDATA #REQUIRED
   name CDATA #IMPLIED
-  onDelete (cascade|setnull|restrict|none) "none"
+  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
+  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
 >
 
 <!ELEMENT reference EMPTY>
