@@ -22,6 +22,7 @@
 
 require_once 'PHPUnit2/Framework/TestCase.php';
 include_once 'propel/engine/database/transform/XmlToAppData.php';
+include_once 'propel/engine/platform/MysqlPlatform.php';
 
 /**
  * Tests for package handling.
@@ -39,7 +40,7 @@ class TableTest extends PHPUnit2_Framework_TestCase {
      *
      */
     public function testIdMethodHandling() {
-        $this->xmlToAppData = new XmlToAppData("mysql", "defaultpackage", null);
+        $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 
         //$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
         $this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");

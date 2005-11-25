@@ -22,6 +22,8 @@
 
 require_once 'classes/propel/BaseTestCase.php';
 include_once 'propel/engine/database/model/NameFactory.php';
+include_once 'propel/engine/platform/MysqlPlatform.php';
+include_once 'propel/engine/database/model/AppData.php';
 
 /**
  * <p>Unit tests for class <code>NameFactory</code> and known
@@ -118,9 +120,8 @@ class NameFactoryTest extends BaseTestCase {
     /** Sets up the Propel model. */
     public function setUp()
     {
-        $appData = new AppData(self::DATABASE_TYPE, realpath(PROPEL_TEST_BASE . "/../templates/sql/base") . DIRECTORY_SEPARATOR);
+        $appData = new AppData(new MysqlPlatform(), realpath(PROPEL_TEST_BASE . "/../templates/sql/base") . DIRECTORY_SEPARATOR);
         $this->database = new Database();
-        $this->database->setDatabaseType(self::DATABASE_TYPE);
         $appData->addDatabase($this->database);
     }
 
