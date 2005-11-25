@@ -475,10 +475,12 @@ class BasePeer
 		$failureMap = array(); // map of ValidationFailed objects
 		foreach($columns as $colName => $colValue) {
 			if ($tableMap->containsColumn($colName)) {
-				foreach($tableMap->getColumn($colName)->getValidators() as $validatorMap) {
-					if(($validator = BasePeer::getValidator($validatorMap->getClass())) !== null && $validator->isValid($validatorMap, $colValue) === false) {
+				$col = $tableMap->getColumn($colName);
+				foreach($col->getValidators() as $validatorMap) {
+					$validator = BasePeer::getValidator($validatorMap->getClass());
+					if($validator && ($col->isNotNull() || $colValue !== null) && $validator->isValid($validatorMap, $colValue) === false) {
 						if (!isset($failureMap[$colName])) { // for now we do one ValidationFailed per column, not per rule
-							$failureMap[$colName] = new ValidationFailed($colName, $validatorMap->getMessage());
+							$failureMap[$colName] = new ValidationFailed($colName, $validatorMap->getMessage(), $validator);
 						}
 					}
 				}

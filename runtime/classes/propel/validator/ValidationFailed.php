@@ -42,15 +42,20 @@ class ValidationFailed {
     /** Message to display to user. */
     private $message;
     
+	/** Validator object that caused this to fail. */
+	private $validator;
+	
     /**
      * Construct a new ValidationFailed object.
      * @param string $colname Column name.
      * @param string $message Message to display to user.
+	 * @param object $validator The Validator that caused this column to fail.
      */
-    public function __construct($colname, $message)
+    public function __construct($colname, $message, $validator = null)
     {
         $this->colname = $colname;
         $this->message = $message;
+		$this->validator = $validator;
     }
     
     /**
@@ -72,7 +77,7 @@ class ValidationFailed {
     }
 
     /**
-     * Set the message for user.
+     * Set the message for the validation failure.
      * @param string $v
      */
     public function setMessage($v)
@@ -81,12 +86,30 @@ class ValidationFailed {
     }
     
     /**
-     * Gets the message for user.
+     * Gets the message for the validation failure.
      * @return string
      */
     public function getMessage()
     {
         return $this->message;
+    }
+    
+	/**
+     * Set the validator object that caused this to fail.
+     * @param object $v
+     */
+    public function setValidator($v)
+    {
+        $this->validator = $v;
+    }
+    
+    /**
+     * Gets the validator object that caused this to fail.
+     * @return object
+     */
+    public function getValidator()
+    {
+        return $this->validator;
     }
     
     /**
