@@ -130,7 +130,7 @@ COMMENT ON COLUMN ".$platform->quoteIdentifier($table->getName()).".".$platform-
 		
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
+CREATE SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())).";
 ";
 		}
 	}
