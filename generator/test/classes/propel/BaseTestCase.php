@@ -19,33 +19,4 @@ abstract class BaseTestCase extends PHPUnit2_Framework_TestCase {
      */
     const DEBUG = false;
 
-    /**
-     * The path to the configuration file.
-     */
-    //const CONFIG_FILE = "propel-conf.php";
-    const CONFIG_FILE = 'etc/conf/propel-conf.php';
-
-    /**
-     * Whether propel has been initialized.
-     */
-    private static $hasInitialized = false;
-
-    /**
-     * Initialize Propel on the first setUp().  Subclasses which
-     * override setUp() must call super.setUp() as their first action.
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        if (!self::$hasInitialized) {
-            try {
-                Propel::init(self::CONFIG_FILE);
-                self::$hasInitialized = true;
-            } catch (Exception $e) {
-                    $this->fail("Couldn't initialize Propel: " . $e->getMessage());
-            }
-        }
-
-    }
 }

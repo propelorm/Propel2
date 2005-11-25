@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<project name="DD Build Tests" default="phpunit" basedir=".">
+	
+	<!--
+		=========================================================================================
+		Global Properties
+		~~~~~~~~~~~~~~~~~
+		
+		=========================================================================================					
+	-->
+	<property name="tests.dir" value="./tests"/>
+	<property name="tests.phpunit.dir" value="."/>
+	<property name="tests.reports.dir" value="${tests.phpunit.dir}/reports"/>
+	<property file="./test.properties" />
+
+	<!--
+		=========================================================================================
+		PHPUnit2 Targets
+		~~~~~~~~~~~~~~~~
+		
+		=========================================================================================					
+	-->
+
+	<property name="test.class" value="${test}"/>
+	
+	<resolvepath propertyName="tests.dir.resolved" file="${tests.phpunit.dir}"/>
+	<resolvepath propertyName="tests.classes.dir.resolved" file="${tests.phpunit.dir}/classes"/>
+	<resolvepath propertyName="propel-generator.classes.dir.resolved" file="../classes"/>
+	<resolvepath propertyName="bookstore.classes.dir.resolved" file="../projects/bookstore/build/classes"/>
+	<resolvepath propertyName="bookstore.conf.dir.resolved" file="../projects/bookstore/build/conf"/>
+	
+	
+	<path id="incthis">
+		<pathelement dir="${tests.dir.resolved}"/>
+		<pathelement dir="${tests.classes.dir.resolved}"/>
+		<pathelement dir="${propel-generator.classes.dir.resolved}"/>
+		<pathelement dir="${bookstore.classes.dir.resolved}"/>		
+		<pathelement dir="${bookstore.conf.dir.resolved}"/>
+	</path>
+
+	<target name="configure-for-branch" if="branch">
+	
+		<echo>-------------------------------------------------</echo>
+		<echo> +++++ Running tests on BRANCH ${branch}</echo>
+		<echo>-------------------------------------------------</echo>
+		
+		<echo></echo>
+		<echo>This doesn't apply for Propel yet!</echo>
+		
+	</target>
+	
+	<target name="configure-for-trunk" unless="branch">
+		<echo>-------------------------------------------------</echo>
+		<echo> +++++ Running tests on TRUNK</echo>
+		<echo>-------------------------------------------------</echo>
+		<adhoc><![CDATA[
+			require_once 'propel/Propel.php';
+			Propel::init('bookstore-conf.php');	
+		]]></adhoc>
+		
+		<fileset dir="${tests.classes.dir.resolved}" id="relevant-tests">
+			<include name="**/*${test.class}Test.php"/>
+		</fileset>
+	</target>
+			
+	<includepath classpathRef="incthis"/>
+
+	<target name="reports" depends="configure-for-branch,configure-for-trunk">
+
+		<phpunit2 haltonerror="true" haltonfailure="false" printsummary="true">
+			<formatter type="xml" usefile="true" todir="${tests.reports.dir}" outfile="test-results.xml" />
+			<formatter type="plain" usefile="false"/>
+			<batchtest>
+				<fileset refid="relevant-tests"/>
+			</batchtest>
+		</phpunit2>
+		<phpunit2report format="noframes" todir="${tests.reports.dir}" infile="${tests.reports.dir}/test-results.xml" styledir="${tests.phpunit.dir}/etc/xsl"/>
+	</target>
+	
+	<!-- run the insert-sql target of the build.xml unless we are doing this for one specific test -->
+	<target name="initialize" unless="test">
+		<!--
+		<phing phingFile="build.xml" target="insert-sql"/>
+		-->
+		<property name="test.class" value="" override="true"/>
+	</target>
+	
+	<target name="phpunit" depends="initialize,reports" description="Executes the PHPUnit2 test suite"/>
+	
+</project>
