@@ -122,5 +122,12 @@ class DBSybase extends DBAdapter {
         // user may have issued a commit but do it here to be sure.
         $con->commit();
     }
-
+	
+	/**
+	 * @see DBAdapter::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '[' . $text . ']';
+	}
 }

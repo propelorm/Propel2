@@ -112,5 +112,13 @@ class DBSQLite extends DBAdapter {
     public function unlockTable(Connection $con, $table)
     {        
     }
+	
+	/**
+	 * @see DBAdapter::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '[' . $text . ']';
+	}
 
 }

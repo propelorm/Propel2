@@ -121,5 +121,13 @@ class DBMySQL extends DBAdapter {
         $statement = $con->createStatement();
         $statement->executeUpdate("UNLOCK TABLES");
     }
+	
+	/**
+	 * @see DBAdapter::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '`' . $text . '`';
+	}
 
 }

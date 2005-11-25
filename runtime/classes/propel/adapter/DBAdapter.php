@@ -168,5 +168,16 @@ abstract class DBAdapter {
      * @return string 
      */
     public abstract function strLength($s);
+	
+	
+	/**
+	 * Quotes database objec identifiers (table names, col names, sequences, etc.).
+	 * @param string $text The identifier to quote.
+	 * @return string The quoted identifier.
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '"' . $text . '"';
+	}
     
 }
