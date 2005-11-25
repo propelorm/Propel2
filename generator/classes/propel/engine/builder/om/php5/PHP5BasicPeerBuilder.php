@@ -182,11 +182,10 @@ if (Propel::isInit()) {
 	private static \$phpNameMap = null;
 
 ";
-		// TODO [sv] methods do not exist
-		if ($this->isAddGenericAccessors() || $this->isAddGenericMutators()) {
-			$this->addFieldNamesAttribute($script);
-			$this->addFieldKeysAttribute($script);
-		}
+
+		$this->addFieldNamesAttribute($script);
+		$this->addFieldKeysAttribute($script);
+		
 	}
 
 	/**
