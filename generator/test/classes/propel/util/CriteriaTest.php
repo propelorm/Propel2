@@ -215,11 +215,15 @@ class CriteriaTest extends BaseTestCase {
         $myCriterion = $myCriteria->getNewCriterion(
                 "TABLE.COLUMN", "FoObAr", Criteria::LIKE);
         $myCriterion->appendPsTo($sb="", $params=array());
-        print("before setIgnoreCase: " . $sb . "\n");
+		$expected = "TABLE.COLUMN LIKE ?";
+		
+		$this->assertEquals($expected, $sb);
 
         $ignoreCriterion = $myCriterion->setIgnoreCase(true);
         $ignoreCriterion->appendPsTo($sb="", $params=array());
-        print("after setIgnoreCase: " .$sb . "\n");
+		$expected = "UPPER(TABLE.COLUMN) LIKE UPPER(?)";
+		$this->assertEquals($expected, $sb);		
+
     }
 
     /**
@@ -314,7 +318,6 @@ class CriteriaTest extends BaseTestCase {
 		$expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (?,?))";
 		try {
             $result = BasePeer::createSelectSql($c, $params=array());
-			print "\n" . $result;
         } catch (PropelException $e) {
             print $e->getTraceAsString();
             $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());

@@ -21,6 +21,7 @@
  */
 
 include_once 'propel/engine/EngineException.php';
+include_once 'propel/engine/database/model/NameGenerator.php';
 
 /**
  * A name generation factory.

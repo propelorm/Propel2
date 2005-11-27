@@ -19,6 +19,8 @@
  * <http://propel.phpdb.org>.
  */
 
+require_once 'propel/engine/database/model/XMLElement.php';
+ 
 /**
  * A Class for holding data about a column used in an Application.
  *
