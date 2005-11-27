@@ -486,11 +486,13 @@ try {
     print "Making sure validation failed: ";
     print boolTest($ret !== true);
 
+	$failures = $bk1->getValidationFailures();
+	
     print "Making sure 1 validation message was returned: ";
-    print boolTest(count($ret) === 1);
+    print boolTest(count($failures) === 1);
 
     print "Making sure expected validation message was returned: ";
-    $el = array_shift($ret);
+    $el = array_shift($failures);
     print boolTest(stripos($el->getMessage(), "must be more than") !== false);
 
     print "\n(Unique validator)\n";
@@ -502,11 +504,12 @@ try {
     print "Making sure validation failed: ";
     print boolTest($ret !== true);
 
+	$failures = $bk2->getValidationFailures();
     print "Making sure 1 validation message was returned: ";
-    print boolTest(count($ret) === 1);
+    print boolTest(count($failures) === 1);
 
     print "Making sure expected validation message was returned: ";
-    $el = array_shift($ret);
+    $el = array_shift($failures);
     print boolTest(stripos($el->getMessage(), "Book title already in database.") !== false);
 
     print "\n(Now trying some more complex validation.)\n";
@@ -523,18 +526,17 @@ try {
     $bk1->addReview($rev1);
 
     $ret2 = $bk1->validate();
-
+	
+	$failures2 = $bk1->getValidationFailures();
+	
     print "Making sure 6 validation messages were returned: ";
-    print boolTest(count($ret2) === 6);
+    print boolTest(count($failures2) === 3);
 
     print "Making sure correct columns failed: ";
-    print boolTest(array_keys($ret2) === array(
+    print boolTest(array_keys($failures2) === array(
 		AuthorPeer::LAST_NAME,
-		AuthorPeer::EMAIL,
-		AuthorPeer::AGE,
 		BookPeer::TITLE,
 		ReviewPeer::REVIEWED_BY,
-		ReviewPeer::STATUS
 	));
 
 

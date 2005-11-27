@@ -171,7 +171,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addHydrate($script);
 
 		$this->addManipulationMethods($script);
-
+		$this->addValidationMethods($script);
+		
 		if ($this->isAddGenericAccessors()) {
 			$this->addGetByName($script);
 			$this->addGetByPosition($script);
@@ -808,7 +809,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	public function getByName(\$name, \$type = BasePeer::TYPE_PHPNAME)
 	{
-		\$names = ".$this->getPeerClassname()."::getFieldNames(\$type);
 		\$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
 		return \$this->getByPosition(\$pos);
 	}
@@ -864,8 +864,7 @@ $script .= "
 	 */
 	public function setByName(\$name, \$value, \$type = BasePeer::TYPE_PHPNAME)
 	{
-		\$names = ".$this->getPeerClassname()."::getFieldNames(\$type);
-		\$pos = array_search(\$name, \$names);
+		\$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
 		return \$this->setByPosition(\$pos, \$value);
 	}
 ";
@@ -976,14 +975,25 @@ $script .= "
 
 	/**
 	 * Adds the methods related to saving and deleting the object.
+	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addManipulationMethods(&$script)
 	{
 		$this->addDelete($script);
 		$this->addSave($script);
+	}
+	
+	/**
+	 * Adds the methods related to validationg the object.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addValidationMethods(&$script)
+	{
+		$this->addValidationFailuresAttribute($script);
+		$this->addGetValidationFailures($script);
 		$this->addValidate($script);
 	}
-
+	
 	/**
 	 * Adds the save() method.
 	 * @param string &$script The script will be modified in this method.
@@ -1039,6 +1049,21 @@ $script .= "
 	} // addSave()
 
 	/**
+	 * Adds the $validationFailures attribute to store ValidationFailed objects.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addValidationFailuresAttribute(&$script)
+	{
+		$script .= "
+	/**
+	 * Array of ValidationFailed objects.
+	 * @var array ValidationFailed[]
+	 */
+	protected \$validationFailures = array();
+";
+	}
+
+	/**
 	 * Adds the validate() method.
 	 * @param string &$script The script will be modified in this method.
 	 */
@@ -1066,6 +1091,27 @@ $script .= "
 ";
 
 	} // addValidate()
+
+	/**
+	 * Adds the getValidationFailures() method.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetValidationFailures(&$script)
+	{
+		$script .= "
+	/**
+	 * Gets any ValidationFailed objects that resulted from last call to validate().
+	 *
+	 *
+	 * @return array ValidationFailed[]
+	 * @see validate()
+	 */
+	public function getValidationFailures()
+	{
+		return \$this->validationFailures;
+	}
+";
+	} // addGetValidationFailures()
 
 	/**
 	 * Adds the correct getPrimaryKey() method for this object.

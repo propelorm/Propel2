@@ -136,15 +136,22 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	
 	/**
 	 * Adds the methods related to validating, saving and deleting the object.
+	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addManipulationMethods(&$script)
 	{
 		$this->addDelete($script);
-		
 		$this->addSave($script);
 		$this->addDoSave($script);
-		
-		$this->addValidate($script);
+	}
+	
+	/**
+	 * Adds the methods related to validationg the object.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addValidationMethods(&$script)
+	{
+		parent::addValidationMethods($script);
 		$this->addDoValidate($script);
 	}
 	
@@ -1025,17 +1032,20 @@ $script .= "
 	 * only those columns are validated.
 	 *
 	 * @param mixed \$columns Column name or an array of column names.
-	 *
-	 * @return mixed <code>true</code> if all columns pass validation
-	 *			  or an array of <code>ValidationFailed</code> objects for columns that fail.
+	 * @return boolean Whether all columns pass validation.
 	 * @see doValidate()
+	 * @see getValidationFailures()
 	 */
 	public function validate(\$columns = null)
 	{
-	  if (\$columns) {
-		return ".$this->getPeerClassname()."::doValidate(\$this, \$columns);
-	  }
-		return \$this->doValidate();
+		\$res = \$this->doValidate(\$columns);
+		if (\$res === true) {
+			\$this->validationFailures = array();
+			return true;
+		} else {
+			\$this->validationFailures = \$res;
+			return false;
+		}
 	}
 ";
 	} // addValidate()
@@ -1056,9 +1066,10 @@ $script .= "
 	 * also be validated.  If all pass then <code>true</code> is returned; otherwise
 	 * an aggreagated array of ValidationFailed objects will be returned.
 	 *
+	 * @param array \$columns Array of column names to validate.
 	 * @return mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
 	 */
-	protected function doValidate()
+	protected function doValidate(\$columns = null)
 	{
 		if (!\$this->alreadyInValidation) {
 			\$this->alreadyInValidation = true;
@@ -1077,9 +1088,9 @@ $script .= "
 			foreach($table->getForeignKeys() as $fk) {
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
-			if (\$this->$aVarName !== null) {
-				if ((\$retval = \$this->".$aVarName."->validate()) !== true) {
-					\$failureMap = array_merge(\$failureMap, \$retval);
+			if (\$this->".$aVarName." !== null) {
+				if (!\$this->".$aVarName."->validate(\$columns)) {
+					\$failureMap = array_merge(\$failureMap, \$this->".$aVarName."->getValidationFailures());
 				}
 			}
 ";
@@ -1088,7 +1099,7 @@ $script .= "
 		
 		$script .= "
 
-			if ((\$retval = ".$this->getPeerClassname()."::doValidate(\$this)) !== true) {
+			if ((\$retval = ".$this->getPeerClassname()."::doValidate(\$this, \$columns)) !== true) {
 				\$failureMap = array_merge(\$failureMap, \$retval);
 			}
 
@@ -1101,8 +1112,8 @@ $script .= "
 				$script .= "
 				if (\$this->$collName !== null) {
 					foreach(\$this->$collName as \$referrerFK) {
-						if ((\$retval = \$referrerFK->validate()) !== true) {
-							\$failureMap = array_merge(\$failureMap, \$retval);
+						if (!\$referrerFK->validate(\$columns)) {
+							\$failureMap = array_merge(\$failureMap, \$referrerFK->getValidationFailures());
 						}
 					}
 				}
@@ -1119,7 +1130,7 @@ $script .= "
 	}
 ";
 	} // addDoValidate()
-
+		
 	/**
 	 * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
 	 * @param string &$script The script will be modified in this method.
