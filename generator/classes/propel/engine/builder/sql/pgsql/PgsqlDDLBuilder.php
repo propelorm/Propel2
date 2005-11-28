@@ -45,7 +45,7 @@ DROP TABLE ".$platform->quoteIdentifier($table->getName())." CASCADE;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
+DROP SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())).";
 ";
 		}
 	}
