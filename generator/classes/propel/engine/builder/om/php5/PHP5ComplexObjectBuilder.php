@@ -707,10 +707,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Returns the number of related $relCol.
 	 *
 	 * @param Criteria \$criteria
+	 * @param boolean \$distinct
 	 * @param Connection \$con
 	 * @throws PropelException
 	 */
-	public function count$relCol(\$criteria = null, \$con = null)
+	public function count$relCol(\$criteria = null, \$distinct = false, \$con = null)
 	{
 		// include the Peer class
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
@@ -732,7 +733,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 ";
 		} // end foreach ($fk->getForeignColumns()
 		$script .="
-		return ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
+		return ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$distinct, \$con);
 	}
 ";
 	} // addRefererCount
