@@ -893,9 +893,14 @@ $script .= "
 			// If this object has been modified, then save it to the database.
 			if (\$this->isModified()";
 		
+		/*
+		FIXME: this doesn't work right now because the BasePeer::doInsert() method
+		expects to be passed a Criteria object that contains columns (which tell BasePeer
+		which table is being updated)
 		if ($table->hasAutoIncrementPrimaryKey()) {
 			$script .= " || \$this->isNew()";
 		}
+		*/
 		
 		$script .= ") {
 				if (\$this->isNew()) {
