@@ -255,5 +255,31 @@
 	  <reference local="book_club_list_id" foreign="id"/>
 	</foreign-key>
   </table>
-
+  
+  <!-- test self-referencing foreign keys -->	
+  <table name="bookstore_employee" description="Hierarchical table to represent employees of a bookstore.">
+    <column
+	  name="id"
+	  primaryKey="true"
+	  type="INTEGER"
+	  description="Employee ID number"/>
+	<column
+	  name="name"
+	  type="VARCHAR"
+	  size="32"
+	  description="Employee name"/>
+	<column
+	  name="job_title"
+	  type="VARCHAR"
+	  size="32"
+	  description="Employee job title"/>
+	<column
+	  name="supervisor_id"
+	  type="INTEGER"
+	  description="Fkey to supervisor."/>
+	<foreign-key foreignTable="bookstore_employee">
+	  <reference local="supervisor_id" foreign="id"/>
+	</foreign-key>
+  </table>
+  
 </database>
