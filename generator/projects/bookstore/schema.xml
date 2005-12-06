@@ -260,8 +260,9 @@
   <table name="bookstore_employee" description="Hierarchical table to represent employees of a bookstore.">
     <column
 	  name="id"
-	  primaryKey="true"
 	  type="INTEGER"
+	  primaryKey="true"
+	  autoIncrement="true"
 	  description="Employee ID number"/>
 	<column
 	  name="name"
