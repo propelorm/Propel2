@@ -26,6 +26,9 @@ require_once 'bookstore/Publisher.php';
 require_once 'bookstore/Review.php';
 require_once 'bookstore/BookClubList.php';
 require_once 'bookstore/BookListRel.php';
+require_once 'bookstore/BookstoreEmployee.php';
+
+define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../etc/lob');
 
 /**
  * Populates data needed by the bookstore unit tests.
@@ -171,8 +174,8 @@ class BookstoreDataPopulator {
 		$r2_id = $r2->getId();
 		//print "Added New York Times book review  [id = $r2_id].\n";	
 	
-		$blob_path = PROPEL_TEST_BASE . '/etc/lob/tin_drum.gif';
-		$clob_path =  PROPEL_TEST_BASE . '/etc/lob/tin_drum.txt';
+		$blob_path = _LOB_SAMPLE_FILE_PATH . '/tin_drum.gif';
+		$clob_path =  _LOB_SAMPLE_FILE_PATH . '/tin_drum.txt';
 		
 		$m1 = new Media();
 		$m1->setBook($td);
