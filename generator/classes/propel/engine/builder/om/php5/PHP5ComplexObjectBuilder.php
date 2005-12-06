@@ -891,14 +891,20 @@ $script .= "
 		$script .= "	
 
 			// If this object has been modified, then save it to the database.
-			if (\$this->isModified()) {
+			if (\$this->isModified()";
+		
+		if ($table->hasAutoIncrementPrimaryKey()) {
+			$script .= " || \$this->isNew()";
+		}
+		
+		$script .= ") {
 				if (\$this->isNew()) {
 					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
 					\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which 
 										 // should always be true here (even though technically 
 										 // BasePeer::doInsert() can insert multiple rows).
 ";
-		if ($table->getIdMethod() != "none") {
+		if ($table->getIdMethod() != IDMethod::NO_ID_METHOD) {
 	
 			if (count($pks = $table->getPrimaryKey())) {
 				foreach ($pks as $pk) {

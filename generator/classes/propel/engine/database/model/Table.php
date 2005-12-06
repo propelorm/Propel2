@@ -1120,13 +1120,31 @@ class Table extends XMLElement implements IDMethod {
     /**
      * Determine whether this table has a primary key.
      *
-     * @return Whether this table has any primary key parts.
+     * @return boolean Whether this table has any primary key parts.
      */
     public function hasPrimaryKey()
     {
         return (count($this->getPrimaryKey()) > 0);
     }
-
+	
+	/**
+	 * Determine whether this table has any auto-increment primary key(s).
+	 * 
+	 * @return boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
+	 */
+	public function hasAutoIncrementPrimaryKey()
+	{
+		if ($this->getIdMethod() != IDMethod::NO_ID_METHOD) {
+			$pks =$this->getPrimaryKey();
+			foreach ($pks as $pk) {
+				if ($pk->isAutoIncrement()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
     /**
      * Returns all parts of the primary key, separated by commas.
      *
