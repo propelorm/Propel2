@@ -329,12 +329,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		// these default values are based on the Creole defaults
 		// the date and time default formats are locale-sensitive
 		if ($col->getType() === PropelTypes::DATE) {
-			$defaultfmt = '%x';
+			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
 		} elseif ($col->getType() === PropelTypes::TIME) {
-			$defaultfmt = '%X';
+			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
 		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
-			$defaultfmt = 'Y-m-d H:i:s';
+			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
 		}
+		
+		// if the default format property was an empty string, then we'll set it
+		// to NULL, which will return the "native" integer timestamp
+		if (empty($defaultfmt)) { $defaultfmt = null; }
 
 		$script .= "
 	/**
@@ -345,7 +349,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
 	 * @throws PropelException - if unable to convert the date/time to timestamp.
 	 */
-	public function get$cfc(\$format = '$defaultfmt'";
+	public function get$cfc(\$format = ".var_export($defaultfmt, true)."";
 		if ($col->isLazyLoad()) $script .= ", \$con = null";
 		$script .= ")
 	{
