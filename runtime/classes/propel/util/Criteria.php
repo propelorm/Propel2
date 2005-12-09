@@ -1472,7 +1472,7 @@ class Criterion  {
                 if ($this->value !== null) {
                 
                     // ANSI SQL functions get inserted right into SQL (not escaped, etc.)                    
-                    if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME) {
+                    if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME || $this->value === Criteria::CURRENT_TIMESTAMP) {
                         $sb .= $field . $this->comparison . $this->value;
                     } else {
                         // default case, it is a normal col = value expression; value
