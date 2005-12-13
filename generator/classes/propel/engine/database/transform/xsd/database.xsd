@@ -289,7 +289,7 @@
 
 	<xs:complexType name="foreign-key">
 		<xs:sequence>
-			<xs:element name="reference" type="reference"/>
+			<xs:element name="reference" type="reference" minOccurs="1" maxOccurs="unbounded"/>
 			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="foreignTable" type="table_name" use="required"/>
