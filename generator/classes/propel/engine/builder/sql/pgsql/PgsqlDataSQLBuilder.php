@@ -45,7 +45,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
      * @param mixed $blob Blob object or string containing data.
      * @return string
      */
-    function getBlobSql($blob) 
+    protected function getBlobSql($blob) 
     {    
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {

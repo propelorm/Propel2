@@ -96,7 +96,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
     /**
      * 
      */
-    function getBlobSql($blob) 
+    protected function getBlobSql($blob) 
     {        
         // they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {
@@ -109,7 +109,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
     /**
      * 
      */
-    function getClobSql($clob) 
+    protected function getClobSql($clob) 
     {
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($clob)) {
@@ -124,7 +124,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param string $value
      * @return void
      */
-    function getDateSql($value) 
+    protected function getDateSql($value) 
     {
         return $this->getStringSql($value);
     } 
@@ -134,7 +134,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param double $value
      * @return void
      */
-    function getDecimalSql($value) 
+    protected function getDecimalSql($value) 
     {
         return (float) $value;
     }             
@@ -144,7 +144,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param double $value
      * @return void
      */
-    function getDoubleSql($value) 
+    protected function getDoubleSql($value) 
     {
         return (double) $value;
     } 
@@ -154,7 +154,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param float $value
      * @return void
      */
-    function getFloatSql($value) 
+    protected function getFloatSql($value) 
     {
         return (float) $value;
     } 
@@ -164,7 +164,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param int $value
      * @return void
      */
-    function getIntSql($value) 
+    protected function getIntSql($value) 
     {
 		return (int) $value;
     }
@@ -173,7 +173,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * 
      * @return void
      */
-    function getNullSql() 
+    protected function getNullSql() 
     {
         return 'NULL';
     }
@@ -183,7 +183,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param string $value
      * @return void
      */
-    function getStringSql($value) 
+    protected function getStringSql($value) 
     {
 		return "'" . $this->getPlatform()->escapeText($value) . "'";
     }
@@ -193,7 +193,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param string $value
      * @return void
      */
-    function getTimeSql($paramIndex, $value) 
+    protected function getTimeSql($paramIndex, $value) 
     {
 		return $this->getStringSql($value);
     }
@@ -203,7 +203,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * @param string $value
      * @return void
      */
-    function getTimestampSql($value) 
+    protected function getTimestampSql($value) 
     {
 		return $this->getStringSql($value);
     }
