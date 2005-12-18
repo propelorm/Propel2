@@ -30,7 +30,63 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
  * @package propel.engine.builder.sql.pgsql
  */
 class PgsqlDDLBuilder extends DDLBuilder {
-		
+
+
+    /**
+     * Array that keeps track of already
+     * added schema names
+     *
+     * @var Array of schema names
+     */    
+    protected static $addedSchemas = array();
+    
+    /**
+     * Get the schema for the current table
+     *
+     * @author Markus Lervik <markus.lervik@necora.fi>
+     * @access protected
+     * @return schema name if table has one, else
+     *         null 
+     **/
+    protected function getSchema()
+    {
+        
+        $table = $this->getTable();
+        $schema = $table->getVendorSpecificInfo();
+        if (!empty($schema) && isset($schema['schema'])) {
+            return $schema['schema'];
+        } 
+        
+        return null;
+        
+    }
+    
+    /**
+     * Add a schema to the generated SQL script
+     *
+     * @author Markus Lervik <markus.lervik@necora.fi>
+     * @access protected
+     * @return string with CREATE SCHEMA statement if
+     *         applicable, else empty string
+     **/ 
+    protected function addSchema()
+    {
+        
+        $schemaName = $this->getSchema();
+        
+        if ($schemaName !== null) {
+            
+            if (!in_array($schemaName, self::$addedSchemas)) {
+		$platform = $this->getPlatform();
+                self::$addedSchemas[] = $schemaName;
+		return "\nCREATE SCHEMA " . $platform->quoteIdentifier($schemaName) . ";\n";
+            } 
+        }
+        
+        return '';
+        
+    }
+    		
 	/**
 	 * 
 	 * @see parent::addDropStatement()
@@ -65,10 +121,17 @@ DROP SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())
 -----------------------------------------------------------------------------
 ";
 
+        $script .= $this->addSchema();
+
+        $schemaName = $this->getSchema();
+        if ($schemaName !== null) {
+            $script .= "\nSET search_path TO " . $platform->quoteIdentifier($schemaName) . ";\n";
+        }
+
 		$this->addDropStatements($script);
 		$this->addSequences($script);
-
-		$script .= "
+        
+        $script .= "
 
 CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
 (
@@ -99,6 +162,9 @@ COMMENT ON TABLE ".$platform->quoteIdentifier($table->getName())." IS '" . $plat
 ";
 
 		$this->addColumnComments($script);
+        
+        $script .= "\nSET search_path TO public;";
+        
 	}
 	
 	/**
