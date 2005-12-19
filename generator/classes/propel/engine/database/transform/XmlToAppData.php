@@ -98,25 +98,28 @@ class XmlToAppData extends AbstractHandler {
 			return;
 		}
 
-			$domDocument = new DomDocument('1.0', 'UTF-8');
-			$domDocument->load($xmlFile);
+		$domDocument = new DomDocument('1.0', 'UTF-8');
+		$domDocument->load($xmlFile);
 
-			$xsl = new XsltProcessor();
-			$xsl->importStyleSheet(DomDocument::load(realpath(dirname(__FILE__) . "/xsl/database.xsl")));
-			$transformed = $xsl->transformToDoc($domDocument);
+		$xsl = new XsltProcessor();
+		$xsl->importStyleSheet(DomDocument::load(realpath(dirname(__FILE__) . "/xsl/database.xsl")));
+		$transformed = $xsl->transformToDoc($domDocument);
 
-			$xmlFile = $xmlFile . "transformed.xml";
-			$transformed->save($xmlFile);
+		$xmlFile = $xmlFile . "transformed.xml";
+		$transformed->save($xmlFile);
 
-			// store current schema file path
-			$this->schemasTagsStack[$xmlFile] = array();
+		// store current schema file path
+		$this->schemasTagsStack[$xmlFile] = array();
 
-			$this->currentXmlFile = $xmlFile;
+		$this->currentXmlFile = $xmlFile;
 
 
-			if ($transformed->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true")
-				if (!$transformed->schemaValidate(realpath(dirname(__FILE__) . "/xsd/database.xsd")))
-					throw new EngineException("XML schema does not validate, sorry...");
+		if ($transformed->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true") {
+			$xsdFile = realpath(dirname(__FILE__) . "/xsd/database.xsd");
+			if (!$transformed->schemaValidate($xsdFile)) {
+				throw new EngineException("XML schema does not validate (using schema file $xsdFile).  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).");		
+			}
+		}
 
 		try {
 			$fr = new FileReader($xmlFile);
