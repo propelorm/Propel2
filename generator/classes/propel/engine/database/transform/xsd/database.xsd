@@ -264,7 +264,7 @@
 	<xs:complexType name="column">
 		<xs:sequence>
 			<xs:element name="inheritance" type="inheritance" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="vendor" type="inheritance" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="column_name" use="required"/>
 		<xs:attribute name="phpName" type="php_name" use="optional"/>
