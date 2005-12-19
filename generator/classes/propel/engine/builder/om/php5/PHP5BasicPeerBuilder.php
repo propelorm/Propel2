@@ -362,7 +362,7 @@ if (Propel::isInit()) {
 	 * @return array The PHP to DB name map for this peer
 	 * @throws PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @todo Consider having template build the array rather than doing it at runtime.
+	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
 	 */
 	public static function getPhpNameMap()
 	{
@@ -436,7 +436,7 @@ if (Propel::isInit()) {
 	 */
 	public static function alias(\$alias, \$column)
 	{
-		return \$alias . substr(\$column, strlen(".$this->getPeerClassname()."::TABLE_NAME));
+		return str_replace(".$this->getPeerClassname()."::TABLE_NAME.'.', \$alias.'.', \$column);
 	}
 ";
 	} // addAliasMethod
