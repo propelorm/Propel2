@@ -18,50 +18,92 @@
 -->
 <project name="propel-project-builder" default="main" basedir=".">
 
-<!-- in case ${project} was specified on command line, we set the project.dir
+<!-- in case ${project.dir} was specified on command line, we set the project.dir
      property here.  If it wasn't set, then this will be bogus, but it will
-     be overridden by the "projectcheck" target. -->    
-<property name="project.dir" value="./projects/${project}"/>
+     be overridden by the "set-project-dir" target. -->    
+<property name="internal.project.dir" value="${project.dir}"/>
 
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
-<target name="buildpropescheck">
-  <available file="${project.dir}/build.properties" property="projBuildPopertiesExists"/>  
+<target name="check-buildprops-exists">
+  <available file="${internal.project.dir}/build.properties" property="projBuildPopertiesExists"/>  
 </target>
 
-<target name="projectcheck" unless="project">
+<target name="check-buildprops" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
+		<echo message="====================================================="/>
+		<echo message="Could not open build.properties file:"/>
+		<echo message="		${internal.project.dir}/build.properties"/>
+		<echo message=" "/>
+		<echo message="Make sure that '${internal.project.dir}' is a valid path"/>
+		<echo message="and that it contains a build.properties file."/>
+		<echo message="====================================================="/>	
+		
+		<fail message="Missing configuration file (see description above)."/>
+</target>
+
+<target name="check-project-or-dir-set">
+  <condition property="projectOrDirSet">
+  		<or>
+			<isset property="project"/>
+			<isset property="project.dir"/>
+		</or>
+  </condition>
+</target>
+
+<target name="check-buildprops-for-propel-gen" if="using.propel-gen" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
+	<echo message="=========================================================="/>
+	<echo message="Could not open build.properties file:"/>
+	<echo message="		${internal.project.dir}/build.properties"/>
+	<echo message=" "/>
+	<echo message="Project directory not specified or invalid. You must "/>
+	<echo message="specify the ABSOLUTE path to your project directory and "/>
+	<echo message="your project directory must contain your build.properties "/>
+	<echo message="and schema.xml files.                                "/>
+	<echo message=" "/>
+	<echo message="Usage: "/>
+	<echo message=" "/>
+	<echo message="$&gt; propel-gen /path/to/projectdir [target]"/>
+	<echo message=" "/>
+	<echo message="=========================================================="/>	
+	<fail message="No project directory specified (did you specify a relative path instead of absolute?)."/>
+</target>
+
+<target name="check-project-set" unless="projectOrDirSet" depends="check-project-or-dir-set">
 		<echo message="====================================================="/>
 		<echo message="Project not specified. You must enter a project name. "/>
 		<echo message="In the future you can enter it on the command line: "/>
 		<echo message=" "/>
 		<echo message="-Dproject=bookstore"/>
+		<echo message=" "/>
+		<echo message="This will attempt to find your project directory in"/>
+		<echo message="the default directory (./projects/bookstore)."/>
+		<echo message=" "/>
+		<echo message="You can also avoid this message and specicfy a custom "/>
+		<echo message="directory, using the project.dir property:"/>
+		<echo message=" "/>
+		<echo message="-Dproject.dir=/path/to/bookstore"/>
 		<echo message="====================================================="/>	
 		<input propertyname="project" promptChar=":">Project name</input>
-		<property name="project.dir" value="./projects/${project}" override="true"/>        
+		<property name="propel.project" value="${project}" override="true"/>
 </target>
 
-<target name="configure" depends="projectcheck">
-	<echo msg="Loading project-specific props from ${project.dir}/build.properties"/>
-	<property file="${project.dir}/build.properties"/>
+<target name="set-project-dir" unless="project.dir" depends="check-project-set">
+	<echo>No project.dir was specified, using default path: ./projects/${project}</echo>
+	<property name="internal.project.dir" value="./projects/${project}" override="true"/>
 </target>
 
-<target name="main" depends="configure" 
-  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
+<target name="configure" depends="set-project-dir,check-buildprops-for-propel-gen,check-buildprops">
+	<echo msg="Loading project-specific props from ${internal.project.dir}/build.properties"/>
+	<property file="${internal.project.dir}/build.properties"/>
+</target>
+
+<target name="main" depends="configure" description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
 
  <!--<property file="${project.dir}/build.properties"/>-->
  <phing phingfile="./build-propel.xml" target="${target}"/>
  
 </target>
-
-<target name="old-build" depends="configure" 
-  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
-
- <!--<property file="${project.dir}/build.properties"/>-->
- <phing phingfile="./build-propel.xml" target="old-build"/>
- 
-</target>
-
 
 <!-- 
  Convenience mappings to build-propel.xml main targets 
