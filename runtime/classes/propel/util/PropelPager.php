@@ -319,8 +319,12 @@ class PropelPager {
 	 */
 	public function getLastPage()
 	{
-		$lastPage = $this->getTotalPages();
-		return $lastPage;
+		$totalPages = $this->getTotalPages();
+		if ($totalPages == 0) {
+			return 1;
+		} else {
+			return $totalPages;
+		}
 	}
 	
 	/**
