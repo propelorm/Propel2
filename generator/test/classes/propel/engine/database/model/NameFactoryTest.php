@@ -120,7 +120,7 @@ class NameFactoryTest extends BaseTestCase {
     /** Sets up the Propel model. */
     public function setUp()
     {
-        $appData = new AppData(new MysqlPlatform(), realpath(PROPEL_TEST_BASE . "/../templates/sql/base") . DIRECTORY_SEPARATOR);
+        $appData = new AppData(new MysqlPlatform());
         $this->database = new Database();
         $appData->addDatabase($this->database);
     }
