@@ -150,8 +150,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$super->addBookstoreEmployeeRelatedBySupervisorId($e2);
 		
 		$affected = $super->save();
-				
-		print("\nsuper->save() results in [rows] ".$affected."\n");
 		
 	}
 }
