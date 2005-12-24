@@ -21,21 +21,21 @@
 <!-- in case ${project.dir} was specified on command line, we set the project.dir
      property here.  If it wasn't set, then this will be bogus, but it will
      be overridden by the "set-project-dir" target. -->    
-<property name="internal.project.dir" value="${project.dir}"/>
+<property name="propel.project.dir" value="${project.dir}"/>
 
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
 <target name="check-buildprops-exists">
-  <available file="${internal.project.dir}/build.properties" property="projBuildPopertiesExists"/>  
+  <available file="${propel.project.dir}/build.properties" property="projBuildPopertiesExists"/>  
 </target>
 
 <target name="check-buildprops" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 		<echo message="====================================================="/>
 		<echo message="Could not open build.properties file:"/>
-		<echo message="		${internal.project.dir}/build.properties"/>
+		<echo message="		${propel.project.dir}/build.properties"/>
 		<echo message=" "/>
-		<echo message="Make sure that '${internal.project.dir}' is a valid path"/>
+		<echo message="Make sure that '${propel.project.dir}' is a valid path"/>
 		<echo message="and that it contains a build.properties file."/>
 		<echo message="====================================================="/>	
 		
@@ -54,7 +54,7 @@
 <target name="check-buildprops-for-propel-gen" if="using.propel-gen" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 	<echo message="=========================================================="/>
 	<echo message="Could not open build.properties file:"/>
-	<echo message="		${internal.project.dir}/build.properties"/>
+	<echo message="		${propel.project.dir}/build.properties"/>
 	<echo message=" "/>
 	<echo message="Project directory not specified or invalid. You must "/>
 	<echo message="specify the ABSOLUTE path to your project directory and "/>
@@ -90,12 +90,12 @@
 
 <target name="set-project-dir" unless="project.dir" depends="check-project-set">
 	<echo>No project.dir was specified, using default path: ./projects/${project}</echo>
-	<property name="internal.project.dir" value="./projects/${project}" override="true"/>
+	<property name="propel.project.dir" value="./projects/${project}" override="true"/>
 </target>
 
 <target name="configure" depends="set-project-dir,check-buildprops-for-propel-gen,check-buildprops">
-	<echo msg="Loading project-specific props from ${internal.project.dir}/build.properties"/>
-	<property file="${internal.project.dir}/build.properties"/>
+	<echo msg="Loading project-specific props from ${propel.project.dir}/build.properties"/>
+	<property file="${propel.project.dir}/build.properties"/>
 </target>
 
 <target name="main" depends="configure" description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
