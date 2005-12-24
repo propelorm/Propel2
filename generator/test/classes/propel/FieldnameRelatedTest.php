@@ -97,8 +97,8 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			$this->assertEquals(
 				$expecteds[$type],
 				$results[$type],
-				'expected was: ' . print_r($expected, 1) .
-				'but getFieldnames() returned ' . print_r($result, 1)
+				'expected was: ' . print_r($expecteds[$type], 1) .
+				'but getFieldnames() returned ' . print_r($results[$type], 1)
 			);
 		}
 	}
@@ -177,8 +177,8 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			$this->assertEquals(
 				$expecteds[$type],
 				$results[$type],
-				'expected was: ' . print_r($expected, 1) .
-				'but getFieldnames() returned ' . print_r($result, 1)
+				'expected was: ' . print_r($expecteds[$type], 1) .
+				'but getFieldnames() returned ' . print_r($results[$type], 1)
 			);
 		}
 	}
