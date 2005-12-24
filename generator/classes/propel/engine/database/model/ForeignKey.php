@@ -39,7 +39,6 @@ class ForeignKey extends XMLElement {
     private $parentTable;
     private $localColumns = array();
     private $foreignColumns = array();
-    private $vendorSpecificInfo = array();
 
     // the uppercase equivalent of the onDelete/onUpdate values in the dtd
     const NONE     = "";            // No "ON [ DELETE | UPDATE]" behaviour specified.
@@ -249,30 +248,6 @@ class ForeignKey extends XMLElement {
             $h[ $this->foreignColumns[$i] ] = $this->localColumns[$i];
         }
         return $h;
-    }
-
-    /**
-     * Sets vendor specific parameter
-     */
-    public function setVendorParameter($name, $value)
-    {
-        $this->vendorSpecificInfo[$name] = $value;
-    }
-
-    /**
-     * Sets vendor specific information to a table.
-     */
-    public function setVendorSpecificInfo($info)
-    {
-        $this->vendorSpecificInfo = $info;
-    }
-
-    /**
-     * Retrieves vendor specific information to an index.
-     */
-    public function getVendorSpecificInfo()
-    {
-        return $this->vendorSpecificInfo;
     }
 
     /**

@@ -79,7 +79,6 @@ class Table extends XMLElement implements IDMethod {
     private $heavyIndexing;
     private $forReferenceOnly;
     private $isTree;
-    private $vendorSpecificInfo = array();
 
     /**
      * Constructs a table object with a name
@@ -968,31 +967,7 @@ class Table extends XMLElement implements IDMethod {
     {
         $this->isTree = (boolean) $v;
     }
-
-    /**
-     * Sets vendor specific parameter
-     */
-    public function setVendorParameter($name, $value)
-    {
-        $this->vendorSpecificInfo[$name] = $value;
-    }
-
-    /**
-     * Sets vendor specific information to a table.
-     */
-    public function setVendorSpecificInfo($info)
-    {
-        $this->vendorSpecificInfo = $info;
-    }
-
-    /**
-     * Retrieves vendor specific information to an index.
-     */
-    public function getVendorSpecificInfo()
-    {
-        return $this->vendorSpecificInfo;
-    }
-
+	
     /**
      * Returns a XML representation of this table.
      *

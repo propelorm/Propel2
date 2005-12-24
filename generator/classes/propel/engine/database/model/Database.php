@@ -57,8 +57,6 @@ class Database extends XMLElement {
 
     private $domainMap = array();
 
-    private $vendorSpecificInfo = array();
-
     /**
      * Sets up the Database object based on the attributes that were passed to loadFromXML().
 	 * @see parent::loadFromXML()
@@ -341,30 +339,6 @@ class Database extends XMLElement {
             return null;
         }
         return $this->domainMap[$domainName];
-    }
-
-    /**
-     * Sets vendor specific parameter
-     */
-    public function setVendorParameter($name, $value)
-    {
-        $this->vendorSpecificInfo[$name] = $value;
-    }
-
-    /**
-     * Sets vendor specific information to a table.
-     */
-    public function setVendorSpecificInfo($info)
-    {
-        $this->vendorSpecificInfo = $info;
-    }
-
-    /**
-     * Retrieves vendor specific information to an index.
-     */
-    public function getVendorSpecificInfo()
-    {
-        return $this->vendorSpecificInfo;
     }
 
     public function doFinalInitialization()

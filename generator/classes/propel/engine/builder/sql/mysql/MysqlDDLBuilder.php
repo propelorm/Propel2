@@ -151,6 +151,25 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 	}
 	
 	/**
+	 * Creates a comma-separated list of column names for the index. 
+	 * For MySQL unique indexes there is the option of specifying size, so we cannot use 
+	 * the Column::makeList() method.
+	 * @param Index $index
+	 * @return string
+	 */
+	private function getIndexColumnList(Index $index)
+	{
+		$platform = $this->getPlatform();
+		
+		$cols = $index->getColumns();
+		$list = array();
+		foreach($cols as $col) {
+			$list[] = $platform->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
+		}
+		return implode(', ', $list);
+	}
+	
+	/**
 	 * Adds indexes
 	 */
 	protected function addIndicesLines(&$lines)
@@ -159,12 +178,12 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 		$platform = $this->getPlatform();
 		
 		foreach ($table->getUnices() as $unique) {
-			$lines[] = "UNIQUE KEY ".$platform->quoteIdentifier($unique->getName())." (".$unique->getColumnList().")";
+			$lines[] = "UNIQUE KEY ".$platform->quoteIdentifier($unique->getName())." (".$this->getIndexColumnList($unique).")";
 		}		
 		
 		foreach ($table->getIndices() as $index ) {
 			$vendor = $index->getVendorSpecificInfo();
-			$lines[] .= (($vendor && $vendor['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $platform->quoteIdentifier($index->getName()) . "(" . $index->getColumnList() . ")";
+			$lines[] .= (($vendor && $vendor['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $platform->quoteIdentifier($index->getName()) . "(" . $this->getIndexColumnList($index) . ")";
 		}
 		
 	}

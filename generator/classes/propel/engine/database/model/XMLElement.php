@@ -30,6 +30,8 @@ abstract class XMLElement {
 	
 	protected $attributes = array();
 	
+	protected $vendorSpecificInfo = array();
+	 
 	/**
 	 * Replaces the old loadFromXML() so that we can use loadFromXML() to load the attribs into the class.
 	 */
@@ -82,4 +84,58 @@ abstract class XMLElement {
             return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
         }
     }
+	
+	/**
+     * Sets vendor specific parameter that applies to this object.
+	 * @param string $name
+	 * @param string $value
+     */
+    public function setVendorParameter($name, $value)
+    {
+        $this->vendorSpecificInfo[$name] = $value;
+    }
+	
+	/**
+     * Whether specified vendor specific information is set.
+	 * @param string $name
+	 * @return boolean
+     */
+    public function hasVendorParameter($name)
+    {
+        return isset($this->vendorSpecificInfo[$name]);
+    }
+	
+	/**
+     * Returns specified vendor specific information is set.
+	 * @param string $name
+	 * @return string
+     */
+    public function getVendorParameter($name)
+    {
+		if (isset($this->vendorSpecificInfo[$name])) {
+		    return $this->vendorSpecificInfo[$name];
+		}
+        return null; // just to be explicit
+    }
+	
+    /**
+     * Sets vendor specific information for this object.
+	 * @param array $info
+     */
+    public function setVendorSpecificInfo($info)
+    {
+        $this->vendorSpecificInfo = $info;
+    }
+
+    /**
+     * Retrieves vendor specific information for this object.
+	 * @return array
+     */
+    public function getVendorSpecificInfo()
+    {
+        return $this->vendorSpecificInfo;
+    }
+	
+	
+
 }

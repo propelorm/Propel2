@@ -41,9 +41,9 @@ class Index extends XMLElement {
 
     /** @var array string[] */
     private $indexColumns;
-
-    /** @var array */
-    protected $vendorSpecificInfo = array();
+	
+	/** @var array  */
+	private $indexColumnSizes = array();
 
     /**
      * Creates a new instance with default characteristics (no name or
@@ -183,36 +183,39 @@ class Index extends XMLElement {
 
     /**
      * Adds a new column to an index.
+	 * @param array $attrib The attribute array from XML parser.
      */
     public function addColumn($attrib)
     {
-        $this->indexColumns[] = @$attrib["name"];
+		$name = $attrib["name"];
+        $this->indexColumns[] = $name;
+		if (isset($attrib["size"])) {
+			$this->indexColumnSizes[$name] = $attrib["size"];
+		}
     }
-
-    /**
-     * Sets vendor specific parameter
-     */
-    public function setVendorParameter($name, $value)
-    {
-        $this->vendorSpecificInfo[$name] = $value;
-    }
-
-    /**
-     * Sets vendor specific information to an index.
-     */
-    public function setVendorSpecificInfo($info)
-    {
-        $this->vendorSpecificInfo = $info;
-    }
-
-    /**
-     * Retrieves vendor specific information to an index.
-     */
-    public function getVendorSpecificInfo()
-    {
-        return $this->vendorSpecificInfo;
-    }
-
+	
+	/**
+	 * Whether there is a size for the specified column.
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function hasColumnSize($name)
+	{
+		return isset($this->indexColumnSizes[$name]);
+	}
+	
+	/**
+	 * Returns the size for the specified column, if given.
+	 * @param string $name
+	 * @return numeric The size or NULL
+	 */
+	public function getColumnSize($name)
+	{
+		if (isset($this->indexColumnSizes[$name])) {
+		    return $this->indexColumnSizes[$name];
+		}
+		return null; // just to be explicit
+	}
 
     /**
      * @see #getColumnList()
@@ -242,27 +245,11 @@ class Index extends XMLElement {
 
     /**
      * Return the list of local columns. You should not edit this list.
+	 * @return array string[]
      */
     public function getColumns()
     {
         return $this->indexColumns;
-    }
-
-    /**
-     * Returns the list of names of the columns referenced by this
-     * index.  Slightly over-allocates the list's buffer (just in case
-     * more elements are going to be added, such as when a name is
-     * being generated).  Feel free to modify this list.
-     */
-    protected function getColumnNames()
-    {
-        $names = array();
-        $cols = $this->getColumns();
-        for($i=0,$size=count($cols); $i < $size; $i++) {
-            $c = $cols[$i];
-            $names[] = $c->getName();
-        }
-        return $names;
     }
 
     /**
