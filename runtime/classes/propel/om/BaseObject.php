@@ -52,11 +52,6 @@ abstract class BaseObject {
      * @var array
      */
     protected $modifiedColumns = array();
-
-    /**
-     * Cache the logger to avoid looking it up every time its needed.
-     */
-    private $_log;
     
     /**
      * Returns whether the object has been modified.
