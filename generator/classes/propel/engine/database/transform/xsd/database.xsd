@@ -210,13 +210,7 @@
 	</xs:complexType>
 
 	<xs:complexType name="id-method-parameter">
-		<xs:sequence>
-			<xs:element name="rule" type="rule" minOccurs='0' maxOccurs="unbounded"/>
-		</xs:sequence>
-		<xs:attribute name="column" type="xs:string" default="default"/>
-		<xs:attribute name="translate" type="xs:string" use="optional"/>
-		<xs:attribute name="default" type="xs:string" use="optional"/>		
-		<xs:attribute name="value" type="xs:string" use="optional"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="name" type="xs:string" use="optional"/>		
 	</xs:complexType>
 
