@@ -210,7 +210,8 @@
 	</xs:complexType>
 
 	<xs:complexType name="id-method-parameter">
-		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="value" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="index">

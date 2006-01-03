@@ -417,7 +417,7 @@ class PropelCreoleTransformTask extends Task {
 					$seq_name = $table->getName().'_'.$col->getName().'_seq';					
 					if ($table->getDatabase()->isSequence($seq_name)) {
 						$idMethodParameterNode = $this->doc->createElement("id-method-parameter");
-						$idMethodParameterNode->setAttribute("name", $seq_name);
+						$idMethodParameterNode->setAttribute("value", $seq_name);
 						$node->appendChild($idMethodParameterNode);
 					}
 				}
