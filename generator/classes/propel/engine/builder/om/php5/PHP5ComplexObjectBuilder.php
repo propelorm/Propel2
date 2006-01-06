@@ -1232,7 +1232,9 @@ $script .= "
 				//if ( $fk->getTable()->getName() != $table->getName() ) {
 					$script .= "
 			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
-				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+				if(\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
+					\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+				}
 			}
 ";
 				// HL: commenting out close of self-referential check
