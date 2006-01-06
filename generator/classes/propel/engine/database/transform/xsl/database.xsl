@@ -152,6 +152,9 @@
 
 	<xsl:template match='id-method-parameter'>
 		<id-method-parameter>
+			<xsl:if test='not(boolean(@name))'>
+				<xsl:attribute name='name'>default</xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates select='@*'/>
 		</id-method-parameter>
 	</xsl:template>
