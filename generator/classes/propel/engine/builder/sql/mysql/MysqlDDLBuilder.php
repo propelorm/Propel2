@@ -23,11 +23,11 @@
 require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
- * 
+ * DDL Builder class for MySQL.
  * 
  * @author David Zülke
  * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql.pgsql
+ * @package propel.engine.builder.sql.mysql
  */
 class MysqlDDLBuilder extends DDLBuilder {
 	
