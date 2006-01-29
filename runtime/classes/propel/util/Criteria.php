@@ -1039,6 +1039,11 @@ class Criteria implements IteratorAggregate {
             } else {
                 $oc->addAnd($c);
             }
+        } elseif ($p2 === null && $p3 === null) {
+            // client has not specified $p3 (comparison)
+            // which means Criteria::EQUAL but has also specified $p2 == null 
+            // which is a valid combination we should handle by creating "IS NULL"
+            $this->addAnd($p1, $p2, self::EQUAL);
         }                                    
         return $this;
     }
@@ -1091,6 +1096,11 @@ class Criteria implements IteratorAggregate {
             } else {
                 $oc->addOr($c);
             }
+        } elseif ($p2 === null && $p3 === null) {
+            // client has not specified $p3 (comparison)
+            // which means Criteria::EQUAL but has also specified $p2 == null 
+            // which is a valid combination we should handle by creating "IS NULL"
+            $this->addOr($p1, $p2, self::EQUAL);
         }
                                     
         return $this;
