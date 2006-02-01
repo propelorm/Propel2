@@ -1431,8 +1431,8 @@ class Criterion  {
 				$valuesLength = count($values);
 				if ($valuesLength == 0) {
 				    // a SQL error will result if we have COLUMN IN (), so replace it with an expression
-					// that will always evaluate to FALSE
-					$sb .= "1<>1";
+				    // that will always evaluate to FALSE for Criteria::IN and TRUE for Criteria::NOT_IN
+					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
 				} else {
 					$sb .= $field . $this->comparison;
 	                for ($i=0; $i < $valuesLength; $i++) {
