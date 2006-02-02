@@ -83,7 +83,7 @@ class XmlToAppData extends AbstractHandler {
 		$this->firstPass = true;
 		$this->encoding = $encoding;
 	}
-
+	
 	/**
 	 * Parses a XML input file and returns a newly created and
 	 * populated AppData structure.
@@ -101,25 +101,10 @@ class XmlToAppData extends AbstractHandler {
 		$domDocument = new DomDocument('1.0', 'UTF-8');
 		$domDocument->load($xmlFile);
 
-		$xsl = new XsltProcessor();
-		$xsl->importStyleSheet(DomDocument::load(realpath(dirname(__FILE__) . "/xsl/database.xsl")));
-		$transformed = $xsl->transformToDoc($domDocument);
-
-		$xmlFile = $xmlFile . "transformed.xml";
-		$transformed->save($xmlFile);
-
 		// store current schema file path
 		$this->schemasTagsStack[$xmlFile] = array();
 
-		$this->currentXmlFile = $xmlFile;
-
-
-		if ($transformed->getElementsByTagName("database")->item(0)->getAttribute("noxsd") != "true") {
-			$xsdFile = realpath(dirname(__FILE__) . "/xsd/database.xsd");
-			if (!$transformed->schemaValidate($xsdFile)) {
-				throw new EngineException("XML schema does not validate (using schema file $xsdFile).  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).");		
-			}
-		}
+		$this->currentXmlFile = $xmlFile;		
 
 		try {
 			$fr = new FileReader($xmlFile);

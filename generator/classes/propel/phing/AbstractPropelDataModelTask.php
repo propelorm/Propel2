@@ -109,7 +109,25 @@ abstract class AbstractPropelDataModelTask extends Task {
      * @var PhingFile
      */
     protected $packageObjectModel;
-
+	
+	/**
+	 * Whether to perform validation (XSD) on the schema.xml file(s).
+	 * @var boolean
+	 */
+	protected $validate;
+	
+	/**
+	 * The XSD schema file to use for validation.
+	 * @var PhingFile
+	 */
+	protected $xsdFile;
+	
+	/**
+	 * XSL file to use to normalize (or otherwise transform) schema before validation.
+	 * @var PhingFile
+	 */
+	protected $xslFile;
+	
     /**
      * Return the data models that have been
      * processed.
@@ -193,7 +211,34 @@ abstract class AbstractPropelDataModelTask extends Task {
     {
         $this->packageObjectModel = ($v === '1' ? true : false);
     }
-
+	
+	/**
+	 * Set whether to perform validation on the datamodel schema.xml file(s).
+	 * @param boolean $v
+	 */
+	public function setValidate($v)
+	{
+		$this->validate = $v;
+	}
+	
+	/**
+	 * Set the XSD schema to use for validation of any datamodel schema.xml file(s).
+	 * @param $v PhingFile
+	 */
+	public function setXsd(PhingFile $v)
+	{
+		$this->xsdFile = $v;
+	}
+	
+	/**
+	 * Set the normalization XSLT to use to transform datamodel schema.xml file(s) before validation and parsing.
+	 * @param $v PhingFile
+	 */
+	public function setXsl(PhingFile $v)
+	{
+		$this->xslFile = $v;
+	}
+	
     /**
      * [REQUIRED] Set the path where Capsule will look
      * for templates using the file template
@@ -354,11 +399,47 @@ abstract class AbstractPropelDataModelTask extends Task {
 			
             // Make a transaction for each file
             foreach($dataModelFiles as $dmFilename) {
+			
                 $this->log("Processing: ".$dmFilename);
-                $f = new PhingFile($srcDir, $dmFilename);
-                $xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
-                $ad = $xmlParser->parseFile($f->getAbsolutePath());
-                $ad->setName($f->getName());
+                $xmlFile = new PhingFile($srcDir, $dmFilename);
+				
+				$dom = new DomDocument('1.0', 'UTF-8');
+				$dom->load($xmlFile->getAbsolutePath());
+
+				// normalize (or transform) the XML document using XSLT
+				if ($this->xslFile) {
+					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), PROJECT_MSG_VERBOSE);
+					if (!class_exists('XSLTProcessor')) {
+						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", PROJECT_MSG_ERR);
+        			} else {						
+						// normalize the document using normalizer stylesheet
+						
+						$xsl = new XsltProcessor();
+						$xsl->importStyleSheet(DomDocument::load($this->xslFile->getAbsolutePath()));
+						$transformed = $xsl->transformToDoc($dom);
+						$newXmlFilename = substr($xmlFile->getName(), 0, strrpos($xmlFile->getName(), '.')) . '-transformed.xml';
+						
+						// now overwrite previous vars to point to newly transformed file
+						$xmlFile = new PhingFile($srcDir, $newXmlFilename);
+						$transformed->save($xmlFile->getAbsolutePath());
+						$this->log("\t- Using new (post-transformation) XML file: " . $xmlFile->getPath(), PROJECT_MSG_VERBOSE);										
+						
+						$dom = new DomDocument('1.0', 'UTF-8');
+						$dom->load($xmlFile->getAbsolutePath());		
+					}
+				}
+				
+				// validate the XML document using XSD schema
+				if ($this->validate && $this->xsdFile) {
+					$this->log("Validating XML doc (".$xmlFile->getPath().") using schema file " . $this->xsdFile->getPath(), PROJECT_MSG_VERBOSE);
+					if (!$dom->schemaValidate($this->xsdFile->getAbsolutePath())) {
+						throw new BuildException("XML schema file (".$xmlFile->getPath().") does not validate.  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).");		throw new EngineException("XML schema does not validate (using schema file $xsdFile).  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).", $this->getLocation());
+					}
+				}
+				
+				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
+                $ad = $xmlParser->parseFile($xmlFile->getAbsolutePath());
+                $ad->setName($dmFilename); // <-- Important: use the original name, not the -transformed name.
                 $ads[] = $ad;
             }
         }
@@ -535,13 +616,19 @@ abstract class AbstractPropelDataModelTask extends Task {
     protected function validate()
     {
         if (empty($this->schemaFilesets)) {
-            throw new BuildException("You must specify a fileset of XML schemas.");
+            throw new BuildException("You must specify a fileset of XML schemas.", $this->getLocation());
         }
 
         // Make sure the output directory is set.
         if ($this->outputDirectory === null) {
-            throw new BuildException("The output directory needs to be defined!");
+            throw new BuildException("The output directory needs to be defined!", $this->getLocation());
         }
+		
+		if ($this->validate) {
+			if (!$this->xsdFile) {
+				throw new BuildException("'validate' set to TRUE, but no XSD specified (use 'xsd' attribute).", $this->getLocation());
+			}
+		}
 
     }
 

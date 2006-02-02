@@ -142,6 +142,9 @@
 
   <target name="sql-template">
     <propel-sql
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
@@ -176,6 +179,9 @@
 
   <target name="old-sql-template">
     <propel-old-sql
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
@@ -210,6 +216,9 @@
     description="==> generates the target database">
 
     <propel-data-model
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       controlTemplate="${propel.template.sqlDbInit}"
       outputDirectory="${propel.sql.dir}"
       outputFile="create-db.sql"
@@ -294,6 +303,9 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-sql
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       dbEncoding="${propel.database.encoding}"
@@ -325,6 +337,9 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-dump
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       targetDatabase="${propel.database}"
       datadbmap="${propel.schema.dir}/datadb.map"
       databaseDriver="${propel.database.driver}"
@@ -357,6 +372,9 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-dtd
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       targetDatabase="${propel.database}"
       outputDirectory="${propel.output.dir}"
       templatePath="${propel.templatePath}">
@@ -406,6 +424,9 @@
 
   <target name="om-template">
     <propel-om
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.php.dir}"
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
@@ -441,6 +462,9 @@
 
   <target name="old-om-template">
     <propel-old-om
+	  validate="${propel.schema.validate}"
+	  xsd="${propel.schema.xsd.file}"
+	  xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.php.dir}"
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
