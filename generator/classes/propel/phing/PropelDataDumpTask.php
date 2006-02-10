@@ -319,7 +319,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
                             Creole::registerDriver($dsn['phptype'], $this->databaseDriver);
                         }
 
-                        $this->conn = Creole::getConnection($dsn, Creole::NO_ASSOC_LOWER);
+                        $this->conn = Creole::getConnection($dsn);
 
                         $doc = $this->createXMLDoc($database);
                         $doc->save($outFile->getAbsolutePath());
