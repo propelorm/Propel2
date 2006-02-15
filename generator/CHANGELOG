@@ -2,16 +2,36 @@
   P R O P E L    C H A N G E S
   ============================
 
+ Feb ??, 2006 - 1.2.0
+
+  Breaking Changes:
+  *** New API for accessors and settors (see API docs).  The methods are the same
+  but the default indexing has changed.
+  *** New API for validators (see Wiki / docs).
+
+  Major Changes (for complete list see issue tracker at http://propel.phpdb.org):
+  - Propel now compatible w/ PHP >= 5.0.5 & 5.1.x
+  - New MySQLi driver for Propel (use 'mysqli' instead of 'mysql')
+  - Added propel-gen script to standard-installed versions of Propel also
+  - #146 Added 'size' attribute to <index-column> and <unique-column>
+  - New extensible OO builder classes for generating PHP5 classes and SQL DDL
+  - Identifier escaping in generated SQL (note: for Postgres this means columns
+    are case-sensitive)
+  - Numerous improvements to validation framework, including new, cleaner API
+  - Added doCountJoin*() methods to the generated Peer classes
+  - Obj->save() calls now return the number of affected rows (if supported by db)
+  - ... & numerous bug fixes which can be seen on the site issue tracker.
+
  April 7, 2005 - 1.1.0
-	
+
   Big Changes:
   *** Changed retrieveByPK() to return NULL instead of throw Exception if no row
       was matched. (Dave Lawson)
   *** New PHP runtime conf format has changed (must regenerate conf file).
   *** Dropped support for deprecated ini-format runtime properties file. (Hans)
   *** Cleanup of build properties files, removal of deprecated properties. (Hans)
-  
-  New Features:  
+
+  New Features:
   - Schema attributes are no longer case-sensitive.
   - New <vendor> tag allows specifying vendor-specific attributes. (Pavel)
   - MySQL identifiers escaping added to SQL generation templates. (Pavel)
@@ -22,10 +42,10 @@
   - Added support for returning affected rows from update methods in peer classes. (Hans)
   - Added PHPUnit2-based unit testing framework to replace old bookstore-test.php
   - Added schema validation / error throwing to schema parser. (Pavel)
-  - Logging is now optional (no log section means no logger used).  (David Zülke) 
+  - Logging is now optional (no log section means no logger used).  (David Zülke)
   - Added TIMESTAMP_BU, DATE_BU types for "before-unix" (pre 1970) dates. (Hans)
-  
-  Bug Fixes:  
+
+  Bug Fixes:
   - Fixed E_STRICT error in generated Peer doCount() method (Hans)
   - Fixed bug when using doSelectJoin*() methods with tables that have lazyload columns. (Hans)
   - Fixed logic bugs in doSelectJoinExcept*() method generation. (Hans)
