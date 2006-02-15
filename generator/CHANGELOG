@@ -13,6 +13,9 @@
   - Propel now compatible w/ PHP >= 5.0.5 & 5.1.x
   - New MySQLi driver for Propel (use 'mysqli' instead of 'mysql')
   - Added propel-gen script to standard-installed versions of Propel also
+  - New XSD schema for validating the XML datamodel descriptions (schema.xml)
+  - Support for specifying vendor-specific info in the schema.xml
+  - Better support for sequences in reverse engineering PostgreSQL databases
   - #146 Added 'size' attribute to <index-column> and <unique-column>
   - New extensible OO builder classes for generating PHP5 classes and SQL DDL
   - Identifier escaping in generated SQL (note: for Postgres this means columns
