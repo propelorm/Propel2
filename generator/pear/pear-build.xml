@@ -18,13 +18,16 @@
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
+<property name="propel.project.dir" value="${project.dir}"/>
+<resolvepath propertyName="propel.project.dir" file="${propel.project.dir}" dir="${application.startdir}"/>
+
 <target name="projdircheckExists">
   <condition property="projDirExists">
   	<and>
 		<not>
-			<equals arg1="${project.dir}" arg2="" trim="true"/>
+			<equals arg1="${propel.project.dir}" arg2="" trim="true"/>
 		</not>
-		<available file="${project.dir}/build.properties"/>
+		<available file="${propel.project.dir}/build.properties"/>
 	</and>
   </condition>
 </target>
@@ -32,8 +35,8 @@
 <target name="projdircheck" depends="projdircheckExists" unless="projDirExists">
 	<echo message="====================================================="/>
 	<echo message="Project directory not specified or invalid. You must "/>
-	<echo message="specify the ABSOLUTE path to your project directory and "/>
-	<echo message="your project directory must contain your build.properties "/>
+	<echo message="specify the path to your project directory and your "/>
+	<echo message="project directory must contain your build.properties "/>
 	<echo message="and schema.xml files.                                "/>
 	<echo message=" "/>
 	<echo message="Usage: "/>
@@ -41,12 +44,12 @@
 	<echo message="$&gt; propel-gen /path/to/projectdir [target]"/>
 	<echo message=" "/>
 	<echo message="====================================================="/>	
-	<fail message="No project directory specified (did you specify a relative path instead of absolute?)."/>
+	<fail message="No project directory specified."/>
 </target>
 
 <target name="configure" depends="projdircheck">
 	<echo msg="Loading project-specific props from ${project.dir}/build.properties"/>
-	<property file="${project.dir}/build.properties"/>
+	<property file="${propel.project.dir}/build.properties"/>
 </target>
 
 <target name="main" depends="configure" 
