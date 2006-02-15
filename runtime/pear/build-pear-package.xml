@@ -1,27 +1,36 @@
 <?xml version="1.0"?>
 
 <!--
-	This build file creates a minimal package of propel-runtime files, 
+	This build file creates a minimal package of propel-runtime files,
 	builds a package.xml for installation using PEAR and creates the necessary TGZ file.
-		
--->	
+
+-->
 
 <project name="propel_runtime" basedir="." default="main">
-	
+
+	<property name="propel.home" value=".."/>
 	<property name="build.base.dir" value="build"/>
-	<property name="pkgname" value="${phing.project.name}-${version}"/>		
+	<property name="pkgname" value="${phing.project.name}-${version}"/>
 	<property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
-	
-	<fileset dir="classes/propel" id="classes">			
+
+	<!-- some default properties -->
+	<property name="notes">This is the latest snapshot of the Propel Runtime.</property>
+	<property name="state" value="devel"/>
+
+	<taskdef
+    name="pear-package"
+    classname="BuildPropelPEARPackageTask" classpath="."/>
+
+	<fileset dir="${propel.home}/classes/propel" id="classes">
 		<include name="**"/>
-	</fileset>	
+	</fileset>
 
 	<!--
 		==============================================
 		Main entry point
 		==============================================
-	-->				
-	<target name="main" if="version" depends="versioncheck">	
+	-->
+	<target name="main" if="version" depends="versioncheck">
 		<phingcall target="build"/>
 		<phingcall target="pear-package"/>
 		<phingcall target="tar"/>
@@ -39,107 +48,71 @@
 		<echo message="enter it on the command line: "/>
 		<echo message=" "/>
 		<echo message="-Dversion=1.0.0"/>
-		<echo message="====================================================="/>	
+		<echo message="====================================================="/>
 		<input propertyname="version" promptChar=":">Propel version for package</input>
-		
-		<property name="pkgname" value="${phing.project.name}-${version}" override="true"/>		
+
+		<property name="pkgname" value="${phing.project.name}-${version}" override="true"/>
 		<property name="build.src.dir" value="${build.base.dir}/${pkgname}" override="true"/>
-		
+
 	</target>
-  
+
 	<!--
 		==============================================
 		Copy the desired files into the build/ dir
 		making sure to put them in the directory
 		structure that will be needed for PEAR install
 		==============================================
-	-->	
+	-->
 	<target name="build">
 		<echo>-----------------------------</echo>
 		<echo>| Creating directory layout |</echo>
 		<echo>-----------------------------</echo>
-		
+
 		<delete dir="${build.base.dir}"/>
 		<mkdir dir="${build.base.dir}"/>
-		
-		<copy todir="${build.src.dir}">			
+
+		<copy todir="${build.src.dir}">
 			<fileset refid="classes"/>
 		</copy>
-				
+
 	</target>
-	
+
 	<!--
 		==============================================
 		Create a PEAR package.xml which will guide the
 		installation.
 		==============================================
-	-->	
+	-->
 	<target name="pear-package">
-	
+
 		<echo>-----------------------------</echo>
 		<echo>| Creating PEAR package.xml |</echo>
 		<echo>-----------------------------</echo>
 		<echo></echo>
-		<echo>... This may take some time ...</echo>
-		
-		<pearpkg name="${phing.project.name}" dir="${build.src.dir}" destFile="${build.base.dir}/package.xml">
-			
+
+		<pear-package dir="${build.src.dir}" destFile="${build.base.dir}/package.xml" version="${version}" state="${state}" notes="${notes}">
+
 			<fileset dir="${build.src.dir}">
 				<include name="**"/>
 			</fileset>
-			
-			<option name="baseinstalldir" value="propel"/>
-			
-			<option name="notes">The 1.1.0 release adds some new features and fixes several bugs.</option>
-			
-			<!-- Set the simple options -->
-			<option name="description">This is the runtime component of the Propel object persistence framework.</option>
-			
-			<option name="summary">PHP5 object persistence layer based on Apache Torque</option>
-			<option name="version" value="${version}"/>
-			<option name="state" value="stable"/>
-			<option name="license" value="LGPL"/>
-			
-			<!-- Set the complex options -->
-			<mapping name="maintainers">
-				<element>
-					<element key="handle" value="hlellelid"/>
-					<element key="name" value="Hans"/>
-					<element key="email" value="hans@xmpl.org"/>
-					<element key="role" value="lead"/>
-				</element>
-			</mapping>
-			
-			<mapping name="deps">
-				<element>
-					<element key="type" value="php"/>
-					<element key="version" value="5.0.0"/>
-					<element key="rel" value="ge"/>
-				</element>
-				<element>
-					<element key="name" value="creole"/>
-					<element key="type" value="pkg"/>
-					<element key="version" value="1.0.1"/>
-					<element key="rel" value="ge"/>
-				</element>
-			</mapping>
-			
-		</pearpkg>
+
+		</pear-package>
+
 	</target>
-	
+
 	<!--
 		==============================================
-		Create a tar.gz of the files, which will be 
+		Create a tar.gz of the files, which will be
 		installed by pear package manager.
 		==============================================
 	-->
 	<target name="tar">
 		<echo>-----------------------------</echo>
 		<echo>| Creating tar.gz package   |</echo>
-		<echo>-----------------------------</echo>	
+		<echo>-----------------------------</echo>
 		<property name="tarfile" value="${build.base.dir}/${pkgname}.tgz"/>
 		<delete	file="${tarfile}"/>
-		<tar destFile="${tarfile}" basedir="${build.base.dir}" />		
+		<tar destFile="${tarfile}" basedir="${build.base.dir}" />
 	</target>
-	
+
 </project>

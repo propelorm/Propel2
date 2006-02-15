@@ -1,27 +1,36 @@
 <?xml version="1.0"?>
 
 <!--
-	This build file creates a minimal package of propel-generator files, 
+	This build file creates a minimal package of propel-generator files,
 	builds a package.xml for installation using PEAR and creates the necessary TGZ file.
-	
+
 	It's pretty easy to build the PEAR package:
-	
+
 	$> cd /path/to/propel-generator
 	$> phing -Dversion=1.0.0RC1 -f pear\build-pear-package.xml
-		
--->	
 
-<project name="propel_generator" basedir=".." default="main">
-	
+-->
+
+<project name="propel_generator" basedir="." default="main">
+
+	<property name="propelgen.home" value=".."/>
 	<property name="build.base.dir" value="build"/>
-	<property name="pkgname" value="${phing.project.name}-${version}"/>		
+	<property name="pkgname" value="${phing.project.name}-${version}"/>
 	<property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
-	
-	<fileset dir="classes/propel" id="classes">			
+
+	<!-- some default properties -->
+	<property name="notes">This is the latest snapshot of the Propel Generator.</property>
+	<property name="state" value="devel"/>
+
+	<taskdef
+    name="pear-package"
+    classname="BuildPropelGenPEARPackageTask" classpath="."/>
+
+	<fileset dir="${propelgen.home}/classes/propel" id="classes">
 		<include name="**"/>
 	</fileset>
-	
-	<fileset dir="." id="data">
+
+	<fileset dir="${propelgen.home}" id="data">
 		<!--<include name="build.xml"/>-->
 		<include name="build-propel.xml"/>
 		<include name="projects/bookstore/*"/>
@@ -31,15 +40,15 @@
 		<include name="pear/build.properties"/>
 		<include name="default.properties"/>
 		<include name="templates/**"/>
-		<include name="dtd/**"/>
+		<include name="resources/**"/>
 	</fileset>
 
 	<!--
 		==============================================
 		Main entry point
 		==============================================
-	-->				
-	<target name="main" if="version" depends="versioncheck">	
+	-->
+	<target name="main" if="version" depends="versioncheck">
 		<phingcall target="build"/>
 		<phingcall target="pear-package"/>
 		<phingcall target="tar"/>
@@ -57,225 +66,79 @@
 		<echo message="enter it on the command line: "/>
 		<echo message=" "/>
 		<echo message="-Dversion=1.0.0"/>
-		<echo message="====================================================="/>	
+		<echo message="====================================================="/>
 		<input propertyname="version" promptChar=":">Propel version for package</input>
-		
-		<property name="pkgname" value="${phing.project.name}-${version}" override="true"/>		
+
+		<property name="pkgname" value="${phing.project.name}-${version}" override="true"/>
 		<property name="build.src.dir" value="${build.base.dir}/${pkgname}" override="true"/>
-		
+
 	</target>
-  
+
 	<!--
 		==============================================
 		Copy the desired files into the build/ dir
 		making sure to put them in the directory
 		structure that will be needed for PEAR install
 		==============================================
-	-->	
+	-->
 	<target name="build">
 		<echo>-----------------------------</echo>
 		<echo>| Creating directory layout |</echo>
 		<echo>-----------------------------</echo>
-		
+
 		<delete dir="${build.base.dir}"/>
 		<mkdir dir="${build.base.dir}"/>
-		
-		<copy todir="${build.src.dir}">			
-			<fileset refid="classes"/>						
+
+		<copy todir="${build.src.dir}">
+			<fileset refid="classes"/>
 			<fileset refid="data"/>
 		</copy>
-		
+
 		<!-- some files need to be manually moved here to save headache when
 		doing the pear package.xml creation -->
 		<move file="${build.src.dir}/pear/build.properties" todir="${build.src.dir}"/>
 		<move file="${build.src.dir}/pear/pear-build.xml" todir="${build.src.dir}"/>
-		
+
 		<chmod file="${build.src.dir}/pear/pear-propel-gen" mode="755"/>
-		
+
 	</target>
-	
+
 	<!--
 		==============================================
 		Create a PEAR package.xml which will guide the
 		installation.
 		==============================================
-	-->	
+	-->
 	<target name="pear-package">
-	
+
 		<echo>-----------------------------</echo>
 		<echo>| Creating PEAR package.xml |</echo>
 		<echo>-----------------------------</echo>
 		<echo></echo>
-		<echo>... This may take some time ...</echo>
-		
-		<pearpkg name="${phing.project.name}" dir="${build.src.dir}" destFile="${build.base.dir}/package.xml">
-			
+
+		<pear-package dir="${build.src.dir}" destFile="${build.base.dir}/package.xml" version="${version}" state="${state}" notes="${notes}">
+
 			<fileset dir="${build.src.dir}">
 				<include name="**"/>
 			</fileset>
-			
-			<option name="baseinstalldir" value="propel"/>
-			
-			<option name="notes">The 1.1.0 release adds some new features and fixes several bugs. See CHANGELOG for important changes.</option>
-			
-			<!-- Set the simple options -->
-			<option name="description">Propel is an object persistence layer for PHP5 based on Apache Torque. In practical terms, Propel allows you to use objects instead of SQL to read and write rows in your database tables. Propel is composed of two tools: (1) a generator that creates SQL definition files (DDL) and PHP classes for your datamodel, and (2) a runtime engine that transparently handles object persistence and retrieval. Propel makes it easy to customize generated classes and, by using XML for the datamodel definition, can be easily integrated with an existing application framework.</option>
-			
-			<option name="summary">PHP5 object persistence layer based on Apache Torque</option>
-			<option name="version" value="${version}"/>
-			<option name="state" value="stable"/>
-			<option name="license" value="LGPL"/>
-			
-			<!-- Set the complex options -->
-			<mapping name="maintainers">
-				<element>
-					<element key="handle" value="hlellelid"/>
-					<element key="name" value="Hans"/>
-					<element key="email" value="hans@xmpl.org"/>
-					<element key="role" value="lead"/>
-				</element>
-			</mapping>
-			
-			<mapping name="deps">
-				<element>
-					<element key="type" value="php"/>
-					<element key="version" value="5.0.0"/>
-					<element key="rel" value="ge"/>
-				</element>
-				<element>
-					<element key="name" value="phing"/>
-					<element key="type" value="pkg"/>
-					<element key="version" value="2.0.0"/>
-					<element key="rel" value="ge"/>
-				</element>
-				<element>
-					<element key="name" value="creole"/>
-					<element key="type" value="pkg"/>
-					<element key="version" value="1.0.1"/>
-					<element key="rel" value="ge"/>
-				</element>
-			</mapping>
-			
-			<mapping name="installexceptions">
-				<element key="pear/pear-propel-gen" value="/"/>
-				<element key="pear/pear-propel-gen.bat" value="/"/>
-				<element key="pear/pear-build.xml" value="/"/>
-				<element key="pear/build.properties" value="/"/>
-			</mapping>
-			
-			
-			<mapping name="installas">
-				<element key="pear/pear-propel-gen" value="propel-gen"/>
-				<element key="pear/pear-propel-gen.bat" value="propel-gen.bat"/>
-			</mapping>
-			
-			<mapping name="platformexceptions">
-				<element key="pear/pear-propel-gen.bat" value="windows"/>
-				<element key="pear/pear-propel-gen" value="(*ix|*ux|darwin*|*BSD|SunOS*)"/>
-			</mapping>
-			
-			<mapping name="replacements">				
-				<element key="pear/pear-propel-gen.bat">
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PHP-BIN@"/>
-						<element key="to" value="php_bin"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@BIN-DIR@"/>
-						<element key="to" value="bin_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PEAR-DIR@"/>
-						<element key="to" value="php_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@DATA-DIR@"/>
-						<element key="to" value="data_dir"/>
-					</element>
-				</element>
-				<element key="pear/pear-propel-gen">
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PHP-BIN@"/>
-						<element key="to" value="php_bin"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@BIN-DIR@"/>
-						<element key="to" value="bin_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PEAR-DIR@"/>
-						<element key="to" value="php_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@DATA-DIR@"/>
-						<element key="to" value="data_dir"/>
-					</element>
-				</element>
-				<element key="pear/pear-build.xml">
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PHP-BIN@"/>
-						<element key="to" value="php_bin"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@BIN-DIR@"/>
-						<element key="to" value="bin_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@PEAR-DIR@"/>
-						<element key="to" value="php_dir"/>
-					</element>
-					<element>
-						<element key="type" value="pear-config"/>
-						<element key="from" value="@DATA-DIR@"/>
-						<element key="to" value="data_dir"/>
-					</element>
-				</element>
-			</mapping>
-			
-			<mapping name="dir_roles">
-				<element key="projects" value="data"/>
-				<element key="test" value="test"/>
-				<element key="templates" value="data"/>
-				<element key="dtd" value="data"/>
-			</mapping>
-			
-			<mapping name="exceptions">
-				<element key="pear/pear-propel-gen.bat" value="script"/>
-				<element key="pear/pear-propel-gen" value="script"/>
-				<element key="pear/pear-build.xml" value="data"/>
-				<element key="build.xml" value="data"/>
-				<element key="build-propel.xml" value="data"/>
-				<!--<element key="default.properties" value="data"/>-->
-				<!--<element key="default.properties" value="data"/>-->
-			</mapping>
-			
-		</pearpkg>
+
+		</pear-package>
+
 	</target>
-	
+
 	<!--
 		==============================================
-		Create a tar.gz of the files, which will be 
+		Create a tar.gz of the files, which will be
 		installed by pear package manager.
 		==============================================
 	-->
 	<target name="tar">
 		<echo>-----------------------------</echo>
 		<echo>| Creating tar.gz package   |</echo>
-		<echo>-----------------------------</echo>	
+		<echo>-----------------------------</echo>
 		<property name="tarfile" value="${build.base.dir}/${pkgname}.tgz"/>
 		<delete	file="${tarfile}"/>
-		<tar destFile="${tarfile}" basedir="${build.base.dir}" />		
+		<tar destFile="${tarfile}" basedir="${build.base.dir}" />
 	</target>
-	
+
 </project>
