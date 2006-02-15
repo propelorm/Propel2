@@ -123,6 +123,7 @@
 			<xs:enumeration value="validValues"/>
 			<xs:enumeration value="notMatch"/>
 			<xs:enumeration value="match"/>
+			<xs:enumeration value="class"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -207,6 +208,7 @@
 		<xs:attribute name="value" type="xs:string" use="optional"/>
 		<xs:attribute name="size" type="xs:positiveInteger" use="optional"/>
 		<xs:attribute name="message" type="xs:string" use="optional"/>
+		<xs:attribute name="class" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="id-method-parameter">

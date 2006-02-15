@@ -168,6 +168,9 @@
 
 	<xsl:template match='rule'>
 		<rule>
+			<xsl:if test='not(boolean(@name))'>
+				<xsl:attribute name='name'>class</xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates select='@*'/>
 		</rule>
 	</xsl:template>
