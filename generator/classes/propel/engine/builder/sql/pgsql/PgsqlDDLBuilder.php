@@ -233,7 +233,7 @@ CREATE ";
 		
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$platform->quoteIdentifier($fk->getForeignTableName())." (".$fk->getForeignColumnNames().")";
 			if ($fk->hasOnUpdate()) {
 				$script .= " ON UPDATE ".$fk->getOnUpdate();
 			}
