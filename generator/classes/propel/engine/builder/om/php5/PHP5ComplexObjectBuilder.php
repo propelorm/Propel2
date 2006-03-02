@@ -1227,14 +1227,14 @@ $script .= "
 			\$copyObj->setNew(false);
 ";
 			foreach ($table->getReferrers() as $fk) {
-				//HL: commenting out self-referrential check below
-				//		it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
-				//if ( $fk->getTable()->getName() != $table->getName() ) {
-					$script .= "
+				// Continue if $this and $copyObj are the same class and have the same primary key
+				// to avoid endless loops
+				$script .= "
 			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
-				if(\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
-					\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+				if(\$copyObj instanceof self && \$this->getPrimaryKey() === \$relObj->getPrimaryKey()) {
+					continue;
 				}
+				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
 			}
 ";
 				// HL: commenting out close of self-referential check
