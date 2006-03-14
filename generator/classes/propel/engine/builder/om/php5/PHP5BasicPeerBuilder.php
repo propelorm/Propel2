@@ -1439,7 +1439,8 @@ if (Propel::isInit()) {
 		}
 		$script .= "
 		\$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
-        return !empty(\$v) ? \$v[0] : null;
+
+		return !empty(\$v) ? \$v[0] : null;
 	}";
 	}
 
