@@ -1336,7 +1336,8 @@ if (Propel::isInit()) {
 		$script .= "
 
 		\$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
-        return !empty(\$v) > 0 ? \$v[0] : null;
+
+		return !empty(\$v) > 0 ? \$v[0] : null;
 	}
 ";
 	}
