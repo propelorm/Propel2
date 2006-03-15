@@ -194,6 +194,7 @@ class ForeignKey extends XMLElement {
 
     /**
      * Return a comma delimited string of local column names
+     * @deprecated because Column::makeList() is deprecated; use the array-returning getLocalColumns() and DDLBuilder->getColumnList() instead instead.
      */
     public function getLocalColumnNames()
     {
@@ -202,6 +203,7 @@ class ForeignKey extends XMLElement {
 
     /**
      * Return a comma delimited string of foreign column names
+     * @deprecated because Column::makeList() is deprecated; use the array-returning getForeignColumns() and DDLBuilder->getColumnList() instead instead.
      */
     public function getForeignColumnNames()
     {
@@ -209,7 +211,8 @@ class ForeignKey extends XMLElement {
     }
 
     /**
-     * Return the list of local columns. You should not edit this List.
+     * Return an array of local column names.
+     * @return array string[]
      */
     public function getLocalColumns()
     {
@@ -230,7 +233,8 @@ class ForeignKey extends XMLElement {
     }
 
     /**
-     * Return the list of local columns. You should not edit this List.
+     * Return an array of foreign column names.
+     * @return array string[]
      */
     public function getForeignColumns()
     {

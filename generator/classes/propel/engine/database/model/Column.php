@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/database/model/XMLElement.php';
 include_once 'propel/engine/EngineException.php';
 include_once 'propel/engine/database/model/PropelTypes.php';
@@ -38,7 +38,7 @@ include_once 'propel/engine/database/model/Domain.php';
  * @package propel.engine.database.model
  */
 class Column extends XMLElement {
-   	
+
 	const DEFAULT_TYPE = "VARCHAR";
 
 	private $name;
@@ -112,6 +112,7 @@ class Column extends XMLElement {
 	 *
 	 * @param columns Either a list of <code>Column</code> objects, or
 	 * a list of <code>String</code> objects with column names.
+	 * @deprecated Use the DDLBuilder->getColumnList() method instead; this will be removed in 1.3
 	 */
 	public static function makeList($columns, Platform $platform)
 	{
@@ -137,52 +138,52 @@ class Column extends XMLElement {
 				$this->domain = new Domain();
 				$this->domain->copy($this->getTable()->getDatabase()->getDomain($dom));
 			} else {
-				$this->domain = new Domain();			
+				$this->domain = new Domain();
 				$this->domain->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
 				$this->setType(strtoupper($this->getAttribute("type")));
 			}
-			
+
 			//Name
 			$this->name = $this->getAttribute("name");
-	
+
 			$this->phpName = $this->getAttribute("phpName");
 			$this->phpType = $this->getAttribute("phpType");
 			$this->peerName = $this->getAttribute("peerName");
-			
+
 			if (empty($this->phpType)) {
 				$this->phpType = null;
 			}
-	
+
 			// retrieves the method for converting from specified name to
 			// a PHP name.
 			$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
-		   
+
 			$this->isPrimaryKey = $this->booleanValue($this->getAttribute("primaryKey"));
-	
+
 			$this->isNodeKey = $this->booleanValue($this->getAttribute("nodeKey"));
 			$this->nodeKeySep = $this->getAttribute("nodeKeySep", ".");
-			
+
 			$this->isNotNull = $this->booleanValue($this->getAttribute("required"), false);
-			
+
 			// Regardless of above, if this column is a primary key then it can't be null.
 			if ($this->isPrimaryKey) {
 				$this->isNotNull = true;
 			}
-			
+
 			//AutoIncrement/Sequences
 			$this->isAutoIncrement = $this->booleanValue($this->getAttribute("autoIncrement"));
 			$this->isLazyLoad = $this->booleanValue($this->getAttribute("lazyLoad"));
-	
+
 			//Default column value.
 			$this->domain->replaceDefaultValue($this->getAttribute("default"));
 			$this->domain->replaceSize($this->getAttribute("size"));
-			$this->domain->replaceScale($this->getAttribute("scale"));				
-					
+			$this->domain->replaceScale($this->getAttribute("scale"));
+
 			$this->inheritanceType = $this->getAttribute("inheritance");
 			$this->isInheritance = ($this->inheritanceType !== null
 					&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
 															// use boleanValue()
-	
+
 			$this->inputValidator = $this->getAttribute("inputValidator");
 			$this->description = $this->getAttribute("description");
 		} catch (Exception $e) {
@@ -767,14 +768,14 @@ class Column extends XMLElement {
 	{
 		return $this->domain->getDefaultValue();
 	}
-	
+
 	/**
 	 * Get the default value suitable for use in PHP.
 	 * @return mixed
 	 * @see Domain::getPhpDefaultValue()
 	 */
 	public function getPhpDefaultValue()
-	{		
+	{
 		return $this->domain->getPhpDefaultValue();
 	}
 
@@ -901,6 +902,7 @@ class Column extends XMLElement {
 	/**
 	 *
 	 * @return string
+	 * @deprecated Use DDLBuilder->getColumnDDL() instead; this will be removed in 1.3
 	 */
 	public function getSqlString()
 	{

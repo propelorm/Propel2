@@ -24,12 +24,12 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
 
 /**
  * Baseclass for SQL data dump SQL building classes.
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql
  */
 abstract class DataSQLBuilder extends DataModelBuilder {
-	
+
 	/**
 	 * The main method in this class, returns the SQL for INSERTing data into a row.
 	 * @param DataRow $row The row to process.
@@ -40,31 +40,31 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 		$sql = "";
 		$platform = $this->getPlatform();
 		$table = $this->getTable();
-		
-		$sql .= "INSERT INTO ".$this->getPlatform()->quoteIdentifier($this->getTable()->getName())." (";		
-		
+
+		$sql .= "INSERT INTO ".$this->quoteIdentifier($this->getTable()->getName())." (";
+
 		// add column names to SQL
 		$colNames = array();
 		foreach ($row->getColumnValues() as $colValue) {
-			$colNames[] = $platform->quoteIdentifier($colValue->getColumn()->getName());
+			$colNames[] = $this->quoteIdentifier($colValue->getColumn()->getName());
 		}
-		
+
 		$sql .= implode(',', $colNames);
-		
+
 		$sql .= ") VALUES (";
-		
+
 		$colVals = array();
 		foreach ($row->getColumnValues() as $colValue) {
 			$colVals[] = $this->getColumnValueSql($colValue);
 		}
-		
-		$sql .= implode(',', $colVals);		
+
+		$sql .= implode(',', $colVals);
 		$sql .= ");
 ";
-		
+
 		return $sql;
 	}
-	
+
 	/**
 	 * Gets the propertly escaped (and quoted) value for a column.
 	 * @param ColumnValue $colValue
@@ -74,46 +74,46 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	{
 		$column = $colValue->getColumn();
 		$creoleTypeString = PropelTypes::getCreoleType($column->getPropelType());
-		$creoleTypeCode = CreoleTypes::getCreoleCode($creoleTypeString);		
+		$creoleTypeCode = CreoleTypes::getCreoleCode($creoleTypeString);
 		$method = 'get' . CreoleTypes::getAffix($creoleTypeCode) . 'Sql';
 		return $this->$method($colValue->getValue());
 	}
-	
-	
-	
+
+
+
 	/**
      * Gets a representation of a binary value suitable for use in a SQL statement.
      * Default behavior is true = 1, false = 0.
      * @param boolean $value
      * @return int
      */
-    protected function getBooleanSql($value) 
-    {      
+    protected function getBooleanSql($value)
+    {
 		return (int) $value;
     }
-    
+
 
     /**
      * Gets a representation of a BLOB/LONGVARBINARY value suitable for use in a SQL statement.
 	 * @param mixed $blob Blob object or string data.
 	 * @return string
      */
-    protected function getBlobSql($blob) 
-    {        
+    protected function getBlobSql($blob)
+    {
         // they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($blob)) {
 			return "'" . $this->escape($blob->__toString()) . "'";
 		} else {
 			return "'" . $this->escape($blob) . "'";
 		}
-    } 
+    }
 
     /**
      * Gets a representation of a CLOB/LONGVARCHAR value suitable for use in a SQL statement.
 	 * @param mixed $clob Clob object or string data.
 	 * @return string
      */
-    protected function getClobSql($clob) 
+    protected function getClobSql($clob)
     {
 		// they took magic __toString() out of PHP5.0.0; this sucks
 		if (is_object($clob)) {
@@ -121,54 +121,54 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 		} else {
 			return "'" . $this->escape($clob) . "'";
 		}
-    }     
+    }
 
     /**
      * Gets a representation of a date value suitable for use in a SQL statement.
      * @param string $value
      * @return string
      */
-    protected function getDateSql($value) 
+    protected function getDateSql($value)
     {
         return "'" . date('Y-m-d', strtotime($value)) . "'";
-    } 
-    
+    }
+
     /**
      * Gets a representation of a decimal value suitable for use in a SQL statement.
      * @param double $value
      * @return float
      */
-    protected function getDecimalSql($value) 
+    protected function getDecimalSql($value)
     {
         return (float) $value;
-    }             
+    }
 
     /**
      * Gets a representation of a double value suitable for use in a SQL statement.
      * @param double $value
      * @return double
      */
-    protected function getDoubleSql($value) 
+    protected function getDoubleSql($value)
     {
         return (double) $value;
-    } 
-        
+    }
+
     /**
      * Gets a representation of a float value suitable for use in a SQL statement.
      * @param float $value
      * @return float
      */
-    protected function getFloatSql($value) 
+    protected function getFloatSql($value)
     {
         return (float) $value;
-    } 
+    }
 
     /**
      * Gets a representation of an integer value suitable for use in a SQL statement.
      * @param int $value
      * @return int
      */
-    protected function getIntSql($value) 
+    protected function getIntSql($value)
     {
 		return (int) $value;
     }
@@ -177,7 +177,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
      * Gets a representation of a NULL value suitable for use in a SQL statement.
      * @return null
      */
-    protected function getNullSql() 
+    protected function getNullSql()
     {
         return 'NULL';
     }
@@ -187,29 +187,29 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 * @param string $value
      * @return string
      */
-    protected function getStringSql($value) 
+    protected function getStringSql($value)
     {
 		return "'" . $this->getPlatform()->escapeText($value) . "'";
     }
-    
+
     /**
      * Gets a representation of a time value suitable for use in a SQL statement.
      * @param string $value
      * @return string
      */
-    protected function getTimeSql($paramIndex, $value) 
+    protected function getTimeSql($paramIndex, $value)
     {
 		return "'" . date('H:i:s', strtotime($value)) . "'";
     }
-    
+
     /**
      * Gets a representation of a timestamp value suitable for use in a SQL statement.
      * @param string $value
      * @return string
      */
-    function getTimestampSql($value) 
+    function getTimestampSql($value)
     {
 		return "'" . date('Y-m-d H:i:s', strtotime($value)) . "'";
     }
-	
+
 }

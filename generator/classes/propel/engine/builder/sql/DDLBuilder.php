@@ -24,20 +24,20 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
 
 /**
  * Baseclass for SQL DDL-building classes.
- * 
+ *
  * DDL-building classes are those that build all the SQL DDL for a single table.
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql
  */
-abstract class DDLBuilder extends DataModelBuilder {	
+abstract class DDLBuilder extends DataModelBuilder {
 
 	/**
 	 * Builds the SQL for current table and returns it as a string.
-	 * 
-	 * This is the main entry point and defines a basic structure that classes should follow. 
+	 *
+	 * This is the main entry point and defines a basic structure that classes should follow.
 	 * In most cases this method will not need to be overridden by subclasses.
-	 * 
+	 *
 	 * @return string The resulting SQL DDL.
 	 */
 	public function build()
@@ -48,7 +48,48 @@ abstract class DDLBuilder extends DataModelBuilder {
 		$this->addForeignKeys($script);
 		return $script;
 	}
-	
+
+	/**
+	 * Builds the DDL SQL for a Column object.
+	 * @return string
+	 */
+	public function getColumnDDL(Column $col)
+	{
+		$platform = $this->getPlatform();
+		$domain = $col->getDomain();
+
+		$sb = "";
+		$sb .= $this->quoteIdentifier($col->getName()) . " ";
+		$sb .= $domain->getSqlType();
+		if ($platform->hasSize($domain->getSqlType())) {
+			$sb .= $domain->printSize();
+		}
+		$sb .= " ";
+		$sb .= $col->getDefaultSetting() . " ";
+		$sb .= $col->getNotNullString() . " ";
+		$sb .= $col->getAutoIncrementString();
+
+		return trim($sb);
+	}
+
+	/**
+	 * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+	 * @param array Column[] or string[]
+	 * @param string $delim The delimiter to use in separating the column names.
+	 * @return string
+	 */
+	public function getColumnList($columns, $delim=',')
+	{
+		$list = array();
+		foreach($columns as $col) {
+			if ($col instanceof Column) {
+				$col = $col->getName();
+			}
+			$list[] = $this->quoteIdentifier($col);
+		}
+		return implode($delim, $list);
+	}
+
 	/**
 	 * This function adds any _database_ start/initialization SQL.
 	 * This is designed to be called for a database, not a specific table, hence it is static.
@@ -58,7 +99,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * This function adds any _database_ end/cleanup SQL.
 	 * This is designed to be called for a database, not a specific table, hence it is static.
@@ -68,7 +109,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * Adds table definition.
 	 * @param string &$script The script will be modified in this method.
@@ -80,11 +121,11 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * @param string &$script The script will be modified in this method.
 	 */
 	abstract protected function addIndices(&$script);
-	
+
 	/**
 	 * Adds foreign key constraint definitions.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	abstract protected function addForeignKeys(&$script);
-	
+
 }

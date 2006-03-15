@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/database/model/XMLElement.php';
 include_once 'propel/engine/EngineException.php';
 include_once 'propel/engine/database/model/IDMethod.php';
@@ -110,16 +110,16 @@ class Table extends XMLElement implements IDMethod {
 
         // retrieves the method for converting from specified name to a PHP name.
         $this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
-                
+
         $this->skipSql = $this->booleanValue($this->getAttribute("skipSql"));
         $this->readOnly = $this->booleanValue($this->getAttribute("readOnly"));
-        
+
         $this->pkg = $this->getAttribute("package");
         $this->abstractValue = $this->booleanValue($this->getAttribute("abstract"));
         $this->baseClass = $this->getAttribute("baseClass");
         $this->basePeer = $this->getAttribute("basePeer");
         $this->alias = $this->getAttribute("alias");
-		
+
         $this->heavyIndexing = ( $this->booleanValue($this->getAttribute("heavyIndexing"))
                 || ("false" !== $this->getAttribute("heavyIndexing")
                 		&& $this->getDatabase()->isHeavyIndexing() ) );
@@ -967,7 +967,7 @@ class Table extends XMLElement implements IDMethod {
     {
         $this->isTree = (boolean) $v;
     }
-	
+
     /**
      * Returns a XML representation of this table.
      *
@@ -1101,10 +1101,10 @@ class Table extends XMLElement implements IDMethod {
     {
         return (count($this->getPrimaryKey()) > 0);
     }
-	
+
 	/**
 	 * Determine whether this table has any auto-increment primary key(s).
-	 * 
+	 *
 	 * @return boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
 	 */
 	public function hasAutoIncrementPrimaryKey()
@@ -1119,11 +1119,12 @@ class Table extends XMLElement implements IDMethod {
 		}
 		return false;
 	}
-	
+
     /**
      * Returns all parts of the primary key, separated by commas.
      *
      * @return A CSV list of primary key parts.
+     * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
      */
     public function printPrimaryKey()
     {
@@ -1134,6 +1135,7 @@ class Table extends XMLElement implements IDMethod {
      * Returns the elements of the list, separated by commas.
      * @param array $list
      * @return A CSV list.
+     * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
      */
     private function printList($list){
         $result = "";

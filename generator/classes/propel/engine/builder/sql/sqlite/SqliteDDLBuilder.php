@@ -24,36 +24,36 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
  * The SQL DDL-building class for SQLite.
- * 
- * 
+ *
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql.pgsql
  */
 class SqliteDDLBuilder extends DDLBuilder {
-		
+
 	/**
-	 * 
+	 *
 	 * @see parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
-DROP TABLE ".$platform->quoteIdentifier($table->getName()).";
+DROP TABLE ".$this->quoteIdentifier($table->getName()).";
 ";
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @see parent::addColumns()
 	 */
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
 -----------------------------------------------------------------------------
 -- ".$table->getName()."
@@ -64,18 +64,18 @@ DROP TABLE ".$platform->quoteIdentifier($table->getName()).";
 
 		$script .= "
 
-CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
-	
+
 		$lines = array();
-		
+
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $col->getSqlString();
+			$lines[] = $this->getColumnDDL($col);
 		}
 
-		foreach ($table->getUnices() as $unique ) { 
-			$lines[] = "UNIQUE (".$unique->getColumnList().")";
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
     	}
 
 		$sep = ",
@@ -85,7 +85,7 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 );
 ";
 	}
-	
+
 	/**
 	 * Adds CREATE INDEX statements for this table.
 	 * @see parent::addIndices()
@@ -94,33 +94,33 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @see parent::addForeignKeys()
 	 */
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY (".$fk->getLocalColumnNames().") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")
+-- FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).") REFERENCES ".$fk->getForeignTableName()." (".$this->getColumnList($fk->getForeignColumns()).")
 ";
 		}
 	}
-	
+
 }

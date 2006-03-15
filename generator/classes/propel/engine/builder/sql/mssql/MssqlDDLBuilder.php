@@ -24,34 +24,34 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
  * The SQL DDL-building class for MS SQL Server.
- * 
- * 
+ *
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql.pgsql
  */
 class MssqlDDLBuilder extends DDLBuilder {
-	
+
 	private static $dropCount = 0;
-	
+
 	/**
-	 * 
+	 *
 	 * @see parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-    ALTER TABLE ".$platform->quoteIdentifier($table->getName())." DROP CONSTRAINT ".$platform->quoteIdentifier($fk->getName()).";
+    ALTER TABLE ".$this->quoteIdentifier($table->getName())." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
 ";
 		}
-		
-		
-		self::$dropCount++;	
-		
+
+
+		self::$dropCount++;
+
 		$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".$table->getName()."')
 BEGIN
@@ -75,11 +75,11 @@ BEGIN
      END
      CLOSE refcursor
      DEALLOCATE refcursor
-     DROP TABLE ".$platform->quoteIdentifier($table->getName())."
+     DROP TABLE ".$this->quoteIdentifier($table->getName())."
 END
 ";
 	}
-	
+
 	/**
 	 * @see parent::addColumns()
 	 */
@@ -87,7 +87,7 @@ END
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
 /* ---------------------------------------------------------------------- */
 /* ".$table->getName()."											*/
@@ -95,26 +95,26 @@ END
 
 ";
 
-		$this->addDropStatements($script);		
+		$this->addDropStatements($script);
 
 		$script .= "
 
-CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
-	
+
 		$lines = array();
-		
+
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $col->getSqlString();
+			$lines[] = $this->getColumnDDL($col);
 		}
-		
+
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "CONSTRAINT ".$platform->quoteIdentifier($table->getName())."_PK PRIMARY KEY (".$table->printPrimaryKey().")";
+			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($table->getName())."_PK PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
 		}
-		
-		foreach ($table->getUnices() as $unique ) { 
-			$lines[] = "UNIQUE (".$unique->getColumnList().")";
+
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
     	}
 
 		$sep = ",
@@ -133,44 +133,44 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @see parent::addForeignKeys()
 	 */
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 BEGIN
-ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
 				    // we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$fk->getLocalColumnNames()." fk).");
+					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				} else {
 					$script .= " ON UPDATE ".$fk->getOnUpdate();
 				}
-				
+
 			}
-			if ($fk->hasOnDelete()) { 
+			if ($fk->hasOnDelete()) {
 				if ($fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
 				    // we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$fk->getLocalColumnNames()." fk).");
+					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				} else {
 					$script .= " ON DELETE ".$fk->getOnDelete();
 				}
@@ -181,5 +181,5 @@ END
 ";
 		}
 	}
-	
+
 }

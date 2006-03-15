@@ -24,15 +24,15 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
  * The SQL DDL-building class for Oracle.
- * 
- * 
+ *
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql.pgsql
  */
 class OracleDDLBuilder extends DDLBuilder {
-		
+
 	/**
-	 * 
+	 *
 	 * @see parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
@@ -40,24 +40,24 @@ class OracleDDLBuilder extends DDLBuilder {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		$script .= "
-DROP TABLE ".$platform->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
+DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
+DROP SEQUENCE ".$this->quoteIdentifier($table->getSequenceName()).";
 ";
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @see parent::addColumns()
 	 */
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
 		$script .= "
-		
+
 /* -----------------------------------------------------------------------
    ".$table->getName()."
    ----------------------------------------------------------------------- */
@@ -67,16 +67,16 @@ DROP SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName()).";
 
 		$script .= "
 
-CREATE TABLE ".$table->getName()." 
+CREATE TABLE ".$table->getName()."
 (
 	";
-	
+
 		$lines = array();
-		
+
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $col->getSqlString();
+			$lines[] = $this->getColumnDDL($col);
 		}
-		
+
 		$sep = ",
 	";
 		$script .= implode($sep, $lines);
@@ -86,12 +86,12 @@ CREATE TABLE ".$table->getName()."
 		$this->addPrimaryKey($script);
 		$this->addIndices($script);
 		$this->addSequences($script);
-		
+
 	}
-	
+
 	/**
 	 *
-	 * 
+	 *
 	 */
 	protected function addPrimaryKey(&$script)
 	{
@@ -104,7 +104,7 @@ CREATE TABLE ".$table->getName()."
 		}
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
-	ALTER TABLE ".$platform->quoteIdentifier($table->getName())."
+	ALTER TABLE ".$this->quoteIdentifier($table->getName())."
 	    ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
 	PRIMARY KEY (";
 			$delim = "";
@@ -116,21 +116,21 @@ CREATE TABLE ".$table->getName()."
 ";
 		}
 	}
-	
+
 	/**
 	 * Adds CREATE SEQUENCE statements for this table.
-	 * 
+	 *
 	 */
 	protected function addSequences(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
-			$script .= "CREATE SEQUENCE ".$platform->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+			$script .= "CREATE SEQUENCE ".$this->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}
 	}
-	
+
 
 	/**
 	 * Adds CREATE INDEX statements for this table.
@@ -145,13 +145,13 @@ CREATE TABLE ".$table->getName()."
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$platform->quoteIdentifier($index->getName()) ." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @see parent::addForeignKeys()
 	 */
 	protected function addForeignKeys(&$script)
@@ -160,18 +160,18 @@ CREATE TABLE ".$table->getName()."
 		$platform = $this->getPlatform();
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$fk->getForeignTableName()." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
-				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$fk->getLocalColumnNames()." fk).");
+				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				//$script .= " ON UPDATE ".$fk->getOnUpdate();
 			}
-			if ($fk->hasOnDelete()) { 
+			if ($fk->hasOnDelete()) {
 				$script .= " ON DELETE ".$fk->getOnDelete();
 			}
 			$script .= ";
 ";
 		}
 	}
-	
-	
+
+
 }

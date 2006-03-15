@@ -124,9 +124,33 @@
     </uptodate>
   </target>
 
+  <!--	temporary target to check whether postgres is being used with identifier quoting ON.
+		If so, a warning is issued, since identifier quoting is only paritally implemented & this point.  -->
+  <target name="pgsql-quoting-check">
+  	<if>
+  		<and>
+			<equals arg1="${propel.database}" arg2="pgsql"/>
+			<equals arg1="${propel.disableIdentifierQuoting}" arg2=""/>
+		</and>
+		<then>
+			<warn>ATTENTION: It appears you are using PostgreSQL and you have identifier-quoting turned on.</warn>
+			<warn>It is suggested that you disable identifier quoting when using PostgreSQL -- especially if you</warn>
+			<warn>have case-sensitive columns in your database.</warn>
+			<warn></warn>
+			<warn>To disable identifier quoting, add the following property to your build.properties (or specify</warn>
+			<warn>it using -D on commandline):</warn>
+			<warn></warn>
+			<warn>propel.disableIdentifierQuoting=true</warn>
+			<warn></warn>
+			<warn>You can ignore this warning if you understand the issues related to case-sensitivity and Propel's</warn>
+			<warn>DDL-only implementation of identifier quoting.</warn>
+		</then>
+	</if>
+  </target>
+
   <target
     name="sql"
-    depends="sql-check"
+    depends="sql-check,pgsql-quoting-check"
     unless="propel.internal.sql.uptodate"
     description="==> generates the SQL for your project">
 
@@ -159,7 +183,7 @@
     </propel-sql>
   </target>
 
-  
+
   <target
     name="old-sql"
     depends="sql-check"
@@ -195,7 +219,7 @@
       />
     </propel-old-sql>
   </target>
-  
+
   <!-- ================================================================ -->
   <!-- C R E A T E  T A R G E T  D A T A B A S E                        -->
   <!-- ================================================================ -->

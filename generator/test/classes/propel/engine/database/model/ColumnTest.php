@@ -31,9 +31,10 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
  * @version $Id: TableTest.php 287 2005-11-25 17:14:50Z hans $
  */
 class ColumnTest extends PHPUnit2_Framework_TestCase {
-	
+
 	/**
 	 * Tests static Column::makeList() method.
+	 * @deprecated - Column::makeList() is deprecated and set to be removed in 1.3
 	 */
 	public function testMakeList()
 	{
@@ -44,18 +45,18 @@ class ColumnTest extends PHPUnit2_Framework_TestCase {
 			$c->setName("Column" . $i);
 			$objArray[] = $c;
 		}
-		
+
 		$list = Column::makeList($objArray, new MySQLPlatform());
-		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));		
+		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
 
 		$strArray = array();
 		for($i=0; $i<5; $i++) {
 			$strArray[] = "Column" . $i;
 		}
-		
+
 		$list = Column::makeList($strArray, new MySQLPlatform());
 		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
-			
+
 	}
-	
+
 }

@@ -24,8 +24,8 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 
 /**
  * The SQL DDL-building class for PostgreSQL.
- * 
- * 
+ *
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.sql.pgsql
  */
@@ -37,30 +37,30 @@ class PgsqlDDLBuilder extends DDLBuilder {
      * added schema names
      *
      * @var Array of schema names
-     */    
+     */
     protected static $addedSchemas = array();
-    
+
     /**
      * Get the schema for the current table
      *
      * @author Markus Lervik <markus.lervik@necora.fi>
      * @access protected
      * @return schema name if table has one, else
-     *         null 
+     *         null
      **/
     protected function getSchema()
     {
-        
+
         $table = $this->getTable();
         $schema = $table->getVendorSpecificInfo();
         if (!empty($schema) && isset($schema['schema'])) {
             return $schema['schema'];
-        } 
-        
+        }
+
         return null;
-        
+
     }
-    
+
     /**
      * Add a schema to the generated SQL script
      *
@@ -68,53 +68,53 @@ class PgsqlDDLBuilder extends DDLBuilder {
      * @access protected
      * @return string with CREATE SCHEMA statement if
      *         applicable, else empty string
-     **/ 
+     **/
     protected function addSchema()
     {
-        
+
         $schemaName = $this->getSchema();
-        
+
         if ($schemaName !== null) {
-            
+
             if (!in_array($schemaName, self::$addedSchemas)) {
 		$platform = $this->getPlatform();
                 self::$addedSchemas[] = $schemaName;
-		return "\nCREATE SCHEMA " . $platform->quoteIdentifier($schemaName) . ";\n";
-            } 
+		return "\nCREATE SCHEMA " . $this->quoteIdentifier($schemaName) . ";\n";
+            }
         }
-        
+
         return '';
-        
+
     }
-    		
+
 	/**
-	 * 
+	 *
 	 * @see parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
-DROP TABLE ".$platform->quoteIdentifier($table->getName())." CASCADE;
+DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())).";
+DROP SEQUENCE ".$this->quoteIdentifier(strtolower($table->getSequenceName())).";
 ";
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @see parent::addColumns()
 	 */
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
 -----------------------------------------------------------------------------
 -- ".$table->getName()."
@@ -125,30 +125,30 @@ DROP SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())
 
         $schemaName = $this->getSchema();
         if ($schemaName !== null) {
-            $script .= "\nSET search_path TO " . $platform->quoteIdentifier($schemaName) . ";\n";
+            $script .= "\nSET search_path TO " . $this->quoteIdentifier($schemaName) . ";\n";
         }
 
 		$this->addDropStatements($script);
 		$this->addSequences($script);
-        
+
         $script .= "
 
-CREATE TABLE ".$platform->quoteIdentifier($table->getName())." 
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
-	
+
 		$lines = array();
-		
+
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $col->getSqlString();
+			$lines[] = $this->getColumnDDL($col);
 		}
-		
+
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "PRIMARY KEY (".$table->printPrimaryKey().")";
+			$lines[] = "PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
 		}
-		
-		foreach ($table->getUnices() as $unique ) { 
-			$lines[] = "CONSTRAINT ".$platform->quoteIdentifier($unique->getName())." UNIQUE (".$unique->getColumnList().")";
+
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($unique->getName())." UNIQUE (".$this->getColumnList($unique->getColumns()).")";
     	}
 
 		$sep = ",
@@ -157,50 +157,50 @@ CREATE TABLE ".$platform->quoteIdentifier($table->getName())."
 		$script .= "
 );
 
-COMMENT ON TABLE ".$platform->quoteIdentifier($table->getName())." IS '" . $platform->escapeText($table->getDescription())."';
+COMMENT ON TABLE ".$this->quoteIdentifier($table->getName())." IS '" . $platform->escapeText($table->getDescription())."';
 
 ";
 
 		$this->addColumnComments($script);
-        
+
         $script .= "\nSET search_path TO public;";
-        
+
 	}
-	
+
 	/**
 	 * Adds comments for the columns.
-	 * 
+	 *
 	 */
 	protected function addColumnComments(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($this->getTable()->getColumns() as $col) {
     		if( $col->getDescription() != '' ) {
 				$script .= "
-COMMENT ON COLUMN ".$platform->quoteIdentifier($table->getName()).".".$platform->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
+COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
 ";
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds CREATE SEQUENCE statements for this table.
-	 * 
+	 *
 	 */
 	protected function addSequences(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName())).";
+CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($table->getSequenceName())).";
 ";
 		}
 	}
-	
+
 
 	/**
 	 * Adds CREATE INDEX statements for this table.
@@ -210,39 +210,39 @@ CREATE SEQUENCE ".$platform->quoteIdentifier(strtolower($table->getSequenceName(
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$platform->quoteIdentifier($index->getName())." ON ".$platform->quoteIdentifier($table->getName())." (".$index->getColumnList().");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @see parent::addForeignKeys()
 	 */
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$platform->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$platform->quoteIdentifier($fk->getName())." FOREIGN KEY (".$fk->getLocalColumnNames() .") REFERENCES ".$platform->quoteIdentifier($fk->getForeignTableName())." (".$fk->getForeignColumnNames().")";
+ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$script .= " ON UPDATE ".$fk->getOnUpdate();
 			}
-			if ($fk->hasOnDelete()) { 
+			if ($fk->hasOnDelete()) {
 				$script .= " ON DELETE ".$fk->getOnDelete();
 			}
 			$script .= ";
 ";
 		}
 	}
-	
+
 }

@@ -41,7 +41,7 @@ class Index extends XMLElement {
 
     /** @var array string[] */
     private $indexColumns;
-	
+
 	/** @var array  */
 	private $indexColumnSizes = array();
 
@@ -193,7 +193,7 @@ class Index extends XMLElement {
 			$this->indexColumnSizes[$name] = $attrib["size"];
 		}
     }
-	
+
 	/**
 	 * Whether there is a size for the specified column.
 	 * @param string $name
@@ -203,7 +203,7 @@ class Index extends XMLElement {
 	{
 		return isset($this->indexColumnSizes[$name]);
 	}
-	
+
 	/**
 	 * Returns the size for the specified column, if given.
 	 * @param string $name
@@ -219,7 +219,7 @@ class Index extends XMLElement {
 
     /**
      * @see #getColumnList()
-     * @deprecated Use getColumnList() instead.
+     * @deprecated Use getColumnList() instead (which is not deprecated too!)
      */
     public function getIndexColumnList()
     {
@@ -228,6 +228,7 @@ class Index extends XMLElement {
 
     /**
      * Return a comma delimited string of the columns which compose this index.
+     * @deprecated because Column::makeList() is deprecated; use the array-returning getColumns() and DDLBuilder->getColumnList() instead instead.
      */
     public function getColumnList()
     {
