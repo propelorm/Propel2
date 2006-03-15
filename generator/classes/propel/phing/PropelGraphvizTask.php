@@ -37,7 +37,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
      * @var PhingFile
      */
     private $sqldbmap;
-    
+
     /**
      * Name of the database.
      */
@@ -47,7 +47,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
      * Name of the output directory.
      */
     private $outDir;
-    
+
 
     /**
      * Set the sqldbmap.
@@ -79,7 +79,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
     {
         return $this->sqldbmap;
     }
-    
+
     /**
      * Set the database name.
      * @param string $database
@@ -109,19 +109,19 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
         // file we are going to create
 
         $dbMaps = $this->getDataModelDbMap();
-		
+
         foreach ($this->getDataModels() as $dataModel) {
 
             $dotSyntax .= "digraph G {\n";
             foreach ($dataModel->getDatabases() as $database) {
-			
+
 				$this->log("db: " . $database->getName());
 
                 //print the tables
-                foreach($database->getTables() as $tbl) {        
-					
+                foreach($database->getTables() as $tbl) {
+
 					$this->log("\t+ " . $tbl->getName());
-					
+
                     ++$count;
                     $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
 
@@ -142,35 +142,35 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
                 $count = 0;
                 $dotSyntax .= "\n";
-                foreach($database->getTables() as $tbl) {        
+                foreach($database->getTables() as $tbl) {
                     ++$count;
 
                     foreach ($tbl->getColumns() as $col) {
                         $fk = $col->getForeignKey();
                         if ( $fk == null ) continue;
-                        $dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . $fk->getForeignColumnNames() . ' "];';
+                        $dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
                         $dotSyntax .= "\n";
                     }
                 }
 
 
 
-            } // foreach database        
+            } // foreach database
             $dotSyntax .= "}\n";
 
             $this->writeDot($dotSyntax,$this->outDir);
-			
-        } //foreach datamodels            
-        
+
+        } //foreach datamodels
+
     } // main()
 
 
     /**
-     * probably insecure 
+     * probably insecure
      */
     function writeDot($dotSyntax, PhingFile $outputDir) {
 		$file = new PhingFile($outputDir, 'schema.dot');
-		$this->log("Writing dot file to " . $file->getAbsolutePath());		
+		$this->log("Writing dot file to " . $file->getAbsolutePath());
         file_put_contents($file->getAbsolutePath(), $dotSyntax);
     }
 
