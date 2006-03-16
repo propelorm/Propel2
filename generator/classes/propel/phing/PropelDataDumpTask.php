@@ -341,7 +341,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
     private function getTableDataRS($tableName) {
         // Set Statement object in associated PropelDataDump
         // instance.
-        return $this->conn->createStatement()->executeQuery("SELECT * FROM " . $tableName);
+        return $this->conn->createStatement()->executeQuery("SELECT * FROM " . $this->getPlatformForTargetDatabase()->quoteIdentifier ( $tableName ) );
     }
 
     /**
