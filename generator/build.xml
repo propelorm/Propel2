@@ -27,17 +27,23 @@
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
+<!-- Set a default name for the build.properties file.
+		This allows for overriding the name of the build.properties file; however,
+		Propel still expects to find the file in the ${propel.project.dir}.
+ -->
+<property name="build.properties" value="build.properties"/>
+	
 <target name="check-buildprops-exists">
-  <available file="${propel.project.dir}/build.properties" property="projBuildPopertiesExists"/>  
+  <available file="${propel.project.dir}/${build.properties}" property="projBuildPopertiesExists"/>  
 </target>
 
 <target name="check-buildprops" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 		<echo message="====================================================="/>
-		<echo message="Could not open build.properties file:"/>
-		<echo message="		${propel.project.dir}/build.properties"/>
+		<echo message="Could not open ${build.properties} file:"/>
+		<echo message="		${propel.project.dir}/${build.properties}"/>
 		<echo message=" "/>
 		<echo message="Make sure that '${propel.project.dir}' is a valid path"/>
-		<echo message="and that it contains a build.properties file."/>
+		<echo message="and that it contains a ${build.properties} file."/>
 		<echo message="====================================================="/>	
 		
 		<fail message="Missing configuration file (see description above)."/>
@@ -54,12 +60,12 @@
 
 <target name="check-buildprops-for-propel-gen" if="using.propel-gen" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 	<echo message="=========================================================="/>
-	<echo message="Could not open build.properties file:"/>
-	<echo message="		${propel.project.dir}/build.properties"/>
+	<echo message="Could not open ${build.properties} file:"/>
+	<echo message="		${propel.project.dir}/${build.properties}"/>
 	<echo message=" "/>
 	<echo message="Project directory not specified or invalid. You must "/>
 	<echo message="specify the path to your project directory and your "/>
-	<echo message="project directory must contain your build.properties "/>
+	<echo message="project directory must contain your ${build.properties} "/>
 	<echo message="and schema.xml files.                                "/>
 	<echo message=" "/>
 	<echo message="Usage: "/>
@@ -95,13 +101,12 @@
 </target>
 
 <target name="configure" depends="set-project-dir,check-buildprops-for-propel-gen,check-buildprops">
-	<echo msg="Loading project-specific props from ${propel.project.dir}/build.properties"/>
-	<property file="${propel.project.dir}/build.properties"/>
+	<echo msg="Loading project-specific props from ${propel.project.dir}/${build.properties}"/>
+	<property file="${propel.project.dir}/${build.properties}"/>
 </target>
 
 <target name="main" depends="configure" description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
 
- <!--<property file="${project.dir}/build.properties"/>-->
  <phing phingfile="./build-propel.xml" target="${target}"/>
  
 </target>
