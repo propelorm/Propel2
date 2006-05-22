@@ -1230,10 +1230,15 @@ $script .= "
 				// Continue if $this and $copyObj are the same class and have the same primary key
 				// to avoid endless loops
 				$script .= "
-			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
-				if(\$relObj instanceof self && \$relObj->getPrimaryKey() === \$this->getPrimaryKey()) {
-					continue;
+			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {";
+				if ($table->getName() === $fk->getTableName()) {
+					$script .= "
+				if(\$this->getPrimaryKey() === \$relObj->getPrimaryKey()) {
+						continue;
 				}
+";
+				}
+				$script .= "
 				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
 			}
 ";
