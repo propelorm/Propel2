@@ -14,6 +14,7 @@
 	<xs:include schemaLocation="custom_datatypes.xsd"/>
 
 	<xs:element name="database" type="database"/>
+	<xs:element name="vendor" type="vendor"/>
 
 	<xs:simpleType name="file">
 		<xs:restriction base="xs:string">
@@ -217,22 +218,24 @@
 	</xs:complexType>
 
 	<xs:complexType name="index">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="index-column" type="index-column" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="name" type="index_name" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="unique">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="unique-column" type="unique-column" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="name" type="index_name" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="index-column">
 		<xs:sequence>
-			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="column_name" use="required"/>
 		<xs:attribute name="size" type="xs:positiveInteger" use="optional"/>
@@ -240,7 +243,7 @@
 
 	<xs:complexType name="unique-column">
 		<xs:sequence>
-			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="column_name" use="required"/>
 		<xs:attribute name="size" type="xs:positiveInteger" use="optional"/>
@@ -259,10 +262,10 @@
 	</xs:complexType>
 
 	<xs:complexType name="column">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="inheritance" type="inheritance" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="name" type="column_name" use="required"/>
 		<xs:attribute name="phpName" type="php_name" use="optional"/>
 		<xs:attribute name="peerName" type="php_class" use="optional"/>
@@ -285,10 +288,10 @@
 	</xs:complexType>
 
 	<xs:complexType name="foreign-key">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="reference" type="reference" minOccurs="1" maxOccurs="unbounded"/>
-			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="foreignTable" type="table_name" use="required"/>
 		<xs:attribute name="name" type="foreign_name" use="optional"/>
 		<xs:attribute name="onDelete" type="delete" default="none"/>
@@ -300,15 +303,15 @@
 	</xs:complexType>
 
 	<xs:complexType name="table">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="column" type="column" maxOccurs="unbounded"/>
 			<xs:element name="foreign-key" type="foreign-key" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="index" type="index" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="unique" type="unique" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="id-method-parameter" type="id-method-parameter" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="vendor" type="vendor" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
 		<xs:attribute name="name" type="table_name" use="required"/>
 		<xs:attribute name="phpName" type="php_class" use="optional"/>
 		<xs:attribute name="idMethod" type="idmethod" use='optional'/>
@@ -327,10 +330,10 @@
 	</xs:complexType>
 
 	<xs:complexType name="database">
-		<xs:sequence>
+		<xs:choice maxOccurs="unbounded">
 			<xs:element name="external-schema" type="external-schema" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="table" type="table" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
+		</xs:choice>
 		<xs:attribute name="name" type="xs:string" use="optional"/>
 		<xs:attribute name="defaultIdMethod" type="dbidmethod" default="none"/>
 		<xs:attribute name="defaultTranslateMethod" type="xs:string" use="optional"/>
