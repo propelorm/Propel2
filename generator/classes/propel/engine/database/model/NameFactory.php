@@ -62,7 +62,7 @@ class NameFactory {
         $this->algorithms = array();
     }
 
-    private function instance()
+    private static function instance()
     {
         if (self::$instance === null) {
             self::$instance = new NameFactory();            
@@ -78,8 +78,7 @@ class NameFactory {
      */
     protected function getAlgorithm($name)
     {
-        // synchronized (algorithms)
-        $algorithm = @$this->algorithms[$name];
+        $algorithm = isset($this->algorithms[$name]) ? $this->algorithms[$name] : null;
         if ($algorithm === null) {
             try {
                 include_once 'propel/engine/database/model/' . $name . '.php';
@@ -109,7 +108,7 @@ class NameFactory {
      * @return The generated name.
      * @throws EngineException
      */
-    public function generateName($algorithmName, $inputs)
+    public static function generateName($algorithmName, $inputs)
     {
         $algorithm = self::instance()->getAlgorithm($algorithmName);
         return $algorithm->generateName($inputs);
