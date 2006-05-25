@@ -80,8 +80,10 @@ class CriteriaTest extends BaseTestCase {
                 . "AND myTable3.myColumn3=?) "
             . "OR (myTable4.myColumn4=? "
                 . "AND myTable5.myColumn5=?))";
-
-        $crit2->appendPsTo($sb="", $params=array());
+		
+		$sb = "";
+		$params = array();
+        $crit2->appendPsTo($sb, $params);
 
         $expect_params = array(
                                     array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
@@ -89,7 +91,7 @@ class CriteriaTest extends BaseTestCase {
                                     array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
                                     array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
                                 );
-
+				
         $this->assertEquals($expect, $sb);
         $this->assertEquals($expect_params, $params);
 
@@ -104,8 +106,10 @@ class CriteriaTest extends BaseTestCase {
                     . "AND myTable3.myColumn3=?) "
                 . "OR myTable4.myColumn4=?) "
                     . "AND myTable5.myColumn5=?)";
-
-        $crit6->appendPsTo($sb="", $params=array());
+		
+		$sb = "";
+		$params = array();
+        $crit6->appendPsTo($sb, $params);
 
         $expect_params = array(
                                     array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
@@ -113,7 +117,7 @@ class CriteriaTest extends BaseTestCase {
                                     array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
                                     array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
                                 );
-
+		
         $this->assertEquals($expect, $sb);
         $this->assertEquals($expect_params, $params);
 
@@ -161,7 +165,8 @@ class CriteriaTest extends BaseTestCase {
                                );
 
         try {
-            $result = BasePeer::createSelectSql($this->c, $params=array());
+        	$params = array();
+            $result = BasePeer::createSelectSql($this->c, $params);
         } catch (PropelException $e) {
             $this->fail("PropelException thrown in BasePeer.createSelectSql(): ".$e->getMessage());
         }
@@ -194,7 +199,8 @@ class CriteriaTest extends BaseTestCase {
                                );
 
         try {
-            $result = BasePeer::createSelectSql($this->c, $params=array());
+        	$params=array();
+            $result = BasePeer::createSelectSql($this->c, $params);
         } catch (PropelException $e) {
             $this->fail("PropelException thrown in BasePeer::createSelectSql()");
         }
@@ -214,13 +220,18 @@ class CriteriaTest extends BaseTestCase {
 
         $myCriterion = $myCriteria->getNewCriterion(
                 "TABLE.COLUMN", "FoObAr", Criteria::LIKE);
-        $myCriterion->appendPsTo($sb="", $params=array());
+        $sb = "";
+        $params=array();
+        $myCriterion->appendPsTo($sb, $params);
 		$expected = "TABLE.COLUMN LIKE ?";
 		
 		$this->assertEquals($expected, $sb);
 
         $ignoreCriterion = $myCriterion->setIgnoreCase(true);
-        $ignoreCriterion->appendPsTo($sb="", $params=array());
+        
+        $sb = "";
+        $params=array();
+        $ignoreCriterion->appendPsTo($sb, $params);
 		$expected = "UPPER(TABLE.COLUMN) LIKE UPPER(?)";
 		$this->assertEquals($expected, $sb);		
 
@@ -238,7 +249,8 @@ class CriteriaTest extends BaseTestCase {
         $expect_params = array( array('table' => 'TABLE', 'column' => 'COLUMN', 'value' => true),
                                );
         try {
-            $result = BasePeer::createSelectSql($this->c, $params=array());
+        	$params = array();
+            $result = BasePeer::createSelectSql($this->c, $params);
         } catch (PropelException $e) {
             $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
         }
