@@ -618,7 +618,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * The criteria used to select the current contents of $collName.
 	 * @var Criteria
 	 */
-	private \$".$lastCriteriaName." = null;
+	protected \$".$lastCriteriaName." = null;
 ";
 	}
 
