@@ -36,11 +36,11 @@ class MysqliPlatform extends MysqlPlatform {
     protected function initialize()
     {
         parent::initialize();
-
-		// set these back to the SQL standard, since newer MySQL doesn't have a weird
-		// meaning for TIMESTAMP
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "TIMESTAMP"));
+        
+		// HL -- commenting these out, as it turns out that while the date format is fixed
+		// there is still a special meaning to TIMESTAMP in MySQL 4.1+ 
+        // $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
+        // $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "TIMESTAMP"));
     }
 
     /**
