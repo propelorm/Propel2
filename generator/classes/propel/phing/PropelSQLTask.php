@@ -189,7 +189,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
                 // Finally check to see if there is any "footer" SQL
                 $ddl .= call_user_func(array($builderClazz, 'getDatabaseEndDDL'));
 				
-				
+				#var_dump($outFile->getAbsolutePath());
 				// Now we're done.  Write the file!
 				file_put_contents($outFile->getAbsolutePath(), $ddl);
 				

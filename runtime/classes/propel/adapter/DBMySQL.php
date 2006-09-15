@@ -130,4 +130,11 @@ class DBMySQL extends DBAdapter {
 		return '`' . $text . '`';
 	}
 
+	/**
+	 * @see DBAdapter::quoteIdentifier()
+	 */
+	public function useQuoteIdentifier() {
+		return true;
+	}
+
 }

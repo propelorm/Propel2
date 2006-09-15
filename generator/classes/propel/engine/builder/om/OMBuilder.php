@@ -112,7 +112,7 @@ abstract class OMBuilder extends DataModelBuilder {
 		}
 		return $this->peerBuilder;
 	}
-	
+
 	/**
 	 * Returns new or existing stub Peer builder class for this table.
 	 * @return DataModelBuilder
@@ -282,7 +282,14 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	abstract public function getClassname();
+	public function getClassname() {
+		return $this->getBuildProperty('classPrefix') . $this->getName();
+	}
+
+	/**
+	 * 
+	 */
+	abstract public function getName();
 	
 	/**
 	 * Gets the dot-path representation of current class being built.
@@ -304,7 +311,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	public function getClassFilePath()
 	{
-		return parent::getFilePath($this->getPackage(), $this->getClassname());
+		return parent::getFilePath($this->getPackage(), $this->getName());
 	}
 
 	/**
@@ -405,5 +412,13 @@ abstract class OMBuilder extends DataModelBuilder {
         }
         return $class;
     }	
-	
+
+    /**
+     * 
+     */
+    protected function getBuilder($tablename, $type) {
+		$table = $this->getTable()->getDatabase()->getTable($tablename);
+		return self::builderFactory($table, $type);
+    }
+
 }

@@ -46,7 +46,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getName()
 	{
 		return $this->getTable()->getPhpName() . 'MapBuilder';
 	}
@@ -215,6 +215,7 @@ class ".$this->getClassname()." {
 		
 		\$tMap = \$this->dbMap->addTable('".$table->getName()."');
 		\$tMap->setPhpName('".$table->getPhpName()."');
+		\$tMap->setClassname('" . $this->getBuilder($table->getName(), 'objectstub')->getClassname() . "');
 ";
 		if ($table->getIdMethod() == "native") { 
 			$script .= "

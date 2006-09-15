@@ -50,7 +50,7 @@ class DatabaseMap {
     private $name;
 
     /** Name of the tables in the database. */
-    private $tables;
+    protected $tables = array();
 
     /**
      * Constructor.
@@ -122,6 +122,6 @@ class DatabaseMap {
     public function addTable($tableName)
     {
         $this->tables[$tableName] = new TableMap($tableName, $this);
-    return $this->tables[$tableName];
+        return $this->tables[$tableName];
     }
 }

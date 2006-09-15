@@ -40,7 +40,7 @@ class PHP5ExtensionNodeBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getName()
 	{
 		return $this->getTable()->getPhpName() . 'Node';
 	}

@@ -40,9 +40,9 @@ class PHP5ExtensionNodePeerBuilder extends PeerBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getName()
 	{
-		return $this->getStubNodeBuilder()->getClassname() . 'Peer';
+		return $this->getStubNodeBuilder()->getName() . 'Peer';
 	}
 
 	/**

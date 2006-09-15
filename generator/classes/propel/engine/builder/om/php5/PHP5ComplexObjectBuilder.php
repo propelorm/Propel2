@@ -177,7 +177,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
 	{
 		$className = $this->getForeignTable($fk)->getPhpName();
-		return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk);
+		return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk, true);
 	}
 
 	/**
@@ -205,7 +205,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 *
 	 * @return string
 	 */
-	protected function getRelatedBySuffix(ForeignKey $fk)
+	protected function getRelatedBySuffix(ForeignKey $fk, $columnCheck = false)
 	{
 		$relCol = "";
 		foreach ($fk->getLocalColumns() as $columnName) {
@@ -215,6 +215,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				print $e;
 				throw $e;
 			}
+
 			if ($column->isMultipleFK() || $fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// if there are seeral foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
@@ -223,6 +224,18 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				$relCol .= $column->getPhpName();
 			}
 		}
+
+		#var_dump($fk->getForeignTableName() . ' - ' .$fk->getTableName() . ' - ' . $this->getTable()->getName());
+
+		#$fk->getForeignTableName() != $this->getTable()->getName() && 
+		// @todo comment on it
+		if ($columnCheck && !$relCol && $fk->getTable()->getColumn($fk->getForeignTableName())) {
+			foreach ($fk->getLocalColumns() as $columnName) {
+				$column = $fk->getTable()->getColumn($columnName);
+				$relCol .= $column->getPhpName();
+			}
+		}
+		
 
 		if ($relCol != "") {
 			$relCol = "RelatedBy" . $relCol;
@@ -363,6 +376,8 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 
+		#var_dump($pCollName);
+		
 		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
 
 		$script .= "
@@ -671,7 +686,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKAdd(&$script, ForeignKey $refFK)
 	{
 		$tblFK = $refFK->getTable();
-		$className = $refFK->getTable()->getPhpName();
+		$className = $this->getBuilder($refFK->getTable()->getName(), 'objectstub')->getClassname();
 
 		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
 
@@ -879,7 +894,7 @@ $script .= "
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
 			if (\$this->$aVarName !== null) {
-				if (\$this->".$aVarName."->isModified()) {
+				if (\$this->".$aVarName."->isModified() || \$this->".$aVarName."->isNew()) {
 					\$affectedRows += \$this->".$aVarName."->save(\$con);
 				}
 				\$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);

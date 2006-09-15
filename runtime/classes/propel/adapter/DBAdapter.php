@@ -180,5 +180,18 @@ abstract class DBAdapter {
 	{
 		return '"' . $text . '"';
 	}
-    
+
+	/**
+	 * Should Column-Names get identifiers for inserts or updates. 
+	 * By default false is returned -> backwards compability.
+	 * 
+	 * it`s a workaround...!!!
+	 * 
+	 * @todo	should be abstract
+	 * @return	boolean
+	 */
+	public function useQuoteIdentifier() {
+		return false;
+	}
+	
 }

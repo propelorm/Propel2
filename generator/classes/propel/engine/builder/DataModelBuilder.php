@@ -52,6 +52,8 @@ abstract class DataModelBuilder {
 	 */
 	private static $buildProperties = array();
 
+	private static $cache = array();
+	
 	/**
 	 * Sets the [name transformed] build properties to use.
 	 * @param array Property values keyed by [transformed] prop names.
@@ -106,7 +108,14 @@ abstract class DataModelBuilder {
 	public static function builderFactory(Table $table, $type)
 	{
 		$classname = self::getBuilderClass($type);
-		return new $classname($table);
+
+		$cacheKey = strtolower($classname . $table->getName());
+		
+		if (!isset(self::$cache[$cacheKey])) {
+		    self::$cache[$cacheKey] = new $classname($table);
+		}
+		
+		return self::$cache[$cacheKey];
 	}
 
 	/**

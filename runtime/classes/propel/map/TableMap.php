@@ -58,6 +58,9 @@ class TableMap {
     /** The PHP name of the table. */
     private $phpName;
 
+    /** The Basic - Classname */
+    private $classname;
+    
     /** The prefix on the table name. */
     private $prefix;
 
@@ -150,6 +153,25 @@ class TableMap {
         $this->phpName = $phpName;
     }
 
+    /**
+     * Get the Classname of the Propel-Classes belonging to this table.
+     * 
+     * @return string
+     */
+    public function getClassname() {
+		return $this->classname;
+    }
+
+    /**
+     * Set the Classname of the Table. Could be useful for calling
+     * Peer and Object methods dynamically
+     * 
+     * @param string $classname The Classname
+     */
+    public function setClassname($classname) {
+		$this->classname = $classname;
+    }
+    
     /**
      * Get table prefix name.
      *
