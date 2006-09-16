@@ -391,9 +391,16 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(\$con = null)
 	{
+        ";
+
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 		// include the related Peer class
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
+";
+        }
 
+        $script .= "
 		if (\$this->$varName === null && ($conditional)) {
 ";
 		$script .= "
@@ -540,8 +547,14 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null)
 	{
+        ";
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 		// include the Peer class
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
+";
+        }
+        $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -633,7 +646,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * The criteria used to select the current contents of $collName.
 	 * @var Criteria
 	 */
-	protected \$".$lastCriteriaName." = null;
+	private \$".$lastCriteriaName." = null;
 ";
 	}
 
@@ -728,8 +741,14 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function count$relCol(\$criteria = null, \$distinct = false, \$con = null)
 	{
+        ";
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 		// include the Peer class
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
+";
+        }
+        $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -784,8 +803,14 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function get$relCol(\$criteria = null, \$con = null)
 	{
+        ";
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 		// include the Peer class
 		include_once '".$fkPeerBuilder->getClassFilePath()."';
+";
+        }
+        $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -1242,19 +1267,14 @@ $script .= "
 			\$copyObj->setNew(false);
 ";
 			foreach ($table->getReferrers() as $fk) {
-				// Continue if $this and $copyObj are the same class and have the same primary key
-				// to avoid endless loops
+				//HL: commenting out self-referrential check below
+				//		it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
+				//if ( $fk->getTable()->getName() != $table->getName() ) {
 				$script .= "
-			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {";
-				if ($table->getName() === $fk->getTableName()) {
-					$script .= "
-				if(\$this->getPrimaryKey() === \$relObj->getPrimaryKey()) {
-						continue;
-				}
-";
-				}
-				$script .= "
+			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
+				if(\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
 				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+			}
 			}
 ";
 				// HL: commenting out close of self-referential check

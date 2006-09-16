@@ -57,11 +57,12 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{		
-		$script .= "		
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "		
 require_once 'propel/map/MapBuilder.php';
 include_once 'creole/CreoleTypes.php';
 ";
-		
+        }
 		
 	} // addIncludes()
 	

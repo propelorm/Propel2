@@ -66,17 +66,19 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 		$parentClass = $this->getBaseClass();
 		$interface = $this->getInterface();
 
-		$script .= "
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "
 require_once '".$this->getFilePath($parentClass)."';
 ";
 
 
 
-		if (!empty($interface)) {
-			$script .= "
+            if (!empty($interface)) {
+                $script .= "
 require_once '".$this->getFilePath($interface)."';
 ";
-		}
+            }
+        }
 
 
 		if (!$table->isAlias()) {
@@ -93,22 +95,28 @@ require_once '".$this->getFilePath($interface)."';
 				}
 			}
 
-			if($includes_lobs) {
-				$script .= "
+            if (!$this->isAutoloadCoreClassess()) {
+                if($includes_lobs) {
+                    $script .= "
 include_once 'creole/util/Clob.php';
 include_once 'creole/util/Blob.php';
 ";
-			}
+                }
+            }
 		} // if table is not alias
 
-		$script .= "
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "
 
 include_once 'propel/util/Criteria.php';
 ";
+        }
 
-		$script .= "
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
 ";
+        }
 	} // addIncludes()
 
 	/**

@@ -60,10 +60,12 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-		$script .= "
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "
 require_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
 require_once '".$this->getStubNodeBuilder()->getClassFilePath()."';
 ";
+        }
 	} // addIncludes()
 	
 	/**

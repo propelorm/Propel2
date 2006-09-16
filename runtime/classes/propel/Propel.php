@@ -31,7 +31,7 @@ include_once 'propel/adapter/DBAdapter.php';
  *
  * @author Hans Lellelid <hans@xmpl.rg> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author MagnÃºs ÃžÃ³r Torfason <magnus@handtolvur.is> (Torque)
+ * @author Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -135,12 +135,6 @@ class Propel {
 	 */
 	private static $connectionMap = array();
 
-	/**
- 	 * You can set your own Database-Mapper - Class
- 	 * @var string
- 	 */
-	private static $databaseMapClass = 'DatabaseMap';
-	
 	/**
 	 * initialize Propel
 	 * @return void
@@ -415,13 +409,6 @@ class Propel {
 	}
 
 	/**
-	 * 
-	 */
-	public static function setDatabaseMapClass($name) {
-		self::$databaseMapClass = $name;
-	}
-
-	/**
 	 * Creates and initializes the mape for the named database.
 	 *
 	 * The database maps are "registered" by the generated map builder classes
@@ -435,8 +422,7 @@ class Propel {
 	 */
 	private static function initDatabaseMap($name)
 	{
-		$class = self::$databaseMapClass; 
-		$map = new $class($name);
+		$map = new DatabaseMap($name);
 		self::$dbMaps[$name] = $map;
 		return $map;
 	}
@@ -592,4 +578,33 @@ class Propel {
 		}
 	}
 
+    /**
+     *  Autoload function for loading propel dependencies.
+     *
+     *  spl_autoload() compatible.
+     *
+     *  @param string The class name needing loading.
+     *  @param mixed Array of file extensions?
+     *  @return boolean TRUE if the class was loaded, false otherwise.
+     */
+    public static function autoload($className, $fileExts = NULL)
+    {
+        switch ($className) {
+            case 'CreoleTypes':
+                require('creole/CreoleTypes.php');
+                return true;
+            case 'MapBuilder':
+                require 'propel/map/MapBuilder.php';
+                return true;
+            case 'BaseObject':
+            case 'Persistent':
+                require("propel/om/{$className}.php");
+                return true;
+            case 'BasePeer':
+            case 'Criteria':
+                require("propel/util/{$className}.php");
+                return true;
+        }
+        return false;
+    }
 }

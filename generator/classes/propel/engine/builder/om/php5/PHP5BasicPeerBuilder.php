@@ -62,14 +62,20 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 
 		$table = $this->getTable();
 
-		$basePeerFile = $this->getFilePath($this->basePeerClass);
-		$objectFile = $this->getStubObjectBuilder()->getClassFilePath();
-
-		$script .= "
+        if (!$this->isAutoloadCoreClassess()) {
+            $basePeerFile = $this->getFilePath($this->basePeerClass);
+            $script .= "
 require_once '$basePeerFile';
+";
+        }
+
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $objectFile = $this->getStubObjectBuilder()->getClassFilePath();
+            $script .= "
 // The object class -- needed for instanceof checks in this class.
 // actual class may be a subclass -- as returned by ".$this->getPeerClassname()."::getOMClass()
 include_once '$objectFile';";
+        }
 
 		$script .= "
 ";
@@ -142,8 +148,13 @@ if (Propel::isInit()) {
 } else {
 	// even if Propel is not yet initialized, the map builder class can be registered
 	// now and then it will be loaded when Propel initializes.
+";
+    if (!$this->isAutoloadGeneratedClassess()) {
+        $script .= "
 	require_once '$mapBuilderFile';
-	Propel::registerMapBuilder('".$this->getMapBuilderBuilder()->getClasspath()."');
+";
+    }
+        $script .= "Propel::registerMapBuilder('".$this->getMapBuilderBuilder()->getClasspath()."');
 }
 ";
 	}
@@ -343,7 +354,13 @@ if (Propel::isInit()) {
 	 */
 	public static function getMapBuilder()
 	{
+";
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 		include_once '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
+";
+        }
+        $script .= "
 		return ".$this->basePeerClassname."::getMapBuilder('". $this->getMapBuilderBuilder()->getClasspath() ."');
 	}";
 	}
@@ -1128,9 +1145,13 @@ if (Propel::isInit()) {
 					$columnNamesF = $fk->getLocalColumns();
 					$columnNamesL = $fk->getForeignColumns();
 
-					$script .= "
+                    if (!$this->isAutoloadGeneratedClassess()) {
+                        $script .= "
 
-			include_once '".$this->getFilePath($tblFKPackage, $tblFK->getPhpName())."';
+            include_once '".$this->getFilePath($tblFKPackage, $tblFK->getPhpName())."';
+";
+                    }
+                    $script .= "
 
 			// delete related $fkClassName objects
 			\$c = new Criteria();

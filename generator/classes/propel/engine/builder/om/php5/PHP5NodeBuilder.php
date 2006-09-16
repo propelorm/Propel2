@@ -60,9 +60,11 @@ class PHP5NodeBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-		$script .= "
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "
 require_once '".$this->getStubNodePeerBuilder()->getClassFilePath()."';
 ";
+        }
 	} // addIncludes()
 	
 	/**
@@ -282,8 +284,14 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			
 		\$itclass = ucfirst(strtolower(\$type)) . 'OrderNodeIterator';
 		
+";
+        if (!$this->isAutoloadCoreClassess()) {
+            $script .= "
 		require_once('propel/om/' . \$itclass . '.php');
 		return new \$itclass(\$this, \$opts);
+";
+        }
+        $script .= "
 	}
 ";
 	}

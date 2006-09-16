@@ -118,12 +118,14 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-		$script .= "
+        if (!$this->isAutoloadGeneratedClassess()) {
+            $script .= "
 require_once '".$this->getParentClassFilePath()."';
 ";
-		$script .= "
+            $script .= "
 require_once '".$this->getObjectBuilder()->getClassFilePath()."';
 ";
+        }
 	} // addIncludes()
 	
 	/**
