@@ -31,7 +31,7 @@ include_once 'propel/adapter/DBAdapter.php';
  *
  * @author Hans Lellelid <hans@xmpl.rg> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Magn�s ��r Torfason <magnus@handtolvur.is> (Torque)
+ * @author Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -136,7 +136,8 @@ class Propel {
 	private static $connectionMap = array();
 
     /** 
-	* You can set your own Database-Mapper - Class 
+	* You can set your own Database-Mapper - Class. Class DatabaseMap is
+	* used by default.
 	* @var string 
 	*/ 
     private static $databaseMapClass = 'DatabaseMap'; 
