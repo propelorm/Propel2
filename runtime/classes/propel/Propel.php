@@ -31,7 +31,7 @@ include_once 'propel/adapter/DBAdapter.php';
  *
  * @author Hans Lellelid <hans@xmpl.rg> (Propel)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Magnús Þór Torfason <magnus@handtolvur.is> (Torque)
+ * @author Magnï¿½s ï¿½ï¿½r Torfason <magnus@handtolvur.is> (Torque)
  * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author Rafal Krzewski <Rafal.Krzewski@e-point.pl> (Torque)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -135,6 +135,12 @@ class Propel {
 	 */
 	private static $connectionMap = array();
 
+    /** 
+	* You can set your own Database-Mapper - Class 
+	* @var string 
+	*/ 
+    private static $databaseMapClass = 'DatabaseMap'; 
+	
 	/**
 	 * initialize Propel
 	 * @return void
@@ -422,7 +428,8 @@ class Propel {
 	 */
 	private static function initDatabaseMap($name)
 	{
-		$map = new DatabaseMap($name);
+        $class = self::$databaseMapClass;  
+		$map = new $class($name);
 		self::$dbMaps[$name] = $map;
 		return $map;
 	}
@@ -607,4 +614,17 @@ class Propel {
         }
         return false;
     }
+
+    /** 
+     * Set your own class-name for Database-Mapping. Then
+     * you can change the whole TableMap-Model, but keep its 
+     * functionality for Criteria.
+     * 
+     * @param string $name
+     */ 
+    public static function setDatabaseMapClass($name)
+	{ 
+        self::$databaseMapClass = $name; 
+    } 
+
 }
