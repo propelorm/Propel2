@@ -111,7 +111,7 @@ class PropelPDO extends PDO {
 		$opcount = $this->getNestedTransactionCount();
     	if ($opcount > 0) {
 			if ($opcount === 1) {
-				$this->commit();
+				parent::commit();
 			}
 			$this->decrementNestedTransactionCount();
 		}
@@ -126,7 +126,7 @@ class PropelPDO extends PDO {
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			if ($opcount === 1) {
-				$this->rollback();
+				parent::rollback();
 			}
 			$this->decrementNestedTransactionCount();
 		}

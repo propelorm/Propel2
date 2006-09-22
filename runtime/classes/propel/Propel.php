@@ -22,6 +22,7 @@
 
 include_once 'propel/PropelException.php';
 include_once 'propel/adapter/DBAdapter.php';
+include_once 'propel/util/PropelPDO.php';
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -350,7 +351,7 @@ class Propel {
 			$dsn = self::$configuration['datasources'][$key];			
 
 			try {
-				$con = new PDO($dsn);
+				$con = new PropelPDO($dsn);
 				$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				self::$connectionMap[$name] = $con; 
 			} catch (PDOException $e) {
