@@ -30,14 +30,12 @@ include_once 'propel/map/TableMap.php';
  * The propel.map classes are abstract building-block classes for modeling
  * the database at runtime.  These classes are similar (a lite version) to the
  * propel.engine.database.model classes, which are build-time modeling classes.
- * These classes in themselves do not do any database metadata lookups, but instead 
- * are used by the MapBuilder classes that were generated for your datamodel. The 
+ * These classes in themselves do not do any database metadata lookups, but instead
+ * are used by the MapBuilder classes that were generated for your datamodel. The
  * MapBuilder that was created for your datamodel build a representation of your
- * database by creating instances of the DatabaseMap, TableMap, ColumnMap, etc. 
- * classes. See propel/templates/om/php5/MapBuilder.tpl and the classes generated
- * by that template for your datamodel to further understand how these are put 
- * together.
- * 
+ * database by creating instances of the DatabaseMap, TableMap, ColumnMap, etc.
+ * classes.
+ *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
@@ -52,15 +50,20 @@ class DatabaseMap {
     /** Name of the tables in the database. */
     protected $tables = array();
 
+	/**
+	 * The table MapBuilder objects that will initialize tables (on demand).
+	 * @var array Map of table builders (name => MapBuilder)
+	 */
+	private $tableBuilders = array();
+
     /**
      * Constructor.
      *
      * @param string $name Name of the database.
      */
-    function __construct($name)
+    public function __construct($name)
     {
         $this->name = $name;
-        $this->tables = array();
     }
 
     /**
@@ -74,7 +77,8 @@ class DatabaseMap {
         if ( strpos($name, '.') > 0) {
             $name = substr($name, 0, strpos($name, '.'));
         }
-        return isset($this->tables[$name]);
+        // table builders are *always* loaded, whereas the tables aren't necessarily
+        return isset($this->tableBuilders[$name]);
     }
 
     /**
@@ -97,7 +101,10 @@ class DatabaseMap {
     public function getTable($name)
     {
         if (!isset($this->tables[$name])) {
-            throw new PropelException("Cannot fetch TableMap for undefined table: " . $name);
+        	if (!isset($this->tableBuilders[$name])) {
+				throw new PropelException("Cannot fetch TableMap for undefined table: " . $name . ".  Make sure you have the static MapBuilder registration code after your peer stub class definition.");
+			}
+			$this->tableBuilders[$name]->doBuild();
         }
         return $this->tables[$name];
     }
@@ -109,19 +116,39 @@ class DatabaseMap {
      */
     public function getTables()
     {
+    	// if there's a mismatch in the tables and tableBuilders
+    	if (count($this->tableBuilders) != count($this->tables)) {
+			$missingTables = array_diff(array_keys($this->tableBuilders), array_keys($this->tables));
+			foreach($missingTables as $table) {
+				$this->tableBuilders[$table]->doBuild();
+			}
+		}
         return $this->tables;
     }
 
     /**
-     * Add a new table to the database by name.  It creates an empty
-     * TableMap that you need to populate.
+     * Add a new table to the database by name.
+     * 
+	 * This method creates an empty TableMap that must then be populated. This
+	 * is called indirectly on-demand by the getTable() method, when there is
+	 * a table builder (MapBuilder) registered, but no TableMap loaded. 
      *
      * @param string $tableName The name of the table.
-   * @return TableMap The newly created TableMap.
+	 * @return TableMap The newly created TableMap.
      */
     public function addTable($tableName)
     {
         $this->tables[$tableName] = new TableMap($tableName, $this);
-        return $this->tables[$tableName];
+    	return $this->tables[$tableName];
+    }
+
+	/**
+     * Add a new table builder (MapBuilder) to the database by name.
+     *
+     * @param string $tableName The name of the table.
+     */
+    public function addTableBuilder($tableName, MapBuilder $builder)
+    {
+        $this->tableBuilders[$tableName] = $builder;
     }
 }

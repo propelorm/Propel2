@@ -35,14 +35,6 @@ require_once 'propel/adapter/DBAdapter.php';
 class DBNone extends DBAdapter {
 
     /**
-     * @return null
-     */
-    public function getConnection()
-    {
-        return null;
-    }
-
-    /**
      * @see DBAdapter::init()
      */
     public function init($url, $username, $password)
@@ -106,26 +98,5 @@ class DBNone extends DBAdapter {
     {
         return strlen($s);
     }
- 
-    /**
-     * Locks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to lock.
-     * @throws SQLException No Statement could be created or executed.
-     */
-    public function lockTable(Connection $con, $table)
-    {
-    }
-
-    /**
-     * Unlocks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to unlock.
-     * @throws SQLException No Statement could be created or executed.
-     */
-    public function unlockTable(Connection $con, $table)
-    {
-    }
+    
 }

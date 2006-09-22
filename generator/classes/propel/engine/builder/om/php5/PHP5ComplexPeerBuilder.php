@@ -157,7 +157,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
+		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
 ";
 		
@@ -169,14 +169,14 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");"; //CHECKME
 						}
 						$script .= "
-		\$rs = ".$this->basePeerClassname."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
 		\$results = array();
 
-		while(\$rs->next()) {
+		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 ";
 						if ($table->getChildrenColumn()) {
 							$script .= "
-			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$rs, 1);
+			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
 ";
 						} else {
 							$script .= "
@@ -186,11 +186,11 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						$script .= "
 			\$cls = Propel::import(\$omClass);
 			\$obj1 = new \$cls();
-			\$obj1->hydrate(\$rs);
+			\$obj1->hydrate(\$row);
 ";
 						if ($joinTable->getChildrenColumn()) {
 							$script .= "
-			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
 ";
 						} else { 
 							$script .= "
@@ -201,7 +201,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						$script .= "
 			\$cls = Propel::import(\$omClass);
 			\$obj2 = new \$cls();
-			\$obj2->hydrate(\$rs, \$startcol);
+			\$obj2->hydrate(\$row, \$startcol);
 
 			\$newObject = true;
 			foreach(\$results as \$temp_obj1) {
@@ -262,10 +262,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param Criteria \$c
 	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, \$con = null)
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -293,9 +293,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						}
 						$script .= "
-		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
-		if (\$rs->next()) {
-			return \$rs->getInt(1);
+		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			return \$row[0];
 		} else {
 			// no rows returned; we infer that means 0 matches.
 			return 0;
@@ -337,7 +337,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
+		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 		$index = 2;
 		foreach ($table->getForeignKeys() as $fk) {
@@ -379,15 +379,15 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 		
 		$script .= "
-		\$rs = ".$this->basePeerClassname."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
 		\$results = array();
 		
-		while(\$rs->next()) {
+		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 ";
 
 		if ($table->getChildrenColumn()) { 
 			$script .= "
-			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$rs, 1);
+			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
 ";
 		} else {
 			$script .= "
@@ -399,7 +399,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			
 			\$cls = Propel::import(\$omClass);
 			\$obj1 = new \$cls();
-			\$obj1->hydrate(\$rs);
+			\$obj1->hydrate(\$row);
 ";
 
 		$index = 1;
@@ -449,7 +449,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	";
 				if ($joinTable->getChildrenColumn()) {
 					$script .= "
-			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol$index);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
 ";
 				} else {
 					$script .= "
@@ -461,7 +461,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 			\$cls = Propel::import(\$omClass);
 			\$obj".$index." = new \$cls();
-			\$obj".$index."->hydrate(\$rs, \$startcol$index);
+			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			
 			\$newObject = true;
 			for (\$j=0, \$resCount=count(\$results); \$j < \$resCount; \$j++) {
@@ -508,10 +508,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param Criteria \$c
 	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, \$con = null)
+	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
 		\$criteria = clone \$criteria;
 
@@ -549,9 +549,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		} // foreach [sub] foreign keys
 
 		$script .= "
-		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
-		if (\$rs->next()) {
-			return \$rs->getInt(1);
+		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			return \$row[0];
 		} else {
 			// no rows returned; we infer that means 0 matches.
 			return 0;
@@ -629,7 +629,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS) + 1;
+		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";	
 			$index = 2;
 			foreach ($table->getForeignKeys() as $subfk) {
@@ -673,14 +673,14 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			} // foreach fkeys 
 			$script .= "
 
-		\$rs = ".$this->basePeerClassname ."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname ."::doSelect(\$c, \$con);
 		\$results = array();
 		
-		while(\$rs->next()) {
+		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 ";
 			if ($table->getChildrenColumn()) {
 				$script .= "
-			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$rs, 1);
+			\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
 ";
 			} else {
 				$script .= "
@@ -691,7 +691,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			$script .= "
 			\$cls = Propel::import(\$omClass);
 			\$obj1 = new \$cls();
-			\$obj1->hydrate(\$rs);		
+			\$obj1->hydrate(\$row);		
 ";
 	
 		$index = 1;
@@ -735,7 +735,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				
 					if ($joinTable->getChildrenColumn()) {
 						$script .= "
-			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$rs, \$startcol$index);
+			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
 ";
 					} else {
 						$script .= "
@@ -747,7 +747,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 			\$cls = Propel::import(\$omClass);
 			\$obj$index  = new \$cls();
-			\$obj".$index."->hydrate(\$rs, \$startcol$index);
+			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			
 			\$newObject = true;
 			for (\$j=0, \$resCount=count(\$results); \$j < \$resCount; \$j++) {
@@ -806,10 +806,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param Criteria \$c
 	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @return int Number of matching rows.
 	 */
-	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, \$con = null)
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -850,9 +850,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				}
 			} // foreach fkeys 
 			$script .= "
-		\$rs = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
-		if (\$rs->next()) {
-			return \$rs->getInt(1);
+		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			return \$row[0];
 		} else {
 			// no rows returned; we infer that means 0 matches.
 			return 0;

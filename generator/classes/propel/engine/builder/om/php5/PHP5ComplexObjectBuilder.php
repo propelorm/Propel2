@@ -385,11 +385,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	/**
 	 * Get the associated $className object
 	 *
-	 * @param Connection Optional Connection object.
+	 * @param PDO Optional Connection object.
 	 * @return $className The associated $className object.
 	 * @throws PropelException
 	 */
-	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(\$con = null)
+	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(PDO \$con = null)
 	{
         ";
 
@@ -736,10 +736,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 *
 	 * @param Criteria \$criteria
 	 * @param boolean \$distinct
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @throws PropelException
 	 */
-	public function count$relCol(\$criteria = null, \$distinct = false, \$con = null)
+	public function count$relCol(\$criteria = null, \$distinct = false, PDO \$con = null)
 	{
         ";
         if (!$this->isAutoloadGeneratedClassess()) {
@@ -797,11 +797,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * an empty collection or the current collection, the criteria
 	 * is ignored on a new object.
 	 *
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @param Criteria \$criteria
 	 * @throws PropelException
 	 */
-	public function get$relCol(\$criteria = null, \$con = null)
+	public function get$relCol(\$criteria = null, PDO \$con = null)
 	{
         ";
         if (!$this->isAutoloadGeneratedClassess()) {
@@ -892,12 +892,12 @@ $script .= "
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws PropelException
 	 * @see save()
 	 */
-	protected function doSave(\$con)
+	protected function doSave(PDO \$con)
 	{
 		\$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!\$this->alreadyInSave) {
@@ -1025,12 +1025,12 @@ $script .= "
 	 * it inserts it; otherwise an update is performed.  This method
 	 * wraps the doSave() worker method in a transaction.
 	 *
-	 * @param Connection \$con
+	 * @param PDO \$con
 	 * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws PropelException
 	 * @see doSave()
 	 */
-	public function save(\$con = null)
+	public function save(PDO \$con = null)
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"You cannot save an object that has been deleted.\");
@@ -1041,12 +1041,12 @@ $script .= "
 		}
 
 		try {
-			\$con->begin();
+			Transaction::begin(\$con);
 			\$affectedRows = \$this->doSave(\$con);
-			\$con->commit();
+			Transaction::commit(\$con);
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			Transaction::rollback(\$con);
 			throw \$e;
 		}
 	}

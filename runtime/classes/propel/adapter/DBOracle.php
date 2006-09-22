@@ -93,31 +93,30 @@ class DBOracle extends DBAdapter {
     {
         return "LENGTH($s)";
     }
-     
+    
     /**
-     * Locks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to lock.
-     * @throws SQLException No Statement could be created or executed.
+     * @see DBAdapter::applyLimit()
      */
-    public function lockTable(Connection $con, $table)
+    public function applyLimit(&$sql, $offset, $limit)
     {
-        $statement = $con->createStatement();
-        $statement->executeQuery("SELECT next_id FROM " . $table ." FOR UPDATE");
-    }
+		 $sql =
+			'SELECT B.* FROM (  '
+			.  'SELECT A.*, rownum AS PROPEL$ROWNUM FROM (  '
+			. $sql
+			. '  ) A '
+			.  ' ) B WHERE ';
 
-    /**
-     * Unlocks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to unlock.
-     * @throws SQLException - No Statement could be created or executed.
-     */
-    public function unlockTable(Connection $con, $table)
-    {
-        // Tables in Oracle are unlocked when a commit is issued.  The
-        // user may have issued a commit but do it here to be sure.
-        $con->commit();
-    }    
+        if ( $offset > 0 ) {
+            $sql				.= ' B.PROPEL$ROWNUM > ' . $offset;            
+
+            if ( $limit > 0 )
+			{
+                $sql			.= ' AND B.PROPEL$ROWNUM <= '
+									. ( $offset + $limit );
+            }
+        } else {
+			$sql				.= ' B.PROPEL$ROWNUM <= ' . $limit;
+		}
+	}
+	
 }

@@ -87,6 +87,7 @@ class PropelTypes {
 	
     private static $propelToPHPNativeMap = null;
     private static $propelTypeToCreoleTypeMap = null;
+    private static $propelTypeToPDOTypeMap = null;
     private static $creoleToPropelTypeMap = null;
     
     private static $isInitialized = false;
@@ -169,7 +170,39 @@ class PropelTypes {
 			// timestamps on Windows.
 			self::$propelTypeToCreoleTypeMap[self::BU_DATE] = self::VARCHAR;
 			self::$propelTypeToCreoleTypeMap[self::BU_TIMESTAMP] = self::VARCHAR;
+
+            /*
+             * Create Propel -> Creole _name_ mappings (not CreoleType:: mappings).
+             * (this is now pretty useless since we've designed them to be the same!)
+             */
+            self::$propelTypeToPDOTypeMap = array();
+            self::$propelTypeToPDOTypeMap[self::CHAR] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::VARCHAR] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::LONGVARCHAR] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::CLOB] = PDO::PARAM_LOB;
+            self::$propelTypeToPDOTypeMap[self::NUMERIC] = PDO::PARAM_INT;
+            self::$propelTypeToPDOTypeMap[self::DECIMAL] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::TINYINT] = PDO::PARAM_INT;
+            self::$propelTypeToPDOTypeMap[self::SMALLINT] = PDO::PARAM_INT;
+            self::$propelTypeToPDOTypeMap[self::INTEGER] = PDO::PARAM_INT;
+            self::$propelTypeToPDOTypeMap[self::BIGINT] = PDO::PARAM_INT;
+            self::$propelTypeToPDOTypeMap[self::REAL] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::FLOAT] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::DOUBLE] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::BINARY] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::VARBINARY] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::LONGVARBINARY] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::BLOB] = PDO::PARAM_LOB;
+            self::$propelTypeToPDOTypeMap[self::DATE] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::TIME] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::TIMESTAMP] = PDO::PARAM_STR;
+            self::$propelTypeToPDOTypeMap[self::BOOLEAN] = PDO::PARAM_BOOL;
 			
+			// These are pre-epoch dates, which we need to map to String type
+			// since they cannot be properly handled using strtotime() -- or even numeric
+			// timestamps on Windows.
+			self::$propelTypeToPDOTypeMap[self::BU_DATE] = PDO::PARAM_STR;
+			self::$propelTypeToPDOTypeMap[self::BU_TIMESTAMP] = PDO::PARAM_STR;
 
             /*
              * Create Creole type code to Propel type map.
@@ -236,6 +269,15 @@ class PropelTypes {
         return  self::$propelTypeToCreoleTypeMap[$type];
     }
 
+	/**
+	 * Resturns the PDO type (PDO::PARAM_* constant) value.
+	 * @return int
+	 */
+	public static function getPDOType($type)
+	{
+		return self::$propelTypeToPDOTypeMap[$type];
+	}
+	
     /**
      * Returns Propel type constant corresponding to Creole type code.
      * Used but Propel Creole task.

@@ -1,5 +1,4 @@
 <?php
-
 /*
  *  $Id$
  *
@@ -20,8 +19,6 @@
  * <http://propel.phpdb.org>.
  */
  
-include_once 'creole/Connection.php';
-
 /**
  * DBAdapter</code> defines the interface for a Propel database adapter.  
  * 
@@ -45,6 +42,10 @@ include_once 'creole/Connection.php';
  * @package propel.adapter
  */
 abstract class DBAdapter {
+    
+    const ID_METHOD_NONE = 0;
+    const ID_METHOD_AUTOINCREMENT = 1;
+    const ID_METHOD_SEQUENCE = 2;
     
     /**
      * Creole driver to Propel adapter map.
@@ -101,26 +102,6 @@ abstract class DBAdapter {
         return '\'';
     }
     
-    /**
-     * Locks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to lock.
-     * @return void
-     * @throws SQLException No Statement could be created or executed.
-     */
-    public abstract function lockTable(Connection $con, $table);
-
-    /**
-     * Unlocks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to unlock.
-     * @return void
-     * @throws SQLException No Statement could be created or executed.
-     */
-    public abstract function unlockTable(Connection $con, $table);
-
     /**
      * This method is used to ignore case.
      *
@@ -180,7 +161,70 @@ abstract class DBAdapter {
 	{
 		return '"' . $text . '"';
 	}
+    
+    /**
+     * Returns the native ID method for this RDBMS.
+     * @return int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
+	 */ 
+    protected function getIdMethod()
+    {
+		return DBAdapter::ID_METHOD_AUTOINCREMENT;
+	}
+	
+	/**
+	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
+	 * @return boolean
+	 */
+	public function isGetIdBeforeInsert()
+	{
+		return ($this->getIdMethod() === DBAdapter::ID_METHOD_SEQUENCE);
+	}
+	
+	/**
+	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
+	 * @return boolean
+	 */
+	public function isGetIdAfterInsert()
+	{
+		return ($this->getIdMethod() === DBAdapter::ID_METHOD_AUTOINCREMENT);
+	}
+	
+	/**
+	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
+	 * @return mixed
+	 */
+	public function getId(PDO $con, $name = null)
+	{
+		return $con->lastInsertId($name);
+	}
+	
+	/**
+     * Returns timestamp formatter string for use in date() function. 
+     * @return string
+     */
+	public function getTimestampFormatter()
+	{
+		return "Y-m-d H:i:s";
+	}
 
+	/**
+     * Returns date formatter string for use in date() function. 
+     * @return string
+     */
+	public function getDateFormatter()
+	{
+		return "Y-m-d";
+	}
+	
+	/**
+     * Returns time formatter string for use in date() function. 
+     * @return string
+     */
+	public function getTimeFormatter()
+	{
+		return "H:i:s";
+	}
+	
 	/**
 	 * Should Column-Names get identifiers for inserts or updates. 
 	 * By default false is returned -> backwards compability.
@@ -189,9 +233,15 @@ abstract class DBAdapter {
 	 * 
 	 * @todo	should be abstract
 	 * @return	boolean
+	 * @deprecated
 	 */
 	public function useQuoteIdentifier() {
 		return false;
 	}
-	
+		
+	/**
+	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET. 
+	 */
+	public abstract function applyLimit(&$sql, $offset, $limit);
 }
+

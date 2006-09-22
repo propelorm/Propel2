@@ -1486,7 +1486,7 @@ class Criterion  {
                         $sb .= $field . $this->comparison . $this->value;
                     } else {
                         // default case, it is a normal col = value expression; value
-                        // will be replaced w/ '?' and will be inserted later using native Creole functions
+                        // will be replaced w/ '?' and will be inserted later using PDO bindValue()
                         if ($this->ignoreStringCase) {
                             $sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase("?");
                         } else {

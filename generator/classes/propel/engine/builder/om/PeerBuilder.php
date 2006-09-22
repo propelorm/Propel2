@@ -142,7 +142,6 @@ abstract class PeerBuilder extends OMBuilder {
 		}
 
 		$this->addGetMapBuilder($script);
-		$this->addGetPhpNameMap($script);
 
 		$this->addTranslateFieldName($script);
 		$this->addGetFieldNames($script);

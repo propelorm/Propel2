@@ -60,7 +60,6 @@ class PHP5MapBuilderBuilder extends OMBuilder {
         if (!$this->isAutoloadCoreClassess()) {
             $script .= "		
 require_once 'propel/map/MapBuilder.php';
-include_once 'creole/CreoleTypes.php';
 ";
         }
 		
@@ -96,7 +95,7 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->getClassname()." {
+class ".$this->getClassname()." implements MapBuilder {
 ";
 	}
 	
@@ -212,9 +211,9 @@ class ".$this->getClassname()." {
      */
     public function doBuild()
     {
-		\$this->dbMap = Propel::getDatabaseMap('".$table->getDatabase()->getName()."');
+		\$this->dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
 		
-		\$tMap = \$this->dbMap->addTable('".$table->getName()."');
+		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
 		\$tMap->setPhpName('".$table->getPhpName()."');
 		\$tMap->setClassname('" . $this->getBuilder($table->getName(), 'objectstub')->getClassname() . "');
 ";
@@ -257,21 +256,21 @@ class ".$this->getClassname()." {
 			if($col->isPrimaryKey()) {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."' , CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
+		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).", ".$size.");
+		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");
 ";
 				} 
 			} else {
 				if($col->isForeignKey()) {
 					$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
+		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
             } else { 
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getPhpType()."', CreoleTypes::".$col->getType().", ".var_export($col->isNotNull(), true).");
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).");
 ";
 				} 
 			} // if col-is prim key

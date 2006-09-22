@@ -88,30 +88,6 @@ class DBSQLite extends DBAdapter {
     {
         return "length($s)";
     }
- 
-    /**
-     * Locks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to lock.
-     * @throws SQLException No Statement could be created or
-     * executed.
-     */
-    public function lockTable(Connection $con, $table)
-    {        
-    }
-
-    /**
-     * Unlocks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to unlock.
-     * @throws SQLException No Statement could be created or
-     * executed.
-     */
-    public function unlockTable(Connection $con, $table)
-    {        
-    }
 	
 	/**
 	 * @see DBAdapter::quoteIdentifier()
@@ -120,5 +96,17 @@ class DBSQLite extends DBAdapter {
 	{
 		return '[' . $text . ']';
 	}
+	
+	/**
+     * @see DBAdapter::applyLimit()
+     */
+    public function applyLimit(&$sql, $offset, $limit)
+    {
+        if ( $limit > 0 ) {
+            $sql .= " LIMIT " . $limit . ($offset > 0 ? " OFFSET " . $offset : "");
+        } elseif ( $offset > 0 ) {
+            $sql .= " LIMIT -1 OFFSET " . $offset;
+        }
+    }
 
 }

@@ -131,4 +131,5 @@ class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 	
+	
 } // PHP5ExtensionPeerBuilder

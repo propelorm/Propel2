@@ -91,27 +91,56 @@ class DBPostgres extends DBAdapter {
     {
         return "char_length($s)";
     }
-     
+	
     /**
-     * Locks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to lock.
-     * @exception SQLException No Statement could be created or executed.
-     */
-    public function lockTable(Connection $con, $table)
+     * @see DBAdapter::getIdMethod()
+	 */ 
+    protected function getIdMethod()
     {
-    }
-
-    /**
-     * Unlocks the specified table.
-     *
-     * @param Connection $con The Creole connection to use.
-     * @param string $table The name of the table to unlock.
-     * @exception SQLException No Statement could be created or executed.
+		return DBAdapter::ID_METHOD_SEQUENCE;
+	}
+	
+	/**
+	 * Gets ID for specified sequence name.
+	 */
+	public function getId(PDO $con, $name = null)
+	{
+		if ($name === null) {
+			throw new PropelException("Unable to fetch next sequence ID without sequence name.");
+		}
+		$stmt = $con->query("SELECT nextval(".$con->quote($name).")");
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		return $row[0];
+	}
+	
+	/**
+     * Returns timestamp formatter string for use in date() function. 
+     * @return string
      */
-    public function unlockTable(Connection $con, $table)
-    {
-    }
+	public function getTimestampFormatter()
+	{
+		return "Y-m-d H:i:s O";
+	}
 
+	/**
+     * Returns timestamp formatter string for use in date() function. 
+     * @return string
+     */
+	public function getTimeFormatter()
+	{
+		return "H:i:s O";
+	}
+	
+	/**
+     * @see DBAdapter::applyLimit()
+     */
+    public function applyLimit(&$sql, $offset, $limit)
+    {
+        if ( $limit > 0 ) {
+            $sql .= " LIMIT ".$limit;
+        }
+        if ( $offset > 0 ) {
+            $sql .= " OFFSET ".$offset;
+        }
+    }
 }

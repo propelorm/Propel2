@@ -363,19 +363,20 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
      * 
      * @param Column $col The column we need a name for.
-     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+     * @param string $classname The Peer classname to use.
      * 
-     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, then uses current table COLUMN_NAME.
+     * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME. 
      */
-    public function getColumnConstant($col, $phpName = null)
+    public function getColumnConstant($col, $classname = null)
 	{	
 		if ($col === null) {
 		    $e = new Exception("No col specified.");
 			print $e;
 			throw $e;
 		}
-		$classname = $this->getPeerClassname($phpName);
-		
+		if ($classname === null) { 
+			$classname = $this->getPeerClassname(); 
+		}
         // was it overridden in schema.xml ?
         if ($col->getPeerName()) {
             $const = strtoupper($col->getPeerName());

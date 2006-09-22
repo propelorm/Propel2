@@ -205,18 +205,17 @@ abstract class ".$this->getClassname()." {
      * Use at your own risk!
      *
      * @param $objectClassname Object wrapped by new node.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return $nodeObjectClassname
      * @throws PropelException
      */
-    public static function createNewRootNode(\$obj, \$con = null)
+    public static function createNewRootNode(\$obj, PDO \$con = null)
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
         
         try {
-
-            \$con->begin();
+			Transaction::begin(\$con);
 
             self::deleteNodeSubTree('1', \$con);
             
@@ -225,10 +224,10 @@ abstract class ".$this->getClassname()." {
             \$obj->\$setNodePath('1');
             \$obj->save(\$con);
 
-            \$con->commit();
+            Transaction::commit(\$con);
             
         } catch (PropelException \$e) {
-            \$con->rollback();
+            Transaction::rollback(\$con);
             throw \$e;
         }            
 
@@ -252,11 +251,11 @@ abstract class ".$this->getClassname()." {
      * safer alternative to createNewRootNode().
      *
      * @param $objectClassname Object wrapped by new node.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return $nodeObjectClassname
      * @throws PropelException
      */
-    public static function insertNewRootNode(\$obj, \$con = null)
+    public static function insertNewRootNode(\$obj, PDO \$con = null)
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
@@ -314,10 +313,10 @@ abstract class ".$this->getClassname()." {
      * @param Criteria Criteria to use.
      * @param boolean True if ancestors should also be retrieved.
      * @param boolean True if descendants should also be retrieved.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return array Array of root nodes.
      */
-    public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, \$con = null)
+    public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
         \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectRS(\$criteria, \$con);
@@ -342,10 +341,10 @@ abstract class ".$this->getClassname()." {
      * @param mixed $objectClassname primary key (array for composite keys)
      * @param boolean True if ancestors should also be retrieved.
      * @param boolean True if descendants should also be retrieved.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return $nodeObjectClassname
      */
-    public static function retrieveNodeByPK(\$pk, \$ancestors = false, \$descendants = false, \$con = null)
+    public static function retrieveNodeByPK(\$pk, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         throw new PropelException('retrieveNodeByPK() not implemented yet.');
     }
@@ -368,10 +367,10 @@ abstract class ".$this->getClassname()." {
      * @param string Node path to retrieve.
      * @param boolean True if ancestors should also be retrieved.
      * @param boolean True if descendants should also be retrieved.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return $objectClassname
      */
-    public static function retrieveNodeByNP(\$np, \$ancestors = false, \$descendants = false, \$con = null)
+    public static function retrieveNodeByNP(\$np, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
         \$criteria->add(self::NPATH_COLNAME, \$np, Criteria::EQUAL);
@@ -391,10 +390,10 @@ abstract class ".$this->getClassname()." {
      *
      * @param string Node path to retrieve.
      * @param boolean True if descendants should also be retrieved.
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return ".$this->getStubNodeBuilder()->getClassname()."
      */ 
-    public static function retrieveRootNode(\$descendants = false, \$con = null)
+    public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
     {
         return self::retrieveNodeByNP('1', false, \$descendants, \$con);
     }
@@ -420,7 +419,7 @@ abstract class ".$this->getClassname()." {
      *
      * @param string Source node path to move (root of the src subtree).
      * @param string Destination node path to move to (root of the dst subtree).
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return void
      * @throws PropelException
      * @todo This is currently broken for simulated 'onCascadeDelete's. 
@@ -428,7 +427,7 @@ abstract class ".$this->getClassname()." {
      *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
      *       to DBAdapter.
      */    
-    public static function moveNodeSubTree(\$srcPath, \$dstPath, \$con = null)
+    public static function moveNodeSubTree(\$srcPath, \$dstPath, PDO \$con = null)
     {
         if (substr(\$dstPath, 0, strlen(\$srcPath)) == \$srcPath)
             throw new PropelException('Cannot move a node subtree within itself.');
@@ -495,12 +494,12 @@ abstract class ".$this->getClassname()." {
      * Deletes the node subtree at the specified node path from the database.
      *
      * @param string Node path to delete
-     * @param Connection Connection to use.
+     * @param PDO Connection to use.
      * @return void
      * @throws PropelException
      * @todo This is currently broken for simulated 'onCascadeDelete's. 
      */
-    public static function deleteNodeSubTree(\$nodePath, \$con = null)
+    public static function deleteNodeSubTree(\$nodePath, PDO \$con = null)
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);

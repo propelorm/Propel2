@@ -58,15 +58,15 @@ class TableMap {
     /** The PHP name of the table. */
     private $phpName;
 
-    /** The Basic - Classname */
-    private $classname;
-    
     /** The prefix on the table name. */
     private $prefix;
-
+	
+	/** The Classname for this table */
+	private $classname;
+	
     /** Whether to use an id generator for pkey. */
     private $useIdGenerator;
-
+	
     /**
      * Object to store information that is needed if the
      * for generating primary keys.
@@ -154,25 +154,6 @@ class TableMap {
     }
 
     /**
-     * Get the Classname of the Propel-Classes belonging to this table.
-     * 
-     * @return string
-     */
-    public function getClassname() {
-		return $this->classname;
-    }
-
-    /**
-     * Set the Classname of the Table. Could be useful for calling
-     * Peer and Object methods dynamically
-     * 
-     * @param string $classname The Classname
-     */
-    public function setClassname($classname) {
-		$this->classname = $classname;
-    }
-    
-    /**
      * Get table prefix name.
      *
      * @return string A String with the prefix.
@@ -193,7 +174,26 @@ class TableMap {
     {
         $this->prefix = $prefix;
     }
-
+	
+	/**
+	 * Get the Classname of the Propel-Classes belonging to this table.
+	 * @return string  
+	 */
+	public function getClassname()
+	{
+		return $this->classname;
+	}
+	
+	/**
+	 * Set the Classname of the Table. Could be useful for calling
+	 * Peer and Object methods dynamically.
+	 * @param string $classname The Classname 
+	 */
+	public function setClassname($classname)
+	{
+		$this->classname = $classname;
+	}
+	
     /**
      * Whether to use Id generator for primary key.
      * @return boolean
@@ -242,23 +242,21 @@ class TableMap {
      * Add a primary key column to this Table.
      *
      * @param string $columnName A String with the column name.
-     * @param string $type A string specifying the PHP native type.
-     * @param int $creoleType The integer representing the Creole type.
+     * @param string $type A string specifying the Propel type.
      * @param boolean $isNotNull Whether column does not allow NULL values.
      * @param $size An int specifying the size.
      * @return ColumnMap Newly added PrimaryKey column.
      */
-    public function addPrimaryKey($columnName, $phpName, $type, $creoleType, $isNotNull = false, $size = null)
+    public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null)
     {
-        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, null, null);
+        return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, true, null, null);
     }
 
     /**
      * Add a foreign key column to the table.
      *
      * @param string $columnName A String with the column name.
-     * @param string $type A string specifying the PHP native type.
-     * @param int $creoleType The integer representing the Creole type.
+     * @param string $type A string specifying the Propel type.
      * @param string $fkTable A String with the foreign key table name.
      * @param string $fkColumn A String with the foreign key column name.
      * @param boolean $isNotNull Whether column does not allow NULL values.
@@ -266,17 +264,16 @@ class TableMap {
 	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap Newly added ForeignKey column.
      */
-    public function addForeignKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
+    public function addForeignKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
     {
-        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, false, $fkTable, $fkColumn);
+        return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, false, $fkTable, $fkColumn);
     }
 
     /**
      * Add a foreign primary key column to the table.
      *
      * @param string $columnName A String with the column name.
-     * @param string $type A string specifying the PHP native type.
-     * @param int $creoleType The integer representing the Creole type.
+     * @param string $type A string specifying the Propel type.
      * @param string $fkTable A String with the foreign key table name.
      * @param string $fkColumn A String with the foreign key column name.
      * @param boolean $isNotNull Whether column does not allow NULL values.
@@ -284,9 +281,9 @@ class TableMap {
 	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap Newly created foreign pkey column.
      */
-    public function addForeignPrimaryKey($columnName, $phpName, $type, $creoleType, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
+    public function addForeignPrimaryKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0)
     {
-        return $this->addColumn($columnName, $phpName, $type, $creoleType, $isNotNull, $size, true, $fkTable, $fkColumn);
+        return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, true, $fkTable, $fkColumn);
     }
 
     /**
@@ -306,8 +303,7 @@ class TableMap {
      * Add a column to the table.
      *
      * @param string name A String with the column name.
-     * @param string $type A string specifying the PHP native type.
-     * @param int $creoleType The integer representing the Creole type.
+     * @param string $type A string specifying the Propel type.
      * @param boolean $isNotNull Whether column does not allow NULL values.
      * @param int $size An int specifying the size.
      * @param boolean $pk True if column is a primary key.
@@ -316,7 +312,7 @@ class TableMap {
 	 * @param string $defaultValue The default value for this column.
      * @return ColumnMap The newly created column.
      */
-    public function addColumn($name, $phpName, $type, $creoleType, $isNotNull = false, $size = null, $pk = null, $fkTable = null, $fkColumn = null)
+    public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $pk = null, $fkTable = null, $fkColumn = null)
     {
 
         $col = new ColumnMap($name, $this);
@@ -329,7 +325,6 @@ class TableMap {
         }
 
         $col->setType($type);
-        $col->setCreoleType($creoleType);
         $col->setPrimaryKey($pk);
         $col->setSize($size);
         $col->setPhpName($phpName);

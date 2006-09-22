@@ -98,28 +98,25 @@ class DBMySQL extends DBAdapter {
      *
      * @param Connection $con The Creole connection to use.
      * @param string $table The name of the table to lock.
-     * @throws SQLException No Statement could be created or
+     * @throws PDOException No Statement could be created or
      * executed.
      */
-    public function lockTable(Connection $con, $table)
+    public function lockTable(PDO $con, $table)
     {
-        $statement = $con->createStatement();
-        $sql = "LOCK TABLE " . $table . " WRITE";
-        $statement->executeUpdate($sql);
+        $con->exec("LOCK TABLE " . $table . " WRITE");
     }
 
     /**
      * Unlocks the specified table.
      *
-     * @param Connection $con The Creole connection to use.
+     * @param PDO $con The PDO connection to use.
      * @param string $table The name of the table to unlock.
-     * @throws SQLException No Statement could be created or
+     * @throws PDOException No Statement could be created or
      * executed.
      */
-    public function unlockTable(Connection $con, $table)
+    public function unlockTable(PDO $con, $table)
     {
-        $statement = $con->createStatement();
-        $statement->executeUpdate("UNLOCK TABLES");
+        $statement = $con->exec("UNLOCK TABLES");
     }
 	
 	/**
@@ -131,10 +128,22 @@ class DBMySQL extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::quoteIdentifier()
+	 * @see DBAdapter::useQuoteIdentifier()
 	 */
-	public function useQuoteIdentifier() {
-		return true;
+	public function useQuoteIdentifier()
+	{
+		return false;
 	}
-
+	
+	/**
+     * @see DBAdapter::applyLimit()
+     */
+    public function applyLimit(&$sql, $offset, $limit)
+    {
+        if ( $limit > 0 ) {
+            $sql .= " LIMIT " . ($offset > 0 ? $offset . ", " : "") . $limit;
+        } else if ( $offset > 0 ) {
+            $sql .= " LIMIT " . $offset . ", 18446744073709551615";
+        }
+    }
 }

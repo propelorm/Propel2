@@ -111,6 +111,19 @@ abstract class DDLBuilder extends DataModelBuilder {
 	}
 
 	/**
+	 * Resets any static variables between building a SQL file for a database.
+	 * 
+	 * Theoretically, Propel could build multiple .sql files for multiple databases; in 
+	 * many cases we don't want static values to persist between these.  This method provides
+	 * a way to clear out static values between iterations, if the subclasses choose to implement
+	 * it.
+	 */
+	public static function reset()
+	{
+		// nothing by default
+	}
+	
+	/**
 	 * Adds table definition.
 	 * @param string &$script The script will be modified in this method.
 	 */

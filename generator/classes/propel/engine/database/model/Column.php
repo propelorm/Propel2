@@ -609,6 +609,15 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::getCreoleType($this->propelType);
 	}
+	
+	/**
+	 * Returns the column Creole type as a string.
+	 * @return string The constant representing Creole type: e.g. "VARCHAR".
+	 */
+	public function getPDOType()
+	{
+		return PropelTypes::getPDOType($this->propelType);
+	}
 
 	/**
 	 * Returns the column type as given in the schema as an object

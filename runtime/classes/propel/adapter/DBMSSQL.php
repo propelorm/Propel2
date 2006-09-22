@@ -27,10 +27,56 @@ require_once 'propel/adapter/DBSybase.php';
  * simply extends the adaptor for Sybase.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Gonzalo Diethelm <gonzalo.diethelm@sonda.com> (Torque)
  * @version $Revision$
  * @package propel.adapter
  */
 class DBMSSQL extends DBSybase {
     // no difference currently
+    
+    /**
+     * @see DBAdapter::applyLimit()
+     */
+    public function applyLimit(&$sql, $offset, $limit)
+    {
+ 		throw new PropelException("LIMIT/OFFSET support in MSSQL not yet implemented...");
+ 		
+ 		/*
+ 		 Here's one solution:
+ 		
+		CREATE PROCEDURE [owner].[LimitSelect]
+		@query CHAR (256), -- SQL query, it'd better be a SELECT!
+		@offset INT, -- start result set from offset
+		@limit INT -- limit the result set of the query
+		AS
+		-- Execute call to declare a global cursor (node_cursor) for the query passed to the SP
+		EXEC ('DECLARE node_cursor CURSOR GLOBAL SCROLL READ_ONLY FOR ' + @query)
+		
+		-- open the global cursor declared above
+		OPEN node_cursor
+		
+		-- tweak the starting values of limit and offset for use in the loop
+		SET @offset = @offset + 1
+		SET @limit = @limit
+		
+		-- advanced the cursor to the offset in the result set
+		FETCH ABSOLUTE @offset FROM node_cursor
+		
+		-- counter i
+		DECLARE @i INTEGER
+		
+		SET @i = 0
+		
+		-- loop until limit reached by counter i
+		WHILE (@i < @limit)
+		BEGIN
+		-- fetch the next row in the result set and advance counter i
+		FETCH NEXT FROM node_cursor
+		SET @i = @i + 1
+		END
+		
+		-- clean finish
+		CLOSE node_cursor
+		DEALLOCATE node_cursor
+		*/
+	}
 }

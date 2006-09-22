@@ -102,17 +102,17 @@ interface Persistent {
 
     /**
      * Deletes the object.
-     * @param Connection $con
+     * @param PDO $con
      * @return void
      * @throws Exception
      */
-    public function delete($con = null);
+    public function delete(PDO $con = null);
 
     /**
      * Saves the object.
-     * @param Connection $con
+     * @param PDO $con
      * @return void
      * @throws Exception
      */
-    public function save($con = null);
+    public function save(PDO $con = null);
 }

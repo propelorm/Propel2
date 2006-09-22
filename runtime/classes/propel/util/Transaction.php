@@ -20,9 +20,10 @@
  */ 
  
 /**
- * Utility class to make it easier to begin, commit, and rollback transactions.
+ * PDO utility class to help with managing transactions.
  * 
  * This can be used to handle cases where transaction support is optional.
+ * 
  * The second parameter of beginOptionalTransaction() will determine with a transaction 
  * is used or not. If a transaction is not used, the commit and rollback methods
  * do not have any effect. Instead it simply makes the logic easier to follow
@@ -30,81 +31,105 @@
  * is needed or not.
  * 
  * @author Hans Lellelid <hans@xmpl.org> (Propel) 
- * @author Stephen Haberman <stephenh@chase3000.com> (Torque)
  * @version $Revision$
  * @package propel.util
  */
 class Transaction {
-
+	
+	/**
+	 * Stores the transaction opcount so that we can emulate support for nested transactions.
+	 */
+	private static $txMap = array();
+	
+	/**
+	 * Checks whether THIS CLASS has started a transaction for the passed-in PDO connection object.
+	 * 
+	 * The transactions are stored keyed by the string representation of the object (e.g. "Object id #14").
+	 * 
+	 * @param PDO $con
+	 */
+	public static function isInTransaction(PDO $con)
+	{
+		return (self::getOpcount($con) > 0);
+	}
+	
+	/**
+	 * Returns the current nested transaction depth.
+	 * @param PDO $con
+	 * @return int
+	 */
+	private static function getOpcount(PDO $con)
+	{
+		$txkey = (string)$con;
+		if (!isset(self::$txMap[$txkey])) { self::$txMap[$txkey] = 0; }
+		return self::$txMap[$txkey];
+	}
+	
+	/**
+	 * Increments the current nested transaction depth.
+	 * @param PDO $con
+	 */
+	private static function incrementOpcount(PDO $con)
+	{
+		self::$txMap[(string)$con]++;
+	}
+	
+	/**
+	 * Decrements the current nested transaction depth.
+	 * @param PDO $con
+	 */
+	private static function decrementOpcount(PDO $con)
+	{
+		self::$txMap[(string)$con]--;
+	}
+	
     /**
-     * Begin a transaction.  This method will fallback gracefully to
-     * return a normal connection, if the database being accessed does
-     * not support transactions.
-     *
-     * @param string $dbName Name of database.
-     * @return Connection The Connection for the transaction.
-     * @throws PropelException
+     * Begin a transaction.
+     * 
+     * @param $con PDO The Connection for the transaction.
+     * @throws PDOException
      */
-    public static function begin($dbName)
+    public static function begin(PDO $con)
     {
-        $con = Propel::getConnection($dbName);
-        try {
-            $con->setAutoCommit(false);
-        } catch (SQLException $e) {
-            throw new PropelException($e);
-        }
-        return $con;
+    	if (self::getOpcount($con) === 0) {
+            $con->beginTransaction();	        
+		}
+		self::incrementOpcount($con);			
     }
 
     /**
-     * Begin a transaction.  This method will fallback gracefully to
-     * return a normal connection, if the database being accessed does
-     * not support transactions.
+     * Convenience method to begin an optional transaction.
      *
      * @param sring $dbName Name of database.
      * @param boolean $useTransaction If false, a transaction won't be used.
-     * @return Connection The Connection for the transaction.
      * @throws PropelException
      */
-    public static function beginOptional($dbName, $useTransaction)
+    public static function beginOptional(PDO $con, $useTransaction)
     {
-        $con = Propel::getConnection($dbName);
-        try {
-            if ($useTransaction) {
-                $con->setAutoCommit(false);
-            }
-        } catch (SQLException $e) {
-            throw new PropelException($e);
-        }
-        return $con;
+		if ($useTransaction) {
+			self::begin($con);
+		}
     }
 
     /**
-     * Commit a transaction.  This method takes care of releasing the
-     * connection after the commit.  In databases that do not support
-     * transactions, it only returns the connection.
+     * Commit a transaction.
+     * 
+     * This method commits a transaction if it is the outermost transaction - otherwise,
+     * nothing happens.
      *
-     * @param Connection $con The Connection for the transaction.
+     * @param PDO $con The Connection for the transaction.
      * @return void
      * @throws PropelException
      */
-    public static function commit($con)
+    public static function commit(PDO $con)
     {
-        if ($con === null) {
-            throw new PropelException(
-                    "Connection object was null. "
-                    . "This could be due to a misconfiguration. "
-                    . "Check the logs and Propel properties "
-                    . "to better determine the cause.");
-        }
-        try {
-            if ($con->getAutoCommit() === false) {
-                $con->commit();
-                $con->setAutoCommit(true);
-            }
-        } catch (SQLException $e) {
-            throw new PropelException($e);
-        }
+    	$opcount = self::getOpcount($con);    	
+    	if ($opcount > 0) {
+			if ($opcount === 1) {
+				$con->commit();
+			}
+			self::decrementOpcount($con);
+		}
     }
 
     /**
@@ -113,32 +138,27 @@ class Transaction {
      * transactions, this method will log the attempt and release the
      * connection.
      *
-     * @param Connection $con The Connection for the transaction.
+     * @param PDO $con The Connection for the transaction.
      * @return void
      * @throws PropelException
      */
-    public static function rollback($con)
+    public static function rollback(PDO $con)
     {
-        if ($con === null) {
-            throw new PropelException(
-                    "Connection object was null. "
-                    . "This could be due to a misconfiguration. "
-                    . "Check the logs and Propel properties "
-                    . "to better determine the cause.");
-        }
-
-        try {
-            if ($con->getAutoCommit() === false) {
-                $con->rollback();
-                $con->setAutoCommit(true);
-            }
-        } catch (SQLException $e) {
-            Propel::log(
-                    "An attempt was made to rollback a transaction "
-                    . "but the database did not allow the operation to be "
-                    . "rolled back: " . $e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException($e);
-        }
+    	$opcount = self::getOpcount($con);    	
+    	if ($opcount > 0) {
+			if ($opcount === 1) {
+				try {
+					$con->rollback();
+				} catch (PDOException $e) {
+					Propel::log(
+		                    "An attempt was made to rollback a transaction "
+		                    . "but the database did not allow the operation to be "
+		                    . "rolled back: " . $e->getMessage(), Propel::LOG_ERR);
+		            throw new $e;
+				}
+			}
+			self::decrementOpcount($con);
+		} 
     }
     
     /**
@@ -151,7 +171,7 @@ class Transaction {
     {
         try {
             Transaction::rollback($con);
-        } catch (PropelException $e) {
+        } catch (PDOException $e) {
             Propel::log("An error occured during rollback: " . $e->getMessage(), Propel::LOG_ERR);
         }
     }

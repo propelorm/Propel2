@@ -26,7 +26,7 @@
 
 error_reporting(E_ALL);
 
-$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore/build/conf/bookstore-conf.php');
+$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore/runtime-conf.ini');
 if (!file_exists($conf_path)) {
     print "Make sure that you specify properties in conf/bookstore.properties and "
     ."build propel before running this script.";
@@ -41,7 +41,8 @@ if (!file_exists($conf_path)) {
  set_include_path(
  			//realpath(dirname(__FILE__) . '/../classes') . PATH_SEPARATOR .
 			realpath(dirname(__FILE__) . '/../projects/bookstore/build/classes') . PATH_SEPARATOR .
-			get_include_path()
+			dirname(__FILE__) . '/../../runtime/classes' . PATH_SEPARATOR .
+			'/usr/share/php'
  );
 
 

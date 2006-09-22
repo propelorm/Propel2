@@ -21,7 +21,6 @@
  */
 
 require_once 'phing/Task.php';
-include_once 'creole/Connection.php';
 
 /**
  * Executes all SQL files referenced in the sqldbmap file against their mapped databases.
@@ -56,17 +55,11 @@ class PropelSQLExec extends Task {
     //private static $delimiterTypes = array(DELIM_NORMAL, DELIM_ROW);
     //private static $errorActions = array("continue", "stop", "abort");
     
-    /** Database connection */
+    /** PDO Database connection */
     private $conn = null;
 
     /** Autocommit flag. Default value is false */
     private $autocommit = false;
-
-    /** SQL statement */
-    private $statement = null;
-
-    /** DB driver. */
-    private $driver = null;
 
     /** DB url. */
     private $url = null;
@@ -372,23 +365,17 @@ class PropelSQLExec extends Task {
             . ($this->password ? " password: " . $this->password . "\n" : "");
             
             $this->log($buf, PROJECT_MSG_VERBOSE);
-            
-            $dsn = Creole::parseDSN($url);
-            
-            if($this->userId) {
-                $dsn["username"] = $this->userId;
-            }
-            if ($this->password) {
-                $dsn["password"] = $this->password;
-            }                        
-            if ($this->driver) {
-                Creole::registerDriver($dsn['phptype'], $this->driver);
-            }
-            
-            $this->conn = Creole::getConnection($dsn);
 
-            $this->conn->setAutoCommit($this->autocommit);
-            $this->statement = $this->conn->createStatement();
+			// Set user + password to null if they are empty strings
+            if(!$this->userId) { $this->userId = null; }
+            
+            if (!$this->password) { $this->password = null; }
+			
+			$this->conn = new PDO($url, $this->userId, $this->password);
+			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			
+            // $this->conn->setAutoCommit($this->autocommit);
+            // $this->statement = $this->conn->createStatement();
             
             $out = null;
             
@@ -415,27 +402,27 @@ class PropelSQLExec extends Task {
             if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
                 try {
                     $this->conn->rollback();
-                } catch (SQLException $ex) {
+                } catch (PDOException $ex) {
                     // do nothing.
                     System::println("Rollback failed.");
                 }
             }
-            if ($this->statement) $this->statement->close();
+            if ($this->statement) $this->statement = null; // close
             throw new BuildException($e);
-        } catch (SQLException $e) {
+        } catch (PDOException $e) {
             if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
                 try {
                     $this->conn->rollback();
-                } catch (SQLException $ex) {
+                } catch (PDOException $ex) {
                     // do nothing.
                     System::println("Rollback failed");
                 }
             }
-            if ($this->statement) $this->statement->close();
+            if ($this->statement) $this->statement = null; // close
             throw new BuildException($e);
         }
        
-           $this->statement->close();
+           $this->statement = null; // close
 
         $this->log($this->goodSql . " of " . $this->totalSql
                 . " SQL statements executed successfully");
@@ -450,7 +437,7 @@ class PropelSQLExec extends Task {
      *
      * @param Reader $reader
      * @param $out Optional output stream.
-     * @throws SQLException
+     * @throws PDOException
      * @throws IOException
      */
     public function runStatements(Reader $reader, $out = null)            
@@ -528,7 +515,7 @@ class PropelSQLExec extends Task {
             if ($sql !== "") {
                 $this->execSQL($sql, $out);
             }
-        } catch (SQLException $e) {
+        } catch (PDOException $e) {
             throw $e;
         }
     }
@@ -538,7 +525,7 @@ class PropelSQLExec extends Task {
      *
      * @param sql
      * @param out
-     * @throws SQLException
+     * @throws PDOException
      */
     protected function execSQL($sql, $out = null)
     {
@@ -549,18 +536,17 @@ class PropelSQLExec extends Task {
 
         try {
             $this->totalSql++;
-            if (!$this->statement->execute($sql)) {
-                $this->log($this->statement->getUpdateCount() . " rows affected",
-                        PROJECT_MSG_VERBOSE);
-            } else {
-                if ($this->print) {
-                    $this->printResults($out);
-                }
-            }
-
-            $this->goodSql++;
             
-        } catch (SQLException $e) {
+            if (!$this->autocommit) $this->conn->beginTransaction();
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $this->log($stmt->rowCount() . " rows affected", PROJECT_MSG_VERBOSE);
+			
+			if (!$this->autocommit) $this->conn->commit();
+			
+            $this->goodSql++;
+        } catch (PDOException $e) {
             $this->log("Failed to execute: " . $sql, PROJECT_MSG_ERR);
             if ($this->onError != "continue") {
                 throw $e;
@@ -573,7 +559,7 @@ class PropelSQLExec extends Task {
      * print any results in the statement.
      *
      * @param out
-     * @throws SQLException
+     * @throws PDOException
      */
     protected function printResults($out = null)
     {
@@ -661,7 +647,7 @@ class PropelSQLExecTransaction {
     }
 
     /**
-     * @throws IOException, SQLException
+     * @throws IOException, PDOException
      */
     public function runTransaction($out = null)
     {
@@ -671,8 +657,7 @@ class PropelSQLExecTransaction {
         }
 
         if ($this->tSrcFile !== null) {
-            $this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(),
-                PROJECT_MSG_INFO);
+            $this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(), PROJECT_MSG_INFO);
             $reader = new FileReader($this->tSrcFile);
             $this->parent->runStatements($reader, $out);
             $reader->close();
