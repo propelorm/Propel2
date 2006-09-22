@@ -678,7 +678,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			
 		try {
 				
-			if (!\$this->obj->isNew()) Transaction::begin(\$con);
+			if (!\$this->obj->isNew()) \$con->beginTransaction();
 				
 			if (\$beforeNode)
 			{
@@ -728,12 +728,12 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 				\$node->adjustNodePath(\$srcPath, \$dstPath);
 			}
 
-			if (!\$this->obj->isNew()) Transaction::commit(\$con);
+			if (!\$this->obj->isNew()) \$con->commit();
 
 			\$this->attachChildNode(\$node);
 
 		} catch (SQLException \$e) {
-			if (!\$this->obj->isNew()) Transaction::rollback(\$con);
+			if (!\$this->obj->isNew()) \$con->rollback();
 			throw new PropelException(\$e);
 		}
 	}
@@ -992,7 +992,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			
 			try {
 				
-				Transaction::begin(\$con);
+				\$con->beginTransaction();
 				 
 				\$n = \$lastIdx - \$offsetIdx + 1;
 				\$i = \$direction < 1 ? \$offsetIdx : \$lastIdx;
@@ -1007,10 +1007,10 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 					\$i -= \$direction;
 				}
 				
-				Transaction::commit(\$con);
+				\$con->commit();
 				
 			} catch (SQLException \$e) {
-				Transaction::rollback(\$con);
+				\$con->rollback();
 				throw new PropelException(\$e);
 			}
 		}

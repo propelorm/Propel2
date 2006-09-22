@@ -99,12 +99,6 @@ abstract class AbstractPropelDataModelTask extends Task {
     protected $outputDirectory;
 
     /**
-     * Path where Capsule looks for templates.
-     * @var PhingFile
-     */
-    protected $templatePath;
-
-    /**
      * Whether to package the datamodels or not
      * @var PhingFile
      */
@@ -239,44 +233,6 @@ abstract class AbstractPropelDataModelTask extends Task {
 		$this->xslFile = $v;
 	}
 	
-    /**
-     * [REQUIRED] Set the path where Capsule will look
-     * for templates using the file template
-     * loader.
-     * @return void
-     * @throws Exception
-     */
-    public function setTemplatePath($templatePath) {
-        $resolvedPath = "";
-        $tok = strtok($templatePath, ",");
-        while ( $tok ) {
-            // resolve relative path from basedir and leave
-            // absolute path untouched.
-            $fullPath = $this->project->resolveFile($tok);
-            $cpath = $fullPath->getCanonicalPath();
-            if ($cpath === false) {
-                $this->log("Template directory does not exist: " . $fullPath->getAbsolutePath());
-            } else {
-                $resolvedPath .= $cpath;
-            }
-            $tok = strtok(",");
-            if ( $tok ) {
-                $resolvedPath .= ",";
-            }
-        }
-        $this->templatePath = $resolvedPath;
-     }
-
-    /**
-     * Get the path where Velocity will look
-     * for templates using the file template
-     * loader.
-     * @return string
-     */
-    public function getTemplatePath() {
-        return $this->templatePath;
-    }
-
     /**
      * [REQUIRED] Set the output directory. It will be
      * created if it doesn't exist.
@@ -515,42 +471,6 @@ abstract class AbstractPropelDataModelTask extends Task {
 		}
 	}
 
-    /**
-     * Creates a new Capsule context with some basic properties set.
-     * (Capsule is a simple PHP encapsulation system -- aka a php "template" class.)
-     * @return Capsule
-     */
-    protected function createContext() {
-
-        $context = new Capsule();
-
-        // Make sure the output directory exists, if it doesn't
-        // then create it.
-        $outputDir = new PhingFile($this->outputDirectory);
-        if (!$outputDir->exists()) {
-            $this->log("Output directory does not exist, creating: " . $outputDir->getAbsolutePath());
-            $outputDir->mkdirs();
-        }
-
-        // Place our set of data models into the context along
-        // with the names of the databases as a convenience for now.
-        $context->put("targetDatabase", $this->targetDatabase);
-        $context->put("targetPackage", $this->targetPackage);
-        $context->put("now", strftime("%c"));
-
-        $this->log("Target database type: " . $this->targetDatabase);
-        $this->log("Target package: " . $this->targetPackage);
-        $this->log("Using template path: " . $this->templatePath);
-        $this->log("Output directory: " . $this->outputDirectory);
-
-        $context->setTemplatePath($this->templatePath);
-        $context->setOutputDirectory($this->outputDirectory);
-
-        $this->populateContextProperties($context);
-
-        return $context;
-    }
-
 	/**
 	 * Fetches the propel.xxx properties from project, renaming the propel.xxx properties to just xxx.
 	 *
@@ -591,28 +511,12 @@ abstract class AbstractPropelDataModelTask extends Task {
 		return null; // just to be explicit
 	}
 
-    /**
-     * Adds the propel.xxx properties to the passed Capsule context, changing names to just xxx.
-     *
-     * Also, move xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-     *
-     * @param Capsule $context
-	 * @see getPropelProperties()
-     */
-    public function populateContextProperties(Capsule $context)
-    {
-		foreach ($this->getPropelProperties() as $key => $propValue) {
-			$this->log('Adding property ${' . $key . '} to context', PROJECT_MSG_DEBUG);
-			$context->put($key, $propValue);
-        }
-    }
-
-  /**
-   * Checks this class against Basic requrements of any propel datamodel task.
-   *
-   * @throws BuildException 	- if schema fileset was not defined
-   * 							- if no output directory was specified
-   */
+	/**
+	 * Checks this class against Basic requrements of any propel datamodel task.
+	 *
+	 * @throws BuildException 	- if schema fileset was not defined
+	 * 							- if no output directory was specified
+	 */
     protected function validate()
     {
         if (empty($this->schemaFilesets)) {

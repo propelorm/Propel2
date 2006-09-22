@@ -104,18 +104,6 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 		// check to make sure task received all correct params
 		$this->validate();		
 		
-		$basepath = $this->getOutputDirectory();		
-		
-		// Get new Capsule context
-		$generator = $this->createContext();
-		$generator->put("basepath", $basepath); // make available to other templates
-		
-		$targetPlatform = $this->getTargetPlatform(); // convenience for embedding in strings below
-				
-		// we need some values that were loaded into the template context
-		$basePrefix = $generator->get('basePrefix');
-		$project = $generator->get('project');
-		
 		DataModelBuilder::setBuildProperties($this->getPropelProperties());
 		
 		foreach ($this->getDataModels() as $dataModel) {
@@ -124,8 +112,6 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 			foreach ($dataModel->getDatabases() as $database) {
 				
 				$this->log("  - processing database : " . $database->getName());
-				$generator->put("platform", $database->getPlatform());
-				
 							
 				foreach ($database->getTables() as $table) {					
 				

@@ -1041,12 +1041,12 @@ $script .= "
 		}
 
 		try {
-			Transaction::begin(\$con);
+			\$con->beginTransaction();
 			\$affectedRows = \$this->doSave(\$con);
-			Transaction::commit(\$con);
+			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			Transaction::rollback(\$con);
+			\$con->rollback();
 			throw \$e;
 		}
 	}

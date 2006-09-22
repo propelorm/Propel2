@@ -42,10 +42,7 @@
 
   <taskdef
     name="propel-data-model"
-    classname="propel.phing.PropelDataModelTask" classpathRef="propelclasses"/>
-  <taskdef
-    name="propel-old-om"
-    classname="propel.phing.PropelOldOMTask" classpathRef="propelclasses"/>
+    classname="propel.phing.PropelDataModelTemplateTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask" classpathRef="propelclasses"/>
@@ -64,9 +61,6 @@
   <taskdef
     name="propel-sql"
     classname="propel.phing.PropelSQLTask" classpathRef="propelclasses"/>
-  <taskdef
-    name="propel-old-sql"
-    classname="propel.phing.PropelOldSQLTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-sql-exec"
     classname="propel.phing.PropelSQLExec" classpathRef="propelclasses"/>
@@ -182,7 +176,6 @@
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
-      templatePath="${propel.templatePath}"
       packageObjectModel="${propel.packageObjectModel}"
       >
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
@@ -344,7 +337,6 @@
       sqldbmap="${propel.sql.dir}/sqldb.map"
       dbEncoding="${propel.database.encoding}"
       targetDatabase="${propel.database}"
-      templatePath="${propel.templatePath}"
       datadbmap="${propel.schema.dir}/datadb.map"
       srcDir="${propel.schema.dir}"
       >
@@ -379,8 +371,7 @@
       databaseDriver="${propel.database.driver}"
       dbEncoding="${propel.database.encoding}"
       databaseUrl="${propel.database.url}"
-      outputDirectory="${propel.schema.dir}"
-      templatePath="${propel.templatePath}">
+      outputDirectory="${propel.schema.dir}">
       <mapper type="glob" from="${propel.datadump.mapper.from}" to="${propel.datadump.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.datadtd.includes}"
@@ -464,7 +455,6 @@
       outputDirectory="${propel.php.dir}"
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
-      templatePath="${propel.templatePath}"
       targetPlatform="${propel.targetPlatform}"
       packageObjectModel="${propel.packageObjectModel}"
       >

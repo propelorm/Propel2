@@ -828,11 +828,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		try {
 			// use transaction because \$criteria could contain info
 			// for more than one table (I guess, conceivably)
-			Transaction::begin(\$con);
+			\$con->beginTransaction();
 			\$pk = ".$this->basePeerClassname."::doInsert(\$criteria, \$con);
-			Transaction::commit(\$con);
+			\$con->commit();
 		} catch(PropelException \$e) {
-			Transaction::rollback(\$con);
+			\$con->rollback();
 			throw \$e;
 		}
 
@@ -914,7 +914,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		try {
 			// use transaction because \$criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			Transaction::begin(\$con);
+			\$con->beginTransaction();
 			";
 			if ($this->isDeleteCascadeEmulationNeeded()) {
 			    $script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(), \$con);
@@ -925,10 +925,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			";
 			}
 			$script .= "\$affectedRows += BasePeer::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
-			Transaction::commit(\$con);
+			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			Transaction::rollback(\$con);
+			\$con->rollback();
 			throw \$e;
 		}
 	}
@@ -1024,7 +1024,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		try {
 			// use transaction because \$criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			Transaction::begin(\$con);
+			\$con->beginTransaction();
 			";
 
 		if ($this->isDeleteCascadeEmulationNeeded()) {
@@ -1036,10 +1036,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 			\$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
-			Transaction::commit(\$con);
+			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			Transaction::rollback(\$con);
+			\$con->rollback();
 			throw \$e;
 		}
 	}

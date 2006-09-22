@@ -215,7 +215,7 @@ abstract class ".$this->getClassname()." {
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
         
         try {
-			Transaction::begin(\$con);
+        	\$con->beginTransaction();
 
             self::deleteNodeSubTree('1', \$con);
             
@@ -224,10 +224,10 @@ abstract class ".$this->getClassname()." {
             \$obj->\$setNodePath('1');
             \$obj->save(\$con);
 
-            Transaction::commit(\$con);
+            \$con->commit();
             
         } catch (PropelException \$e) {
-            Transaction::rollback(\$con);
+        	\$con->rollback();
             throw \$e;
         }            
 

@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
  
-require_once 'propel/phing/AbstractPropelDataModelTask.php';
+require_once 'propel/phing/PropelDataModelTemplateTask.php';
 include_once 'propel/engine/builder/om/ClassTools.php';
 
 /**
@@ -29,7 +29,7 @@ include_once 'propel/engine/builder/om/ClassTools.php';
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
  */
-class PropelDataDTDTask extends AbstractPropelDataModelTask {
+class PropelDataDTDTask extends PropelDataModelTemplateTask {
 
     
     public function main() {

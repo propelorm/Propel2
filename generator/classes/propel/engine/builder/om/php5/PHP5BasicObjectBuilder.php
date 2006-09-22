@@ -933,12 +933,12 @@ $script .= "
 		}
 
 		try {
-			Transaction::begin(\$con);
+			\$con->beginTransaction();
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);
 			\$this->setDeleted(true);
-			Transaction::commit(\$con);
+			\$con->commit();
 		} catch (PropelException \$e) {
-			Transaction::rollback(\$con);
+			\$con->rollback();
 			throw \$e;
 		}
 	}
