@@ -345,13 +345,9 @@ class Propel {
 			$key = $name.'.dsn';
 			
 			if (!isset(self::$configuration['datasources'][$key])) {
-				throw new PropelException("Unable to find " . $key . ".dsn in the [datasources] section of your configuration file.");
-			}
-			
-			if ( ! isset ( self::$configuration['datasources'][$key] ) ) {
 				throw new PropelException("Unable to find " . $key . " in the [datasources] section of your configuration file.");
 			}
-
+			
 			$user_key = $name . '.user';
 			$password_key = $name . '.password';
 
