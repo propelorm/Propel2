@@ -47,7 +47,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	 */
 	public function getName()
 	{
-		return $this->getChild()->getName();
+		return $this->getChild()->getClassName();
 	}
 	
 	/**
