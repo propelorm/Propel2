@@ -378,17 +378,9 @@ class Propel
 			
 			// load any driver options from the INI file
 			$driver_options = array();
-			
-			if ( isset(self::$configuration['datasources']['options']) && is_array(self::$configuration['datasources']['options']) ) {
+			if ( isset($conparams['options']) && is_array($conparams['options']) ) {
 				try {
-					self::processDriverOptions( self::$configuration['datasources']['options'], $driver_options );
-				} catch (PropelException $e) {
-					throw new PropelException('Error processing driver options in global [options]', $e);
-				}
-			}
-			if ( isset(self::$configuration['datasources'][$name]['options']) && is_array(self::$configuration['datasources'][$name]['options']) ) {
-				try {
-					self::processDriverOptions( self::$configuration['datasources'][$name]['options'], $driver_options );
+					self::processDriverOptions( $conparams['options'], $driver_options );
 				} catch (PropelException $e) {
 					throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
 				}

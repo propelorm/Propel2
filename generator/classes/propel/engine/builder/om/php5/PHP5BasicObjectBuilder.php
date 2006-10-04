@@ -431,7 +431,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$c, \$con);
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);
 ";
-		$affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
 		$clo = strtolower($col->getName());
 		switch($col->getType()) {
 			 case PropelTypes::DATE:

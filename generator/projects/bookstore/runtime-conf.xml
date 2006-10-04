@@ -49,17 +49,11 @@
 					<user>testuser</user>
 					<password>password</password>
 					-->
+					<options>
+						<option id="ATTR_PERSISTENT">false</option>
+					</options>
 				</connection>
-				<options>
-					<option id="ATTR_PERSISTENT">false</option>
-				</options>
 			</datasource>
-						
-			<!-- global options -->
-			<options>
-				<option id="ATTR_EMULATE_PREPARES">true></option>
-				<option id="ATTR_PERSISTENT">true</option>
-			</options>
 
 		</datasources>
 	</propel>
