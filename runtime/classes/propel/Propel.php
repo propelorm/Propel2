@@ -141,7 +141,9 @@ class Propel
 				. "a valid configuration. Please check the log files "
 				. "for further details.");
 		}
-
+		
+		self::configureLogging();
+		
 		// Support having the configuration stored within a 'propel' sub-section or at the top-level
 		if (isset(self::$configuration['propel']) && is_array(self::$configuration['propel'])) {
 			self::$configuration = self::$configuration['propel'];
@@ -177,7 +179,26 @@ class Propel
 			}
 		}		
 	}
-
+	
+	/**
+	 * Configure the logging system, if config is specified in the runtime configuration.
+	 */
+	protected static function configureLogging()
+	{
+		if (self::$logger === null) {
+			if (isset(self::$configuration['log']) && is_array(self::$configuration['log']) && count(self::$configuration['log'])) {
+				include_once 'Log.php'; // PEAR Log class
+				$c = self::$configuration['log'];
+				$type = isset($c['type']) ? $c['type'] : 'file';
+				$name = isset($c['name']) ? $c['name'] : './propel.log';
+				$ident = isset($c['ident']) ? $c['ident'] : 'propel';
+				$conf = isset($c['conf']) ? $c['conf'] : array();
+				$level = isset($c['level']) ? $c['level'] : PEAR_LOG_DEBUG;
+				self::$logger = Log::singleton($type, $name, $ident, $conf, $level);
+			} // if isset()
+		}
+	}
+	
 	/**
 	 * Initialization of Propel with an INI or PHP (array) configuration file.
 	 *
@@ -340,45 +361,36 @@ class Propel
 			$name = self::getDefaultDB();
 		}
 		
-		if (!isset(self::$connectionMap[$name])) {
-			$key = $name.'.dsn';
+		if (!isset(self::$connectionMap[$name])) {		
 			
-			if (!isset(self::$configuration['datasources'][$key])) {
-				throw new PropelException("Unable to find " . $key . " in the [datasources] section of your configuration file.");
+			$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null; 		 
+			if ($conparams === null) {
+				throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
 			}
 			
-			$user_key = $name . '.user';
-			$password_key = $name . '.password';
-
-			if (isset(self::$configuration['datasources'][$user_key])) {
-				$user = self::$configuration['datasources'][$user_key];
-			} else {
-				$user = null;
-			}
-
-			if (isset(self::$configuration['datasources'][$password_key])) {
-				$password = self::$configuration['datasources'][$password_key];
-			} else {
-				$password = null;
-			}
-
-			$dsn = self::$configuration['datasources'][$key];			
+			$dsn = $conparams['dsn'];
+			if ($dsn === null) {
+				throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
+			} 
+			
+			$user = isset($conparams['user']) ? $conparams['user'] : null;
+			$password = isset($conparams['password']) ? $conparams['password'] : null;			
 			
 			// load any driver options from the INI file
 			$driver_options = array();
-			$options_key = $name . '_options';
-			if ( isset( self::$configuration['global_options'] ) && is_array( self::$configuration['global_options'] ) ) {
+			
+			if ( isset(self::$configuration['datasources']['options']) && is_array(self::$configuration['datasources']['options']) ) {
 				try {
-					self::processDriverOptions( self::$configuration['global_options'], $driver_options );
+					self::processDriverOptions( self::$configuration['datasources']['options'], $driver_options );
 				} catch (PropelException $e) {
-					throw new PropelException('Error processing driver options in [global_options]', $e);
+					throw new PropelException('Error processing driver options in global [options]', $e);
 				}
 			}
-			if ( isset( self::$configuration[$options_key] ) ) {
+			if ( isset(self::$configuration['datasources'][$name]['options']) && is_array(self::$configuration['datasources'][$name]['options']) ) {
 				try {
-					self::processDriverOptions( self::$configuration[$options_key], $driver_options );
+					self::processDriverOptions( self::$configuration['datasources'][$name]['options'], $driver_options );
 				} catch (PropelException $e) {
-					throw new PropelException('Error processing driver options in ['.$options_key.']', $e);
+					throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
 				}
 			}
 			
@@ -406,12 +418,14 @@ class Propel
 	 */
 	private static function processDriverOptions($source, &$write_to)
 	{
-		foreach ($source as $option_key => $option_value) {
-			$option_key = 'PDO::'.$option_key;
-			if ( defined ( $option_key ) && $option_key_value = constant ( $option_key ) ) {
-				$write_to[$option_key_value] = $option_value;
+		foreach ($source as $option => $optiondata) {
+			$constant = 'PDO::'.$option;
+			$option_value = $optiondata['value'];
+			if ( defined ($constant) ) {
+				$constant_value = constant($constant);
+				$write_to[$constant_value] = $option_value;
 			} else {
-				throw new PropelException("Invalid PDO option specified: ".$option_key." = ".$option_value);
+				throw new PropelException("Invalid PDO option specified: ".$option." = ".$option_value);
 			}
 		}
 	}
@@ -432,11 +446,10 @@ class Propel
 		}
 		
 		if (!isset(self::$adapterMap[$name])) {
-			$key = $name.'.adapter';
-			if (!isset(self::$configuration['datasources'][$key])) {
-				throw new PropelException("Unable to find " . $key . ".adapter in the [datasources] section of your configuration file.");
+			if (!isset(self::$configuration['datasources'][$name]['adapter'])) {
+				throw new PropelException("Unable to find adapter for datasource [" . $name . "].");
 			}
-			$db = DBAdapter::factory(self::$configuration['datasources'][$key]);
+			$db = DBAdapter::factory(self::$configuration['datasources'][$name]['adapter']);
 			// register the adapter for this name
 			self::$adapterMap[$name] = $db;
 		}

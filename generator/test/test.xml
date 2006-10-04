@@ -29,8 +29,7 @@
 	<resolvepath propertyName="propel-generator.classes.dir.resolved" file="../classes"/>
 	<resolvepath propertyName="propel-runtime.classes.dir.resolved" file="../../runtime/classes"/>
 	<resolvepath propertyName="bookstore.classes.dir.resolved" file="../projects/bookstore/build/classes"/>
-	<resolvepath propertyName="bookstore.conf.dir.resolved" file="../projects/bookstore/"/>
-	
+	<resolvepath propertyName="bookstore.conf.dir.resolved" file="../projects/bookstore/build/conf"/>
 	
 	<path id="incthis">
 		<pathelement dir="${tests.dir.resolved}"/>
@@ -47,7 +46,7 @@
 		<echo>-------------------------------------------------</echo>
 		<adhoc><![CDATA[
 			require_once 'propel/Propel.php';
-			Propel::init('runtime-conf.ini');	
+			Propel::init('bookstore-conf.php');	
 		]]></adhoc>
 		
 		<fileset dir="${tests.classes.dir.resolved}" id="relevant-tests">

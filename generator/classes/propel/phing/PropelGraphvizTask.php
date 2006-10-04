@@ -20,11 +20,11 @@
  * <http://propel.phpdb.org>.
  */
 
+require_once 'propel/phing/AbstractPropelDataModelTask.php';
 include_once 'propel/engine/database/model/AppData.php';
-//require_once 'phing/Task.php';
 
 /**
- * A task to generate Graphviz png images from propel datamodel.
+ * A task to generate Graphviz dot files from Propel datamodel.
  *
  * @author Mark Kimsal
  * @version $Revision$

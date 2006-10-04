@@ -26,10 +26,10 @@
 
 error_reporting(E_ALL);
 
-$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore/runtime-conf.ini');
+$conf_path = realpath(dirname(__FILE__) . '/../projects/bookstore/build/conf/bookstore-conf.php');
 if (!file_exists($conf_path)) {
     print "Make sure that you specify properties in conf/bookstore.properties and "
-    ."build propel before running this script.";
+    ."build propel before running this script.\n";
     exit;
 }
  // Add PHP_CLASSPATH, if set
