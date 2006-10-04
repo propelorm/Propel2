@@ -18,8 +18,10 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
-require_once 'creole/CreoleTypes.php';
+
+//HL - removing this dependency, though there are larger issues still needing to 
+// be addressed for reverse-engineering.  
+//require_once 'creole/CreoleTypes.php';
 
 /**
  * A class that maps PropelTypes to CreoleTypes and to native PHP types.
@@ -208,7 +210,7 @@ class PropelTypes {
              * Create Creole type code to Propel type map.
              */
             self::$creoleToPropelTypeMap = array();
-
+			/* COMMENTED OUT TO REMOVE CREOLE DEPENDENCY.  THIS STILL NEEDS TO BE ADDRESSED FOR REVERSE ENGINEERING
             self::$creoleToPropelTypeMap[CreoleTypes::CHAR] = self::CHAR;
             self::$creoleToPropelTypeMap[CreoleTypes::VARCHAR] = self::VARCHAR;
             self::$creoleToPropelTypeMap[CreoleTypes::LONGVARCHAR] = self::LONGVARCHAR;
@@ -231,7 +233,7 @@ class PropelTypes {
             self::$creoleToPropelTypeMap[CreoleTypes::TIMESTAMP] = self::TIMESTAMP;
             self::$creoleToPropelTypeMap[CreoleTypes::BOOLEAN] = self::BOOLEAN;
             self::$creoleToPropelTypeMap[CreoleTypes::YEAR] = self::INTEGER;
-            
+            */
             self::$isInitialized = true;
         }
     }
