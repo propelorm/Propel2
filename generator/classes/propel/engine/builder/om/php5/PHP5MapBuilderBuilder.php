@@ -56,13 +56,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
-	{		
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "		
-require_once 'propel/map/MapBuilder.php';
-";
-        }
-		
+	{
 	} // addIncludes()
 	
 	/**

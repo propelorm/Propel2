@@ -1450,7 +1450,6 @@ class Criterion  {
                 // If selection is case insensitive use ILIKE for PostgreSQL or SQL 
                 // UPPER() function on column name for other databases.
                 if ($this->ignoreStringCase) {
-                    include_once 'propel/adapter/DBPostgres.php'; // for instanceof, since is_a() is not E_STRICT
                     if ($db instanceof DBPostgres) { // use is_a() because instanceof needs class to have been loaded
                         if ($this->comparison === Criteria::LIKE) {
                             $this->comparison = Criteria::ILIKE; 

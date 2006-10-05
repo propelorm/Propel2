@@ -60,36 +60,6 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-
-		$table = $this->getTable();
-		$package = $this->getPackage();
-		$parentClass = $this->getBaseClass();
-		$interface = $this->getInterface();
-
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-require_once '".$this->getFilePath($parentClass)."';
-";
-
-            if (!empty($interface)) {
-                $script .= "
-require_once '".$this->getFilePath($interface)."';
-";
-            }
-        }
-
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-
-include_once 'propel/util/Criteria.php';
-";
-        }
-
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-include_once '".$this->getStubPeerBuilder()->getClassFilePath()."';
-";
-        }
 	} // addIncludes()
 
 	/**

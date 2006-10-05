@@ -96,8 +96,6 @@ class PeerInfo
      */
     public static function loadPeer($peerName)
     {
-        $peerFile = $peerName . ".php";
-        require_once($peerFile);
         $peerObject = new $peerName();
         return $peerObject;
     }

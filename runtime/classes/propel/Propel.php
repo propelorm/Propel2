@@ -20,9 +20,9 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/PropelException.php';
-include_once 'propel/adapter/DBAdapter.php';
-include_once 'propel/util/PropelPDO.php';
+require 'propel/PropelException.php';
+require 'propel/adapter/DBAdapter.php';
+require 'propel/util/PropelPDO.php';
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -123,10 +123,60 @@ class Propel
 	 */
 	private static $logger = null;
 
- /** 
-	* @var         string The name of the database mapper class
-	*/ 
+	/** 
+	 * @var         string The name of the database mapper class
+	 */ 
 	private static $databaseMapClass = 'DatabaseMap'; 
+	
+	/**
+	 * @var        array A map of class names and their file paths for autoloading
+	 */
+	private static $autoloadMap = array(
+		'PropelException' => 'propel/PropelException.php',
+		
+		'DBAdapter' => 'propel/adapter/DBAdapter.php',
+		'DBMSSQL' => 'propel/adapter/DBMSSQL.php',
+		'DBMySQL' => 'propel/adapter/DBMySQL.php',
+		'DBMySQLi' => 'propel/adapter/DBMySQLi.php',
+		'DBNone' => 'propel/adapter/DBNone.php',
+		'DBOracle' => 'propel/adapter/DBOracle.php',
+		'DBPostgres' => 'propel/adapter/DBPostgres.php',
+		'DBSQLite' => 'propel/adapter/DBSQLite.php',
+		'DBSybase' => 'propel/adapter/DBSybase.php',
+		
+		'BasicLogger' => 'propel/logger/BasicLogger.php',
+		'MojaviLogAdapter' => 'propel/logger/MojaviLogAdapter.php',
+		
+		'ColumnMap' => 'propel/map/ColumnMap.php',
+		'DatabaseMap' => 'propel/map/DatabaseMap.php',
+		'MapBuilder' => 'propel/map/MapBuilder.php',
+		'TableMap' => 'propel/map/TableMap.php',
+		'ValidatorMap' => 'propel/map/ValidatorMap.php',
+		
+		'BaseObject' => 'propel/om/BaseObject.php',
+		'Persistent' => 'propel/om/Persistent.php',
+		'PreOrderNodeIterator' => 'propel/om/PreOrderNodeIterator.php',
+		
+		'BasePeer' => 'propel/util/BasePeer.php',
+		'Criteria' => 'propel/util/Criteria.php',
+		'PeerInfo' => 'propel/util/PeerInfo.php',
+		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
+		'PropelPDO' => 'propel/util/PropelPDO.php',
+		'PropelPager' => 'propel/util/PropelPager.php',
+		'Transaction' => 'propel/util/Transaction.php',
+		
+		'BasicValidator' => 'propel/validator/BasicValidator.php',
+		'MatchValidator' => 'propel/validator/MatchValidator.php',
+		'MaxLengthValidator' => 'propel/validator/MaxLengthValidator.php',
+		'MaxValueValidator' => 'propel/validator/MaxValueValidator.php',
+		'MinLengthValidator' => 'propel/validator/MinLengthValidator.php',
+		'MinValueValidator' => 'propel/validator/MinValueValidator.php',
+		'NotMatchValidator' => 'propel/validator/NotMatchValidator.php',
+		'RequiredValidator' => 'propel/validator/RequiredValidator.php',
+		'UniqueValidator' => 'propel/validator/UniqueValidator.php',
+		'ValidValuesValidator' => 'propel/validator/ValidValuesValidator.php',
+		'ValidationFailed' => 'propel/validator/ValidationFailed.php',
+	);
 	
 	/**
 	 * Initializes Propel
@@ -151,6 +201,9 @@ class Propel
 		
 		// reset the connection map (this should enable runtime changes of connection params)
 		self::$connectionMap = array();
+		
+		// merge the classes to the autoload map
+		self::$autoloadMap = array_merge(self::$configuration['classes'], self::$autoloadMap);
 		
 		self::$isInit = true;
 	}
@@ -177,6 +230,7 @@ class Propel
 			if (self::$configuration === false) {
 				throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
 			}
+			
 		}		
 	}
 	
@@ -464,47 +518,6 @@ class Propel
 	}
 
 	/**
-	 * Include once a file specified in DOT notation and reutrn unqualified clasname.
-	 *
-	 * Package notation is expected to be relative to a location
-	 * on the PHP include_path.  The dot-path classes are used as a way
-	 * to represent both classname and filesystem location; there is
-	 * an inherent assumption about filenaming.  To get around these
-	 * naming requirements you can include the class yourself
-	 * and then just use the classname instead of dot-path.
-	 *
-	 * @param      string dot-path to clas (e.g. path.to.my.ClassName).
-	 *
-	 * @return     string unqualified classname
-	 */
-	public static function import($path)
-	{
-		// extract classname
-		if (($pos = strrpos($path, '.')) === false) {
-			$class = $path;
-		} else {
-			$class = substr($path, $pos + 1);
-		}
-
-		// check if class exists
-		if (class_exists($class, false)) {
-			return $class;
-		}
-
-		// turn to filesystem path
-		$path = strtr($path, '.', DIRECTORY_SEPARATOR) . '.php';
-
-		// include class
-		$ret = include_once($path);
-		if ($ret === false) {
-			throw new PropelException("Unable to import class: " . $class . " from " . $path);
-		}
-
-		// return qualified name
-		return $class;
-	}
-
-	/**
 	 * Closes any associated resource handles.
 	 *
 	 * This method frees any database connection handles that have been
@@ -526,21 +539,9 @@ class Propel
 	 */
 	public static function autoload($className)
 	{
-		switch ($className) {
-			case 'CreoleTypes':
-				require('creole/CreoleTypes.php');
-				return true;
-			case 'MapBuilder':
-				require 'propel/map/MapBuilder.php';
-				return true;
-			case 'BaseObject':
-			case 'Persistent':
-				require("propel/om/{$className}.php");
-				return true;
-			case 'BasePeer':
-			case 'Criteria':
-				require("propel/util/{$className}.php");
-				return true;
+		if(isset(self::$autoloadMap[$className])) {
+			require(self::$autoloadMap[$className]);
+			return true;
 		}
 		return false;
 	}
@@ -557,3 +558,5 @@ class Propel
 		self::$databaseMapClass = $name; 
 	}
 }
+
+spl_autoload_register(array('Propel', 'autoload'));

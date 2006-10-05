@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
  
-require_once 'propel/adapter/DBAdapter.php';
-
 /**
  * This DatabaseHandler is used when you do not have a database
  * installed.

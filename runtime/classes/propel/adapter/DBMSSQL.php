@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/adapter/DBSybase.php';
-
 /**
  * This is used to connect to a MSSQL database.  For now, this class
  * simply extends the adaptor for Sybase.

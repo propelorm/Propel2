@@ -421,5 +421,4 @@ abstract class OMBuilder extends DataModelBuilder {
 		$table = $this->getTable()->getDatabase()->getTable($tablename);
 		return self::builderFactory($table, $type);
     }
-
 }

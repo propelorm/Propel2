@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/map/TableMap.php';
-
 /**
  * DatabaseMap is used to model a database.
  *

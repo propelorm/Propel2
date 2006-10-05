@@ -58,28 +58,8 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addIncludes(&$script) {
-
-		$table = $this->getTable();
-
-        if (!$this->isAutoloadCoreClassess()) {
-            $basePeerFile = $this->getFilePath($this->basePeerClass);
-            $script .= "
-require_once '$basePeerFile';
-";
-        }
-
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $objectFile = $this->getStubObjectBuilder()->getClassFilePath();
-            $script .= "
-// The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by ".$this->getPeerClassname()."::getOMClass()
-include_once '$objectFile';";
-        }
-
-		$script .= "
-";
-
+	protected function addIncludes(&$script)
+	{
 	} // addIncludes()
 
 	/**
@@ -347,7 +327,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	public static function getMapBuilder()
 	{
 		if (self::\$mapBuilder === null) {
-			include_once '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
+			require '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
 			self::\$mapBuilder = new ".$this->getMapBuilderBuilder()->getClassname()."();
 		}
 		return self::\$mapBuilder;
@@ -635,7 +615,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 		// set the class once to avoid overhead in the loop
 		\$cls = ".$this->getPeerClassname()."::getOMClass();
-		\$cls = Propel::import(\$cls);";
+		\$cls = array_pop(explode('.', \$cls));";
 		}
 
 		$script .= "
@@ -645,7 +625,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		if ($table->getChildrenColumn()) {
 			$script .= "
 			// class must be set each time from the record row
-			\$cls = Propel::import(".$this->getPeerClassname()."::getOMClass(\$row, 0));
+			\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj = new \$cls();
 			\$obj->hydrate(\$row);
 			\$results[] = \$obj;
@@ -707,7 +688,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 ";
 		} else { /* if not enumerated */
 			$script .= "
-			\$omClass = Propel::import(\$row[\$colnum + ".($col->getPosition()-1)."));
+			\$omClass = \$row[\$colnum + ".($col->getPosition()-1)."];
+			\$omClass = array_pop(explode('.', \$omClass));
 ";
 		}
 		$script .= "
@@ -1100,12 +1082,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$columnNamesF = $fk->getLocalColumns();
 					$columnNamesL = $fk->getForeignColumns();
 
-                    if (!$this->isAutoloadGeneratedClassess()) {
-                        $script .= "
-
-            include_once '".$this->getFilePath($tblFKPackage, $tblFK->getPhpName())."';
-";
-                    }
                     $script .= "
 
 			// delete related $fkClassName objects

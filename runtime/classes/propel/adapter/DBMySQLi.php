@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/adapter/DBMySQL.php';
-
 /**
  * This is used in order to connect to a MySQL database using the new mysqli API.
  *

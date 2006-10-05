@@ -51,20 +51,9 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-  // include base peer class
-  require_once '".$this->getPeerBuilder()->getClassFilePath()."';
+		$script .="
+require '".$this->getPeerBuilder()->getClassFilePath()."';
 ";
-        }
-
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-  
-  // include object class
-  include_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
-";
-        }
 	} // addIncludes()
 	
 	/**

@@ -184,7 +184,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						} 
 						$script .= "
-			\$cls = Propel::import(\$omClass);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);
 ";
@@ -199,7 +199,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						}
 						
 						$script .= "
-			\$cls = Propel::import(\$omClass);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj2 = new \$cls();
 			\$obj2->hydrate(\$row, \$startcol);
 
@@ -397,7 +397,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 		$script .= "
 			
-			\$cls = Propel::import(\$omClass);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);
 ";
@@ -459,7 +459,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			
 				$script .= "
 	
-			\$cls = Propel::import(\$omClass);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj".$index." = new \$cls();
 			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			
@@ -689,7 +689,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			}
 			
 			$script .= "
-			\$cls = Propel::import(\$omClass);
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);		
 ";
@@ -742,10 +742,9 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 					} /* $joinTable->getChildrenColumn() */
-	
 					$script .= "
-	
-			\$cls = Propel::import(\$omClass);
+
+			\$cls = array_pop(explode('.', \$cls));
 			\$obj$index  = new \$cls();
 			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			

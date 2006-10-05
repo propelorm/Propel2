@@ -51,11 +51,9 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-require_once '".$this->getObjectBuilder()->getClassFilePath()."';
+		$script .="
+require '".$this->getObjectBuilder()->getClassFilePath()."';
 ";
-        }
 	} // addIncludes()
 	
 	/**

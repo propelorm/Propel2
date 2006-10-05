@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */ 
 
-require_once 'propel/om/Persistent.php';
-
 /**
  * This class contains attributes and methods that are used by all
  * business objects within the system.

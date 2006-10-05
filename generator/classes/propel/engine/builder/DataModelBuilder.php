@@ -210,26 +210,6 @@ abstract class DataModelBuilder {
 		return $this->warnings;
 	}
 
-    /**
-     *  Should Propel-generated classes be assumed to be autoloaded?
-     *
-     *  @return boolean TRUE if Propel-generated classes are autoloaded, false to have Propel generate include statements.
-     */
-    public function isAutoloadGeneratedClassess()
-    {
-        return $this->getBuildProperty('autoloadGeneratedClasses');
-    }
-
-    /**
-     *  Should Propel-core classes be assumed to be autoloaded?
-     *
-     *  @return boolean TRUE if Propel-core classes are autoloaded (by Propel::autoload()), false to have Propel generate include statements for core classes.
-     */
-    public function isAutoloadCoreClassess()
-    {
-        return $this->getBuildProperty('autoloadCoreClasses');
-    }
-
 	/**
 	 * Wraps call to Platform->quoteIdentifier() with a check to see whether quoting is enabled.
 	 *

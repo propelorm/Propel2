@@ -60,12 +60,6 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-require_once '".$this->getStubObjectBuilder()->getClassFilePath()."';
-require_once '".$this->getStubNodeBuilder()->getClassFilePath()."';
-";
-        }
 	} // addIncludes()
 	
 	/**
@@ -734,7 +728,8 @@ abstract class ".$this->getClassname()." {
 		if (!$table->getChildrenColumn()) {
 			$script .= "
         // set the class once to avoid overhead in the loop
-        \$cls = Propel::import($peerClassname::getOMClass());
+        \$cls = $peerClassname::getOMClass();
+        \$cls = array_pop(explode('.', \$cls));
 ";
 		}
         
@@ -748,7 +743,8 @@ abstract class ".$this->getClassname()." {
 		if ($table->getChildrenColumn()) {
 			$script .= "
 				// class must be set each time from the record row
-				$cls = Propel::import($peerClassname::getOMClass($rs, 1));
+				\$cls = $peerClassname::getOMClass(\$rs, 1);
+				\$cls = array_pop(explode('.', \$cls));
 ";
 		}
 		

@@ -19,9 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/map/ColumnMap.php';
-include_once 'propel/map/ValidatorMap.php';
-
 /**
  * TableMap is used to model a table in a database.
  *

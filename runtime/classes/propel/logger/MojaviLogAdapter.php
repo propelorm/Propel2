@@ -19,9 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-// include BasicLogger from include path
-require_once('propel/logger/BasicLogger.php');
- 
 /**
  * Mojavi logging adapter for propel
  * 

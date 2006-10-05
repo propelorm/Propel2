@@ -20,9 +20,6 @@
  * <http://propel.phpdb.org>.
  */
  
-include_once 'propel/map/ValidatorMap.php';
-include_once 'propel/util/PropelColumnTypes.php';
-
 /**
  * ColumnMap is used to model a column of a table in a database.
  * 

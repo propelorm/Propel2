@@ -19,8 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'propel/validator/BasicValidator.php';
-
 /**
  * A validator for valid values (e.g. for enum fields)
  *

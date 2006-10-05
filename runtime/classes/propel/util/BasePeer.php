@@ -19,16 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'propel/adapter/DBAdapter.php';
-include_once 'propel/map/ColumnMap.php';
-include_once 'propel/map/DatabaseMap.php';
-include_once 'propel/map/MapBuilder.php';
-include_once 'propel/map/TableMap.php';
-include_once 'propel/map/ValidatorMap.php';
-include_once 'propel/validator/ValidationFailed.php';
-include_once 'propel/util/Transaction.php';
-include_once 'propel/util/PropelColumnTypes.php';
-
 /**
  * This is a utility class for all generated Peer classes in the system.
  *
@@ -907,7 +897,7 @@ class BasePeer
 		try {
 			$v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
 			if ($v === null) {
-				$cls = Propel::import($classname);
+				$cls = array_pop(explode('.', $classname));
 				$v = new $cls();
 				self::$validatorMap[$classname] = $v;
 			}

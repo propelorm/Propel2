@@ -51,20 +51,9 @@ class PHP5ExtensionNodePeerBuilder extends PeerBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
-        if (!$this->isAutoloadCoreClassess()) {
-            $script .= "
-  // include base nodepeer class
-  require_once '".$this->getNodePeerBuilder()->getClassFilePath()."';
+		$script .="
+require '".$this->getNodePeerBuilder()->getClassFilePath()."';
 ";
-        }
-
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-  
-  // include node class
-  include_once '".$this->getStubNodeBuilder()->getClassFilePath()."';
-";
-        }
 	} // addIncludes()
 	
 	/**

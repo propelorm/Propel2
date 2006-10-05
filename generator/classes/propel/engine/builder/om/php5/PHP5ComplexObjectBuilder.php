@@ -393,13 +393,6 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	{
         ";
 
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-		// include the related Peer class
-		include_once '".$fkPeerBuilder->getClassFilePath()."';
-";
-        }
-
         $script .= "
 		if (\$this->$varName === null && ($conditional)) {
 ";
@@ -548,12 +541,6 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null)
 	{
         ";
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-		// include the Peer class
-		include_once '".$fkPeerBuilder->getClassFilePath()."';
-";
-        }
         $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
@@ -742,12 +729,6 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function count$relCol(\$criteria = null, \$distinct = false, PDO \$con = null)
 	{
         ";
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-		// include the Peer class
-		include_once '".$fkPeerBuilder->getClassFilePath()."';
-";
-        }
         $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
@@ -804,12 +785,6 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get$relCol(\$criteria = null, PDO \$con = null)
 	{
         ";
-        if (!$this->isAutoloadGeneratedClassess()) {
-            $script .= "
-		// include the Peer class
-		include_once '".$fkPeerBuilder->getClassFilePath()."';
-";
-        }
         $script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
