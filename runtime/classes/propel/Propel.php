@@ -218,20 +218,10 @@ class Propel
 	 */
 	public static function configure($configFile)
 	{
-		if (substr($configFile, strrpos($configFile, '.') + 1) === "ini") {
-			ini_set('track_errors', true);
-			self::$configuration = parse_ini_file($configFile, true);
-			if (!empty($php_errormsg)) {
-				throw new PropelException("Error reading ini file: " . $php_errormsg);
-			}
-			ini_restore('track_errors');
-		} else {
-			self::$configuration = include($configFile);
-			if (self::$configuration === false) {
-				throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
-			}
-			
-		}		
+		self::$configuration = include($configFile);
+		if (self::$configuration === false) {
+			throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
+		}
 	}
 	
 	/**
