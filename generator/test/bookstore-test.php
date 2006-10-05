@@ -47,14 +47,7 @@ set_include_path(
 
 
  // Require classes.
- require_once 'propel/Propel.php';
- require_once 'bookstore/Author.php';
- require_once 'bookstore/Publisher.php';
- require_once 'bookstore/Book.php';
- require_once 'bookstore/Review.php';
- include_once 'bookstore/Media.php';
- include_once 'bookstore/BookClubList.php';
- include_once 'bookstore/BookListRel.php';
+ require 'propel/Propel.php';
 
  include_once 'Benchmark/Timer.php';
 
