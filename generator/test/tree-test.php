@@ -13,20 +13,16 @@ if (!file_exists($conf_path)) {
 
 // Add PHP_CLASSPATH, if set
 if (getenv("PHP_CLASSPATH")) {
-    ini_set('include_path', getenv("PHP_CLASSPATH") . PATH_SEPARATOR . ini_get('include_path'));
-}
-else {
-    ini_set('include_path',
-            realpath(dirname(__FILE__) . '/../../../creole/classes') . PATH_SEPARATOR . 
-            realpath(dirname(__FILE__) . '/../../../pear') . PATH_SEPARATOR . 
-            ini_get('include_path'));
+	set_include_path(getenv("PHP_CLASSPATH") . PATH_SEPARATOR . get_include_path());
 }
 
-// Add build/classes/ and classes/ to path 
-ini_set('include_path',
-        realpath(dirname(__FILE__) . '/../../propel/classes') . PATH_SEPARATOR . 
-        realpath(dirname(__FILE__) . '/../projects/treetest/build/classes') . PATH_SEPARATOR . 
-        ini_get('include_path'));
+ // Add build/classes/ and classes/ to path
+set_include_path(
+	realpath(dirname(__FILE__) . '/../projects/treetest/build/classes') . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../../runtime/classes' . PATH_SEPARATOR .
+	get_include_path()
+);
+
 
 // Require classes.
 require_once 'propel/Propel.php';

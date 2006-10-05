@@ -32,17 +32,18 @@ if (!file_exists($conf_path)) {
     ."build propel before running this script.";
     exit;
 }
- // Add PHP_CLASSPATH, if set
- if (getenv("PHP_CLASSPATH")) {
-     ini_set('include_path', getenv("PHP_CLASSPATH") . PATH_SEPARATOR . ini_get('include_path'));
- }
+
+// Add PHP_CLASSPATH, if set
+if (getenv("PHP_CLASSPATH")) {
+	set_include_path(getenv("PHP_CLASSPATH") . PATH_SEPARATOR . get_include_path());
+}
 
  // Add build/classes/ and classes/ to path
- set_include_path(
- 			//realpath(dirname(__FILE__) . '/../classes') . PATH_SEPARATOR .
-			realpath(dirname(__FILE__) . '/../projects/bookstore-packaged/build/classes') . PATH_SEPARATOR .
-			get_include_path()
- );
+set_include_path(
+	realpath(dirname(__FILE__) . '/../projects/bookstore-packaged/build/classes') . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../../runtime/classes' . PATH_SEPARATOR .
+	get_include_path()
+);
 
 
  // Require classes.
