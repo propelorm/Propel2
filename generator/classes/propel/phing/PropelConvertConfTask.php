@@ -91,7 +91,6 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 		
 		// Create a map of all PHP classes and their filepaths for this data model
 		
-		$classMap = array();
 		foreach ($this->getDataModels() as $dataModel) {
 
             foreach ($dataModel->getDatabases() as $database) {
@@ -120,7 +119,29 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
 						}
-												
+
+						if ($table->getChildrenColumn()) {
+							$col = $table->getChildrenColumn();
+							if ($col->isEnumeratedClasses()) {
+								foreach ($col->getChildren() as $child) {
+									$builder = DataModelBuilder::builderFactory($table, 'objectmultiextend');
+									$builder->setChild($child);
+									$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+									$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+								}
+							}
+						}
+
+						$baseClass = $table->getBaseClass();
+						if( $baseClass !== null ) {
+							$className = ClassTools::classname($baseClass);
+							if(!isset($classMap[$className])) {
+								$classPath = ClassTools::getFilePath($baseClass);
+								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
+								$classMap[$className] = $classPath;
+							}
+						}
+
 						// -----------------------------------------------------------------------------------------
 						// Create tree Node classes
 						// -----------------------------------------------------------------------------------------
