@@ -91,6 +91,8 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 		
 		// Create a map of all PHP classes and their filepaths for this data model
 		
+		DataModelBuilder::setBuildProperties($this->getPropelProperties());
+		
 		foreach ($this->getDataModels() as $dataModel) {
 
             foreach ($dataModel->getDatabases() as $database) {
