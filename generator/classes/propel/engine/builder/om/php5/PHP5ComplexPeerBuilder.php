@@ -744,7 +744,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					} /* $joinTable->getChildrenColumn() */
 					$script .= "
 
-			\$cls = array_pop(explode('.', \$cls));
+			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
 			\$obj$index  = new \$cls();
 			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			

@@ -897,7 +897,7 @@ class BasePeer
 		try {
 			$v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
 			if ($v === null) {
-				$cls = array_pop(explode('.', $classname));
+				$cls = substr($classname, strrpos($classname, '.') + 1);
 				$v = new $cls();
 				self::$validatorMap[$classname] = $v;
 			}

@@ -615,7 +615,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 		// set the class once to avoid overhead in the loop
 		\$cls = ".$this->getPeerClassname()."::getOMClass();
-		\$cls = array_pop(explode('.', \$cls));";
+		\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);";
 		}
 
 		$script .= "
@@ -626,7 +626,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 			// class must be set each time from the record row
 			\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-			\$cls = array_pop(explode('.', \$cls));
+			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
 			\$obj = new \$cls();
 			\$obj->hydrate(\$row);
 			\$results[] = \$obj;
@@ -689,7 +689,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} else { /* if not enumerated */
 			$script .= "
 			\$omClass = \$row[\$colnum + ".($col->getPosition()-1)."];
-			\$omClass = array_pop(explode('.', \$omClass));
+			\$omClass = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 ";
 		}
 		$script .= "
