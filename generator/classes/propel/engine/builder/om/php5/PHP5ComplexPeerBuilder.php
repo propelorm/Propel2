@@ -184,7 +184,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						} 
 						$script .= "
-			\$cls = array_pop(explode('.', \$cls));
+			\$cls = substr(\$cls, strrpos(\$cls, '.')+1);
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);
 ";
