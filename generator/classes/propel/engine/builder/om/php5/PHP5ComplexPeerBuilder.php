@@ -184,7 +184,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						} 
 						$script .= "
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);
 ";
@@ -199,7 +199,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						}
 						
 						$script .= "
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj2 = new \$cls();
 			\$obj2->hydrate(\$row, \$startcol);
 
@@ -397,7 +397,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	
 		$script .= "
 			
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);
 ";
@@ -459,7 +459,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			
 				$script .= "
 	
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj".$index." = new \$cls();
 			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			
@@ -689,7 +689,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			}
 			
 			$script .= "
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj1 = new \$cls();
 			\$obj1->hydrate(\$row);		
 ";
@@ -744,7 +744,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					} /* $joinTable->getChildrenColumn() */
 					$script .= "
 
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
 			\$obj$index  = new \$cls();
 			\$obj".$index."->hydrate(\$row, \$startcol$index);
 			
