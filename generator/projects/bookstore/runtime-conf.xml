@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- This new XML configuration format is the default format for properties 
-	files.  You can also used the old INI-based .properties format, but 
-	support for this will be removed in next major Propel version. -->
-		
 <config>
 	<!--
 	#
@@ -23,6 +19,10 @@
 	#                   PEAR_LOG_NOTICE   5
 	#                   PEAR_LOG_INFO     6
 	#                   PEAR_LOG_DEBUG    7
+	# 
+	# Note that if you omit the <log> config section, Propel will not attempt to 
+	# configure a logger, and you will need to specify one manually using 
+	# Propel::setLogger() if you want Propel to log debug or error messages.
 	-->
 	<log>
 		<ident>propel-bookstore</ident>
@@ -39,9 +39,9 @@
 		<datasources default="bookstore">		
 			
 			<datasource id="bookstore">
-				<!-- the Propel adapter (usually same as phptype of connection DSN) -->
+				<!-- the Propel adapter to use for this connection -->
 				<adapter>sqlite</adapter>				
-				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
+				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
 					<dsn>sqlite2:/tmp/bookstore.db</dsn>
 					<!--
