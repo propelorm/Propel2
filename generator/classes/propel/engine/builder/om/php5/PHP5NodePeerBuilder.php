@@ -313,7 +313,7 @@ abstract class ".$this->getClassname()." {
     public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectRS(\$criteria, \$con);
+        \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
         return self::populateNodes(\$rs, \$criteria);
     }
 ";
@@ -369,7 +369,7 @@ abstract class ".$this->getClassname()." {
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
         \$criteria->add(self::NPATH_COLNAME, \$np, Criteria::EQUAL);
         \$criteria = self::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = $peerClassname::doSelectRS(\$criteria, \$con);
+        \$rs = $peerClassname::doSelectStmt(\$criteria, \$con);
         \$nodes = self::populateNodes(\$rs, \$criteria);
         return (count(\$nodes) == 1 ? \$nodes[0] : null);
     }

@@ -398,7 +398,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$c = \$this->buildPkeyCriteria();
 		\$c->addSelectColumn(".$this->getColumnConstant($col).");
 		try {
-			\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$c, \$con);
+			\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$c, \$con);
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);
 ";
 		$clo = strtolower($col->getName());

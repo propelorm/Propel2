@@ -61,8 +61,8 @@ abstract class PeerBuilder extends OMBuilder {
 		// into a top-level method
 		$this->addDoSelectOne($script);
 		$this->addDoSelect($script);
-		$this->addDoSelectRS($script);	 // <-- there's Creole code in here
-		$this->addPopulateObjects($script); // <-- there's Creole code in here
+		$this->addDoSelectStmt($script);	 // <-- there's PDO code in here
+		$this->addPopulateObjects($script); // <-- there's PDO code in here
 
 	}
 

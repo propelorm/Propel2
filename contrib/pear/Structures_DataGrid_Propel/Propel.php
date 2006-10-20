@@ -293,15 +293,15 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
                 $mapBuilder = call_user_func(array($this->getPeerName(), 'getMapBuilder'));
                 $dbMap = $mapBuilder->getDatabaseMap();
                 $cols = $dbMap->getTable(constant($this->getPeerName()."::TABLE_NAME"))->getColumns();
-                $rs = call_user_func(array( $this->getPeerName(), 'doSelectRS'), $this->criteria);
+                $stmt = call_user_func(array( $this->getPeerName(), 'doSelectStmt'), $this->criteria);
 
                 $dataset = array();
                 $columns = array();
                 $this->primaryKeys = array();
                 $class = $this->getClassName();
-                while($rs->next()) { // use Creole ResultSet methods to iterate over resultset
+                while($row = $stmt->fetch(PDO::FETCH_NUM)) { // use Creole ResultSet methods to iterate over resultset
                         $obj = new $class();
-                        $obj->hydrate($rs);
+                        $obj->hydrate($row);
 
                         $row = array();
                         foreach($cols as $tmp_id => $col)

@@ -293,7 +293,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 ";
 						}
 						$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			return \$row[0];
 		} else {
@@ -549,7 +549,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		} // foreach [sub] foreign keys
 
 		$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			return \$row[0];
 		} else {
@@ -849,7 +849,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				}
 			} // foreach fkeys 
 			$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			return \$row[0];
 		} else {

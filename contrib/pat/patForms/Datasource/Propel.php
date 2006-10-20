@@ -41,7 +41,7 @@ class patForms_Datasource_Propel {
 			);
 		}
 
-		$rs = AuthorPeer::doSelectRs($c);
+		$rs = AuthorPeer::doSelectStmt($c);
 		$rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 		while ($rs->next()) {
 			$row = $rs->getRow();

@@ -491,7 +491,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->addSelectColumn(\$column);
 		}
 
-		\$stmt = ".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con);
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			return \$row[0];
 		} else {
@@ -547,33 +547,32 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function doSelect(Criteria \$criteria, PDO \$con = null)
 	{
-		return ".$this->getPeerClassname()."::populateObjects(".$this->getPeerClassname()."::doSelectRS(\$criteria, \$con));
+		return ".$this->getPeerClassname()."::populateObjects(".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con));
 	}";
 	}
 
 	/**
-	 * Adds the doSelectRS() method.
+	 * Adds the doSelectStmt() method.
 	 * @param string &$script The script will be modified in this method.
 	 */
-	protected function addDoSelectRS(&$script)
+	protected function addDoSelectStmt(&$script)
 	{
 
 		$script .= "
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param Criteria \$criteria The Criteria object used to build the SELECT statement.
 	 * @param PDO \$con The connection to use
 	 * @throws PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return ResultSet The resultset object with numerically-indexed fields.
+	 * @return PDOStatement The executed PDOStatement object.
 	 * @see ".$this->basePeerClassname."::doSelect()
 	 */
-	public static function doSelectRS(Criteria \$criteria, PDO \$con = null)
+	public static function doSelectStmt(Criteria \$criteria, PDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
