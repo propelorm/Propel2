@@ -261,7 +261,7 @@ CREATE ";
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
-			$privscript .= "
+			$privscript = "
 ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$privscript .= " ON UPDATE ".$fk->getOnUpdate();
