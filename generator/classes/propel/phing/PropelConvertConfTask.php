@@ -95,14 +95,16 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 		
 		foreach ($this->getDataModels() as $dataModel) {
 
-            foreach ($dataModel->getDatabases() as $database) {
-
+			foreach ($dataModel->getDatabases() as $database) {
+				
+				$classMap = array();
+				
 				// $this->log("Processing class mappings in database: " . $database->getName());
 
-                //print the tables
-                foreach($database->getTables() as $table) {
-                	
-                	if (!$table->isForReferenceOnly()) {
+        //print the tables
+				foreach($database->getTables() as $table) {
+
+					if (!$table->isForReferenceOnly()) {
 						
 						// $this->log("\t+ " . $table->getName());
 												
@@ -159,10 +161,11 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
                 	} // if (!$table->isReferenceOnly())
 				}
 				
+				$phpconf['propel']['datasources'][$database->getName()]['classes'] = $classMap;
 			}
 		}
 		
-		$phpconf['propel']['classes'] = $classMap;
+//		$phpconf['propel']['classes'] = $classMap;
 		
 		$phpconf['propel']['generator_version'] = DataModelBuilder::getBuildProperty('version');
 		
