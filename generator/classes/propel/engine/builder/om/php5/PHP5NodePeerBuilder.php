@@ -49,9 +49,9 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubNodePeerBuilder()->getName();
+		return $this->getBuildProperty('basePrefix') . $this->getStubNodePeerBuilder()->getClassname();
 	}
 	
 	/**
@@ -90,7 +90,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */	
-abstract class ".$this->getClassname()." {
+abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 ";
 	}
 	
@@ -132,7 +132,7 @@ abstract class ".$this->getClassname()." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	
@@ -164,8 +164,8 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addIsCodeBase(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
     /** 
@@ -185,11 +185,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addCreateNewRootNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -232,11 +232,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addInsertNewRootNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -296,8 +296,8 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addRetrieveNodes(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -313,7 +313,7 @@ abstract class ".$this->getClassname()." {
     public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
+        \$rs = ".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::doSelectStmt(\$criteria, \$con);
         return self::populateNodes(\$rs, \$criteria);
     }
 ";
@@ -321,11 +321,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addRetrieveNodeByPK(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -347,11 +347,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addRetrieveNodeByNP(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -385,7 +385,7 @@ abstract class ".$this->getClassname()." {
      * @param string Node path to retrieve.
      * @param boolean True if descendants should also be retrieved.
      * @param PDO Connection to use.
-     * @return ".$this->getStubNodeBuilder()->getClassname()."
+     * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
      */ 
     public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
     {
@@ -396,11 +396,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addMoveNodeSubTree(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 
 		$script .= "
 	/**
@@ -477,11 +477,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addDeleteNodeSubTree(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -516,11 +516,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addBuildFamilyCriteria(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 	
 		$script .= "
 	/** 
@@ -641,11 +641,11 @@ abstract class ".$this->getClassname()." {
 	
 	protected function addBuildTree(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 	
 		$script .= "
 	/**
@@ -698,11 +698,11 @@ abstract class ".$this->getClassname()." {
 	{
 		$table = $this->getTable();
 		
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 		
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 	
 		$script .= "
 	/**

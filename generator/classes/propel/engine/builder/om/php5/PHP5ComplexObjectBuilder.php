@@ -686,7 +686,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKAdd(&$script, ForeignKey $refFK)
 	{
 		$tblFK = $refFK->getTable();
-		$className = $this->getBuilder($refFK->getTable()->getName(), 'objectstub')->getClassname();
+		$className = DataModelBuilder::prefixClassname($this->getBuilder($refFK->getTable()->getName(), 'objectstub')->getClassname());
 
 		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
 

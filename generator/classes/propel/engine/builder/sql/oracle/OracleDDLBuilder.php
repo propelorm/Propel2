@@ -40,11 +40,11 @@ class OracleDDLBuilder extends DDLBuilder {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		$script .= "
-DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
+DROP TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." CASCADE CONSTRAINTS;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$this->quoteIdentifier($table->getSequenceName()).";
+DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($this->getSequenceName())).";
 ";
 		}
 	}
@@ -67,7 +67,7 @@ DROP SEQUENCE ".$this->quoteIdentifier($table->getSequenceName()).";
 
 		$script .= "
 
-CREATE TABLE ".$table->getName()."
+CREATE TABLE ".DataModelBuilder::prefixTablename($table->getName())."
 (
 	";
 
@@ -104,12 +104,12 @@ CREATE TABLE ".$table->getName()."
 		}
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
-	ALTER TABLE ".$this->quoteIdentifier($table->getName())."
+	ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
 	    ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
 	PRIMARY KEY (";
 			$delim = "";
 			foreach ($table->getPrimaryKey() as $col) {
-				echo $delim . $col->getName();
+				$script .= $delim . $col->getName();
 				$delim = ",";
 			}
 	$script .= ");
@@ -126,7 +126,7 @@ CREATE TABLE ".$table->getName()."
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
-			$script .= "CREATE SEQUENCE ".$this->quoteIdentifier($table->getSequenceName())." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+			$script .= "CREATE SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($this->getSequenceName()))." INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}
 	}
@@ -145,7 +145,7 @@ CREATE TABLE ".$table->getName()."
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -160,7 +160,7 @@ CREATE TABLE ".$table->getName()."
 		$platform = $this->getPlatform();
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
+ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				//$script .= " ON UPDATE ".$fk->getOnUpdate();

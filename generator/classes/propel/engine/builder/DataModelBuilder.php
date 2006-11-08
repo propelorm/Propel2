@@ -227,4 +227,48 @@ abstract class DataModelBuilder {
 		}
 		return $text;
 	}
+	
+	/**
+	 * Returns the name of the current class being built, with a possible prefix.
+	 * @return string
+	 */
+	public static function prefixClassname($identifier) {
+		return self::getBuildProperty('classPrefix') . $identifier;
+	}
+	
+	/**
+	 * Returns the name of the current table being built, with a possible prefix.
+	 * @return string
+	 */
+	public static function prefixTablename($identifier) {
+		return self::getBuildProperty('tablePrefix') . $identifier;
+	}
+	
+	/**
+	 * A name to use for creating a sequence if one is not specified.
+	 */
+	public function getSequenceName()
+	{
+		$table = $this->getTable();
+		static $longNamesMap = array();
+		$result = null;
+		if($table->getIdMethod() == IDMethod::NATIVE) {
+			$idMethodParams = $table->getIdMethodParameters();
+			if($idMethodParams === null) {
+				$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
+				if(strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
+					if(!isset($longNamesMap[$table->getName()])) {
+						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
+					}
+					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
+				}
+				else {
+					$result = $table->getName() . "_SEQ";
+				}
+			} else {
+				$result = $idMethodParams[0]->getValue();
+			}
+		}
+		return $result;
+	}
 }

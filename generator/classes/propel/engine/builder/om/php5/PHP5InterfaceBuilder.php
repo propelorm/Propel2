@@ -40,7 +40,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{	
 		return ClassTools::classname($this->getInterface());
 	}
@@ -65,7 +65,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getObjectBuilder()->getClassname();
+		$baseClassname = DataModelBuilder::prefixClassname($this->getObjectBuilder()->getClassname());
 		
 		$script .= "
 /**
@@ -88,7 +88,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
  *
  * @package ".$this->getPackage()."
  */	
-interface ".$this->getClassname()." {
+interface ".DataModelBuilder::prefixClassname($this->getClassname())." {
 ";
 	}
 	
@@ -112,7 +112,7 @@ interface ".$this->getClassname()." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	

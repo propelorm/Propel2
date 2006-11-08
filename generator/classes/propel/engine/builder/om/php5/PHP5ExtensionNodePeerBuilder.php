@@ -40,9 +40,9 @@ class PHP5ExtensionNodePeerBuilder extends PeerBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getStubNodeBuilder()->getName() . 'Peer';
+		return $this->getStubNodeBuilder()->getClassname() . 'Peer';
 	}
 
 	/**
@@ -67,7 +67,7 @@ require '".$this->getNodePeerBuilder()->getClassFilePath()."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getNodePeerBuilder()->getClassname();
+		$baseClassname = DataModelBuilder::prefixClassname($this->getNodePeerBuilder()->getClassname());
 		
 		$script .= "
 
@@ -91,7 +91,7 @@ require '".$this->getNodePeerBuilder()->getClassFilePath()."';
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->getClassname()." extends $baseClassname {
+class ".DataModelBuilder::prefixClassname($this->getClassname())." extends $baseClassname {
 ";
 	}
 	
@@ -116,7 +116,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	

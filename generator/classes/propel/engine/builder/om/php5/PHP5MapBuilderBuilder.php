@@ -46,7 +46,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
 		return $this->getTable()->getPhpName() . 'MapBuilder';
 	}
@@ -89,7 +89,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->getClassname()." implements MapBuilder {
+class ".DataModelBuilder::prefixClassname($this->getClassname())." implements MapBuilder {
 ";
 	}
 	
@@ -143,7 +143,7 @@ class ".$this->getClassname()." implements MapBuilder {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	
@@ -209,7 +209,7 @@ class ".$this->getClassname()." implements MapBuilder {
 		
 		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
 		\$tMap->setPhpName('".$table->getPhpName()."');
-		\$tMap->setClassname('" . $this->getBuilder($table->getName(), 'objectstub')->getClassname() . "');
+		\$tMap->setClassname('" . DataModelBuilder::prefixClassname($this->getBuilder($table->getName(), 'objectstub')->getClassname()) . "');
 ";
 		if ($table->getIdMethod() == "native") { 
 			$script .= "
@@ -229,7 +229,7 @@ class ".$this->getClassname()." implements MapBuilder {
 ";
 		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
 			$script .= " 
-		\$tMap->setPrimaryKeyMethodInfo('".$table->getSequenceName()."');
+		\$tMap->setPrimaryKeyMethodInfo('".$this->getSequenceName()."');
 ";
 		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
 			$script .= " 

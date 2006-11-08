@@ -49,9 +49,9 @@ class PHP5NodeBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubNodeBuilder()->getName();
+		return $this->getBuildProperty('basePrefix') . $this->getStubNodeBuilder()->getClassname();
 	}
 	
 	/**
@@ -90,7 +90,7 @@ class PHP5NodeBuilder extends ObjectBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */	
-abstract class ".$this->getClassname()." implements IteratorAggregate {
+abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." implements IteratorAggregate {
 ";
 	}
 	
@@ -154,7 +154,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	
@@ -167,13 +167,13 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	{
 		$script .= "
 	/**
-	 * @var ".$this->getStubObjectBuilder()->getClassname()." object wrapped by this node.
+	 * @var ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())." object wrapped by this node.
 	 */
 	protected \$obj = null;
 	
 	/**
 	 * The parent node for this node.
-	 * @var ".$this->getStubNodeBuilder()->getClassname()."
+	 * @var ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
 	 */
 	protected \$parentNode = null;
 
@@ -195,15 +195,15 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	/**
 	 * Constructor.
 	 *
-	 * @param ".$this->getStubObjectBuilder()->getClassname()." \$obj Object wrapped by this node.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())." \$obj Object wrapped by this node.
 	 */
 	public function __construct(\$obj = null) 
 	{
 		if (\$obj !== null) {
 			\$this->obj = \$obj;
 		} else {
-			\$setNodePath = 'set' . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_PHPNAME;
-			\$this->obj = new ".$this->getStubObjectBuilder()->getClassname()."();
+			\$setNodePath = 'set' . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_PHPNAME;
+			\$this->obj = new ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())."();
 			\$this->obj->\$setNodePath('0');
 		}
 	}
@@ -290,7 +290,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 		$script .= "
 	/**
 	 * Returns the object wrapped by this class.
-	 * @return ".$this->getStubObjectBuilder()->getClassname()."
+	 * @return ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())."
 	 */
 	public function getNodeObj()
 	{
@@ -308,7 +308,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 */
 	public function getNodePath()
 	{
-		\$getNodePath = 'get' . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_PHPNAME;
+		\$getNodePath = 'get' . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_PHPNAME;
 		return \$this->obj->\$getNodePath();
 	}
 ";
@@ -324,7 +324,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	public function getNodeIndex()
 	{
 		\$npath =& \$this->getNodePath();
-		\$sep = strrpos(\$npath, ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP);
+		\$sep = strrpos(\$npath, ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP);
 		return (int) (\$sep !== false ? substr(\$npath, \$sep+1) : \$npath);
 	}
 ";
@@ -339,7 +339,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 */
 	public function getNodeLevel()
 	{
-		return (substr_count(\$this->getNodePath(), ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP) + 1);
+		return (substr_count(\$this->getNodePath(), ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP) + 1);
 	}
 ";
 	}
@@ -351,7 +351,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 * Returns true if specified node is a child of this node. If recurse is
 	 * true, checks if specified node is a descendant of this node.
 	 *
-	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to look for.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to look for.
 	 * @param boolean True if strict comparison should be used.
 	 * @param boolean True if all descendants should be checked.
 	 * @return boolean
@@ -382,7 +382,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 * @param int One-based child node index.
 	 * @param boolean True if child should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
 	 */
 	public function getChildNodeAt(\$i, \$querydb = false, PDO \$con = null)
 	{
@@ -391,11 +391,11 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			!\$this->obj->isDeleted() && 
 			!isset(\$this->childNodes[\$i]))
 		{
-			\$criteria = new Criteria(".$this->getStubPeerBuilder()->getClassname()."::DATABASE_NAME);
-			\$criteria->add(".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_COLNAME, \$this->getNodePath() . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP . \$i, Criteria::EQUAL);
+			\$criteria = new Criteria(".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::DATABASE_NAME);
+			\$criteria->add(".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_COLNAME, \$this->getNodePath() . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP . \$i, Criteria::EQUAL);
 
-			if (\$childObj = ".$this->getStubPeerBuilder()->getClassname()."::doSelectOne(\$criteria, \$con))
-				\$this->attachChildNode(new ".$this->getStubNodeBuilder()->getClassname()."(\$childObj));
+			if (\$childObj = ".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::doSelectOne(\$criteria, \$con))
+				\$this->attachChildNode(new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$childObj));
 		}
 
 		return (isset(\$this->childNodes[\$i]) ? \$this->childNodes[\$i] : null);
@@ -411,7 +411,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 *
 	 * @param boolean True if child should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
 	 */
 	public function getFirstChildNode(\$querydb = false, PDO \$con = null)
 	{
@@ -422,8 +422,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addGetLastChildNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -455,7 +455,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			
 			if (\$lastObj !== null)
 			{
-				\$lastNode = new ".$this->getStubNodeBuilder()->getClassname()."(\$lastObj);
+				\$lastNode = new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$lastObj);
 				
 				end(\$this->childNodes);
 				\$endNode = (count(\$this->childNodes) ? current(\$this->childNodes) : null);
@@ -491,7 +491,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 * @param boolean True if previous sibling should be returned.
 	 * @param boolean True if sibling should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
 	 */
 	public function getSiblingNode(\$prev = false, \$querydb = false, PDO \$con = null)
 	{
@@ -521,8 +521,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 
 	protected function addGetParentNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 
 		$script .= "
 	/**
@@ -530,7 +530,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 *
 	 * @param boolean True if parent should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
 	 */
 	public function getParentNode(\$querydb = true, PDO \$con = null)
 	{
@@ -549,7 +549,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			
 			if (\$parentObj = $peerClassname::doSelectOne(\$criteria, \$con))
 			{
-				\$parentNode = new ".$this->getStubNodeBuilder()->getClassname()."(\$parentObj);
+				\$parentNode = new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$parentObj);
 				\$parentNode->attachChildNode(\$this);
 			}
 		}
@@ -634,8 +634,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addAddChildNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -644,8 +644,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	 * \$beforeNode. If \$beforeNode is not specified the node will be appended to
 	 * the end of the child nodes.
 	 *
-	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to add.
-	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to insert before.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to add.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to insert before.
 	 * @param PDO Connection to use.
 	 */
 	public function addChildNode(\$node, \$beforeNode = null, PDO \$con = null)
@@ -735,7 +735,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	/**
 	 * Moves the specified child node in the specified direction.
 	 *
-	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to move.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to move.
 	 * @param int Number of spaces to move among siblings (may be negative).
 	 * @param PDO Connection to use.
 	 * @throws PropelException
@@ -751,7 +751,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	protected function addSave(&$script)
 	{
 
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		$script .= "
 	/**
 	 * Saves modified object data to the datastore.
@@ -784,7 +784,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addDelete(&$script)
 	{
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		$script .= "
 	/**
 	 * Removes this object and all descendants from datastore.
@@ -816,7 +816,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 
 	protected function addEquals(&$script)
 	{
-		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		$script .= "
 	/**
 	 * Compares the object wrapped by this node with that of another node. Use 
@@ -840,7 +840,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addAttachParentNode(&$script)
 	{
-		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		$script .= "
 	/**
 	 * This method is used internally when constructing the tree structure 
@@ -864,8 +864,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addAttachChildNode(&$script)
 	{
-		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		$script .= "
 	/**
 	 * This method is used internally when constructing the tree structure 
@@ -903,7 +903,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addDetachParentNode(&$script)
 	{
-		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
 		$script .= "
 	/**
 	 * This method is used internally when deleting nodes. It is used to break
@@ -929,7 +929,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	/**
 	 * This method is used internally when deleting nodes. It is used to break
 	 * the link to this between this node and the specified child.
-	 * @param ".$this->getStubNodeBuilder()->getClassname()." Child node to detach.
+	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Child node to detach.
 	 * @return void
 	 * @throws PropelException
 	 */
@@ -946,8 +946,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addShiftChildNodes(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -1032,9 +1032,9 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addInsertNewChildNode(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
-		$nodeClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		
 		$script .= "
 	/**
@@ -1086,7 +1086,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 	
 	protected function addAdjustNodePath(&$script)
 	{
-		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
 		$script .= "
 	/**
 	 * Adjust path of node and all children. This is used internally when 

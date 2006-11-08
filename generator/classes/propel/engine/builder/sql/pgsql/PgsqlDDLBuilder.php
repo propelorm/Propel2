@@ -126,11 +126,11 @@ class PgsqlDDLBuilder extends DDLBuilder {
 		$platform = $this->getPlatform();
 
 		$script .= "
-DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE;
+DROP TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." CASCADE;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$this->quoteIdentifier(strtolower($table->getSequenceName())).";
+DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()))).";
 ";
 		}
 	}
@@ -162,7 +162,7 @@ DROP SEQUENCE ".$this->quoteIdentifier(strtolower($table->getSequenceName())).";
 
         $script .= "
 
-CREATE TABLE ".$this->quoteIdentifier($table->getName())."
+CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
 (
 	";
 
@@ -186,7 +186,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$script .= "
 );
 
-COMMENT ON TABLE ".$this->quoteIdentifier($table->getName())." IS '" . $platform->escapeText($table->getDescription())."';
+COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." IS '" . $platform->escapeText($table->getDescription())."';
 
 ";
 
@@ -208,7 +208,7 @@ COMMENT ON TABLE ".$this->quoteIdentifier($table->getName())." IS '" . $platform
 		foreach ($this->getTable()->getColumns() as $col) {
     		if( $col->getDescription() != '' ) {
 				$script .= "
-COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
+COMMENT ON COLUMN ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName())).".".$this->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
 ";
 			}
 		}
@@ -225,7 +225,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteId
 
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($table->getSequenceName())).";
+CREATE SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()))).";
 ";
 		}
 	}
@@ -246,7 +246,7 @@ CREATE ";
 			if($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -262,7 +262,7 @@ CREATE ";
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$privscript = "
-ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
+ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$privscript .= " ON UPDATE ".$fk->getOnUpdate();
 			}

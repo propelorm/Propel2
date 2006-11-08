@@ -810,36 +810,6 @@ class Table extends XMLElement implements IDMethod {
     }
 
     /**
-     * A name to use for creating a sequence if one is not specified.
-     */
-    public function getSequenceName()
-    {
-        static $longNamesMap = array();
-        $result = null;
-        if ($this->getIdMethod() == self::NATIVE) {
-            $idMethodParams = $this->getIdMethodParameters();
-            if ($idMethodParams === null) {
-                $maxIdentifierLength = $this->getDatabase()->getPlatform()->getMaxColumnNameLength();
-                if(strlen($this->getName() . "_SEQ") > $maxIdentifierLength)
-                {
-                  if(!isset($longNamesMap[$this->getName()]))
-                  {
-                    $longNamesMap[$this->getName()] = strval(count($longNamesMap) + 1);
-                  }
-                  $result = substr($this->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$this->getName()])) . "_SEQ_" . $longNamesMap[$this->getName()];
-                }
-                else
-                {
-                  $result = $this->getName() . "_SEQ";
-                }
-            } else {
-                $result = $idMethodParams[0]->getValue();
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Returns an Array containing all the FKs in the table
      */
     public function getIndices()

@@ -40,7 +40,7 @@ class PHP5ExtensionNodeBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
 		return $this->getTable()->getPhpName() . 'Node';
 	}
@@ -67,7 +67,7 @@ require '".$this->getNodeBuilder()->getClassFilePath()."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getNodeBuilder()->getClassname();
+		$baseClassname = DataModelBuilder::prefixClassname($this->getNodeBuilder()->getClassname());
 		
 		$script .= "
 
@@ -91,7 +91,7 @@ require '".$this->getNodeBuilder()->getClassFilePath()."';
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->getClassname()." extends $baseClassname {
+class ".DataModelBuilder::prefixClassname($this->getClassname())." extends $baseClassname {
 ";
 	}
 	
@@ -115,7 +115,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	

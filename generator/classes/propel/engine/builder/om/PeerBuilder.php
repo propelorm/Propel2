@@ -42,8 +42,11 @@ abstract class PeerBuilder extends OMBuilder {
 	 */
 	public function __construct(Table $table) {
 		parent::__construct($table);
-		$this->basePeerClass = $this->getBasePeer($table);
-		$this->basePeerClassname = $this->classname($this->basePeerClass);
+		$this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
+		$pos = strrpos($this->basePeerClassname, '.');
+		if($pos !== false) { 
+			$this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
+		}
 	}
 
 	/**

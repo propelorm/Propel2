@@ -45,9 +45,9 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getChild()->getClassName();
+		return DataModelBuilder::prefixClassname($this->getChild()->getClassname());
 	}
 	
 	/**
@@ -131,7 +131,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		
-		$baseClassname = $this->getObjectBuilder()->getClassname();
+		$baseClassname = DataModelBuilder::prefixClassname($this->getObjectBuilder()->getClassname());
 		
 		$script .= "
 
@@ -155,7 +155,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
  *
  * @package ".$this->getPackage()."
  */	
-class ".$this->getClassname()." extends ".$this->getParentClassname()." {
+class ".DataModelBuilder::prefixClassname($this->getClassname())." extends ".$this->getParentClassname()." {
 ";
 	}
 	
@@ -177,7 +177,7 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 		
 		$script .= "
 	/**
-	 * Constructs a new ".$this->getChild()->getClassName()." class, setting the ".$col->getName()." column to ".$this->getPeerClassname()."::$const.
+	 * Constructs a new ".DataModelBuilder::prefixClassname($this->getChild()->getClassname())." class, setting the ".$col->getName()." column to ".$this->getPeerClassname()."::$const.
 	 */
 	public function __construct()
 	{
@@ -196,7 +196,7 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 	

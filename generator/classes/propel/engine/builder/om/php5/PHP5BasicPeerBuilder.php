@@ -40,9 +40,9 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getName();
+		return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getClassname();
 	}
 
 	/**
@@ -88,7 +88,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */
-abstract class ".$this->getClassname()." {
+abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 ";
 	}
 
@@ -101,7 +101,7 @@ abstract class ".$this->getClassname()." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 		$this->addStaticMapBuilderRegistration($script);
 	}
@@ -125,7 +125,7 @@ abstract class ".$this->getClassname()." {
 // 
 // Doing so will effectively overwrite the registration below.
 
-Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getClassname()."::TABLE_NAME, ".$this->getClassname()."::getMapBuilder());
+Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname())."::DATABASE_NAME)->addTableBuilder(".DataModelBuilder::prefixClassname($this->getClassname())."::TABLE_NAME, ".DataModelBuilder::prefixClassname($this->getClassname())."::getMapBuilder());
 
 ";
 	}
@@ -137,7 +137,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	protected function addConstantsAndAttributes(&$script)
 	{
-		$tableName = $this->getTable()->getName();
+		$tableName = DataModelBuilder::prefixTableName($this->getTable()->getName());
 		$dbName = $this->getDatabase()->getName();
 		$script .= "
 	/** the default database name for this class */
@@ -182,7 +182,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			$script .= "
 	/** the column name for the ".strtoupper($col->getName()) ." field */
-	const ".$this->getColumnName($col) ." = '".$this->getTable()->getName().".".strtoupper($col->getName())."';
+	const ".$this->getColumnName($col) ." = '".DataModelBuilder::prefixTablename($this->getTable()->getName()).".".strtoupper($col->getName())."';
 ";
 		} // foreach
 	}
@@ -328,7 +328,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		if (self::\$mapBuilder === null) {
 			require '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
-			self::\$mapBuilder = new ".$this->getMapBuilderBuilder()->getClassname()."();
+			self::\$mapBuilder = new ".DataModelBuilder::prefixClassname($this->getMapBuilderBuilder()->getClassname())."();
 		}
 		return self::\$mapBuilder;
 	}";
@@ -360,7 +360,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 
         /** A key representing a particular subclass */
-        const CLASSKEY_".strtoupper($child->getClassName())." = '" . $child->getKey() . "';
+        const CLASSKEY_".strtoupper(DataModelBuilder::prefixClassname($child->getClassname()))." = '" . $child->getKey() . "';
 
 	/** A class that can be returned by this peer. */
 	const CLASSNAME_".strtoupper($child->getKey())." = '". $childBuilder->getClasspath() . "';
@@ -448,7 +448,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		*/
 		if ($table->hasPrimaryKey()) {
 			$pk = $table->getPrimaryKey();
-			$count_col = $table->getName().".".strtoupper($pk[0]->getName());
+			$count_col = DataModelBuilder::prefixClassname($table->getName()).".".strtoupper($pk[0]->getName());
 		}
 
 		$script .= "

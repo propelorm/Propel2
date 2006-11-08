@@ -279,17 +279,9 @@ abstract class OMBuilder extends DataModelBuilder {
 	}
 	
 	/**
-	 * Returns the name of the current class being built.
-	 * @return string
-	 */
-	public function getClassname() {
-		return $this->getBuildProperty('classPrefix') . $this->getName();
-	}
-
-	/**
 	 * 
 	 */
-	abstract public function getName();
+	abstract public function getClassname();
 	
 	/**
 	 * Gets the dot-path representation of current class being built.
@@ -298,9 +290,9 @@ abstract class OMBuilder extends DataModelBuilder {
 	public function getClasspath()
 	{
 		if ($this->getPackage()) {
-		    $path = $this->getPackage() . '.' . $this->getClassname();
+		    $path = $this->getPackage() . '.' . DataModelBuilder::prefixClassname($this->getClassname());
 		} else {
-			$path = $this->getClassname();
+			$path = DataModelBuilder::prefixClassname($this->getClassname());
 		}
 		return $path;
 	}
@@ -311,7 +303,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	public function getClassFilePath()
 	{
-		return parent::getFilePath($this->getPackage(), $this->getName());
+		return parent::getFilePath($this->getPackage(), $this->getClassname());
 	}
 
 	/**
@@ -345,7 +337,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * @see StubPeerBuilder::getClassname()
 	 */
 	public function getPeerClassname() {
-		return $this->getStubPeerBuilder()->getClassname();
+		return DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
 	}
 		
 	/**
@@ -356,7 +348,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 * @see StubPeerBuilder::getClassname()
 	 */
 	public function getObjectClassname() {
-		return $this->getStubObjectBuilder()->getClassname();
+		return DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
 	}
 	
 	/** 
@@ -384,21 +376,6 @@ abstract class OMBuilder extends DataModelBuilder {
             $const = strtoupper($col->getName());
         }
 		return $classname.'::'.$const;
-    }
-	
-	/**
-     * Gets just classname, given a dot-path to class.
-     * @param string $qualifiedName
-     * @return string
-     */
-    public function classname($qualifiedName)
-    {
-        $pos = strrpos($qualifiedName, '.');
-        if ($pos === false) { 
-            return $qualifiedName;  // there is no '.' in the qualifed name
-        } else {
-            return substr($qualifiedName, $pos + 1); // start just after '.'
-        }
     }
 	
 	/**

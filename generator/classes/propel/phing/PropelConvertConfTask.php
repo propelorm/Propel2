@@ -118,8 +118,8 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						
 						foreach(array('mapbuilder', 'peerstub', 'objectstub') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
-							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+							$this->log("Adding class mapping: " . DataModelBuilder::prefixClassname($builder->getClassname()) . ' => ' . $builder->getClassFilePath());
+							$classMap[DataModelBuilder::prefixClassname($builder->getClassname())] = $builder->getClassFilePath();
 						}
 
 						if ($table->getChildrenColumn()) {
@@ -128,8 +128,8 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 								foreach ($col->getChildren() as $child) {
 									$builder = DataModelBuilder::builderFactory($table, 'objectmultiextend');
 									$builder->setChild($child);
-									$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-									$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+									$this->log("Adding class mapping: " . DataModelBuilder::prefixClassname($builder->getClassname()) . ' => ' . $builder->getClassFilePath());
+									$classMap[DataModelBuilder::prefixClassname($builder->getClassname())] = $builder->getClassFilePath();
 								}
 							}
 						}
@@ -151,8 +151,8 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						if ($table->isTree()) {							
 							foreach(array('nodepeerstub', 'nodestub') as $target) {
 								$builder = DataModelBuilder::builderFactory($table, $target);
-								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+								$this->log("Adding class mapping: " . DataModelBuilder::prefixClassname($builder->getClassname()) . ' => ' . $builder->getClassFilePath());
+								$classMap[DataModelBuilder::prefixClassname($builder->getClassname())] = $builder->getClassFilePath();
 							}
 						} // if Table->isTree()
 						

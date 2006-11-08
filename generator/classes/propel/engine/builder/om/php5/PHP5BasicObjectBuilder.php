@@ -49,9 +49,9 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getName()
+	public function getClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getName();
+		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname();
 	}
 
 	/**
@@ -91,7 +91,7 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */
-abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->getBaseClass())." ";
+abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." extends ".ClassTools::classname($this->getBaseClass())." ";
 
 		$interface = ClassTools::getInterface($table);
 		if ($interface) {
@@ -155,7 +155,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . $this->getClassname() . "
+} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
 ";
 	}
 

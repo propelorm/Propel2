@@ -84,14 +84,14 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 		
 		$_f = new PhingFile($this->getOutputDirectory(), $path);
 		if ($overwrite || !$_f->exists()) {
-			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
+			$this->log("\t\t-> " . DataModelBuilder::prefixClassname($builder->getClassname()) . " [builder: " . get_class($builder) . "]");
 			$script = $builder->build();
 			file_put_contents($_f->getAbsolutePath(), $script);
 			foreach($builder->getWarnings() as $warning) {
 				$this->log($warning, PROJECT_MSG_WARN);
 			}
 		} else {
-			$this->log("\t\t-> (exists) " . $builder->getClassname());
+			$this->log("\t\t-> (exists) " . DataModelBuilder::prefixClassname($builder->getClassname()));
 		}
 		
 	}
