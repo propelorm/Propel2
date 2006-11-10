@@ -49,9 +49,9 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname();
+		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
 	}
 
 	/**
@@ -91,7 +91,7 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */
-abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." extends ".ClassTools::classname($this->getBaseClass())." ";
+abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->getBaseClass())." ";
 
 		$interface = ClassTools::getInterface($table);
 		if ($interface) {
@@ -123,7 +123,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." exte
 
 		$this->addManipulationMethods($script);
 		$this->addValidationMethods($script);
-		
+
 		if ($this->isAddGenericAccessors()) {
 			$this->addGetByName($script);
 			$this->addGetByPosition($script);
@@ -155,7 +155,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." exte
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 	}
 
@@ -286,7 +286,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." exte
 		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
 			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
 		}
-		
+
 		// if the default format property was an empty string, then we'll set it
 		// to NULL, which will return the "native" integer timestamp
 		if (empty($defaultfmt)) { $defaultfmt = null; }
@@ -593,7 +593,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." exte
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param array \$row The row returned by PDOStatement->fetch(PDO::FETCH_NUM) 
+	 * @param array \$row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
 	 * @param int \$startcol 0-based offset column which indicates which restultset column to start with.
 	 * @return int next starting column
 	 * @throws PropelException  - Any caught Exception will be rewrapped as a PropelException.
@@ -923,7 +923,7 @@ $script .= "
 		$this->addDelete($script);
 		$this->addSave($script);
 	}
-	
+
 	/**
 	 * Adds the methods related to validationg the object.
 	 * @param string &$script The script will be modified in this method.
@@ -934,7 +934,7 @@ $script .= "
 		$this->addGetValidationFailures($script);
 		$this->addValidate($script);
 	}
-	
+
 	/**
 	 * Adds the save() method.
 	 * @param string &$script The script will be modified in this method.
@@ -1261,7 +1261,7 @@ $script .= "
 	 * It creates a new object filling in the simple attributes, but skipping any primary
 	 * keys that are defined for the table.
 	 *
-	 * @return ".$table->getPhpName()." Clone of current object.
+	 * @return ".$this->getObjectClassname()." Clone of current object.
 	 * @throws PropelException
 	 */
 	public function copy()
@@ -1286,8 +1286,8 @@ $script .= "
 	/**
 	 * Sets contents of passed object to values from current object.
 	 *
-	 * @param object \$copyObj An object of ".$table->getPhpName()." (or compatible) type.
-	 * @return ".$table->getPhpName()." Clone of current object.
+	 * @param object \$copyObj An object of ".$this->getObjectClassname()." (or compatible) type.
+	 * @return ".$this->getObjectClassname()." Clone of current object.
 	 * @throws PropelException
 	 */
 	public function copyInto(\$copyObj)

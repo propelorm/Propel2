@@ -24,18 +24,18 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
 
 /**
  * Generates a PHP5 tree node Peer class for user object model (OM).
- * 
+ *
  * This class produces the base tree node object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
- * 
+ *
  * This class replaces the Node.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5NodePeerBuilder extends PeerBuilder {		
-	
+class PHP5NodePeerBuilder extends PeerBuilder {
+
 	/**
 	 * Gets the package for the [base] object classes.
 	 * @return string
@@ -44,16 +44,16 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	{
 		return parent::getPackage() . ".om";
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubNodePeerBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
@@ -61,18 +61,18 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	protected function addIncludes(&$script)
 	{
 	} // addIncludes()
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
-		
+
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
-		
+
 		$script .= "
 /**
  * Base  static class for performing query operations on the tree contained by the '$tableName' table.
@@ -89,11 +89,11 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 		}
 		$script .= "
  * @package ".$this->getPackage()."
- */	
-abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
+ */
+abstract class ".$this->getClassname()." {
 ";
 	}
-	
+
 	/**
 	 * Specifies the methods that are added as part of the basic OM class.
 	 * This can be overridden by subclasses that wish to add more methods.
@@ -102,44 +102,44 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 	protected function addClassBody(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		// FIXME
 		// - Probably the build needs to be customized for supporting
 		// tables that are "aliases".  -- definitely a fringe usecase, though.
-						
+
 		$this->addConstants($script);
-		
+
 		$this->addIsCodeBase($script);
-				
+
 		$this->addRetrieveMethods($script);
-		
+
 		$this->addCreateNewRootNode($script);
 		$this->addInsertNewRootNode($script);
 		$this->addMoveNodeSubTree($script);
 		$this->addDeleteNodeSubTree($script);
-		
+
 		$this->addBuildFamilyCriteria($script);
 		$this->addBuildTree($script);
-		
+
 		$this->addPopulateNodes($script);
-		
+
 	}
-		
+
 	/**
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 	}
-	
+
 	protected function addConstants(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		$npath_colname = '';
 		$npath_phpname = '';
 		$npath_len = 0;
@@ -160,41 +160,41 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 	const NPATH_LEN		= $npath_len;
 ";
 	}
-	
-	
+
+
 	protected function addIsCodeBase(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
-    /** 
+    /**
      * Temp function for CodeBase hacks that will go away.
      */
     public static function isCodeBase(\$con = null)
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
-            
-        return (get_class(\$con) == 'ODBCConnection' && 
+
+        return (get_class(\$con) == 'ODBCConnection' &&
                 get_class(\$con->getAdapter()) == 'CodeBaseAdapter');
     }
 ";
 	}
-	
-	
+
+
 	protected function addCreateNewRootNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
-     * Create a new Node at the top of tree. This method will destroy any 
-     * existing root node (along with its children). 
+     * Create a new Node at the top of tree. This method will destroy any
+     * existing root node (along with its children).
      *
      * Use at your own risk!
      *
@@ -207,41 +207,41 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
-        
+
         try {
         	\$con->beginTransaction();
 
             self::deleteNodeSubTree('1', \$con);
-            
+
             \$setNodePath = 'set' . self::NPATH_PHPNAME;
 
             \$obj->\$setNodePath('1');
             \$obj->save(\$con);
 
             \$con->commit();
-            
+
         } catch (PropelException \$e) {
         	\$con->rollback();
             throw \$e;
-        }            
+        }
 
         return new $nodeObjectClassname(\$obj);
     }
 ";
 	}
-	
+
 	protected function addInsertNewRootNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
      * Inserts a new Node at the top of tree. Any existing root node (along with
-     * its children) will be made a child of the new root node. This is a 
+     * its children) will be made a child of the new root node. This is a
      * safer alternative to createNewRootNode().
      *
      * @param $objectClassname Object wrapped by new node.
@@ -253,55 +253,55 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     {
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
-        
+
         try {
-            
+
             \$con->begin();
-            
+
             // Move root tree to an invalid node path.
             $nodePeerClassname::moveNodeSubTree('1', '0', \$con);
 
             \$setNodePath = 'set' . self::NPATH_PHPNAME;
-            
+
             // Insert the new root node.
             \$obj->\$setNodePath('1');
             \$obj->save(\$con);
 
             // Move the old root tree as a child of the new root.
             $nodePeerClassname::moveNodeSubTree('0', '1' . self::NPATH_SEP . '1', \$con);
-            
+
             \$con->commit();
-                        
+
         } catch (PropelException \$e) {
             \$con->rollback();
             throw \$e;
-        }            
-        
+        }
+
         return new $nodeObjectClassname(\$obj);
     }
 ";
 	}
-	
+
 	/**
 	 * Adds the methods for retrieving nodes.
-	 */	
+	 */
 	protected function addRetrieveMethods(&$script)
 	{
 		$this->addRetrieveNodes($script);
 		$this->addRetrieveNodeByPK($script);
 		$this->addRetrieveNodeByNP($script);
 		$this->addRetrieveRootNode($script);
-	
+
 	}
-	
+
 	protected function addRetrieveNodes(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
 	/**
-     * Retrieves an array of tree nodes based on specified criteria. Optionally 
+     * Retrieves an array of tree nodes based on specified criteria. Optionally
      * includes all parent and/or child nodes of the matching nodes.
      *
      * @param Criteria Criteria to use.
@@ -313,23 +313,23 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
     {
         \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = ".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::doSelectStmt(\$criteria, \$con);
+        \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
         return self::populateNodes(\$rs, \$criteria);
     }
 ";
 	}
-	
+
 	protected function addRetrieveNodeByPK(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
-     * Retrieves a tree node based on a primary key. Optionally includes all 
+     * Retrieves a tree node based on a primary key. Optionally includes all
      * parent and/or child nodes of the matching node.
      *
      * @param mixed $objectClassname primary key (array for composite keys)
@@ -344,18 +344,18 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     }
 ";
 	}
-	
+
 	protected function addRetrieveNodeByNP(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
-     * Retrieves a tree node based on a node path. Optionally includes all 
+     * Retrieves a tree node based on a node path. Optionally includes all
      * parent and/or child nodes of the matching node.
      *
      * @param string Node path to retrieve.
@@ -375,9 +375,9 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     }
 ";
 	}
-	
+
 	protected function addRetrieveRootNode(&$script)
-	{		
+	{
 		$script .= "
 	/**
      * Retrieves the root node.
@@ -385,29 +385,29 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
      * @param string Node path to retrieve.
      * @param boolean True if descendants should also be retrieved.
      * @param PDO Connection to use.
-     * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
-     */ 
+     * @return ".$this->getStubNodeBuilder()->getClassname()."
+     */
     public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
     {
         return self::retrieveNodeByNP('1', false, \$descendants, \$con);
     }
 ";
 	}
-	
+
 	protected function addMoveNodeSubTree(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
 
 		$script .= "
 	/**
      * Moves the node subtree at srcpath to the dstpath. This method is intended
-     * for internal use by the BaseNode object. Note that it does not check for 
-     * preexisting nodes at the dstpath. It also does not update the  node path 
-     * of any Node objects that might currently be in memory. 
+     * for internal use by the BaseNode object. Note that it does not check for
+     * preexisting nodes at the dstpath. It also does not update the  node path
+     * of any Node objects that might currently be in memory.
      *
      * Use at your own risk!
      *
@@ -416,40 +416,40 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
      * @param PDO Connection to use.
      * @return void
      * @throws PropelException
-     * @todo This is currently broken for simulated 'onCascadeDelete's. 
-     * @todo Need to abstract the SQL better. The CONCAT sql function doesn't 
+     * @todo This is currently broken for simulated 'onCascadeDelete's.
+     * @todo Need to abstract the SQL better. The CONCAT sql function doesn't
      *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
      *       to DBAdapter.
-     */    
+     */
     public static function moveNodeSubTree(\$srcPath, \$dstPath, PDO \$con = null)
     {
         if (substr(\$dstPath, 0, strlen(\$srcPath)) == \$srcPath)
             throw new PropelException('Cannot move a node subtree within itself.');
-    
+
         if (\$con === null)
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
         /**
          * Example:
-         * UPDATE table 
-         * SET npath = CONCAT('1.3', SUBSTRING(npath, 6, 74)) 
+         * UPDATE table
+         * SET npath = CONCAT('1.3', SUBSTRING(npath, 6, 74))
          * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
          */
-         
+
         \$npath = $nodePeerClassname::NPATH_COLNAME;
 		//the following dot isn`t mean`t a nodeKeySeperator
         \$setcol = substr(\$npath, strpos(\$npath, '.')+1);
         \$setcollen = $nodePeerClassname::NPATH_LEN;
         \$db = Propel::getDb($peerClassname::DATABASE_NAME);
-        
-        // <hack> 
+
+        // <hack>
         if ($nodePeerClassname::isCodeBase(\$con))
         {
             // This is a hack to get CodeBase working. It will eventually be removed.
             // It is a workaround for the following CodeBase bug:
             //   -Prepared statement parameters cannot be embedded in SQL functions (i.e. CONCAT)
             \$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
-                   \"SET \$setcol=\" . \$db->concatString(\"'\$dstPath'\", \$db->subString(\$npath, strlen(\$srcPath)+1, \$setcollen)) . \" \" . 
+                   \"SET \$setcol=\" . \$db->concatString(\"'\$dstPath'\", \$db->subString(\$npath, strlen(\$srcPath)+1, \$setcollen)) . \" \" .
                    \"WHERE \$npath = '\$srcPath' OR \$npath LIKE '\" . \$srcPath . $nodePeerClassname::NPATH_SEP . \"%'\";
 
             \$con->executeUpdate(\$sql);
@@ -458,7 +458,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
         {
         // </hack>
             \$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
-                   \"SET \$setcol=\" . \$db->concatString('?', \$db->subString(\$npath, '?', '?')) . \" \" . 
+                   \"SET \$setcol=\" . \$db->concatString('?', \$db->subString(\$npath, '?', '?')) . \" \" .
                    \"WHERE \$npath = ? OR \$npath LIKE ?\";
 
             \$stmt = \$con->prepareStatement(\$sql);
@@ -474,15 +474,15 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     }
 ";
 	}
-	
+
 	protected function addDeleteNodeSubTree(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
      * Deletes the node subtree at the specified node path from the database.
@@ -491,7 +491,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
      * @param PDO Connection to use.
      * @return void
      * @throws PropelException
-     * @todo This is currently broken for simulated 'onCascadeDelete's. 
+     * @todo This is currently broken for simulated 'onCascadeDelete's.
      */
     public static function deleteNodeSubTree(\$nodePath, PDO \$con = null)
     {
@@ -502,28 +502,28 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
          * DELETE FROM table
          * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
          */
-        
+
         \$criteria = new Criteria($peerClassname::DATABASE_NAME);
         \$criteria->add($nodePeerClassname::NPATH_COLNAME, \$nodePath, Criteria::EQUAL);
         \$criteria->addOr($nodePeerClassname::NPATH_COLNAME, \$nodePath . self::NPATH_SEP . '%', Criteria::LIKE);
-// For now, we call BasePeer directly since $peerClassname tries to 
+// For now, we call BasePeer directly since $peerClassname tries to
 // do a cascade delete.
 //          $peerClassname::doDelete(\$criteria, \$con);
         BasePeer::doDelete(\$criteria, \$con);
     }
 ";
 	}
-	
+
 	protected function addBuildFamilyCriteria(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-	
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
-	/** 
+	/**
      * Builds the criteria needed to retrieve node ancestors and/or descendants.
      *
      * @param Criteria Criteria to start with
@@ -535,12 +535,12 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     {
         /*
             Example SQL to retrieve nodepath '1.2.3' with both ancestors and descendants:
-            
-            SELECT L.NPATH, L.LABEL, test.NPATH, UCASE(L.NPATH) 
-            FROM test L, test 
-            WHERE test.NPATH='1.2.3' AND 
-                 (L.NPATH=SUBSTRING(test.NPATH, 1, LENGTH(L.NPATH)) OR 
-                  test.NPATH=SUBSTRING(L.NPATH, 1, LENGTH(test.NPATH))) 
+
+            SELECT L.NPATH, L.LABEL, test.NPATH, UCASE(L.NPATH)
+            FROM test L, test
+            WHERE test.NPATH='1.2.3' AND
+                 (L.NPATH=SUBSTRING(test.NPATH, 1, LENGTH(L.NPATH)) OR
+                  test.NPATH=SUBSTRING(L.NPATH, 1, LENGTH(test.NPATH)))
             ORDER BY UCASE(L.NPATH) ASC
         */
 
@@ -554,26 +554,26 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 
         if ((\$ancestors || \$descendants) && \$criteria->size())
         {
-            // If we are retrieving ancestors/descendants, we need to do a 
+            // If we are retrieving ancestors/descendants, we need to do a
             // self-join to locate them. The exception to this is if no search
-            // criteria is specified. In this case we're retrieving all nodes 
-            // anyway, so there is no need to do a self-join. 
-            
+            // criteria is specified. In this case we're retrieving all nodes
+            // anyway, so there is no need to do a self-join.
+
             // The left-side of the self-join will contain the columns we'll
             // use to build node objects (target node records along with their
             // ancestors and/or descendants). The right-side of the join will
             // contain the target node records specified by the initial criteria.
             // These are used to match the appropriate ancestor/descendant on
-            // the left. 
+            // the left.
 
             // Specify an alias for the left-side table to use.
             \$criteria->addAlias('L', $peerClassname::TABLE_NAME);
-            
+
             // Make sure we have select columns to begin with.
             if (!\$criteria->getSelectColumns())
                 $peerClassname::addSelectColumns(\$criteria);
-            
-            // Replace any existing columns for the right-side table with the 
+
+            // Replace any existing columns for the right-side table with the
             // left-side alias.
             \$selectColumns = \$criteria->getSelectColumns();
             \$criteria->clearSelectColumns();
@@ -582,23 +582,23 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 
             \$a = null;
             \$d = null;
-            
+
             \$npathL = $peerClassname::alias('L', $nodePeerClassname::NPATH_COLNAME);
             \$npathR = $nodePeerClassname::NPATH_COLNAME;
             \$npath_len = $nodePeerClassname::NPATH_LEN;
-            
+
             if (\$ancestors)
             {
-                // For ancestors, match left-side node paths which are contained 
+                // For ancestors, match left-side node paths which are contained
                 // by right-side node paths.
-                \$a = \$criteria->getNewCriterion(\$npathL, 
+                \$a = \$criteria->getNewCriterion(\$npathL,
                                                 \"\$npathL=\" . \$db->subString(\$npathR, 1, \$db->strLength(\$npathL), \$npath_len),
-                                                Criteria::CUSTOM);                                                        
+                                                Criteria::CUSTOM);
             }
-            
+
             if (\$descendants)
             {
-                // For descendants, match left-side node paths which contain 
+                // For descendants, match left-side node paths which contain
                 // right-side node paths.
                 \$d = \$criteria->getNewCriterion(\$npathR,
                                                 \"\$npathR=\" . \$db->subString(\$npathL, 1, \$db->strLength(\$npathR), \$npath_len),
@@ -614,10 +614,10 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
             {
                 \$criteria->addAnd(\$d);
             }
-            
+
             // Add the target node path column. This is used by populateNodes().
             \$criteria->addSelectColumn(\$npathR);
-            
+
             // Sort by node path to speed up tree construction in populateNodes()
             \$criteria->addAsColumn('npathlen', \$db->strLength(\$npathL));
             \$criteria->addAscendingOrderByColumn('npathlen');
@@ -633,28 +633,28 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
             \$criteria->addAscendingOrderByColumn('npathlen');
             \$criteria->addAscendingOrderByColumn($nodePeerClassname::NPATH_COLNAME);
         }
-        
+
         return \$criteria;
     }
 ";
 	}
-	
+
 	protected function addBuildTree(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-	
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
      * This method reconstructs as much of the tree structure as possible from
-     * the given array of objects. Depending on how you execute your query, it 
+     * the given array of objects. Depending on how you execute your query, it
      * is possible for the ResultSet to contain multiple tree fragments (i.e.
      * subtrees). The array returned by this method will contain one entry
      * for each subtree root node it finds. The remaining subtree nodes are
-     * accessible from the $nodeObjectClassname methods of the 
+     * accessible from the $nodeObjectClassname methods of the
      * subtree root nodes.
      *
      * @param array Array of $nodeObjectClassname objects
@@ -693,28 +693,28 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
     }
 ";
 	}
-	
+
 	protected function addPopulateNodes(&$script)
 	{
 		$table = $this->getTable();
-		
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$objectClassname = DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname());
-		
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeObjectClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-	
+
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeObjectClassname = $this->getStubNodeBuilder()->getClassname();
+
 		$script .= "
 	/**
-     * Populates the $objectClassname objects from the 
+     * Populates the $objectClassname objects from the
      * specified ResultSet, wraps them in $nodeObjectClassname
      * objects and build the appropriate node relationships.
-     * The array returned by this method will only include the initial targets 
-     * of the query, even if ancestors/descendants were also requested. 
+     * The array returned by this method will only include the initial targets
+     * of the query, even if ancestors/descendants were also requested.
      * The ancestors/descendants will be cached in memory and are accessible via
-     * the getNode() methods. 
+     * the getNode() methods.
      *
-     * @param ResultSet 
+     * @param ResultSet
      * @param Criteria
      * @return array Array of $nodeObjectClassname objects.
      */
@@ -732,10 +732,10 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
         \$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
 ";
 		}
-        
+
 		$script .= "
         // populate the object(s)
-        while(\$rs->next()) 
+        while(\$rs->next())
         {
             if (!isset(\$nodes[\$rs->getString(1)]))
             {
@@ -747,7 +747,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 				\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
 ";
 		}
-		
+
 		$script .= "
 				\$obj = new \$cls();
 				\$obj->hydrate(\$rs);
@@ -756,16 +756,16 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
             }
 
             \$node = \$nodes[\$rs->getString(1)];
-            
+
             if (\$node->getNodePath() === \$rs->getString(\$targetfld))
                 \$targets[\$node->getNodePath()] = \$node;
         }
 
         $nodePeerClassname::buildTree(\$nodes);
-        
+
         return array_values(\$targets);
     }
 ";
 	}
-	
+
 } // PHP5NodePeerBuilder

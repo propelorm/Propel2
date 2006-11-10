@@ -40,9 +40,9 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getClassname();
+		return $this->getBuildProperty('basePrefix') . $this->getStubPeerBuilder()->getUnprefixedClassname();
 	}
 
 	/**
@@ -88,7 +88,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 		$script .= "
  * @package ".$this->getPackage()."
  */
-abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
+abstract class ".$this->getClassname()." {
 ";
 	}
 
@@ -101,7 +101,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 		$this->addStaticMapBuilderRegistration($script);
 	}
@@ -120,16 +120,16 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." {
 //
 // NOTE: This static code cannot call methods on the ".$this->getPeerClassname()." class, because it is not defined yet.
 // If you need to use overridden methods, you can add this code to the bottom of the ".$this->getPeerClassname()." class:
-// 
+//
 // Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getPeerClassname()."::TABLE_NAME, ".$this->getPeerClassname()."::getMapBuilder());
-// 
+//
 // Doing so will effectively overwrite the registration below.
 
-Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname())."::DATABASE_NAME)->addTableBuilder(".DataModelBuilder::prefixClassname($this->getClassname())."::TABLE_NAME, ".DataModelBuilder::prefixClassname($this->getClassname())."::getMapBuilder());
+Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getClassname()."::TABLE_NAME, ".$this->getClassname()."::getMapBuilder());
 
 ";
 	}
-	
+
 	/**
 	 * Adds constant and variable declarations that go at the top of the class.
 	 * @param string &$script The script will be modified in this method.
@@ -161,15 +161,23 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 
 		$script .= "
 	/**
+	 * An identiy map to hold any loaded instances of ".$this->getObjectClassname()." objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var array ".$this->getObjectClassname()."[]
+	 */
+	public static \$instances = array();
+
+	/**
 	 * The MapBuilder instance for this peer.
 	 * @var MapBuilder
 	 */
-	private static \$mapBuilder = null; 
+	private static \$mapBuilder = null;
 ";
 
 		$this->addFieldNamesAttribute($script);
 		$this->addFieldKeysAttribute($script);
-		
+
 	}
 
 	/**
@@ -192,7 +200,6 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 
 		$tableColumns = $table->getColumns();
-		$tablePhpname = $table->getPhpName();
 
 		$script .= "
 	/**
@@ -231,7 +238,6 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 
 		$tableColumns = $table->getColumns();
-		$tablePhpname = $table->getPhpName();
 
 		$script .= "
 	/**
@@ -328,7 +334,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	{
 		if (self::\$mapBuilder === null) {
 			require '" . $this->getMapBuilderBuilder()->getClassFilePath()."';
-			self::\$mapBuilder = new ".DataModelBuilder::prefixClassname($this->getMapBuilderBuilder()->getClassname())."();
+			self::\$mapBuilder = new ".$this->getMapBuilderBuilder()->getClassname()."();
 		}
 		return self::\$mapBuilder;
 	}";
@@ -343,7 +349,6 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		if ($this->getTable()->getChildrenColumn()) {
 
 			$col = $this->getTable()->getChildrenColumn();
-			$tfc = $this->getTable()->getPhpName();
 			$cfc = $col->getPhpName();
 
 			if ($col->isEnumeratedClasses()) {
@@ -359,8 +364,8 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	/** A key representing a particular subclass */
 	const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 
-        /** A key representing a particular subclass */
-        const CLASSKEY_".strtoupper(DataModelBuilder::prefixClassname($child->getClassname()))." = '" . $child->getKey() . "';
+	/** A key representing a particular subclass */
+	const CLASSKEY_".strtoupper($child->getClassname())." = '" . $child->getKey() . "';
 
 	/** A class that can be returned by this peer. */
 	const CLASSNAME_".strtoupper($child->getKey())." = '". $childBuilder->getClasspath() . "';
@@ -387,7 +392,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 *		\$c->addJoin(TablePeer::alias(\"alias1\", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param string \$alias The alias for the current table.
-	 * @param string \$column The column name for current table. (i.e. ".$this->getTable()->getPhpName()."Peer::COLUMN_NAME).
+	 * @param string \$column The column name for current table. (i.e. ".$this->getPeerClassname()."::COLUMN_NAME).
 	 * @return string
 	 */
 	public static function alias(\$alias, \$column)
@@ -448,7 +453,8 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		*/
 		if ($table->hasPrimaryKey()) {
 			$pk = $table->getPrimaryKey();
-			$count_col = DataModelBuilder::prefixClassname($table->getName()).".".strtoupper($pk[0]->getName());
+			$count_col = DataModelBuilder::prefixTablename($table->getName())
+			. "." . strtoupper($pk[0]->getName());
 		}
 
 		$script .= "
@@ -513,7 +519,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 *
 	 * @param Criteria \$criteria object used to create the SELECT statement.
 	 * @param PDO \$con
-	 * @return ".$this->getTable()->getPhpName()."
+	 * @return ".$this->getObjectClassname()."
 	 * @throws PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -592,6 +598,203 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	}
 
 	/**
+	 * Creates a convenience method to add objects to an instance pool.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addAddInstanceToPool(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
+	 */
+	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj)
+	{
+		// print \"+Adding (by rel) \" . get_class(\$obj) . \" \" . var_export(\$obj->getPrimaryKey(),true) . \" to instance pool.\\n\";
+	";
+		$pk = $this->getTable()->getPrimaryKey();
+		if ($pk > 0) {
+			$script .= "
+		\$key = serialize(\$obj->getPrimaryKey());";
+		} else {
+			$script .= "
+		\$key = (string) \$obj->getPrimaryKey();";
+		}
+		$script .= "
+		self::\$instances[\$key] = \$obj;
+	}
+";
+	}
+
+	/**
+	 *  Creates a convenience method to remove objects form an instance pool.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addRemoveInstanceFromPool(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param mixed \$value A ".$this->getObjectClassname()." object or a primary key value.
+	 */
+	public static function removeInstanceFromPool(\$value)
+	{";
+		$pk = $table->getPrimaryKey();
+
+		$script .= "
+		if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {
+			// print \"-Removing \" . get_class(\$value) . \" \" . var_export(\$value->getPrimaryKey(),true) . \" from instance pool.\\n\";
+		";
+		if (count($pk) > 1) {
+			$script .= "
+			\$key = serialize(\$value->getPrimaryKey());";
+		} else {
+			$script .= "
+			\$key = (string) \$value->getPrimaryKey();";
+		}
+
+		$script .= "
+		} elseif(".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
+			// print \"-Removing pk: \" . var_export(\$value,true) . \" class: ".$this->getObjectClassname()." from instance pool.\\n\";
+			// assume we've been passed a primary key";
+
+		if ($pk > 1) {
+			$script .= "
+			\$key = serialize(\$value);";
+		} else {
+			$script .= "
+			\$key = (string) \$value;";
+		}
+		$script .= "
+		} else {
+
+			\$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object: \" . var_export(\$value,true));
+			print \$e;
+			throw \$e;
+		}
+
+		unset(self::\$instances[\$key]);
+
+	} // removeInstanceFromPool()
+";
+	} // addRemoveFromInstancePool()
+
+	/**
+	 * Adds method to clear the instance pool.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addClearInstancePool(&$script)
+	{
+		$script .= "
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param array \$row PDO resultset row.
+	 * @param int \$startcol The 0-based offset for reading from the resultset row.
+	 * @return string
+	 */
+	public static function clearInstancePool()
+	{
+		//print \"\\tClearing ".$this->getPeerClassname()." instance pool.\\n\";
+		self::\$instances = array();
+	}
+	";
+	}
+
+	/**
+	 * Adds method to get an the instance from the pool, given a key.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetInstanceFromPool(&$script)
+	{
+		$script .= "
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param string \$key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return object or NULL if no instance exists for specified key.
+	 * @see getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool(\$key)
+	{
+		if (isset(self::\$instances[\$key])) {
+			//print \"  <--Found ".$this->getObjectClassname()." \" . self::\$instances[\$key] . \" in instance pool.\\n\";
+			return self::\$instances[\$key];
+		} else {
+			return null; // just to be explicit
+		}
+	}
+	";
+	}
+
+	/**
+	 * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
+	 * @param string &$script The script will be modified in this method.
+	 */
+	protected function addGetPrimaryKeyHash(&$script)
+	{
+		$script .= "
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param array \$row PDO resultset row.
+	 * @param int \$startcol The 0-based offset for reading from the resultset row.
+	 * @return string
+	 */
+	public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
+	{";
+
+		// We have to iterate through all the columns so that we know the offset of the primary
+		// key columns.
+		$n = 0;
+		foreach($this->getTable()->getColumns() as $col) {
+			if(!$col->isLazyLoad()) {
+				if ($col->isPrimaryKey()) {
+					$pk[] = "\$row[\$startcol + $n]";
+				}
+				$n++;
+			}
+		}
+
+		// the general case is a single column
+		if (count($pk) == 1) {
+			$script .= "
+		return (string) ".$pk[0].";";
+		} else {
+			$script .= "
+		return serialize(array(".implode(',', $pk)."));";
+		}
+
+		$script .= "
+	}
+";
+	} // addGetPrimaryKeyHash
+
+	/**
 	 * Adds the populateObjects() method.
 	 * @param string &$script The script will be modified in this method.
 	 */
@@ -619,25 +822,34 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 
 		$script .= "
 		// populate the object(s)
+		// populate the object(s)
 		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
+			if (isset(self::\$instances[\$key])) {
+				// print \"  <-Found \" . get_class(self::\$instances[\$key]) . \" \" . self::\$instances[\$key] . \" in instance pool.\\n\";
+				\$results[] = self::\$instances[\$key];
+			} else {
 		";
 		if ($table->getChildrenColumn()) {
 			$script .= "
-			// class must be set each time from the record row
-			\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-			\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
-			\$obj = new \$cls();
-			\$obj->hydrate(\$row);
-			\$results[] = \$obj;
-			";
+				// class must be set each time from the record row
+				\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+				\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+				\$obj = new \$cls();
+				\$obj->hydrate(\$row);
+				\$results[] = \$obj;
+				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";
+				self::\$instances[\$key] = \$obj;";
 		} else {
 			$script .= "
-			\$obj = new \$cls();
-			\$obj->hydrate(\$row);
-			\$results[] = \$obj;
-			";
+				\$obj = new \$cls();
+				\$obj->hydrate(\$row);
+				\$results[] = \$obj;
+				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";
+				self::\$instances[\$key] = \$obj;";
 		}
 		$script .= "
+			} // if key exists
 		}
 		return \$results;
 	}";
@@ -712,7 +924,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 * objects that inherit from the default.
 	 *
 	 * This method must be overridden by the stub subclass, because
-	 * ".$this->getTable()->getPhpName()." is declared abstract in the schema.
+	 * ".$this->getObjectClassname()." is declared abstract in the schema.
 	 *
 	 * @param ResultSet \$rs ResultSet with pointer to record containing om class.
 	 * @param int \$colnum Column to examine for OM class information (first is 1).
@@ -757,7 +969,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 * The class that the Peer will make instances of.
 	 *
 	 * This method must be overridden by the stub subclass, because
-	 * ".$this->getTable()->getPhpName()." is declared abstract in the schema.
+	 * ".$this->getObjectClassname()." is declared abstract in the schema.
 	 */
 	abstract public static function getOMClass();
 ";
@@ -772,9 +984,9 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Method perform an INSERT on the database, given a ".$table->getPhpName()." or Criteria object.
+	 * Method perform an INSERT on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
-	 * @param mixed \$values Criteria or ".$table->getPhpName()." object containing data that is used to create the INSERT statement.
+	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the INSERT statement.
 	 * @param PDO \$con the PDO connection to use
 	 * @return mixed The new primary key.
 	 * @throws PropelException Any exceptions caught during processing will be
@@ -789,7 +1001,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		if (\$values instanceof Criteria) {
 			\$criteria = clone \$values; // rename for clarity
 		} else {
-			\$criteria = \$values->buildCriteria(); // build Criteria from ".$table->getPhpName()." object
+			\$criteria = \$values->buildCriteria(); // build Criteria from ".$this->getObjectClassname()." object
 		}
 ";
 
@@ -831,9 +1043,9 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Method perform an UPDATE on the database, given a ".$table->getPhpName()." or Criteria object.
+	 * Method perform an UPDATE on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
-	 * @param mixed \$values Criteria or ".$table->getPhpName()." object containing data that is used to create the UPDATE statement.
+	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the UPDATE statement.
 	 * @param PDO \$con The connection to use (specify PDO connection object to exert more control over transactions).
 	 * @return int The number of affected rows (if supported by underlying database driver).
 	 * @throws PropelException Any exceptions caught during processing will be
@@ -860,7 +1072,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 	} /* foreach */
 
 		$script .= "
-		} else { // \$values is ".$table->getPhpName()." object
+		} else { // \$values is ".$this->getObjectClassname()." object
 			\$criteria = \$values->buildCriteria(); // gets full criteria
 			\$selectCriteria = \$values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -925,9 +1137,9 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Method perform a DELETE on the database, given a ".$table->getPhpName()." or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a ".$this->getObjectClassname()." or Criteria object OR a primary key value.
 	 *
-	 * @param mixed \$values Criteria or ".$table->getPhpName()." object or primary key or array of primary keys
+	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param PDO \$con the connection to use
 	 * @return int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -942,20 +1154,34 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		}
 
 		if (\$values instanceof Criteria) {
-			\$criteria = clone \$values; // rename for clarity
-		} elseif (\$values instanceof ".$table->getPhpName().") {
-";
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			".$this->getPeerClassname()."::clearInstancePool();
+
+			// rename for clarity
+			\$criteria = clone \$values;
+		} elseif (\$values instanceof ".$this->getObjectClassname().") {
+			// invalidate the cache for this single object
+			".$this->getPeerClassname()."::removeInstanceFromPool(\$values);";
+
 		if (count($table->getPrimaryKey()) > 0) {
 			$script .= "
+			// create criteria based on pk values
 			\$criteria = \$values->buildPkeyCriteria();";
 		} else {
 			$script .= "
+			// create criteria based on pk value
 			\$criteria = \$values->buildCriteria();";
 		}
 
 		$script .= "
 		} else {
 			// it must be the primary key
+
+			// we can invalidate the cache for this single object
+			".$this->getPeerClassname()."::removeInstanceFromPool(\$values);
+
 			\$criteria = new Criteria(self::DATABASE_NAME);";
 
 		if (count($table->getPrimaryKey()) === 1) {
@@ -1017,6 +1243,41 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 
 		$script .= "
 			\$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
+";
+		// Handle ON DELETE CASCADE for updating instance pool
+
+		foreach ($table->getReferrers() as $fk) {
+
+			// $fk is the foreign key in the other table, so localTableName will
+			// actually be the table name of other table
+			$tblFK = $fk->getTable();
+
+			$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
+			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
+
+			if (!$tblFK->isForReferenceOnly()) {
+				// we can't perform operations on tables that are
+				// not within the schema (i.e. that we have no map for, etc.)
+
+				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
+
+				// i'm not sure whether we can allow delete cascade for foreign keys
+				// within the same table?  perhaps we can?
+				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
+							&& $tblFK->getName() != $table->getName()) {
+					$script .= "
+			// invalidate objects in ".$joinedTablePeerBuilder->getPeerClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
+			".$joinedTablePeerBuilder->getPeerClassname()."::clearInstancePool();
+";
+  				} // if fk is on delete cascade
+
+  			} // if (! for ref only)
+
+  		} // foreach
+
+
+
+		$script .= "
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
@@ -1071,7 +1332,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 				// we can't perform operations on tables that are
 				// not within the schema (i.e. that we have no map for, etc.)
 
-				$fkClassName = $tblFK->getPhpName();
+				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
 
 				// i'm not sure whether we can allow delete cascade for foreign keys
 				// within the same table?  perhaps we can?
@@ -1152,7 +1413,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 				// we can't perform operations on tables that are
 				// not within the schema (i.e. that we have no map for, etc.)
 
-				$fkClassName = $tblFK->getPhpName();
+				$fkClassName = $refTablePeerBuilder->getObjectClassname();
 
 				// i'm not sure whether we can allow delete setnull for foreign keys
 				// within the same table?  perhaps we can?
@@ -1198,18 +1459,18 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Validates all modified columns of given ".$table->getPhpName()." object.
+	 * Validates all modified columns of given ".$this->getObjectClassname()." object.
 	 * If parameter \$columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param ".$table->getPhpName()." \$obj The object to validate.
+	 * @param ".$this->getObjectClassname()." \$obj The object to validate.
 	 * @param mixed \$cols Column name or array of column names.
 	 *
 	 * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(".$table->getPhpName()." \$obj, \$cols = null)
+	public static function doValidate(".$this->getObjectClassname()." \$obj, \$cols = null)
 	{
 		\$columns = array();
 
@@ -1260,7 +1521,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	 *
 	 * @param mixed \$pk the primary key.
 	 * @param PDO \$con the connection to use
-	 * @return " . $table->getPhpName() . "
+	 * @return " .$this->getObjectClassname(). "
 	 */
 	public static function ".$this->getRetrieveMethodName()."(\$pk, PDO \$con = null)
 	{
@@ -1374,7 +1635,7 @@ Propel::getDatabaseMap(".DataModelBuilder::prefixClassname($this->getClassname()
 	   }
 	   $script .= "
 	 * @param PDO \$con
-	 * @return ".$table->getPhpName()."
+	 * @return ".$this->getObjectClassname()."
 	 */
 	public static function ".$this->getRetrieveMethodName()."(";
 		$co = 0;

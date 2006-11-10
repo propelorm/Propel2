@@ -227,7 +227,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		#var_dump($fk->getForeignTableName() . ' - ' .$fk->getTableName() . ' - ' . $this->getTable()->getName());
 
-		#$fk->getForeignTableName() != $this->getTable()->getName() && 
+		#$fk->getForeignTableName() != $this->getTable()->getName() &&
 		// @todo comment on it
 		if ($columnCheck && !$relCol && $fk->getTable()->getColumn($fk->getForeignTableName())) {
 			foreach ($fk->getLocalColumns() as $columnName) {
@@ -235,7 +235,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				$relCol .= $column->getPhpName();
 			}
 		}
-		
+
 
 		if ($relCol != "") {
 			$relCol = "RelatedBy" . $relCol;
@@ -377,7 +377,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 
 		#var_dump($pCollName);
-		
+
 		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
 
 		$script .= "
@@ -644,13 +644,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKMethods(&$script)
 	{
 		foreach($this->getTable()->getReferrers() as $refFK) {
-			// if ( $refFK->getTable()->getName() != $this->getTable()->getName() ) {
-				$this->addRefFKInit($script, $refFK);
-				$this->addRefFKGet($script, $refFK);
-				$this->addRefFKCount($script, $refFK);
-				$this->addRefFKAdd($script, $refFK);
-				$this->addRefFKGetJoinMethods($script, $refFK);
-			// }
+			$this->addRefFKInit($script, $refFK);
+			$this->addRefFKGet($script, $refFK);
+			$this->addRefFKCount($script, $refFK);
+			$this->addRefFKAdd($script, $refFK);
+			$this->addRefFKGetJoinMethods($script, $refFK);
 		}
 	}
 
@@ -668,7 +666,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Temporary storage of $collName to save a possible db hit in
 	 * the event objects are add to the collection, but the
 	 * complete collection is never requested.
+	 *
 	 * @return void
+	 * @deprecated - This method will be removed in 2.0 since arrays
+	 *				are automatically initialized in the add$relCol() method.
+	 * @see add$relCol()
 	 */
 	public function init$relCol()
 	{
@@ -686,14 +688,16 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	protected function addRefFKAdd(&$script, ForeignKey $refFK)
 	{
 		$tblFK = $refFK->getTable();
-		$className = DataModelBuilder::prefixClassname($this->getBuilder($refFK->getTable()->getName(), 'objectstub')->getClassname());
 
 		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+
+		$collName = 'coll' . $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$script .= "
 	/**
-	 * Method called to associate a ".$tblFK->getPhpName()." object to this object
-	 * through the $className foreign key attribute
+	 * Method called to associate a $className object to this object
+	 * through the $className foreign key attribute.
 	 *
 	 * @param $className \$l $className
 	 * @return void
@@ -701,7 +705,8 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function add".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$l)
 	{
-		\$this->coll".$this->getRefFKPhpNameAffix($refFK, $plural = true)."[] = \$l;
+		\$this->$collName = (array) \$this->$collName;
+		array_push(\$this->$collName, \$l);
 		\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 	}
 ";
@@ -772,9 +777,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	/**
 	 * If this collection has already been initialized with
 	 * an identical criteria, it returns the collection.
-	 * Otherwise if this ".$table->getPhpName()." has previously
+	 * Otherwise if this ".$this->getObjectClassname()." has previously
 	 * been saved, it will retrieve related $relCol from storage.
-	 * If this ".$table->getPhpName()." is new, it will return
+	 * If this ".$this->getObjectClassname()." is new, it will return
 	 * an empty collection or the current collection, the criteria
 	 * is ignored on a new object.
 	 *
@@ -843,8 +848,6 @@ $script .= "
 	}
 ";
 	} // addRefererGet()
-
-
 
 	// ----------------------------------------------------------------
 	//
@@ -1178,7 +1181,7 @@ $script .= "
 	 * objects.
 	 *
 	 * @param boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return ".$table->getPhpName()." Clone of current object.
+	 * @return ".$this->getObjectClassname()." Clone of current object.
 	 * @throws PropelException
 	 */
 	public function copy(\$deepCopy = false)
@@ -1208,7 +1211,7 @@ $script .= "
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param object \$copyObj An object of ".$table->getPhpName()." (or compatible) type.
+	 * @param object \$copyObj An object of ".$this->getObjectClassname()." (or compatible) type.
 	 * @param boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @throws PropelException
 	 */

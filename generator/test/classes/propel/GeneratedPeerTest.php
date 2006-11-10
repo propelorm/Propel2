@@ -40,7 +40,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	/**
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */
-	public function testDoDelete_MultiTable() {
+	public function t3estDoDelete_MultiTable() {
 
 		$selc = new Criteria();
 		$selc->add(BookPeer::TITLE, "Harry Potter and the Order of the Phoenix");
@@ -56,6 +56,8 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$c->add(PublisherPeer::ID, $hp->getPublisherId());
 		$c->setSingleRecord(true);
 		BookPeer::doDelete($c);
+
+		//print_r(AuthorPeer::doSelect(new Criteria()));
 
 		// check to make sure the right # of records was removed
 		$this->assertEquals(3, count(AuthorPeer::doSelect(new Criteria())), "Expected 3 authors after deleting.");
@@ -119,13 +121,13 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		// 1) Get an arbitrary book
 
-			$book = BookPeer::doSelectOne(new Criteria());
+			$c = new Criteria();
+			$book = BookPeer::doSelectOne($c);
 			$bookId = $book->getId();
 			$authorId = $book->getAuthorId();
 			unset($book);
 
 		// 2) Delete the author for that book
-
 			AuthorPeer::doDelete($authorId);
 
 		// 3) Assert that the book.author_id column is now NULL
@@ -277,24 +279,68 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertEquals($limitcount, count($results2), "Expected $limitcount results from BookPeer::doSelectJoinAuthor()");
 
 	}
-	
+
 	/**
 	 * Test the basic functionality of the doSelectJoin*() methods.
 	 */
 	public function testDoSelectJoin()
 	{
+
 		$c = new Criteria();
-		$joinBooks = BookPeer::doSelectJoinAuthor($c);
-		
-		$obj = $joinBooks[0];
-		$joinSize = strlen(serialize($obj));
-		
+
 		$books = BookPeer::doSelect($c);
 		$obj = $books[0];
 		$size = strlen(serialize($obj));
-		
+
+
+		$joinBooks = BookPeer::doSelectJoinAuthor($c);
+		$obj = $joinBooks[0];
+		$joinSize = strlen(serialize($obj));
+
 		$this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");
+
 		$this->assertTrue($joinSize > $size, "Expected a serialized join object to be larger than a non-join object.");
 	}
-	
+
+	public function testObjectInstances()
+	{
+
+		// 1) make sure consecutive calls to retrieveByPK() return the same object.
+		$b1 = BookPeer::retrieveByPK(1);
+		$b2 = BookPeer::retrieveByPK(1);
+
+		$sampleval = md5(microtime());
+
+		$this->assertTrue($b1 === $b2, "Expected object instances to match for calls with same retrieveByPK() method signature.");
+
+		// 2) make sure that calls to doSelect also return references to the same objects.
+		$allbooks = BookPeer::doSelect(new Criteria());
+		foreach($allbooks as $testb) {
+			if ($testb->getPrimaryKey() == $b1->getPrimaryKey()) {
+				$this->assertTrue($testb === $b1, "Expected same object instance from doSelect() as from retrieveByPK()");
+			}
+		}
+
+		// 3) test fetching related objects
+		$book = BookPeer::retrieveByPK(1);
+
+		$bookauthor = $book->getAuthor();
+
+		$author = AuthorPeer::retrieveByPK($bookauthor->getId());
+
+		$this->assertTrue($bookauthor === $author, "Expected same object instance when calling fk object accessor as retrieveByPK()");
+
+		// 4) test a doSelectJoin()
+		$morebooks = BookPeer::doSelectJoinAuthor(new Criteria());
+		for($i=0,$j=0; $j < count($morebooks); $i++, $j++) {
+			$testb1 = $allbooks[$i];
+			$testb2 = $allbooks[$j];
+			$this->assertTrue($testb1 === $testb2, "Expected the same objects from consecutive doSelect() calls.");
+			// we could probably also test this by just verifying that $book & $testb are the same
+			if ($testb1->getPrimaryKey() === $book) {
+				$this->assertTrue($book->getAuthor() === $testb1->getAuthor(), "Expected same author object in calls to pkey-matching books.");
+			}
+		}
+
+	}
 }

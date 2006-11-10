@@ -53,7 +53,7 @@ abstract class DataModelBuilder {
 	private static $buildProperties = array();
 
 	private static $cache = array();
-	
+
 	/**
 	 * Sets the [name transformed] build properties to use.
 	 * @param array Property values keyed by [transformed] prop names.
@@ -110,11 +110,11 @@ abstract class DataModelBuilder {
 		$classname = self::getBuilderClass($type);
 
 		$cacheKey = strtolower($classname . $table->getName());
-		
+
 		if (!isset(self::$cache[$cacheKey])) {
 		    self::$cache[$cacheKey] = new $classname($table);
 		}
-		
+
 		return self::$cache[$cacheKey];
 	}
 
@@ -227,23 +227,26 @@ abstract class DataModelBuilder {
 		}
 		return $text;
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built, with a possible prefix.
 	 * @return string
+	 * @see OMBuilder#getClassname()
 	 */
-	public static function prefixClassname($identifier) {
+	public static function prefixClassname($identifier)
+	{
 		return self::getBuildProperty('classPrefix') . $identifier;
 	}
-	
+
 	/**
 	 * Returns the name of the current table being built, with a possible prefix.
 	 * @return string
 	 */
-	public static function prefixTablename($identifier) {
+	public static function prefixTablename($identifier)
+	{
 		return self::getBuildProperty('tablePrefix') . $identifier;
 	}
-	
+
 	/**
 	 * A name to use for creating a sequence if one is not specified.
 	 */

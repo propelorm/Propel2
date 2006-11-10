@@ -255,8 +255,8 @@
 	  <reference local="book_club_list_id" foreign="id"/>
 	</foreign-key>
   </table>
-  
-  <!-- test self-referencing foreign keys -->	
+
+  <!-- test self-referencing foreign keys -->
   <table name="bookstore_employee" description="Hierarchical table to represent employees of a bookstore.">
     <column
 	  name="id"
@@ -282,5 +282,26 @@
 	  <reference local="supervisor_id" foreign="id"/>
 	</foreign-key>
   </table>
-  
+
+  <!-- test one-to-one server -->
+  <table name="bookstore_employee_account" description="A table that represents a bookstore employees login credentials.">
+	<column
+	  name="employee_id"
+	  type="INTEGER"
+	  primaryKey="true"
+	  description="Primary key for "
+	  />
+	<column
+	  name="login"
+	  type="VARCHAR"
+	  size="32"/>
+	<column
+	  name="password"
+	  type="VARCHAR"
+	  size="100"/>
+	<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
+	  <reference local="employee_id" foreign="id"/>
+	</foreign-key>
+  </table>
+
 </database>

@@ -44,7 +44,7 @@ abstract class PeerBuilder extends OMBuilder {
 		parent::__construct($table);
 		$this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
 		$pos = strrpos($this->basePeerClassname, '.');
-		if($pos !== false) { 
+		if($pos !== false) {
 			$this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
 		}
 	}
@@ -65,6 +65,13 @@ abstract class PeerBuilder extends OMBuilder {
 		$this->addDoSelectOne($script);
 		$this->addDoSelect($script);
 		$this->addDoSelectStmt($script);	 // <-- there's PDO code in here
+
+		$this->addAddInstanceToPool($script);
+		$this->addRemoveInstanceFromPool($script);
+		$this->addGetInstanceFromPool($script);
+		$this->addClearInstancePool($script);
+
+		$this->addGetPrimaryKeyHash($script);
 		$this->addPopulateObjects($script); // <-- there's PDO code in here
 
 	}

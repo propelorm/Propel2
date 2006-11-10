@@ -24,10 +24,10 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
 
 /**
  * Generates the PHP5 map builder class for user object model (OM).
- * 
+ *
  * This class replaces the MapBuilder.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
@@ -41,12 +41,12 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	{
 		return parent::getPackage() . '.map';
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
 		return $this->getTable()->getPhpName() . 'MapBuilder';
 	}
@@ -58,14 +58,14 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	protected function addIncludes(&$script)
 	{
 	} // addIncludes()
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
-		$table = $this->getTable();		
+		$table = $this->getTable();
 		$script .= "
 
 /**
@@ -83,16 +83,16 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 		$script .= "
  *
  * These statically-built map classes are used by Propel to do runtime db structure discovery.
- * For example, the createSelectSql() method checks the type of a given column used in an 
- * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive 
+ * For example, the createSelectSql() method checks the type of a given column used in an
+ * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
  * @package ".$this->getPackage()."
- */	
-class ".DataModelBuilder::prefixClassname($this->getClassname())." implements MapBuilder {
+ */
+class ".$this->getClassname()." implements MapBuilder {
 ";
 	}
-	
+
 	/**
 	 * Specifies the methods that are added as part of the map builder class.
 	 * This can be overridden by subclasses that wish to add more methods.
@@ -102,12 +102,12 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
 	{
 		$this->addConstants($script);
 		$this->addAttributes($script);
-		
+
 		$this->addIsBuilt($script);
 		$this->addGetDatabaseMap($script);
 		$this->addDoBuild($script);
 	}
-	
+
 	/**
 	 * Adds any constants needed for this MapBuilder class.
 	 * @param string &$script The script will be modified in this method.
@@ -118,10 +118,10 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = '".$this->getClasspath()."';	
+	const CLASS_NAME = '".$this->getClasspath()."';
 ";
 	}
-	
+
 	/**
 	 * Adds any attributes needed for this MapBuilder class.
 	 * @param string &$script The script will be modified in this method.
@@ -135,22 +135,22 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
     private \$dbMap;
 ";
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 	}
-	
+
 	/**
 	 * Adds the method that indicates whether this map has already been built.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addIsBuilt(&$script)
 	{
 		$script .= "
@@ -166,11 +166,11 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
     }
 ";
 	}
-	
+
 	/**
 	 * Adds the DatabaseMap accessor method.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addGetDatabaseMap(&$script)
 	{
 		$script .= "
@@ -185,17 +185,17 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
     }
 ";
 	}
-	
+
 	/**
 	 * Adds the main doBuild() method to the map builder class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addDoBuild(&$script)
 	{
-	
+
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		
+
 		$script .= "
     /**
      * The doBuild() method builds the DatabaseMap
@@ -206,16 +206,16 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
     public function doBuild()
     {
 		\$this->dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
-		
+
 		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
 		\$tMap->setPhpName('".$table->getPhpName()."');
-		\$tMap->setClassname('" . DataModelBuilder::prefixClassname($this->getBuilder($table->getName(), 'objectstub')->getClassname()) . "');
+		\$tMap->setClassname('" . $this->getObjectClassname() . "');
 ";
-		if ($table->getIdMethod() == "native") { 
+		if ($table->getIdMethod() == "native") {
 			$script .= "
 		\$tMap->setUseIdGenerator(true);
 ";
-		} else { 
+		} else {
 			$script .= "
 		\$tMap->setUseIdGenerator(false);
 ";
@@ -228,18 +228,17 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
 		\$tMap->setPrimaryKeyMethodInfo('".$imp->getValue()."');
 ";
 		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
-			$script .= " 
+			$script .= "
 		\$tMap->setPrimaryKeyMethodInfo('".$this->getSequenceName()."');
 ";
 		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
-			$script .= " 
+			$script .= "
 		\$tMap->setPrimaryKeyMethodInfo('".$table->getName()."');
 ";
 		}
-		
+
 		// Add columns to map
 		foreach ($table->getColumns() as $col) {
-			$tfc=$table->getPhpName();
 			$cfc=$col->getPhpName();
 			$cup=strtoupper($col->getName());
 			if (!$col->getSize()) {
@@ -256,20 +255,20 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
 					$script .= "
 		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");
 ";
-				} 
+				}
 			} else {
 				if($col->isForeignKey()) {
 					$script .= "
 		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
-            } else { 
+            } else {
 					$script .= "
 		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).");
 ";
-				} 
+				}
 			} // if col-is prim key
 		} // foreach
-		
+
 		foreach($table->getValidators() as $val) {
 			$col = $val->getColumn();
 			$cup = strtoupper($col->getName());
@@ -285,11 +284,11 @@ class ".DataModelBuilder::prefixClassname($this->getClassname())." implements Ma
 				} // if ($rule->getTranslation() ...
   			} // foreach rule
 		}  // foreach validator
-		
-		$script .= "				
+
+		$script .= "
     } // doBuild()
 ";
 
 	}
-	
+
 } // PHP5ExtensionPeerBuilder

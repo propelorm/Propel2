@@ -1048,7 +1048,7 @@ class Table extends XMLElement implements IDMethod {
      * Returns the collection of Columns which make up the single primary
      * key for this table.
      *
-     * @return array A list of the primary key parts.
+     * @return array Column[] A list of the primary key parts.
      */
     public function getPrimaryKey()
     {

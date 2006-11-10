@@ -24,18 +24,18 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 
 /**
  * Generates a PHP5 tree node Object class for user object model (OM).
- * 
+ *
  * This class produces the base tree node object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
- * 
+ *
  * This class replaces the Node.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5NodeBuilder extends ObjectBuilder {		
-	
+class PHP5NodeBuilder extends ObjectBuilder {
+
 	/**
 	 * Gets the package for the [base] object classes.
 	 * @return string
@@ -44,16 +44,16 @@ class PHP5NodeBuilder extends ObjectBuilder {
 	{
 		return parent::getPackage() . ".om";
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubNodeBuilder()->getClassname();
+		return $this->getBuildProperty('basePrefix') . $this->getStubNodeBuilder()->getUnprefixedClassname();
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
@@ -61,18 +61,18 @@ class PHP5NodeBuilder extends ObjectBuilder {
 	protected function addIncludes(&$script)
 	{
 	} // addIncludes()
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
-		
+
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
-		
+
 		$script .= "
 /**
  * Base class that represents a row from the '$tableName' table.
@@ -89,11 +89,11 @@ class PHP5NodeBuilder extends ObjectBuilder {
 		}
 		$script .= "
  * @package ".$this->getPackage()."
- */	
-abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." implements IteratorAggregate {
+ */
+abstract class ".$this->getClassname()." implements IteratorAggregate {
 ";
 	}
-	
+
 	/**
 	 * Specifies the methods that are added as part of the basic OM class.
 	 * This can be overridden by subclasses that wish to add more methods.
@@ -102,63 +102,63 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	protected function addClassBody(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		$this->addAttributes($script);
-				
+
 		$this->addConstructor($script);
-		
+
 		$this->addCallOverload($script);
 		$this->addSetIteratorOptions($script);
 		$this->addGetIterator($script);
-		
+
 		$this->addGetNodeObj($script);
 		$this->addGetNodePath($script);
 		$this->addGetNodeIndex($script);
 		$this->addGetNodeLevel($script);
-		
+
 		$this->addHasChildNode($script);
 		$this->addGetChildNodeAt($script);
 		$this->addGetFirstChildNode($script);
 		$this->addGetLastChildNode($script);
 		$this->addGetSiblingNode($script);
-		
+
 		$this->addGetParentNode($script);
 		$this->addGetAncestors($script);
 		$this->addIsRootNode($script);
-		
+
 		$this->addSetNew($script);
 		$this->addSetDeleted($script);
 		$this->addAddChildNode($script);
 		$this->addMoveChildNode($script);
 		$this->addSave($script);
-		
+
 		$this->addDelete($script);
 		$this->addEquals($script);
-		
+
 		$this->addAttachParentNode($script);
 		$this->addAttachChildNode($script);
 		$this->addDetachParentNode($script);
 		$this->addDetachChildNode($script);
 		$this->addShiftChildNodes($script);
 		$this->addInsertNewChildNode($script);
-		
+
 		$this->addAdjustStatus($script);
 		$this->addAdjustNodePath($script);
-		
+
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 	}
-	
-	
+
+
 	/**
 	 * Adds class attributes.
 	 * @param string &$script The script will be modified in this method.
@@ -167,13 +167,13 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		$script .= "
 	/**
-	 * @var ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())." object wrapped by this node.
+	 * @var ".$this->getStubObjectBuilder()->getClassname()." object wrapped by this node.
 	 */
 	protected \$obj = null;
-	
+
 	/**
 	 * The parent node for this node.
-	 * @var ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
+	 * @var ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	protected \$parentNode = null;
 
@@ -182,9 +182,9 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 * @var array
 	 */
 	protected \$childNodes = array();
-";	
+";
 	}
-	
+
 	/**
 	 * Adds the constructor.
 	 * @param string &$script The script will be modified in this method.
@@ -195,23 +195,23 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	/**
 	 * Constructor.
 	 *
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())." \$obj Object wrapped by this node.
+	 * @param ".$this->getStubObjectBuilder()->getClassname()." \$obj Object wrapped by this node.
 	 */
-	public function __construct(\$obj = null) 
+	public function __construct(\$obj = null)
 	{
 		if (\$obj !== null) {
 			\$this->obj = \$obj;
 		} else {
-			\$setNodePath = 'set' . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_PHPNAME;
-			\$this->obj = new ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())."();
+			\$setNodePath = 'set' . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_PHPNAME;
+			\$this->obj = new ".$this->getStubObjectBuilder()->getClassname()."();
 			\$this->obj->\$setNodePath('0');
 		}
 	}
 ";
 	}
 
-	
-	
+
+
 	protected function addCallOverload(&$script)
 	{
 		$script .= "
@@ -232,14 +232,14 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addSetIteratorOptions(&$script)
 	{
 		$script .= "
-	
+
 	/**
 	 * Sets the default options for iterators created from this object.
-	 * The options are specified in map format. The following options 
+	 * The options are specified in map format. The following options
 	 * are supported by all iterators. Some iterators may support other
 	 * options:
 	 *
@@ -250,7 +250,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 * @param array Map of option name => value.
 	 * @return void
 	 * @todo Implement other iterator types (i.e. post-order, level, etc.)
-	 */ 
+	 */
 	public function setIteratorOptions(\$type, \$opts)
 	{
 		\$this->itType = \$type;
@@ -258,7 +258,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addGetIterator(&$script)
 	{
 		$script .= "
@@ -273,24 +273,24 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		if (\$type === null)
 			\$type = (isset(\$this->itType) ? \$this->itType : 'Pre');
-				
+
 		if (\$opts === null)
 			\$opts = (isset(\$this->itOpts) ? \$this->itOpts : array());
-			
+
 		\$itclass = ucfirst(strtolower(\$type)) . 'OrderNodeIterator';
-		
+
 ";
         $script .= "
 	}
 ";
 	}
-	
+
 	protected function addGetNodeObj(&$script)
 	{
 		$script .= "
 	/**
 	 * Returns the object wrapped by this class.
-	 * @return ".DataModelBuilder::prefixClassname($this->getStubObjectBuilder()->getClassname())."
+	 * @return ".$this->getStubObjectBuilder()->getClassname()."
 	 */
 	public function getNodeObj()
 	{
@@ -298,7 +298,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addGetNodePath(&$script)
 	{
 		$script .= "
@@ -308,7 +308,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 */
 	public function getNodePath()
 	{
-		\$getNodePath = 'get' . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_PHPNAME;
+		\$getNodePath = 'get' . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_PHPNAME;
 		return \$this->obj->\$getNodePath();
 	}
 ";
@@ -324,12 +324,12 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	public function getNodeIndex()
 	{
 		\$npath =& \$this->getNodePath();
-		\$sep = strrpos(\$npath, ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP);
+		\$sep = strrpos(\$npath, ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP);
 		return (int) (\$sep !== false ? substr(\$npath, \$sep+1) : \$npath);
 	}
 ";
 	}
-	
+
 	protected function addGetNodeLevel(&$script)
 	{
 		$script .= "
@@ -339,19 +339,19 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 */
 	public function getNodeLevel()
 	{
-		return (substr_count(\$this->getNodePath(), ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP) + 1);
+		return (substr_count(\$this->getNodePath(), ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP) + 1);
 	}
 ";
 	}
-	
+
 	protected function addHasChildNode(&$script)
 	{
 		$script .= "
-	/** 
+	/**
 	 * Returns true if specified node is a child of this node. If recurse is
 	 * true, checks if specified node is a descendant of this node.
 	 *
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to look for.
+	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to look for.
 	 * @param boolean True if strict comparison should be used.
 	 * @param boolean True if all descendants should be checked.
 	 * @return boolean
@@ -362,47 +362,47 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 		{
 			if (\$childNode->equals(\$node, \$strict))
 				return true;
-				
+
 			if (\$recurse && \$childNode->hasChildNode(\$node, \$recurse))
 				return true;
 		}
-		
+
 		return false;
 	}
 ";
 	}
-	
+
 	protected function addGetChildNodeAt(&$script)
 	{
 		$script .= "
 	/**
-	 * Returns child node at one-based index. Retrieves from database if not 
+	 * Returns child node at one-based index. Retrieves from database if not
 	 * loaded yet.
 	 *
 	 * @param int One-based child node index.
 	 * @param boolean True if child should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
+	 * @return ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	public function getChildNodeAt(\$i, \$querydb = false, PDO \$con = null)
 	{
-		if (\$querydb && 
-			!\$this->obj->isNew() && 
-			!\$this->obj->isDeleted() && 
+		if (\$querydb &&
+			!\$this->obj->isNew() &&
+			!\$this->obj->isDeleted() &&
 			!isset(\$this->childNodes[\$i]))
 		{
-			\$criteria = new Criteria(".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::DATABASE_NAME);
-			\$criteria->add(".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_COLNAME, \$this->getNodePath() . ".DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname())."::NPATH_SEP . \$i, Criteria::EQUAL);
+			\$criteria = new Criteria(".$this->getStubPeerBuilder()->getClassname()."::DATABASE_NAME);
+			\$criteria->add(".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_COLNAME, \$this->getNodePath() . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP . \$i, Criteria::EQUAL);
 
-			if (\$childObj = ".DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname())."::doSelectOne(\$criteria, \$con))
-				\$this->attachChildNode(new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$childObj));
+			if (\$childObj = ".$this->getStubPeerBuilder()->getClassname()."::doSelectOne(\$criteria, \$con))
+				\$this->attachChildNode(new ".$this->getStubNodeBuilder()->getClassname()."(\$childObj));
 		}
 
 		return (isset(\$this->childNodes[\$i]) ? \$this->childNodes[\$i] : null);
 	}
 ";
 	}
-	
+
 	protected function addGetFirstChildNode(&$script)
 	{
 		$script .= "
@@ -411,7 +411,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 *
 	 * @param boolean True if child should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
+	 * @return ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	public function getFirstChildNode(\$querydb = false, PDO \$con = null)
 	{
@@ -419,15 +419,15 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addGetLastChildNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
 	/**
-	 * Returns last child node (if any). 
+	 * Returns last child node (if any).
 	 *
 	 * @param boolean True if child should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
@@ -450,16 +450,16 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 			\$criteria->addAsColumn('npathlen', \$db->strLength($nodePeerClassname::NPATH_COLNAME));
 			\$criteria->addDescendingOrderByColumn('npathlen');
 			\$criteria->addDescendingOrderByColumn($nodePeerClassname::NPATH_COLNAME);
-		  
+
 			\$lastObj = $peerClassname::doSelectOne(\$criteria, \$con);
-			
+
 			if (\$lastObj !== null)
 			{
-				\$lastNode = new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$lastObj);
-				
+				\$lastNode = new ".$this->getStubNodeBuilder()->getClassname()."(\$lastObj);
+
 				end(\$this->childNodes);
 				\$endNode = (count(\$this->childNodes) ? current(\$this->childNodes) : null);
-				
+
 				if (\$endNode)
 				{
 					if (\$endNode->getNodePath() > \$lastNode->getNodePath())
@@ -480,23 +480,23 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addGetSiblingNode(&$script)
 	{
-		$script .= "	
+		$script .= "
 	/**
-	 * Returns next (or previous) sibling node or null. Retrieves from database if 
+	 * Returns next (or previous) sibling node or null. Retrieves from database if
 	 * not loaded yet.
 	 *
 	 * @param boolean True if previous sibling should be returned.
 	 * @param boolean True if sibling should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
+	 * @return ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	public function getSiblingNode(\$prev = false, \$querydb = false, PDO \$con = null)
 	{
 		\$nidx = \$this->getNodeIndex();
-		
+
 		if (\$this->isRootNode())
 		{
 			return null;
@@ -521,8 +521,8 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 	protected function addGetParentNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 
 		$script .= "
 	/**
@@ -530,40 +530,40 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 *
 	 * @param boolean True if parent should be retrieved from database.
 	 * @param PDO Connection to use if retrieving from database.
-	 * @return ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."
+	 * @return ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	public function getParentNode(\$querydb = true, PDO \$con = null)
 	{
 		if (\$querydb &&
-			\$this->parentNode === null && 
+			\$this->parentNode === null &&
 			!\$this->isRootNode() &&
-			!\$this->obj->isNew() && 
+			!\$this->obj->isNew() &&
 			!\$this->obj->isDeleted())
 		{
 			\$npath =& \$this->getNodePath();
 			\$sep = strrpos(\$npath, $nodePeerClassname::NPATH_SEP);
 			\$ppath = substr(\$npath, 0, \$sep);
-			
+
 			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
 			\$criteria->add($nodePeerClassname::NPATH_COLNAME, \$ppath, Criteria::EQUAL);
-			
+
 			if (\$parentObj = $peerClassname::doSelectOne(\$criteria, \$con))
 			{
-				\$parentNode = new ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())."(\$parentObj);
+				\$parentNode = new ".$this->getStubNodeBuilder()->getClassname()."(\$parentObj);
 				\$parentNode->attachChildNode(\$this);
 			}
 		}
-		
+
 		return \$this->parentNode;
 	}
 ";
 	}
-	
+
 	protected function addGetAncestors(&$script)
 	{
 		$script .= "
-	/** 
-	 * Returns an array of all ancestor nodes, starting with the root node 
+	/**
+	 * Returns an array of all ancestor nodes, starting with the root node
 	 * first.
 	 *
 	 * @param boolean True if ancestors should be retrieved from database.
@@ -574,15 +574,15 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		\$ancestors = array();
 		\$parentNode = \$this;
-		
+
 		while (\$parentNode = \$parentNode->getParentNode(\$querydb, \$con))
 			array_unshift(\$ancestors, \$parentNode);
-		
+
 		return \$ancestors;
 	}
 ";
 	}
-	
+
 	protected function addIsRootNode(&$script)
 	{
 		$script .= "
@@ -602,7 +602,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 		$script .= "
 	/**
 	 * Changes the state of the object and its descendants to 'new'.
-	 * Also changes the node path to '0' to indicate that it is not a 
+	 * Also changes the node path to '0' to indicate that it is not a
 	 * stored node.
 	 *
 	 * @param boolean
@@ -618,7 +618,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 	protected function addSetDeleted(&$script)
 	{
-		$script .= "	
+		$script .= "
 	/**
 	 * Changes the state of the object and its descendants to 'deleted'.
 	 *
@@ -631,44 +631,44 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addAddChildNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
 	/**
 	 * Adds the specified node (and its children) as a child to this node. If a
-	 * valid \$beforeNode is specified, the node will be inserted in front of 
+	 * valid \$beforeNode is specified, the node will be inserted in front of
 	 * \$beforeNode. If \$beforeNode is not specified the node will be appended to
 	 * the end of the child nodes.
 	 *
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to add.
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to insert before.
+	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to add.
+	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to insert before.
 	 * @param PDO Connection to use.
 	 */
 	public function addChildNode(\$node, \$beforeNode = null, PDO \$con = null)
 	{
 		if (\$this->obj->isNew() && !\$node->obj->isNew())
 			throw new PropelException('Cannot add stored nodes to a new node.');
-			
+
 		if (\$this->obj->isDeleted() || \$node->obj->isDeleted())
 			throw new PropelException('Cannot add children in a deleted state.');
-		
+
 		if (\$this->hasChildNode(\$node))
 			throw new PropelException('Node is already a child of this node.');
 
 		if (\$beforeNode && !\$this->hasChildNode(\$beforeNode))
 			throw new PropelException('Invalid beforeNode.');
-			
+
 		if (\$con === null)
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
-			
+
 		try {
-				
+
 			if (!\$this->obj->isNew()) \$con->beginTransaction();
-				
+
 			if (\$beforeNode)
 			{
 				// Inserting before a node.
@@ -694,10 +694,10 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 			{
 				// \$this->isNew() && \$node->isNew() ||
 				// !\$this->isNew() && !node->isNew()
-				
+
 				\$srcPath = \$node->getNodePath();
 				\$dstPath = \$this->getNodePath() . $nodePeerClassname::NPATH_SEP . \$childIdx;
-				
+
 				if (!\$node->obj->isNew())
 				{
 					$nodePeerClassname::moveNodeSubTree(\$srcPath, \$dstPath, \$con);
@@ -707,13 +707,13 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 				{
 					\$parentNode = \$node->getParentNode();
 				}
-				
+
 				if (\$parentNode)
 				{
 					\$parentNode->detachChildNode(\$node);
 					\$parentNode->shiftChildNodes(-1, \$node->getNodeIndex()+1, \$con);
 				}
-			
+
 				\$node->adjustNodePath(\$srcPath, \$dstPath);
 			}
 
@@ -728,14 +728,14 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addMoveChildNode(&$script)
 	{
 		$script .= "
 	/**
 	 * Moves the specified child node in the specified direction.
 	 *
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Node to move.
+	 * @param ".$this->getStubNodeBuilder()->getClassname()." Node to move.
 	 * @param int Number of spaces to move among siblings (may be negative).
 	 * @param PDO Connection to use.
 	 * @throws PropelException
@@ -746,12 +746,12 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
-	
+
+
 	protected function addSave(&$script)
 	{
 
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Saves modified object data to the datastore.
@@ -763,15 +763,15 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		if (\$this->obj->isDeleted())
 			throw new PropelException('Cannot save deleted node.');
-			
+
 		if (substr(\$this->getNodePath(), 0, 1) == '0')
 			throw new PropelException('Cannot save unattached node.');
 
 		if (\$this->obj->isColumnModified($nodePeerClassname::NPATH_COLNAME))
 			throw new PropelException('Cannot save manually modified node path.');
-		
+
 		\$this->obj->save(\$con);
-		
+
 		if (\$recurse)
 		{
 			foreach (\$this->childNodes as \$childNode)
@@ -780,11 +780,11 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
-	
+
+
 	protected function addDelete(&$script)
 	{
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Removes this object and all descendants from datastore.
@@ -802,13 +802,13 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 		{
 			$nodePeerClassname::deleteNodeSubTree(\$this->getNodePath(), \$con);
 		}
-		
+
 		if (\$parentNode = \$this->getParentNode(true, \$con))
 		{
 			\$parentNode->detachChildNode(\$this);
 			\$parentNode->shiftChildNodes(-1, \$this->getNodeIndex()+1, \$con);
 		}
-		
+
 		\$this->setDeleted(true);
 	}
 ";
@@ -816,11 +816,11 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 	protected function addEquals(&$script)
 	{
-		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
+		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Compares the object wrapped by this node with that of another node. Use 
-	 * this instead of equality operators to prevent recursive dependency 
+	 * Compares the object wrapped by this node with that of another node. Use
+	 * this instead of equality operators to prevent recursive dependency
 	 * errors.
 	 *
 	 * @param $nodeClassname Node to compare.
@@ -837,14 +837,14 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addAttachParentNode(&$script)
 	{
-		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
+		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
 		$script .= "
 	/**
-	 * This method is used internally when constructing the tree structure 
-	 * from the database. To set the parent of a node, you should call 
+	 * This method is used internally when constructing the tree structure
+	 * from the database. To set the parent of a node, you should call
 	 * addChildNode() on the parent.
 	 *
 	 * @param $nodeClassname Parent node to attach.
@@ -853,24 +853,24 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	 */
 	public function attachParentNode(\$node)
 	{
-		if (!\$node->hasChildNode(\$this, true)) 
+		if (!\$node->hasChildNode(\$this, true))
 			throw new PropelException('Failed to attach parent node for non-child.');
 
 		\$this->parentNode = \$node;
 	}
 ";
 	}
-	
-	
+
+
 	protected function addAttachChildNode(&$script)
 	{
-		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * This method is used internally when constructing the tree structure 
-	 * from the database. To add a child to a node you should call the 
-	 * addChildNode() method instead. 
+	 * This method is used internally when constructing the tree structure
+	 * from the database. To add a child to a node you should call the
+	 * addChildNode() method instead.
 	 *
 	 * @param $nodeClassname Child node to attach.
 	 * @return void
@@ -880,10 +880,10 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		if (\$this->hasChildNode(\$node))
 			throw new PropelException('Failed to attach child node. Node already exists.');
-		
+
 		if (\$this->obj->isDeleted() || \$node->obj->isDeleted())
 			throw new PropelException('Failed to attach node in deleted state.');
-			
+
 		if (\$this->obj->isNew() && !\$node->obj->isNew())
 			throw new PropelException('Failed to attach non-new child to new node.');
 
@@ -892,18 +892,18 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 		if (\$this->getNodePath() . $nodePeerClassname::NPATH_SEP . \$node->getNodeIndex() != \$node->getNodePath())
 			throw new PropelException('Failed to attach child node. Node path mismatch.');
-		
+
 		\$this->childNodes[\$node->getNodeIndex()] = \$node;
 		ksort(\$this->childNodes);
-		
+
 		\$node->attachParentNode(\$this);
 	}
 ";
 	}
-	
+
 	protected function addDetachParentNode(&$script)
 	{
-		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname());
+		$nodeClassname = $this->getStubNodeBuilder()->getClassname();
 		$script .= "
 	/**
 	 * This method is used internally when deleting nodes. It is used to break
@@ -922,14 +922,14 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 	protected function addDetachChildNode(&$script)
 	{
 		$script .= "
 	/**
 	 * This method is used internally when deleting nodes. It is used to break
 	 * the link to this between this node and the specified child.
-	 * @param ".DataModelBuilder::prefixClassname($this->getStubNodeBuilder()->getClassname())." Child node to detach.
+	 * @param ".$this->getStubNodeBuilder()->getClassname()." Child node to detach.
 	 * @return void
 	 * @throws PropelException
 	 */
@@ -937,23 +937,23 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		if (!\$this->hasChildNode(\$node, true))
 			throw new PropelException('Failed to detach non-existent child node.');
-		
+
 		unset(\$this->childNodes[\$node->getNodeIndex()]);
 		\$node->parentNode = null;
 	}
 ";
 	}
-	
+
 	protected function addShiftChildNodes(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
 	/**
-	 * Shifts child nodes in the specified direction and offset index. This 
-	 * method assumes that there is already space available in the 
-	 * direction/offset indicated. 
+	 * Shifts child nodes in the specified direction and offset index. This
+	 * method assumes that there is already space available in the
+	 * direction/offset indicated.
 	 *
 	 * @param int Direction/# spaces to shift. 1=leftshift, 1=rightshift
 	 * @param int Node index to start shift at.
@@ -965,7 +965,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	{
 		if (\$this->obj->isDeleted())
 			throw new PropelException('Cannot shift nodes for deleted object');
-					
+
 		\$lastNode = \$this->getLastChildNode(true, \$con);
 		\$lastIdx = (\$lastNode !== null ? \$lastNode->getNodeIndex() : 0);
 
@@ -974,38 +974,38 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 		if (\$con === null)
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
-			
+
 		if (!\$this->obj->isNew())
 		{
 			// Shift nodes in database.
-			
+
 			try {
-				
+
 				\$con->beginTransaction();
-				 
+
 				\$n = \$lastIdx - \$offsetIdx + 1;
 				\$i = \$direction < 1 ? \$offsetIdx : \$lastIdx;
-				
+
 				while (\$n--)
 				{
 					\$srcPath = \$this->getNodePath() . $nodePeerClassname::NPATH_SEP . \$i;			  // 1.2.2
 					\$dstPath = \$this->getNodePath() . $nodePeerClassname::NPATH_SEP . (\$i+\$direction); // 1.2.3
 
 					$nodePeerClassname::moveNodeSubTree(\$srcPath, \$dstPath, \$con);
-					
+
 					\$i -= \$direction;
 				}
-				
+
 				\$con->commit();
-				
+
 			} catch (SQLException \$e) {
 				\$con->rollback();
 				throw new PropelException(\$e);
 			}
 		}
-		
+
 		// Shift the in-memory objects.
-		
+
 		\$n = \$lastIdx - \$offsetIdx + 1;
 		\$i = \$direction < 1 ? \$offsetIdx : \$lastIdx;
 
@@ -1015,27 +1015,27 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 			{
 				\$srcPath = \$this->getNodePath() . $nodePeerClassname::NPATH_SEP . \$i;			  // 1.2.2
 				\$dstPath = \$this->getNodePath() . $nodePeerClassname::NPATH_SEP . (\$i+\$direction); // 1.2.3
-				
+
 				\$this->childNodes[\$i+\$direction] = \$this->childNodes[\$i];
 				\$this->childNodes[\$i+\$direction]->adjustNodePath(\$srcPath, \$dstPath);
 
 				unset(\$this->childNodes[\$i]);
 			}
-			
+
 			\$i -= \$direction;
 		}
-		
+
 		ksort(\$this->childNodes);
 	}
 ";
 	}
-	
+
 	protected function addInsertNewChildNode(&$script)
 	{
-		$peerClassname = DataModelBuilder::prefixClassname($this->getStubPeerBuilder()->getClassname());
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		$nodeClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
-		
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
+		$nodeClassname = $this->getStubNodePeerBuilder()->getClassname();
+
 		$script .= "
 	/**
 	 * Inserts the node and its children at the specified childIdx.
@@ -1054,19 +1054,19 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 
 		\$node->obj->\$setNodePath(\$this->getNodePath() . $nodePeerClassname::NPATH_SEP . \$childIdx);
 		\$node->obj->save(\$con);
-		
+
 		\$i = 1;
 		foreach (\$node->childNodes as \$childNode)
-			\$node->insertNewChildNode(\$childNode, \$i++, \$con);		
+			\$node->insertNewChildNode(\$childNode, \$i++, \$con);
 	}
 ";
 	}
-	
+
 	protected function addAdjustStatus(&$script)
-	{		
+	{
 		$script .= "
 	/**
-	 * Adjust new/deleted status of node and all children. 
+	 * Adjust new/deleted status of node and all children.
 	 *
 	 * @param string Status to change ('New' or 'Deleted')
 	 * @param boolean Value for status.
@@ -1075,21 +1075,21 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	protected function adjustStatus(\$status, \$b)
 	{
 		\$setStatus = 'set' . \$status;
-		
+
 		\$this->obj->\$setStatus(\$b);
-		
+
 		foreach (\$this->childNodes as \$childNode)
-			\$childNode->obj->\$setStatus(\$b);			
+			\$childNode->obj->\$setStatus(\$b);
 	}
 ";
 	}
-	
+
 	protected function addAdjustNodePath(&$script)
 	{
-		$nodePeerClassname = DataModelBuilder::prefixClassname($this->getStubNodePeerBuilder()->getClassname());
+		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Adjust path of node and all children. This is used internally when 
+	 * Adjust path of node and all children. This is used internally when
 	 * inserting/moving nodes.
 	 *
 	 * @param string Section of old path to change.
@@ -1099,7 +1099,7 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	protected function adjustNodePath(\$oldBasePath, \$newBasePath)
 	{
 		\$setNodePath = 'set' . $nodePeerClassname::NPATH_PHPNAME;
-		
+
 		\$this->obj->\$setNodePath(\$newBasePath .  substr(\$this->getNodePath(), strlen(\$oldBasePath)));
 		\$this->obj->resetModified($nodePeerClassname::NPATH_COLNAME);
 
@@ -1108,5 +1108,5 @@ abstract class ".DataModelBuilder::prefixClassname($this->getClassname())." impl
 	}
 ";
 	}
-	
+
 } // PHP5NodeObjectBuilder

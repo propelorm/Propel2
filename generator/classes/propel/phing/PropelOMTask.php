@@ -19,14 +19,14 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/phing/AbstractPropelDataModelTask.php';
 include_once 'propel/engine/builder/om/ClassTools.php';
 require_once 'propel/engine/builder/om/OMBuilder.php';
 
 /**
  * This Task creates the OM classes based on the XML schema file.
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.phing
  */
@@ -37,7 +37,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	 * @var string
 	 */
 	private $targetPlatform;
-	
+
 	/**
 	 * Sets the platform (php4, php5, etc.) for which the om is being built.
 	 * @param string $v
@@ -45,7 +45,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	public function setTargetPlatform($v) {
 		$this->targetPlatform = $v;
 	}
-	
+
 	/**
 	 * Gets the platform (php4, php5, etc.) for which the om is being built.
 	 * @return string
@@ -53,7 +53,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	public function getTargetPlatform() {
 		return $this->targetPlatform;
 	}
-	
+
 	/**
 	 * Utility method to create directory for package if it doesn't already exist.
 	 * @param string $path The [relative] package path.
@@ -68,7 +68,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 			}
 		}
 	}
-	
+
 	/**
 	 * Uses a builder class to create the output class.
 	 * This method assumes that the DataModelBuilder class has been initialized with the build properties.
@@ -78,71 +78,71 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	 */
 	protected function build(OMBuilder $builder, $overwrite = true)
 	{
-		
+
 		$path = $builder->getClassFilePath();
 		$this->ensureDirExists(dirname($path));
-		
+
 		$_f = new PhingFile($this->getOutputDirectory(), $path);
 		if ($overwrite || !$_f->exists()) {
-			$this->log("\t\t-> " . DataModelBuilder::prefixClassname($builder->getClassname()) . " [builder: " . get_class($builder) . "]");
+			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
 			$script = $builder->build();
 			file_put_contents($_f->getAbsolutePath(), $script);
 			foreach($builder->getWarnings() as $warning) {
 				$this->log($warning, PROJECT_MSG_WARN);
 			}
 		} else {
-			$this->log("\t\t-> (exists) " . DataModelBuilder::prefixClassname($builder->getClassname()));
+			$this->log("\t\t-> (exists) " . $builder->getClassname());
 		}
-		
+
 	}
-	
+
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
 	public function main()
-	{		
+	{
 		// check to make sure task received all correct params
-		$this->validate();		
-		
+		$this->validate();
+
 		DataModelBuilder::setBuildProperties($this->getPropelProperties());
-		
+
 		foreach ($this->getDataModels() as $dataModel) {
 			$this->log("Processing Datamodel : " . $dataModel->getName());
-			
+
 			foreach ($dataModel->getDatabases() as $database) {
-				
+
 				$this->log("  - processing database : " . $database->getName());
-							
-				foreach ($database->getTables() as $table) {					
-				
+
+				foreach ($database->getTables() as $table) {
+
 					if (!$table->isForReferenceOnly()) {
-						
+
 						$this->log("\t+ " . $table->getName());
-						
+
 						// -----------------------------------------------------------------------------------------
 						// Create Peer, Object, and MapBuilder classes
 						// -----------------------------------------------------------------------------------------
-						
+
 						// these files are always created / overwrite any existing files
 						foreach(array('peer', 'object', 'mapbuilder') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
 							$this->build($builder);
 						}
-						
+
 						// -----------------------------------------------------------------------------------------
 						// Create [empty] stub Peer and Object classes if they don't exist
 						// -----------------------------------------------------------------------------------------
-						
+
 						// these classes are only generated if they don't already exist
 						foreach(array('peerstub', 'objectstub') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
 							$this->build($builder, $overwrite=false);
 						}
-						
+
 						// -----------------------------------------------------------------------------------------
 						// Create [empty] stub child Object classes if they don't exist
 						// -----------------------------------------------------------------------------------------
-						
+
 						// If table has enumerated children (uses inheritance) then create the empty child stub classes if they don't already exist.
 						if ($table->getChildrenColumn()) {
 							$col = $table->getChildrenColumn();
@@ -154,45 +154,45 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 								} // foreach
 							} // if col->is enumerated
 						} // if tbl->getChildrenCol
-						
-						
+
+
 						// -----------------------------------------------------------------------------------------
 						// Create [empty] Interface if it doesn't exist
 						// -----------------------------------------------------------------------------------------
-						
+
 						// Create [empty] interface if it does not already exist
 						if ($table->getInterface()) {
 							$builder = DataModelBuilder::builderFactory($table, 'interface');
 							$this->build($builder, $overwrite=false);
 						}
-						
+
 						// -----------------------------------------------------------------------------------------
 						// Create tree Node classes
 						// -----------------------------------------------------------------------------------------
-						
+
 						if ($table->isTree()) {
-							
-							foreach(array('nodepeer', 'node') as $target) {							
+
+							foreach(array('nodepeer', 'node') as $target) {
 								$builder = DataModelBuilder::builderFactory($table, $target);
-								$this->build($builder);							
+								$this->build($builder);
 							}
-							
+
 							foreach(array('nodepeerstub', 'nodestub') as $target) {
 								$builder = DataModelBuilder::builderFactory($table, $target);
-								$this->build($builder, $overwrite=false);							
+								$this->build($builder, $overwrite=false);
 							}
-							
+
 						} // if Table->isTree()
-						
-						
-					} // if !$table->isForReferenceOnly()										
-					
-				} // foreach table	
-		
+
+
+					} // if !$table->isForReferenceOnly()
+
+				} // foreach table
+
 			} // foreach database
-		
+
 		} // foreach dataModel
 
-	
+
 	} // main()
 }

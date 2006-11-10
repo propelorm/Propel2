@@ -24,27 +24,27 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
 
 /**
  * Generates the empty PHP5 stub object class for user object model (OM).
- * 
+ *
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
- * 
+ *
  * This class replaces the ExtensionObject.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om.php5
  */
-class PHP5ExtensionObjectBuilder extends ObjectBuilder {		
-	
+class PHP5ExtensionObjectBuilder extends ObjectBuilder {
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return string
 	 */
-	public function getClassname()
+	public function getUnprefixedClassname()
 	{
 		return $this->getTable()->getPhpName();
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param string &$script The script will be modified in this method.
@@ -55,20 +55,20 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 require '".$this->getObjectBuilder()->getClassFilePath()."';
 ";
 	} // addIncludes()
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
-		
+
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
-		
-		$baseClassname = DataModelBuilder::prefixClassname($this->getObjectBuilder()->getClassname());
-		
+
+		$baseClassname = $this->getObjectBuilder()->getClassname();
+
 		$script .= "
 
 /**
@@ -90,33 +90,33 @@ require '".$this->getObjectBuilder()->getClassFilePath()."';
  * long as it does not already exist in the output directory.
  *
  * @package ".$this->getPackage()."
- */	
-class ".DataModelBuilder::prefixClassname($this->getClassname())." extends $baseClassname {
+ */
+class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
-	
+
 	/**
 	 * Specifies the methods that are added as part of the stub object class.
-	 * 
+	 *
 	 * By default there are no methods for the empty stub classes; override this method
 	 * if you want to change that behavior.
-	 * 
+	 *
 	 * @see ObjectBuilder::addClassBody()
 	 */
 	protected function addClassBody(&$script)
 	{
 		// there is no class body
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param string &$script The script will be modified in this method.
-	 */	
+	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
-} // " . DataModelBuilder::prefixClassname($this->getClassname()) . "
+} // " . $this->getClassname() . "
 ";
 	}
-	
+
 } // PHP5ExtensionObjectBuilder

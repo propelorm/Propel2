@@ -4,7 +4,7 @@
 	#
 	#  L O G G I N G
 	#
-	# We use PEAR-compatible Log for all Propel logging and we embed the 
+	# We use PEAR-compatible Log for all Propel logging and we embed the
 	# log conf properties within our application configuration.
 	#
 	#   type    - the type of log (default 'file')
@@ -19,13 +19,14 @@
 	#                   PEAR_LOG_NOTICE   5
 	#                   PEAR_LOG_INFO     6
 	#                   PEAR_LOG_DEBUG    7
-	# 
-	# Note that if you omit the <log> config section, Propel will not attempt to 
-	# configure a logger, and you will need to specify one manually using 
+	#
+	# Note that if you omit the <log> config section, Propel will not attempt to
+	# configure a logger, and you will need to specify one manually using
 	# Propel::setLogger() if you want Propel to log debug or error messages.
 	-->
 	<log>
 		<ident>propel-bookstore</ident>
+		<name>console</name>
 		<level>7</level>
 	</log>
 	<!--
@@ -36,11 +37,11 @@
 	# project uses several databases.
 	-->
 	<propel>
-		<datasources default="bookstore">		
-			
+		<datasources default="bookstore">
+
 			<datasource id="bookstore">
 				<!-- the Propel adapter to use for this connection -->
-				<adapter>sqlite</adapter>				
+				<adapter>sqlite</adapter>
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
 					<dsn>sqlite2:/tmp/bookstore.db</dsn>

@@ -154,7 +154,16 @@ class ForeignKey extends XMLElement {
     {
         $this->foreignTableName = $tableName;
     }
-
+	
+	/**
+	 * Gets the resolved foreign Table model object.
+	 * @return Table
+	 */
+	public function getForeignTable()
+	{
+		return $this->getTable()->getDatabase()->getTable($this->getForeignTableName());
+	}
+	
     /**
      * Set the parent Table of the foreign key
      */
@@ -253,7 +262,32 @@ class ForeignKey extends XMLElement {
         }
         return $h;
     }
-
+	
+	/**
+	 * Whether this foreign key is also the primary key of the local table.
+	 * 
+	 * @return boolean
+	 */
+	public function isLocalPrimaryKey()
+	{
+		$localCols = $this->getLocalColumns();
+		
+		$localPKColumnObjs = $this->getTable()->getPrimaryKey();
+		
+		$localPKCols = array();
+		foreach($localPKColumnObjs as $lPKCol) {
+			$localPKCols[] = $lPKCol->getName();
+		}
+//		
+//		print "Local key columns: \n";
+//		print_r($localCols);
+//		
+//		print "Local table primary key columns: \n";
+//		print_r($localPKCols);
+		
+		return (!array_diff($localPKCols, $localCols));
+	}
+	
     /**
      * String representation of the foreign key. This is an xml representation.
      */

@@ -132,24 +132,42 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertNull($book, "Expect NULL from retrieveByPK on deleted Book.");
 
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function testNoColsModified()
 	{
 		$e1 = new BookstoreEmployee();
 		$e1->setName('Employee 1');
-		
+
 		$e2 = new BookstoreEmployee();
 		$e2->setName('Employee 2');
-		
+
 		$super = new BookstoreEmployee();
 		// we don't know who the supervisor is yet
 		$super->addBookstoreEmployeeRelatedBySupervisorId($e1);
 		$super->addBookstoreEmployeeRelatedBySupervisorId($e2);
-		
+
 		$affected = $super->save();
-		
+
+	}
+
+	/**
+	 * Tests new one-to-one functionality.
+	 *
+	 * @todo -cGeneratedObjectTest Add a test for one-to-one when implemented.
+	 */
+	public function testOneToOne()
+	{
+		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setBookstoreEmployee($emp);
+		$acct->setLogin("testuser");
+		$acct->setPassword("testpass");
+
+		// $this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
+
 	}
 }
