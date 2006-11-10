@@ -13,17 +13,17 @@
   <property name="build.properties" value="build.properties"/>
   <property name="propel.contextProperties" value="./${build.properties}"/>
   <property name="propel.home" value="."/>
-  
+
   <available file="${propel.home}/build.properties" property="globalBuildPopertiesExists"/>
-  
-  <if> 
+
+  <if>
   	<and>
   		<isset property="globalBuildPopertiesExists"/>
   	</and>
   	<then>
 	    <property file="${propel.home}/build.properties"/>
-	</then>	
-  </if>  
+	</then>
+  </if>
 
   <!--
     The default.properties file will map old properties to the new ones along
@@ -201,6 +201,9 @@
     depends="create-db-check"
     description="==> generates the target database">
 
+	<fail message="create-db target temporarily disabled, while we replace creole components."/>
+
+	<!--
     <propel-data-model
 	  validate="${propel.schema.validate}"
 	  xsd="${propel.schema.xsd.file}"
@@ -228,6 +231,7 @@
       src="${propel.sql.dir}/create-db.sql"
       url="${propel.database.createUrl}"
     />
+    -->
   </target>
 
   <!-- ================================================================ -->
@@ -251,7 +255,7 @@
   <!-- ================================================================ -->
   <!-- C R E O L E  TO  X M L                                               -->
   <!-- ================================================================ -->
-	
+
   <target
     name="creole"
     description="==> generate xml schema from Creole metadata">
@@ -275,8 +279,8 @@
     />
     -->
   </target>
-	
-	
+
+
   <!-- ================================================================ -->
   <!-- Generate SQL from XML data file                                  -->
   <!-- ================================================================ -->
@@ -441,11 +445,11 @@
     <echo message="| array dump for improved performance.     |"/>
     <echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
-	
-	
+
+
 	<echo>Output file: ${propel.runtime.phpconf.file}</echo>
 	<echo>XMLFile: ${propel.conf.dir}/${propel.runtime.conf.file}</echo>
-	
+
     <propel-convert-conf
       targetDatabase="${propel.database}"
       xsd="${propel.schema.xsd.file}"
