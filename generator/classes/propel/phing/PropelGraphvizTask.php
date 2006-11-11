@@ -158,7 +158,9 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
             } // foreach database
             $dotSyntax .= "}\n";
 
-            $this->writeDot($dotSyntax,$this->outDir);
+            $this->writeDot($dotSyntax,$this->outDir,$database->getName());
+
+	    $dotSyntax = '';
 
         } //foreach datamodels
 
@@ -168,8 +170,8 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
     /**
      * probably insecure
      */
-    function writeDot($dotSyntax, PhingFile $outputDir) {
-		$file = new PhingFile($outputDir, 'schema.dot');
+    function writeDot($dotSyntax, PhingFile $outputDir, $baseFilename) {
+		$file = new PhingFile($outputDir, $baseFilename . '.schema.dot');
 		$this->log("Writing dot file to " . $file->getAbsolutePath());
         file_put_contents($file->getAbsolutePath(), $dotSyntax);
     }
