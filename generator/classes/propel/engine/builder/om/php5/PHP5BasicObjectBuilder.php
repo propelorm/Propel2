@@ -602,34 +602,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		try {
 ";
-/*
-
-    const CHAR = "CHAR";
-    const VARCHAR = "VARCHAR";
-    const LONGVARCHAR = "LONGVARCHAR";
-    const CLOB = "CLOB";
-    const NUMERIC = "NUMERIC";
-    const DECIMAL = "DECIMAL";
-    const TINYINT = "TINYINT";
-    const SMALLINT = "SMALLINT";
-    const INTEGER = "INTEGER";
-    const BIGINT = "BIGINT";
-    const REAL = "REAL";
-    const FLOAT = "FLOAT";
-    const DOUBLE = "DOUBLE";
-    const BINARY = "BINARY";
-    const VARBINARY = "VARBINARY";
-    const LONGVARBINARY = "LONGVARBINARY";
-    const BLOB = "BLOB";
-    const DATE = "DATE";
-    const TIME = "TIME";
-    const TIMESTAMP = "TIMESTAMP";
-	
-	const BU_DATE = "BU_DATE";
-	const BU_TIMESTAMP = "BU_TIMESTAMP";
-	
-    const BOOLEAN = "BOOLEAN";
-*/
 			$n = 0;
 			foreach($table->getColumns() as $col) {
 				if(!$col->isLazyLoad()) {
