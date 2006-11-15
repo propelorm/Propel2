@@ -47,7 +47,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	 */
 	public function getUnprefixedClassname()
 	{
-		return $this->getChild()->getUnprefixedClassname();
+		return $this->getChild()->getClassname();
 	}
 
 	/**
