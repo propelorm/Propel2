@@ -27,6 +27,8 @@ require_once 'bookstore/Review.php';
 require_once 'bookstore/BookClubList.php';
 require_once 'bookstore/BookListRel.php';
 require_once 'bookstore/BookstoreEmployee.php';
+require_once 'bookstore/BookstoreManager.php';
+require_once 'bookstore/BookstoreCashier.php';
 require_once 'bookstore/BookstoreEmployeeAccount.php';
 
 define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../etc/lob');
@@ -121,6 +123,7 @@ class BookstoreDataPopulator {
 		$phoenix->setISBN("043935806X");
 		$phoenix->setAuthor($rowling);
 		$phoenix->setPublisher($scholastic);
+		$phoenix->setPrice(10.99);
 		$phoenix->save();
 		$phoenix_id = $phoenix->getId();
 		// print "Created book Phoenix: " . (string) $phoenix . "\n";
@@ -130,6 +133,7 @@ class BookstoreDataPopulator {
 		$qs = new Book();
 		$qs->setISBN("0380977427");
 		$qs->setTitle("Quicksilver");
+		$qs->setPrice(11.99);
 		$qs->setAuthor($stephenson);
 		$qs->setPublisher($morrow);
 		$qs->save();
@@ -139,6 +143,7 @@ class BookstoreDataPopulator {
 		$dj = new Book();
 		$dj->setISBN("0140422161");
 		$dj->setTitle("Don Juan");
+		$dj->setPrice(12.99);
 		$dj->setAuthor($byron);
 		$dj->setPublisher($penguin);
 		$dj->save();
@@ -148,6 +153,7 @@ class BookstoreDataPopulator {
 		$td = new Book();
 		$td->setISBN("067972575X");
 		$td->setTitle("The Tin Drum");
+		$td->setPrice(13.99);
 		$td->setAuthor($grass);
 		$td->setPublisher($vintage);
 		$td->save();

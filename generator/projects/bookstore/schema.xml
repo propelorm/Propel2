@@ -22,6 +22,11 @@
       phpName="ISBN"
       description="ISBN Number"/>
     <column
+      name="price"
+      required="false"
+      type="FLOAT"
+      description="Price of the book."/>
+    <column
       name="publisher_id"
       required="false"
       type="INTEGER"
@@ -256,7 +261,7 @@
 	</foreign-key>
   </table>
 
-  <!-- test self-referencing foreign keys -->
+  <!-- test self-referencing foreign keys and inheritance-->
   <table name="bookstore_employee" description="Hierarchical table to represent employees of a bookstore.">
     <column
 	  name="id"
@@ -264,6 +269,11 @@
 	  primaryKey="true"
 	  autoIncrement="true"
 	  description="Employee ID number"/>
+	<column name="class_key" type="INTEGER" required="true" default="0" inheritance="single">
+		<inheritance key="0" class="BookstoreEmployee"/>
+		<inheritance key="1" class="BookstoreManager" extends="BookstoreEmployee"/>
+		<inheritance key="2" class="BookstoreCashier" extends="BookstoreEmployee"/>
+	</column>
 	<column
 	  name="name"
 	  type="VARCHAR"
@@ -283,7 +293,7 @@
 	</foreign-key>
   </table>
 
-  <!-- test one-to-one server -->
+  <!-- Test one-to-one relationship -->
   <table name="bookstore_employee_account" description="A table that represents a bookstore employees login credentials.">
 	<column
 	  name="employee_id"
@@ -303,5 +313,5 @@
 	  <reference local="employee_id" foreign="id"/>
 	</foreign-key>
   </table>
-
+  
 </database>

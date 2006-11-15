@@ -1022,6 +1022,7 @@ $script .= "
 			\$con->beginTransaction();
 			\$affectedRows = \$this->doSave(\$con);
 			\$con->commit();
+			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
 		} catch (PropelException \$e) {
 			\$con->rollback();

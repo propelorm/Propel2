@@ -618,10 +618,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj)
 	{
-		// print \"+Adding (by rel) \" . get_class(\$obj) . \" \" . var_export(\$obj->getPrimaryKey(),true) . \" to instance pool.\\n\";
+		// print \"+Adding (by addInstanceToPool()) \" . get_class(\$obj) . \" \" . var_export(\$obj->getPrimaryKey(),true) . \" to instance pool.\\n\";
 	";
 		$pk = $this->getTable()->getPrimaryKey();
-		if ($pk > 0) {
+		if (count($pk) > 1) {
 			$script .= "
 		\$key = serialize(\$obj->getPrimaryKey());";
 		} else {
@@ -739,7 +739,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	public static function getInstanceFromPool(\$key)
 	{
 		if (isset(self::\$instances[\$key])) {
-			//print \"  <--Found ".$this->getObjectClassname()." \" . self::\$instances[\$key] . \" in instance pool.\\n\";
+			//print \"  <-Found ".$this->getObjectClassname()." \" . self::\$instances[\$key] . \" in instance pool.\\n\";
 			return self::\$instances[\$key];
 		} else {
 			return null; // just to be explicit

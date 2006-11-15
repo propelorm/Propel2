@@ -980,7 +980,8 @@ $script .= "
 			} else {
 					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 			}
-				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 		} // if \$this->isModified()
 
 		return \$affectedRows;
