@@ -66,29 +66,33 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 				0 => 'Id',
 				1 => 'Title',
 				2 => 'ISBN',
-				3 => 'PublisherId',
-				4 => 'AuthorId'
+				3 => 'Price',
+				4 => 'PublisherId',
+				5 => 'AuthorId'
 			),
 			BasePeer::TYPE_COLNAME => array(
 				0 => 'book.ID',
 				1 => 'book.TITLE',
 				2 => 'book.ISBN',
-				3 => 'book.PUBLISHER_ID',
-				4 => 'book.AUTHOR_ID'
+				3 => 'book.PRICE',
+				4 => 'book.PUBLISHER_ID',
+				5 => 'book.AUTHOR_ID'
 			),
 			BasePeer::TYPE_FIELDNAME => array(
 				0 => 'id',
 				1 => 'title',
 				2 => 'isbn',
-				3 => 'publisher_id',
-				4 => 'author_id'
+				3 => 'price',
+				4 => 'publisher_id',
+				5 => 'author_id'
 			),
 			BasePeer::TYPE_NUM => array(
 				0 => 0,
 				1 => 1,
 				2 => 2,
 				3 => 3,
-				4 => 4
+				4 => 4,
+				5 => 5
 			)
 		);
 
@@ -118,7 +122,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			BasePeer::TYPE_PHPNAME => 'AuthorId',
 			BasePeer::TYPE_COLNAME => 'book.AUTHOR_ID',
 			BasePeer::TYPE_FIELDNAME => 'author_id',
-			BasePeer::TYPE_NUM => 4,
+			BasePeer::TYPE_NUM => 5,
 		);
 		foreach($types as $fromType) {
 			foreach($types as $toType) {
@@ -146,29 +150,33 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 				0 => 'Id',
 				1 => 'Title',
 				2 => 'ISBN',
-				3 => 'PublisherId',
-				4 => 'AuthorId'
+				3 => 'Price',
+				4 => 'PublisherId',
+				5 => 'AuthorId'
 			),
 			BasePeer::TYPE_COLNAME => array(
 				0 => 'book.ID',
 				1 => 'book.TITLE',
 				2 => 'book.ISBN',
-				3 => 'book.PUBLISHER_ID',
-				4 => 'book.AUTHOR_ID'
+				3 => 'book.PRICE',
+				4 => 'book.PUBLISHER_ID',
+				5 => 'book.AUTHOR_ID'
 			),
 			BasePeer::TYPE_FIELDNAME => array(
 				0 => 'id',
 				1 => 'title',
 				2 => 'isbn',
-				3 => 'publisher_id',
-				4 => 'author_id'
+				3 => 'price',
+				4 => 'publisher_id',
+				5 => 'author_id'
 			),
 			BasePeer::TYPE_NUM => array(
 				0 => 0,
 				1 => 1,
 				2 => 2,
 				3 => 3,
-				4 => 4
+				4 => 4,
+				5 => 5
 			)
 		);
 
@@ -198,7 +206,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			BasePeer::TYPE_PHPNAME => 'AuthorId',
 			BasePeer::TYPE_COLNAME => 'book.AUTHOR_ID',
 			BasePeer::TYPE_FIELDNAME => 'author_id',
-			BasePeer::TYPE_NUM => 4,
+			BasePeer::TYPE_NUM => 5,
 		);
 		foreach($types as $fromType) {
 			foreach($types as $toType) {

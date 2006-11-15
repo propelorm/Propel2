@@ -602,24 +602,64 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		try {
 ";
+/*
+
+    const CHAR = "CHAR";
+    const VARCHAR = "VARCHAR";
+    const LONGVARCHAR = "LONGVARCHAR";
+    const CLOB = "CLOB";
+    const NUMERIC = "NUMERIC";
+    const DECIMAL = "DECIMAL";
+    const TINYINT = "TINYINT";
+    const SMALLINT = "SMALLINT";
+    const INTEGER = "INTEGER";
+    const BIGINT = "BIGINT";
+    const REAL = "REAL";
+    const FLOAT = "FLOAT";
+    const DOUBLE = "DOUBLE";
+    const BINARY = "BINARY";
+    const VARBINARY = "VARBINARY";
+    const LONGVARBINARY = "LONGVARBINARY";
+    const BLOB = "BLOB";
+    const DATE = "DATE";
+    const TIME = "TIME";
+    const TIMESTAMP = "TIMESTAMP";
+	
+	const BU_DATE = "BU_DATE";
+	const BU_TIMESTAMP = "BU_TIMESTAMP";
+	
+    const BOOLEAN = "BOOLEAN";
+*/
 			$n = 0;
 			foreach($table->getColumns() as $col) {
 				if(!$col->isLazyLoad()) {
 					// $affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
 					$clo = strtolower($col->getName());
 					switch($col->getType()) {
-
+						case PropelTypes::SMALLINT:
+						case PropelTypes::INTEGER:
+							$script .= "
+			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (int) \$row[\$startcol + $n] : null;";
+							break;
+						case PropelTypes::BOOLEAN:
+							$script .= "
+			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (boolean) \$row[\$startcol + $n] : null;";
+							break;
+						case PropelTypes::REAL:
+						case PropelTypes::DOUBLE:
+						case PropelTypes::FLOAT:
+							$script .= "
+			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (float) \$row[\$startcol + $n] : null;";
+							break;
 						case PropelTypes::DATE:
 						case PropelTypes::TIME:
 						case PropelTypes::TIMESTAMP:
 							$script .= "
-			\$this->$clo = \$row[\$startcol + $n]; // FIXME - this is a timestamp, we should maybe convert it (?)
-";
+			\$this->$clo = \$row[\$startcol + $n]; // FIXME - this is a timestamp, we should maybe convert it (?)";
 							break;
 						default:
 							$script .= "
-			\$this->$clo = \$row[\$startcol + $n];
-";
+			\$this->$clo = \$row[\$startcol + $n];";
 					}
 					$n++;
 				} // if col->isLazyLoad()
