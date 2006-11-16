@@ -288,7 +288,7 @@
 	  name="supervisor_id"
 	  type="INTEGER"
 	  description="Fkey to supervisor."/>
-	<foreign-key foreignTable="bookstore_employee">
+	<foreign-key foreignTable="bookstore_employee" phpName="Supervisor" refPhpName="Subordinate">
 	  <reference local="supervisor_id" foreign="id"/>
 	</foreign-key>
   </table>

@@ -34,6 +34,8 @@ class ForeignKey extends XMLElement {
 
     private $foreignTableName;
     private $name;
+    private $phpName;
+    private $refPhpName;
     private $onUpdate;
     private $onDelete;
     private $parentTable;
@@ -56,6 +58,8 @@ class ForeignKey extends XMLElement {
     {
         $this->foreignTableName = $this->getAttribute("foreignTable");
         $this->name = $this->getAttribute("name");
+        $this->phpName = $this->getAttribute("phpName");
+        $this->refPhpName = $this->getAttribute("refPhpName");
         $this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
         $this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
     }
@@ -138,7 +142,43 @@ class ForeignKey extends XMLElement {
     {
         $this->name = $name;
     }
-
+	
+	/**
+	 * Gets the phpName for this foreign key (if any).
+	 * @return string
+	 */
+	public function getPhpName()
+	{
+		return $this->phpName;
+	}
+	
+	/**
+	 * Sets a phpName to use for this foreign key.
+	 * @param string $name
+	 */
+	public function setPhpName($name)
+	{
+		$this->phpName = $name;
+	}
+	
+	/**
+	 * Gets the refPhpName for this foreign key (if any).
+	 * @return string
+	 */
+	public function getRefPhpName()
+	{
+		return $this->refPhpName;
+	}
+	
+	/**
+	 * Sets a refPhpName to use for this foreign key.
+	 * @param string $name
+	 */
+	public function setRefPhpName($name)
+	{
+		$this->refPhpName = $name;
+	}
+	
     /**
      * Get the foreignTableName of the FK
      */
@@ -297,7 +337,10 @@ class ForeignKey extends XMLElement {
             . $this->getForeignTableName()
             . "\" name=\""
             . $this->getName()
-            . "\">\n";
+            . "\""
+            . ($this->getPhpName() ? " phpName=\"".($this->getPhpName())."\"" : "")
+            . ($this->getRefPhpName() ? " refPhpName=\"".($this->getRefPhpName())."\"" : "")
+			.">\n";
 
         for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
             $result .= "        <reference local=\""

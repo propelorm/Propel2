@@ -146,8 +146,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$super = new BookstoreEmployee();
 		// we don't know who the supervisor is yet
-		$super->addBookstoreEmployeeRelatedBySupervisorId($e1);
-		$super->addBookstoreEmployeeRelatedBySupervisorId($e2);
+		$super->addSubordinate($e1);
+		$super->addSubordinate($e2);
 
 		$affected = $super->save();
 

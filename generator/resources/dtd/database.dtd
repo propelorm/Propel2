@@ -107,6 +107,8 @@ PHP class or method name.
 <!ATTLIST foreign-key
   foreignTable CDATA #REQUIRED
   name CDATA #IMPLIED
+  phpName CDATA #IMPLIED
+  refPhpName CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
 >

@@ -217,7 +217,7 @@ class BookstoreDataPopulator {
 		$bemp2 = new BookstoreEmployee();
 		$bemp2->setName("Pieter");
 		$bemp2->setJobTitle("Clerk");
-		$bemp2->setBookstoreEmployeeRelatedBySupervisorId($bemp1);
+		$bemp2->setSupervisor($bemp1);
 
 		$bemp2->save();
 
