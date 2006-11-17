@@ -157,16 +157,6 @@ class PropelSQLExec extends Task {
     }
 
     /**
-     * Set the Creole driver to be used.
-     *
-     * @param string $driver driver class name
-     */
-    public function setDriver($driver)
-    {
-        $this->driver = $driver;
-    }
-
-    /**
      * Set the DB connection url.
      *
      * @param string $url connection url
@@ -359,7 +349,6 @@ class PropelSQLExec extends Task {
         try {        
             
             $buf = "Database settings:\n"
-            . " driver: " . ($this->driver ? $this->driver : "(default)" ). "\n"
             . " URL: " . $url . "\n"
             . ($this->userId ? " user: " . $this->userId . "\n" : "")
             . ($this->password ? " password: " . $this->password . "\n" : "");
