@@ -52,6 +52,10 @@
 					-->
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
+						<!-- for MySQL, you should also turn on prepared statement emulation, as
+							prepared statements support is buggy in mysql driver
+						<option id="ATTR_EMULATE_PREPARES">true</option>
+						-->
 					</options>
 				</connection>
 			</datasource>
