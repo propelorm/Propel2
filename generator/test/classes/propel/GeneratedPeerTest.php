@@ -404,4 +404,15 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertTrue($o3 instanceof BookstoreCashier, "Expected BookstoreCashier object, got " . get_class($o3));
 		
 	}
+	
+	/**
+	 * Tests the return type of doCount*() methods.
+	 */
+	public function testDoCountType()
+	{
+		$c = new Criteria(); 
+		$this->assertType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
+		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
+		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
+	}
 }

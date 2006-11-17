@@ -499,7 +499,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-			return \$row[0];
+			return (int) \$row[0];
 		} else {
 			// no rows returned; we infer that means 0 matches.
 			return 0;
