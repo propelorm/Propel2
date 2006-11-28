@@ -167,8 +167,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setLogin("testuser");
 		$acct->setPassword("testpass");
 
-		// $this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
-
+		$this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
 	}
 		
 	/** 
