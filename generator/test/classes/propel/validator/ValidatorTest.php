@@ -49,8 +49,8 @@ class ValidatorTest extends BookstoreTestBase
 
 		$res = $book->validate();
 		$this->assertFalse($res, "Expected validation to fail.");
-		
-		$failures = $book->getValidationFailures();		
+
+		$failures = $book->getValidationFailures();
 		$this->assertSingleValidation($failures, "Book title must be more than 10 characters long.");
 	}
 
@@ -85,11 +85,11 @@ class ValidatorTest extends BookstoreTestBase
 		$book->addReview($review);
 
 		$res = $book->validate();
-		
+
 		$this->assertFalse($res, "Expected validation to fail.");
-		
-		$failures = $book->getValidationFailures();				
-		
+
+		$failures = $book->getValidationFailures();
+
 		/* Make sure 3 validation messages were returned; NOT 6, because the others were NULL */
 		$this->assertEquals(3, count($failures), "");
 
@@ -104,7 +104,7 @@ class ValidatorTest extends BookstoreTestBase
 		/* implode for readability */
 		$this->assertEquals(implode(',', $expectedCols), implode(',', $returnedCols));
 	}
-	
+
 	/**
 	 * Test recursive validaton with specified columns.
 	 */
@@ -121,15 +121,15 @@ class ValidatorTest extends BookstoreTestBase
 
 		$book->setAuthor($author);
 		$book->addReview($review);
-		
+
 		$cols = array(AuthorPeer::LAST_NAME, ReviewPeer::REVIEWED_BY);
-		
+
 		$res = $book->validate($cols);
-		
+
 		$this->assertFalse($res, "Expected validation to fail.");
-		
-		$failures = $book->getValidationFailures();				
-		
+
+		$failures = $book->getValidationFailures();
+
 		/* Make sure 3 validation messages were returned; NOT 6, because the others were NULL */
 		$this->assertEquals(2, count($failures), "");
 
@@ -138,13 +138,13 @@ class ValidatorTest extends BookstoreTestBase
 			AuthorPeer::LAST_NAME,
 			ReviewPeer::REVIEWED_BY
 		);
-		
+
 		$returnedCols = array_keys($failures);
 
 		/* implode for readability */
 		$this->assertEquals(implode(',', $expectedCols), implode(',', $returnedCols));
 	}
-	
+
 	/**
 	 * Test the fact that validators should not complain NULL values for non-required columns.
 	 */
@@ -153,47 +153,47 @@ class ValidatorTest extends BookstoreTestBase
 		$author = new Author();
 		$author->setFirstName("Malcolm"); // last name required, valid email format, age > 0
 		$author->setLastName("X");
-		
+
 		$author->setEmail(null); // just to be explicit, of course these are the defaults anyway
 		$author->setAge(null);
-		
+
 		$res = $author->validate();
-		
-	
+
+
 		$this->assertTrue($res, "Expected validation to pass with NULL columns");
-		
+
 		$author->setEmail('malcolm@'); // fail
 		$res = $author->validate();
-		
+
 		$this->assertFalse($res, "Expected validation to fail.");
-		
-		$failures = $author->getValidationFailures();				
+
+		$failures = $author->getValidationFailures();
 		$this->assertEquals(1, count($failures), "Expected 1 column to fail validation.");
 		$this->assertEquals(array(AuthorPeer::EMAIL), array_keys($failures), "Expected EMAIL to fail validation.");
-				
+
 	}
-	
+
 	public function testDoValidate_BasicValidatorObj()
 	{
 		$author = new Author();
 		$author->setFirstName("Malcolm"); // last name required, valid email format, age > 0
 		$author->setLastName("X");
 		$author->setEmail('malcolm@'); // fail
-		
+
 		$res = $author->validate();
-		
+
 		$this->assertFalse($res, "Expected validation to fail.");
-		
+
 		$failures = $author->getValidationFailures();
-		
+
 		$this->assertEquals(1, count($failures), "Expected 1 column to fail validation.");
 		$this->assertEquals(array(AuthorPeer::EMAIL), array_keys($failures), "Expected EMAIL to fail validation.");
-		
+
 		$validator = $failures[AuthorPeer::EMAIL]->getValidator();
 		$this->assertTrue($validator instanceof MatchValidator, "Expected validator that failed to be MatchValidator");
-		
+
 	}
-	
+
 	protected function assertSingleValidation($ret, $expectedMsg)
 	{
 		/* Make sure validation failed */
@@ -207,5 +207,5 @@ class ValidatorTest extends BookstoreTestBase
 		$el = array_shift($ret);
 		$this->assertEquals($el->getMessage(), $expectedMsg, "Got unexpected validation failed message: " . $el->getMessage());
 	}
-	
+
 }

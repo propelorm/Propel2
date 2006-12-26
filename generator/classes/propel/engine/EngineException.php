@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'phing/BuildException.php';
 
 /**

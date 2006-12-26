@@ -176,7 +176,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 	/**
 	 * Test the doDeleteAll() method for single table.
-     */
+	 */
 	public function testDoDeleteAll() {
 
 		BookPeer::doDeleteAll();
@@ -341,20 +341,20 @@ class GeneratedPeerTest extends BookstoreTestBase {
 				$this->assertTrue($book->getAuthor() === $testb1->getAuthor(), "Expected same author object in calls to pkey-matching books.");
 			}
 		}
-		
-		
+
+
 		// 5) test creating a new object, saving it, and then retrieving that object (should all be same instance)
 		$b = new BookstoreEmployee();
 		$b->setName("Testing");
 		$b->setJobTitle("Testing");
 		$b->save();
-		
+
 		$empId = $b->getId();
-		
+
 		$this->assertSame($b, BookstoreEmployeePeer::retrieveByPK($empId), "Expected newly saved object to be same instance as pooled.");
 
 	}
-	
+
 	/**
 	 * Test inheritance features.
 	 */
@@ -365,52 +365,52 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$manager->setJobTitle("Warehouse Manager");
 		$manager->save();
 		$managerId = $manager->getId();
-		
+
 		$employee = new BookstoreEmployee();
 		$employee->setName("Employee 1");
 		$employee->setJobTitle("Janitor");
 		$employee->setSupervisorId($managerId);
 		$employee->save();
 		$empId = $employee->getId();
-		
+
 		$cashier = new BookstoreCashier();
 		$cashier->setName("Cashier 1");
 		$cashier->setJobTitle("Cashier");
 		$cashier->save();
 		$cashierId = $cashier->getId();
-		
+
 		// 1) test the pooled instances'
 		$c = new Criteria();
 		$c->add(BookstoreEmployeePeer::ID, array($managerId, $empId, $cashierId), Criteria::IN);
 		$c->addAscendingOrderByColumn(BookstoreEmployeePeer::ID);
-		
+
 		$objects = BookstoreEmployeePeer::doSelect($c);
-		
+
 		$this->assertEquals(3, count($objects), "Expected 3 objects to be returned.");
-		
+
 		list($o1, $o2, $o3) = $objects;
-			
+
 		$this->assertSame($o1, $manager);
 		$this->assertSame($o2, $employee);
 		$this->assertSame($o3, $cashier);
-		
+
 		// 2) test a forced reload from database
 		BookstoreEmployeePeer::clearInstancePool();
-		
+
 		list($o1,$o2,$o3) = BookstoreEmployeePeer::doSelect($c);
-		
+
 		$this->assertTrue($o1 instanceof BookstoreManager, "Expected BookstoreManager object, got " . get_class($o1));
 		$this->assertTrue($o2 instanceof BookstoreEmployee, "Expected BookstoreEmployee object, got " . get_class($o2));
 		$this->assertTrue($o3 instanceof BookstoreCashier, "Expected BookstoreCashier object, got " . get_class($o3));
-		
+
 	}
-	
+
 	/**
 	 * Tests the return type of doCount*() methods.
 	 */
 	public function testDoCountType()
 	{
-		$c = new Criteria(); 
+		$c = new Criteria();
 		$this->assertType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
 		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
 		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");

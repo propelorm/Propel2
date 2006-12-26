@@ -30,9 +30,9 @@ ini_set('include_path', $includes);
 
 
 if (! is_readable(TREETEST_CONF)) {
-    echo "Make sure that you specify properties in conf/treetest.properties and "
-    ."build propel before running this script.";
-    exit;
+	echo "Make sure that you specify properties in conf/treetest.properties and "
+	."build propel before running this script.";
+	exit;
 }
 
 // Require classes.
@@ -41,23 +41,23 @@ require_once 'treetest/TestNodePeer.php';
 
 function dumpTree(&$node, $querydb = false)
 {
-    $opts = array();
+	$opts = array();
 	$opts['querydb'] = $querydb;
 
-    $node->setIteratorOptions('pre', $opts);
+	$node->setIteratorOptions('pre', $opts);
 
-    $indent = 0;
-    $lastLevel = $node->getNodeLevel();
+	$indent = 0;
+	$lastLevel = $node->getNodeLevel();
 
 	for ($it =& $node->getIterator(); $it->valid(); $it->next()) {
 
 		$n =& $it->current();
-        $nodeLevel = $n->getNodeLevel();
-        $indent += $nodeLevel - $lastLevel;
-        echo str_repeat('  ',  $indent);
-        echo $n->getNodePath() . " -> " . $n->callObjMethod('getLabel');
-        echo "\n";
-        $lastLevel = $nodeLevel;
+		$nodeLevel = $n->getNodeLevel();
+		$indent += $nodeLevel - $lastLevel;
+		echo str_repeat('  ',  $indent);
+		echo $n->getNodePath() . " -> " . $n->callObjMethod('getLabel');
+		echo "\n";
+		$lastLevel = $nodeLevel;
 	}
 }
 
@@ -314,7 +314,7 @@ $node =& TestNodePeer::retrieveNodeByNP(implode($nodeKeySep, $o_addr), true, tru
 echo "ancestors:\n";
 $ancestors =& $node->getAncestors(false);
 for ($i = 0; $i < count($ancestors); $i++)
-    echo $ancestors[$i]->getNodePath() . " -> " . $ancestors[$i]->callObjMethod('getLabel') . "\n";
+	echo $ancestors[$i]->getNodePath() . " -> " . $ancestors[$i]->callObjMethod('getLabel') . "\n";
 
 echo "\ndescendants:\n";
 dumpTree($node);

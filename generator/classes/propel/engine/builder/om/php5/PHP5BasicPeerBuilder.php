@@ -669,7 +669,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		}
 
 		$script .= "
-		} elseif(".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
+		} elseif (".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
 			// print \"-Removing pk: \" . var_export(\$value,true) . \" class: ".$this->getObjectClassname()." from instance pool.\\n\";
 			// assume we've been passed a primary key";
 
@@ -772,7 +772,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// key columns.
 		$n = 0;
 		foreach($this->getTable()->getColumns() as $col) {
-			if(!$col->isLazyLoad()) {
+			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
 					$pk[] = "\$row[\$startcol + $n]";
 				}
@@ -823,7 +823,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$script .= "
 		// populate the object(s)
 		// populate the object(s)
-		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key])) {
 				// print \"  <-Found \" . get_class(self::\$instances[\$key]) . \" \" . self::\$instances[\$key] . \" in instance pool.\\n\";
@@ -1063,7 +1063,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria = clone \$values; // rename for clarity
 ";
 		foreach ($table->getColumns() as $col) {
-			if($col->isPrimaryKey()) {
+			if ($col->isPrimaryKey()) {
 				$script .= "
 			\$comparison = \$criteria->getComparison(".$this->getColumnConstant($col).");
 			\$selectCriteria->add(".$this->getColumnConstant($col).", \$criteria->remove(".$this->getColumnConstant($col)."), \$comparison);
@@ -1110,7 +1110,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$con->beginTransaction();
 			";
 			if ($this->isDeleteCascadeEmulationNeeded()) {
-			    $script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(), \$con);
+				$script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(), \$con);
 			";
 			}
 			if ($this->isDeleteSetNullEmulationNeeded()) {
@@ -1194,7 +1194,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// primary key is composite; we therefore, expect
 			// the primary key passed to be an array of pkey
 			// values
-			if(count(\$values) == count(\$values, COUNT_RECURSIVE))
+			if (count(\$values) == count(\$values, COUNT_RECURSIVE))
 			{
 				// array is not multi-dimensional
 				\$values = array(\$values);
@@ -1235,7 +1235,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			";
 
 		if ($this->isDeleteCascadeEmulationNeeded()) {
-		    $script .= "\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(\$criteria, \$con);";
+			$script .= "\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(\$criteria, \$con);";
 		}
 		if ($this->isDeleteSetNullEmulationNeeded()) {
 			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(\$criteria, \$con);";
@@ -1342,7 +1342,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$columnNamesF = $fk->getLocalColumns();
 					$columnNamesL = $fk->getForeignColumns();
 
-                    $script .= "
+					$script .= "
 
 			// delete related $fkClassName objects
 			\$c = new Criteria();
@@ -1682,4 +1682,3 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	}
 } // PHP5BasicPeerBuilder
-

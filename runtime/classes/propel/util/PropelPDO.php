@@ -17,22 +17,22 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 
 /**
  * PDO connection subclass that provides some enhanced functionality needed by Propel.
- * 
+ *
  * This class was designed to work around the limitation in PDO where attempting to begin
  * a transaction when one has already been begun will trigger a PDOException.  Propel
  * relies on the ability to create nested transactions, even if the underlying layer
  * simply ignores these (because it doesn't support nested transactions).
- * 
+ *
  * The changes that this class makes to the underlying API include the addition of the
- * getNestedTransactionDepth() and isInTransaction() and the fact that beginTransaction() 
- * will no longer throw a PDOException (or trigger an error) if a transaction is already 
+ * getNestedTransactionDepth() and isInTransaction() and the fact that beginTransaction()
+ * will no longer throw a PDOException (or trigger an error) if a transaction is already
  * in-progress.
- * 
+ *
  * @author Cameron Brunner <cameron.brunner@gmail.com>
  * @author Hans Lellelid <hans@xmpl.org>
  * @since 2006-09-22
@@ -45,7 +45,7 @@ class PropelPDO extends PDO {
 	 * @var int
 	 */
 	protected $nestedTransactionCount = 0;
-	
+
 	/**
 	 * Gets the current transaction depth.
 	 * @return int
@@ -54,7 +54,7 @@ class PropelPDO extends PDO {
 	{
 		return $this->nestedTransactionCount;
 	}
-	
+
 	/**
 	 * Set the current transaction depth.
 	 * @param int $v The new depth.
@@ -63,7 +63,7 @@ class PropelPDO extends PDO {
 	{
 		$this->nestedTransactionCount = $v;
 	}
-	
+
 	/**
 	 * Decrements the current transaction depth by one.
 	 */
@@ -71,7 +71,7 @@ class PropelPDO extends PDO {
 	{
 		$this->nestedTransactionCount--;
 	}
-	
+
 	/**
 	 * Increments the current transaction depth by one.
 	 */
@@ -79,7 +79,7 @@ class PropelPDO extends PDO {
 	{
 		$this->nestedTransactionCount++;
 	}
-	
+
 	/**
 	 * Is this PDO connection currently in-transaction?
 	 * This is equivalent to asking whether the current nested transaction count
@@ -88,9 +88,9 @@ class PropelPDO extends PDO {
 	 */
 	public function isInTransaction()
 	{
-		return ($this->getNestedTransactionCount() > 0); 
+		return ($this->getNestedTransactionCount() > 0);
 	}
-	
+
 	/**
 	 * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
 	 */
@@ -102,7 +102,7 @@ class PropelPDO extends PDO {
 		}
 		$this->incrementNestedTransactionCount();
 	}
-	
+
 	/**
 	 * Overrides PDO::commit() to only commit the transaction if we are in the outermost
 	 * transaction nesting level.
@@ -110,14 +110,14 @@ class PropelPDO extends PDO {
 	public function commit()
 	{
 		$opcount = $this->getNestedTransactionCount();
-    	if ($opcount > 0) {
+		if ($opcount > 0) {
 			if ($opcount === 1) {
 				parent::commit();
 			}
 			$this->decrementNestedTransactionCount();
 		}
 	}
-	
+
 	/**
 	 * Overrides PDO::rollback() to only rollback the transaction if we are in the outermost
 	 * transaction nesting level.
@@ -133,4 +133,3 @@ class PropelPDO extends PDO {
 		}
 	}
 }
-

@@ -168,17 +168,17 @@ abstract class ".$this->getClassname()." {
 		$nodePeerClassname = $this->getStubNodePeerBuilder()->getClassname();
 
 		$script .= "
-    /**
-     * Temp function for CodeBase hacks that will go away.
-     */
-    public static function isCodeBase(\$con = null)
-    {
-        if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+	/**
+	 * Temp function for CodeBase hacks that will go away.
+	 */
+	public static function isCodeBase(\$con = null)
+	{
+		if (\$con === null)
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
-        return (get_class(\$con) == 'ODBCConnection' &&
-                get_class(\$con->getAdapter()) == 'CodeBaseAdapter');
-    }
+		return (get_class(\$con) == 'ODBCConnection' &&
+				get_class(\$con->getAdapter()) == 'CodeBaseAdapter');
+	}
 ";
 	}
 
@@ -193,40 +193,40 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Create a new Node at the top of tree. This method will destroy any
-     * existing root node (along with its children).
-     *
-     * Use at your own risk!
-     *
-     * @param $objectClassname Object wrapped by new node.
-     * @param PDO Connection to use.
-     * @return $nodeObjectClassname
-     * @throws PropelException
-     */
-    public static function createNewRootNode(\$obj, PDO \$con = null)
-    {
-        if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+	 * Create a new Node at the top of tree. This method will destroy any
+	 * existing root node (along with its children).
+	 *
+	 * Use at your own risk!
+	 *
+	 * @param $objectClassname Object wrapped by new node.
+	 * @param PDO Connection to use.
+	 * @return $nodeObjectClassname
+	 * @throws PropelException
+	 */
+	public static function createNewRootNode(\$obj, PDO \$con = null)
+	{
+		if (\$con === null)
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
-        try {
-        	\$con->beginTransaction();
+		try {
+			\$con->beginTransaction();
 
-            self::deleteNodeSubTree('1', \$con);
+			self::deleteNodeSubTree('1', \$con);
 
-            \$setNodePath = 'set' . self::NPATH_PHPNAME;
+			\$setNodePath = 'set' . self::NPATH_PHPNAME;
 
-            \$obj->\$setNodePath('1');
-            \$obj->save(\$con);
+			\$obj->\$setNodePath('1');
+			\$obj->save(\$con);
 
-            \$con->commit();
+			\$con->commit();
 
-        } catch (PropelException \$e) {
-        	\$con->rollback();
-            throw \$e;
-        }
+		} catch (PropelException \$e) {
+			\$con->rollback();
+			throw \$e;
+		}
 
-        return new $nodeObjectClassname(\$obj);
-    }
+		return new $nodeObjectClassname(\$obj);
+	}
 ";
 	}
 
@@ -240,45 +240,45 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Inserts a new Node at the top of tree. Any existing root node (along with
-     * its children) will be made a child of the new root node. This is a
-     * safer alternative to createNewRootNode().
-     *
-     * @param $objectClassname Object wrapped by new node.
-     * @param PDO Connection to use.
-     * @return $nodeObjectClassname
-     * @throws PropelException
-     */
-    public static function insertNewRootNode(\$obj, PDO \$con = null)
-    {
-        if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+	 * Inserts a new Node at the top of tree. Any existing root node (along with
+	 * its children) will be made a child of the new root node. This is a
+	 * safer alternative to createNewRootNode().
+	 *
+	 * @param $objectClassname Object wrapped by new node.
+	 * @param PDO Connection to use.
+	 * @return $nodeObjectClassname
+	 * @throws PropelException
+	 */
+	public static function insertNewRootNode(\$obj, PDO \$con = null)
+	{
+		if (\$con === null)
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
-        try {
+		try {
 
-            \$con->begin();
+			\$con->begin();
 
-            // Move root tree to an invalid node path.
-            $nodePeerClassname::moveNodeSubTree('1', '0', \$con);
+			// Move root tree to an invalid node path.
+			$nodePeerClassname::moveNodeSubTree('1', '0', \$con);
 
-            \$setNodePath = 'set' . self::NPATH_PHPNAME;
+			\$setNodePath = 'set' . self::NPATH_PHPNAME;
 
-            // Insert the new root node.
-            \$obj->\$setNodePath('1');
-            \$obj->save(\$con);
+			// Insert the new root node.
+			\$obj->\$setNodePath('1');
+			\$obj->save(\$con);
 
-            // Move the old root tree as a child of the new root.
-            $nodePeerClassname::moveNodeSubTree('0', '1' . self::NPATH_SEP . '1', \$con);
+			// Move the old root tree as a child of the new root.
+			$nodePeerClassname::moveNodeSubTree('0', '1' . self::NPATH_SEP . '1', \$con);
 
-            \$con->commit();
+			\$con->commit();
 
-        } catch (PropelException \$e) {
-            \$con->rollback();
-            throw \$e;
-        }
+		} catch (PropelException \$e) {
+			\$con->rollback();
+			throw \$e;
+		}
 
-        return new $nodeObjectClassname(\$obj);
-    }
+		return new $nodeObjectClassname(\$obj);
+	}
 ";
 	}
 
@@ -301,21 +301,21 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Retrieves an array of tree nodes based on specified criteria. Optionally
-     * includes all parent and/or child nodes of the matching nodes.
-     *
-     * @param Criteria Criteria to use.
-     * @param boolean True if ancestors should also be retrieved.
-     * @param boolean True if descendants should also be retrieved.
-     * @param PDO Connection to use.
-     * @return array Array of root nodes.
-     */
-    public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
-    {
-        \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
-        return self::populateNodes(\$rs, \$criteria);
-    }
+	 * Retrieves an array of tree nodes based on specified criteria. Optionally
+	 * includes all parent and/or child nodes of the matching nodes.
+	 *
+	 * @param Criteria Criteria to use.
+	 * @param boolean True if ancestors should also be retrieved.
+	 * @param boolean True if descendants should also be retrieved.
+	 * @param PDO Connection to use.
+	 * @return array Array of root nodes.
+	 */
+	public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
+	{
+		\$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
+		\$rs = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
+		return self::populateNodes(\$rs, \$criteria);
+	}
 ";
 	}
 
@@ -329,19 +329,19 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Retrieves a tree node based on a primary key. Optionally includes all
-     * parent and/or child nodes of the matching node.
-     *
-     * @param mixed $objectClassname primary key (array for composite keys)
-     * @param boolean True if ancestors should also be retrieved.
-     * @param boolean True if descendants should also be retrieved.
-     * @param PDO Connection to use.
-     * @return $nodeObjectClassname
-     */
-    public static function retrieveNodeByPK(\$pk, \$ancestors = false, \$descendants = false, PDO \$con = null)
-    {
-        throw new PropelException('retrieveNodeByPK() not implemented yet.');
-    }
+	 * Retrieves a tree node based on a primary key. Optionally includes all
+	 * parent and/or child nodes of the matching node.
+	 *
+	 * @param mixed $objectClassname primary key (array for composite keys)
+	 * @param boolean True if ancestors should also be retrieved.
+	 * @param boolean True if descendants should also be retrieved.
+	 * @param PDO Connection to use.
+	 * @return $nodeObjectClassname
+	 */
+	public static function retrieveNodeByPK(\$pk, \$ancestors = false, \$descendants = false, PDO \$con = null)
+	{
+		throw new PropelException('retrieveNodeByPK() not implemented yet.');
+	}
 ";
 	}
 
@@ -355,24 +355,24 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Retrieves a tree node based on a node path. Optionally includes all
-     * parent and/or child nodes of the matching node.
-     *
-     * @param string Node path to retrieve.
-     * @param boolean True if ancestors should also be retrieved.
-     * @param boolean True if descendants should also be retrieved.
-     * @param PDO Connection to use.
-     * @return $objectClassname
-     */
-    public static function retrieveNodeByNP(\$np, \$ancestors = false, \$descendants = false, PDO \$con = null)
-    {
-        \$criteria = new Criteria($peerClassname::DATABASE_NAME);
-        \$criteria->add(self::NPATH_COLNAME, \$np, Criteria::EQUAL);
-        \$criteria = self::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
-        \$rs = $peerClassname::doSelectStmt(\$criteria, \$con);
-        \$nodes = self::populateNodes(\$rs, \$criteria);
-        return (count(\$nodes) == 1 ? \$nodes[0] : null);
-    }
+	 * Retrieves a tree node based on a node path. Optionally includes all
+	 * parent and/or child nodes of the matching node.
+	 *
+	 * @param string Node path to retrieve.
+	 * @param boolean True if ancestors should also be retrieved.
+	 * @param boolean True if descendants should also be retrieved.
+	 * @param PDO Connection to use.
+	 * @return $objectClassname
+	 */
+	public static function retrieveNodeByNP(\$np, \$ancestors = false, \$descendants = false, PDO \$con = null)
+	{
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+		\$criteria->add(self::NPATH_COLNAME, \$np, Criteria::EQUAL);
+		\$criteria = self::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
+		\$rs = $peerClassname::doSelectStmt(\$criteria, \$con);
+		\$nodes = self::populateNodes(\$rs, \$criteria);
+		return (count(\$nodes) == 1 ? \$nodes[0] : null);
+	}
 ";
 	}
 
@@ -380,17 +380,17 @@ abstract class ".$this->getClassname()." {
 	{
 		$script .= "
 	/**
-     * Retrieves the root node.
-     *
-     * @param string Node path to retrieve.
-     * @param boolean True if descendants should also be retrieved.
-     * @param PDO Connection to use.
-     * @return ".$this->getStubNodeBuilder()->getClassname()."
-     */
-    public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
-    {
-        return self::retrieveNodeByNP('1', false, \$descendants, \$con);
-    }
+	 * Retrieves the root node.
+	 *
+	 * @param string Node path to retrieve.
+	 * @param boolean True if descendants should also be retrieved.
+	 * @param PDO Connection to use.
+	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 */
+	public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
+	{
+		return self::retrieveNodeByNP('1', false, \$descendants, \$con);
+	}
 ";
 	}
 
@@ -404,74 +404,74 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Moves the node subtree at srcpath to the dstpath. This method is intended
-     * for internal use by the BaseNode object. Note that it does not check for
-     * preexisting nodes at the dstpath. It also does not update the  node path
-     * of any Node objects that might currently be in memory.
-     *
-     * Use at your own risk!
-     *
-     * @param string Source node path to move (root of the src subtree).
-     * @param string Destination node path to move to (root of the dst subtree).
-     * @param PDO Connection to use.
-     * @return void
-     * @throws PropelException
-     * @todo This is currently broken for simulated 'onCascadeDelete's.
-     * @todo Need to abstract the SQL better. The CONCAT sql function doesn't
-     *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
-     *       to DBAdapter.
-     */
-    public static function moveNodeSubTree(\$srcPath, \$dstPath, PDO \$con = null)
-    {
-        if (substr(\$dstPath, 0, strlen(\$srcPath)) == \$srcPath)
-            throw new PropelException('Cannot move a node subtree within itself.');
+	 * Moves the node subtree at srcpath to the dstpath. This method is intended
+	 * for internal use by the BaseNode object. Note that it does not check for
+	 * preexisting nodes at the dstpath. It also does not update the  node path
+	 * of any Node objects that might currently be in memory.
+	 *
+	 * Use at your own risk!
+	 *
+	 * @param string Source node path to move (root of the src subtree).
+	 * @param string Destination node path to move to (root of the dst subtree).
+	 * @param PDO Connection to use.
+	 * @return void
+	 * @throws PropelException
+	 * @todo This is currently broken for simulated 'onCascadeDelete's.
+	 * @todo Need to abstract the SQL better. The CONCAT sql function doesn't
+	 *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
+	 *       to DBAdapter.
+	 */
+	public static function moveNodeSubTree(\$srcPath, \$dstPath, PDO \$con = null)
+	{
+		if (substr(\$dstPath, 0, strlen(\$srcPath)) == \$srcPath)
+			throw new PropelException('Cannot move a node subtree within itself.');
 
-        if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+		if (\$con === null)
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
-        /**
-         * Example:
-         * UPDATE table
-         * SET npath = CONCAT('1.3', SUBSTRING(npath, 6, 74))
-         * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
-         */
+		/**
+		 * Example:
+		 * UPDATE table
+		 * SET npath = CONCAT('1.3', SUBSTRING(npath, 6, 74))
+		 * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
+		 */
 
-        \$npath = $nodePeerClassname::NPATH_COLNAME;
+		\$npath = $nodePeerClassname::NPATH_COLNAME;
 		//the following dot isn`t mean`t a nodeKeySeperator
-        \$setcol = substr(\$npath, strpos(\$npath, '.')+1);
-        \$setcollen = $nodePeerClassname::NPATH_LEN;
-        \$db = Propel::getDb($peerClassname::DATABASE_NAME);
+		\$setcol = substr(\$npath, strpos(\$npath, '.')+1);
+		\$setcollen = $nodePeerClassname::NPATH_LEN;
+		\$db = Propel::getDb($peerClassname::DATABASE_NAME);
 
-        // <hack>
-        if ($nodePeerClassname::isCodeBase(\$con))
-        {
-            // This is a hack to get CodeBase working. It will eventually be removed.
-            // It is a workaround for the following CodeBase bug:
-            //   -Prepared statement parameters cannot be embedded in SQL functions (i.e. CONCAT)
-            \$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
-                   \"SET \$setcol=\" . \$db->concatString(\"'\$dstPath'\", \$db->subString(\$npath, strlen(\$srcPath)+1, \$setcollen)) . \" \" .
-                   \"WHERE \$npath = '\$srcPath' OR \$npath LIKE '\" . \$srcPath . $nodePeerClassname::NPATH_SEP . \"%'\";
+		// <hack>
+		if ($nodePeerClassname::isCodeBase(\$con))
+		{
+			// This is a hack to get CodeBase working. It will eventually be removed.
+			// It is a workaround for the following CodeBase bug:
+			//   -Prepared statement parameters cannot be embedded in SQL functions (i.e. CONCAT)
+			\$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
+				   \"SET \$setcol=\" . \$db->concatString(\"'\$dstPath'\", \$db->subString(\$npath, strlen(\$srcPath)+1, \$setcollen)) . \" \" .
+				   \"WHERE \$npath = '\$srcPath' OR \$npath LIKE '\" . \$srcPath . $nodePeerClassname::NPATH_SEP . \"%'\";
 
-            \$con->executeUpdate(\$sql);
-        }
-        else
-        {
-        // </hack>
-            \$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
-                   \"SET \$setcol=\" . \$db->concatString('?', \$db->subString(\$npath, '?', '?')) . \" \" .
-                   \"WHERE \$npath = ? OR \$npath LIKE ?\";
+			\$con->executeUpdate(\$sql);
+		}
+		else
+		{
+		// </hack>
+			\$sql = \"UPDATE \" . $peerClassname::TABLE_NAME . \" \" .
+				   \"SET \$setcol=\" . \$db->concatString('?', \$db->subString(\$npath, '?', '?')) . \" \" .
+				   \"WHERE \$npath = ? OR \$npath LIKE ?\";
 
-            \$stmt = \$con->prepareStatement(\$sql);
-            \$stmt->setString(1, \$dstPath);
-            \$stmt->setInt(2, strlen(\$srcPath)+1);
-            \$stmt->setInt(3, \$setcollen);
-            \$stmt->setString(4, \$srcPath);
-            \$stmt->setString(5, \$srcPath . $nodePeerClassname::NPATH_SEP . '%');
-            \$stmt->executeUpdate();
-        // <hack>
-        }
-        // </hack>
-    }
+			\$stmt = \$con->prepareStatement(\$sql);
+			\$stmt->setString(1, \$dstPath);
+			\$stmt->setInt(2, strlen(\$srcPath)+1);
+			\$stmt->setInt(3, \$setcollen);
+			\$stmt->setString(4, \$srcPath);
+			\$stmt->setString(5, \$srcPath . $nodePeerClassname::NPATH_SEP . '%');
+			\$stmt->executeUpdate();
+		// <hack>
+		}
+		// </hack>
+	}
 ";
 	}
 
@@ -485,32 +485,32 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Deletes the node subtree at the specified node path from the database.
-     *
-     * @param string Node path to delete
-     * @param PDO Connection to use.
-     * @return void
-     * @throws PropelException
-     * @todo This is currently broken for simulated 'onCascadeDelete's.
-     */
-    public static function deleteNodeSubTree(\$nodePath, PDO \$con = null)
-    {
-        if (\$con === null)
-            \$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+	 * Deletes the node subtree at the specified node path from the database.
+	 *
+	 * @param string Node path to delete
+	 * @param PDO Connection to use.
+	 * @return void
+	 * @throws PropelException
+	 * @todo This is currently broken for simulated 'onCascadeDelete's.
+	 */
+	public static function deleteNodeSubTree(\$nodePath, PDO \$con = null)
+	{
+		if (\$con === null)
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 
-        /**
-         * DELETE FROM table
-         * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
-         */
+		/**
+		 * DELETE FROM table
+		 * WHERE npath = '1.2.2' OR npath LIKE '1.2.2.%'
+		 */
 
-        \$criteria = new Criteria($peerClassname::DATABASE_NAME);
-        \$criteria->add($nodePeerClassname::NPATH_COLNAME, \$nodePath, Criteria::EQUAL);
-        \$criteria->addOr($nodePeerClassname::NPATH_COLNAME, \$nodePath . self::NPATH_SEP . '%', Criteria::LIKE);
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+		\$criteria->add($nodePeerClassname::NPATH_COLNAME, \$nodePath, Criteria::EQUAL);
+		\$criteria->addOr($nodePeerClassname::NPATH_COLNAME, \$nodePath . self::NPATH_SEP . '%', Criteria::LIKE);
 // For now, we call BasePeer directly since $peerClassname tries to
 // do a cascade delete.
 //          $peerClassname::doDelete(\$criteria, \$con);
-        BasePeer::doDelete(\$criteria, \$con);
-    }
+		BasePeer::doDelete(\$criteria, \$con);
+	}
 ";
 	}
 
@@ -524,118 +524,118 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Builds the criteria needed to retrieve node ancestors and/or descendants.
-     *
-     * @param Criteria Criteria to start with
-     * @param boolean True if ancestors should be retrieved.
-     * @param boolean True if descendants should be retrieved.
-     * @return Criteria
-     */
-    public static function buildFamilyCriteria(\$criteria, \$ancestors = false, \$descendants = false)
-    {
-        /*
-            Example SQL to retrieve nodepath '1.2.3' with both ancestors and descendants:
+	 * Builds the criteria needed to retrieve node ancestors and/or descendants.
+	 *
+	 * @param Criteria Criteria to start with
+	 * @param boolean True if ancestors should be retrieved.
+	 * @param boolean True if descendants should be retrieved.
+	 * @return Criteria
+	 */
+	public static function buildFamilyCriteria(\$criteria, \$ancestors = false, \$descendants = false)
+	{
+		/*
+			Example SQL to retrieve nodepath '1.2.3' with both ancestors and descendants:
 
-            SELECT L.NPATH, L.LABEL, test.NPATH, UCASE(L.NPATH)
-            FROM test L, test
-            WHERE test.NPATH='1.2.3' AND
-                 (L.NPATH=SUBSTRING(test.NPATH, 1, LENGTH(L.NPATH)) OR
-                  test.NPATH=SUBSTRING(L.NPATH, 1, LENGTH(test.NPATH)))
-            ORDER BY UCASE(L.NPATH) ASC
-        */
+			SELECT L.NPATH, L.LABEL, test.NPATH, UCASE(L.NPATH)
+			FROM test L, test
+			WHERE test.NPATH='1.2.3' AND
+				 (L.NPATH=SUBSTRING(test.NPATH, 1, LENGTH(L.NPATH)) OR
+				  test.NPATH=SUBSTRING(L.NPATH, 1, LENGTH(test.NPATH)))
+			ORDER BY UCASE(L.NPATH) ASC
+		*/
 
-        if (\$criteria === null)
-            \$criteria = new Criteria($peerClassname::DATABASE_NAME);
+		if (\$criteria === null)
+			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
 
-        if (!\$criteria->getSelectColumns())
-            $peerClassname::addSelectColumns(\$criteria);
+		if (!\$criteria->getSelectColumns())
+			$peerClassname::addSelectColumns(\$criteria);
 
-        \$db = Propel::getDb(\$criteria->getDbName());
+		\$db = Propel::getDb(\$criteria->getDbName());
 
-        if ((\$ancestors || \$descendants) && \$criteria->size())
-        {
-            // If we are retrieving ancestors/descendants, we need to do a
-            // self-join to locate them. The exception to this is if no search
-            // criteria is specified. In this case we're retrieving all nodes
-            // anyway, so there is no need to do a self-join.
+		if ((\$ancestors || \$descendants) && \$criteria->size())
+		{
+			// If we are retrieving ancestors/descendants, we need to do a
+			// self-join to locate them. The exception to this is if no search
+			// criteria is specified. In this case we're retrieving all nodes
+			// anyway, so there is no need to do a self-join.
 
-            // The left-side of the self-join will contain the columns we'll
-            // use to build node objects (target node records along with their
-            // ancestors and/or descendants). The right-side of the join will
-            // contain the target node records specified by the initial criteria.
-            // These are used to match the appropriate ancestor/descendant on
-            // the left.
+			// The left-side of the self-join will contain the columns we'll
+			// use to build node objects (target node records along with their
+			// ancestors and/or descendants). The right-side of the join will
+			// contain the target node records specified by the initial criteria.
+			// These are used to match the appropriate ancestor/descendant on
+			// the left.
 
-            // Specify an alias for the left-side table to use.
-            \$criteria->addAlias('L', $peerClassname::TABLE_NAME);
+			// Specify an alias for the left-side table to use.
+			\$criteria->addAlias('L', $peerClassname::TABLE_NAME);
 
-            // Make sure we have select columns to begin with.
-            if (!\$criteria->getSelectColumns())
-                $peerClassname::addSelectColumns(\$criteria);
+			// Make sure we have select columns to begin with.
+			if (!\$criteria->getSelectColumns())
+				$peerClassname::addSelectColumns(\$criteria);
 
-            // Replace any existing columns for the right-side table with the
-            // left-side alias.
-            \$selectColumns = \$criteria->getSelectColumns();
-            \$criteria->clearSelectColumns();
-            foreach (\$selectColumns as \$colName)
-                \$criteria->addSelectColumn(str_replace($peerClassname::TABLE_NAME, 'L', \$colName));
+			// Replace any existing columns for the right-side table with the
+			// left-side alias.
+			\$selectColumns = \$criteria->getSelectColumns();
+			\$criteria->clearSelectColumns();
+			foreach (\$selectColumns as \$colName)
+				\$criteria->addSelectColumn(str_replace($peerClassname::TABLE_NAME, 'L', \$colName));
 
-            \$a = null;
-            \$d = null;
+			\$a = null;
+			\$d = null;
 
-            \$npathL = $peerClassname::alias('L', $nodePeerClassname::NPATH_COLNAME);
-            \$npathR = $nodePeerClassname::NPATH_COLNAME;
-            \$npath_len = $nodePeerClassname::NPATH_LEN;
+			\$npathL = $peerClassname::alias('L', $nodePeerClassname::NPATH_COLNAME);
+			\$npathR = $nodePeerClassname::NPATH_COLNAME;
+			\$npath_len = $nodePeerClassname::NPATH_LEN;
 
-            if (\$ancestors)
-            {
-                // For ancestors, match left-side node paths which are contained
-                // by right-side node paths.
-                \$a = \$criteria->getNewCriterion(\$npathL,
-                                                \"\$npathL=\" . \$db->subString(\$npathR, 1, \$db->strLength(\$npathL), \$npath_len),
-                                                Criteria::CUSTOM);
-            }
+			if (\$ancestors)
+			{
+				// For ancestors, match left-side node paths which are contained
+				// by right-side node paths.
+				\$a = \$criteria->getNewCriterion(\$npathL,
+								                \"\$npathL=\" . \$db->subString(\$npathR, 1, \$db->strLength(\$npathL), \$npath_len),
+								                Criteria::CUSTOM);
+			}
 
-            if (\$descendants)
-            {
-                // For descendants, match left-side node paths which contain
-                // right-side node paths.
-                \$d = \$criteria->getNewCriterion(\$npathR,
-                                                \"\$npathR=\" . \$db->subString(\$npathL, 1, \$db->strLength(\$npathR), \$npath_len),
-                                                Criteria::CUSTOM);
-            }
+			if (\$descendants)
+			{
+				// For descendants, match left-side node paths which contain
+				// right-side node paths.
+				\$d = \$criteria->getNewCriterion(\$npathR,
+								                \"\$npathR=\" . \$db->subString(\$npathL, 1, \$db->strLength(\$npathR), \$npath_len),
+								                Criteria::CUSTOM);
+			}
 
-            if (\$a)
-            {
-                if (\$d) \$a->addOr(\$d);
-                \$criteria->addAnd(\$a);
-            }
-            else if (\$d)
-            {
-                \$criteria->addAnd(\$d);
-            }
+			if (\$a)
+			{
+				if (\$d) \$a->addOr(\$d);
+				\$criteria->addAnd(\$a);
+			}
+			else if (\$d)
+			{
+				\$criteria->addAnd(\$d);
+			}
 
-            // Add the target node path column. This is used by populateNodes().
-            \$criteria->addSelectColumn(\$npathR);
+			// Add the target node path column. This is used by populateNodes().
+			\$criteria->addSelectColumn(\$npathR);
 
-            // Sort by node path to speed up tree construction in populateNodes()
-            \$criteria->addAsColumn('npathlen', \$db->strLength(\$npathL));
-            \$criteria->addAscendingOrderByColumn('npathlen');
-            \$criteria->addAscendingOrderByColumn(\$npathL);
-        }
-        else
-        {
-            // Add the target node path column. This is used by populateNodes().
-            \$criteria->addSelectColumn($nodePeerClassname::NPATH_COLNAME);
+			// Sort by node path to speed up tree construction in populateNodes()
+			\$criteria->addAsColumn('npathlen', \$db->strLength(\$npathL));
+			\$criteria->addAscendingOrderByColumn('npathlen');
+			\$criteria->addAscendingOrderByColumn(\$npathL);
+		}
+		else
+		{
+			// Add the target node path column. This is used by populateNodes().
+			\$criteria->addSelectColumn($nodePeerClassname::NPATH_COLNAME);
 
-            // Sort by node path to speed up tree construction in populateNodes()
-            \$criteria->addAsColumn('npathlen', \$db->strLength($nodePeerClassname::NPATH_COLNAME));
-            \$criteria->addAscendingOrderByColumn('npathlen');
-            \$criteria->addAscendingOrderByColumn($nodePeerClassname::NPATH_COLNAME);
-        }
+			// Sort by node path to speed up tree construction in populateNodes()
+			\$criteria->addAsColumn('npathlen', \$db->strLength($nodePeerClassname::NPATH_COLNAME));
+			\$criteria->addAscendingOrderByColumn('npathlen');
+			\$criteria->addAscendingOrderByColumn($nodePeerClassname::NPATH_COLNAME);
+		}
 
-        return \$criteria;
-    }
+		return \$criteria;
+	}
 ";
 	}
 
@@ -649,48 +649,48 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * This method reconstructs as much of the tree structure as possible from
-     * the given array of objects. Depending on how you execute your query, it
-     * is possible for the ResultSet to contain multiple tree fragments (i.e.
-     * subtrees). The array returned by this method will contain one entry
-     * for each subtree root node it finds. The remaining subtree nodes are
-     * accessible from the $nodeObjectClassname methods of the
-     * subtree root nodes.
-     *
-     * @param array Array of $nodeObjectClassname objects
-     * @return array Array of $nodeObjectClassname objects
-     */
-    public static function buildTree(\$nodes)
-    {
-        // Subtree root nodes to return
-        \$rootNodes = array();
+	 * This method reconstructs as much of the tree structure as possible from
+	 * the given array of objects. Depending on how you execute your query, it
+	 * is possible for the ResultSet to contain multiple tree fragments (i.e.
+	 * subtrees). The array returned by this method will contain one entry
+	 * for each subtree root node it finds. The remaining subtree nodes are
+	 * accessible from the $nodeObjectClassname methods of the
+	 * subtree root nodes.
+	 *
+	 * @param array Array of $nodeObjectClassname objects
+	 * @return array Array of $nodeObjectClassname objects
+	 */
+	public static function buildTree(\$nodes)
+	{
+		// Subtree root nodes to return
+		\$rootNodes = array();
 
-        // Build the tree relations
-        foreach (\$nodes as \$node)
-        {
-            \$sep = strrpos(\$node->getNodePath(), $nodePeerClassname::NPATH_SEP);
-            \$parentPath = (\$sep !== false ? substr(\$node->getNodePath(), 0, \$sep) : '');
-            \$parentNode = null;
+		// Build the tree relations
+		foreach (\$nodes as \$node)
+		{
+			\$sep = strrpos(\$node->getNodePath(), $nodePeerClassname::NPATH_SEP);
+			\$parentPath = (\$sep !== false ? substr(\$node->getNodePath(), 0, \$sep) : '');
+			\$parentNode = null;
 
-            // Scan other nodes for parent.
-            foreach (\$nodes as \$pnode)
-            {
-                if (\$pnode->getNodePath() === \$parentPath)
-                {
-                    \$parentNode = \$pnode;
-                    break;
-                }
-            }
+			// Scan other nodes for parent.
+			foreach (\$nodes as \$pnode)
+			{
+				if (\$pnode->getNodePath() === \$parentPath)
+				{
+					\$parentNode = \$pnode;
+					break;
+				}
+			}
 
-            // If parent was found, attach as child, otherwise its a subtree root
-            if (\$parentNode)
-                \$parentNode->attachChildNode(\$node);
-            else
-                \$rootNodes[] = \$node;
-        }
+			// If parent was found, attach as child, otherwise its a subtree root
+			if (\$parentNode)
+				\$parentNode->attachChildNode(\$node);
+			else
+				\$rootNodes[] = \$node;
+		}
 
-        return \$rootNodes;
-    }
+		return \$rootNodes;
+	}
 ";
 	}
 
@@ -706,39 +706,39 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 	/**
-     * Populates the $objectClassname objects from the
-     * specified ResultSet, wraps them in $nodeObjectClassname
-     * objects and build the appropriate node relationships.
-     * The array returned by this method will only include the initial targets
-     * of the query, even if ancestors/descendants were also requested.
-     * The ancestors/descendants will be cached in memory and are accessible via
-     * the getNode() methods.
-     *
-     * @param ResultSet
-     * @param Criteria
-     * @return array Array of $nodeObjectClassname objects.
-     */
-    public static function populateNodes(\$rs, \$criteria)
-    {
-        \$nodes = array();
-        \$targets = array();
-        \$targetfld = count(\$criteria->getSelectColumns());
+	 * Populates the $objectClassname objects from the
+	 * specified ResultSet, wraps them in $nodeObjectClassname
+	 * objects and build the appropriate node relationships.
+	 * The array returned by this method will only include the initial targets
+	 * of the query, even if ancestors/descendants were also requested.
+	 * The ancestors/descendants will be cached in memory and are accessible via
+	 * the getNode() methods.
+	 *
+	 * @param ResultSet
+	 * @param Criteria
+	 * @return array Array of $nodeObjectClassname objects.
+	 */
+	public static function populateNodes(\$rs, \$criteria)
+	{
+		\$nodes = array();
+		\$targets = array();
+		\$targetfld = count(\$criteria->getSelectColumns());
 ";
 
 		if (!$table->getChildrenColumn()) {
 			$script .= "
-        // set the class once to avoid overhead in the loop
-        \$cls = $peerClassname::getOMClass();
-        \$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+		// set the class once to avoid overhead in the loop
+		\$cls = $peerClassname::getOMClass();
+		\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
 ";
 		}
 
 		$script .= "
-        // populate the object(s)
-        while(\$rs->next())
-        {
-            if (!isset(\$nodes[\$rs->getString(1)]))
-            {
+		// populate the object(s)
+		while (\$rs->next())
+		{
+			if (!isset(\$nodes[\$rs->getString(1)]))
+			{
 ";
 		if ($table->getChildrenColumn()) {
 			$script .= "
@@ -752,19 +752,19 @@ abstract class ".$this->getClassname()." {
 				\$obj = new \$cls();
 				\$obj->hydrate(\$rs);
 
-                \$nodes[\$rs->getString(1)] = new $nodeObjectClassname(\$obj);
-            }
+				\$nodes[\$rs->getString(1)] = new $nodeObjectClassname(\$obj);
+			}
 
-            \$node = \$nodes[\$rs->getString(1)];
+			\$node = \$nodes[\$rs->getString(1)];
 
-            if (\$node->getNodePath() === \$rs->getString(\$targetfld))
-                \$targets[\$node->getNodePath()] = \$node;
-        }
+			if (\$node->getNodePath() === \$rs->getString(\$targetfld))
+				\$targets[\$node->getNodePath()] = \$node;
+		}
 
-        $nodePeerClassname::buildTree(\$nodes);
+		$nodePeerClassname::buildTree(\$nodes);
 
-        return array_values(\$targets);
-    }
+		return array_values(\$targets);
+	}
 ";
 	}
 

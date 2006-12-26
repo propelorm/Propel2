@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
@@ -31,59 +31,59 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
  */
 class OraclePlatform extends DefaultPlatform {
 
-    /**
-     * Initializes db specific domain mapping.
-     */
-    protected function initialize()
-    {
-        parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "NUMBER", "1", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "NUMBER", "3", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "NUMBER", "5", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "NUMBER", "20", "0"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "NUMBER"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARCHAR, "VARCHAR2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "VARCHAR2", "2000"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "LONG RAW"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BLOB"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));
-    }
-    
-    /**
-     * @see Platform#getMaxColumnNameLength()
-     */
-    public function getMaxColumnNameLength()
-    {
-        return 30;
-    }
+	/**
+	 * Initializes db specific domain mapping.
+	 */
+	protected function initialize()
+	{
+		parent::initialize();
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "NUMBER", "1", "0"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "NUMBER", "3", "0"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "NUMBER", "5", "0"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "NUMBER"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "NUMBER", "20", "0"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "NUMBER"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, "NUMBER"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "NUMBER"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARCHAR, "VARCHAR2"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "VARCHAR2", "2000"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATE"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATE"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "LONG RAW"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BLOB"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));
+	}
 
-    /**
-     * @see Platform#getNativeIdMethod()
-     */
-    public function getNativeIdMethod()
-    {
-        return Platform::SEQUENCE;
-    }
+	/**
+	 * @see Platform#getMaxColumnNameLength()
+	 */
+	public function getMaxColumnNameLength()
+	{
+		return 30;
+	}
 
-    /**
-     * @see Platform#getAutoIncrement()
-     */
-    public function getAutoIncrement()
-    {
-        return "";
-    }
-    
-    /**
-     * @see Platform::supportsNativeDeleteTrigger()
-     */
-    public function supportsNativeDeleteTrigger()
-    {
-        return true;
-    }
+	/**
+	 * @see Platform#getNativeIdMethod()
+	 */
+	public function getNativeIdMethod()
+	{
+		return Platform::SEQUENCE;
+	}
+
+	/**
+	 * @see Platform#getAutoIncrement()
+	 */
+	public function getAutoIncrement()
+	{
+		return "";
+	}
+
+	/**
+	 * @see Platform::supportsNativeDeleteTrigger()
+	 */
+	public function supportsNativeDeleteTrigger()
+	{
+		return true;
+	}
 }

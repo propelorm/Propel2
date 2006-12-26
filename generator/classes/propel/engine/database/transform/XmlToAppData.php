@@ -83,7 +83,7 @@ class XmlToAppData extends AbstractHandler {
 		$this->firstPass = true;
 		$this->encoding = $encoding;
 	}
-	
+
 	/**
 	 * Parses a XML input file and returns a newly created and
 	 * populated AppData structure.
@@ -94,7 +94,7 @@ class XmlToAppData extends AbstractHandler {
 	public function parseFile($xmlFile)
 	{
 		// we don't want infinite recursion
-		if($this->isAlreadyParsed($xmlFile)) {
+		if ($this->isAlreadyParsed($xmlFile)) {
 			return;
 		}
 
@@ -104,7 +104,7 @@ class XmlToAppData extends AbstractHandler {
 		// store current schema file path
 		$this->schemasTagsStack[$xmlFile] = array();
 
-		$this->currentXmlFile = $xmlFile;		
+		$this->currentXmlFile = $xmlFile;
 
 		try {
 			$fr = new FileReader($xmlFile);
@@ -175,7 +175,7 @@ class XmlToAppData extends AbstractHandler {
 
 						//"referenceOnly" attribute is valid in the main schema XML file only,
 						//and it's ingnored in the nested external-schemas
-						if(!$this->isExternalSchema()) {
+						if (!$this->isExternalSchema()) {
 							$isForRefOnly = @$attributes["referenceOnly"];
 							$this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower($isForRefOnly) === "true") : true); // defaults to TRUE
 						}
@@ -315,7 +315,7 @@ class XmlToAppData extends AbstractHandler {
 
 				switch($name) {
 					case "parameter":
-						if($this->currVendorObject->isCompatible($this->platform->getDatabaseType())) {
+						if ($this->currVendorObject->isCompatible($this->platform->getDatabaseType())) {
 							$this->currVendorObject->setVendorParameter($attributes['name'], iconv('utf-8',$this->encoding, $attributes['value']));
 						}
 					break;

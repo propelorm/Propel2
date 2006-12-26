@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 require_once 'PHPUnit/TestListener.php';
 
@@ -47,10 +47,10 @@ class TestListener extends PHPUnit_TestListener
   */
   function startTest(&$test)
   {
-    $this->class = get_class($test);
-    $this->name = $test->getName();
+	$this->class = get_class($test);
+	$this->name = $test->getName();
 
-    print "[{$this->class}]: {$this->name}() ";
+	print "[{$this->class}]: {$this->name}() ";
   }
 
   /**
@@ -61,15 +61,15 @@ class TestListener extends PHPUnit_TestListener
   */
   function addError(&$test, &$t)
   {
-    $class = get_class($test);
-    $name = $test->getName();
+	$class = get_class($test);
+	$name = $test->getName();
 
-    if (! isset($this->cache[$class][$name])) {
-      $this->cache[$class][$name] = 1;
-      print "[ ERROR ]\n\n";
-    }
+	if (! isset($this->cache[$class][$name])) {
+	  $this->cache[$class][$name] = 1;
+	  print "[ ERROR ]\n\n";
+	}
 
-    print "==> $t\n\n";
+	print "==> $t\n\n";
   }
 
   /**
@@ -80,15 +80,15 @@ class TestListener extends PHPUnit_TestListener
   */
   function addFailure(&$test, &$t)
   {
-    $class = get_class($test);
-    $name = $test->getName();
+	$class = get_class($test);
+	$name = $test->getName();
 
-    if (! isset($this->cache[$class][$name])) {
-      $this->cache[$class][$name] = 1;
-      print "[ FAILED ]\n\n";
-    }
+	if (! isset($this->cache[$class][$name])) {
+	  $this->cache[$class][$name] = 1;
+	  print "[ FAILED ]\n\n";
+	}
 
-    print "==> $t\n\n";
+	print "==> $t\n\n";
   }
 
   /**
@@ -101,16 +101,15 @@ class TestListener extends PHPUnit_TestListener
   */
   function endTest(&$test)
   {
-    $class = get_class($test);
-    $name = $test->getName();
+	$class = get_class($test);
+	$name = $test->getName();
 
-    if (isset($this->cache[$class][$name]))
-    {
-      exit();
-    }
+	if (isset($this->cache[$class][$name]))
+	{
+	  exit();
+	}
 
-    print "[ PASSED ]\n";
+	print "[ PASSED ]\n";
   }
 
 }
-

@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 define('ROOT',             realpath(dirname(__FILE__) . '/../../../../') . '/');
 define('CREOLE_BASE',      ROOT . 'creole/');
@@ -51,8 +51,8 @@ require_once 'propel/GeneratedPeerTest.php';
 // TESTS ----------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-$timer = new Benchmark_Timer();    
-$timer->start();  
+$timer = new Benchmark_Timer();
+$timer->start();
 
 $result = new PHPUnit_TestResult();
 $result->addListener(new TestListener());

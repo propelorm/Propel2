@@ -34,64 +34,64 @@
  */
 class DBSybase extends DBAdapter {
 
-    /**
-     * This method is used to ignore case.
-     *
-     * @param in The string to transform to upper case.
-     * @return The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param in The string to transform to upper case.
+	 * @return The upper case string.
+	 */
+	public function toUpperCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
 
-    /**
-     * This method is used to ignore case.
-     *
-     * @param in The string whose case to ignore.
-     * @return The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param in The string whose case to ignore.
+	 * @return The string in a case that can be ignored.
+	 */
+	public function ignoreCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
 
-    /**
-     * Returns SQL which concatenates the second string to the first.
-     *
-     * @param string String to concatenate.
-     * @param string String to append.
-     * @return string 
-     */
-    public function concatString($s1, $s2)
-    {
-        return "($s1 + $s2)";
-    }
+	/**
+	 * Returns SQL which concatenates the second string to the first.
+	 *
+	 * @param string String to concatenate.
+	 * @param string String to append.
+	 * @return string
+	 */
+	public function concatString($s1, $s2)
+	{
+		return "($s1 + $s2)";
+	}
 
-    /**
-     * Returns SQL which extracts a substring.
-     *
-     * @param string String to extract from.
-     * @param int Offset to start from.
-     * @param int Number of characters to extract.
-     * @return string 
-     */
-    public function subString($s, $pos, $len)
-    {
-        return "SUBSTRING($s, $pos, $len)";
-    }
+	/**
+	 * Returns SQL which extracts a substring.
+	 *
+	 * @param string String to extract from.
+	 * @param int Offset to start from.
+	 * @param int Number of characters to extract.
+	 * @return string
+	 */
+	public function subString($s, $pos, $len)
+	{
+		return "SUBSTRING($s, $pos, $len)";
+	}
 
-    /**
-     * Returns SQL which calculates the length (in chars) of a string.
-     *
-     * @param string String to calculate length of.
-     * @return string 
-     */
-    public function strLength($s)
-    {
-        return "LEN($s)";
-    }
-	
+	/**
+	 * Returns SQL which calculates the length (in chars) of a string.
+	 *
+	 * @param string String to calculate length of.
+	 * @return string
+	 */
+	public function strLength($s)
+	{
+		return "LEN($s)";
+	}
+
 	/**
 	 * @see DBAdapter::quoteIdentifier()
 	 */

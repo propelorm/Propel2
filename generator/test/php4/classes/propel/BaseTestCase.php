@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 require_once 'propel/Propel.php';
 require_once 'PHPUnit/TestCase.php';
@@ -51,7 +51,7 @@ class BaseTestCase extends PHPUnit_TestCase
   */
   function BaseTestCase($name)
   {
-    parent::PHPUnit_TestCase($name);
+	parent::PHPUnit_TestCase($name);
   }
 
   /**
@@ -62,17 +62,17 @@ class BaseTestCase extends PHPUnit_TestCase
   */
   function setUp()
   {
-    static $hasInitialized = false;
+	static $hasInitialized = false;
 
-    if (! $hasInitialized)
-    {
-      $e = Propel::init(BaseTestCase::CONFIG_FILE());
-      $hasInitialized = true;
+	if (! $hasInitialized)
+	{
+	  $e = Propel::init(BaseTestCase::CONFIG_FILE());
+	  $hasInitialized = true;
 
-      if (Propel::isError($e)) {
-        $this->fail("Couldn't initialize Propel: " . $e->getMessage());
-      }
-    }
+	  if (Propel::isError($e)) {
+		$this->fail("Couldn't initialize Propel: " . $e->getMessage());
+	  }
+	}
   }
 
 }

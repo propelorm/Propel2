@@ -95,7 +95,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$interface = ClassTools::getInterface($table);
 		if ($interface) {
-		    $script .= " implements " . ClassTools::classname($interface);
+			$script .= " implements " . ClassTools::classname($interface);
 		}
 
 		$script .= " {
@@ -131,7 +131,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 
 		if ($this->isAddGenericMutators()) {
-		    $this->addSetByName($script);
+			$this->addSetByName($script);
 			$this->addSetByPosition($script);
 			$this->addFromArray($script);
 		}
@@ -185,7 +185,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected static \$peer;
 ";
 		if (!$this->getTable()->isAlias()) {
-		    $this->addColumnAttributes($script);
+			$this->addColumnAttributes($script);
 		}
 	}
 
@@ -604,7 +604,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 			$n = 0;
 			foreach($table->getColumns() as $col) {
-				if(!$col->isLazyLoad()) {
+				if (!$col->isLazyLoad()) {
 					// $affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
 					$clo = strtolower($col->getName());
 					switch($col->getType()) {
@@ -1075,7 +1075,7 @@ $script .= "
 	{
 		$pkeys = $this->getTable()->getPrimaryKey();
 		if (count($pkeys) == 1) {
-		    $this->addGetPrimaryKey_SinglePK($script);
+			$this->addGetPrimaryKey_SinglePK($script);
 		} elseif (count($pkeys) > 1) {
 			$this->addGetPrimaryKey_MultiPK($script);
 		} else {
@@ -1166,7 +1166,7 @@ $script .= "
 	{
 		$pkeys = $this->getTable()->getPrimaryKey();
 		if (count($pkeys) == 1) {
-		    $this->addSetPrimaryKey_SinglePK($script);
+			$this->addSetPrimaryKey_SinglePK($script);
 		} elseif (count($pkeys) > 1) {
 			$this->addSetPrimaryKey_MultiPK($script);
 		} else {

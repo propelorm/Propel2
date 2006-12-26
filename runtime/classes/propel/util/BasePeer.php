@@ -222,9 +222,9 @@ class BasePeer
 
 		// the primary key
 		$id = null;
-		
+
 		$db = Propel::getDB($criteria->getDbName());
-		
+
 		// Get the table name and method for determining the primary
 		// key value.
 		$keys = $criteria->keys();
@@ -250,7 +250,7 @@ class BasePeer
 
 		// pk will be null if there is no primary key defined for the table
 		// we're inserting into.
-		if ($pk !== null && $useIdGen && !$criteria->containsKey($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {		
+		if ($pk !== null && $useIdGen && !$criteria->containsKey($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
 			try {
 				$id = $db->getId($con, $keyInfo);
 			} catch (Exception $e) {
@@ -368,9 +368,9 @@ class BasePeer
 				self::populateStmtValues($stmt, array_merge(self::buildParams($updateTablesColumns[$tableName], $updateValues), $selectParams), $dbMap, $db);
 
 				$stmt->execute();
-				
-				$affectedRows = $stmt->rowCount(); 
-				
+
+				$affectedRows = $stmt->rowCount();
+
 				$stmt = null; // close
 
 			} catch (Exception $e) {
@@ -397,11 +397,11 @@ class BasePeer
 	{
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 		$db = Propel::getDB($criteria->getDbName());
-		
+
 		if ($con === null) {
 			$con = Propel::getConnection($criteria->getDbName());
 		}
-		
+
 		$stmt = null;
 
 		try {
@@ -415,17 +415,17 @@ class BasePeer
 			$sql = self::createSelectSql($criteria, $params);
 
  			$stmt = $con->prepare($sql);
- 			
- 			// FIXME - add SQL-modification for LIMIT/OFFSET into DBAdapters & createSelectSql method.  
+
+ 			// FIXME - add SQL-modification for LIMIT/OFFSET into DBAdapters & createSelectSql method.
 			// $stmt->setLimit($criteria->getLimit());
 			// $stmt->setOffset($criteria->getOffset());
 
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
 
 			$stmt->execute();
-			
+
 			if ($criteria->isUseTransaction()) Transaction::commit($con);
-			
+
 		} catch (Exception $e) {
 			if ($stmt) $stmt = null; // close
 			if ($criteria->isUseTransaction()) Transaction::rollback($con);
@@ -435,7 +435,7 @@ class BasePeer
 
 		return $stmt;
 	}
-	
+
 	/**
 	 * Populates values in a prepared statement.
 	 *
@@ -453,16 +453,16 @@ class BasePeer
 			$value = $param['value'];
 
 			if ($value === null) {
-			
+
 				$stmt->bindValue($i++, null, PDO::PARAM_NULL);
 				// $stmt->setNull($i++);
-				
+
 			} else {
-			
+
 				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
 				$type = $cMap->getType();
 				$pdoType = $cMap->getPdoType();
-				
+
 				if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
 					if ($type == PropelColumnTypes::TIMESTAMP) {
 						$value = date($db->getTimestampFormatter(), $value);
@@ -472,18 +472,18 @@ class BasePeer
 						$value = date($db->getTimeFormatter(), $value);
 					}
 				}
-				
+
 				if ($type == PropelColumnTypes::BLOB || $type == PropelColumnTypes::CLOB ) {
 					Propel::log("Binding [LOB value] at position $i w/ Propel type $type and PDO type $pdoType", Propel::LOG_DEBUG);
 				} else {
 					Propel::log("Binding " . var_export($value, true) . " at position $i w/ Propel type $type and PDO type $pdoType", Propel::LOG_DEBUG);
 				}
-				
+
 				$stmt->bindValue($i++, $value, $pdoType);
 			}
 		} // foreach
 	}
-	
+
 	/**
 	 * Applies any validators that were defined in the schema to the specified columns.
 	 *
@@ -501,7 +501,7 @@ class BasePeer
 				$col = $tableMap->getColumn($colName);
 				foreach($col->getValidators() as $validatorMap) {
 					$validator = BasePeer::getValidator($validatorMap->getClass());
-					if($validator && ($col->isNotNull() || $colValue !== null) && $validator->isValid($validatorMap, $colValue) === false) {
+					if ($validator && ($col->isNotNull() || $colValue !== null) && $validator->isValid($validatorMap, $colValue) === false) {
 						if (!isset($failureMap[$colName])) { // for now we do one ValidationFailed per column, not per rule
 							$failureMap[$colName] = new ValidationFailed($colName, $validatorMap->getMessage(), $validator);
 						}
@@ -671,11 +671,11 @@ class BasePeer
 			$whereClause[] = $sb;
 
 		}
-		
+
 		// handle RIGHT (straight) joins
-		// Loop through the joins, 
+		// Loop through the joins,
 		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
-		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause 
+		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
 		// New Code.
 		foreach ((array) $criteria->getJoins() as $join) { // we'll only loop if there's actually something here
 
@@ -687,14 +687,14 @@ class BasePeer
 				$leftTableAlias = " $leftTable";
 				$leftTable = $realTable;
 			}
-			
+
 			$rightTable = $join->getRightTableName();
 			$rightTableAlias = '';
 			if ($realTable = $criteria->getTableForAlias($rightTable)) {
 				$rightTableAlias = " $rightTable";
 				$rightTable = $realTable;
 			}
-					
+
 			// determine if casing is relevant.
 			if ($ignoreCase = $criteria->isIgnoreCase()) {
 				$leftColType = $dbMap->getTable($leftTable)->getColumn($join->getLeftColumnName())->getType();
@@ -708,24 +708,24 @@ class BasePeer
 			} else {
 				$condition = $join->getLeftColumn() . '=' . $join->getRightColumn();
 			}
-					
-			// add 'em to the queues..  
-			if ($joinType = $join->getJoinType()) { 
+
+			// add 'em to the queues..
+			if ($joinType = $join->getJoinType()) {
 				if (!$fromClause) {
 					$fromClause[] = $leftTable . $leftTableAlias;
 				}
 				$joinTables[] = $rightTable . $rightTableAlias;
 				$joinClause[] = $join->getJoinType() . ' ' . $rightTable . $rightTableAlias . " ON ($condition)";
-			} else { 
+			} else {
 				$fromClause[] = $leftTable . $leftTableAlias;
 				$fromClause[] = $rightTable . $rightTableAlias;
 				$whereClause[] = $condition;
 			}
 		}
-		
+
 		// Unique from clause elements
 		$fromClause = array_unique($fromClause);
-				
+
 		// tables should not exist in both the from and join clauses
 		if ($joinTables && $fromClause) {
 			foreach ($fromClause as $fi => $ftable) {
@@ -783,7 +783,7 @@ class BasePeer
 					} // Join for loop
 				} // If Joins
 */
-		
+
 		// Add the GROUP BY columns
 		$groupByClause = $groupBy;
 
@@ -798,14 +798,14 @@ class BasePeer
 		 if (!empty($orderBy)) {
 
 			foreach($orderBy as $orderByColumn) {
-				
+
 				// Add function expression as-is.
-				
+
 				if (strpos($orderByColumn, '(') !== false) {
 					$orderByClause[] = $orderByColumn;
 					continue;
 				}
-				
+
 				// Split orderByColumn (i.e. "table.column DESC")
 
 				$dotPos = strpos($orderByColumn, '.');
@@ -855,7 +855,7 @@ class BasePeer
 		$sql =  "SELECT "
 				.($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
 				.implode(", ", $selectClause)
-				." FROM ". ( (!empty($joinClause) && count($fromClause) > 1 && (substr(get_class($db), 0, 7) == 'DBMySQL')) ? "(" . implode(", ", $fromClause) . ")" : implode(", ", $fromClause) ) 
+				." FROM ". ( (!empty($joinClause) && count($fromClause) > 1 && (substr(get_class($db), 0, 7) == 'DBMySQL')) ? "(" . implode(", ", $fromClause) . ")" : implode(", ", $fromClause) )
 								.($joinClause ? ' ' . implode(' ', $joinClause) : '')
 				.($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
 				.($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")

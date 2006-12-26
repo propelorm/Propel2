@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/database/model/XMLElement.php';
 
 /**
@@ -33,93 +33,93 @@ require_once 'propel/engine/database/model/XMLElement.php';
  */
 class IdMethodParameter extends XMLElement {
 
-    private $name;
-    private $value;
-    private $parentTable;
+	private $name;
+	private $value;
+	private $parentTable;
 
    /**
-     * Sets up the IdMethodParameter object based on the attributes that were passed to loadFromXML().
+	 * Sets up the IdMethodParameter object based on the attributes that were passed to loadFromXML().
 	 * @see parent::loadFromXML()
-     */
-    protected function setupObject()
-    {
-        $this->name = $this->getAttribute("name");
-        $this->value = $this->getAttribute("value");
-    }
+	 */
+	protected function setupObject()
+	{
+		$this->name = $this->getAttribute("name");
+		$this->value = $this->getAttribute("value");
+	}
 
-    /**
-     * Get the parameter name
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
+	/**
+	 * Get the parameter name
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 
-    /**
-     * Set the parameter name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
+	/**
+	 * Set the parameter name
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
 
-    /**
-     * Get the parameter value
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
+	/**
+	 * Get the parameter value
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
 
-    /**
-     * Set the parameter value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
+	/**
+	 * Set the parameter value
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
+	}
 
-    /**
-     * Set the parent Table of the id method
-     */
-    public function setTable(Table $parent)
-    {
-        $this->parentTable = $parent;
-    }
+	/**
+	 * Set the parent Table of the id method
+	 */
+	public function setTable(Table $parent)
+	{
+		$this->parentTable = $parent;
+	}
 
-    /**
-     * Get the parent Table of the id method
-     */
-    public function getTable()
-    {
-        return $this->parentTable;
-    }
+	/**
+	 * Get the parent Table of the id method
+	 */
+	public function getTable()
+	{
+		return $this->parentTable;
+	}
 
-    /**
-     * Returns the Name of the table the id method is in
-     */
-    public function getTableName()
-    {
-        return $this->parentTable->getName();
-    }
+	/**
+	 * Returns the Name of the table the id method is in
+	 */
+	public function getTableName()
+	{
+		return $this->parentTable->getName();
+	}
 
-    /**
-     * XML representation of the foreign key.
-     */
-    public function toString()
-    {
-        $result = " <id-method-parameter";
-        
-        if ($this->getName() !== null) {
-            $result .= " name=\""
-                  . $this->getName()
-                  . '"';
-        } 
-        
-        $result .= " value=\""
-              . $this->getValue()
-              .  "\">\n";
-              
-        return $result;
-    }
+	/**
+	 * XML representation of the foreign key.
+	 */
+	public function toString()
+	{
+		$result = " <id-method-parameter";
+
+		if ($this->getName() !== null) {
+			$result .= " name=\""
+				  . $this->getName()
+				  . '"';
+		}
+
+		$result .= " value=\""
+			  . $this->getValue()
+			  .  "\">\n";
+
+		return $result;
+	}
 }

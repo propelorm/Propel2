@@ -35,107 +35,107 @@ require_once 'phing/Task.php';
  */
 class PropelCreoleTransformTask extends Task {
 
-    /** Name of XML database schema produced. */
-    protected $xmlSchema;
+	/** Name of XML database schema produced. */
+	protected $xmlSchema;
 
-    /** Creole URL. */
-    protected $dbUrl;
+	/** Creole URL. */
+	protected $dbUrl;
 
-    /** Creole driver. */
-    protected $dbDriver;
+	/** Creole driver. */
+	protected $dbDriver;
 
-    /** Creole user name. */
-    protected $dbUser;
+	/** Creole user name. */
+	protected $dbUser;
 
-    /** Creole password. */
-    protected $dbPassword;
+	/** Creole password. */
+	protected $dbPassword;
 
-    /** DB encoding to use */
-    protected $dbEncoding = 'iso-8859-1';
+	/** DB encoding to use */
+	protected $dbEncoding = 'iso-8859-1';
 
-    /** DB schema to use. */
-    protected $dbSchema;
+	/** DB schema to use. */
+	protected $dbSchema;
 
-    /** parsed DB DSN */
-    protected $dsn;
+	/** parsed DB DSN */
+	protected $dsn;
 
-    /** DOM document produced. */
-    protected $doc;
+	/** DOM document produced. */
+	protected $doc;
 
-    /** The document root element. */
-    protected $databaseNode;
+	/** The document root element. */
+	protected $databaseNode;
 
-    /** Hashtable of columns that have primary keys. */
-    protected $primaryKeys;
+	/** Hashtable of columns that have primary keys. */
+	protected $primaryKeys;
 
-    /** Hashtable to track what table a column belongs to. */
-    // doesn't seem to be used
-    // protected $columnTableMap;
+	/** Hashtable to track what table a column belongs to. */
+	// doesn't seem to be used
+	// protected $columnTableMap;
 
-    /** whether to use same name for phpName or not */
-    protected $samePhpName;
+	/** whether to use same name for phpName or not */
+	protected $samePhpName;
 
-    /** whether to add vendor info or not */
+	/** whether to add vendor info or not */
 	protected $addVendorInfo;
 
-    /**
-     * Bitfield to switch on/off which validators will be created.
-     *
-     * @var int
-     */
-    protected $validatorBits;
+	/**
+	 * Bitfield to switch on/off which validators will be created.
+	 *
+	 * @var int
+	 */
+	protected $validatorBits;
 
-    /**
-     * Collect validatorInfos to create validators.
-     *
-     * @var int
-     */
-    protected $validatorInfos;
+	/**
+	 * Collect validatorInfos to create validators.
+	 *
+	 * @var int
+	 */
+	protected $validatorInfos;
 
-    /**
-     * Zero bit for no validators
-     */
+	/**
+	 * Zero bit for no validators
+	 */
 	const VALIDATORS_NONE = 0;
 
-    /**
-     * Bit for maxLength validator
-     */
+	/**
+	 * Bit for maxLength validator
+	 */
 	const VALIDATORS_MAXLENGTH = 1;
 
-    /**
-     * Bit for maxValue validator
-     */
+	/**
+	 * Bit for maxValue validator
+	 */
 	const VALIDATORS_MAXVALUE = 2;
 
-    /**
-     * Bit for type validator
-     */
+	/**
+	 * Bit for type validator
+	 */
 	const VALIDATORS_TYPE = 4;
 
-    /**
-     * Bit for required validator
-     */
+	/**
+	 * Bit for required validator
+	 */
 	const VALIDATORS_REQUIRED = 8;
 
-    /**
-     * Bit for unique validator
-     */
+	/**
+	 * Bit for unique validator
+	 */
 	const VALIDATORS_UNIQUE = 16;
 
-    /**
-     * Bit for all validators
-     */
+	/**
+	 * Bit for all validators
+	 */
 	const VALIDATORS_ALL = 255;
 
-    /**
-     * Maps validator type tokens to bits
-     *
-     * The tokens are used in the propel.addValidators property to define
-     * which validators are to be added
-     *
-     * @static
-     * @var array
-     */
+	/**
+	 * Maps validator type tokens to bits
+	 *
+	 * The tokens are used in the propel.addValidators property to define
+	 * which validators are to be added
+	 *
+	 * @static
+	 * @var array
+	 */
 	static protected $validatorBitMap = array (
 		'none' => PropelCreoleTransformTask::VALIDATORS_NONE,
 		'maxlength' => PropelCreoleTransformTask::VALIDATORS_MAXLENGTH,
@@ -146,12 +146,12 @@ class PropelCreoleTransformTask extends Task {
 		'all' => PropelCreoleTransformTask::VALIDATORS_ALL,
 	);
 
-    /**
-     * Defines messages that are added to validators
-     *
-     * @static
-     * @var array
-     */
+	/**
+	 * Defines messages that are added to validators
+	 *
+	 * @static
+	 * @var array
+	 */
 	static protected $validatorMessages = array (
 		'maxlength' => array (
 			'msg' => 'The field %s must be not longer than %s characters.',
@@ -175,64 +175,64 @@ class PropelCreoleTransformTask extends Task {
 		),
 	);
 
-    public function getDbSchema()
-    {
-        return $this->dbSchema;
-    }
+	public function getDbSchema()
+	{
+		return $this->dbSchema;
+	}
 
-    public function setDbSchema($dbSchema)
-    {
-        $this->dbSchema = $dbSchema;
-    }
+	public function setDbSchema($dbSchema)
+	{
+		$this->dbSchema = $dbSchema;
+	}
 
-    public function setDbUrl($v)
-    {
-        $this->dbUrl = $v;
-    }
+	public function setDbUrl($v)
+	{
+		$this->dbUrl = $v;
+	}
 
-    public function setDbDriver($v)
-    {
-        $this->dbDriver = $v;
-    }
+	public function setDbDriver($v)
+	{
+		$this->dbDriver = $v;
+	}
 
-    public function setDbUser($v)
-    {
-        $this->dbUser = $v;
-    }
+	public function setDbUser($v)
+	{
+		$this->dbUser = $v;
+	}
 
-    public function setDbPassword($v)
-    {
-        $this->dbPassword = $v;
-    }
+	public function setDbPassword($v)
+	{
+		$this->dbPassword = $v;
+	}
 
-    public function setDbEncoding($v)
-    {
-       $this->dbEncoding = $v;
-    }
+	public function setDbEncoding($v)
+	{
+	   $this->dbEncoding = $v;
+	}
 
-    public function setOutputFile($v)
-    {
-        $this->xmlSchema = $v;
-    }
+	public function setOutputFile($v)
+	{
+		$this->xmlSchema = $v;
+	}
 
-    public function setSamePhpName($v)
-    {
-        $this->samePhpName = $v;
-    }
+	public function setSamePhpName($v)
+	{
+		$this->samePhpName = $v;
+	}
 
-    public function setAddVendorInfo($v)
-    {
-        $this->addVendorInfo = (boolean) $v;
-    }
+	public function setAddVendorInfo($v)
+	{
+		$this->addVendorInfo = (boolean) $v;
+	}
 
-    /**
-     * Sets set validator bitfield from propel.addValidators property
-     *
-     * @param string $v The propel.addValidators property
-     * @return void
-     */
-    public function setAddValidators($v)
-    {
+	/**
+	 * Sets set validator bitfield from propel.addValidators property
+	 *
+	 * @param string $v The propel.addValidators property
+	 * @return void
+	 */
+	public function setAddValidators($v)
+	{
 		// lowercase input
 		$v = strtolower($v);
 		// make it a bit expression
@@ -243,127 +243,127 @@ class PropelCreoleTransformTask extends Task {
 			// eval the expression
 			eval("\$v = $v;");
 		} else {
-            $this->log("\n\nERROR: NO VALIDATORS ADDED!\n\nThere is an error in propel.addValidators build property.\n\nAllowed tokens are: " . implode(', ', array_keys(self::$validatorBitMap)) . "\n\nAllowed operators are (like in php.ini):\n\n|    bitwise OR\n&    bitwise AND\n~    bitwise NOT\n\n", PROJECT_MSG_ERR);
-            $v = self::VALIDATORS_NONE;
+			$this->log("\n\nERROR: NO VALIDATORS ADDED!\n\nThere is an error in propel.addValidators build property.\n\nAllowed tokens are: " . implode(', ', array_keys(self::$validatorBitMap)) . "\n\nAllowed operators are (like in php.ini):\n\n|    bitwise OR\n&    bitwise AND\n~    bitwise NOT\n\n", PROJECT_MSG_ERR);
+			$v = self::VALIDATORS_NONE;
 		}
-        $this->validatorBits = $v;
-    }
+		$this->validatorBits = $v;
+	}
 
-    public function isSamePhpName()
-    {
-        return $this->samePhpName;
-    }
+	public function isSamePhpName()
+	{
+		return $this->samePhpName;
+	}
 
-    /**
-     * Default constructor.
-     * @return void
-     * @throws BuildException
-     */
-    public function main()
-    {
-        $this->log("Propel - CreoleToXMLSchema starting");
-        $this->log("Your DB settings are:");
-        $this->log("driver : " . ($this->dbDriver ? $this->dbDriver : "(default)"));
-        $this->log("URL : " . $this->dbUrl);
+	/**
+	 * Default constructor.
+	 * @return void
+	 * @throws BuildException
+	 */
+	public function main()
+	{
+		$this->log("Propel - CreoleToXMLSchema starting");
+		$this->log("Your DB settings are:");
+		$this->log("driver : " . ($this->dbDriver ? $this->dbDriver : "(default)"));
+		$this->log("URL : " . $this->dbUrl);
 
-        //(not yet supported) $this->log("schema : " . $this->dbSchema);
-        //DocumentTypeImpl docType = new DocumentTypeImpl(null, "database", null,
-        //	   "http://jakarta.apache.org/turbine/dtd/database.dtd");
+		//(not yet supported) $this->log("schema : " . $this->dbSchema);
+		//DocumentTypeImpl docType = new DocumentTypeImpl(null, "database", null,
+		//	   "http://jakarta.apache.org/turbine/dtd/database.dtd");
 
-        $this->doc = new DOMDocument('1.0', 'utf-8');
-        $this->doc->formatOutput = true; // pretty printing
+		$this->doc = new DOMDocument('1.0', 'utf-8');
+		$this->doc->formatOutput = true; // pretty printing
 
-        $this->doc->appendChild($this->doc->createComment("Autogenerated by CreoleToXMLSchema!"));
+		$this->doc->appendChild($this->doc->createComment("Autogenerated by CreoleToXMLSchema!"));
 
-        try {
-            $this->generateXML();
-            $this->log("Writing XML to file: " . $this->xmlSchema);
-            $outFile = new PhingFile($this->xmlSchema);
-            $out = new FileWriter($outFile);
-            $xmlstr = $this->doc->saveXML();
-            $out->write($xmlstr);
-            $out->close();
-        } catch (Exception $e) {
-            $this->log("There was an error building XML from metadata: " . $e->getMessage(), PROJECT_MSG_ERR);
-        }
-        $this->log("Propel - CreoleToXMLSchema finished");
-    }
+		try {
+			$this->generateXML();
+			$this->log("Writing XML to file: " . $this->xmlSchema);
+			$outFile = new PhingFile($this->xmlSchema);
+			$out = new FileWriter($outFile);
+			$xmlstr = $this->doc->saveXML();
+			$out->write($xmlstr);
+			$out->close();
+		} catch (Exception $e) {
+			$this->log("There was an error building XML from metadata: " . $e->getMessage(), PROJECT_MSG_ERR);
+		}
+		$this->log("Propel - CreoleToXMLSchema finished");
+	}
 
-    /**
-     * Generates an XML database schema from Creole metadata.
-     *
-     * @return void
-     * @throws Exception a generic exception.
-     */
-    public function generateXML()
-    {
+	/**
+	 * Generates an XML database schema from Creole metadata.
+	 *
+	 * @return void
+	 * @throws Exception a generic exception.
+	 */
+	public function generateXML()
+	{
 		// Establish db connection
 		$con = $this->getConnection();
 
-        // Get the database Metadata.
-        $dbInfo = $con->getDatabaseInfo();
+		// Get the database Metadata.
+		$dbInfo = $con->getDatabaseInfo();
 
 		// create and add the database node
-        $databaseNode = $this->createDatabaseNode($dbInfo);
-        $this->doc->appendChild($databaseNode);
-    }
-
-    /**
-     * Establishes a Creole database connection
-     *
-     * @return object The connection
-     */
-    protected function getConnection() {
-
-        // Attemtp to connect to a database.
-        $this->dsn = Creole::parseDSN($this->dbUrl);
-        if($this->dbUser) {
-            $this->dsn["username"] = $this->dbUser;
-        }
-        if ($this->dbPassword) {
-            $this->dsn["password"] = $this->dbPassword;
-        }
-        if ($this->dbDriver) {
-            Creole::registerDriver($this->dsn['phptype'], $this->dbDriver);
-        }
-        $con = Creole::getConnection($this->dsn);
-        $this->log("DB connection established");
-
-        return $con;
+		$databaseNode = $this->createDatabaseNode($dbInfo);
+		$this->doc->appendChild($databaseNode);
 	}
 
-    /**
-     * Creates a database node
-     *
-     * @param object $dbInfo The dbInfo for this db
-     * @return object The database node instance
-     */
+	/**
+	 * Establishes a Creole database connection
+	 *
+	 * @return object The connection
+	 */
+	protected function getConnection() {
+
+		// Attemtp to connect to a database.
+		$this->dsn = Creole::parseDSN($this->dbUrl);
+		if ($this->dbUser) {
+			$this->dsn["username"] = $this->dbUser;
+		}
+		if ($this->dbPassword) {
+			$this->dsn["password"] = $this->dbPassword;
+		}
+		if ($this->dbDriver) {
+			Creole::registerDriver($this->dsn['phptype'], $this->dbDriver);
+		}
+		$con = Creole::getConnection($this->dsn);
+		$this->log("DB connection established");
+
+		return $con;
+	}
+
+	/**
+	 * Creates a database node
+	 *
+	 * @param object $dbInfo The dbInfo for this db
+	 * @return object The database node instance
+	 */
 	protected function createDatabaseNode($dbInfo) {
 
-        $this->log("Processing database");
+		$this->log("Processing database");
 
-        $node = $this->doc->createElement("database");
-        $node->setAttribute("name", $dbInfo->getName());
+		$node = $this->doc->createElement("database");
+		$node->setAttribute("name", $dbInfo->getName());
 
-        if ($vendorNode = $this->createVendorInfoNode($dbInfo->getVendorSpecificInfo())) {
-        	$node->appendChild($vendorNode);
+		if ($vendorNode = $this->createVendorInfoNode($dbInfo->getVendorSpecificInfo())) {
+			$node->appendChild($vendorNode);
 		}
 
-        // create and add table nodes
-        foreach($dbInfo->getTables() as $table) {
+		// create and add table nodes
+		foreach($dbInfo->getTables() as $table) {
 			$tableNode = $this->createTableNode($table);
 			$node->appendChild($tableNode);
-        }
+		}
 
-        return $node;
+		return $node;
 	}
 
-    /**
-     * Creates a table node
-     *
-     * @param object $table The table
-     * @return object The table node instance
-     */
+	/**
+	 * Creates a table node
+	 *
+	 * @param object $table The table
+	 * @return object The table node instance
+	 */
 	protected function createTableNode($table) {
 
 		$this->log("Processing table: " . $table->toString());
@@ -373,8 +373,8 @@ class PropelCreoleTransformTask extends Task {
 		if ($this->isSamePhpName()) {
 			$node->setAttribute("phpName", $table->getName());
 		}
-        if ($vendorNode = $this->createVendorInfoNode($table->getVendorSpecificInfo())) {
-        	$node->appendChild($vendorNode);
+		if ($vendorNode = $this->createVendorInfoNode($table->getVendorSpecificInfo())) {
+			$node->appendChild($vendorNode);
 		}
 
 		// Create and add column nodes, register column validators
@@ -404,17 +404,17 @@ class PropelCreoleTransformTask extends Task {
 			$indexNode = $this->createIndexNode($index);
 			$node->appendChild($indexNode);
 		}
-		
+
 		// add an id-method-parameter if we have a sequence that matches table_colname_seq
-		// 
-		// 
+		//
+		//
 		$pkey = $table->getPrimaryKey();
 		if ($pkey) {
-		    $cols = $pkey->getColumns();
+			$cols = $pkey->getColumns();
 			if (count($cols) === 1) {
 				$col = array_shift($cols);
 				if ($col->isAutoIncrement()) {
-					$seq_name = $table->getName().'_'.$col->getName().'_seq';					
+					$seq_name = $table->getName().'_'.$col->getName().'_seq';
 					if ($table->getDatabase()->isSequence($seq_name)) {
 						$idMethodParameterNode = $this->doc->createElement("id-method-parameter");
 						$idMethodParameterNode->setAttribute("value", $seq_name);
@@ -423,7 +423,7 @@ class PropelCreoleTransformTask extends Task {
 				}
 			}
 		}
-		
+
 
 		// Create and add validator and rule nodes.
 		$nodes = array();
@@ -446,12 +446,12 @@ class PropelCreoleTransformTask extends Task {
 		return $node;
 	}
 
-    /**
-     * Creates an column node
-     *
-     * @param object $column The Creole column
-     * @return object The column node instance
-     */
+	/**
+	 * Creates an column node
+	 *
+	 * @param object $column The Creole column
+	 * @return object The column node instance
+	 */
 	protected function createColumnNode($column) {
 
 		$node = $this->doc->createElement("column");
@@ -485,7 +485,7 @@ class PropelCreoleTransformTask extends Task {
 		}
 
 		if ($colScale > 0 && (
-			       $colType == CreoleTypes::DECIMAL
+				   $colType == CreoleTypes::DECIMAL
 				|| $colType == CreoleTypes::FLOAT
 				|| $colType == CreoleTypes::NUMERIC)) {
 			$node->setAttribute("scale", (string) $colScale);
@@ -507,19 +507,19 @@ class PropelCreoleTransformTask extends Task {
 			$node->setAttribute("default", iconv($this->dbEncoding, 'utf-8', $defValue));
 		}
 
-        if ($vendorNode = $this->createVendorInfoNode($column->getVendorSpecificInfo())) {
-        	$node->appendChild($vendorNode);
+		if ($vendorNode = $this->createVendorInfoNode($column->getVendorSpecificInfo())) {
+			$node->appendChild($vendorNode);
 		}
 
 		return $node;
 	}
 
-    /**
-     * Returns the primary key columns for a table
-     *
-     * @param object $table The table
-     * @return array The primary keys
-     */
+	/**
+	 * Returns the primary key columns for a table
+	 *
+	 * @param object $table The table
+	 * @return array The primary keys
+	 */
 	protected function getTablePkCols($table) {
 
 		static $columns = array();
@@ -537,17 +537,17 @@ class PropelCreoleTransformTask extends Task {
 		return $columns[$tableName];
 	}
 
-    /**
-     * Creates an foreign key node
-     *
-     * @param object $foreignKey The foreign key
-     * @return object The foreign key node instance
-     */
+	/**
+	 * Creates an foreign key node
+	 *
+	 * @param object $foreignKey The foreign key
+	 * @return object The foreign key node instance
+	 */
 	protected function createForeignKeyNode($foreignKey) {
 
 		$node = $this->doc->createElement("foreign-key");
-        if ($vendorNode = $this->createVendorInfoNode($foreignKey->getVendorSpecificInfo())) {
-        	$node->appendChild($vendorNode);
+		if ($vendorNode = $this->createVendorInfoNode($foreignKey->getVendorSpecificInfo())) {
+			$node->appendChild($vendorNode);
 		}
 
 		$refs = $foreignKey->getReferences();
@@ -566,12 +566,12 @@ class PropelCreoleTransformTask extends Task {
 		return $node;
 	}
 
-    /**
-     * Creates an index node
-     *
-     * @param object $index The index
-     * @return object The index node instance
-     */
+	/**
+	 * Creates an index node
+	 *
+	 * @param object $index The index
+	 * @return object The index node instance
+	 */
 	protected function createIndexNode($index) {
 
 		$indexType = $index->isUnique() ?  'unique' : 'index';
@@ -591,30 +591,30 @@ class PropelCreoleTransformTask extends Task {
 			}
 		}
 
-        if ($vendorNode = $this->createVendorInfoNode($index->getVendorSpecificInfo())) {
-        	$node->appendChild($vendorNode);
+		if ($vendorNode = $this->createVendorInfoNode($index->getVendorSpecificInfo())) {
+			$node->appendChild($vendorNode);
 		}
 
 		return $node;
 	}
 
-    /**
-     * Checks whether to add validators of specified type or not
+	/**
+	 * Checks whether to add validators of specified type or not
 	 *
-     * @param string $type The validator type
-     * @return boolean
-     */
-    protected function isValidatorRequired($type) {
+	 * @param string $type The validator type
+	 * @return boolean
+	 */
+	protected function isValidatorRequired($type) {
 		$type = strtolower($type);
 		return ($this->validatorBits & self::$validatorBitMap[$type] ? true : false);
 	}
 
-    /**
-     * Registers column type specific validators if necessary
-     *
-     * We'll first collect the validators/rule infos and add them later on to
-     * have them appended to the table tag as a block.
-     *
+	/**
+	 * Registers column type specific validators if necessary
+	 *
+	 * We'll first collect the validators/rule infos and add them later on to
+	 * have them appended to the table tag as a block.
+	 *
 	 * CreoleTypes are:
 	 *
 	 * 		BOOLEAN
@@ -634,12 +634,12 @@ class PropelCreoleTransformTask extends Task {
 	 * 		for numeric types: maxValue validators (BIGINT, SMALLINT, TINYINT, INTEGER, FLOAT, DOUBLE, NUMERIC, DECIMAL, REAL)
 	 * 		for integer and timestamp types: notMatch validator with [^\d]+ (BIGINT, SMALLINT, TINYINT, INTEGER, TIMESTAMP)
 	 * 		for float types: notMatch validator with [^\d\.]+ (FLOAT, DOUBLE, NUMERIC, DECIMAL, REAL)
-     *
-     * @param object $column The Creole column
-     * @return void
-     * @todo find out how to evaluate the appropriate size and adjust maxValue rule values appropriate
-     * @todo find out if float type column values must always notMatch('[^\d\.]+'), i.e. digits and point for any db vendor, language etc.
-     */
+	 *
+	 * @param object $column The Creole column
+	 * @return void
+	 * @todo find out how to evaluate the appropriate size and adjust maxValue rule values appropriate
+	 * @todo find out if float type column values must always notMatch('[^\d\.]+'), i.e. digits and point for any db vendor, language etc.
+	 */
 	protected function registerValidatorsForColumn($column) {
 
 		$table = $column->getTable();
@@ -679,7 +679,7 @@ class PropelCreoleTransformTask extends Task {
 					CreoleTypes::REAL))) {
 
 			// TODO: how to evaluate the appropriate size??
-            $this->log("WARNING: maxValue validator added for column $colName. You will have to adjust the size value manually.", PROJECT_MSG_WARN);
+			$this->log("WARNING: maxValue validator added for column $colName. You will have to adjust the size value manually.", PROJECT_MSG_WARN);
 			$ruleInfo = array('type' => 'maxValue', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
@@ -705,14 +705,14 @@ class PropelCreoleTransformTask extends Task {
 		}
 	}
 
-    /**
-     * Creates a validator node
-     *
-     * @param object  $column    The Creole column
-     * @param integer $type      The validator type
-     * @return object The validator node instance
-     */
-    protected function createValidator($column, $type) {
+	/**
+	 * Creates a validator node
+	 *
+	 * @param object  $column    The Creole column
+	 * @param integer $type      The validator type
+	 * @return object The validator node instance
+	 */
+	protected function createValidator($column, $type) {
 
 		$node = $this->doc->createElement('validator');
 		$node->setAttribute('column', $column->getName());
@@ -720,14 +720,14 @@ class PropelCreoleTransformTask extends Task {
 		return $node;
 	}
 
-    /**
-     * Creates a rule node
-     *
-     * @param object  $column The Creole column
-     * @param array   $rule   The rule info
-     * @return object The rule node instance
-     */
-    protected function createRuleNode($column, $rule) {
+	/**
+	 * Creates a rule node
+	 *
+	 * @param object  $column The Creole column
+	 * @param array   $rule   The rule info
+	 * @return object The rule node instance
+	 */
+	protected function createRuleNode($column, $rule) {
 
 		extract($rule);
 
@@ -746,33 +746,33 @@ class PropelCreoleTransformTask extends Task {
 		return $node;
 	}
 
-    /**
-     * Creates a vendor info node
-     *
-     * returns false if no vendor info can or has to be added
-     *
-     * @param array   $vendorInfo The validator info
-     * @return object|boolean The vendor info instance or false
-     */
-    protected function createVendorInfoNode($vendorInfo)
-    {
-        if(!$vendorInfo OR !$this->addVendorInfo) {
-            return false;
-        }
+	/**
+	 * Creates a vendor info node
+	 *
+	 * returns false if no vendor info can or has to be added
+	 *
+	 * @param array   $vendorInfo The validator info
+	 * @return object|boolean The vendor info instance or false
+	 */
+	protected function createVendorInfoNode($vendorInfo)
+	{
+		if (!$vendorInfo OR !$this->addVendorInfo) {
+			return false;
+		}
 
-        $vendorNode = $this->doc->createElement("vendor");
-        $vendorNode->setAttribute("type", $this->dsn["phptype"]);
+		$vendorNode = $this->doc->createElement("vendor");
+		$vendorNode->setAttribute("type", $this->dsn["phptype"]);
 
-        foreach($vendorInfo as $key => $value) {
-            $parameterNode = $this->doc->createElement("parameter");
-            $value = iconv($this->dbEncoding, "utf-8", $value);
-            $parameterNode->setAttribute("name", $key);
-            $parameterNode->setAttribute("value", $value);
-            $vendorNode->appendChild($parameterNode);
-        }
+		foreach($vendorInfo as $key => $value) {
+			$parameterNode = $this->doc->createElement("parameter");
+			$value = iconv($this->dbEncoding, "utf-8", $value);
+			$parameterNode->setAttribute("name", $key);
+			$parameterNode->setAttribute("value", $value);
+			$vendorNode->appendChild($parameterNode);
+		}
 
-        return $vendorNode;
-    }
+		return $vendorNode;
+	}
 
 }
 ?>

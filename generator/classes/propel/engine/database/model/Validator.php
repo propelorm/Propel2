@@ -33,96 +33,96 @@ include_once 'propel/engine/database/model/Rule.php';
  */
 class Validator extends XMLElement {
 
-    const TRANSLATE_NONE = "none";
-    const TRANSLATE_GETTEXT = "gettext";
+	const TRANSLATE_NONE = "none";
+	const TRANSLATE_GETTEXT = "gettext";
 
-    private $columnName;
-    private $column;
-    private $ruleList;
-    private $translate;
-    private $table;
-	
-    /**
-     * Creates a new column and set the name
-     *
-     * @param name validator name
-     */
-    public function __construct()
-    {
-        $this->ruleList = array();
-    }
+	private $columnName;
+	private $column;
+	private $ruleList;
+	private $translate;
+	private $table;
 
-    /**
-     * Sets up the Validator object based on the attributes that were passed to loadFromXML().
+	/**
+	 * Creates a new column and set the name
+	 *
+	 * @param name validator name
+	 */
+	public function __construct()
+	{
+		$this->ruleList = array();
+	}
+
+	/**
+	 * Sets up the Validator object based on the attributes that were passed to loadFromXML().
 	 * @see parent::loadFromXML()
-     */
-    protected function setupObject()
-    {
-        $this->columnName = $this->getAttribute("column");
-        $this->translate = $this->getAttribute("translate", $this->getTable()->getDatabase()->getDefaultTranslateMethod());;
-    }
-    
-    /**
-     * Add a Rule to this validator.
-     * Supports two signatures:
-     * - addRule(Rule $rule)
-     * - addRule(array $attribs)
-     * @param mixed $data Rule object or XML attribs (array) from <rule/> element.
-     * @return Rule The added Rule.
-     */
-    public function addRule($data)
-    {
-        if ($data instanceof Rule) {
-            $rule = $data; // alias
-            $rule->setValidator($this);
-            $this->ruleList[] = $rule;
-            return $rule;
-        }
-        else {
-            $rule = new Rule();
-            $rule->setValidator($this);
-            $rule->loadFromXML($data);
-            return $this->addRule($rule); // call self w/ different param
-        }
-    }
-    
-    /**
-     * Gets an array of all added rules for this validator.
-     * @return array Rule[]
-     */
-    public function getRules()
-    {
-        return $this->ruleList;
-    }
-    
-    /**
-     * Gets the name of the column that this Validator applies to.
-     * @return string
-     */
-    public function getColumnName()
-    {
-        return $this->columnName;
-    }
-    
-    /**
-     * Sets the Column object that this validator applies to.
-     * @param Column $column
-     * @see Table::addValidator()
-     */
-    public function setColumn(Column $column)
-    {
-        $this->column = $column;
-    }
-    
-    /**
-     * Gets the Column object that this validator applies to.
-     * @return Column
-     */
-    public function getColumn()
-    {
-        return $this->column;
-    }
-	
+	 */
+	protected function setupObject()
+	{
+		$this->columnName = $this->getAttribute("column");
+		$this->translate = $this->getAttribute("translate", $this->getTable()->getDatabase()->getDefaultTranslateMethod());;
+	}
+
+	/**
+	 * Add a Rule to this validator.
+	 * Supports two signatures:
+	 * - addRule(Rule $rule)
+	 * - addRule(array $attribs)
+	 * @param mixed $data Rule object or XML attribs (array) from <rule/> element.
+	 * @return Rule The added Rule.
+	 */
+	public function addRule($data)
+	{
+		if ($data instanceof Rule) {
+			$rule = $data; // alias
+			$rule->setValidator($this);
+			$this->ruleList[] = $rule;
+			return $rule;
+		}
+		else {
+			$rule = new Rule();
+			$rule->setValidator($this);
+			$rule->loadFromXML($data);
+			return $this->addRule($rule); // call self w/ different param
+		}
+	}
+
+	/**
+	 * Gets an array of all added rules for this validator.
+	 * @return array Rule[]
+	 */
+	public function getRules()
+	{
+		return $this->ruleList;
+	}
+
+	/**
+	 * Gets the name of the column that this Validator applies to.
+	 * @return string
+	 */
+	public function getColumnName()
+	{
+		return $this->columnName;
+	}
+
+	/**
+	 * Sets the Column object that this validator applies to.
+	 * @param Column $column
+	 * @see Table::addValidator()
+	 */
+	public function setColumn(Column $column)
+	{
+		$this->column = $column;
+	}
+
+	/**
+	 * Gets the Column object that this validator applies to.
+	 * @return Column
+	 */
+	public function getColumn()
+	{
+		return $this->column;
+	}
+
 	/**
 	 * Set the owning Table.
 	 * @param Table $table
@@ -131,7 +131,7 @@ class Validator extends XMLElement {
 	{
 		$this->table = $table;
 	}
-	
+
 	/**
 	 * Get the owning Table.
 	 * @return Table
@@ -141,46 +141,46 @@ class Validator extends XMLElement {
 		return $this->table;
 	}
 
-    /**
-     * Set the translation mode to use for the message.
-     * Currently only "gettext" and "none" are supported.  The default is "none".
-     * @param string $method Translation method ("gettext", "none").
-     */
-    public function setTranslate($method)
-    {
-        $this->translate = $method;
-    }
-    
-    /**
-     * Get the translation mode to use for the message.
-     * Currently only "gettext" and "none" are supported.  The default is "none".
-     * @return string Translation method ("gettext", "none").
-     */
-    public function getTranslate()
-    {
-        return $this->translate;
-    }
-    
-    /**
-     * Gets XML (string) representation of this Validator.
-     * @return string
-     */
-    public function toString()
-    {
-        $result = "<validator column=\"" . $this->columnName . "\"";
-        if ($this->translate !== null) {
-            $result .= " translate=\"".$this->translate."\"";
-        }
-        $result .= ">\n";
-        
-        if ($this->ruleList !== null) {
-            for($i=0,$_i=count($this->ruleList); $i < $_i; $i++) {
-                $result .= $this->ruleList[$i]->toString();
-            }
-        }
-        
-        $result .= "</validator>\n";
-        
-        return $result;
-    }
+	/**
+	 * Set the translation mode to use for the message.
+	 * Currently only "gettext" and "none" are supported.  The default is "none".
+	 * @param string $method Translation method ("gettext", "none").
+	 */
+	public function setTranslate($method)
+	{
+		$this->translate = $method;
+	}
+
+	/**
+	 * Get the translation mode to use for the message.
+	 * Currently only "gettext" and "none" are supported.  The default is "none".
+	 * @return string Translation method ("gettext", "none").
+	 */
+	public function getTranslate()
+	{
+		return $this->translate;
+	}
+
+	/**
+	 * Gets XML (string) representation of this Validator.
+	 * @return string
+	 */
+	public function toString()
+	{
+		$result = "<validator column=\"" . $this->columnName . "\"";
+		if ($this->translate !== null) {
+			$result .= " translate=\"".$this->translate."\"";
+		}
+		$result .= ">\n";
+
+		if ($this->ruleList !== null) {
+			for($i=0,$_i=count($this->ruleList); $i < $_i; $i++) {
+				$result .= $this->ruleList[$i]->toString();
+			}
+		}
+
+		$result .= "</validator>\n";
+
+		return $result;
+	}
 }

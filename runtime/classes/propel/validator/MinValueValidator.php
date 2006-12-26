@@ -39,16 +39,16 @@
  */
 class MinValueValidator implements BasicValidator
 {
-    
-    /**
-     * @see BasicValidator::isValid()
-     */
-    public function isValid (ValidatorMap $map, $value)
-    {
-      if(is_null($value) == false && is_numeric($value)) {
-          return intval($value) >= intval($map->getValue());
-      }
 
-      return false;
-    }
+	/**
+	 * @see BasicValidator::isValid()
+	 */
+	public function isValid (ValidatorMap $map, $value)
+	{
+	  if (is_null($value) == false && is_numeric($value)) {
+		  return intval($value) >= intval($map->getValue());
+	  }
+
+	  return false;
+	}
 }

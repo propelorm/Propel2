@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 /**
  * The base class of all exceptions thrown by Propel.
  * @author Hans Lellelid <hans@xmpl.org>
@@ -26,36 +26,36 @@
  * @package propel
  */
 class PropelException extends Exception {
-    
-    /** The nested "cause" exception. */
-    protected $cause;
-    
-    function __construct($p1, $p2 = null) {
-        
-        $cause = null;
-        
-        if ($p2 !== null) {
-            $msg = $p1;
-            $cause = $p2;
-        } else {
-            if ($p1 instanceof Exception) {
-                $msg = "";
-                $cause = $p1;
-            } else {
-                $msg = $p1;
-            }        
-        }
-        
-        parent::__construct($msg);
-        
-        if ($cause !== null) {
-            $this->cause = $cause;
-            $this->message .= " [wrapped: " . $cause->getMessage() ."]";
-        }
-    }
-    
-    function getCause() {
-        return $this->cause;
-    }
-    
+
+	/** The nested "cause" exception. */
+	protected $cause;
+
+	function __construct($p1, $p2 = null) {
+
+		$cause = null;
+
+		if ($p2 !== null) {
+			$msg = $p1;
+			$cause = $p2;
+		} else {
+			if ($p1 instanceof Exception) {
+				$msg = "";
+				$cause = $p1;
+			} else {
+				$msg = $p1;
+			}
+		}
+
+		parent::__construct($msg);
+
+		if ($cause !== null) {
+			$this->cause = $cause;
+			$this->message .= " [wrapped: " . $cause->getMessage() ."]";
+		}
+	}
+
+	function getCause() {
+		return $this->cause;
+	}
+
 }

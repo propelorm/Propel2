@@ -92,7 +92,7 @@ class Propel
 	 * The Propel version.
 	 */
 	const VERSION = '1.3.0-dev';
-	
+
 	/**
 	 * @var        string The db name that is specified as the default in the property file
 	 */
@@ -112,7 +112,7 @@ class Propel
 	 * @var        array Cache of established connections (to eliminate overhead).
 	 */
 	private static $connectionMap = array();
-	
+
 	/**
 	 * @var        array Propel-specific configuration.
 	 */
@@ -128,17 +128,17 @@ class Propel
 	 */
 	private static $logger = null;
 
-	/** 
+	/**
 	 * @var         string The name of the database mapper class
-	 */ 
-	private static $databaseMapClass = 'DatabaseMap'; 
-	
+	 */
+	private static $databaseMapClass = 'DatabaseMap';
+
 	/**
 	 * @var        array A map of class names and their file paths for autoloading
 	 */
 	private static $autoloadMap = array(
 		'PropelException' => 'propel/PropelException.php',
-		
+
 		'DBAdapter' => 'propel/adapter/DBAdapter.php',
 		'DBMSSQL' => 'propel/adapter/DBMSSQL.php',
 		'DBMySQL' => 'propel/adapter/DBMySQL.php',
@@ -148,20 +148,20 @@ class Propel
 		'DBPostgres' => 'propel/adapter/DBPostgres.php',
 		'DBSQLite' => 'propel/adapter/DBSQLite.php',
 		'DBSybase' => 'propel/adapter/DBSybase.php',
-		
+
 		'BasicLogger' => 'propel/logger/BasicLogger.php',
 		'MojaviLogAdapter' => 'propel/logger/MojaviLogAdapter.php',
-		
+
 		'ColumnMap' => 'propel/map/ColumnMap.php',
 		'DatabaseMap' => 'propel/map/DatabaseMap.php',
 		'MapBuilder' => 'propel/map/MapBuilder.php',
 		'TableMap' => 'propel/map/TableMap.php',
 		'ValidatorMap' => 'propel/map/ValidatorMap.php',
-		
+
 		'BaseObject' => 'propel/om/BaseObject.php',
 		'Persistent' => 'propel/om/Persistent.php',
 		'PreOrderNodeIterator' => 'propel/om/PreOrderNodeIterator.php',
-		
+
 		'BasePeer' => 'propel/util/BasePeer.php',
 		'Criteria' => 'propel/util/Criteria.php',
 		'PeerInfo' => 'propel/util/PeerInfo.php',
@@ -169,7 +169,7 @@ class Propel
 		'PropelPDO' => 'propel/util/PropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'Transaction' => 'propel/util/Transaction.php',
-		
+
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
 		'MatchValidator' => 'propel/validator/MatchValidator.php',
 		'MaxLengthValidator' => 'propel/validator/MaxLengthValidator.php',
@@ -182,7 +182,7 @@ class Propel
 		'ValidValuesValidator' => 'propel/validator/ValidValuesValidator.php',
 		'ValidationFailed' => 'propel/validator/ValidationFailed.php',
 	);
-	
+
 	/**
 	 * Initializes Propel
 	 *
@@ -196,24 +196,24 @@ class Propel
 				. "a valid configuration. Please check the log files "
 				. "for further details.");
 		}
-		
+
 		self::configureLogging();
-		
+
 		// Support having the configuration stored within a 'propel' sub-section or at the top-level
 		if (isset(self::$configuration['propel']) && is_array(self::$configuration['propel'])) {
 			self::$configuration = self::$configuration['propel'];
 		}
-		
+
 		// reset the connection map (this should enable runtime changes of connection params)
 		self::$connectionMap = array();
-		
+
 		foreach(self::$configuration['datasources'] as $key => $datasource) {
-			if($key != 'default' && isset($datasource['classes'])) {
+			if ($key != 'default' && isset($datasource['classes'])) {
 				// merge the classes to the autoload map
 				self::$autoloadMap = array_merge($datasource['classes'], self::$autoloadMap);
 			}
 		}
-		
+
 		self::$isInit = true;
 	}
 
@@ -222,7 +222,7 @@ class Propel
 	 *
 	 * @param      string Path (absolute or relative to include_path) to config file.
 	 *
-	 * @throws     PropelException If configuration file cannot be opened. 
+	 * @throws     PropelException If configuration file cannot be opened.
 	 *                             (E_WARNING probably will also be raised by PHP)
 	 */
 	public static function configure($configFile)
@@ -232,7 +232,7 @@ class Propel
 			throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
 		}
 	}
-	
+
 	/**
 	 * Configure the logging system, if config is specified in the runtime configuration.
 	 */
@@ -251,7 +251,7 @@ class Propel
 			} // if isset()
 		}
 	}
-	
+
 	/**
 	 * Initialization of Propel with an INI or PHP (array) configuration file.
 	 *
@@ -398,11 +398,11 @@ class Propel
 
 		return self::$dbMaps[$name];
 	}
-	
+
 	/**
 	 * Gets an already-opened PDO connection or opens a new one for passed-in db name.
-	 * 
-	 * @param      string The name that is used to look up the DSN from the runtime properties file. 
+	 *
+	 * @param      string The name that is used to look up the DSN from the runtime properties file.
 	 *
 	 * @return     PDO A database connection
 	 *
@@ -413,22 +413,22 @@ class Propel
 		if ($name === null) {
 			$name = self::getDefaultDB();
 		}
-		
-		if (!isset(self::$connectionMap[$name])) {		
-			
-			$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null; 		 
+
+		if (!isset(self::$connectionMap[$name])) {
+
+			$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
 			if ($conparams === null) {
 				throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
 			}
-			
+
 			$dsn = $conparams['dsn'];
 			if ($dsn === null) {
 				throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
-			} 
-			
+			}
+
 			$user = isset($conparams['user']) ? $conparams['user'] : null;
-			$password = isset($conparams['password']) ? $conparams['password'] : null;			
-			
+			$password = isset($conparams['password']) ? $conparams['password'] : null;
+
 			// load any driver options from the INI file
 			$driver_options = array();
 			if ( isset($conparams['options']) && is_array($conparams['options']) ) {
@@ -438,19 +438,19 @@ class Propel
 					throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
 				}
 			}
-			
+
 			try {
 				$con = new PropelPDO($dsn, $user, $password, $driver_options);
 				$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				self::$connectionMap[$name] = $con; 
+				self::$connectionMap[$name] = $con;
 			} catch (PDOException $e) {
 				throw new PropelException("Unable to open PDO connection", $e);
 			}
 		}
-		
+
 		return self::$connectionMap[$name];
 	}
-	
+
 	/**
 	 * Internal function to handle driver_options in PDO
 	 *
@@ -489,7 +489,7 @@ class Propel
 		if ($name === null) {
 			$name = self::getDefaultDB();
 		}
-		
+
 		if (!isset(self::$adapterMap[$name])) {
 			if (!isset(self::$configuration['datasources'][$name]['adapter'])) {
 				throw new PropelException("Unable to find adapter for datasource [" . $name . "].");
@@ -498,7 +498,7 @@ class Propel
 			// register the adapter for this name
 			self::$adapterMap[$name] = $db;
 		}
-		
+
 		return self::$adapterMap[$name];
 	}
 
@@ -538,23 +538,23 @@ class Propel
 	 */
 	public static function autoload($className)
 	{
-		if(isset(self::$autoloadMap[$className])) {
+		if (isset(self::$autoloadMap[$className])) {
 			require(self::$autoloadMap[$className]);
 			return true;
 		}
 		return false;
 	}
 
-	/** 
+	/**
 	 * Set your own class-name for Database-Mapping. Then
 	 * you can change the whole TableMap-Model, but keep its
 	 * functionality for Criteria.
-	 * 
+	 *
 	 * @param      string The name of the class.
-	 */ 
+	 */
 	public static function setDatabaseMapClass($name)
-	{ 
-		self::$databaseMapClass = $name; 
+	{
+		self::$databaseMapClass = $name;
 	}
 }
 

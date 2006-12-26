@@ -44,7 +44,7 @@ abstract class PeerBuilder extends OMBuilder {
 		parent::__construct($table);
 		$this->basePeerClassname = $this->basePeerClass = $this->getBasePeer($table);
 		$pos = strrpos($this->basePeerClassname, '.');
-		if($pos !== false) {
+		if ($pos !== false) {
 			$this->basePeerClassname = substr($this->basePeerClassname, $pos + 1);
 		}
 	}
@@ -85,13 +85,13 @@ abstract class PeerBuilder extends OMBuilder {
 		$table = $this->getTable();
 		if ($table->getChildrenColumn()) {
 			if ($table->isAbstract()) {
-			    $this->addGetOMClass_Inheritance_Abstract($script);
+				$this->addGetOMClass_Inheritance_Abstract($script);
 			} else {
 				$this->addGetOMClass_Inheritance($script);
 			}
 		} else {
 			if ($table->isAbstract()) {
-			    $this->addGetOMClass_NoInheritance_Abstract($script);
+				$this->addGetOMClass_NoInheritance_Abstract($script);
 			} else {
 				$this->addGetOMClass_NoInheritance($script);
 			}
@@ -123,10 +123,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 */
 	protected function addRetrieveByPKMethods(&$script)
 	{
-	    if (count($this->getTable()->getPrimaryKey()) === 1) {
+		if (count($this->getTable()->getPrimaryKey()) === 1) {
 			$this->addRetrieveByPK_SinglePK($script);
-	        $this->addRetrieveByPKs_SinglePK($script);
-	    } else {
+			$this->addRetrieveByPKs_SinglePK($script);
+		} else {
 			$this->addRetrieveByPK_MultiPK($script);
 		}
 	}
@@ -250,29 +250,29 @@ abstract class PeerBuilder extends OMBuilder {
 
 
 	/**
-     * COMPATIBILITY: Get the column constant name (e.g. PeerName::COLUMN_NAME).
+	 * COMPATIBILITY: Get the column constant name (e.g. PeerName::COLUMN_NAME).
 	 *
-     * This method exists simply because it belonged to the 'PeerBuilder' that this
+	 * This method exists simply because it belonged to the 'PeerBuilder' that this
 	 * class is replacing (because of name conflict more than actual functionality overlap).
 	 * When the new builder model is finished this method will be removed.
 	 *
-     * @param Column $col The column we need a name for.
-     * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
-     *
-     * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
+	 * @param Column $col The column we need a name for.
+	 * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+	 *
+	 * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
 	 * @deprecated
-     */
-    public static function getColumnName(Column $col, $phpName = null) {
-        // was it overridden in schema.xml ?
-        if ($col->getPeerName()) {
-            $const = strtoupper($col->getPeerName());
-        } else {
-            $const = strtoupper($col->getName());
-        }
-        if ($phpName !== null) {
-            return $phpName . 'Peer::' . $const;
-        } else {
-            return $const;
-        }
-    }
+	 */
+	public static function getColumnName(Column $col, $phpName = null) {
+		// was it overridden in schema.xml ?
+		if ($col->getPeerName()) {
+			$const = strtoupper($col->getPeerName());
+		} else {
+			$const = strtoupper($col->getName());
+		}
+		if ($phpName !== null) {
+			return $phpName . 'Peer::' . $const;
+		} else {
+			return $const;
+		}
+	}
 }

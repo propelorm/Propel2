@@ -14,9 +14,9 @@ require_once 'PHPUnit2/Framework/TestCase.php';
  */
 abstract class BaseTestCase extends PHPUnit2_Framework_TestCase {
 
-    /**
-     * Conditional compilation flag.
-     */
-    const DEBUG = false;
+	/**
+	 * Conditional compilation flag.
+	 */
+	const DEBUG = false;
 
 }

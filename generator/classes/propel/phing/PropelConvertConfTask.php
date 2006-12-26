@@ -39,9 +39,9 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 	private $xmlConfFile;
 
 	/**
-     * @var        PhingFile This is the file where the converted conf array dump will be placed.
-     */
-    private $outputFile;
+	 * @var        PhingFile This is the file where the converted conf array dump will be placed.
+	 */
+	private $outputFile;
 
 	/**
 	 * [REQUIRED] Set the input XML runtime conf file.
@@ -53,21 +53,21 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 	}
 
 	/**
-     * [REQUIRED] Set the output filename for the converted runtime conf.
-     * The directory is specified using AbstractPropelDataModelTask#setOutputDirectory().
-     * @param      string $outputFile
-     * @see        AbstractPropelDataModelTask#setOutputDirectory()
-     */
-    public function setOutputFile($outputFile)
+	 * [REQUIRED] Set the output filename for the converted runtime conf.
+	 * The directory is specified using AbstractPropelDataModelTask#setOutputDirectory().
+	 * @param      string $outputFile
+	 * @see        AbstractPropelDataModelTask#setOutputDirectory()
+	 */
+	public function setOutputFile($outputFile)
 	{
 		// this is a string, not a file
-        $this->outputFile = $outputFile;
-    }
+		$this->outputFile = $outputFile;
+	}
 
-    /**
-     * The main method does the work of the task.
-     */
-    public function main()
+	/**
+	 * The main method does the work of the task.
+	 */
+	public function main()
 	{
 		// Check to make sure the input and output files were specified and that the input file exists.
 
@@ -101,7 +101,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 
 				// $this->log("Processing class mappings in database: " . $database->getName());
 
-        //print the tables
+		//print the tables
 				foreach($database->getTables() as $table) {
 
 					if (!$table->isForReferenceOnly()) {
@@ -137,9 +137,9 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						}
 
 						$baseClass = $table->getBaseClass();
-						if( $baseClass !== null ) {
+						if ( $baseClass !== null ) {
 							$className = ClassTools::classname($baseClass);
-							if(!isset($classMap[$className])) {
+							if (!isset($classMap[$className])) {
 								$classPath = ClassTools::getFilePath($baseClass);
 								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
 								$classMap[$className] = $classPath;
@@ -158,7 +158,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 							}
 						} // if Table->isTree()
 
-                	} // if (!$table->isReferenceOnly())
+					} // if (!$table->isReferenceOnly())
 				}
 
 				$phpconf['propel']['datasources'][$database->getName()]['classes'] = $classMap;
@@ -186,17 +186,17 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
  			throw new BuildException("Error creating output file: " . $outfile->getAbsolutePath(), $this->getLocation());
  		}
 
-    } // main()
+	} // main()
 
-    /**
-     * Recursive function that converts an SimpleXML object into an array.
-     * @author     Christophe VG (based on code form php.net manual comment)
-     * @param      object SimpleXML object.
-     * @return     array Array representation of SimpleXML object.
+	/**
+	 * Recursive function that converts an SimpleXML object into an array.
+	 * @author     Christophe VG (based on code form php.net manual comment)
+	 * @param      object SimpleXML object.
+	 * @return     array Array representation of SimpleXML object.
 	 */
-    private static function simpleXmlToArray($xml)
-    {
-    	$ar = array();
+	private static function simpleXmlToArray($xml)
+	{
+		$ar = array();
 
 		foreach( $xml->children() as $k => $v ) {
 
@@ -206,7 +206,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			//print "Recursed down and found: " . var_export($child, true) . "\n";
 
 			// if it's not an array, then it was empty, thus a value/string
-			if( count($child) == 0 ) {
+			if ( count($child) == 0 ) {
 				$child = self::getConvertedXmlValue($v);
 
 			}
@@ -215,14 +215,14 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			foreach( $v->attributes() as $ak => $av ) {
 
 				// if the child is not an array, transform it into one
-				if( !is_array( $child ) ) {
+				if ( !is_array( $child ) ) {
 					$child = array( "value" => $child );
 				}
 
 				if ($ak == 'id') {
 					// special exception: if there is a key named 'id'
 					// then we will name the current key after that id
-				    $k = self::getConvertedXmlValue($av);
+					$k = self::getConvertedXmlValue($av);
 				} else {
 					// otherwise, just add the attribute like a child element
 					$child[$ak] = self::getConvertedXmlValue($av);
@@ -231,7 +231,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 
 			 // if the $k is already in our children list, we need to transform
 			 // it into an array, else we add it as a value
-			 if( !in_array( $k, array_keys($ar) ) ) {
+			 if ( !in_array( $k, array_keys($ar) ) ) {
 				 $ar[$k] = $child;
 			 } else {
 				 // if the $ar[$k] element is not already an array, then we need to make it one
@@ -242,7 +242,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 		}
 
 		return $ar;
-    }
+	}
 
  	/**
  	 * Process XML value, handling boolean, if appropriate.

@@ -24,16 +24,16 @@ require_once 'bookstore/BookstoreTestBase.php';
 /**
  * Tests the generated Object classes.
  *
- * This test uses generated Bookstore classes to test the behavior of various 
+ * This test uses generated Bookstore classes to test the behavior of various
  * object operations.  The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
  * The database is relaoded before every test and flushed after every test.  This
- * means that you can always rely on the contents of the databases being the same 
- * for each test method in this class.  See the BookstoreDataPopulator::populate() 
+ * means that you can always rely on the contents of the databases being the same
+ * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
- * 
- * @see BookstoreDataPopulator 
+ *
+ * @see BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase
@@ -44,22 +44,22 @@ class GeneratedObjectTest extends BookstoreTestBase
   */
   function testSaveWithDefaultValues()
   {
-    // From the schema.xml, I am relying on the following:
-    //  - that 'Penguin' is the default Name for a Publisher
-    //  - that 01/01/2001 is the default ReviewDate for a Review
-    
-    // 1) check regular values (VARCHAR)
-    $pub = new Publisher();
-    $pub->setName('Penguin');
-    $pub->save();
+	// From the schema.xml, I am relying on the following:
+	//  - that 'Penguin' is the default Name for a Publisher
+	//  - that 01/01/2001 is the default ReviewDate for a Review
 
-    $this->assertTrue($pub->getId() !== null, "Expect Publisher to have been saved when default value set.");
-    
-    // 2) check date/time values 
-    $review = new Review();
-    // note that this is different from how it's represented in schema, but should resolve to same unix timestamp
-    $review->setReviewDate('2001-01-01');   
-    $this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
+	// 1) check regular values (VARCHAR)
+	$pub = new Publisher();
+	$pub->setName('Penguin');
+	$pub->save();
+
+	$this->assertTrue($pub->getId() !== null, "Expect Publisher to have been saved when default value set.");
+
+	// 2) check date/time values
+	$review = new Review();
+	// note that this is different from how it's represented in schema, but should resolve to same unix timestamp
+	$review->setReviewDate('2001-01-01');
+	$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
   }
 
   /**
@@ -67,30 +67,30 @@ class GeneratedObjectTest extends BookstoreTestBase
    */
   function testDelete()
   {
-    // 1) grab an arbitrary object
-    $book = BookPeer::doSelectOne(new Criteria());
-    $bookId = $book->getId();
-    
-    // 2) delete it
-    $e = $book->delete();
-    if (Propel::isError($e)) {
-      $this->fail($e->getMessage());
-      return;
-    }
+	// 1) grab an arbitrary object
+	$book = BookPeer::doSelectOne(new Criteria());
+	$bookId = $book->getId();
 
-    // 3) make sure it can't be save()d now that it's deleted
-    $book->setTitle("Will Fail");
+	// 2) delete it
+	$e = $book->delete();
+	if (Propel::isError($e)) {
+	  $this->fail($e->getMessage());
+	  return;
+	}
 
-    $e = $book->save();
+	// 3) make sure it can't be save()d now that it's deleted
+	$book->setTitle("Will Fail");
 
-    if (! Propel::isError($e)) {
-      $this->fail("Expect an exception to be thrown when attempting to save() a deleted object.");
-      return;
-    }
-    
-    // 4) make sure that it doesn't exist in db
-    $book = BookPeer::retrieveByPK($bookId);
-    $this->assertNull($book, "Expect NULL from retrieveByPK on deleted book !");
+	$e = $book->save();
+
+	if (! Propel::isError($e)) {
+	  $this->fail("Expect an exception to be thrown when attempting to save() a deleted object.");
+	  return;
+	}
+
+	// 4) make sure that it doesn't exist in db
+	$book = BookPeer::retrieveByPK($bookId);
+	$this->assertNull($book, "Expect NULL from retrieveByPK on deleted book !");
   }
-  
+
 }

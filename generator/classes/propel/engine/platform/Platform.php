@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 /**
  * Interface for RDBMS platform specific behaviour.
  *
@@ -29,100 +29,100 @@
  */
 interface Platform {
 
-    /** constant for native id method */
-    const IDENTITY = "identity";
-    
-    /** constant for native id method */
-    const SEQUENCE = "sequence";
-    
+	/** constant for native id method */
+	const IDENTITY = "identity";
+
+	/** constant for native id method */
+	const SEQUENCE = "sequence";
+
 	/**
 	 * Returns the short name of the database type that this platform represents.
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
 	 * @return string
 	 */
 	public function getDatabaseType();
-	
-    /**
-     * Returns the native IdMethod (sequence|identity)
-     *
-     * @return string The native IdMethod (Platform:IDENTITY, Platform::SEQUENCE).
-     */
-    public function getNativeIdMethod();
 
-    /**
-     * Returns the max column length supported by the db.
-     *
-     * @return int The max column length
-     */
-    public function getMaxColumnNameLength();
+	/**
+	 * Returns the native IdMethod (sequence|identity)
+	 *
+	 * @return string The native IdMethod (Platform:IDENTITY, Platform::SEQUENCE).
+	 */
+	public function getNativeIdMethod();
 
-    /**
-     * Returns the db specific domain for a jdbcType.
-     *
-     * @param string $creoleType the creole type name.
-     * @return Domain The db specific domain.
-     */
-    public function getDomainForType($creoleType);
-    
-    /**
-     * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
-     * or <code>NOT NULL</code>.
-     */
-    public function getNullString($notNull);
+	/**
+	 * Returns the max column length supported by the db.
+	 *
+	 * @return int The max column length
+	 */
+	public function getMaxColumnNameLength();
 
-    /**
-     * @return The RDBMS-specific SQL fragment for autoincrement.
-     */
-    public function getAutoIncrement();
-    
-    /**
-     * Returns if the RDBMS-specific SQL type has a size attribute.
-     * 
-     * @param string $sqlType the SQL type
-     * @return boolean True if the type has a size attribute
-     */
-    public function hasSize($sqlType);
-    
-    /**
-     * Returns if the RDBMS-specific SQL type has a scale attribute.
-     * 
-     * @param string $sqlType the SQL type
-     * @return boolean True if the type has a scale attribute
-     */
-    public function hasScale($sqlType);
-    
-    /**
-     * Escape the string for RDBMS.
-     * @param string $text
-     * @return string
-     */ 
-    public function escapeText($text);
-    
+	/**
+	 * Returns the db specific domain for a jdbcType.
+	 *
+	 * @param string $creoleType the creole type name.
+	 * @return Domain The db specific domain.
+	 */
+	public function getDomainForType($creoleType);
+
+	/**
+	 * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
+	 * or <code>NOT NULL</code>.
+	 */
+	public function getNullString($notNull);
+
+	/**
+	 * @return The RDBMS-specific SQL fragment for autoincrement.
+	 */
+	public function getAutoIncrement();
+
+	/**
+	 * Returns if the RDBMS-specific SQL type has a size attribute.
+	 *
+	 * @param string $sqlType the SQL type
+	 * @return boolean True if the type has a size attribute
+	 */
+	public function hasSize($sqlType);
+
+	/**
+	 * Returns if the RDBMS-specific SQL type has a scale attribute.
+	 *
+	 * @param string $sqlType the SQL type
+	 * @return boolean True if the type has a scale attribute
+	 */
+	public function hasScale($sqlType);
+
+	/**
+	 * Escape the string for RDBMS.
+	 * @param string $text
+	 * @return string
+	 */
+	public function escapeText($text);
+
 	/**
 	 * Quotes identifiers used in database SQL.
 	 * @param string $text
 	 * @return string Quoted identifier.
 	 */
 	public function quoteIdentifier($text);
-	
-    /**
-     * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return boolean
-     */
-    public function supportsNativeDeleteTrigger();
-    
-    /**
-     * Returns the boolean value for the RDBMS.
-     * 
-     * This value should match the boolean value that is set
-     * when using Creole's PreparedStatement::setBoolean().
-     * 
-     * This function is used to set default column values when building
-     * SQL.
-     * 
-     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
-     * @return mixed
-     */
-    public function getBooleanString($tf);
-    
+
+	/**
+	 * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
+	 * @return boolean
+	 */
+	public function supportsNativeDeleteTrigger();
+
+	/**
+	 * Returns the boolean value for the RDBMS.
+	 *
+	 * This value should match the boolean value that is set
+	 * when using Creole's PreparedStatement::setBoolean().
+	 *
+	 * This function is used to set default column values when building
+	 * SQL.
+	 *
+	 * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
+	 * @return mixed
+	 */
+	public function getBooleanString($tf);
+
 }

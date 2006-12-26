@@ -18,10 +18,10 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 /**
- * DBAdapter</code> defines the interface for a Propel database adapter.  
- * 
+ * DBAdapter</code> defines the interface for a Propel database adapter.
+ *
  * <p>Support for new databases is added by subclassing
  * <code>DBAdapter</code> and implementing its abstract interface, and by
  * registering the new database adapter and corresponding Creole
@@ -33,7 +33,7 @@
  * transparent swapping of databases is theoretically supported with
  * <i>zero code change</i> and minimal configuration file
  * modifications.</p>
- * 
+ *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jon S. Stevens <jon@latchkey.com> (Torque)
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
@@ -42,116 +42,116 @@
  * @package propel.adapter
  */
 abstract class DBAdapter {
-    
-    const ID_METHOD_NONE = 0;
-    const ID_METHOD_AUTOINCREMENT = 1;
-    const ID_METHOD_SEQUENCE = 2;
-    
-    /**
-     * Creole driver to Propel adapter map.
-     * @var array
-     */
-    private static $adapters = array(
-                                    'mysql' => 'DBMySQL',
+
+	const ID_METHOD_NONE = 0;
+	const ID_METHOD_AUTOINCREMENT = 1;
+	const ID_METHOD_SEQUENCE = 2;
+
+	/**
+	 * Creole driver to Propel adapter map.
+	 * @var array
+	 */
+	private static $adapters = array(
+								    'mysql' => 'DBMySQL',
 									'mysqli' => 'DBMySQLi',
-                                    'mssql' => 'DBMSSQL',
-                                    'sybase' => 'DBSyabase',
-                                    'oracle' => 'DBOracle',
-                                    'pgsql' => 'DBPostgres',
-                                    'sqlite' => 'DBSQLite',
-                                    '' => 'DBNone',
-                                );
+								    'mssql' => 'DBMSSQL',
+								    'sybase' => 'DBSyabase',
+								    'oracle' => 'DBOracle',
+								    'pgsql' => 'DBPostgres',
+								    'sqlite' => 'DBSQLite',
+								    '' => 'DBNone',
+								);
 
-    /**
-     * Creates a new instance of the database adapter associated
-     * with the specified Creole driver.
-     *
-     * @param string $driver The name of the Propel/Creole driver to
-     * create a new adapter instance for or a shorter form adapter key.
-     * @return DBAdapter An instance of a Propel database adapter.
-     * @throws PropelException if the adapter could not be instantiated.
-     */
-    public static function factory($driver) {        
-        $adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
-        if ($adapterClass !== null) {
-            require 'propel/adapter/'.$adapterClass.'.php';
-            $a = new $adapterClass();
-            return $a;
-        } else {
-            throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
-        }
-    }
+	/**
+	 * Creates a new instance of the database adapter associated
+	 * with the specified Creole driver.
+	 *
+	 * @param string $driver The name of the Propel/Creole driver to
+	 * create a new adapter instance for or a shorter form adapter key.
+	 * @return DBAdapter An instance of a Propel database adapter.
+	 * @throws PropelException if the adapter could not be instantiated.
+	 */
+	public static function factory($driver) {
+		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
+		if ($adapterClass !== null) {
+			require 'propel/adapter/'.$adapterClass.'.php';
+			$a = new $adapterClass();
+			return $a;
+		} else {
+			throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
+		}
+	}
 
-    /**
-     * This method is used to ignore case.
-     *
-     * @param in The string to transform to upper case.
-     * @return string The upper case string.
-     */
-    public abstract function toUpperCase($in);
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param in The string to transform to upper case.
+	 * @return string The upper case string.
+	 */
+	public abstract function toUpperCase($in);
 
-    /**
-     * Returns the character used to indicate the beginning and end of
-     * a piece of text used in a SQL statement (generally a single
-     * quote).
-     *
-     * @return string The text delimeter.
-     */
-    public function getStringDelimiter()
-    {
-        return '\'';
-    }
-    
-    /**
-     * This method is used to ignore case.
-     *
-     * @param string $in The string whose case to ignore.
-     * @return string The string in a case that can be ignored.
-     */
-    public abstract function ignoreCase($in);
+	/**
+	 * Returns the character used to indicate the beginning and end of
+	 * a piece of text used in a SQL statement (generally a single
+	 * quote).
+	 *
+	 * @return string The text delimeter.
+	 */
+	public function getStringDelimiter()
+	{
+		return '\'';
+	}
 
-    /**
-     * This method is used to ignore case in an ORDER BY clause.
-     * Usually it is the same as ignoreCase, but some databases
-     * (Interbase for example) does not use the same SQL in ORDER BY
-     * and other clauses.
-     *
-     * @param string $in The string whose case to ignore.
-     * @return string The string in a case that can be ignored.
-     */
-    public function ignoreCaseInOrderBy($in)
-    {
-        return $this->ignoreCase($in);
-    }      
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param string $in The string whose case to ignore.
+	 * @return string The string in a case that can be ignored.
+	 */
+	public abstract function ignoreCase($in);
 
-    /**
-     * Returns SQL which concatenates the second string to the first.
-     *
-     * @param string String to concatenate.
-     * @param string String to append.
-     * @return string 
-     */
-    public abstract function concatString($s1, $s2);
+	/**
+	 * This method is used to ignore case in an ORDER BY clause.
+	 * Usually it is the same as ignoreCase, but some databases
+	 * (Interbase for example) does not use the same SQL in ORDER BY
+	 * and other clauses.
+	 *
+	 * @param string $in The string whose case to ignore.
+	 * @return string The string in a case that can be ignored.
+	 */
+	public function ignoreCaseInOrderBy($in)
+	{
+		return $this->ignoreCase($in);
+	}
 
-    /**
-     * Returns SQL which extracts a substring.
-     *
-     * @param string String to extract from.
-     * @param int Offset to start from.
-     * @param int Number of characters to extract.
-     * @return string 
-     */
-    public abstract function subString($s, $pos, $len);
+	/**
+	 * Returns SQL which concatenates the second string to the first.
+	 *
+	 * @param string String to concatenate.
+	 * @param string String to append.
+	 * @return string
+	 */
+	public abstract function concatString($s1, $s2);
 
-    /**
-     * Returns SQL which calculates the length (in chars) of a string.
-     *
-     * @param string String to calculate length of.
-     * @return string 
-     */
-    public abstract function strLength($s);
-	
-	
+	/**
+	 * Returns SQL which extracts a substring.
+	 *
+	 * @param string String to extract from.
+	 * @param int Offset to start from.
+	 * @param int Number of characters to extract.
+	 * @return string
+	 */
+	public abstract function subString($s, $pos, $len);
+
+	/**
+	 * Returns SQL which calculates the length (in chars) of a string.
+	 *
+	 * @param string String to calculate length of.
+	 * @return string
+	 */
+	public abstract function strLength($s);
+
+
 	/**
 	 * Quotes database objec identifiers (table names, col names, sequences, etc.).
 	 * @param string $text The identifier to quote.
@@ -161,16 +161,16 @@ abstract class DBAdapter {
 	{
 		return '"' . $text . '"';
 	}
-    
-    /**
-     * Returns the native ID method for this RDBMS.
-     * @return int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
-	 */ 
-    protected function getIdMethod()
-    {
+
+	/**
+	 * Returns the native ID method for this RDBMS.
+	 * @return int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
+	 */
+	protected function getIdMethod()
+	{
 		return DBAdapter::ID_METHOD_AUTOINCREMENT;
 	}
-	
+
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
 	 * @return boolean
@@ -179,7 +179,7 @@ abstract class DBAdapter {
 	{
 		return ($this->getIdMethod() === DBAdapter::ID_METHOD_SEQUENCE);
 	}
-	
+
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
 	 * @return boolean
@@ -188,7 +188,7 @@ abstract class DBAdapter {
 	{
 		return ($this->getIdMethod() === DBAdapter::ID_METHOD_AUTOINCREMENT);
 	}
-	
+
 	/**
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
 	 * @return mixed
@@ -197,40 +197,40 @@ abstract class DBAdapter {
 	{
 		return $con->lastInsertId($name);
 	}
-	
+
 	/**
-     * Returns timestamp formatter string for use in date() function. 
-     * @return string
-     */
+	 * Returns timestamp formatter string for use in date() function.
+	 * @return string
+	 */
 	public function getTimestampFormatter()
 	{
 		return "Y-m-d H:i:s";
 	}
 
 	/**
-     * Returns date formatter string for use in date() function. 
-     * @return string
-     */
+	 * Returns date formatter string for use in date() function.
+	 * @return string
+	 */
 	public function getDateFormatter()
 	{
 		return "Y-m-d";
 	}
-	
+
 	/**
-     * Returns time formatter string for use in date() function. 
-     * @return string
-     */
+	 * Returns time formatter string for use in date() function.
+	 * @return string
+	 */
 	public function getTimeFormatter()
 	{
 		return "H:i:s";
 	}
-	
+
 	/**
-	 * Should Column-Names get identifiers for inserts or updates. 
+	 * Should Column-Names get identifiers for inserts or updates.
 	 * By default false is returned -> backwards compability.
-	 * 
+	 *
 	 * it`s a workaround...!!!
-	 * 
+	 *
 	 * @todo	should be abstract
 	 * @return	boolean
 	 * @deprecated
@@ -238,10 +238,9 @@ abstract class DBAdapter {
 	public function useQuoteIdentifier() {
 		return false;
 	}
-		
+
 	/**
-	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET. 
+	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
 }
-

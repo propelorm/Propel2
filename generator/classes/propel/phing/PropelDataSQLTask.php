@@ -37,183 +37,183 @@ include_once 'propel/engine/database/transform/XmlToData.php';
  */
 class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
-    /**
-     * Properties file that maps an SQL file to a particular database.
-     * @var PhingFile
-     */
-    private $sqldbmap;
+	/**
+	 * Properties file that maps an SQL file to a particular database.
+	 * @var PhingFile
+	 */
+	private $sqldbmap;
 
-    /**
-     * Properties file that maps a data XML file to a particular database.
-     * @var PhingFile
-     */
-    private $datadbmap;
+	/**
+	 * Properties file that maps a data XML file to a particular database.
+	 * @var PhingFile
+	 */
+	private $datadbmap;
 
-    /**
-     * The base directory in which to find data XML files.
-     * @var PhingFile
-     */
-    private $srcDir;
+	/**
+	 * The base directory in which to find data XML files.
+	 * @var PhingFile
+	 */
+	private $srcDir;
 
-    /**
-     * Set the file that maps between SQL files and databases.
-     *
-     * @param PhingFile $sqldbmap the sql -> db map.
-     * @return void
-     */
-    public function setSqlDbMap(PhingFile $sqldbmap)
-    {
-        $this->sqldbmap = $sqldbmap;
-    }
+	/**
+	 * Set the file that maps between SQL files and databases.
+	 *
+	 * @param PhingFile $sqldbmap the sql -> db map.
+	 * @return void
+	 */
+	public function setSqlDbMap(PhingFile $sqldbmap)
+	{
+		$this->sqldbmap = $sqldbmap;
+	}
 
-    /**
-     * Get the file that maps between SQL files and databases.
-     *
-     * @return PhingFile sqldbmap.
-     */
-    public function getSqlDbMap()
-    {
-        return $this->sqldbmap;
-    }
+	/**
+	 * Get the file that maps between SQL files and databases.
+	 *
+	 * @return PhingFile sqldbmap.
+	 */
+	public function getSqlDbMap()
+	{
+		return $this->sqldbmap;
+	}
 
-    /**
-     * Set the file that maps between data XML files and databases.
-     *
-     * @param PhingFile $sqldbmap the db map
-     * @return void
-     */
-    public function setDataDbMap(PhingFile $datadbmap)
-    {
-        $this->datadbmap = $datadbmap;
-    }
+	/**
+	 * Set the file that maps between data XML files and databases.
+	 *
+	 * @param PhingFile $sqldbmap the db map
+	 * @return void
+	 */
+	public function setDataDbMap(PhingFile $datadbmap)
+	{
+		$this->datadbmap = $datadbmap;
+	}
 
-    /**
-     * Get the file that maps between data XML files and databases.
-     *
-     * @return PhingFile $datadbmap.
-     */
-    public function getDataDbMap()
-    {
-        return $this->datadbmap;
-    }
+	/**
+	 * Get the file that maps between data XML files and databases.
+	 *
+	 * @return PhingFile $datadbmap.
+	 */
+	public function getDataDbMap()
+	{
+		return $this->datadbmap;
+	}
 
-    /**
-     * Set the src directory for the data xml files listed in the datadbmap file.
-     * @param PhingFile $srcDir data xml source directory
-     */
-    public function setSrcDir(PhingFile $srcDir)
-    {
-        $this->srcDir = $srcDir;
-    }
+	/**
+	 * Set the src directory for the data xml files listed in the datadbmap file.
+	 * @param PhingFile $srcDir data xml source directory
+	 */
+	public function setSrcDir(PhingFile $srcDir)
+	{
+		$this->srcDir = $srcDir;
+	}
 
-    /**
-     * Get the src directory for the data xml files listed in the datadbmap file.
-     *
-     * @return PhingFile data xml source directory
-     */
-    public function getSrcDir()
-    {
-        return $this->srcDir;
-    }
+	/**
+	 * Get the src directory for the data xml files listed in the datadbmap file.
+	 *
+	 * @return PhingFile data xml source directory
+	 */
+	public function getSrcDir()
+	{
+		return $this->srcDir;
+	}
 
-    /**
-     * Search through all data models looking for matching database.
-     * @return Database or NULL if none found.
-     */
-    private function getDatabase($name)
-    {
-        foreach($this->getDataModels() as $dm) {
-            foreach($dm->getDatabases() as $db) {
-                if ($db->getName() == $name) {
-                    return $db;
-                }
-            }
-        }
-    }
+	/**
+	 * Search through all data models looking for matching database.
+	 * @return Database or NULL if none found.
+	 */
+	private function getDatabase($name)
+	{
+		foreach($this->getDataModels() as $dm) {
+			foreach($dm->getDatabases() as $db) {
+				if ($db->getName() == $name) {
+					return $db;
+				}
+			}
+		}
+	}
 
-    /**
-     * Main method parses the XML files and creates SQL files.
-     *
-     * @return void
-     * @throws Exception If there is an error parsing the data xml.
-     */
-    public function main()
-    {
-        $this->validate();
+	/**
+	 * Main method parses the XML files and creates SQL files.
+	 *
+	 * @return void
+	 * @throws Exception If there is an error parsing the data xml.
+	 */
+	public function main()
+	{
+		$this->validate();
 
-        $targetDatabase = $this->getTargetDatabase();
-		
+		$targetDatabase = $this->getTargetDatabase();
+
 		$platform = $this->getPlatformForTargetDatabase();
-		
-        // Load the Data XML -> DB Name properties
-        $map = new Properties();
-        try {
-            $map->load($this->getDataDbMap());
-        } catch (IOException $ioe) {
-            throw new BuildException("Cannot open and process the datadbmap!", $ioe);
-        }
+
+		// Load the Data XML -> DB Name properties
+		$map = new Properties();
+		try {
+			$map->load($this->getDataDbMap());
+		} catch (IOException $ioe) {
+			throw new BuildException("Cannot open and process the datadbmap!", $ioe);
+		}
 
 		DataModelBuilder::setBuildProperties($this->getPropelProperties());
-		
-        // Parse each file in teh data -> db map
 
-        foreach($map->keys() as $dataXMLFilename) {
+		// Parse each file in teh data -> db map
 
-            $dataXMLFile = new PhingFile($this->srcDir, $dataXMLFilename);
+		foreach($map->keys() as $dataXMLFilename) {
 
-            // if file exists then proceed
-            if ($dataXMLFile->exists()) {
+			$dataXMLFile = new PhingFile($this->srcDir, $dataXMLFilename);
 
-                $dbname = $map->get($dataXMLFilename);
+			// if file exists then proceed
+			if ($dataXMLFile->exists()) {
 
-                $db = $this->getDatabase($dbname);
-				
-                if (!$db) {
-                    throw new BuildException("Cannot find instantiated Database for name '$dbname' from datadbmap file.");
-                }
-				
+				$dbname = $map->get($dataXMLFilename);
+
+				$db = $this->getDatabase($dbname);
+
+				if (!$db) {
+					throw new BuildException("Cannot find instantiated Database for name '$dbname' from datadbmap file.");
+				}
+
 				$db->setPlatform($platform);
-				
-                $outFile = $this->getMappedFile($dataXMLFilename);
 
-                $this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
+				$outFile = $this->getMappedFile($dataXMLFilename);
 
-                try {
-                    $dataXmlParser = new XmlToData($db, $this->dbEncoding);
-                    $data = $dataXmlParser->parseFile($dataXMLFile->getAbsolutePath());
-                } catch (Exception $e) {
-                    throw new Exception("Exception parsing data XML: " . $e->getMessage());
-                }
-				
+				$this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
+
+				try {
+					$dataXmlParser = new XmlToData($db, $this->dbEncoding);
+					$data = $dataXmlParser->parseFile($dataXMLFile->getAbsolutePath());
+				} catch (Exception $e) {
+					throw new Exception("Exception parsing data XML: " . $e->getMessage());
+				}
+
 				$fp = fopen($outFile->getAbsolutePath(), 'w');
-				
+
 				$currTable = null;
-                foreach ($data as $dataRow) {
+				foreach ($data as $dataRow) {
 					if ($currTable !== $dataRow->getTable()) {
-					    $currTable = $dataRow->getTable();
+						$currTable = $dataRow->getTable();
 						$builder = DataModelBuilder::builderFactory($currTable, 'datasql');
 					}
 					$sql = $builder->buildRowSql($dataRow);
 					fwrite($fp, $sql);
-                }
-				
+				}
+
 				fclose($fp);
-				
+
 				// Place the generated SQL file(s)
-	            $p = new Properties();
-	            if ($this->getSqlDbMap()->exists()) {
-	                $p->load($this->getSqlDbMap());
-	            }
-	
-	            $p->setProperty($outFile->getName(), $db->getName());
-	            $p->store($this->getSqlDbMap(), "Sqlfile -> Database map");
-				
-            } else {
-                $this->log("File '" . $dataXMLFile->getAbsolutePath()
-                        . "' in datadbmap does not exist, so skipping it.", PROJECT_MSG_WARN);
-            }            
+				$p = new Properties();
+				if ($this->getSqlDbMap()->exists()) {
+					$p->load($this->getSqlDbMap());
+				}
 
-        } // foreach data xml file
+				$p->setProperty($outFile->getName(), $db->getName());
+				$p->store($this->getSqlDbMap(), "Sqlfile -> Database map");
 
-    } // main()
+			} else {
+				$this->log("File '" . $dataXMLFile->getAbsolutePath()
+						. "' in datadbmap does not exist, so skipping it.", PROJECT_MSG_WARN);
+			}
+
+		} // foreach data xml file
+
+	} // main()
 }

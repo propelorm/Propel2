@@ -19,9 +19,9 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/database/model/XMLElement.php';
- 
+
 /**
  * A Class for information regarding possible objects representing a table
  *
@@ -32,133 +32,133 @@ require_once 'propel/engine/database/model/XMLElement.php';
  */
 class Inheritance extends XMLElement {
 
-    private $key;
-    private $className;
+	private $key;
+	private $className;
 	private $pkg;
-    private $ancestor;
-    private $parent;
+	private $ancestor;
+	private $parent;
 
-    /**
-     * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
+	/**
+	 * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
 	 * @see parent::loadFromXML()
-     */
-    protected function setupObject()
-    {
-        $this->key = $this->getAttribute("key");
-        $this->className = $this->getAttribute("class");
+	 */
+	protected function setupObject()
+	{
+		$this->key = $this->getAttribute("key");
+		$this->className = $this->getAttribute("class");
 		$this->pkg = $this->getAttribute("package");
-        $this->ancestor = $this->getAttribute("extends");
-    }
+		$this->ancestor = $this->getAttribute("extends");
+	}
 
-    /**
-     * Get the value of key.
-     * @return value of key.
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
+	/**
+	 * Get the value of key.
+	 * @return value of key.
+	 */
+	public function getKey()
+	{
+		return $this->key;
+	}
 
-    /**
-     * Set the value of key.
-     * @param v  Value to assign to key.
-     */
-    public function setKey($v)
-    {
-        $this->key = $v;
-    }
+	/**
+	 * Set the value of key.
+	 * @param v  Value to assign to key.
+	 */
+	public function setKey($v)
+	{
+		$this->key = $v;
+	}
 
-    /**
-     * Get the value of parent.
-     * @return value of parent.
-     */
-    public function getColumn()
-    {
-        return $this->parent;
-    }
+	/**
+	 * Get the value of parent.
+	 * @return value of parent.
+	 */
+	public function getColumn()
+	{
+		return $this->parent;
+	}
 
-    /**
-     * Set the value of parent.
-     * @param v  Value to assign to parent.
-     */
-    public function setColumn(Column  $v)
-    {
-        $this->parent = $v;
-    }
+	/**
+	 * Set the value of parent.
+	 * @param v  Value to assign to parent.
+	 */
+	public function setColumn(Column  $v)
+	{
+		$this->parent = $v;
+	}
 
-    /**
-     * Get the value of className.
-     * @return value of className.
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
+	/**
+	 * Get the value of className.
+	 * @return value of className.
+	 */
+	public function getClassName()
+	{
+		return $this->className;
+	}
 
-    /**
-     * Set the value of className.
-     * @param v  Value to assign to className.
-     */
-    public function setClassName($v)
-    {
-        $this->className = $v;
-    }
+	/**
+	 * Set the value of className.
+	 * @param v  Value to assign to className.
+	 */
+	public function setClassName($v)
+	{
+		$this->className = $v;
+	}
 
-    /**
-     * Get the value of package.
-     * @return value of package.
-     */
-    public function getPackage()
-    {
-        return $this->pkg;
-    }
+	/**
+	 * Get the value of package.
+	 * @return value of package.
+	 */
+	public function getPackage()
+	{
+		return $this->pkg;
+	}
 
-    /**
-     * Set the value of package.
-     * @param v  Value to assign to package.
-     */
-    public function setPackage($v)
-    {
-        $this->pkg = $v;
-    }
+	/**
+	 * Set the value of package.
+	 * @param v  Value to assign to package.
+	 */
+	public function setPackage($v)
+	{
+		$this->pkg = $v;
+	}
 
-    /**
-     * Get the value of ancestor.
-     * @return value of ancestor.
-     */
-    public function getAncestor()
-    {
-        return $this->ancestor;
-    }
+	/**
+	 * Get the value of ancestor.
+	 * @return value of ancestor.
+	 */
+	public function getAncestor()
+	{
+		return $this->ancestor;
+	}
 
-    /**
-     * Set the value of ancestor.
-     * @param v  Value to assign to ancestor.
-     */
-    public function setAncestor($v)
-    {
-        $this->ancestor = $v;
-    }
+	/**
+	 * Set the value of ancestor.
+	 * @param v  Value to assign to ancestor.
+	 */
+	public function setAncestor($v)
+	{
+		$this->ancestor = $v;
+	}
 
-    /**
-     * String representation of the foreign key. This is an xml representation.
-     */
-    public function toString()
-    {
-        $result = " <inheritance key=\""
-              . $this->key
-              . "\" class=\""
-              . $this->className
-              . '"';
+	/**
+	 * String representation of the foreign key. This is an xml representation.
+	 */
+	public function toString()
+	{
+		$result = " <inheritance key=\""
+			  . $this->key
+			  . "\" class=\""
+			  . $this->className
+			  . '"';
 
-        if ($this->ancestor !== null) {
-            $result .= " extends=\""
-                  . $this->ancestor
-                  . '"';
-        }
+		if ($this->ancestor !== null) {
+			$result .= " extends=\""
+				  . $this->ancestor
+				  . '"';
+		}
 
-        $result .= "/>";
+		$result .= "/>";
 
-        return $result;
-    }
+		return $result;
+	}
 }

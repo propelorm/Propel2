@@ -24,10 +24,10 @@ require_once 'propel/engine/builder/sql/mysql/MysqlDDLBuilder.php';
 
 /**
  * DDL Builder class for MySQL, specifically using new mysqli API.
- * 
+ *
  * @author Hans Lellelid
  * @package propel.engine.builder.sql.mysql
  */
 class MysqliDDLBuilder extends MysqlDDLBuilder {
-	
+
 }

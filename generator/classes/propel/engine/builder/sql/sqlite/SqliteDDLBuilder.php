@@ -76,7 +76,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 		foreach ($table->getUnices() as $unique ) {
 			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
-    	}
+		}
 
 		$sep = ",
 	";
@@ -98,7 +98,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
-			if($index->getIsUnique()) {
+			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
 			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");

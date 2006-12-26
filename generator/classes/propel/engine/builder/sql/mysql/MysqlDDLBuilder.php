@@ -135,7 +135,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		$mysqlTableType = $this->getBuildProperty("mysqlTableType");
 		if (!$mysqlTableType) {
 			$vendorSpecific = $table->getVendorSpecificInfo();
-			if(isset($vendorSpecific['Type'])) {
+			if (isset($vendorSpecific['Type'])) {
 				$mysqlTableType = $vendorSpecific['Type'];
 			} else {
 				$mysqlTableType = 'MyISAM';
@@ -143,7 +143,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		}
 
 		$script .= "Type=$mysqlTableType";
-		if($table->getDescription()) {
+		if ($table->getDescription()) {
 			$script .= " COMMENT='".$platform->escapeText($table->getDescription())."'";
 		}
 		$script .= ";
@@ -229,8 +229,8 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		$allTables = $table->getDatabase()->getTables();
 		foreach($allTables as $_table) {
 			foreach($_table->getForeignKeys() as $_foreignKey) {
-				if($_foreignKey->getForeignTableName() == $table->getName()) {
-					if(!in_array($this->getColumnList($_foreignKey->getForeignColumns()), $_indices)) {
+				if ($_foreignKey->getForeignTableName() == $table->getName()) {
+					if (!in_array($this->getColumnList($_foreignKey->getForeignColumns()), $_indices)) {
 						// no matching index defined in the schema, so we have to create one
 						$lines[] = "INDEX ".$this->quoteIdentifier("I_referenced_".$_foreignKey->getName()."_".(++$counter))." (" .$this->getColumnList($_foreignKey->getForeignColumns()).")";
 					}
@@ -242,7 +242,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 			$indexName = $this->quoteIdentifier(substr_replace($fk->getName(), 'FI_',  strrpos($fk->getName(), 'FK_'), 3));
 
-			if(!in_array($this->getColumnList($fk->getLocalColumns()), $_indices)) {
+			if (!in_array($this->getColumnList($fk->getLocalColumns()), $_indices)) {
 				// no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
 				$lines[] = "INDEX $indexName (".$this->getColumnList($fk->getLocalColumns()).")";
 			}

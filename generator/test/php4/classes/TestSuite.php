@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 require_once 'PHPUnit/TestSuite.php';
 
@@ -26,17 +26,17 @@ class TestSuite extends PHPUnit_TestSuite
 
   function TestSuite($name)
   {
-    $line = "--------------------------------------------";
-    $info = "| Running test suite '$name'";
-    $info = $info . str_repeat(' ', strlen($line) - strlen($info) - 1) . '|';
+	$line = "--------------------------------------------";
+	$info = "| Running test suite '$name'";
+	$info = $info . str_repeat(' ', strlen($line) - strlen($info) - 1) . '|';
 
-    print "\n";
-    print "$line\n";
-    print "$info\n";
-    print "$line\n";        
-    print "\n";
+	print "\n";
+	print "$line\n";
+	print "$info\n";
+	print "$line\n";
+	print "\n";
 
-    parent::PHPUnit_TestSuite($name);
+	parent::PHPUnit_TestSuite($name);
   }
 
   /**
@@ -46,8 +46,8 @@ class TestSuite extends PHPUnit_TestSuite
   */
   function addTestSuite($name)
   {
-    print "[INFO] Adding test suite '$name'\n";
-    parent::addTestSuite($name);
+	print "[INFO] Adding test suite '$name'\n";
+	parent::addTestSuite($name);
   }
 
   /**
@@ -55,9 +55,8 @@ class TestSuite extends PHPUnit_TestSuite
   */
   function run(&$result)
   {
-    print "\n";
-    parent::run($result);
+	print "\n";
+	parent::run($result);
   }
 
 }
-

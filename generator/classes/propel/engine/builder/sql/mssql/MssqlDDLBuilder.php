@@ -45,7 +45,7 @@ class MssqlDDLBuilder extends DDLBuilder {
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-    ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
+	ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
 ";
 		}
 
@@ -55,27 +55,27 @@ IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName().
 		$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".DataModelBuilder::prefixTablename($table->getName())."')
 BEGIN
-     DECLARE @reftable_".self::$dropCount." nvarchar(60), @constraintname_".self::$dropCount." nvarchar(60)
-     DECLARE refcursor CURSOR FOR
-     select reftables.name tablename, cons.name constraintname
-      from sysobjects tables,
-           sysobjects reftables,
-           sysobjects cons,
-           sysreferences ref
-       where tables.id = ref.rkeyid
-         and cons.id = ref.constid
-         and reftables.id = ref.fkeyid
-         and tables.name = '".DataModelBuilder::prefixTablename($table->getName())."'
-     OPEN refcursor
-     FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
-     while @@FETCH_STATUS = 0
-     BEGIN
-       exec ('alter table '+@reftable_".self::$dropCount."+' drop constraint '+@constraintname_".self::$dropCount.")
-       FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
-     END
-     CLOSE refcursor
-     DEALLOCATE refcursor
-     DROP TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
+	 DECLARE @reftable_".self::$dropCount." nvarchar(60), @constraintname_".self::$dropCount." nvarchar(60)
+	 DECLARE refcursor CURSOR FOR
+	 select reftables.name tablename, cons.name constraintname
+	  from sysobjects tables,
+		   sysobjects reftables,
+		   sysobjects cons,
+		   sysreferences ref
+	   where tables.id = ref.rkeyid
+		 and cons.id = ref.constid
+		 and reftables.id = ref.fkeyid
+		 and tables.name = '".DataModelBuilder::prefixTablename($table->getName())."'
+	 OPEN refcursor
+	 FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
+	 while @@FETCH_STATUS = 0
+	 BEGIN
+	   exec ('alter table '+@reftable_".self::$dropCount."+' drop constraint '+@constraintname_".self::$dropCount.")
+	   FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
+	 END
+	 CLOSE refcursor
+	 DEALLOCATE refcursor
+	 DROP TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
 END
 ";
 	}
@@ -115,7 +115,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 		foreach ($table->getUnices() as $unique ) {
 			$lines[] = "UNIQUE (".$this->getColumnList($unique->getColumns()).")";
-    	}
+		}
 
 		$sep = ",
 	";
@@ -137,7 +137,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
-			if($index->getIsUnique()) {
+			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
 			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
@@ -160,7 +160,7 @@ BEGIN
 ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
-				    // we have to skip this because it's unsupported.
+					// we have to skip this because it's unsupported.
 					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				} else {
 					$script .= " ON UPDATE ".$fk->getOnUpdate();
@@ -169,7 +169,7 @@ ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->g
 			}
 			if ($fk->hasOnDelete()) {
 				if ($fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
-				    // we have to skip this because it's unsupported.
+					// we have to skip this because it's unsupported.
 					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				} else {
 					$script .= " ON DELETE ".$fk->getOnDelete();

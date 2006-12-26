@@ -32,32 +32,32 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
  */
 class TableTest extends PHPUnit2_Framework_TestCase {
 
-    private $xmlToAppData;
-    private $appData;
+	private $xmlToAppData;
+	private $appData;
 
-    /**
-     * test if the tables get the package name from the properties file
-     *
-     */
-    public function testIdMethodHandling() {
-        $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+	/**
+	 * test if the tables get the package name from the properties file
+	 *
+	 */
+	public function testIdMethodHandling() {
+		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 
-        //$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
-        $this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
+		//$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
+		$this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
 
-        $db = $this->appData->getDatabase("iddb");
-        $expected = IDMethod::NATIVE;
-        $result = $db->getDefaultIdMethod();
-        $this->assertEquals($expected, $result);
+		$db = $this->appData->getDatabase("iddb");
+		$expected = IDMethod::NATIVE;
+		$result = $db->getDefaultIdMethod();
+		$this->assertEquals($expected, $result);
 
-        $table2 = $db->getTable("table_native");
-        $expected = IDMethod::NATIVE;
-        $result = $table2->getIdMethod();
-        $this->assertEquals($expected, $result);
+		$table2 = $db->getTable("table_native");
+		$expected = IDMethod::NATIVE;
+		$result = $table2->getIdMethod();
+		$this->assertEquals($expected, $result);
 
-        $table = $db->getTable("table_none");
-        $expected = IDMethod::NO_ID_METHOD;
-        $result = $table->getIdMethod();
-        $this->assertEquals($expected, $result);
-    }
+		$table = $db->getTable("table_none");
+		$expected = IDMethod::NO_ID_METHOD;
+		$result = $table->getIdMethod();
+		$this->assertEquals($expected, $result);
+	}
 }

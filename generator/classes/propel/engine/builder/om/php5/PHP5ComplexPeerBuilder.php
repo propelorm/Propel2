@@ -59,7 +59,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		if ($includeJoinAll) {
-			if($countFK > 0) {
+			if ($countFK > 0) {
 				$this->addDoCountJoinAll($script);
 				$this->addDoSelectJoinAll($script);
 			}
@@ -135,7 +135,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
 		\$results = array();
 
-		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key1])) {
 				\$obj1 = self::\$instances[\$key1];
@@ -348,7 +348,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
 		\$results = array();
 
-		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key1])) {
 				\$obj1 = self::\$instances[\$key1];
@@ -391,7 +391,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 				$interfaceName = $joinClassName;
 
-				if($joinTable->getInterface()) {
+				if ($joinTable->getInterface()) {
 					$interfaceName = DataModelPeer::prefixClassname($joinTable->getInterface());
 				}
 
@@ -588,7 +588,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 					$joinClassName = $joinTablePeerBuilder->getObjectClassname();
 
-					if($joinClassName != $excludedClassName)
+					if ($joinClassName != $excludedClassName)
 					{
 						$lfMap = $subfk->getLocalForeignMapping();
 						foreach ($subfk->getLocalColumns() as $columnName ) {
@@ -606,7 +606,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		\$stmt = ".$this->basePeerClassname ."::doSelect(\$c, \$con);
 		\$results = array();
 
-		while(\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key1])) {
 				\$obj1 = self::\$instances[\$key1];
@@ -645,7 +645,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 
 				$interfaceName = $joinClassName;
-				if($joinTable->getInterface()) {
+				if ($joinTable->getInterface()) {
 					$interfaceName = DataModelBuilder::prefixClassname($joinTable->getInterface());
 				}
 
@@ -753,7 +753,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 					$joinClassName = $joinTablePeerBuilder->getObjectClassname();
 
-					if($joinClassName != $excludedClassName)
+					if ($joinClassName != $excludedClassName)
 					{
 						$lfMap = $subfk->getLocalForeignMapping();
 						foreach ($subfk->getLocalColumns() as $columnName ) {

@@ -19,10 +19,10 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 /**
  * Oracle adapter.
- * 
+ *
  * @author David Giffin <david@giffin.org> (Propel)
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Jon S. Stevens <jon@clearink.com> (Torque)
@@ -34,69 +34,69 @@
  */
 class DBOracle extends DBAdapter {
 
-    /**
-     * This method is used to ignore case.
-     *
-     * @param string $in The string to transform to upper case.
-     * @return string The upper case string.
-     */
-    public function toUpperCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param string $in The string to transform to upper case.
+	 * @return string The upper case string.
+	 */
+	public function toUpperCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
 
-    /**
-     * This method is used to ignore case.
-     *
-     * @param string $in The string whose case to ignore.
-     * @return string The string in a case that can be ignored.
-     */
-    public function ignoreCase($in)
-    {
-        return "UPPER(" . $in . ")";
-    }
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param string $in The string whose case to ignore.
+	 * @return string The string in a case that can be ignored.
+	 */
+	public function ignoreCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
 
-    /**
-     * Returns SQL which concatenates the second string to the first.
-     *
-     * @param string String to concatenate.
-     * @param string String to append.
-     * @return string 
-     */
-    public function concatString($s1, $s2)
-    {
-        return "CONCAT($s1, $s2)";
-    }
+	/**
+	 * Returns SQL which concatenates the second string to the first.
+	 *
+	 * @param string String to concatenate.
+	 * @param string String to append.
+	 * @return string
+	 */
+	public function concatString($s1, $s2)
+	{
+		return "CONCAT($s1, $s2)";
+	}
 
-    /**
-     * Returns SQL which extracts a substring.
-     *
-     * @param string String to extract from.
-     * @param int Offset to start from.
-     * @param int Number of characters to extract.
-     * @return string 
-     */
-    public function subString($s, $pos, $len)
-    {
-        return "SUBSTR($s, $pos, $len)";
-    }
+	/**
+	 * Returns SQL which extracts a substring.
+	 *
+	 * @param string String to extract from.
+	 * @param int Offset to start from.
+	 * @param int Number of characters to extract.
+	 * @return string
+	 */
+	public function subString($s, $pos, $len)
+	{
+		return "SUBSTR($s, $pos, $len)";
+	}
 
-    /**
-     * Returns SQL which calculates the length (in chars) of a string.
-     *
-     * @param string String to calculate length of.
-     * @return string 
-     */
-    public function strLength($s)
-    {
-        return "LENGTH($s)";
-    }
-    
-    /**
-     * @see DBAdapter::applyLimit()
-     */
-    public function applyLimit(&$sql, $offset, $limit)
-    {
+	/**
+	 * Returns SQL which calculates the length (in chars) of a string.
+	 *
+	 * @param string String to calculate length of.
+	 * @return string
+	 */
+	public function strLength($s)
+	{
+		return "LENGTH($s)";
+	}
+
+	/**
+	 * @see DBAdapter::applyLimit()
+	 */
+	public function applyLimit(&$sql, $offset, $limit)
+	{
 		 $sql =
 			'SELECT B.* FROM (  '
 			.  'SELECT A.*, rownum AS PROPEL$ROWNUM FROM (  '
@@ -104,17 +104,17 @@ class DBOracle extends DBAdapter {
 			. '  ) A '
 			.  ' ) B WHERE ';
 
-        if ( $offset > 0 ) {
-            $sql				.= ' B.PROPEL$ROWNUM > ' . $offset;            
+		if ( $offset > 0 ) {
+			$sql				.= ' B.PROPEL$ROWNUM > ' . $offset;
 
-            if ( $limit > 0 )
+			if ( $limit > 0 )
 			{
-                $sql			.= ' AND B.PROPEL$ROWNUM <= '
+				$sql			.= ' AND B.PROPEL$ROWNUM <= '
 									. ( $offset + $limit );
-            }
-        } else {
+			}
+		} else {
 			$sql				.= ' B.PROPEL$ROWNUM <= ' . $limit;
 		}
 	}
-	
+
 }

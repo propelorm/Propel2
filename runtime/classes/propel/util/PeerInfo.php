@@ -31,157 +31,157 @@
  */
 class PeerInfo
 {
-    /** Propel Object Peers */
-    private static $peers = array();    
+	/** Propel Object Peers */
+	private static $peers = array();
 
-    /** Reflection Objects of the Propel Peers */
-    private static $reflections = array();    
+	/** Reflection Objects of the Propel Peers */
+	private static $reflections = array();
 
-    /** Table Maps of the Propel Peers */
-    private static $maps = array();    
-
-
-    /**
-     * Add a Peer to the list of Peers
-     * 
-     * @param string $peer The Propel Peer to add
-     */
-     private static function addPeer($peer)
-     {
+	/** Table Maps of the Propel Peers */
+	private static $maps = array();
 
 
-        $peers = array_keys(self::$peers);
-
-        if (!in_array($peer, $peers)) {
-
-            self::$peers[$peer]       = self::loadPeer($peer);
-            self::$reflections[$peer] = new reflectionClass($peer);
-            self::$maps[$peer]        = null;
-
-        }
-    }  
+	/**
+	 * Add a Peer to the list of Peers
+	 *
+	 * @param string $peer The Propel Peer to add
+	 */
+	 private static function addPeer($peer)
+	 {
 
 
-    /**     
-     * Get a constant from the Peer Reflector
-     * 
-     * @param  String The name of the constant
-     * @return String The Constant String
-     */
-        public static function getPeerConstant($peer, $name)
-        {
-        self::addPeer($peer);
-                return self::$reflections[$peer]->getConstant($name);
-        }
+		$peers = array_keys(self::$peers);
+
+		if (!in_array($peer, $peers)) {
+
+			self::$peers[$peer]       = self::loadPeer($peer);
+			self::$reflections[$peer] = new reflectionClass($peer);
+			self::$maps[$peer]        = null;
+
+		}
+	}
 
 
-    /**
-     * Get a Peer from the Peer List
-     *
-     * @param string $peer The Propel Peer to add
-     */
-        public static function getPeer($peer) {
-        self::addPeer($peer);
-                return self::$peers[$peer];
-        }    
+	/**
+	 * Get a constant from the Peer Reflector
+	 *
+	 * @param  String The name of the constant
+	 * @return String The Constant String
+	 */
+		public static function getPeerConstant($peer, $name)
+		{
+		self::addPeer($peer);
+				return self::$reflections[$peer]->getConstant($name);
+		}
 
 
-    /**
-     * Load a Peer
-     *
-     * You may wat to override this method if your Peers
-     * are not in the include_path.
-     *
-     * @param string $peerName the name of the Peer
-     */
-    public static function loadPeer($peerName)
-    {
-        $peerObject = new $peerName();
-        return $peerObject;
-    }
+	/**
+	 * Get a Peer from the Peer List
+	 *
+	 * @param string $peer The Propel Peer to add
+	 */
+		public static function getPeer($peer) {
+		self::addPeer($peer);
+				return self::$peers[$peer];
+		}
 
 
-    /**
-     * Get a Column Constant from a Peer
-     *
-     * @param string The PhpName or DB_NAME for the constant
-     * @return string the Column Constant
-     */
-    public static function getColumnConstant($peer, $name)
-    {
-        self::addPeer($peer);
-        $map = self::getPeer($peer)->getPhpNameMap();
-        foreach ($map as $phpName => $dbName) {
-            if ($phpName == $name) {
-                return self::getPeerConstant($peer, $dbName);                
-            } else if ($dbName == $name) {
-                return self::getPeerConstant($peer, $dbName);
-            }
-        }
-        return null;
-    }
+	/**
+	 * Load a Peer
+	 *
+	 * You may wat to override this method if your Peers
+	 * are not in the include_path.
+	 *
+	 * @param string $peerName the name of the Peer
+	 */
+	public static function loadPeer($peerName)
+	{
+		$peerObject = new $peerName();
+		return $peerObject;
+	}
 
 
-    /**
-     * Get the Primary Key for this Peer
-     *
-     * @param string $peer   The name of the Peer
-     * @return string The name of the Primary Key
-     */
-    public static function getPrimaryKey($peer)
-    {
-        self::addPeer($peer);
-        $tableMap = self::getTableMap($peer);
-        $columns = $tableMap->getColumns();
-        foreach ($columns as $columnName => $column) {
-            if ($column->isPrimaryKey()) {
-                return $columnName;
-            }
-        }
-        return null;
-    }
+	/**
+	 * Get a Column Constant from a Peer
+	 *
+	 * @param string The PhpName or DB_NAME for the constant
+	 * @return string the Column Constant
+	 */
+	public static function getColumnConstant($peer, $name)
+	{
+		self::addPeer($peer);
+		$map = self::getPeer($peer)->getPhpNameMap();
+		foreach ($map as $phpName => $dbName) {
+			if ($phpName == $name) {
+				return self::getPeerConstant($peer, $dbName);
+			} else if ($dbName == $name) {
+				return self::getPeerConstant($peer, $dbName);
+			}
+		}
+		return null;
+	}
 
 
-    /**
-     * Get the Table Map for a Peer
-     *
-     * @param string $peer   The name of the Peer
-     * @return TableMap The table map for this Peer
-     */
-    public static function getTableMap($peer)
-    {        
-        self::addPeer($peer);
-        if (!self::$maps[$peer]) {
-            $tableName = self::getTableName($peer);        
-            $dbMap     = self::getPeer($peer)->getMapBuilder()->getDatabaseMap();
-            self::$maps[$peer] = $dbMap->getTable($tableName);
-        }
-        return self::$maps[$peer];
-    }
+	/**
+	 * Get the Primary Key for this Peer
+	 *
+	 * @param string $peer   The name of the Peer
+	 * @return string The name of the Primary Key
+	 */
+	public static function getPrimaryKey($peer)
+	{
+		self::addPeer($peer);
+		$tableMap = self::getTableMap($peer);
+		$columns = $tableMap->getColumns();
+		foreach ($columns as $columnName => $column) {
+			if ($column->isPrimaryKey()) {
+				return $columnName;
+			}
+		}
+		return null;
+	}
 
 
-    public static function getTableName($peer)
-    {
-        self::addPeer($peer);
-        return self::getPeerConstant($peer, "TABLE_NAME");
-    }
+	/**
+	 * Get the Table Map for a Peer
+	 *
+	 * @param string $peer   The name of the Peer
+	 * @return TableMap The table map for this Peer
+	 */
+	public static function getTableMap($peer)
+	{
+		self::addPeer($peer);
+		if (!self::$maps[$peer]) {
+			$tableName = self::getTableName($peer);
+			$dbMap     = self::getPeer($peer)->getMapBuilder()->getDatabaseMap();
+			self::$maps[$peer] = $dbMap->getTable($tableName);
+		}
+		return self::$maps[$peer];
+	}
 
 
-    /**
-     * Call a Method from the Static Peer Class
-     *
-     * @param string $peer   The name of the Peer
-     * @param string $method The name of the method to call
-     * @param array  $params The parameters to pass to the method
-     * @return mixed What ever the method returns
-     */
-        public static function callMethod($peer, $method, $params = null)
-        {
-                if ($params !== null) {
-                        return call_user_func_array(array($peer, $method), $params);
-                }  
-                return call_user_func(array($peer, $method));
-        }
+	public static function getTableName($peer)
+	{
+		self::addPeer($peer);
+		return self::getPeerConstant($peer, "TABLE_NAME");
+	}
+
+
+	/**
+	 * Call a Method from the Static Peer Class
+	 *
+	 * @param string $peer   The name of the Peer
+	 * @param string $method The name of the method to call
+	 * @param array  $params The parameters to pass to the method
+	 * @return mixed What ever the method returns
+	 */
+		public static function callMethod($peer, $method, $params = null)
+		{
+				if ($params !== null) {
+						return call_user_func_array(array($peer, $method), $params);
+				}
+				return call_user_func(array($peer, $method));
+		}
 
 }
 

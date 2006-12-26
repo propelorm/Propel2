@@ -105,7 +105,7 @@ CREATE TABLE ".DataModelBuilder::prefixTablename($table->getName())."
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
 	ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
-	    ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
+		ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
 	PRIMARY KEY (";
 			$delim = "";
 			foreach ($table->getPrimaryKey() as $col) {
@@ -142,7 +142,7 @@ CREATE TABLE ".DataModelBuilder::prefixTablename($table->getName())."
 		$platform = $this->getPlatform();
 		foreach ($table->getIndices() as $index) {
 			$script .= "CREATE ";
-			if($index->getIsUnique()) {
+			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
 			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");

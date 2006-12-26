@@ -27,16 +27,16 @@
  * @package propel.engine.database.model
  */
 abstract class XMLElement {
-	
+
 	protected $attributes = array();
-	
+
 	protected $vendorSpecificInfo = array();
-	 
+
 	/**
 	 * Replaces the old loadFromXML() so that we can use loadFromXML() to load the attribs into the class.
 	 */
 	abstract protected function setupObject();
-	
+
 	/**
 	 * This is the entry point method for loading data from XML.
 	 * It calls a setupObject() method that must be implemented by the child class.
@@ -46,7 +46,7 @@ abstract class XMLElement {
 		$this->attributes = array_change_key_case($attributes, CASE_LOWER);
 		$this->setupObject();
 	}
-	
+
 	/**
 	 * Returns the assoc array of attributes.
 	 * All attribute names (keys) are lowercase.
@@ -55,7 +55,7 @@ abstract class XMLElement {
 	public function getAttributes() {
 		return $this->attributes;
 	}
-	
+
 	/**
 	 * Gets a particular attribute by [case-insensitive] name.
 	 * If attribute is not set then the $defaultValue is returned.
@@ -71,71 +71,71 @@ abstract class XMLElement {
 			return $defaultValue;
 		}
 	}
-	
+
 	/**
-     * Converts value specified in XML to a boolean value.
-     * This is to support the default value when used w/ a boolean column.
-     * @return value
-     */
-    protected function booleanValue($val) {
-        if (is_numeric($val)) {
-            return (bool) $val;
-        } else {
-            return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
-        }
-    }
-	
+	 * Converts value specified in XML to a boolean value.
+	 * This is to support the default value when used w/ a boolean column.
+	 * @return value
+	 */
+	protected function booleanValue($val) {
+		if (is_numeric($val)) {
+			return (bool) $val;
+		} else {
+			return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
+		}
+	}
+
 	/**
-     * Sets vendor specific parameter that applies to this object.
+	 * Sets vendor specific parameter that applies to this object.
 	 * @param string $name
 	 * @param string $value
-     */
-    public function setVendorParameter($name, $value)
-    {
-        $this->vendorSpecificInfo[$name] = $value;
-    }
-	
+	 */
+	public function setVendorParameter($name, $value)
+	{
+		$this->vendorSpecificInfo[$name] = $value;
+	}
+
 	/**
-     * Whether specified vendor specific information is set.
+	 * Whether specified vendor specific information is set.
 	 * @param string $name
 	 * @return boolean
-     */
-    public function hasVendorParameter($name)
-    {
-        return isset($this->vendorSpecificInfo[$name]);
-    }
-	
+	 */
+	public function hasVendorParameter($name)
+	{
+		return isset($this->vendorSpecificInfo[$name]);
+	}
+
 	/**
-     * Returns specified vendor specific information is set.
+	 * Returns specified vendor specific information is set.
 	 * @param string $name
 	 * @return string
-     */
-    public function getVendorParameter($name)
-    {
+	 */
+	public function getVendorParameter($name)
+	{
 		if (isset($this->vendorSpecificInfo[$name])) {
-		    return $this->vendorSpecificInfo[$name];
+			return $this->vendorSpecificInfo[$name];
 		}
-        return null; // just to be explicit
-    }
-	
-    /**
-     * Sets vendor specific information for this object.
-	 * @param array $info
-     */
-    public function setVendorSpecificInfo($info)
-    {
-        $this->vendorSpecificInfo = $info;
-    }
+		return null; // just to be explicit
+	}
 
-    /**
-     * Retrieves vendor specific information for this object.
+	/**
+	 * Sets vendor specific information for this object.
+	 * @param array $info
+	 */
+	public function setVendorSpecificInfo($info)
+	{
+		$this->vendorSpecificInfo = $info;
+	}
+
+	/**
+	 * Retrieves vendor specific information for this object.
 	 * @return array
-     */
-    public function getVendorSpecificInfo()
-    {
-        return $this->vendorSpecificInfo;
-    }
-	
-	
+	 */
+	public function getVendorSpecificInfo()
+	{
+		return $this->vendorSpecificInfo;
+	}
+
+
 
 }

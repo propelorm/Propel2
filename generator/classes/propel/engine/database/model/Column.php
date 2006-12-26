@@ -609,7 +609,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::getCreoleType($this->propelType);
 	}
-	
+
 	/**
 	 * Returns the column Creole type as a string.
 	 * @return string The constant representing Creole type: e.g. "VARCHAR".
@@ -682,12 +682,12 @@ class Column extends XMLElement {
 				. '"';
 		}
 
-        if ($this->isNodeKey()) {
-                $result .= " nodeKey=\"true\"";
-                if ($this->getNodeKeySep() !== null) {
-                        $result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
-                }
-        }
+		if ($this->isNodeKey()) {
+				$result .= " nodeKey=\"true\"";
+				if ($this->getNodeKeySep() !== null) {
+						$result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
+				}
+		}
 
 		// Close the column.
 		$result .= " />\n";

@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'propel/engine/platform/DefaultPlatform.php';
 
 /**
@@ -31,84 +31,84 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
  */
 class PgsqlPlatform extends DefaultPlatform {
 
-    /**
-     * Initializes db specific domain mapping.
-     */
-    protected function initialize()
-    {
-        parent::initialize();
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "BOOLEAN"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "INT2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "INT2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "INT8"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "FLOAT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "BYTEA"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
-    }
-    
-    /**
-     * @see Platform#getNativeIdMethod()
-     */
-    public function getNativeIdMethod()
-    {
-        return Platform::SEQUENCE;
-    }
-
-    /**
-     * @see Platform#getAutoIncrement()
-     */
-    public function getAutoIncrement()
-    {
-        return "";
-    }
-    
-    /**
-     * @see Platform#getMaxColumnNameLength()
-     */
-    public function getMaxColumnNameLength()
-    {
-        return 32;
-    }
-    
-    /**
-     * Escape the string for RDBMS.
-     * @param string $text
-     * @return string
-     */ 
-    public function escapeText($text) {
-        return pg_escape_string($text);
-    }
-    
-    /**
-     * @see Platform::getBooleanString()
-     */
-    public function getBooleanString($b)
-    {
-        // parent method does the checking for allowes tring
-        // representations & returns integer
-        $b = parent::getBooleanString($b);
-        return ($b ? "'t'" : "'f'");
-    }
-    
-    /**
-     * @see Platform::supportsNativeDeleteTrigger()
-     */
-    public function supportsNativeDeleteTrigger()
-    {
-        return true;
-    }
-	
 	/**
-     * @see Platform::hasSize(String)
-     * TODO collect info for all platforms
-     */
-    public function hasSize($sqlType)
-    {
+	 * Initializes db specific domain mapping.
+	 */
+	protected function initialize()
+	{
+		parent::initialize();
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "BOOLEAN"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, "INT2"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, "INT2"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "INT8"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "FLOAT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BYTEA"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BYTEA"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "BYTEA"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "BYTEA"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
+	}
+
+	/**
+	 * @see Platform#getNativeIdMethod()
+	 */
+	public function getNativeIdMethod()
+	{
+		return Platform::SEQUENCE;
+	}
+
+	/**
+	 * @see Platform#getAutoIncrement()
+	 */
+	public function getAutoIncrement()
+	{
+		return "";
+	}
+
+	/**
+	 * @see Platform#getMaxColumnNameLength()
+	 */
+	public function getMaxColumnNameLength()
+	{
+		return 32;
+	}
+
+	/**
+	 * Escape the string for RDBMS.
+	 * @param string $text
+	 * @return string
+	 */
+	public function escapeText($text) {
+		return pg_escape_string($text);
+	}
+
+	/**
+	 * @see Platform::getBooleanString()
+	 */
+	public function getBooleanString($b)
+	{
+		// parent method does the checking for allowes tring
+		// representations & returns integer
+		$b = parent::getBooleanString($b);
+		return ($b ? "'t'" : "'f'");
+	}
+
+	/**
+	 * @see Platform::supportsNativeDeleteTrigger()
+	 */
+	public function supportsNativeDeleteTrigger()
+	{
+		return true;
+	}
+
+	/**
+	 * @see Platform::hasSize(String)
+	 * TODO collect info for all platforms
+	 */
+	public function hasSize($sqlType)
+	{
 		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);
-    }
+	}
 }

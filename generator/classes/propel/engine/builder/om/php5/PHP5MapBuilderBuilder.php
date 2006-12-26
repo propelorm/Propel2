@@ -129,10 +129,10 @@ class ".$this->getClassname()." implements MapBuilder {
 	protected function addAttributes(&$script)
 	{
 		$script .= "
-    /**
-     * The database map.
-     */
-    private \$dbMap;
+	/**
+	 * The database map.
+	 */
+	private \$dbMap;
 ";
 	}
 
@@ -155,15 +155,15 @@ class ".$this->getClassname()." implements MapBuilder {
 	{
 		$script .= "
 	/**
-     * Tells us if this DatabaseMapBuilder is built so that we
-     * don't have to re-build it every time.
-     *
-     * @return boolean true if this DatabaseMapBuilder is built, false otherwise.
-     */
-    public function isBuilt()
-    {
-        return (\$this->dbMap !== null);
-    }
+	 * Tells us if this DatabaseMapBuilder is built so that we
+	 * don't have to re-build it every time.
+	 *
+	 * @return boolean true if this DatabaseMapBuilder is built, false otherwise.
+	 */
+	public function isBuilt()
+	{
+		return (\$this->dbMap !== null);
+	}
 ";
 	}
 
@@ -175,14 +175,14 @@ class ".$this->getClassname()." implements MapBuilder {
 	{
 		$script .= "
 	/**
-     * Gets the databasemap this map builder built.
-     *
-     * @return the databasemap
-     */
-    public function getDatabaseMap()
-    {
-        return \$this->dbMap;
-    }
+	 * Gets the databasemap this map builder built.
+	 *
+	 * @return the databasemap
+	 */
+	public function getDatabaseMap()
+	{
+		return \$this->dbMap;
+	}
 ";
 	}
 
@@ -197,14 +197,14 @@ class ".$this->getClassname()." implements MapBuilder {
 		$platform = $this->getPlatform();
 
 		$script .= "
-    /**
-     * The doBuild() method builds the DatabaseMap
-     *
+	/**
+	 * The doBuild() method builds the DatabaseMap
+	 *
 	 * @return void
-     * @throws PropelException
-     */
-    public function doBuild()
-    {
+	 * @throws PropelException
+	 */
+	public function doBuild()
+	{
 		\$this->dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
 
 		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
@@ -246,8 +246,8 @@ class ".$this->getClassname()." implements MapBuilder {
 			} else {
 				$size = $col->getSize();
 			}
-			if($col->isPrimaryKey()) {
-				if($col->isForeignKey()) {
+			if ($col->isPrimaryKey()) {
+				if ($col->isForeignKey()) {
 					$script .= "
 		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
@@ -257,11 +257,11 @@ class ".$this->getClassname()." implements MapBuilder {
 ";
 				}
 			} else {
-				if($col->isForeignKey()) {
+				if ($col->isForeignKey()) {
 					$script .= "
 		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$col->getRelatedTableName()."', '".strtoupper($col->getRelatedColumnName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
-            } else {
+			} else {
 					$script .= "
 		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).");
 ";
@@ -286,7 +286,7 @@ class ".$this->getClassname()." implements MapBuilder {
 		}  // foreach validator
 
 		$script .= "
-    } // doBuild()
+	} // doBuild()
 ";
 
 	}

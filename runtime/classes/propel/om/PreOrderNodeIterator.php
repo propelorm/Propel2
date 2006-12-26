@@ -18,7 +18,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 /**
  * Pre-order node iterator for Node objects.
@@ -29,64 +29,64 @@
  */
 class PreOrderNodeIterator implements Iterator
 {
-    private $topNode = null;
-    
-    private $curNode = null;
- 
-    private $querydb = false;
-    
-    private $con = null;
-    
-    public function __construct($node, $opts) {
-        $this->topNode = $node;
-        $this->curNode = $node;
-        
-        if (isset($opts['con']))
-            $this->con = $opts['con'];
-            
-        if (isset($opts['querydb']))
-            $this->querydb = $opts['querydb'];
-    }
-    
-    public function rewind() {
-        $this->curNode = $this->topNode;
-    }
-    
-    public function valid() {
-        return ($this->curNode !== null);
-    }
-    
-    public function current() {
-        return $this->curNode;
-    }
-    
-    public function key() {
-        return $this->curNode->getNodePath();
-    }
+	private $topNode = null;
 
-    public function next() {
+	private $curNode = null;
 
-        if ($this->valid())
-        {
-            $nextNode = $this->curNode->getFirstChildNode($this->querydb, $this->con);
+	private $querydb = false;
 
-            while ($nextNode === null)
-            {
-                if ($this->curNode === null || $this->curNode->equals($this->topNode))
-                    break;
+	private $con = null;
 
-                $nextNode = $this->curNode->getSiblingNode(false, $this->querydb, $this->con);
-                
-                if ($nextNode === null)
-                    $this->curNode = $this->curNode->getParentNode($this->querydb, $this->con);
-            }
-            
-            $this->curNode = $nextNode;
-        }
-        
-        return $this->curNode;
-    }
-    
+	public function __construct($node, $opts) {
+		$this->topNode = $node;
+		$this->curNode = $node;
+
+		if (isset($opts['con']))
+			$this->con = $opts['con'];
+
+		if (isset($opts['querydb']))
+			$this->querydb = $opts['querydb'];
+	}
+
+	public function rewind() {
+		$this->curNode = $this->topNode;
+	}
+
+	public function valid() {
+		return ($this->curNode !== null);
+	}
+
+	public function current() {
+		return $this->curNode;
+	}
+
+	public function key() {
+		return $this->curNode->getNodePath();
+	}
+
+	public function next() {
+
+		if ($this->valid())
+		{
+			$nextNode = $this->curNode->getFirstChildNode($this->querydb, $this->con);
+
+			while ($nextNode === null)
+			{
+				if ($this->curNode === null || $this->curNode->equals($this->topNode))
+					break;
+
+				$nextNode = $this->curNode->getSiblingNode(false, $this->querydb, $this->con);
+
+				if ($nextNode === null)
+					$this->curNode = $this->curNode->getParentNode($this->querydb, $this->con);
+			}
+
+			$this->curNode = $nextNode;
+		}
+
+		return $this->curNode;
+	}
+
 }
 
 ?>

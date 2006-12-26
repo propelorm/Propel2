@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 require_once 'PHPUnit/TestCase.php';
 require_once 'bookstore/BookstoreDataPopulator.php';
 
@@ -27,33 +27,33 @@ require_once 'bookstore/BookstoreDataPopulator.php';
  */
 class BookstoreTestBase extends PHPUnit_TestCase
 {
-  
+
   /**
   * This is run before each unit test; it populates the database.
   */
   function setUp()
   {
-    parent::setUp();
-    $e = BookstoreDataPopulator::populate();
+	parent::setUp();
+	$e = BookstoreDataPopulator::populate();
 
-    if (Propel::isError($e)) {
-      die("Unable to populate bookstore: " . $e->getMessage() . "\n");
-    }
+	if (Propel::isError($e)) {
+	  die("Unable to populate bookstore: " . $e->getMessage() . "\n");
+	}
   }
-  
+
   /**
   * This is run after each unit test.  It empties the database.
   */
   function tearDown()
   {
-    $e = BookstoreDataPopulator::depopulate();
-    if (Propel::isError($e)) die("Unable to depopulate bookstore: " . $e->getMessage() . "\n");
-    $this->assertEquals(0, count(BookPeer::doSelect(new Criteria())), "Expect book table to be empty.");
-    $this->assertEquals(0, count(AuthorPeer::doSelect(new Criteria())), "Expect author table to be empty.");
-    $this->assertEquals(0, count(PublisherPeer::doSelect(new Criteria())), "Expect publisher table to be empty.");
-    $this->assertEquals(0, count(ReviewPeer::doSelect(new Criteria())), "Expect review table to be empty.");
-    $this->assertEquals(0, count(MediaPeer::doSelect(new Criteria())), "Expect media table to be empty.");
-    parent::tearDown();
+	$e = BookstoreDataPopulator::depopulate();
+	if (Propel::isError($e)) die("Unable to depopulate bookstore: " . $e->getMessage() . "\n");
+	$this->assertEquals(0, count(BookPeer::doSelect(new Criteria())), "Expect book table to be empty.");
+	$this->assertEquals(0, count(AuthorPeer::doSelect(new Criteria())), "Expect author table to be empty.");
+	$this->assertEquals(0, count(PublisherPeer::doSelect(new Criteria())), "Expect publisher table to be empty.");
+	$this->assertEquals(0, count(ReviewPeer::doSelect(new Criteria())), "Expect review table to be empty.");
+	$this->assertEquals(0, count(MediaPeer::doSelect(new Criteria())), "Expect media table to be empty.");
+	parent::tearDown();
   }
-  
+
 }

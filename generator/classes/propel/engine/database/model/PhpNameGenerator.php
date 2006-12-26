@@ -18,7 +18,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 include_once 'propel/engine/database/model/NameGenerator.php';
 
 /**
@@ -32,100 +32,100 @@ include_once 'propel/engine/database/model/NameGenerator.php';
  */
 class PhpNameGenerator implements NameGenerator {
 
-    /**
-     * <code>inputs</code> should consist of two elements, the
-     * original name of the database element and the method for
-     * generating the name.  There are currently three methods:
-     * <code>CONV_METHOD_NOCHANGE</code> - xml names are converted
-     * directly to php names without modification.
-     * <code>CONV_METHOD_UNDERSCORE</code> will capitalize the first
-     * letter, remove underscores, and capitalize each letter before
-     * an underscore.  All other letters are lowercased. "phpname"
-     * works the same as the <code>CONV_METHOD_PHPNAME</code> method
-     * but will not lowercase any characters.
-     *
-     * @param inputs list expected to contain two parameters, element
-     * 0 contains name to convert, element 1 contains method for conversion.
-     * @return The generated name.
-     * @see NameGenerator
-     */
-    public function generateName($inputs)
-    {
-        $schemaName = $inputs[0];
-        $method = $inputs[1];
-        $phpName = null;
+	/**
+	 * <code>inputs</code> should consist of two elements, the
+	 * original name of the database element and the method for
+	 * generating the name.  There are currently three methods:
+	 * <code>CONV_METHOD_NOCHANGE</code> - xml names are converted
+	 * directly to php names without modification.
+	 * <code>CONV_METHOD_UNDERSCORE</code> will capitalize the first
+	 * letter, remove underscores, and capitalize each letter before
+	 * an underscore.  All other letters are lowercased. "phpname"
+	 * works the same as the <code>CONV_METHOD_PHPNAME</code> method
+	 * but will not lowercase any characters.
+	 *
+	 * @param inputs list expected to contain two parameters, element
+	 * 0 contains name to convert, element 1 contains method for conversion.
+	 * @return The generated name.
+	 * @see NameGenerator
+	 */
+	public function generateName($inputs)
+	{
+		$schemaName = $inputs[0];
+		$method = $inputs[1];
+		$phpName = null;
 
-        if ($method == self::CONV_METHOD_UNDERSCORE) {
-            $phpName = $this->underscoreMethod($schemaName);
-        } elseif ($method == self::CONV_METHOD_PHPNAME) {
-            $phpName = $this->phpnameMethod($schemaName);
-        } else if ($method == self::CONV_METHOD_NOCHANGE) {
-            $phpName = $this->nochangeMethod($schemaName);
-        } else {
-            // if for some reason nothing is defined then we default
-            // to the traditional method.
-            $phpName = $this->underscoreMethod($schemaName);
-        }
+		if ($method == self::CONV_METHOD_UNDERSCORE) {
+			$phpName = $this->underscoreMethod($schemaName);
+		} elseif ($method == self::CONV_METHOD_PHPNAME) {
+			$phpName = $this->phpnameMethod($schemaName);
+		} else if ($method == self::CONV_METHOD_NOCHANGE) {
+			$phpName = $this->nochangeMethod($schemaName);
+		} else {
+			// if for some reason nothing is defined then we default
+			// to the traditional method.
+			$phpName = $this->underscoreMethod($schemaName);
+		}
 
-        return $phpName;
-    }
+		return $phpName;
+	}
 
-    /**
-     * Converts a database schema name to php object name.  Removes
-     * <code>STD_SEPARATOR_CHAR</code>, capitilizes first letter of
-     * name and each letter after the <code>STD_SEPERATOR</code>,
-     * converts the rest of the letters to lowercase.
-     *
-     * my_CLASS_name -> MyClassName
-     *
-     * @param string $schemaName name to be converted.
-     * @return string Converted name.
-     * @see NameGenerator
-     * @see #underscoreMethod()
-     */
-    protected function underscoreMethod($schemaName)
-    {
-        $name = "";
-        $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while($tok) {            
-            $name .= ucfirst(strtolower($tok));
-            $tok = strtok(self::STD_SEPARATOR_CHAR);
-        }
-        return $name;
-    }
+	/**
+	 * Converts a database schema name to php object name.  Removes
+	 * <code>STD_SEPARATOR_CHAR</code>, capitilizes first letter of
+	 * name and each letter after the <code>STD_SEPERATOR</code>,
+	 * converts the rest of the letters to lowercase.
+	 *
+	 * my_CLASS_name -> MyClassName
+	 *
+	 * @param string $schemaName name to be converted.
+	 * @return string Converted name.
+	 * @see NameGenerator
+	 * @see #underscoreMethod()
+	 */
+	protected function underscoreMethod($schemaName)
+	{
+		$name = "";
+		$tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
+		while ($tok) {
+			$name .= ucfirst(strtolower($tok));
+			$tok = strtok(self::STD_SEPARATOR_CHAR);
+		}
+		return $name;
+	}
 
-    /**
-     * Converts a database schema name to php object name.  Operates
-     * same as underscoreMethod but does not convert anything to
-     * lowercase.
-     * 
-     * my_CLASS_name -> MyCLASSName
-     * 
-     * @param string $schemaName name to be converted.
-     * @return string Converted name.
-     * @see NameGenerator
-     * @see #underscoreMethod(String)
-     */
-    protected function phpnameMethod($schemaName)
-    {
-        $name = "";
-        $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while($tok) {            
-            $name .= ucfirst($tok);
-            $tok = strtok(self::STD_SEPARATOR_CHAR);
-        }
-        return $name;
-    }
+	/**
+	 * Converts a database schema name to php object name.  Operates
+	 * same as underscoreMethod but does not convert anything to
+	 * lowercase.
+	 *
+	 * my_CLASS_name -> MyCLASSName
+	 *
+	 * @param string $schemaName name to be converted.
+	 * @return string Converted name.
+	 * @see NameGenerator
+	 * @see #underscoreMethod(String)
+	 */
+	protected function phpnameMethod($schemaName)
+	{
+		$name = "";
+		$tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
+		while ($tok) {
+			$name .= ucfirst($tok);
+			$tok = strtok(self::STD_SEPARATOR_CHAR);
+		}
+		return $name;
+	}
 
-    /**
-     * Converts a database schema name to PHP object name.  In this
-     * case no conversion is made.
-     *
-     * @param string $name name to be converted.
-     * @return string The <code>name</code> parameter, unchanged.
-     */
-    protected function nochangeMethod($name)
-    {
-        return $name;
-    }
+	/**
+	 * Converts a database schema name to PHP object name.  In this
+	 * case no conversion is made.
+	 *
+	 * @param string $name name to be converted.
+	 * @return string The <code>name</code> parameter, unchanged.
+	 */
+	protected function nochangeMethod($name)
+	{
+		return $name;
+	}
 }

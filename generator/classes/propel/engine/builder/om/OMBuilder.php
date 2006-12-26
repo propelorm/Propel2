@@ -301,7 +301,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	public function getClasspath()
 	{
 		if ($this->getPackage()) {
-		    $path = $this->getPackage() . '.' . $this->getClassname();
+			$path = $this->getPackage() . '.' . $this->getClassname();
 		} else {
 			$path = $this->getClassname();
 		}
@@ -326,7 +326,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	{
 		$pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
 		if (!$pkg) {
-		    $pkg = $this->getBuildProperty('targetPackage');
+			$pkg = $this->getBuildProperty('targetPackage');
 		}
 		return $pkg;
 	}
@@ -364,49 +364,49 @@ abstract class OMBuilder extends DataModelBuilder {
 
 	/**
 	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
-     *
-     * @param Column $col The column we need a name for.
-     * @param string $classname The Peer classname to use.
-     *
-     * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME.
-     */
-    public function getColumnConstant($col, $classname = null)
+	 *
+	 * @param Column $col The column we need a name for.
+	 * @param string $classname The Peer classname to use.
+	 *
+	 * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the peername is looked up for current table to yield $currTablePeer::COLUMN_NAME.
+	 */
+	public function getColumnConstant($col, $classname = null)
 	{
 		if ($col === null) {
-		    $e = new Exception("No col specified.");
+			$e = new Exception("No col specified.");
 			print $e;
 			throw $e;
 		}
 		if ($classname === null) {
 			$classname = $this->getPeerClassname();
 		}
-        // was it overridden in schema.xml ?
-        if ($col->getPeerName()) {
-            $const = strtoupper($col->getPeerName());
-        } else {
-            $const = strtoupper($col->getName());
-        }
+		// was it overridden in schema.xml ?
+		if ($col->getPeerName()) {
+			$const = strtoupper($col->getPeerName());
+		} else {
+			$const = strtoupper($col->getName());
+		}
 		return $classname.'::'.$const;
-    }
+	}
 
 	/**
-     * Gets the basePeer path if specified for table/db.
-     * If not, will return 'propel.util.BasePeer'
-     * @return string
-     */
-    public function getBasePeer(Table $table) {
-        $class = $table->getBasePeer();
-        if ($class === null) {
-            $class = "propel.util.BasePeer";
-        }
-        return $class;
-    }
+	 * Gets the basePeer path if specified for table/db.
+	 * If not, will return 'propel.util.BasePeer'
+	 * @return string
+	 */
+	public function getBasePeer(Table $table) {
+		$class = $table->getBasePeer();
+		if ($class === null) {
+			$class = "propel.util.BasePeer";
+		}
+		return $class;
+	}
 
-    /**
-     *
-     */
-    protected function getBuilder($tablename, $type) {
+	/**
+	 *
+	 */
+	protected function getBuilder($tablename, $type) {
 		$table = $this->getTable()->getDatabase()->getTable($tablename);
 		return self::builderFactory($table, $type);
-    }
+	}
 }

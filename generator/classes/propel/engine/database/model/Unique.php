@@ -36,34 +36,34 @@ include_once 'propel/engine/database/model/Index.php';
  */
 class Unique extends Index {
 
-    /**
-     * Default constructor.
-     */
-    public function __construct(Table $table, $indexColumns = array())
-    {
-    }
+	/**
+	 * Default constructor.
+	 */
+	public function __construct(Table $table, $indexColumns = array())
+	{
+	}
 
-    /**
-     * Returns <code>true</code>.
-     */
-    public function isUnique()
-    {
-        return true;
-    }
+	/**
+	 * Returns <code>true</code>.
+	 */
+	public function isUnique()
+	{
+		return true;
+	}
 
-    /**
-     * String representation of the index. This is an xml representation.
-     */
-    public function toString()
-    {
-        $result = " <unique name=\"" . $this->getName() . "\">\n";        
-        $columns = $this->getColumns();
-        for ($i=0, $size=count($columns); $i < $size; $i++) {
-            $result .= "  <unique-column name=\""
-                . $columns[$i]
-                . "\"/>\n";
-        }
-        $result .= " </unique>\n";
-        return $result;
-    }
+	/**
+	 * String representation of the index. This is an xml representation.
+	 */
+	public function toString()
+	{
+		$result = " <unique name=\"" . $this->getName() . "\">\n";
+		$columns = $this->getColumns();
+		for ($i=0, $size=count($columns); $i < $size; $i++) {
+			$result .= "  <unique-column name=\""
+				. $columns[$i]
+				. "\"/>\n";
+		}
+		$result .= " </unique>\n";
+		return $result;
+	}
 }

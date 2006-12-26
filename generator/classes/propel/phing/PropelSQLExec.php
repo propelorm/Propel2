@@ -24,7 +24,7 @@ require_once 'phing/Task.php';
 
 /**
  * Executes all SQL files referenced in the sqldbmap file against their mapped databases.
- * 
+ *
  * This task uses an SQL -> Database map in the form of a properties
  * file to insert each SQL file listed into its designated database.
  *
@@ -40,569 +40,569 @@ require_once 'phing/Task.php';
  */
 class PropelSQLExec extends Task {
 
-    private $goodSql = 0;
-    private $totalSql = 0;
+	private $goodSql = 0;
+	private $totalSql = 0;
 
-    const DELIM_ROW = "row";
-    const DELIM_NORMAL = "normal";
+	const DELIM_ROW = "row";
+	const DELIM_NORMAL = "normal";
 
-    /**
-     * The delimiter type indicating whether the delimiter will
-     * only be recognized on a line by itself
-     */
-    private $delimiterType = "normal"; // can't use constant just defined
-        
-    //private static $delimiterTypes = array(DELIM_NORMAL, DELIM_ROW);
-    //private static $errorActions = array("continue", "stop", "abort");
-    
-    /** PDO Database connection */
-    private $conn = null;
+	/**
+	 * The delimiter type indicating whether the delimiter will
+	 * only be recognized on a line by itself
+	 */
+	private $delimiterType = "normal"; // can't use constant just defined
 
-    /** Autocommit flag. Default value is false */
-    private $autocommit = false;
+	//private static $delimiterTypes = array(DELIM_NORMAL, DELIM_ROW);
+	//private static $errorActions = array("continue", "stop", "abort");
 
-    /** DB url. */
-    private $url = null;
+	/** PDO Database connection */
+	private $conn = null;
 
-    /** User name. */
-    private $userId = null;
+	/** Autocommit flag. Default value is false */
+	private $autocommit = false;
 
-    /** Password */
-    private $password = null;
+	/** DB url. */
+	private $url = null;
 
-    /** SQL input command */
-    private $sqlCommand = "";
+	/** User name. */
+	private $userId = null;
 
-    /** SQL transactions to perform */
-    private $transactions = array();
+	/** Password */
+	private $password = null;
 
-    /** SQL Statement delimiter */
-    private $delimiter = ";";
+	/** SQL input command */
+	private $sqlCommand = "";
 
-    /** Print SQL results. */
-    private $print = false;
+	/** SQL transactions to perform */
+	private $transactions = array();
 
-    /** Print header columns. */
-    private $showheaders = true;
+	/** SQL Statement delimiter */
+	private $delimiter = ";";
 
-    /** Results Output file. */
-    private $output = null;
+	/** Print SQL results. */
+	private $print = false;
 
-    /** RDBMS Product needed for this SQL. */
-    private $rdbms = null;
+	/** Print header columns. */
+	private $showheaders = true;
 
-    /** RDBMS Version needed for this SQL. */
-    private $version = null;
+	/** Results Output file. */
+	private $output = null;
 
-    /** Action to perform if an error is found */
-    private $onError = "abort";
+	/** RDBMS Product needed for this SQL. */
+	private $rdbms = null;
 
-    /** Encoding to use when reading SQL statements from a file */
-    private $encoding = null;
+	/** RDBMS Version needed for this SQL. */
+	private $version = null;
 
-    /** Src directory for the files listed in the sqldbmap. */
-    private $srcDir;
+	/** Action to perform if an error is found */
+	private $onError = "abort";
 
-    /** Properties file that maps an individual SQL file to a database. */
-    private $sqldbmap;
+	/** Encoding to use when reading SQL statements from a file */
+	private $encoding = null;
 
-    /**
-     * Set the sqldbmap properties file.
-     *
-     * @param sqldbmap filename for the sqldbmap
-     */
-    public function setSqlDbMap($sqldbmap)
-    {
-        $this->sqldbmap = $this->project->resolveFile($sqldbmap);
-    }
+	/** Src directory for the files listed in the sqldbmap. */
+	private $srcDir;
 
-    /**
-     * Get the sqldbmap properties file.
-     *
-     * @return filename for the sqldbmap
-     */
-    public function getSqlDbMap()
-    {
-        return $this->sqldbmap;
-    }
+	/** Properties file that maps an individual SQL file to a database. */
+	private $sqldbmap;
 
-    /**
-     * Set the src directory for the sql files listed in the sqldbmap file.
-     * 
-     * @param PhingFile $srcDir sql source directory
-     */
-    public function setSrcDir(PhingFile $srcDir)
-    {
-        $this->srcDir = $srcDir;
-    }
+	/**
+	 * Set the sqldbmap properties file.
+	 *
+	 * @param sqldbmap filename for the sqldbmap
+	 */
+	public function setSqlDbMap($sqldbmap)
+	{
+		$this->sqldbmap = $this->project->resolveFile($sqldbmap);
+	}
 
-    /**
-     * Get the src directory for the sql files listed in the sqldbmap file.
-     *
-     * @return PhingFile SQL Source directory
-     */
-    public function getSrcDir()
-    {
-        return $this->srcDir;
-    }
-    
-    /**
-     * Set the sql command to execute
-     *
-     * @param sql sql command to execute
-     */
-    public function addText($sql)
-    {
-        $this->sqlCommand .= $sql;
-    }
+	/**
+	 * Get the sqldbmap properties file.
+	 *
+	 * @return filename for the sqldbmap
+	 */
+	public function getSqlDbMap()
+	{
+		return $this->sqldbmap;
+	}
 
-    /**
-     * Set the DB connection url.
-     *
-     * @param string $url connection url
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
+	/**
+	 * Set the src directory for the sql files listed in the sqldbmap file.
+	 *
+	 * @param PhingFile $srcDir sql source directory
+	 */
+	public function setSrcDir(PhingFile $srcDir)
+	{
+		$this->srcDir = $srcDir;
+	}
 
-    /**
-     * Set the user name for the DB connection.
-     *
-     * @param string $userId database user
-     * @deprecated Specify userid in the DSN URL.
-     */
-    public function setUserid($userId)
-    {
-        $this->userId = $userId;
-    }   
+	/**
+	 * Get the src directory for the sql files listed in the sqldbmap file.
+	 *
+	 * @return PhingFile SQL Source directory
+	 */
+	public function getSrcDir()
+	{
+		return $this->srcDir;
+	}
 
-    /**
-     * Set the password for the DB connection.
-     *
-     * @param string $password database password
-     * @deprecated Specify password in the DSN URL.
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
+	/**
+	 * Set the sql command to execute
+	 *
+	 * @param sql sql command to execute
+	 */
+	public function addText($sql)
+	{
+		$this->sqlCommand .= $sql;
+	}
 
-    /**
-     * Set the autocommit flag for the DB connection.
-     *
-     * @param boolean $autocommit the autocommit flag
-     */
-    public function setAutoCommit($autocommit)
-    {
-        $this->autocommit = (boolean) $autocommit;
-    }
+	/**
+	 * Set the DB connection url.
+	 *
+	 * @param string $url connection url
+	 */
+	public function setUrl($url)
+	{
+		$this->url = $url;
+	}
 
-    /**
-     * Set the statement delimiter.
-     *
-     * <p>For example, set this to "go" and delimitertype to "ROW" for
-     * Sybase ASE or MS SQL Server.</p>
-     *
-     * @param string $delimiter
-     */
-    public function setDelimiter($delimiter)
-    {
-        $this->delimiter = $delimiter;
-    }
+	/**
+	 * Set the user name for the DB connection.
+	 *
+	 * @param string $userId database user
+	 * @deprecated Specify userid in the DSN URL.
+	 */
+	public function setUserid($userId)
+	{
+		$this->userId = $userId;
+	}
 
-    /**
-     * Set the Delimiter type for this sql task. The delimiter type takes two
-     * values - normal and row. Normal means that any occurence of the delimiter
-     * terminate the SQL command whereas with row, only a line containing just
-     * the delimiter is recognized as the end of the command.
-     *
-     * @param string $delimiterType
-     */
-    public function setDelimiterType($delimiterType)
-    {
-        $this->delimiterType = $delimiterType;
-    }
+	/**
+	 * Set the password for the DB connection.
+	 *
+	 * @param string $password database password
+	 * @deprecated Specify password in the DSN URL.
+	 */
+	public function setPassword($password)
+	{
+		$this->password = $password;
+	}
 
-    /**
-     * Set the print flag.
-     *
-     * @param boolean $print
-     */
-    public function setPrint($print)
-    {
-        $this->print = (boolean) $print;
-    }
+	/**
+	 * Set the autocommit flag for the DB connection.
+	 *
+	 * @param boolean $autocommit the autocommit flag
+	 */
+	public function setAutoCommit($autocommit)
+	{
+		$this->autocommit = (boolean) $autocommit;
+	}
 
-    /**
-     * Set the showheaders flag.
-     *
-     * @param boolean $showheaders
-     */
-    public function setShowheaders($showheaders)
-    {
-        $this->showheaders = (boolean) $showheaders;
-    }
+	/**
+	 * Set the statement delimiter.
+	 *
+	 * <p>For example, set this to "go" and delimitertype to "ROW" for
+	 * Sybase ASE or MS SQL Server.</p>
+	 *
+	 * @param string $delimiter
+	 */
+	public function setDelimiter($delimiter)
+	{
+		$this->delimiter = $delimiter;
+	}
 
-    /**
-     * Set the output file.
-     *
-     * @param PhingFile $output
-     */
-    public function setOutput(PhingFile $output)
-    {
-        $this->output = $output;
-    }   
+	/**
+	 * Set the Delimiter type for this sql task. The delimiter type takes two
+	 * values - normal and row. Normal means that any occurence of the delimiter
+	 * terminate the SQL command whereas with row, only a line containing just
+	 * the delimiter is recognized as the end of the command.
+	 *
+	 * @param string $delimiterType
+	 */
+	public function setDelimiterType($delimiterType)
+	{
+		$this->delimiterType = $delimiterType;
+	}
 
-    /**
-     * Set the action to perform onerror
-     *
-     * @param string $action
-     */
-    public function setOnerror($action)
-    {
-        $this->onError = $action;
-    }
+	/**
+	 * Set the print flag.
+	 *
+	 * @param boolean $print
+	 */
+	public function setPrint($print)
+	{
+		$this->print = (boolean) $print;
+	}
 
-    /**
-     * Load the sql file and then execute it
-     *
-     * @throws BuildException
-     */
-    public function main()
-    {
-        $this->sqlCommand = trim($this->sqlCommand);
+	/**
+	 * Set the showheaders flag.
+	 *
+	 * @param boolean $showheaders
+	 */
+	public function setShowheaders($showheaders)
+	{
+		$this->showheaders = (boolean) $showheaders;
+	}
 
-        if ($this->sqldbmap === null || $this->getSqlDbMap()->exists() === false) {
-            throw new BuildException("You haven't provided an sqldbmap, or "
-                    . "the one you specified doesn't exist: " . $this->sqldbmap->getPath());
-        }
-             
-        if ($this->url === null) {
-            throw new BuildException("DSN url attribute must be set!");
-        }                                  
-        
-        $map = new Properties();
+	/**
+	 * Set the output file.
+	 *
+	 * @param PhingFile $output
+	 */
+	public function setOutput(PhingFile $output)
+	{
+		$this->output = $output;
+	}
 
-        try {
-            $map->load($this->getSqlDbMap());            
-        } catch (IOException $ioe) {
-            throw new BuildException("Cannot open and process the sqldbmap!");
-        }
+	/**
+	 * Set the action to perform onerror
+	 *
+	 * @param string $action
+	 */
+	public function setOnerror($action)
+	{
+		$this->onError = $action;
+	}
 
-        $databases = array();
+	/**
+	 * Load the sql file and then execute it
+	 *
+	 * @throws BuildException
+	 */
+	public function main()
+	{
+		$this->sqlCommand = trim($this->sqlCommand);
 
-        foreach($map->keys() as $sqlfile) {
-        
-            $database = $map->getProperty($sqlfile);
-            
-            // Q: already there?
-            if (!isset($databases[$database])) {
-            // A: No.
-                $databases[$database] = array();
-            }
+		if ($this->sqldbmap === null || $this->getSqlDbMap()->exists() === false) {
+			throw new BuildException("You haven't provided an sqldbmap, or "
+					. "the one you specified doesn't exist: " . $this->sqldbmap->getPath());
+		}
 
-            // We want to make sure that the base schemas
-            // are inserted first.
-            if (strpos($sqlfile, "schema.sql") !== false) {
-                // add to the beginning of the array
-                array_unshift($databases[$database], $sqlfile);
-            } else {
-                array_push($databases[$database], $sqlfile);
-            }
-        }
-    
-        foreach($databases as $db => $files) {        
-            $transactions = array();
-            
-            foreach($files as $fileName) {
+		if ($this->url === null) {
+			throw new BuildException("DSN url attribute must be set!");
+		}
 
-                $file = new PhingFile($this->srcDir, $fileName);
+		$map = new Properties();
 
-                if ($file->exists()) {
-                    $this->log("Executing statements in file: " . $file->__toString());
-                    $transaction = new PropelSQLExecTransaction($this);
-                    $transaction->setSrc($file);
-                    $transactions[] = $transaction;
-                } else {
-                    $this->log("File '" . $file->__toString()
-                            . "' in sqldbmap does not exist, so skipping it.");
-                }
-            }
-            $this->insertDatabaseSqlFiles($this->url, $db, $transactions);
-        }
-    }
+		try {
+			$map->load($this->getSqlDbMap());
+		} catch (IOException $ioe) {
+			throw new BuildException("Cannot open and process the sqldbmap!");
+		}
 
-    /**
-     * Take the base url, the target database and insert a set of SQL
-     * files into the target database.
-     *
-     * @param string $url
-     * @param string $database
-     * @param array $transactions
-     */
-    private function insertDatabaseSqlFiles($url, $database, $transactions)
-    {
-        $url = str_replace("@DB@", $database, $url);
-        $this->log("Our new url -> " . $url);
-        
-        try {        
-            
-            $buf = "Database settings:\n"
-            . " URL: " . $url . "\n"
-            . ($this->userId ? " user: " . $this->userId . "\n" : "")
-            . ($this->password ? " password: " . $this->password . "\n" : "");
-            
-            $this->log($buf, PROJECT_MSG_VERBOSE);
+		$databases = array();
+
+		foreach($map->keys() as $sqlfile) {
+
+			$database = $map->getProperty($sqlfile);
+
+			// Q: already there?
+			if (!isset($databases[$database])) {
+			// A: No.
+				$databases[$database] = array();
+			}
+
+			// We want to make sure that the base schemas
+			// are inserted first.
+			if (strpos($sqlfile, "schema.sql") !== false) {
+				// add to the beginning of the array
+				array_unshift($databases[$database], $sqlfile);
+			} else {
+				array_push($databases[$database], $sqlfile);
+			}
+		}
+
+		foreach($databases as $db => $files) {
+			$transactions = array();
+
+			foreach($files as $fileName) {
+
+				$file = new PhingFile($this->srcDir, $fileName);
+
+				if ($file->exists()) {
+					$this->log("Executing statements in file: " . $file->__toString());
+					$transaction = new PropelSQLExecTransaction($this);
+					$transaction->setSrc($file);
+					$transactions[] = $transaction;
+				} else {
+					$this->log("File '" . $file->__toString()
+							. "' in sqldbmap does not exist, so skipping it.");
+				}
+			}
+			$this->insertDatabaseSqlFiles($this->url, $db, $transactions);
+		}
+	}
+
+	/**
+	 * Take the base url, the target database and insert a set of SQL
+	 * files into the target database.
+	 *
+	 * @param string $url
+	 * @param string $database
+	 * @param array $transactions
+	 */
+	private function insertDatabaseSqlFiles($url, $database, $transactions)
+	{
+		$url = str_replace("@DB@", $database, $url);
+		$this->log("Our new url -> " . $url);
+
+		try {
+
+			$buf = "Database settings:\n"
+			. " URL: " . $url . "\n"
+			. ($this->userId ? " user: " . $this->userId . "\n" : "")
+			. ($this->password ? " password: " . $this->password . "\n" : "");
+
+			$this->log($buf, PROJECT_MSG_VERBOSE);
 
 			// Set user + password to null if they are empty strings
-            if(!$this->userId) { $this->userId = null; }
-            
-            if (!$this->password) { $this->password = null; }
-			
+			if (!$this->userId) { $this->userId = null; }
+
+			if (!$this->password) { $this->password = null; }
+
 			$this->conn = new PDO($url, $this->userId, $this->password);
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			
-            // $this->conn->setAutoCommit($this->autocommit);
-            // $this->statement = $this->conn->createStatement();
-            
-            $out = null;
-            
-            try {
-                if ($this->output !== null) {
-                    $this->log("Opening PrintStream to output file " . $this->output->__toString(), PROJECT_MSG_VERBOSE);
-                    $out = new FileWriter($this->output);
-                }
 
-                // Process all transactions
-                for ($i=0,$size=count($transactions); $i < $size; $i++) {
-                    $transactions[$i]->runTransaction($out);
-                    if (!$this->autocommit) {
-                        $this->log("Commiting transaction", PROJECT_MSG_VERBOSE);
-                        $this->conn->commit();
-                    }
-                }
-            } catch (Exception $e) {
-                if ($out) $out->close();
-            }
-            
-        } catch (IOException $e) {
-        
-            if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
-                try {
-                    $this->conn->rollback();
-                } catch (PDOException $ex) {
-                    // do nothing.
-                    System::println("Rollback failed.");
-                }
-            }
-            if ($this->statement) $this->statement = null; // close
-            throw new BuildException($e);
-        } catch (PDOException $e) {
-            if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
-                try {
-                    $this->conn->rollback();
-                } catch (PDOException $ex) {
-                    // do nothing.
-                    System::println("Rollback failed");
-                }
-            }
-            if ($this->statement) $this->statement = null; // close
-            throw new BuildException($e);
-        }
-       
-           $this->statement = null; // close
+			// $this->conn->setAutoCommit($this->autocommit);
+			// $this->statement = $this->conn->createStatement();
 
-        $this->log($this->goodSql . " of " . $this->totalSql
-                . " SQL statements executed successfully");
-    }
+			$out = null;
 
-    /**
-     * Read the statements from the .sql file and execute them.
-     * Lines starting with '//', '--' or 'REM ' are ignored.
-     *
-     * Developer note:  must be public in order to be called from 
-     * sudo-"inner" class PropelSQLExecTransaction.
-     *
-     * @param Reader $reader
-     * @param $out Optional output stream.
-     * @throws PDOException
-     * @throws IOException
-     */
-    public function runStatements(Reader $reader, $out = null)            
-    {
-        $sql = "";
-        $line = "";
-        $sqlBacklog = "";
-        $hasQuery = false;
+			try {
+				if ($this->output !== null) {
+					$this->log("Opening PrintStream to output file " . $this->output->__toString(), PROJECT_MSG_VERBOSE);
+					$out = new FileWriter($this->output);
+				}
 
-        $in = new BufferedReader($reader);
+				// Process all transactions
+				for ($i=0,$size=count($transactions); $i < $size; $i++) {
+					$transactions[$i]->runTransaction($out);
+					if (!$this->autocommit) {
+						$this->log("Commiting transaction", PROJECT_MSG_VERBOSE);
+						$this->conn->commit();
+					}
+				}
+			} catch (Exception $e) {
+				if ($out) $out->close();
+			}
 
-        try {
-            while (($line = $in->readLine()) !== null) {
-                $line = trim($line);
-                $line = ProjectConfigurator::replaceProperties($this->project, $line,
-                        $this->project->getProperties());
-                
-                if (StringHelper::startsWith("//", $line) || 
-                    StringHelper::startsWith("--", $line) ||
-                    StringHelper::startsWith("#", $line)) {
-                    continue;
-                }
-                
-                if (strlen($line) > 4
-                        && strtoupper(substr($line,0, 4)) == "REM ") {
-                    continue;
-                }
+		} catch (IOException $e) {
 
-                if($sqlBacklog !== "")
-                {
-                    $sql = $sqlBacklog;
-                    $sqlBacklog = "";
-                }
+			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
+				try {
+					$this->conn->rollback();
+				} catch (PDOException $ex) {
+					// do nothing.
+					System::println("Rollback failed.");
+				}
+			}
+			if ($this->statement) $this->statement = null; // close
+			throw new BuildException($e);
+		} catch (PDOException $e) {
+			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
+				try {
+					$this->conn->rollback();
+				} catch (PDOException $ex) {
+					// do nothing.
+					System::println("Rollback failed");
+				}
+			}
+			if ($this->statement) $this->statement = null; // close
+			throw new BuildException($e);
+		}
 
-                $sql .= " " . $line . "\n";
+		   $this->statement = null; // close
 
-                // SQL defines "--" as a comment to EOL
-                // and in Oracle it may contain a hint
-                // so we cannot just remove it, instead we must end it
-                if (strpos($line, "--") !== false) {
-                    $sql .= "\n";
-                }
+		$this->log($this->goodSql . " of " . $this->totalSql
+				. " SQL statements executed successfully");
+	}
 
-                // DELIM_ROW doesn't need this (as far as i can tell)
-                if($this->delimiterType == self::DELIM_NORMAL) {
-                
-                    $reg = "#((?:\"(?:\\\\.|[^\"])*\"?)+|'(?:\\\\.|[^'])*'?|" . preg_quote($this->delimiter) . ")#";
+	/**
+	 * Read the statements from the .sql file and execute them.
+	 * Lines starting with '//', '--' or 'REM ' are ignored.
+	 *
+	 * Developer note:  must be public in order to be called from
+	 * sudo-"inner" class PropelSQLExecTransaction.
+	 *
+	 * @param Reader $reader
+	 * @param $out Optional output stream.
+	 * @throws PDOException
+	 * @throws IOException
+	 */
+	public function runStatements(Reader $reader, $out = null)
+	{
+		$sql = "";
+		$line = "";
+		$sqlBacklog = "";
+		$hasQuery = false;
 
-                    $sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
-                    $sqlBacklog = "";
-                    foreach($sqlParts as $sqlPart) {
-                        // we always want to append, even if it's a delim (which will be stripped off later)
-                        $sqlBacklog .= $sqlPart; 
+		$in = new BufferedReader($reader);
 
-                        // we found a single (not enclosed by ' or ") delimiter, so we can use all stuff before the delim as the actual query
-                        if($sqlPart === $this->delimiter) {
-                            $sql = $sqlBacklog;
-                            $sqlBacklog = "";
-                            $hasQuery = true;
-                        }
-                    }
-                }
+		try {
+			while (($line = $in->readLine()) !== null) {
+				$line = trim($line);
+				$line = ProjectConfigurator::replaceProperties($this->project, $line,
+						$this->project->getProperties());
 
-                if ($hasQuery || ($this->delimiterType == self::DELIM_ROW && $line == $this->delimiter)) {
-                    // this assumes there is always a delimter on the end of the SQL statement.
-                    $sql = StringHelper::substring($sql, 0, strlen($sql) - 1 - strlen($this->delimiter));
-                    $this->log("SQL: " . $sql, PROJECT_MSG_VERBOSE);
-                    $this->execSQL($sql, $out);
-                    $sql = "";
-                    $hasQuery = false;
-                }
-            }
+				if (StringHelper::startsWith("//", $line) ||
+					StringHelper::startsWith("--", $line) ||
+					StringHelper::startsWith("#", $line)) {
+					continue;
+				}
 
-            // Catch any statements not followed by ;
-            if ($sql !== "") {
-                $this->execSQL($sql, $out);
-            }
-        } catch (PDOException $e) {
-            throw $e;
-        }
-    }
+				if (strlen($line) > 4
+						&& strtoupper(substr($line,0, 4)) == "REM ") {
+					continue;
+				}
 
-    /**
-     * Exec the sql statement.
-     *
-     * @param sql
-     * @param out
-     * @throws PDOException
-     */
-    protected function execSQL($sql, $out = null)
-    {
-        // Check and ignore empty statements
-        if (trim($sql) == "") {
-            return;
-        }
+				if ($sqlBacklog !== "")
+				{
+					$sql = $sqlBacklog;
+					$sqlBacklog = "";
+				}
 
-        try {
-            $this->totalSql++;
-            
-            if (!$this->autocommit) $this->conn->beginTransaction();
-            
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            $this->log($stmt->rowCount() . " rows affected", PROJECT_MSG_VERBOSE);
-			
+				$sql .= " " . $line . "\n";
+
+				// SQL defines "--" as a comment to EOL
+				// and in Oracle it may contain a hint
+				// so we cannot just remove it, instead we must end it
+				if (strpos($line, "--") !== false) {
+					$sql .= "\n";
+				}
+
+				// DELIM_ROW doesn't need this (as far as i can tell)
+				if ($this->delimiterType == self::DELIM_NORMAL) {
+
+					$reg = "#((?:\"(?:\\\\.|[^\"])*\"?)+|'(?:\\\\.|[^'])*'?|" . preg_quote($this->delimiter) . ")#";
+
+					$sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
+					$sqlBacklog = "";
+					foreach($sqlParts as $sqlPart) {
+						// we always want to append, even if it's a delim (which will be stripped off later)
+						$sqlBacklog .= $sqlPart;
+
+						// we found a single (not enclosed by ' or ") delimiter, so we can use all stuff before the delim as the actual query
+						if ($sqlPart === $this->delimiter) {
+							$sql = $sqlBacklog;
+							$sqlBacklog = "";
+							$hasQuery = true;
+						}
+					}
+				}
+
+				if ($hasQuery || ($this->delimiterType == self::DELIM_ROW && $line == $this->delimiter)) {
+					// this assumes there is always a delimter on the end of the SQL statement.
+					$sql = StringHelper::substring($sql, 0, strlen($sql) - 1 - strlen($this->delimiter));
+					$this->log("SQL: " . $sql, PROJECT_MSG_VERBOSE);
+					$this->execSQL($sql, $out);
+					$sql = "";
+					$hasQuery = false;
+				}
+			}
+
+			// Catch any statements not followed by ;
+			if ($sql !== "") {
+				$this->execSQL($sql, $out);
+			}
+		} catch (PDOException $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Exec the sql statement.
+	 *
+	 * @param sql
+	 * @param out
+	 * @throws PDOException
+	 */
+	protected function execSQL($sql, $out = null)
+	{
+		// Check and ignore empty statements
+		if (trim($sql) == "") {
+			return;
+		}
+
+		try {
+			$this->totalSql++;
+
+			if (!$this->autocommit) $this->conn->beginTransaction();
+
+			$stmt = $this->conn->prepare($sql);
+			$stmt->execute();
+			$this->log($stmt->rowCount() . " rows affected", PROJECT_MSG_VERBOSE);
+
 			if (!$this->autocommit) $this->conn->commit();
-			
-            $this->goodSql++;
-        } catch (PDOException $e) {
-            $this->log("Failed to execute: " . $sql, PROJECT_MSG_ERR);
-            if ($this->onError != "continue") {
-                throw $e;
-            }
-            $this->log($e->getMessage(), PROJECT_MSG_ERR);
-        }
-    }
 
-    /**
-     * print any results in the statement.
-     *
-     * @param out
-     * @throws PDOException
-     */
-    protected function printResults($out = null)
-    {
-        $rs = null;
-        
-        do {
-            $rs = $this->statement->getResultSet();
-            
-            if ($rs !== null) {
-            
-                $this->log("Processing new result set.", PROJECT_MSG_VERBOSE);            
-    
-                $line = "";
+			$this->goodSql++;
+		} catch (PDOException $e) {
+			$this->log("Failed to execute: " . $sql, PROJECT_MSG_ERR);
+			if ($this->onError != "continue") {
+				throw $e;
+			}
+			$this->log($e->getMessage(), PROJECT_MSG_ERR);
+		}
+	}
 
-                $colsprinted = false;
-                
-                while ($rs->next()) {
-                
-                    if (!$colsprinted && $this->showheaders) {
-                        $first = true;                        
-                        foreach($this->fields as $fieldName => $ignore) {
-                            if ($first) $first = false; else $line .= ",";
-                            $line .= $fieldName;
-                        }
-                    } // if show headers
-                    
-                    $first = true;
-                    foreach($rs->fields as $columnValue) {
-                        
-                        if ($columnValue != null) {
-                            $columnValue = trim($columnValue);
-                        }
+	/**
+	 * print any results in the statement.
+	 *
+	 * @param out
+	 * @throws PDOException
+	 */
+	protected function printResults($out = null)
+	{
+		$rs = null;
 
-                        if ($first) {
-                            $first = false;
-                        } else {
-                            $line .= ",";
-                        }
-                        $line .= $columnValue;
-                    }
-                    
-                    if ($out !== null) {
-                        $out->write($line);
-                        $out->newLine();
-                    }
-                    
-                    System::println($line);
-                    $line = "";
-                } // while rs->next()
-            }
-        } while ($this->statement->getMoreResults());
-        System::println();
-        if ($out !== null) $out->newLine();
-    }
+		do {
+			$rs = $this->statement->getResultSet();
+
+			if ($rs !== null) {
+
+				$this->log("Processing new result set.", PROJECT_MSG_VERBOSE);
+
+				$line = "";
+
+				$colsprinted = false;
+
+				while ($rs->next()) {
+
+					if (!$colsprinted && $this->showheaders) {
+						$first = true;
+						foreach($this->fields as $fieldName => $ignore) {
+							if ($first) $first = false; else $line .= ",";
+							$line .= $fieldName;
+						}
+					} // if show headers
+
+					$first = true;
+					foreach($rs->fields as $columnValue) {
+
+						if ($columnValue != null) {
+							$columnValue = trim($columnValue);
+						}
+
+						if ($first) {
+							$first = false;
+						} else {
+							$line .= ",";
+						}
+						$line .= $columnValue;
+					}
+
+					if ($out !== null) {
+						$out->write($line);
+						$out->newLine();
+					}
+
+					System::println($line);
+					$line = "";
+				} // while rs->next()
+			}
+		} while ($this->statement->getMoreResults());
+		System::println();
+		if ($out !== null) $out->newLine();
+	}
 
 }
 
@@ -615,42 +615,41 @@ class PropelSQLExec extends Task {
  */
 class PropelSQLExecTransaction {
 
-    private $tSrcFile = null;
-    private $tSqlCommand = "";
-    private $parent;
-    
-    function __construct($parent)
-    {
-        // Parent is required so that we can log things ...
-        $this->parent = $parent;
-    }
-    
-    public function setSrc(PhingFile $src)
-    {
-        $this->tSrcFile = $src;
-    }
+	private $tSrcFile = null;
+	private $tSqlCommand = "";
+	private $parent;
 
-    public function addText($sql)
-    {
-        $this->tSqlCommand .= $sql;
-    }
+	function __construct($parent)
+	{
+		// Parent is required so that we can log things ...
+		$this->parent = $parent;
+	}
 
-    /**
-     * @throws IOException, PDOException
-     */
-    public function runTransaction($out = null)
-    {
-        if (!empty($this->tSqlCommand)) {
-            $this->parent->log("Executing commands", PROJECT_MSG_INFO);
-            $this->parent->runStatements($tSqlCommand, $out);
-        }
+	public function setSrc(PhingFile $src)
+	{
+		$this->tSrcFile = $src;
+	}
 
-        if ($this->tSrcFile !== null) {
-            $this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(), PROJECT_MSG_INFO);
-            $reader = new FileReader($this->tSrcFile);
-            $this->parent->runStatements($reader, $out);
-            $reader->close();
-        }
-    }
+	public function addText($sql)
+	{
+		$this->tSqlCommand .= $sql;
+	}
+
+	/**
+	 * @throws IOException, PDOException
+	 */
+	public function runTransaction($out = null)
+	{
+		if (!empty($this->tSqlCommand)) {
+			$this->parent->log("Executing commands", PROJECT_MSG_INFO);
+			$this->parent->runStatements($tSqlCommand, $out);
+		}
+
+		if ($this->tSrcFile !== null) {
+			$this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(), PROJECT_MSG_INFO);
+			$reader = new FileReader($this->tSrcFile);
+			$this->parent->runStatements($reader, $out);
+			$reader->close();
+		}
+	}
 }
-

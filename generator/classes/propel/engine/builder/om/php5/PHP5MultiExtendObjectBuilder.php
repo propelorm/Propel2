@@ -88,7 +88,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	protected function getParentClasspath()
 	{
 		if ($this->getChild()->getAncestor()) {
-		    return $this->getChild()->getAncestor();
+			return $this->getChild()->getAncestor();
 		} else {
 			return $this->getObjectBuilder()->getClasspath();
 		}
@@ -170,8 +170,8 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 	protected function addClassBody(&$script)
 	{
 		$child = $this->getChild();
-        $col = $child->getColumn();
-        $cfc = $col->getPhpName();
+		$col = $child->getColumn();
+		$cfc = $col->getPhpName();
 
 		$const = "CLASSKEY_".strtoupper($child->getKey());
 
@@ -184,8 +184,8 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 ";
 
 		$script .= "
-        \$this->set$cfc(".$this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");
-    }
+		\$this->set$cfc(".$this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");
+	}
 ";
 	}
 

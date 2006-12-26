@@ -32,24 +32,24 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 class PgsqlDDLBuilder extends DDLBuilder {
 
 
-    /**
-     * Array that keeps track of already
-     * added schema names
-     *
-     * @var Array of schema names
-     */
-    protected static $addedSchemas = array();
-	
+	/**
+	 * Array that keeps track of already
+	 * added schema names
+	 *
+	 * @var Array of schema names
+	 */
+	protected static $addedSchemas = array();
+
 	/**
 	 * Queue of constraint SQL that will be added to script at the end.
-	 * 
+	 *
 	 * PostgreSQL seems (now?) to not like constraints for tables that don't exist,
 	 * so the solution is to queue up the statements and execute it at the end.
-	 * 
+	 *
 	 * @var array
 	 */
-	protected static $queuedConstraints = array(); 
-	
+	protected static $queuedConstraints = array();
+
 	/**
 	 * Reset static vars between db iterations.
 	 */
@@ -68,53 +68,53 @@ class PgsqlDDLBuilder extends DDLBuilder {
 		$ddl = implode("", self::$queuedConstraints);
 		return $ddl;
 	}
-	
-    /**
-     * Get the schema for the current table
-     *
-     * @author Markus Lervik <markus.lervik@necora.fi>
-     * @access protected
-     * @return schema name if table has one, else
-     *         null
-     **/
-    protected function getSchema()
-    {
 
-        $table = $this->getTable();
-        $schema = $table->getVendorSpecificInfo();
-        if (!empty($schema) && isset($schema['schema'])) {
-            return $schema['schema'];
-        }
+	/**
+	 * Get the schema for the current table
+	 *
+	 * @author Markus Lervik <markus.lervik@necora.fi>
+	 * @access protected
+	 * @return schema name if table has one, else
+	 *         null
+	 **/
+	protected function getSchema()
+	{
 
-        return null;
+		$table = $this->getTable();
+		$schema = $table->getVendorSpecificInfo();
+		if (!empty($schema) && isset($schema['schema'])) {
+			return $schema['schema'];
+		}
 
-    }
+		return null;
 
-    /**
-     * Add a schema to the generated SQL script
-     *
-     * @author Markus Lervik <markus.lervik@necora.fi>
-     * @access protected
-     * @return string with CREATE SCHEMA statement if
-     *         applicable, else empty string
-     **/
-    protected function addSchema()
-    {
+	}
 
-        $schemaName = $this->getSchema();
+	/**
+	 * Add a schema to the generated SQL script
+	 *
+	 * @author Markus Lervik <markus.lervik@necora.fi>
+	 * @access protected
+	 * @return string with CREATE SCHEMA statement if
+	 *         applicable, else empty string
+	 **/
+	protected function addSchema()
+	{
 
-        if ($schemaName !== null) {
+		$schemaName = $this->getSchema();
 
-            if (!in_array($schemaName, self::$addedSchemas)) {
+		if ($schemaName !== null) {
+
+			if (!in_array($schemaName, self::$addedSchemas)) {
 		$platform = $this->getPlatform();
-                self::$addedSchemas[] = $schemaName;
+				self::$addedSchemas[] = $schemaName;
 		return "\nCREATE SCHEMA " . $this->quoteIdentifier($schemaName) . ";\n";
-            }
-        }
+			}
+		}
 
-        return '';
+		return '';
 
-    }
+	}
 
 	/**
 	 *
@@ -150,17 +150,17 @@ DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolo
 -----------------------------------------------------------------------------
 ";
 
-        $script .= $this->addSchema();
+		$script .= $this->addSchema();
 
-        $schemaName = $this->getSchema();
-        if ($schemaName !== null) {
-            $script .= "\nSET search_path TO " . $this->quoteIdentifier($schemaName) . ";\n";
-        }
+		$schemaName = $this->getSchema();
+		if ($schemaName !== null) {
+			$script .= "\nSET search_path TO " . $this->quoteIdentifier($schemaName) . ";\n";
+		}
 
 		$this->addDropStatements($script);
 		$this->addSequences($script);
 
-        $script .= "
+		$script .= "
 
 CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
 (
@@ -178,7 +178,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 		foreach ($table->getUnices() as $unique ) {
 			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($unique->getName())." UNIQUE (".$this->getColumnList($unique->getColumns()).")";
-    	}
+		}
 
 		$sep = ",
 	";
@@ -192,7 +192,7 @@ COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($tab
 
 		$this->addColumnComments($script);
 
-        $script .= "\nSET search_path TO public;";
+		$script .= "\nSET search_path TO public;";
 
 	}
 
@@ -206,7 +206,7 @@ COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($tab
 		$platform = $this->getPlatform();
 
 		foreach ($this->getTable()->getColumns() as $col) {
-    		if( $col->getDescription() != '' ) {
+			if ( $col->getDescription() != '' ) {
 				$script .= "
 COMMENT ON COLUMN ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName())).".".$this->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
 ";
@@ -243,7 +243,7 @@ CREATE SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strto
 		foreach ($table->getIndices() as $index) {
 			$script .= "
 CREATE ";
-			if($index->getIsUnique()) {
+			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
 			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");

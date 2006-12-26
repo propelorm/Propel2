@@ -30,29 +30,29 @@ require_once 'propel/engine/platform/MysqlPlatform.php';
  */
 class MysqliPlatform extends MysqlPlatform {
 
-    /**
-     * Initializes db specific domain mapping.
-     */
-    protected function initialize()
-    {
-        parent::initialize();
-        
-		// HL -- commenting these out, as it turns out that while the date format is fixed
-		// there is still a special meaning to TIMESTAMP in MySQL 4.1+ 
-        // $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
-        // $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "TIMESTAMP"));
-    }
+	/**
+	 * Initializes db specific domain mapping.
+	 */
+	protected function initialize()
+	{
+		parent::initialize();
 
-    /**
-     * Escape the string for MySQL.
-	 * 
-     * @param string $text
-     * @return string
-     */
-    public function escapeText($text) {
+		// HL -- commenting these out, as it turns out that while the date format is fixed
+		// there is still a special meaning to TIMESTAMP in MySQL 4.1+
+		// $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
+		// $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "TIMESTAMP"));
+	}
+
+	/**
+	 * Escape the string for MySQL.
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	public function escapeText($text) {
 		// Because mysqli requires open connection, we are using addslashes() here.
 		// This needs to be fixed in a better way ...
-        return addslashes($text);
-    }
-	
+		return addslashes($text);
+	}
+
 }

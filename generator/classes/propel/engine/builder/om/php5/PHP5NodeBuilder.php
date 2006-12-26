@@ -280,7 +280,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 		\$itclass = ucfirst(strtolower(\$type)) . 'OrderNodeIterator';
 
 ";
-        $script .= "
+		$script .= "
 	}
 ";
 	}

@@ -17,21 +17,21 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 require_once 'bookstore/BookstoreTestBase.php';
 
 /**
  * Tests the validator classes.
  *
- * This test uses generated Bookstore classes to test the behavior of various 
+ * This test uses generated Bookstore classes to test the behavior of various
  * validator operations.
- * 
+ *
  * The database is relaoded before every test and flushed after every test.  This
- * means that you can always rely on the contents of the databases being the same 
- * for each test method in this class.  See the BookstoreDataPopulator::populate() 
+ * means that you can always rely on the contents of the databases being the same
+ * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
- * 
+ *
  * @see BookstoreDataPopulator
  * @author Michael Aichler <aichler@mediacluster.de>
  */
@@ -44,11 +44,11 @@ class ValidatorTest extends BookstoreTestBase
   */
   function testDoValidate_MinLength()
   {
-    $book = new Book();
-    $book->setTitle("12345"); // min length is 10
+	$book = new Book();
+	$book->setTitle("12345"); // min length is 10
 
-    $ret = $book->validate();
-    $this->assertSingleValidation($ret, "Book title must be more than 10 characters long.");
+	$ret = $book->validate();
+	$this->assertSingleValidation($ret, "Book title must be more than 10 characters long.");
   }
 
   /**
@@ -56,11 +56,11 @@ class ValidatorTest extends BookstoreTestBase
   */
   function testDoValidate_Unique()
   {
-    $book = new Book();
-    $book->setTitle("Don Juan");
+	$book = new Book();
+	$book->setTitle("Don Juan");
 
-    $ret = $book->validate();
-    $this->assertSingleValidation($ret, "Book title already in database.");
+	$ret = $book->validate();
+	$this->assertSingleValidation($ret, "Book title already in database.");
   }
 
   /**
@@ -68,44 +68,44 @@ class ValidatorTest extends BookstoreTestBase
   */
   function testDoValidate_Complex()
   {
-    $book = new Book();
-    $book->setTitle("12345"); // min length is 10
+	$book = new Book();
+	$book->setTitle("12345"); // min length is 10
 
-    $author = new Author();
-    $author->setFirstName("Hans"); // last name required; will fail
-    
-    $review = new Review();
-    $review->setReviewDate("08/09/2001"); // will fail: reviewed_by column required
-     
-    $book->setAuthor($author);
-    $book->addReview($review);
-    
-    $ret = $book->validate();
-    
-    /* Make sure 3 validation messages were returned */
-    $this->assertEquals(3, count($ret), "");
-    
-    /* Make sure correct columns failed */
-    $expectedCols = array(AuthorPeer::LAST_NAME(), BookPeer::TITLE(), ReviewPeer::REVIEWED_BY());
-    $returnedCols = array_keys($ret);
+	$author = new Author();
+	$author->setFirstName("Hans"); // last name required; will fail
 
-    /* implode for readability */
-    $this->assertEquals(implode(',', $expectedCols), implode(',', $returnedCols));
+	$review = new Review();
+	$review->setReviewDate("08/09/2001"); // will fail: reviewed_by column required
+
+	$book->setAuthor($author);
+	$book->addReview($review);
+
+	$ret = $book->validate();
+
+	/* Make sure 3 validation messages were returned */
+	$this->assertEquals(3, count($ret), "");
+
+	/* Make sure correct columns failed */
+	$expectedCols = array(AuthorPeer::LAST_NAME(), BookPeer::TITLE(), ReviewPeer::REVIEWED_BY());
+	$returnedCols = array_keys($ret);
+
+	/* implode for readability */
+	$this->assertEquals(implode(',', $expectedCols), implode(',', $returnedCols));
   }
 
 
   function assertSingleValidation($ret, $expectedMsg)
   {
-    /* Make sure validation failed */
-    $this->assertTrue($ret !== true, "Expected validation to fail !");
+	/* Make sure validation failed */
+	$this->assertTrue($ret !== true, "Expected validation to fail !");
 
-    /* Make sure 1 validation message was returned */
-    $count = count($ret);
-    $this->assertTrue($count === 1, "Expected that exactly one validation failed ($count) !");
+	/* Make sure 1 validation message was returned */
+	$count = count($ret);
+	$this->assertTrue($count === 1, "Expected that exactly one validation failed ($count) !");
 
-    /* Make sure expected validation message was returned */
-    $el = array_shift($ret);
-    $this->assertEquals($el->getMessage(), $expectedMsg, "Got unexpected validation failed message: " . $el->getMessage());
+	/* Make sure expected validation message was returned */
+	$el = array_shift($ret);
+	$this->assertEquals($el->getMessage(), $expectedMsg, "Got unexpected validation failed message: " . $el->getMessage());
   }
 
 }
