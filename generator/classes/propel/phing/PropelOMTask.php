@@ -170,19 +170,33 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						// Create tree Node classes
 						// -----------------------------------------------------------------------------------------
 
-						if ($table->isTree()) {
+						if ($table->treeMode()) {
+						    switch($table->treeMode()) {
+								case 'NestedSet':
+									foreach(array('nestedsetpeer', 'nestedset') as $target) {
+										$builder = DataModelBuilder::builderFactory($table, $target);
+										$this->build($builder);
+									}
+								break;
 
-							foreach(array('nodepeer', 'node') as $target) {
-								$builder = DataModelBuilder::builderFactory($table, $target);
-								$this->build($builder);
+								case 'MaterializedPath':
+									foreach(array('nodepeer', 'node') as $target) {
+										$builder = DataModelBuilder::builderFactory($table, $target);
+										$this->build($builder);
+									}
+
+									foreach(array('nodepeerstub', 'nodestub') as $target) {
+										$builder = DataModelBuilder::builderFactory($table, $target);
+										$this->build($builder, $overwrite=false);
+									}
+								break;
+								
+								case 'AdjacencyList':
+								default:
+								break;
 							}
 
-							foreach(array('nodepeerstub', 'nodestub') as $target) {
-								$builder = DataModelBuilder::builderFactory($table, $target);
-								$this->build($builder, $overwrite=false);
-							}
-
-						} // if Table->isTree()
+						} // if Table->treeMode()
 
 
 					} // if !$table->isForReferenceOnly()
@@ -192,7 +206,6 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 			} // foreach database
 
 		} // foreach dataModel
-
 
 	} // main()
 }

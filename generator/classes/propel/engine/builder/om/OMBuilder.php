@@ -27,7 +27,7 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
  *
  * OM-building classes are those that build a PHP (or other) class to service
  * a single table.  This includes Peer classes, Entity classes, Map classes,
- * Node classes, etc.
+ * Node classes, Nested Set classes, etc.
  *
  * @author Hans Lellelid <hans@xmpl.org>
  * @package propel.engine.builder.om
@@ -100,6 +100,17 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	private $stubNodePeerBuilder;
 
+	/**
+	 * NestedSet object builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $nestedSetBuilder;
+
+	/**
+	 * NestedSet peer builder for current table.
+	 * @var DataModelBuilder
+	 */
+	private $nestedSetPeerBuilder;
 
 	/**
 	 * Returns new or existing Peer builder class for this table.
@@ -232,6 +243,30 @@ abstract class OMBuilder extends DataModelBuilder {
 			$this->stubNodePeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nodepeerstub');
 		}
 		return $this->stubNodePeerBuilder;
+	}
+
+	/**
+	 * Returns new or existing nested set Object builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getNestedSetBuilder()
+	{
+		if (!isset($this->nestedSetBuilder)) {
+			$this->nestedSetBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nestedset');
+		}
+		return $this->nestedSetBuilder;
+	}
+
+	/**
+	 * Returns new or existing nested set Peer builder class for this table.
+	 * @return DataModelBuilder
+	 */
+	public function getNestedSetPeerBuilder()
+	{
+		if (!isset($this->nestedSetPeerBuilder)) {
+			$this->nestedSetPeerBuilder = DataModelBuilder::builderFactory($this->getTable(), 'nestedsetpeer');
+		}
+		return $this->nestedSetPeerBuilder;
 	}
 
 	/**

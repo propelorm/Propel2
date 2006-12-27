@@ -114,7 +114,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						//	- base node peer and object classes
 
 						// -----------------------------------------------------------------------------------------
-						// Add Peer & Object stub classes and MapBuilder classe
+						// Add Peer & Object stub classes and MapBuilder classes
 						// -----------------------------------------------------------------------------------------
 						// (this code is based on PropelOMTask)
 
@@ -150,13 +150,13 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						// Create tree Node classes
 						// -----------------------------------------------------------------------------------------
 
-						if ($table->isTree()) {
+						if ('MaterializedPath' == $table->treeMode()) {
 							foreach(array('nodepeerstub', 'nodestub') as $target) {
 								$builder = DataModelBuilder::builderFactory($table, $target);
 								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
 							}
-						} // if Table->isTree()
+						} // if Table->treeMode() == 'MaterializedPath'
 
 					} // if (!$table->isReferenceOnly())
 				}

@@ -132,4 +132,13 @@ class PropelPDO extends PDO {
 			$this->decrementNestedTransactionCount();
 		}
 	}
+
+	/**
+	 * Overrides PDO::prepare() to add logging.
+	 */
+	public function prepare($sql)
+	{
+		Propel::log($sql, Propel::LOG_DEBUG);
+		return parent::prepare($sql);
+	}
 }

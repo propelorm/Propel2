@@ -77,6 +77,8 @@ class Column extends XMLElement {
 	private $isPrimaryKey = false;
 	private $isNodeKey = false;
 	private $nodeKeySep;
+	private $isNestedSetLeftKey = false;
+	private $isNestedSetRightKey = false;
 	private $isUnique = false;
 	private $isAutoIncrement = false;
 	private $isLazyLoad = false;
@@ -162,6 +164,9 @@ class Column extends XMLElement {
 
 			$this->isNodeKey = $this->booleanValue($this->getAttribute("nodeKey"));
 			$this->nodeKeySep = $this->getAttribute("nodeKeySep", ".");
+
+			$this->isNestedSetLeftKey = $this->booleanValue($this->getAttribute("nestedSetLeftKey"));
+			$this->isNestedSetRightKey = $this->booleanValue($this->getAttribute("nestedSetRightKey"));
 
 			$this->isNotNull = $this->booleanValue($this->getAttribute("required"), false);
 
@@ -470,6 +475,38 @@ class Column extends XMLElement {
 	public function getNodeKeySep()
 	{
 		return $this->nodeKeySep;
+	}
+
+	/**
+	 * Set if the column is the nested set left key of a tree
+	 */
+	public function setNestedSetLeftKey($nslk)
+	{
+		$this->isNestedSetLeftKey = (boolean) $nslk;
+	}
+
+	/**
+	 * Return true if the column is a nested set key of a tree
+	 */
+	public function isNestedSetLeftKey()
+	{
+		return $this->isNestedSetLeftKey;
+	}
+
+	/**
+	 * Set if the column is the nested set right key of a tree
+	 */
+	public function setNestedSetRightKey($nsrk)
+	{
+		$this->isNestedSetRightKey = (boolean) $nsrk;
+	}
+
+	/**
+	 * Return true if the column is a nested set right key of a tree
+	 */
+	public function isNestedSetRightKey()
+	{
+		return $this->isNestedSetRightKey;
 	}
 
 	/**

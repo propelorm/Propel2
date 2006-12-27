@@ -78,7 +78,7 @@ class Table extends XMLElement implements IDMethod {
 	private $needsTransactionInPostgres;//maybe this can be retrieved from vendorSpecificInfo?
 	private $heavyIndexing;
 	private $forReferenceOnly;
-	private $isTree;
+	private $treeMode;
 
 	/**
 	 * Constructs a table object with a name
@@ -125,7 +125,7 @@ class Table extends XMLElement implements IDMethod {
 						&& $this->getDatabase()->isHeavyIndexing() ) );
 		$this->description = $this->getAttribute("description");
 		$this->enterface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
-		$this->isTree = $this->booleanValue($this->getAttribute("isTree"));
+		$this->treeMode = $this->getAttribute("treeMode");
 	}
 
 	/**
@@ -920,22 +920,22 @@ class Table extends XMLElement implements IDMethod {
 		$this->forReferenceOnly = (boolean) $v;
 	}
 
-   /**
+	/**
 	 * Flag to determine if tree node class should be generated for this table.
-	 * @return valur of isTree
-	*/
-   public function isTree()
-   {
-		return $this->isTree;
-   }
+	 * @return valur of treeMode
+	 */
+	public function treeMode()
+	{
+		return $this->treeMode;
+	}
 
 	/**
 	 * Flag to determine if tree node class should be generated for this table.
-	 * @param v  Value to assign to isTree.
+	 * @param v  Value to assign to treeMode.
 	 */
-	public function setIsTree($v)
+	public function setTreeMode($v)
 	{
-		$this->isTree = (boolean) $v;
+		$this->treeMode = $v;
 	}
 
 	/**
@@ -971,10 +971,10 @@ class Table extends XMLElement implements IDMethod {
 				  . '"';
 		}
 
-		if ($this->isTree) {
-			$result .= " isTree=\""
-				  . ($this->isTree ? "true" : "false")
-				  . '"';
+		if ($this->treeMode) {
+			$result .= " treeMode=\""
+					. $this->treeMode
+					. '"';
 		}
 
 		if ($this->forReferenceOnly) {

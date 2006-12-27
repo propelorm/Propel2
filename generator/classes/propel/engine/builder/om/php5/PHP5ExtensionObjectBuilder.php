@@ -51,8 +51,20 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 	 */
 	protected function addIncludes(&$script)
 	{
+		switch($this->getTable()->treeMode()) {
+			case 'NestedSet':
+				$requiredClassFilePath = $this->getNestedSetBuilder()->getClassFilePath();
+			break;
+
+			case 'MaterializedPath':
+			case "AdjacencyList":
+			default:
+				$requiredClassFilePath = $this->getObjectBuilder()->getClassFilePath();
+			break;
+		}
+
 		$script .="
-require '".$this->getObjectBuilder()->getClassFilePath()."';
+require '".$requiredClassFilePath."';
 ";
 	} // addIncludes()
 
@@ -67,7 +79,17 @@ require '".$this->getObjectBuilder()->getClassFilePath()."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 
-		$baseClassname = $this->getObjectBuilder()->getClassname();
+		switch($table->treeMode()) {
+			case 'NestedSet':
+				$baseClassname = $this->getNestedSetBuilder()->getClassname();
+			break;
+
+			case 'MaterializedPath':
+			case "AdjacencyList":
+			default:
+				$baseClassname = $this->getObjectBuilder()->getClassname();
+			break;
+		}
 
 		$script .= "
 
