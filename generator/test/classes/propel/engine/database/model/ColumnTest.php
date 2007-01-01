@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: TableTest.php 287 2005-11-25 17:14:50Z hans $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
  * Tests for package handling.
  *
  * @author <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version $Id: TableTest.php 287 2005-11-25 17:14:50Z hans $
+ * @version $Id$
  */
 class ColumnTest extends PHPUnit2_Framework_TestCase {
 

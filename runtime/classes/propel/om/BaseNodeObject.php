@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: BaseObject.php 460 2006-10-05 04:24:57Z david $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
  * business objects within the system to handle Node object.
  *
  * @author Heltem <heltme@o2php.com> (Propel)
- * @version $Revision: 460 $
+ * @version $Revision$
  * @package propel.om
  */
 interface BaseNodeObject extends IteratorAggregate {

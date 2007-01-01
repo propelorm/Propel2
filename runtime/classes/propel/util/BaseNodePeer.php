@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: BaseNodePeer.php 475 2006-10-20 19:06:35Z hans $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,7 +23,7 @@
  * This is a utility interface for all generated NodePeer classes in the system.
  *
  * @author Heltem <heltem@o2php.com> (Propel)
- * @version $Revision: 475 $
+ * @version $Revision$
  * @package propel.util
  */
 interface BaseNodePeer {

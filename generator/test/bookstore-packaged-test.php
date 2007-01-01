@@ -18,7 +18,7 @@
  * functionality into class & provide ability to subclass.
  *
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision: 71 $
+ * @version $Revision$
  */
 
 // Setup configuration.  It is expected that the bookstore-conf.php file exists in ../build/conf

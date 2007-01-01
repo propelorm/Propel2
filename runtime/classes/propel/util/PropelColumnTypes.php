@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PropelTypes.php 216 2005-09-28 13:16:42Z hans $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@
  * THIS CLASS MUST BE KEPT UP-TO-DATE WITH THE MORE EXTENSIVE GENERATOR VERSION OF THIS CLASS.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @version $Revision: 216 $
+ * @version $Revision$
  * @package propel.util
  */
 class PropelColumnTypes {

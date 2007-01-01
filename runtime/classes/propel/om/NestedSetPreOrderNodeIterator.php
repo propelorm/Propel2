@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: NestedSetPreOrderNodeIterator.php 64 2005-05-13 02:43:56Z root $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
  * Pre-order node iterator for Node objects.
  *
  * @author Heltem <heltem@o2php.com>
- * @version $Revision: 64 $
+ * @version $Revision$
  * @package propel.om
  */
 class NestedSetPreOrderNodeIterator implements Iterator
