@@ -29,54 +29,54 @@
  */
 class NestedSetPreOrderNodeIterator implements Iterator
 {
-    private $topNode = null;
-    
-    private $curNode = null;
- 
-    public function __construct($node) {
+	private $topNode = null;
+
+	private $curNode = null;
+
+	public function __construct($node) {
 		$this->topNode = $node;
 		$this->curNode = $node;
-    }
-    
-    public function rewind() {
-        $this->curNode = $this->topNode;
-    }
-    
-    public function valid() {
-        return ($this->curNode !== null && $this->curNode !== false);
-    }
-    
-    public function current() {
-        return $this->curNode;
-    }
-    
-    public function key() {
-        return $this->curNode->getPath();
-    }
+	}
 
-    public function next() {
-        $nextNode = false;
-        
-        if ($this->valid()) {
-	        if($this->curNode->hasChildren()) {
-	            $nextNode = $this->curNode->retrieveFirstChild();
+	public function rewind() {
+		$this->curNode = $this->topNode;
+	}
+
+	public function valid() {
+		return ($this->curNode !== null && $this->curNode !== false);
+	}
+
+	public function current() {
+		return $this->curNode;
+	}
+
+	public function key() {
+		return $this->curNode->getPath();
+	}
+
+	public function next() {
+		$nextNode = false;
+
+		if ($this->valid()) {
+			if($this->curNode->hasChildren()) {
+				$nextNode = $this->curNode->retrieveFirstChild();
 			}
 
-	        while(false === $nextNode) {
-	            if(null === $this->curNode) {
+			while(false === $nextNode) {
+				if(null === $this->curNode) {
 					break;
 				}
 
-		        if($this->curNode->hasNextSibling()) {
-		            $nextNode = $this->curNode->retrieveNextSibling();
+				if($this->curNode->hasNextSibling()) {
+					$nextNode = $this->curNode->retrieveNextSibling();
 				} else if ($this->curNode->isEqualTo($this->topNode)) {
-				    break;
+					break;
 				} else {
 					$this->curNode = $this->curNode->retrieveParent();
 				}
 			}
-	        $this->curNode = $nextNode;
-        }
-        return $this->curNode;
-    }
+			$this->curNode = $nextNode;
+		}
+		return $this->curNode;
+	}
 }
