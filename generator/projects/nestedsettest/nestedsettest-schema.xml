@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="treetest" defaultIdMethod="native">
+
+	<table name="test" treeMode="NestedSet" description="Test">
+		<column
+			name="id"
+			required="true"
+			primaryKey="true"
+			type="INTEGER"
+			description="Node Id"/>
+		<column
+			name="left"
+			required="true"
+			nestedSetLeftKey="true"
+			type="INTEGER"
+			description="Node Left Key"/>
+		<column
+			name="right"
+			required="true"
+			nestedSetRightKey="true"
+			type="INTEGER"
+			description="Node Right Key"/>
+		<column
+			name="label"
+			required="true"
+			type="VARCHAR"
+			size="10"
+			description="Label"/>
+		<unique name="pk">
+			<unique-column name="label"/>
+		</unique>
+		<unique name="left">
+			<unique-column name="left"/>
+		</unique>
+		<unique name="right">
+			<unique-column name="right"/>
+		</unique>
+	</table>
+
+</database>
