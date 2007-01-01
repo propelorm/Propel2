@@ -6,6 +6,7 @@
 			name="id"
 			required="true"
 			primaryKey="true"
+			autoIncrement="true"
 			type="INTEGER"
 			description="Node Id"/>
 		<column
