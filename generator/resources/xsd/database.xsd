@@ -290,10 +290,10 @@
 		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use="optional"/>
 		<xs:attribute name="description" type="xs:string" use="optional"/>
 		<xs:attribute name="lazyLoad" type="xs:boolean" default="false"/>
-		<xs:attribute name="nodeKeySep" type="xs:string" use="optional"/> <!-- missing in the old DTD, but required to keep the treetest example working -->
-		<xs:attribute name="nodeKey" type="xs:string" use="optional"/> <!-- missing in the old DTD, but required to keep the treetest example working -->
-		<xs:attribute name="nestedSetLeftKey" type="xs:boolean" default="false"/> <!-- missing in the old DTD, but required to keep the nested set example working -->
-		<xs:attribute name="nestedSetRightKey" type="xs:boolean" default="false"/> <!-- missing in the old DTD, but required to keep the nested set example working -->
+		<xs:attribute name="nodeKeySep" type="xs:string" use="optional"/>
+		<xs:attribute name="nodeKey" type="xs:string" use="optional"/>
+		<xs:attribute name="nestedSetLeftKey" type="xs:boolean" default="false"/>
+		<xs:attribute name="nestedSetRightKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="require" type="xs:string" use="optional"/>
 	</xs:complexType>
 
@@ -338,7 +338,7 @@
 		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use='optional'/>
 		<xs:attribute name="heavyIndexing" type="xs:boolean" use="optional"/>
 		<xs:attribute name="description" type="xs:string"/>
-		<xs:attribute name="treeMode" type="treemode" use="optional"/> <!-- missing in the old DTD, but required to keep the treetest example working -->
+		<xs:attribute name="treeMode" type="treemode" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="database">
