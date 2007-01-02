@@ -18,7 +18,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
- */ 
+ */
 
 /**
  * Pre-order node iterator for Node objects.
@@ -58,16 +58,16 @@ class NestedSetPreOrderNodeIterator implements Iterator
 		$nextNode = false;
 
 		if ($this->valid()) {
-			if($this->curNode->hasChildren()) {
+			if ($this->curNode->hasChildren()) {
 				$nextNode = $this->curNode->retrieveFirstChild();
 			}
 
-			while(false === $nextNode) {
-				if(null === $this->curNode) {
+			while (false === $nextNode) {
+				if (null === $this->curNode) {
 					break;
 				}
 
-				if($this->curNode->hasNextSibling()) {
+				if ($this->curNode->hasNextSibling()) {
 					$nextNode = $this->curNode->retrieveNextSibling();
 				} else if ($this->curNode->isEqualTo($this->topNode)) {
 					break;

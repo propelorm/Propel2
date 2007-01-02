@@ -31,8 +31,8 @@ include_once 'phing/tasks/ext/pearpackage/Fileset.php';
  */
 class BuildPropelGenPEARPackageTask extends MatchingTask {
 
-    /** Base directory for reading files. */
-    private $dir;
+	/** Base directory for reading files. */
+	private $dir;
 
 	private $version;
 	private $state = 'stable';
@@ -40,22 +40,22 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 
 	private $filesets = array();
 
-    /** Package file */
-    private $packageFile;
+	/** Package file */
+	private $packageFile;
 
-    public function init() {
-        include_once 'PEAR/PackageFileManager2.php';
-        if (!class_exists('PEAR_PackageFileManager2')) {
-            throw new BuildException("You must have installed PEAR_PackageFileManager2 (PEAR_PackageFileManager >= 1.6.0) in order to create a PEAR package.xml file.");
-        }
-    }
+	public function init() {
+		include_once 'PEAR/PackageFileManager2.php';
+		if (!class_exists('PEAR_PackageFileManager2')) {
+			throw new BuildException("You must have installed PEAR_PackageFileManager2 (PEAR_PackageFileManager >= 1.6.0) in order to create a PEAR package.xml file.");
+		}
+	}
 
-    private function setOptions($pkg){
+	private function setOptions($pkg){
 
 		$options['baseinstalldir'] = 'propel';
-        $options['packagedirectory'] = $this->dir->getAbsolutePath();
+		$options['packagedirectory'] = $this->dir->getAbsolutePath();
 
-        if (empty($this->filesets)) {
+		if (empty($this->filesets)) {
 			throw new BuildException("You must use a <fileset> tag to specify the files to include in the package.xml");
 		}
 
@@ -66,15 +66,15 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		$options['phing_filesets'] = $this->filesets;
 
 		if ($this->packageFile !== null) {
-            // create one w/ full path
-            $f = new PhingFile($this->packageFile->getAbsolutePath());
-            $options['packagefile'] = $f->getName();
-            // must end in trailing slash
-            $options['outputdirectory'] = $f->getParent() . DIRECTORY_SEPARATOR;
-            $this->log("Creating package file: " . $f->getPath(), PROJECT_MSG_INFO);
-        } else {
-            $this->log("Creating [default] package.xml file in base directory.", PROJECT_MSG_INFO);
-        }
+			// create one w/ full path
+			$f = new PhingFile($this->packageFile->getAbsolutePath());
+			$options['packagefile'] = $f->getName();
+			// must end in trailing slash
+			$options['outputdirectory'] = $f->getParent() . DIRECTORY_SEPARATOR;
+			$this->log("Creating package file: " . $f->getPath(), PROJECT_MSG_INFO);
+		} else {
+			$this->log("Creating [default] package.xml file in base directory.", PROJECT_MSG_INFO);
+		}
 
 		// add install exceptions
 		$options['installexceptions'] = array(	'pear/pear-propel-gen' => '/',
@@ -97,21 +97,21 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 
 		$pkg->setOptions($options);
 
-    }
+	}
 
-    /**
-     * Main entry point.
-     * @return void
-     */
-    public function main() {
+	/**
+	 * Main entry point.
+	 * @return void
+	 */
+	public function main() {
 
-        if ($this->dir === null) {
-            throw new BuildException("You must specify the \"dir\" attribute for PEAR package task.");
-        }
+		if ($this->dir === null) {
+			throw new BuildException("You must specify the \"dir\" attribute for PEAR package task.");
+		}
 
 		if ($this->version === null) {
-            throw new BuildException("You must specify the \"version\" attribute for PEAR package task.");
-        }
+			throw new BuildException("You must specify the \"version\" attribute for PEAR package task.");
+		}
 
 		$package = new PEAR_PackageFileManager2();
 
@@ -193,50 +193,50 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		// is necessary before we can add replacements ... ?
 		$package->generateContents();
 
-        $e = $package->writePackageFile();
+		$e = $package->writePackageFile();
 
-        if (PEAR::isError($e)) {
-            throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
-        }
+		if (PEAR::isError($e)) {
+			throw new BuildException("Unable to write package file.", new Exception($e->getMessage()));
+		}
 
-    }
-
-    /**
-     * Used by the PEAR_PackageFileManager_PhingFileSet lister.
-     * @return array FileSet[]
-     */
-    public function getFileSets() {
-        return $this->filesets;
-    }
-
-    // -------------------------------
-    // Set properties from XML
-    // -------------------------------
-
-    /**
-     * Nested creator, creates a FileSet for this task
-     *
-     * @return FileSet The created fileset object
-     */
-    function createFileSet() {
-        $num = array_push($this->filesets, new FileSet());
-        return $this->filesets[$num-1];
-    }
+	}
 
 	/**
-     * Set the version we are building.
-     * @param string $v
-     * @return void
-     */
+	 * Used by the PEAR_PackageFileManager_PhingFileSet lister.
+	 * @return array FileSet[]
+	 */
+	public function getFileSets() {
+		return $this->filesets;
+	}
+
+	// -------------------------------
+	// Set properties from XML
+	// -------------------------------
+
+	/**
+	 * Nested creator, creates a FileSet for this task
+	 *
+	 * @return FileSet The created fileset object
+	 */
+	function createFileSet() {
+		$num = array_push($this->filesets, new FileSet());
+		return $this->filesets[$num-1];
+	}
+
+	/**
+	 * Set the version we are building.
+	 * @param string $v
+	 * @return void
+	 */
 	public function setVersion($v){
 		$this->version = $v;
 	}
 
 	/**
-     * Set the state we are building.
-     * @param string $v
-     * @return void
-     */
+	 * Set the state we are building.
+	 * @param string $v
+	 * @return void
+	 */
 	public function setState($v) {
 		$this->state = $v;
 	}
@@ -249,22 +249,20 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 	public function setNotes($v) {
 		$this->notes = $v;
 	}
-    /**
-     * Sets "dir" property from XML.
-     * @param PhingFile $f
-     * @return void
-     */
-    public function setDir(PhingFile $f) {
-        $this->dir = $f;
-    }
+	/**
+	 * Sets "dir" property from XML.
+	 * @param PhingFile $f
+	 * @return void
+	 */
+	public function setDir(PhingFile $f) {
+		$this->dir = $f;
+	}
 
-    /**
-     * Sets the file to use for generated package.xml
-     */
-    public function setDestFile(PhingFile $f) {
-        $this->packageFile = $f;
-    }
+	/**
+	 * Sets the file to use for generated package.xml
+	 */
+	public function setDestFile(PhingFile $f) {
+		$this->packageFile = $f;
+	}
 
 }
-
-

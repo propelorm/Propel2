@@ -30,20 +30,20 @@
 interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * If object is saved without left/right values, set them as undefined (0)
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 */
 	public function save(PDO $con = null);
 
 	/**
 	 * Delete node and descendants
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 */
 	public function delete(PDO $con = null);
 
 	/**
 	 * Gets the level if set, otherwise calculates this and returns it
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return int
 	 */
 	public function getLevel(PDO $con = null);
@@ -59,7 +59,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Get the path to the node in the tree
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return array
 	 */
 	public function getPath(PDO $con = null);
@@ -67,7 +67,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets the number of children for the node (direct descendants)
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return int
 	 */
 	public function getNumberOfChildren(PDO $con = null);
@@ -75,7 +75,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets the total number of desceandants for the node
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return int
 	 */
 	public function getNumberOfDescendants(PDO $con = null);
@@ -83,7 +83,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets the children for the node
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return array
 	 */
 	public function getChildren(PDO $con = null);
@@ -91,7 +91,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets the descendants for the node
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
  	 * @return array
 	 */
 	public function getDescendants(PDO $con = null);
@@ -113,8 +113,8 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Tests if object is equal to $node
 	 *
-	 * @param object $node		Propel object for node to compare to
-     * @param PDO $con      Connection to use.
+	 * @param object $node	Propel object for node to compare to
+	 * @param PDO $con		Connection to use.
 	 * @return bool
 	 */
 	public function isEqualTo($node, PDO $con = null);
@@ -122,7 +122,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Tests if object has an ancestor
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return bool
 	 */
 	public function hasParent(PDO $con = null);
@@ -137,7 +137,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Determines if the node has previous sibling
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return bool
 	 */
 	public function hasPrevSibling(PDO $con = null);
@@ -145,7 +145,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Determines if the node has next sibling
 	 *
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return bool
 	 */
 	public function hasNextSibling(PDO $con = null);
@@ -153,7 +153,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return mixed 		Propel object if exists else false
 	 */
 	public function retrieveParent(PDO $con = null);
@@ -161,7 +161,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets first child if it exists
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return mixed 		Propel object if exists else false
 	 */
 	public function retrieveFirstChild(PDO $con = null);
@@ -169,7 +169,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets last child if it exists
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return mixed 		Propel object if exists else false
 	 */
 	public function retrieveLastChild(PDO $con = null);
@@ -177,7 +177,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets prev sibling for the given node if it exists
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return mixed 		Propel object if exists else false
 	 */
 	public function retrievePrevSibling(PDO $con = null);
@@ -185,7 +185,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Gets next sibling for the given node if it exists
 	 *
-     * @param PDO $con      Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return mixed 		Propel object if exists else false
 	 */
 	public function retrieveNextSibling(PDO $con = null);
@@ -194,7 +194,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * Inserts as first child of destination node $dest
 	 *
 	 * @param object $dest	Propel object for destination node
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
 	public function insertAsFirstChildOf($dest, PDO $con = null);
@@ -203,7 +203,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * Inserts as last child of destination node $dest
 	 *
 	 * @param object $dest	Propel object for destination node
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
 	public function insertAsLastChildOf($dest, PDO $con = null);
@@ -212,7 +212,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * Inserts $node as previous sibling to destination node $dest
 	 *
 	 * @param object $dest	Propel object for destination node
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
 	public function insertAsPrevSiblingOf($dest, PDO $con = null);
@@ -221,7 +221,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * Inserts $node as next sibling to destination node $dest
 	 *
 	 * @param object $dest	Propel object for destination node
-     * @param PDO Connection to use.
+	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
 	public function insertAsNextSiblingOf($dest, PDO $con = null);
