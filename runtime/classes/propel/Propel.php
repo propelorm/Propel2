@@ -163,6 +163,7 @@ class Propel
 		'Persistent' => 'propel/om/Persistent.php',
 		'PreOrderNodeIterator' => 'propel/om/PreOrderNodeIterator.php',
 		'NestedSetPreOrderNodeIterator' => 'propel/om/NestedSetPreOrderNodeIterator.php',
+		'NestedSetRecursiveIterator' => 'propel/om/NestedSetRecursiveIterator.php',
 
 		'BasePeer' => 'propel/util/BasePeer.php',
 		'BaseNodePeer' => 'propel/util/BaseNodePeer.php',

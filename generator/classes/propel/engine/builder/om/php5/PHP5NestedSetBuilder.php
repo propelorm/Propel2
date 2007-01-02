@@ -196,7 +196,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Store children of the node
 	 * @var array
 	 */
-	protected \$_children = null;
+	public \$_children = null;
 ";
 	}
 
@@ -210,7 +210,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function getIterator()
 	{
-		return new NestedSetPreOrderNodeIterator(\$this);
+		return new NestedSetRecursiveIterator(\$this);
 	}
 ";
 	}
