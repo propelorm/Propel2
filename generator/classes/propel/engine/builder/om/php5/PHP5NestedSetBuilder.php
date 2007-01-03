@@ -1,5 +1,4 @@
 <?php
-
 /*
  *  $Id$
  *
@@ -185,6 +184,18 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @var bool
 	 */
 	protected \$hasNextSibling = null;
+
+	/**
+	 * Store node if has prev sibling
+	 * @var bool
+	 */
+	public \$prevSibling = null;
+
+	/**
+	 * Store node if has next sibling
+	 * @var bool
+	 */
+	public \$nextSibling = null;
 
 	/**
 	 * The parent node for this node.
