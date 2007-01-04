@@ -49,14 +49,6 @@ interface BaseNodeObject extends IteratorAggregate {
 	public function getLevel(PDO $con = null);
 
 	/**
-	 * Sets the level of the node in the tree
-	 *
-	 * @param int $v new value
-	 * @return void
-	 */
-	public function setLevel($level);
-
-	/**
 	 * Get the path to the node in the tree
 	 *
 	 * @param PDO $con		Connection to use.
@@ -117,7 +109,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param PDO $con		Connection to use.
 	 * @return bool
 	 */
-	public function isEqualTo($node, PDO $con = null);
+	public function isEqualTo(BaseNodeObject $node, PDO $con = null);
 
 	/**
 	 * Tests if object has an ancestor
@@ -197,7 +189,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf($dest, PDO $con = null);
+	public function insertAsFirstChildOf(BaseNodeObject $dest, PDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $dest
@@ -206,7 +198,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf($dest, PDO $con = null);
+	public function insertAsLastChildOf(BaseNodeObject $dest, PDO $con = null);
 
 	/**
 	 * Inserts $node as previous sibling to destination node $dest
@@ -215,7 +207,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf($dest, PDO $con = null);
+	public function insertAsPrevSiblingOf(BaseNodeObject $dest, PDO $con = null);
 
 	/**
 	 * Inserts $node as next sibling to destination node $dest
@@ -224,6 +216,6 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param PDO $con		Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf($dest, PDO $con = null);
+	public function insertAsNextSiblingOf(BaseNodeObject $dest, PDO $con = null);
 
 } // BaseNodeObject

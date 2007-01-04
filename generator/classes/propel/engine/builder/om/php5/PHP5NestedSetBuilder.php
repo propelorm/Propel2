@@ -331,7 +331,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Sets the children array of the node in the tree
 	 *
-	 * @param array of $objectClassName \$children array of Propel node object
+	 * @param array of $objectClassName \$children	array of Propel node object
 	 * @return void
 	 */
 	public function setChildren(\$children)
@@ -534,7 +534,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param PDO \$con      Connection to use.
 	 * @return bool
 	 */
-	public function isEqualTo(\$node, PDO \$con = null)
+	public function isEqualTo(BaseNodeObject \$node, PDO \$con = null)
 	{
 		return $peerClassname::isEqualTo(\$this, \$node, \$con);
 	}
@@ -629,7 +629,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function retrieveParent(PDO \$con = null)
 	{
-		return $peerClassname::retrieveParent(\$this, \$con);
+		if (empty(\$this->parentNode)) {
+			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
+		}
+		return \$this->parentNode;
 	}
 ";
 	}
@@ -732,7 +735,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param PDO Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(\$dest, PDO \$con = null)
+	public function insertAsFirstChildOf(BaseNodeObject \$dest, PDO \$con = null)
 	{
 		return $peerClassname::insertAsFirstChildOf(\$dest, \$this, \$con);
 	}
@@ -750,7 +753,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param PDO Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(\$dest, PDO \$con = null)
+	public function insertAsLastChildOf(BaseNodeObject \$dest, PDO \$con = null)
 	{
 		return $peerClassname::insertAsLastChildOf(\$dest, \$this, \$con);
 	}
@@ -768,7 +771,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param PDO Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(\$dest, PDO \$con = null)
+	public function insertAsPrevSiblingOf(BaseNodeObject \$dest, PDO \$con = null)
 	{
 		return $peerClassname::insertAsPrevSiblingOf(\$dest, \$this, \$con);
 	}
@@ -786,7 +789,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param PDO Connection to use.
 	 * @return object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(\$dest, PDO \$con = null)
+	public function insertAsNextSiblingOf(BaseNodeObject \$dest, PDO \$con = null)
 	{
 		return $peerClassname::insertAsNextSiblingOf(\$dest, \$this, \$con);
 	}
