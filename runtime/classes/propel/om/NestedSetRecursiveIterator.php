@@ -29,9 +29,9 @@
  */
 class NestedSetRecursiveIterator implements RecursiveIterator
 {
-	private $topNode = null;
+	protected $topNode = null;
 
-	private $curNode = null;
+	protected $curNode = null;
 
 	public function __construct($node) {
 		$this->topNode = $node;
@@ -51,7 +51,11 @@ class NestedSetRecursiveIterator implements RecursiveIterator
 	}
 
 	public function key() {
-		return $this->curNode->getPath();
+	    $key = array();
+	    foreach($this->curNode->getPath() as $node) {
+			$key[] = $node->getPrimaryKey();
+		}
+		return implode('.', $key);
 	}
 
 	public function next() {
