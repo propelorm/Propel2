@@ -112,6 +112,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$this->addGetLevel($script);
 		$this->addSetLevel($script);
 
+		$this->addSetChildren($script);
+		$this->addSetParentNode($script);
+		$this->addSetPrevSibling($script);
+		$this->addSetNextSibling($script);
+
 		$this->addGetPath($script);
 		$this->addGetNumberOfChildren($script);
 		$this->addGetNumberOfDescendants($script);
@@ -180,22 +185,28 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	protected \$hasPrevSibling = null;
 
 	/**
+	 * Store node if has prev sibling
+	 * @var $objectClassName
+	 */
+	protected \$prevSibling = null;
+
+	/**
 	 * Store if node has next sibling
 	 * @var bool
 	 */
 	protected \$hasNextSibling = null;
 
 	/**
-	 * Store node if has prev sibling
-	 * @var bool
+	 * Store node if has next sibling
+	 * @var $objectClassName
 	 */
-	public \$prevSibling = null;
+	protected \$nextSibling = null;
 
 	/**
-	 * Store node if has next sibling
+	 * Store if node has parent node
 	 * @var bool
 	 */
-	public \$nextSibling = null;
+	protected \$hasParentNode = null;
 
 	/**
 	 * The parent node for this node.
@@ -207,7 +218,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Store children of the node
 	 * @var array
 	 */
-	public \$_children = null;
+	protected \$_children = null;
 ";
 	}
 
@@ -244,7 +255,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		\$right = \$this->getRightValue();
 		if (empty(\$left) || empty(\$right)) {
 			\$root = $peerClassname::retrieveRoot(\$con);
-	  		$peerClassname::insertAsLastChildOf(\$root, \$this, \$con);
+			$peerClassname::insertAsLastChildOf(\$root, \$this, \$con);
 		}
 
 		parent::save(\$con);
@@ -313,6 +324,77 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 ";
 	}
 
+	protected function addSetChildren(&$script)
+	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$script .= "
+	/**
+	 * Sets the children array of the node in the tree
+	 *
+	 * @param array of $objectClassName \$children array of Propel node object
+	 * @return void
+	 */
+	public function setChildren(\$children)
+	{
+		\$this->_children = \$children;
+	}
+";
+	}
+
+	protected function addSetParentNode(&$script)
+	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$script .= "
+	/**
+	 * Sets the parentNode of the node in the tree
+	 *
+	 * @param $objectClassName \$node Propel node object
+	 * @return void
+	 */
+	public function setParentNode(\$node)
+	{
+		\$this->parentNode = \$node;
+		\$this->hasParentNode = is_object(\$node);
+	}
+";
+	}
+
+	protected function addSetPrevSibling(&$script)
+	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$script .= "
+	/**
+	 * Sets the previous sibling of the node in the tree
+	 *
+	 * @param $objectClassName \$node Propel node object
+	 * @return void
+	 */
+	public function setPrevSibling(\$node)
+	{
+		\$this->prevSibling = \$node;
+		\$this->hasPrevSibling = is_object(\$node);
+	}
+";
+	}
+
+	protected function addSetNextSibling(&$script)
+	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$script .= "
+	/**
+	 * Sets the next sibling of the node in the tree
+	 *
+	 * @param $objectClassName \$node Propel node object
+	 * @return void
+	 */
+	public function setNextSibling(\$node)
+	{
+		\$this->nextSibling = \$node;
+		\$this->hasNextSibling = is_object(\$node);
+	}
+";
+	}
+
 	protected function addGetPath(&$script)
 	{
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
@@ -377,6 +459,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function getChildren(PDO \$con = null)
 	{
 		\$this->getLevel();
+		
+		if (is_array(\$this->_children)) {
+			return \$this->_children;
+		}
+
 		return $peerClassname::retrieveChildren(\$this, \$con);
 	}
 ";
@@ -390,11 +477,15 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Gets the descendants for the node
 	 *
 	 * @param PDO Connection to use.
- 	 * @return array
+	 * @return array
 	 */
 	public function getDescendants(PDO \$con = null)
 	{
 		\$this->getLevel();
+		if (is_array(\$this->_children)) {
+			return \$this->_children;
+		}
+
 		return $peerClassname::retrieveDescendants(\$this, \$con);
 	}
 ";
@@ -462,7 +553,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function hasParent(PDO \$con = null)
 	{
-		return $peerClassname::hasParent(\$this, \$con);
+		if (null === \$this->hasParentNode) {
+			\$this->hasParentNode = $peerClassname::hasParent(\$this, \$con);
+		}
+		return \$this->hasParentNode;
 	}
 ";
 	}
@@ -553,6 +647,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function retrieveFirstChild(PDO \$con = null)
 	{
 		if (\$this->hasChildren(\$con)) {
+			if (is_array(\$this->_children)) {
+				return \$this->_children[0];
+			}
+
 			return $peerClassname::retrieveFirstChild(\$this, \$con);
 		}
 		return false;
@@ -573,6 +671,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function retrieveLastChild(PDO \$con = null)
 	{
 		if (\$this->hasChildren(\$con)) {
+			if (is_array(\$this->_children)) {
+				\$last = count(\$this->_children) - 1;
+				return \$this->_children[\$last];
+			}
+
 			return $peerClassname::retrieveLastChild(\$this, \$con);
 		}
 		return false;
@@ -582,7 +685,6 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addRetrievePrevSibling(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Gets prev sibling for the given node if it exists
@@ -593,7 +695,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function retrievePrevSibling(PDO \$con = null)
 	{
 		if (\$this->hasPrevSibling(\$con)) {
-			return $peerClassname::retrievePrevSibling(\$this, \$con);
+			return \$this->prevSibling;
 		}
 		return \$this->hasPrevSibling;
 	}
@@ -602,7 +704,6 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addRetrieveNextSibling(&$script)
 	{
-		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Gets next sibling for the given node if it exists
@@ -612,8 +713,8 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function retrieveNextSibling(PDO \$con = null)
 	{
-		if (\$this->hasNextSibling($con)) {
-			return $peerClassname::retrieveNextSibling(\$this, \$con);
+		if (\$this->hasNextSibling(\$con)) {
+			return \$this->nextSibling;
 		}
 		return \$this->hasNextSibling;
 	}

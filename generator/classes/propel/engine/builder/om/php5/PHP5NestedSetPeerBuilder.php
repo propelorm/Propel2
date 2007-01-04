@@ -204,9 +204,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				$right_colname = $tableName . '.' . strtoupper($col->getName());
 			}
 
- 			if (!empty($right_name) && !empty($left_colname)) {
- 			    break;
- 			}
+			if (!empty($right_name) && !empty($left_colname)) {
+				break;
+			}
 		}
 		$script .= "
 	/**
@@ -463,7 +463,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		if (\$dest->getLeftValue() == 1) {
 			return $peerClassname::deleteRoot(\$con); // deleting root implies conditions (see deleteRoot() method)
-  		}
+		}
 
 		self::shiftRLRange(\$dest->getLeftValue(), \$dest->getRightValue(), -1, \$con);
 		self::shiftRLValues(\$dest->getRightValue() + 1, -2, \$con);
@@ -626,13 +626,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		\$node = $peerClassname::getNode(\$node, \$con);
 
-	    if(null === \$node->prevSibling) {
-			\$c = new Criteria();
-			\$c->add(self::RIGHT_COL, \$node->getLeftValue() - 1, Criteria::EQUAL);
-
-	        \$node->prevSibling = $peerClassname::doSelectOne(\$c, \$con);
-		}
-		return \$node->prevSibling;
+		\$c = new Criteria();
+		\$c->add(self::RIGHT_COL, \$node->getLeftValue() - 1, Criteria::EQUAL);
+		\$prevSibling = $peerClassname::doSelectOne(\$c, \$con);
+		\$node->setPrevSibling(\$prevSibling);
+		return \$prevSibling;
 	}
 ";
 	}
@@ -653,13 +651,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		\$node = $peerClassname::getNode(\$node, \$con);
 
-	    if(null === \$node->nextSibling) {
-			\$c = new Criteria();
-			\$c->add(self::LEFT_COL, \$node->getRightValue() + 1, Criteria::EQUAL);
-
-			\$node->nextSibling = self::doSelectOne(\$c, \$con);
-		}
-        return \$node->nextSibling;
+		\$c = new Criteria();
+		\$c->add(self::LEFT_COL, \$node->getRightValue() + 1, Criteria::EQUAL);
+		\$nextSibling = $peerClassname::doSelectOne(\$c, \$con);
+		\$node->setNextSibling(\$nextSibling);
+		return \$nextSibling;
 	}
 ";
 	}
@@ -683,11 +679,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$root = new $objectName();
 			\$root->hydrate(\$row);
 			\$root->setLevel(0);
-			self::hydrateDescendants(\$root, \$stmt);
+			$peerClassname::hydrateDescendants(\$root, \$stmt);
 
 			return \$root;
-  		}
-  		return false;
+		}
+		return false;
 	}
 ";
 	}
@@ -723,18 +719,13 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function retrieveChildren(\$node, PDO \$con = null)
 	{
-		if (is_array(\$node->_children)) {
-			return \$node->_children;
-		}
-
 		\$c = new Criteria();
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		\$c->add(self::LEFT_COL, \$node->getLeftValue(), Criteria::GREATER_THAN);
 		\$c->addAnd(self::RIGHT_COL, \$node->getRightValue(), Criteria::LESS_THAN);
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
 
-		self::hydrateChildren(\$node, \$stmt);
-		return \$node->_children;
+		return $peerClassname::hydrateChildren(\$node, \$stmt);
 	}
 ";
 	}
@@ -752,17 +743,13 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function retrieveDescendants(\$node, PDO \$con = null)
 	{
-		if (is_array(\$node->_children)) {
-			return \$node->_children;
-		}
-
 		\$c = new Criteria();
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		\$c->add(self::LEFT_COL, \$node->getLeftValue(), Criteria::GREATER_THAN);
 		\$c->addAnd(self::RIGHT_COL, \$node->getRightValue(), Criteria::LESS_THAN);
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
 
-		self::hydrateDescendants(\$node, \$stmt);
+		$peerClassname::hydrateDescendants(\$node, \$stmt);
 		return \$node->_children;
 	}
 ";
@@ -804,19 +791,22 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	static function retrieveParent(\$node, PDO \$con = null)
 	{
 		\$node = self::getNode(\$node);
+		if(empty(\$node->parentNode)) {
+			\$c = new Criteria();
+			\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
+			\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_THAN);
 
-		\$c = new Criteria();
-		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
-		\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_THAN);
+			\$c1->addAnd(\$c2);
 
-		\$c1->addAnd(\$c2);
+			\$c->add(\$c1);
+			\$c->addAscendingOrderByColumn(self::RIGHT_COL);
 
-		\$c->add(\$c1);
-		\$c->addAscendingOrderByColumn(self::RIGHT_COL);
+			\$results = $peerClassname::doSelect(\$c, \$con);
 
-		\$results = $peerClassname::doSelect(\$c, \$con);
+			\$node->parentNode = array_shift(\$results);
+		}
 
-		return array_shift(\$results);
+		return \$node->parentNode;
 	}
 ";
 	}
@@ -930,7 +920,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$objectName = $this->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
- 	/**
+	/**
 	 * Returns path to a specific node as an array, useful to create breadcrumbs
 	 *
 	 * @param $objectName \$node		Propel object of node to create path to
@@ -944,8 +934,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$path = array();
 		\$path[] = \$node;
 
-		while (\$parent = $peerClassname::retrieveParent(\$node, \$con))
-		{
+		while (\$parent = $peerClassname::retrieveParent(\$node, \$con)) {
 			\$path[] = \$parent;
 			\$node = \$parent;
 		}
@@ -1239,22 +1228,34 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function hydrateDescendants(\$node, PDOStatement \$stmt)
 	{
-		\$node->_children = array();
+	    \$descendants = array();
+		\$children = array();
+		\$prevSibling = null;
 		while (\$row = \$stmt->fetch()) {
 			\$child = new $objectName();
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
-
-			if (\$child->hasChildren()) {
-				$peerClassname::hydrateDescendants(\$child, \$stmt);
+			\$child->setParentNode(\$node);
+			if (!empty(\$prevSibling)) {
+				\$child->setPrevSibling(\$prevSibling);
+				\$prevSibling->setNextSibling(\$child);
 			}
 
-			\$node->_children[] = \$child;
+			if (\$child->hasChildren()) {
+				\$descendants = array_merge(\$descendants, $peerClassname::hydrateDescendants(\$child, \$stmt));
+			}
+
+			\$children[] = \$child;
+			\$descendants[] = \$child;
+			\$prevSibling = \$child;
 
 			if (\$child->getRightValue() + 1 == \$node->getRightValue()) {
+			    \$child->setNextSibling(null);
 				break;
 			}
 		}
+		\$node->setChildren(\$children);
+		return \$descendants;
 	}
 ";
 	}
@@ -1270,18 +1271,20 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function hydrateChildren(\$node, PDOStatement \$stmt)
 	{
-		\$node->_children = array();
+		\$children = array();
 		while (\$row = \$stmt->fetch()) {
 			\$child = new $objectName();
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
 
-			\$node->_children[] = \$child;
+			\$children[] = \$child;
 
 			if (\$child->getRightValue() + 1 == \$node->getRightValue()) {
 				break;
 			}
 		}
+		\$node->setChildren(\$children);
+		return \$children;
 	}
 ";
 	}
@@ -1408,7 +1411,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param PDO \$con		Connection to use.
 	 * @return array 		Shifted L and R values
 	 */
- 	protected static function shiftRLRange(\$first, \$last, \$delta, PDO \$con = null)
+	protected static function shiftRLRange(\$first, \$last, \$delta, PDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
