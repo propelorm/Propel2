@@ -791,7 +791,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	static function retrieveParent(\$node, PDO \$con = null)
 	{
 		\$node = self::getNode(\$node);
-		if(empty(\$node->parentNode)) {
+		if (empty(\$node->parentNode)) {
 			\$c = new Criteria();
 			\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
 			\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_THAN);
@@ -1228,7 +1228,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function hydrateDescendants(\$node, PDOStatement \$stmt)
 	{
-	    \$descendants = array();
+		\$descendants = array();
 		\$children = array();
 		\$prevSibling = null;
 		while (\$row = \$stmt->fetch()) {
@@ -1250,7 +1250,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$prevSibling = \$child;
 
 			if (\$child->getRightValue() + 1 == \$node->getRightValue()) {
-			    \$child->setNextSibling(null);
+				\$child->setNextSibling(null);
 				break;
 			}
 		}

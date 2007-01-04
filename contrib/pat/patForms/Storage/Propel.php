@@ -9,7 +9,7 @@ class patForms_Storage_Propel extends patForms_Storage
 
 		$this->peer = new $peername();
 		$this->peername = $peername;
-		
+
 		$parts = explode('.', explode('.', $this->peer->getOMClass()));
 		$this->classname = array_pop($parts);
 
@@ -38,7 +38,7 @@ class patForms_Storage_Propel extends patForms_Storage
 	*/
 	public function loadEntry(&$form) {
 
-		if(!$object = $this->_entryExists($form->getValues())) {
+		if (!$object = $this->_entryExists($form->getValues())) {
 			// entry does not exists (why return an array here??)
 			return array();
 		}
@@ -126,7 +126,7 @@ class patForms_Storage_Propel extends patForms_Storage
 
 		$objects[$hash] = $this->peer->doSelectOne($criteria);
 
-		if(empty($objects[$hash])) {
+		if (empty($objects[$hash])) {
 			return false;
 		}
 		return $objects[$hash];
@@ -137,11 +137,10 @@ class patForms_Storage_Propel extends patForms_Storage
 	private function populateObjectFromArray($object, $values) {
 
 		foreach(array_keys($object->toArray()) as $key) {
-			if(array_key_exists($key, $values)) {
+			if (array_key_exists($key, $values)) {
 				$object->{'set' . $key}($values[$key]);
 			}
 		}
 		return $object;
 	}
 }
-?>

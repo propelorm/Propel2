@@ -95,5 +95,3 @@ if ($errors = $form->getValidationErrors()) {
 }
 
 $tpl->displayParsedTemplate();
-
-?>

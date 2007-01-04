@@ -17,7 +17,7 @@
 /**
  * set the include path
  */
-if( !defined( 'PATFORMS_INCLUDE_PATH' ) ) {
+if ( !defined( 'PATFORMS_INCLUDE_PATH' ) ) {
 	define( 'PATFORMS_INCLUDE_PATH', dirname( __FILE__ ). '/patForms' );
 }
 
@@ -564,10 +564,10 @@ class patForms
 			patForms::setStaticProperty('customLocales', $customLocales);
 		}
 
-		if( isset( $this ) && is_a( $this, 'patForms' ) ) {
+		if ( isset( $this ) && is_a( $this, 'patForms' ) ) {
 			$this->locale = $locale;
 
-			if( !empty( $this->elements ) ) {
+			if ( !empty( $this->elements ) ) {
 				$cnt	=	count( $this->elements );
 				for( $i=0; $i < $cnt; $i++ ) {
 					$this->elements[$i]->setLocale( $locale );
@@ -644,11 +644,11 @@ class patForms
 	*/
 	function setFormat( $format )
 	{
-		if( isset( $this ) && is_a( $this, 'patForms' ) )
+		if ( isset( $this ) && is_a( $this, 'patForms' ) )
 		{
 			$this->format	=	strtolower( $format );
 
-			if( !empty( $this->elements ) )
+			if ( !empty( $this->elements ) )
 			{
 				$cnt	=	count( $this->elements );
 				for( $i=0; $i < $cnt; $i++ )
@@ -679,7 +679,7 @@ class patForms
 	{
 		$this->mode	=	strtolower( $mode );
 
-		if( !empty( $this->elements ) )
+		if ( !empty( $this->elements ) )
 		{
 			$cnt	=	count( $this->elements );
 			for( $i=0; $i < $cnt; $i++ )
@@ -701,16 +701,16 @@ class patForms
 	*/
 	function setSubmitted( $state )
 	{
-		if( $state == true )
+		if ( $state == true )
 		{
 			$eventState	=	$this->triggerEvent( 'Submit' );
-			if( $eventState === false )
+			if ( $eventState === false )
 				return	false;
 		}
 
 		$this->submitted	=	$state;
 
-		if( !empty( $this->elements ) )
+		if ( !empty( $this->elements ) )
 		{
 			$cnt	=	count( $this->elements );
 			for( $i=0; $i < $cnt; $i++ )
@@ -734,7 +734,7 @@ class patForms
 	{
 		$method	=	strtolower( $method );
 
-		if( $method != 'get' && $method != 'post' )
+		if ( $method != 'get' && $method != 'post' )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_INVALID_METHOD,
@@ -770,7 +770,7 @@ class patForms
 	*/
 	function setAutoFinalize( $mode )
 	{
-		if( !is_bool( $mode ) )
+		if ( !is_bool( $mode ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_PARAMETER_NO_BOOL,
@@ -778,7 +778,7 @@ class patForms
 			);
 		}
 
-		if( isset( $this ) && is_a( $this, 'patForms' ) )
+		if ( isset( $this ) && is_a( $this, 'patForms' ) )
 		{
 			$this->autoFinalize	=	$mode;
 		}
@@ -802,7 +802,7 @@ class patForms
 	*/
 	function applyFilter( &$filter )
 	{
-		if( empty( $this->elements ) )
+		if ( empty( $this->elements ) )
 			return true;
 
 		$cnt = count( $this->elements );
@@ -827,28 +827,28 @@ class patForms
 	{
 		$form	=	&new patForms();
 
-		if( $attributes != null )
+		if ( $attributes != null )
 		{
 			$form->setAttributes( $attributes );
 		}
 
-		if( $formDefinition === null )
+		if ( $formDefinition === null )
 			return	$form;
 
 		foreach( $formDefinition as $name => $element )
 		{
-			if( !isset( $element["filters"] ) )
+			if ( !isset( $element["filters"] ) )
 			{
 				$element["filters"]	=	null;
 			}
-			if( !isset( $element["children"] ) )
+			if ( !isset( $element["children"] ) )
 			{
 				$element["children"]	=	null;
 			}
 
 			$el	= &$form->createElement( $name, $element["type"], $element["attributes"], $element["filters"], $element["children"] );
 
-			if( isset( $element["renderer"] ) ) {
+			if ( isset( $element["renderer"] ) ) {
 				$el->setRenderer( $element["renderer"] );
 			}
 
@@ -893,7 +893,7 @@ class patForms
 		foreach( $this->staticProperties as $staticProperty => $setMethod )
 		{
 			$propValue	=	patForms::getStaticProperty( $staticProperty );
-			if( patErrorManager::isError( $propValue ) )
+			if ( patErrorManager::isError( $propValue ) )
 				continue;
 
 			$this->$setMethod( $propValue );
@@ -915,7 +915,7 @@ class patForms
 	}
 
    /**
-    * sets a renderer object that will be used to render
+	* sets a renderer object that will be used to render
 	* the form.
 	*
 	* @access	public
@@ -926,7 +926,7 @@ class patForms
 	*/
 	function setRenderer( &$renderer, $args = array() )
 	{
-		if( !is_object( $renderer ) )
+		if ( !is_object( $renderer ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_INVALID_RENDERER,
@@ -936,7 +936,7 @@ class patForms
 
 		$this->renderer	=	&$renderer;
 
-		if( isset( $args['includeElements'] ) && $args['includeElements'] === true )
+		if ( isset( $args['includeElements'] ) && $args['includeElements'] === true )
 		{
 			// check all elements - there may be some that need
 			// renderers too, so we give them the same renderer if
@@ -944,7 +944,7 @@ class patForms
 			$cnt = count( $this->elements );
 			for( $i = 0; $i < $cnt; $i++ )
 			{
-				if( $this->elements[$i]->usesRenderer && !is_object( $this->elements[$i]->renderer ) )
+				if ( $this->elements[$i]->usesRenderer && !is_object( $this->elements[$i]->renderer ) )
 				{
 					$this->elements[$i]->setRenderer( $renderer );
 				}
@@ -955,7 +955,7 @@ class patForms
 	}
 
    /**
-    * sets a storage container object that will be used to store data
+	* sets a storage container object that will be used to store data
 	*
 	* @access	public
 	* @param	object patForms_Storage
@@ -963,7 +963,7 @@ class patForms
 	*/
 	function setStorage( &$storage )
 	{
-		if( !is_object( $storage ) )
+		if ( !is_object( $storage ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_INVALID_STORAGE,
@@ -996,7 +996,7 @@ class patForms
 	*/
 	function renderForm( $args = null )
 	{
-		if( $this->renderer === null )
+		if ( $this->renderer === null )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_NO_RENDERER_SET,
@@ -1005,7 +1005,7 @@ class patForms
 		}
 
 		// form is not submitted, or auto-validation is disabled => render it
-		if( !$this->isSubmitted() || $this->autoValidate !== true )
+		if ( !$this->isSubmitted() || $this->autoValidate !== true )
 		{
 			$this->triggerEvent( 'Init' );
 			return $this->renderer->render( $this, $args );
@@ -1020,13 +1020,13 @@ class patForms
 	* Validates all elements of the form.
 	*
 	* @access	public
-    * @param    boolean     Flag to indicate, whether form should be validated again, if it already has been validated.
+	* @param    boolean     Flag to indicate, whether form should be validated again, if it already has been validated.
 	* @return	boolean	    True if all elements could be validated, false otherwise.
 	* @see		finishForm()
 	*/
 	function validateForm( $revalidate = false )
 	{
-		if( $this->validated && !$revalidate )
+		if ( $this->validated && !$revalidate )
 			return $this->valid;
 
 		$valid	=	true;
@@ -1034,7 +1034,7 @@ class patForms
 		/**
 		 * validate custom rules
 		 */
-		if( !$this->_applyRules( PATFORMS_RULE_BEFORE_VALIDATION ) )
+		if ( !$this->_applyRules( PATFORMS_RULE_BEFORE_VALIDATION ) )
 		{
 			$valid	=	false;
 		}
@@ -1042,12 +1042,12 @@ class patForms
 		/**
 		 * validate elements
 		 */
-		if( $valid === true )
+		if ( $valid === true )
 		{
 			$cnt	=	count( $this->elements );
 			for( $i = 0; $i < $cnt; ++$i )
 			{
-				if( !$this->elements[$i]->validate() )
+				if ( !$this->elements[$i]->validate() )
 				{
 					$valid	=	false;
 				}
@@ -1064,19 +1064,19 @@ class patForms
 		/**
 		 * validate custom rules
 		 */
-		if( !$this->_applyRules( PATFORMS_RULE_AFTER_VALIDATION, $valid ) )
+		if ( !$this->_applyRules( PATFORMS_RULE_AFTER_VALIDATION, $valid ) )
 		{
 			$valid	=	false;
 		}
 
-		if( $valid === true && $this->autoFinalize === true )
+		if ( $valid === true && $this->autoFinalize === true )
 			$this->finalizeForm();
 
 		$this->valid	=	$valid;
 
 		$this->validated = true;
 
-		if( $valid === true )
+		if ( $valid === true )
 		{
 			$this->_announce( 'status', 'validated' );
 			$event	=	'Success';
@@ -1117,7 +1117,7 @@ class patForms
 			}
 
 			$result	=	$this->_rules[$i]['rule']->applyRule( $this, PATFORMS_RULE_AFTER_VALIDATION );
-			if( $result === false ) {
+			if ( $result === false ) {
 				$valid	=	false;
 			}
 		}
@@ -1140,7 +1140,7 @@ class patForms
 		$cnt	=	count( $this->elements );
 		for( $i = 0; $i < $cnt; ++$i )
 		{
-			if( !$this->elements[$i]->finalize() )
+			if ( !$this->elements[$i]->finalize() )
 			{
 				patErrorManager::raiseWarning(
 					PATFORMS_ERROR_ELEMENT_NOT_FINALIZED,
@@ -1197,7 +1197,7 @@ class patForms
 	{
 		$filter	=	&patForms::_createModule( 'Filter', $name );
 
-		if( !is_array( $params ) )
+		if ( !is_array( $params ) )
 		{
 			return	$filter;
 		}
@@ -1205,7 +1205,7 @@ class patForms
 		foreach( $params as $param => $value )
 		{
 			$setter		=	'set' . ucfirst( $param );
-			if( method_exists( $filter, $setter ) )
+			if ( method_exists( $filter, $setter ) )
 			{
 				$filter->$setter( $value );
 			}
@@ -1227,7 +1227,7 @@ class patForms
 	function &createRule( $name, $id = null )
 	{
 		$rule	=	&patForms::_createModule( 'Rule', $name );
-		if( $id != null )
+		if ( $id != null )
 		{
 			$rule->setId( $id );
 		}
@@ -1268,7 +1268,7 @@ class patForms
 		// to load the module from a subfolder, so we transform
 		// all underscores to slashes.
 		$pathName	=	$name;
-		if( strstr( $pathName, '_' ) )
+		if ( strstr( $pathName, '_' ) )
 		{
 			$pathName	=	str_replace( '_', '/', $name );
 		}
@@ -1276,9 +1276,9 @@ class patForms
 		$moduleFile		=	PATFORMS_INCLUDE_PATH . '/'.$type.'/'.$pathName.'.php';
 		$moduleClass	=	'patForms_'.$type.'_'.$name;
 
-		if( !class_exists( $baseClass ) )
+		if ( !class_exists( $baseClass ) )
 		{
-			if( !file_exists( $baseFile ) )
+			if ( !file_exists( $baseFile ) )
 			{
 				return patErrorManager::raiseError(
 					PATFORMS_ERROR_NO_MODULE_BASE_FILE,
@@ -1290,9 +1290,9 @@ class patForms
 			include_once $baseFile;
 		}
 
-		if( !class_exists( $moduleClass ) )
+		if ( !class_exists( $moduleClass ) )
 		{
-			if( !file_exists( $moduleFile ) )
+			if ( !file_exists( $moduleFile ) )
 			{
 				return patErrorManager::raiseError(
 					PATFORMS_ERROR_MODULE_NOT_FOUND,
@@ -1321,7 +1321,7 @@ class patForms
 	*/
 	function addElement( &$element )
 	{
-		if( !is_object( $element ) )
+		if ( !is_object( $element ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_ELEMENT_IS_NO_OBJECT,
@@ -1329,7 +1329,7 @@ class patForms
 			);
 		}
 
-		if( patErrorManager::isError( $element ) )
+		if ( patErrorManager::isError( $element ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_UNEXPECTED_ERROR,
@@ -1337,7 +1337,7 @@ class patForms
 			);
 		}
 
-		if( !$element->getId() ) {
+		if ( !$element->getId() ) {
 			$element->setId( $this->getElementId() );
 		}
 		$element->setMode( $this->getMode() );
@@ -1362,14 +1362,14 @@ class patForms
 	*/
 	function replaceElement( $element, &$replace )
 	{
-		if( !is_object( $replace ) ) {
+		if ( !is_object( $replace ) ) {
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_ELEMENT_IS_NO_OBJECT,
 				'The addElement() method expects an element object, "'.gettype( $replace ).'" given.'
 			);
 		}
 
-		if( patErrorManager::isError( $replace ) ) {
+		if ( patErrorManager::isError( $replace ) ) {
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_UNEXPECTED_ERROR,
 				'The element you are trying to add is a patError object, and not a patForms element object.'
@@ -1384,7 +1384,7 @@ class patForms
 		for ($i = 0; $i < $cnt; $i++) {
 			if ($this->elements[$i]->getId() === $element) {
 
-				if( !$replace->getId() ) {
+				if ( !$replace->getId() ) {
 					$replace->setId( $this->getElementId() );
 				}
 				$replace->setMode( $this->getMode() );
@@ -1431,7 +1431,7 @@ class patForms
 	*/
 	function &getElementByName( $name )
 	{
-		if( $name == '__form' ) {
+		if ( $name == '__form' ) {
 			return $this;
 		}
 
@@ -1488,7 +1488,7 @@ class patForms
 		$cnt	=	count( $this->elements );
 		for( $i = 0; $i < $cnt; $i++ )
 		{
-			if( $this->elements[$i]->getId() == $id ) {
+			if ( $this->elements[$i]->getId() == $id ) {
 				return $this->elements[$i];
 			}
 			if (method_exists($this->elements[$i], 'getElementById')) {
@@ -1541,13 +1541,13 @@ class patForms
 	function &createElement( $name, $type, $attributes, $filters = null, $children = null )
 	{
 		$element =& patForms::_createModule( 'Element', $type );
-		if( patErrorManager::isError( $element ) )
+		if ( patErrorManager::isError( $element ) )
 		{
 			return	$element;
 		}
 
 		$attributes['name']	=	$name;
-		if( !isset( $attributes['id'] ) ) {
+		if ( !isset( $attributes['id'] ) ) {
 			$attributes['id'] = $this->getElementId();
 		}
 
@@ -1556,7 +1556,7 @@ class patForms
 		// if it does not support it - this is not expected from default attributes.
 		foreach( patForms::getStaticProperty( 'defaultAttributes' ) as $attributeName => $attributeValue )
 		{
-			if( !$element->hasAttribute( $attributeName ) )
+			if ( !$element->hasAttribute( $attributeName ) )
 			{
 				continue;
 			}
@@ -1566,7 +1566,7 @@ class patForms
 
 		// set the given attributes normally
 		$success = $element->setAttributes( $attributes );
-		if( patErrorManager::isError( $success ) )
+		if ( patErrorManager::isError( $success ) )
 		{
 			return $success;
 		}
@@ -1576,7 +1576,7 @@ class patForms
 				$childName = $child['attributes']['name'];
 
 				$childEl = &patForms::createElement($childName, $child['type'], $child['attributes']);
-				if( isset( $child["renderer"] ) ) {
+				if ( isset( $child["renderer"] ) ) {
 					$childEl->setRenderer( $child["renderer"] );
 				}
 
@@ -1585,12 +1585,12 @@ class patForms
 		}
 
 		$success = $element->_init();
-		if( patErrorManager::isError( $success ) ) {
+		if ( patErrorManager::isError( $success ) ) {
 			return $success;
 		}
 
 		// if we don't have any filters to add, we're done
-		if( !is_array( $filters ) )
+		if ( !is_array( $filters ) )
 		{
 			return $element;
 		}
@@ -1600,7 +1600,7 @@ class patForms
 		{
 			$params =	isset( $filters[$i]['params'] ) ? $filters[$i]['params'] : null;
 			$filter	=	&patForms::createFilter( $filters[$i]['filter'], $params );
-			if( patErrorManager::isError( $filter ) )
+			if ( patErrorManager::isError( $filter ) )
 			{
 				continue;
 			}
@@ -1624,7 +1624,7 @@ class patForms
 		$found	=	false;
 		$errors	=	array();
 
-		if( !empty( $this->validationErrors ) )
+		if ( !empty( $this->validationErrors ) )
 		{
 			$errors['__form']	=	$this->validationErrors;
 			$found = true;
@@ -1638,21 +1638,21 @@ class patForms
 		for( $i = 0; $i < $cnt; ++$i )
 		{
 			$name	=	$this->elements[$i]->getAttribute( 'name' );
-			if( $name === false )
+			if ( $name === false )
 			{
 				continue;
 			}
 
 			$elementErrors = $this->elements[$i]->getValidationErrors();
 
-			if( empty( $elementErrors ) )
+			if ( empty( $elementErrors ) )
 				continue;
 
 			$errors[$name]	=	$elementErrors;
 			$found = true;
 		}
 
-		if( $found )
+		if ( $found )
 			return $errors;
 
 		return false;
@@ -1677,11 +1677,11 @@ class patForms
 		for( $i = 0; $i < $cnt; ++$i )
 		{
 			$name	=	$this->elements[$i]->getAttribute( 'name' );
-			if( $name === false ) {
+			if ( $name === false ) {
 				continue;
 			}
 
-			if( is_array( $fields ) && !in_array( $name, $fields ) ) {
+			if ( is_array( $fields ) && !in_array( $name, $fields ) ) {
 				continue;
 			}
 
@@ -1797,7 +1797,7 @@ class patForms
 	function getAction()
 	{
 		$action = $this->getAttribute( 'action' );
-		if( !empty( $action ) )
+		if ( !empty( $action ) )
 			return $action;
 		return	$_SERVER['PHP_SELF'];
 	}
@@ -1812,7 +1812,7 @@ class patForms
 	*/
 	function setAttribute( $attributeName, $attributeValue )
 	{
-		if( !isset( $this->attributeDefinition[$attributeName] ) )
+		if ( !isset( $this->attributeDefinition[$attributeName] ) )
 		{
 			patErrorManager::raiseNotice(
 				PATFORMS_NOTICE_ATTRIBUTE_NOT_SUPPORTED,
@@ -1836,7 +1836,7 @@ class patForms
 	*/
 	function setAttributes( $attributes )
 	{
-		if( !is_array( $attributes ) )
+		if ( !is_array( $attributes ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_NOTICE_ARRAY_EXPECTED,
@@ -1862,7 +1862,7 @@ class patForms
 	*/
 	function getAttribute( $attribute )
 	{
-		if( !isset( $this->attributes[$attribute] ) )
+		if ( !isset( $this->attributes[$attribute] ) )
 		{
 			return false;
 		}
@@ -1880,7 +1880,7 @@ class patForms
 	*/
 	function getAttributes( $attributes = array() )
 	{
-		if( empty( $attributes ) )
+		if ( empty( $attributes ) )
 		{
 			return $this->attributes;
 		}
@@ -1888,7 +1888,7 @@ class patForms
 		$result	=	array();
 		foreach( $attributes as $attribute )
 		{
-			if( $attributeValue = $this->getAttribute( $attribute ) )
+			if ( $attributeValue = $this->getAttribute( $attribute ) )
 			{
 				$result[$attribute]	=	$attributeValue;
 			}
@@ -1912,18 +1912,18 @@ class patForms
 	{
 		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
-			if( isset( $attributeDef['default'] ) )
+			if ( isset( $attributeDef['default'] ) )
 			{
 				$this->attributes[$attributeName]	=	$attributeDef['default'];
 			}
 
-			if( $attributeName == 'action' )
+			if ( $attributeName == 'action' )
 			{
 				$this->attributes[$attributeName]	=	$_SERVER['PHP_SELF'];
 				/**
 				 * session has been started, append session ID
 				 */
-				if( defined( 'SID' ) )
+				if ( defined( 'SID' ) )
 					$this->attributes[$attributeName] .= '?' . SID;
 			}
 		}
@@ -1944,22 +1944,22 @@ class patForms
 	*/
 	function isSubmitted()
 	{
-		if( $this->submitted === true )
+		if ( $this->submitted === true )
 		{
 			return true;
 		}
 
-		if( !isset( $this->submitVar ) )
+		if ( !isset( $this->submitVar ) )
 		{
 			return	false;
 		}
 
-		if( !$this->autoValidate )
+		if ( !$this->autoValidate )
 		{
 			return	false;
 		}
 
-		if( isset( $_GET[$this->submitVar] ) || isset( $_POST[$this->submitVar] ) )
+		if ( isset( $_GET[$this->submitVar] ) || isset( $_POST[$this->submitVar] ) )
 		{
 			$this->setSubmitted( true );
 		}
@@ -2014,7 +2014,7 @@ class patForms
 	{
 		foreach( $defs as $lang => $codes )
 		{
-			if( !isset( $this->validatorErrorCodes[$lang] ) )
+			if ( !isset( $this->validatorErrorCodes[$lang] ) )
 			{
 				$this->validatorErrorCodes[$lang]	=	array();
 			}
@@ -2037,17 +2037,17 @@ class patForms
 	* @return 	boolean $result	true on success
 	* @see		addRule()
 	*/
-    function addValidationError( $code, $vars = array() )
-    {
+	function addValidationError( $code, $vars = array() )
+	{
 		$error		=	false;
 		$lang		=	$this->locale;
 		$element	=	$this->getElementName();
 
 		// find error message for selected language
-		while( true )
+		while ( true )
 		{
 			// error message matches language code
-			if( isset( $this->validatorErrorCodes[$lang][$code] ) )
+			if ( isset( $this->validatorErrorCodes[$lang][$code] ) )
 			{
 				$error	=	array( "element" => $element, "code" => $code, "message" => $this->validatorErrorCodes[$lang][$code] );
 				break;
@@ -2061,11 +2061,11 @@ class patForms
 			$lang_old	=	$lang;
 
 			// look for other languages
-			if( strlen( $lang ) > 5 )
+			if ( strlen( $lang ) > 5 )
 			{
 				list( $lang, $trash	) =	explode( ".", $lang );
 			}
-			else if( strlen( $lang ) > 2 )
+			else if ( strlen( $lang ) > 2 )
 			{
 				list( $lang, $trash	) =	explode( "_", $lang );
 			}
@@ -2084,7 +2084,7 @@ class patForms
 		}
 
 		// get default Error!
-		if( !$error )
+		if ( !$error )
 		{
 	 		patErrorManager::raiseWarning(
 				PATFORMS_WARNING_VALIDATOR_ERROR_UNDEFINED,
@@ -2095,7 +2095,7 @@ class patForms
 		}
 
 		// insert values to placeholders
-		if( !empty( $vars ) )
+		if ( !empty( $vars ) )
 		{
 			foreach( $vars as $key => $value )
 			{
@@ -2105,8 +2105,8 @@ class patForms
 
 		array_push( $this->validationErrors, $error );
 		$this->valid	=	false;
-        return  true;
-    }
+		return  true;
+	}
 
    /**
 	* retreives a new element id, used to give each added element a unique id for this
@@ -2134,7 +2134,7 @@ class patForms
 		/**
 		 * attach the observer to all elements
 		 */
-		if( ( $where & PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS ) == PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS )
+		if ( ( $where & PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS ) == PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS )
 		{
 			$cnt	=	count( $this->elements );
 			for( $i = 0; $i < $cnt; ++$i )
@@ -2146,7 +2146,7 @@ class patForms
 		/**
 		 * attach the observer to the form
 		 */
-		if( ( $where & PATFORMS_OBSERVER_ATTACH_TO_FORM ) == PATFORMS_OBSERVER_ATTACH_TO_FORM )
+		if ( ( $where & PATFORMS_OBSERVER_ATTACH_TO_FORM ) == PATFORMS_OBSERVER_ATTACH_TO_FORM )
 		{
 			$this->observers[] = &$observer;
 		}
@@ -2166,7 +2166,7 @@ class patForms
 	{
 		$methodName	=	"serializeStart".ucfirst( $this->getFormat() ).ucfirst( $this->getMode() );
 
-		if( !method_exists( $this, $methodName ) )
+		if ( !method_exists( $this, $methodName ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_METHOD_FOR_MODE_NOT_AVAILABLE,
@@ -2186,14 +2186,14 @@ class patForms
 	function serializeStartHtmlDefault()
 	{
 		$attributes	= $this->getAttributesFor( $this->format );
-		if( patErrorManager::isError( $attributes ) )
+		if ( patErrorManager::isError( $attributes ) )
 		{
 			return $attributes;
 		}
 
 		$content	=	patForms_Element::createTag( 'form', 'opening', $attributes );
 
-		if( $this->optionEnabled( 'scripts' ) )
+		if ( $this->optionEnabled( 'scripts' ) )
 		{
 			$content	.=	$this->getScripts();
 		}
@@ -2210,7 +2210,7 @@ class patForms
 	function serializeStartHtmlReadonly()
 	{
 		$attributes	= $this->getAttributesFor( $this->format );
-		if( patErrorManager::isError( $attributes ) )
+		if ( patErrorManager::isError( $attributes ) )
 		{
 			return $attributes;
 		}
@@ -2228,7 +2228,7 @@ class patForms
 	{
 		$methodName	=	"serializeEnd".ucfirst( $this->getFormat() ).ucfirst( $this->getMode() );
 
-		if( !method_exists( $this, $methodName ) )
+		if ( !method_exists( $this, $methodName ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ERROR_METHOD_FOR_MODE_NOT_AVAILABLE,
@@ -2277,9 +2277,9 @@ class patForms
 
 		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
-			if( !isset( $this->attributes[$attributeName] ) )
+			if ( !isset( $this->attributes[$attributeName] ) )
 			{
-				if( $attributeDef["required"] )
+				if ( $attributeDef["required"] )
 				{
 					return patErrorManager::raiseError(
 						PATFORMS_ERROR_ATTRIBUTE_REQUIRED,
@@ -2293,14 +2293,14 @@ class patForms
 
 			$attributeValue	=	$this->attributes[$attributeName];
 
-			if( !in_array( $format, $attributeDef["outputFormats"] ) )
+			if ( !in_array( $format, $attributeDef["outputFormats"] ) )
 			{
 				continue;
 			}
 
-			if( isset( $attributeDef["format"] ) )
+			if ( isset( $attributeDef["format"] ) )
 			{
-				if( !$this->_checkAttributeFormat( $attributeValue, $attributeDef["format"] ) )
+				if ( !$this->_checkAttributeFormat( $attributeValue, $attributeDef["format"] ) )
 				{
 					return patErrorManager::raiseError(
 						PATFORMS_ERROR_CAN_NOT_VERIFY_FORMAT,
@@ -2345,7 +2345,7 @@ class patForms
 	*/
 	function enableOption( $option, $params = array() )
 	{
-		if( !in_array( $option, array_keys( $this->options ) ) )
+		if ( !in_array( $option, array_keys( $this->options ) ) )
 		{
 			return patErrorManager::raiseNotice(
 				PATFORMS_NOTICE_INVALID_OPTION,
@@ -2380,7 +2380,7 @@ class patForms
 	*/
 	function disableOption( $option )
 	{
-		if( !in_array( $option, array_keys( $this->options ) ) )
+		if ( !in_array( $option, array_keys( $this->options ) ) )
 		{
 			return patErrorManager::raiseNotice(
 				PATFORMS_NOTICE_INVALID_OPTION,
@@ -2412,7 +2412,7 @@ class patForms
 	*/
 	function optionEnabled( $option )
 	{
-		if( !isset( $this->options[$option] ) )
+		if ( !isset( $this->options[$option] ) )
 			return false;
 
 		return $this->options[$option]['enabled'];
@@ -2453,7 +2453,7 @@ class patForms
 	function registerEvent( $name )
 	{
 		$event	=	'on' . $name;
-		if( in_array( $event, $this->_validEvents ) )
+		if ( in_array( $event, $this->_validEvents ) )
 		{
 			return patErrorManager::raiseNotice(
 												PATFORMS_NOTICE_EVENT_ALREADY_REGISTERED,
@@ -2494,7 +2494,7 @@ class patForms
 	*/
 	function registerEventHandler( $event, $handler )
 	{
-		if( !in_array( $event, $this->_validEvents ) )
+		if ( !in_array( $event, $this->_validEvents ) )
 		{
 			return patErrorManager::raiseError(
 												PATFORMS_ERROR_UNKNOWN_EVENT,
@@ -2502,7 +2502,7 @@ class patForms
 												);
 		}
 
-		if( !is_callable( $handler ) )
+		if ( !is_callable( $handler ) )
 		{
 			return patErrorManager::raiseError(
 												PATFORMS_ERROR_INVALID_HANDLER,
@@ -2510,7 +2510,7 @@ class patForms
 												);
 		}
 
-		if( !isset( $this->_eventHandler[$event] ) )
+		if ( !isset( $this->_eventHandler[$event] ) )
 		{
 			$this->_eventHandler[$event]	=	array();
 		}
@@ -2534,11 +2534,11 @@ class patForms
 	*/
 	function registerEventHandlerObject( &$obj, $methods = array() )
 	{
-		if( empty( $methods ) )
+		if ( empty( $methods ) )
 		{
 			foreach( $this->_validEvents as $event )
 			{
-				if( !method_exists( $obj, $event ) )
+				if ( !method_exists( $obj, $event ) )
 					continue;
 
 				$methods[$event]	=	$event;
@@ -2547,7 +2547,7 @@ class patForms
 
 		foreach( $methods as $event => $method )
 		{
-			if( !isset( $this->_eventHandler[$event] ) )
+			if ( !isset( $this->_eventHandler[$event] ) )
 			{
 				$this->_eventHandler[$event]	=	array();
 			}
@@ -2573,7 +2573,7 @@ class patForms
 	{
 		$handlerName	=	'on' . $event;
 
-		if( !isset( $this->_eventHandler[$handlerName] ) || empty( $this->_eventHandler[$handlerName] ) )
+		if ( !isset( $this->_eventHandler[$handlerName] ) || empty( $this->_eventHandler[$handlerName] ) )
 		{
 			return true;
 		}
@@ -2582,7 +2582,7 @@ class patForms
 		for( $i = 0; $i < $cnt; $i++ )
 		{
 			$result	=	call_user_func( $this->_eventHandler[$handlerName][$i], $this, $event );
-			if( $result == false )
+			if ( $result == false )
 			{
 				return $result;
 			}
@@ -2604,7 +2604,7 @@ class patForms
 		$tagName = 'Form';
 
 		// prepend Namespace
-		if( $namespace != null )
+		if ( $namespace != null )
 		{
 			$tagName	=	$namespace.':'.$tagName;
 		}
@@ -2656,7 +2656,7 @@ class patForms
 	*/
 	function &getStaticProperty( $property )
 	{
-		if( isset( $GLOBALS["_patForms"][$property] ) )
+		if ( isset( $GLOBALS["_patForms"][$property] ) )
 		{
 			return	$GLOBALS["_patForms"][$property];
 		}
@@ -2676,7 +2676,7 @@ class patForms
 	*/
 	function getName()
 	{
-		if( isset( $this->attributes['name'] ) )
+		if ( isset( $this->attributes['name'] ) )
 			return $this->attributes['name'];
 		return 'patForms';
 	}
@@ -2720,7 +2720,7 @@ class patForms
 			$instances	.=	$this->elements[$i]->getInstanceJavascript();
 
 			$type	=	$this->elements[$i]->getElementName();
-			if( in_array( $type, $displayedTypes ) )
+			if ( in_array( $type, $displayedTypes ) )
 				continue;
 
 			array_push( $displayedTypes, $type );
@@ -2734,7 +2734,7 @@ class patForms
 
 
 			$type	=	$this->_rules[$i]['rule']->getRuleName();
-			if( in_array( $type, $displayedTypes ) )
+			if ( in_array( $type, $displayedTypes ) )
 				continue;
 
 			array_push( $displayedTypes, $type );
@@ -2782,4 +2782,3 @@ class patForms
 		return true;
 	}
 }
-?>

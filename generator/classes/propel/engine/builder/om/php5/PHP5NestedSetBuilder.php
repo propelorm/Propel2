@@ -459,7 +459,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function getChildren(PDO \$con = null)
 	{
 		\$this->getLevel();
-		
+
 		if (is_array(\$this->_children)) {
 			return \$this->_children;
 		}

@@ -385,7 +385,7 @@ class patForms_Element
 	*/
 	function __construct( $format = false )
 	{
-		if( $format !== false )
+		if ( $format !== false )
 		{
 			$this->format	=	$format;
 		}
@@ -401,10 +401,10 @@ class patForms_Element
 	 *	@return boolean $result	true on success
 	 *	@see	__construct
 	 */
-    function patForms_Element( $format = false )
-    {
+	function patForms_Element( $format = false )
+	{
 		$this->__construct( $format );
-    }
+	}
 
    /**
 	* Add any initialization routines for your element in your element class,
@@ -415,11 +415,11 @@ class patForms_Element
 	* @access	private
 	* @return	mixed	$success	True on success, a patError object otherwise
 	*/
-    function _init()
-    {
-    	// your code here
-    	return true;
-    }
+	function _init()
+	{
+		// your code here
+		return true;
+	}
 
    /**
 	* sets the format of the element - this defines which method will be called in your
@@ -459,8 +459,8 @@ class patForms_Element
 	* @return	bool	$result	True on success
 	* @see		$locale
 	*/
-    function setLocale( $lang )
-    {
+	function setLocale( $lang )
+	{
 		$this->locale = $lang;
 
 		// check, whether this is a custom locale
@@ -471,8 +471,8 @@ class patForms_Element
 			}
 		}
 
-        return  true;
-    }
+		return  true;
+	}
 
    /**
 	* sets the value of the element, which will be used to fill the element with. If none is
@@ -556,7 +556,7 @@ class patForms_Element
 	*/
 	function hasAttribute( $attributeName )
 	{
-		if( isset( $this->attributeDefinition[$attributeName] ) )
+		if ( isset( $this->attributeDefinition[$attributeName] ) )
 		{
 			return true;
 		}
@@ -575,7 +575,7 @@ class patForms_Element
 	*/
 	function setAttribute( $attributeName, $attributeValue )
 	{
-		if( !isset( $this->attributeDefinition[$attributeName] ) )
+		if ( !isset( $this->attributeDefinition[$attributeName] ) )
 		{
 			return patErrorManager::raiseNotice(
 				PATFORMS_ELEMENT_NOTICE_ATTRIBUTE_NOT_SUPPORTED,
@@ -599,7 +599,7 @@ class patForms_Element
 	*/
 	function setAttributes( $attributes )
 	{
-		if( !is_array( $attributes ) )
+		if ( !is_array( $attributes ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ELEMENT_ERROR_ARRAY_EXPECTED,
@@ -616,7 +616,7 @@ class patForms_Element
 	}
 
    /**
-    * sets a renderer object that will be used to render
+	* sets a renderer object that will be used to render
 	* the element. Use the serialize() method to retrieve
 	* the rendered content of the element.
 	*
@@ -628,7 +628,7 @@ class patForms_Element
 	*/
 	function setRenderer( &$renderer )
 	{
-		if( !$this->usesRenderer )
+		if ( !$this->usesRenderer )
 		{
 			return patErrorManager::raiseWarning(
 				PATFORMS_ELEMENT_RENDERER_NOT_SUPPORTED,
@@ -636,7 +636,7 @@ class patForms_Element
 			);
 		}
 
-		if( !is_object( $renderer ) )
+		if ( !is_object( $renderer ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ELEMENT_ERROR_INVALID_RENDERER,
@@ -657,7 +657,7 @@ class patForms_Element
 	*/
 	function getAttribute( $attribute )
 	{
-		if( !isset( $this->attributes[$attribute] ) )
+		if ( !isset( $this->attributes[$attribute] ) )
 		{
 			return false;
 		}
@@ -675,7 +675,7 @@ class patForms_Element
 	*/
 	function getAttributes( $attributes = array() )
 	{
-		if( empty( $attributes ) )
+		if ( empty( $attributes ) )
 		{
 			return $this->attributes;
 		}
@@ -683,7 +683,7 @@ class patForms_Element
 		$result	=	array();
 		foreach( $attributes as $attribute )
 		{
-			if( $attributeValue = $this->getAttribute( $attribute ) )
+			if ( $attributeValue = $this->getAttribute( $attribute ) )
 			{
 				$result[$attribute]	=	$attributeValue;
 			}
@@ -705,7 +705,7 @@ class patForms_Element
 	{
 		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
-			if( isset( $attributeDef['default'] ) )
+			if ( isset( $attributeDef['default'] ) )
 			{
 				$this->attributes[$attributeName]	=	$attributeDef['default'];
 			}
@@ -727,12 +727,12 @@ class patForms_Element
 	*/
 	function getValue( $external = true )
 	{
-		if( $this->value === false )
+		if ( $this->value === false )
 		{
 			$this->resolveValue();
 
 			// could not be resolved
-			if( $this->value === false )
+			if ( $this->value === false )
 			{
 				$value	=	'';
 			}
@@ -746,7 +746,7 @@ class patForms_Element
 			$value	=	$this->value;
 		}
 
-		if( $external === false )
+		if ( $external === false )
 		{
 			return $value;
 		}
@@ -768,25 +768,25 @@ class patForms_Element
 	{
 		$varName	=	$this->attributes['name'];
 
-		if( $this->submitted && isset( $_POST[$varName] ) )
+		if ( $this->submitted && isset( $_POST[$varName] ) )
 		{
 			$this->value	=	$_POST[$varName];
-			if( ini_get( 'magic_quotes_gpc' ) )
+			if ( ini_get( 'magic_quotes_gpc' ) )
 				$this->value = $this->rStripSlashes( $this->value );
 			$this->value	=	$this->_applyFilters( $this->value, 'in', PATFORMS_FILTER_TYPE_HTTP );
 			return true;
 		}
 
-		if( $this->submitted && isset( $_GET[$varName] ) )
+		if ( $this->submitted && isset( $_GET[$varName] ) )
 		{
 			$this->value	=	$_GET[$varName];
-			if( ini_get( 'magic_quotes_gpc' ) )
+			if ( ini_get( 'magic_quotes_gpc' ) )
 				$this->value = $this->rStripSlashes( $this->value );
 			$this->value	=	$this->_applyFilters( $this->value, 'in', PATFORMS_FILTER_TYPE_HTTP );
 			return true;
 		}
 
-		if( isset( $this->attributes['default'] ) )
+		if ( isset( $this->attributes['default'] ) )
 		{
 			$this->value	=	$this->attributes['default'];
 			$this->value	=	$this->_applyFilters( $this->value, 'in', PATFORMS_FILTER_TYPE_PHP );
@@ -808,9 +808,9 @@ class patForms_Element
 	*/
 	function rStripSlashes( $value )
 	{
-		if( is_scalar( $value ) )
+		if ( is_scalar( $value ) )
 			return stripslashes( $value );
-		if( is_array( $value ) )
+		if ( is_array( $value ) )
 		{
 			foreach( $value as $key => $val )
 			{
@@ -831,7 +831,7 @@ class patForms_Element
 	*/
 	function _applyFilters( $value, $dir = 'in', $type = PATFORMS_FILTER_TYPE_PHP )
 	{
-		if( empty( $this->filters ) )
+		if ( empty( $this->filters ) )
 			return $value;
 
 			/**
@@ -843,7 +843,7 @@ class patForms_Element
 				/**
 				 * check, whether filter is located between php script and form
 				 */
-				if( $this->filters[$i]->getType() != $type )
+				if ( $this->filters[$i]->getType() != $type )
 				{
 					continue;
 				}
@@ -915,7 +915,7 @@ class patForms_Element
 	*/
 	function addRule( &$rule, $time = null )
 	{
-		if( is_null( $time ) )
+		if ( is_null( $time ) )
 		{
 			$time	=	$rule->getTime();
 		}
@@ -953,14 +953,14 @@ class patForms_Element
 	* @return	string	$element		The created element according to the specified mode.
 	* @see		setFormat()
 	* @see		setMode()
-    * @todo     serialize*() methods should return a patError object instead of false!!!!
-    *           Has to be changed asap!
+	* @todo     serialize*() methods should return a patError object instead of false!!!!
+	*           Has to be changed asap!
 	*/
 	function serialize()
 	{
 		$methodName	=	"serialize".ucfirst( $this->getFormat() ).ucfirst( $this->getMode() );
 
-		if( !method_exists( $this, $methodName ) )
+		if ( !method_exists( $this, $methodName ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ELEMENT_ERROR_METHOD_FOR_MODE_NOT_AVAILABLE,
@@ -975,7 +975,7 @@ class patForms_Element
 		$value	=	$this->getValue( false );
 
 		$element = $this->$methodName( $value );
-		if( patErrorManager::isError( $element ) )
+		if ( patErrorManager::isError( $element ) )
 		{
 			return $element;
 		}
@@ -1004,7 +1004,7 @@ class patForms_Element
 		/**
 		 * validate custom rules
 		 */
-		if( !$this->_applyRules( PATFORMS_RULE_BEFORE_VALIDATION ) )
+		if ( !$this->_applyRules( PATFORMS_RULE_BEFORE_VALIDATION ) )
 		{
 			$this->_announce( 'status', 'error' );
 			return false;
@@ -1015,17 +1015,17 @@ class patForms_Element
 		 */
 		$value	=	$this->getValue( false );
 
-        $valid  =   $this->validateElement( $value );
-        if( $valid === false )
-        {
+		$valid  =   $this->validateElement( $value );
+		if ( $valid === false )
+		{
 			$this->_announce( 'status', 'error' );
-            return false;
-        }
+			return false;
+		}
 
 		/**
 		 * validate custom rules
 		 */
-		if( !$this->_applyRules( PATFORMS_RULE_AFTER_VALIDATION ) )
+		if ( !$this->_applyRules( PATFORMS_RULE_AFTER_VALIDATION ) )
 		{
 			$this->_announce( 'status', 'error' );
 			return false;
@@ -1045,9 +1045,9 @@ class patForms_Element
 	*/
 	function validateElement()
 	{
-        // your code here
-        return true;
-    }
+		// your code here
+		return true;
+	}
 
    /**
 	* apply rules
@@ -1064,11 +1064,11 @@ class patForms_Element
 		$cnt	=	count( $this->_rules );
 		for( $i = 0; $i < $cnt; $i++ )
 		{
-			if( ( $this->_rules[$i]['time'] & $time ) != $time )
+			if ( ( $this->_rules[$i]['time'] & $time ) != $time )
 				continue;
 
 			$result	=	$this->_rules[$i]['rule']->applyRule( $this, $time );
-			if( $result === false )
+			if ( $result === false )
 			{
 				$valid	=	false;
 			}
@@ -1123,7 +1123,7 @@ class patForms_Element
 	*/
 	function enableOption( $option, $params = array() )
 	{
-		if( !isset( $this->options[$option] ) )
+		if ( !isset( $this->options[$option] ) )
 			$this->options[$option]	=	array();
 
 		$this->options[$option]['enabled']	=	true;
@@ -1142,7 +1142,7 @@ class patForms_Element
 	*/
 	function disableOption( $option )
 	{
-		if( !isset( $this->options[$option] ) )
+		if ( !isset( $this->options[$option] ) )
 			$this->options[$option]	=	array();
 
 		$this->options[$option]['enabled']	=	false;
@@ -1161,10 +1161,10 @@ class patForms_Element
 	*/
 	function validateFormat( $value, $format )
 	{
-		if( !class_exists( "patForms_FormatChecker" ) )
+		if ( !class_exists( "patForms_FormatChecker" ) )
 		{
 			$checkerFile	=	dirname( __FILE__ )."/FormatChecker.php";
-			if( !file_exists( $checkerFile ) )
+			if ( !file_exists( $checkerFile ) )
 			{
 				$this->valid	=	false;
 				return patErrorManager::raiseError(
@@ -1181,12 +1181,12 @@ class patForms_Element
 		$methodName	=	"is_".$format;
 		$option		=	false;
 
-		if( method_exists( $this, $methodName ) )
+		if ( method_exists( $this, $methodName ) )
 		{
 			return $this->$methodName( $value );
 		}
 
-		if( in_array( $methodName, get_class_methods( "patForms_FormatChecker" ) ) )
+		if ( in_array( $methodName, get_class_methods( "patForms_FormatChecker" ) ) )
 		{
 			return call_user_func( array( 'patForms_FormatChecker', $methodName ), $value );
 		}
@@ -1218,7 +1218,7 @@ class patForms_Element
 	{
 		foreach( $defs as $lang => $codes )
 		{
-			if( !isset( $this->validatorErrorCodes[$lang] ) ) {
+			if ( !isset( $this->validatorErrorCodes[$lang] ) ) {
 				$this->validatorErrorCodes[$lang]	=	array();
 			}
 
@@ -1234,10 +1234,10 @@ class patForms_Element
 	* @access	public
 	* @return 	array	errors that occured during the validation
 	*/
-    function    getValidationErrors()
-    {
-        return  $this->validationErrors;
-    }
+	function    getValidationErrors()
+	{
+		return  $this->validationErrors;
+	}
 
 	/**
 	* addValidationError
@@ -1248,17 +1248,17 @@ class patForms_Element
 	* @param	array	$vars	fill named placeholder with values
 	* @return 	boolean $result	true on success
 	*/
-    function    addValidationError( $code, $vars = array() )
-    {
+	function    addValidationError( $code, $vars = array() )
+	{
 		$error		=	false;
 		$lang		=	$this->locale;
 		$element	=	$this->getElementName();
 
 		// find error message for selected language
-		while( true )
+		while ( true )
 		{
 			// error message matches language code
-			if( isset( $this->validatorErrorCodes[$lang][$code] ) )
+			if ( isset( $this->validatorErrorCodes[$lang][$code] ) )
 			{
 				$error	=	array( "element" => $element, "code" => $code, "message" => $this->validatorErrorCodes[$lang][$code] );
 				break;
@@ -1272,11 +1272,11 @@ class patForms_Element
 			$lang_old	=	$lang;
 
 			// look for other languages
-			if( strlen( $lang ) > 5 )
+			if ( strlen( $lang ) > 5 )
 			{
 				list( $lang, $trash	) =	explode( ".", $lang );
 			}
-			else if( strlen( $lang ) > 2 )
+			else if ( strlen( $lang ) > 2 )
 			{
 				list( $lang, $trash	) =	explode( "_", $lang );
 			}
@@ -1295,7 +1295,7 @@ class patForms_Element
 		}
 
 		// get default Error!
-		if( !$error )
+		if ( !$error )
 		{
 	 		patErrorManager::raiseWarning(
 				PATFORMS_ELEMENT_ERROR_VALIDATOR_ERROR_UNDEFINED,
@@ -1306,7 +1306,7 @@ class patForms_Element
 		}
 
 		// insert values to placeholders
-		if( !empty( $vars ) )
+		if ( !empty( $vars ) )
 		{
 			foreach( $vars as $key => $value )
 			{
@@ -1316,8 +1316,8 @@ class patForms_Element
 
 		array_push( $this->validationErrors, $error );
 		$this->valid	=	false;
-        return  true;
-    }
+		return  true;
+	}
 
    /**
 	* applies the specified modifiers to an attribute value, as set in the attribute definition.
@@ -1330,7 +1330,7 @@ class patForms_Element
 	*/
 	function _applyModifiers( $attributeValue, $modifiers )
 	{
-		if( !is_array( $modifiers ) )
+		if ( !is_array( $modifiers ) )
 		{
 			return patErrorManager::raiseError(
 				PATFORMS_ELEMENT_ERROR_MODIFIER_NOT_AN_ARRAY,
@@ -1343,7 +1343,7 @@ class patForms_Element
 			// compute method name for this definition and check if it exists
 			$modifierMethod	=	"_modifier".ucfirst( $modifier );
 
-			if( !method_exists( $this, $modifierMethod ) )
+			if ( !method_exists( $this, $modifierMethod ) )
 			{
 				return patErrorManager::raiseError(
 					PATFORMS_ELEMENT_ERROR_METHOD_FOR_MODIFIER_NOT_FOUND,
@@ -1353,7 +1353,7 @@ class patForms_Element
 
 			$modifiedValue	=	$this->$modifierMethod( $attributeValue );
 
-			if( $modifiedValue === false )
+			if ( $modifiedValue === false )
 			{
 				return patErrorManager::raiseError(
 					PATFORMS_ELEMENT_ERROR_MODIFIER_RETURNED_ERROR,
@@ -1368,7 +1368,7 @@ class patForms_Element
 	}
 
    /**
-    * insertSpecials attribute value modifier
+	* insertSpecials attribute value modifier
 	*
 	* you can use special placeholders to insert dynamic values into the attribute values.
 	* This method inserts the correct information for each placeholder in the given string.
@@ -1382,7 +1382,7 @@ class patForms_Element
 	*/
 	function _modifierInsertSpecials( $modifyValue, $options = array() )
 	{
-		if( is_array( $modifyValue ) || is_object( $modifyValue ) || is_array( $this->value ) )
+		if ( is_array( $modifyValue ) || is_object( $modifyValue ) || is_array( $this->value ) )
 			return $modifyValue;
 
 		// go through each attribute in the attribute definition and replace the strings
@@ -1393,7 +1393,7 @@ class patForms_Element
 			$attributeValue	=	"";
 
 			// retrieve real attribute value if it was set
-			if( isset( $this->attributes[$attributeName] ) && is_string( $this->attributes[$attributeName] ) )
+			if ( isset( $this->attributes[$attributeName] ) && is_string( $this->attributes[$attributeName] ) )
 			{
 				$attributeValue	=	$this->attributes[$attributeName];
 			}
@@ -1439,9 +1439,9 @@ class patForms_Element
 
 		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
-			if( !isset( $this->attributes[$attributeName] ) )
+			if ( !isset( $this->attributes[$attributeName] ) )
 			{
-				if( $attributeDef["required"] )
+				if ( $attributeDef["required"] )
 				{
 					return patErrorManager::raiseError(
 						PATFORMS_ELEMENT_ERROR_ATTRIBUTE_REQUIRED,
@@ -1457,15 +1457,15 @@ class patForms_Element
 
 			// special case disabled attribute: skip this if it is not set to yes
 			// to avoid generating a disabled field anyway (empty HTML attribute)
-			if( $attributeName == 'disabled' && $attributeValue != 'yes' )
+			if ( $attributeName == 'disabled' && $attributeValue != 'yes' )
 			{
 				continue;
 			}
 
-			if( isset( $attributeDef["modifiers"] ) && !empty( $attributeDef["modifiers"] ) )
+			if ( isset( $attributeDef["modifiers"] ) && !empty( $attributeDef["modifiers"] ) )
 			{
 				$modifiedValue	=	$this->_applyModifiers( $attributeValue, $attributeDef["modifiers"] );
-				if( $modifiedValue === false )
+				if ( $modifiedValue === false )
 				{
 					return patErrorManager::raiseError(
 						PATFORMS_ELEMENT_ERROR_UNABLE_TO_APPLY_MODIFIER_TO_ATTRIBUTE,
@@ -1479,14 +1479,14 @@ class patForms_Element
 				$this->attributes[$attributeName]	=	$attributeValue;
 			}
 
-			if( !in_array( $format, $attributeDef["outputFormats"] ) )
+			if ( !in_array( $format, $attributeDef["outputFormats"] ) )
 			{
 				continue;
 			}
 
-			if( isset( $attributeDef["format"] ) )
+			if ( isset( $attributeDef["format"] ) )
 			{
-				if( !$this->_checkAttributeFormat( $attributeValue, $attributeDef["format"] ) )
+				if ( !$this->_checkAttributeFormat( $attributeValue, $attributeDef["format"] ) )
 				{
 					return patErrorManager::raiseError(
 						PATFORMS_ELEMENT_ERROR_CAN_NOT_VERIFY_FORMAT,
@@ -1514,7 +1514,7 @@ class patForms_Element
 	function toHtml()
 	{
 		$attributes	= $this->getAttributesFor( $this->getFormat() );
-		if( patErrorManager::isError( $attributes ) )
+		if ( patErrorManager::isError( $attributes ) )
 		{
 			return $attributes;
 		}
@@ -1588,7 +1588,7 @@ class patForms_Element
 				}
 
 				// empty tag?
-				if( $type == "empty" )
+				if ( $type == "empty" )
 				{
 					$tag	=	$tag . " />";
 					return	$tag;
@@ -1600,7 +1600,7 @@ class patForms_Element
 				break;
 
 			case "full":
-				if( $value === false )
+				if ( $value === false )
 				{
 					return patForms_Element::createTag( $tagname, "empty", $attributes );
 				}
@@ -1627,7 +1627,7 @@ class patForms_Element
 		$tagName	=	$this->getElementName();
 
 		// prepend Namespace
-		if( $namespace != null )
+		if ( $namespace != null )
 		{
 			$tagName	=	$namespace.':'.$tagName;
 		}
@@ -1643,7 +1643,7 @@ class patForms_Element
 
 		$value	=	strtr( $this->getValue(), $this->xmlEntities );
 
-		if( $value != false )
+		if ( $value != false )
 		{
 			return	$this->createTag( $tagName, "full", $attributes, $value );
 		}
@@ -1668,7 +1668,7 @@ class patForms_Element
 	}
 
    /**
-    * Get the name of the element, as stored in the elementName property.
+	* Get the name of the element, as stored in the elementName property.
 	*
 	* This is used when serializing an element to XML to
 	* create a now form template.
@@ -1681,7 +1681,7 @@ class patForms_Element
 	*/
 	function getElementName()
 	{
-		if( $this->elementName != null )
+		if ( $this->elementName != null )
 		{
 			return	$this->elementName;
 		}
@@ -1705,30 +1705,30 @@ class patForms_Element
 	* @see unsetSessionValue()
 	* @todo destroy session variables if sessions won't be usead any further
 	*/
-    function useSession( $switch = null )
-    {
+	function useSession( $switch = null )
+	{
 		// switch sessions on or off
-		if( $switch == "yes" )
+		if ( $switch == "yes" )
 		{
 			$this->attributes["usesession"]	=	"yes";
 		}
-		else if( $switch == "no" )
+		else if ( $switch == "no" )
 		{
 			$this->attributes["usesession"]	=	"no";
 			return false;
 		}
 
-		if( isset( $this->attributes["usesession"] ) && $this->attributes["usesession"] == "yes" )
+		if ( isset( $this->attributes["usesession"] ) && $this->attributes["usesession"] == "yes" )
 		{
-			if( !$this->sessionVar )
+			if ( !$this->sessionVar )
 			{
-				if( !defined( "SID" ) )
+				if ( !defined( "SID" ) )
 				{
 					session_start();
 				}
 
 				$name	=	$this->attributes["name"];
-				if( !isset( $_SESSION["_patforms_element"][$name] ) )
+				if ( !isset( $_SESSION["_patforms_element"][$name] ) )
 				{
 					$_SESSION["_patforms_element"][$name]	=	array();
 				}
@@ -1739,7 +1739,7 @@ class patForms_Element
 			return true;
 		}
 		return false;
-    }
+	}
 
    /**
 	* save a variable to the session
@@ -1751,16 +1751,16 @@ class patForms_Element
 	* @see getSessionValue()
 	* @see unsetSessionValue()
 	*/
-    function setSessionValue( $name, $value )
-    {
-		if( !$this->useSession() )
+	function setSessionValue( $name, $value )
+	{
+		if ( !$this->useSession() )
 		{
 			return false;
 		}
 
 		$this->sessionVar[$name]	=	$value;
-        return true;
-    }
+		return true;
+	}
 
    /**
 	* get a variable from session
@@ -1771,19 +1771,19 @@ class patForms_Element
 	* @see getSessionValue()
 	* @see unsetSessionValue()
 	*/
-    function getSessionValue( $name )
-    {
-		if( !$this->useSession() )
+	function getSessionValue( $name )
+	{
+		if ( !$this->useSession() )
 		{
 			return false;
 		}
 
-		if( isset( $this->sessionVar[$name] ) )
+		if ( isset( $this->sessionVar[$name] ) )
 		{
 			return $this->sessionVar[$name];
 		}
-        return null;
-    }
+		return null;
+	}
 
    /**
 	* remove a variable from session
@@ -1794,21 +1794,21 @@ class patForms_Element
 	* @see getSessionValue()
 	* @see setSessionValue)
 	*/
-    function unsetSessionValue( $name )
-    {
-		if( !$this->useSession() )
+	function unsetSessionValue( $name )
+	{
+		if ( !$this->useSession() )
 		{
 			return false;
 		}
 
 		$value	=	null;
-		if( isset( $this->sessionVar[$name] ) )
+		if ( isset( $this->sessionVar[$name] ) )
 		{
 			$value	=	$this->sessionVar[$name];
 			unset( $this->sessionVar[$name] );
 		}
-        return $value;
-    }
+		return $value;
+	}
 
    /**
 	* get the global javascript of the element
@@ -1819,7 +1819,7 @@ class patForms_Element
 	/*
 	function getGlobalJavascript()
 	{
-		if( !isset( $this->globalJavascript[$this->format] ) )
+		if ( !isset( $this->globalJavascript[$this->format] ) )
 		{
 			$script	=	'';
 		}
@@ -1832,7 +1832,7 @@ class patForms_Element
 		for( $i = 0; $i < $cnt; $i++ )
 		{
 			$tmp	=	$this->_rules[$i]['rule']->getGlobalJavascript();
-			if( $tmp === false )
+			if ( $tmp === false )
 				continue;
 			$script	.=	$tmp;
 		}
@@ -1850,7 +1850,7 @@ class patForms_Element
 	/*
 	function getInstanceJavascript()
 	{
-		if( !isset( $this->instanceJavascript[$this->format] ) )
+		if ( !isset( $this->instanceJavascript[$this->format] ) )
 		{
 			$script	=	'';
 		}
@@ -1866,7 +1866,7 @@ class patForms_Element
 		for( $i = 0; $i < $cnt; $i++ )
 		{
 			$tmp	=	$this->_rules[$i]['rule']->getInstanceJavascript();
-			if( $tmp === false )
+			if ( $tmp === false )
 				continue;
 			$script	.=	$tmp;
 		}
@@ -1877,11 +1877,11 @@ class patForms_Element
 
 	function registerJavascripts(&$form) {
 
-		if($script = $this->getGlobalJavascript()) {
+		if ($script = $this->getGlobalJavascript()) {
 			$form->registerGlobalJavascript($this->elementName, $script);
 		}
 
-		if($script = $this->getInstanceJavascript()) {
+		if ($script = $this->getInstanceJavascript()) {
 			$form->registerInstanceJavascript($script);
 		}
 
@@ -1892,14 +1892,14 @@ class patForms_Element
 
 	function getGlobalJavascript() {
 
-		if(isset($this->globalJavascript[$this->format])) {
+		if (isset($this->globalJavascript[$this->format])) {
 			return $this->globalJavascript[$this->format];
 		}
 	}
 
 	function getInstanceJavascript() {
 
-		if(isset($this->instanceJavascript[$this->format])) {
+		if (isset($this->instanceJavascript[$this->format])) {
 			$script	= $this->instanceJavascript[$this->format];
 			$script	= str_replace('[ELEMENT::NAME]', $this->getName(), $script);
 			$script	= str_replace('[ELEMENT::ID]', $this->getId(), $script);
@@ -1916,7 +1916,7 @@ class patForms_Element
 	*/
 	function isSubmitted()
 	{
-		if( $this->submitted === true ) {
+		if ( $this->submitted === true ) {
 			return true;
 		}
 		return false;
@@ -1952,4 +1952,3 @@ class patForms_Element
 		return true;
 	}
 }
-?>

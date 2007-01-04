@@ -122,7 +122,7 @@ class patForms_Rule
 	*/
 	function patForms_Rule( $id = null )
 	{
-		if( $id === null )
+		if ( $id === null )
 		{
 			$id	=	uniqid( '' );
 		}
@@ -220,8 +220,8 @@ class patForms_Rule
 	* @param	array	$vars	fill named placeholder with values
 	* @return   boolean $result	true on success
 	*/
-    function addValidationError( $code, $vars = array() )
-    {
+	function addValidationError( $code, $vars = array() )
+	{
 		$code= $this->errorOffset + $code;
 		return $this->container->addValidationError( $code, $vars );
 	}
@@ -252,7 +252,7 @@ class patForms_Rule
 	/*
 	function getGlobalJavascript()
 	{
-		if( isset( $this->globalScript['html'] ) )
+		if ( isset( $this->globalScript['html'] ) )
 		{
 			return $this->globalScript['html'];
 		}
@@ -269,7 +269,7 @@ class patForms_Rule
 	/*
 	function getInstanceJavascript()
 	{
-		if( !isset( $this->instanceScript[$this->format] ) )
+		if ( !isset( $this->instanceScript[$this->format] ) )
 		{
 			return false;
 		}
@@ -278,18 +278,18 @@ class patForms_Rule
 
 		// always replace the id
 		$script	=	str_replace( '[RULE::ID]', $this->_id, $script );
-		if( method_exists( $this->container, 'getId' ) )
+		if ( method_exists( $this->container, 'getId' ) )
 		{
 			$script	=	str_replace( '[CONTAINER::ID]', $this->container->getId(), $script );
 		}
-		if( method_exists( $this->container, 'getName' ) )
+		if ( method_exists( $this->container, 'getName' ) )
 		{
 			$script	=	str_replace( '[CONTAINER::NAME]', $this->container->getName(), $script );
 		}
 
 		foreach( $this->scriptPlaceholders as $placeholder => $property )
 		{
-			if( isset( $this->$property ) )
+			if ( isset( $this->$property ) )
 				$script	=	str_replace( '['.$placeholder.']', $this->$property, $script );
 			else
 				$script	=	str_replace( '['.$placeholder.']', '', $script );
@@ -300,35 +300,35 @@ class patForms_Rule
 
 	function registerJavascripts(&$form) {
 
-		if($script = $this->getGlobalJavascript()) {
+		if ($script = $this->getGlobalJavascript()) {
 			$form->registerGlobalJavascript($this->getRuleName(), $script);
 		}
 
-		if($script = $this->getInstanceJavascript()) {
+		if ($script = $this->getInstanceJavascript()) {
 			$form->registerInstanceJavascript($script);
 		}
 	}
 
 	function getGlobalJavascript() {
 
-		if(isset($this->globalScript[$this->format])) {
+		if (isset($this->globalScript[$this->format])) {
 			return $this->globalScript[$this->format];
 		}
 	}
 
 	function getInstanceJavascript(){
 
-		if(isset($this->instanceScript[$this->format])) {
+		if (isset($this->instanceScript[$this->format])) {
 			$script	= $this->instanceScript[$this->format];
 			$script = str_replace('[RULE::ID]', $this->_id, $script);
-			if(method_exists($this->container, 'getId')) {
+			if (method_exists($this->container, 'getId')) {
 				$script = str_replace('[CONTAINER::ID]', $this->container->getId(), $script);
 			}
-			if(method_exists($this->container, 'getName')) {
+			if (method_exists($this->container, 'getName')) {
 				$script = str_replace('[CONTAINER::NAME]', $this->container->getName(), $script);
 			}
 			foreach($this->scriptPlaceholders as $placeholder => $property) {
-				if(isset($this->$property)) {
+				if (isset($this->$property)) {
 					$script = str_replace('['.$placeholder.']', $this->$property, $script);
 				} else {
 					$script = str_replace('['.$placeholder.']', '', $script);
@@ -338,4 +338,3 @@ class patForms_Rule
 		}
 	}
 }
-?>

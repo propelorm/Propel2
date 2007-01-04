@@ -94,7 +94,7 @@ class patForms_Definition {
 
 		// seems as if patForms_Element(s) are broken here
 		// e.g. in patForms_Element_Text::serializeHtmlDefault()
-		// at line 245 if( $this->attributes['display'] == 'no' )
+		// at line 245 if ( $this->attributes['display'] == 'no' )
 		// will result to true if the display attribute is set
 		// to (php boolean) true
 		// so casting the 'true'/'false' and 'yes'/'no' values
@@ -120,6 +120,3 @@ class patForms_Definition {
 		return $value;
 	}
 }
-
-
-?>

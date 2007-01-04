@@ -171,7 +171,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 
 						if ($table->treeMode()) {
-						    switch($table->treeMode()) {
+							switch($table->treeMode()) {
 								case 'NestedSet':
 									foreach(array('nestedsetpeer', 'nestedset') as $target) {
 										$builder = DataModelBuilder::builderFactory($table, $target);
@@ -190,7 +190,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 										$this->build($builder, $overwrite=false);
 									}
 								break;
-								
+
 								case 'AdjacencyList':
 								default:
 								break;

@@ -163,4 +163,3 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 		$form->registerInstanceJavascript($script);
 	}
 }
-?>

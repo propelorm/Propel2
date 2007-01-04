@@ -161,4 +161,3 @@ pFRC_NotMatch.prototype.setValue = function(pattern) {
 		$form->registerInstanceJavascript($script);
 	}
 }
-?>

@@ -114,7 +114,7 @@ class patForms_Definition_Propel extends patForms_Definition {
 				}
 			}
 
-			if($col->isForeignKey()) {
+			if ($col->isForeignKey()) {
 
 				$relColname = $col->getRelatedColumnName();
 				$relTablename = $col->getRelatedTableName();
@@ -139,7 +139,7 @@ class patForms_Definition_Propel extends patForms_Definition {
 			}
 
 			$rules = array();
-			if($col->hasValidators()) {
+			if ($col->hasValidators()) {
 				foreach ($col->getValidators() as $validator) {
 					$name = $validator->getName();
 					$type = self::$validatorTypeMap[$name];
@@ -163,5 +163,3 @@ class patForms_Definition_Propel extends patForms_Definition {
 		return $definition;
 	}
 }
-
-?>

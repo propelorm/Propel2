@@ -156,7 +156,7 @@ pFRC_ValidValue.prototype.setValues = function(values) {
 	*/
 	function applyRule(&$element, $type = PATFORMS_RULE_AFTER_VALIDATION) {
 
-		if(in_array($element->getValue(), $this->_values)) {
+		if (in_array($element->getValue(), $this->_values)) {
 			return	true;
 		}
 
@@ -180,4 +180,3 @@ pFRC_ValidValue.prototype.setValues = function(values) {
 		$form->registerInstanceJavascript($script);
 	}
 }
-?>

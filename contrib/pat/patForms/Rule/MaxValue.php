@@ -161,4 +161,3 @@ pFRC_MaxValue.prototype.setMaxValue = function(value) {
 		$form->registerInstanceJavascript($script);
 	}
 }
-?>

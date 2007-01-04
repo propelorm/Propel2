@@ -40,4 +40,3 @@ class patForms_Creator_Definition {
 	}
 
 }
-?>

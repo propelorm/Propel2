@@ -68,4 +68,3 @@ class patForms_Datasource_Propel {
 		return $result;
 	}
 }
-?>

@@ -138,7 +138,7 @@ pFRC_MaxLength.prototype.setValue = function(value) {
 	*/
 	function applyRule(&$element, $type = PATFORMS_RULE_AFTER_VALIDATION) {
 
-		if(strlen($element->getValue()) <= $this->value) {
+		if (strlen($element->getValue()) <= $this->value) {
 			return	true;
 		}
 
@@ -159,4 +159,3 @@ pFRC_MaxLength.prototype.setValue = function(value) {
 		$form->registerInstanceJavascript($script);
 	}
 }
-?>

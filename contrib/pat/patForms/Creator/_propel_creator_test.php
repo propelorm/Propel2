@@ -65,7 +65,7 @@
 
 
 	// ERROR DISPLAY ------------------------------------------------------
-	if( $form->isSubmitted() )
+	if ( $form->isSubmitted() )
 	{
 			displayErrors( $form ); // see patExampleGen/customFunctions.php
 	}
@@ -91,7 +91,7 @@
 			$errors = $form->getValidationErrors();
 
 			// if there are any errors, display them.
-			if( $errors )
+			if ( $errors )
 			{
 					echo '<div class="piErrors">';
 					echo '  <div class="piErrorsTitle">Validation failed</div>';
@@ -179,7 +179,7 @@
 
 
 		// form submitted? display all form values
-		if( $form->isSubmitted() ) {
+		if ( $form->isSubmitted() ) {
 				$els =& $form->getElements();
 				$cnt = count( $els );
 
@@ -199,4 +199,3 @@
 				echo '</div>';
 		}
 	}
-?>

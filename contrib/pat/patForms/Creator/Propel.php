@@ -90,18 +90,18 @@ class patForms_Creator_Propel extends patForms_Creator
 				'description' => $el_displayname
 			);
 
-      //// Obsolete ?
+	  //// Obsolete ?
 			// Parse column info to element type info
 			//$type_info = $this->parseTypeInfoFromColumn($propel_col);
 			// Merge extra element attributes
 			//$el_attr = array_merge( $el_attr, $type_info['attributes'] );
-			
+
 			// Is the element required ? Can we retrieve this info from the Column object ?
 			$el_attr['required'] = 'yes';
 			// Value: for now we use default to set the value. Is there a better (more correct) way to do this ?
 			$el_attr['default'] = $object->{'get'.$propel_col->getPhpName()}();
 
-			if($propel_col->isPrimaryKey()) {
+			if ($propel_col->isPrimaryKey()) {
 				$el_type = 'hidden';
 			} else {
 				$el_type = self::$creoleTypeMapping[$propel_col->getCreoleType()];
@@ -120,7 +120,7 @@ class patForms_Creator_Propel extends patForms_Creator
 
 		return  $form;
 	}
-  
+
   // Seems this function will become obsolete if we use the static $creoleTypeMapping
 	function parseTypeInfoFromColumn ( $column ) {
 
@@ -130,4 +130,3 @@ class patForms_Creator_Propel extends patForms_Creator
 		);
 	}
 }
-?>
