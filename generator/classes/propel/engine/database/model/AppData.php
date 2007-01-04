@@ -95,7 +95,7 @@ class AppData {
 	 */
 	public function getShortName()
 	{
-		return str_replace("-schema", "", $name);
+		return str_replace("-schema", "", $this->name);
 	}
 
 	/**

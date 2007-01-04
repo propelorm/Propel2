@@ -642,7 +642,7 @@ class PropelSQLExecTransaction {
 	{
 		if (!empty($this->tSqlCommand)) {
 			$this->parent->log("Executing commands", PROJECT_MSG_INFO);
-			$this->parent->runStatements($tSqlCommand, $out);
+			$this->parent->runStatements($this->tSqlCommand, $out);
 		}
 
 		if ($this->tSrcFile !== null) {

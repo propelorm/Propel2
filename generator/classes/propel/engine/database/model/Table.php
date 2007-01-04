@@ -985,7 +985,7 @@ class Table extends XMLElement implements IDMethod {
 
 		if ($this->abstractValue) {
 			$result .= " abstract=\""
-				  . ($abstractValue ? "true" : "false")
+				  . ($this->abstractValue ? "true" : "false")
 				  . '"';
 		}
 
