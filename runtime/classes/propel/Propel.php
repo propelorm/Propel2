@@ -210,7 +210,7 @@ class Propel
 		// reset the connection map (this should enable runtime changes of connection params)
 		self::$connectionMap = array();
 
-		foreach(self::$configuration['datasources'] as $key => $datasource) {
+		foreach (self::$configuration['datasources'] as $key => $datasource) {
 			if ($key != 'default' && isset($datasource['classes'])) {
 				// merge the classes to the autoload map
 				self::$autoloadMap = array_merge($datasource['classes'], self::$autoloadMap);

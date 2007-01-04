@@ -44,7 +44,7 @@ class DefaultPlatform implements Platform {
 	protected function initialize()
 	{
 		$this->schemaDomainMap = array();
-		foreach(PropelTypes::getPropelTypes() as $type) {
+		foreach (PropelTypes::getPropelTypes() as $type) {
 			$this->schemaDomainMap[$type] = new Domain($type);
 		}
 		$this->schemaDomainMap[PropelTypes::BU_DATE] = new Domain("DATE");

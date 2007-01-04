@@ -245,7 +245,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		// just in case we're grouping: add those columns to the select statement
-		foreach(\$criteria->getGroupByColumns() as \$column)
+		foreach (\$criteria->getGroupByColumns() as \$column)
 		{
 			\$criteria->addSelectColumn(\$column);
 		}
@@ -471,7 +471,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		// just in case we're grouping: add those columns to the select statement
-		foreach(\$criteria->getGroupByColumns() as \$column)
+		foreach (\$criteria->getGroupByColumns() as \$column)
 		{
 			\$criteria->addSelectColumn(\$column);
 		}
@@ -740,7 +740,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 		}
 
 		// just in case we're grouping: add those columns to the select statement
-		foreach(\$criteria->getGroupByColumns() as \$column)
+		foreach (\$criteria->getGroupByColumns() as \$column)
 		{
 			\$criteria->addSelectColumn(\$column);
 		}

@@ -301,7 +301,7 @@ $criteria->add(TestPeer::LABEL(), 'x', Criteria::EQUAL());
 $nodes =& TestNodePeer::retrieveNodes($criteria, true, false);
 $ancestors =& $nodes[0]->getAncestors(false);
 
-for($i = 0; $i < count($ancestors); $i++)
+for ($i = 0; $i < count($ancestors); $i++)
 	echo $ancestors[$i]->getNodePath() . " -> " . $ancestors[$i]->callObjMethod('getLabel') . "\n";
 
 $o_addr = array(1,1,3,2);

@@ -72,7 +72,7 @@ class patForms_Creator_Propel extends patForms_Creator
 		$form =& patForms::createForm( null, array( 'name' => 'patForms_Creator_Form' ) );
 
 		$propel_cols = $propel_tableMap->getColumns();
-		foreach($propel_cols as $propel_colname => $propel_col) {
+		foreach ($propel_cols as $propel_colname => $propel_col) {
 
 			// phpName can be altered by editing the schema.xml,
 			// thus I think, we should lowercase()/ucfirst() this

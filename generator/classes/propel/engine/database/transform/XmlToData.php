@@ -108,7 +108,7 @@ class XmlToData extends AbstractHandler {
 				$table = $this->database->getTableByPhpName($name);
 
 				$this->columnValues = array();
-				foreach($attributes as $name => $value) {
+				foreach ($attributes as $name => $value) {
 					$col = $table->getColumnByPhpName($name);
 					$this->columnValues[] = new ColumnValue($col, iconv('utf-8',$this->encoding, $value));
 				}

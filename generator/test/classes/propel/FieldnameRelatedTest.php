@@ -96,7 +96,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			)
 		);
 
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			$results[$type] = BookPeer::getFieldnames($type);
 			$this->assertEquals(
 				$expecteds[$type],
@@ -124,8 +124,8 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			BasePeer::TYPE_FIELDNAME => 'author_id',
 			BasePeer::TYPE_NUM => 5,
 		);
-		foreach($types as $fromType) {
-			foreach($types as $toType) {
+		foreach ($types as $fromType) {
+			foreach ($types as $toType) {
 				$name = $expecteds[$fromType];
 				$expected = $expecteds[$toType];
 				$result = BookPeer::translateFieldName($name, $fromType, $toType);
@@ -180,7 +180,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			)
 		);
 
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			$results[$type] = BasePeer::getFieldnames('Book', $type);
 			$this->assertEquals(
 				$expecteds[$type],
@@ -208,8 +208,8 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			BasePeer::TYPE_FIELDNAME => 'author_id',
 			BasePeer::TYPE_NUM => 5,
 		);
-		foreach($types as $fromType) {
-			foreach($types as $toType) {
+		foreach ($types as $fromType) {
+			foreach ($types as $toType) {
 				$name = $expecteds[$fromType];
 				$expected = $expecteds[$toType];
 				$result = BasePeer::translateFieldName('Book', $name, $fromType, $toType);
@@ -234,7 +234,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 		$book->setTitle('Harry Potter and the Order of the Phoenix');
 
 		$expected = 'Harry Potter and the Order of the Phoenix';
-		foreach($types as $type => $name) {
+		foreach ($types as $type => $name) {
 			$result = $book->getByName($name, $type);
 			$this->assertEquals($expected, $result);
 		}
@@ -295,7 +295,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 
 		$book = new Book();
 
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			$expected = $expecteds[$type];
 			$book->fromArray($expected, $type);
 			$result = array();
@@ -348,7 +348,7 @@ class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 			)
 		);
 
-		foreach($types as $type) {
+		foreach ($types as $type) {
 			$expected = $expecteds[$type];
 			$result = $book->toArray($type);
 			// remove ID since its autoincremented at each test iteration

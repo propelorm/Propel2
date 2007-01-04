@@ -315,7 +315,7 @@ class ForeignKey extends XMLElement {
 		$localPKColumnObjs = $this->getTable()->getPrimaryKey();
 
 		$localPKCols = array();
-		foreach($localPKColumnObjs as $lPKCol) {
+		foreach ($localPKColumnObjs as $lPKCol) {
 			$localPKCols[] = $lPKCol->getName();
 		}
 //

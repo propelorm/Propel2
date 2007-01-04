@@ -292,7 +292,7 @@ class PropelSQLExec extends Task {
 
 		$databases = array();
 
-		foreach($map->keys() as $sqlfile) {
+		foreach ($map->keys() as $sqlfile) {
 
 			$database = $map->getProperty($sqlfile);
 
@@ -312,10 +312,10 @@ class PropelSQLExec extends Task {
 			}
 		}
 
-		foreach($databases as $db => $files) {
+		foreach ($databases as $db => $files) {
 			$transactions = array();
 
-			foreach($files as $fileName) {
+			foreach ($files as $fileName) {
 
 				$file = new PhingFile($this->srcDir, $fileName);
 
@@ -477,7 +477,7 @@ class PropelSQLExec extends Task {
 
 					$sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
 					$sqlBacklog = "";
-					foreach($sqlParts as $sqlPart) {
+					foreach ($sqlParts as $sqlPart) {
 						// we always want to append, even if it's a delim (which will be stripped off later)
 						$sqlBacklog .= $sqlPart;
 
@@ -569,14 +569,14 @@ class PropelSQLExec extends Task {
 
 					if (!$colsprinted && $this->showheaders) {
 						$first = true;
-						foreach($this->fields as $fieldName => $ignore) {
+						foreach ($this->fields as $fieldName => $ignore) {
 							if ($first) $first = false; else $line .= ",";
 							$line .= $fieldName;
 						}
 					} // if show headers
 
 					$first = true;
-					foreach($rs->fields as $columnValue) {
+					foreach ($rs->fields as $columnValue) {
 
 						if ($columnValue != null) {
 							$columnValue = trim($columnValue);

@@ -77,7 +77,7 @@ class patForms_Definition_Propel extends patForms_Definition {
 		$tableMap = $mapBuilder->getDatabaseMap()->getTable($tablename);
 		$cols = $tableMap->getColumns();
 
-		foreach($cols as $col) {
+		foreach ($cols as $col) {
 
 			$phpname = $col->getPhpName();
 			// this would need a patched version of patForms in order

@@ -603,7 +603,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		try {
 ";
 			$n = 0;
-			foreach($table->getColumns() as $col) {
+			foreach ($table->getColumns() as $col) {
 				if (!$col->isLazyLoad()) {
 					// $affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
 					$clo = strtolower($col->getName());

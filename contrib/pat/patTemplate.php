@@ -612,7 +612,7 @@ class patTemplate
 		}
 
 		$cnt	=	count( $value );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			if ( !isset( $this->_vars[$template]['rows'][$i] ) )
 				$this->_vars[$template]['rows'][$i]	=	array();
@@ -642,7 +642,7 @@ class patTemplate
 		$value = array();
 
 		$cnt = count( $this->_vars[$template]['rows'] );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			if ( !isset( $this->_vars[$template]['rows'][$i][$varname] ) )
 				continue;
@@ -671,7 +671,7 @@ class patTemplate
 		$prefix		=	strtoupper( $prefix );
 		$variables	=	array_change_key_case( $variables, CASE_UPPER );
 
-		foreach( $variables as $varname => $value )
+		foreach ( $variables as $varname => $value )
 		{
 			$varname	=	$prefix.$varname;
 
@@ -684,7 +684,7 @@ class patTemplate
 			}
 
 			$cnt	=	count( $value );
-			for( $i = 0; $i < $cnt; $i++ )
+			for ( $i = 0; $i < $cnt; $i++ )
 			{
 				if ( !isset( $this->_vars[$template]['rows'][$i] ) )
 					$this->_vars[$template]['rows'][$i]	=	array();
@@ -712,14 +712,14 @@ class patTemplate
 		$prefix		=	strtoupper( $prefix );
 
 		$cnt		=	count( $rows );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			if ( !isset( $this->_vars[$template]['rows'][$i] ) )
 				$this->_vars[$template]['rows'][$i]	=	array();
 
 			$rows[$i]	=	array_change_key_case( $rows[$i], CASE_UPPER );
 
-			foreach( $rows[$i] as $varname => $value )
+			foreach ( $rows[$i] as $varname => $value )
 			{
 				$this->_vars[$template]['rows'][$i][$prefix.$varname]	=	$value;
 			}
@@ -742,7 +742,7 @@ class patTemplate
 		if ( is_array( $object ) )
 		{
 			$rows = array();
-			foreach( $object as $o )
+			foreach ( $object as $o )
 				array_push( $rows, get_object_vars( $o ) );
 
 	   		$this->addRows( $template, $rows, $prefix );
@@ -791,7 +791,7 @@ class patTemplate
 	{
 		$variables	=	array_change_key_case( $variables, CASE_UPPER );
 		$prefix		=	strtoupper( $prefix );
-		foreach( $variables as $varname => $value )
+		foreach ( $variables as $varname => $value )
 		{
 			$this->_globals[$prefix.$varname]	=	( string )$value;
 		}
@@ -996,7 +996,7 @@ class patTemplate
 		/**
 		 * traverse all templates
 		 */
-		foreach( $templates as $name => $spec )
+		foreach ( $templates as $name => $spec )
 		{
 			/**
 			 * root template
@@ -1051,7 +1051,7 @@ class patTemplate
 			/**
 			 * store the default values of the variables
 			 */
-			foreach( $spec['varspecs'] as $varname => $varspec )
+			foreach ( $spec['varspecs'] as $varname => $varspec )
 			{
 				if ( isset( $varspec['modifier'] ) )
 				{
@@ -1253,7 +1253,7 @@ class patTemplate
 				$dirs = array();
 			array_push( $dirs, $this->getIncludePath() .'/'. $moduleType );
 
-			foreach( $dirs as $dir )
+			foreach ( $dirs as $dir )
 			{
 				$moduleFile	=	sprintf( "%s/%s.php", $dir, str_replace( '_', '/', $moduleName ) );
 				if ( @include_once $moduleFile )
@@ -1302,7 +1302,7 @@ class patTemplate
 			$dirs = array();
 		array_push( $dirs, $this->getIncludePath() .'/'. $moduleType );
 
-		foreach( $dirs as $dir )
+		foreach ( $dirs as $dir )
 		{
 			$moduleFile	=	sprintf( "%s/%s.php", $dir, str_replace( '_', '/', $moduleName ) );
 		if ( !file_exists( $moduleFile ) )
@@ -1437,7 +1437,7 @@ class patTemplate
 		}
 
 		$loopCount = 0;
-		for( $i = $start; $i < $this->_templates[$template]['loop']; $i++ )
+		for ( $i = $start; $i < $this->_templates[$template]['loop']; $i++ )
 		{
 			$finished  = false;
 
@@ -1529,7 +1529,7 @@ class patTemplate
 	*/
 	function _initTemplate( $template )
 	{
-		foreach( $this->_templates[$template]['copyVars'] as $dest => $src )
+		foreach ( $this->_templates[$template]['copyVars'] as $dest => $src )
 		{
 			/**
 			 * copy from the same template
@@ -1560,7 +1560,7 @@ class patTemplate
 
 				$rows = count( $this->_vars[$srcTemplate]['rows'] );
 
-				for( $i = 0; $i < $rows; $i++ )
+				for ( $i = 0; $i < $rows; $i++ )
 				{
 					if ( !isset( $this->_vars[$srcTemplate]['rows'][$i][$srcVar] ) )
 						continue;
@@ -1592,7 +1592,7 @@ class patTemplate
 		 */
 		$this->_applyModifers($template, $this->_templates[$template]['vars']);
 
-		foreach( $this->_templates[$template]['vars'] as $key => $value )
+		foreach ( $this->_templates[$template]['vars'] as $key => $value )
 		{
 			if ( is_array( $value ) )
 			{
@@ -1631,7 +1631,7 @@ class patTemplate
 		$globalVars = $this->_globals;
 		$this->_applyModifers($template, $globalVars);
 
-		foreach( $globalVars as $key => $value )
+		foreach ( $globalVars as $key => $value )
 		{
 			if ( is_array( $value ) )
 			{
@@ -1656,7 +1656,7 @@ class patTemplate
 	*/
 	function _applyModifers($template, &$vars)
 	{
-		foreach( $this->_templates[$template]['modifyVars'] as $varname => $modifier )
+		foreach ( $this->_templates[$template]['modifyVars'] as $varname => $modifier )
 		{
 			if ( !isset( $vars[$varname] ) )
 				continue;
@@ -1685,7 +1685,7 @@ class patTemplate
 	function _parseDependencies( $template )
 	{
 		$countDep	=	count( $this->_templates[$template]['currentDependencies'] );
-		for( $i = 0; $i < $countDep; $i++ )
+		for ( $i = 0; $i < $countDep; $i++ )
 		{
 			$depTemplate	=	$this->_templates[$template]['currentDependencies'][$i];
 			$this->parseTemplate( $depTemplate );
@@ -1731,7 +1731,7 @@ class patTemplate
 			 * condition template
 			 */
 			case 'simplecondition':
-				foreach( $this->_templates[$template]['attributes']['requiredvars'] as $var )
+				foreach ( $this->_templates[$template]['attributes']['requiredvars'] as $var )
 				{
 					if ( $var[0] !== $template )
 						$this->_fetchVariables($var[0]);
@@ -2084,7 +2084,7 @@ class patTemplate
 			return $result;
 
 		$cnt = count( $this->_outputFilters );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$result = $this->_outputFilters[$i]->apply( $result );
 		}
@@ -2163,7 +2163,7 @@ class patTemplate
 		if ( $recursive === true )
 		{
 			$deps = $this->_getDependencies( $name );
-			foreach( $deps as $dep )
+			foreach ( $deps as $dep )
 			{
 				$this->clearTemplate( $dep, true );
 			}
@@ -2181,7 +2181,7 @@ class patTemplate
 	{
 		$templates	=	array_keys( $this->_templates );
 		$cnt		=	count( $templates );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$this->clearTemplate( $templates[$i] );
 		}
@@ -2220,7 +2220,7 @@ class patTemplate
 		if ( $recursive === true )
 		{
 			$deps = $this->_getDependencies( $name );
-			foreach( $deps as $dep )
+			foreach ( $deps as $dep )
 			{
 				$this->freeTemplate( $dep, true );
 			}
@@ -2263,7 +2263,7 @@ class patTemplate
 
 		if ( isset( $this->_templates[$template]['subtemplates'] ) )
 		{
-			foreach( $this->_templates[$template]['subtemplates'] as $sub )
+			foreach ( $this->_templates[$template]['subtemplates'] as $sub )
 			{
 				if ( isset( $sub['dependencies'] ) )
 					$deps = array_merge( $deps, $sub['dependencies'] );
@@ -2308,7 +2308,7 @@ class patTemplate
 			$templates = array();
 			$vars      = array();
 
-			foreach( $this->_templates as $name => $spec )
+			foreach ( $this->_templates as $name => $spec )
 			{
 				if ( !in_array( $name, $restrict ) )
 					continue;
@@ -2347,7 +2347,7 @@ class patTemplate
 	function applyInputFilters( $template )
 	{
 		$cnt = count( $this->_inputFilters );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$template = $this->_inputFilters[$i]->apply( $template );
 		}

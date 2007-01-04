@@ -287,7 +287,7 @@ class patForms_Rule
 			$script	=	str_replace( '[CONTAINER::NAME]', $this->container->getName(), $script );
 		}
 
-		foreach( $this->scriptPlaceholders as $placeholder => $property )
+		foreach ( $this->scriptPlaceholders as $placeholder => $property )
 		{
 			if ( isset( $this->$property ) )
 				$script	=	str_replace( '['.$placeholder.']', $this->$property, $script );
@@ -327,7 +327,7 @@ class patForms_Rule
 			if (method_exists($this->container, 'getName')) {
 				$script = str_replace('[CONTAINER::NAME]', $this->container->getName(), $script);
 			}
-			foreach($this->scriptPlaceholders as $placeholder => $property) {
+			foreach ($this->scriptPlaceholders as $placeholder => $property) {
 				if (isset($this->$property)) {
 					$script = str_replace('['.$placeholder.']', $this->$property, $script);
 				} else {

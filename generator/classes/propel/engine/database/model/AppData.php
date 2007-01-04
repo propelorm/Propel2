@@ -141,7 +141,7 @@ class AppData {
 			return $this->dbList[0];
 		}
 
-		for($i=0,$size=count($this->dbList); $i < $size; $i++) {
+		for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
 			$db = $this->dbList[$i];
 			if ($db->getName() === $name) {
 				return $db;
@@ -181,7 +181,7 @@ class AppData {
 	private function doFinalInitialization()
 	{
 		if (!$this->isInitialized) {
-			for($i=0, $size=count($this->dbList); $i < $size; $i++) {
+			for ($i=0, $size=count($this->dbList); $i < $size; $i++) {
 				$this->dbList[$i]->doFinalInitialization();
 			}
 			$this->isInitialized = true;

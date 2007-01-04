@@ -111,7 +111,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 		} else {
 			// the traditional way is to map the schema.xml filenames
 			$dmMap = $this->getDataModelDbMap();
-			foreach(array_keys($dmMap) as $dataModelName) {
+			foreach (array_keys($dmMap) as $dataModelName) {
 				$sqlFile = $this->getMappedFile($dataModelName);
 				if ($this->getDatabase() === null) {
 					$databaseName = $dmMap[$dataModelName];
@@ -171,13 +171,13 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 				// First add any "header" SQL
 				$ddl = call_user_func(array($builderClazz, 'getDatabaseStartDDL'));
 
-				foreach($database->getTables() as $table) {
+				foreach ($database->getTables() as $table) {
 
 					if (!$table->isSkipSql()) {
 						$builder = DataModelBuilder::builderFactory($table, 'ddl');
 						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
 						$ddl .= $builder->build();
-						foreach($builder->getWarnings() as $warning) {
+						foreach ($builder->getWarnings() as $warning) {
 							$this->log($warning, PROJECT_MSG_WARN);
 						}
 					} else {

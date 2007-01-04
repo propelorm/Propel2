@@ -607,7 +607,7 @@ class patForms_Element
 			);
 		}
 
-		foreach( $attributes as $attributeName => $attributeValue )
+		foreach ( $attributes as $attributeName => $attributeValue )
 		{
 			$this->setAttribute( $attributeName, $attributeValue );
 		}
@@ -681,7 +681,7 @@ class patForms_Element
 		}
 
 		$result	=	array();
-		foreach( $attributes as $attribute )
+		foreach ( $attributes as $attribute )
 		{
 			if ( $attributeValue = $this->getAttribute( $attribute ) )
 			{
@@ -703,7 +703,7 @@ class patForms_Element
 	*/
 	function loadAttributeDefaults()
 	{
-		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
+		foreach ( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
 			if ( isset( $attributeDef['default'] ) )
 			{
@@ -812,7 +812,7 @@ class patForms_Element
 			return stripslashes( $value );
 		if ( is_array( $value ) )
 		{
-			foreach( $value as $key => $val )
+			foreach ( $value as $key => $val )
 			{
 				$value[$key] = $this->rStripSlashes( $val );
 			}
@@ -838,7 +838,7 @@ class patForms_Element
 			 * apply filters!
 			 */
 			$cnt	=	count( $this->filters );
-			for( $i = 0; $i < $cnt; $i++ )
+			for ( $i = 0; $i < $cnt; $i++ )
 			{
 				/**
 				 * check, whether filter is located between php script and form
@@ -996,7 +996,7 @@ class patForms_Element
 		// apply locale, if the current locale is a custom locale
 		if (patForms::isCustomLocale($this->locale)) {
 			$cnt = count( $this->_rules );
-			for( $i = 0; $i < $cnt; $i++ ) {
+			for ( $i = 0; $i < $cnt; $i++ ) {
 				$this->_rules[$i]['rule']->setLocale($this->locale);
 			}
 		}
@@ -1062,7 +1062,7 @@ class patForms_Element
 		$valid	=	true;
 
 		$cnt	=	count( $this->_rules );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			if ( ( $this->_rules[$i]['time'] & $time ) != $time )
 				continue;
@@ -1216,13 +1216,13 @@ class patForms_Element
 	*/
 	function addValidatorErrorCodes( $defs, $offset = 1000 )
 	{
-		foreach( $defs as $lang => $codes )
+		foreach ( $defs as $lang => $codes )
 		{
 			if ( !isset( $this->validatorErrorCodes[$lang] ) ) {
 				$this->validatorErrorCodes[$lang]	=	array();
 			}
 
-			foreach( $codes as $code => $message ) {
+			foreach ( $codes as $code => $message ) {
 				$this->validatorErrorCodes[$lang][($offset+$code)]	=	$message;
 			}
 		}
@@ -1308,7 +1308,7 @@ class patForms_Element
 		// insert values to placeholders
 		if ( !empty( $vars ) )
 		{
-			foreach( $vars as $key => $value )
+			foreach ( $vars as $key => $value )
 			{
 				$error["message"]	=	str_replace( "[". strtoupper( $key ) ."]", $value, $error["message"] );
 			}
@@ -1338,7 +1338,7 @@ class patForms_Element
 			);
 		}
 
-		foreach( $modifiers as $modifier => $modifierOptions )
+		foreach ( $modifiers as $modifier => $modifierOptions )
 		{
 			// compute method name for this definition and check if it exists
 			$modifierMethod	=	"_modifier".ucfirst( $modifier );
@@ -1387,7 +1387,7 @@ class patForms_Element
 
 		// go through each attribute in the attribute definition and replace the strings
 		// with the corresponding attribute values.
-		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
+		foreach ( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
 			// if attribute was not set, strip the variable by setting it to empty.
 			$attributeValue	=	"";
@@ -1437,7 +1437,7 @@ class patForms_Element
 	{
 		$attributes	=	array();
 
-		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
+		foreach ( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
 			if ( !isset( $this->attributes[$attributeName] ) )
 			{
@@ -1582,7 +1582,7 @@ class patForms_Element
 				$tag	=	"<".$tagname;
 
 				// create attribute collection
-				foreach( $attributes as $attributeName => $attributeValue )
+				foreach ( $attributes as $attributeName => $attributeValue )
 				{
 					$tag	=	$tag . " ".$attributeName."=\"".htmlentities( (string)$attributeValue )."\"";
 				}
@@ -1636,7 +1636,7 @@ class patForms_Element
 		$attributes	=	$this->getAttributes();
 
 		// create valid XML attributes
-		foreach( $attributes as $key => $value )
+		foreach ( $attributes as $key => $value )
 		{
 			$attributes[$key]	=	strtr( $value, $this->xmlEntities );
 		}
@@ -1829,7 +1829,7 @@ class patForms_Element
 		}
 
 		$cnt	=	count( $this->_rules );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$tmp	=	$this->_rules[$i]['rule']->getGlobalJavascript();
 			if ( $tmp === false )
@@ -1863,7 +1863,7 @@ class patForms_Element
 		}
 
 		$cnt	=	count( $this->_rules );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$tmp	=	$this->_rules[$i]['rule']->getInstanceJavascript();
 			if ( $tmp === false )
@@ -1885,7 +1885,7 @@ class patForms_Element
 			$form->registerInstanceJavascript($script);
 		}
 
-		foreach($this->_rules as $rule) {
+		foreach ($this->_rules as $rule) {
 			$rule['rule']->registerJavascripts($form);
 		}
 	}
@@ -1945,7 +1945,7 @@ class patForms_Element
 	function _announce( $property, $value )
 	{
 		$cnt = count( $this->observers );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$this->observers[$i]->notify( $this, $property, $value );
 		}

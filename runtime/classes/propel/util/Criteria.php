@@ -176,7 +176,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Implementing SPL IteratorAggregate interface.  This allows
-	 * you to foreach() over a Criteria object.
+	 * you to foreach () over a Criteria object.
 	 */
 	public function getIterator()
 		{
@@ -389,7 +389,7 @@ class Criteria implements IteratorAggregate {
 	{
 		$tables = array();
 		$keys = array_keys($this->map);
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			$t = substr($key, 0, strpos($key, '.'));
 			// this happens automatically, so if no notices
 			// are raised, then leave it out:
@@ -947,7 +947,7 @@ class Criteria implements IteratorAggregate {
 			   )
 			{
 				$isEquiv = true;
-				foreach($criteria->keys() as $key) {
+				foreach ($criteria->keys() as $key) {
 					if ($this->containsKey($key)) {
 						$a = $this->getCriterion($key);
 						$b = $criteria->getCriterion($key);
@@ -1108,11 +1108,11 @@ class Criteria implements IteratorAggregate {
 }
 
 // --------------------------------------------------------------------
-// Criterion Iterator class -- allows foreach($criteria as $criterion)
+// Criterion Iterator class -- allows foreach ($criteria as $criterion)
 // --------------------------------------------------------------------
 
 /**
- * Class that implements SPL Iterator interface.  This allows foreach() to
+ * Class that implements SPL Iterator interface.  This allows foreach () to
  * be used w/ Criteria objects.  Probably there is no performance advantage
  * to doing it this way, but it makes sense -- and simpler code.
  *
@@ -1316,7 +1316,7 @@ class Criterion  {
 	public function setDB(DBAdapter $v)
 	{
 		$this->db = $v;
-		for($i=0, $_i=count($this->clauses); $i < $_i; $i++) {
+		for ($i=0, $_i=count($this->clauses); $i < $_i; $i++) {
 			$this->clauses[$i]->setDB($v);
 		}
 	}
@@ -1401,7 +1401,7 @@ class Criterion  {
 
 		$db = $this->getDb();
 		$clausesLength = count($this->clauses);
-		for($j = 0; $j < $clausesLength; $j++) {
+		for ($j = 0; $j < $clausesLength; $j++) {
 			$sb .= '(';
 		}
 
@@ -1514,7 +1514,7 @@ class Criterion  {
 			}
 		}
 
-		for($i=0; $i < $clausesLength; $i++) {
+		for ($i=0; $i < $clausesLength; $i++) {
 			$sb .= $this->conjunctions[$i];
 			$this->clauses[$i]->appendPsTo($sb, $params);
 			$sb .= ')';
@@ -1578,7 +1578,7 @@ class Criterion  {
 		}
 
 		$clausesLength = count($this->clauses);
-		for($i=0; $i < $clausesLength; $i++) {
+		for ($i=0; $i < $clausesLength; $i++) {
 			$this->clauses[$i]->appendPsTo($sb="", $params=array());
 			$h ^= crc32(serialize(array($sb, $params)));
 		}
@@ -1607,7 +1607,7 @@ class Criterion  {
 		$s[] = $c->getTable();
 		$clauses = $c->getClauses();
 		$clausesLength = count($clauses);
-		for($i = 0; $i < $clausesLength; $i++) {
+		for ($i = 0; $i < $clausesLength; $i++) {
 			$this->addCriterionTable($clauses[$i], $s);
 		}
 	}
@@ -1636,7 +1636,7 @@ class Criterion  {
 		$a[] = $c;
 		$clauses = $c->getClauses();
 		$clausesLength = count($clauses);
-		for($i=0; $i < $clausesLength; $i++) {
+		for ($i=0; $i < $clausesLength; $i++) {
 			$this->traverseCriterion($clauses[$i], $a);
 		}
 	}

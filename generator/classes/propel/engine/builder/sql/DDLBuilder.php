@@ -81,7 +81,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	public function getColumnList($columns, $delim=',')
 	{
 		$list = array();
-		foreach($columns as $col) {
+		foreach ($columns as $col) {
 			if ($col instanceof Column) {
 				$col = $col->getName();
 			}

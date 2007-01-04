@@ -23,7 +23,7 @@ class patForms_Creator_Definition {
 				}
 			}
 			if (isset($el['rules'])) {
-				foreach($el['rules'] as $rule) {
+				foreach ($el['rules'] as $rule) {
 					$element->addRule(new $rule['type']($rule));
 				}
 			}

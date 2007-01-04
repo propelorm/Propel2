@@ -102,7 +102,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 				// $this->log("Processing class mappings in database: " . $database->getName());
 
 		//print the tables
-				foreach($database->getTables() as $table) {
+				foreach ($database->getTables() as $table) {
 
 					if (!$table->isForReferenceOnly()) {
 
@@ -118,7 +118,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 						// (this code is based on PropelOMTask)
 
-						foreach(array('mapbuilder', 'peerstub', 'objectstub') as $target) {
+						foreach (array('mapbuilder', 'peerstub', 'objectstub') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
@@ -151,7 +151,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 
 						if ('MaterializedPath' == $table->treeMode()) {
-							foreach(array('nodepeerstub', 'nodestub') as $target) {
+							foreach (array('nodepeerstub', 'nodestub') as $target) {
 								$builder = DataModelBuilder::builderFactory($table, $target);
 								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
@@ -198,7 +198,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 	{
 		$ar = array();
 
-		foreach( $xml->children() as $k => $v ) {
+		foreach ( $xml->children() as $k => $v ) {
 
 			// recurse the child
 			$child = self::simpleXmlToArray( $v );
@@ -212,7 +212,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			}
 
 			// add the childs attributes as if they where children
-			foreach( $v->attributes() as $ak => $av ) {
+			foreach ( $v->attributes() as $ak => $av ) {
 
 				// if the child is not an array, transform it into one
 				if ( !is_array( $child ) ) {

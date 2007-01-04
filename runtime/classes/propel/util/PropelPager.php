@@ -55,13 +55,13 @@
  * <?endif?>
  * </td>
  * <td>
- * <?foreach($pager->getPrevLinks() as $link):?>
+ * <?foreach ($pager->getPrevLinks() as $link):?>
  * <a href="somescript?page=<?=$link?>"><?=$link?></a>|
  * <?endforeach?>
  * </td>
  * <td><?=$pager->getPage()?></td>
  * <td>
- * <?foreach($pager->getNextLinks() as $link):?>
+ * <?foreach ($pager->getNextLinks() as $link):?>
  * | <a href="somescript?page=<?=$link?>"><?=$link?></a>
  * <?endforeach?>
  * </td>
@@ -84,7 +84,7 @@
  * <th>Date</th>
  * <th>comments</th>
  * </tr>
- * <?foreach($pager->getResult() as $poem):?>
+ * <?foreach ($pager->getResult() as $poem):?>
  * <tr>
  * <td><?=$poem->getTitle()?></td>
  * <td><?=$poem->getPoemUsers()->getUname()?></td>
@@ -367,7 +367,7 @@ class PropelPager {
 		$end = $this->getPage() - $range;
 		$first =  $this->getFirstPage();
 		$links = array();
-		for($i=$start; $i>$end; $i--) {
+		for ($i=$start; $i>$end; $i--) {
 			if ($i < $first) {
 					break;
 			}
@@ -390,7 +390,7 @@ class PropelPager {
 		$end = $this->getPage() + $range;
 		$last =  $this->getLastPage();
 		$links = array();
-		for($i=$start; $i<$end; $i++) {
+		for ($i=$start; $i<$end; $i++) {
 			if ($i > $last) {
 					break;
 			}

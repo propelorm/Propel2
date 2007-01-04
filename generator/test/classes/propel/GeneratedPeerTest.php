@@ -315,7 +315,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		// 2) make sure that calls to doSelect also return references to the same objects.
 		$allbooks = BookPeer::doSelect(new Criteria());
-		foreach($allbooks as $testb) {
+		foreach ($allbooks as $testb) {
 			if ($testb->getPrimaryKey() == $b1->getPrimaryKey()) {
 				$this->assertTrue($testb === $b1, "Expected same object instance from doSelect() as from retrieveByPK()");
 			}
@@ -332,7 +332,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		// 4) test a doSelectJoin()
 		$morebooks = BookPeer::doSelectJoinAuthor(new Criteria());
-		for($i=0,$j=0; $j < count($morebooks); $i++, $j++) {
+		for ($i=0,$j=0; $j < count($morebooks); $i++, $j++) {
 			$testb1 = $allbooks[$i];
 			$testb2 = $allbooks[$j];
 			$this->assertTrue($testb1 === $testb2, "Expected the same objects from consecutive doSelect() calls.");

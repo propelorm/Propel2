@@ -492,7 +492,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		}
 
 		// just in case we're grouping: add those columns to the select statement
-		foreach(\$criteria->getGroupByColumns() as \$column)
+		foreach (\$criteria->getGroupByColumns() as \$column)
 		{
 			\$criteria->addSelectColumn(\$column);
 		}
@@ -771,7 +771,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// We have to iterate through all the columns so that we know the offset of the primary
 		// key columns.
 		$n = 0;
-		foreach($this->getTable()->getColumns() as $col) {
+		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
 					$pk[] = "\$row[\$startcol + $n]";
@@ -1200,11 +1200,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				\$values = array(\$values);
 			}
 			\$vals = array();
-			foreach(\$values as \$value)
+			foreach (\$values as \$value)
 			{
 ";
 			$i=0;
-			foreach($table->getPrimaryKey() as $col) {
+			foreach ($table->getPrimaryKey() as $col) {
 				$script .= "
 				\$vals[$i][] = \$value[$i];";
 				$i++;
@@ -1213,7 +1213,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			}
 ";
 			$i=0;
-			foreach($table->getPrimaryKey() as $col) {
+			foreach ($table->getPrimaryKey() as $col) {
 				$script .= "
 			\$criteria->add(".$this->getColumnConstant($col).", \$vals[$i], Criteria::IN);";
 				$i++;
@@ -1316,7 +1316,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		// first find the objects that are implicated by the \$criteria
 		\$objects = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
-		foreach(\$objects as \$obj) {
+		foreach (\$objects as \$obj) {
 ";
 
 		foreach ($table->getReferrers() as $fk) {
@@ -1347,7 +1347,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// delete related $fkClassName objects
 			\$c = new Criteria();
 			";
-					for($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
+					for ($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
 						$columnFK = $tblFK->getColumn($columnNamesF[$x]);
 						$columnL = $table->getColumn($columnNamesL[$x]);
 
@@ -1395,7 +1395,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		// first find the objects that are implicated by the \$criteria
 		\$objects = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
-		foreach(\$objects as \$obj) {
+		foreach (\$objects as \$obj) {
 ";
 
 		// This logic is almost exactly the same as that in doOnDeleteCascade()
@@ -1482,7 +1482,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				\$cols = array(\$cols);
 			}
 
-			foreach(\$cols as \$colName) {
+			foreach (\$cols as \$colName) {
 				if (\$tableMap->containsColumn(\$colName)) {
 					\$get = 'get' . \$tableMap->getColumn(\$colName)->getPhpName();
 					\$columns[\$colName] = \$obj->\$get();
@@ -1542,7 +1542,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// the primary key passed to be an array of pkey
 			// values
 			$i=0;
-			foreach($table->getPrimaryKey() as $col) {
+			foreach ($table->getPrimaryKey() as $col) {
 	   			$script .= "
 		\$criteria->add(".$this->getColumnConstant($col).", \$pk[$i]);";
 				$i++;
@@ -1590,9 +1590,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->add(".$this->getColumnConstant($k1[0]).", \$pks, Criteria::IN);";
 		} else {
 			$script .= "
-			foreach(\$pks as \$pk) {";
+			foreach (\$pks as \$pk) {";
 			$i = 0;
-			foreach($table->getPrimaryKey() as $col) {
+			foreach ($table->getPrimaryKey() as $col) {
 				$script .= "
 				\$c{$i} = \$criteria->getNewCriterion(".$this->getPeerClassname($col).", \$pk[$i], Criteria::EQUAL);";
 				$j = $i - 1;

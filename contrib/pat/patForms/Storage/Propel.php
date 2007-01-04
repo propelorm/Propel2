@@ -59,7 +59,7 @@ class patForms_Storage_Propel extends patForms_Storage
 		if ($result !== true) {
 			$mapBuilder = $this->peer->getMapBuilder();
 			$dbMap = $mapBuilder->getDatabaseMap();
-			foreach($result as $colname => $error) {
+			foreach ($result as $colname => $error) {
 				list($tablename, $colname) = explode('.', $colname);
 				$column = $dbMap->getTable($tablename)->getColumn($colname);
 				$element = $form->getElement($column->getPhpName());
@@ -136,7 +136,7 @@ class patForms_Storage_Propel extends patForms_Storage
 
 	private function populateObjectFromArray($object, $values) {
 
-		foreach(array_keys($object->toArray()) as $key) {
+		foreach (array_keys($object->toArray()) as $key) {
 			if (array_key_exists($key, $values)) {
 				$object->{'set' . $key}($values[$key]);
 			}

@@ -345,7 +345,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 		$ads = array();
 
 		// Get all matched files from schemaFilesets
-		foreach($this->schemaFilesets as $fs) {
+		foreach ($this->schemaFilesets as $fs) {
 			$ds = $fs->getDirectoryScanner($this->project);
 			$srcDir = $fs->getDir($this->project);
 
@@ -354,7 +354,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 			$platform = $this->getPlatformForTargetDatabase();
 
 			// Make a transaction for each file
-			foreach($dataModelFiles as $dmFilename) {
+			foreach ($dataModelFiles as $dmFilename) {
 
 				$this->log("Processing: ".$dmFilename);
 				$xmlFile = new PhingFile($srcDir, $dmFilename);
@@ -412,7 +412,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 			// Different datamodels may state the same database
 			// names, we just want the unique names of databases.
-			foreach($this->dataModels as $dm) {
+			foreach ($this->dataModels as $dm) {
 				$database = $dm->getDatabase();
 				$this->dataModelDbMap[$dm->getName()] = $database->getName();
 				$this->databaseNames[$database->getName()] = $database->getName(); // making list of *unique* dbnames.
@@ -437,7 +437,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 */
 	protected function joinDatamodels($ads) {
 
-		foreach($ads as $ad) {
+		foreach ($ads as $ad) {
 			$db = $ad->getDatabase(null, false);
 			$this->dataModelDbMap[$ad->getName()] = $db->getName();
 		}

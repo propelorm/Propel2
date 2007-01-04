@@ -345,7 +345,7 @@ class Database extends XMLElement {
 	{
 		$tables = $this->getTables();
 
-		for($i=0,$size=count($tables); $i < $size; $i++) {
+		for ($i=0,$size=count($tables); $i < $size; $i++) {
 			$currTable = $tables[$i];
 
 			// check schema integrity
@@ -395,7 +395,7 @@ class Database extends XMLElement {
 				// local column references
 				$localColumnNames = $currFK->getLocalColumns();
 
-				for($k=0,$lcnLen=count($localColumnNames); $k < $lcnLen; $k++) {
+				for ($k=0,$lcnLen=count($localColumnNames); $k < $lcnLen; $k++) {
 
 					$local = $currTable->getColumn($localColumnNames[$k]);
 
@@ -418,7 +418,7 @@ class Database extends XMLElement {
 
 				// foreign column references
 				$foreignColumnNames = $currFK->getForeignColumns();
-				for($k=0,$fcnLen=count($localColumnNames); $k < $fcnLen; $k++) {
+				for ($k=0,$fcnLen=count($localColumnNames); $k < $fcnLen; $k++) {
 					$foreign = $foreignTable->getColumn($foreignColumnNames[$k]);
 					// if the foreign column does not exist, we may have an
 					// external reference or a misspelling

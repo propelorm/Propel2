@@ -174,7 +174,7 @@ class Validator extends XMLElement {
 		$result .= ">\n";
 
 		if ($this->ruleList !== null) {
-			for($i=0,$_i=count($this->ruleList); $i < $_i; $i++) {
+			for ($i=0,$_i=count($this->ruleList); $i < $_i; $i++) {
 				$result .= $this->ruleList[$i]->toString();
 			}
 		}

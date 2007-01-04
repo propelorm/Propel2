@@ -304,7 +304,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 						$obj->hydrate($row);
 
 						$row = array();
-						foreach($cols as $tmp_id => $col)
+						foreach ($cols as $tmp_id => $col)
 						{
 								// save the PK in an array
 								if ($col->isPrimaryKey()) {
@@ -326,7 +326,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 				$this->bind($dataset);
 
 				if ($this->columnMode == STRUCTURES_DATAGRID_PROPEL_ALL_COLUMNS) {
-						foreach($columns as $tmp_id => $column) {
+						foreach ($columns as $tmp_id => $column) {
 
 								if (!$this->isColumnHidden($column)) {
 
@@ -335,7 +335,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 						}
 				} else {
 
-						foreach($this->columnVisibility as $column => $visibility) {
+						foreach ($this->columnVisibility as $column => $visibility) {
 
 								if (!$this->isColumnHidden($column)) {
 								        $this->addColumn(new Structures_DataGrid_Column($column, $column, $column, null));

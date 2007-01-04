@@ -40,7 +40,7 @@ class ColumnTest extends PHPUnit2_Framework_TestCase {
 	{
 		$expected = "`Column0`, `Column1`, `Column2`, `Column3`, `Column4`";
 		$objArray = array();
-		for($i=0; $i<5; $i++) {
+		for ($i=0; $i<5; $i++) {
 			$c = new Column();
 			$c->setName("Column" . $i);
 			$objArray[] = $c;
@@ -50,7 +50,7 @@ class ColumnTest extends PHPUnit2_Framework_TestCase {
 		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
 
 		$strArray = array();
-		for($i=0; $i<5; $i++) {
+		for ($i=0; $i<5; $i++) {
 			$strArray[] = "Column" . $i;
 		}
 

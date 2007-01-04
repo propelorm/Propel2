@@ -87,7 +87,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
 			$script = $builder->build();
 			file_put_contents($_f->getAbsolutePath(), $script);
-			foreach($builder->getWarnings() as $warning) {
+			foreach ($builder->getWarnings() as $warning) {
 				$this->log($warning, PROJECT_MSG_WARN);
 			}
 		} else {
@@ -124,7 +124,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 
 						// these files are always created / overwrite any existing files
-						foreach(array('peer', 'object', 'mapbuilder') as $target) {
+						foreach (array('peer', 'object', 'mapbuilder') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
 							$this->build($builder);
 						}
@@ -134,7 +134,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 
 						// these classes are only generated if they don't already exist
-						foreach(array('peerstub', 'objectstub') as $target) {
+						foreach (array('peerstub', 'objectstub') as $target) {
 							$builder = DataModelBuilder::builderFactory($table, $target);
 							$this->build($builder, $overwrite=false);
 						}
@@ -173,19 +173,19 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 						if ($table->treeMode()) {
 							switch($table->treeMode()) {
 								case 'NestedSet':
-									foreach(array('nestedsetpeer', 'nestedset') as $target) {
+									foreach (array('nestedsetpeer', 'nestedset') as $target) {
 										$builder = DataModelBuilder::builderFactory($table, $target);
 										$this->build($builder);
 									}
 								break;
 
 								case 'MaterializedPath':
-									foreach(array('nodepeer', 'node') as $target) {
+									foreach (array('nodepeer', 'node') as $target) {
 										$builder = DataModelBuilder::builderFactory($table, $target);
 										$this->build($builder);
 									}
 
-									foreach(array('nodepeerstub', 'nodestub') as $target) {
+									foreach (array('nodepeerstub', 'nodestub') as $target) {
 										$builder = DataModelBuilder::builderFactory($table, $target);
 										$this->build($builder, $overwrite=false);
 									}

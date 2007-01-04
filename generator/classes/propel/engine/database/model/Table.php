@@ -152,7 +152,7 @@ class Table extends XMLElement implements IDMethod {
 		// columns in the table, then change it to "none"
 		if ($this->getIdMethod() === IDMethod::NATIVE) {
 			$anyAutoInc = false;
-			foreach($this->getColumns() as $col) {
+			foreach ($this->getColumns() as $col) {
 				if ($col->isAutoIncrement()) {
 					$anyAutoInc = true;
 					break;
@@ -776,7 +776,7 @@ class Table extends XMLElement implements IDMethod {
 	public function getNumLazyLoadColumns()
 	{
 		$count = 0;
-		foreach($this->columnList as $col) {
+		foreach ($this->columnList as $col) {
 			if ($col->isLazyLoad()) {
 				$count++;
 			}
@@ -853,7 +853,7 @@ class Table extends XMLElement implements IDMethod {
 	public function getForeignKey($col)
 	{
 		$firstFK = null;
-		for($i=0,$size=count($this->foreignKeys); $i < $size; $i++) {
+		for ($i=0,$size=count($this->foreignKeys); $i < $size; $i++) {
 			$key = $this->foreignKeys[$i];
 			if (in_array($col, $key->getLocalColumns())) {
 				if ($firstFK === null) {
@@ -1016,25 +1016,25 @@ class Table extends XMLElement implements IDMethod {
 		$result .= ">\n";
 
 		if ($this->columnList !== null) {
-			for($i=0,$_i=count($this->columnList); $i < $_i; $i++) {
+			for ($i=0,$_i=count($this->columnList); $i < $_i; $i++) {
 				$result .= $this->columnList[$i]->toString();
 			}
 		}
 
 		if ($this->validatorList !== null) {
-			for($i=0,$_i=count($this->validatorList); $i < $_i; $i++) {
+			for ($i=0,$_i=count($this->validatorList); $i < $_i; $i++) {
 				$result .= $this->validatorList[$i]->toString();
 			}
 		}
 
 		if ($this->foreignKeys !== null) {
-			for($i=0,$_i=count($this->foreignKeys); $i < $_i; $i++) {
+			for ($i=0,$_i=count($this->foreignKeys); $i < $_i; $i++) {
 				$result .= $this->foreignKeys[$i]->toString();
 			}
 		}
 
 		if ($this->idMethodParameters !== null) {
-			for($i=0,$_i=count($this->idMethodParameters); $i < $_i; $i++) {
+			for ($i=0,$_i=count($this->idMethodParameters); $i < $_i; $i++) {
 				$result .= $this->idMethodParameters[$i]->toString();
 			}
 		}
@@ -1053,7 +1053,7 @@ class Table extends XMLElement implements IDMethod {
 	public function getPrimaryKey()
 	{
 		$pk = array();
-		for($i=0,$_i=count($this->columnList); $i < $_i; $i++) {
+		for ($i=0,$_i=count($this->columnList); $i < $_i; $i++) {
 			$col = $this->columnList[$i];
 			if ($col->isPrimaryKey()) {
 				$pk[] = $col;
@@ -1110,7 +1110,7 @@ class Table extends XMLElement implements IDMethod {
 	private function printList($list){
 		$result = "";
 		$comma = 0;
-		for($i=0,$_i=count($list); $i < $_i; $i++) {
+		for ($i=0,$_i=count($list); $i < $_i; $i++) {
 			$col = $list[$i];
 			if ($col->isPrimaryKey()) {
 				$result .= ($comma++ ? ',' : '') . $this->getDatabase()->getPlatform()->quoteIdentifier($col->getName());

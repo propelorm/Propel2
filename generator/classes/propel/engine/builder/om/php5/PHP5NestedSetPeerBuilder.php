@@ -1246,7 +1246,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function shiftRParent(BaseNodeObject \$node, \$delta, PDO \$con = null)
 	{
-		if(\$node->hasParent()) {
+		if (\$node->hasParent()) {
 			\$parent = \$node->retrieveParent();
 			self::shiftRParent(\$parent, \$delta, \$con);
 		}

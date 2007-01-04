@@ -269,10 +269,10 @@ class ".$this->getClassname()." implements MapBuilder {
 			} // if col-is prim key
 		} // foreach
 
-		foreach($table->getValidators() as $val) {
+		foreach ($table->getValidators() as $val) {
 			$col = $val->getColumn();
 			$cup = strtoupper($col->getName());
-			foreach($val->getRules() as $rule) {
+			foreach ($val->getRules() as $rule) {
 				if ($val->getTranslate() !== Validator::TRANSLATE_NONE) {
 					$script .= "
 		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".$rule->getValue()."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));

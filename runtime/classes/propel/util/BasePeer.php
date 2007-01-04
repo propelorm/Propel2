@@ -114,8 +114,8 @@ class BasePeer
 		// be executed per table)
 
 		$tables_keys = array();
-		foreach($criteria as $c) {
-			foreach($c->getAllTables() as $tableName) {
+		foreach ($criteria as $c) {
+			foreach ($c->getAllTables() as $tableName) {
 				$tableName2 = $criteria->getTableForAlias($tableName);
 				if ($tableName2 !== null) {
 					$tables_keys[$tableName2 . ' ' . $tableName] = true;
@@ -129,11 +129,11 @@ class BasePeer
 
 		$tables = array_keys($tables_keys);
 
-		foreach($tables as $tableName) {
+		foreach ($tables as $tableName) {
 
 			$whereClause = array();
 			$selectParams = array();
-			foreach($dbMap->getTable($tableName)->getColumns() as $colMap) {
+			foreach ($dbMap->getTable($tableName)->getColumns() as $colMap) {
 				$key = $tableName . '.' . $colMap->getColumnName();
 				if ($criteria->containsKey($key)) {
 					$sb = "";
@@ -264,7 +264,7 @@ class BasePeer
 
 			$qualifiedCols = $criteria->keys(); // we need table.column cols when populating values
 			$columns = array(); // but just 'column' cols for the SQL
-			foreach($qualifiedCols as $qualifiedCol) {
+			foreach ($qualifiedCols as $qualifiedCol) {
 				$columns[] = substr($qualifiedCol, strpos($qualifiedCol, '.') + 1);
 			}
 
@@ -334,12 +334,12 @@ class BasePeer
 
 		$affectedRows = 0; // initialize this in case the next loop has no iterations.
 
-		foreach($tablesColumns as $tableName => $columns) {
+		foreach ($tablesColumns as $tableName => $columns) {
 
 			$whereClause = array();
 
 			$selectParams = array();
-			foreach($columns as $colName) {
+			foreach ($columns as $colName) {
 				$sb = "";
 				$selectCriteria->getCriterion($colName)->appendPsTo($sb, $selectParams);
 				$whereClause[] = $sb;
@@ -349,7 +349,7 @@ class BasePeer
 			try {
 
 				$sql = "UPDATE " . $tableName . " SET ";
-				foreach($updateTablesColumns[$tableName] as $col) {
+				foreach ($updateTablesColumns[$tableName] as $col) {
 					$updateColumnName = substr($col, strpos($col, '.') + 1);
 					// add identifiers for the actual database?
 					if ($db->useQuoteIdentifier()) {
@@ -447,7 +447,7 @@ class BasePeer
 	private static function populateStmtValues($stmt, $params, DatabaseMap $dbMap, DBAdapter $db)
 	{
 		$i = 1;
-		foreach($params as $param) {
+		foreach ($params as $param) {
 			$tableName = $param['table'];
 			$columnName = $param['column'];
 			$value = $param['value'];
@@ -496,10 +496,10 @@ class BasePeer
 		$dbMap = Propel::getDatabaseMap($dbName);
 		$tableMap = $dbMap->getTable($tableName);
 		$failureMap = array(); // map of ValidationFailed objects
-		foreach($columns as $colName => $colValue) {
+		foreach ($columns as $colName => $colValue) {
 			if ($tableMap->containsColumn($colName)) {
 				$col = $tableMap->getColumn($colName);
-				foreach($col->getValidators() as $validatorMap) {
+				foreach ($col->getValidators() as $validatorMap) {
 					$validator = BasePeer::getValidator($validatorMap->getClass());
 					if ($validator && ($col->isNotNull() || $colValue !== null) && $validator->isValid($validatorMap, $colValue) === false) {
 						if (!isset($failureMap[$colName])) { // for now we do one ValidationFailed per column, not per rule
@@ -543,7 +543,7 @@ class BasePeer
 			}
 
 			$columns = $dbMap->getTable($table)->getColumns();
-			foreach(array_keys($columns) as $key) {
+			foreach (array_keys($columns) as $key) {
 				if ($columns[$key]->isPrimaryKey()) {
 					$pk = $columns[$key];
 					break;
@@ -590,7 +590,7 @@ class BasePeer
 		$selectModifiers = $criteria->getSelectModifiers();
 
 		// get selected columns
-		foreach($select as $columnName) {
+		foreach ($select as $columnName) {
 
 			// expect every column to be of "table.column" formation
 			// it could be a function:  e.g. MAX(books.price)
@@ -631,14 +631,14 @@ class BasePeer
 		}
 
 		// set the aliases
-		foreach($aliases as $alias => $col) {
+		foreach ($aliases as $alias => $col) {
 			$selectClause[] = $col . " AS " . $alias;
 		}
 
 		// add the criteria to WHERE clause
 		// this will also add the table names to the FROM clause if they are not already
 		// invluded via a LEFT JOIN
-		foreach($criteria->keys() as $key) {
+		foreach ($criteria->keys() as $key) {
 
 			$criterion = $criteria->getCriterion($key);
 			$someCriteria = $criterion->getAttachedCriterion();
@@ -797,7 +797,7 @@ class BasePeer
 
 		 if (!empty($orderBy)) {
 
-			foreach($orderBy as $orderByColumn) {
+			foreach ($orderBy as $orderByColumn) {
 
 				// Add function expression as-is.
 
@@ -880,7 +880,7 @@ class BasePeer
 	 */
 	private static function buildParams($columns, Criteria $values) {
 		$params = array();
-		foreach($columns as $key) {
+		foreach ($columns as $key) {
 			if ($values->containsKey($key)) {
 				$crit = $values->getCriterion($key);
 				$params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());

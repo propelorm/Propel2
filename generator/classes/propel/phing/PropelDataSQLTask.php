@@ -122,8 +122,8 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 	 */
 	private function getDatabase($name)
 	{
-		foreach($this->getDataModels() as $dm) {
-			foreach($dm->getDatabases() as $db) {
+		foreach ($this->getDataModels() as $dm) {
+			foreach ($dm->getDatabases() as $db) {
 				if ($db->getName() == $name) {
 					return $db;
 				}
@@ -157,7 +157,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
 		// Parse each file in teh data -> db map
 
-		foreach($map->keys() as $dataXMLFilename) {
+		foreach ($map->keys() as $dataXMLFilename) {
 
 			$dataXMLFile = new PhingFile($this->srcDir, $dataXMLFilename);
 

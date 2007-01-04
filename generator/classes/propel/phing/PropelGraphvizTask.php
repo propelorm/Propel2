@@ -118,7 +118,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 				$this->log("db: " . $database->getName());
 
 				//print the tables
-				foreach($database->getTables() as $tbl) {
+				foreach ($database->getTables() as $tbl) {
 
 					$this->log("\t+ " . $tbl->getName());
 
@@ -142,7 +142,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 				$count = 0;
 				$dotSyntax .= "\n";
-				foreach($database->getTables() as $tbl) {
+				foreach ($database->getTables() as $tbl) {
 					++$count;
 
 					foreach ($tbl->getColumns() as $col) {

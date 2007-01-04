@@ -163,7 +163,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 		$cols = $index->getColumns();
 		$list = array();
-		foreach($cols as $col) {
+		foreach ($cols as $col) {
 			$list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
 		}
 		return implode(', ', $list);
@@ -206,18 +206,18 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		// ColA, ColB+ColC, and ColB (but not ColC!). This is because of the way SQL multi-column indices work.
 		// we will later match found, defined foreign key and referenced column definitions against this array to know
 		// whether we should create a new index for mysql or not
-		foreach($table->getPrimaryKey() as $_primaryKeyColumn) {
+		foreach ($table->getPrimaryKey() as $_primaryKeyColumn) {
 			// do the above for primary keys
 			$_previousColumns[] = $this->quoteIdentifier($_primaryKeyColumn->getName());
 			$_indices[] = implode(',', $_previousColumns);
 		}
 
 		$_tableIndices = array_merge($table->getIndices(), $table->getUnices());
-		foreach($_tableIndices as $_index) {
+		foreach ($_tableIndices as $_index) {
 			// same procedure, this time for unices and indices
 			$_previousColumns = array();
 			$_indexColumns = $_index->getColumns();
-			foreach($_indexColumns as $_indexColumn) {
+			foreach ($_indexColumns as $_indexColumn) {
 				$_previousColumns[] = $this->quoteIdentifier($_indexColumn);
 				$_indices[] = implode(',', $_previousColumns);
 			}
@@ -227,8 +227,8 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		// any column that is referenced by another table (yep, MySQL _is_ a PITA)
 		$counter = 0;
 		$allTables = $table->getDatabase()->getTables();
-		foreach($allTables as $_table) {
-			foreach($_table->getForeignKeys() as $_foreignKey) {
+		foreach ($allTables as $_table) {
+			foreach ($_table->getForeignKeys() as $_foreignKey) {
 				if ($_foreignKey->getForeignTableName() == $table->getName()) {
 					if (!in_array($this->getColumnList($_foreignKey->getForeignColumns()), $_indices)) {
 						// no matching index defined in the schema, so we have to create one
@@ -269,7 +269,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 	 */
 	private function containsColname($columns, $searchcol)
 	{
-		foreach($columns as $col) {
+		foreach ($columns as $col) {
 			if ($col instanceof Column) {
 				$col = $col->getName();
 			}

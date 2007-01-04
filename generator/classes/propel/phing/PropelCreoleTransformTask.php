@@ -350,7 +350,7 @@ class PropelCreoleTransformTask extends Task {
 		}
 
 		// create and add table nodes
-		foreach($dbInfo->getTables() as $table) {
+		foreach ($dbInfo->getTables() as $table) {
 			$tableNode = $this->createTableNode($table);
 			$node->appendChild($tableNode);
 		}
@@ -379,7 +379,7 @@ class PropelCreoleTransformTask extends Task {
 
 		// Create and add column nodes, register column validators
 		$columns = $table->getColumns();
-		foreach($columns as $column) {
+		foreach ($columns as $column) {
 			$columnNode = $this->createColumnNode($column);
 			$node->appendChild($columnNode);
 			$this->registerValidatorsForColumn($column);
@@ -393,14 +393,14 @@ class PropelCreoleTransformTask extends Task {
 
 		// Create and add foreign key nodes.
 		$foreignKeys = $table->getForeignKeys();
-		foreach($foreignKeys as $foreignKey) {
+		foreach ($foreignKeys as $foreignKey) {
 			$foreignKeyNode = $this->createForeignKeyNode($foreignKey);
 			$node->appendChild($foreignKeyNode);
 		}
 
 		// Create and add index nodes.
 		$indices =  $table->getIndices();
-		foreach($indices as $index) {
+		foreach ($indices as $index) {
 			$indexNode = $this->createIndexNode($index);
 			$node->appendChild($indexNode);
 		}
@@ -529,7 +529,7 @@ class PropelCreoleTransformTask extends Task {
 			$columns[$tableName] = array();
 			$primaryKey = $table->getPrimaryKey();
 			if ($primaryKey) {
-				foreach($primaryKey->getColumns() as $colObject) {
+				foreach ($primaryKey->getColumns() as $colObject) {
 					$columns[$tableName][] = $colObject->getName();
 				}
 			}
@@ -555,7 +555,7 @@ class PropelCreoleTransformTask extends Task {
 		$node->setAttribute("foreignTable", $refs[0][1]->getTable()->getName());
 		$node->setAttribute("onDelete", $refs[0][2]);
 		$node->setAttribute("onUpdate", $refs[0][3]);
-		for($m = 0, $size = count($refs); $m < $size; $m++) {
+		for ($m = 0, $size = count($refs); $m < $size; $m++) {
 			$refNode = $this->doc->createElement("reference");
 			$refData = $refs[$m];
 			$refNode->setAttribute("local", $refData[0]->getName());
@@ -763,7 +763,7 @@ class PropelCreoleTransformTask extends Task {
 		$vendorNode = $this->doc->createElement("vendor");
 		$vendorNode->setAttribute("type", $this->dsn["phptype"]);
 
-		foreach($vendorInfo as $key => $value) {
+		foreach ($vendorInfo as $key => $value) {
 			$parameterNode = $this->doc->createElement("parameter");
 			$value = iconv($this->dbEncoding, "utf-8", $value);
 			$parameterNode->setAttribute("name", $key);

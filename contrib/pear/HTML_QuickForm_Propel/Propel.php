@@ -425,7 +425,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 				// Do it the HTML_QuickForm way and use defaultValues
 				// instead of setValue() on every element.
 				// we have to first loop through the columns
-				foreach($this->cols as $colName=>$col) {
+				foreach ($this->cols as $colName=>$col) {
 
 
 						$elementType = $this->typeMapping[$col->getCreoleType()];
@@ -444,7 +444,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
 				$this->setDefaults($defaultValues);
 
-				foreach($this->cols as $colName=>$col) {
+				foreach ($this->cols as $colName=>$col) {
 
 						if ($this->isColumnHidden($colName)) {
 								continue;
@@ -497,7 +497,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 								        } else {
 								                //auto detection
 								                // determine the first string column
-								                foreach($relatedCols as $relatedCol) {
+								                foreach ($relatedCols as $relatedCol) {
 								                        if ($relatedCol->getType() == 'string') {
 								                                $relatedGetter = 'get'.$relatedCol->getPhpName();
 								                                break;
@@ -511,7 +511,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 								        // TODO: not hardcoded here.
 								        $selectList[null] = _('Please selection an option');
 
-								        foreach($relatedList as $relObj) {
+								        foreach ($relatedList as $relObj) {
 								                $key = $relObj->getPrimaryKey();
 
 								                if (false OR $yesWannaUseEntireObjectsToUseItInTemplate) {
@@ -598,7 +598,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 
 								if ($col->hasValidators()) {
 
-								        foreach($col->getValidators() as $validatorMap) {
+								        foreach ($col->getValidators() as $validatorMap) {
 
 								                $this->addRule($colName,
 								                                $validatorMap->getMessage(),
@@ -663,7 +663,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 						throw new PropelException('HTML_QuickForm_Propel::save(): form cannot be saved before it is build.');
 				}
 
-				foreach($this->cols as $colName=>$col) {
+				foreach ($this->cols as $colName=>$col) {
 
 						// Has the form got this element?
 						if ($this->isColumnHidden($colName))
@@ -699,7 +699,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 								                'A' => null
 								             );
 
-								foreach($value as $key=>$val)  {
+								foreach ($value as $key=>$val)  {
 								        $date[$key] = $val[0];
 
 								}

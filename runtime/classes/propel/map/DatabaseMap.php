@@ -117,7 +117,7 @@ class DatabaseMap {
 		// if there's a mismatch in the tables and tableBuilders
 		if (count($this->tableBuilders) != count($this->tables)) {
 			$missingTables = array_diff(array_keys($this->tableBuilders), array_keys($this->tables));
-			foreach($missingTables as $table) {
+			foreach ($missingTables as $table) {
 				$this->tableBuilders[$table]->doBuild();
 			}
 		}

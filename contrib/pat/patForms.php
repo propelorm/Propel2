@@ -569,7 +569,7 @@ class patForms
 
 			if ( !empty( $this->elements ) ) {
 				$cnt	=	count( $this->elements );
-				for( $i=0; $i < $cnt; $i++ ) {
+				for ( $i=0; $i < $cnt; $i++ ) {
 					$this->elements[$i]->setLocale( $locale );
 				}
 			}
@@ -651,7 +651,7 @@ class patForms
 			if ( !empty( $this->elements ) )
 			{
 				$cnt	=	count( $this->elements );
-				for( $i=0; $i < $cnt; $i++ )
+				for ( $i=0; $i < $cnt; $i++ )
 				{
 					$this->elements[$i]->setFormat( $format );
 				}
@@ -682,7 +682,7 @@ class patForms
 		if ( !empty( $this->elements ) )
 		{
 			$cnt	=	count( $this->elements );
-			for( $i=0; $i < $cnt; $i++ )
+			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$this->elements[$i]->setMode( $mode );
 			}
@@ -713,7 +713,7 @@ class patForms
 		if ( !empty( $this->elements ) )
 		{
 			$cnt	=	count( $this->elements );
-			for( $i=0; $i < $cnt; $i++ )
+			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$this->elements[$i]->setSubmitted( $state );
 			}
@@ -807,7 +807,7 @@ class patForms
 
 		$cnt = count( $this->elements );
 
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$this->elements[$i]->applyFilter( $filter );
 		}
@@ -835,7 +835,7 @@ class patForms
 		if ( $formDefinition === null )
 			return	$form;
 
-		foreach( $formDefinition as $name => $element )
+		foreach ( $formDefinition as $name => $element )
 		{
 			if ( !isset( $element["filters"] ) )
 			{
@@ -890,7 +890,7 @@ class patForms
 	*/
 	function __construct()
 	{
-		foreach( $this->staticProperties as $staticProperty => $setMethod )
+		foreach ( $this->staticProperties as $staticProperty => $setMethod )
 		{
 			$propValue	=	patForms::getStaticProperty( $staticProperty );
 			if ( patErrorManager::isError( $propValue ) )
@@ -942,7 +942,7 @@ class patForms
 			// renderers too, so we give them the same renderer if
 			// they don't already have one.
 			$cnt = count( $this->elements );
-			for( $i = 0; $i < $cnt; $i++ )
+			for ( $i = 0; $i < $cnt; $i++ )
 			{
 				if ( $this->elements[$i]->usesRenderer && !is_object( $this->elements[$i]->renderer ) )
 				{
@@ -1045,7 +1045,7 @@ class patForms
 		if ( $valid === true )
 		{
 			$cnt	=	count( $this->elements );
-			for( $i = 0; $i < $cnt; ++$i )
+			for ( $i = 0; $i < $cnt; ++$i )
 			{
 				if ( !$this->elements[$i]->validate() )
 				{
@@ -1138,7 +1138,7 @@ class patForms
 		$success	=	true;
 
 		$cnt	=	count( $this->elements );
-		for( $i = 0; $i < $cnt; ++$i )
+		for ( $i = 0; $i < $cnt; ++$i )
 		{
 			if ( !$this->elements[$i]->finalize() )
 			{
@@ -1202,7 +1202,7 @@ class patForms
 			return	$filter;
 		}
 
-		foreach( $params as $param => $value )
+		foreach ( $params as $param => $value )
 		{
 			$setter		=	'set' . ucfirst( $param );
 			if ( method_exists( $filter, $setter ) )
@@ -1486,7 +1486,7 @@ class patForms
 	function &getElementById( $id )
 	{
 		$cnt	=	count( $this->elements );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			if ( $this->elements[$i]->getId() == $id ) {
 				return $this->elements[$i];
@@ -1554,7 +1554,7 @@ class patForms
 		// add default attributes - do this the 'silent' way be checking whether
 		// the element supports the given attribute, as the element throws a notice
 		// if it does not support it - this is not expected from default attributes.
-		foreach( patForms::getStaticProperty( 'defaultAttributes' ) as $attributeName => $attributeValue )
+		foreach ( patForms::getStaticProperty( 'defaultAttributes' ) as $attributeName => $attributeValue )
 		{
 			if ( !$element->hasAttribute( $attributeName ) )
 			{
@@ -1596,7 +1596,7 @@ class patForms
 		}
 
 		$cnt	=	count( $filters );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$params =	isset( $filters[$i]['params'] ) ? $filters[$i]['params'] : null;
 			$filter	=	&patForms::createFilter( $filters[$i]['filter'], $params );
@@ -1635,7 +1635,7 @@ class patForms
 		}
 
 		$cnt = count( $this->elements );
-		for( $i = 0; $i < $cnt; ++$i )
+		for ( $i = 0; $i < $cnt; ++$i )
 		{
 			$name	=	$this->elements[$i]->getAttribute( 'name' );
 			if ( $name === false )
@@ -1674,7 +1674,7 @@ class patForms
 		$values	=	array();
 
 		$cnt = count( $this->elements );
-		for( $i = 0; $i < $cnt; ++$i )
+		for ( $i = 0; $i < $cnt; ++$i )
 		{
 			$name	=	$this->elements[$i]->getAttribute( 'name' );
 			if ( $name === false ) {
@@ -1844,7 +1844,7 @@ class patForms
 			);
 		}
 
-		foreach( $attributes as $attributeName => $attributeValue )
+		foreach ( $attributes as $attributeName => $attributeValue )
 		{
 			$this->setAttribute( $attributeName, $attributeValue );
 		}
@@ -1886,7 +1886,7 @@ class patForms
 		}
 
 		$result	=	array();
-		foreach( $attributes as $attribute )
+		foreach ( $attributes as $attribute )
 		{
 			if ( $attributeValue = $this->getAttribute( $attribute ) )
 			{
@@ -1910,7 +1910,7 @@ class patForms
 	*/
 	function loadAttributeDefaults()
 	{
-		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
+		foreach ( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
 			if ( isset( $attributeDef['default'] ) )
 			{
@@ -2012,14 +2012,14 @@ class patForms
 	*/
 	function addValidatorErrorCodes( $defs, $offset = 1000 )
 	{
-		foreach( $defs as $lang => $codes )
+		foreach ( $defs as $lang => $codes )
 		{
 			if ( !isset( $this->validatorErrorCodes[$lang] ) )
 			{
 				$this->validatorErrorCodes[$lang]	=	array();
 			}
 
-			foreach( $codes as $code => $message )
+			foreach ( $codes as $code => $message )
 			{
 				$this->validatorErrorCodes[$lang][($offset+$code)]	=	$message;
 			}
@@ -2097,7 +2097,7 @@ class patForms
 		// insert values to placeholders
 		if ( !empty( $vars ) )
 		{
-			foreach( $vars as $key => $value )
+			foreach ( $vars as $key => $value )
 			{
 				$error["message"]	=	str_replace( "[". strtoupper( $key ) ."]", $value, $error["message"] );
 			}
@@ -2137,7 +2137,7 @@ class patForms
 		if ( ( $where & PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS ) == PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS )
 		{
 			$cnt	=	count( $this->elements );
-			for( $i = 0; $i < $cnt; ++$i )
+			for ( $i = 0; $i < $cnt; ++$i )
 			{
 				$this->elements[$i]->attachObserver( $observer );
 			}
@@ -2275,7 +2275,7 @@ class patForms
 	{
 		$attributes	=	array();
 
-		foreach( $this->attributeDefinition as $attributeName => $attributeDef )
+		foreach ( $this->attributeDefinition as $attributeName => $attributeDef )
 		{
 			if ( !isset( $this->attributes[$attributeName] ) )
 			{
@@ -2358,7 +2358,7 @@ class patForms
 
 		// now update all available elements too
 		$cnt = count( $this->elements );
-		for( $i=0; $i < $cnt; $i++ )
+		for ( $i=0; $i < $cnt; $i++ )
 		{
 			$this->elements[$i]->enableOption( $option, $params );
 		}
@@ -2392,7 +2392,7 @@ class patForms
 
 		// now update all available elements too
 		$cnt = count( $this->elements );
-		for( $i=0; $i < $cnt; $i++ )
+		for ( $i=0; $i < $cnt; $i++ )
 		{
 			$this->elements[$i]->disableOption( $option );
 		}
@@ -2536,7 +2536,7 @@ class patForms
 	{
 		if ( empty( $methods ) )
 		{
-			foreach( $this->_validEvents as $event )
+			foreach ( $this->_validEvents as $event )
 			{
 				if ( !method_exists( $obj, $event ) )
 					continue;
@@ -2545,7 +2545,7 @@ class patForms
 			}
 		}
 
-		foreach( $methods as $event => $method )
+		foreach ( $methods as $event => $method )
 		{
 			if ( !isset( $this->_eventHandler[$event] ) )
 			{
@@ -2579,7 +2579,7 @@ class patForms
 		}
 
 		$cnt	=	count( $this->_eventHandler[$handlerName] );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$result	=	call_user_func( $this->_eventHandler[$handlerName][$i], $this, $event );
 			if ( $result == false )
@@ -2613,13 +2613,13 @@ class patForms
 		$attributes	=	$this->getAttributes();
 
 		// create valid XML attributes
-		foreach( $attributes as $key => $value )
+		foreach ( $attributes as $key => $value )
 		{
 			$attributes[$key]	=	strtr( $value, $this->xmlEntities );
 		}
 
 		$elements = '';
-		for( $i = 0; $i < $this->elementCounter; $i++ )
+		for ( $i = 0; $i < $this->elementCounter; $i++ )
 		{
 			$elements .= $this->elements[$i]->toXML( $namespace );
 		}
@@ -2715,7 +2715,7 @@ class patForms
 		$displayedTypes		=	array();
 
 		$cnt = count( $this->elements );
-		for( $i = 0; $i < $cnt; ++$i )
+		for ( $i = 0; $i < $cnt; ++$i )
 		{
 			$instances	.=	$this->elements[$i]->getInstanceJavascript();
 
@@ -2728,7 +2728,7 @@ class patForms
 		}
 
 		$cnt = count( $this->_rules );
-		for( $i = 0; $i < $cnt; ++$i )
+		for ( $i = 0; $i < $cnt; ++$i )
 		{
 			$instances	.=	$this->_rules[$i]['rule']->getInstanceJavascript();
 
@@ -2775,7 +2775,7 @@ class patForms
 	function _announce( $property, $value )
 	{
 		$cnt = count( $this->observers );
-		for( $i = 0; $i < $cnt; $i++ )
+		for ( $i = 0; $i < $cnt; $i++ )
 		{
 			$this->observers[$i]->notify( $this, $property, $value );
 		}

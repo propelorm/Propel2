@@ -51,7 +51,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$this->addFKAttributes($script, $fk);
 		}
 
-		foreach($table->getReferrers() as $refFK) {
+		foreach ($table->getReferrers() as $refFK) {
 			// if ($refFK->getTable()->getName() != $table->getName()) {
 				$this->addRefFKAttributes($script, $refFK);
 			// }
@@ -129,7 +129,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		// update associated ".$tblFK->getPhpName()."
 		if (\$this->$collName !== null) {
-			foreach(\$this->$collName as \$referrerObject) {
+			foreach (\$this->$collName as \$referrerObject) {
 				  \$referrerObject->set".$colFK->getPhpName()."(\$v);
 			  }
 		  }
@@ -717,7 +717,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addRefFKMethods(&$script)
 	{
-		foreach($this->getTable()->getReferrers() as $refFK) {
+		foreach ($this->getTable()->getReferrers() as $refFK) {
 			if ($refFK->isLocalPrimaryKey()) {
 				$this->addPKRefFKGet($script, $refFK);
 				$this->addPKRefFKSet($script, $refFK);
@@ -1062,7 +1062,7 @@ $script .= "
 			// foreign key reference.
 ";
 
-			foreach($table->getForeignKeys() as $fk)
+			foreach ($table->getForeignKeys() as $fk)
 			{
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
@@ -1134,7 +1134,7 @@ $script .= "
 				$collName = $this->getRefFKCollVarName($refFK);
 				$script .= "
 			if (\$this->$collName !== null) {
-				foreach(\$this->$collName as \$referrerFK) {
+				foreach (\$this->$collName as \$referrerFK) {
 					if (!\$referrerFK->isDeleted()) {
 						\$affectedRows += \$referrerFK->save(\$con);
 					}
@@ -1294,7 +1294,7 @@ $script .= "
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 ";
-			foreach($table->getForeignKeys() as $fk) {
+			foreach ($table->getForeignKeys() as $fk) {
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
 			if (\$this->".$aVarName." !== null) {
@@ -1303,7 +1303,7 @@ $script .= "
 				}
 			}
 ";
-			} /* for() */
+			} /* for () */
 		} /* if count(fkeys) */
 
 		$script .= "
@@ -1320,7 +1320,7 @@ $script .= "
 				$collName = $this->getRefFKCollVarName($fk);
 				$script .= "
 				if (\$this->$collName !== null) {
-					foreach(\$this->$collName as \$referrerFK) {
+					foreach (\$this->$collName as \$referrerFK) {
 						if (!\$referrerFK->validate(\$columns)) {
 							\$failureMap = array_merge(\$failureMap, \$referrerFK->getValidationFailures());
 						}
@@ -1428,7 +1428,7 @@ $script .= "
 				//		it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
 				//if ( $fk->getTable()->getName() != $table->getName() ) {
 				$script .= "
-			foreach(\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
+			foreach (\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
 				if (\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
 				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
 			}
