@@ -2,8 +2,8 @@
 /**
  * patForms Creator Propel
  *
- * @package		patForms
- * @subpackage	Creator
+ * @package    patForms
+ * @subpackage Creator
  */
 
 
@@ -15,12 +15,12 @@
 /**
  * patForms Creator DB
  *
- * @access		protected
- * @package		patForms
- * @subpackage	Creator
- * @author		Bert Van den Brande <cyruzb@gmail.com>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @access     protected
+ * @package    patForms
+ * @subpackage Creator
+ * @author     Bert Van den Brande <cyruzb@gmail.com>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 class patForms_Creator_Propel extends patForms_Creator
 {
@@ -55,10 +55,10 @@ class patForms_Creator_Propel extends patForms_Creator
    /**
 	* Create a form from a propel instance
 	*
-	* @access	public
-	* @param	mixed	$object		An instance of a Propel object
-	* @param	array	$options	Any options the creator may need
-	* @return	object 	$form		The patForms object, or a patError object on failure.
+	* @access     public
+	* @param      mixed	$object		An instance of a Propel object
+	* @param      array	$options	Any options the creator may need
+	* @return     object 	$form		The patForms object, or a patError object on failure.
 	*/
 	function &create( $object, $options = array() )
 	{

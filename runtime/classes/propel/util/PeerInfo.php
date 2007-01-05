@@ -25,9 +25,9 @@
  * Handle Dynamic Peer Access. Trying to solve the problems associated
  * with looking at constants, calling methods on static Peer Objects
  *
- * @author   David Giffin <david@giffin.org>
- * @copyright Copyright (c) 2000-2003 David Giffin : LGPL - See LICENCE
- * @package  propel.util
+ * @author     David Giffin <david@giffin.org>
+ * @copyright  Copyright (c) 2000-2003 David Giffin : LGPL - See LICENCE
+ * @package    propel.util
  */
 class PeerInfo
 {
@@ -44,7 +44,7 @@ class PeerInfo
 	/**
 	 * Add a Peer to the list of Peers
 	 *
-	 * @param string $peer The Propel Peer to add
+	 * @param      string $peer The Propel Peer to add
 	 */
 	 private static function addPeer($peer)
 	 {
@@ -65,8 +65,8 @@ class PeerInfo
 	/**
 	 * Get a constant from the Peer Reflector
 	 *
-	 * @param  String The name of the constant
-	 * @return String The Constant String
+	 * @param      String The name of the constant
+	 * @return     String The Constant String
 	 */
 		public static function getPeerConstant($peer, $name)
 		{
@@ -78,7 +78,7 @@ class PeerInfo
 	/**
 	 * Get a Peer from the Peer List
 	 *
-	 * @param string $peer The Propel Peer to add
+	 * @param      string $peer The Propel Peer to add
 	 */
 		public static function getPeer($peer) {
 		self::addPeer($peer);
@@ -92,7 +92,7 @@ class PeerInfo
 	 * You may wat to override this method if your Peers
 	 * are not in the include_path.
 	 *
-	 * @param string $peerName the name of the Peer
+	 * @param      string $peerName the name of the Peer
 	 */
 	public static function loadPeer($peerName)
 	{
@@ -104,8 +104,8 @@ class PeerInfo
 	/**
 	 * Get a Column Constant from a Peer
 	 *
-	 * @param string The PhpName or DB_NAME for the constant
-	 * @return string the Column Constant
+	 * @param      string The PhpName or DB_NAME for the constant
+	 * @return     string the Column Constant
 	 */
 	public static function getColumnConstant($peer, $name)
 	{
@@ -125,8 +125,8 @@ class PeerInfo
 	/**
 	 * Get the Primary Key for this Peer
 	 *
-	 * @param string $peer   The name of the Peer
-	 * @return string The name of the Primary Key
+	 * @param      string $peer   The name of the Peer
+	 * @return     string The name of the Primary Key
 	 */
 	public static function getPrimaryKey($peer)
 	{
@@ -145,8 +145,8 @@ class PeerInfo
 	/**
 	 * Get the Table Map for a Peer
 	 *
-	 * @param string $peer   The name of the Peer
-	 * @return TableMap The table map for this Peer
+	 * @param      string $peer   The name of the Peer
+	 * @return     TableMap The table map for this Peer
 	 */
 	public static function getTableMap($peer)
 	{
@@ -170,10 +170,10 @@ class PeerInfo
 	/**
 	 * Call a Method from the Static Peer Class
 	 *
-	 * @param string $peer   The name of the Peer
-	 * @param string $method The name of the method to call
-	 * @param array  $params The parameters to pass to the method
-	 * @return mixed What ever the method returns
+	 * @param      string $peer   The name of the Peer
+	 * @param      string $method The name of the method to call
+	 * @param      array  $params The parameters to pass to the method
+	 * @return     mixed What ever the method returns
 	 */
 		public static function callMethod($peer, $method, $params = null)
 		{

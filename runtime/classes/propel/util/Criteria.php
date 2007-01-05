@@ -24,16 +24,16 @@
  *
  * BasePeer constructs SQL statements based on the values in this class.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
- * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author Eric Dobbs <eric@dobbse.net> (Torque)
- * @author Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
- * @author Sam Joseph <sam@neurogrid.com> (Torque)
- * @version $Revision$
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
+ * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author     Eric Dobbs <eric@dobbse.net> (Torque)
+ * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
+ * @author     Sam Joseph <sam@neurogrid.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.util
  */
 class Criteria implements IteratorAggregate {
 
@@ -158,7 +158,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Primary storage of criteria data.
-	 * @var array
+	 * @var        array
 	 */
 	private $map = array();
 
@@ -166,7 +166,7 @@ class Criteria implements IteratorAggregate {
 	 * Creates a new instance with the default capacity which corresponds to
 	 * the specified database.
 	 *
-	 * @param dbName The dabase name.
+	 * @param      dbName The dabase name.
 	 */
 	public function __construct($dbName = null)
 	{
@@ -185,7 +185,7 @@ class Criteria implements IteratorAggregate {
 
 		/**
 		 * Get the criteria map.
-		 * @return array
+		 * @return     array
 		 */
 		public function getMap()
 		{
@@ -196,7 +196,7 @@ class Criteria implements IteratorAggregate {
 	 * Brings this criteria back to its initial state, so that it
 	 * can be reused as if it was new. Except if the criteria has grown in
 	 * capacity, it is left at the current capacity.
-	 * @return void
+	 * @return     void
 	 */
 	public function clear()
 	{
@@ -226,12 +226,12 @@ class Criteria implements IteratorAggregate {
 	 * myCrit->addAsColumn("alias", "ALIAS(".MyPeer::ID.")");
 	 * </code>
 	 *
-	 * @param string $name Wanted Name of the column (alias).
-	 * @param string $clause SQL clause to select from the table
+	 * @param      string $name Wanted Name of the column (alias).
+	 * @param      string $clause SQL clause to select from the table
 	 *
 	 * If the name already exists, it is replaced by the new clause.
 	 *
-	 * @return Criteria A modified Criteria object.
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function addAsColumn($name, $clause)
 	{
@@ -242,7 +242,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get the column aliases.
 	 *
-	 * @return array An assoc array which map the column alias names
+	 * @return     array An assoc array which map the column alias names
 	 * to the alias clauses.
 	 */
 	public function getAsColumns()
@@ -253,8 +253,8 @@ class Criteria implements IteratorAggregate {
 		/**
 	 * Returns the column name associated with an alias (AS-column).
 	 *
-	 * @param string $alias
-	 * @return string $string
+	 * @param      string $alias
+	 * @return     string $string
 	 */
 	public function getColumnForAs($as)
 	{
@@ -267,9 +267,9 @@ class Criteria implements IteratorAggregate {
 	 * Allows one to specify an alias for a table that can
 	 * be used in various parts of the SQL.
 	 *
-	 * @param string $alias
-	 * @param string $table
-	 * @return void
+	 * @param      string $alias
+	 * @param      string $table
+	 * @return     void
 	 */
 	public function addAlias($alias, $table)
 	{
@@ -282,8 +282,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Returns the table name associated with an alias.
 	 *
-	 * @param string $alias
-	 * @return string $string
+	 * @param      string $alias
+	 * @return     string $string
 	 */
 	public function getTableForAlias($alias)
 	{
@@ -294,7 +294,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Get the keys for the criteria map.
-	 * @return array
+	 * @return     array
 	 */
 	public function keys()
 	{
@@ -304,8 +304,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Does this Criteria object contain the specified key?
 	 *
-	 * @param string $column [table.]column
-	 * @return boolean True if this Criteria object contain the specified key.
+	 * @param      string $column [table.]column
+	 * @return     boolean True if this Criteria object contain the specified key.
 	 */
 	public function containsKey($column)
 	{
@@ -319,7 +319,7 @@ class Criteria implements IteratorAggregate {
 	 * a transaction.  This is here primarily to support the oid type in
 	 * postgresql.  Though it can be used to require any single sql statement
 	 * to use a transaction.
-	 * @return void
+	 * @return     void
 	 */
 	public function setUseTransaction($v)
 	{
@@ -330,7 +330,7 @@ class Criteria implements IteratorAggregate {
 	 * called by BasePeer to determine whether the sql command specified by
 	 * this criteria must be wrapped in a transaction.
 	 *
-	 * @return a <code>boolean</code> value
+	 * @return     a <code>boolean</code> value
 	 */
 	public function isUseTransaction()
 	{
@@ -340,8 +340,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return criteria related to columns in a table.
 	 *
-		 * @param string $column Column name.
-	 * @return A Criterion or null if $column is invalid.
+		 * @param      string $column Column name.
+	 * @return     A Criterion or null if $column is invalid.
 	 */
 	public function getCriterion($column)
 	{
@@ -355,10 +355,10 @@ class Criteria implements IteratorAggregate {
 	 * to this Criteria.  This can be used to chain the
 	 * Criterions to form a more complex where clause.
 	 *
-	 * @param column String full name of column (for example TABLE.COLUMN).
-	 * @param mixed $value
-	 * @param string $comparison
-	 * @return A Criterion.
+	 * @param      column String full name of column (for example TABLE.COLUMN).
+	 * @param      mixed $value
+	 * @param      string $comparison
+	 * @return     A Criterion.
 	 */
 	public function getNewCriterion($column, $value, $comparison = null)
 	{
@@ -368,8 +368,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return a String table name.
 	 *
-	 * @param name A String with the name of the key.
-	 * @return A String with the value of the object at key.
+	 * @param      name A String with the name of the key.
+	 * @return     A String with the value of the object at key.
 	 */
 	public function getColumnName($name)
 	{
@@ -383,7 +383,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Shortcut method to get an array of columns indexed by table.
-	 * @return array array(table => array(table.column1, table.column2))
+	 * @return     array array(table => array(table.column1, table.column2))
 	 */
 	function getTablesColumns()
 	{
@@ -402,8 +402,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return a comparison String.
 	 *
-	 * @param string $key String name of the key.
-	 * @return string A String with the value of the object at key.
+	 * @param      string $key String name of the key.
+	 * @return     string A String with the value of the object at key.
 	 */
 	public function getComparison($key)
 	{
@@ -418,7 +418,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get the Database(Map) name.
 	 *
-	 * @return string A String with the Database(Map) name.
+	 * @return     string A String with the Database(Map) name.
 	 */
 	public function getDbName()
 	{
@@ -429,8 +429,8 @@ class Criteria implements IteratorAggregate {
 	 * Set the DatabaseMap name.  If <code>null</code> is supplied, uses value
 	 * provided by <code>Propel::getDefaultDB()</code>.
 	 *
-	 * @param $dbName A String with the Database(Map) name.
-	 * @return void
+	 * @param      $dbName A String with the Database(Map) name.
+	 * @return     void
 	 */
 	public function setDbName($dbName = null)
 	{
@@ -440,8 +440,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return a String table name.
 	 *
-	 * @param $name A String with the name of the key.
-	 * @return string A String with the value of table for criterion at key.
+	 * @param      $name A String with the name of the key.
+	 * @return     string A String with the value of table for criterion at key.
 	 */
 	public function getTableName($name)
 	{
@@ -456,8 +456,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return the value that was added to Criteria.
 	 *
-	 * @param string $name A String with the name of the key.
-	 * @return mixed The value of object at key.
+	 * @param      string $name A String with the name of the key.
+	 * @return     mixed The value of object at key.
 	 */
 	public function getValue($name)
 	{
@@ -472,8 +472,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * An alias to getValue() -- exposing a Hashtable-like interface.
 	 *
-	 * @param string $key An Object.
-	 * @return mixed The value within the Criterion (not the Criterion object).
+	 * @param      string $key An Object.
+	 * @return     mixed The value within the Criterion (not the Criterion object).
 	 */
 	public function get($key)
 	{
@@ -490,9 +490,9 @@ class Criteria implements IteratorAggregate {
 	 * throw a NPE. The reason for this is that none of the add()
 	 * methods support adding anything other than a String as a key.
 	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return Instance of self.
+	 * @param      string $key
+	 * @param      mixed $value
+	 * @return     Instance of self.
 	 */
 	public function put($key, $value)
 	{
@@ -507,7 +507,7 @@ class Criteria implements IteratorAggregate {
 	 * if the map was another Criteria, its attributes are copied to this
 	 * Criteria, overwriting previous settings.
 	 *
-	 * @param mixed $t Mappings to be stored in this map.
+	 * @param      mixed $t Mappings to be stored in this map.
 	 */
 	public function putAll($t)
 	{
@@ -552,11 +552,11 @@ class Criteria implements IteratorAggregate {
 	 * so the Column name must be something like 'TABLE.id'. If you
 	 * don't like this, you can use the add(table, column, value) method.
 	 *
-	 * @param string $critOrColumn The column to run the comparison on, or Criterion object.
-	 * @param mixed $value
-	 * @param string $comparison A String.
+	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
+	 * @param      mixed $value
+	 * @param      string $comparison A String.
 	 *
-	 * @return A modified Criteria object.
+	 * @return     A modified Criteria object.
 	 */
 	public function add($p1, $value = null, $comparison = null)
 	{
@@ -581,10 +581,10 @@ class Criteria implements IteratorAggregate {
 	 * left = PROJECT.PROJECT_ID
 	 * right = FOO.PROJECT_ID
 	 *
-	 * @param string $left A String with the left side of the join.
-	 * @param string $right A String with the right side of the join.
-		 * @param string $operator A String with the join operator e.g. LEFT JOIN, ...
-	 * @return Criteria A modified Criteria object.
+	 * @param      string $left A String with the left side of the join.
+	 * @param      string $right A String with the right side of the join.
+		 * @param      string $operator A String with the join operator e.g. LEFT JOIN, ...
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function addJoin($left, $right, $operator = null)
 	{
@@ -596,7 +596,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get the array of Joins.  This method is meant to
 	 * be called by BasePeer.
-	 * @return an array which contains objects of type Join,
+	 * @return     an array which contains objects of type Join,
 	 *         or an empty array if the criteria does not contains any joins
 	 */
 	function & getJoins()
@@ -607,7 +607,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * get one side of the set of possible joins.  This method is meant to
 	 * be called by BasePeer.
-	 * @return array
+	 * @return     array
 	 * @deprecated This method is no longer used by BasePeer.
 	 */
 	public function getJoinL()
@@ -618,7 +618,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * get one side of the set of possible joins.  This method is meant to
 	 * be called by BasePeer.
-	 * @return array
+	 * @return     array
 		 * @deprecated This method is no longer used by BasePeer.
 	 */
 	public function getJoinR()
@@ -628,7 +628,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Adds "ALL " to the SQL statement.
-	 * @return void
+	 * @return     void
 	 */
 	public function setAll()
 	{
@@ -637,7 +637,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Adds "DISTINCT " to the SQL statement.
-	 * @return void
+	 * @return     void
 	 */
 	public function setDistinct()
 	{
@@ -647,8 +647,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Sets ignore case.
 	 *
-	 * @param boolean $b True if case should be ignored.
-	 * @return A modified Criteria object.
+	 * @param      boolean $b True if case should be ignored.
+	 * @return     A modified Criteria object.
 	 */
 	public function setIgnoreCase($b)
 	{
@@ -659,7 +659,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Is ignore case on or off?
 	 *
-	 * @return boolean True if case is ignored.
+	 * @return     boolean True if case is ignored.
 	 */
 	public function isIgnoreCase()
 	{
@@ -675,9 +675,9 @@ class Criteria implements IteratorAggregate {
 	 * multiple records but you are only interested in the first one then you
 	 * should be using setLimit(1).
 	 *
-	 * @param b set to <code>true</code> if you expect the query to select just
+	 * @param      b set to <code>true</code> if you expect the query to select just
 	 * one record.
-	 * @return A modified Criteria object.
+	 * @return     A modified Criteria object.
 	 */
 	public function setSingleRecord($b)
 	{
@@ -688,7 +688,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Is single record?
 	 *
-	 * @return boolean True if a single record is being returned.
+	 * @return     boolean True if a single record is being returned.
 	 */
 	public function isSingleRecord()
 	{
@@ -698,8 +698,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Set limit.
 	 *
-	 * @param limit An int with the value for limit.
-	 * @return A modified Criteria object.
+	 * @param      limit An int with the value for limit.
+	 * @return     A modified Criteria object.
 	 */
 	public function setLimit($limit)
 	{
@@ -710,7 +710,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get limit.
 	 *
-	 * @return int An int with the value for limit.
+	 * @return     int An int with the value for limit.
 	 */
 	public function getLimit()
 	{
@@ -720,8 +720,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Set offset.
 	 *
-	 * @param int $offset An int with the value for offset.
-	 * @return A modified Criteria object.
+	 * @param      int $offset An int with the value for offset.
+	 * @return     A modified Criteria object.
 	 */
 	public function setOffset($offset)
 	{
@@ -732,7 +732,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get offset.
 	 *
-	 * @return An int with the value for offset.
+	 * @return     An int with the value for offset.
 	 */
 	public function getOffset()
 	{
@@ -742,8 +742,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Add select column.
 	 *
-	 * @param name A String with the name of the select column.
-	 * @return A modified Criteria object.
+	 * @param      name A String with the name of the select column.
+	 * @return     A modified Criteria object.
 	 */
 	public function addSelectColumn($name)
 	{
@@ -754,7 +754,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get select columns.
 	 *
-	 * @return array An array with the name of the select
+	 * @return     array An array with the name of the select
 	 * columns.
 	 */
 	public function getSelectColumns()
@@ -765,7 +765,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Clears current select columns.
 	 *
-	 * @return Criteria A modified Criteria object.
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function clearSelectColumns() {
 				$this->selectColumns = array();
@@ -776,7 +776,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get select modifiers.
 	 *
-	 * @return An array with the select modifiers.
+	 * @return     An array with the select modifiers.
 	 */
 	public function getSelectModifiers()
 	{
@@ -786,8 +786,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Add group by column name.
 	 *
-	 * @param string $groupBy The name of the column to group by.
-	 * @return A modified Criteria object.
+	 * @param      string $groupBy The name of the column to group by.
+	 * @return     A modified Criteria object.
 	 */
 	public function addGroupByColumn($groupBy)
 	{
@@ -798,8 +798,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Add order by column name, explicitly specifying ascending.
 	 *
-	 * @param name The name of the column to order by.
-	 * @return A modified Criteria object.
+	 * @param      name The name of the column to order by.
+	 * @return     A modified Criteria object.
 	 */
 	public function addAscendingOrderByColumn($name)
 	{
@@ -810,8 +810,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Add order by column name, explicitly specifying descending.
 	 *
-	 * @param string $name The name of the column to order by.
-	 * @return Criteria The modified Criteria object.
+	 * @param      string $name The name of the column to order by.
+	 * @return     Criteria The modified Criteria object.
 	 */
 	public function addDescendingOrderByColumn($name)
 	{
@@ -822,7 +822,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get order by columns.
 	 *
-	 * @return array An array with the name of the order columns.
+	 * @return     array An array with the name of the order columns.
 	 */
 	public function getOrderByColumns()
 	{
@@ -832,7 +832,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Clear the order-by columns.
 	 *
-	 * @return Criteria
+	 * @return     Criteria
 	 */
 	public function clearOrderByColumns()
 	{
@@ -843,7 +843,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Clear the group-by columns.
 	 *
-	 * @return Criteria
+	 * @return     Criteria
 	 */
 	public function clearGroupByColumns()
 	{
@@ -854,7 +854,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get group by columns.
 	 *
-	 * @return array
+	 * @return     array
 	 */
 	public function getGroupByColumns()
 	{
@@ -864,7 +864,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Get Having Criterion.
 	 *
-	 * @return Criterion A Criterion object that is the having clause.
+	 * @return     Criterion A Criterion object that is the having clause.
 	 */
 	public function getHaving()
 	{
@@ -874,8 +874,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Remove an object from the criteria.
 	 *
-	 * @param string $key A string with the key to be removed.
-	 * @return mixed The removed value.
+	 * @param      string $key A string with the key to be removed.
+	 * @return     mixed The removed value.
 	 */
 	public function remove($key)
 	{
@@ -890,7 +890,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Build a string representation of the Criteria.
 	 *
-	 * @return string A String with the representation of the Criteria.
+	 * @return     string A String with the representation of the Criteria.
 	 */
 	public function toString()
 	{
@@ -912,7 +912,7 @@ class Criteria implements IteratorAggregate {
 
 	/**
 	 * Returns the size (count) of this criteria.
-	 * @return int
+	 * @return     int
 	 */
 	public function size()
 	{
@@ -922,7 +922,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * This method checks another Criteria to see if they contain
 	 * the same attributes and hashtable entries.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function equals($crit)
 	{
@@ -977,9 +977,9 @@ class Criteria implements IteratorAggregate {
 	 * $crit->addHaving($c);
 	 * </code>
 	 *
-	 * @param having A Criterion object
+	 * @param      having A Criterion object
 	 *
-	 * @return A modified Criteria object.
+	 * @return     A modified Criteria object.
 	 */
 	public function addHaving(Criterion $having)
 	{
@@ -1014,7 +1014,7 @@ class Criteria implements IteratorAggregate {
 	 * Any comparison can be used, of course.
 	 *
 	 *
-	 * @return Criteria A modified Criteria object.
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function addAnd($p1, $p2 = null, $p3 = null)
 	{
@@ -1071,7 +1071,7 @@ class Criteria implements IteratorAggregate {
 	 *
 	 * addOr(Criterion)
 	 *
-	 * @return Criteria A modified Criteria object.
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function addOr($p1, $p2 = null, $p3 = null)
 	{
@@ -1116,8 +1116,8 @@ class Criteria implements IteratorAggregate {
  * be used w/ Criteria objects.  Probably there is no performance advantage
  * to doing it this way, but it makes sense -- and simpler code.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.util
  */
 class CriterionIterator implements Iterator {
 
@@ -1163,8 +1163,8 @@ class CriterionIterator implements Iterator {
  *
  * In Torque this is an inner class of the Criteria class.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @package    propel.util
  */
 class Criterion  {
 
@@ -1175,7 +1175,7 @@ class Criterion  {
 	private $value;
 
 	/** Comparison value.
-	 * @var SqlEnum
+	 * @var        SqlEnum
 	 */
 	private $comparison;
 
@@ -1209,10 +1209,10 @@ class Criterion  {
 	/**
 	 * Create a new instance.
 	 *
-	 * @param Criteria $parent The outer class (this is an "inner" class).
-	 * @param string $column TABLE.COLUMN format.
-	 * @param mixed $value
-	 * @param string $comparison
+	 * @param      Criteria $parent The outer class (this is an "inner" class).
+	 * @param      string $column TABLE.COLUMN format.
+	 * @param      mixed $value
+	 * @param      string $comparison
 	 */
 	public function __construct(Criteria $outer, $column, $value, $comparison = null)
 	{
@@ -1224,7 +1224,7 @@ class Criterion  {
 
 	/**
 	* Init some properties with the help of outer class
-	* @param Criteria $criteria The outer class
+	* @param      Criteria $criteria The outer class
 	*/
 	public function init(Criteria $criteria)
 	{
@@ -1248,7 +1248,7 @@ class Criterion  {
 	/**
 	 * Get the column name.
 	 *
-	 * @return string A String with the column name.
+	 * @return     string A String with the column name.
 	 */
 	public function getColumn()
 	{
@@ -1258,8 +1258,8 @@ class Criterion  {
 	/**
 	 * Set the table name.
 	 *
-	 * @param name A String with the table name.
-	 * @return void
+	 * @param      name A String with the table name.
+	 * @return     void
 	 */
 	public function setTable($name)
 	{
@@ -1269,7 +1269,7 @@ class Criterion  {
 	/**
 	 * Get the table name.
 	 *
-	 * @return string A String with the table name.
+	 * @return     string A String with the table name.
 	 */
 	public function getTable()
 	{
@@ -1279,7 +1279,7 @@ class Criterion  {
 	/**
 	 * Get the comparison.
 	 *
-	 * @return string A String with the comparison.
+	 * @return     string A String with the comparison.
 	 */
 	public function getComparison()
 	{
@@ -1289,7 +1289,7 @@ class Criterion  {
 	/**
 	 * Get the value.
 	 *
-	 * @return mixed An Object with the value.
+	 * @return     mixed An Object with the value.
 	 */
 	public function getValue()
 	{
@@ -1300,7 +1300,7 @@ class Criterion  {
 	 * Get the value of db.
 	 * The DBAdapter which might be used to get db specific
 	 * variations of sql.
-	 * @return DBAdapter value of db.
+	 * @return     DBAdapter value of db.
 	 */
 	public function getDB()
 	{
@@ -1310,8 +1310,8 @@ class Criterion  {
 	/**
 	 * Set the value of db.
 	 * The DBAdapter might be used to get db specific variations of sql.
-	 * @param DBAdapter $v Value to assign to db.
-	 * @return void
+	 * @param      DBAdapter $v Value to assign to db.
+	 * @return     void
 	 */
 	public function setDB(DBAdapter $v)
 	{
@@ -1324,8 +1324,8 @@ class Criterion  {
 	/**
 	 * Sets ignore case.
 	 *
-	 * @param boolean $b True if case should be ignored.
-	 * @return Criterion A modified Criterion object.
+	 * @param      boolean $b True if case should be ignored.
+	 * @return     Criterion A modified Criterion object.
 	 */
 	public function setIgnoreCase($b)
 	{
@@ -1336,7 +1336,7 @@ class Criterion  {
 	/**
 	 * Is ignore case on or off?
 	 *
-	 * @return boolean True if case is ignored.
+	 * @return     boolean True if case is ignored.
 	 */
 	 public function isIgnoreCase()
 	 {
@@ -1345,7 +1345,7 @@ class Criterion  {
 
 	/**
 	 * Get the list of clauses in this Criterion.
-	 * @return array
+	 * @return     array
 	 */
 	private function getClauses()
 	{
@@ -1354,7 +1354,7 @@ class Criterion  {
 
 	/**
 	 * Get the list of conjunctions in this Criterion
-	 * @return array
+	 * @return     array
 	 */
 	private function getConjunctions()
 	{
@@ -1373,7 +1373,7 @@ class Criterion  {
 
 	/**
 	 * Append an OR Criterion onto this Criterion's list.
-	 * @return Criterion
+	 * @return     Criterion
 	 */
 	public function addOr(Criterion $criterion)
 	{
@@ -1386,11 +1386,11 @@ class Criterion  {
 	 * Appends a Prepared Statement representation of the Criterion
 	 * onto the buffer.
 	 *
-	 * @param string &$sb The stringbuffer that will receive the Prepared Statement
-	 * @param array $params A list to which Prepared Statement parameters
+	 * @param      string &$sb The stringbuffer that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters
 	 * will be appended
-	 * @return void
-	 * @throws PropelException - if the expression builder cannot figure out how to turn a specified
+	 * @return     void
+	 * @throws     PropelException - if the expression builder cannot figure out how to turn a specified
 	 *                           expression into proper SQL.
 	 */
 	public function appendPsTo(&$sb, &$params)
@@ -1524,7 +1524,7 @@ class Criterion  {
 	/**
 	 * This method checks another Criteria to see if they contain
 	 * the same attributes and hashtable entries.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function equals($obj)
 	{
@@ -1588,7 +1588,7 @@ class Criterion  {
 
 	/**
 	 * Get all tables from nested criterion objects
-	 * @return array
+	 * @return     array
 	 */
 	public function getAllTables()
 	{
@@ -1600,7 +1600,7 @@ class Criterion  {
 	/**
 	 * method supporting recursion through all criterions to give
 	 * us a string array of tables from each criterion
-	 * @return void
+	 * @return     void
 	 */
 	private function addCriterionTable(Criterion $c, &$s)
 	{
@@ -1615,7 +1615,7 @@ class Criterion  {
 	/**
 	 * get an array of all criterion attached to this
 	 * recursing through all sub criterion
-	 * @return array Criterion[]
+	 * @return     array Criterion[]
 	 */
 	public function getAttachedCriterion()
 	{
@@ -1627,9 +1627,9 @@ class Criterion  {
 	/**
 	 * method supporting recursion through all criterions to give
 	 * us an array of them
-	 * @param Criterion $c
-	 * @param array &$a
-	 * @return void
+	 * @param      Criterion $c
+	 * @param      array &$a
+	 * @return     void
 	 */
 	private function traverseCriterion(Criterion $c, &$a)
 	{
@@ -1661,11 +1661,11 @@ class Join
 
 	/**
 	 * Constructor
-	 * @param leftColumn the left column of the join condition;
+	 * @param      leftColumn the left column of the join condition;
 	 *        might contain an alias name
-	 * @param rightColumn the right column of the join condition
+	 * @param      rightColumn the right column of the join condition
 	 *        might contain an alias name
-	 * @param joinType the type of the join. Valid join types are
+	 * @param      joinType the type of the join. Valid join types are
 	 *        null (adding the join condition to the where clause),
 	 *        Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
 	 */
@@ -1677,7 +1677,7 @@ class Join
 	}
 
 	/**
-	 * @return the type of the join, i.e. Criteria::LEFT_JOIN(), ...,
+	 * @return     the type of the join, i.e. Criteria::LEFT_JOIN(), ...,
 	 *         or null for adding the join condition to the where Clause
 	 */
 	public function getJoinType()
@@ -1686,7 +1686,7 @@ class Join
 	}
 
 	/**
-	 * @return the left column of the join condition
+	 * @return     the left column of the join condition
 	 */
 	public function getLeftColumn()
 	{
@@ -1704,7 +1704,7 @@ class Join
 		}
 
 	/**
-	 * @return the right column of the join condition
+	 * @return     the right column of the join condition
 	 */
 	public function getRightColumn()
 	{
@@ -1724,7 +1724,7 @@ class Join
 	/**
 	 * returns a String representation of the class,
 	 * mainly for debugging purposes
-	 * @return a String representation of the class
+	 * @return     a String representation of the class
 	 */
 	public function toString()
 	{

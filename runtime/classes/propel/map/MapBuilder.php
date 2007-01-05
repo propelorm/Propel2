@@ -43,18 +43,18 @@
  * by that template for your datamodel to further understand how these are put
  * together.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @author Hans Lellelid <hans@xmpl.org> (Torque)
- * @version $Revision$
- * @package propel.map
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author     Hans Lellelid <hans@xmpl.org> (Torque)
+ * @version    $Revision$
+ * @package    propel.map
  */
 interface MapBuilder {
 
 	/**
 	 * Build up the database mapping.
-	 * @return void
-	 * @throws Exception Couldn't build mapping.
+	 * @return     void
+	 * @throws     Exception Couldn't build mapping.
 	 */
 	function doBuild();
 
@@ -62,14 +62,14 @@ interface MapBuilder {
 	 * Tells us if the database mapping is built so that we can avoid
 	 * re-building it repeatedly.
 	 *
-	 * @return boolean Whether the DatabaseMap is built.
+	 * @return     boolean Whether the DatabaseMap is built.
 	 */
 	function isBuilt();
 
 	/**
 	 * Gets the database mapping this map builder built.
 	 *
-	 * @return DatabaseMap A DatabaseMap.
+	 * @return     DatabaseMap A DatabaseMap.
 	 */
 	function getDatabaseMap();
 }

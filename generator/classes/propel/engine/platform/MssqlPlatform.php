@@ -25,10 +25,10 @@ include_once 'propel/engine/database/model/Domain.php';
 /**
  * MS SQL Platform implementation.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class MssqlPlatform extends DefaultPlatform {
 
@@ -55,7 +55,7 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getMaxColumnNameLength()
+	 * @see        Platform#getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -63,9 +63,9 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @return Explicitly returns <code>NULL</code> if null values are
+	 * @return     Explicitly returns <code>NULL</code> if null values are
 	 * allowed (as recomended by Microsoft).
-	 * @see Platform#getNullString(boolean)
+	 * @see        Platform#getNullString(boolean)
 	 */
 	public function getNullString($notNull)
 	{
@@ -73,7 +73,7 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::supportsNativeDeleteTrigger()
+	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
 	public function supportsNativeDeleteTrigger()
 	{
@@ -81,7 +81,7 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::hasSize(String)
+	 * @see        Platform::hasSize(String)
 	 */
 	public function hasSize($sqlType)
 	{
@@ -89,7 +89,7 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::quoteIdentifier()
+	 * @see        Platform::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{

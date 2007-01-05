@@ -24,10 +24,10 @@ require_once 'phing/BuildException.php';
 /**
  * The base class of all exceptions thrown by the engine.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@collab.net> (Torque)
- * @author Jason van Zyl <jvz@apache.org> (Torque)
- * @version $Revision$
- * @package propel.engine
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @author     Jason van Zyl <jvz@apache.org> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine
  */
 class EngineException extends BuildException {}

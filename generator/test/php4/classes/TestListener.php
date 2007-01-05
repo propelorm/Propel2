@@ -25,17 +25,17 @@ class TestListener extends PHPUnit_TestListener
 {
   /**
   * Test cache.
-  * @var array
+  * @var        array
   */
   var $cache = array();
   /**
   * Current test class.
-  * @var string
+  * @var        string
   */
   var $class = '';
   /**
   * Current test name.
-  * @var string
+  * @var        string
   */
   var $name  = '';
 
@@ -43,7 +43,7 @@ class TestListener extends PHPUnit_TestListener
   /**
   * A test started.
   *
-  * @param  object
+  * @param      object
   */
   function startTest(&$test)
   {
@@ -56,8 +56,8 @@ class TestListener extends PHPUnit_TestListener
   /**
   * An error occurred.
   *
-  * @param  object
-  * @param  object
+  * @param      object
+  * @param      object
   */
   function addError(&$test, &$t)
   {
@@ -75,8 +75,8 @@ class TestListener extends PHPUnit_TestListener
   /**
   * A failure occurred.
   *
-  * @param  object
-  * @param  object
+  * @param      object
+  * @param      object
   */
   function addFailure(&$test, &$t)
   {
@@ -94,9 +94,9 @@ class TestListener extends PHPUnit_TestListener
   /**
   * An error occurred.
   *
-  * @param  object
-  * @param  object
-  * @access public
+  * @param      object
+  * @param      object
+  * @access     public
   * @abstract
   */
   function endTest(&$test)

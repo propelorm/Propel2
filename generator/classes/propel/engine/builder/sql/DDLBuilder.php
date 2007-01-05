@@ -27,8 +27,8 @@ require_once 'propel/engine/builder/DataModelBuilder.php';
  *
  * DDL-building classes are those that build all the SQL DDL for a single table.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.sql
  */
 abstract class DDLBuilder extends DataModelBuilder {
 
@@ -38,7 +38,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	 * This is the main entry point and defines a basic structure that classes should follow.
 	 * In most cases this method will not need to be overridden by subclasses.
 	 *
-	 * @return string The resulting SQL DDL.
+	 * @return     string The resulting SQL DDL.
 	 */
 	public function build()
 	{
@@ -51,7 +51,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 
 	/**
 	 * Builds the DDL SQL for a Column object.
-	 * @return string
+	 * @return     string
 	 */
 	public function getColumnDDL(Column $col)
 	{
@@ -74,9 +74,9 @@ abstract class DDLBuilder extends DataModelBuilder {
 
 	/**
 	 * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
-	 * @param array Column[] or string[]
-	 * @param string $delim The delimiter to use in separating the column names.
-	 * @return string
+	 * @param      array Column[] or string[]
+	 * @param      string $delim The delimiter to use in separating the column names.
+	 * @return     string
 	 */
 	public function getColumnList($columns, $delim=',')
 	{
@@ -93,7 +93,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	/**
 	 * This function adds any _database_ start/initialization SQL.
 	 * This is designed to be called for a database, not a specific table, hence it is static.
-	 * @return string The DDL is returned as astring.
+	 * @return     string The DDL is returned as astring.
 	 */
 	public static function getDatabaseStartDDL()
 	{
@@ -103,7 +103,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 	/**
 	 * This function adds any _database_ end/cleanup SQL.
 	 * This is designed to be called for a database, not a specific table, hence it is static.
-	 * @return string The DDL is returned as astring.
+	 * @return     string The DDL is returned as astring.
 	 */
 	public static function getDatabaseEndDDL()
 	{
@@ -125,19 +125,19 @@ abstract class DDLBuilder extends DataModelBuilder {
 
 	/**
 	 * Adds table definition.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	abstract protected function addTable(&$script);
 
 	/**
 	 * Adds index definitions.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	abstract protected function addIndices(&$script);
 
 	/**
 	 * Adds foreign key constraint definitions.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	abstract protected function addForeignKeys(&$script);
 

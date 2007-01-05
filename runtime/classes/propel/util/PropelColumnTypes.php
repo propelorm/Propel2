@@ -24,9 +24,9 @@
  *
  * THIS CLASS MUST BE KEPT UP-TO-DATE WITH THE MORE EXTENSIVE GENERATOR VERSION OF THIS CLASS.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @version $Revision$
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @version    $Revision$
+ * @package    propel.util
  */
 class PropelColumnTypes {
 
@@ -113,8 +113,8 @@ class PropelColumnTypes {
 	/**
 	 * Return native PHP type which corresponds to the Propel type provided.
 	 *
-	 * @param $propelType The Propel type.
-	 * @return string Name of the native PHP type
+	 * @param      $propelType The Propel type.
+	 * @return     string Name of the native PHP type
 	 */
 	public static function getPhpType($propelType)
 	{
@@ -123,8 +123,8 @@ class PropelColumnTypes {
 
 	/**
 	 * Resturns the PDO type (PDO::PARAM_* constant) value for the Propel type provided.
-	 * @param string $propelType
-	 * @return int
+	 * @param      string $propelType
+	 * @return     int
 	 */
 	public static function getPdoType($propelType)
 	{

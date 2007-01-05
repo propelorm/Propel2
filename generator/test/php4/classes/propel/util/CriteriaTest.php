@@ -26,16 +26,16 @@ include_once 'propel/util/BasePeer.php';
 /**
  * Test class for Criteria.
  *
- * @author <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
- * @author <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
- * @version $Revision$
+ * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
+ * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
+ * @version    $Revision$
  */
 class CriteriaTest extends BaseTestCase
 {
 
   /**
   * The criteria to use in the test.
-  * @var Criteria
+  * @var        Criteria
   */
   var $c;
 

@@ -24,10 +24,10 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
 /**
  * Oracle Platform implementation.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class OraclePlatform extends DefaultPlatform {
 
@@ -56,7 +56,7 @@ class OraclePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getMaxColumnNameLength()
+	 * @see        Platform#getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -64,7 +64,7 @@ class OraclePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getNativeIdMethod()
+	 * @see        Platform#getNativeIdMethod()
 	 */
 	public function getNativeIdMethod()
 	{
@@ -72,7 +72,7 @@ class OraclePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getAutoIncrement()
+	 * @see        Platform#getAutoIncrement()
 	 */
 	public function getAutoIncrement()
 	{
@@ -80,7 +80,7 @@ class OraclePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::supportsNativeDeleteTrigger()
+	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
 	public function supportsNativeDeleteTrigger()
 	{

@@ -32,22 +32,22 @@ include_once 'propel/engine/database/transform/XmlToAppData.php';
  * a CapsuleTask subclass.  This class also makes it easy to quickly add some custom
  * datamodel-based transformations (by allowing you to put the logic in the templates).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.phing
- * @version $Revision$
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.phing
+ * @version    $Revision$
  */
 class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * This is the file where the generated text
 	 * will be placed.
-	 * @var string
+	 * @var        string
 	 */
 	protected $outputFile;
 
 	/**
 	 * Path where Capsule looks for templates.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	protected $templatePath;
 
@@ -55,15 +55,15 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * This is the control template that governs the output.
 	 * It may or may not invoke the services of worker
 	 * templates.
-	 * @var string
+	 * @var        string
 	 */
 	protected $controlTemplate;
 
 	/**
 	 * [REQUIRED] Set the output file for the
 	 * generation process.
-	 * @param string $outputFile (TODO: change this to File)
-	 * @return void
+	 * @param      string $outputFile (TODO: change this to File)
+	 * @return     void
 	 */
 	public function setOutputFile($outputFile) {
 		$this->outputFile = $outputFile;
@@ -72,7 +72,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the output file for the
 	 * generation process.
-	 * @return string
+	 * @return     string
 	 */
 	public function getOutputFile() {
 		return $this->outputFile;
@@ -81,8 +81,8 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	/**
 	 * [REQUIRED] Set the control template for the
 	 * generating process.
-	 * @param string $controlTemplate
-	 * @return void
+	 * @param      string $controlTemplate
+	 * @return     void
 	 */
 	public function setControlTemplate ($controlTemplate) {
 		$this->controlTemplate = $controlTemplate;
@@ -91,7 +91,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the control template for the
 	 * generating process.
-	 * @return string
+	 * @return     string
 	 */
 	public function getControlTemplate() {
 		return $this->controlTemplate;
@@ -101,8 +101,8 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * [REQUIRED] Set the path where Capsule will look
 	 * for templates using the file template
 	 * loader.
-	 * @return void
-	 * @throws Exception
+	 * @return     void
+	 * @throws     Exception
 	 */
 	public function setTemplatePath($templatePath) {
 		$resolvedPath = "";
@@ -129,7 +129,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 * Get the path where Velocity will look
 	 * for templates using the file template
 	 * loader.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTemplatePath() {
 		return $this->templatePath;
@@ -138,7 +138,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	/**
 	 * Creates a new Capsule context with some basic properties set.
 	 * (Capsule is a simple PHP encapsulation system -- aka a php "template" class.)
-	 * @return Capsule
+	 * @return     Capsule
 	 */
 	protected function createContext() {
 
@@ -176,8 +176,8 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	 *
 	 * Also, move xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
 	 *
-	 * @param Capsule $context
-	 * @see getPropelProperties()
+	 * @param      Capsule $context
+	 * @see        getPropelProperties()
 	 */
 	public function populateContextProperties(Capsule $context)
 	{
@@ -189,7 +189,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Performs validation for single-file mode.
-	 * @throws BuildException - if there are any validation errors
+	 * @throws     BuildException - if there are any validation errors
 	 */
 	protected function singleFileValidate()
 	{
@@ -208,7 +208,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Creates Capsule context and parses control template.
-	 * @return void
+	 * @return     void
 	 */
 	public function main()
 	{

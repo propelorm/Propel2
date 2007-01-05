@@ -84,33 +84,33 @@ define('HTML_QUICKFORM_PROPEL_COLUMN_MADE_HIDDEN', 5);
  *
  * TODO: map all creoleTypes to usefull formelements
  *
- * @author  Rob Halff <info@rhalff.com>
+ * @author     Rob Halff <info@rhalff.com>
  *   some improvements by Zoltan Nagy (sunshine@freemail.hu)
- * @version   $Rev$
- * @copyright Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
- * @package   propel.contrib
+ * @version    $Rev$
+ * @copyright  Copyright (c) 2005 Rob Halff: LGPL - See LICENCE
+ * @package    propel.contrib
  */
 
 class HTML_QuickForm_Propel extends HTML_QuickForm {
 
 		/**
 		 * ID of the Propel Object.
-		 * @var integer
-		 * @access private
+		 * @var        integer
+		 * @access     private
 		 */
 		private $id;
 
 		/**
 		 * Contains column visibility information.
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $columnVisibility = array();
 
 		/**
 		 * Contains titles of columns.
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $columnTitle = array();
 
@@ -121,37 +121,37 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * HTML_QUICKFORM_PROPEL_ALL_COLUMNS
 		 * HTML_QUICKFORM_PROPEL_NO_COLUMNS
 		 *
-		 * @var integer
-		 * @access private
+		 * @var        integer
+		 * @access     private
 		 */
 		private $columnMode;
 
 		/**
 		 * String containing the peerName.
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $peerName;
 
 		/**
 		 * String containing the className of the propel Object.
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $className;
 
 		/**
 		 * The Column objects.
 		 *
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $cols;
 
 		/**
 		 * The Object being operated on.
-		 * @var object
-		 * @access private
+		 * @var        object
+		 * @access     private
 		 */
 		private $obj;
 
@@ -161,8 +161,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * In case the option list will be build by multiple values
 		 * This is the value these fields will be seperated with
 		 *
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $seperator = ' ';
 
@@ -170,8 +170,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Not used yet.
 		 *
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $joinMap = array();
 
@@ -179,24 +179,24 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * The default QuickForm rule type to use.
 		 * Either server or client
 		 *
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $defaultRuleType = 'server';
 
 
 		/**
 		 * This is used in the QuickForm DateElement
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $lang = 'en';
 
 		/**
 		 * Rulemapping should cover all available propel rules
 		 *
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $ruleMapping =  array(
 						'mask'=>'regex',
@@ -213,8 +213,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * CreoleType to QuickForm element mapping
 		 *
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $typeMapping = array(
 						CreoleTypes::BOOLEAN    =>'radio',
@@ -252,14 +252,14 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * The other parameters are needed to construct the parent QuickForm Class.
 		 *
-		 * @param string className
-		 * @param string id
-		 * @param string formName
-		 * @param string method
-		 * @param string action
-		 * @param string target
-		 * @param array attributes
-		 * @param boolean trackSubmit
+		 * @param      string className
+		 * @param      string id
+		 * @param      string formName
+		 * @param      string method
+		 * @param      string action
+		 * @param      string target
+		 * @param      array attributes
+		 * @param      boolean trackSubmit
 		 *
 		 */
 		public function __construct($className = null, $id = null, $formName='HTML_QuickForm_Propel', $method='post', $action='', $target='_self', $attributes=null, $trackSubmit = false)
@@ -283,7 +283,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * However we will be able to join tables in complex ways.
 		 *
-		 * @param Criteria
+		 * @param      Criteria
 		 *
 		 */
 		public function setCriteria(Criteria $c)
@@ -296,7 +296,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Set the action of this form
 		 *
-		 * @param string action
+		 * @param      string action
 		 *
 		 */
 		public function setAction($action)
@@ -309,7 +309,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Set method of this form, e.g. post or get
 		 *
-		 * @param string method
+		 * @param      string method
 		 *
 		 */
 		public function setMethod($method)
@@ -322,7 +322,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Set the target of this form
 		 *
-		 * @param string target
+		 * @param      string target
 		 *
 		 */
 		public function setTarget($target)
@@ -335,7 +335,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Set the id of the object we need to get
 		 *
-		 * @param string id
+		 * @param      string id
 		 *
 		 */
 		public function setId($id)
@@ -347,7 +347,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Set the class
 		 *
-		 * @param string className
+		 * @param      string className
 		 *
 		 */
 		public function setClassName($className)
@@ -359,7 +359,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Get the class name
 		 *
-		 * @return string className
+		 * @return     string className
 		 *
 		 */
 		public function getClassName()
@@ -376,7 +376,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Get the peer name
 		 *
-		 * @return string peerName
+		 * @return     string peerName
 		 *
 		 */
 		public function getPeerName()
@@ -387,7 +387,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		/**
 		 * Build the form
 		 *
-		 * @return void
+		 * @return     void
 		 *
 		 */
 		public function build()
@@ -625,8 +625,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Use it to change the locale used for the Date element
 		 *
-		 * @param string locale
-		 * @return void
+		 * @param      string locale
+		 * @return     void
 		 *
 		 */
 		public function setLang($lang)
@@ -638,7 +638,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Save the form.
 		 *
-		 * @return void
+		 * @return     void
 		 *
 		 */
 		public function save()
@@ -651,7 +651,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Copy form values to Obj.
 		 *
-		 * @return void
+		 * @return     void
 		 *
 		 */
 		public function copyToObj()
@@ -715,7 +715,7 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * Get the object we are operating on.
 		 *
-		 * @return object a propel object
+		 * @return     object a propel object
 		 *
 		 */
 		public function getObj()
@@ -768,8 +768,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * HTML_QUICKFORM_PROPEL_NO_COLUMNS or
 		 * HTML_QUICKFORM_PROPEL_ALL_COLUMNS
 		 *
-		 * @param string $column column name
-		 * @return void
+		 * @param      string $column column name
+		 * @return     void
 		 *
 		 */
 		public function setColumnMode($mode)
@@ -790,8 +790,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * It is now passed like ID instead of somePeer::ID
 		 * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
 		 *
-		 * @param string $column column name
-		 * @return void
+		 * @param      string $column column name
+		 * @return     void
 		 *
 		 */
 
@@ -807,9 +807,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * It is now passed like ID instead of somePeer::ID
 		 * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
 		 *
-		 * @param string $column column name
-		 * @param string $title Title for the column, not required
-		 * @return void
+		 * @param      string $column column name
+		 * @param      string $title Title for the column, not required
+		 * @return     void
 		 */
 		public function showColumn($column, $title = NULL)
 		{
@@ -824,9 +824,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * assign a title to the column
 		 *
-		 * @param string $column
-		 * @param string $title
-		 * @return void
+		 * @param      string $column
+		 * @param      string $title
+		 * @return     void
 		 */
 		public function setColumnTitle($column, $title)
 		{
@@ -837,8 +837,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * returns column's title
 		 *
-		 * @param string $column
-		 * @return void
+		 * @param      string $column
+		 * @return     void
 		 */
 		public function getColumnTitle($column)
 		{
@@ -853,8 +853,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 * Try to automatically join all relatedTables.
 		 * NOT IMPLEMENTED
 		 *
-		 * @param boolean $bool
-		 * @return void
+		 * @param      boolean $bool
+		 * @return     void
 		 */
 		public function autoJoin($bool)
 		{
@@ -864,9 +864,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		/**
 		 * Override this if you don't like the (strtolower) default
 		 *
-		 * @param HTML_QuickForm_Element $el
-		 * @param string $colName
-		 * @return void
+		 * @param      HTML_QuickForm_Element $el
+		 * @param      string $colName
+		 * @return     void
 		 */
 		protected function addElementId($el, $colName)
 		{
@@ -876,8 +876,8 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		/**
 		 *
 		 * Set the default rule typef
-		 * @param string $type
-		 * @return void
+		 * @param      string $type
+		 * @return     void
 		 *
 		 */
 		public function setDefaultRuleType($type)
@@ -893,9 +893,9 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		 *
 		 * TODO: further implement multiple columns for the select list
 		 *
-		 * @var colName constant
-		 * @var foreignColName mixed (constant/array of columnName constants)
-		 * @var $seperator string Only used if foreignColName is an array
+		 * @var        colName constant
+		 * @var        foreignColName mixed (constant/array of columnName constants)
+		 * @var        $seperator string Only used if foreignColName is an array
 		 */
 
 		public function joinColumn($colName, $foreignColName, $seperator = null)

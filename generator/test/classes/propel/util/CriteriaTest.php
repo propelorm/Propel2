@@ -7,9 +7,9 @@ include_once 'propel/util/BasePeer.php';
 /**
  * Test class for Criteria.
  *
- * @author <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
- * @author <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
- * @version $Id$
+ * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
+ * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
+ * @version    $Id$
  */
 class CriteriaTest extends BaseTestCase {
 

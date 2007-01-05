@@ -95,10 +95,10 @@
  * </table>
  *
  *
- * @author	Rob Halff <info@rhalff.com>
- * @version   $Revision$
- * @copyright Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
- * @package   propel.util
+ * @author     Rob Halff <info@rhalff.com>
+ * @version    $Revision$
+ * @copyright  Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
+ * @package    propel.util
  */
 class PropelPager {
 
@@ -112,19 +112,19 @@ class PropelPager {
 	private $page;
 	private $rs = null;
 
-	/** @var int Start row (offset) */
+	/** @var        int Start row (offset) */
 	protected $start = 0;
 
-	/** @var int Max rows to return (0 means all) */
+	/** @var        int Max rows to return (0 means all) */
 	protected $max = 0;
 
 	/**
 	 * Create a new Propel Pager.
-	 * @param Criteria $c
-	 * @param string $peerClass The name of the static Peer class.
-	 * @param string $peerSelectMethod The name of the static method for selecting content from the Peer class.
-	 * @param int $page The current page (1-based).
-	 * @param int $rowsPerPage The number of rows that should be displayed per page.
+	 * @param      Criteria $c
+	 * @param      string $peerClass The name of the static Peer class.
+	 * @param      string $peerSelectMethod The name of the static method for selecting content from the Peer class.
+	 * @param      int $page The current page (1-based).
+	 * @param      int $rowsPerPage The number of rows that should be displayed per page.
 	 */
 	public function __construct($c = null, $peerClass = null, $peerSelectMethod = null, $page = 1, $rowsPerPage = 25)
 	{
@@ -141,8 +141,8 @@ class PropelPager {
 
 	/**
 	 * Set the criteria for this pager.
-	 * @param Criteria $c
-	 * @return void
+	 * @param      Criteria $c
+	 * @return     void
 	 */
 	public function setCriteria(Criteria $c)
 	{
@@ -151,7 +151,7 @@ class PropelPager {
 
 	/**
 	 * Return the Criteria object for this pager.
-	 * @return Criteria
+	 * @return     Criteria
 	 */
 	public function getCriteria()
 	{
@@ -161,8 +161,8 @@ class PropelPager {
 	/**
 	 * Set the Peer Classname
 	 *
-	 * @param string $class
-	 * @return void
+	 * @param      string $class
+	 * @return     void
 	 */
 	public function setPeerClass($class)
 	{
@@ -171,7 +171,7 @@ class PropelPager {
 
 	/**
 	 * Return the Peer Classname.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPeerClass()
 	{
@@ -181,9 +181,9 @@ class PropelPager {
 	/**
 	 * Set the Peer select method.
 	 * This exists for legacy support, please use setPeerSelectMethod().
-	 * @param string $method The name of the static method to call on the Peer class.
-	 * @return void
-	 * @see setPeerSelectMethod()
+	 * @param      string $method The name of the static method to call on the Peer class.
+	 * @return     void
+	 * @see        setPeerSelectMethod()
 	 * @deprecated
 	 */
 	public function setPeerMethod($method)
@@ -194,8 +194,8 @@ class PropelPager {
 	/**
 	 * Return the Peer select method.
 	 * This exists for legacy support, please use getPeerSelectMethod().
-	 * @return string
-	 * @see getPeerSelectMethod()
+	 * @return     string
+	 * @see        getPeerSelectMethod()
 	 * @deprecated
 	 */
 	public function getPeerMethod()
@@ -206,8 +206,8 @@ class PropelPager {
 	/**
 	 * Set the Peer select method.
 	 *
-	 * @param string $method The name of the static method to call on the Peer class.
-	 * @return void
+	 * @param      string $method The name of the static method to call on the Peer class.
+	 * @return     void
 	 */
 	public function setPeerSelectMethod($method)
 	{
@@ -216,7 +216,7 @@ class PropelPager {
 
 	/**
 	 * Return the Peer select method.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPeerSelectMethod()
 	{
@@ -227,7 +227,7 @@ class PropelPager {
 	 * Sets the Count method.
 	 * This is set based on the Peer method, for example if Peer method is doSelectJoin*() then the
 	 * count method will be doCountJoin*().
-	 * @param string $method The name of the static method to call on the Peer class.
+	 * @param      string $method The name of the static method to call on the Peer class.
 	 */
 	public function setPeerCountMethod($method)
 	{
@@ -264,7 +264,7 @@ class PropelPager {
 	/**
 	 * Get the paged resultset
 	 *
-	 * @return mixed $rs
+	 * @return     mixed $rs
 	 */
 	public function getResult()
 	{
@@ -295,7 +295,7 @@ class PropelPager {
 	 * For now I can only think of returning 1 always.
 	 * It should probably return 0 if there are no pages
 	 *
-	 * @return int 1
+	 * @return     int 1
 	 */
 	public function getFirstPage()
 	{
@@ -305,7 +305,7 @@ class PropelPager {
 	/**
 	 * Convenience method to indicate whether current page is the first page.
 	 *
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function atFirstPage()
 	{
@@ -315,7 +315,7 @@ class PropelPager {
 	/**
 	 * Get last page
 	 *
-	 * @return int $lastPage
+	 * @return     int $lastPage
 	 */
 	public function getLastPage()
 	{
@@ -330,7 +330,7 @@ class PropelPager {
 	/**
 	 * Convenience method to indicate whether current page is the last page.
 	 *
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function atLastPage()
 	{
@@ -340,7 +340,7 @@ class PropelPager {
 	/**
 	 * get total pages
 	 *
-	 * @return int $this->pages
+	 * @return     int $this->pages
 	 */
 	public function getTotalPages() {
 		if (!isset($this->pages)) {
@@ -357,8 +357,8 @@ class PropelPager {
 	/**
 	 * get an array of previous id's
 	 *
-	 * @param int $range
-	 * @return array $links
+	 * @param      int $range
+	 * @return     array $links
 	 */
 	public function getPrevLinks($range = 5)
 	{
@@ -380,8 +380,8 @@ class PropelPager {
 	/**
 	 * get an array of next id's
 	 *
-	 * @param int $range
-	 * @return array $links
+	 * @param      int $range
+	 * @return     array $links
 	 */
 	public function getNextLinks($range = 5)
 	{
@@ -403,7 +403,7 @@ class PropelPager {
 	/**
 	 * Returns whether last page is complete
 	 *
-	 * @return bool Last page complete or not
+	 * @return     bool Last page complete or not
 	 */
 	public function isLastPageComplete()
 	{
@@ -413,7 +413,7 @@ class PropelPager {
 	/**
 	 * get previous id
 	 *
-	 * @return mixed $prev
+	 * @return     mixed $prev
 	 */
 	public function getPrev() {
 		if ($this->getPage() != $this->getFirstPage()) {
@@ -427,7 +427,7 @@ class PropelPager {
 	/**
 	 * get next id
 	 *
-	 * @return mixed $next
+	 * @return     mixed $next
 	 */
 	public function getNext() {
 		if ($this->getPage() != $this->getLastPage()) {
@@ -440,8 +440,8 @@ class PropelPager {
 
 	/**
 	 * Set the current page number (First page is 1).
-	 * @param int $page
-	 * @return void
+	 * @param      int $page
+	 * @return     void
 	 */
 	public function setPage($page)
 	{
@@ -452,7 +452,7 @@ class PropelPager {
 
 	/**
 	 * Get current page.
-	 * @return int
+	 * @return     int
 	 */
 	public function getPage()
 	{
@@ -461,7 +461,7 @@ class PropelPager {
 
 	/**
 	 * Set the number of rows per page.
-	 * @param int $r
+	 * @param      int $r
 	 */
 	public function setRowsPerPage($r)
 	{
@@ -472,7 +472,7 @@ class PropelPager {
 
 	/**
 	 * Get number of rows per page.
-	 * @return int
+	 * @return     int
 	 */
 	public function getRowsPerPage()
 	{
@@ -481,7 +481,7 @@ class PropelPager {
 
 	/**
 	 * Calculate startrow / max rows based on current page and rows-per-page.
-	 * @return void
+	 * @return     void
 	 */
 	private function calculateStart()
 	{
@@ -493,7 +493,7 @@ class PropelPager {
 	 *
 	 * This method will perform a query that executes un-LIMITed query.
 	 *
-	 * @return int Total number of records - disregarding page, maxrows, etc.
+	 * @return     int Total number of records - disregarding page, maxrows, etc.
 	 */
 	public function getTotalRecordCount()
 	{
@@ -523,7 +523,7 @@ class PropelPager {
 
 	/**
 	 * Sets the start row or offset.
-	 * @param int $v
+	 * @param      int $v
 	 */
 	public function setStart($v)
 	{
@@ -532,8 +532,8 @@ class PropelPager {
 
 	/**
 	 * Sets max rows (limit).
-	 * @param int $v
-	 * @return void
+	 * @param      int $v
+	 * @return     void
 	 */
 	public function setMax($v)
 	{

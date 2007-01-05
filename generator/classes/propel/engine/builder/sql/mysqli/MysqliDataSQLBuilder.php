@@ -25,8 +25,8 @@ require_once 'propel/engine/builder/sql/DataSQLBuilder.php';
 /**
  * MySQL class for building data dump SQL.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql.mysql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.sql.mysql
  */
 class MysqliDataSQLBuilder extends DataSQLBuilder {
 

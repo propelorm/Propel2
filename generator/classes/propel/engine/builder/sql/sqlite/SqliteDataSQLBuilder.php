@@ -25,15 +25,15 @@ require_once 'propel/engine/builder/sql/DataSQLBuilder.php';
 /**
  * SQLite class for building data dump SQL.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql.sqlite
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.sql.sqlite
  */
 class SqliteDataSQLBuilder extends DataSQLBuilder {
 
 	/**
 	 * Returns string processed by sqlite_udf_encode_binary() to ensure that binary contents will be handled correctly by sqlite.
-	 * @param mixed $blob Blob or string
-	 * @return string encoded text
+	 * @param      mixed $blob Blob or string
+	 * @return     string encoded text
 	 */
 	protected function getBlobSql($blob)
 	{

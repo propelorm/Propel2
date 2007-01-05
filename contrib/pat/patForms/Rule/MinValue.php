@@ -5,19 +5,19 @@
  *
  * This rule simply checks for a required minimum value (number) of a field
  *
- * @package		patForms
- * @subpackage	Rules
- * @author		Sven Fuchs <svenfuchs@artweb-design.de>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @package    patForms
+ * @subpackage Rules
+ * @author     Sven Fuchs <svenfuchs@artweb-design.de>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 class patForms_Rule_MinValue extends patForms_Rule
 {
 	/**
 	* script that will be displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 
 	var $globalScript = array(
@@ -48,8 +48,8 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	/**
 	* javascript that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceScript	= array(
 		'html'	=>	"var pfr_[RULE::ID] = new pFRC_MinValue('[CONTAINER::NAME]');\n"
@@ -58,8 +58,8 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	/**
 	* properties that have to be replaced in the instance script.
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $scriptPlaceholders	= array(
 		'RULE::SOURCE'	=>	'_source',
@@ -69,16 +69,16 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	* name of the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$ruleName = 'MinValue';
 
 	/**
 	* define error codes and messages for the rule
 	*
-	* @access	private
-	* @var		array	$validatorErrorCodes
-	* @todo		translate error messages
+	* @access     private
+	* @var        array	$validatorErrorCodes
+	* @todo       translate error messages
 	*/
 	var	$validatorErrorCodes = array(
 		"C"	=>	array(
@@ -94,15 +94,15 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 
 	/**
 	* the regEx pattern
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_value;
 
 	/**
 	* field id that is used
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_field;
 
@@ -119,8 +119,8 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	/**
 	* prepare the rule
 	*
-	* @access	public
-	* @param	object patForms
+	* @access     public
+	* @param      object patForms
 	*/
 	function prepareRule(&$container) {
 
@@ -137,8 +137,8 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	* method called by patForms or any patForms_Element to validate the
 	* element or the form.
 	*
-	* @access	public
-	* @param	object patForms	form object
+	* @access     public
+	* @param      object patForms	form object
 	*/
 	function applyRule(&$element, $type = PATFORMS_RULE_AFTER_VALIDATION) {
 
@@ -153,7 +153,7 @@ pFRC_MinValue.prototype.setMinValue = function(value) {
 	/**
 	*
 	*
-	* @access	public
+	* @access     public
 	*/
 	function registerJavascripts(&$form) {
 

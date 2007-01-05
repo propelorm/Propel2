@@ -33,15 +33,15 @@ include_once 'propel/engine/database/model/Validator.php';
 /**
  * Data about a table used in an application.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author John McNally <jmcnally@collab.net> (Torque)
- * @author Daniel Rall <dlr@collab.net> (Torque)
- * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author     John McNally <jmcnally@collab.net> (Torque)
+ * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Table extends XMLElement implements IDMethod {
 
@@ -83,7 +83,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Constructs a table object with a name
 	 *
-	 * @param string $name table name
+	 * @param      string $name table name
 	 */
 	public function __construct($name = null)
 	{
@@ -100,7 +100,7 @@ class Table extends XMLElement implements IDMethod {
 
    /**
 	 * Sets up the Rule object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	public function setupObject()
 	{
@@ -251,10 +251,10 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Macro to a constraint name.
 	 *
-	 * @param nameType constraint type
-	 * @param nbr unique number for this constraint type
-	 * @return unique name for constraint
-	 * @throws EngineException
+	 * @param      nameType constraint type
+	 * @param      nbr unique number for this constraint type
+	 * @return     unique name for constraint
+	 * @throws     EngineException
 	 */
 	private function acquireConstraintName($nameType, $nbr)
 	{
@@ -269,7 +269,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Gets the value of base class for classes produced from this table.
 	 *
-	 * @return The base class for classes produced from this table.
+	 * @return     The base class for classes produced from this table.
 	 */
 	public function getBaseClass()
 	{
@@ -284,7 +284,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Set the value of baseClass.
-	 * @param v  Value to assign to baseClass.
+	 * @param      v  Value to assign to baseClass.
 	 */
 	public function setBaseClass($v)
 	{
@@ -293,7 +293,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Get the value of basePeer.
-	 * @return value of basePeer.
+	 * @return     value of basePeer.
 	 */
 	public function getBasePeer()
 	{
@@ -308,7 +308,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Set the value of basePeer.
-	 * @param v  Value to assign to basePeer.
+	 * @param      v  Value to assign to basePeer.
 	 */
 	public function setBasePeer($v)
 	{
@@ -319,8 +319,8 @@ class Table extends XMLElement implements IDMethod {
 	 * A utility function to create a new column from attrib and add it to this
 	 * table.
 	 *
-	 * @param $coldata xml attributes or Column class for the column to add
-	 * @return the added column
+	 * @param      $coldata xml attributes or Column class for the column to add
+	 * @return     the added column
 	 */
 	public function addColumn($data)
 	{
@@ -351,9 +351,9 @@ class Table extends XMLElement implements IDMethod {
 	* - addValidator(Validator $validator)
 	* - addValidator(array $attribs)
 	*
-	* @param mixed $data Validator object or XML attribs (array) from <validator /> element.
-	* @return Validator The added Validator.
-	* @throws EngineException
+	* @param      mixed $data Validator object or XML attribs (array) from <validator /> element.
+	* @return     Validator The added Validator.
+	* @throws     EngineException
 	*/
    public function addValidator($data)
    {
@@ -407,7 +407,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Gets the column that subclasses of the class representing this
 	 * table can be produced from.
-	 * @return string
+	 * @return     string
 	 */
 	public function getChildrenColumn()
 	{
@@ -416,7 +416,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Get the subclasses that can be created from this table.
-	 * @return array string[] Class names
+	 * @return     array string[] Class names
 	 */
 	public function getChildrenNames()
 	{
@@ -572,7 +572,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Set the description for the Table
 	 *
-	 * @param newDescription description for the Table
+	 * @param      newDescription description for the Table
 	 */
 	public function setDescription($newDescription)
 	{
@@ -581,7 +581,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Get name to use in PHP sources
-	 * @return string
+	 * @return     string
 	 */
 	public function getPhpName()
 	{
@@ -601,7 +601,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Set name to use in PHP sources
-	 * @param string $phpName
+	 * @param      string $phpName
 	 */
 	public function setPhpName($phpName)
 	{
@@ -613,7 +613,7 @@ class Table extends XMLElement implements IDMethod {
 	 * [HL] changing behavior so that Database default
 	 *        method is returned if no method has been specified
 	 *        for the table.
-	 * @return string
+	 * @return     string
 	 */
 	public function getIdMethod()
 	{
@@ -635,7 +635,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Skip generating sql for this table (in the event it should
 	 * not be created from scratch).
-	 * @return boolean Value of skipSql.
+	 * @return     boolean Value of skipSql.
 	 */
 	public function isSkipSql()
 	{
@@ -645,7 +645,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Is table read-only, in which case only accessors (and relationship setters)
 	 * will be created.
-	 * @return boolan Value of readOnly.
+	 * @return     boolan Value of readOnly.
 	 */
 	public function isReadOnly()
 	{
@@ -654,7 +654,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Set whether this table should have its creation sql generated.
-	 * @param boolean $v Value to assign to skipSql.
+	 * @param      boolean $v Value to assign to skipSql.
 	 */
 	public function setSkipSql($v)
 	{
@@ -663,7 +663,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * PhpName of om object this entry references.
-	 * @return value of external.
+	 * @return     value of external.
 	 */
 	public function getAlias()
 	{
@@ -673,7 +673,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Is this table specified in the schema or is there just
 	 * a foreign key reference to it.
-	 * @return value of external.
+	 * @return     value of external.
 	 */
 	public function isAlias()
 	{
@@ -683,7 +683,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Set whether this table specified in the schema or is there just
 	 * a foreign key reference to it.
-	 * @param v  Value to assign to alias.
+	 * @param      v  Value to assign to alias.
 	 */
 	public function setAlias($v)
 	{
@@ -693,7 +693,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Interface which objects for this table will implement
-	 * @return value of interface.
+	 * @return     value of interface.
 	 */
 	public function getInterface()
 	{
@@ -702,7 +702,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Interface which objects for this table will implement
-	 * @param v  Value to assign to interface.
+	 * @param      v  Value to assign to interface.
 	 */
 	public function setInterface($v)
 	{
@@ -715,7 +715,7 @@ class Table extends XMLElement implements IDMethod {
 	 * Foo BO will be <code>public abstract class Foo</code>
 	 * This helps support class hierarchies
 	 *
-	 * @return value of abstractValue.
+	 * @return     value of abstractValue.
 	 */
 	public function isAbstract()
 	{
@@ -729,7 +729,7 @@ class Table extends XMLElement implements IDMethod {
 	 * <code>public abstract class Foo</code>
 	 * This helps support class hierarchies
 	 *
-	 * @param v  Value to assign to abstractValue.
+	 * @param      v  Value to assign to abstractValue.
 	 */
 	public function setAbstract($v)
 	{
@@ -738,7 +738,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Get the value of package.
-	 * @return value of package.
+	 * @return     value of package.
 	 */
 	public function getPackage()
 	{
@@ -747,7 +747,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Set the value of package.
-	 * @param v  Value to assign to package.
+	 * @param      v  Value to assign to package.
 	 */
 	public function setPackage($v)
 	{
@@ -827,7 +827,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns a specified column.
-	 * @return Return a Column object or null if it does not exist.
+	 * @return     Return a Column object or null if it does not exist.
 	 */
 	public function getColumn($name)
 	{
@@ -836,7 +836,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns a specified column.
-	 * @return Return a Column object or null if it does not exist.
+	 * @return     Return a Column object or null if it does not exist.
 	 */
 	public function getColumnByPhpName($phpName)
 	{
@@ -847,8 +847,8 @@ class Table extends XMLElement implements IDMethod {
 	 * Return the first foreign key that includes col in it's list
 	 * of local columns.  Eg. Foreign key (a,b,c) refrences tbl(x,y,z)
 	 * will be returned of col is either a,b or c.
-	 * @param string $col
-	 * @return Return a Column object or null if it does not exist.
+	 * @param      string $col
+	 * @return     Return a Column object or null if it does not exist.
 	 */
 	public function getForeignKey($col)
 	{
@@ -869,7 +869,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns true if the table contains a specified column
-	 * @param mixed $col Column or column name.
+	 * @param      mixed $col Column or column name.
 	 */
 	public function containsColumn($col)
 	{
@@ -883,7 +883,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Set the parent of the table
 	 *
-	 * @param parent the parant database
+	 * @param      parent the parant database
 	 */
 	public function setDatabase($parent)
 	{
@@ -893,7 +893,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Get the parent of the table
 	 *
-	 * @return the parant database
+	 * @return     the parant database
 	 */
 	public function getDatabase()
 	{
@@ -903,7 +903,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Flag to determine if code/sql gets created for this table.
 	 * Table will be skipped, if return true.
-	 * @return value of forReferenceOnly.
+	 * @return     value of forReferenceOnly.
 	 */
 	public function isForReferenceOnly()
 	{
@@ -913,7 +913,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Flag to determine if code/sql gets created for this table.
 	 * Table will be skipped, if set to true.
-	 * @param v  Value to assign to forReferenceOnly.
+	 * @param      v  Value to assign to forReferenceOnly.
 	 */
 	public function setForReferenceOnly($v)
 	{
@@ -922,7 +922,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Flag to determine if tree node class should be generated for this table.
-	 * @return valur of treeMode
+	 * @return     valur of treeMode
 	 */
 	public function treeMode()
 	{
@@ -931,7 +931,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Flag to determine if tree node class should be generated for this table.
-	 * @param v  Value to assign to treeMode.
+	 * @param      v  Value to assign to treeMode.
 	 */
 	public function setTreeMode($v)
 	{
@@ -941,7 +941,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Returns a XML representation of this table.
 	 *
-	 * @return XML representation of this table
+	 * @return     XML representation of this table
 	 */
 	public function toString() {
 
@@ -1048,7 +1048,7 @@ class Table extends XMLElement implements IDMethod {
 	 * Returns the collection of Columns which make up the single primary
 	 * key for this table.
 	 *
-	 * @return array Column[] A list of the primary key parts.
+	 * @return     array Column[] A list of the primary key parts.
 	 */
 	public function getPrimaryKey()
 	{
@@ -1065,7 +1065,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Determine whether this table has a primary key.
 	 *
-	 * @return boolean Whether this table has any primary key parts.
+	 * @return     boolean Whether this table has any primary key parts.
 	 */
 	public function hasPrimaryKey()
 	{
@@ -1075,7 +1075,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Determine whether this table has any auto-increment primary key(s).
 	 *
-	 * @return boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
+	 * @return     boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
 	 */
 	public function hasAutoIncrementPrimaryKey()
 	{
@@ -1093,7 +1093,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Returns all parts of the primary key, separated by commas.
 	 *
-	 * @return A CSV list of primary key parts.
+	 * @return     A CSV list of primary key parts.
 	 * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
 	 */
 	public function printPrimaryKey()
@@ -1103,8 +1103,8 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns the elements of the list, separated by commas.
-	 * @param array $list
-	 * @return A CSV list.
+	 * @param      array $list
+	 * @return     A CSV list.
 	 * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
 	 */
 	private function printList($list){

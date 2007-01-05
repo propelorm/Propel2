@@ -27,14 +27,14 @@ include_once 'propel/engine/database/model/AppData.php';
  *
  * This class uses the new DDLBuilder classes instead of the Capsule PHP templates.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.phing
  */
 class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * The properties file that maps an SQL file to a particular database.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	private $sqldbmap;
 
@@ -45,7 +45,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Set the sqldbmap.
-	 * @param PhingFile $sqldbmap The db map.
+	 * @param      PhingFile $sqldbmap The db map.
 	 */
 	public function setSqlDbMap(PhingFile $sqldbmap)
 	{
@@ -54,7 +54,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Get the sqldbmap.
-	 * @return PhingFile $sqldbmap.
+	 * @return     PhingFile $sqldbmap.
 	 */
 	public function getSqlDbMap()
 	{
@@ -63,7 +63,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Set the database name.
-	 * @param string $database
+	 * @param      string $database
 	 */
 	public function setDatabase($database)
 	{
@@ -72,7 +72,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Get the database name.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDatabase()
 	{
@@ -82,7 +82,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	/**
 	 * Create the sql -> database map.
 	 *
-	 * @throws IOException - if unable to store properties
+	 * @throws     IOException - if unable to store properties
 	 */
 	private function createSqlDbMap()
 	{
@@ -205,7 +205,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 * re-package the datamodels to allow the database package attribute to control
 	 * which tables go into which SQL file.
 	 *
-	 * @return array The packaged datamodels
+	 * @return     array The packaged datamodels
 	 */
 	protected function packageDataModels() {
 

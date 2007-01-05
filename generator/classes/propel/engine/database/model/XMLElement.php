@@ -22,9 +22,9 @@
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 abstract class XMLElement {
 
@@ -40,7 +40,7 @@ abstract class XMLElement {
 	/**
 	 * This is the entry point method for loading data from XML.
 	 * It calls a setupObject() method that must be implemented by the child class.
-	 * @param array $attributes The attributes for the XML tag.
+	 * @param      array $attributes The attributes for the XML tag.
 	 */
 	public function loadFromXML($attributes) {
 		$this->attributes = array_change_key_case($attributes, CASE_LOWER);
@@ -50,7 +50,7 @@ abstract class XMLElement {
 	/**
 	 * Returns the assoc array of attributes.
 	 * All attribute names (keys) are lowercase.
-	 * @return array
+	 * @return     array
 	 */
 	public function getAttributes() {
 		return $this->attributes;
@@ -59,9 +59,9 @@ abstract class XMLElement {
 	/**
 	 * Gets a particular attribute by [case-insensitive] name.
 	 * If attribute is not set then the $defaultValue is returned.
-	 * @param string $name The [case-insensitive] name of the attribute to lookup.
-	 * @param mixed $defaultValue The default value to use in case the attribute is not set.
-	 * @return mixed The value of the attribute or $defaultValue if not set.
+	 * @param      string $name The [case-insensitive] name of the attribute to lookup.
+	 * @param      mixed $defaultValue The default value to use in case the attribute is not set.
+	 * @return     mixed The value of the attribute or $defaultValue if not set.
 	 */
 	public function getAttribute($name, $defaultValue = null) {
 		$name = strtolower($name);
@@ -75,7 +75,7 @@ abstract class XMLElement {
 	/**
 	 * Converts value specified in XML to a boolean value.
 	 * This is to support the default value when used w/ a boolean column.
-	 * @return value
+	 * @return     value
 	 */
 	protected function booleanValue($val) {
 		if (is_numeric($val)) {
@@ -87,8 +87,8 @@ abstract class XMLElement {
 
 	/**
 	 * Sets vendor specific parameter that applies to this object.
-	 * @param string $name
-	 * @param string $value
+	 * @param      string $name
+	 * @param      string $value
 	 */
 	public function setVendorParameter($name, $value)
 	{
@@ -97,8 +97,8 @@ abstract class XMLElement {
 
 	/**
 	 * Whether specified vendor specific information is set.
-	 * @param string $name
-	 * @return boolean
+	 * @param      string $name
+	 * @return     boolean
 	 */
 	public function hasVendorParameter($name)
 	{
@@ -107,8 +107,8 @@ abstract class XMLElement {
 
 	/**
 	 * Returns specified vendor specific information is set.
-	 * @param string $name
-	 * @return string
+	 * @param      string $name
+	 * @return     string
 	 */
 	public function getVendorParameter($name)
 	{
@@ -120,7 +120,7 @@ abstract class XMLElement {
 
 	/**
 	 * Sets vendor specific information for this object.
-	 * @param array $info
+	 * @param      array $info
 	 */
 	public function setVendorSpecificInfo($info)
 	{
@@ -129,7 +129,7 @@ abstract class XMLElement {
 
 	/**
 	 * Retrieves vendor specific information for this object.
-	 * @return array
+	 * @return     array
 	 */
 	public function getVendorSpecificInfo()
 	{

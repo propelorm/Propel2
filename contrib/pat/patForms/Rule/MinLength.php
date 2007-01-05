@@ -5,19 +5,19 @@
  *
  * This is just a simple rule, that checks for a required minimum length of a field
  *
- * @package		patForms
- * @subpackage	Rules
- * @author		Sven Fuchs <svenfuchs@artweb-design.de>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @package    patForms
+ * @subpackage Rules
+ * @author     Sven Fuchs <svenfuchs@artweb-design.de>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 class patForms_Rule_MinLength extends patForms_Rule
 {
 	/**
 	* script that will be displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $globalScript = array(
 		'html'	=>	"/* patForms::Rule::MinLength */
@@ -44,8 +44,8 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	/**
 	* javascript that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceScript	= array(
 		'html'	=>	"var pfr_[RULE::ID] = new pFRC_MinLength('[CONTAINER::NAME]');\n"
@@ -54,8 +54,8 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	/**
 	* properties that have to be replaced in the instance script.
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $scriptPlaceholders	= array(
 		'RULE::SOURCE'	=>	'_source',
@@ -65,16 +65,16 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	* name of the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$ruleName = 'MinLength';
 
 	/**
 	* define error codes and messages for the rule
 	*
-	* @access	private
-	* @var		array	$validatorErrorCodes
-	* @todo		translate error messages
+	* @access     private
+	* @var        array	$validatorErrorCodes
+	* @todo       translate error messages
 	*/
 	var	$validatorErrorCodes = array(
 		"C"	=>	array(
@@ -90,15 +90,15 @@ pFRC_MinLength.prototype.setValue = function(value) {
 
 	/**
 	* possible values
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $_values;
 
 	/**
 	* field id that is used
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_field;
 
@@ -115,8 +115,8 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	/**
 	* prepare the rule
 	*
-	* @access	public
-	* @param	object patForms
+	* @access     public
+	* @param      object patForms
 	*/
 	function prepareRule(&$container) {
 
@@ -133,8 +133,8 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	* method called by patForms or any patForms_Element to validate the
 	* element or the form.
 	*
-	* @access	public
-	* @param	object patForms	form object
+	* @access     public
+	* @param      object patForms	form object
 	*/
 	function applyRule(&$element, $type = PATFORMS_RULE_AFTER_VALIDATION) {
 
@@ -149,7 +149,7 @@ pFRC_MinLength.prototype.setValue = function(value) {
 	/**
 	*
 	*
-	* @access	public
+	* @access     public
 	*/
 	function registerJavascripts(&$form) {
 

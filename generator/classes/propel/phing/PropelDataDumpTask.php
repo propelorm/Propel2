@@ -33,12 +33,12 @@ include_once 'creole/Creole.php';
  * the contents of one database.  Otherwise it is assumed that all databases described
  * by datamodel schema file(s) will be dumped.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
- * @author Jason van Zyl <jvanzyl@zenplex.com> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
+ * @author     Jason van Zyl <jvanzyl@zenplex.com> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.phing
  */
 class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
@@ -75,7 +75,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Properties file that maps a data XML file to a particular database.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	private $datadbmap;
 
@@ -93,8 +93,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the file that maps between data XML files and databases.
 	 *
-	 * @param PhingFile $sqldbmap the db map
-	 * @return void
+	 * @param      PhingFile $sqldbmap the db map
+	 * @return     void
 	 */
 	public function setDataDbMap(PhingFile $datadbmap)
 	{
@@ -104,7 +104,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the file that maps between data XML files and databases.
 	 *
-	 * @return PhingFile $datadbmap.
+	 * @return     PhingFile $datadbmap.
 	 */
 	public function getDataDbMap()
 	{
@@ -114,7 +114,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the database name to dump
 	 *
-	 * @return  The DatabaseName value
+	 * @return     The DatabaseName value
 	 */
 	public function getDatabaseName()
 	{
@@ -124,7 +124,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the database name
 	 *
-	 * @param  v The new DatabaseName value
+	 * @param      v The new DatabaseName value
 	 */
 	public function setDatabaseName($v)
 	{
@@ -134,7 +134,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the database url
 	 *
-	 * @return  The DatabaseUrl value
+	 * @return     The DatabaseUrl value
 	 */
 	public function getDatabaseUrl()
 	{
@@ -144,7 +144,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the database url
 	 *
-	 * @param string $v The PEAR-compatible database DSN URL.
+	 * @param      string $v The PEAR-compatible database DSN URL.
 	 */
 	public function setDatabaseUrl($v)
 	{
@@ -154,7 +154,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the database user
 	 *
-	 * @return string database user
+	 * @return     string database user
 	 * @deprecated
 	 */
 	public function getDatabaseUser()
@@ -165,7 +165,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the database user
 	 *
-	 * @param string $v The new DatabaseUser value
+	 * @param      string $v The new DatabaseUser value
 	 * @deprecated Specify user in DSN URL.
 	 */
 	public function setDatabaseUser($v)
@@ -176,7 +176,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the database password
 	 *
-	 * @return string database password
+	 * @return     string database password
 	 */
 	public function getDatabasePassword()
 	{
@@ -186,7 +186,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the database password
 	 *
-	 * @param string $v The new DatabasePassword value
+	 * @param      string $v The new DatabasePassword value
 	 * @deprecated Specify database password in DSN URL.
 	 */
 	public function setDatabasePassword($v)
@@ -197,7 +197,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Get the database driver name
 	 *
-	 * @return string database driver name
+	 * @return     string database driver name
 	 */
 	public function getDatabaseDriver()
 	{
@@ -207,7 +207,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Set the database driver name
 	 *
-	 * @param string $v The new DatabaseDriver value
+	 * @param      string $v The new DatabaseDriver value
 	 */
 	public function setDatabaseDriver($v)
 	{
@@ -221,7 +221,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * data XML files correspond to which database.  This map allows us to convert multiple
 	 * data XML files into SQL.
 	 *
-	 * @throws IOException - if unable to store properties
+	 * @throws     IOException - if unable to store properties
 	 */
 	private function createDataDbMap()
 	{
@@ -258,8 +258,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	/**
 	 * Iterates through each datamodel/database, dumps the contents of all tables and creates a DOM XML doc.
 	 *
-	 * @return void
-	 * @throws BuildException
+	 * @return     void
+	 * @throws     BuildException
 	 */
 	public function main()
 	{
@@ -335,8 +335,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Gets ResultSet of query to fetch all data from a table.
-	 * @param string $tableName
-	 * @return ResultSet
+	 * @param      string $tableName
+	 * @return     ResultSet
 	 */
 	private function getTableDataRS($tableName) {
 		// Set Statement object in associated PropelDataDump
@@ -346,8 +346,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Creates a DOM document containing data for specified database.
-	 * @param Database $database
-	 * @return DOMDocument
+	 * @param      Database $database
+	 * @return     DOMDocument
 	 */
 	private function createXMLDoc(Database $database) {
 

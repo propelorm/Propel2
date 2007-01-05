@@ -31,16 +31,16 @@ include_once 'propel/engine/database/transform/XmlToAppData.php';
  *
  * The subclasses invoke templates to do the actual writing of the resulting files.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jason van Zyl <jvanzyl@zenplex.com> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jason van Zyl <jvanzyl@zenplex.com> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @package    propel.phing
  */
 abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Fileset of XML schemas which represent our data models.
-	 * @var array Fileset[]
+	 * @var        array Fileset[]
 	 */
 	protected $schemaFilesets = array();
 
@@ -51,7 +51,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Have datamodels been initialized?
-	 * @var boolean
+	 * @var        boolean
 	 */
 	private $dataModelsLoaded = false;
 
@@ -88,37 +88,37 @@ abstract class AbstractPropelDataModelTask extends Task {
 	protected $targetPackage;
 
 	/**
-	 * @var Mapper
+	 * @var        Mapper
 	 */
 	protected $mapperElement;
 
 	/**
 	 * Destination directory for results of template scripts.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	protected $outputDirectory;
 
 	/**
 	 * Whether to package the datamodels or not
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	protected $packageObjectModel;
 
 	/**
 	 * Whether to perform validation (XSD) on the schema.xml file(s).
-	 * @var boolean
+	 * @var        boolean
 	 */
 	protected $validate;
 
 	/**
 	 * The XSD schema file to use for validation.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	protected $xsdFile;
 
 	/**
 	 * XSL file to use to normalize (or otherwise transform) schema before validation.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	protected $xslFile;
 
@@ -126,7 +126,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * Return the data models that have been
 	 * processed.
 	 *
-	 * @return List data models
+	 * @return     List data models
 	 */
 	public function getDataModels()
 	{
@@ -137,7 +137,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Return the data model to database name map.
 	 *
-	 * @return Hashtable data model name to database name map.
+	 * @return     Hashtable data model name to database name map.
 	 */
 	public function getDataModelDbMap()
 	{
@@ -148,7 +148,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Adds a set of xml schema files (nested fileset attribute).
 	 *
-	 * @param set a Set of xml schema files
+	 * @param      set a Set of xml schema files
 	 */
 	public function addSchemaFileset(Fileset $set)
 	{
@@ -158,7 +158,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Get the current target database.
 	 *
-	 * @return String target database(s)
+	 * @return     String target database(s)
 	 */
 	public function getTargetDatabase()
 	{
@@ -168,7 +168,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Set the current target database. (e.g. mysql, oracle, ..)
 	 *
-	 * @param v target database(s)
+	 * @param      v target database(s)
 	 */
 	public function setTargetDatabase($v)
 	{
@@ -178,7 +178,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Get the current target package.
 	 *
-	 * @return string target PHP package.
+	 * @return     string target PHP package.
 	 */
 	public function getTargetPackage()
 	{
@@ -189,7 +189,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * Set the current target package. This is where generated PHP classes will
 	 * live.
 	 *
-	 * @param string $v target PHP package.
+	 * @param      string $v target PHP package.
 	 */
 	public function setTargetPackage($v)
 	{
@@ -199,7 +199,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Set the packageObjectModel switch on/off
 	 *
-	 * @param string $v The build.property packageObjectModel
+	 * @param      string $v The build.property packageObjectModel
 	 */
 	public function setPackageObjectModel($v)
 	{
@@ -208,7 +208,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Set whether to perform validation on the datamodel schema.xml file(s).
-	 * @param boolean $v
+	 * @param      boolean $v
 	 */
 	public function setValidate($v)
 	{
@@ -217,7 +217,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Set the XSD schema to use for validation of any datamodel schema.xml file(s).
-	 * @param $v PhingFile
+	 * @param      $v PhingFile
 	 */
 	public function setXsd(PhingFile $v)
 	{
@@ -226,7 +226,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Set the normalization XSLT to use to transform datamodel schema.xml file(s) before validation and parsing.
-	 * @param $v PhingFile
+	 * @param      $v PhingFile
 	 */
 	public function setXsl(PhingFile $v)
 	{
@@ -236,9 +236,9 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * [REQUIRED] Set the output directory. It will be
 	 * created if it doesn't exist.
-	 * @param PhingFile $outputDirectory
-	 * @return void
-	 * @throws Exception
+	 * @param      PhingFile $outputDirectory
+	 * @return     void
+	 * @throws     Exception
 	 */
 	public function setOutputDirectory(PhingFile $outputDirectory) {
 		try {
@@ -257,7 +257,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Set the current target database encoding.
 	 *
-	 * @param v target database encoding
+	 * @param      v target database encoding
 	 */
 	public function setDbEncoding($v)
 	{
@@ -266,7 +266,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Get the output directory.
-	 * @return string
+	 * @return     string
 	 */
 	public function getOutputDirectory() {
 		return $this->outputDirectory;
@@ -275,8 +275,8 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Nested creator, creates one Mapper for this task.
 	 *
-	 * @return  Mapper  The created Mapper type object.
-	 * @throws  BuildException
+	 * @return     Mapper  The created Mapper type object.
+	 * @throws     BuildException
 	 */
 	public function createMapper() {
 		if ($this->mapperElement !== null) {
@@ -288,9 +288,9 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Maps the passed in name to a new filename & returns resolved File object.
-	 * @param string $from
-	 * @return PhingFile Resolved File object.
-	 * @throws BuilException    - if no Mapper element se
+	 * @param      string $from
+	 * @return     PhingFile Resolved File object.
+	 * @throws     BuilException    - if no Mapper element se
 	 *                          - if unable to map new filename.
 	 */
 	protected function getMappedFile($from)
@@ -312,7 +312,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Get the Platform class based on the target database type.
-	 * @return Platform Class that implements the Platform interface.
+	 * @return     Platform Class that implements the Platform interface.
 	 */
 	protected function getPlatformForTargetDatabase()
 	{
@@ -338,7 +338,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Gets all matching XML schema files and loads them into data models for class.
-	 * @return void
+	 * @return     void
 	 */
 	protected function loadDataModels()
 	{
@@ -433,7 +433,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * join the datamodels in this case to allow for foreign keys that point to
 	 * tables in different packages.
 	 *
-	 * @param array $ads The datamodels to join
+	 * @param      array $ads The datamodels to join
 	 */
 	protected function joinDatamodels($ads) {
 
@@ -476,7 +476,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 *
 	 * Also, renames any xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
 	 *
-	 * @return array Assoc array of properties.
+	 * @return     array Assoc array of properties.
 	 */
 	protected function getPropelProperties()
 	{
@@ -498,9 +498,9 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Fetches a single propel.xxx property from project, using "converted" property names.
-	 * @see getPropelProperties()
-	 * @param string $name Name of property to fetch (in converted CamelCase)
-	 * @return string The value of the property (or NULL if not set)
+	 * @see        getPropelProperties()
+	 * @param      string $name Name of property to fetch (in converted CamelCase)
+	 * @return     string The value of the property (or NULL if not set)
 	 */
 	protected function getPropelProperty($name)
 	{
@@ -514,7 +514,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	/**
 	 * Checks this class against Basic requrements of any propel datamodel task.
 	 *
-	 * @throws BuildException 	- if schema fileset was not defined
+	 * @throws     BuildException 	- if schema fileset was not defined
 	 * 							- if no output directory was specified
 	 */
 	protected function validate()

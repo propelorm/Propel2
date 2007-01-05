@@ -35,9 +35,9 @@
  * by that template for your datamodel to further understand how these are put
  * together.
  *
- * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision$
- * @package propel.map
+ * @author     Michael Aichler <aichler@mediacluster.de>
+ * @version    $Revision$
+ * @package    propel.map
  */
 class ValidatorMap
 {

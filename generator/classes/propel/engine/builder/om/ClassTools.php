@@ -23,16 +23,16 @@
  /**
   * Tools to support class & package inclusion and referencing.
   *
-  * @author Hans Lellelid <hans@xmpl.org>
-  * @version $Revision$
-  * @package propel.engine.builder.om
+  * @author     Hans Lellelid <hans@xmpl.org>
+  * @version    $Revision$
+  * @package    propel.engine.builder.om
   */
 class ClassTools {
 
 	/**
 	 * Gets just classname, given a dot-path to class.
-	 * @param string $qualifiedName
-	 * @return string
+	 * @param      string $qualifiedName
+	 * @return     string
 	 */
 	public static function classname($qualifiedName)
 	{
@@ -51,9 +51,9 @@ class ClassTools {
 	 * (1) getFilePath($dotPathClass);
 	 * (2) getFilePath($dotPathPrefix, $className);
 	 *
-	 * @param string $path dot-path to class or to package prefix.
-	 * @param string $classname class name
-	 * @return string
+	 * @param      string $path dot-path to class or to package prefix.
+	 * @param      string $classname class name
+	 * @return     string
 	 */
 	public static function getFilePath($path, $classname = null, $extension = '.php')
 	{
@@ -69,7 +69,7 @@ class ClassTools {
 	/**
 	 * Gets the basePeer path if specified for table/db.
 	 * If not, will return 'propel.util.BasePeer'
-	 * @return string
+	 * @return     string
 	 */
 	public static function getBasePeer(Table $table) {
 		$class = $table->getBasePeer();
@@ -82,7 +82,7 @@ class ClassTools {
 	/**
 	 * Gets the baseClass path if specified for table/db.
 	 * If not, will return 'propel.om.BaseObject'
-	 * @return string
+	 * @return     string
 	 */
 	public static function getBaseClass(Table $table) {
 		$class = $table->getBaseClass();
@@ -95,7 +95,7 @@ class ClassTools {
 	/**
 	 * Gets the interface path if specified for table.
 	 * If not, will return 'propel.om.Persistent'.
-	 * @return string
+	 * @return     string
 	 */
 	public static function getInterface(Table $table) {
 		$interface = $table->getInterface();

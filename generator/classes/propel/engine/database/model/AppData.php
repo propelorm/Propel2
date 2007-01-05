@@ -25,24 +25,24 @@ include_once 'propel/engine/database/model/Database.php';
 /**
  * A class for holding application data structures.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author John McNally <jmcnally@collab.net> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author     John McNally <jmcnally@collab.net> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class AppData {
 
 	/**
 	 * The list of databases for this application.
-	 * @var array Database[]
+	 * @var        array Database[]
 	 */
 	private $dbList = array();
 
 	/**
 	 * The platform class for our database(s).
-	 * @var string
+	 * @var        string
 	 */
 	private $platform;
 
@@ -54,14 +54,14 @@ class AppData {
 
 	/**
 	 * Flag to ensure that initialization is performed only once.
-	 * @var boolean
+	 * @var        boolean
 	 */
 	private $isInitialized = false;
 
 	/**
 	 * Creates a new instance for the specified database type.
 	 *
-	 * @param Platform $platform The platform class to use for any databases added to this application model.
+	 * @param      Platform $platform The platform class to use for any databases added to this application model.
 	 */
 	public function __construct(Platform $platform)
 	{
@@ -71,7 +71,7 @@ class AppData {
 	/**
 	 * Set the name of the database.
 	 *
-	 * @param name of the database.
+	 * @param      name of the database.
 	 */
 	public function setName($name)
 	{
@@ -81,7 +81,7 @@ class AppData {
 	/**
 	 * Get the name of the database.
 	 *
-	 * @return String name
+	 * @return     String name
 	 */
 	public function getName()
 	{
@@ -91,7 +91,7 @@ class AppData {
 	/**
 	 * Get the short name of the database (without the '-schema' postfix).
 	 *
-	 * @return String name
+	 * @return     String name
 	 */
 	public function getShortName()
 	{
@@ -101,7 +101,7 @@ class AppData {
 	/**
 	 * Return an array of all databases
 	 *
-	 * @return Array of Database objects
+	 * @return     Array of Database objects
 	 */
 	public function getDatabases($doFinalInit = true)
 	{
@@ -116,7 +116,7 @@ class AppData {
 	/**
 	 * Returns whether this application has multiple databases.
 	 *
-	 * @return boolean True if the application has multiple databases
+	 * @return     boolean True if the application has multiple databases
 	 */
 	public function hasMultipleDatabases()
 	{
@@ -126,8 +126,8 @@ class AppData {
 	/**
 	 * Return the database with the specified name.
 	 *
-	 * @param name database name
-	 * @return A Database object.  If it does not exist it returns null
+	 * @param      name database name
+	 * @return     A Database object.  If it does not exist it returns null
 	 */
 	public function getDatabase($name = null, $doFinalInit = true)
 	{
@@ -154,7 +154,7 @@ class AppData {
 	 * Add a database to the list and sets the AppData property to this
 	 * AppData
 	 *
-	 * @param db the database to add
+	 * @param      db the database to add
 	 */
 	public function addDatabase($db)
 	{
@@ -176,7 +176,7 @@ class AppData {
 
 	/**
 	 *
-	 * @return void
+	 * @return     void
 	 */
 	private function doFinalInitialization()
 	{
@@ -192,7 +192,7 @@ class AppData {
 	 * Creats a string representation of this AppData.
 	 * The representation is given in xml format.
 	 *
-	 * @return string Representation in xml format
+	 * @return     string Representation in xml format
 	 */
 	public function toString()
 	{

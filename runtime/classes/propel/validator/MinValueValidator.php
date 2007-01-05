@@ -33,15 +33,15 @@
  *   </validator>
  * </code>
  *
- * @author Michael Aichler <aichler@mediacluster.de>
- * @version $Revision$
- * @package propel.validator
+ * @author     Michael Aichler <aichler@mediacluster.de>
+ * @version    $Revision$
+ * @package    propel.validator
  */
 class MinValueValidator implements BasicValidator
 {
 
 	/**
-	 * @see BasicValidator::isValid()
+	 * @see        BasicValidator::isValid()
 	 */
 	public function isValid (ValidatorMap $map, $value)
 	{

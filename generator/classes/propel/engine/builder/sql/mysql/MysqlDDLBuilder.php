@@ -25,15 +25,15 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
 /**
  * DDL Builder class for MySQL.
  *
- * @author David Zülke
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql.mysql
+ * @author     David Zülke
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.sql.mysql
  */
 class MysqlDDLBuilder extends DDLBuilder {
 
 	/**
 	 * Returns some header SQL that disables foreign key checking.
-	 * @return string DDL
+	 * @return     string DDL
 	 */
 	public static function getDatabaseStartDDL()
 	{
@@ -47,7 +47,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 	/**
 	 * Returns some footer SQL that re-enables foreign key checking.
-	 * @return string DDL
+	 * @return     string DDL
 	 */
 	public static function getDatabaseEndDDL()
 	{
@@ -61,7 +61,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 	/**
 	 *
-	 * @see parent::addDropStatement()
+	 * @see        parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
 	{
@@ -76,7 +76,7 @@ DROP TABLE IF EXISTS ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(
 	 * This is the main entry point and defines a basic structure that classes should follow.
 	 * In most cases this method will not need to be overridden by subclasses.
 	 *
-	 * @return string The resulting SQL DDL.
+	 * @return     string The resulting SQL DDL.
 	 */
 	public function build()
 	{
@@ -87,7 +87,7 @@ DROP TABLE IF EXISTS ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(
 
 	/**
 	 *
-	 * @see parent::addColumns()
+	 * @see        parent::addColumns()
 	 */
 	protected function addTable(&$script)
 	{
@@ -154,8 +154,8 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 	 * Creates a comma-separated list of column names for the index.
 	 * For MySQL unique indexes there is the option of specifying size, so we cannot simply use
 	 * the getColumnsList() method.
-	 * @param Index $index
-	 * @return string
+	 * @param      Index $index
+	 * @return     string
 	 */
 	private function getIndexColumnList(Index $index)
 	{
@@ -190,7 +190,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 	/**
 	 * Adds foreign key declarations & necessary indexes for mysql (if they don't exist already).
-	 * @see parent::addForeignKeys()
+	 * @see        parent::addForeignKeys()
 	 */
 	protected function addForeignKeysLines(&$lines)
 	{
@@ -264,8 +264,8 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 	/**
 	 * Checks whether passed-in array of Column objects contains a column with specified name.
-	 * @param array Column[] or string[]
-	 * @param string $searchcol Column name to search for
+	 * @param      array Column[] or string[]
+	 * @param      string $searchcol Column name to search for
 	 */
 	private function containsColname($columns, $searchcol)
 	{
@@ -282,7 +282,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 	/**
 	 * Not used for MySQL since foreign keys are declared inside table declaration.
-	 * @see addForeignKeysLines()
+	 * @see        addForeignKeysLines()
 	 */
 	protected function addForeignKeys(&$script)
 	{
@@ -290,7 +290,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 	/**
 	 * Not used for MySQL since indexes are declared inside table declaration.
-	 * @see addIndicesLines()
+	 * @see        addIndicesLines()
 	 */
 	protected function addIndices(&$script)
 	{

@@ -28,11 +28,11 @@ include_once 'propel/engine/database/model/Index.php';
  * a column also creates an index on that column (this is known to be
  * true for MySQL and Oracle).
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author Daniel Rall <dlr@collab.net> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Unique extends Index {
 

@@ -31,14 +31,14 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
  * This class replaces the Peer.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5BasicPeerBuilder extends PeerBuilder {
 
 	/**
 	 * Returns the name of the current class being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getUnprefixedClassname()
 	{
@@ -47,7 +47,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 
 	/**
 	 * Gets the package for the [base] peer classes.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPackage()
 	{
@@ -56,7 +56,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
@@ -64,7 +64,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
 
 	/**
 	 * Adds class phpdoc comment and openning of class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script) {
 
@@ -86,7 +86,7 @@ class PHP5BasicPeerBuilder extends PeerBuilder {
  *";
 		}
 		$script .= "
- * @package ".$this->getPackage()."
+ * @package    ".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." {
 ";
@@ -95,8 +95,8 @@ abstract class ".$this->getClassname()." {
 	/**
 	 * Closes class.
 	 * Adds closing brace at end of class and the static map builder registration code.
-	 * @param string &$script The script will be modified in this method.
-	 * @see addStaticMapBuilderRegistration()
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addStaticMapBuilderRegistration()
 	 */
 	protected function addClassClose(&$script)
 	{
@@ -108,7 +108,7 @@ abstract class ".$this->getClassname()." {
 
 	/**
 	 * Adds the static map builder registration code.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addStaticMapBuilderRegistration(&$script)
 	{
@@ -132,8 +132,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds constant and variable declarations that go at the top of the class.
-	 * @param string &$script The script will be modified in this method.
-	 * @see addColumnNameConstants()
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addColumnNameConstants()
 	 */
 	protected function addConstantsAndAttributes(&$script)
 	{
@@ -164,13 +164,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * An identiy map to hold any loaded instances of ".$this->getObjectClassname()." objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
 	 * queries.
-	 * @var array ".$this->getObjectClassname()."[]
+	 * @var        array ".$this->getObjectClassname()."[]
 	 */
 	public static \$instances = array();
 
 	/**
 	 * The MapBuilder instance for this peer.
-	 * @var MapBuilder
+	 * @var        MapBuilder
 	 */
 	private static \$mapBuilder = null;
 ";
@@ -182,7 +182,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the COLUMN_NAME contants to the class definition.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addColumnNameConstants(&$script)
 	{
@@ -278,10 +278,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Returns an array of of field names.
 	 *
-	 * @param  string \$type The type of fieldnames to return:
+	 * @param      string \$type The type of fieldnames to return:
 	 *                      One of the class type constants TYPE_PHPNAME,
 	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @return array A list of field names
+	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
@@ -301,11 +301,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Translates a fieldname to another type
 	 *
-	 * @param string \$name field name
-	 * @param string \$fromType One of the class type constants TYPE_PHPNAME,
+	 * @param      string \$name field name
+	 * @param      string \$fromType One of the class type constants TYPE_PHPNAME,
 	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
-	 * @param string \$toType   One of the class type constants
-	 * @return string translated name of the field.
+	 * @param      string \$toType   One of the class type constants
+	 * @return     string translated name of the field.
 	 */
 	static public function translateFieldName(\$name, \$fromType, \$toType)
 	{
@@ -321,14 +321,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the getMapBuilder() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetMapBuilder(&$script)
 	{
 		$script .= "
 	/**
 	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return MapBuilder The map builder for this peer
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
@@ -342,7 +342,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	public function addInheritanceColumnConstants(&$script)
 	{
@@ -378,7 +378,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the alias() utility method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addAlias(&$script)
 	{
@@ -391,9 +391,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *		\$c->addAlias(\"alias1\", TablePeer::TABLE_NAME);
 	 *		\$c->addJoin(TablePeer::alias(\"alias1\", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
-	 * @param string \$alias The alias for the current table.
-	 * @param string \$column The column name for current table. (i.e. ".$this->getPeerClassname()."::COLUMN_NAME).
-	 * @return string
+	 * @param      string \$alias The alias for the current table.
+	 * @param      string \$column The column name for current table. (i.e. ".$this->getPeerClassname()."::COLUMN_NAME).
+	 * @return     string
 	 */
 	public static function alias(\$alias, \$column)
 	{
@@ -404,7 +404,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the addSelectColumns() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addAddSelectColumns(&$script)
 	{
@@ -416,8 +416,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param criteria object containing the columns to add.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      criteria object containing the columns to add.
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function addSelectColumns(Criteria \$criteria)
@@ -439,7 +439,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the COUNT constants.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addCountConstants(&$script)
 	{
@@ -465,7 +465,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doCount() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoCount(&$script)
 	{
@@ -473,10 +473,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
-	 * @param Criteria \$criteria
-	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param PDO \$con
-	 * @return int Number of matching rows.
+	 * @param      Criteria \$criteria
+	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      PDO \$con
+	 * @return     int Number of matching rows.
 	 */
 	public static function doCount(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
@@ -509,7 +509,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doSelectOne() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelectOne(&$script)
 	{
@@ -517,10 +517,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method to select one object from the DB.
 	 *
-	 * @param Criteria \$criteria object used to create the SELECT statement.
-	 * @param PDO \$con
-	 * @return ".$this->getObjectClassname()."
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      Criteria \$criteria object used to create the SELECT statement.
+	 * @param      PDO \$con
+	 * @return     ".$this->getObjectClassname()."
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doSelectOne(Criteria \$criteria, PDO \$con = null)
@@ -537,7 +537,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doSelect() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelect(&$script)
 	{
@@ -545,10 +545,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method to do selects.
 	 *
-	 * @param Criteria \$criteria The Criteria object used to build the SELECT statement.
-	 * @param PDO \$con
-	 * @return array Array of selected Objects
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
+	 * @param      PDO \$con
+	 * @return     array Array of selected Objects
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doSelect(Criteria \$criteria, PDO \$con = null)
@@ -559,7 +559,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doSelectStmt() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelectStmt(&$script)
 	{
@@ -571,12 +571,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Use this method directly if you want to work with an executed statement durirectly (for example
 	 * to perform your own object hydration).
 	 *
-	 * @param Criteria \$criteria The Criteria object used to build the SELECT statement.
-	 * @param PDO \$con The connection to use
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
+	 * @param      PDO \$con The connection to use
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return PDOStatement The executed PDOStatement object.
-	 * @see ".$this->basePeerClassname."::doSelect()
+	 * @return     PDOStatement The executed PDOStatement object.
+	 * @see        ".$this->basePeerClassname."::doSelect()
 	 */
 	public static function doSelectStmt(Criteria \$criteria, PDO \$con = null)
 	{
@@ -599,7 +599,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Creates a convenience method to add objects to an instance pool.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addAddInstanceToPool(&$script)
 	{
@@ -614,7 +614,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
 	 * and retrieveByPK*() calls.
 	 *
-	 * @param ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
+	 * @param      ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
 	 */
 	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj)
 	{
@@ -636,7 +636,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 *  Creates a convenience method to remove objects form an instance pool.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addRemoveInstanceFromPool(&$script)
 	{
@@ -650,7 +650,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * methods in your stub classes -- you may need to explicitly remove objects
 	 * from the cache in order to prevent returning objects that no longer exist.
 	 *
-	 * @param mixed \$value A ".$this->getObjectClassname()." object or a primary key value.
+	 * @param      mixed \$value A ".$this->getObjectClassname()." object or a primary key value.
 	 */
 	public static function removeInstanceFromPool(\$value)
 	{";
@@ -696,7 +696,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds method to clear the instance pool.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClearInstancePool(&$script)
 	{
@@ -707,9 +707,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
-	 * @param array \$row PDO resultset row.
-	 * @param int \$startcol The 0-based offset for reading from the resultset row.
-	 * @return string
+	 * @param      array \$row PDO resultset row.
+	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
+	 * @return     string
 	 */
 	public static function clearInstancePool()
 	{
@@ -721,7 +721,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds method to get an the instance from the pool, given a key.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetInstanceFromPool(&$script)
 	{
@@ -732,9 +732,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
-	 * @param string \$key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return object or NULL if no instance exists for specified key.
-	 * @see getPrimaryKeyHash()
+	 * @param      string \$key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     object or NULL if no instance exists for specified key.
+	 * @see        getPrimaryKeyHash()
 	 */
 	public static function getInstanceFromPool(\$key)
 	{
@@ -750,7 +750,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetPrimaryKeyHash(&$script)
 	{
@@ -761,9 +761,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
-	 * @param array \$row PDO resultset row.
-	 * @param int \$startcol The 0-based offset for reading from the resultset row.
-	 * @return string
+	 * @param      array \$row PDO resultset row.
+	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
+	 * @return     string
 	 */
 	public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
 	{";
@@ -796,7 +796,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the populateObjects() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addPopulateObjects(&$script)
 	{
@@ -806,7 +806,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function populateObjects(PDOStatement \$stmt)
@@ -857,7 +857,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds a getOMClass() for non-abstract tables that have inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetOMClass_Inheritance(&$script)
 	{
@@ -867,9 +867,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * The returned Class will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
-	 * @param array \$row PDO result row.
-	 * @param int \$colnum Column to examine for OM class information (first is 0).
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      array \$row PDO result row.
+	 * @param      int \$colnum Column to examine for OM class information (first is 0).
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function getOMClass(\$row, \$colnum)
@@ -914,7 +914,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds a getOMClass() signature for abstract tables that have inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetOMClass_Inheritance_Abstract(&$script)
 	{
@@ -926,9 +926,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * This method must be overridden by the stub subclass, because
 	 * ".$this->getObjectClassname()." is declared abstract in the schema.
 	 *
-	 * @param ResultSet \$rs ResultSet with pointer to record containing om class.
-	 * @param int \$colnum Column to examine for OM class information (first is 1).
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      ResultSet \$rs ResultSet with pointer to record containing om class.
+	 * @param      int \$colnum Column to examine for OM class information (first is 1).
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	abstract public static function getOMClass();
@@ -937,7 +937,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds a getOMClass() for non-abstract tables that do note use inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetOMClass_NoInheritance(&$script)
 	{
@@ -949,7 +949,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
-	 * @return string path.to.ClassName
+	 * @return     string path.to.ClassName
 	 */
 	public static function getOMClass()
 	{
@@ -960,7 +960,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds a getOMClass() signature for abstract tables that do not have inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetOMClass_NoInheritance_Abstract(&$script)
 	{
@@ -977,7 +977,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doInsert() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoInsert(&$script)
 	{
@@ -986,10 +986,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method perform an INSERT on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
-	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the INSERT statement.
-	 * @param PDO \$con the PDO connection to use
-	 * @return mixed The new primary key.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the INSERT statement.
+	 * @param      PDO \$con the PDO connection to use
+	 * @return     mixed The new primary key.
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doInsert(\$values, \$con = null)
@@ -1036,7 +1036,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doUpdate() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoUpdate(&$script)
 	{
@@ -1045,10 +1045,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method perform an UPDATE on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
-	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the UPDATE statement.
-	 * @param PDO \$con The connection to use (specify PDO connection object to exert more control over transactions).
-	 * @return int The number of affected rows (if supported by underlying database driver).
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the UPDATE statement.
+	 * @param      PDO \$con The connection to use (specify PDO connection object to exert more control over transactions).
+	 * @return     int The number of affected rows (if supported by underlying database driver).
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doUpdate(\$values, PDO \$con = null)
@@ -1087,7 +1087,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doDeleteAll() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoDeleteAll(&$script)
 	{
@@ -1096,7 +1096,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method to DELETE all rows from the ".$table->getName()." table.
 	 *
-	 * @return int The number of affected rows (if supported by underlying database driver).
+	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
 	public static function doDeleteAll(\$con = null)
 	{
@@ -1130,7 +1130,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doDelete() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoDelete(&$script)
 	{
@@ -1139,12 +1139,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Method perform a DELETE on the database, given a ".$this->getObjectClassname()." or Criteria object OR a primary key value.
 	 *
-	 * @param mixed \$values Criteria or ".$this->getObjectClassname()." object or primary key or array of primary keys
+	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param PDO \$con the connection to use
-	 * @return int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+	 * @param      PDO \$con the connection to use
+	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	 public static function doDelete(\$values, PDO \$con = null)
@@ -1290,7 +1290,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoOnDeleteCascade(&$script)
 	{
@@ -1305,9 +1305,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * This method should be used within a transaction if possible.
 	 *
-	 * @param Criteria \$criteria
-	 * @param PDO \$con
-	 * @return int The number of affected rows (if supported by underlying database driver).
+	 * @param      Criteria \$criteria
+	 * @param      PDO \$con
+	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
 	protected static function doOnDeleteCascade(Criteria \$criteria, PDO \$con)
 	{
@@ -1371,7 +1371,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoOnDeleteSetNull(&$script)
 	{
@@ -1386,9 +1386,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * This method should be used within a transaction if possible.
 	 *
-	 * @param Criteria \$criteria
-	 * @param PDO \$con
-	 * @return void
+	 * @param      Criteria \$criteria
+	 * @param      PDO \$con
+	 * @return     void
 	 */
 	protected static function doOnDeleteSetNull(Criteria \$criteria, PDO \$con)
 	{
@@ -1452,7 +1452,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the doValidate() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoValidate(&$script)
 	{
@@ -1465,10 +1465,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param ".$this->getObjectClassname()." \$obj The object to validate.
-	 * @param mixed \$cols Column name or array of column names.
+	 * @param      ".$this->getObjectClassname()." \$obj The object to validate.
+	 * @param      mixed \$cols Column name or array of column names.
 	 *
-	 * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
+	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
 	public static function doValidate(".$this->getObjectClassname()." \$obj, \$cols = null)
 	{
@@ -1510,7 +1510,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the retrieveByPK method for tables with single-column primary key.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addRetrieveByPK_SinglePK(&$script)
 	{
@@ -1519,9 +1519,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Retrieve a single object by pkey.
 	 *
-	 * @param mixed \$pk the primary key.
-	 * @param PDO \$con the connection to use
-	 * @return " .$this->getObjectClassname(). "
+	 * @param      mixed \$pk the primary key.
+	 * @param      PDO \$con the connection to use
+	 * @return     " .$this->getObjectClassname(). "
 	 */
 	public static function ".$this->getRetrieveMethodName()."(\$pk, PDO \$con = null)
 	{
@@ -1559,7 +1559,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the retrieveByPKs method for tables with single-column primary key.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addRetrieveByPKs_SinglePK(&$script)
 	{
@@ -1568,9 +1568,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Retrieve multiple objects by pkey.
 	 *
-	 * @param array \$pks List of primary keys
-	 * @param PDO \$con the connection to use
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @param      array \$pks List of primary keys
+	 * @param      PDO \$con the connection to use
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function ".$this->getRetrieveMethodName()."s(\$pks, PDO \$con = null)
@@ -1618,7 +1618,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the retrieveByPK method for tables with multi-column primary key.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addRetrieveByPK_MultiPK(&$script)
 	{
@@ -1634,8 +1634,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	   ";
 	   }
 	   $script .= "
-	 * @param PDO \$con
-	 * @return ".$this->getObjectClassname()."
+	 * @param      PDO \$con
+	 * @return     ".$this->getObjectClassname()."
 	 */
 	public static function ".$this->getRetrieveMethodName()."(";
 		$co = 0;
@@ -1662,7 +1662,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetTableMap(&$script)
 	{
@@ -1670,8 +1670,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Returns the TableMap related to this peer.
 	 * This method is not needed for general use but a specific application could have a need.
-	 * @return TableMap
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @return     TableMap
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function getTableMap()

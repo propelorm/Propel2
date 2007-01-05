@@ -26,8 +26,8 @@ require_once 'propel/engine/builder/sql/DDLBuilder.php';
  * The SQL DDL-building class for PostgreSQL.
  *
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.sql.pgsql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.sql.pgsql
  */
 class PgsqlDDLBuilder extends DDLBuilder {
 
@@ -36,7 +36,7 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 * Array that keeps track of already
 	 * added schema names
 	 *
-	 * @var Array of schema names
+	 * @var        Array of schema names
 	 */
 	protected static $addedSchemas = array();
 
@@ -46,7 +46,7 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 * PostgreSQL seems (now?) to not like constraints for tables that don't exist,
 	 * so the solution is to queue up the statements and execute it at the end.
 	 *
-	 * @var array
+	 * @var        array
 	 */
 	protected static $queuedConstraints = array();
 
@@ -61,7 +61,7 @@ class PgsqlDDLBuilder extends DDLBuilder {
 
 	/**
 	 * Returns all the ALTER TABLE ADD CONSTRAINT lines for inclusion at end of file.
-	 * @return string DDL
+	 * @return     string DDL
 	 */
 	public static function getDatabaseEndDDL()
 	{
@@ -72,9 +72,9 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	/**
 	 * Get the schema for the current table
 	 *
-	 * @author Markus Lervik <markus.lervik@necora.fi>
-	 * @access protected
-	 * @return schema name if table has one, else
+	 * @author     Markus Lervik <markus.lervik@necora.fi>
+	 * @access     protected
+	 * @return     schema name if table has one, else
 	 *         null
 	 **/
 	protected function getSchema()
@@ -93,9 +93,9 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	/**
 	 * Add a schema to the generated SQL script
 	 *
-	 * @author Markus Lervik <markus.lervik@necora.fi>
-	 * @access protected
-	 * @return string with CREATE SCHEMA statement if
+	 * @author     Markus Lervik <markus.lervik@necora.fi>
+	 * @access     protected
+	 * @return     string with CREATE SCHEMA statement if
 	 *         applicable, else empty string
 	 **/
 	protected function addSchema()
@@ -118,7 +118,7 @@ class PgsqlDDLBuilder extends DDLBuilder {
 
 	/**
 	 *
-	 * @see parent::addDropStatement()
+	 * @see        parent::addDropStatement()
 	 */
 	protected function addDropStatements(&$script)
 	{
@@ -137,7 +137,7 @@ DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolo
 
 	/**
 	 *
-	 * @see parent::addColumns()
+	 * @see        parent::addColumns()
 	 */
 	protected function addTable(&$script)
 	{
@@ -233,7 +233,7 @@ CREATE SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strto
 
 	/**
 	 * Adds CREATE INDEX statements for this table.
-	 * @see parent::addIndices()
+	 * @see        parent::addIndices()
 	 */
 	protected function addIndices(&$script)
 	{
@@ -253,7 +253,7 @@ CREATE ";
 
 	/**
 	 *
-	 * @see parent::addForeignKeys()
+	 * @see        parent::addForeignKeys()
 	 */
 	protected function addForeignKeys(&$script)
 	{

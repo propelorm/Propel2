@@ -22,9 +22,9 @@
 /**
  * Mojavi logging adapter for propel
  *
- * @author Brandon Keepers <brandon@opensoul.org>
- * @version $Revision$
- * @package propel.logger
+ * @author     Brandon Keepers <brandon@opensoul.org>
+ * @version    $Revision$
+ * @package    propel.logger
  */
 class MojaviLogAdapter implements BasicLogger {
 
@@ -36,7 +36,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * constructor for setting up Mojavi log adapter
 	 *
-	 * @param   ErrorLog   $logger   instance of Mojavi error log obtained by
+	 * @param      ErrorLog   $logger   instance of Mojavi error log obtained by
 	 *                               calling LogManager::getLogger();
 	 */
 	public function __construct($logger = null)
@@ -47,7 +47,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging an alert event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function alert($message)
@@ -58,7 +58,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging a critical event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function crit($message)
@@ -69,7 +69,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging an error event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function err($message)
@@ -80,7 +80,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging a warning event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function warning($message)
@@ -92,7 +92,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging an critical event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function notice($message)
@@ -102,7 +102,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging an critical event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function info($message)
@@ -113,7 +113,7 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * A convenience function for logging a debug event.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
 	 */
 	public function debug($message)
@@ -124,9 +124,9 @@ class MojaviLogAdapter implements BasicLogger {
 	/**
 	 * Primary method to handle logging.
 	 *
-	 * @param   mixed   $message    String or Exception object containing the message
+	 * @param      mixed   $message    String or Exception object containing the message
 	 *                              to log.
-	 * @param   int     $severity   The numeric severity.  Defaults to null so that no
+	 * @param      int     $severity   The numeric severity.  Defaults to null so that no
 	 *                              assumptions are made about the logging backend.
 	 */
 	public function log($message, $severity = null)

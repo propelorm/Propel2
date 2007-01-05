@@ -5,25 +5,25 @@
  *
  * $Id$
  *
- * @package		patForms
- * @subpackage	patForms_Element
- * @access		protected
- * @author		Sebastian Mordziol <argh@php-tools.net>
- * @author		gERD Schaufelberger <gerd@php-tools.net>
- * @author		Stephan Schmidt <schst@php-tools.net>
+ * @package    patForms
+ * @subpackage patForms_Element
+ * @access     protected
+ * @author     Sebastian Mordziol <argh@php-tools.net>
+ * @author     gERD Schaufelberger <gerd@php-tools.net>
+ * @author     Stephan Schmidt <schst@php-tools.net>
  */
 
 /**
  * error definition: the attribute that was set is not supported by this element (it is
  * not listed in the attributeDefinition property set in the element class).
- * @see	patForms_Element::attributeDefinition
+ * @see        patForms_Element::attributeDefinition
  */
 define( "PATFORMS_ELEMENT_NOTICE_ATTRIBUTE_NOT_SUPPORTED", 1101 );
 
 /**
  * error definition: the setAttributes() method expects an array,
  * but given value was not.
- * @see	patForms_Element::setAttributes()
+ * @see        patForms_Element::setAttributes()
  */
 define( "PATFORMS_ELEMENT_ERROR_ARRAY_EXPECTED", 1102 );
 
@@ -35,7 +35,7 @@ define( "PATFORMS_ELEMENT_ERROR_ADDING_ATTRIBUTE_FAILED", 1103 );
 /**
  * error definition: the element method to serialize the element in the given mode is
  * not implemented.
- * @see	patForms_Element::serialize()
+ * @see        patForms_Element::serialize()
  */
 define( "PATFORMS_ELEMENT_ERROR_METHOD_FOR_MODE_NOT_AVAILABLE", 1104 );
 
@@ -47,57 +47,57 @@ define( "PATFORMS_ELEMENT_ERROR_ERROR_RETURNED", 1105 );
 /**
  * error definition: the utility class {@link patForms_FormatChecker} could not be found, this is
  * needed for the format validation of certain variable types.
- * @see	patForms_FormatChecker
- * @see	patForms_Element::validateFormat()
+ * @see        patForms_FormatChecker
+ * @see        patForms_Element::validateFormat()
  */
 define( "PATFORMS_ELEMENT_ERROR_FORMAT_CHECKER_NOT_FOUND", 1106 );
 
 /**
  * error definition: the modifier that was set for the element is not an array.
- * @see	patForms_Element::_applyModifiers()
+ * @see        patForms_Element::_applyModifiers()
  */
 define( "PATFORMS_ELEMENT_ERROR_MODIFIER_NOT_AN_ARRAY", 1107 );
 
 /**
  * error definition: the method for the given modifier does not exist
- * @see	patForms_Element::_applyModifiers()
+ * @see        patForms_Element::_applyModifiers()
  */
 define( "PATFORMS_ELEMENT_ERROR_METHOD_FOR_MODIFIER_NOT_FOUND", 1108 );
 
 /**
  * error definition: the modifier returned an error, modifications could not be made.
- * @see	patForms_Element::_applyModifiers()
+ * @see        patForms_Element::_applyModifiers()
  */
 define( "PATFORMS_ELEMENT_ERROR_MODIFIER_RETURNED_ERROR", 1109 );
 
 /**
  * error definition: the given attribute is required for the specified output format.
- * @see	patForms_Element::getAttributesFor()
+ * @see        patForms_Element::getAttributesFor()
  */
 define( "PATFORMS_ELEMENT_ERROR_ATTRIBUTE_REQUIRED", 1110 );
 
 /**
  * error definition: given modifier could not be applied to specified attribute
- * @see	patForms_Element::getAttributesFor()
+ * @see        patForms_Element::getAttributesFor()
  */
 define( "PATFORMS_ELEMENT_ERROR_UNABLE_TO_APPLY_MODIFIER_TO_ATTRIBUTE", 1111 );
 
 /**
  * error definition: the given attribute is not available for output in the specified
  * output format.
- * @see	patForms_Element::getAttributesFor()
+ * @see        patForms_Element::getAttributesFor()
  */
 define( "PATFORMS_ELEMENT_ERROR_ATTRIBUTE_NOT_AVAILABLE_FOR_OUTPUT", 1112 );
 
 /**
  * error definition: format of the attribute could not be verified
- * @see	patForms_Element::getAttributesFor()
+ * @see        patForms_Element::getAttributesFor()
  */
 define( "PATFORMS_ELEMENT_ERROR_CAN_NOT_VERIFY_FORMAT", 1113 );
 
 /**
  * error definition: the attribute collection of the element could not be validated.
- * @see patForms_Element::toHtml()
+ * @see        patForms_Element::toHtml()
  */
 define( "PATFORMS_ELEMENT_ERROR_CAN_NOT_VALIDATE_ATTRIBUTE_COLLECTION", 1114 );
 
@@ -143,57 +143,57 @@ define( 'PATFORMS_FILTER_TYPE_PHP', 2 );
  * $Id$
  *
  * @abstract
- * @package		patForms
- * @subpackage	patForms_Element
- * @access		protected
- * @version		0.1
- * @author		Sebastian Mordziol <argh@php-tools.net>
- * @author		gERD Schaufelberger <gerd@php-tools.net>
- * @author		Stephan Schmidt <schst@php-tools.net>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @package    patForms
+ * @subpackage patForms_Element
+ * @access     protected
+ * @version    0.1
+ * @author     Sebastian Mordziol <argh@php-tools.net>
+ * @author     gERD Schaufelberger <gerd@php-tools.net>
+ * @author     Stephan Schmidt <schst@php-tools.net>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 class patForms_Element
 {
    /**
 	* the type of the element, set this in your element class!
-	* @access	protected
+	* @access     protected
 	*/
 	var $elementType	=	false;
 
    /**
 	* javascript that will be displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $globalJavascript	=	array();
 
    /**
 	* javascript that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceJavascript	=	array();
 
    /**
 	* the value of the element
-	* @access	protected
+	* @access     protected
 	*/
 	var $value		=	false;
 
    /**
 	* filters that have been applied
-	* @access	private
+	* @access     private
 	*/
 	var $filters	=	array();
 
    /**
 	* observers that have been attached
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $observers	=	array();
 
@@ -205,18 +205,18 @@ class patForms_Element
 	* created by extracting everything after the last underscore in
 	* the classname.
 	*
-	* @access	protected
-	* @see		toXML()
+	* @access     protected
+	* @see        toXML()
 	*/
 	var $elementName	=	null;
 
    /**
 	* the attribute collection of the element
-	* @access	private
-	* @see		setAttribute()
-	* @see		setAttributes()
-	* @see		getAttribute()
-	* @see		getAttributes()
+	* @access     private
+	* @see        setAttribute()
+	* @see        setAttributes()
+	* @see        getAttribute()
+	* @see        getAttributes()
 	*/
 	var $attributes	=	array();
 
@@ -233,8 +233,8 @@ class patForms_Element
 	* if the given attributes have not been set by the user.
 	*
 	* @abstract
-	* @access	private
-	* @see		getAttributeDefaults()
+	* @access     private
+	* @see        getAttributeDefaults()
 	*/
 	var $attributeDefaults	=	array();
 
@@ -242,8 +242,8 @@ class patForms_Element
 	* stores the mode for the element. It defaults to 'default', and is only overwritten if
 	* set specifically.
 	*
-	* @access	protected
-	* @see		setMode()
+	* @access     protected
+	* @see        setMode()
 	*/
 	var $mode	=	"default";
 
@@ -251,8 +251,8 @@ class patForms_Element
 	* stores the format for the element. It defaults to 'html', and is only overwritten if
 	* set specifically.
 	*
-	* @access	protected
-	* @see		setFormat()
+	* @access     protected
+	* @see        setFormat()
 	*/
 	var $format	=	"html";
 
@@ -261,39 +261,39 @@ class patForms_Element
 	* to be set in the validationErrorCodes element class property, otherwise the default
 	* 'C' (as in the programming language C => english) will be used.
 	*
-	* @access	private
-	* @var		string	$locale
-	* @see		setLocale()
+	* @access     private
+	* @var        string	$locale
+	* @see        setLocale()
 	*/
 	var	$locale   =   "C";
 
    /**
 	* stores the flag telling the element whether it has been submitted - this is used by the
 	* getValue() method to determine where to get the element's value from.
-	* @access	protected
-	* @see		getValue()
+	* @access     protected
+	* @see        getValue()
 	*/
 	var $submitted	=	false;
 
    /**
 	* stores the flag whether the element is valid
-	* @access	protected
+	* @access     protected
 	*/
 	var $valid	=	true;
 
    /**
 	* stores any validation errors that can occurr during the element's validation process.
 	*
-	* @access	private
-	* @var		array	$validationErrors
+	* @access     private
+	* @var        array	$validationErrors
 	*/
 	var	$validationErrors  =   array();
 
    /**
 	* define error codes an messages for each form element
 	*
-	* @access	protected
-	* @var		array	$validatorErrorCodes
+	* @access     protected
+	* @var        array	$validatorErrorCodes
 	*/
 	var	$validatorErrorCodes  =   array();
 
@@ -301,8 +301,8 @@ class patForms_Element
 	* defines the starting character for the modifier placeholders that can be inserted
 	* in the attributes listed as having modifier support.
 	*
-	* @access	private
-	* @var		string	$modifierStart
+	* @access     private
+	* @var        string	$modifierStart
 	*/
 	var $modifierStart	=	"[";
 
@@ -310,16 +310,16 @@ class patForms_Element
 	* defines the starting character for the modifier placeholders that can be inserted
 	* in the attributes listed as having modifier support.
 	*
-	* @access	private
-	* @var		string	$modifierStart
+	* @access     private
+	* @var        string	$modifierStart
 	*/
 	var $modifierEnd	=	"]";
 
    /**
 	* XML entities
 	*
-	* @access	protected
-	* @see		toXML()
+	* @access     protected
+	* @see        toXML()
 	*/
 	var $xmlEntities	=	array(
 									"<"	=>	"&lt;",
@@ -332,43 +332,43 @@ class patForms_Element
 	* shortcur to the session variables
 	* If "false", no session will be used, otherwise it stores the session variables for this element
 	*
-	* @access private
-	* @var	mixed	$sessionVar
+	* @access     private
+	* @var        mixed	$sessionVar
 	*/
 	var	$sessionVar = false;
 
    /**
 	* custom validation rules
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $_rules			=	array();
 
    /**
 	* next error offset for rules
-	* @access	private
-	* @var		integer
+	* @access     private
+	* @var        integer
 	*/
 	var $nextErrorOffset	=	1000;
 
    /**
 	* stores whether the element uses a renderer to serialize its content
-	* @access	private
-	* @var		bool
+	* @access     private
+	* @var        bool
 	*/
 	var $usesRenderer		=	false;
 
    /**
 	* Stores the renderer object that can be set via the setRenderer method
-	* @access	private
-	* @var		object
+	* @access     private
+	* @var        object
 	*/
 	var $renderer			=	false;
 
    /**
 	* Stores all element options
-	* @access	private
+	* @access     private
 	*/
 	var $options	=	array();
 
@@ -380,8 +380,8 @@ class patForms_Element
 	* That's easy to do... just add the following line in your constructor:
 	* parent::patForms_Element();
 	*
-	* @access	public
-	* @param	mixed	$mode	Optional: the output format, e.g. 'html'
+	* @access     public
+	* @param      mixed	$mode	Optional: the output format, e.g. 'html'
 	*/
 	function __construct( $format = false )
 	{
@@ -412,8 +412,8 @@ class patForms_Element
 	* the attribute collection has been created.
 	*
 	* @abstract
-	* @access	private
-	* @return	mixed	$success	True on success, a patError object otherwise
+	* @access     private
+	* @return     mixed	$success	True on success, a patError object otherwise
 	*/
 	function _init()
 	{
@@ -425,11 +425,11 @@ class patForms_Element
 	* sets the format of the element - this defines which method will be called in your
 	* element class, along with the {@link mode} property.
 	*
-	* @access	public
-	* @param	string	$format	The name of the format you have implemented in your element(s). Default is 'html'
-	* @see		setFormat()
-	* @see		format
-	* @see		serialize()
+	* @access     public
+	* @param      string	$format	The name of the format you have implemented in your element(s). Default is 'html'
+	* @see        setFormat()
+	* @see        format
+	* @see        serialize()
 	*/
 	function setFormat( $format )
 	{
@@ -440,11 +440,11 @@ class patForms_Element
 	* sets the mode of the element that defines which methods will be called in your
 	* element class, along with the {@link format} property.
 	*
-	* @access	public
-	* @param	string	$mode	The mode to set the element to: default|readonly or any other mode you have implemented in your element class(es). Default is 'default'.
-	* @see		setFormat()
-	* @see		mode
-	* @see		serialize()
+	* @access     public
+	* @param      string	$mode	The mode to set the element to: default|readonly or any other mode you have implemented in your element class(es). Default is 'default'.
+	* @see        setFormat()
+	* @see        mode
+	* @see        serialize()
 	*/
 	function setMode( $mode )
 	{
@@ -454,10 +454,10 @@ class patForms_Element
    /**
 	* sets the locale (language) to use for the validation error messages of the form.
 	*
-	* @access	public
-	* @param	string	$lang
-	* @return	bool	$result	True on success
-	* @see		$locale
+	* @access     public
+	* @param      string	$lang
+	* @return     bool	$result	True on success
+	* @see        $locale
 	*/
 	function setLocale( $lang )
 	{
@@ -480,11 +480,11 @@ class patForms_Element
 	*
 	* This will override user input.
 	*
-	* @access	public
-	* @param	mixed	$value	The value to set
-	* @see		$value
-	* @see		resolveValue()
-	* @see		getValue()
+	* @access     public
+	* @param      mixed	$value	The value to set
+	* @see        $value
+	* @see        resolveValue()
+	* @see        getValue()
 	*/
 	function setValue( $value )
 	{
@@ -495,12 +495,12 @@ class patForms_Element
    /**
 	* sets the default value of the element, which will be used to fill the element with.
 	*
-	* @access	public
-	* @param	mixed	$value	The value to set
-	* @see		$value
-	* @see		resolveValue()
-	* @see		setValue()
-	* @see		getValue()
+	* @access     public
+	* @param      mixed	$value	The value to set
+	* @see        $value
+	* @see        resolveValue()
+	* @see        setValue()
+	* @see        getValue()
 	*/
 	function setDefaultValue( $value )
 	{
@@ -511,10 +511,10 @@ class patForms_Element
 	* sets the current submitted state of the element. Set this to true if you want the element
 	* to pick up its submitted data.
 	*
-	* @access	public
-	* @param	bool	$state	True if it has been submitted, false otherwise (default).
-	* @see		getSubmitted()
-	* @see		$submitted
+	* @access     public
+	* @param      bool	$state	True if it has been submitted, false otherwise (default).
+	* @see        getSubmitted()
+	* @see        $submitted
 	*/
 	function setSubmitted( $state )
 	{
@@ -526,9 +526,9 @@ class patForms_Element
 	* give each element a unique ID that will be added as ID attribute to each element if the
 	* id attribute has not been defined.
 	*
-	* @access	public
-	* @param	string	$id	The id to set for the element
-	* @see		getId()
+	* @access     public
+	* @param      string	$id	The id to set for the element
+	* @see        getId()
 	*/
 	function setId( $id )
 	{
@@ -538,9 +538,9 @@ class patForms_Element
    /**
 	* gets the internal ID of the element
 	*
-	* @access	public
-	* @return	string	$id	The id to set for the element
-	* @see		setId()
+	* @access     public
+	* @return     string	$id	The id to set for the element
+	* @see        setId()
 	*/
 	function getId()
 	{
@@ -550,9 +550,9 @@ class patForms_Element
    /**
 	* checks whether a given attribute is supported by this element.
 	*
-	* @access	public
-	* @param	string	$attributeName	The name of the attribute to check
-	* @return	bool	$hasAttribute	True if it supports the attribute, false otherwise.
+	* @access     public
+	* @param      string	$attributeName	The name of the attribute to check
+	* @return     bool	$hasAttribute	True if it supports the attribute, false otherwise.
 	*/
 	function hasAttribute( $attributeName )
 	{
@@ -568,10 +568,10 @@ class patForms_Element
 	* adds an attribute to the element's attribut3 collection. If the attribute
 	* already exists, it is overwritten.
 	*
-	* @access	public
-	* @param	string	$attributeName	The name of the attribute to add
-	* @param	string	$attributeValue	The value of the attribute
-	* @return	mixed	$success		True on success, a patError object otherwise
+	* @access     public
+	* @param      string	$attributeName	The name of the attribute to add
+	* @param      string	$attributeValue	The value of the attribute
+	* @return     mixed	$success		True on success, a patError object otherwise
 	*/
 	function setAttribute( $attributeName, $attributeValue )
 	{
@@ -593,9 +593,9 @@ class patForms_Element
 	* adds several attribute at once to the element's attributes collection.
 	* Any existing attributes will be overwritten.
 	*
-	* @access	public
-	* @param	array	$attributes	The attributes to add
-	* @return	mixed	$success	True on success, false otherwise
+	* @access     public
+	* @param      array	$attributes	The attributes to add
+	* @return     mixed	$success	True on success, false otherwise
 	*/
 	function setAttributes( $attributes )
 	{
@@ -623,8 +623,8 @@ class patForms_Element
 	* Only enabled in elements that support renderers, like
 	* the radio element.
 	*
-	* @access	public
-	* @param	object	&$renderer	The renderer object
+	* @access     public
+	* @param      object	&$renderer	The renderer object
 	*/
 	function setRenderer( &$renderer )
 	{
@@ -650,10 +650,10 @@ class patForms_Element
    /**
 	* retrieves the value of an attribute.
 	*
-	* @access	public
-	* @param	string	$attribute	The name of the attribute to retrieve
-	* @return	mixed	$attributeValue	The value of the attribute, or false if it does not exist in the attributes collection.
-	* @see		setAttribute()
+	* @access     public
+	* @param      string	$attribute	The name of the attribute to retrieve
+	* @return     mixed	$attributeValue	The value of the attribute, or false if it does not exist in the attributes collection.
+	* @see        setAttribute()
 	*/
 	function getAttribute( $attribute )
 	{
@@ -668,10 +668,10 @@ class patForms_Element
    /**
 	* retrieves all attributes, or only the specified attributes.
 	*
-	* @access	public
-	* @param	array	$attributes	Optional: The names of the attributes to retrieve. Only the attributes that exist will be returned.
-	* @return	array	$result		The attributes
-	* @see		getAttribute()
+	* @access     public
+	* @param      array	$attributes	Optional: The names of the attributes to retrieve. Only the attributes that exist will be returned.
+	* @return     array	$result		The attributes
+	* @see        getAttribute()
 	*/
 	function getAttributes( $attributes = array() )
 	{
@@ -697,9 +697,9 @@ class patForms_Element
 	* on startup (in the consructor), so make sure you call this if your element needs
 	* this feature and you have implemented a custom constructor in your element.
 	*
-	* @access	public
-	* @return	bool	$success	Always returns true.
-	* @see		$attributeDefaults
+	* @access     public
+	* @return     bool	$success	Always returns true.
+	* @see        $attributeDefaults
 	*/
 	function loadAttributeDefaults()
 	{
@@ -718,12 +718,12 @@ class patForms_Element
 	* retrieves the current value of the element. If none is set, will try to retrieve the
 	* value from submitted form data.
 	*
-	* @access	public
-	* @param	boolean		Determines whether the method is used from an external script
-	* @return	mixed		The value, or an empty string if none found.
-	* @see		setValue()
-	* @see		value
-	* @see		resolveValue()
+	* @access     public
+	* @param      boolean		Determines whether the method is used from an external script
+	* @return     mixed		The value, or an empty string if none found.
+	* @see        setValue()
+	* @see        value
+	* @see        resolveValue()
 	*/
 	function getValue( $external = true )
 	{
@@ -759,10 +759,10 @@ class patForms_Element
    /**
 	* resolves the scope the value of the element may be stored in, and returns it.
 	*
-	* @access	protected
-	* @see		getValue()
-	* @see		value
-	* @todo		parse element name, if it uses the array syntax
+	* @access     protected
+	* @see        getValue()
+	* @see        value
+	* @todo       parse element name, if it uses the array syntax
 	*/
 	function resolveValue()
 	{
@@ -802,9 +802,9 @@ class patForms_Element
 	*
 	* This method is used to 'fix' magic_quotes_gpc.
 	*
-	* @access	public
-	* @param	mixed		user input (get or post)
-	* @return	mixed		data with slashes stripped
+	* @access     public
+	* @param      mixed		user input (get or post)
+	* @return     mixed		data with slashes stripped
 	*/
 	function rStripSlashes( $value )
 	{
@@ -823,11 +823,11 @@ class patForms_Element
    /**
 	* apply filters to a value
 	*
-	* @access	private
-	* @param	mixed		value
-	* @param	string		direction of the filter ('in' or 'out')
-	* @param	integer		type of filters to apply
-	* @return	mixed		filtered value
+	* @access     private
+	* @param      mixed		value
+	* @param      string		direction of the filter ('in' or 'out')
+	* @param      integer		type of filters to apply
+	* @return     mixed		filtered value
 	*/
 	function _applyFilters( $value, $dir = 'in', $type = PATFORMS_FILTER_TYPE_PHP )
 	{
@@ -856,10 +856,10 @@ class patForms_Element
    /**
 	* retrieves the current mode of the element
 	*
-	* @access	public
-	* @return	string	$mode	The current element mode
-	* @see		setMode()
-	* @see		mode
+	* @access     public
+	* @return     string	$mode	The current element mode
+	* @see        setMode()
+	* @see        mode
 	*/
 	function getMode()
 	{
@@ -869,10 +869,10 @@ class patForms_Element
    /**
 	* retrieves the current format of the element
 	*
-	* @access	public
-	* @return	string	$format	The current element format
-	* @see		setFormat()
-	* @see		format
+	* @access     public
+	* @return     string	$format	The current element format
+	* @see        setFormat()
+	* @see        format
 	*/
 	function getFormat()
 	{
@@ -882,10 +882,10 @@ class patForms_Element
    /**
 	* retrieves the element's current submitted state.
 	*
-	* @access	public
-	* @return	bool	$state	True if it has been submitted, false otherwise.
-	* @see		setSubmitted()
-	* @see		submitted
+	* @access     public
+	* @return     bool	$state	True if it has been submitted, false otherwise.
+	* @see        setSubmitted()
+	* @see        submitted
 	*/
 	function getSubmitted()
 	{
@@ -895,9 +895,9 @@ class patForms_Element
    /**
 	* retrieves the name of the element
 	*
-	* @access	public
-	* @return	string	$name	name of the element
-	* @uses		getAttribute()
+	* @access     public
+	* @return     string	$name	name of the element
+	* @uses       getAttribute()
 	*/
 	function getName()
 	{
@@ -907,11 +907,11 @@ class patForms_Element
    /**
 	* add a custom validation rule
 	*
-	* @access	public
-	* @param	object patForms_Rule	validation rule
-	* @param	integer					time, when rule has to be applied, can be before or after validation.
+	* @access     public
+	* @param      object patForms_Rule	validation rule
+	* @param      integer					time, when rule has to be applied, can be before or after validation.
 	*									If set to null, it will use the default value as specified in the rule
-	* @return	boolean					currently always true
+	* @return     boolean					currently always true
 	*/
 	function addRule( &$rule, $time = null )
 	{
@@ -932,9 +932,9 @@ class patForms_Element
    /**
 	* adds an observer to the element
 	*
-	* @access	public
-	* @param	object patForms_Observer	observer
-	* @return	boolean						currently always true
+	* @access     public
+	* @param      object patForms_Observer	observer
+	* @return     boolean						currently always true
 	*/
 	function attachObserver( &$observer )
 	{
@@ -949,11 +949,11 @@ class patForms_Element
 	*
 	* serialize[format][mode](), e.g. serializeHtmlDefault()
 	*
-	* @access	public
-	* @return	string	$element		The created element according to the specified mode.
-	* @see		setFormat()
-	* @see		setMode()
-	* @todo     serialize*() methods should return a patError object instead of false!!!!
+	* @access     public
+	* @return     string	$element		The created element according to the specified mode.
+	* @see        setFormat()
+	* @see        setMode()
+	* @todo       serialize*() methods should return a patError object instead of false!!!!
 	*           Has to be changed asap!
 	*/
 	function serialize()
@@ -988,8 +988,8 @@ class patForms_Element
 	* validation method
 	*
 	* @final
-	* @access	public
-	* @return	bool	$success	True on success, false otherwise
+	* @access     public
+	* @return     bool	$success	True on success, false otherwise
 	*/
 	function validate()
 	{
@@ -1040,8 +1040,8 @@ class patForms_Element
 	* and returns the data with any needed modifications.
 	*
 	* @abstract
-	* @access	private
-	* @return	bool	$success	True on success, false otherwise
+	* @access     private
+	* @return     bool	$success	True on success, false otherwise
 	*/
 	function validateElement()
 	{
@@ -1052,10 +1052,10 @@ class patForms_Element
    /**
 	* apply rules
 	*
-	* @access	private
-	* @param	integer		time of validation
-	* @return	boolean		rules are valid or not
-	* @todo		add documentation
+	* @access     private
+	* @param      integer		time of validation
+	* @return     boolean		rules are valid or not
+	* @todo       add documentation
 	*/
 	function _applyRules( $time )
 	{
@@ -1082,9 +1082,9 @@ class patForms_Element
 	* Used as a template method.
 	*
 	* @final
-	* @access	protected
-	* @return	bool	$success	True on success, false otherwise
-	* @uses		finalizeElement() to call the user code
+	* @access     protected
+	* @return     bool	$success	True on success, false otherwise
+	* @uses       finalizeElement() to call the user code
 	*/
 	function finalize()
 	{
@@ -1101,9 +1101,9 @@ class patForms_Element
 	* the uploaded file to the correct location.
 	*
 	* @abstract
-	* @access	private
-	* @param	mixed	value of the element
-	* @return	bool	$success	True on success, false otherwise
+	* @access     private
+	* @param      mixed	value of the element
+	* @return     bool	$success	True on success, false otherwise
 	*/
 	function finalizeElement( $value )
 	{
@@ -1115,11 +1115,11 @@ class patForms_Element
 	*
 	* See the {@link patForms::$options} property for an exhaustive list of available options.
 	*
-	* @access	public
-	* @param	string	$option		The option to enable
-	* @param	array	$params		Optional parameters for the option
-	* @see		disableOption()
-	* @see		$options
+	* @access     public
+	* @param      string	$option		The option to enable
+	* @param      array	$params		Optional parameters for the option
+	* @see        disableOption()
+	* @see        $options
 	*/
 	function enableOption( $option, $params = array() )
 	{
@@ -1135,10 +1135,10 @@ class patForms_Element
 	*
 	* See the {@link patForms::$options} property for an exhaustive list of available options.
 	*
-	* @access	public
-	* @param	string	$option	The option to disable
-	* @see		enableOption()
-	* @see		$options
+	* @access     public
+	* @param      string	$option	The option to disable
+	* @see        enableOption()
+	* @see        $options
 	*/
 	function disableOption( $option )
 	{
@@ -1153,11 +1153,11 @@ class patForms_Element
 	* checks if there is a method to check the format in the {@link patForms_FormatChecker}
 	* class, then checks in the element class itself.
 	*
-	* @access	public
-	* @param	mixed	$value		The value to validate the format of
-	* @param	string	$format		The format to validate the value with
-	* @return	bool	$isValid	True if valid, false if invalid or no method exists to validate the format.
-	* @see		patForms_FormatChecker
+	* @access     public
+	* @param      mixed	$value		The value to validate the format of
+	* @param      string	$format		The format to validate the value with
+	* @return     bool	$isValid	True if valid, false if invalid or no method exists to validate the format.
+	* @see        patForms_FormatChecker
 	*/
 	function validateFormat( $value, $format )
 	{
@@ -1197,8 +1197,8 @@ class patForms_Element
    /**
 	* get next error offset
 	*
-	* @access	public
-	* @return	integer
+	* @access     public
+	* @return     integer
 	*/
 	function getErrorOffset( $requiredCodes = 100 )
 	{
@@ -1210,9 +1210,9 @@ class patForms_Element
    /**
 	* add error codes and messages for validator method
 	*
-	* @access	public
-	* @param	array	defintions
-	* @param	integer	offset for the error codes
+	* @access     public
+	* @param      array	defintions
+	* @param      integer	offset for the error codes
 	*/
 	function addValidatorErrorCodes( $defs, $offset = 1000 )
 	{
@@ -1231,8 +1231,8 @@ class patForms_Element
 	/**
 	* getValidationErrors
 	*
-	* @access	public
-	* @return 	array	errors that occured during the validation
+	* @access     public
+	* @return     array	errors that occured during the validation
 	*/
 	function    getValidationErrors()
 	{
@@ -1243,10 +1243,10 @@ class patForms_Element
 	* addValidationError
 	*
 	*
-	* @access	public
-	* @param	integer	$code
-	* @param	array	$vars	fill named placeholder with values
-	* @return 	boolean $result	true on success
+	* @access     public
+	* @param      integer	$code
+	* @param      array	$vars	fill named placeholder with values
+	* @return     boolean $result	true on success
 	*/
 	function    addValidationError( $code, $vars = array() )
 	{
@@ -1322,11 +1322,11 @@ class patForms_Element
    /**
 	* applies the specified modifiers to an attribute value, as set in the attribute definition.
 	*
-	* @access	private
-	* @param	mixed	$attributeValue	The value of the attribute to modify
-	* @param	array	$modifiers		Array containing the list of modifiers and their options to apply.
-	* @return	mixed	$attributeValue	The modified attribute value.
-	* @see		createAttributes()
+	* @access     private
+	* @param      mixed	$attributeValue	The value of the attribute to modify
+	* @param      array	$modifiers		Array containing the list of modifiers and their options to apply.
+	* @return     mixed	$attributeValue	The modified attribute value.
+	* @see        createAttributes()
 	*/
 	function _applyModifiers( $attributeValue, $modifiers )
 	{
@@ -1373,12 +1373,12 @@ class patForms_Element
 	* you can use special placeholders to insert dynamic values into the attribute values.
 	* This method inserts the correct information for each placeholder in the given string.
 	*
-	* @access	private
-	* @param	string	$string	The string to insert the specials in
-	* @return	string	$string	The string with all needed replacements
-	* @see		_applyModifiers()
-	* @todo		Maybe make this configurable
-	* @todo		Add any other relevant information
+	* @access     private
+	* @param      string	$string	The string to insert the specials in
+	* @return     string	$string	The string with all needed replacements
+	* @see        _applyModifiers()
+	* @todo       Maybe make this configurable
+	* @todo       Add any other relevant information
 	*/
 	function _modifierInsertSpecials( $modifyValue, $options = array() )
 	{
@@ -1413,12 +1413,12 @@ class patForms_Element
    /**
 	* checks the format of an attribute value according to the given format.
 	*
-	* @access	private
-	* @param	mixed	$attributeValue	The attribute value to check
-	* @param	string	$format			The format to check the attribute value against
-	* @return	bool	$result			True if format check succeeded, false otherwise.
-	* @see		createAttributes()
-	* @todo		Implement this method sometime
+	* @access     private
+	* @param      mixed	$attributeValue	The attribute value to check
+	* @param      string	$format			The format to check the attribute value against
+	* @return     bool	$result			True if format check succeeded, false otherwise.
+	* @see        createAttributes()
+	* @todo       Implement this method sometime
 	*/
 	function _checkAttributeFormat( $attributeValue, $format )
 	{
@@ -1429,9 +1429,9 @@ class patForms_Element
 	* validates the current attribute collection according to the attributes definition
 	* and the given output format, and returns the list of valid attributes.
 	*
-	* @access	private
-	* @param	string	$format		The output format to retrieve the attributes for.
-	* @return	mixed	$attributes	The list of attributes, or false if failed.
+	* @access     private
+	* @param      string	$format		The output format to retrieve the attributes for.
+	* @return     mixed	$attributes	The list of attributes, or false if failed.
 	*/
 	function getAttributesFor( $format )
 	{
@@ -1505,11 +1505,11 @@ class patForms_Element
 	* [helper method] wrapper for the {@link createTag()} method which automates the tag
 	* creation by creating the tag from the current attribute collection and element type.
 	*
-	* @access	protected
-	* @return	mixed	$result	The created tag, or false if failed.
-	* @see		elementType
-	* @see		attributes
-	* @see		createTag()
+	* @access     protected
+	* @return     mixed	$result	The created tag, or false if failed.
+	* @see        elementType
+	* @see        attributes
+	* @see        createTag()
 	*/
 	function toHtml()
 	{
@@ -1525,7 +1525,7 @@ class patForms_Element
    /**
 	* [helper method] create a hidden field with the given value. Retrieves all other needed
 	* attributes from the attributes collection.
-	* @access	public
+	* @access     public
 	*/
 	function createHiddenTag( $value )
 	{
@@ -1544,10 +1544,10 @@ class patForms_Element
 	* that the attributes collection is initialized to ensure that any variables
 	* in the element's attributes  get replaced.
 	*
-	* @access	private
-	* @param	mixed	$value		The value of the element
-	* @return	string	$element	The serialized hidden tag
-	* @see		createHiddenTag()
+	* @access     private
+	* @param      mixed	$value		The value of the element
+	* @return     string	$element	The serialized hidden tag
+	* @see        createHiddenTag()
 	*/
 	function createDisplaylessTag( $value )
 	{
@@ -1563,11 +1563,11 @@ class patForms_Element
 	* returns it.
 	*
 	* @static
-	* @access	protected
-	* @param	string	$tagname		The name of the element / tag
-	* @param	string	$type			Optional: the type of element to generate. Valid parameters are full|opening|closing|empty. Defaults to "full".
-	* @param	mixed	$value			The value of the element
-	* @return	string	$element		The HTML source of the element
+	* @access     protected
+	* @param      string	$tagname		The name of the element / tag
+	* @param      string	$type			Optional: the type of element to generate. Valid parameters are full|opening|closing|empty. Defaults to "full".
+	* @param      mixed	$value			The value of the element
+	* @return     string	$element		The HTML source of the element
 	*/
 	function createTag( $tagname, $type = "full", $attributes = array(), $value = false )
 	{
@@ -1617,10 +1617,10 @@ class patForms_Element
 	* of your form in flat files or create form templates that can
 	* be read by patForms_Parser at a later point.
 	*
-	* @access	public
-	* @param	string		namespace
-	* @uses		getElementName()
-	* @see		patForms_Parser
+	* @access     public
+	* @param      string		namespace
+	* @uses       getElementName()
+	* @see        patForms_Parser
 	*/
 	function toXML( $namespace = null )
 	{
@@ -1655,10 +1655,10 @@ class patForms_Element
 	*
 	* This is still in alpha state!
 	*
-	* @access	public
-	* @param	object patForms_Filter
-	* @todo		add error management and docs
-	* @todo		allow filter to be an array containg two callbacks
+	* @access     public
+	* @param      object patForms_Filter
+	* @todo       add error management and docs
+	* @todo       allow filter to be an array containg two callbacks
 	*			array( 'in' => 'myInFunc', 'out' => 'myOutFunc' ) )
 	*/
 	function applyFilter( &$filter )
@@ -1676,8 +1676,8 @@ class patForms_Element
 	* This method checks for the $elementName property and if it
 	* is set to null, it will extract the element name from the class name
 	*
-	* @access	public
-	* @return	string		tag name
+	* @access     public
+	* @return     string		tag name
 	*/
 	function getElementName()
 	{
@@ -1697,13 +1697,13 @@ class patForms_Element
 	* If switch argument is missing, this function just reports if sessions
 	* will be used or not
 	*
-	* @access protected
-	* @param string $switch switch sessions on ("yes") or off ("yes")
-	* @return boolean $result true if sessions will be used, false otherwise
-	* @see setSessionValue()
-	* @see getSessionValue()
-	* @see unsetSessionValue()
-	* @todo destroy session variables if sessions won't be usead any further
+	* @access     protected
+	* @param      string $switch switch sessions on ("yes") or off ("yes")
+	* @return     boolean $result true if sessions will be used, false otherwise
+	* @see        setSessionValue()
+	* @see        getSessionValue()
+	* @see        unsetSessionValue()
+	* @todo       destroy session variables if sessions won't be usead any further
 	*/
 	function useSession( $switch = null )
 	{
@@ -1744,12 +1744,12 @@ class patForms_Element
    /**
 	* save a variable to the session
 	*
-	* @access protected
-	* @param string $name name to identify the variable
-	* @param mixed $value
-	* @return boolean $result true on success
-	* @see getSessionValue()
-	* @see unsetSessionValue()
+	* @access     protected
+	* @param      string $name name to identify the variable
+	* @param      mixed $value
+	* @return     boolean $result true on success
+	* @see        getSessionValue()
+	* @see        unsetSessionValue()
 	*/
 	function setSessionValue( $name, $value )
 	{
@@ -1765,11 +1765,11 @@ class patForms_Element
    /**
 	* get a variable from session
 	*
-	* @access protected
-	* @param string $name name to identify the variable
-	* @return mixed $result false if no sessions are used, null if variable is not set or the value of the variable
-	* @see getSessionValue()
-	* @see unsetSessionValue()
+	* @access     protected
+	* @param      string $name name to identify the variable
+	* @return     mixed $result false if no sessions are used, null if variable is not set or the value of the variable
+	* @see        getSessionValue()
+	* @see        unsetSessionValue()
 	*/
 	function getSessionValue( $name )
 	{
@@ -1788,11 +1788,11 @@ class patForms_Element
    /**
 	* remove a variable from session
 	*
-	* @access protected
-	* @param string $name name to identify the variable
-	* @return mixed $result false if no sessions are used, null if variable is not set or the value of the variable
-	* @see getSessionValue()
-	* @see setSessionValue)
+	* @access     protected
+	* @param      string $name name to identify the variable
+	* @return     mixed $result false if no sessions are used, null if variable is not set or the value of the variable
+	* @see        getSessionValue()
+	* @see        setSessionValue)
 	*/
 	function unsetSessionValue( $name )
 	{
@@ -1813,8 +1813,8 @@ class patForms_Element
    /**
 	* get the global javascript of the element
 	*
-	* @access	public
-	* @return	string
+	* @access     public
+	* @return     string
 	*/
 	/*
 	function getGlobalJavascript()
@@ -1844,8 +1844,8 @@ class patForms_Element
    /**
 	* get the instance javascript of the element
 	*
-	* @access	public
-	* @return	string	javascript for this instance
+	* @access     public
+	* @return     string	javascript for this instance
 	*/
 	/*
 	function getInstanceJavascript()
@@ -1910,9 +1910,9 @@ class patForms_Element
    /**
 	* retrieves the element's current submitted state.
 	*
-	* @access	public
-	* @return	bool	$state	True if it has been submitted, false otherwise.
-	* @see		submitted
+	* @access     public
+	* @return     bool	$state	True if it has been submitted, false otherwise.
+	* @see        submitted
 	*/
 	function isSubmitted()
 	{
@@ -1925,10 +1925,10 @@ class patForms_Element
    /**
 	* returns the locale that is currently set for the form.
 	*
-	* @access	public
-	* @return	string	$locale	The locale.
-	* @see		setLocale()
-	* @see		$locale
+	* @access     public
+	* @return     string	$locale	The locale.
+	* @see        setLocale()
+	* @see        $locale
 	*/
 	function getLocale()
 	{
@@ -1938,9 +1938,9 @@ class patForms_Element
    /**
 	* anounce a change in the element to all observers
 	*
-	* @access	private
-	* @param	string		property that changed
-	* @param	mixed		new value of the property
+	* @access     private
+	* @param      string		property that changed
+	* @param      mixed		new value of the property
 	*/
 	function _announce( $property, $value )
 	{

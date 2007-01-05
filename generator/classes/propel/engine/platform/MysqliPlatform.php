@@ -24,9 +24,9 @@ require_once 'propel/engine/platform/MysqlPlatform.php';
 /**
  * MySql Platform implementation, using new mysqli API.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class MysqliPlatform extends MysqlPlatform {
 
@@ -46,8 +46,8 @@ class MysqliPlatform extends MysqlPlatform {
 	/**
 	 * Escape the string for MySQL.
 	 *
-	 * @param string $text
-	 * @return string
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function escapeText($text) {
 		// Because mysqli requires open connection, we are using addslashes() here.

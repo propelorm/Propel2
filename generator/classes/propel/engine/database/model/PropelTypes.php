@@ -26,10 +26,10 @@
 /**
  * A class that maps PropelTypes to CreoleTypes and to native PHP types.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class PropelTypes {
 
@@ -241,7 +241,7 @@ class PropelTypes {
 	/**
 	 * Report whether this object has been initialized.
 	 *
-	 * @return true if this object has been initialized
+	 * @return     true if this object has been initialized
 	 */
 	public static function isInitialized()
 	{
@@ -252,8 +252,8 @@ class PropelTypes {
 	 * Return native PHP type which corresponds to the
 	 * Creole type provided. Use in the base object class generation.
 	 *
-	 * @param $propelType The Propel type name.
-	 * @return string Name of the native PHP type
+	 * @param      $propelType The Propel type name.
+	 * @return     string Name of the native PHP type
 	 */
 	public static function getPhpNative($propelType)
 	{
@@ -263,8 +263,8 @@ class PropelTypes {
 	/**
 	 * Returns the correct Creole type _name_ for propel added types
 	 *
-	 * @param $type the propel added type.
-	 * @return string Name of the the correct Creole type (e.g. "VARCHAR").
+	 * @param      $type the propel added type.
+	 * @return     string Name of the the correct Creole type (e.g. "VARCHAR").
 	 */
 	public static function getCreoleType($type)
 	{
@@ -273,7 +273,7 @@ class PropelTypes {
 
 	/**
 	 * Resturns the PDO type (PDO::PARAM_* constant) value.
-	 * @return int
+	 * @return     int
 	 */
 	public static function getPDOType($type)
 	{
@@ -284,8 +284,8 @@ class PropelTypes {
 	 * Returns Propel type constant corresponding to Creole type code.
 	 * Used but Propel Creole task.
 	 *
-	 * @param int $sqlType The Creole SQL type constant.
-	 * @return string The Propel type to use or NULL if none found.
+	 * @param      int $sqlType The Creole SQL type constant.
+	 * @return     string The Propel type to use or NULL if none found.
 	 */
 	public static function getPropelType($sqlType)
 	{
@@ -297,7 +297,7 @@ class PropelTypes {
 	/**
 	 * Get array of Propel types.
 	 *
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	public static function getPropelTypes()
 	{
@@ -307,8 +307,8 @@ class PropelTypes {
 	/**
 	 * Returns true if values for the type need to be quoted.
 	 *
-	 * @param string $type The Propel type to check.
-	 * @return true if values for the type need to be quoted.
+	 * @param      string $type The Propel type to check.
+	 * @return     true if values for the type need to be quoted.
 	 */
 	public static function isTextType($type)
 	{
@@ -321,8 +321,8 @@ class PropelTypes {
 
 	/**
 	 * Returns true if type is a LOB type (i.e. would be handled by Blob/Clob class).
-	 * @param string $type Propel type to check.
-	 * @return boolean
+	 * @param      string $type Propel type to check.
+	 * @return     boolean
 	 */
 	public static function isLobType($type)
 	{

@@ -27,9 +27,9 @@ include_once 'propel/engine/database/model/Rule.php';
 /**
  * Validator.
  *
- * @author Michael Aichler <aichler@mediacluster.de> (Propel)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Validator extends XMLElement {
 
@@ -45,7 +45,7 @@ class Validator extends XMLElement {
 	/**
 	 * Creates a new column and set the name
 	 *
-	 * @param name validator name
+	 * @param      name validator name
 	 */
 	public function __construct()
 	{
@@ -54,7 +54,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Sets up the Validator object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -67,8 +67,8 @@ class Validator extends XMLElement {
 	 * Supports two signatures:
 	 * - addRule(Rule $rule)
 	 * - addRule(array $attribs)
-	 * @param mixed $data Rule object or XML attribs (array) from <rule/> element.
-	 * @return Rule The added Rule.
+	 * @param      mixed $data Rule object or XML attribs (array) from <rule/> element.
+	 * @return     Rule The added Rule.
 	 */
 	public function addRule($data)
 	{
@@ -88,7 +88,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Gets an array of all added rules for this validator.
-	 * @return array Rule[]
+	 * @return     array Rule[]
 	 */
 	public function getRules()
 	{
@@ -97,7 +97,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Gets the name of the column that this Validator applies to.
-	 * @return string
+	 * @return     string
 	 */
 	public function getColumnName()
 	{
@@ -106,8 +106,8 @@ class Validator extends XMLElement {
 
 	/**
 	 * Sets the Column object that this validator applies to.
-	 * @param Column $column
-	 * @see Table::addValidator()
+	 * @param      Column $column
+	 * @see        Table::addValidator()
 	 */
 	public function setColumn(Column $column)
 	{
@@ -116,7 +116,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Gets the Column object that this validator applies to.
-	 * @return Column
+	 * @return     Column
 	 */
 	public function getColumn()
 	{
@@ -125,7 +125,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Set the owning Table.
-	 * @param Table $table
+	 * @param      Table $table
 	 */
 	public function setTable(Table $table)
 	{
@@ -134,7 +134,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Get the owning Table.
-	 * @return Table
+	 * @return     Table
 	 */
 	public function getTable()
 	{
@@ -144,7 +144,7 @@ class Validator extends XMLElement {
 	/**
 	 * Set the translation mode to use for the message.
 	 * Currently only "gettext" and "none" are supported.  The default is "none".
-	 * @param string $method Translation method ("gettext", "none").
+	 * @param      string $method Translation method ("gettext", "none").
 	 */
 	public function setTranslate($method)
 	{
@@ -154,7 +154,7 @@ class Validator extends XMLElement {
 	/**
 	 * Get the translation mode to use for the message.
 	 * Currently only "gettext" and "none" are supported.  The default is "none".
-	 * @return string Translation method ("gettext", "none").
+	 * @return     string Translation method ("gettext", "none").
 	 */
 	public function getTranslate()
 	{
@@ -163,7 +163,7 @@ class Validator extends XMLElement {
 
 	/**
 	 * Gets XML (string) representation of this Validator.
-	 * @return string
+	 * @return     string
 	 */
 	public function toString()
 	{

@@ -57,18 +57,18 @@ define('STRUCTURES_DATAGRID_PROPEL_COLUMN_MADE_HIDDEN', 5);
  * // Display the datagrid
  * $dg->render();
  *
- * @author Marc <therebel@free.fr>
- * @version $Rev$
- * @copyright Copyright (c) 2005 Marc: LGPL - See LICENCE
- * @package propel.contrib
+ * @author     Marc <therebel@free.fr>
+ * @version    $Rev$
+ * @copyright  Copyright (c) 2005 Marc: LGPL - See LICENCE
+ * @package    propel.contrib
  */
 
 class Structures_DataGrid_Propel extends Structures_DataGrid {
 
 		/**
 		 * Contains column visibility information.
-		 * @var array
-		 * @access private
+		 * @var        array
+		 * @access     private
 		 */
 		private $columnVisibility = array();
 
@@ -79,36 +79,36 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 * STRUCTURES_DATAGRID_PROPEL_ALL_COLUMNS
 		 * STRUCTURES_DATAGRID_PROPEL_NO_COLUMNS
 		 *
-		 * @var integer
-		 * @access private
+		 * @var        integer
+		 * @access     private
 		 */
 		private $columnMode;
 
 		/**
 		 * String containing the peerName.
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $peerName;
 
 		/**
 		 * String containing the className of the propel Object.
-		 * @var string
-		 * @access private
+		 * @var        string
+		 * @access     private
 		 */
 		private $className;
 
 		/**
 		 * Criteria of the Select query.
-		 * @var criteria
-		 * @access private
+		 * @var        criteria
+		 * @access     private
 		 */
 		private $criteria;
 
 		/**
 		 * List of primary keys
-		 * @var array
-		 * @access public
+		 * @var        array
+		 * @access     public
 		 */
 		public $primaryKeys;
 
@@ -120,9 +120,9 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * The other parameters are needed to construct the parent Structures_DataGrid Class.
 		 *
-		 * @param string className
-		 * @param string limit
-		 * @param string render
+		 * @param      string className
+		 * @param      string limit
+		 * @param      string render
 		 *
 		 */
 		public function __construct($className = null, $limit = null, $render = DATAGRID_RENDER_HTML_TABLE)
@@ -144,7 +144,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Set the criteria for select query
 		 *
-		 * @param Criteria c
+		 * @param      Criteria c
 		 *
 		 */
 		public function setCriteria(Criteria $c)
@@ -156,7 +156,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Set the class
 		 *
-		 * @param string className
+		 * @param      string className
 		 *
 		 */
 		public function setClassName($className)
@@ -168,7 +168,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Get the class name
 		 *
-		 * @return string className
+		 * @return     string className
 		 *
 		 */
 		public function getClassName()
@@ -185,7 +185,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Get the peer name
 		 *
-		 * @return string peerName
+		 * @return     string peerName
 		 *
 		 */
 		public function getPeerName()
@@ -197,7 +197,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Get the visibility of a column
 		 *
-		 * @return boolean true if column is set to hidden
+		 * @return     boolean true if column is set to hidden
 		 *
 		 */
 		public function isColumnHidden($column)
@@ -217,7 +217,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Check the state of a column
 		 *
-		 * @return boolean true if column is set to state
+		 * @return     boolean true if column is set to state
 		 *
 		 */
 		private function checkColumn($column, $state)
@@ -237,8 +237,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 * STRUCTURES_DATAGRID_PROPEL_NO_COLUMNS or
 		 * STRUCTURES_DATAGRID_PROPEL_ALL_COLUMNS
 		 *
-		 * @param string $column column name
-		 * @return void
+		 * @param      string $column column name
+		 * @return     void
 		 *
 		 */
 		public function setColumnMode($mode)
@@ -258,8 +258,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 * The latter is better, but the array_keys of the columns are
 		 * in ID format and not somePeer::ID
 		 *
-		 * @param string $column column name
-		 * @return void
+		 * @param      string $column column name
+		 * @return     void
 		 *
 		 */
 		public function hideColumn($column)
@@ -274,8 +274,8 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 * It is now passed like ID instead of somePeer::ID
 		 * The latter is better, but the array_keys of the columns are in ID format and not somePeer::ID
 		 *
-		 * @param string $column column name
-		 * @return void
+		 * @param      string $column column name
+		 * @return     void
 		 */
 		public function showColumn($column)
 		{
@@ -286,7 +286,7 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		 *
 		 * Build the datagrid
 		 *
-		 * @return void
+		 * @return     void
 		 */
 		public function build()
 		{

@@ -26,10 +26,10 @@
  * constraints.  Conforms to the maximum column name length for the
  * type of database in use.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class ConstraintNameGenerator implements NameGenerator {
 	/**
@@ -44,8 +44,8 @@ class ConstraintNameGenerator implements NameGenerator {
 	 * and the fourth is a <code>Integer</code> indicating the number
 	 * of this contraint.
 	 *
-	 * @see NameGenerator
-	 * @throws EngineException
+	 * @see        NameGenerator
+	 * @throws     EngineException
 	 */
 	public function generateName($inputs)
 	{

@@ -31,14 +31,14 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
  * This class replaces the Node.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5NodePeerBuilder extends PeerBuilder {
 
 	/**
 	 * Gets the package for the [base] object classes.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPackage()
 	{
@@ -47,7 +47,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 
 	/**
 	 * Returns the name of the current class being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getUnprefixedClassname()
 	{
@@ -56,7 +56,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
@@ -64,7 +64,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 
 	/**
 	 * Adds class phpdoc comment and openning of class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
@@ -88,7 +88,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
  *";
 		}
 		$script .= "
- * @package ".$this->getPackage()."
+ * @package    ".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." {
 ";
@@ -97,7 +97,7 @@ abstract class ".$this->getClassname()." {
 	/**
 	 * Specifies the methods that are added as part of the basic OM class.
 	 * This can be overridden by subclasses that wish to add more methods.
-	 * @see ObjectBuilder::addClassBody()
+	 * @see        ObjectBuilder::addClassBody()
 	 */
 	protected function addClassBody(&$script)
 	{
@@ -127,7 +127,7 @@ abstract class ".$this->getClassname()." {
 
 	/**
 	 * Closes class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassClose(&$script)
 	{
@@ -198,10 +198,10 @@ abstract class ".$this->getClassname()." {
 	 *
 	 * Use at your own risk!
 	 *
-	 * @param $objectClassname Object wrapped by new node.
-	 * @param PDO Connection to use.
-	 * @return $nodeObjectClassname
-	 * @throws PropelException
+	 * @param      $objectClassname Object wrapped by new node.
+	 * @param      PDO Connection to use.
+	 * @return     $nodeObjectClassname
+	 * @throws     PropelException
 	 */
 	public static function createNewRootNode(\$obj, PDO \$con = null)
 	{
@@ -244,10 +244,10 @@ abstract class ".$this->getClassname()." {
 	 * its children) will be made a child of the new root node. This is a
 	 * safer alternative to createNewRootNode().
 	 *
-	 * @param $objectClassname Object wrapped by new node.
-	 * @param PDO Connection to use.
-	 * @return $nodeObjectClassname
-	 * @throws PropelException
+	 * @param      $objectClassname Object wrapped by new node.
+	 * @param      PDO Connection to use.
+	 * @return     $nodeObjectClassname
+	 * @throws     PropelException
 	 */
 	public static function insertNewRootNode(\$obj, PDO \$con = null)
 	{
@@ -304,11 +304,11 @@ abstract class ".$this->getClassname()." {
 	 * Retrieves an array of tree nodes based on specified criteria. Optionally
 	 * includes all parent and/or child nodes of the matching nodes.
 	 *
-	 * @param Criteria Criteria to use.
-	 * @param boolean True if ancestors should also be retrieved.
-	 * @param boolean True if descendants should also be retrieved.
-	 * @param PDO Connection to use.
-	 * @return array Array of root nodes.
+	 * @param      Criteria Criteria to use.
+	 * @param      boolean True if ancestors should also be retrieved.
+	 * @param      boolean True if descendants should also be retrieved.
+	 * @param      PDO Connection to use.
+	 * @return     array Array of root nodes.
 	 */
 	public static function retrieveNodes(\$criteria, \$ancestors = false, \$descendants = false, PDO \$con = null)
 	{
@@ -332,11 +332,11 @@ abstract class ".$this->getClassname()." {
 	 * Retrieves a tree node based on a primary key. Optionally includes all
 	 * parent and/or child nodes of the matching node.
 	 *
-	 * @param mixed $objectClassname primary key (array for composite keys)
-	 * @param boolean True if ancestors should also be retrieved.
-	 * @param boolean True if descendants should also be retrieved.
-	 * @param PDO Connection to use.
-	 * @return $nodeObjectClassname
+	 * @param      mixed $objectClassname primary key (array for composite keys)
+	 * @param      boolean True if ancestors should also be retrieved.
+	 * @param      boolean True if descendants should also be retrieved.
+	 * @param      PDO Connection to use.
+	 * @return     $nodeObjectClassname
 	 */
 	public static function retrieveNodeByPK(\$pk, \$ancestors = false, \$descendants = false, PDO \$con = null)
 	{
@@ -358,11 +358,11 @@ abstract class ".$this->getClassname()." {
 	 * Retrieves a tree node based on a node path. Optionally includes all
 	 * parent and/or child nodes of the matching node.
 	 *
-	 * @param string Node path to retrieve.
-	 * @param boolean True if ancestors should also be retrieved.
-	 * @param boolean True if descendants should also be retrieved.
-	 * @param PDO Connection to use.
-	 * @return $objectClassname
+	 * @param      string Node path to retrieve.
+	 * @param      boolean True if ancestors should also be retrieved.
+	 * @param      boolean True if descendants should also be retrieved.
+	 * @param      PDO Connection to use.
+	 * @return     $objectClassname
 	 */
 	public static function retrieveNodeByNP(\$np, \$ancestors = false, \$descendants = false, PDO \$con = null)
 	{
@@ -382,10 +382,10 @@ abstract class ".$this->getClassname()." {
 	/**
 	 * Retrieves the root node.
 	 *
-	 * @param string Node path to retrieve.
-	 * @param boolean True if descendants should also be retrieved.
-	 * @param PDO Connection to use.
-	 * @return ".$this->getStubNodeBuilder()->getClassname()."
+	 * @param      string Node path to retrieve.
+	 * @param      boolean True if descendants should also be retrieved.
+	 * @param      PDO Connection to use.
+	 * @return     ".$this->getStubNodeBuilder()->getClassname()."
 	 */
 	public static function retrieveRootNode(\$descendants = false, PDO \$con = null)
 	{
@@ -411,13 +411,13 @@ abstract class ".$this->getClassname()." {
 	 *
 	 * Use at your own risk!
 	 *
-	 * @param string Source node path to move (root of the src subtree).
-	 * @param string Destination node path to move to (root of the dst subtree).
-	 * @param PDO Connection to use.
-	 * @return void
-	 * @throws PropelException
-	 * @todo This is currently broken for simulated 'onCascadeDelete's.
-	 * @todo Need to abstract the SQL better. The CONCAT sql function doesn't
+	 * @param      string Source node path to move (root of the src subtree).
+	 * @param      string Destination node path to move to (root of the dst subtree).
+	 * @param      PDO Connection to use.
+	 * @return     void
+	 * @throws     PropelException
+	 * @todo       This is currently broken for simulated 'onCascadeDelete's.
+	 * @todo       Need to abstract the SQL better. The CONCAT sql function doesn't
 	 *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
 	 *       to DBAdapter.
 	 */
@@ -487,11 +487,11 @@ abstract class ".$this->getClassname()." {
 	/**
 	 * Deletes the node subtree at the specified node path from the database.
 	 *
-	 * @param string Node path to delete
-	 * @param PDO Connection to use.
-	 * @return void
-	 * @throws PropelException
-	 * @todo This is currently broken for simulated 'onCascadeDelete's.
+	 * @param      string Node path to delete
+	 * @param      PDO Connection to use.
+	 * @return     void
+	 * @throws     PropelException
+	 * @todo       This is currently broken for simulated 'onCascadeDelete's.
 	 */
 	public static function deleteNodeSubTree(\$nodePath, PDO \$con = null)
 	{
@@ -526,10 +526,10 @@ abstract class ".$this->getClassname()." {
 	/**
 	 * Builds the criteria needed to retrieve node ancestors and/or descendants.
 	 *
-	 * @param Criteria Criteria to start with
-	 * @param boolean True if ancestors should be retrieved.
-	 * @param boolean True if descendants should be retrieved.
-	 * @return Criteria
+	 * @param      Criteria Criteria to start with
+	 * @param      boolean True if ancestors should be retrieved.
+	 * @param      boolean True if descendants should be retrieved.
+	 * @return     Criteria
 	 */
 	public static function buildFamilyCriteria(\$criteria, \$ancestors = false, \$descendants = false)
 	{
@@ -657,8 +657,8 @@ abstract class ".$this->getClassname()." {
 	 * accessible from the $nodeObjectClassname methods of the
 	 * subtree root nodes.
 	 *
-	 * @param array Array of $nodeObjectClassname objects
-	 * @return array Array of $nodeObjectClassname objects
+	 * @param      array Array of $nodeObjectClassname objects
+	 * @return     array Array of $nodeObjectClassname objects
 	 */
 	public static function buildTree(\$nodes)
 	{
@@ -714,9 +714,9 @@ abstract class ".$this->getClassname()." {
 	 * The ancestors/descendants will be cached in memory and are accessible via
 	 * the getNode() methods.
 	 *
-	 * @param ResultSet
-	 * @param Criteria
-	 * @return array Array of $nodeObjectClassname objects.
+	 * @param      ResultSet
+	 * @param      Criteria
+	 * @return     array Array of $nodeObjectClassname objects.
 	 */
 	public static function populateNodes(\$rs, \$criteria)
 	{

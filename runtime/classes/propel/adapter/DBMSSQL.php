@@ -24,15 +24,15 @@
  * This is used to connect to a MSSQL database.  For now, this class
  * simply extends the adaptor for Sybase.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @version $Revision$
- * @package propel.adapter
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 class DBMSSQL extends DBSybase {
 	// no difference currently
 
 	/**
-	 * @see DBAdapter::applyLimit()
+	 * @see        DBAdapter::applyLimit()
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{

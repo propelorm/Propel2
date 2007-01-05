@@ -30,7 +30,7 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
  * should not have any actual template code in it -- simply basic logic & utility
  * methods.
  *
- * @author Hans Lellelid <hans@xmpl.org>
+ * @author     Hans Lellelid <hans@xmpl.org>
  */
 abstract class PeerBuilder extends OMBuilder {
 
@@ -51,7 +51,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Adds the addSelectColumns(), doCount(), etc. methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addSelectMethods(&$script)
 	{
@@ -78,7 +78,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetOMClassMethod(&$script)
 	{
@@ -100,7 +100,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Adds the doInsert(), doUpdate(), doDeleteAll(), doValidate(), etc. methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addUpdateMethods(&$script)
 	{
@@ -119,7 +119,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Adds the retrieveByPK() (and possibly retrieveByPKs()) method(s) appropriate for this class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addRetrieveByPKMethods(&$script)
 	{
@@ -140,7 +140,7 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Hint: Override this method in your subclass if you want to reorganize or
 	 * drastically change the contents of the generated peer class.
 	 *
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassBody(&$script)
 	{
@@ -176,7 +176,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Whether the platform in use requires ON DELETE CASCADE emulation and whether there are references to this table.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	protected function isDeleteCascadeEmulationNeeded()
 	{
@@ -193,7 +193,7 @@ abstract class PeerBuilder extends OMBuilder {
 
 	/**
 	 * Whether the platform in use requires ON DELETE SETNULL emulation and whether there are references to this table.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	protected function isDeleteSetNullEmulationNeeded()
 	{
@@ -212,7 +212,7 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Whether to add the generic mutator methods (setByName(), setByPosition(), fromArray()).
 	 * This is based on the build property propel.addGenericMutators, and also whether the
 	 * table is read-only or an alias.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	protected function isAddGenericMutators()
 	{
@@ -224,7 +224,7 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
 	 * This is based on the build property propel.addGenericAccessors, and also whether the
 	 * table is an alias.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	protected function isAddGenericAccessors()
 	{
@@ -236,7 +236,7 @@ abstract class PeerBuilder extends OMBuilder {
 	 * Returns the retrieveByPK method name to use for this table.
 	 * If the table is an alias then the method name looks like "retrieveTablenameByPK"
 	 * otherwise simply "retrieveByPK".
-	 * @return string
+	 * @return     string
 	 */
 	public function getRetrieveMethodName()
 	{
@@ -256,10 +256,10 @@ abstract class PeerBuilder extends OMBuilder {
 	 * class is replacing (because of name conflict more than actual functionality overlap).
 	 * When the new builder model is finished this method will be removed.
 	 *
-	 * @param Column $col The column we need a name for.
-	 * @param string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
+	 * @param      Column $col The column we need a name for.
+	 * @param      string $phpName The PHP Name of the peer class. The 'Peer' is appended automatically.
 	 *
-	 * @return string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
+	 * @return     string If $phpName is provided, then will return {$phpName}Peer::COLUMN_NAME; if not, just COLUMN_NAME.
 	 * @deprecated
 	 */
 	public static function getColumnName(Column $col, $phpName = null) {

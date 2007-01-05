@@ -30,9 +30,9 @@
  * by cutting down on the if statements based solely on whether a transaction
  * is needed or not.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @version $Revision$
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @version    $Revision$
+ * @package    propel.util
  */
 class Transaction {
 
@@ -46,7 +46,7 @@ class Transaction {
 	 *
 	 * The transactions are stored keyed by the string representation of the object (e.g. "Object id #14").
 	 *
-	 * @param PDO $con
+	 * @param      PDO $con
 	 */
 	public static function isInTransaction(PDO $con)
 	{
@@ -55,8 +55,8 @@ class Transaction {
 
 	/**
 	 * Returns the current nested transaction depth.
-	 * @param PDO $con
-	 * @return int
+	 * @param      PDO $con
+	 * @return     int
 	 */
 	private static function getOpcount(PDO $con)
 	{
@@ -67,7 +67,7 @@ class Transaction {
 
 	/**
 	 * Increments the current nested transaction depth.
-	 * @param PDO $con
+	 * @param      PDO $con
 	 */
 	private static function incrementOpcount(PDO $con)
 	{
@@ -76,7 +76,7 @@ class Transaction {
 
 	/**
 	 * Decrements the current nested transaction depth.
-	 * @param PDO $con
+	 * @param      PDO $con
 	 */
 	private static function decrementOpcount(PDO $con)
 	{
@@ -86,8 +86,8 @@ class Transaction {
 	/**
 	 * Begin a transaction.
 	 *
-	 * @param $con PDO The Connection for the transaction.
-	 * @throws PDOException
+	 * @param      $con PDO The Connection for the transaction.
+	 * @throws     PDOException
 	 */
 	public static function begin(PDO $con)
 	{
@@ -100,9 +100,9 @@ class Transaction {
 	/**
 	 * Convenience method to begin an optional transaction.
 	 *
-	 * @param sring $dbName Name of database.
-	 * @param boolean $useTransaction If false, a transaction won't be used.
-	 * @throws PropelException
+	 * @param      sring $dbName Name of database.
+	 * @param      boolean $useTransaction If false, a transaction won't be used.
+	 * @throws     PropelException
 	 */
 	public static function beginOptional(PDO $con, $useTransaction)
 	{
@@ -117,9 +117,9 @@ class Transaction {
 	 * This method commits a transaction if it is the outermost transaction - otherwise,
 	 * nothing happens.
 	 *
-	 * @param PDO $con The Connection for the transaction.
-	 * @return void
-	 * @throws PropelException
+	 * @param      PDO $con The Connection for the transaction.
+	 * @return     void
+	 * @throws     PropelException
 	 */
 	public static function commit(PDO $con)
 	{
@@ -138,9 +138,9 @@ class Transaction {
 	 * transactions, this method will log the attempt and release the
 	 * connection.
 	 *
-	 * @param PDO $con The Connection for the transaction.
-	 * @return void
-	 * @throws PropelException
+	 * @param      PDO $con The Connection for the transaction.
+	 * @return     void
+	 * @throws     PropelException
 	 */
 	public static function rollback(PDO $con)
 	{
@@ -164,8 +164,8 @@ class Transaction {
 	/**
 	 * Roll back a transaction without throwing errors if they occur.
 	 *
-	 * @param Connection $con The Connection for the transaction.
-	 * @return void
+	 * @param      Connection $con The Connection for the transaction.
+	 * @return     void
 	 */
 	public static function safeRollback($con)
 	{

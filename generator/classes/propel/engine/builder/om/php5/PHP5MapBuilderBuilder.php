@@ -28,14 +28,14 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
  * This class replaces the MapBuilder.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5MapBuilderBuilder extends OMBuilder {
 
 	/**
 	 * Gets the package for the map builder classes.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPackage()
 	{
@@ -44,7 +44,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 
 	/**
 	 * Returns the name of the current class being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getUnprefixedClassname()
 	{
@@ -53,7 +53,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
@@ -61,7 +61,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 
 	/**
 	 * Adds class phpdoc comment and openning of class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
@@ -87,7 +87,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package ".$this->getPackage()."
+ * @package    ".$this->getPackage()."
  */
 class ".$this->getClassname()." implements MapBuilder {
 ";
@@ -96,7 +96,7 @@ class ".$this->getClassname()." implements MapBuilder {
 	/**
 	 * Specifies the methods that are added as part of the map builder class.
 	 * This can be overridden by subclasses that wish to add more methods.
-	 * @see ObjectBuilder::addClassBody()
+	 * @see        ObjectBuilder::addClassBody()
 	 */
 	protected function addClassBody(&$script)
 	{
@@ -110,7 +110,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Adds any constants needed for this MapBuilder class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addConstants(&$script)
 	{
@@ -124,7 +124,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Adds any attributes needed for this MapBuilder class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addAttributes(&$script)
 	{
@@ -138,7 +138,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Closes class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassClose(&$script)
 	{
@@ -149,7 +149,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Adds the method that indicates whether this map has already been built.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIsBuilt(&$script)
 	{
@@ -158,7 +158,7 @@ class ".$this->getClassname()." implements MapBuilder {
 	 * Tells us if this DatabaseMapBuilder is built so that we
 	 * don't have to re-build it every time.
 	 *
-	 * @return boolean true if this DatabaseMapBuilder is built, false otherwise.
+	 * @return     boolean true if this DatabaseMapBuilder is built, false otherwise.
 	 */
 	public function isBuilt()
 	{
@@ -169,7 +169,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Adds the DatabaseMap accessor method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addGetDatabaseMap(&$script)
 	{
@@ -177,7 +177,7 @@ class ".$this->getClassname()." implements MapBuilder {
 	/**
 	 * Gets the databasemap this map builder built.
 	 *
-	 * @return the databasemap
+	 * @return     the databasemap
 	 */
 	public function getDatabaseMap()
 	{
@@ -188,7 +188,7 @@ class ".$this->getClassname()." implements MapBuilder {
 
 	/**
 	 * Adds the main doBuild() method to the map builder class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoBuild(&$script)
 	{
@@ -200,8 +200,8 @@ class ".$this->getClassname()." implements MapBuilder {
 	/**
 	 * The doBuild() method builds the DatabaseMap
 	 *
-	 * @return void
-	 * @throws PropelException
+	 * @return     void
+	 * @throws     PropelException
 	 */
 	public function doBuild()
 	{

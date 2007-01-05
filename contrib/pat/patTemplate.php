@@ -6,11 +6,11 @@
  *
  * powerful templating engine
  *
- * @version		3.0.0
- * @package		patTemplate
- * @author		Stephan Schmidt <schst@php.net>
- * @license		LGPL
- * @link		http://www.php-tools.net
+ * @version    3.0.0
+ * @package    patTemplate
+ * @author     Stephan Schmidt <schst@php.net>
+ * @license    LGPL
+ * @link       http://www.php-tools.net
  */
 
 /**
@@ -53,17 +53,17 @@ define( 'PATTEMPLATE_ERROR_NO_INPUT', 6000 );
  *
  * powerful templating engine
  *
- * @version		3.0.0
- * @package		patTemplate
- * @author		Stephan Schmidt <schst@php.net>
- * @license		LGPL
- * @link		http://www.php-tools.net
+ * @version    3.0.0
+ * @package    patTemplate
+ * @author     Stephan Schmidt <schst@php.net>
+ * @license    LGPL
+ * @link       http://www.php-tools.net
  */
 class patTemplate
 {
    /**
 	* standard system vars that identify pat tools
-	* @var	array
+	* @var        array
 	*/
 	var	$_systemVars			=	array(
 										'appName'		=>	'patTemplate',
@@ -75,8 +75,8 @@ class patTemplate
 
    /**
 	* default attributes for new templates
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_defaultAttributes	=	array(
 										'type'			=>	'standard',
@@ -95,8 +95,8 @@ class patTemplate
 	* - maintainBc defines, whether patTemplate should be backwards compatible.
 	*   This means, that you may use 'default' and 'empty' for subtemplates.
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_options	=	array(
 								'startTag'   => '{',
@@ -109,16 +109,16 @@ class patTemplate
    /**
 	* start tag
 	*
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_startTag = '{';
 
    /**
 	* end tag
 	*
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_endTag = '}';
 
@@ -131,43 +131,43 @@ class patTemplate
 	* - Variable modifiers
 	* - Filters
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_modules		=	array();
 
    /**
 	* directories, where modules can be stored
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_moduleDirs	=	array();
 
    /**
 	* stores all template names
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_templateList	=	array();
 
    /**
 	* stores all template data
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_templates		=	array();
 
    /**
 	* stores all global variables
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_globals	=	array();
 
    /**
 	* stores all local variables
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_vars	=	array();
 
@@ -175,32 +175,32 @@ class patTemplate
 	* stores the name of the first template that has been
 	* found
 	*
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var	$_root;
 
    /**
 	* output filters that should be used
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_outputFilters = array();
 
    /**
 	* input filters that should be used
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_inputFilters = array();
 
    /**
 	* template cache, that should be used
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$_tmplCache = null;
 
@@ -214,8 +214,8 @@ class patTemplate
 	*
 	* The type influences the tags you are using in your templates.
 	*
-	* @access	public
-	* @param	string	type (either html or tex)
+	* @access     public
+	* @param      string	type (either html or tex)
 	*/
 	function patTemplate( $type = 'html' )
 	{
@@ -232,9 +232,9 @@ class patTemplate
 	* - maintainBc (true|false)
 	* - namespace (string)
 	*
-	* @access	public
-	* @param	string	option to set
-	* @param	string	value of the option
+	* @access     public
+	* @param      string	option to set
+	* @param      string	value of the option
 	*/
 	function setOption( $option, $value )
 	{
@@ -244,9 +244,9 @@ class patTemplate
    /**
 	* gets an option
 	*
-	* @access	public
-	* @param	string	option to get
-	* @return	mixed	value of the option
+	* @access     public
+	* @param      string	option to get
+	* @return     mixed	value of the option
 	*/
 	function getOption( $option )
 	{
@@ -258,9 +258,9 @@ class patTemplate
    /**
 	* sets name of directory where templates are stored
 	*
-	* @access	public
-	* @param	string	dir where templates are stored
-	* @deprecated		please use patTemplate::setRoot() instead
+	* @access     public
+	* @param      string	dir where templates are stored
+	* @deprecated please use patTemplate::setRoot() instead
 	*/
 	function setBasedir( $basedir )
 	{
@@ -272,8 +272,8 @@ class patTemplate
 	*
 	* The parameter depends on the reader you are using.
 	*
-	* @access	public
-	* @param	string	root base of the templates
+	* @access     public
+	* @param      string	root base of the templates
 	*/
 	function setRoot( $root )
 	{
@@ -283,8 +283,8 @@ class patTemplate
    /**
 	* gets name of root base for the templates
 	*
-	* @access	public
-	* @return	mixed 		root base
+	* @access     public
+	* @return     mixed 		root base
 	*/
 	function getRoot()
 	{
@@ -294,8 +294,8 @@ class patTemplate
    /**
 	* sets namespace of patTemplate tags
 	*
-	* @access	public
-	* @param	string	namespace
+	* @access     public
+	* @param      string	namespace
 	*/
 	function setNamespace( $ns )
 	{
@@ -305,8 +305,8 @@ class patTemplate
    /**
 	* gets namespace of patTemplate tags
 	*
-	* @access	public
-	* @return	string	namespace
+	* @access     public
+	* @return     string	namespace
 	*/
 	function getNamespace()
 	{
@@ -316,9 +316,9 @@ class patTemplate
    /**
 	* set default attribute
 	*
-	* @access	public
-	* @param	string	attribute name
-	* @param	mixed	attribute value
+	* @access     public
+	* @param      string	attribute name
+	* @param      mixed	attribute value
 	*/
 	function setDefaultAttribute( $name, $value )
 	{
@@ -328,8 +328,8 @@ class patTemplate
    /**
 	* set default attributes
 	*
-	* @access	public
-	* @param	array	attributes
+	* @access     public
+	* @param      array	attributes
 	*/
 	function setDefaultAttributes( $attributes )
 	{
@@ -339,8 +339,8 @@ class patTemplate
    /**
 	* get default attributes
 	*
-	* @access	public
-	* @return	return default attributes
+	* @access     public
+	* @return     return default attributes
 	*/
 	function getDefaultAttributes()
 	{
@@ -350,9 +350,9 @@ class patTemplate
    /**
 	* set the type for the templates
 	*
-	* @access	public
-	* @param	string	type (html or tex)
-	* @return	boolean	true on success
+	* @access     public
+	* @param      string	type (html or tex)
+	* @return     boolean	true on success
 	*/
 	function setType( $type )
 	{
@@ -376,10 +376,10 @@ class patTemplate
    /**
 	* set the start and end tag for variables
 	*
-	* @access	public
-	* @param	string	start tag
-	* @param	string	end tag
-	* @return	boolean	true on success
+	* @access     public
+	* @param      string	start tag
+	* @param      string	end tag
+	* @return     boolean	true on success
 	*/
 	function setTags( $startTag, $endTag )
 	{
@@ -394,8 +394,8 @@ class patTemplate
    /**
 	* get start tag for variables
 	*
-	* @access	public
-	* @return	string	start tag
+	* @access     public
+	* @return     string	start tag
 	*/
 	function getStartTag()
 	{
@@ -405,8 +405,8 @@ class patTemplate
    /**
 	* get end tag for variables
 	*
-	* @access	public
-	* @return	string	end tag
+	* @access     public
+	* @return     string	end tag
 	*/
 	function getEndTag()
 	{
@@ -424,9 +424,9 @@ class patTemplate
 	* the custom folders, it will look in
 	* patTemplate/$moduleType.
 	*
-	* @access	public
-	* @param	string			module type
-	* @param	string|array	directory or directories to search.
+	* @access     public
+	* @param      string			module type
+	* @param      string|array	directory or directories to search.
 	*/
 	function addModuleDir( $moduleType, $dir )
 	{
@@ -443,11 +443,11 @@ class patTemplate
 	*
 	* supported attributes: visibilty, loop, parse, unusedvars
 	*
-	* @param	string	$template	name of the template
-	* @param	string	$attribute	name of the attribute
-	* @param	mixed	$value	value of the attribute
-	* @access	public
-	* @see		setAttributes(),getAttribute(), clearAttribute()
+	* @param      string	$template	name of the template
+	* @param      string	$attribute	name of the attribute
+	* @param      mixed	$value	value of the attribute
+	* @access     public
+	* @see        setAttributes(),getAttribute(), clearAttribute()
 	*/
 	function setAttribute( $template, $attribute, $value )
 	{
@@ -471,10 +471,10 @@ class patTemplate
 	* $attributes has to be a assotiative arrays containing attribute/value pairs
 	* supported attributes: visibilty, loop, parse, unusedvars
 	*
-	* @param	string	$template	name of the template
-	* @param	array	$attributes	attribute/value pairs
-	* @access	public
-	* @see		setAttribute(), getAttribute(), clearAttribute()
+	* @param      string	$template	name of the template
+	* @param      array	$attributes	attribute/value pairs
+	* @access     public
+	* @see        setAttribute(), getAttribute(), clearAttribute()
 	*/
 	function setAttributes( $template, $attributes )
 	{
@@ -500,9 +500,9 @@ class patTemplate
    /**
 	* Get all attributes of a template
 	*
-	* @param	string	name of the template
-	* @return	array	attributes
-	* @access	public
+	* @param      string	name of the template
+	* @return     array	attributes
+	* @access     public
 	*/
 	function getAttributes( $template )
 	{
@@ -522,11 +522,11 @@ class patTemplate
 	*
 	* supported attributes: visibilty, loop, parse, unusedvars
 	*
-	* @param	string	$template	name of the template
-	* @param	string	$attribute	name of the attribute
-	* @return	mixed	value of the attribute
-	* @access	public
-	* @see		setAttribute(), setAttributes(), clearAttribute()
+	* @param      string	$template	name of the template
+	* @param      string	$attribute	name of the attribute
+	* @return     mixed	value of the attribute
+	* @access     public
+	* @see        setAttribute(), setAttributes(), clearAttribute()
 	*/
 	function getAttribute( $template, $attribute )
 	{
@@ -547,10 +547,10 @@ class patTemplate
 	*
 	* supported attributes: visibilty, loop, parse, unusedvars
 	*
-	* @param	string	$template	name of the template
-	* @param	string	$attribute	name of the attribute
-	* @access	public
-	* @see		setAttribute(), setAttributes(), getAttribute()
+	* @param      string	$template	name of the template
+	* @param      string	$attribute	name of the attribute
+	* @access     public
+	* @see        setAttribute(), setAttributes(), getAttribute()
 	*/
 	function clearAttribute( $template, $attribute )
 	{
@@ -574,8 +574,8 @@ class patTemplate
 	* This can be used if you want to add variables to
 	* a template, that has not been loaded yet.
 	*
-	* @access	public
-	* @param	string	template name
+	* @access     public
+	* @param      string	template name
 	*/
 	function prepareTemplate( $name )
 	{
@@ -595,10 +595,10 @@ class patTemplate
 	* A variable may also be an indexed array, but _not_
 	* an associative array!
 	*
-	* @access	public
-	* @param	string	$template	name of the template
-	* @param	string	$varname	name of the variable
-	* @param	mixed	$value		value of the variable
+	* @access     public
+	* @param      string	$template	name of the template
+	* @param      string	$varname	name of the variable
+	* @param      mixed	$value		value of the variable
 	*/
 	function addVar( $template, $varname, $value )
 	{
@@ -626,10 +626,10 @@ class patTemplate
    /**
 	* get the value of a variable
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @param	string	name of the variable
-	* @return	string	value of the variable, null if the variable is not set
+	* @access     public
+	* @param      string	name of the template
+	* @param      string	name of the variable
+	* @return     string	value of the variable, null if the variable is not set
 	*/
 	function getVar( $template, $varname )
 	{
@@ -659,11 +659,11 @@ class patTemplate
 	* Each Template can have an unlimited amount of its own variables
 	* $variables has to be an assotiative array containing variable/value pairs
 	*
-	* @param	string	$template	name of the template
-	* @param	array	$variables	assotiative array of the variables
-	* @param	string	$prefix	prefix for all variable names
-	* @access	public
-	* @see		addVar(), addRows(), addGlobalVar(), addGlobalVars()
+	* @param      string	$template	name of the template
+	* @param      array	$variables	assotiative array of the variables
+	* @param      string	$prefix	prefix for all variable names
+	* @access     public
+	* @see        addVar(), addRows(), addGlobalVar(), addGlobalVars()
 	*/
 	function addVars( $template, $variables, $prefix = '' )
 	{
@@ -700,11 +700,11 @@ class patTemplate
 	* Each Template can have an unlimited amount of its own variables
 	* Can be used to add a database result as variables to a template
 	*
-	* @param	string	$template	name of the template
-	* @param	array	$rows	array containing assotiative arrays with variable/value pairs
-	* @param	string	$prefix	prefix for all variable names
-	* @access	public
-	* @see		addVar(), addVars(), addGlobalVar(), addGlobalVars()
+	* @param      string	$template	name of the template
+	* @param      array	$rows	array containing assotiative arrays with variable/value pairs
+	* @param      string	$prefix	prefix for all variable names
+	* @access     public
+	* @see        addVar(), addVars(), addGlobalVar(), addGlobalVars()
 	*/
 	function addRows( $template, $rows, $prefix = '' )
 	{
@@ -731,11 +731,11 @@ class patTemplate
 	*
 	* All properties of the object will be available as template variables.
 	*
-	* @param	string		    name of the template
-	* @param	object|array	object or array of objects
-	* @param	string		    prefix for all variable names
-	* @access	public
-	* @see		addVar(), addRows(), addGlobalVar(), addGlobalVars()
+	* @param      string		    name of the template
+	* @param      object|array	object or array of objects
+	* @param      string		    prefix for all variable names
+	* @access     public
+	* @see        addVar(), addRows(), addGlobalVar(), addGlobalVars()
 	*/
 	function addObject( $template, $object, $prefix = '' )
 	{
@@ -762,11 +762,11 @@ class patTemplate
 	* Global variables are valid in all templates of this object.
 	* A global variable has to be scalar, it will be converted to a string.
 	*
-	* @access	public
-	* @param	string	$varname	name of the global variable
-	* @param	string	$value		value of the variable
-	* @return	boolean	true on success
-	* @see		addGlobalVars(), addVar(), addVars(), addRows()
+	* @access     public
+	* @param      string	$varname	name of the global variable
+	* @param      string	$value		value of the variable
+	* @return     boolean	true on success
+	* @see        addGlobalVars(), addVar(), addVars(), addRows()
 	*/
 	function addGlobalVar( $varname, $value )
 	{
@@ -781,11 +781,11 @@ class patTemplate
 	*
 	* $variables is an associative array, containing name/value pairs of the variables.
 	*
-	* @access	public
-	* @param	array	$variables	array containing the variables
-	* @param	string	$prefix		prefix for variable names
-	* @return	boolean	true on success
-	* @see		addGlobalVar(), addVar(), addVars(), addRows()
+	* @access     public
+	* @param      array	$variables	array containing the variables
+	* @param      string	$prefix		prefix for variable names
+	* @return     boolean	true on success
+	* @see        addGlobalVar(), addVar(), addVars(), addRows()
 	*/
 	function addGlobalVars( $variables, $prefix = '' )
 	{
@@ -801,8 +801,8 @@ class patTemplate
    /**
 	* get all global variables
 	*
-	* @access	public
-	* @return	array	global variables
+	* @access     public
+	* @return     array	global variables
 	*/
 	function getGlobalVars()
 	{
@@ -812,9 +812,9 @@ class patTemplate
 	/**
 	* checks wether a template exists
 	*
-	* @access	public
-	* @param	string		name of the template
-	* @return	boolean		true, if the template exists, false otherwise
+	* @access     public
+	* @param      string		name of the template
+	* @return     boolean		true, if the template exists, false otherwise
 	*/
 	function exists( $name )
 	{
@@ -827,10 +827,10 @@ class patTemplate
 	* A template cache will improve performace, as the templates
 	* do not have to be read on each request.
 	*
-	* @access	public
-	* @param	string		name of the template cache
-	* @param	array		parameters for the template cache
-	* @return	boolean		true on success, patError otherwise
+	* @access     public
+	* @param      string		name of the template cache
+	* @param      array		parameters for the template cache
+	* @return     boolean		true on success, patError otherwise
 	*/
 	function useTemplateCache( $cache, $params = array() )
 	{
@@ -853,10 +853,10 @@ class patTemplate
 	*
 	* They are applied, when displayParsedTemplate() is called.
 	*
-	* @access	public
-	* @param	string		name of the output filter
-	* @param	array		parameters for the output filter
-	* @return	boolean		true on success, patError otherwise
+	* @access     public
+	* @param      string		name of the output filter
+	* @param      array		parameters for the output filter
+	* @return     boolean		true on success, patError otherwise
 	*/
 	function applyOutputFilter( $filter, $params = array() )
 	{
@@ -877,10 +877,10 @@ class patTemplate
 	* input filters are used to modify the template
 	* stream before it is split into smaller templates-
 	*
-	* @access	public
-	* @param	string		name of the input filter
-	* @param	array		parameters for the input filter
-	* @return	boolean		true on success, patError otherwise
+	* @access     public
+	* @param      string		name of the input filter
+	* @param      array		parameters for the input filter
+	* @return     boolean		true on success, patError otherwise
 	*/
 	function applyInputFilter( $filter, $params = array() )
 	{
@@ -898,11 +898,11 @@ class patTemplate
    /**
 	* open a file and parse for patTemplate tags
 	*
-	* @access		public
-	* @param		name of the file
-	* @return		true, if the template could be parsed
-	* @deprecated	Use patTemplate::readTemplatesFromInput() instead, as the method name is misleading
-	* @see			readTemplatesFromInput()
+	* @access     public
+	* @param      name of the file
+	* @return     true, if the template could be parsed
+	* @deprecated Use patTemplate::readTemplatesFromInput() instead, as the method name is misleading
+	* @see        readTemplatesFromInput()
 	*/
 	function readTemplatesFromFile( $filename )
 	{
@@ -912,13 +912,13 @@ class patTemplate
    /**
 	* open any input and parse for patTemplate tags
 	*
-	* @access	public
-	* @param	string	name of the input (filename, shm segment, etc.)
-	* @param	string	driver that is used as reader, you may also pass a Reader object
-	* @param	array	additional options that will only be used for this template
-	* @param	string	name of the template that should be used as a container, should not be used by public
+	* @access     public
+	* @param      string	name of the input (filename, shm segment, etc.)
+	* @param      string	driver that is used as reader, you may also pass a Reader object
+	* @param      array	additional options that will only be used for this template
+	* @param      string	name of the template that should be used as a container, should not be used by public
 	*					calls.
-	* @return	boolean	true, if the template could be parsed, false otherwise
+	* @return     boolean	true, if the template could be parsed, false otherwise
 	*/
 	function readTemplatesFromInput( $input, $reader = 'File', $options = null, $parseInto = null )
 	{
@@ -1104,12 +1104,12 @@ class patTemplate
    /**
 	* load from template cache
 	*
-	* @access	private
-	* @param	string	name of the input (filename, shm segment, etc.)
-	* @param	string	driver that is used as reader, you may also pass a Reader object
-	* @param	array	options for the reader
-	* @param	string	cache key
-	* @return	array|boolean	either an array containing the templates, or false
+	* @access     private
+	* @param      string	name of the input (filename, shm segment, etc.)
+	* @param      string	driver that is used as reader, you may also pass a Reader object
+	* @param      array	options for the reader
+	* @param      string	cache key
+	* @return     array|boolean	either an array containing the templates, or false
 	*/
 	function _loadTemplatesFromCache( $input, &$reader, $options, $key )
 	{
@@ -1133,11 +1133,11 @@ class patTemplate
    /**
 	* open any input and load content into template
 	*
-	* @access	public
-	* @param	string	name of the input (filename, shm segment, etc.)
-	* @param	string	driver that is used as reader
-	* @param	string	name of the template that should be used as a container,
-	* @return	boolean	true, if the template could be parsed, false otherwise
+	* @access     public
+	* @param      string	name of the input (filename, shm segment, etc.)
+	* @param      string	driver that is used as reader
+	* @param      string	name of the template that should be used as a container,
+	* @return     boolean	true, if the template could be parsed, false otherwise
 	*/
 	function loadTemplateFromInput( $input, $reader = 'File', $options = null, $parseInto = false )
 	{
@@ -1174,9 +1174,9 @@ class patTemplate
 	* This is needed, if you change the source of a template and want to
 	* load it, after changing the attribute.
 	*
-	* @access	public
-	* @param	string		template name
-	* @return	boolean		true, if template could be loaded
+	* @access     public
+	* @param      string		template name
+	* @return     boolean		true, if template could be loaded
 	*/
 	function  loadTemplate( $template )
 	{
@@ -1213,11 +1213,11 @@ class patTemplate
 	* - Functions
 	* - Stats
 	*
-	* @access	public
-	* @param	string	moduleType (Reader|TemplateCache|Modifier|OutputFilter|InputFilter)
-	* @param	string	moduleName
-	* @param	array	parameters for the module
-	* @return	object
+	* @access     public
+	* @param      string	moduleType (Reader|TemplateCache|Modifier|OutputFilter|InputFilter)
+	* @param      string	moduleName
+	* @param      array	parameters for the module
+	* @return     object
 	*/
 	function &loadModule( $moduleType, $moduleName, $params = array() )
 	{
@@ -1289,10 +1289,10 @@ class patTemplate
 	* - Functions
 	* - Stats
 	*
-	* @access	public
-	* @param	string	moduleType (Reader|TemplateCache|Modifier|OutputFilter|InputFilter)
-	* @param	string	moduleName
-	* @return	boolean
+	* @access     public
+	* @param      string	moduleType (Reader|TemplateCache|Modifier|OutputFilter|InputFilter)
+	* @param      string	moduleName
+	* @return     boolean
 	*/
 	function moduleExists( $moduleType, $moduleName )
 	{
@@ -1321,9 +1321,9 @@ class patTemplate
 	* mode can be "w" for write (delete already parsed content) or "a" for append (appends the
 	* new parsed content to the already parsed content)
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @param	string	mode for the parsing
+	* @access     public
+	* @param      string	name of the template
+	* @param      string	mode for the parsing
 	*/
 	function parseTemplate( $template, $mode = 'w' )
 	{
@@ -1523,9 +1523,9 @@ class patTemplate
 	* This method checks the variable specifications and
 	* copys variables from other templates.
 	*
-	* @access	private
-	* @param	string	name of the template
-	* @return	boolean	true on success
+	* @access     private
+	* @param      string	name of the template
+	* @return     boolean	true on success
 	*/
 	function _initTemplate( $template )
 	{
@@ -1582,8 +1582,8 @@ class patTemplate
    /**
 	* parse all variables in a template
 	*
-	* @access	private
-	* @param	string
+	* @access     private
+	* @param      string
 	*/
 	function _parseVariables( $template )
 	{
@@ -1622,9 +1622,9 @@ class patTemplate
    /**
 	* parse global variables in the template
 	*
-	* @access   private
-	* @param    string      name of the template
-	* @return   boolean
+	* @access     private
+	* @param      string      name of the template
+	* @return     boolean
 	*/
 	function _parseGlobals($template)
 	{
@@ -1649,10 +1649,10 @@ class patTemplate
 	*
 	* The variables will be passed by reference.
 	*
-	* @access   private
-	* @param    string      name of the template (use modifiers from this template)
-	* @param    array       variables to which the modifiers should be applied
-	* @return   boolean
+	* @access     private
+	* @param      string      name of the template (use modifiers from this template)
+	* @param      array       variables to which the modifiers should be applied
+	* @return     boolean
 	*/
 	function _applyModifers($template, &$vars)
 	{
@@ -1679,8 +1679,8 @@ class patTemplate
    /**
 	* parse all dependencies in a template
 	*
-	* @access	private
-	* @param	string
+	* @access     private
+	* @param      string
 	*/
 	function _parseDependencies( $template )
 	{
@@ -1702,9 +1702,9 @@ class patTemplate
 	* configuration so it can be used by other
 	* methods.
 	*
-	* @access	private
-	* @param	string	template name
-	* @return	boolean
+	* @access     private
+	* @param      string	template name
+	* @return     boolean
 	*/
 	function _fetchTemplate( $template )
 	{
@@ -1790,9 +1790,9 @@ class patTemplate
    /**
 	* check, whether a template contains variables
 	*
-	* @access   private
-	* @param    string  template name
-	* @return   boolean
+	* @access     private
+	* @param      string  template name
+	* @return     boolean
 	*/
 	function _hasVariables($template)
 	{
@@ -1811,12 +1811,12 @@ class patTemplate
 	* _fetchVariables() has to be called before this
 	* method is being called.
 	*
-	* @access	private
-	* @param	string	template name
-	* @param	string	condition value
-	* @param	boolean	flag that indicates whether value is the name of the variable that should be resolved
+	* @access     private
+	* @param      string	template name
+	* @param      string	condition value
+	* @param      boolean	flag that indicates whether value is the name of the variable that should be resolved
 	*
-	* @todo		split this method into smaller check methods that will be called according to
+	* @todo       split this method into smaller check methods that will be called according to
 	*			a priority list
 	*/
 	function _getConditionValue( $template, $value, $isVar = true )
@@ -1913,9 +1913,9 @@ class patTemplate
 	* configuration so they can be used by other
 	* methods.
 	*
-	* @access	private
-	* @param	string	template name
-	* @return	boolean
+	* @access     private
+	* @param      string	template name
+	* @return     boolean
 	*/
 	function _fetchVariables( $template )
 	{
@@ -2010,8 +2010,8 @@ class patTemplate
 	* This is influenced by the 'unusedvars' attribute of the
 	* template
 	*
-	* @access	private
-	* @param	string
+	* @access     private
+	* @param      string
 	*/
 	function _handleUnusedVars( $template )
 	{
@@ -2043,10 +2043,10 @@ class patTemplate
 	* If the template already has been parsed, it just returns the parsed template.
 	* If the template has not been loaded, it will be loaded.
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @return	string	Content of the parsed template
-	* @see		displayParsedTemplate()
+	* @access     public
+	* @param      string	name of the template
+	* @return     string	Content of the parsed template
+	* @see        displayParsedTemplate()
 	*/
 	function getParsedTemplate( $name = null )
 	{
@@ -2068,10 +2068,10 @@ class patTemplate
 	*
 	* If the template has not been loaded, it will be loaded.
 	*
-	* @see		getParsedTemplate()
-	* @param	string	name of the template
-	* @return	boolean	true on success
-	* @access	public
+	* @see        getParsedTemplate()
+	* @param      string	name of the template
+	* @return     boolean	true on success
+	* @access     public
 	*/
 	function displayParsedTemplate( $name = null )
 	{
@@ -2100,12 +2100,12 @@ class patTemplate
 	* If the template already has been parsed, it will just be pushed into the variable.
 	* If the template has not been loaded, it will be loaded.
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @return	string	Content of the parsed template
-	* @param	boolean	if set to true, the value will be appended to the value already stored.
-	* @see		getParsedTemplate()
-	* @see		addVar()
+	* @access     public
+	* @param      string	name of the template
+	* @return     string	Content of the parsed template
+	* @param      boolean	if set to true, the value will be appended to the value already stored.
+	* @see        getParsedTemplate()
+	* @see        addVar()
 	*/
 	function parseIntoVar( $srcTmpl, $destTmpl, $var, $append = false )
 	{
@@ -2134,11 +2134,11 @@ class patTemplate
 	* If you will not be using this template anymore, then you should
 	* call freeTemplate()
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @param	boolean		set this to true to clear all child templates, too
-	* @see		clearAllTemplates()
-	* @see		freeTemplate()
+	* @access     public
+	* @param      string	name of the template
+	* @param      boolean		set this to true to clear all child templates, too
+	* @see        clearAllTemplates()
+	* @see        freeTemplate()
 	*/
 	function clearTemplate( $name, $recursive = false )
 	{
@@ -2174,8 +2174,8 @@ class patTemplate
    /**
 	* clears all templates
 	*
-	* @access	public
-	* @uses		clearTemplate()
+	* @access     public
+	* @uses       clearTemplate()
 	*/
 	function clearAllTemplates()
 	{
@@ -2194,10 +2194,10 @@ class patTemplate
 	* All memory consumed by the template
 	* will be freed.
 	*
-	* @access	public
-	* @param	string	name of the template
-	* @param	boolean	clear dependencies of the template
-	* @see		freeAllTemplates()
+	* @access     public
+	* @param      string	name of the template
+	* @param      boolean	clear dependencies of the template
+	* @see        freeAllTemplates()
 	*/
 	function freeTemplate( $name, $recursive = false )
 	{
@@ -2238,8 +2238,8 @@ class patTemplate
 	* All memory consumed by the templates
 	* will be freed.
 	*
-	* @access	public
-	* @see		freeTemplate()
+	* @access     public
+	* @see        freeTemplate()
 	*/
 	function freeAllTemplates()
 	{
@@ -2251,9 +2251,9 @@ class patTemplate
 	* get _all_ dependencies of a template,
 	* regardless of the subtemplates
 	*
-	* @access	private
-	* @param	string	template name
-	* @return	array	list of all subtemplates
+	* @access     private
+	* @param      string	template name
+	* @return     array	list of all subtemplates
 	*/
 	function _getDependencies( $template )
 	{
@@ -2279,10 +2279,10 @@ class patTemplate
 	* This method breaks BC, as it now awaits an array instead of
 	* unlimited parameters.
 	*
-	* @param	mixed	array of templates that should be dumped, or null if you
+	* @param      mixed	array of templates that should be dumped, or null if you
 	*					want all templates to be dumped
-	* @param	string	dumper
-	* @access	public
+	* @param      string	dumper
+	* @access     public
 	*/
 	function dump( $restrict = null, $dumper = 'Html' )
 	{
@@ -2328,7 +2328,7 @@ class patTemplate
    /**
 	* get the include path
 	*
-	* @access	public
+	* @access     public
 	*/
 	function getIncludePath()
 	{
@@ -2340,9 +2340,9 @@ class patTemplate
 	*
 	* This is being called by the readers.
 	*
-	* @access	public
-	* @param	string		template
-	* @return	string		filtered templeta
+	* @access     public
+	* @param      string		template
+	* @return     string		filtered templeta
 	*/
 	function applyInputFilters( $template )
 	{
@@ -2368,8 +2368,8 @@ class patTemplate
 	* echo $tmpl;
 	* </code>
 	*
-	* @access	private
-	* @return	string
+	* @access     private
+	* @return     string
 	*/
 	function __toString()
 	{

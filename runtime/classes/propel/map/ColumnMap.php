@@ -36,14 +36,14 @@
  * by that template for your datamodel to further understand how these are put
  * together.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @version $Revision$
- * @package propel.map
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.map
  */
 class ColumnMap {
 
-	/** @var string Propel type of the column. */
+	/** @var        string Propel type of the column. */
 	private $type;
 
 	/** Size of the column. */
@@ -76,8 +76,8 @@ class ColumnMap {
 	/**
 	 * Constructor.
 	 *
-	 * @param string $name The name of the column.
-	 * @param TableMap containingTable TableMap of the table this column is in.
+	 * @param      string $name The name of the column.
+	 * @param      TableMap containingTable TableMap of the table this column is in.
 	 */
 	public function __construct($name, TableMap $containingTable)
 	{
@@ -87,7 +87,7 @@ class ColumnMap {
 
 	/**
 	 * Gets column name (DEPRECATED).
-	 * @return string
+	 * @return     string
 	 * @deprecated Use getName() instead.
 	 */
 	public function getColumnName()
@@ -98,7 +98,7 @@ class ColumnMap {
 	/**
 	 * Get the name of a column.
 	 *
-	 * @return string A String with the column name.
+	 * @return     string A String with the column name.
 	 */
 	public function getName()
 	{
@@ -108,7 +108,7 @@ class ColumnMap {
 	/**
 	 * Get the name of a column.
 	 *
-	 * @return string A String with the column name.
+	 * @return     string A String with the column name.
 	 */
 	public function getPhpName()
 	{
@@ -118,8 +118,8 @@ class ColumnMap {
 	/**
 	 * Set the php anme of this column.
 	 *
-	 * @param string $phpName A string representing the PHP name.
-	 * @return void
+	 * @param      string $phpName A string representing the PHP name.
+	 * @return     void
 	 */
 	public function setPhpName($phpName)
 	{
@@ -129,7 +129,7 @@ class ColumnMap {
 	/**
 	 * Get the table name + column name.
 	 *
-	 * @return string A String with the full column name.
+	 * @return     string A String with the full column name.
 	 */
 	public function getFullyQualifiedName()
 	{
@@ -138,7 +138,7 @@ class ColumnMap {
 
 	/**
 	 * Get the table map this column belongs to.
-	 * @return TableMap
+	 * @return     TableMap
 	 */
 	public function getTable()
 	{
@@ -148,7 +148,7 @@ class ColumnMap {
 	/**
 	 * Get the name of the table this column is in.
 	 *
-	 * @return string A String with the table name.
+	 * @return     string A String with the table name.
 	 */
 	public function getTableName()
 	{
@@ -158,7 +158,7 @@ class ColumnMap {
 	/**
 	 * Get the Propel type of this column.
 	 *
-	 * @return string A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+	 * @return     string A string representing the Propel type (e.g. PropelColumnTypes::DATE).
 	 */
 	public function getType()
 	{
@@ -168,8 +168,8 @@ class ColumnMap {
 	/**
 	 * Set the Propel type of this column.
 	 *
-	 * @param string $type A string representing the Propel type (e.g. PropelColumnTypes::DATE).
-	 * @return void
+	 * @param      string $type A string representing the Propel type (e.g. PropelColumnTypes::DATE).
+	 * @return     void
 	 */
 	public function setType($type)
 	{
@@ -179,7 +179,7 @@ class ColumnMap {
 	/**
 	 * Get the PHP type of this column.
 	 *
-	 * @return int The PDO::PARMA_* value
+	 * @return     int The PDO::PARMA_* value
 	 */
 	public function getPhpType()
 	{
@@ -189,7 +189,7 @@ class ColumnMap {
 	/**
 	 * Get the PDO type of this column.
 	 *
-	 * @return int The PDO::PARMA_* value
+	 * @return     int The PDO::PARMA_* value
 	 */
 	public function getPdoType()
 	{
@@ -198,7 +198,7 @@ class ColumnMap {
 
 	/**
 	 * Whether this is a BLOB or CLOB.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isLob()
 	{
@@ -211,7 +211,7 @@ class ColumnMap {
 	 * PHP cannot handle pre-epoch timestamps well -- hence the need to differentiate
 	 * between epoch and pre-epoch timestamps.
 	 *
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isEpochTemporal()
 	{
@@ -220,7 +220,7 @@ class ColumnMap {
 
 	/**
 	 * Whether this column is a text column (varchar, char, longvarchar).
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isText()
 	{
@@ -230,8 +230,8 @@ class ColumnMap {
 	/**
 	 * Set the size of this column.
 	 *
-	 * @param int $size An int specifying the size.
-	 * @return void
+	 * @param      int $size An int specifying the size.
+	 * @return     void
 	 */
 	public function setSize($size)
 	{
@@ -241,8 +241,8 @@ class ColumnMap {
 	/**
 	 * Set if this column is a primary key or not.
 	 *
-	 * @param boolean $pk True if column is a primary key.
-	 * @return void
+	 * @param      boolean $pk True if column is a primary key.
+	 * @return     void
 	 */
 	public function setPrimaryKey($pk)
 	{
@@ -252,8 +252,8 @@ class ColumnMap {
 	/**
 	 * Set if this column may be null.
 	 *
-	 * @param boolean nn True if column may be null.
-	 * @return void
+	 * @param      boolean nn True if column may be null.
+	 * @return     void
 	 */
 	public function setNotNull($nn)
 	{
@@ -262,7 +262,7 @@ class ColumnMap {
 
 	/**
 	 * Gets the default value for this column.
-	 * @return mixed String or NULL
+	 * @return     mixed String or NULL
 	 */
 	public function getDefaultValue()
 	{
@@ -272,9 +272,9 @@ class ColumnMap {
 	/**
 	 * Set the foreign key for this column.
 	 *
-	 * @param string tableName The name of the table that is foreign.
-	 * @param string columnName The name of the column that is foreign.
-	 * @return void
+	 * @param      string tableName The name of the table that is foreign.
+	 * @param      string columnName The name of the column that is foreign.
+	 * @return     void
 	 */
 	public function setForeignKey($tableName, $columnName)
 	{
@@ -305,7 +305,7 @@ class ColumnMap {
 	/**
 	 * Get the size of this column.
 	 *
-	 * @return int An int specifying the size.
+	 * @return     int An int specifying the size.
 	 */
 	public function getSize()
 	{
@@ -315,7 +315,7 @@ class ColumnMap {
 	/**
 	 * Is this column a primary key?
 	 *
-	 * @return boolean True if column is a primary key.
+	 * @return     boolean True if column is a primary key.
 	 */
 	public function isPrimaryKey()
 	{
@@ -325,7 +325,7 @@ class ColumnMap {
 	/**
 	 * Is null value allowed ?
 	 *
-	 * @return boolean True if column may be null.
+	 * @return     boolean True if column may be null.
 	 */
 	public function isNotNull()
 	{
@@ -335,7 +335,7 @@ class ColumnMap {
 	/**
 	 * Is this column a foreign key?
 	 *
-	 * @return boolean True if column is a foreign key.
+	 * @return     boolean True if column is a foreign key.
 	 */
 	public function isForeignKey()
 	{
@@ -349,7 +349,7 @@ class ColumnMap {
 	/**
 	 * Get the table.column that this column is related to.
 	 *
-	 * @return string A String with the full name for the related column.
+	 * @return     string A String with the full name for the related column.
 	 */
 	public function getRelatedName()
 	{
@@ -359,7 +359,7 @@ class ColumnMap {
 	/**
 	 * Get the table name that this column is related to.
 	 *
-	 * @return string A String with the name for the related table.
+	 * @return     string A String with the name for the related table.
 	 */
 	public function getRelatedTableName()
 	{
@@ -369,7 +369,7 @@ class ColumnMap {
 	/**
 	 * Get the column name that this column is related to.
 	 *
-	 * @return string A String with the name for the related column.
+	 * @return     string A String with the name for the related column.
 	 */
 	public function getRelatedColumnName()
 	{
@@ -378,8 +378,8 @@ class ColumnMap {
 
 	/**
 	 * Performs DB-specific ignore case, but only if the column type necessitates it.
-	 * @param string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
-	 * @param DBAdapter $db
+	 * @param      string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
+	 * @param      DBAdapter $db
 	 */
 	public function ignoreCase($str, DBAdapter $db)
 	{

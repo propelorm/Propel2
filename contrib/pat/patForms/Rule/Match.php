@@ -6,19 +6,19 @@
  * This rule matches the field value against a regEx pattern. It successfully
  * validates the passed value if the value *does* match the pattern.
  *
- * @package		patForms
- * @subpackage	Rules
- * @author		Sven Fuchs <svenfuchs@artweb-design.de>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @package    patForms
+ * @subpackage Rules
+ * @author     Sven Fuchs <svenfuchs@artweb-design.de>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 class patForms_Rule_Match extends patForms_Rule
 {
 	/**
 	* script that will be displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 
 	var $globalScript = array(
@@ -46,8 +46,8 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	/**
 	* javascript that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceScript	= array(
 		'html'	=>	"var pfr_[RULE::ID] = new pFRC_Match('[CONTAINER::NAME]');\n"
@@ -56,8 +56,8 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	/**
 	* properties that have to be replaced in the instance script.
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $scriptPlaceholders	= array(
 		'RULE::SOURCE'	=>	'_source',
@@ -67,16 +67,16 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	* name of the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$ruleName = 'Match';
 
 	/**
 	* define error codes and messages for the rule
 	*
-	* @access	private
-	* @var		array	$validatorErrorCodes
-	* @todo		translate error messages
+	* @access     private
+	* @var        array	$validatorErrorCodes
+	* @todo       translate error messages
 	*/
 	var	$validatorErrorCodes = array(
 		"C"	=>	array(
@@ -92,15 +92,15 @@ pFRC_Match.prototype.setValue = function(pattern) {
 
 	/**
 	* the regEx pattern
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_pattern;
 
 	/**
 	* field id that is used
-	* @access	private
-	* @var		string
+	* @access     private
+	* @var        string
 	*/
 	var $_field;
 
@@ -117,8 +117,8 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	/**
 	* prepare the rule
 	*
-	* @access	public
-	* @param	object patForms
+	* @access     public
+	* @param      object patForms
 	*/
 	function prepareRule(&$container) {
 
@@ -135,8 +135,8 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	* method called by patForms or any patForms_Element to validate the
 	* element or the form.
 	*
-	* @access	public
-	* @param	object patForms	form object
+	* @access     public
+	* @param      object patForms	form object
 	*/
 	function applyRule(&$element, $type = PATFORMS_RULE_AFTER_VALIDATION) {
 
@@ -151,7 +151,7 @@ pFRC_Match.prototype.setValue = function(pattern) {
 	/**
 	*
 	*
-	* @access	public
+	* @access     public
 	*/
 	function registerJavascripts(&$form) {
 

@@ -25,9 +25,9 @@ include_once 'propel/engine/database/model/Domain.php';
 /**
  * Default implementation for the Platform interface.
  *
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class DefaultPlatform implements Platform {
 
@@ -60,7 +60,7 @@ class DefaultPlatform implements Platform {
 	/**
 	 * Returns the short name of the database type that this platform represents.
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDatabaseType()
 	{
@@ -70,7 +70,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::getMaxColumnNameLength()
+	 * @see        Platform::getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -78,7 +78,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::getNativeIdMethod()
+	 * @see        Platform::getNativeIdMethod()
 	 */
 	public function getNativeIdMethod()
 	{
@@ -86,7 +86,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::getDomainForType()
+	 * @see        Platform::getDomainForType()
 	 */
 	public function getDomainForType($propelType)
 	{
@@ -97,9 +97,9 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @return Only produces a SQL fragment if null values are
+	 * @return     Only produces a SQL fragment if null values are
 	 * disallowed.
-	 * @see Platform::getNullString(boolean)
+	 * @see        Platform::getNullString(boolean)
 	 */
 	public function getNullString($notNull)
 	{
@@ -109,7 +109,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::getAutoIncrement()
+	 * @see        Platform::getAutoIncrement()
 	 */
 	public function getAutoIncrement()
 	{
@@ -117,7 +117,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::hasScale(String)
+	 * @see        Platform::hasScale(String)
 	 * TODO collect info for all platforms
 	 */
 	public function hasScale($sqlType)
@@ -126,7 +126,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::hasSize(String)
+	 * @see        Platform::hasSize(String)
 	 * TODO collect info for all platforms
 	 */
 	public function hasSize($sqlType)
@@ -135,7 +135,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::escapeText()
+	 * @see        Platform::escapeText()
 	 */
 	public function escapeText($text)
 	{
@@ -143,7 +143,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::quoteIdentifier()
+	 * @see        Platform::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -151,7 +151,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::supportsNativeDeleteTrigger()
+	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
 	public function supportsNativeDeleteTrigger()
 	{
@@ -159,7 +159,7 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see Platform::getBooleanString()
+	 * @see        Platform::getBooleanString()
 	 */
 	public function getBooleanString($b)
 	{

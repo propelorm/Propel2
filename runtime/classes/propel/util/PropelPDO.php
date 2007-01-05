@@ -33,22 +33,22 @@
  * will no longer throw a PDOException (or trigger an error) if a transaction is already
  * in-progress.
  *
- * @author Cameron Brunner <cameron.brunner@gmail.com>
- * @author Hans Lellelid <hans@xmpl.org>
- * @since 2006-09-22
- * @package propel.util
+ * @author     Cameron Brunner <cameron.brunner@gmail.com>
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @since      2006-09-22
+ * @package    propel.util
  */
 class PropelPDO extends PDO {
 
 	/**
 	 * The current transaction depth.
-	 * @var int
+	 * @var        int
 	 */
 	protected $nestedTransactionCount = 0;
 
 	/**
 	 * Gets the current transaction depth.
-	 * @return int
+	 * @return     int
 	 */
 	public function getNestedTransactionCount()
 	{
@@ -57,7 +57,7 @@ class PropelPDO extends PDO {
 
 	/**
 	 * Set the current transaction depth.
-	 * @param int $v The new depth.
+	 * @param      int $v The new depth.
 	 */
 	protected function setNestedTransactionCount($v)
 	{
@@ -84,7 +84,7 @@ class PropelPDO extends PDO {
 	 * Is this PDO connection currently in-transaction?
 	 * This is equivalent to asking whether the current nested transaction count
 	 * is greater than 0.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isInTransaction()
 	{

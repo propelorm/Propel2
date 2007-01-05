@@ -9,13 +9,13 @@
  * WARNING:
  * The Creator subpackage is still in devel state!
  *
- * @access		public
- * @package		patForms
- * @subpackage	Examples
- * @author		Stephan Schmidt <schst@php-tools.net
- * @author		Sebastian Mordziol <argh@php-tools.net>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
+ * @access     public
+ * @package    patForms
+ * @subpackage Examples
+ * @author     Stephan Schmidt <schst@php-tools.net
+ * @author     Sebastian Mordziol <argh@php-tools.net>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
  */
 
 	/**
@@ -81,8 +81,8 @@
 	* so that you may concentrate on the relevant parts of the examples.
 	* It does in no way represent the way it should be done :)
 	*
-	* @access       public
-	* @param        object  &$form  The patForms object to use
+	* @access     public
+	* @param      object  &$form  The patForms object to use
 	*/
 	function displayErrors( &$form )
 	{
@@ -135,9 +135,9 @@
 	* so that you may concentrate on the relevant parts of the examples.
 	* It does in no way represent the way it should be done :)
 	*
-	* @access       public
-	* @param        object  &$form          The current form object
-	* @param        array   $elements       The rendered elements from the
+	* @access     public
+	* @param      object  &$form          The current form object
+	* @param      array   $elements       The rendered elements from the
 	* @return
 	* @see
 	*/

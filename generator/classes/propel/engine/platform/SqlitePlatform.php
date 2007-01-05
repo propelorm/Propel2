@@ -24,9 +24,9 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
 /**
  * SQLite Platform implementation.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class SqlitePlatform extends DefaultPlatform {
 
@@ -47,8 +47,8 @@ class SqlitePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getAutoIncrement()
-	 * @link http://www.sqlite.org/autoinc.html
+	 * @see        Platform#getAutoIncrement()
+	 * @link       http://www.sqlite.org/autoinc.html
 	 */
 	public function getAutoIncrement()
 	{
@@ -57,7 +57,7 @@ class SqlitePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getMaxColumnNameLength()
+	 * @see        Platform#getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -65,7 +65,7 @@ class SqlitePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#hasSize(String)
+	 * @see        Platform#hasSize(String)
 	 */
 	public function hasSize($sqlType) {
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
@@ -75,15 +75,15 @@ class SqlitePlatform extends DefaultPlatform {
 
 	/**
 	 * Escape the string for RDBMS.
-	 * @param string $text
-	 * @return string
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function escapeText($text) {
 		return sqlite_escape_string($text);
 	}
 
 	/**
-	 * @see Platform::quoteIdentifier()
+	 * @see        Platform::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{

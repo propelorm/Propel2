@@ -32,8 +32,8 @@ require_once 'bookstore/BookstoreTestBase.php';
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see BookstoreDataPopulator
- * @author Hans Lellelid <hans@xmpl.org>
+ * @see        BookstoreDataPopulator
+ * @author     Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedPeerTest extends BookstoreTestBase {
 

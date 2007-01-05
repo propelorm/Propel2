@@ -24,10 +24,10 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
 /**
  * Postgresql Platform implementation.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class PgsqlPlatform extends DefaultPlatform {
 
@@ -52,7 +52,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getNativeIdMethod()
+	 * @see        Platform#getNativeIdMethod()
 	 */
 	public function getNativeIdMethod()
 	{
@@ -60,7 +60,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getAutoIncrement()
+	 * @see        Platform#getAutoIncrement()
 	 */
 	public function getAutoIncrement()
 	{
@@ -68,7 +68,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getMaxColumnNameLength()
+	 * @see        Platform#getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -77,15 +77,15 @@ class PgsqlPlatform extends DefaultPlatform {
 
 	/**
 	 * Escape the string for RDBMS.
-	 * @param string $text
-	 * @return string
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function escapeText($text) {
 		return pg_escape_string($text);
 	}
 
 	/**
-	 * @see Platform::getBooleanString()
+	 * @see        Platform::getBooleanString()
 	 */
 	public function getBooleanString($b)
 	{
@@ -96,7 +96,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::supportsNativeDeleteTrigger()
+	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
 	public function supportsNativeDeleteTrigger()
 	{
@@ -104,7 +104,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::hasSize(String)
+	 * @see        Platform::hasSize(String)
 	 * TODO collect info for all platforms
 	 */
 	public function hasSize($sqlType)

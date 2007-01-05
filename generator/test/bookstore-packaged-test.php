@@ -17,8 +17,8 @@
  * of driver-specific things like callable statements (stored procedures), etc.  Perhaps break
  * functionality into class & provide ability to subclass.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
  */
 
 // Setup configuration.  It is expected that the bookstore-conf.php file exists in ../build/conf

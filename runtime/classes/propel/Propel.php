@@ -128,7 +128,7 @@ class Propel
 	private static $logger = null;
 
 	/**
-	 * @var         string The name of the database mapper class
+	 * @var        string The name of the database mapper class
 	 */
 	private static $databaseMapClass = 'DatabaseMap';
 
@@ -535,9 +535,9 @@ class Propel
 	/**
 	 * Autoload function for loading propel dependencies.
 	 *
-	 * @param     string The class name needing loading.
+	 * @param      string The class name needing loading.
 	 *
-	 * @return    boolean TRUE if the class was loaded, false otherwise.
+	 * @return     boolean TRUE if the class was loaded, false otherwise.
 	 */
 	public static function autoload($className)
 	{

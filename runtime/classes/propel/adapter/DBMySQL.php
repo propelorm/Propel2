@@ -23,20 +23,20 @@
 /**
  * This is used in order to connect to a MySQL database.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jon S. Stevens <jon@clearink.com> (Torque)
- * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.adapter
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jon S. Stevens <jon@clearink.com> (Torque)
+ * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 class DBMySQL extends DBAdapter {
 
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string to transform to upper case.
-	 * @return The upper case string.
+	 * @param      in The string to transform to upper case.
+	 * @return     The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -46,8 +46,8 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string whose case to ignore.
-	 * @return The string in a case that can be ignored.
+	 * @param      in The string whose case to ignore.
+	 * @return     The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -57,9 +57,9 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param string String to concatenate.
-	 * @param string String to append.
-	 * @return string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -69,10 +69,10 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param string String to extract from.
-	 * @param int Offset to start from.
-	 * @param int Number of characters to extract.
-	 * @return string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -82,8 +82,8 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param string String to calculate length of.
-	 * @return string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public function strLength($s)
 	{
@@ -94,9 +94,9 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * Locks the specified table.
 	 *
-	 * @param Connection $con The Creole connection to use.
-	 * @param string $table The name of the table to lock.
-	 * @throws PDOException No Statement could be created or
+	 * @param      Connection $con The Creole connection to use.
+	 * @param      string $table The name of the table to lock.
+	 * @throws     PDOException No Statement could be created or
 	 * executed.
 	 */
 	public function lockTable(PDO $con, $table)
@@ -107,9 +107,9 @@ class DBMySQL extends DBAdapter {
 	/**
 	 * Unlocks the specified table.
 	 *
-	 * @param PDO $con The PDO connection to use.
-	 * @param string $table The name of the table to unlock.
-	 * @throws PDOException No Statement could be created or
+	 * @param      PDO $con The PDO connection to use.
+	 * @param      string $table The name of the table to unlock.
+	 * @throws     PDOException No Statement could be created or
 	 * executed.
 	 */
 	public function unlockTable(PDO $con, $table)
@@ -118,7 +118,7 @@ class DBMySQL extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::quoteIdentifier()
+	 * @see        DBAdapter::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -126,7 +126,7 @@ class DBMySQL extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::useQuoteIdentifier()
+	 * @see        DBAdapter::useQuoteIdentifier()
 	 */
 	public function useQuoteIdentifier()
 	{
@@ -134,7 +134,7 @@ class DBMySQL extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::applyLimit()
+	 * @see        DBAdapter::applyLimit()
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{

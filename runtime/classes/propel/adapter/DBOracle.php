@@ -23,22 +23,22 @@
 /**
  * Oracle adapter.
  *
- * @author David Giffin <david@giffin.org> (Propel)
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jon S. Stevens <jon@clearink.com> (Torque)
- * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author Bill Schneider <bschneider@vecna.com> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.adapter
+ * @author     David Giffin <david@giffin.org> (Propel)
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jon S. Stevens <jon@clearink.com> (Torque)
+ * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author     Bill Schneider <bschneider@vecna.com> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 class DBOracle extends DBAdapter {
 
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param string $in The string to transform to upper case.
-	 * @return string The upper case string.
+	 * @param      string $in The string to transform to upper case.
+	 * @return     string The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -48,8 +48,8 @@ class DBOracle extends DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param string $in The string whose case to ignore.
-	 * @return string The string in a case that can be ignored.
+	 * @param      string $in The string whose case to ignore.
+	 * @return     string The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -59,9 +59,9 @@ class DBOracle extends DBAdapter {
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param string String to concatenate.
-	 * @param string String to append.
-	 * @return string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -71,10 +71,10 @@ class DBOracle extends DBAdapter {
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param string String to extract from.
-	 * @param int Offset to start from.
-	 * @param int Number of characters to extract.
-	 * @return string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -84,8 +84,8 @@ class DBOracle extends DBAdapter {
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param string String to calculate length of.
-	 * @return string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public function strLength($s)
 	{
@@ -93,7 +93,7 @@ class DBOracle extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::applyLimit()
+	 * @see        DBAdapter::applyLimit()
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{

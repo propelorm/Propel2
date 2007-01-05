@@ -27,8 +27,8 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
 /**
  * Tests for package handling.
  *
- * @author <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version $Id$
+ * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
+ * @version    $Id$
  */
 class TableTest extends PHPUnit2_Framework_TestCase {
 

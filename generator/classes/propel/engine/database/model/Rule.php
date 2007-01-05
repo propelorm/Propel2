@@ -24,10 +24,10 @@ require_once 'propel/engine/database/model/XMLElement.php';
 /**
  * Data about a validation rule used in an application.
  *
- * @author Michael Aichler <aichler@mediacluster.de> (Propel)
- * @author John McNally <jmcnally@collab.net> (Intake)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
+ * @author     John McNally <jmcnally@collab.net> (Intake)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Rule extends XMLElement {
 
@@ -39,7 +39,7 @@ class Rule extends XMLElement {
 
 	/**
 	 * Sets up the Rule object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -71,8 +71,8 @@ class Rule extends XMLElement {
 
 	/**
 	 * Sets the owning validator for this rule.
-	 * @param Validator $validator
-	 * @see Validator::addRule()
+	 * @param      Validator $validator
+	 * @see        Validator::addRule()
 	 */
 	public function setValidator(Validator $validator)
 	{
@@ -81,7 +81,7 @@ class Rule extends XMLElement {
 
 	/**
 	 * Gets the owning validator for this rule.
-	 * @return Validator
+	 * @return     Validator
 	 */
 	public function getValidator()
 	{
@@ -92,7 +92,7 @@ class Rule extends XMLElement {
 	 * Sets the dot-path name of class to use for rule.
 	 * If no class is specified in XML, then a classname will
 	 * be built based on the 'name' attrib.
-	 * @param string $classname dot-path classname (e.g. myapp.propel.MyValidator)
+	 * @param      string $classname dot-path classname (e.g. myapp.propel.MyValidator)
 	 */
 	public function setClass($classname)
 	{
@@ -103,7 +103,7 @@ class Rule extends XMLElement {
 	 * Gets the dot-path name of class to use for rule.
 	 * If no class was specified, this method will build a default classname
 	 * based on the 'name' attribute.  E.g. 'maxLength' -> 'propel.validator.MaxLengthValidator'
-	 * @return string dot-path classname (e.g. myapp.propel.MyValidator)
+	 * @return     string dot-path classname (e.g. myapp.propel.MyValidator)
 	 */
 	public function getClass()
 	{
@@ -116,8 +116,8 @@ class Rule extends XMLElement {
 	/**
 	 * Sets the name of the validator for this rule.
 	 * This name is used to build the classname if none was specified.
-	 * @param string $name Validator name for this rule (e.g. "maxLength", "required").
-	 * @see getClass()
+	 * @param      string $name Validator name for this rule (e.g. "maxLength", "required").
+	 * @see        getClass()
 	 */
 	public function setName($name)
 	{
@@ -126,7 +126,7 @@ class Rule extends XMLElement {
 
 	/**
 	 * Gets the name of the validator for this rule.
-	 * @return string Validator name for this rule (e.g. "maxLength", "required").
+	 * @return     string Validator name for this rule (e.g. "maxLength", "required").
 	 */
 	public function getName()
 	{
@@ -137,7 +137,7 @@ class Rule extends XMLElement {
 	 * Sets the value parameter for this validator rule.
 	 * Note: not all validators need a value parameter (e.g. 'required' validator
 	 * does not).
-	 * @param string $value
+	 * @param      string $value
 	 */
 	public function setValue($value)
 	{
@@ -146,7 +146,7 @@ class Rule extends XMLElement {
 
 	/**
 	 * Gets the value parameter for this validator rule.
-	 * @return string
+	 * @return     string
 	 */
 	public function getValue()
 	{
@@ -158,8 +158,8 @@ class Rule extends XMLElement {
 	 * This message may be a Gettext msgid (if translation="gettext") or some other
 	 * id for an alternative not-yet-supported translation system.  It may also
 	 * be a simple, single-language string.
-	 * @param string $message
-	 * @see setTranslation()
+	 * @param      string $message
+	 * @see        setTranslation()
 	 */
 	public function setMessage($message)
 	{
@@ -171,8 +171,8 @@ class Rule extends XMLElement {
 	 * This message may be a Gettext msgid (if translation="gettext") or some other
 	 * id for an alternative not-yet-supported translation system.  It may also
 	 * be a simple, single-language string.
-	 * @return string
-	 * @see setTranslation()
+	 * @return     string
+	 * @see        setTranslation()
 	 */
 	public function getMessage()
 	{
@@ -182,7 +182,7 @@ class Rule extends XMLElement {
 
 	/**
 	 * Create XML (string) representation of this object.
-	 * @return string
+	 * @return     string
 	 */
 	public function toString()
 	{

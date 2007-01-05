@@ -40,7 +40,7 @@ define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../etc/lob');
  * inserting directly into the database.  This will have a performance hit, but will
  * benefit from increased flexibility (as does anything using Propel).
  *
- * @author Hans Lellelid <hans@xmpl.org>
+ * @author     Hans Lellelid <hans@xmpl.org>
  */
 class BookstoreDataPopulator {
 

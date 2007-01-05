@@ -24,10 +24,10 @@ require_once 'propel/engine/platform/DefaultPlatform.php';
 /**
  * MySql Platform implementation.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 class MysqlPlatform extends DefaultPlatform {
 
@@ -49,7 +49,7 @@ class MysqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getAutoIncrement()
+	 * @see        Platform#getAutoIncrement()
 	 */
 	public function getAutoIncrement()
 	{
@@ -57,7 +57,7 @@ class MysqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#getMaxColumnNameLength()
+	 * @see        Platform#getMaxColumnNameLength()
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -65,7 +65,7 @@ class MysqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform::supportsNativeDeleteTrigger()
+	 * @see        Platform::supportsNativeDeleteTrigger()
 	 */
 	public function supportsNativeDeleteTrigger()
 	{
@@ -78,7 +78,7 @@ class MysqlPlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * @see Platform#hasSize(String)
+	 * @see        Platform#hasSize(String)
 	 */
 	public function hasSize($sqlType) {
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
@@ -88,15 +88,15 @@ class MysqlPlatform extends DefaultPlatform {
 
 	/**
 	 * Escape the string for RDBMS.
-	 * @param string $text
-	 * @return string
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function escapeText($text) {
 		return mysql_escape_string($text);
 	}
 
 	/**
-	 * @see Platform::quoteIdentifier()
+	 * @see        Platform::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{

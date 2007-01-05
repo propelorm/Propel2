@@ -28,14 +28,14 @@
  * utility methods which ease execution of cross-database queries and
  * the implementation of concrete Peers.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
- * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author Stephen Haberman <stephenh@chase3000.com> (Torque)
- * @version $Revision$
- * @package propel.util
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
+ * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author     Stephen Haberman <stephenh@chase3000.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.util
  */
 class BasePeer
 {
@@ -96,14 +96,14 @@ class BasePeer
 	 * Method to perform deletes based on values and keys in a
 	 * Criteria.
 	 *
-	 * @param Criteria $criteria The criteria to use.
-	 * @param PDO $con A PDO connection object.
-	 * @return int	The number of rows affected by last statement execution.  For most
+	 * @param      Criteria $criteria The criteria to use.
+	 * @param      PDO $con A PDO connection object.
+	 * @return     int	The number of rows affected by last statement execution.  For most
 	 * 				uses there is only one delete statement executed, so this number
 	 * 				will correspond to the number of rows affected by the call to this
 	 * 				method.  Note that the return value does require that this information
 	 * 				is returned (supported) by the PDO driver.
-	 * @throws PropelException
+	 * @throws     PropelException
 	 */
 	public static function doDelete(Criteria $criteria, PDO $con)
 	{
@@ -175,12 +175,12 @@ class BasePeer
 	 * }
 	 * </code>
 	 *
-	 * @param string $tableName The name of the table to empty.
-	 * @param PDO $con A PDO connection object.
-	 * @return int	The number of rows affected by the statement.  Note
+	 * @param      string $tableName The name of the table to empty.
+	 * @param      PDO $con A PDO connection object.
+	 * @return     int	The number of rows affected by the statement.  Note
 	 * 				that the return value does require that this information
 	 * 				is returned (supported) by the Creole db driver.
-	 * @throws PropelException - wrapping SQLException caught from statement execution.
+	 * @throws     PropelException - wrapping SQLException caught from statement execution.
 	 */
 	public static function doDeleteAll($tableName, PDO $con)
 	{
@@ -212,11 +212,11 @@ class BasePeer
 	 * If no primary key is defined for the table the values will be
 	 * inserted as specified in Criteria and null will be returned.
 	 *
-	 * @param Criteria $criteria Object containing values to insert.
-	 * @param PDO $con A PDO connection.
-	 * @return mixed The primary key for the new row if (and only if!) the primary key
+	 * @param      Criteria $criteria Object containing values to insert.
+	 * @param      PDO $con A PDO connection.
+	 * @return     mixed The primary key for the new row if (and only if!) the primary key
 	 *				is auto-generated.  Otherwise will return <code>null</code>.
-	 * @throws PropelException
+	 * @throws     PropelException
 	 */
 	public static function doInsert(Criteria $criteria, PDO $con) {
 
@@ -309,17 +309,17 @@ class BasePeer
 	 * WHERE some_column = some value AND could_have_another_column =
 	 * another value AND so on.
 	 *
-	 * @param $selectCriteria A Criteria object containing values used in where
+	 * @param      $selectCriteria A Criteria object containing values used in where
 	 *		clause.
-	 * @param $updateValues A Criteria object containing values used in set
+	 * @param      $updateValues A Criteria object containing values used in set
 	 *		clause.
-	 * @param PDO $con The PDO connection object to use.
-	 * @return int	The number of rows affected by last update statement.  For most
+	 * @param      PDO $con The PDO connection object to use.
+	 * @return     int	The number of rows affected by last update statement.  For most
 	 * 				uses there is only one update statement executed, so this number
 	 * 				will correspond to the number of rows affected by the call to this
 	 * 				method.  Note that the return value does require that this information
 	 * 				is returned (supported) by the Creole db driver.
-	 * @throws PropelException
+	 * @throws     PropelException
 	 */
 	public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, PDO $con) {
 
@@ -387,11 +387,11 @@ class BasePeer
 	/**
 	 * Executes query build by createSelectSql() and returns ResultSet.
 	 *
-	 * @param Criteria $criteria A Criteria.
-	 * @param PDO $con A PDO connection to use.
-	 * @return ResultSet The resultset.
-	 * @throws PropelException
-	 * @see createSelectSql()
+	 * @param      Criteria $criteria A Criteria.
+	 * @param      PDO $con A PDO connection to use.
+	 * @return     ResultSet The resultset.
+	 * @throws     PropelException
+	 * @see        createSelectSql()
 	 */
 	public static function doSelect(Criteria $criteria, PDO $con = null)
 	{
@@ -439,10 +439,10 @@ class BasePeer
 	/**
 	 * Populates values in a prepared statement.
 	 *
-	 * @param PreparedStatement $stmt
-	 * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
-	 * @param DatabaseMap $dbMap
-	 * @return int The number of params replaced.
+	 * @param      PreparedStatement $stmt
+	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
+	 * @param      DatabaseMap $dbMap
+	 * @return     int The number of params replaced.
 	 */
 	private static function populateStmtValues($stmt, $params, DatabaseMap $dbMap, DBAdapter $db)
 	{
@@ -487,9 +487,9 @@ class BasePeer
 	/**
 	 * Applies any validators that were defined in the schema to the specified columns.
 	 *
-	 * @param string $dbName The name of the database
-	 * @param string $tableName The name of the table
-	 * @param array $columns Array of column names as key and column values as value.
+	 * @param      string $dbName The name of the database
+	 * @param      string $tableName The name of the table
+	 * @param      array $columns Array of column names as key and column values as value.
 	 */
 	public static function doValidate($dbName, $tableName, $columns)
 	{
@@ -516,10 +516,10 @@ class BasePeer
 	 * Helper method which returns the primary key contained
 	 * in the given Criteria object.
 	 *
-	 * @param Criteria $criteria A Criteria.
-	 * @return ColumnMap If the Criteria object contains a primary
+	 * @param      Criteria $criteria A Criteria.
+	 * @return     ColumnMap If the Criteria object contains a primary
 	 *		  key, or null if it doesn't.
-	 * @throws PropelException
+	 * @throws     PropelException
 	 */
 	private static function getPrimaryKey(Criteria $criteria)
 	{
@@ -561,10 +561,10 @@ class BasePeer
 	 * to be set before the statement is executed.  The reason we do it this way
 	 * is to let the PDO layer handle all escaping & value formatting.
 	 *
-	 * @param Criteria $criteria Criteria for the SELECT query.
-	 * @param array &$params Parameters that are to be replaced in prepared statement.
-	 * @return string
-	 * @throws PropelException Trouble creating the query string.
+	 * @param      Criteria $criteria Criteria for the SELECT query.
+	 * @param      array &$params Parameters that are to be replaced in prepared statement.
+	 * @return     string
+	 * @throws     PropelException Trouble creating the query string.
 	 */
 	public static function createSelectSql(Criteria $criteria, &$params) {
 
@@ -874,9 +874,9 @@ class BasePeer
 	/**
 	 * Builds a params array, like the kind populated by Criterion::appendPsTo().
 	 * This is useful for building an array even when it is not using the appendPsTo() method.
-	 * @param array $columns
-	 * @param Criteria $values
-	 * @return array params array('column' => ..., 'table' => ..., 'value' => ...)
+	 * @param      array $columns
+	 * @param      Criteria $values
+	 * @return     array params array('column' => ..., 'table' => ..., 'value' => ...)
 	 */
 	private static function buildParams($columns, Criteria $values) {
 		$params = array();
@@ -893,8 +893,8 @@ class BasePeer
 	* This function searches for the given validator $name under propel/validator/$name.php,
 	* imports and caches it.
 	*
-	* @param string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
-	* @return Validator object or null if not able to instantiate validator class (and error will be logged in this case)
+	* @param      string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
+	* @return     Validator object or null if not able to instantiate validator class (and error will be logged in this case)
 	*/
 	public static function getValidator($classname)
 	{

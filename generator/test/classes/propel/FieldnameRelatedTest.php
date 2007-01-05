@@ -37,7 +37,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  * need the BookstoreTestBase's setUp and tearDown (database de/population)
  * behaviour. The tests will run faster this way.
  *
- * @author Sven Fuchs <svenfuchs@artweb-design.de>
+ * @author     Sven Fuchs <svenfuchs@artweb-design.de>
  */
 class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
 

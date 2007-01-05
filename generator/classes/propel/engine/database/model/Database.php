@@ -28,14 +28,14 @@ include_once 'propel/engine/database/model/Table.php';
 /**
  * A class for holding application data structures.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author John McNally<jmcnally@collab.net> (Torque)
- * @author Martin Poeschl<mpoeschl@marmot.at> (Torque)
- * @author Daniel Rall<dlr@collab.net> (Torque)
- * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author     John McNally<jmcnally@collab.net> (Torque)
+ * @author     Martin Poeschl<mpoeschl@marmot.at> (Torque)
+ * @author     Daniel Rall<dlr@collab.net> (Torque)
+ * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Database extends XMLElement {
 
@@ -59,7 +59,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Sets up the Database object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -77,7 +77,7 @@ class Database extends XMLElement {
 	/**
 	 * Returns the Platform implementation for this database.
 	 *
-	 * @return Platform a Platform implementation
+	 * @return     Platform a Platform implementation
 	 */
 	public function getPlatform()
 	{
@@ -87,7 +87,7 @@ class Database extends XMLElement {
 	/**
 	 * Sets the Platform implementation for this database.
 	 *
-	 * @param Platform $platform A Platform implementation
+	 * @param      Platform $platform A Platform implementation
 	 */
 	public function setPlatform($platform)
 	{
@@ -112,7 +112,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of package.
-	 * @return value of package.
+	 * @return     value of package.
 	 */
 	public function getPackage()
 	{
@@ -121,7 +121,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of package.
-	 * @param v  Value to assign to package.
+	 * @param      v  Value to assign to package.
 	 */
 	public function setPackage($v)
 	{
@@ -130,7 +130,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of baseClass.
-	 * @return value of baseClass.
+	 * @return     value of baseClass.
 	 */
 	public function getBaseClass()
 	{
@@ -139,7 +139,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of baseClass.
-	 * @param v  Value to assign to baseClass.
+	 * @param      v  Value to assign to baseClass.
 	 */
 	public function setBaseClass($v)
 	{
@@ -148,7 +148,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of basePeer.
-	 * @return value of basePeer.
+	 * @return     value of basePeer.
 	 */
 	public function getBasePeer()
 	{
@@ -157,7 +157,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of basePeer.
-	 * @param v Value to assign to basePeer.
+	 * @param      v Value to assign to basePeer.
 	 */
 	public function setBasePeer($v)
 	{
@@ -166,7 +166,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of defaultIdMethod.
-	 * @return value of defaultIdMethod.
+	 * @return     value of defaultIdMethod.
 	 */
 	public function getDefaultIdMethod()
 	{
@@ -175,7 +175,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of defaultIdMethod.
-	 * @param v Value to assign to defaultIdMethod.
+	 * @param      v Value to assign to defaultIdMethod.
 	 */
 	public function setDefaultIdMethod($v)
 	{
@@ -185,7 +185,7 @@ class Database extends XMLElement {
 	/**
 	 * Get the value of defaultPHPNamingMethod which specifies the
 	 * method for converting schema names for table and column to PHP names.
-	 * @return string The default naming conversion used by this database.
+	 * @return     string The default naming conversion used by this database.
 	 */
 	public function getDefaultPhpNamingMethod()
 	{
@@ -194,7 +194,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of defaultPHPNamingMethod.
-	 * @param string $v The default naming conversion for this database to use.
+	 * @param      string $v The default naming conversion for this database to use.
 	 */
 	public function setDefaultPhpNamingMethod($v)
 	{
@@ -204,7 +204,7 @@ class Database extends XMLElement {
 	/**
 	 * Get the value of defaultTranslateMethod which specifies the
 	 * method for translate validator error messages.
-	 * @return string The default translate method.
+	 * @return     string The default translate method.
 	 */
 	public function getDefaultTranslateMethod()
 	{
@@ -213,7 +213,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of defaultTranslateMethod.
-	 * @param string $v The default translate method to use.
+	 * @param      string $v The default translate method to use.
 	 */
 	public function setDefaultTranslateMethod($v)
 	{
@@ -222,7 +222,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of heavyIndexing.
-	 * @return boolean Value of heavyIndexing.
+	 * @return     boolean Value of heavyIndexing.
 	 */
 	public function isHeavyIndexing()
 	{
@@ -231,7 +231,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Set the value of heavyIndexing.
-	 * @param boolean $v  Value to assign to heavyIndexing.
+	 * @param      boolean $v  Value to assign to heavyIndexing.
 	 */
 	public function setHeavyIndexing($v)
 	{
@@ -248,8 +248,8 @@ class Database extends XMLElement {
 
 	/**
 	 * Return the table with the specified name.
-	 * @param string $name The name of the table (e.g. 'my_table')
-	 * @return Table a Table object or null if it doesn't exist
+	 * @param      string $name The name of the table (e.g. 'my_table')
+	 * @return     Table a Table object or null if it doesn't exist
 	 */
 	public function getTable($name)
 	{
@@ -261,8 +261,8 @@ class Database extends XMLElement {
 
 	/**
 	 * Return the table with the specified phpName.
-	 * @param string $phpName the PHP Name of the table (e.g. 'MyTable')
-	 * @return Table a Table object or null if it doesn't exist
+	 * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
+	 * @return     Table a Table object or null if it doesn't exist
 	 */
 	public function getTableByPhpName($phpName)
 	{
@@ -313,7 +313,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Adds Domain object from <domain> tag.
-	 * @param mixed XML attributes (array) or Domain object.
+	 * @param      mixed XML attributes (array) or Domain object.
 	 */
 	public function addDomain($data) {
 
@@ -332,7 +332,7 @@ class Database extends XMLElement {
 
 	/**
 	 * Get already configured Domain object by name.
-	 * @return Domain
+	 * @return     Domain
 	 */
 	public function getDomain($domainName) {
 		if (!isset($this->domainMap[$domainName])) {

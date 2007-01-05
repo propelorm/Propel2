@@ -34,12 +34,12 @@
  * <i>zero code change</i> and minimal configuration file
  * modifications.</p>
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jon S. Stevens <jon@latchkey.com> (Torque)
- * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.adapter
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jon S. Stevens <jon@latchkey.com> (Torque)
+ * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 abstract class DBAdapter {
 
@@ -49,7 +49,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Creole driver to Propel adapter map.
-	 * @var array
+	 * @var        array
 	 */
 	private static $adapters = array(
 								    'mysql' => 'DBMySQL',
@@ -66,10 +66,10 @@ abstract class DBAdapter {
 	 * Creates a new instance of the database adapter associated
 	 * with the specified Creole driver.
 	 *
-	 * @param string $driver The name of the Propel/Creole driver to
+	 * @param      string $driver The name of the Propel/Creole driver to
 	 * create a new adapter instance for or a shorter form adapter key.
-	 * @return DBAdapter An instance of a Propel database adapter.
-	 * @throws PropelException if the adapter could not be instantiated.
+	 * @return     DBAdapter An instance of a Propel database adapter.
+	 * @throws     PropelException if the adapter could not be instantiated.
 	 */
 	public static function factory($driver) {
 		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
@@ -85,8 +85,8 @@ abstract class DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string to transform to upper case.
-	 * @return string The upper case string.
+	 * @param      in The string to transform to upper case.
+	 * @return     string The upper case string.
 	 */
 	public abstract function toUpperCase($in);
 
@@ -95,7 +95,7 @@ abstract class DBAdapter {
 	 * a piece of text used in a SQL statement (generally a single
 	 * quote).
 	 *
-	 * @return string The text delimeter.
+	 * @return     string The text delimeter.
 	 */
 	public function getStringDelimiter()
 	{
@@ -105,8 +105,8 @@ abstract class DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param string $in The string whose case to ignore.
-	 * @return string The string in a case that can be ignored.
+	 * @param      string $in The string whose case to ignore.
+	 * @return     string The string in a case that can be ignored.
 	 */
 	public abstract function ignoreCase($in);
 
@@ -116,8 +116,8 @@ abstract class DBAdapter {
 	 * (Interbase for example) does not use the same SQL in ORDER BY
 	 * and other clauses.
 	 *
-	 * @param string $in The string whose case to ignore.
-	 * @return string The string in a case that can be ignored.
+	 * @param      string $in The string whose case to ignore.
+	 * @return     string The string in a case that can be ignored.
 	 */
 	public function ignoreCaseInOrderBy($in)
 	{
@@ -127,35 +127,35 @@ abstract class DBAdapter {
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param string String to concatenate.
-	 * @param string String to append.
-	 * @return string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public abstract function concatString($s1, $s2);
 
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param string String to extract from.
-	 * @param int Offset to start from.
-	 * @param int Number of characters to extract.
-	 * @return string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public abstract function subString($s, $pos, $len);
 
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param string String to calculate length of.
-	 * @return string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public abstract function strLength($s);
 
 
 	/**
 	 * Quotes database objec identifiers (table names, col names, sequences, etc.).
-	 * @param string $text The identifier to quote.
-	 * @return string The quoted identifier.
+	 * @param      string $text The identifier to quote.
+	 * @return     string The quoted identifier.
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -164,7 +164,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Returns the native ID method for this RDBMS.
-	 * @return int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
+	 * @return     int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
 	 */
 	protected function getIdMethod()
 	{
@@ -173,7 +173,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isGetIdBeforeInsert()
 	{
@@ -182,7 +182,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isGetIdAfterInsert()
 	{
@@ -191,7 +191,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
-	 * @return mixed
+	 * @return     mixed
 	 */
 	public function getId(PDO $con, $name = null)
 	{
@@ -200,7 +200,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Returns timestamp formatter string for use in date() function.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTimestampFormatter()
 	{
@@ -209,7 +209,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Returns date formatter string for use in date() function.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDateFormatter()
 	{
@@ -218,7 +218,7 @@ abstract class DBAdapter {
 
 	/**
 	 * Returns time formatter string for use in date() function.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTimeFormatter()
 	{
@@ -231,8 +231,8 @@ abstract class DBAdapter {
 	 *
 	 * it`s a workaround...!!!
 	 *
-	 * @todo	should be abstract
-	 * @return	boolean
+	 * @todo       should be abstract
+	 * @return     boolean
 	 * @deprecated
 	 */
 	public function useQuoteIdentifier() {

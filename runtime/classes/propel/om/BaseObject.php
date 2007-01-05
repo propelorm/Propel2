@@ -24,37 +24,37 @@
  * This class contains attributes and methods that are used by all
  * business objects within the system.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Frank Y. Kim <frank.kim@clearink.com> (Torque)
- * @author John D. McNally <jmcnally@collab.net> (Torque)
- * @version $Revision$
- * @package propel.om
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
+ * @author     John D. McNally <jmcnally@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.om
  */
 abstract class BaseObject {
 
 	/**
 	 * attribute to determine if this object has previously been saved.
-	 * @var boolean
+	 * @var        boolean
 	 */
 	private $_new = true;
 
 	/**
 	 * attribute to determine whether this object has been deleted.
-	 * @var boolean
+	 * @var        boolean
 	 */
 	private $_deleted = false;
 
 	/**
 	 * The columns that have been modified in current object.
 	 * Tracking modified columns allows us to only update modified columns.
-	 * @var array
+	 * @var        array
 	 */
 	protected $modifiedColumns = array();
 
 	/**
 	 * Returns whether the object has been modified.
 	 *
-	 * @return boolean True if the object has been modified.
+	 * @return     boolean True if the object has been modified.
 	 */
 	public function isModified()
 	{
@@ -64,8 +64,8 @@ abstract class BaseObject {
 	/**
 	 * Has specified column been modified?
 	 *
-	 * @param string $col
-	 * @return boolean True if $col has been modified.
+	 * @param      string $col
+	 * @return     boolean True if $col has been modified.
 	 */
 	public function isColumnModified($col)
 	{
@@ -77,7 +77,7 @@ abstract class BaseObject {
 	 * be false, if the object was retrieved from storage or was created
 	 * and then saved.
 	 *
-	 * @return true, if the object has never been persisted.
+	 * @return     true, if the object has never been persisted.
 	 */
 	public function isNew()
 	{
@@ -88,7 +88,7 @@ abstract class BaseObject {
 	 * Setter for the isNew attribute.  This method will be called
 	 * by Propel-generated children and Peers.
 	 *
-	 * @param boolean $b the state of the object.
+	 * @param      boolean $b the state of the object.
 	 */
 	public function setNew($b)
 	{
@@ -97,7 +97,7 @@ abstract class BaseObject {
 
 	/**
 	 * Whether this object has been deleted.
-	 * @return boolean The deleted state of this object.
+	 * @return     boolean The deleted state of this object.
 	 */
 	public function isDeleted()
 	{
@@ -106,8 +106,8 @@ abstract class BaseObject {
 
 	/**
 	 * Specify whether this object has been deleted.
-	 * @param boolean $b The deleted state of this object.
-	 * @return void
+	 * @param      boolean $b The deleted state of this object.
+	 * @return     void
 	 */
 	public function setDeleted($b)
 	{
@@ -116,8 +116,8 @@ abstract class BaseObject {
 
 	/**
 	 * Sets the modified state for the object to be false.
-	 * @param string $col If supplied, only the specified column is reset.
-	 * @return void
+	 * @param      string $col If supplied, only the specified column is reset.
+	 * @return     void
 	 */
 	public function resetModified($col = null)
 	{
@@ -137,8 +137,8 @@ abstract class BaseObject {
 	 * <code>obj</code> is an instance of <code>BaseObject</code>, delegates to
 	 * <code>equals(BaseObject)</code>.  Otherwise, returns <code>false</code>.
 	 *
-	 * @param obj The object to compare to.
-	 * @return    Whether equal to the object specified.
+	 * @param      obj The object to compare to.
+	 * @return     Whether equal to the object specified.
 	 */
 	public function equals($obj)
 	{
@@ -159,7 +159,7 @@ abstract class BaseObject {
 	 * If the primary key is not <code>null</code>, return the hashcode of the
 	 * primary key.  Otherwise calls <code>Object.hashCode()</code>.
 	 *
-	 * @return int Hashcode
+	 * @return     int Hashcode
 	 */
 	public function hashCode()
 	{
@@ -173,9 +173,9 @@ abstract class BaseObject {
 	/**
 	 * Logs a message using Propel::log().
 	 *
-	 * @param string $msg
-	 * @param int $priority One of the Propel::LOG_* logging levels
-	 * @return boolean
+	 * @param      string $msg
+	 * @param      int $priority One of the Propel::LOG_* logging levels
+	 * @return     boolean
 	 */
 	protected function log($msg, $priority = Propel::LOG_INFO)
 	{

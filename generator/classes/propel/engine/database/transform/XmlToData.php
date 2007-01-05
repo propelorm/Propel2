@@ -26,13 +26,13 @@ require_once 'phing/parser/AbstractHandler.php';
  * A Class that is used to parse an input xml schema file and creates an
  * AppData object.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @author Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.transform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author     Fedor Karpelevitch <fedor.karpelevitch@home.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.transform
  */
 class XmlToData extends AbstractHandler {
 
@@ -51,7 +51,7 @@ class XmlToData extends AbstractHandler {
 	 * This class is passed the Database object so that it knows what to expect from
 	 * the XML file.
 	 *
-	 * @param Database $database
+	 * @param      Database $database
 	 */
 	public function __construct(Database $database, $encoding = 'iso-8859-1')
 	{
@@ -124,7 +124,7 @@ class XmlToData extends AbstractHandler {
 	/**
 	 * Handles closing elements of the xml file.
 	 *
-	 * @param $name The local name (without prefix), or the empty string if
+	 * @param      $name The local name (without prefix), or the empty string if
 	 *         Namespace processing is not being performed.
 	 */
 	public function endElement($name)
@@ -138,7 +138,7 @@ class XmlToData extends AbstractHandler {
 
 	/**
 	 * "inner class"
-	 * @package propel.engine.database.transform
+	 * @package    propel.engine.database.transform
 	 */
 	class DataRow
 	{
@@ -164,7 +164,7 @@ class XmlToData extends AbstractHandler {
 
 	/**
 	 * "inner" class
-	 * @package propel.engine.database.transform
+	 * @package    propel.engine.database.transform
 	 */
 	class ColumnValue {
 

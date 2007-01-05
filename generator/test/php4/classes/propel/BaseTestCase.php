@@ -26,11 +26,11 @@ require_once 'PHPUnit/TestCase.php';
  * Base functionality to be extended by all Propel test cases.  Test
  * case implementations are used to automate unit testing via PHPUnit.
  *
- * @author Michael Aichler <aichler@mediacluster.de> (Propel)
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Christopher Elkins <celkins@scardini.com> (Torque)
- * @version $Revision$
+ * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author     Christopher Elkins <celkins@scardini.com> (Torque)
+ * @version    $Revision$
  */
 class BaseTestCase extends PHPUnit_TestCase
 {
@@ -58,7 +58,7 @@ class BaseTestCase extends PHPUnit_TestCase
   * Initialize Propel on the first setUp().  Subclasses which
   * override setUp() must call super.setUp() as their first action.
   *
-  * @return void
+  * @return     void
   */
   function setUp()
   {

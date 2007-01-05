@@ -26,10 +26,10 @@ include_once 'propel/engine/EngineException.php';
 /**
  * Information about indices of a table.
  *
- * @author Jason van Zyl <vanzyl@apache.org>
- * @author Daniel Rall <dlr@finemaltcoding.com>
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Jason van Zyl <vanzyl@apache.org>
+ * @author     Daniel Rall <dlr@finemaltcoding.com>
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Index extends XMLElement {
 
@@ -39,18 +39,18 @@ class Index extends XMLElement {
 	private $indexName;
 	private $parentTable;
 
-	/** @var array string[] */
+	/** @var        array string[] */
 	private $indexColumns;
 
-	/** @var array  */
+	/** @var        array  */
 	private $indexColumnSizes = array();
 
 	/**
 	 * Creates a new instance with default characteristics (no name or
 	 * parent table, small column list size allocation, non-unique).
 	 *
-	 * @param Table $table
-	 * @param array $indexColumns
+	 * @param      Table $table
+	 * @param      array $indexColumns
 	 */
 	public function __construct(Table $table, $indexColumns = array())
 	{
@@ -91,7 +91,7 @@ class Index extends XMLElement {
 
 	/**
 	 * Sets up the Index object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -99,7 +99,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see #isUnique()
+	 * @see        #isUnique()
 	 * @deprecated Use isUnique() instead.
 	 */
 	public function getIsUnique()
@@ -116,7 +116,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see #getName()
+	 * @see        #getName()
 	 * @deprecated Use getName() instead.
 	 */
 	public function getIndexName()
@@ -141,7 +141,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see #setName(String name)
+	 * @see        #setName(String name)
 	 * @deprecated Use setName(String name) instead.
 	 */
 	public function setIndexName($name)
@@ -183,7 +183,7 @@ class Index extends XMLElement {
 
 	/**
 	 * Adds a new column to an index.
-	 * @param array $attrib The attribute array from XML parser.
+	 * @param      array $attrib The attribute array from XML parser.
 	 */
 	public function addColumn($attrib)
 	{
@@ -196,8 +196,8 @@ class Index extends XMLElement {
 
 	/**
 	 * Whether there is a size for the specified column.
-	 * @param string $name
-	 * @return boolean
+	 * @param      string $name
+	 * @return     boolean
 	 */
 	public function hasColumnSize($name)
 	{
@@ -206,8 +206,8 @@ class Index extends XMLElement {
 
 	/**
 	 * Returns the size for the specified column, if given.
-	 * @param string $name
-	 * @return numeric The size or NULL
+	 * @param      string $name
+	 * @return     numeric The size or NULL
 	 */
 	public function getColumnSize($name)
 	{
@@ -218,7 +218,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see #getColumnList()
+	 * @see        #getColumnList()
 	 * @deprecated Use getColumnList() instead (which is not deprecated too!)
 	 */
 	public function getIndexColumnList()
@@ -236,7 +236,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see #getColumns()
+	 * @see        #getColumns()
 	 * @deprecated Use getColumns() instead.
 	 */
 	public function getIndexColumns()
@@ -246,7 +246,7 @@ class Index extends XMLElement {
 
 	/**
 	 * Return the list of local columns. You should not edit this list.
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	public function getColumns()
 	{

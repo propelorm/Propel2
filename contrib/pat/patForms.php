@@ -5,13 +5,13 @@
  *
  * $Id$
  *
- * @package		patForms
- * @author		Sebastian Mordziol <argh@php-tools.net>
- * @author		gERD Schaufelberger <gerd@php-tools.net>
- * @author		Stephan Schmidt <schst@php-tools.net>
- * @copyright	2003-2004 PHP Application Tools
- * @license		LGPL
- * @link		http://www.php-tools.net
+ * @package    patForms
+ * @author     Sebastian Mordziol <argh@php-tools.net>
+ * @author     gERD Schaufelberger <gerd@php-tools.net>
+ * @author     Stephan Schmidt <schst@php-tools.net>
+ * @copyright  2003-2004 PHP Application Tools
+ * @license    LGPL
+ * @link       http://www.php-tools.net
  */
 
 /**
@@ -30,14 +30,14 @@ include_once PATFORMS_INCLUDE_PATH . "/Element.php";
  * error definition: renderer base class file (renderers/_base.php) could not
  * be found.
  *
- * @see	patForms::_createModule()
+ * @see        patForms::_createModule()
  */
 define( "PATFORMS_ERROR_NO_MODULE_BASE_FILE", 1001 );
 
 /**
  * error definition: the specified renderer could not be found.
  *
- * @see	patForms::_createModule()
+ * @see        patForms::_createModule()
  */
 define( "PATFORMS_ERROR_MODULE_NOT_FOUND", 1002 );
 
@@ -46,8 +46,8 @@ define( "PATFORMS_ERROR_MODULE_NOT_FOUND", 1002 );
  * is not an object. Use the {@link patForms::createElement()} method to
  * create an element object.
  *
- * @see	patForms::addElement()
- * @see	patForms::createElement()
+ * @see        patForms::addElement()
+ * @see        patForms::createElement()
  */
 define( "PATFORMS_ERROR_ELEMENT_IS_NO_OBJECT", 1003 );
 
@@ -66,22 +66,22 @@ define( "PATFORMS_ERROR_ELEMENT_NOT_FOUND", 1012 );
  * set a renderer object via the {@link patForms::setRenderer()} method. To create
  * a renderer, use the {@link patForms::createRenderer()} method.
  *
- * @see	patForms::setRenderer()
- * @see	patForms::createRenderer()
+ * @see        patForms::setRenderer()
+ * @see        patForms::createRenderer()
  */
 define( "PATFORMS_ERROR_NO_RENDERER_SET", 1013 );
 
 /**
  * invalid renderer
  *
- * @see	createRenderer()
+ * @see        createRenderer()
  */
 define( "PATFORMS_ERROR_INVALID_RENDERER", 1014 );
 
 /**
  * invalid method
  *
- * @see	setMethod()
+ * @see        setMethod()
  */
 define( "PATFORMS_ERROR_INVALID_METHOD", 1015 );
 
@@ -182,8 +182,8 @@ define('PATFORMS_VALUES_PREFIXED', 2);
 /**
  * Static patForms properties - used to emulate pre-PHP5 static properties.
  *
- * @see	setStaticProperty()
- * @see	getStaticProperty()
+ * @see        setStaticProperty()
+ * @see        getStaticProperty()
  */
 $GLOBALS['_patForms']	=	array(
 	'format'			=>	'html',
@@ -197,31 +197,31 @@ $GLOBALS['_patForms']	=	array(
  * patForms form manager class - serialize form elements into any given output format
  * using element classes, and build the output via renderer classes.
  *
- * @package		patForms
- * @author		Sebastian Mordziol <argh@php-tools.net>
- * @author		gERD Schaufelberger <gerd@php-tools.net>
- * @author		Stephan Schmidt <schst@php-tools.net>
- * @copyright	2003-2004 PHP Application Tools
- * @license		LGPL
- * @link		http://www.php-tools.net
- * @version		0.9.0alpha
- * @todo		check the clientside functionality, as that can lead to broken pages
+ * @package    patForms
+ * @author     Sebastian Mordziol <argh@php-tools.net>
+ * @author     gERD Schaufelberger <gerd@php-tools.net>
+ * @author     Stephan Schmidt <schst@php-tools.net>
+ * @copyright  2003-2004 PHP Application Tools
+ * @license    LGPL
+ * @link       http://www.php-tools.net
+ * @version    0.9.0alpha
+ * @todo       check the clientside functionality, as that can lead to broken pages
  */
 class patForms
 {
    /**
 	* javascript that will displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $globalJavascript	=	array();
 
    /**
 	* javascript that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceJavascript	=	array();
 
@@ -229,17 +229,17 @@ class patForms
 	* stores the mode for the form. It defaults to 'default', and is only overwritten if
 	* set specifically. It is passed on to any elements you create.
 	*
-	* @access	private
-	* @see		setMode()
+	* @access     private
+	* @see        setMode()
 	*/
 	var $mode	=	'default';
 
    /**
 	* XML entities
 	*
-	* @access	private
-	* @see		toXML()
-	* @todo		This is redundant to the Element's xmlEntities property - find a way to keep this in one place
+	* @access     private
+	* @see        toXML()
+	* @todo       This is redundant to the Element's xmlEntities property - find a way to keep this in one place
 	*/
 	var $xmlEntities = array(
 		"<"	=>	"&lt;",
@@ -253,8 +253,8 @@ class patForms
 	* stores the format for the element. It defaults to 'html', and is only overwritten if
 	* set specifically. It is passed on to any elements you create.
 	*
-	* @access	private
-	* @see		setFormat()
+	* @access     private
+	* @see        setFormat()
 	*/
 	var $format	=	'html';
 
@@ -262,54 +262,54 @@ class patForms
 	* stores the flag telling the form whether it has been submitted - this is passed on to any
 	* elements you create.
 	*
-	* @access	private
-	* @see		setSubmitted()
+	* @access     private
+	* @see        setSubmitted()
 	*/
 	var $submitted	=	false;
 
    /**
 	* stores the element objects of this form.
-	* @access	private
-	* @see		addElement()
+	* @access     private
+	* @see        addElement()
 	*/
 	var $elements	=	array();
 
    /**
 	* stores the current element count for this form, used to generate the ids for each element
-	* @access	private
-	* @see		getElementId()
+	* @access     private
+	* @see        getElementId()
 	*/
 	var $elementCounter	=	0;
 
    /**
 	* stores a renderer
-	* @access	private
-	* @see		setRenderer(), renderForm()
+	* @access     private
+	* @see        setRenderer(), renderForm()
 	*/
 	var $renderer		=	null;
 
    /**
 	* stores the locale to use when adding validation errors for the whole form.
 	*
-	* @access	private
-	* @var		string	$locale
-	* @see		setLocale()
+	* @access     private
+	* @var        string	$locale
+	* @see        setLocale()
 	*/
 	var	$locale		=	'C';
 
    /**
 	* stores custom locale
 	*
-	* @access	private
-	* @var		array
-	* @see		setLocale()
+	* @access     private
+	* @var        array
+	* @see        setLocale()
 	*/
 	var	$customLocales = array();
 
    /**
 	* stores the element name
-	* @access	private
-	* @see		getElementName()
+	* @access     private
+	* @see        getElementName()
 	*/
 	var $elementName = 'Form';
 
@@ -317,9 +317,9 @@ class patForms
 	* flag to indicate, whether form should be validated automatically
 	* by renderForm()
 	*
-	* @access	private
-	* @var		string
-	* @see		setAutoValidate(), renderForm()
+	* @access     private
+	* @var        string
+	* @see        setAutoValidate(), renderForm()
 	*/
 	var	$autoValidate	=	false;
 
@@ -327,37 +327,37 @@ class patForms
 	* name of the variable that indicates, whether the form has
 	* been submitted.
 	*
-	* @access	private
-	* @var		string
-	* @see		setAutoValidate()
+	* @access     private
+	* @var        string
+	* @see        setAutoValidate()
 	*/
 	var	$submitVar	=	null;
 
    /**
 	* event handlers
 	*
-	* @access	private
-	* @var		array
-	* @see		registerEventHandler()
-	* @see		registerEvent()
+	* @access     private
+	* @var        array
+	* @see        registerEventHandler()
+	* @see        registerEvent()
 	*/
 	var	$_eventHandler	=	array();
 
    /**
 	* events that can be triggered
 	*
-	* @access	private
-	* @var		array
-	* @see		registerEventHandler()
-	* @see		triggerEvent()
-	* @see		registerEvent()
+	* @access     private
+	* @var        array
+	* @see        registerEventHandler()
+	* @see        triggerEvent()
+	* @see        registerEvent()
 	*/
 	var	$_validEvents	=	array( 'onInit', 'onValidate', 'onSubmit', 'onError', 'onSuccess' );
 
    /**
 	* Stores whether the current form has been validated
 	*
-	* @access	private
+	* @access     private
 	*/
 	var $validated	=	false;
 
@@ -365,7 +365,7 @@ class patForms
 	* Stores whether the current form is valid or not (after the
 	* validation process)
 	*
-	* @access	private
+	* @access     private
 	*/
 	var $valid	=	null;
 
@@ -373,7 +373,7 @@ class patForms
 	* Stores the names of all static properties that patForms will use as defaults
 	* for the properties with the same name on startup.
 	*
-	* @access	private
+	* @access     private
 	*/
 	var $staticProperties	=	array(
 		'format'		=>	'setFormat',
@@ -384,15 +384,15 @@ class patForms
    /**
 	* Stores the flag for the autoFinalize feature
 	*
-	* @access	private
+	* @access     private
 	*/
 	var $autoFinalize	=	true;
 
    /**
 	* custom validation rules
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $_rules			=	array();
 
@@ -402,8 +402,8 @@ class patForms
 	* Will be set by validation rules that have been
 	* added to the form.
 	*
-	* @access private
-	* @var	array	$validatorErrorCodes
+	* @access     private
+	* @var        array	$validatorErrorCodes
 	*/
 	var	$validatorErrorCodes  =   array();
 
@@ -411,24 +411,24 @@ class patForms
 	* stores any validation errors that can occurr during the
 	* form's validation process.
 	*
-	* @access	private
-	* @var		array	$validationErrors
+	* @access     private
+	* @var        array	$validationErrors
 	*/
 	var	$validationErrors  =   array();
 
    /**
 	* next error offset for rules
-	* @access	private
-	* @var		integer
+	* @access     private
+	* @var        integer
 	*/
 	var $nextErrorOffset	=	1000;
 
    /**
 	* Attributes of the form - needed to generate the form tag
 	*
-	* @access	private
-	* @var		array	$attributes
-	* @see		setAttribute()
+	* @access     private
+	* @var        array	$attributes
+	* @see        setAttribute()
 	*/
 	var	$attributes	=	array();
 
@@ -436,7 +436,7 @@ class patForms
 	* Attribute definition for the form - defines which attribute the form
 	* itself supports.
 	*
-	* @access	public
+	* @access     public
 	*/
 	var	$attributeDefinition	=	array(
 
@@ -510,7 +510,7 @@ class patForms
 	*
 	* - scripts: enable client script integration
 	*
-	* @access	public
+	* @access     public
 	*/
 	var $options	=	array(
 
@@ -524,8 +524,8 @@ class patForms
    /**
 	* observers of the form
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$observers = array();
 
@@ -537,8 +537,8 @@ class patForms
 	* default attributes cannot be set after an element has been created.
 	*
 	* @static
-	* @access	public
-	* @param	array	$attributes	The list of attributes to set with key => value pairs.
+	* @access     public
+	* @param      array	$attributes	The list of attributes to set with key => value pairs.
 	*/
 	function setDefaultAttributes( $attributes )
 	{
@@ -549,10 +549,10 @@ class patForms
 	* sets the locale (language) to use for the validation error messages of all elements
 	* in the form.
 	*
-	* @access	public
-	* @param	string		language code
-	* @param	string		optional language file
-	* @return	bool		True on success
+	* @access     public
+	* @param      string		language code
+	* @param      string		optional language file
+	* @return     bool		True on success
 	*/
 	function setLocale( $locale, $languageFile = null )
 	{
@@ -584,9 +584,9 @@ class patForms
 	* checks, whether a locale is a custom locale
 	*
 	* @static
-	* @access	public
-	* @param	string		locale name
-	* @return	boolean
+	* @access     public
+	* @param      string		locale name
+	* @return     boolean
 	*/
 	function isCustomLocale($locale)
 	{
@@ -601,10 +601,10 @@ class patForms
 	* get the custom locale for an element or a rule
 	*
 	* @static
-	* @access	public
-	* @param	string		locale
-	* @param	string		key
-	* @return	array
+	* @access     public
+	* @param      string		locale
+	* @param      string		key
+	* @return     array
 	*/
 	function getCustomLocale($locale, $key)
 	{
@@ -621,10 +621,10 @@ class patForms
    /**
 	* parses a locale file
 	*
-	* @access	private
-	* @param	string		filename
-	* @return	array		locale information
-	* @todo		add some file checks
+	* @access     private
+	* @param      string		filename
+	* @return     array		locale information
+	* @todo       add some file checks
 	*/
 	function parseLocaleFile($filename)
 	{
@@ -635,12 +635,12 @@ class patForms
 	* sets the format of the element - this will be passed on to any elements you create. If you
 	* have already added some elements when you call this method, it will be passed on to them too.
 	*
-	* @access	public
-	* @param	string	$format	The name of the format you have implemented in your element(s).
-	* @return	bool	$result	True on success
-	* @see		setMode()
-	* @see		format
-	* @see		serialize()
+	* @access     public
+	* @param      string	$format	The name of the format you have implemented in your element(s).
+	* @return     bool	$result	True on success
+	* @see        setMode()
+	* @see        format
+	* @see        serialize()
 	*/
 	function setFormat( $format )
 	{
@@ -669,11 +669,11 @@ class patForms
 	* sets the mode of the form - If you have already added some elements when you call this
 	* method, it will be passed on to them too.
 	*
-	* @access	public
-	* @param	string	$mode	The mode to set the form to: default|readonly or any other mode you have implemented in your element class(es). Default is 'default'.
-	* @see		setMode()
-	* @see		mode
-	* @see		serialize()
+	* @access     public
+	* @param      string	$mode	The mode to set the form to: default|readonly or any other mode you have implemented in your element class(es). Default is 'default'.
+	* @see        setMode()
+	* @see        mode
+	* @see        serialize()
 	*/
 	function setMode( $mode )
 	{
@@ -694,10 +694,10 @@ class patForms
 	* to pick up its submitted data. It will pass on this information to all elements that
 	* have been added so far, and new ones inherit it too.
 	*
-	* @access	public
-	* @param	bool	$state	True if it has been submitted, false otherwise (default).
-	* @see		isSubmitted()
-	* @see		submitted
+	* @access     public
+	* @param      bool	$state	True if it has been submitted, false otherwise (default).
+	* @see        isSubmitted()
+	* @see        submitted
 	*/
 	function setSubmitted( $state )
 	{
@@ -725,10 +725,10 @@ class patForms
    /**
 	* sets the method for the request
 	*
-	* @access	public
-	* @param	string	$method		GET or POST
-	* @see		method
-	* @uses		setAttribute()
+	* @access     public
+	* @param      string	$method		GET or POST
+	* @see        method
+	* @uses       setAttribute()
 	*/
 	function setMethod( $method )
 	{
@@ -750,9 +750,9 @@ class patForms
 	*
 	* This is a only a wrapper for setAttribute()
 	*
-	* @access	public
-	* @param	string	$action
-	* @see		setAttribute()
+	* @access     public
+	* @param      string	$action
+	* @see        setAttribute()
 	*/
 	function setAction( $action )
 	{
@@ -763,10 +763,10 @@ class patForms
 	* Sets the AutoFinalize mode for the form. The AutoFinalize mode will tell patForms to
 	* finalize all elements after the form has been validated successfully.
 	*
-	* @access	public
-	* @param	boolean	$mode		Whether to activate the AutoFinalize mode (true) or not (false).
-	* @return	boolean	$success	True if okay, a patError object otherwise.
-	* @see		finalizeForm()
+	* @access     public
+	* @param      boolean	$mode		Whether to activate the AutoFinalize mode (true) or not (false).
+	* @return     boolean	$success	True if okay, a patError object otherwise.
+	* @see        finalizeForm()
 	*/
 	function setAutoFinalize( $mode )
 	{
@@ -795,10 +795,10 @@ class patForms
 	* of the form at once instead of having to do it for
 	* each element.
 	*
-	* @access	public
-	* @param	object	&$filter	The filter object to apply
-	* @see		patForms_Element::applyFilter()
-	* @todo		add error management and docs once the element's applyFilter method has too
+	* @access     public
+	* @param      object	&$filter	The filter object to apply
+	* @see        patForms_Element::applyFilter()
+	* @todo       add error management and docs once the element's applyFilter method has too
 	*/
 	function applyFilter( &$filter )
 	{
@@ -817,11 +817,11 @@ class patForms
 	* creates a new patForms object and returns it; this method is made to be called statically
 	* to be able to create a new patForms object from anywhere.
 	*
-	* @access	public
-	* @param	array	$formDefinition		Optional form definition for elements that will be added to the form
-	* @param	array	$attributes			The attributes to set for the form itself
-	* @return	object patForms	$form	The new patForms object.
-	* @todo		it should be possible to pass Rule definitions, so they can be loaded and added	automatically.
+	* @access     public
+	* @param      array	$formDefinition		Optional form definition for elements that will be added to the form
+	* @param      array	$attributes			The attributes to set for the form itself
+	* @return     object patForms	$form	The new patForms object.
+	* @todo       it should be possible to pass Rule definitions, so they can be loaded and added	automatically.
 	*/
 	function &createForm( $formDefinition = null, $attributes = null )
 	{
@@ -863,12 +863,12 @@ class patForms
    /**
 	* add a custom validation rule
 	*
-	* @access	public
-	* @param	object patForms_Rule	validation rule
-	* @param	integer					time to apply rule (before or after built-in validation)
-	* @param	boolean					apply the rule, even if the form is invalid
-	* @param	boolean					should form get revalidated (not implemented yet)
-	* @return	boolean					currently always true
+	* @access     public
+	* @param      object patForms_Rule	validation rule
+	* @param      integer					time to apply rule (before or after built-in validation)
+	* @param      boolean					apply the rule, even if the form is invalid
+	* @param      boolean					should form get revalidated (not implemented yet)
+	* @return     boolean					currently always true
 	*/
 	function addRule( &$rule, $time = PATFORMS_RULE_AFTER_VALIDATION, $invalid = false, $revalidate = false )
 	{
@@ -886,7 +886,7 @@ class patForms
 	* patForms PHP5 constructor - processes some intitialization tasks like merging the currently
 	* set static properties with the internal properties.
 	*
-	* @access	public
+	* @access     public
 	*/
 	function __construct()
 	{
@@ -907,7 +907,7 @@ class patForms
 	* patForms pre-PHP5 constructor - does nothing for the moment except being a wrapper
 	* for the PHP5 contructor for older PHP versions support.
 	*
-	* @access	public
+	* @access     public
 	*/
 	function patForms()
 	{
@@ -918,11 +918,11 @@ class patForms
 	* sets a renderer object that will be used to render
 	* the form.
 	*
-	* @access	public
-	* @param	object		&$renderer	The renderer object
-	* @return	mixed		$success	True on success, patError object otherwise.
-	* @see		createRenderer()
-	* @see		renderForm()
+	* @access     public
+	* @param      object		&$renderer	The renderer object
+	* @return     mixed		$success	True on success, patError object otherwise.
+	* @see        createRenderer()
+	* @see        renderForm()
 	*/
 	function setRenderer( &$renderer, $args = array() )
 	{
@@ -957,9 +957,9 @@ class patForms
    /**
 	* sets a storage container object that will be used to store data
 	*
-	* @access	public
-	* @param	object patForms_Storage
-	* @see		createStorage()
+	* @access     public
+	* @param      object patForms_Storage
+	* @see        createStorage()
 	*/
 	function setStorage( &$storage )
 	{
@@ -990,9 +990,9 @@ class patForms
 	* The return value could contain large blocks of HTML or large arrays!
 	* Do we want to copy these?
 	*
-	* @access	public
-	* @param	mixed	$args		arguments that will be passed to the renderer
-	* @return	mixed	$form		The rendered form, or false if failed.
+	* @access     public
+	* @param      mixed	$args		arguments that will be passed to the renderer
+	* @return     mixed	$form		The rendered form, or false if failed.
 	*/
 	function renderForm( $args = null )
 	{
@@ -1019,10 +1019,10 @@ class patForms
    /**
 	* Validates all elements of the form.
 	*
-	* @access	public
-	* @param    boolean     Flag to indicate, whether form should be validated again, if it already has been validated.
-	* @return	boolean	    True if all elements could be validated, false otherwise.
-	* @see		finishForm()
+	* @access     public
+	* @param      boolean     Flag to indicate, whether form should be validated again, if it already has been validated.
+	* @return     boolean	    True if all elements could be validated, false otherwise.
+	* @see        finishForm()
 	*/
 	function validateForm( $revalidate = false )
 	{
@@ -1095,11 +1095,11 @@ class patForms
    /**
 	* apply rules
 	*
-	* @access	private
-	* @param	integer		time of validation
-	* @param	boolean		form is valid
-	* @return	boolean		rules are valid or not
-	* @todo		add documentation
+	* @access     private
+	* @param      integer		time of validation
+	* @param      boolean		form is valid
+	* @return     boolean		rules are valid or not
+	* @todo       add documentation
 	*/
 	function _applyRules( $time, $isValid = true )
 	{
@@ -1129,9 +1129,9 @@ class patForms
 	* process any tasks that need to be done after the form has been validated, like
 	* deleting any temporary files or whatever an element needs to do at that point.
 	*
-	* @access	public
-	* @return	bool	$success	Wether all elements could be finalized
-	* @see		validateForm()
+	* @access     public
+	* @return     bool	$success	Wether all elements could be finalized
+	* @see        validateForm()
 	*/
 	function finalizeForm()
 	{
@@ -1157,9 +1157,9 @@ class patForms
    /**
 	* creates a new renderer from the patForms renderer collection and returns it.
 	*
-	* @access	public
-	* @param	string						The name of the renderer to create - have a look at the Renderer/ subfolder for a list of available renderers.
-	* @return	object patForms_Renderer	The renderer object, or error object
+	* @access     public
+	* @param      string						The name of the renderer to create - have a look at the Renderer/ subfolder for a list of available renderers.
+	* @return     object patForms_Renderer	The renderer object, or error object
 	*/
 	function &createRenderer( $name )
 	{
@@ -1169,9 +1169,9 @@ class patForms
    /**
 	* creates a new storage container and returns it.
 	*
-	* @access	public
-	* @param	string						The name of the storage to create - have a look at the Storage/ subfolder for a list of available storage containers.
-	* @return	object patForms_Storage		The storage container, or error object
+	* @access     public
+	* @param      string						The name of the storage to create - have a look at the Storage/ subfolder for a list of available storage containers.
+	* @return     object patForms_Storage		The storage container, or error object
 	*/
 	function &createStorage( $name )
 	{
@@ -1187,11 +1187,11 @@ class patForms
 	*
 	* This eases the creating of simple filter objects.
 	*
-	* @access	public
-	* @param	string						The name of the filter to create - have a look at the Filter/ subfolder for a list of available filters.
-	* @param	array						Optional parameters for the filter, if you provide a parameter, make sure the filter implements a set[Paramname]() method.
+	* @access     public
+	* @param      string						The name of the filter to create - have a look at the Filter/ subfolder for a list of available filters.
+	* @param      array						Optional parameters for the filter, if you provide a parameter, make sure the filter implements a set[Paramname]() method.
 	*										This will be automated with interceptors in the PHP5 version of patForms
-	* @return	object patForms_Filter		The filter, or error object
+	* @return     object patForms_Filter		The filter, or error object
 	*/
 	function &createFilter( $name, $params = null )
 	{
@@ -1219,10 +1219,10 @@ class patForms
 	* If your rules are not located in patForms/Rule you have to load and
 	* instantiate them on your own.
 	*
-	* @access	public
-	* @param	string					The name of the rule to create - have a look at the Rule/ subfolder for a list of available rules.
-	* @param	string					The id of the rule, needed if the rule uses client side actions.
-	* @return	object patForms_Rule	The rule object, or error object
+	* @access     public
+	* @param      string					The name of the rule to create - have a look at the Rule/ subfolder for a list of available rules.
+	* @param      string					The id of the rule, needed if the rule uses client side actions.
+	* @return     object patForms_Rule	The rule object, or error object
 	*/
 	function &createRule( $name, $id = null )
 	{
@@ -1240,9 +1240,9 @@ class patForms
 	* If your observers are not located in patForms/Observer you have to load and
 	* instantiate them on your own.
 	*
-	* @access	public
-	* @param	string						The name of the observer to create - have a look at the Observer/ subfolder for a list of available observers.
-	* @return	object patForms_Observer	The observer object, or error object
+	* @access     public
+	* @param      string						The name of the observer to create - have a look at the Observer/ subfolder for a list of available observers.
+	* @return     object patForms_Observer	The observer object, or error object
 	*/
 	function &createObserver( $name )
 	{
@@ -1254,10 +1254,10 @@ class patForms
    /**
 	* creates a new module for patForms
 	*
-	* @access	private
-	* @param	string	$type		type of the module. Possible values are 'Renderer', 'Rule'
-	* @param	string	$name		The name of the renderer to create - have a look at the renderers/ subfolder for a list of available renderers.
-	* @return	object	$module		The module object, or an error object
+	* @access     private
+	* @param      string	$type		type of the module. Possible values are 'Renderer', 'Rule'
+	* @param      string	$name		The name of the renderer to create - have a look at the renderers/ subfolder for a list of available renderers.
+	* @return     object	$module		The module object, or an error object
 	*/
 	function &_createModule( $type, $name )
 	{
@@ -1313,11 +1313,11 @@ class patForms
 	* method to create a new element object. Also takes care of passing on the form's configuration
 	* including the mode, format and submitted flags to the element.
 	*
-	* @access	public
-	* @param	object	&$element	The patForms_Element object to add to this form.
-	* @return	bool	$success	True if everything went well, false otherwise.
-	* @see		patForms_Element
-	* @see		createElement()
+	* @access     public
+	* @param      object	&$element	The patForms_Element object to add to this form.
+	* @return     bool	$success	True if everything went well, false otherwise.
+	* @see        patForms_Element
+	* @see        createElement()
 	*/
 	function addElement( &$element )
 	{
@@ -1353,12 +1353,12 @@ class patForms
    /**
 	* replaces an element in the form
 	*
-	* @access	public
-	* @param	object	$element	The patForms_Element object to be replaced
-	* @param	object	&$replace	The element that will replace the old element
-	* @return	bool	$success	True if everything went well, false otherwise.
-	* @see		patForms_Element
-	* @see		addElement()
+	* @access     public
+	* @param      object	$element	The patForms_Element object to be replaced
+	* @param      object	&$replace	The element that will replace the old element
+	* @return     bool	$success	True if everything went well, false otherwise.
+	* @see        patForms_Element
+	* @see        addElement()
 	*/
 	function replaceElement( $element, &$replace )
 	{
@@ -1411,10 +1411,10 @@ class patForms
    /**
 	* Get an element by its name.
 	*
-	* @access	public
-	* @param	string	$name	name of the element
-	* @return	object			patForms element
-	* @deprecated	please use patForms::getElementByName() instead
+	* @access     public
+	* @param      string	$name	name of the element
+	* @return     object			patForms element
+	* @deprecated please use patForms::getElementByName() instead
 	*/
 	function &getElement( $name )
 	{
@@ -1424,10 +1424,10 @@ class patForms
    /**
 	* Get an element by its name.
 	*
-	* @access	public
-	* @param	string	$name	name of the element
-	* @return	mixed			either a patForms element or an array containing patForms elements
-	* @see		getElementById()
+	* @access     public
+	* @param      string	$name	name of the element
+	* @return     mixed			either a patForms element or an array containing patForms elements
+	* @see        getElementById()
 	*/
 	function &getElementByName( $name )
 	{
@@ -1479,9 +1479,9 @@ class patForms
    /**
 	* Get an element by its id.
 	*
-	* @access	public
-	* @param	string	$id		id of the element
-	* @return	object			patForms element
+	* @access     public
+	* @param      string	$id		id of the element
+	* @return     object			patForms element
 	*/
 	function &getElementById( $id )
 	{
@@ -1509,8 +1509,8 @@ class patForms
    /**
 	* Get all elements of the form
 	*
-	* @access	public
-	* @return	array	all elements of the form
+	* @access     public
+	* @return     array	all elements of the form
 	*/
 	function &getElements()
 	{
@@ -1531,12 +1531,12 @@ class patForms
 	*	   )
 	* </pre>
 	*
-	* @access	public
-	* @param	string	$name		The name of the element
-	* @param	string	$type		The type of the element; for a list of possible elements, have a look at the elements/ subfolder of the patForms package.
-	* @param	array	$attributes	Attributes for the element
-	* @param	array	$filters	Optional filters that will be applied
-	* @return	object patForms_Element	$element	The element object, or patError if failed.
+	* @access     public
+	* @param      string	$name		The name of the element
+	* @param      string	$type		The type of the element; for a list of possible elements, have a look at the elements/ subfolder of the patForms package.
+	* @param      array	$attributes	Attributes for the element
+	* @param      array	$filters	Optional filters that will be applied
+	* @return     object patForms_Element	$element	The element object, or patError if failed.
 	*/
 	function &createElement( $name, $type, $attributes, $filters = null, $children = null )
 	{
@@ -1614,10 +1614,10 @@ class patForms
 	* retrieves the validation errors from all elements in the form. Use this if the validateForm()
 	* method returned false.
 	*
-	* @access	public
+	* @access     public
 	* q
-	* @return	array	$errors	Array containing an array with validation errors for each element in the form.
-	* @todo		replace	__form with the name of the form, once attributes are implemented
+	* @return     array	$errors	Array containing an array with validation errors for each element in the form.
+	* @todo       replace	__form with the name of the form, once attributes are implemented
 	*/
 	function getValidationErrors($withElements = true)
 	{
@@ -1661,13 +1661,13 @@ class patForms
    /**
 	* retrieves the values for all elements in the form.
 	*
-	* @access	public
-	* @param	array		desired fields
-	* @param	integer		Mode that should be used to return values in groups
-	* @return	array		The values for all elements, as elementname => elementvalue.
+	* @access     public
+	* @param      array		desired fields
+	* @param      integer		Mode that should be used to return values in groups
+	* @return     array		The values for all elements, as elementname => elementvalue.
 	*
-	* @todo		remove the ugly Group check and replace with something better
-	* @todo		implement something similar for getValidation errors
+	* @todo       remove the ugly Group check and replace with something better
+	* @todo       implement something similar for getValidation errors
 	*/
 	function getValues( $fields = null, $type = PATFORMS_VALUES_NESTED )
 	{
@@ -1715,8 +1715,8 @@ class patForms
 	* data, like a db query. Caution: if you do this and set the form to submitted, the values
 	* will be overwritten by any values present in the $_GET or $_POST variables.
 	*
-	* @access	public
-	* @param	array	$values	The values for all elements, as elementname => elementvalue.
+	* @access     public
+	* @param      array	$values	The values for all elements, as elementname => elementvalue.
 	*/
 	function setValues( $values, $overrideUserInput = false )
 	{
@@ -1739,10 +1739,10 @@ class patForms
    /**
 	* retrieves the current mode of the form
 	*
-	* @access	public
-	* @return	string	$mode	The current form mode
-	* @see		setMode()
-	* @see		$mode
+	* @access     public
+	* @return     string	$mode	The current form mode
+	* @see        setMode()
+	* @see        $mode
 	*/
 	function getMode()
 	{
@@ -1752,10 +1752,10 @@ class patForms
    /**
 	* returns the locale that is currently set for the form.
 	*
-	* @access	public
-	* @return	string	$locale	The locale.
-	* @see		setLocale()
-	* @see		$locale
+	* @access     public
+	* @return     string	$locale	The locale.
+	* @see        setLocale()
+	* @see        $locale
 	*/
 	function getLocale()
 	{
@@ -1765,10 +1765,10 @@ class patForms
    /**
 	* retrieves the current format of the form
 	*
-	* @access	public
-	* @return	string	$format	The current form format
-	* @see		setFormat()
-	* @see		format
+	* @access     public
+	* @return     string	$format	The current form format
+	* @see        setFormat()
+	* @see        format
 	*/
 	function getFormat()
 	{
@@ -1778,9 +1778,9 @@ class patForms
    /**
 	* retrieves the current method of the form
 	*
-	* @access	public
-	* @return	string	$method	The request method
-	* @see		setMethod()
+	* @access     public
+	* @return     string	$method	The request method
+	* @see        setMethod()
 	*/
 	function getMethod()
 	{
@@ -1790,9 +1790,9 @@ class patForms
    /**
 	* retrieves the current action of the form
 	*
-	* @access	public
-	* @return	string	$action		Action of the form
-	* @see		setAction()
+	* @access     public
+	* @return     string	$action		Action of the form
+	* @see        setAction()
 	*/
 	function getAction()
 	{
@@ -1806,9 +1806,9 @@ class patForms
 	* adds an atribute to the form's attribute collection. If the attribute
 	* already exists, it is overwritten.
 	*
-	* @access	public
-	* @param	string	$attributeName	The name of the attribute to add
-	* @param	string	$atributeValue	The value of the attribute
+	* @access     public
+	* @param      string	$attributeName	The name of the attribute to add
+	* @param      string	$atributeValue	The value of the attribute
 	*/
 	function setAttribute( $attributeName, $attributeValue )
 	{
@@ -1830,9 +1830,9 @@ class patForms
 	* adds several attributes at once to the form's attribute collection.
 	* Any existing attributes will be overwritten.
 	*
-	* @access	public
-	* @param	array	$attributes	The attributes to add
-	* @see		setAttribute()
+	* @access     public
+	* @param      array	$attributes	The attributes to add
+	* @see        setAttribute()
 	*/
 	function setAttributes( $attributes )
 	{
@@ -1855,10 +1855,10 @@ class patForms
    /**
 	* retrieves the value of a form attribute.
 	*
-	* @access	public
-	* @param	string	$attribute	The name of the attribute to retrieve
-	* @return	mixed	$attributeValue	The value of the attribute, or false if it does not exist in the attributes collection.
-	* @see		setAttribute()
+	* @access     public
+	* @param      string	$attribute	The name of the attribute to retrieve
+	* @return     mixed	$attributeValue	The value of the attribute, or false if it does not exist in the attributes collection.
+	* @see        setAttribute()
 	*/
 	function getAttribute( $attribute )
 	{
@@ -1873,10 +1873,10 @@ class patForms
    /**
 	* retrieves all attributes of the form, or only the specified attributes.
 	*
-	* @access	public
-	* @param	array	$attributes	Optional: The names of the attributes to retrieve. Only the attributes that exist will be returned.
-	* @return	array	$result		The attributes
-	* @see		getAttribute()
+	* @access     public
+	* @param      array	$attributes	Optional: The names of the attributes to retrieve. Only the attributes that exist will be returned.
+	* @return     array	$result		The attributes
+	* @see        getAttribute()
 	*/
 	function getAttributes( $attributes = array() )
 	{
@@ -1904,9 +1904,9 @@ class patForms
 	* The action defaults to the path of the current script, with session
 	* ID appended automatically, if SID has been defined.
 	*
-	* @access	public
-	* @return	bool	$success	Always returns true.
-	* @see		$attributeDefaults
+	* @access     public
+	* @return     bool	$success	Always returns true.
+	* @see        $attributeDefaults
 	*/
 	function loadAttributeDefaults()
 	{
@@ -1937,10 +1937,10 @@ class patForms
 	* If autoValidate is used, it will check for the submitVar and
 	* set the submitted flag accordingly
 	*
-	* @access	public
-	* @return	bool	$state	True if it has been submitted, false otherwise.
-	* @see		setSubmitted(), setAutoValidate()
-	* @see		submitted
+	* @access     public
+	* @return     bool	$state	True if it has been submitted, false otherwise.
+	* @see        setSubmitted(), setAutoValidate()
+	* @see        submitted
 	*/
 	function isSubmitted()
 	{
@@ -1971,8 +1971,8 @@ class patForms
 	* Creates a new patForms_Creator object
 	*
 	* @static
-	* @access	public
-	* @return	object	$creator	The creator object, or a patError object on failure
+	* @access     public
+	* @return     object	$creator	The creator object, or a patError object on failure
 	*/
 	function createCreator( $type )
 	{
@@ -1982,8 +1982,8 @@ class patForms
    /**
 	* get the element name of the form
 	*
-	* @access	public
-	* @return	string	name of the form
+	* @access     public
+	* @return     string	name of the form
 	*/
 	function getElementName()
 	{
@@ -1993,8 +1993,8 @@ class patForms
    /**
 	* get next error offset
 	*
-	* @access	public
-	* @return	integer
+	* @access     public
+	* @return     integer
 	*/
 	function getErrorOffset( $requiredCodes = 100 )
 	{
@@ -2006,9 +2006,9 @@ class patForms
    /**
 	* add error codes and messages for validator method
 	*
-	* @access	public
-	* @param	array	defintions
-	* @param	integer	offset for the error codes
+	* @access     public
+	* @param      array	defintions
+	* @param      integer	offset for the error codes
 	*/
 	function addValidatorErrorCodes( $defs, $offset = 1000 )
 	{
@@ -2031,11 +2031,11 @@ class patForms
 	*
 	* This can be achieved by adding a validation rule to the form.
 	*
-	* @access	public
-	* @param	integer	$code
-	* @param	array	$vars	fill named placeholder with values
-	* @return 	boolean $result	true on success
-	* @see		addRule()
+	* @access     public
+	* @param      integer	$code
+	* @param      array	$vars	fill named placeholder with values
+	* @return     boolean $result	true on success
+	* @see        addRule()
 	*/
 	function addValidationError( $code, $vars = array() )
 	{
@@ -2112,8 +2112,8 @@ class patForms
 	* retreives a new element id, used to give each added element a unique id for this
 	* form (id can be overwritten by setting the id attribute specifically).
 	*
-	* @access	private
-	* @return	int	$elementId	The new element id.
+	* @access     private
+	* @return     int	$elementId	The new element id.
 	*/
 	function getElementId()
 	{
@@ -2124,10 +2124,10 @@ class patForms
    /**
 	* attach an observer
 	*
-	* @access	public
-	* @param	object	patForms_Observer
-	* @see		createObserver()
-	* @uses		patForms_Element::createObserver()
+	* @access     public
+	* @param      object	patForms_Observer
+	* @see        createObserver()
+	* @uses       patForms_Element::createObserver()
 	*/
 	function attachObserver( &$observer, $where = PATFORMS_OBSERVER_ATTACH_TO_ELEMENTS )
 	{
@@ -2158,9 +2158,9 @@ class patForms
 	* additional content, e.g. global scripts if the scripts option
 	* is enabled.
 	*
-	* @access	public
-	* @return	string	$formStart	The form start content
-	* @todo		use format to build a dynamic method
+	* @access     public
+	* @return     string	$formStart	The form start content
+	* @todo       use format to build a dynamic method
 	*/
 	function serializeStart()
 	{
@@ -2180,8 +2180,8 @@ class patForms
    /**
 	* Serializes the form's start element for html format, in default mode.
 	*
-	* @access	private
-	* @return	mixed	$formStart	The serialized start content, or a patError object.
+	* @access     private
+	* @return     mixed	$formStart	The serialized start content, or a patError object.
 	*/
 	function serializeStartHtmlDefault()
 	{
@@ -2204,8 +2204,8 @@ class patForms
    /**
 	* Serializes the form's start element for html format, in readonly mode.
 	*
-	* @access	private
-	* @return	mixed	$formStart	The serialized start content, or a patError object.
+	* @access     private
+	* @return     mixed	$formStart	The serialized start content, or a patError object.
 	*/
 	function serializeStartHtmlReadonly()
 	{
@@ -2221,8 +2221,8 @@ class patForms
    /**
  	* Retrieve the content for the end of the form.
 	*
-	* @access	public
-	* @return	string	$formEnd	The form end content
+	* @access     public
+	* @return     string	$formEnd	The form end content
 	*/
 	function serializeEnd()
 	{
@@ -2243,8 +2243,8 @@ class patForms
 	* Retrieves the content for the end of the form for html format,
 	* in default mode.
 	*
-	* @access	private
-	* @return	string	$formEnd	The form end content
+	* @access     private
+	* @return     string	$formEnd	The form end content
 	*/
 	function serializeEndHtmlDefault()
 	{
@@ -2255,8 +2255,8 @@ class patForms
 	* Retrieves the content for the end of the form for html format,
 	* in readonly mode.
 	*
-	* @access	private
-	* @return	string	$formEnd	The form end content
+	* @access     private
+	* @return     string	$formEnd	The form end content
 	*/
 	function serializeEndHtmlReadonly()
 	{
@@ -2267,9 +2267,9 @@ class patForms
 	* validates the current attribute collection according to the attributes definition
 	* and the given output format, and returns the list of valid attributes.
 	*
-	* @access	private
-	* @param	string	$format		The output format to retrieve the attributes for.
-	* @return	mixed	$attributes	The list of attributes, or false if failed.
+	* @access     private
+	* @param      string	$format		The output format to retrieve the attributes for.
+	* @return     mixed	$attributes	The list of attributes, or false if failed.
 	*/
 	function getAttributesFor( $format )
 	{
@@ -2318,12 +2318,12 @@ class patForms
    /**
 	* checks the format of an attribute value according to the given format.
 	*
-	* @access	private
-	* @param	mixed	$attributeValue	The attribute value to check
-	* @param	string	$format			The format to check the attribute value against
-	* @return	bool	$result			True if format check succeeded, false otherwise.
-	* @see		createAttributes()
-	* @todo		Implement this method sometime
+	* @access     private
+	* @param      mixed	$attributeValue	The attribute value to check
+	* @param      string	$format			The format to check the attribute value against
+	* @return     bool	$result			True if format check succeeded, false otherwise.
+	* @see        createAttributes()
+	* @todo       Implement this method sometime
 	*/
 	function _checkAttributeFormat( $attributeValue, $format )
 	{
@@ -2335,13 +2335,13 @@ class patForms
 	*
 	* See the {@link $options} property for an exhaustive list of available options.
 	*
-	* @access	public
-	* @param	string	$option		The option to enable
-	* @param	array	$params		Optional parameters for the option
-	* @return	mixed	$result		True on success, patError object otherwise.
-	* @see		disableOption()
-	* @see		optionEnabled()
-	* @see		$options
+	* @access     public
+	* @param      string	$option		The option to enable
+	* @param      array	$params		Optional parameters for the option
+	* @return     mixed	$result		True on success, patError object otherwise.
+	* @see        disableOption()
+	* @see        optionEnabled()
+	* @see        $options
 	*/
 	function enableOption( $option, $params = array() )
 	{
@@ -2371,12 +2371,12 @@ class patForms
 	*
 	* See the {@link $options} property for an exhaustive list of available options.
 	*
-	* @access	public
-	* @param	string	$option	The option to disable
-	* @return	mixed	$result	True on success, patError object otherwise.
-	* @see		enableOption()
-	* @see		optionEnabled()
-	* @see		$options
+	* @access     public
+	* @param      string	$option	The option to disable
+	* @return     mixed	$result	True on success, patError object otherwise.
+	* @see        enableOption()
+	* @see        optionEnabled()
+	* @see        $options
 	*/
 	function disableOption( $option )
 	{
@@ -2403,12 +2403,12 @@ class patForms
    /**
 	* Checks whether the given option is enabled.
 	*
-	* @access	public
-	* @param	string	$option		The option to check
-	* @return	bool	$enabled	True if enabled, false otherwise.
-	* @see		enableOption()
-	* @see		disableOption()
-	* @see		$options
+	* @access     public
+	* @param      string	$option		The option to check
+	* @return     bool	$enabled	True if enabled, false otherwise.
+	* @see        enableOption()
+	* @see        disableOption()
+	* @see        $options
 	*/
 	function optionEnabled( $option )
 	{
@@ -2427,8 +2427,8 @@ class patForms
 	*
 	* When creating a start tag for the form, the value will be inserted automatically.
 	*
-	* @access	public
-	* @param	string	$submitVar
+	* @access     public
+	* @param      string	$submitVar
 	*/
 	function setAutoValidate( $submitVar )
 	{
@@ -2444,11 +2444,11 @@ class patForms
 	*
 	* This lets you extend the functionality of patForms.
 	*
-	* @access	public
-	* @param	string	event name
-	* @return	boolean	true, if event could be registered
-	* @see		registerEventHandler()
-	* @see		triggerEvent()
+	* @access     public
+	* @param      string	event name
+	* @return     boolean	true, if event could be registered
+	* @see        registerEventHandler()
+	* @see        triggerEvent()
 	*/
 	function registerEvent( $name )
 	{
@@ -2485,12 +2485,12 @@ class patForms
 	* - onSuccess
 	* - onError
 	*
-	* @access	public
-	* @param	string	event name
-	* @param	mixed	event handler
-	* @return	boolean	true, if the handler could be registered
-	* @see		triggerEvent()
-	* @see		$_validEvents
+	* @access     public
+	* @param      string	event name
+	* @param      mixed	event handler
+	* @return     boolean	true, if the handler could be registered
+	* @see        triggerEvent()
+	* @see        $_validEvents
 	*/
 	function registerEventHandler( $event, $handler )
 	{
@@ -2527,10 +2527,10 @@ class patForms
 	* for all events it should handle, the names of the methods
 	* have to be the same as the names of the events.
 	*
-	* @access	public
-	* @param	object	event handler object
-	* @param	array	method names, used to change the names of the methods
-	* @return	boolean
+	* @access     public
+	* @param      object	event handler object
+	* @param      array	method names, used to change the names of the methods
+	* @return     boolean
 	*/
 	function registerEventHandlerObject( &$obj, $methods = array() )
 	{
@@ -2565,8 +2565,8 @@ class patForms
 	* from outside the class. The method is declared public
 	* to allow you to trigger custom events.
 	*
-	* @access	public
-	* @param	string	Event name. The event name must not contain 'on', as this will be
+	* @access     public
+	* @param      string	Event name. The event name must not contain 'on', as this will be
 	*					prefixed automatically.
 	*/
 	function triggerEvent( $event )
@@ -2593,11 +2593,11 @@ class patForms
    /**
 	* Serializes the entire form to XML, all elements included
 	*
-	* @access	public
-	* @param	string	$namespace	Optional namespace to use for the tags
-	* @return	string	$xml		The XML representation of the form
-	* @see		patForms_Element::toXML()
-	* @todo		needs patForms_Element, maybe switch to PEAR::XML_Util
+	* @access     public
+	* @param      string	$namespace	Optional namespace to use for the tags
+	* @return     string	$xml		The XML representation of the form
+	* @see        patForms_Element::toXML()
+	* @todo       needs patForms_Element, maybe switch to PEAR::XML_Util
 	*/
 	function toXML( $namespace = null )
 	{
@@ -2634,9 +2634,9 @@ class patForms
 	* until PHP5 is ready to use.
 	*
 	* @static
-	* @param	string	property name
-	* @param	mixed	property value
-	* @see		getStaticProperty()
+	* @param      string	property name
+	* @param      mixed	property value
+	* @see        getStaticProperty()
 	*/
 	function setStaticProperty( $property, &$value )
 	{
@@ -2650,9 +2650,9 @@ class patForms
 	* until PHP5 is ready to use.
 	*
 	* @static
-	* @param	string	property name
-	* @return	mixed	property value
-	* @see		setStaticProperty()
+	* @param      string	property name
+	* @return     mixed	property value
+	* @see        setStaticProperty()
 	*/
 	function &getStaticProperty( $property )
 	{
@@ -2671,8 +2671,8 @@ class patForms
 	*
 	* If no name is set, it will use 'patForms' as name.
 	*
-	* @access	public
-	* @return	string	$name	The name of the form.
+	* @access     public
+	* @return     string	$name	The name of the form.
 	*/
 	function getName()
 	{
@@ -2688,10 +2688,10 @@ class patForms
 	* allow client side validation if the element
 	* provides this feature.
 	*
-	* @access	public
-	* @return	string	javascript needed by the form
-	* @todo		make this dependent on the format
-	* @todo		add changeable linebreaks
+	* @access     public
+	* @return     string	javascript needed by the form
+	* @todo       make this dependent on the format
+	* @todo       add changeable linebreaks
 	*/
 	function getScripts()
 	{
@@ -2768,9 +2768,9 @@ class patForms
    /**
 	* anounce a change in the element to all observers
 	*
-	* @access	private
-	* @param	string		property that changed
-	* @param	mixed		new value of the property
+	* @access     private
+	* @param      string		property that changed
+	* @param      mixed		new value of the property
 	*/
 	function _announce( $property, $value )
 	{

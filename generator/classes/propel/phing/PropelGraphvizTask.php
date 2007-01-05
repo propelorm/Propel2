@@ -26,15 +26,15 @@ include_once 'propel/engine/database/model/AppData.php';
 /**
  * A task to generate Graphviz dot files from Propel datamodel.
  *
- * @author Mark Kimsal
- * @version $Revision$
- * @package propel.phing
+ * @author     Mark Kimsal
+ * @version    $Revision$
+ * @package    propel.phing
  */
 class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * The properties file that maps an SQL file to a particular database.
-	 * @var PhingFile
+	 * @var        PhingFile
 	 */
 	private $sqldbmap;
 
@@ -51,7 +51,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Set the sqldbmap.
-	 * @param PhingFile $sqldbmap The db map.
+	 * @param      PhingFile $sqldbmap The db map.
 	 */
 	public function setOutputDirectory(PhingFile $out)
 	{
@@ -64,7 +64,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Set the sqldbmap.
-	 * @param PhingFile $sqldbmap The db map.
+	 * @param      PhingFile $sqldbmap The db map.
 	 */
 	public function setSqlDbMap(PhingFile $sqldbmap)
 	{
@@ -73,7 +73,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Get the sqldbmap.
-	 * @return PhingFile $sqldbmap.
+	 * @return     PhingFile $sqldbmap.
 	 */
 	public function getSqlDbMap()
 	{
@@ -82,7 +82,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Set the database name.
-	 * @param string $database
+	 * @param      string $database
 	 */
 	public function setDatabase($database)
 	{
@@ -91,7 +91,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Get the database name.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDatabase()
 	{

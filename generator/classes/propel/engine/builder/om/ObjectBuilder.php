@@ -30,7 +30,7 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
  * should not have any actual template code in it -- simply basic logic & utility
  * methods.
  *
- * @author Hans Lellelid <hans@xmpl.org>
+ * @author     Hans Lellelid <hans@xmpl.org>
  */
 abstract class ObjectBuilder extends OMBuilder {
 
@@ -49,7 +49,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * Hint: Override this method in your subclass if you want to reorganize or
 	 * drastically change the contents of the generated peer class.
 	 *
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	abstract protected function addClassBody(&$script);
 
@@ -57,7 +57,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * Adds the getter methods for the column values.
 	 * This is here because it is probably generic enough to apply to templates being generated
 	 * in different langauges (e.g. PHP4 and PHP5).
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addColumnAccessorMethods(&$script)
 	{
@@ -80,7 +80,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * Adds the mutator (setter) methods for setting column values.
 	 * This is here because it is probably generic enough to apply to templates being generated
 	 * in different langauges (e.g. PHP4 and PHP5).
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addColumnMutatorMethods(&$script)
 	{
@@ -100,7 +100,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	/**
 	 * Gets the baseClass path if specified for table/db.
 	 * If not, will return 'propel.om.BaseObject'
-	 * @return string
+	 * @return     string
 	 */
 	protected function getBaseClass() {
 		$class = $this->getTable()->getBaseClass();
@@ -113,7 +113,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	/**
 	 * Gets the interface path if specified for current table.
 	 * If not, will return 'propel.om.Persistent'.
-	 * @return string
+	 * @return     string
 	 */
 	protected function getInterface() {
 		$interface = $this->getTable()->getInterface();

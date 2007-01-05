@@ -4,21 +4,21 @@
  *
  * $Id$
  *
- * @access		protected
- * @package		patForms
- * @subpackage	Rules
+ * @access     protected
+ * @package    patForms
+ * @subpackage Rules
  */
 
 /**
  * patForms rule base class
  *
- * @access		protected
- * @package		patForms
- * @subpackage	Rules
- * @author		Stephan Schmidt <schst@php-tools.net>
- * @license		LGPL, see license.txt for details
- * @link		http://www.php-tools.net
- * @todo		implement javascript helper methods (set a javascript property plus an
+ * @access     protected
+ * @package    patForms
+ * @subpackage Rules
+ * @author     Stephan Schmidt <schst@php-tools.net>
+ * @license    LGPL, see license.txt for details
+ * @link       http://www.php-tools.net
+ * @todo       implement javascript helper methods (set a javascript property plus an
  *				array of keys that will be replaced by the properties of the rule)
  */
 class patForms_Rule
@@ -31,40 +31,40 @@ class patForms_Rule
 	* -PATFORMS_RULE_AFTER_VALIDATION
 	* -PATFORMS_RULE_BOTH
 	*
-	* @access	private
-	* @var		integer
+	* @access     private
+	* @var        integer
 	*/
 	var $_time	=	PATFORMS_RULE_AFTER_VALIDATION;
 
    /**
 	* script that will be displayed only once
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $globalScript	=	array();
 
    /**
 	* script that will be displayed once per instance
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $instanceScript	=	array();
 
    /**
 	* properties that have to be replaced in the instance script.
 	*
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var $scriptPlaceholders	=	array();
 
    /**
 	* store the container of the rule
 	*
-	* @access	private
-	* @var		object
+	* @access     private
+	* @var        object
 	*/
 	var $container;
 
@@ -72,8 +72,8 @@ class patForms_Rule
 	* define error codes an messages for each form element
 	*
 	* @abstract
-	* @access	private
-	* @var		array
+	* @access     private
+	* @var        array
 	*/
 	var	$validatorErrorCodes  =   array();
 
@@ -81,7 +81,7 @@ class patForms_Rule
 	* error code offset for the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$errorOffset;
 
@@ -89,7 +89,7 @@ class patForms_Rule
 	* format of the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$format	=	'html';
 
@@ -97,7 +97,7 @@ class patForms_Rule
 	* name of the rule
 	*
 	* @abstract
-	* @access	private
+	* @access     private
 	*/
 	var	$ruleName = '';
 
@@ -106,8 +106,8 @@ class patForms_Rule
 	*
 	* This has to be defined in the _time property of the rule.
 	*
-	* @access	public
-	* @return	integer
+	* @access     public
+	* @return     integer
 	*/
 	function getTime()
 	{
@@ -117,8 +117,8 @@ class patForms_Rule
    /**
 	* create a new rule object
 	*
-	* @access	public
-	* @param	string	id
+	* @access     public
+	* @param      string	id
 	*/
 	function patForms_Rule( $id = null )
 	{
@@ -133,8 +133,8 @@ class patForms_Rule
    /**
 	* set the id for the rule
 	*
-	* @access	public
-	* @param	string	id
+	* @access     public
+	* @param      string	id
 	*/
 	function setId( $id )
 	{
@@ -146,9 +146,9 @@ class patForms_Rule
 	* translations, that have been passed to the container
 	* element
 	*
-	* @access	public
-	* @param	string		new locale
-	* @return	boolean
+	* @access     public
+	* @param      string		new locale
+	* @return     boolean
 	*/
 	function setLocale( $locale )
 	{
@@ -183,8 +183,8 @@ class patForms_Rule
 	* patForms_Rule::prepareRule( $container );
 	* </code>
 	*
-	* @access	public
-	* @param	object	Either a patForms or patForms_Element object
+	* @access     public
+	* @param      object	Either a patForms or patForms_Element object
 	*/
 	function prepareRule( &$container )
 	{
@@ -203,9 +203,9 @@ class patForms_Rule
 	* element or the form.
 	*
 	* @abstract
-	* @access	public
-	* @param	object	    Either a patForms or patForms_Element object
-	* @return	boolean     true, if rule has been applied succesfully, false otherwise
+	* @access     public
+	* @param      object	    Either a patForms or patForms_Element object
+	* @return     boolean     true, if rule has been applied succesfully, false otherwise
 	*/
 	function applyRule( &$container, $type = PATFORMS_RULE_BEFORE_VALIDATION )
 	{
@@ -215,10 +215,10 @@ class patForms_Rule
    /**
 	* addValidationError
 	*
-	* @access	private
-	* @param	integer	$code
-	* @param	array	$vars	fill named placeholder with values
-	* @return   boolean $result	true on success
+	* @access     private
+	* @param      integer	$code
+	* @param      array	$vars	fill named placeholder with values
+	* @return     boolean $result	true on success
 	*/
 	function addValidationError( $code, $vars = array() )
 	{
@@ -231,8 +231,8 @@ class patForms_Rule
 	*
 	* By default just return the classname, this is sufficient.
 	*
-	* @access	public
-	* @return	string
+	* @access     public
+	* @return     string
 	*/
 	function getRuleName()
 	{
@@ -245,9 +245,9 @@ class patForms_Rule
    /**
 	* get the global javascript of the rule
 	*
-	* @access	public
-	* @return	string
-	* @todo		Rules need to know the output format
+	* @access     public
+	* @return     string
+	* @todo       Rules need to know the output format
 	*/
 	/*
 	function getGlobalJavascript()
@@ -263,8 +263,8 @@ class patForms_Rule
    /**
 	* get the instance javascript of the rule
 	*
-	* @access	public
-	* @return	string
+	* @access     public
+	* @return     string
 	*/
 	/*
 	function getInstanceJavascript()

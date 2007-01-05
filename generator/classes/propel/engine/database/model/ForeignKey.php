@@ -24,11 +24,11 @@ require_once 'propel/engine/database/model/XMLElement.php';
 /**
  * A Class for information about foreign keys of a table.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @author Fedor <fedor.karpelevitch@home.com>
- * @author Daniel Rall <dlr@finemaltcoding.com>
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @author     Fedor <fedor.karpelevitch@home.com>
+ * @author     Daniel Rall <dlr@finemaltcoding.com>
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class ForeignKey extends XMLElement {
 
@@ -52,7 +52,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Sets up the ForeignKey object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -145,7 +145,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Gets the phpName for this foreign key (if any).
-	 * @return string
+	 * @return     string
 	 */
 	public function getPhpName()
 	{
@@ -154,7 +154,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Sets a phpName to use for this foreign key.
-	 * @param string $name
+	 * @param      string $name
 	 */
 	public function setPhpName($name)
 	{
@@ -163,7 +163,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Gets the refPhpName for this foreign key (if any).
-	 * @return string
+	 * @return     string
 	 */
 	public function getRefPhpName()
 	{
@@ -172,7 +172,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Sets a refPhpName to use for this foreign key.
-	 * @param string $name
+	 * @param      string $name
 	 */
 	public function setRefPhpName($name)
 	{
@@ -197,7 +197,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Gets the resolved foreign Table model object.
-	 * @return Table
+	 * @return     Table
 	 */
 	public function getForeignTable()
 	{
@@ -261,7 +261,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Return an array of local column names.
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	public function getLocalColumns()
 	{
@@ -283,7 +283,7 @@ class ForeignKey extends XMLElement {
 
 	/**
 	 * Return an array of foreign column names.
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	public function getForeignColumns()
 	{
@@ -306,7 +306,7 @@ class ForeignKey extends XMLElement {
 	/**
 	 * Whether this foreign key is also the primary key of the local table.
 	 *
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isLocalPrimaryKey()
 	{

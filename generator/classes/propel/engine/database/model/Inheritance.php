@@ -25,10 +25,10 @@ require_once 'propel/engine/database/model/XMLElement.php';
 /**
  * A Class for information regarding possible objects representing a table
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author John McNally <jmcnally@collab.net> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     John McNally <jmcnally@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Inheritance extends XMLElement {
 
@@ -40,7 +40,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Sets up the Inheritance object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -52,7 +52,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Get the value of key.
-	 * @return value of key.
+	 * @return     value of key.
 	 */
 	public function getKey()
 	{
@@ -61,7 +61,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Set the value of key.
-	 * @param v  Value to assign to key.
+	 * @param      v  Value to assign to key.
 	 */
 	public function setKey($v)
 	{
@@ -70,7 +70,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Get the value of parent.
-	 * @return value of parent.
+	 * @return     value of parent.
 	 */
 	public function getColumn()
 	{
@@ -79,7 +79,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Set the value of parent.
-	 * @param v  Value to assign to parent.
+	 * @param      v  Value to assign to parent.
 	 */
 	public function setColumn(Column  $v)
 	{
@@ -88,7 +88,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Get the value of className.
-	 * @return value of className.
+	 * @return     value of className.
 	 */
 	public function getClassName()
 	{
@@ -97,7 +97,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Set the value of className.
-	 * @param v  Value to assign to className.
+	 * @param      v  Value to assign to className.
 	 */
 	public function setClassName($v)
 	{
@@ -106,7 +106,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Get the value of package.
-	 * @return value of package.
+	 * @return     value of package.
 	 */
 	public function getPackage()
 	{
@@ -115,7 +115,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Set the value of package.
-	 * @param v  Value to assign to package.
+	 * @param      v  Value to assign to package.
 	 */
 	public function setPackage($v)
 	{
@@ -124,7 +124,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Get the value of ancestor.
-	 * @return value of ancestor.
+	 * @return     value of ancestor.
 	 */
 	public function getAncestor()
 	{
@@ -133,7 +133,7 @@ class Inheritance extends XMLElement {
 
 	/**
 	 * Set the value of ancestor.
-	 * @param v  Value to assign to ancestor.
+	 * @param      v  Value to assign to ancestor.
 	 */
 	public function setAncestor($v)
 	{

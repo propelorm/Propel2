@@ -23,17 +23,17 @@
 /**
  * This is used in order to connect to a SQLite database.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
- * @package propel.adapter
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 class DBSQLite extends DBAdapter {
 
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string to transform to upper case.
-	 * @return The upper case string.
+	 * @param      in The string to transform to upper case.
+	 * @return     The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -43,8 +43,8 @@ class DBSQLite extends DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string whose case to ignore.
-	 * @return The string in a case that can be ignored.
+	 * @param      in The string whose case to ignore.
+	 * @return     The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -54,9 +54,9 @@ class DBSQLite extends DBAdapter {
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param string String to concatenate.
-	 * @param string String to append.
-	 * @return string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -66,10 +66,10 @@ class DBSQLite extends DBAdapter {
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param string String to extract from.
-	 * @param int Offset to start from.
-	 * @param int Number of characters to extract.
-	 * @return string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -79,8 +79,8 @@ class DBSQLite extends DBAdapter {
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param string String to calculate length of.
-	 * @return string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public function strLength($s)
 	{
@@ -88,7 +88,7 @@ class DBSQLite extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::quoteIdentifier()
+	 * @see        DBAdapter::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -96,7 +96,7 @@ class DBSQLite extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::applyLimit()
+	 * @see        DBAdapter::applyLimit()
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{

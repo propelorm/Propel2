@@ -25,11 +25,11 @@ require_once 'propel/engine/database/model/XMLElement.php';
 /**
  * Information related to an ID method.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author John McNally <jmcnally@collab.net> (Torque)
- * @author Daniel Rall <dlr@collab.net> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     John McNally <jmcnally@collab.net> (Torque)
+ * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class IdMethodParameter extends XMLElement {
 
@@ -39,7 +39,7 @@ class IdMethodParameter extends XMLElement {
 
    /**
 	 * Sets up the IdMethodParameter object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{

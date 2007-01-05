@@ -23,11 +23,11 @@
 /**
  * The generic interface to a name generation algorithm.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 interface NameGenerator {
 	/**
@@ -42,7 +42,7 @@ interface NameGenerator {
 	 * define how names for columns and tables in the database schema
 	 * will be converted to PHP source names.
 	 *
-	 * @see PhpNameGenerator::underscoreMethod()
+	 * @see        PhpNameGenerator::underscoreMethod()
 	 */
 	const CONV_METHOD_UNDERSCORE = "underscore";
 
@@ -50,7 +50,7 @@ interface NameGenerator {
 	 * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
 	 * converted to lowercase.
 	 *
-	 * @see PhpNameGenerator::phpnameMethod()
+	 * @see        PhpNameGenerator::phpnameMethod()
 	 */
 	const CONV_METHOD_PHPNAME = "phpname";
 
@@ -64,9 +64,9 @@ interface NameGenerator {
 	 * Given a list of <code>String</code> objects, implements an
 	 * algorithm which produces a name.
 	 *
-	 * @param inputs Inputs used to generate a name.
-	 * @return The generated name.
-	 * @throws EngineException
+	 * @param      inputs Inputs used to generate a name.
+	 * @return     The generated name.
+	 * @throws     EngineException
 	 */
 	public function generateName($inputs);
 }

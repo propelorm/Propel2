@@ -25,9 +25,9 @@ include_once 'phing/tasks/ext/pearpackage/Fileset.php';
 
 /**
  *
- * @author   Hans Lellelid <hans@xmpl.org>
- * @package  phing.tasks.ext
- * @version  $Revision$
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    phing.tasks.ext
+ * @version    $Revision$
  */
 class BuildPropelPEARPackageTask extends MatchingTask {
 
@@ -82,7 +82,7 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 	/**
 	 * Main entry point.
-	 * @return void
+	 * @return     void
 	 */
 	public function main() {
 
@@ -140,7 +140,7 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 	/**
 	 * Used by the PEAR_PackageFileManager_PhingFileSet lister.
-	 * @return array FileSet[]
+	 * @return     array FileSet[]
 	 */
 	public function getFileSets() {
 		return $this->filesets;
@@ -153,7 +153,7 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	/**
 	 * Nested creator, creates a FileSet for this task
 	 *
-	 * @return FileSet The created fileset object
+	 * @return     FileSet The created fileset object
 	 */
 	function createFileSet() {
 		$num = array_push($this->filesets, new FileSet());
@@ -162,8 +162,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 	/**
 	 * Set the version we are building.
-	 * @param string $v
-	 * @return void
+	 * @param      string $v
+	 * @return     void
 	 */
 	public function setVersion($v){
 		$this->version = $v;
@@ -171,8 +171,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 	/**
 	 * Set the state we are building.
-	 * @param string $v
-	 * @return void
+	 * @param      string $v
+	 * @return     void
 	 */
 	public function setState($v) {
 		$this->state = $v;
@@ -180,16 +180,16 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 	/**
 	 * Sets release notes field.
-	 * @param string $v
-	 * @return void
+	 * @param      string $v
+	 * @return     void
 	 */
 	public function setNotes($v) {
 		$this->notes = $v;
 	}
 	/**
 	 * Sets "dir" property from XML.
-	 * @param PhingFile $f
-	 * @return void
+	 * @param      PhingFile $f
+	 * @return     void
 	 */
 	public function setDir(PhingFile $f) {
 		$this->dir = $f;

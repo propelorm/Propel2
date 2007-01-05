@@ -21,9 +21,9 @@
 
 /**
  * The base class of all exceptions thrown by Propel.
- * @author Hans Lellelid <hans@xmpl.org>
- * @version $Revision$
- * @package propel
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel
  */
 class PropelException extends Exception {
 

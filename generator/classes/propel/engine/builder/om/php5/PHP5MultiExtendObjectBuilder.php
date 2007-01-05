@@ -31,8 +31,8 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
  * This class replaces the MultiExtendObject.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
@@ -43,7 +43,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns the name of the current class being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getUnprefixedClassname()
 	{
@@ -52,7 +52,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Override method to return child package, if specified.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPackage()
 	{
@@ -61,7 +61,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Set the child object that we're operating on currrently.
-	 * @param $child Inheritance
+	 * @param      $child Inheritance
 	 */
 	public function setChild(Inheritance $child)
 	{
@@ -70,8 +70,8 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns the child object we're operating on currently.
-	 * @return Inheritance
-	 * @throws BuildException - if child was not set.
+	 * @return     Inheritance
+	 * @throws     BuildException - if child was not set.
 	 */
 	public function getChild()
 	{
@@ -83,7 +83,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns classpath to parent class.
-	 * @return string
+	 * @return     string
 	 */
 	protected function getParentClasspath()
 	{
@@ -96,7 +96,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns classname of parent class.
-	 * @return string
+	 * @return     string
 	 */
 	protected function getParentClassname()
 	{
@@ -105,7 +105,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Gets the file path to the parent class.
-	 * @return string
+	 * @return     string
 	 */
 	protected function getParentClassFilePath()
 	{
@@ -114,7 +114,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
@@ -122,7 +122,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Adds class phpdoc comment and openning of class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
@@ -153,7 +153,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package ".$this->getPackage()."
+ * @package    ".$this->getPackage()."
  */
 class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 ";
@@ -165,7 +165,7 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 	 * By default there are no methods for the empty stub classes; override this method
 	 * if you want to change that behavior.
 	 *
-	 * @see ObjectBuilder::addClassBody()
+	 * @see        ObjectBuilder::addClassBody()
 	 */
 	protected function addClassBody(&$script)
 	{
@@ -191,7 +191,7 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 
 	/**
 	 * Closes class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassClose(&$script)
 	{

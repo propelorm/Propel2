@@ -22,10 +22,10 @@
 /**
  * Interface for RDBMS platform specific behaviour.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.platform
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.platform
  */
 interface Platform {
 
@@ -38,76 +38,76 @@ interface Platform {
 	/**
 	 * Returns the short name of the database type that this platform represents.
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDatabaseType();
 
 	/**
 	 * Returns the native IdMethod (sequence|identity)
 	 *
-	 * @return string The native IdMethod (Platform:IDENTITY, Platform::SEQUENCE).
+	 * @return     string The native IdMethod (Platform:IDENTITY, Platform::SEQUENCE).
 	 */
 	public function getNativeIdMethod();
 
 	/**
 	 * Returns the max column length supported by the db.
 	 *
-	 * @return int The max column length
+	 * @return     int The max column length
 	 */
 	public function getMaxColumnNameLength();
 
 	/**
 	 * Returns the db specific domain for a jdbcType.
 	 *
-	 * @param string $creoleType the creole type name.
-	 * @return Domain The db specific domain.
+	 * @param      string $creoleType the creole type name.
+	 * @return     Domain The db specific domain.
 	 */
 	public function getDomainForType($creoleType);
 
 	/**
-	 * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
+	 * @return     string The RDBMS-specific SQL fragment for <code>NULL</code>
 	 * or <code>NOT NULL</code>.
 	 */
 	public function getNullString($notNull);
 
 	/**
-	 * @return The RDBMS-specific SQL fragment for autoincrement.
+	 * @return     The RDBMS-specific SQL fragment for autoincrement.
 	 */
 	public function getAutoIncrement();
 
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
-	 * @param string $sqlType the SQL type
-	 * @return boolean True if the type has a size attribute
+	 * @param      string $sqlType the SQL type
+	 * @return     boolean True if the type has a size attribute
 	 */
 	public function hasSize($sqlType);
 
 	/**
 	 * Returns if the RDBMS-specific SQL type has a scale attribute.
 	 *
-	 * @param string $sqlType the SQL type
-	 * @return boolean True if the type has a scale attribute
+	 * @param      string $sqlType the SQL type
+	 * @return     boolean True if the type has a scale attribute
 	 */
 	public function hasScale($sqlType);
 
 	/**
 	 * Escape the string for RDBMS.
-	 * @param string $text
-	 * @return string
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function escapeText($text);
 
 	/**
 	 * Quotes identifiers used in database SQL.
-	 * @param string $text
-	 * @return string Quoted identifier.
+	 * @param      string $text
+	 * @return     string Quoted identifier.
 	 */
 	public function quoteIdentifier($text);
 
 	/**
 	 * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function supportsNativeDeleteTrigger();
 
@@ -120,8 +120,8 @@ interface Platform {
 	 * This function is used to set default column values when building
 	 * SQL.
 	 *
-	 * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
-	 * @return mixed
+	 * @param      mixed $tf A boolean or string representation of boolean ('y', 'true').
+	 * @return     mixed
 	 */
 	public function getBooleanString($tf);
 

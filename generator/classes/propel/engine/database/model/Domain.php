@@ -24,10 +24,10 @@ require_once 'propel/engine/database/model/XMLElement.php';
 /**
  * A Class for holding data about a column used in an Application.
  *
- * @author  Hans Lellelid <hans@xmpl.org> (Propel)
- * @author  Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Domain extends XMLElement {
 
@@ -48,10 +48,10 @@ class Domain extends XMLElement {
 	 * Creates a new Domain object.
 	 * If this domain needs a name, it must be specified manually.
 	 *
-	 * @param string $type Propel type.
-	 * @param string $sqlType SQL type.
-	 * @param string $size
-	 * @param string $scale
+	 * @param      string $type Propel type.
+	 * @param      string $sqlType SQL type.
+	 * @param      string $size
+	 * @param      string $scale
 	 */
 	public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
 	{
@@ -74,7 +74,7 @@ class Domain extends XMLElement {
 
    /**
 	 * Sets up the Domain object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -107,7 +107,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return Returns the description.
+	 * @return     Returns the description.
 	 */
 	public function getDescription()
 	{
@@ -115,7 +115,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param description The description to set.
+	 * @param      description The description to set.
 	 */
 	public function setDescription($description)
 	{
@@ -123,7 +123,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return Returns the name.
+	 * @return     Returns the name.
 	 */
 	public function getName()
 	{
@@ -131,7 +131,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param name The name to set.
+	 * @param      name The name to set.
 	 */
 	public function setName($name)
 	{
@@ -139,7 +139,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return Returns the scale.
+	 * @return     Returns the scale.
 	 */
 	public function getScale()
 	{
@@ -147,7 +147,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param scale The scale to set.
+	 * @param      scale The scale to set.
 	 */
 	public function setScale($scale)
 	{
@@ -157,7 +157,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the size if the new value is not null.
 	 *
-	 * @param value The size to set.
+	 * @param      value The size to set.
 	 */
 	public function replaceScale($value)
 	{
@@ -167,7 +167,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return Returns the size.
+	 * @return     Returns the size.
 	 */
 	public function getSize()
 	{
@@ -175,7 +175,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param size The size to set.
+	 * @param      size The size to set.
 	 */
 	public function setSize($size)
 	{
@@ -185,7 +185,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the size if the new value is not null.
 	 *
-	 * @param value The size to set.
+	 * @param      value The size to set.
 	 */
 	public function replaceSize($value)
 	{
@@ -195,7 +195,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return string Returns the propelType.
+	 * @return     string Returns the propelType.
 	 */
 	public function getType()
 	{
@@ -203,7 +203,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param string $propelType The PropelTypes type to set.
+	 * @param      string $propelType The PropelTypes type to set.
 	 */
 	public function setType($propelType)
 	{
@@ -213,7 +213,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the default value if the new value is not null.
 	 *
-	 * @param value The defaultValue to set.
+	 * @param      value The defaultValue to set.
 	 */
 	public function replaceType($value)
 	{
@@ -224,7 +224,7 @@ class Domain extends XMLElement {
 
 	/**
 	 * Gets the "raw" default value, suitable for use in SQL.
-	 * @return string Returns the defaultValue.
+	 * @return     string Returns the defaultValue.
 	 */
 	public function getDefaultValue()
 	{
@@ -235,8 +235,8 @@ class Domain extends XMLElement {
 
 	/**
 	 * Gets the default value, type-casted for use in PHP OM.
-	 * @return mixed
-	 * @see getDefaultValue()
+	 * @return     mixed
+	 * @see        getDefaultValue()
 	 */
 	public function getPhpDefaultValue()
 	{
@@ -258,7 +258,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param defaultValue The defaultValue to set.
+	 * @param      defaultValue The defaultValue to set.
 	 */
 	public function setDefaultValue($defaultValue)
 	{
@@ -268,7 +268,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the default value if the new value is not null.
 	 *
-	 * @param string $value The defaultValue to set.
+	 * @param      string $value The defaultValue to set.
 	 */
 	public function replaceDefaultValue($value)
 	{
@@ -278,7 +278,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return Returns the sqlType.
+	 * @return     Returns the sqlType.
 	 */
 	public function getSqlType()
 	{
@@ -286,7 +286,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param string $sqlType The sqlType to set.
+	 * @param      string $sqlType The sqlType to set.
 	 */
 	public function setSqlType($sqlType)
 	{
@@ -296,7 +296,7 @@ class Domain extends XMLElement {
 	/**
 	 * Return the size and scale in brackets for use in an sql schema.
 	 *
-	 * @return size and scale or an empty String if there are no values
+	 * @return     size and scale or an empty String if there are no values
 	 *         available.
 	 */
 	public function printSize()

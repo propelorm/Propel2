@@ -28,14 +28,14 @@ include_once 'propel/engine/database/model/Domain.php';
 /**
  * A Class for holding data about a column used in an Application.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Leon Messerschmidt <leon@opticode.co.za> (Torque)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author Jon S. Stevens <jon@latchkey.com> (Torque)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @author Byron Foster <byron_foster@yahoo.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Leon Messerschmidt <leon@opticode.co.za> (Torque)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author     Jon S. Stevens <jon@latchkey.com> (Torque)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class Column extends XMLElement {
 
@@ -51,25 +51,25 @@ class Column extends XMLElement {
 	/**
 	 * The name to use for the Peer constant that identifies this column.
 	 * (Will be converted to all-uppercase in the templates.)
-	 * @var string
+	 * @var        string
 	 */
 	private $peerName;
 
 	/**
 	 * Type as defined in schema.xml
-	 * @var string
+	 * @var        string
 	 */
 	private $propelType;
 
 	/**
 	 * Type corresponding to Creole type
-	 * @var int
+	 * @var        int
 	 */
 	private $creoleType;
 
 	/**
 	 * Native PHP type
-	 * @var string "string", "boolean", "int", "double"
+	 * @var        string "string", "boolean", "int", "double"
 	 */
 	private $phpType;
 	private $parentTable;
@@ -102,7 +102,7 @@ class Column extends XMLElement {
 	/**
 	 * Creates a new column and set the name
 	 *
-	 * @param name column name
+	 * @param      name column name
 	 */
 	public function __construct($name = null)
 	{
@@ -112,7 +112,7 @@ class Column extends XMLElement {
 	/**
 	 * Return a comma delimited string listing the specified columns.
 	 *
-	 * @param columns Either a list of <code>Column</code> objects, or
+	 * @param      columns Either a list of <code>Column</code> objects, or
 	 * a list of <code>String</code> objects with column names.
 	 * @deprecated Use the DDLBuilder->getColumnList() method instead; this will be removed in 1.3
 	 */
@@ -130,7 +130,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Sets up the Column object based on the attributes that were passed to loadFromXML().
-	 * @see parent::loadFromXML()
+	 * @see        parent::loadFromXML()
 	 */
 	protected function setupObject()
 	{
@@ -198,7 +198,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Gets domain for this column.
-	 * @return Domain
+	 * @return     Domain
 	 */
 	public function getDomain()
 	{
@@ -240,7 +240,7 @@ class Column extends XMLElement {
 	/**
 	 * Set the description for the Table
 	 *
-	 * @param newDescription description for the Table
+	 * @param      newDescription description for the Table
 	 */
 	public function setDescription($newDescription)
 	{
@@ -249,7 +249,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Get name to use in PHP sources
-	 * @return string
+	 * @return     string
 	 */
 	public function getPhpName()
 	{
@@ -277,7 +277,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Get the Peer constant name that will identify this column.
-	 * @return string
+	 * @return     string
 	 */
 	public function getPeerName() {
 		return $this->peerName;
@@ -285,7 +285,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set the Peer constant name that will identify this column.
-	 * @param $name string
+	 * @param      $name string
 	 */
 	public function setPeerName($name) {
 		$this->peerName = $name;
@@ -302,8 +302,8 @@ class Column extends XMLElement {
 	 * always cast to PHP native types, we can't cast objects (in PHP) -- hence the
 	 * importance of maintaining this distinction.
 	 *
-	 * @return string The type name.
-	 * @see getPhpNative()
+	 * @return     string The type name.
+	 * @see        getPhpNative()
 	 */
 	public function getPhpType()
 	{
@@ -315,7 +315,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Get the location of this column within the table (one-based).
-	 * @return int value of position.
+	 * @return     int value of position.
 	 */
 	public function getPosition()
 	{
@@ -324,7 +324,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Get the location of this column within the table (one-based).
-	 * @param int $v Value to assign to position.
+	 * @param      int $v Value to assign to position.
 	 */
 	public function setPosition($v)
 	{
@@ -358,7 +358,7 @@ class Column extends XMLElement {
 	/**
 	 * Adds a new inheritance definition to the inheritance list and set the
 	 * parent column of the inheritance to the current column
-	 * @param mixed $inhdata Inheritance or XML data.
+	 * @param      mixed $inhdata Inheritance or XML data.
 	 */
 	public function addInheritance($inhdata)
 	{
@@ -422,7 +422,7 @@ class Column extends XMLElement {
 	 /**
 	  * Return NOT NULL String for this column
 	  *
-	  * @return "NOT NULL" if null values are not allowed or an empty string.
+	  * @return     "NOT NULL" if null values are not allowed or an empty string.
 	  */
 	public function getNotNullString()
 	{
@@ -640,7 +640,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Returns the column Creole type as a string.
-	 * @return string The constant representing Creole type: e.g. "VARCHAR".
+	 * @return     string The constant representing Creole type: e.g. "VARCHAR".
 	 */
 	public function getType()
 	{
@@ -649,7 +649,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Returns the column Creole type as a string.
-	 * @return string The constant representing Creole type: e.g. "VARCHAR".
+	 * @return     string The constant representing Creole type: e.g. "VARCHAR".
 	 */
 	public function getPDOType()
 	{
@@ -666,7 +666,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Utility method to know whether column needs Blob/Lob handling.
-	 * @return boolean
+	 * @return     boolean
 	 */
 	public function isLob()
 	{
@@ -734,7 +734,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Returns the size of the column
-	 * @return string
+	 * @return     string
 	 */
 	public function getSize()
 	{
@@ -743,7 +743,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set the size of the column
-	 * @param string $newSize
+	 * @param      string $newSize
 	 */
 	public function setSize($newSize)
 	{
@@ -752,7 +752,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Returns the scale of the column
-	 * @return string
+	 * @return     string
 	 */
 	public function getScale()
 	{
@@ -761,7 +761,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set the scale of the column
-	 * @param string $newScale
+	 * @param      string $newScale
 	 */
 	public function setScale($newScale)
 	{
@@ -779,7 +779,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Return a string that will give this column a default value.
-	 * @return string
+	 * @return     string
 	 */
 	 public function getDefaultSetting()
 	 {
@@ -807,8 +807,8 @@ class Column extends XMLElement {
 
 	/**
 	 * Get the raw string that will give this column a default value.
-	 * @return string
-	 * @see Domain::getDefaultValue()
+	 * @return     string
+	 * @see        Domain::getDefaultValue()
 	 */
 	public function getDefaultValue()
 	{
@@ -817,8 +817,8 @@ class Column extends XMLElement {
 
 	/**
 	 * Get the default value suitable for use in PHP.
-	 * @return mixed
-	 * @see Domain::getPhpDefaultValue()
+	 * @return     mixed
+	 * @see        Domain::getPhpDefaultValue()
 	 */
 	public function getPhpDefaultValue()
 	{
@@ -853,7 +853,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Gets the auto-increment string.
-	 * @return string
+	 * @return     string
 	 */
 	public function getAutoIncrementString()
 	{
@@ -908,7 +908,7 @@ class Column extends XMLElement {
 	 * Return a string representation of the native PHP type which corresponds
 	 * to the Creole type of this column. Use in the generation of Base objects.
 	 *
-	 * @return string PHP datatype used by propel.
+	 * @return     string PHP datatype used by propel.
 	 */
 	public function getPhpNative()
 	{
@@ -938,7 +938,7 @@ class Column extends XMLElement {
 	/**
 	 * Get the platform/adapter impl.
 	 *
-	 * @return Platform
+	 * @return     Platform
 	 */
 	public function getPlatform()
 	{
@@ -947,7 +947,7 @@ class Column extends XMLElement {
 
 	/**
 	 *
-	 * @return string
+	 * @return     string
 	 * @deprecated Use DDLBuilder->getColumnDDL() instead; this will be removed in 1.3
 	 */
 	public function getSqlString()

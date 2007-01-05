@@ -27,20 +27,20 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
 /**
  * This Task creates the OM classes based on the XML schema file.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.phing
  */
 class PropelOMTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * The platform (php4, php5, etc.) for which the om is being built.
-	 * @var string
+	 * @var        string
 	 */
 	private $targetPlatform;
 
 	/**
 	 * Sets the platform (php4, php5, etc.) for which the om is being built.
-	 * @param string $v
+	 * @param      string $v
 	 */
 	public function setTargetPlatform($v) {
 		$this->targetPlatform = $v;
@@ -48,7 +48,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Gets the platform (php4, php5, etc.) for which the om is being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTargetPlatform() {
 		return $this->targetPlatform;
@@ -56,8 +56,8 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 	/**
 	 * Utility method to create directory for package if it doesn't already exist.
-	 * @param string $path The [relative] package path.
-	 * @throws BuildException - if there is an error creating directories
+	 * @param      string $path The [relative] package path.
+	 * @throws     BuildException - if there is an error creating directories
 	 */
 	protected function ensureDirExists($path)
 	{
@@ -72,9 +72,9 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	/**
 	 * Uses a builder class to create the output class.
 	 * This method assumes that the DataModelBuilder class has been initialized with the build properties.
-	 * @param OMBuilder $builder
-	 * @param boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
-	 * @todo -cPropelOMTask Consider refactoring build() method into AbstractPropelDataModelTask (would need to be more generic).
+	 * @param      OMBuilder $builder
+	 * @param      boolean $overwrite Whether to overwrite existing files with te new ones (default is YES).
+	 * @todo       -cPropelOMTask Consider refactoring build() method into AbstractPropelDataModelTask (would need to be more generic).
 	 */
 	protected function build(OMBuilder $builder, $overwrite = true)
 	{

@@ -37,8 +37,8 @@ include_once 'propel/engine/database/model/AppData.php';
  * adapter, <code>DBMM</code>.  MySQL has a column length limit of 64
  * characters.</p>
  *
- * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>
- * @version $Id$
+ * @author     <a href="mailto:dlr@collab.net">Daniel Rall</a>
+ * @version    $Id$
  */
 class NameFactoryTest extends BaseTestCase {
 
@@ -106,8 +106,8 @@ class NameFactoryTest extends BaseTestCase {
 	 * the character <code>A</code>.  Useful for simulating table
 	 * names, etc.
 	 *
-	 * @param int $len the number of characters to include in the string
-	 * @return a string of length <code>len</code> with every character an 'A'
+	 * @param      int $len the number of characters to include in the string
+	 * @return     a string of length <code>len</code> with every character an 'A'
 	 */
 	private static function makeString($len) {
 		$buf = "";
@@ -126,7 +126,7 @@ class NameFactoryTest extends BaseTestCase {
 	}
 
 	/**
-	 * @throws Exception on fail
+	 * @throws     Exception on fail
 	 */
 	public function testNames() {
 		for ($algoIndex = 0; $algoIndex < count(self::$ALGORITHMS); $algoIndex++) {
@@ -145,11 +145,11 @@ class NameFactoryTest extends BaseTestCase {
 	 * Creates the list of arguments to pass to the specified type of
 	 * <code>NameGenerator</code> implementation.
 	 *
-	 * @param algo The class name of the <code>NameGenerator</code> to
+	 * @param      algo The class name of the <code>NameGenerator</code> to
 	 * create an argument list for.
-	 * @param inputs The (possibly partial) list inputs from which to
+	 * @param      inputs The (possibly partial) list inputs from which to
 	 * generate the final list.
-	 * @return the list of arguments to pass to the <code>NameGenerator</code>
+	 * @return     the list of arguments to pass to the <code>NameGenerator</code>
 	 */
 	private function makeInputs($algo, $inputs)
 	{

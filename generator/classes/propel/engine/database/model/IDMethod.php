@@ -24,10 +24,10 @@
  * Interface for various ID retrieval method types
  * (i.e. auto-increment, sequence, ID broker, etc.).
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@collab.net> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@collab.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 interface IDMethod {
 

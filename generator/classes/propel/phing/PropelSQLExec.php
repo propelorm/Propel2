@@ -28,15 +28,15 @@ require_once 'phing/Task.php';
  * This task uses an SQL -> Database map in the form of a properties
  * file to insert each SQL file listed into its designated database.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @author Dominik del Bondio
- * @author Jeff Martin <jeff@custommonkey.org> (Torque)
- * @author Michael McCallum <gholam@xtra.co.nz> (Torque)
- * @author Tim Stephenson <tim.stephenson@sybase.com> (Torque)
- * @author Jason van Zyl <jvanzyl@apache.org> (Torque)
- * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
- * @version $Revision$
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @author     Dominik del Bondio
+ * @author     Jeff Martin <jeff@custommonkey.org> (Torque)
+ * @author     Michael McCallum <gholam@xtra.co.nz> (Torque)
+ * @author     Tim Stephenson <tim.stephenson@sybase.com> (Torque)
+ * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
+ * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @version    $Revision$
+ * @package    propel.phing
  */
 class PropelSQLExec extends Task {
 
@@ -109,7 +109,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the sqldbmap properties file.
 	 *
-	 * @param sqldbmap filename for the sqldbmap
+	 * @param      sqldbmap filename for the sqldbmap
 	 */
 	public function setSqlDbMap($sqldbmap)
 	{
@@ -119,7 +119,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Get the sqldbmap properties file.
 	 *
-	 * @return filename for the sqldbmap
+	 * @return     filename for the sqldbmap
 	 */
 	public function getSqlDbMap()
 	{
@@ -129,7 +129,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the src directory for the sql files listed in the sqldbmap file.
 	 *
-	 * @param PhingFile $srcDir sql source directory
+	 * @param      PhingFile $srcDir sql source directory
 	 */
 	public function setSrcDir(PhingFile $srcDir)
 	{
@@ -139,7 +139,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Get the src directory for the sql files listed in the sqldbmap file.
 	 *
-	 * @return PhingFile SQL Source directory
+	 * @return     PhingFile SQL Source directory
 	 */
 	public function getSrcDir()
 	{
@@ -149,7 +149,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the sql command to execute
 	 *
-	 * @param sql sql command to execute
+	 * @param      sql sql command to execute
 	 */
 	public function addText($sql)
 	{
@@ -159,7 +159,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the DB connection url.
 	 *
-	 * @param string $url connection url
+	 * @param      string $url connection url
 	 */
 	public function setUrl($url)
 	{
@@ -169,7 +169,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the user name for the DB connection.
 	 *
-	 * @param string $userId database user
+	 * @param      string $userId database user
 	 * @deprecated Specify userid in the DSN URL.
 	 */
 	public function setUserid($userId)
@@ -180,7 +180,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the password for the DB connection.
 	 *
-	 * @param string $password database password
+	 * @param      string $password database password
 	 * @deprecated Specify password in the DSN URL.
 	 */
 	public function setPassword($password)
@@ -191,7 +191,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the autocommit flag for the DB connection.
 	 *
-	 * @param boolean $autocommit the autocommit flag
+	 * @param      boolean $autocommit the autocommit flag
 	 */
 	public function setAutoCommit($autocommit)
 	{
@@ -204,7 +204,7 @@ class PropelSQLExec extends Task {
 	 * <p>For example, set this to "go" and delimitertype to "ROW" for
 	 * Sybase ASE or MS SQL Server.</p>
 	 *
-	 * @param string $delimiter
+	 * @param      string $delimiter
 	 */
 	public function setDelimiter($delimiter)
 	{
@@ -217,7 +217,7 @@ class PropelSQLExec extends Task {
 	 * terminate the SQL command whereas with row, only a line containing just
 	 * the delimiter is recognized as the end of the command.
 	 *
-	 * @param string $delimiterType
+	 * @param      string $delimiterType
 	 */
 	public function setDelimiterType($delimiterType)
 	{
@@ -227,7 +227,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the print flag.
 	 *
-	 * @param boolean $print
+	 * @param      boolean $print
 	 */
 	public function setPrint($print)
 	{
@@ -237,7 +237,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the showheaders flag.
 	 *
-	 * @param boolean $showheaders
+	 * @param      boolean $showheaders
 	 */
 	public function setShowheaders($showheaders)
 	{
@@ -247,7 +247,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the output file.
 	 *
-	 * @param PhingFile $output
+	 * @param      PhingFile $output
 	 */
 	public function setOutput(PhingFile $output)
 	{
@@ -257,7 +257,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Set the action to perform onerror
 	 *
-	 * @param string $action
+	 * @param      string $action
 	 */
 	public function setOnerror($action)
 	{
@@ -267,7 +267,7 @@ class PropelSQLExec extends Task {
 	/**
 	 * Load the sql file and then execute it
 	 *
-	 * @throws BuildException
+	 * @throws     BuildException
 	 */
 	public function main()
 	{
@@ -337,9 +337,9 @@ class PropelSQLExec extends Task {
 	 * Take the base url, the target database and insert a set of SQL
 	 * files into the target database.
 	 *
-	 * @param string $url
-	 * @param string $database
-	 * @param array $transactions
+	 * @param      string $url
+	 * @param      string $database
+	 * @param      array $transactions
 	 */
 	private function insertDatabaseSqlFiles($url, $database, $transactions)
 	{
@@ -424,10 +424,10 @@ class PropelSQLExec extends Task {
 	 * Developer note:  must be public in order to be called from
 	 * sudo-"inner" class PropelSQLExecTransaction.
 	 *
-	 * @param Reader $reader
-	 * @param $out Optional output stream.
-	 * @throws PDOException
-	 * @throws IOException
+	 * @param      Reader $reader
+	 * @param      $out Optional output stream.
+	 * @throws     PDOException
+	 * @throws     IOException
 	 */
 	public function runStatements(Reader $reader, $out = null)
 	{
@@ -512,9 +512,9 @@ class PropelSQLExec extends Task {
 	/**
 	 * Exec the sql statement.
 	 *
-	 * @param sql
-	 * @param out
-	 * @throws PDOException
+	 * @param      sql
+	 * @param      out
+	 * @throws     PDOException
 	 */
 	protected function execSQL($sql, $out = null)
 	{
@@ -547,8 +547,8 @@ class PropelSQLExec extends Task {
 	/**
 	 * print any results in the statement.
 	 *
-	 * @param out
-	 * @throws PDOException
+	 * @param      out
+	 * @throws     PDOException
 	 */
 	protected function printResults($out = null)
 	{
@@ -611,7 +611,7 @@ class PropelSQLExec extends Task {
  * Transactions allow several files or blocks of statements
  * to be executed using the same Creole connection and commit
  * operation in between.
- * @package propel.phing
+ * @package    propel.phing
  */
 class PropelSQLExecTransaction {
 
@@ -636,7 +636,7 @@ class PropelSQLExecTransaction {
 	}
 
 	/**
-	 * @throws IOException, PDOException
+	 * @throws     IOException, PDOException
 	 */
 	public function runTransaction($out = null)
 	{

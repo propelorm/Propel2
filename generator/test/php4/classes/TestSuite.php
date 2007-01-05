@@ -42,7 +42,7 @@ class TestSuite extends PHPUnit_TestSuite
   /**
   * Add a test suite.
   *
-  * @param  object
+  * @param      object
   */
   function addTestSuite($name)
   {

@@ -26,8 +26,8 @@ include_once 'propel/engine/builder/om/ClassTools.php';
 /**
  * This Task creates the OM classes based on the XML schema file.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.phing
  */
 class PropelDataDTDTask extends PropelDataModelTemplateTask {
 

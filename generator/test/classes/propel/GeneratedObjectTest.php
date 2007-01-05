@@ -33,8 +33,8 @@ require_once 'bookstore/BookstoreTestBase.php';
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see BookstoreDataPopulator
- * @author Hans Lellelid <hans@xmpl.org>
+ * @see        BookstoreDataPopulator
+ * @author     Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase {
 
@@ -156,7 +156,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	/**
 	 * Tests new one-to-one functionality.
 	 *
-	 * @todo -cGeneratedObjectTest Add a test for one-to-one when implemented.
+	 * @todo       -cGeneratedObjectTest Add a test for one-to-one when implemented.
 	 */
 	public function testOneToOne()
 	{

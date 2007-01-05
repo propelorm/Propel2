@@ -28,15 +28,15 @@ require_once 'propel/engine/builder/om/php5/PHP5BasicPeerBuilder.php';
  * This class extends the basic peer builder by adding on the doSelectJoin*()
  * methods and other complex object model methods.
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the complex OM methods to the base addSelectMethods() function.
-	 * @param string &$script The script will be modified in this method.
-	 * @see PeerBuilder::addSelectMethods()
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        PeerBuilder::addSelectMethods()
 	 */
 	protected function addSelectMethods(&$script)
 	{
@@ -73,7 +73,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doSelectJoin*() methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelectJoin(&$script)
 	{
@@ -106,8 +106,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Selects a collection of $className objects pre-filled with their $joinClassName objects.
 	 *
-	 * @return array Array of $className objects.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @return     array Array of $className objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
@@ -197,7 +197,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doCountJoin*() methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoCountJoin(&$script)
 	{
@@ -226,10 +226,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
-	 * @param Criteria \$c
-	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param PDO \$con
-	 * @return int Number of matching rows.
+	 * @param      Criteria \$c
+	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      PDO \$con
+	 * @return     int Number of matching rows.
 	 */
 	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
@@ -277,7 +277,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doSelectJoinAll() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelectJoinAll(&$script)
 	{
@@ -289,8 +289,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Selects a collection of $className objects pre-filled with all related objects.
 	 *
-	 * @return array Array of $className objects.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @return     array Array of $className objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doSelectJoinAll(Criteria \$c, \$con = null)
@@ -441,7 +441,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doCountJoinAll() method.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoCountJoinAll(&$script)
 	{
@@ -453,10 +453,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param Criteria \$c
-	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param PDO \$con
-	 * @return int Number of matching rows.
+	 * @param      Criteria \$c
+	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      PDO \$con
+	 * @return     int Number of matching rows.
 	 */
 	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{
@@ -510,7 +510,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doSelectJoinAllExcept*() methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoSelectJoinAllExcept(&$script)
 	{
@@ -543,8 +543,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Selects a collection of ".$this->getObjectClassname()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
 	 *
-	 * @return array Array of ".$this->getObjectClassname()." objects.
-	 * @throws PropelException Any exceptions caught during processing will be
+	 * @return     array Array of ".$this->getObjectClassname()." objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
@@ -696,7 +696,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 	/**
 	 * Adds the doCountJoinAllExcept*() methods.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addDoCountJoinAllExcept(&$script)
 	{
@@ -721,10 +721,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	/**
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
-	 * @param Criteria \$c
-	 * @param boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param PDO \$con
-	 * @return int Number of matching rows.
+	 * @param      Criteria \$c
+	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      PDO \$con
+	 * @return     int Number of matching rows.
 	 */
 	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
 	{

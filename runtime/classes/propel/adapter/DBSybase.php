@@ -27,18 +27,18 @@
  * methods for ResultSetMetaData, and therefore the village API's may
  * not function.  For connection pooling, everything works.</I>
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jeff Brekke <ekkerbj@netscape.net> (Torque)
- * @version $Revision$
- * @package propel.adapter
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jeff Brekke <ekkerbj@netscape.net> (Torque)
+ * @version    $Revision$
+ * @package    propel.adapter
  */
 class DBSybase extends DBAdapter {
 
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string to transform to upper case.
-	 * @return The upper case string.
+	 * @param      in The string to transform to upper case.
+	 * @return     The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -48,8 +48,8 @@ class DBSybase extends DBAdapter {
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param in The string whose case to ignore.
-	 * @return The string in a case that can be ignored.
+	 * @param      in The string whose case to ignore.
+	 * @return     The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -59,9 +59,9 @@ class DBSybase extends DBAdapter {
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param string String to concatenate.
-	 * @param string String to append.
-	 * @return string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -71,10 +71,10 @@ class DBSybase extends DBAdapter {
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param string String to extract from.
-	 * @param int Offset to start from.
-	 * @param int Number of characters to extract.
-	 * @return string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -84,8 +84,8 @@ class DBSybase extends DBAdapter {
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param string String to calculate length of.
-	 * @return string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public function strLength($s)
 	{
@@ -93,7 +93,7 @@ class DBSybase extends DBAdapter {
 	}
 
 	/**
-	 * @see DBAdapter::quoteIdentifier()
+	 * @see        DBAdapter::quoteIdentifier()
 	 */
 	public function quoteIdentifier($text)
 	{

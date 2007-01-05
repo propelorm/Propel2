@@ -27,11 +27,11 @@ require_once 'phing/Task.php';
  * This class generates an XML schema of an existing database from
  * Creole metadata.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Jason van Zyl <jvanzyl@periapt.com> (Torque)
- * @author Fedor Karpelevitch <fedor.karpelevitch@barra.com> (Torque)
- * @version $Revision$
- * @package propel.phing
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Jason van Zyl <jvanzyl@periapt.com> (Torque)
+ * @author     Fedor Karpelevitch <fedor.karpelevitch@barra.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.phing
  */
 class PropelCreoleTransformTask extends Task {
 
@@ -81,14 +81,14 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Bitfield to switch on/off which validators will be created.
 	 *
-	 * @var int
+	 * @var        int
 	 */
 	protected $validatorBits;
 
 	/**
 	 * Collect validatorInfos to create validators.
 	 *
-	 * @var int
+	 * @var        int
 	 */
 	protected $validatorInfos;
 
@@ -134,7 +134,7 @@ class PropelCreoleTransformTask extends Task {
 	 * which validators are to be added
 	 *
 	 * @static
-	 * @var array
+	 * @var        array
 	 */
 	static protected $validatorBitMap = array (
 		'none' => PropelCreoleTransformTask::VALIDATORS_NONE,
@@ -150,7 +150,7 @@ class PropelCreoleTransformTask extends Task {
 	 * Defines messages that are added to validators
 	 *
 	 * @static
-	 * @var array
+	 * @var        array
 	 */
 	static protected $validatorMessages = array (
 		'maxlength' => array (
@@ -228,8 +228,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Sets set validator bitfield from propel.addValidators property
 	 *
-	 * @param string $v The propel.addValidators property
-	 * @return void
+	 * @param      string $v The propel.addValidators property
+	 * @return     void
 	 */
 	public function setAddValidators($v)
 	{
@@ -256,8 +256,8 @@ class PropelCreoleTransformTask extends Task {
 
 	/**
 	 * Default constructor.
-	 * @return void
-	 * @throws BuildException
+	 * @return     void
+	 * @throws     BuildException
 	 */
 	public function main()
 	{
@@ -292,8 +292,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Generates an XML database schema from Creole metadata.
 	 *
-	 * @return void
-	 * @throws Exception a generic exception.
+	 * @return     void
+	 * @throws     Exception a generic exception.
 	 */
 	public function generateXML()
 	{
@@ -311,7 +311,7 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Establishes a Creole database connection
 	 *
-	 * @return object The connection
+	 * @return     object The connection
 	 */
 	protected function getConnection() {
 
@@ -335,8 +335,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates a database node
 	 *
-	 * @param object $dbInfo The dbInfo for this db
-	 * @return object The database node instance
+	 * @param      object $dbInfo The dbInfo for this db
+	 * @return     object The database node instance
 	 */
 	protected function createDatabaseNode($dbInfo) {
 
@@ -361,8 +361,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates a table node
 	 *
-	 * @param object $table The table
-	 * @return object The table node instance
+	 * @param      object $table The table
+	 * @return     object The table node instance
 	 */
 	protected function createTableNode($table) {
 
@@ -449,8 +449,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates an column node
 	 *
-	 * @param object $column The Creole column
-	 * @return object The column node instance
+	 * @param      object $column The Creole column
+	 * @return     object The column node instance
 	 */
 	protected function createColumnNode($column) {
 
@@ -517,8 +517,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Returns the primary key columns for a table
 	 *
-	 * @param object $table The table
-	 * @return array The primary keys
+	 * @param      object $table The table
+	 * @return     array The primary keys
 	 */
 	protected function getTablePkCols($table) {
 
@@ -540,8 +540,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates an foreign key node
 	 *
-	 * @param object $foreignKey The foreign key
-	 * @return object The foreign key node instance
+	 * @param      object $foreignKey The foreign key
+	 * @return     object The foreign key node instance
 	 */
 	protected function createForeignKeyNode($foreignKey) {
 
@@ -569,8 +569,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates an index node
 	 *
-	 * @param object $index The index
-	 * @return object The index node instance
+	 * @param      object $index The index
+	 * @return     object The index node instance
 	 */
 	protected function createIndexNode($index) {
 
@@ -601,8 +601,8 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Checks whether to add validators of specified type or not
 	 *
-	 * @param string $type The validator type
-	 * @return boolean
+	 * @param      string $type The validator type
+	 * @return     boolean
 	 */
 	protected function isValidatorRequired($type) {
 		$type = strtolower($type);
@@ -635,10 +635,10 @@ class PropelCreoleTransformTask extends Task {
 	 * 		for integer and timestamp types: notMatch validator with [^\d]+ (BIGINT, SMALLINT, TINYINT, INTEGER, TIMESTAMP)
 	 * 		for float types: notMatch validator with [^\d\.]+ (FLOAT, DOUBLE, NUMERIC, DECIMAL, REAL)
 	 *
-	 * @param object $column The Creole column
-	 * @return void
-	 * @todo find out how to evaluate the appropriate size and adjust maxValue rule values appropriate
-	 * @todo find out if float type column values must always notMatch('[^\d\.]+'), i.e. digits and point for any db vendor, language etc.
+	 * @param      object $column The Creole column
+	 * @return     void
+	 * @todo       find out how to evaluate the appropriate size and adjust maxValue rule values appropriate
+	 * @todo       find out if float type column values must always notMatch('[^\d\.]+'), i.e. digits and point for any db vendor, language etc.
 	 */
 	protected function registerValidatorsForColumn($column) {
 
@@ -708,9 +708,9 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates a validator node
 	 *
-	 * @param object  $column    The Creole column
-	 * @param integer $type      The validator type
-	 * @return object The validator node instance
+	 * @param      object  $column    The Creole column
+	 * @param      integer $type      The validator type
+	 * @return     object The validator node instance
 	 */
 	protected function createValidator($column, $type) {
 
@@ -723,9 +723,9 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Creates a rule node
 	 *
-	 * @param object  $column The Creole column
-	 * @param array   $rule   The rule info
-	 * @return object The rule node instance
+	 * @param      object  $column The Creole column
+	 * @param      array   $rule   The rule info
+	 * @return     object The rule node instance
 	 */
 	protected function createRuleNode($column, $rule) {
 
@@ -751,8 +751,8 @@ class PropelCreoleTransformTask extends Task {
 	 *
 	 * returns false if no vendor info can or has to be added
 	 *
-	 * @param array   $vendorInfo The validator info
-	 * @return object|boolean The vendor info instance or false
+	 * @param      array   $vendorInfo The validator info
+	 * @return     object|boolean The vendor info instance or false
 	 */
 	protected function createVendorInfoNode($vendorInfo)
 	{

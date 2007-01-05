@@ -26,10 +26,10 @@ include_once 'propel/engine/database/model/NameGenerator.php';
 /**
  * A name generation factory.
  *
- * @author Hans Lellelid <hans@xmpl.org> (Propel)
- * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
- * @version $Revision$
- * @package propel.engine.database.model
+ * @author     Hans Lellelid <hans@xmpl.org> (Propel)
+ * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
+ * @version    $Revision$
+ * @package    propel.engine.database.model
  */
 class NameFactory {
 
@@ -73,7 +73,7 @@ class NameFactory {
 	/**
 	 * Factory method which retrieves an instance of the named generator.
 	 *
-	 * @param name The fully qualified class name of the name
+	 * @param      name The fully qualified class name of the name
 	 * generation algorithm to retrieve.
 	 */
 	protected function getAlgorithm($name)
@@ -101,12 +101,12 @@ class NameFactory {
 	 * Given a list of <code>String</code> objects, implements an
 	 * algorithm which produces a name.
 	 *
-	 * @param algorithmName The fully qualified class name of the
+	 * @param      algorithmName The fully qualified class name of the
 	 * {@link NameGenerator}
 	 * implementation to use to generate names.
-	 * @param array $inputs Inputs used to generate a name.
-	 * @return The generated name.
-	 * @throws EngineException
+	 * @param      array $inputs Inputs used to generate a name.
+	 * @return     The generated name.
+	 * @throws     EngineException
 	 */
 	public static function generateName($algorithmName, $inputs)
 	{

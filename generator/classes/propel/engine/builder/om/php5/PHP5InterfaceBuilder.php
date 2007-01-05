@@ -31,14 +31,14 @@ require_once 'propel/engine/builder/om/ObjectBuilder.php';
  * This class replaces the Interface.tpl, with the intent of being easier for users
  * to customize (through extending & overriding).
  *
- * @author Hans Lellelid <hans@xmpl.org>
- * @package propel.engine.builder.om.php5
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om.php5
  */
 class PHP5InterfaceBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns the name of the current class being built.
-	 * @return string
+	 * @return     string
 	 */
 	public function getUnprefixedClassname()
 	{
@@ -47,7 +47,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
 
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addIncludes(&$script)
 	{
@@ -56,7 +56,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
 
 	/**
 	 * Adds class phpdoc comment and openning of class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassOpen(&$script)
 	{
@@ -86,7 +86,7 @@ class PHP5InterfaceBuilder extends ObjectBuilder {
  * application requirements.  This interface will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package ".$this->getPackage()."
+ * @package    ".$this->getPackage()."
  */
 interface ".$this->getClassname()." {
 ";
@@ -98,7 +98,7 @@ interface ".$this->getClassname()." {
 	 * By default there are no methods for the empty stub classes; override this method
 	 * if you want to change that behavior.
 	 *
-	 * @see ObjectBuilder::addClassBody()
+	 * @see        ObjectBuilder::addClassBody()
 	 */
 	protected function addClassBody(&$script)
 	{
@@ -107,7 +107,7 @@ interface ".$this->getClassname()." {
 
 	/**
 	 * Closes class.
-	 * @param string &$script The script will be modified in this method.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addClassClose(&$script)
 	{
