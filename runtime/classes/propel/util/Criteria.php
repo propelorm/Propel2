@@ -1427,21 +1427,18 @@ class Criterion  {
 			// OPTION 1:  table.column IN (?, ?) or table.column NOT IN (?, ?)
 			if ($this->comparison === Criteria::IN || $this->comparison === Criteria::NOT_IN) {
 
-				$values = (array) $this->value;
-				$valuesLength = count($values);
-				if ($valuesLength == 0) {
-					// a SQL error will result if we have COLUMN IN (), so replace it with an expression
-					// that will always evaluate to FALSE for Criteria::IN and TRUE for Criteria::NOT_IN
-					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
-				} else {
-					$sb .= $field . $this->comparison;
-					for ($i=0; $i < $valuesLength; $i++) {
-						$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $values[$i]);
-					}
-					$inString = '(' . substr(str_repeat("?,", $valuesLength), 0, -1) . ')';
-					$sb .= $inString;
+				$valuesLength = 0;
+				foreach ( (array) $this->value as $value ) {
+					$valuesLength++;
+					$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $value);
 				}
-
+				if ( $valuesLength !== 0 ) {
+					$sb .= $field . $this->comparison . '(' . substr(str_repeat("?,", $valuesLength), 0, -1) . ')';
+				} else {
+					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
+				}
+				unset ( $value, $valuesLength );
+				
 			// OPTION 2:  table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
 			} elseif ($this->comparison === Criteria::LIKE || $this->comparison === Criteria::NOT_LIKE
 				|| $this->comparison === Criteria::ILIKE || $this->comparison === Criteria::NOT_ILIKE) {
