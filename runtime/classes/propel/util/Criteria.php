@@ -381,7 +381,7 @@ class Criteria implements IteratorAggregate {
 	 * Shortcut method to get an array of columns indexed by table.
 	 * @return     array array(table => array(table.column1, table.column2))
 	 */
-	function getTablesColumns()
+	public function getTablesColumns()
 	{
 		$tables = array();
 		foreach ( array_keys ( $this->map ) as $key) {
