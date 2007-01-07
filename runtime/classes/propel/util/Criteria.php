@@ -453,8 +453,8 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function getValue($name)
 	{
-		if ( isset ( $this->map[$key] ) ) {
-			return $this->map[$key]->getValue();
+		if ( isset ( $this->map[$name] ) ) {
+			return $this->map[$name]->getValue();
 		}
 		return null;
 	}
@@ -512,7 +512,6 @@ class Criteria implements IteratorAggregate {
 
 				} else {
 
-					// TODO: look into why this is here and if it is valid
 					$this->put($key, $value);
 
 				}
@@ -592,8 +591,13 @@ class Criteria implements IteratorAggregate {
 	 * @return     an array which contains objects of type Join,
 	 *         or an empty array if the criteria does not contains any joins
 	 */
-	function & getJoins()
+	public function & getJoins()
 	{
+		// TODO: do we want to return by reference to the real array?
+		// objects arent cloned and it is then possible for the user
+		// to insert an invalid object or string into the stack
+		// someone who knows this better, please remove this comment if
+		// this functionality is wanted or remove the reference
 		return $this->joins;
 	}
 
@@ -1387,7 +1391,7 @@ class Criterion  {
 	 * @throws     PropelException - if the expression builder cannot figure out how to turn a specified
 	 *                           expression into proper SQL.
 	 */
-	public function appendPsTo(&$sb, &$params)
+	public function appendPsTo(&$sb, array &$params)
 	{
 		if ($this->column === null) {
 			return;
@@ -1597,7 +1601,7 @@ class Criterion  {
 	 * us a string array of tables from each criterion
 	 * @return     void
 	 */
-	private function addCriterionTable(Criterion $c, &$s)
+	private function addCriterionTable(Criterion $c, array &$s)
 	{
 		$s[] = $c->getTable();
 		foreach ( $c->getClauses() as $clause ) {
@@ -1624,7 +1628,7 @@ class Criterion  {
 	 * @param      array &$a
 	 * @return     void
 	 */
-	private function traverseCriterion(Criterion $c, &$a)
+	private function traverseCriterion(Criterion $c, array &$a)
 	{
 		$a[] = $c;
 		foreach ( $c->getClauses() as $clause ) {
