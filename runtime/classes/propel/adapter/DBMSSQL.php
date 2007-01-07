@@ -77,4 +77,10 @@ class DBMSSQL extends DBSybase {
 		DEALLOCATE node_cursor
 		*/
 	}
+
+	public function random($seed=NULL) 
+	{
+		return 'NEWID()';
+	}
+
 }

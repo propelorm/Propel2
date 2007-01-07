@@ -52,15 +52,15 @@ abstract class DBAdapter {
 	 * @var        array
 	 */
 	private static $adapters = array(
-								    'mysql' => 'DBMySQL',
-									'mysqli' => 'DBMySQLi',
-								    'mssql' => 'DBMSSQL',
-								    'sybase' => 'DBSyabase',
-								    'oracle' => 'DBOracle',
-								    'pgsql' => 'DBPostgres',
-								    'sqlite' => 'DBSQLite',
-								    '' => 'DBNone',
-								);
+		'mysql' => 'DBMySQL',
+		'mysqli' => 'DBMySQLi',
+		'mssql' => 'DBMSSQL',
+		'sybase' => 'DBSybase',
+		'oracle' => 'DBOracle',
+		'pgsql' => 'DBPostgres',
+		'sqlite' => 'DBSQLite',
+		'' => 'DBNone',
+	);
 
 	/**
 	 * Creates a new instance of the database adapter associated
@@ -243,4 +243,7 @@ abstract class DBAdapter {
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
+	
+	public abstract function random($seed=NULL);
+
 }

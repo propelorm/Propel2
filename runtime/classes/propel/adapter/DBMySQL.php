@@ -144,4 +144,10 @@ class DBMySQL extends DBAdapter {
 			$sql .= " LIMIT " . $offset . ", 18446744073709551615";
 		}
 	}
+
+	public function random($seed=NULL) 
+	{
+		return 'rand('.$seed.')';
+	}
+
 }
