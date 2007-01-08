@@ -362,7 +362,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$v)
+	public function set".$this->getFKPhpNameAffix($fk, $plural = false)."($className \$v = null)
 	{";
 		foreach ($fk->getLocalColumns() as $columnName) {
 			$column = $table->getColumn($columnName);
