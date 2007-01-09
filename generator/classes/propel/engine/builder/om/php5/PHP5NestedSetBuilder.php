@@ -534,7 +534,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      PDO \$con      Connection to use.
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject \$node, PDO \$con = null)
+	public function isEqualTo(BaseNodeObject \$node = null, PDO \$con = null)
 	{
 		return $peerClassname::isEqualTo(\$this, \$node, \$con);
 	}
@@ -735,7 +735,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      PDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject \$dest, PDO \$con = null)
+	public function insertAsFirstChildOf(BaseNodeObject \$dest = null, PDO \$con = null)
 	{
 		return $peerClassname::insertAsFirstChildOf(\$dest, \$this, \$con);
 	}
@@ -753,7 +753,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      PDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject \$dest, PDO \$con = null)
+	public function insertAsLastChildOf(BaseNodeObject \$dest = null, PDO \$con = null)
 	{
 		return $peerClassname::insertAsLastChildOf(\$dest, \$this, \$con);
 	}
@@ -771,7 +771,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      PDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject \$dest, PDO \$con = null)
+	public function insertAsPrevSiblingOf(BaseNodeObject \$dest = null, PDO \$con = null)
 	{
 		return $peerClassname::insertAsPrevSiblingOf(\$dest, \$this, \$con);
 	}
@@ -789,7 +789,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      PDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject \$dest, PDO \$con = null)
+	public function insertAsNextSiblingOf(BaseNodeObject \$dest = null, PDO \$con = null)
 	{
 		return $peerClassname::insertAsNextSiblingOf(\$dest, \$this, \$con);
 	}

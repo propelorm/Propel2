@@ -109,7 +109,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject $node, PDO $con = null);
+	public function isEqualTo(BaseNodeObject $node = null, PDO $con = null);
 
 	/**
 	 * Tests if object has an ancestor
@@ -189,7 +189,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject $dest, PDO $con = null);
+	public function insertAsFirstChildOf(BaseNodeObject $dest = null, PDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $dest
@@ -198,7 +198,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject $dest, PDO $con = null);
+	public function insertAsLastChildOf(BaseNodeObject $dest = null, PDO $con = null);
 
 	/**
 	 * Inserts $node as previous sibling to destination node $dest
@@ -207,7 +207,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject $dest, PDO $con = null);
+	public function insertAsPrevSiblingOf(BaseNodeObject $dest = null, PDO $con = null);
 
 	/**
 	 * Inserts $node as next sibling to destination node $dest
@@ -216,6 +216,6 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject $dest, PDO $con = null);
+	public function insertAsNextSiblingOf(BaseNodeObject $dest = null, PDO $con = null);
 
 } // BaseNodeObject
