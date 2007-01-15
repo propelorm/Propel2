@@ -81,11 +81,31 @@ abstract class DBAdapter {
 			throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
 		}
 	}
+	
+	/**
+	 * This method is called after a connection was created to run necessary
+	 * post-initialization queries or code.
+	 *
+	 * This base method runs queries specified using the "query" setting.
+	 *
+	 * @param      PDO   A PDO connection instance.
+	 * @param      array An array of settings.
+	 */
+	public function initConnection(PDO $con, array $settings)
+	{
+		if(isset($settings['queries']) && is_array($settings['queries'])) {
+			foreach($settings['queries'] as $queries) {
+				foreach((array)$queries as $query) {
+					$con->query($query);
+				}
+			}
+		}
+	}
 
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string to transform to upper case.
+	 * @param      string The string to transform to upper case.
 	 * @return     string The upper case string.
 	 */
 	public abstract function toUpperCase($in);

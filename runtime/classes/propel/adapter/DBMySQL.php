@@ -33,6 +33,21 @@
 class DBMySQL extends DBAdapter {
 
 	/**
+	 * This method is called after a connection was created to run necessary
+	 * post-initialization queries or code.
+	 *
+	 * @param      PDO   A PDO connection instance.
+	 * @param      array An array of settings.
+	 */
+	public function initConnection(PDO $con, array $settings = array())
+	{
+		if(isset($settings['charset']['value'])) {
+			$con->query('SET NAMES "' . $settings['charset']['value'] . '"');
+		}
+		parent::initConnection($con, $settings);
+	}
+
+	/**
 	 * This method is used to ignore case.
 	 *
 	 * @param      in The string to transform to upper case.

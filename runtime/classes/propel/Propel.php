@@ -431,7 +431,8 @@ class Propel
 			$user = isset($conparams['user']) ? $conparams['user'] : null;
 			$password = isset($conparams['password']) ? $conparams['password'] : null;
 
-			// load any driver options from the INI file
+			// load any driver options from the config file
+			// driver options are those PDO settings that have to be passed during the connection construction
 			$driver_options = array();
 			if ( isset($conparams['options']) && is_array($conparams['options']) ) {
 				try {
@@ -448,13 +449,31 @@ class Propel
 			} catch (PDOException $e) {
 				throw new PropelException("Unable to open PDO connection", $e);
 			}
+			
+			// load any connection options from the config file
+			// connection attributes are those PDO flags that have to be set on the initialized connection
+			if(isset($conparams['attributes']) && is_array($conparams['attributes'])) {
+				$attributes = array();
+				try {
+					self::processDriverOptions( $conparams['attributes'], $attributes );
+				} catch (PropelException $e) {
+					throw new PropelException('Error processing connection attributes for datasource ['.$name.']', $e);
+				}
+				foreach($attributes as $key => $value) {
+					$con->setAttribute($key, $value);
+				}
+			}
+			
+			// initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
+			$adapter = self::getDB($name);
+			$adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
 		}
 
 		return self::$connectionMap[$name];
 	}
 
 	/**
-	 * Internal function to handle driver_options in PDO
+	 * Internal function to handle driver options or conneciton attributes in PDO.
 	 *
 	 * Process the INI file flags to be passed to each connection.
 	 *
@@ -465,15 +484,26 @@ class Propel
 	 */
 	private static function processDriverOptions($source, &$write_to)
 	{
-		foreach ($source as $option => $optiondata) {
-			$constant = 'PDO::'.$option;
-			$option_value = $optiondata['value'];
-			if ( defined ($constant) ) {
-				$constant_value = constant($constant);
-				$write_to[$constant_value] = $option_value;
-			} else {
-				throw new PropelException("Invalid PDO option specified: ".$option." = ".$option_value);
+		foreach($source as $option => $optiondata) {
+			if(is_string($option) && strpos($option, 'PDO::') !== false) {
+				$key = $option;
+			} elseif(is_string($option)) {
+				$key = 'PDO::' . $option;
 			}
+			if(!defined($key)) {
+				throw new PropelException("Invalid PDO option/attribute name specified: ".$key);
+			}
+			$key = constant($key);
+			
+			$value = $optiondata['value'];
+			if(is_string($value) && strpos($value, 'PDO::')) {
+				if(!defined($value)) {
+					throw new PropelException("Invalid PDO option/attribute value specified: ".$value);
+				}
+				$value = constant($value);
+			}
+			
+			$write_to[$key] = $value;
 		}
 	}
 

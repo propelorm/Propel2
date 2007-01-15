@@ -52,11 +52,26 @@
 					-->
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
-						<!-- for MySQL, you should also turn on prepared statement emulation, as
-							prepared statements support is buggy in mysql driver
+					</options>
+					
+					<attributes>
+						<!-- for MySQL, you should also turn on prepared statement emulation, as prepared statements support is buggy in mysql driver
 						<option id="ATTR_EMULATE_PREPARES">true</option>
 						-->
-					</options>
+					</attributes>
+					
+					<settings>
+						<!-- for MySQL 5, you'll likely need this
+						<setting name="charset">utf8</setting>
+						-->
+						
+						<!-- you can also execute arbitrary queries after the connection is created
+						<setting name="queries">
+							<query>SELECT * FROM foo</query>
+							<query>INSERT INTO BAR ('hey', 'there')</query>
+						</setting>
+						-->
+					</settings>
 				</connection>
 			</datasource>
 
