@@ -651,6 +651,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$root->hydrate(\$row);
 			\$root->setLevel(0);
 			$peerClassname::hydrateDescendants(\$root, \$stmt);
+			$peerClassname::addInstanceToPool(\$root);
 
 			return \$root;
 		}
@@ -1190,6 +1191,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$descendants[] = \$child;
 			\$prevSibling = \$child;
 
+			$peerClassname::addInstanceToPool(\$child);
 			if (\$child->getRightValue() + 1 == \$node->getRightValue()) {
 				\$child->setNextSibling(null);
 				break;

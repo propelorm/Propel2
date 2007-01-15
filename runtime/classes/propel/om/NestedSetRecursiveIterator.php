@@ -43,7 +43,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
 	}
 
 	public function valid() {
-		return ($this->curNode !== null && $this->curNode !== false);
+		return ($this->curNode !== null);
 	}
 
 	public function current() {
@@ -59,10 +59,10 @@ class NestedSetRecursiveIterator implements RecursiveIterator
 	}
 
 	public function next() {
-		$nextNode = false;
+		$nextNode = null;
 
 		if ($this->valid()) {
-			while (false === $nextNode) {
+			while (null === $nextNode) {
 				if (null === $this->curNode) {
 					break;
 				}
