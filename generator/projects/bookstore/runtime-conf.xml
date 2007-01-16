@@ -61,8 +61,8 @@
 					</attributes>
 					
 					<settings>
-						<!-- for MySQL 5, you'll likely need this
-						<setting name="charset">utf8</setting>
+						<!-- for MySQL >= 4.1 you'll likely need this
+						<setting id="charset">utf8</setting>
 						-->
 						
 						<!-- you can also execute arbitrary queries after the connection is created
