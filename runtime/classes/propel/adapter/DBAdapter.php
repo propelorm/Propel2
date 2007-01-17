@@ -74,7 +74,6 @@ abstract class DBAdapter {
 	public static function factory($driver) {
 		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
 		if ($adapterClass !== null) {
-			require 'propel/adapter/'.$adapterClass.'.php';
 			$a = new $adapterClass();
 			return $a;
 		} else {
