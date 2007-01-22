@@ -248,6 +248,8 @@
       sqldbmap="${propel.sql.dir}/sqldb.map"
       srcDir="${propel.sql.dir}"
       url="${propel.database.buildUrl}"
+      userId="${propel.database.user}"
+      password="${propel.database.password}"
     />
   </target>
 

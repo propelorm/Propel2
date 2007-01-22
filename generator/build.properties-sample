@@ -129,6 +129,10 @@ propel.packageObjectModel = false
 #
 # propel.database.url = mysql://root@localhost/bookstore
 
+# For MySQL or Oracle, you also need to specify username & password 
+# propel.database.user = [db username]
+# propel.database.password = [db password]
+
 # Use the URL below to specify a DSN to used to create the database.
 # Note that this URL should not contain the database name, as you will
 # get an error if the database does not exist.
