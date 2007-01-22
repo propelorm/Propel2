@@ -39,7 +39,7 @@ class DBMySQL extends DBAdapter {
 	 * @param      PDO   A PDO connection instance.
 	 * @param      array An array of settings.
 	 */
-	public function initConnection(PDO $con, array $settings = array())
+	public function initConnection(PDO $con, array $settings)
 	{
 		if(isset($settings['charset']['value'])) {
 			$con->query('SET NAMES "' . $settings['charset']['value'] . '"');
