@@ -822,7 +822,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 		// populate the object(s)
-		// populate the object(s)
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key])) {
