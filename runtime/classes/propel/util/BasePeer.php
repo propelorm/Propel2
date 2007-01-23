@@ -462,8 +462,13 @@ class BasePeer
 				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
 				$type = $cMap->getType();
 				$pdoType = $cMap->getPdoType();
-
-				if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
+				
+				// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
+				// See http://pecl.php.net/bugs/bug.php?id=9919
+				if ($pdoType == PDO::PARAM_BOOL && $db instanceof DBMySQL) {
+					$value = (int) $value;
+					$pdoType = PDO::PARAM_INT;
+				} else if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
 					if ($type == PropelColumnTypes::TIMESTAMP) {
 						$value = date($db->getTimestampFormatter(), $value);
 					} else if ($type == PropelColumnTypes::DATE) {
