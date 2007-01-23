@@ -633,7 +633,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 	protected function addRetrieveTree(&$script)
 	{
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
@@ -647,7 +646,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
 		if (false !== (\$row = \$stmt->fetch())) {
-			\$root = new $objectClassname();
+			\$omClass = $peerClassname::getOMClass(\$row, 0);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+
+			\$root = new \$cls();
 			\$root->hydrate(\$row);
 			\$root->setLevel(0);
 			$peerClassname::hydrateDescendants(\$root, \$stmt);
@@ -1174,7 +1176,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$children = array();
 		\$prevSibling = null;
 		while (\$row = \$stmt->fetch()) {
-			\$child = new $objectClassname();
+			\$omClass = $peerClassname::getOMClass(\$row, 0);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+
+			\$child = new \$cls();
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
 			\$child->setParentNode(\$node);
@@ -1206,6 +1211,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	protected function addHydrateChildren(&$script)
 	{
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Hydrate the children of the given node
@@ -1216,7 +1222,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		\$children = array();
 		while (\$row = \$stmt->fetch()) {
-			\$child = new $objectClassname();
+			\$omClass = $peerClassname::getOMClass(\$row, 0);
+			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+
+			\$child = new \$cls();
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
 
