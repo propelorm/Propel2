@@ -798,6 +798,14 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addGetLeft(&$script)
 	{
+		$table = $this->getTable();
+
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetLeftKey()) {
+				$left_col_getter_name = 'get'.$col->getPhpName();
+			}
+		}
+
 		$script .= "
 	/**
 	 * Wraps the getter for the left value
@@ -806,13 +814,21 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function getLeftValue()
 	{
-		return \$this->getLft();
+		return \$this->$left_col_getter_name();
 	}
 ";
 	}
 
 	protected function addGetRight(&$script)
 	{
+		$table = $this->getTable();
+
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetRightKey()) {
+				$right_col_getter_name = 'get'.$col->getPhpName();
+			}
+		}
+
 		$script .= "
 	/**
 	 * Wraps the getter for the right value
@@ -821,13 +837,21 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function getRightValue()
 	{
-		return \$this->getRgt();
+		return \$this->$right_col_getter_name();
 	}
 ";
 	}
 
 	protected function addSetLeft(&$script)
 	{
+		$table = $this->getTable();
+
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetLeftKey()) {
+				$left_col_setter_name = 'set'.$col->getPhpName();
+			}
+		}
+
 		$script .= "
 	/**
 	 * Set the value left column
@@ -837,13 +861,21 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function setLeftValue(\$v)
 	{
-		\$this->setLft(\$v);
+		\$this->$left_col_setter_name(\$v);
 	}
 ";
 	}
 
 	protected function addSetRight(&$script)
 	{
+		$table = $this->getTable();
+
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetRightKey()) {
+				$right_col_setter_name = 'set'.$col->getPhpName();
+			}
+		}
+
 		$script .= "
 	/**
 	 * Set the value of right column
@@ -853,7 +885,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function setRightValue(\$v)
 	{
-		\$this->setRgt(\$v);
+		\$this->$right_col_setter_name(\$v);
 	}
 ";
 	}
