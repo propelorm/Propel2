@@ -834,14 +834,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// class must be set each time from the record row
 				\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
 				\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
-				\$obj = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
 				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";
 				self::\$instances[\$key] = \$obj;";
 		} else {
 			$script .= "
-				\$obj = new \$cls();
+			" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
 				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";

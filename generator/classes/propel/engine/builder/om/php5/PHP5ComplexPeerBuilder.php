@@ -153,7 +153,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 						}
 						$script .= "
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj1 = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				// print \"->Adding \" . get_class(\$obj1) . \" \" . \$obj1 . \" into instance pool.\\n\";
 				self::\$instances[\$key1] = \$obj1;
@@ -175,7 +175,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 						$script .= "
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj2 = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
 				\$obj2->hydrate(\$row, \$startcol);
 				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2); // FIXME, we should optimize this since we already calculated the key above
 			} // if obj2 already loaded
@@ -368,7 +368,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		$script .= "
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj1 = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				// print \"->Adding \" . get_class(\$obj1) . \" \" . \$obj1 . \" into instance pool.\\n\";
 				self::\$instances[\$key1] = \$obj1;
@@ -418,7 +418,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				$script .= "
 
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj".$index." = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
 				\$obj".$index."->hydrate(\$row, \$startcol$index);
 				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index); // FIXME - Optimize: we already know the key
 			} // if obj$index loaded
@@ -625,7 +625,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 			$script .= "
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj1 = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				// print \"->Adding \" . get_class(\$obj1) . \" \" . \$obj1 . \" into instance pool.\\n\";
 				self::\$instances[\$key1] = \$obj1;
@@ -673,7 +673,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 					$script .= "
 
 				\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
-				\$obj$index  = new \$cls();
+				" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
 				\$obj".$index."->hydrate(\$row, \$startcol$index);
 				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index); // FIXME - Optimize: we already calculated the key
 			} // if \$obj$index already loaded

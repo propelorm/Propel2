@@ -253,7 +253,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	public function getPeer()
 	{
 		if (self::\$peer === null) {
-			self::\$peer = new ".$this->getPeerClassname()."();
+			" . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassname()) . "
 		}
 		return self::\$peer;
 	}
@@ -1281,7 +1281,7 @@ $script .= "
 	{
 		// we use get_class(), because this might be a subclass
 		\$clazz = get_class(\$this);
-		\$copyObj = new \$clazz();
+		" . $this->buildObjectInstanceCreationCode('$copyObj', '$clazz') . "
 		\$this->copyInto(\$copyObj);
 		return \$copyObj;
 	}

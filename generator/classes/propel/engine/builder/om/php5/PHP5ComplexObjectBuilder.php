@@ -1367,7 +1367,7 @@ $script .= "
 	{
 		// we use get_class(), because this might be a subclass
 		\$clazz = get_class(\$this);
-		\$copyObj = new \$clazz();
+		" . $this->buildObjectInstanceCreationCode('$copyObj', '$clazz') . "
 		\$this->copyInto(\$copyObj, \$deepCopy);
 		return \$copyObj;
 	}

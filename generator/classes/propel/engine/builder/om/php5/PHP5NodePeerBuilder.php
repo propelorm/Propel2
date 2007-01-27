@@ -749,7 +749,7 @@ abstract class ".$this->getClassname()." {
 		}
 
 		$script .= "
-				\$obj = new \$cls();
+		" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$rs);
 
 				\$nodes[\$rs->getString(1)] = new $nodeObjectClassname(\$obj);

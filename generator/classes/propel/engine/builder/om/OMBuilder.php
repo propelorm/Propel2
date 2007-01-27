@@ -312,6 +312,17 @@ abstract class OMBuilder extends DataModelBuilder {
 		$this->addClassClose($script);
 		return $script;
 	}
+	
+	/**
+	 * Creates a $obj = new Book(); code snippet. Can be used by frameworks, for instance, to 
+	 * extend this behavior, e.g. initialize the object after creating the instance or so.
+	 *
+	 * @return     string Some code
+	 */
+	public function buildObjectInstanceCreationCode($objName, $clsName)
+	{
+		return "$objName = new $clsName();\n";
+	}
 
 	/**
 	 * Returns the qualified (prefixed) classname that is being built by the current class.
