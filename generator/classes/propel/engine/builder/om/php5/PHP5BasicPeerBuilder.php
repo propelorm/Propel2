@@ -841,7 +841,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				self::\$instances[\$key] = \$obj;";
 		} else {
 			$script .= "
-			" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
+				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
 				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";

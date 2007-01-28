@@ -321,7 +321,7 @@ abstract class OMBuilder extends DataModelBuilder {
 	 */
 	public function buildObjectInstanceCreationCode($objName, $clsName)
 	{
-		return "$objName = new $clsName();\n";
+		return "$objName = new $clsName();";
 	}
 
 	/**
