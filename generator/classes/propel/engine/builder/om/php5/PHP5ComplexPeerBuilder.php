@@ -658,7 +658,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 				\$key$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
 				\$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
-				if (!$obj$index) {
+				if (!\$obj$index) {
 	";
 
 					if ($joinTable->getChildrenColumn()) {
