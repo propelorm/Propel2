@@ -312,6 +312,9 @@
 	<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
 	  <reference local="employee_id" foreign="id"/>
 	</foreign-key>
+	<unique>
+		<unique-column name="login"/>
+	</unique>
   </table>
   
 </database>
