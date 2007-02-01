@@ -33,8 +33,8 @@ require_once 'bookstore/BookstoreTestBase.php';
  * for each test method in this class.  See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
- * @author     Hans Lellelid <hans@xmpl.org>
+ * @see BookstoreDataPopulator
+ * @author Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectTest extends BookstoreTestBase {
 
@@ -68,18 +68,18 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testSaveReturnValues()
 	{
 
-		$author = new Author();
-		$author->setFirstName("Mark");
-		$author->setLastName("Kurlansky");
+	    $author = new Author();
+	    $author->setFirstName("Mark");
+	    $author->setLastName("Kurlansky");
 		// do not save
 
 		$pub = new Publisher();
-		$pub->setName("Penguin Books");
-		// do not save
+	    $pub->setName("Penguin Books");
+	    // do not save
 
 		$book = new Book();
-		$book->setTitle("Salt: A World History");
-		$book->setISBN("0142001619");
+	    $book->setTitle("Salt: A World History");
+	    $book->setISBN("0142001619");
 		$book->setAuthor($author);
 		$book->setPublisher($pub);
 
@@ -146,6 +146,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$super = new BookstoreEmployee();
 		// we don't know who the supervisor is yet
+		
 		$super->addSubordinate($e1);
 		$super->addSubordinate($e2);
 
@@ -156,7 +157,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	/**
 	 * Tests new one-to-one functionality.
 	 *
-	 * @todo       -cGeneratedObjectTest Add a test for one-to-one when implemented.
+	 * @todo -cGeneratedObjectTest Add a test for one-to-one when implemented.
 	 */
 	public function testOneToOne()
 	{
@@ -167,38 +168,41 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setLogin("testuser");
 		$acct->setPassword("testpass");
 
-		$this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
+		// $this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
+
 	}
-
+	
 	/**
-	 * Test the type sensitivity of the resturning columns.
-	 *
+	 * This is a test for expected exceptions when saving UNIQUE.
+	 * See http://propel.phpdb.org/trac/ticket/2
 	 */
-	public function testTypeSensitive()
+	public function testSaveUnique()
 	{
-		$book = BookPeer::doSelectOne(new Criteria());
-
-		$r = new Review();
-		$r->setReviewedBy("testTypeSensitive Tester");
-		$r->setReviewDate(time());
-		$r->setBook($book);
-		$r->setRecommended(true);
-		$id = $r->save();
-
-		unset($r);
-
-		// clear the instance cache to force reload from database.
-		ReviewPeer::clearInstancePool();
-		BookPeer::clearInstancePool();
-
-		// reload and verify that the types are the same
-		$r2 = ReviewPeer::retrieveByPK($id);
-
-		$this->assertType('integer', $r2->getId(), "Expected getId() to return an integer.");
-		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
-		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
-		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-
+		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setBookstoreEmployee($emp);
+		$acct->setLogin("foo");
+		$acct->setPassword("bar");
+		$acct->save();
+		
+		// now attempt to create a new acct 
+		$acct2 = $acct->copy();
+		
+		try {
+			$acct2->save();
+			$this->fail("Expected PropelException in first attempt to save object with duplicate value for UNIQUE constraint.");
+		} catch (Exception $x) {
+			try {
+				// attempt to save it again
+				$acct3 = $acct->copy();
+				$acct3->save();
+				$this->fail("Expected PropelException in second attempt to save object with duplicate value for UNIQUE constraint.");
+			} catch (Exception $x) {
+				// this is expected.
+			}
+			// now let's double check that it can succeed if we're not violating the constraint.
+			$acct3->setLogin("foo2");
+			$acct3->save();
+		}
 	}
 }
