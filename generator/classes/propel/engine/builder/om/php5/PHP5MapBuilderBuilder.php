@@ -263,7 +263,7 @@ class ".$this->getClassname()." implements MapBuilder {
 ";
 			} else {
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).");
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");
 ";
 				}
 			} // if col-is prim key
