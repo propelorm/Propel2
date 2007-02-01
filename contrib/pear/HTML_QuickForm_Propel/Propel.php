@@ -907,5 +907,3 @@ class HTML_QuickForm_Propel extends HTML_QuickForm {
 		}
 
 }
-
-?>

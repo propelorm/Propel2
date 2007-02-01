@@ -801,4 +801,3 @@ check_tables_empty();
 
 $timer->stop();
 print $timer->display();
-?>

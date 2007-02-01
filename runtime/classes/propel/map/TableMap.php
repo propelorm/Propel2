@@ -208,21 +208,21 @@ class TableMap {
 	{
 		return $this->pkInfo;
 	}
-	
-    /**
-     * Returns array of ColumnMap objects that make up the primary key for this table.
-     * @return array ColumnMap[]
-     */
-    public function getPrimaryKeyColumns()
-    {
-    	$pk = array();
-    	foreach($this->columns as $col) {
-    		if ($col->isPrimaryKey()) {
-    			$pk[] = $col;
-    		}
-    	}
-    	return $pk;
-    }
+
+	/**
+	 * Returns array of ColumnMap objects that make up the primary key for this table.
+	 * @return     array ColumnMap[]
+	 */
+	public function getPrimaryKeyColumns()
+	{
+		$pk = array();
+		foreach ($this->columns as $col) {
+			if ($col->isPrimaryKey()) {
+				$pk[] = $col;
+			}
+		}
+		return $pk;
+	}
 
 	/**
 	 * Get a ColumnMap[] of the columns in this table.

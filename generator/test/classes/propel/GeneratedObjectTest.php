@@ -201,7 +201,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
 
 	}
-	
+
 	/**
 	 * This is a test for expected exceptions when saving UNIQUE.
 	 * See http://propel.phpdb.org/trac/ticket/2
@@ -214,10 +214,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setLogin("foo");
 		$acct->setPassword("bar");
 		$acct->save();
-		
-		// now attempt to create a new acct 
+
+		// now attempt to create a new acct
 		$acct2 = $acct->copy();
-		
+
 		try {
 			$acct2->save();
 			$this->fail("Expected PropelException in first attempt to save object with duplicate value for UNIQUE constraint.");

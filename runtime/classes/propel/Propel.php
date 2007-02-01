@@ -449,21 +449,21 @@ class Propel
 			} catch (PDOException $e) {
 				throw new PropelException("Unable to open PDO connection", $e);
 			}
-			
+
 			// load any connection options from the config file
 			// connection attributes are those PDO flags that have to be set on the initialized connection
-			if(isset($conparams['attributes']) && is_array($conparams['attributes'])) {
+			if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
 				$attributes = array();
 				try {
 					self::processDriverOptions( $conparams['attributes'], $attributes );
 				} catch (PropelException $e) {
 					throw new PropelException('Error processing connection attributes for datasource ['.$name.']', $e);
 				}
-				foreach($attributes as $key => $value) {
+				foreach ($attributes as $key => $value) {
 					$con->setAttribute($key, $value);
 				}
 			}
-			
+
 			// initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
 			$adapter = self::getDB($name);
 			$adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
@@ -484,25 +484,25 @@ class Propel
 	 */
 	private static function processDriverOptions($source, &$write_to)
 	{
-		foreach($source as $option => $optiondata) {
-			if(is_string($option) && strpos($option, 'PDO::') !== false) {
+		foreach ($source as $option => $optiondata) {
+			if (is_string($option) && strpos($option, 'PDO::') !== false) {
 				$key = $option;
-			} elseif(is_string($option)) {
+			} elseif (is_string($option)) {
 				$key = 'PDO::' . $option;
 			}
-			if(!defined($key)) {
+			if (!defined($key)) {
 				throw new PropelException("Invalid PDO option/attribute name specified: ".$key);
 			}
 			$key = constant($key);
-			
+
 			$value = $optiondata['value'];
-			if(is_string($value) && strpos($value, 'PDO::')) {
-				if(!defined($value)) {
+			if (is_string($value) && strpos($value, 'PDO::')) {
+				if (!defined($value)) {
 					throw new PropelException("Invalid PDO option/attribute value specified: ".$value);
 				}
 				$value = constant($value);
 			}
-			
+
 			$write_to[$key] = $value;
 		}
 	}

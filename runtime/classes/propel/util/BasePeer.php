@@ -462,7 +462,7 @@ class BasePeer
 				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
 				$type = $cMap->getType();
 				$pdoType = $cMap->getPdoType();
-				
+
 				// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
 				// See http://pecl.php.net/bugs/bug.php?id=9919
 				if ($pdoType == PDO::PARAM_BOOL && $db instanceof DBMySQL) {

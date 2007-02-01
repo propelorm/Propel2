@@ -88,5 +88,3 @@ class PreOrderNodeIterator implements Iterator
 	}
 
 }
-
-?>

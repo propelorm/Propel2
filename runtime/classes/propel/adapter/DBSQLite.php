@@ -106,8 +106,8 @@ class DBSQLite extends DBAdapter {
 			$sql .= " LIMIT -1 OFFSET " . $offset;
 		}
 	}
-	
-	public function random($seed=NULL) 
+
+	public function random($seed=NULL)
 	{
 		return 'random()';
 	}

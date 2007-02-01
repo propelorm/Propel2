@@ -350,5 +350,3 @@ class Structures_DataGrid_Propel extends Structures_DataGrid {
 		}
 
 }
-
-?>

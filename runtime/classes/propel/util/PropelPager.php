@@ -541,4 +541,3 @@ class PropelPager {
 	}
 
 }
-?>

@@ -78,7 +78,7 @@ class DBMSSQL extends DBSybase {
 		*/
 	}
 
-	public function random($seed=NULL) 
+	public function random($seed=NULL)
 	{
 		return 'NEWID()';
 	}

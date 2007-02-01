@@ -41,7 +41,7 @@ class DBMySQL extends DBAdapter {
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
-		if(isset($settings['charset']['value'])) {
+		if (isset($settings['charset']['value'])) {
 			$con->query('SET NAMES "' . $settings['charset']['value'] . '"');
 		}
 		parent::initConnection($con, $settings);
@@ -160,7 +160,7 @@ class DBMySQL extends DBAdapter {
 		}
 	}
 
-	public function random($seed=NULL) 
+	public function random($seed=NULL)
 	{
 		return 'rand('.$seed.')';
 	}

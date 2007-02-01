@@ -80,7 +80,7 @@ abstract class DBAdapter {
 			throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
 		}
 	}
-	
+
 	/**
 	 * This method is called after a connection was created to run necessary
 	 * post-initialization queries or code.
@@ -92,9 +92,9 @@ abstract class DBAdapter {
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
-		if(isset($settings['queries']) && is_array($settings['queries'])) {
-			foreach($settings['queries'] as $queries) {
-				foreach((array)$queries as $query) {
+		if (isset($settings['queries']) && is_array($settings['queries'])) {
+			foreach ($settings['queries'] as $queries) {
+				foreach ((array)$queries as $query) {
 					$con->query($query);
 				}
 			}
@@ -262,7 +262,7 @@ abstract class DBAdapter {
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
-	
+
 	public abstract function random($seed=NULL);
 
 }

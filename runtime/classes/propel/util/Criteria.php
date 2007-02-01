@@ -1433,7 +1433,7 @@ class Criterion  {
 					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
 				}
 				unset ( $value, $valuesLength );
-				
+
 			// OPTION 2:  table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
 			} elseif ($this->comparison === Criteria::LIKE || $this->comparison === Criteria::NOT_LIKE
 				|| $this->comparison === Criteria::ILIKE || $this->comparison === Criteria::NOT_ILIKE) {
@@ -1605,7 +1605,7 @@ class Criterion  {
 	{
 		$s[] = $c->getTable();
 		foreach ( $c->getClauses() as $clause ) {
-			$this->addCriterionTable($clause, $s);	
+			$this->addCriterionTable($clause, $s);
 		}
 	}
 

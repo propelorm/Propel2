@@ -142,7 +142,7 @@ class DBPostgres extends DBAdapter {
 		}
 	}
 
-	public function random($seed=NULL) 
+	public function random($seed=NULL)
 	{
 		return 'random()';
 	}

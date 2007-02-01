@@ -408,5 +408,3 @@ $last =& $a->getLastChildNode(true);
 echo "Last child node is '" . $last->callObjMethod('getLabel') . "' (" . $last->getNodePath() . ")\n";
 
 if (!isset($argc)) echo "</pre>";
-
-?>

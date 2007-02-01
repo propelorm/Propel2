@@ -118,11 +118,11 @@ class DBOracle extends DBAdapter {
 	}
 
 	/* someone please confirm this is valid
-	public function random($seed=NULL) 
+	public function random($seed=NULL)
 	{
 		return 'dbms_random.value';
 	}
-	*/	
-	
+	*/
+
 
 }
