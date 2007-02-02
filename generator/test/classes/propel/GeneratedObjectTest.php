@@ -235,4 +235,65 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			$acct3->save();
 		}
 	}
+	
+	/**
+	 * Test for correct reporting of isModified().
+	 */
+	public function testIsModified()
+	{
+		// 1) Basic test
+		
+		$a = new Author();
+		$a->setFirstName("John");
+		$a->setLastName("Doe");
+		$a->setAge(25);
+		
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after setting values.");
+		
+		$a->save();
+		
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		
+		// 2) Test behavior with setting vars of different types
+		
+		// checking setting int col to string val
+		$a->setAge('25');
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting int column to string-cast of same value.");
+		
+		$a->setFirstName("John2");
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing string column value.");
+		
+		// checking setting string col to int val
+		$a->setFirstName("1");
+		$a->save();
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		
+		$a->setFirstName(1);
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting string column to int-cast of same value.");
+		
+		// 3) Test for appropriate behavior of NULL
+		
+		// checking "" -> NULL 
+		$a->setFirstName("");
+		$a->save();
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		
+		$a->setFirstName(null);
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing empty string column value to NULL.");
+		
+		$a->setFirstName("John");
+		$a->setAge(0);
+		$a->save();
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		
+		$a->setAge(null);
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
+		
+		$a->save();
+		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		
+		$a->setAge(0);
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL-value int column to 0.");
+		
+	}
 }
