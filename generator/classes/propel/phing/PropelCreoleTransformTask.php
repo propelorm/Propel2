@@ -20,8 +20,10 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'creole/Connection.php';
+require_once 'creole/Creole.php';
+require_once 'creole/Connection.php';
 require_once 'phing/Task.php';
+include_once 'propel/engine/database/model/PropelTypes.php';
 
 /**
  * This class generates an XML schema of an existing database from
@@ -144,7 +146,7 @@ class PropelCreoleTransformTask extends Task {
 		'required' => PropelCreoleTransformTask::VALIDATORS_REQUIRED,
 		'unique' => PropelCreoleTransformTask::VALIDATORS_UNIQUE,
 		'all' => PropelCreoleTransformTask::VALIDATORS_ALL,
-	);
+		);
 
 	/**
 	 * Defines messages that are added to validators
@@ -156,74 +158,74 @@ class PropelCreoleTransformTask extends Task {
 		'maxlength' => array (
 			'msg' => 'The field %s must be not longer than %s characters.',
 			'var' => array('colName', 'value')
-		),
+			),
 		'maxvalue' => array (
 			'msg' => 'The field %s must be not greater than %s.',
 			'var' => array('colName', 'value')
-		),
+			),
 		'type' => array (
 			'msg' => 'The field %s is not a valid value.',
 			'var' => array('colName')
-		),
+			),
 		'required' => array (
 			'msg' => 'The field %s is required.',
 			'var' => array('colName')
-		),
+			),
 		'unique' => array (
 			'msg' => 'This %s already exists in table %s.',
 			'var' => array('colName', 'tableName')
-		),
-	);
+			),
+			);
 
-	public function getDbSchema()
-	{
-		return $this->dbSchema;
-	}
+			public function getDbSchema()
+			{
+				return $this->dbSchema;
+			}
 
-	public function setDbSchema($dbSchema)
-	{
-		$this->dbSchema = $dbSchema;
-	}
+			public function setDbSchema($dbSchema)
+			{
+				$this->dbSchema = $dbSchema;
+			}
 
-	public function setDbUrl($v)
-	{
-		$this->dbUrl = $v;
-	}
+			public function setDbUrl($v)
+			{
+				$this->dbUrl = $v;
+			}
 
-	public function setDbDriver($v)
-	{
-		$this->dbDriver = $v;
-	}
+			public function setDbDriver($v)
+			{
+				$this->dbDriver = $v;
+			}
 
-	public function setDbUser($v)
-	{
-		$this->dbUser = $v;
-	}
+			public function setDbUser($v)
+			{
+				$this->dbUser = $v;
+			}
 
-	public function setDbPassword($v)
-	{
-		$this->dbPassword = $v;
-	}
+			public function setDbPassword($v)
+			{
+				$this->dbPassword = $v;
+			}
 
-	public function setDbEncoding($v)
-	{
+			public function setDbEncoding($v)
+			{
 	   $this->dbEncoding = $v;
-	}
+			}
 
-	public function setOutputFile($v)
-	{
-		$this->xmlSchema = $v;
-	}
+			public function setOutputFile($v)
+			{
+				$this->xmlSchema = $v;
+			}
 
-	public function setSamePhpName($v)
-	{
-		$this->samePhpName = $v;
-	}
+			public function setSamePhpName($v)
+			{
+				$this->samePhpName = $v;
+			}
 
-	public function setAddVendorInfo($v)
-	{
-		$this->addVendorInfo = (boolean) $v;
-	}
+			public function setAddVendorInfo($v)
+			{
+				$this->addVendorInfo = (boolean) $v;
+			}
 
 	/**
 	 * Sets set validator bitfield from propel.addValidators property
@@ -237,7 +239,7 @@ class PropelCreoleTransformTask extends Task {
 		$v = strtolower($v);
 		// make it a bit expression
 		$v = str_replace(
-			array_keys(self::$validatorBitMap), self::$validatorBitMap, $v);
+		array_keys(self::$validatorBitMap), self::$validatorBitMap, $v);
 		// check if it's a valid boolean expression
 		if (!preg_match('/[^\d|&~ ]/', $v)) {
 			// eval the expression
@@ -445,6 +447,50 @@ class PropelCreoleTransformTask extends Task {
 
 		return $node;
 	}
+	
+	/**
+	 * Returns the Propel type for given Creole type.
+	 * 
+	 * This used to be part of the PropelTypes class when Creole was an integral
+	 * part of the Propel build process.  As of Propel 1.3, though, this method
+	 * is only needed in this reverse-engineering code.
+	 * 
+	 * @param int $creoleType Creole type (e.g. CreoleTypes::CHAR)
+	 * @return string Equivalent Propel type (e.g. PropelTypes::CHAR)
+	 */
+	protected static function getMappedPropelType($creoleType)
+	{
+		static $creoleToPropelTypeMap;
+		if ($creoleToPropelTypeMap === null) {
+			$creoleToPropelTypeMap = array();
+			$creoleToPropelTypeMap[CreoleTypes::CHAR] = PropelTypes::CHAR;
+			$creoleToPropelTypeMap[CreoleTypes::VARCHAR] = PropelTypes::VARCHAR;
+			$creoleToPropelTypeMap[CreoleTypes::LONGVARCHAR] = PropelTypes::LONGVARCHAR;
+			$creoleToPropelTypeMap[CreoleTypes::CLOB] = PropelTypes::CLOB;
+			$creoleToPropelTypeMap[CreoleTypes::NUMERIC] = PropelTypes::NUMERIC;
+			$creoleToPropelTypeMap[CreoleTypes::DECIMAL] = PropelTypes::DECIMAL;
+			$creoleToPropelTypeMap[CreoleTypes::TINYINT] = PropelTypes::TINYINT;
+			$creoleToPropelTypeMap[CreoleTypes::SMALLINT] = PropelTypes::SMALLINT;
+			$creoleToPropelTypeMap[CreoleTypes::INTEGER] = PropelTypes::INTEGER;
+			$creoleToPropelTypeMap[CreoleTypes::BIGINT] = PropelTypes::BIGINT;
+			$creoleToPropelTypeMap[CreoleTypes::REAL] = PropelTypes::REAL;
+			$creoleToPropelTypeMap[CreoleTypes::FLOAT] = PropelTypes::FLOAT;
+			$creoleToPropelTypeMap[CreoleTypes::DOUBLE] = PropelTypes::DOUBLE;
+			$creoleToPropelTypeMap[CreoleTypes::BINARY] = PropelTypes::BINARY;
+			$creoleToPropelTypeMap[CreoleTypes::VARBINARY] = PropelTypes::VARBINARY;
+			$creoleToPropelTypeMap[CreoleTypes::LONGVARBINARY] = PropelTypes::LONGVARBINARY;
+			$creoleToPropelTypeMap[CreoleTypes::BLOB] = PropelTypes::BLOB;
+			$creoleToPropelTypeMap[CreoleTypes::DATE] = PropelTypes::DATE;
+			$creoleToPropelTypeMap[CreoleTypes::TIME] = PropelTypes::TIME;
+			$creoleToPropelTypeMap[CreoleTypes::TIMESTAMP] = PropelTypes::TIMESTAMP;
+			$creoleToPropelTypeMap[CreoleTypes::BOOLEAN] = PropelTypes::BOOLEAN;
+			$creoleToPropelTypeMap[CreoleTypes::YEAR] = PropelTypes::INTEGER;
+		}
+		
+		if (isset($creoleToPropelTypeMap[$creoleType])) {
+			return $creoleToPropelTypeMap[$creoleType];
+		}
+	}
 
 	/**
 	 * Creates an column node
@@ -472,22 +518,22 @@ class PropelCreoleTransformTask extends Task {
 			$node->setAttribute("phpName", $colName);
 		}
 
-		$node->setAttribute("type", PropelTypes::getPropelType($colType));
+		$node->setAttribute("type", self::getMappedPropelType($colType));
 
 		if ($colSize > 0 && (
-				   $colType == CreoleTypes::CHAR
-				|| $colType == CreoleTypes::VARCHAR
-				|| $colType == CreoleTypes::LONGVARCHAR
-				|| $colType == CreoleTypes::DECIMAL
-				|| $colType == CreoleTypes::FLOAT
-				|| $colType == CreoleTypes::NUMERIC)) {
+		$colType == CreoleTypes::CHAR
+		|| $colType == CreoleTypes::VARCHAR
+		|| $colType == CreoleTypes::LONGVARCHAR
+		|| $colType == CreoleTypes::DECIMAL
+		|| $colType == CreoleTypes::FLOAT
+		|| $colType == CreoleTypes::NUMERIC)) {
 			$node->setAttribute("size", (string) $colSize);
 		}
 
 		if ($colScale > 0 && (
-				   $colType == CreoleTypes::DECIMAL
-				|| $colType == CreoleTypes::FLOAT
-				|| $colType == CreoleTypes::NUMERIC)) {
+		$colType == CreoleTypes::DECIMAL
+		|| $colType == CreoleTypes::FLOAT
+		|| $colType == CreoleTypes::NUMERIC)) {
 			$node->setAttribute("scale", (string) $colScale);
 		}
 
@@ -659,24 +705,24 @@ class PropelCreoleTransformTask extends Task {
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('maxLength') &&
-				$colSize > 0 && in_array($colType, array(
-					CreoleTypes::CHAR,
-					CreoleTypes::VARCHAR,
-					CreoleTypes::LONGVARCHAR))) {
+		$colSize > 0 && in_array($colType, array(
+		CreoleTypes::CHAR,
+		CreoleTypes::VARCHAR,
+		CreoleTypes::LONGVARCHAR))) {
 			$ruleInfo = array('type' => 'maxLength', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('maxValue') &&
-				$colSize > 0 && in_array($colType, array(
-					CreoleTypes::SMALLINT,
-					CreoleTypes::TINYINT,
-					CreoleTypes::INTEGER,
-					CreoleTypes::BIGINT,
-					CreoleTypes::FLOAT,
-					CreoleTypes::DOUBLE,
-					CreoleTypes::NUMERIC,
-					CreoleTypes::DECIMAL,
-					CreoleTypes::REAL))) {
+		$colSize > 0 && in_array($colType, array(
+		CreoleTypes::SMALLINT,
+		CreoleTypes::TINYINT,
+		CreoleTypes::INTEGER,
+		CreoleTypes::BIGINT,
+		CreoleTypes::FLOAT,
+		CreoleTypes::DOUBLE,
+		CreoleTypes::NUMERIC,
+		CreoleTypes::DECIMAL,
+		CreoleTypes::REAL))) {
 
 			// TODO: how to evaluate the appropriate size??
 			$this->log("WARNING: maxValue validator added for column $colName. You will have to adjust the size value manually.", PROJECT_MSG_WARN);
@@ -684,21 +730,21 @@ class PropelCreoleTransformTask extends Task {
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('type') &&
-				$colSize > 0 && in_array($colType, array(
-					CreoleTypes::SMALLINT,
-					CreoleTypes::TINYINT,
-					CreoleTypes::INTEGER,
-					CreoleTypes::TIMESTAMP))) {
+		$colSize > 0 && in_array($colType, array(
+		CreoleTypes::SMALLINT,
+		CreoleTypes::TINYINT,
+		CreoleTypes::INTEGER,
+		CreoleTypes::TIMESTAMP))) {
 			$ruleInfo = array('type' => 'type', 'value' => '[^\d]+');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		if ($this->isValidatorRequired('type') &&
-				$colSize > 0 && in_array($colType, array(
-					CreoleTypes::FLOAT,
-					CreoleTypes::DOUBLE,
-					CreoleTypes::NUMERIC,
-					CreoleTypes::DECIMAL,
-					CreoleTypes::REAL))) {
+		$colSize > 0 && in_array($colType, array(
+		CreoleTypes::FLOAT,
+		CreoleTypes::DOUBLE,
+		CreoleTypes::NUMERIC,
+		CreoleTypes::DECIMAL,
+		CreoleTypes::REAL))) {
 			// TODO: is this always true??
 			$ruleInfo = array('type' => 'type', 'value' => '[^\d\.]+');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;

@@ -55,11 +55,9 @@
   <taskdef
     name="propel-data-sql"
     classname="propel.phing.PropelDataSQLTask" classpathRef="propelclasses"/>
-<!--
    <taskdef
     name="propel-creole-transform"
     classname="propel.phing.PropelCreoleTransformTask" classpathRef="propelclasses"/>
--->
 
   <taskdef
     name="propel-sql"
@@ -266,19 +264,18 @@
     <echo message="| Generating XML from Creole connection !       |"/>
     <echo message="|                                               |"/>
     <echo message="+-----------------------------------------------+"/>
-    <fail message="The 'creole' target is temporarily disabled while we build a PDO reverse-engineer solution."/>
-	<!--
+
     <propel-creole-transform
-      dbDriver="${propel.database.driver}"
+      dbDriver="${propel.database.creole.driver}"
       dbSchema="${propel.database.schema}"
       dbEncoding="${propel.database.encoding}"
-      dbUrl="${propel.database.url}"
+      dbUrl="${propel.database.creole.url}"
       outputFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
       samePhpName="${propel.samePhpName}"
       addVendorInfo="${propel.addVendorInfo}"
       addValidators="${propel.addValidators}"
     />
-    -->
+
   </target>
 
 

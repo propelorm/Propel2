@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-include_once 'creole/Creole.php';
-
 /**
  * Dumps the contenst of selected databases to XML data dump file.
  *
@@ -268,8 +266,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 		$buf = "Database settings:\n"
 			. " driver: " . ($this->databaseDriver ? $this->databaseDriver : "(default)" ). "\n"
 			. " URL: " . $this->databaseUrl . "\n"
-			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "") // deprecated
-			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : ""); // deprecated
+			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "") 
+			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : ""); 
 
 		$this->log($buf, PROJECT_MSG_VERBOSE);
 
@@ -291,35 +289,17 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 					try {
 
 						$url = str_replace("@DB@", $database->getName(), $this->databaseUrl);
-
-						$buf = "Database settings:\n"
-						. " driver: " . ($this->databaseDriver ? $this->databaseDriver : "(default)" ). "\n"
-						. " URL: " . $url . "\n"
-						. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "")
-						. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : "");
-
-						$this->log($buf, PROJECT_MSG_VERBOSE);
-
-						$dsn = Creole::parseDSN($url);
-
-						// deprecated, but here for BC
-						if ($this->databaseUser) {
-							$dsn['username'] = $this->databaseUser;
+						
+						if ($url !== $this->databaseUrl) {
+							$this->log("New (resolved) URL: " . $url, PROJECT_MSG_VERBOSE);
 						}
-
-						if ($this->databasePassword) {
-							$dsn['password'] = $this->databasePassword;
+						
+						if (empty($url)) {
+							throw new BuildException("Unable to connect to database; no PDO connection URL specified.", $this->getLocation());
 						}
-
-						if ($this->databaseName) {
-							$dsn['database'] = $this->databaseName;
-						}
-
-						if ($this->databaseDriver) {
-							Creole::registerDriver($dsn['phptype'], $this->databaseDriver);
-						}
-
-						$this->conn = Creole::getConnection($dsn);
+						
+						$this->conn = new PDO($url, $this->databaseUser, $this->databasePassword);
+						$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 						$doc = $this->createXMLDoc($database);
 						$doc->save($outFile->getAbsolutePath());
@@ -338,10 +318,12 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      string $tableName
 	 * @return     ResultSet
 	 */
-	private function getTableDataRS($tableName) {
+	private function getTableDataStmt($tableName) {
 		// Set Statement object in associated PropelDataDump
 		// instance.
-		return $this->conn->createStatement()->executeQuery("SELECT * FROM " . $this->getPlatformForTargetDatabase()->quoteIdentifier ( $tableName ) );
+		$stmt = $this->conn->prepare("SELECT * FROM " . $this->getPlatformForTargetDatabase()->quoteIdentifier ( $tableName ) );
+		$stmt->execute();
+		return $stmt;
 	}
 
 	/**
@@ -363,11 +345,11 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 
 		foreach ($database->getTables() as $tbl) {
 			$this->log("\t+ " . $tbl->getName());
-			$rs = $this->getTableDataRS($tbl->getName());
-			while ($rs->next()) {
+			$stmt = $this->getTableDataStmt($tbl->getName());
+			while ($row = $stmt->fetch()) {
 				$rowNode = $doc->createElement($tbl->getPhpName());
 				foreach ($tbl->getColumns() as $col) {
-					$cval = $rs->get($col->getName());
+					$cval = $row[$col->getName()];
 					if ($cval !== null) {
 						$rowNode->setAttribute($col->getPhpName(), iconv($this->dbEncoding, 'utf-8', $cval));
 					}
@@ -375,7 +357,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 				$dsNode->appendChild($rowNode);
 				unset($rowNode);
 			}
-			$rs->close();
+			unset($stmt);
 		}
 
 		return $doc;
