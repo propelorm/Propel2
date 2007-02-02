@@ -325,7 +325,6 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			} // if fk->getForeignTableName != table->getName
 		} // foreach [sub] foreign keys
 
-
 		foreach ($table->getForeignKeys() as $fk) {
 			// want to cover this case, but the code is not there yet.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
@@ -377,17 +376,16 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		$index = 1;
 		foreach ($table->getForeignKeys() as $fk ) {
-
 			// want to cover this case, but the code is not there yet.
 			// FIXME -- why not? -because we'd have to alias the tables in the JOIN
 			if ( $fk->getForeignTableName() != $table->getName() ) {
-
+				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
+			    
 				$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
 				$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
 				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 
 
-				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 				$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 				$interfaceName = $joinClassName;
 
