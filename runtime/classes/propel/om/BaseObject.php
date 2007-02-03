@@ -142,7 +142,8 @@ abstract class BaseObject {
 	 */
 	public function equals($obj)
 	{
-		if (is_object($obj)) {
+		$thisclazz = get_class($this);
+		if (is_object($obj) && $obj instanceof $thisclazz) {
 			if ($this === $obj) {
 				return true;
 			} elseif ($this->getPrimaryKey() === null || $obj->getPrimaryKey() === null)  {

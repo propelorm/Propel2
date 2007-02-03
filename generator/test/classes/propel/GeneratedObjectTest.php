@@ -296,4 +296,19 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL-value int column to 0.");
 		
 	}
+	
+	/**
+	 * Test the BaseObject#equals().
+	 */
+	public function testEquals()
+	{
+		$b = BookPeer::doSelectOne(new Criteria());
+		$c = new Book();
+		$c->setId($b->getId());
+		$this->assertTrue($b->equals($c), "Expected Book objects to be equal()");
+		
+		$a = new Author();
+		$a->setId($b->getId());
+		$this->assertFalse($b->equals($a), "Expected Book and Author with same primary key NOT to match.");
+	}
 }
