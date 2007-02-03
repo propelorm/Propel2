@@ -75,8 +75,8 @@
  issue as far as maintenance is concerned.
 -->
 
-<target name="convert-props" depends="configure">
-	<phing phingfile="build-propel.xml" target="convert-props"/>
+<target name="convert-conf" depends="configure">
+	<phing phingfile="build-propel.xml" target="convert-conf"/>
 </target>
 
 <target name="create-db" depends="configure">
