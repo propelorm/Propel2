@@ -145,7 +145,7 @@ class DBMySQL extends DBAdapter {
 	 */
 	public function useQuoteIdentifier()
 	{
-		return false;
+		return true;
 	}
 
 	/**

@@ -856,12 +856,26 @@ class BasePeer
 			}
 		}
 
+		// from / join tables quoten if it is necessary
+		if ($db->useQuoteIdentifier()) {
+		    $fromClause = array_map(array($db, 'quoteIdentifier'), $fromClause);
+		    $joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifier'), $joinClause);
+		}
+
+		// build from-clause
+		$from = '';
+		if (!empty($joinClause) && count($fromClause) > 1 && ($db instanceof DBMySQL)) {
+		    $from .= "(" . implode(", ", $fromClause) . ")";
+		} else {
+		    $from .= implode(", ", $fromClause);
+		}
+        $from .= $joinClause ? ' ' . implode(' ', $joinClause) : '';
+
 		// Build the SQL from the arrays we compiled
 		$sql =  "SELECT "
 				.($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
 				.implode(", ", $selectClause)
-				." FROM ". ( (!empty($joinClause) && count($fromClause) > 1 && ($db instanceof DBMySQL)) ? "(" . implode(", ", $fromClause) . ")" : implode(", ", $fromClause) )
-								.($joinClause ? ' ' . implode(' ', $joinClause) : '')
+                ." FROM "  . $from
 				.($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
 				.($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
 				.($havingString ? " HAVING ".$havingString : "")
