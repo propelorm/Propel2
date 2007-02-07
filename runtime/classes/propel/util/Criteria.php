@@ -1020,8 +1020,9 @@ class Criteria implements IteratorAggregate {
 	{
 		if ($p3 !== null) {
 			// addAnd(column, value, comparison)
+			$oc = $this->getCriterion($p1); 
 			$nc = new Criterion($this, $p1, $p2, $p3);
-			if ( $this->getCriterion($p1) === null) {
+			if ( $oc === null) {
 				$this->map[$p1] = $nc;
 			} else {
 				$oc->addAnd($nc);
