@@ -280,6 +280,9 @@ class Database extends XMLElement {
 		if ($data instanceof Table) {
 			$tbl = $data; // alias
 			$tbl->setDatabase($this);
+			if (isset($this->tablesByName[$tbl->getName()])) {
+				throw new EngineException("Duplicate table declared: " . $tbl->getName());
+			}
 			$this->tableList[] = $tbl;
 			$this->tablesByName[ $tbl->getName() ] = $tbl;
 			$this->tablesByPhpName[ $tbl->getPhpName() ] = $tbl;
