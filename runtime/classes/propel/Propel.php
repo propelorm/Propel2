@@ -496,7 +496,7 @@ class Propel
 			$key = constant($key);
 
 			$value = $optiondata['value'];
-			if (is_string($value) && strpos($value, 'PDO::')) {
+			if (is_string($value) && strpos($value, 'PDO::') !== false) {
 				if (!defined($value)) {
 					throw new PropelException("Invalid PDO option/attribute value specified: ".$value);
 				}
