@@ -297,7 +297,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	static public function getFieldNames(\$type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists(\$type, self::\$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . \$type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . \$type . ' was given.');
 		}
 		return self::\$fieldNames[\$type];
 	}
