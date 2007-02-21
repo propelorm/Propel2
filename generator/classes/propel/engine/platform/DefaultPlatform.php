@@ -21,6 +21,7 @@
 
 require_once 'propel/engine/platform/Platform.php';
 include_once 'propel/engine/database/model/Domain.php';
+include_once 'propel/engine/database/model/PropelTypes.php';
 
 /**
  * Default implementation for the Platform interface.
@@ -34,13 +35,37 @@ class DefaultPlatform implements Platform {
 	private $schemaDomainMap;
 
 	/**
-	 * Default constructor.
+	 * @var       PDO Database connection.
 	 */
-	public function __construct()
+	private $con;
+	
+	/**
+	 * Default constructor.
+	 * @param     PDO $con Optional database connection to use in this platform.
+	 */
+	public function __construct(PDO $con = null)
 	{
 		$this->initialize();
 	}
-
+	
+	/**
+	 * Set the database connection to use for this Platform class.
+	 * @param     PDO $con Database connection to use in this platform.
+	 */
+	public function setConnection(PDO $con = null)
+	{
+		$this->con = $con;
+	}
+	
+	/**
+	 * Returns the database connection to use for this Platform class.
+	 * @return    PDO The database connection or NULL if none has been set.
+	 */
+	public function getConnection()
+	{
+		return $this->con;
+	}
+	
 	protected function initialize()
 	{
 		$this->schemaDomainMap = array();
@@ -135,13 +160,35 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @see        Platform::escapeText()
+	 * @see        Platform::quote()
 	 */
-	public function escapeText($text)
+	public function quote($text)
+	{
+		if ($this->getConnection()) {
+			return $this->getConnection()->quote($text);
+		} else {
+			return "'" . $this->disconnectedEscapeText($text) . "'";
+		}
+	}
+	
+	/**
+	 * Method to escape text when no connection has been set.
+	 * 
+	 * The subclasses can implement this using string replacement functions
+	 * or native DB methods.
+	 * 
+	 * @param      string $text Text that needs to be escaped.
+	 * @return     string
+	 */
+	protected function disconnectedEscapeText($text)
 	{
 		return str_replace("'", "''", $text);
 	}
-
+	
+	/**
+	 * 
+	 */
+	
 	/**
 	 * @see        Platform::quoteIdentifier()
 	 */

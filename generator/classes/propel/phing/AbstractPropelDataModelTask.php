@@ -123,6 +123,30 @@ abstract class AbstractPropelDataModelTask extends Task {
 	protected $xslFile;
 
 	/**
+	 * Optional database connection url.
+	 * @var        string
+	 */
+	private $url = null;
+
+	/**
+	 * Optional database connection user name.
+	 * @var        string
+	 */
+	private $userId = null;
+
+	/**
+	 * Optional database connection password.
+	 * @var        string
+	 */
+	private $password = null;
+	
+	/**
+	 * PDO Connection.
+	 * @var        PDO
+	 */
+	private $conn = false;
+	
+	/**
 	 * Return the data models that have been
 	 * processed.
 	 *
@@ -261,9 +285,39 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 */
 	public function setDbEncoding($v)
 	{
-	   $this->dbEncoding = $v;
+		$this->dbEncoding = $v;
+	}
+	
+	/**
+	 * Set the DB connection url.
+	 *
+	 * @param      string $url connection url
+	 */
+	public function setUrl($url)
+	{
+		$this->url = $url;
 	}
 
+	/**
+	 * Set the user name for the DB connection.
+	 *
+	 * @param      string $userId database user
+	 */
+	public function setUserid($userId)
+	{
+		$this->userId = $userId;
+	}
+
+	/**
+	 * Set the password for the DB connection.
+	 *
+	 * @param      string $password database password
+	 */
+	public function setPassword($password)
+	{
+		$this->password = $password;
+	}
+	
 	/**
 	 * Get the output directory.
 	 * @return     string
@@ -271,7 +325,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	public function getOutputDirectory() {
 		return $this->outputDirectory;
 	}
-
+	
 	/**
 	 * Nested creator, creates one Mapper for this task.
 	 *
@@ -311,8 +365,38 @@ abstract class AbstractPropelDataModelTask extends Task {
 	}
 
 	/**
+	 * Gets the PDO connection, if URL specified.
+	 * @return     PDO Connection to use (for quoting, Platform class, etc.) or NULL if no connection params were specified. 
+	 */
+	public function getConnection()
+	{
+		if ($this->conn === false) {
+			$this->conn = null;
+			if ($this->url) {
+				$buf = "Using database settings:\n"
+					. " URL: " . $this->url . "\n"
+					. ($this->userId ? " user: " . $this->userId . "\n" : "")
+				. ($this->password ? " password: " . $this->password . "\n" : "");
+		
+				$this->log($buf, PROJECT_MSG_VERBOSE);
+		
+				// Set user + password to null if they are empty strings
+				if (!$this->userId) { $this->userId = null; }
+				if (!$this->password) { $this->password = null; }
+				try {
+					$this->conn = new PDO($this->url, $this->userId, $this->password);
+					$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				} catch (PDOException $x) {
+					$this->log("Unable to create a PDO connection: " . $x->getMessage(), PROJECT_MSG_WARN);
+				}
+			}
+		}
+		return $this->conn;
+	}
+
+	/**
 	 * Get the Platform class based on the target database type.
-	 * @return     Platform Class that implements the Platform interface.
+	 * @return     Platform Object that implements the Platform interface.
 	 */
 	protected function getPlatformForTargetDatabase()
 	{
@@ -333,7 +417,15 @@ abstract class AbstractPropelDataModelTask extends Task {
 		}
 
 		$clazz = Phing::import($classpath);
-		return new $clazz();
+		$platform = new $clazz();
+		
+		if (!$platform instanceof Platform) {
+			throw new BuildException("Specified platform class ($classpath) does not implement Platform interface.", $this->getLocation());
+		}
+		
+		$platform->setConnection($this->getConnection());
+		
+		return $platform;
 	}
 
 	/**

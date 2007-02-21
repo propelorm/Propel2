@@ -189,7 +189,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	 */
 	protected function getStringSql($value)
 	{
-		return "'" . $this->getPlatform()->escapeText($value) . "'";
+		return $this->getPlatform()->quote($value);
 	}
 
 	/**

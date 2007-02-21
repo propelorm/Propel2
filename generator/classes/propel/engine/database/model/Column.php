@@ -787,7 +787,7 @@ class Column extends XMLElement {
 		if ($this->getDefaultValue() !== null) {
 			$dflt .= "default ";
 			if (PropelTypes::isTextType($this->getType())) {
-				$dflt .= '\'' . $this->getPlatform()->escapeText($this->getDefaultValue()) . '\'';
+				$dflt .= $this->getPlatform()->quote($this->getDefaultValue());
 			} elseif ($this->getType() == PropelTypes::BOOLEAN) {
 				$dflt .= $this->getPlatform()->getBooleanString($this->getDefaultValue());
 			} else {

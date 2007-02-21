@@ -186,7 +186,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		$script .= "
 );
 
-COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." IS '" . $platform->escapeText($table->getDescription())."';
+COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." IS " . $platform->quote($table->getDescription()).";
 
 ";
 
@@ -208,7 +208,7 @@ COMMENT ON TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($tab
 		foreach ($this->getTable()->getColumns() as $col) {
 			if ( $col->getDescription() != '' ) {
 				$script .= "
-COMMENT ON COLUMN ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName())).".".$this->quoteIdentifier($col->getName())." IS '".$platform->escapeText($col->getDescription()) ."';
+COMMENT ON COLUMN ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName())).".".$this->quoteIdentifier($col->getName())." IS ".$platform->quote($col->getDescription()) .";
 ";
 			}
 		}

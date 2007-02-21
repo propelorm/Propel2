@@ -308,7 +308,8 @@
 	<column
 	  name="password"
 	  type="VARCHAR"
-	  size="100"/>
+	  size="100"
+	  default="'@''34&quot;"/>
 	<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
 	  <reference local="employee_id" foreign="id"/>
 	</foreign-key>

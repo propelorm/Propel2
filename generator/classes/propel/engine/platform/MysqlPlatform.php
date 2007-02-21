@@ -80,7 +80,8 @@ class MysqlPlatform extends DefaultPlatform {
 	/**
 	 * @see        Platform#hasSize(String)
 	 */
-	public function hasSize($sqlType) {
+	public function hasSize($sqlType)
+	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
 				|| "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
 				|| "LONGBLOB" == $sqlType);
@@ -91,8 +92,13 @@ class MysqlPlatform extends DefaultPlatform {
 	 * @param      string $text
 	 * @return     string
 	 */
-	public function escapeText($text) {
-		return mysql_escape_string($text);
+	public function disconnectedEscapeText($text)
+	{
+		if (function_exists('mysql_escape_string')) {
+			return mysql_escape_string($text);
+		} else {
+			return addslashes($text);
+		}
 	}
 
 	/**

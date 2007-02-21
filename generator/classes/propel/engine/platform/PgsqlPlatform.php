@@ -80,8 +80,13 @@ class PgsqlPlatform extends DefaultPlatform {
 	 * @param      string $text
 	 * @return     string
 	 */
-	public function escapeText($text) {
-		return pg_escape_string($text);
+	public function disconnectedEscapeText($text)
+	{
+		if (function_exists('pg_escape_string')) {
+			return pg_escape_string($text);
+		} else {
+			return parent::disconnectedEscapeText($text);
+		}
 	}
 
 	/**

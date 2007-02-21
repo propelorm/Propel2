@@ -171,6 +171,9 @@
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
       packageObjectModel="${propel.packageObjectModel}"
+      url="${propel.database.url}"
+      userId="${propel.database.user}"
+      password="${propel.database.password}"
       >
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
