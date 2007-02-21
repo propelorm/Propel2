@@ -83,6 +83,7 @@
 
   <target
     name="main"
+  	depends="mysqli-check"
     description="==> generates sql + om classes">
 
     <phingcall target="sql"/>
@@ -146,9 +147,26 @@
 	</if>
   </target>
 
+	  <!--	temporary target to check whether mysqli is being used
+			If so, a warning is issued, since this is deprecated  -->
+	  <target name="mysqli-check">
+	  	<if>
+	  		<and>
+				<equals arg1="${propel.database}" arg2="mysqli"/>
+			</and>
+			<then>
+				<warn>ATTENTION: It appears you are using the mysqli driver.</warn>
+				<warn></warn>
+				<warn>This driver is no longer supported by Propel because Propel now uses PDO for database connections.</warn>
+				<warn>Please use mysqli driver instead.</warn>
+				<fail>Use 'mysql' instead of 'mysqli' for your propel.database property.</fail>
+			</then>
+		</if>
+	  </target>
+	
   <target
     name="sql"
-    depends="sql-check,pgsql-quoting-check"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
     unless="propel.internal.sql.uptodate"
     description="==> generates the SQL for your project">
 
@@ -199,7 +217,7 @@
   <target
     name="create-db"
     unless="propel.internal.manualCreation"
-    depends="create-db-check"
+    depends="create-db-check,mysqli-check"
     description="==> generates the target database">
 
 	<fail message="create-db target temporarily disabled, while we replace creole components."/>
@@ -399,7 +417,7 @@
 
   <target
     name="om"
-    depends="om-check"
+    depends="om-check,mysqli-check"
     unless="propel.internal.om.uptodate"
     description="==> generates the Peer-based object model for your project">
 
