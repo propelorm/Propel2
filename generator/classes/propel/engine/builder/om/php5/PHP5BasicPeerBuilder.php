@@ -214,6 +214,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "'".$col->getPhpName()."', ";
 		}
 		$script .= "),
+		BasePeer::TYPE_STUDLYPHPNAME => array (";
+		foreach ($tableColumns as $col) {
+			$script .= "'".$col->getStudlyPhpName()."', ";
+		}
+		$script .= "),
 		BasePeer::TYPE_COLNAME => array (";
 		foreach ($tableColumns as $col) {
 			$script .= $this->getColumnConstant($col, 'self').", ";
@@ -252,6 +257,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "'".$col->getPhpName()."' => $num, ";
 		}
 		$script .= "),
+		BasePeer::TYPE_STUDLYPHPNAME => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= "'".$col->getStudlyPhpName()."' => $num, ";
+		}
+		$script .= "),
 		BasePeer::TYPE_COLNAME => array (";
 		foreach ($tableColumns as $num => $col) {
 			$script .= $this->getColumnConstant($col, 'self')." => $num, ";
@@ -279,8 +289,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Returns an array of of field names.
 	 *
 	 * @param      string \$type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
@@ -302,10 +312,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string \$name field name
-	 * @param      string \$fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string \$fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string \$toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName(\$name, \$fromType, \$toType)
 	{

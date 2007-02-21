@@ -186,8 +186,8 @@ class Column extends XMLElement {
 
 			$this->inheritanceType = $this->getAttribute("inheritance");
 			$this->isInheritance = ($this->inheritanceType !== null
-					&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
-															// use boleanValue()
+			&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
+			// use boleanValue()
 
 			$this->inputValidator = $this->getAttribute("inputValidator");
 			$this->description = $this->getAttribute("description");
@@ -273,6 +273,23 @@ class Column extends XMLElement {
 	public function setPhpName($phpName)
 	{
 		$this->phpName = $phpName;
+	}
+
+	/**
+	 * Get studly version of PHP name.
+	 *
+	 * The studly name is the PHP name with the first character lowercase.
+	 *
+	 * @return    string
+	 */
+	public function getStudlyPhpName()
+	{
+		$phpname = $this->getPhpName();
+		if (strlen($phpname) > 1) {
+			return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
+		} else { // 0 or 1 chars (I suppose that's rare)
+			return strtolower($phpname);
+		}
 	}
 
 	/**
@@ -419,11 +436,11 @@ class Column extends XMLElement {
 		$this->isNotNull = (boolean) $status;
 	}
 
-	 /**
-	  * Return NOT NULL String for this column
-	  *
-	  * @return     "NOT NULL" if null values are not allowed or an empty string.
-	  */
+	/**
+	 * Return NOT NULL String for this column
+	 *
+	 * @return     "NOT NULL" if null values are not allowed or an empty string.
+	 */
 	public function getNotNullString()
 	{
 		return $this->getTable()->getDatabase()->getPlatform()->getNullString($this->isNotNull());
@@ -716,14 +733,14 @@ class Column extends XMLElement {
 
 		if ($this->isInheritance()) {
 			$result .= " inheritance=\"" . $this->inheritanceType
-				. '"';
+			. '"';
 		}
 
 		if ($this->isNodeKey()) {
-				$result .= " nodeKey=\"true\"";
-				if ($this->getNodeKeySep() !== null) {
-						$result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
-				}
+			$result .= " nodeKey=\"true\"";
+			if ($this->getNodeKeySep() !== null) {
+				$result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
+			}
 		}
 
 		// Close the column.
@@ -781,8 +798,8 @@ class Column extends XMLElement {
 	 * Return a string that will give this column a default value.
 	 * @return     string
 	 */
-	 public function getDefaultSetting()
-	 {
+	public function getDefaultSetting()
+	{
 		$dflt = "";
 		if ($this->getDefaultValue() !== null) {
 			$dflt .= "default ";
@@ -795,7 +812,7 @@ class Column extends XMLElement {
 			}
 		}
 		return $dflt;
-	 }
+	}
 
 	/**
 	 * Set a string that will give this column a default value.
@@ -830,7 +847,7 @@ class Column extends XMLElement {
 	 */
 	public function getInputValidator()
 	{
-	   return $this->inputValidator;
+		return $this->inputValidator;
 	}
 
 	/**
@@ -925,15 +942,15 @@ class Column extends XMLElement {
 		return in_array($t, array("boolean", "int", "double", "string"));
 	}
 
-  /**
-   * Return true if column's PHP native type is an
-   * boolean, int, long, float, double
-   */
-  public function isPrimitiveNumeric()
-  {
-	$t = $this->getPhpNative();
-	return in_array($t, array("boolean", "int", "double"));
-  }
+	/**
+	 * Return true if column's PHP native type is an
+	 * boolean, int, long, float, double
+	 */
+	public function isPrimitiveNumeric()
+	{
+		$t = $this->getPhpNative();
+		return in_array($t, array("boolean", "int", "double"));
+	}
 
 	/**
 	 * Get the platform/adapter impl.

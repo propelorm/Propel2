@@ -751,8 +751,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string \$keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string \$keyType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
 	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME)
@@ -778,8 +778,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @param      string \$name name
 	 * @param      string \$type The type of fieldname the \$name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName(\$name, \$type = BasePeer::TYPE_PHPNAME)
@@ -833,8 +833,8 @@ $script .= "
 	 * @param      string \$name peer name
 	 * @param      mixed \$value field value
 	 * @param      string \$type The type of fieldname the \$name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName(\$name, \$value, \$type = BasePeer::TYPE_PHPNAME)
@@ -889,8 +889,9 @@ $script .= "
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, 
+     * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  \$arr     An array to populate the object from.
 	 * @param      string \$keyType The type of keys the array uses.

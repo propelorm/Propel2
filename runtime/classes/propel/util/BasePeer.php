@@ -51,7 +51,13 @@ class BasePeer
 	 * e.g. 'AuthorId'
 	 */
 	const TYPE_PHPNAME = 'phpName';
-
+	
+	/**
+	 * studlyphpname type
+	 * e.g. 'authorId'
+	 */
+	const TYPE_STUDLYPHPNAME = 'studlyPhpName';
+	
 	/**
 	 * column (peer) name type
 	 * e.g. 'book.AUTHOR_ID'
