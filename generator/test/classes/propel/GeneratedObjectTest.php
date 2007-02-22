@@ -45,7 +45,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		// From the schema.xml, I am relying on the following:
 		//  - that 'Penguin' is the default Name for a Publisher
-		//  - that 01/01/2001 is the default ReviewDate for a Review
+		//  - that 2001-01-01 is the default ReviewDate for a Review
 
 		// 1) check regular values (VARCHAR)
 		$pub = new Publisher();
