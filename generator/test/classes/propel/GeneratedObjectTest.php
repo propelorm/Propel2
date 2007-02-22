@@ -198,7 +198,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
 
 	}
 
@@ -310,5 +310,33 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$a = new Author();
 		$a->setId($b->getId());
 		$this->assertFalse($b->equals($a), "Expected Book and Author with same primary key NOT to match.");
+	}
+	
+	/**
+	 * Test checking for non-default values.
+	 * @see http://propel.phpdb.org/trac/ticket/331
+	 */
+	public function testHasNonDefaultValues()
+	{
+		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+		
+		$acct2 = new BookstoreEmployeeAccount();
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setBookstoreEmployee($emp);
+		$acct->setLogin("foo");
+		$acct->setPassword("bar");
+		$acct->save();
+		
+		$this->assertFalse($acct->isModified(), "Expected BookstoreEmployeeAccount NOT to be modified after save().");
+		
+		$acct->setEnabled(true);
+		$acct->setPassword($acct2->getPassword());
+		
+		$this->assertTrue($acct->isModified(), "Expected BookstoreEmployeeAccount to be modified after setting default values.");
+		
+		$this->assertFalse($acct->hasNonDefaultValues(), "Expected BookstoreEmployeeAccount to not have any non-default values after setting only default values.");
+		
+		$acct->setPassword("bar");
+		$this->assertTrue($acct->hasNonDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");		
 	}
 }

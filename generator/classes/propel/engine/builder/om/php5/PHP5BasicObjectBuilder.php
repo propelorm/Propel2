@@ -53,7 +53,21 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
 	}
-
+	
+	/**
+	 * Returns the type-casted and stringified default value for the specified Column.
+	 * @return string The default value or NULL if there is none.
+	 */
+	protected function getDefaultValueString(Column $col)
+	{
+		$defaultValue = null;
+		if (($val = $col->getPhpDefaultValue()) !== null) {
+			settype($val, $col->getPhpNative());
+			$defaultValue = var_export($val, true);
+		}
+		return $defaultValue;
+	}
+	
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param      string &$script The script will be modified in this method.
@@ -118,6 +132,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
+		
+		$this->addHasNonDefaultValues($script);
 
 		$this->addHydrate($script);
 
@@ -203,9 +219,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$cptype = $col->getPhpNative();
 			$clo=strtolower($col->getName());
 			$defVal = "";
-			if (($val = $col->getPhpDefaultValue()) !== null) {
-				settype($val, $cptype);
-				$defaultValue = var_export($val, true);
+			
+			$defaultValue = $this->getDefaultValueString($col);
+			if ($defaultValue !== null) {
 				$defVal = " = " . $defaultValue;
 			}
 
@@ -517,11 +533,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$clo = strtolower($col->getName());
 
-		$defaultValue = null;
-		if (($val = $col->getPhpDefaultValue()) !== null) {
-			settype($val, $col->getPhpNative());
-			$defaultValue = var_export($val, true);
-		}
+		$defaultValue = $this->getDefaultValueString($col);
 
 		$this->addMutatorOpen($script, $col);
 
@@ -556,12 +568,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$clo = strtolower($col->getName());
 
-		// FIXME: refactor this
-		$defaultValue = null;
-		if (($val = $col->getPhpDefaultValue()) !== null) {
-			settype($val, $col->getPhpNative());
-			$defaultValue = var_export($val, true);
-		}
+		$defaultValue = $this->getDefaultValueString($col);
 
 		$this->addMutatorOpen($script, $col);
 		
@@ -598,9 +605,61 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		$this->addMutatorClose($script, $col);
 	}
-
+	
+	/**
+	 * Adds the hasNonDefaultValues() method, which sets attributes of the object based on a ResultSet.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addHasNonDefaultValues(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Indicates whether any columns in this object have been set with non-default values.
+	 * 
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.  isModified() will return TRUE if
+	 * an object has been set with default values (since that object still needs to be eligible for being
+	 * saved to the database).
+	 * 
+	 * If none of the columns in this object have any default values then this method will always return true.
+	 * 
+	 * @return    boolean Whether any of the columns in this object have been set with non-default values.
+	 */
+	public function hasNonDefaultValues()
+	{";
+		$colsWithDefaults = array();
+		foreach($table->getColumns() as $col) {
+			$def = $this->getDefaultValueString($col);
+			if ($def !== null) {
+				$colsWithDefaults[] = $col;
+			}
+		}
+		
+		if (empty($colsWithDefaults)) {
+			$script .= "
+		// This object has no columns with default values, so always return TRUE
+		return true;";
+		} else {
+			
+			$comparisons = array();
+			foreach($colsWithDefaults as $col) {
+				$clo = strtolower($col->getName());
+				$defaultValue = $this->getDefaultValueString($col);
+				$comparisons[] = "\$this->$clo !== $defaultValue"; 
+			}
+			$compstr = implode(" || ", $comparisons);
+			$script .= "
+		return ($compstr);";
+		}
+		$script .= "
+	}
+";
+	}
+	
 	/**
 	 * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
+	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addHydrate(&$script)
 	{
