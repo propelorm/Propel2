@@ -1117,9 +1117,12 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function deleteDescendants(BaseNodeObject \$node = null, PDO \$con = null)
 	{
+		\$left = \$node->getLeftValue();
+		\$right = \$node->getRightValue();
+
 		\$c = new Criteria();
-		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::GREATER_THAN);
-		\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$node->getRightValue(), Criteria::LESS_THAN);
+		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$left, Criteria::GREATER_THAN);
+		\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$right, Criteria::LESS_THAN);
 
 		\$c1->addAnd(\$c2);
 

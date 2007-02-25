@@ -283,7 +283,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		parent::delete(\$con);
 
 		// delete descendants and then shift tree
-		$peerClassname::deleteDescendants(\$left, \$right, \$con);
+		$peerClassname::deleteDescendants(\$this, \$con);
 	}
 ";
 	}
