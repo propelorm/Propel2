@@ -24,6 +24,7 @@ include_once 'propel/engine/EngineException.php';
 include_once 'propel/engine/database/model/PropelTypes.php';
 include_once 'propel/engine/database/model/Inheritance.php';
 include_once 'propel/engine/database/model/Domain.php';
+include_once 'propel/engine/database/model/ColumnDefaultValue.php';
 
 /**
  * A Class for holding data about a column used in an Application.
@@ -68,7 +69,7 @@ class Column extends XMLElement {
 	private $creoleType;
 
 	/**
-	 * Native PHP type
+	 * Native PHP type (scalar or class name)
 	 * @var        string "string", "boolean", "int", "double"
 	 */
 	private $phpType;
@@ -96,7 +97,10 @@ class Column extends XMLElement {
 
 	/** class name to do input validation on this column */
 	private $inputValidator = null;
-
+	
+	/**
+	 * @var        Domain The domain object associated with this Column.
+	 */
 	private $domain;
 
 	/**
@@ -145,19 +149,13 @@ class Column extends XMLElement {
 				$this->setType(strtoupper($this->getAttribute("type")));
 			}
 
-			//Name
 			$this->name = $this->getAttribute("name");
-
 			$this->phpName = $this->getAttribute("phpName");
 			$this->phpType = $this->getAttribute("phpType");
+			
 			$this->peerName = $this->getAttribute("peerName");
 
-			if (empty($this->phpType)) {
-				$this->phpType = null;
-			}
-
-			// retrieves the method for converting from specified name to
-			// a PHP name.
+			// retrieves the method for converting from specified name to a PHP name, defaulting to parent tables default method
 			$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
 
 			$this->isPrimaryKey = $this->booleanValue($this->getAttribute("primaryKey"));
@@ -168,21 +166,23 @@ class Column extends XMLElement {
 			$this->isNestedSetLeftKey = $this->booleanValue($this->getAttribute("nestedSetLeftKey"));
 			$this->isNestedSetRightKey = $this->booleanValue($this->getAttribute("nestedSetRightKey"));
 
-			$this->isNotNull = $this->booleanValue($this->getAttribute("required"), false);
-
-			// Regardless of above, if this column is a primary key then it can't be null.
-			if ($this->isPrimaryKey) {
-				$this->isNotNull = true;
-			}
+			$this->isNotNull = ($this->booleanValue($this->getAttribute("required"), false) || $this->isPrimaryKey); // primary keys are required
 
 			//AutoIncrement/Sequences
 			$this->isAutoIncrement = $this->booleanValue($this->getAttribute("autoIncrement"));
 			$this->isLazyLoad = $this->booleanValue($this->getAttribute("lazyLoad"));
 
-			//Default column value.
-			$this->domain->replaceDefaultValue($this->getAttribute("default"));
+			// Add type, size information to associated Domain object
+			$this->domain->replaceSqlType($this->getAttribute("sqlType"));
 			$this->domain->replaceSize($this->getAttribute("size"));
 			$this->domain->replaceScale($this->getAttribute("scale"));
+			
+			$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
+			if ($defval !== null) {
+				$this->domain->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+			} elseif ($this->getAttribute("defaultExpr") !== null) {
+				$this->domain->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
+			}
 
 			$this->inheritanceType = $this->getAttribute("inheritance");
 			$this->isInheritance = ($this->inheritanceType !== null
@@ -310,14 +310,8 @@ class Column extends XMLElement {
 
 	/**
 	 * Get type to use in PHP sources.
-	 * If no type has been specified, then uses results
-	 * of getPhpNative().
-	 *
-	 * The distinction between getPhpType() and getPhpNative()
-	 * is not as salient in PHP as it is in Java, but we'd like to leave open the
-	 * option of specifying complex types (objects) in the schema.  While we can
-	 * always cast to PHP native types, we can't cast objects (in PHP) -- hence the
-	 * importance of maintaining this distinction.
+	 * 
+	 * If no type has been specified, then uses results of getPhpNative().
 	 *
 	 * @return     string The type name.
 	 * @see        getPhpNative()
@@ -642,7 +636,7 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Returns the colunm type
+	 * Sets the colunm type
 	 */
 	public function setType($propelType)
 	{
@@ -685,19 +679,28 @@ class Column extends XMLElement {
 	 * Utility method to know whether column needs Blob/Lob handling.
 	 * @return     boolean
 	 */
-	public function isLob()
+	public function isLobType()
 	{
 		return PropelTypes::isLobType($this->propelType);
 	}
 
 	/**
-	 * Utility method to see if the column is a string
+	 * Utility method to see if the column is text type.
 	 */
-	public function isString()
+	public function isTextType()
 	{
-		return PropelTypes::isTextxType($this->propelType);
+		return PropelTypes::isTextType($this->propelType);
 	}
-
+	
+	/**
+	 * Utility method to know whether column is a temporal column.
+	 * @return     boolean
+	 */
+	public function isTemporalType()
+	{
+		return PropelTypes::isTemporalType($this->propelType);
+	}
+	
 	/**
 	 * String representation of the column. This is an xml representation.
 	 */
@@ -801,14 +804,20 @@ class Column extends XMLElement {
 	public function getDefaultSetting()
 	{
 		$dflt = "";
-		if ($this->getDefaultValue() !== null) {
+		$defaultValue = $this->getDefaultValue();
+		if ($defaultValue !== null) {
 			$dflt .= "default ";
-			if (PropelTypes::isTextType($this->getType())) {
-				$dflt .= $this->getPlatform()->quote($this->getDefaultValue());
-			} elseif ($this->getType() == PropelTypes::BOOLEAN) {
-				$dflt .= $this->getPlatform()->getBooleanString($this->getDefaultValue());
+			
+			if ($this->getDefaultValue()->isExpression()) {
+				$dflt .= $this->getDefaultValue()->getValue();
 			} else {
-				$dflt .= $this->getDefaultValue();
+				if ($this->isTextType()) {
+					$dflt .= $this->getPlatform()->quote($defaultValue->getValue());
+				} elseif ($this->getType() == PropelTypes::BOOLEAN) {
+					$dflt .= $this->getPlatform()->getBooleanString($defaultValue->getValue());
+				} else {
+					$dflt .= $defaultValue->getValue();
+				}
 			}
 		}
 		return $dflt;
@@ -823,8 +832,8 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Get the raw string that will give this column a default value.
-	 * @return     string
+	 * Get the default value object for this column.
+	 * @return     ColumnDefaultValue
 	 * @see        Domain::getDefaultValue()
 	 */
 	public function getDefaultValue()
@@ -894,6 +903,8 @@ class Column extends XMLElement {
 	/**
 	 * Set the column type from a string property
 	 * (normally a string from an sql input file)
+	 *
+	 * @deprecated Do not use; this will be removed in next release.
 	 */
 	public function setTypeFromString($typeName, $size)
 	{
@@ -929,29 +940,39 @@ class Column extends XMLElement {
 	 */
 	public function getPhpNative()
 	{
-		return PropelTypes::getPHPNative($this->propelType);
+		return PropelTypes::getPhpNative($this->propelType);
 	}
 
 	/**
-	 * Returns true if the column's PHP native type is an
-	 * boolean, int, long, float, double, string
+	 * Returns true if the column's PHP native type is an boolean, int, long, float, double, string.
+	 * @return     boolean
+	 * @see        PropelTypes::isPhpPrimitiveType()
 	 */
-	public function isPrimitive()
+	public function isPhpPrimitiveType()
 	{
-		$t = $this->getPhpNative();
-		return in_array($t, array("boolean", "int", "double", "string"));
+		return PropelTypes::isPhpPrimitiveType($this->getPhpType());
 	}
 
 	/**
-	 * Return true if column's PHP native type is an
-	 * boolean, int, long, float, double
+	 * Return true if column's PHP native type is an boolean, int, long, float, double.
+	 * @return     boolean
+	 * @see        PropelTypes::isPhpPrimitiveNumericType()
 	 */
-	public function isPrimitiveNumeric()
+	public function isPhpPrimitiveNumericType()
 	{
-		$t = $this->getPhpNative();
-		return in_array($t, array("boolean", "int", "double"));
+		return PropelTypes::isPhpPrimitiveNumericType($this->getPhpType());
 	}
-
+	
+	/**
+	 * Returns true if the column's PHP native type is a class name.
+	 * @return     boolean
+	 * @see        PropelTypes::isPhpObjectType()
+	 */
+	public function isPhpObjectType()
+	{
+		return PropelTypes::isPhpObjectType($this->getPhpType());
+	}
+	
 	/**
 	 * Get the platform/adapter impl.
 	 *

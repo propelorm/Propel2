@@ -64,12 +64,14 @@ abstract class ObjectBuilder extends OMBuilder {
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
-
-			if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
+			
+			// if they're not using the DateTime class than we will generate "compatibility" accessor method
+			if (!$this->getBuildProperty("useDateTimeClass") && ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP)) {
 				$this->addTemporalAccessor($script, $col);
 			} else {
-				$this->addGenericAccessor($script, $col);
+				$this->addDefaultAccessor($script, $col);
 			}
+			
 			if ($col->isLazyLoad()) {
 				$this->addLazyLoader($script, $col);
 			}
@@ -86,7 +88,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	{
 		foreach ($this->getTable()->getColumns() as $col) {
 
-			if ($col->isLob()) {
+			if ($col->isLobType()) {
 				$this->addLobMutator($script, $col);
 			} elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
 				$this->addTemporalMutator($script, $col);

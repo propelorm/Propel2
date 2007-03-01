@@ -421,7 +421,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$argsize = 0;
 		foreach ($fk->getLocalColumns() as $columnName) {
 			$column = $table->getColumn($columnName);
-			$cptype = $column->getPhpNative();
+			$cptype = $column->getPhpType();
 			$clo = strtolower($column->getName());
 
 			// FIXME: is this correct? what about negative numbers?
@@ -521,7 +521,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$i = 0;
 			foreach ($fk->getLocalColumns() as $colName) {
 				$col = $table->getColumn($colName);
-				$fktype = $col->getPhpNative();
+				$fktype = $col->getPhpType();
 				$script .= "
 			\$this->set".$col->getPhpName()."( ($fktype) \$key[$i] );
 ";
@@ -531,7 +531,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$lcols = $fk->getLocalColumns();
 			$colName = $lcols[0];
 			$col = $table->getColumn($colName);
-			$fktype = $col->getPhpNative();
+			$fktype = $col->getPhpType();
 			$script .= "
 		\$this->set".$col->getPhpName()."( ($fktype) \$key);
 ";

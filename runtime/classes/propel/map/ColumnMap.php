@@ -212,10 +212,22 @@ class ColumnMap {
 	 * between epoch and pre-epoch timestamps.
 	 *
 	 * @return     boolean
+	 * @deprecated Propel supports non-epoch dates
 	 */
 	public function isEpochTemporal()
 	{
 		return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME);
+	}
+	
+	/**
+	 * Whether this is a DATE/TIME/TIMESTAMP column.
+	 *
+	 * @return     boolean
+	 * @since      1.3
+	 */
+	public function isTemporal()
+	{
+		return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME || $this->type == PropelColumnTypes::BU_DATE  || $this->type == PropelColumnTypes::BU_TIMESTAMP);
 	}
 
 	/**

@@ -364,7 +364,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			if ($col->isEnumeratedClasses()) {
 
-				if ($col->isPrimitiveNumeric()) $quote = "";
+				if ($col->isPhpPrimitiveNumericType()) $quote = "";
 				else $quote = '"';
 
 				foreach ($col->getChildren() as $child) {
@@ -1639,7 +1639,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * ";
 		foreach ($table->getPrimaryKey() as $col) {
 			$clo = strtolower($col->getName());
-			$cptype = $col->getPhpNative();
+			$cptype = $col->getPhpType();
 			$script .= "@param $cptype $".$clo."
 	   ";
 	   }

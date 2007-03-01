@@ -19,15 +19,10 @@
  * <http://propel.phpdb.org>.
  */
 
-//HL - removing this dependency, though there are larger issues still needing to
-// be addressed for reverse-engineering.
-//require_once 'creole/CreoleTypes.php';
-
 /**
- * A class that maps PropelTypes to CreoleTypes and to native PHP types.
+ * A class that maps PropelTypes to PHP native types, PDO types (and Creole types).
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @version    $Revision$
  * @package    propel.engine.database.model
  */
@@ -58,11 +53,19 @@ class PropelTypes {
 	const BU_TIMESTAMP = "BU_TIMESTAMP";
 
 	const BOOLEAN = "BOOLEAN";
-
-	private static $TEXT_TYPES = null;
-
-	private static $LOB_TYPES = null;
-
+	
+	private static $TEXT_TYPES = array (
+						self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+					);
+					
+	private static $LOB_TYPES = array (
+						self::VARBINARY, self::LONGVARBINARY, self::CLOB, self::BLOB
+					);
+	
+	private static $TEMPORAL_TYPES = array (
+						self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+					);
+					
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
 	const LONGVARCHAR_NATIVE_TYPE = "string";
@@ -82,171 +85,113 @@ class PropelTypes {
 	const LONGVARBINARY_NATIVE_TYPE = "string";
 	const BLOB_NATIVE_TYPE = "string";
 	const BU_DATE_NATIVE_TYPE = "string";
-	const DATE_NATIVE_TYPE = "int";
-	const TIME_NATIVE_TYPE = "int";
-	const TIMESTAMP_NATIVE_TYPE = "int";
+	const DATE_NATIVE_TYPE = "DateTime";
+	const TIME_NATIVE_TYPE = "DateTime";
+	const TIMESTAMP_NATIVE_TYPE = "DateTime";
 	const BU_TIMESTAMP_NATIVE_TYPE = "string";
-
-	private static $propelToPHPNativeMap = null;
-	private static $propelTypeToCreoleTypeMap = null;
-	private static $propelTypeToPDOTypeMap = null;
-	private static $creoleToPropelTypeMap = null;
-
-	private static $isInitialized = false;
-
+	
 	/**
-	 * Initializes the SQL to PHP map so that it
-	 * can be used by client code.
-	 */
-	public static function initialize()
-	{
-		if (self::$isInitialized === false) {
-
-			self::$TEXT_TYPES = array (
-						self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
-					);
-
-			self::$LOB_TYPES = array (
-						self::VARBINARY, self::LONGVARBINARY, self::CLOB, self::BLOB
-					);
-
-			/*
-			 * Create Creole -> native PHP type mappings.
-			 */
-
-			self::$propelToPHPNativeMap = array();
-
-			self::$propelToPHPNativeMap[self::CHAR] = self::CHAR_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::VARCHAR] = self::VARCHAR_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::LONGVARCHAR] = self::LONGVARCHAR_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::CLOB] = self::CLOB_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::NUMERIC] = self::NUMERIC_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::DECIMAL] = self::DECIMAL_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::TINYINT] = self::TINYINT_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::SMALLINT] = self::SMALLINT_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::INTEGER] = self::INTEGER_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BIGINT] = self::BIGINT_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::REAL] = self::REAL_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::FLOAT] = self::FLOAT_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::DOUBLE] = self::DOUBLE_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BINARY] = self::BINARY_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::VARBINARY] = self::VARBINARY_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::LONGVARBINARY] = self::LONGVARBINARY_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BLOB] = self::BLOB_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::DATE] = self::DATE_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BU_DATE] = self::BU_DATE_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::TIME] = self::TIME_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::TIMESTAMP] = self::TIMESTAMP_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BU_TIMESTAMP] = self::BU_TIMESTAMP_NATIVE_TYPE;
-			self::$propelToPHPNativeMap[self::BOOLEAN] = self::BOOLEAN_NATIVE_TYPE;
-
-			/*
-			 * Create Propel -> Creole _name_ mappings (not CreoleType:: mappings).
-			 * (this is now pretty useless since we've designed them to be the same!)
-			 */
-			self::$propelTypeToCreoleTypeMap = array();
-			self::$propelTypeToCreoleTypeMap[self::CHAR] = self::CHAR;
-			self::$propelTypeToCreoleTypeMap[self::VARCHAR] = self::VARCHAR;
-			self::$propelTypeToCreoleTypeMap[self::LONGVARCHAR] = self::LONGVARCHAR;
-			self::$propelTypeToCreoleTypeMap[self::CLOB] = self::CLOB;
-			self::$propelTypeToCreoleTypeMap[self::NUMERIC] = self::NUMERIC;
-			self::$propelTypeToCreoleTypeMap[self::DECIMAL] = self::DECIMAL;
-			self::$propelTypeToCreoleTypeMap[self::TINYINT] = self::TINYINT;
-			self::$propelTypeToCreoleTypeMap[self::SMALLINT] = self::SMALLINT;
-			self::$propelTypeToCreoleTypeMap[self::INTEGER] = self::INTEGER;
-			self::$propelTypeToCreoleTypeMap[self::BIGINT] = self::BIGINT;
-			self::$propelTypeToCreoleTypeMap[self::REAL] = self::REAL;
-			self::$propelTypeToCreoleTypeMap[self::FLOAT] = self::FLOAT;
-			self::$propelTypeToCreoleTypeMap[self::DOUBLE] = self::DOUBLE;
-			self::$propelTypeToCreoleTypeMap[self::BINARY] = self::BINARY;
-			self::$propelTypeToCreoleTypeMap[self::VARBINARY] = self::VARBINARY;
-			self::$propelTypeToCreoleTypeMap[self::LONGVARBINARY] = self::LONGVARBINARY;
-			self::$propelTypeToCreoleTypeMap[self::BLOB] = self::BLOB;
-			self::$propelTypeToCreoleTypeMap[self::DATE] = self::DATE;
-			self::$propelTypeToCreoleTypeMap[self::TIME] = self::TIME;
-			self::$propelTypeToCreoleTypeMap[self::TIMESTAMP] = self::TIMESTAMP;
-			self::$propelTypeToCreoleTypeMap[self::BOOLEAN] = self::BOOLEAN;
-
-			// These are pre-epoch dates, which we need to map to String type
-			// since they cannot be properly handled using strtotime() -- or even numeric
-			// timestamps on Windows.
-			self::$propelTypeToCreoleTypeMap[self::BU_DATE] = self::VARCHAR;
-			self::$propelTypeToCreoleTypeMap[self::BU_TIMESTAMP] = self::VARCHAR;
-
-			/*
-			 * Create Propel -> Creole _name_ mappings (not CreoleType:: mappings).
-			 * (this is now pretty useless since we've designed them to be the same!)
-			 */
-			self::$propelTypeToPDOTypeMap = array();
-			self::$propelTypeToPDOTypeMap[self::CHAR] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::VARCHAR] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::LONGVARCHAR] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::CLOB] = PDO::PARAM_LOB;
-			self::$propelTypeToPDOTypeMap[self::NUMERIC] = PDO::PARAM_INT;
-			self::$propelTypeToPDOTypeMap[self::DECIMAL] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::TINYINT] = PDO::PARAM_INT;
-			self::$propelTypeToPDOTypeMap[self::SMALLINT] = PDO::PARAM_INT;
-			self::$propelTypeToPDOTypeMap[self::INTEGER] = PDO::PARAM_INT;
-			self::$propelTypeToPDOTypeMap[self::BIGINT] = PDO::PARAM_INT;
-			self::$propelTypeToPDOTypeMap[self::REAL] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::FLOAT] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::DOUBLE] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::BINARY] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::VARBINARY] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::LONGVARBINARY] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::BLOB] = PDO::PARAM_LOB;
-			self::$propelTypeToPDOTypeMap[self::DATE] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::TIME] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::TIMESTAMP] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::BOOLEAN] = PDO::PARAM_BOOL;
-
-			// These are pre-epoch dates, which we need to map to String type
-			// since they cannot be properly handled using strtotime() -- or even numeric
-			// timestamps on Windows.
-			self::$propelTypeToPDOTypeMap[self::BU_DATE] = PDO::PARAM_STR;
-			self::$propelTypeToPDOTypeMap[self::BU_TIMESTAMP] = PDO::PARAM_STR;
-
-			/*
-			 * Create Creole type code to Propel type map.
-			 */
-			self::$creoleToPropelTypeMap = array();
-			/* COMMENTED OUT TO REMOVE CREOLE DEPENDENCY.  THIS STILL NEEDS TO BE ADDRESSED FOR REVERSE ENGINEERING
-			self::$creoleToPropelTypeMap[CreoleTypes::CHAR] = self::CHAR;
-			self::$creoleToPropelTypeMap[CreoleTypes::VARCHAR] = self::VARCHAR;
-			self::$creoleToPropelTypeMap[CreoleTypes::LONGVARCHAR] = self::LONGVARCHAR;
-			self::$creoleToPropelTypeMap[CreoleTypes::CLOB] = self::CLOB;
-			self::$creoleToPropelTypeMap[CreoleTypes::NUMERIC] = self::NUMERIC;
-			self::$creoleToPropelTypeMap[CreoleTypes::DECIMAL] = self::DECIMAL;
-			self::$creoleToPropelTypeMap[CreoleTypes::TINYINT] = self::TINYINT;
-			self::$creoleToPropelTypeMap[CreoleTypes::SMALLINT] = self::SMALLINT;
-			self::$creoleToPropelTypeMap[CreoleTypes::INTEGER] = self::INTEGER;
-			self::$creoleToPropelTypeMap[CreoleTypes::BIGINT] = self::BIGINT;
-			self::$creoleToPropelTypeMap[CreoleTypes::REAL] = self::REAL;
-			self::$creoleToPropelTypeMap[CreoleTypes::FLOAT] = self::FLOAT;
-			self::$creoleToPropelTypeMap[CreoleTypes::DOUBLE] = self::DOUBLE;
-			self::$creoleToPropelTypeMap[CreoleTypes::BINARY] = self::BINARY;
-			self::$creoleToPropelTypeMap[CreoleTypes::VARBINARY] = self::VARBINARY;
-			self::$creoleToPropelTypeMap[CreoleTypes::LONGVARBINARY] = self::LONGVARBINARY;
-			self::$creoleToPropelTypeMap[CreoleTypes::BLOB] = self::BLOB;
-			self::$creoleToPropelTypeMap[CreoleTypes::DATE] = self::DATE;
-			self::$creoleToPropelTypeMap[CreoleTypes::TIME] = self::TIME;
-			self::$creoleToPropelTypeMap[CreoleTypes::TIMESTAMP] = self::TIMESTAMP;
-			self::$creoleToPropelTypeMap[CreoleTypes::BOOLEAN] = self::BOOLEAN;
-			self::$creoleToPropelTypeMap[CreoleTypes::YEAR] = self::INTEGER;
-			*/
-			self::$isInitialized = true;
-		}
-	}
-
-	/**
-	 * Report whether this object has been initialized.
+	 * Mapping between Propel types and PHP native types.
 	 *
-	 * @return     true if this object has been initialized
+	 * @var        array
 	 */
-	public static function isInitialized()
-	{
-		return self::$isInitialized;
-	}
+	private static $propelToPHPNativeMap = array(
+			self::CHAR => self::CHAR_NATIVE_TYPE,
+			self::VARCHAR => self::VARCHAR_NATIVE_TYPE,
+			self::LONGVARCHAR => self::LONGVARCHAR_NATIVE_TYPE,
+			self::CLOB => self::CLOB_NATIVE_TYPE,
+			self::NUMERIC => self::NUMERIC_NATIVE_TYPE,
+			self::DECIMAL => self::DECIMAL_NATIVE_TYPE,
+			self::TINYINT => self::TINYINT_NATIVE_TYPE,
+			self::SMALLINT => self::SMALLINT_NATIVE_TYPE,
+			self::INTEGER => self::INTEGER_NATIVE_TYPE,
+			self::BIGINT => self::BIGINT_NATIVE_TYPE,
+			self::REAL => self::REAL_NATIVE_TYPE,
+			self::FLOAT => self::FLOAT_NATIVE_TYPE,
+			self::DOUBLE => self::DOUBLE_NATIVE_TYPE,
+			self::BINARY => self::BINARY_NATIVE_TYPE,
+			self::VARBINARY => self::VARBINARY_NATIVE_TYPE,
+			self::LONGVARBINARY => self::LONGVARBINARY_NATIVE_TYPE,
+			self::BLOB => self::BLOB_NATIVE_TYPE,
+			self::DATE => self::DATE_NATIVE_TYPE,
+			self::BU_DATE => self::BU_DATE_NATIVE_TYPE,
+			self::TIME => self::TIME_NATIVE_TYPE,
+			self::TIMESTAMP => self::TIMESTAMP_NATIVE_TYPE,
+			self::BU_TIMESTAMP => self::BU_TIMESTAMP_NATIVE_TYPE,
+			self::BOOLEAN => self::BOOLEAN_NATIVE_TYPE,
+	);
+	
+	/**
+	 * Mapping between Propel types and Creole types (for rev-eng task)
+	 *
+	 * @var        array
+	 */
+	private static $propelTypeToCreoleTypeMap = array(
+	
+			self::CHAR => self::CHAR,
+			self::VARCHAR => self::VARCHAR,
+			self::LONGVARCHAR => self::LONGVARCHAR,
+			self::CLOB => self::CLOB,
+			self::NUMERIC => self::NUMERIC,
+			self::DECIMAL => self::DECIMAL,
+			self::TINYINT => self::TINYINT,
+			self::SMALLINT => self::SMALLINT,
+			self::INTEGER => self::INTEGER,
+			self::BIGINT => self::BIGINT,
+			self::REAL => self::REAL,
+			self::FLOAT => self::FLOAT,
+			self::DOUBLE => self::DOUBLE,
+			self::BINARY => self::BINARY,
+			self::VARBINARY => self::VARBINARY,
+			self::LONGVARBINARY => self::LONGVARBINARY,
+			self::BLOB => self::BLOB,
+			self::DATE => self::DATE,
+			self::TIME => self::TIME,
+			self::TIMESTAMP => self::TIMESTAMP,
+			self::BOOLEAN => self::BOOLEAN,
+
+			// These are pre-epoch dates, which we need to map to String type
+			// since they cannot be properly handled using strtotime() -- or even numeric
+			// timestamps on Windows.
+			self::BU_DATE => self::VARCHAR,
+			self::BU_TIMESTAMP => self::VARCHAR,
+			
+	);
+	
+	/**
+	 * Mapping between Propel types and PDO type contants (for prepared statement setting).
+	 *
+	 * @var        array
+	 */
+	private static $propelTypeToPDOTypeMap = array(
+			self::CHAR => PDO::PARAM_STR,
+			self::VARCHAR => PDO::PARAM_STR,
+			self::LONGVARCHAR => PDO::PARAM_STR,
+			self::CLOB => PDO::PARAM_LOB,
+			self::NUMERIC => PDO::PARAM_INT,
+			self::DECIMAL => PDO::PARAM_STR,
+			self::TINYINT => PDO::PARAM_INT,
+			self::SMALLINT => PDO::PARAM_INT,
+			self::INTEGER => PDO::PARAM_INT,
+			self::BIGINT => PDO::PARAM_INT,
+			self::REAL => PDO::PARAM_STR,
+			self::FLOAT => PDO::PARAM_STR,
+			self::DOUBLE => PDO::PARAM_STR,
+			self::BINARY => PDO::PARAM_STR,
+			self::VARBINARY => PDO::PARAM_STR,
+			self::LONGVARBINARY => PDO::PARAM_STR,
+			self::BLOB => PDO::PARAM_LOB,
+			self::DATE => PDO::PARAM_STR,
+			self::TIME => PDO::PARAM_STR,
+			self::TIMESTAMP => PDO::PARAM_STR,
+			self::BOOLEAN => PDO::PARAM_BOOL,
+
+			// These are pre-epoch dates, which we need to map to String type
+			// since they cannot be properly handled using strtotime() -- or even numeric
+			// timestamps on Windows.
+			self::BU_DATE => PDO::PARAM_STR,
+			self::BU_TIMESTAMP => PDO::PARAM_STR,
+	);
 
 	/**
 	 * Return native PHP type which corresponds to the
@@ -303,19 +248,26 @@ class PropelTypes {
 	{
 		return array_keys(self::$propelTypeToCreoleTypeMap);
 	}
-
+	
+	/**
+	 * Whether passed type is a temporal (date/time/timestamp) type.
+	 *
+	 * @param      string $type Propel type
+	 * @return     boolean
+	 */
+	public static function isTemporalType($type)
+	{
+		return in_array($type, self::$TEMPORAL_TYPES);
+	}
+	
 	/**
 	 * Returns true if values for the type need to be quoted.
 	 *
 	 * @param      string $type The Propel type to check.
-	 * @return     true if values for the type need to be quoted.
+	 * @return     boolean True if values for the type need to be quoted.
 	 */
 	public static function isTextType($type)
 	{
-		// Make sure the we are initialized.
-		if (self::$isInitialized === false) {
-			self::initialize();
-		}
 		return in_array($type, self::$TEXT_TYPES);
 	}
 
@@ -328,7 +280,37 @@ class PropelTypes {
 	{
 		return in_array($type, self::$LOB_TYPES);
 	}
+	
+	/**
+	 * Convenience method to indicate whether a passed-in PHP type is a primitive.
+	 *
+	 * @param      string $phpType The PHP type to check
+	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
+	 */
+	public static function isPhpPrimitiveType($phpType)
+	{
+		return in_array($phpType, array("boolean", "int", "double", "float", "string"));
+	}
+	
+	/**
+	 * Convenience method to indicate whether a passed-in PHP type is a numeric primitive.
+	 *
+	 * @param      string $phpType The PHP type to check
+	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
+	 */
+	public static function isPhpPrimitiveNumericType($phpType)
+	{
+		return in_array($phpType, array("boolean", "int", "double", "float"));
+	}
+	
+	/**
+	 * Convenience method to indicate whether a passed-in PHP type is an object.
+	 *
+	 * @param      string $phpType The PHP type to check
+	 * @return     boolean Whether the PHP type is a primitive (string, int, boolean, float)
+	 */
+	public static function isPhpObjectType($phpType)
+	{
+		return (!self::isPhpPrimitiveType($phpType) && !in_array($phpType, array("resource", "array")));
+	}
 }
-
-// static
-PropelTypes::initialize();

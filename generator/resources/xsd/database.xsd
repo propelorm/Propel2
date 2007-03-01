@@ -134,11 +134,16 @@
 			<xs:enumeration value="false"/>
 		</xs:restriction>
 	</xs:simpleType>
-
+	
+	<xs:simpleType name="sql_type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\w_]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
 	<xs:simpleType name="php_type">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="primitive"/>
-			<xs:enumeration value="object"/>
+			<xs:pattern value="[\w_]+"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -280,10 +285,13 @@
 		<xs:attribute name="primaryKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="required" type="xs:boolean" default="false"/>
 		<xs:attribute name="type" type="datatype" default="VARCHAR"/>
+		<xs:attribute name="sqlType" type="sql_type" use="optional"/>
 		<xs:attribute name="phpType" type="php_type" use="optional"/>
 		<xs:attribute name="size" type="xs:nonNegativeInteger" use="optional"/>
 		<xs:attribute name="scale" type="xs:nonNegativeInteger" use="optional"/>
 		<xs:attribute name="default" type="xs:string" use="optional"/>
+		<xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+		<xs:attribute name="defaultExpr" type="xs:string" use="optional"/>
 		<xs:attribute name="autoIncrement" type="xs:boolean" default="false"/>
 		<xs:attribute name="inheritance" type="inh_option" default="false"/>
 		<xs:attribute name="inputValidator" type="xs:string" use="optional"/>

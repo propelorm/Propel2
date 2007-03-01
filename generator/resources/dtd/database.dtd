@@ -83,10 +83,13 @@ PHP class or method name.
         | BLOB | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
         | DOUBLE | BOOLEAN
     ) "VARCHAR"
-  phpType (object|primitive) #IMPLIED
+  phpType CDATA #IMPLIED
+  sqlType CDATA #IMPLIED
   size CDATA #IMPLIED
   scale CDATA #IMPLIED
   default CDATA #IMPLIED
+  defaultValue CDATA #IMPLIED
+  defaultExpr CDATA #IMPLIED
   autoIncrement (true|false) "false"
   inheritance (single|false) "false"
   inputValidator CDATA #IMPLIED

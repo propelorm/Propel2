@@ -60,6 +60,26 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
 
 	}
+	
+	/**
+	 * Test default return values.
+	 */
+	public function testDefaultValues()
+	{
+		$r = new Review();
+		$this->assertEquals('2001-01-01', $r->getReviewDate()->format('Y-m-d'));
+		
+		$this->assertFalse($r->isModified());
+		
+		$acct = new BookstoreEmployeeAccount();
+		$this->assertEquals(true, $acct->getEnabled());
+		$this->assertFalse($acct->isModified());
+		
+		$acct->setLogin("testuser");
+		$acct->setPassword("testpass");
+		$this->assertTrue($acct->isModified());
+	}
+	
 
 	/**
 	 * Test saving an object and getting correct number of affected rows from save().
@@ -199,6 +219,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
 		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('DateTime', $r2->getReviewDate(), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
 
@@ -339,4 +360,5 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setPassword("bar");
 		$this->assertTrue($acct->hasNonDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");		
 	}
+	
 }
