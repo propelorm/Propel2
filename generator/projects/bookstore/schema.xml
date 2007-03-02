@@ -140,11 +140,11 @@
 	<!-- Test one-to-one relationship -->
 	<table name="bookstore_employee_account"
 		description="A table that represents a bookstore employees login credentials.">
-		<column name="employee_id" type="INTEGER" primaryKey="true" description="Primary key for " />
+		<column name="employee_id" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
 		<column name="login" type="VARCHAR" size="32" />
 		<column name="password" type="VARCHAR" size="100" default="'@''34&quot;" />
 		<column name="enabled" type="BOOLEAN" default="true"/>
-		<column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIME"/>
+		<column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
 		<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
 			<reference local="employee_id" foreign="id" />
 		</foreign-key>

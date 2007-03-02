@@ -86,14 +86,28 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testDefaultExpresions()
 	{
+		if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+			$this->fail("Cannot test default expressions with SQLite");
+		}
+		
+		$employee = new BookstoreEmployee();
+		$employee->setName("Johnny Walker");
+		
 		$acct = new BookstoreEmployeeAccount();
-		$acct->setBookstoreEmployee(BookstoreEmployeePeer::doSelectOne(new Criteria()));
+		$acct->setBookstoreEmployee($employee);
 		$acct->setLogin("test-login");
+		
+		$this->assertNull($acct->getCreated());
+		
 		$acct->save();
 		
-		//$acct->reload();
+		BookstoreEmployeeAccountPeer::removeInstanceFromPool($acct);
 		
-		print_r($acct);
+		$acct = BookstoreEmployeeAccountPeer::retrieveByPK($acct->getEmployeeId());
+		$this->assertNotNull($acct->getCreated());
+		
+		$now = new DateTime("now");
+		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated()->format("Y-m-d"));
 	}
 	
 	/**
@@ -128,8 +142,18 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		$this->assertEquals('1702-02-02', $r->getReviewDate()->format("Y-m-d"));
 		
+		// Now test for setting null
+		$r->setReviewDate(null);
+		$this->assertNull($r->getReviewDate());
+		
 		// Now set an invalid date & expect exception
-
+		try {
+			$r->setReviewDate("Invalid Date");
+			$this->fail("Expected Exception when setting date column w/ invalid date");
+		} catch (PropelException $x) {
+			print $x;
+		}
+		
 	}
 	
 	/**
@@ -254,14 +278,15 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$r->setReviewDate(time());
 		$r->setBook($book);
 		$r->setRecommended(true);
-		$id = $r->save();
-
+		$r->save();
+		
+		$id = $r->getId();
 		unset($r);
 
 		// clear the instance cache to force reload from database.
 		ReviewPeer::clearInstancePool();
 		BookPeer::clearInstancePool();
-
+		
 		// reload and verify that the types are the same
 		$r2 = ReviewPeer::retrieveByPK($id);
 
@@ -280,7 +305,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testSaveUnique()
 	{
-		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+		$emp = new BookstoreEmployee();
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($emp);
 		$acct->setLogin("foo");
@@ -388,11 +413,12 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 * Test checking for non-default values.
 	 * @see http://propel.phpdb.org/trac/ticket/331
 	 */
-	public function testHasNonDefaultValues()
+	public function testHasOnlyDefaultValues()
 	{
-		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
+		$emp = new BookstoreEmployee();
 		
 		$acct2 = new BookstoreEmployeeAccount();
+		
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($emp);
 		$acct->setLogin("foo");
@@ -406,10 +432,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		$this->assertTrue($acct->isModified(), "Expected BookstoreEmployeeAccount to be modified after setting default values.");
 		
-		$this->assertFalse($acct->hasNonDefaultValues(), "Expected BookstoreEmployeeAccount to not have any non-default values after setting only default values.");
+		$this->assertTrue($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to not have only default values.");
 		
 		$acct->setPassword("bar");
-		$this->assertTrue($acct->hasNonDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");		
+		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");		
 	}
 	
 }

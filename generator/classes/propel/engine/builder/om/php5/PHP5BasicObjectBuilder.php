@@ -139,7 +139,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
 		
-		$this->addHasNonDefaultValues($script);
+		$this->addHasOnlyDefaultValues($script);
 
 		$this->addHydrate($script);
 
@@ -578,16 +578,24 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= "
 		if (\$v !== null && !(\$v instanceof DateTime)) {
-			if (is_numeric(\$v)) { // if it's a unix timestamp
-				\$date = new DateTime(date(DATE_ISO8601, \$v));
-			} else {
-				\$date = new DateTime(\$v);
+			try {
+				if (is_numeric(\$v)) { // if it's a unix timestamp
+					\$date = new DateTime(date(DATE_ISO8601, \$v));
+				} else {
+					\$date = new DateTime(\$v);
+				}
+			} catch (Exception \$x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export(\$v), \$x);  
 			}
 		} else {
 			\$date = \$v;
 		}
-
-		if (\$this->$clo != \$date) {
+		
+		// For date/time columns we have to compare the formatting
+		// See: http://bugs.php.net/bug.php?id=40691
+		if ((\$this->$clo === null)
+				|| (\$date === null) 
+				|| (\$this->".$clo."->format(DateTime::ISO8601) !== \$date->format(DateTime::ISO8601))) {
 			\$this->$clo = \$date;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
@@ -644,27 +652,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 	
 	/**
-	 * Adds the hasNonDefaultValues() method, which sets attributes of the object based on a ResultSet.
+	 * Adds the hasOnlyDefaultValues() method.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addHasNonDefaultValues(&$script)
+	protected function addHasOnlyDefaultValues(&$script)
 	{
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Indicates whether any columns in this object have been set with non-default values.
+	 * Indicates whether the columns in this object are only set to default values.
 	 * 
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
 	 * modified _and_ has some values set which are non-default.  isModified() will return TRUE if
 	 * an object has been set with default values (since that object still needs to be eligible for being
 	 * saved to the database).
 	 * 
-	 * If none of the columns in this object have any default values then this method will always return true.
+	 * If none of the columns in this object have any default values then this method will always return false.
 	 * 
-	 * @return    boolean Whether any of the columns in this object have been set with non-default values or TRUE if there are no defaults.
+	 * @return    boolean Whether the columns in this object are only been set with default values.
 	 */
-	public function hasNonDefaultValues()
+	public function hasOnlyDefaultValues()
 	{";
+		
 		$colsWithDefaults = array();
 		foreach($table->getColumns() as $col) {
 			$def = $col->getDefaultValue();
@@ -672,32 +681,47 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$colsWithDefaults[] = $col;
 			}
 		}
-		
-		if (empty($colsWithDefaults)) {
-			$script .= "
-		// This object has no columns with default values, so just return true
-		return true;";
-		} else {
 			
-			$comparisons = array();
-			foreach($colsWithDefaults as $col) {
-				$clo = strtolower($col->getName());
-				$def = $col->getDefaultValue();
-				
-				// temporal columns use DateTime values
-				if ($def->getValue() instanceof DateTime) { // do a value comparison on objects
-					$comparisons[] = "\$this->$clo != " . $this->getDefaultValueString($col); 
-				} else {
-					$comparisons[] = "\$this->$clo !== " . $this->getDefaultValueString($col); 
-				}
-			}
-			
-			$compstr = implode(" || ", $comparisons);
-			$script .= "
-		return ($compstr);";
+		$colconsts = array();
+		foreach($colsWithDefaults as $col) {
+			$colconsts[] = $this->getColumnConstant($col);
 		}
+			
 		$script .= "
-	}
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff(\$this->modifiedColumns, array(".implode(",", $colconsts)."))) {
+				return false;
+			}
+";
+		foreach($colsWithDefaults as $col) {
+			
+			$clo = strtolower($col->getName());
+			$def = $col->getDefaultValue();
+			
+			// temporal columns use DateTime values
+			if ($def->getValue() instanceof DateTime) { // do a value comparison on objects
+				$script .= "
+			// For date/time columns we have to compare the formatting
+			// See: http://bugs.php.net/bug.php?id=40691
+			\$dt = ".$this->getDefaultValueString($col).";
+			if (\$this->".$clo."->format(DateTime::ISO8601) !== \$dt->format(DateTime::ISO8601)) {
+				return false;
+			}
+";
+			} else {
+				$script .= "
+			if (\$this->$clo !== " . $this->getDefaultValueString($col).") {
+				return false;
+			}
+";
+				} // if value instanceof DateTime
+			}
+		$script .= "
+		// otherwise, everything was equal, so return TRUE
+		return true;";
+		
+		$script .= "
+	} // hasOnlyDefaultValues()
 ";
 	}
 	
