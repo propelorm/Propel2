@@ -114,7 +114,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 * Test the behavior of date/time/values.
 	 * This requires that the model was built with propel.useDateTimeClass=true.
 	 */
-	public function testTemporalValues()
+	public function testTemporalValues_PreEpoch()
 	{
 		$r = new Review();
 		
@@ -124,19 +124,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		$this->assertEquals('1602-02-02', $r->getReviewDate()->format("Y-m-d"));
 		
-		/*
-		print "Before setting new date: ";
-		debug_zval_dump($r->getReviewDate());
-		print "\n";
-		*/
-		
 		$r->setReviewDate('1702-02-02');
-		
-		/*
-		print "After setting new date: ";
-		debug_zval_dump($r->getReviewDate());
-		print "\n";
-		*/
 		
 		$this->assertTrue($r->isModified());
 		
@@ -146,14 +134,20 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$r->setReviewDate(null);
 		$this->assertNull($r->getReviewDate());
 		
-		// Now set an invalid date & expect exception
+	}
+	
+	/**
+	 * Test setting invalid date/time.
+	 */
+	public function testSetTemporalValue_Invalid()
+	{
+		$r = new Review();
 		try {
 			$r->setReviewDate("Invalid Date");
-			$this->fail("Expected Exception when setting date column w/ invalid date");
+			$this->fail("Expected PropelException when setting date column w/ invalid date");
 		} catch (PropelException $x) {
-			print $x;
+			print "Caught expected PropelException: " . $x->__toString();
 		}
-		
 	}
 	
 	/**

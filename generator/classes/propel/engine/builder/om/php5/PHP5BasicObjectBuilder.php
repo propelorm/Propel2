@@ -585,12 +585,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					\$date = new DateTime(\$v);
 				}
 			} catch (Exception \$x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export(\$v), \$x);  
+				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);  
 			}
 		} else {
 			\$date = \$v;
 		}
-		
+		 		
 		// For date/time columns we have to compare the formatting
 		// See: http://bugs.php.net/bug.php?id=40691
 		if ((\$this->$clo === null)
