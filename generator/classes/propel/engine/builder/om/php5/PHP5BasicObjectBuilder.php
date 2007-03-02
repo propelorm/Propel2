@@ -1039,52 +1039,11 @@ $script .= "
 	} // addDelete()
 	
 	/**
-	 * Adds a reload() method to re-fetch the data for this object from the database.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addReload(&$script)
-	{
-		$script .= "
-	/**
-	 * Reloads this object from datastore based on primary key.
-	 *
-	 * This will only work if the object has been saved and has a valid primary key set.
-	 * 
-	 * @param      PDO \$con
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function reload(PDO \$con = null)
-	{
-		if (\$this->isDeleted()) {
-			throw new PropelException(\"Cannot reload a deleted object.\");
-		}
-
-		if (\$con === null) {
-			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
-		}
-		
-		// We don't actually need to remove the instance from the pool; we are just going to 
-		// modify the instance already in the pool.
-
-		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
-		\$row = \$stmt->fetch(PDO::FETCH_NUM);
-		if (!\$row) {
-			throw new PropelException('Cannot find matching row in the database to reload object values.'); 
-		}
-		\$this->hydrate(\$row);
-		\$this->resetModified(); // after being reloaded, it's no longer modified
-	}
-";
-	} // addReload()
-
-	/**
 	 * Adds the methods related to refreshing, saving and deleting the object.
 	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addManipulationMethods(&$script)
 	{
-		$this->addReload($script);
 		$this->addDelete($script);
 		$this->addSave($script);
 	}

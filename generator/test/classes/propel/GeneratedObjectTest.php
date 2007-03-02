@@ -81,6 +81,22 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	}
 	
 	/**
+	 * Tests the use of default expressions.
+	 * (Also indirectly tests the reload() method.)
+	 */
+	public function testDefaultExpresions()
+	{
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setBookstoreEmployee(BookstoreEmployeePeer::doSelectOne(new Criteria()));
+		$acct->setLogin("test-login");
+		$acct->save();
+		
+		//$acct->reload();
+		
+		print_r($acct);
+	}
+	
+	/**
 	 * Test the behavior of date/time/values.
 	 * This requires that the model was built with propel.useDateTimeClass=true.
 	 */
@@ -114,26 +130,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		// Now set an invalid date & expect exception
 
-	}
-	
-	/**
-	 * Test the reload() method.
-	 */
-	public function testReload()
-	{
-		$a = AuthorPeer::doSelectOne(new Criteria());
-		
-		$origName = $a->getFirstName();
-		
-		$a->setFirstName(md5(time()));
-		
-		$this->assertNotEquals($origName, $a->getFirstName());
-		$this->assertTrue($a->isModified());
-		
-		$a->reload();
-		
-		$this->assertEquals($origName, $a->getFirstName());
-		$this->assertFalse($a->isModified());
 	}
 	
 	/**
