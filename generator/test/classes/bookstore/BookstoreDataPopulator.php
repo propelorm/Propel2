@@ -19,6 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
+/*
 require_once 'bookstore/Book.php';
 require_once 'bookstore/Author.php';
 require_once 'bookstore/Media.php';
@@ -30,6 +31,7 @@ require_once 'bookstore/BookstoreEmployee.php';
 require_once 'bookstore/BookstoreManager.php';
 require_once 'bookstore/BookstoreCashier.php';
 require_once 'bookstore/BookstoreEmployeeAccount.php';
+*/
 
 define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../etc/lob');
 
@@ -220,7 +222,26 @@ class BookstoreDataPopulator {
 		$bemp2->setSupervisor($bemp1);
 
 		$bemp2->save();
+		
+		$bempacct = new BookstoreEmployeeAccount();
+		$bempacct->setBookstoreEmployee($bemp1);
+		$bempacct->setLogin("john");
+		$bempacct->setPassword("johnp4ss");
+		$bempacct->save();
+		
+		// Add bookstores
 
+		$store = new Bookstore();
+		$store->setStoreName("Amazon");
+		$store->setPopulationServed(5000000000); // world population
+		$store->setTotalBooks(300);
+		$store->save();
+		
+		$store = new Bookstore();
+		$store->setStoreName("Local Store");
+		$store->setPopulationServed(20);
+		$store->setTotalBooks(500000);
+		$store->save();
 	}
 
 	public static function depopulate() {
@@ -233,6 +254,7 @@ class BookstoreDataPopulator {
 		BookClubListPeer::doDeleteAll();
 		BookstoreEmployeePeer::doDeleteAll();
 		BookstoreEmployeeAccountPeer::doDeleteAll();
+		BookstorePeer::doDeleteAll();
 	}
 
 }

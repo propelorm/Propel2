@@ -80,7 +80,62 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($acct->isModified());
 	}
 	
+	/**
+	 * Test the behavior of date/time/values.
+	 * This requires that the model was built with propel.useDateTimeClass=true.
+	 */
+	public function testTemporalValues()
+	{
+		$r = new Review();
+		
+		$preEpochDate = new DateTime('1602-02-02');
+		
+		$r->setReviewDate($preEpochDate);
+		
+		$this->assertEquals('1602-02-02', $r->getReviewDate()->format("Y-m-d"));
+		
+		/*
+		print "Before setting new date: ";
+		debug_zval_dump($r->getReviewDate());
+		print "\n";
+		*/
+		
+		$r->setReviewDate('1702-02-02');
+		
+		/*
+		print "After setting new date: ";
+		debug_zval_dump($r->getReviewDate());
+		print "\n";
+		*/
+		
+		$this->assertTrue($r->isModified());
+		
+		$this->assertEquals('1702-02-02', $r->getReviewDate()->format("Y-m-d"));
+		
+		// Now set an invalid date & expect exception
 
+	}
+	
+	/**
+	 * Test the reload() method.
+	 */
+	public function testReload()
+	{
+		$a = AuthorPeer::doSelectOne(new Criteria());
+		
+		$origName = $a->getFirstName();
+		
+		$a->setFirstName(md5(time()));
+		
+		$this->assertNotEquals($origName, $a->getFirstName());
+		$this->assertTrue($a->isModified());
+		
+		$a->reload();
+		
+		$this->assertEquals($origName, $a->getFirstName());
+		$this->assertFalse($a->isModified());
+	}
+	
 	/**
 	 * Test saving an object and getting correct number of affected rows from save().
 	 * This includes tests of cascading saves to fk-related objects.

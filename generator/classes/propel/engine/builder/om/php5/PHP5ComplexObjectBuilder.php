@@ -151,6 +151,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addManipulationMethods(&$script)
 	{
+		$this->addReload($script);
 		$this->addDelete($script);
 		$this->addSave($script);
 		$this->addDoSave($script);

@@ -28,6 +28,7 @@
 			<rule name="notMatch" value="/[^\d-]+/" message="The ISBN contains invalid characters." />
 		</validator>
 	</table>
+	
 	<table name="publisher" description="Publisher Table">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"
 			description="Publisher Id" />
@@ -55,8 +56,8 @@
 			<rule name="minValue" value="0" message="Please enter a positive number." />
 			<rule name="maxValue" value="100" message="Impressive age! Just kidding, hm?" />
 		</validator>
-
 	</table>
+	
 	<table name="review" description="Book Review">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"
 			description="Author Id" />
@@ -143,6 +144,7 @@
 		<column name="login" type="VARCHAR" size="32" />
 		<column name="password" type="VARCHAR" size="100" default="'@''34&quot;" />
 		<column name="enabled" type="BOOLEAN" default="true"/>
+		<column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIME"/>
 		<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
 			<reference local="employee_id" foreign="id" />
 		</foreign-key>
@@ -150,5 +152,53 @@
 			<unique-column name="login" />
 		</unique>
 	</table>
-
+	
+	<!--  book_reader, book_opinion, and reader_favorite test some foreign key issues  
+				(see: http://propel.phpdb.org/trac/ticket/228) -->
+	<table name="book_reader">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"
+			description="Book reader ID number" />
+		<column name="name" type="VARCHAR" size="50"/>
+	</table>
+	
+	<table name="book_opinion">
+		<column name="book_id" type="INTEGER" primaryKey="true"/>
+		<column name="reader_id" type="INTEGER" primaryKey="true"/>
+		<column name="rating" type="DECIMAL"/>
+		<column name="recommend_to_friend" type="BOOLEAN"/>
+		<foreign-key foreignTable="book" onDelete="cascade">
+			<reference local="book_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="book_reader" onDelete="cascade">
+			<reference local="reader_id" foreign="id" />
+		</foreign-key>
+	</table>
+	
+	<table name="reader_favorite">  <!--  this is just for the sake of testing multiple foreign keys for a single column -->
+		<column name="book_id" type="INTEGER" primaryKey="true"/>
+		<column name="reader_id" type="INTEGER" primaryKey="true"/>
+		<foreign-key foreignTable="book" onDelete="cascade">
+			<reference local="book_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="book_reader" onDelete="cascade">
+			<reference local="reader_id" foreign="id" />
+		</foreign-key>
+		<!-- 
+		<foreign-key foreignTable="book_opinion" onDelete="cascade">
+			<reference local="book_id" foreign="book_id"/>
+			<reference local="reader_id" foreign="reader_id"/>
+		</foreign-key>
+		 -->
+	</table>
+		
+	<!--  Test some custom php column types. -->	
+	<table name="bookstore">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"
+			description="Book store ID number" />
+		<column name="store_name" type="VARCHAR" size="50" required="true"/>
+		<column name="location" type="VARCHAR" size="100"/>
+		<column name="population_served" type="INTEGER" phpType="string"/>
+		<column name="total_books" type="INTEGER"/>
+	</table>
+	
 </database>
