@@ -663,11 +663,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Indicates whether the columns in this object are only set to default values.
 	 * 
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
-	 * modified _and_ has some values set which are non-default.  isModified() will return TRUE if
-	 * an object has been set with default values (since that object still needs to be eligible for being
-	 * saved to the database).
-	 * 
-	 * If none of the columns in this object have any default values then this method will always return false.
+	 * modified _and_ has some values set which are non-default. 
 	 * 
 	 * @return    boolean Whether the columns in this object are only been set with default values.
 	 */
