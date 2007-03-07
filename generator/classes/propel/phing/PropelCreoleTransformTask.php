@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'creole/Creole.php';
-require_once 'creole/Connection.php';
 require_once 'phing/Task.php';
 include_once 'propel/engine/database/model/PropelTypes.php';
 
@@ -263,6 +261,11 @@ class PropelCreoleTransformTask extends Task {
 	 */
 	public function main()
 	{
+		include_once 'creole/Creole.php';
+        if (!class_exists('Creole')) {
+            throw new BuildException( get_class($this) . " task depends on Creole classes being on include_path. (i.e. include of 'creole/Creole.php' failed.)", $this->getLocation());
+        }
+        
 		$this->log("Propel - CreoleToXMLSchema starting");
 		$this->log("Your DB settings are:");
 		$this->log("driver : " . ($this->dbDriver ? $this->dbDriver : "(default)"));
