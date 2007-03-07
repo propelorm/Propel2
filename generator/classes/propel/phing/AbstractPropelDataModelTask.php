@@ -409,8 +409,11 @@ abstract class AbstractPropelDataModelTask extends Task {
 		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
 		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
 		$lastdotpos = strrpos($classpath, '.');
-		if ($lastdotpos) $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
-		else ucfirst($classpath);
+		if ($lastdotpos !== null) {
+			$classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
+		} else {
+			$classpath = ucfirst($classpath);
+		}
 
 		if (empty($classpath)) {
 			throw new BuildException("Unable to find class path for '$propname' property.");

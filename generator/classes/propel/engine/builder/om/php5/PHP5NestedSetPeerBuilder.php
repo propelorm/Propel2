@@ -647,7 +647,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
 		if (false !== (\$row = \$stmt->fetch())) {
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
-			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
 			" . $this->buildObjectInstanceCreationCode('$root', '$cls') . "
 			\$root->hydrate(\$row);
@@ -1180,7 +1180,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$prevSibling = null;
 		while (\$row = \$stmt->fetch()) {
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
-			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
 			" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
 			\$child->hydrate(\$row);
@@ -1226,7 +1226,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$children = array();
 		while (\$row = \$stmt->fetch()) {
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
-			\$cls = substr(\$omClass, strrpos(\$omClass, '.') + 1);
+			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
 			" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
 			\$child->hydrate(\$row);

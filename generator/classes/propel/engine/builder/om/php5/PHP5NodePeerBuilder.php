@@ -729,7 +729,7 @@ abstract class ".$this->getClassname()." {
 			$script .= "
 		// set the class once to avoid overhead in the loop
 		\$cls = $peerClassname::getOMClass();
-		\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
 ";
 		}
 
@@ -744,7 +744,7 @@ abstract class ".$this->getClassname()." {
 			$script .= "
 				// class must be set each time from the record row
 				\$cls = $peerClassname::getOMClass(\$rs, 1);
-				\$cls = substr(\$cls, strrpos(\$cls, '.') + 1);
+				\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
 ";
 		}
 
