@@ -1175,6 +1175,17 @@ $script .= "
 	 */
 	protected function addSave(&$script)
 	{
+	
+		// Determine whether or not we should add this instance to the pool.  The basic
+		// rule is that we should not store any object which has default values
+		$hasDefaultValues = false;
+		foreach ($this->getTable()->getColumns() as $col) {
+			if ($col->getDefaultValue() !== null) {
+				$hasDefaultValues = true;
+				break;
+			}
+		}
+
 		$script .= "
 	/**
 	 * Stores the object in the database.  If the object is new,
@@ -1198,9 +1209,14 @@ $script .= "
 
 		try {
 			\$con->beginTransaction();
+			\$isNew = \$this->isNew();
 			\$affectedRows = \$this->doSave(\$con);
 			\$con->commit();
-			".$this->getPeerClassname()."::addInstanceToPool(\$this);
+			if (!\$isNew) {
+				// Do not add new objects to the instance pool, since there
+				// could be defaults that need to be set by the database. 
+				".$this->getPeerClassname()."::addInstanceToPool(\$this);
+			}
 			return \$affectedRows;
 		} catch (PropelException \$e) {
 			\$con->rollback();
