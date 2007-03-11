@@ -730,7 +730,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function clearInstancePool()
 	{
-		//print \"\\tClearing ".$this->getPeerClassname()." instance pool.\\n\";
 		self::\$instances = array();
 	}
 	";
@@ -756,7 +755,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	public static function getInstanceFromPool(\$key)
 	{
 		if (isset(self::\$instances[\$key])) {
-			//print \"  <-Found ".$this->getObjectClassname()." \" . self::\$instances[\$key] . \" in instance pool.\\n\";
 			return self::\$instances[\$key];
 		} else {
 			return null; // just to be explicit
@@ -842,8 +840,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (isset(self::\$instances[\$key])) {
-				// print \"  <-Found \" . get_class(self::\$instances[\$key]) . \" \" . self::\$instances[\$key] . \" in instance pool.\\n\";
-				\$results[] = self::\$instances[\$key];
+				\$obj = self::\$instances[\$key];
+				\$obj->hydrate(\$row, 0, true); // rehydrate
+				\$results[] = \$obj;
 			} else {
 		";
 		if ($table->getChildrenColumn()) {
@@ -854,14 +853,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";
 				self::\$instances[\$key] = \$obj;";
 		} else {
 			$script .= "
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				// print \"->Adding \" . get_class(\$obj) . \" \" . \$obj . \" into instance pool.\\n\";
 				self::\$instances[\$key] = \$obj;";
 		}
 		$script .= "

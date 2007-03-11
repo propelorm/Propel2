@@ -41,8 +41,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	/**
 	 * Test saving an object after setting default values for it.
 	 */
-	public function testSaveWithDefaultValues() {
-
+	public function testSaveWithDefaultValues()
+	{
 		// From the schema.xml, I am relying on the following:
 		//  - that 'Penguin' is the default Name for a Publisher
 		//  - that 2001-01-01 is the default ReviewDate for a Review
@@ -149,6 +149,91 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		} catch (PropelException $x) {
 			print "Caught expected PropelException: " . $x->__toString();
 		}
+	}
+	
+	/**
+	 * Testing creating & saving new object & instance pool.
+	 */
+	public function testObjectInstances_New()
+	{
+		$emp = new BookstoreEmployee();
+		$emp->setName(md5(microtime()));
+		$emp->save();
+		$id = $emp->getId();
+		
+		$retrieved = BookstoreEmployeePeer::retrieveByPK($id);
+		$this->assertSame($emp, $retrieved, "Expected same object (from instance pool)");
+	}
+	
+	/**
+	 * 
+	 */
+	public function testObjectInstances_Fkeys()
+	{
+		// Establish a relationship between one employee and account
+		// and then change the employee_id and ensure that the account 
+		// is not pulling the old employee.
+		
+		$pub1 = new Publisher();
+		$pub1->setName('Publisher 1');
+		$pub1->save();
+		
+		$pub2 = new Publisher();
+		$pub2->setName('Publisher 2');
+		$pub2->save();
+		
+		$book = new Book();
+		$book->setTitle("Book Title");
+		$book->setISBN("1234");
+		$book->setPublisher($pub1);
+		$book->save();
+		
+		$this->assertSame($pub1, $book->getPublisher());
+		
+		// now change values behind the scenes
+		$con = Propel::getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
+		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "  
+						. " publisher_id = " . $pub2->getId() 
+						. " WHERE id = " . $book->getId());
+		
+		
+		$book2 = BookPeer::retrieveByPK($book->getId());
+		$this->assertSame($book, $book2, "Expected same book object instance");
+		
+		$this->assertEquals($pub2->getId(), $book->getPublisherId(), "Expected book to have new publisher id");
+		$this->assertSame($pub2, $book->getPublisher(), "Expected book to have new publisher object associated.");
+		
+		// Now let's set it back and also verify that reload() works ...
+		
+		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "  
+						. " publisher_id = " . $pub1->getId() 
+						. " WHERE id = " . $book->getId());
+		
+		$book->reload();
+		
+		$this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have old publisher id (again).");
+		$this->assertSame($pub1, $book->getPublisher(), "Expected book to have old publisher object associated (again).");
+		
+	}
+	
+	/**
+	 * Test the reload() method.
+	 */
+	public function testReload()
+	{
+		$a = AuthorPeer::doSelectOne(new Criteria());
+		
+		$origName = $a->getFirstName();
+		
+		$a->setFirstName(md5(time()));
+		
+		$this->assertNotEquals($origName, $a->getFirstName());
+		$this->assertTrue($a->isModified());
+		
+		$a->reload();
+		
+		$this->assertEquals($origName, $a->getFirstName());
+		$this->assertFalse($a->isModified());
 	}
 	
 	/**
@@ -289,7 +374,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
 		$this->assertType('DateTime', $r2->getReviewDate(), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
@@ -301,6 +386,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testSaveUnique()
 	{
 		$emp = new BookstoreEmployee();
+		$emp->setName(md5(microtime()));
+		
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($emp);
 		$acct->setLogin("foo");
@@ -411,6 +498,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testHasOnlyDefaultValues()
 	{
 		$emp = new BookstoreEmployee();
+		$emp->setName(md5(microtime()));
 		
 		$acct2 = new BookstoreEmployeeAccount();
 		

@@ -197,7 +197,7 @@
 			description="Book store ID number" />
 		<column name="store_name" type="VARCHAR" size="50" required="true"/>
 		<column name="location" type="VARCHAR" size="100"/>
-		<column name="population_served" type="INTEGER" phpType="string"/>
+		<column name="population_served" type="BIGINT" phpType="string"/>
 		<column name="total_books" type="INTEGER"/>
 	</table>
 	

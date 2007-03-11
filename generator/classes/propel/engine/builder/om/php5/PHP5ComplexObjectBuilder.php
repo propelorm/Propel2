@@ -151,6 +151,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addManipulationMethods(&$script)
 	{
+		$this->addReload($script);
 		$this->addDelete($script);
 		$this->addSave($script);
 		$this->addDoSave($script);
@@ -1175,17 +1176,6 @@ $script .= "
 	 */
 	protected function addSave(&$script)
 	{
-	
-		// Determine whether or not we should add this instance to the pool.  The basic
-		// rule is that we should not store any object which has default values
-		$hasDefaultValues = false;
-		foreach ($this->getTable()->getColumns() as $col) {
-			if ($col->getDefaultValue() !== null) {
-				$hasDefaultValues = true;
-				break;
-			}
-		}
-
 		$script .= "
 	/**
 	 * Stores the object in the database.  If the object is new,
@@ -1209,14 +1199,9 @@ $script .= "
 
 		try {
 			\$con->beginTransaction();
-			\$isNew = \$this->isNew();
 			\$affectedRows = \$this->doSave(\$con);
 			\$con->commit();
-			if (!\$isNew) {
-				// Do not add new objects to the instance pool, since there
-				// could be defaults that need to be set by the database. 
-				".$this->getPeerClassname()."::addInstanceToPool(\$this);
-			}
+			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
 		} catch (PropelException \$e) {
 			\$con->rollback();
@@ -1355,7 +1340,57 @@ $script .= "
 	}
 ";
 	} // addDoValidate()
-
+	
+	/**
+	 * Adds the ensureConsistency() method to ensure that internal state is correct.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addEnsureConsistency(&$script)
+	{
+		$table = $this->getTable();
+		
+		$script .= "
+	/**
+	 * Checks and repairs the internal consistency of the object.
+	 * 
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 * 
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()), 
+	 * in case your model changes.
+	 * 
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+";
+		foreach($table->getColumns() as $col) {
+			
+			$clo=strtolower($col->getName());
+			
+			if ($col->isForeignKey()) {
+	
+				$tblFK = $table->getDatabase()->getTable($col->getRelatedTableName());
+				$colFK = $tblFK->getColumn($col->getRelatedColumnName());
+	
+				$varName = $this->getFKVarName($col->getForeignKey());
+	
+				$script .= "
+		if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {
+			\$this->$varName = null;
+		}
+	";
+			} /* if col is foreign key */
+		
+		} // foreach
+		
+		$script .= "
+	} // ensureConsistency
+";
+	} // addCheckRelConsistency
+		
 	/**
 	 * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
 	 * @param      string &$script The script will be modified in this method.

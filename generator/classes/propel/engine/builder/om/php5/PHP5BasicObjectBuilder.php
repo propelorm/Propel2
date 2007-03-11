@@ -142,6 +142,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addHasOnlyDefaultValues($script);
 
 		$this->addHydrate($script);
+		$this->addEnsureConsistency($script);
 
 		$this->addManipulationMethods($script);
 		$this->addValidationMethods($script);
@@ -740,10 +741,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @param      array \$row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
 	 * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param	   boolean \$rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(\$row, \$startcol = 0)
+	public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
 	{
 		try {
 ";
@@ -774,6 +776,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 			$script .= "
 			\$this->setNew(false);
+			
+			if (\$rehydrate) {
+				\$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
@@ -786,7 +792,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 	} // addHydrate()
 
-
+	/**
+	 * Adds the ensureConsistency() method to ensure that internal state is correct.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addEnsureConsistency(&$script)
+	{
+		$script .= "
+	/**
+	 * Checks and repairs the internal consistency of the object.
+	 * 
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.
+	 * 
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+		// This object has no relationsihps (non-complex OM) to check
+	}
+";
+	}
+	
 	/**
 	 *
 	 */
@@ -1057,13 +1084,57 @@ $script .= "
 	}
 ";
 	} // addDelete()
-	
+
+	/**
+	 * Adds a reload() method to re-fetch the data for this object from the database.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addReload(&$script)
+	{
+		$script .= "
+	/**
+	 * Reloads this object from datastore based on primary key.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 * 
+	 * @param      PDO \$con The (optional) PDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload(PDO \$con = null)
+	{
+		if (\$this->isDeleted()) {
+			throw new PropelException(\"Cannot reload a deleted object.\");
+		}
+		
+		if (\$this->isNew()) {
+			throw new PropelException(\"Cannot reload an unsaved object.\");
+		}
+
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+		}
+		
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
+		\$row = \$stmt->fetch(PDO::FETCH_NUM);
+		if (!\$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.'); 
+		}
+		\$this->hydrate(\$row, 0, true); // rehydrate
+	}
+";
+	} // addReload()
+
 	/**
 	 * Adds the methods related to refreshing, saving and deleting the object.
 	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addManipulationMethods(&$script)
 	{
+		$this->addReload($script);
 		$this->addDelete($script);
 		$this->addSave($script);
 	}
