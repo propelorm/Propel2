@@ -474,6 +474,14 @@ class BasePeer
 				if ($pdoType == PDO::PARAM_BOOL && $db instanceof DBMySQL) {
 					$value = (int) $value;
 					$pdoType = PDO::PARAM_INT;
+				} else if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
+					if ($type == PropelColumnTypes::TIMESTAMP) {
+						$value = date($db->getTimestampFormatter(), $value);
+					} else if ($type == PropelColumnTypes::DATE) {
+						$value = date($db->getDateFormatter(), $value);
+					} else if ($type == PropelColumnTypes::TIME) {
+						$value = date($db->getTimeFormatter(), $value);
+					}
 				} else if ($value instanceof DateTime && $cMap->isTemporal()) { // it's a timestamp that needs to be formatted
 					if ($type == PropelColumnTypes::TIMESTAMP || $type == PropelColumnTypes::BU_TIMESTAMP) {
 						$value = $value->format($db->getTimestampFormatter());
