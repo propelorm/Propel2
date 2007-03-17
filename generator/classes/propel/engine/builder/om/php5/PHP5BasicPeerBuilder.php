@@ -675,7 +675,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 		if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {
-			// print \"-Removing \" . get_class(\$value) . \" \" . var_export(\$value->getPrimaryKey(),true) . \" from instance pool.\\n\";
 		";
 		if (count($pk) > 1) {
 			$script .= "
@@ -687,7 +686,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 		} elseif (".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
-			// print \"-Removing pk: \" . var_export(\$value,true) . \" class: ".$this->getObjectClassname()." from instance pool.\\n\";
 			// assume we've been passed a primary key";
 
 		if ($pk > 1) {
@@ -699,9 +697,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		}
 		$script .= "
 		} else {
-
-			\$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object: \" . var_export(\$value,true));
-			print \$e;
+			\$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object; got \" . (is_object(\$value) ? get_class(\$value) . ' object.' : var_export(\$value,true)));
 			throw \$e;
 		}
 
