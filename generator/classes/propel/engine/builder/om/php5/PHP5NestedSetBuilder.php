@@ -629,8 +629,9 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function retrieveParent(PDO \$con = null)
 	{
-		if (empty(\$this->parentNode)) {
+		if (null === \$this->hasParentNode) {
 			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
+			\$this->hasParentNode = is_object(\$this->parentNode);
 		}
 		return \$this->parentNode;
 	}

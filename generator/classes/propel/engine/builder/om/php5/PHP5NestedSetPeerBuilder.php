@@ -897,7 +897,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$path = array();
 		\$path[] = \$node;
 
-		while (\$parent = $peerClassname::retrieveParent(\$node, \$con)) {
+		while (\$parent = \$node->retrieveParent()) {
 			\$path[] = \$parent;
 			\$node = \$parent;
 		}
