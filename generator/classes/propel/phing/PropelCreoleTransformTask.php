@@ -263,9 +263,9 @@ class PropelCreoleTransformTask extends Task {
 	{
 		include_once 'creole/Creole.php';
 		if (!class_exists('Creole')) {
-		    throw new BuildException( get_class($this) . " task depends on Creole classes being on include_path. (i.e. include of 'creole/Creole.php' failed.)", $this->getLocation());
+			throw new BuildException( get_class($this) . " task depends on Creole classes being on include_path. (i.e. include of 'creole/Creole.php' failed.)", $this->getLocation());
 		}
-        
+
 		$this->log("Propel - CreoleToXMLSchema starting");
 		$this->log("Your DB settings are:");
 		$this->log("driver : " . ($this->dbDriver ? $this->dbDriver : "(default)"));
@@ -450,16 +450,16 @@ class PropelCreoleTransformTask extends Task {
 
 		return $node;
 	}
-	
+
 	/**
 	 * Returns the Propel type for given Creole type.
-	 * 
+	 *
 	 * This used to be part of the PropelTypes class when Creole was an integral
 	 * part of the Propel build process.  As of Propel 1.3, though, this method
 	 * is only needed in this reverse-engineering code.
-	 * 
-	 * @param int $creoleType Creole type (e.g. CreoleTypes::CHAR)
-	 * @return string Equivalent Propel type (e.g. PropelTypes::CHAR)
+	 *
+	 * @param      int $creoleType Creole type (e.g. CreoleTypes::CHAR)
+	 * @return     string Equivalent Propel type (e.g. PropelTypes::CHAR)
 	 */
 	protected static function getMappedPropelType($creoleType)
 	{
@@ -489,7 +489,7 @@ class PropelCreoleTransformTask extends Task {
 			$creoleToPropelTypeMap[CreoleTypes::BOOLEAN] = PropelTypes::BOOLEAN;
 			$creoleToPropelTypeMap[CreoleTypes::YEAR] = PropelTypes::INTEGER;
 		}
-		
+
 		if (isset($creoleToPropelTypeMap[$creoleType])) {
 			return $creoleToPropelTypeMap[$creoleType];
 		}

@@ -97,7 +97,7 @@ class Column extends XMLElement {
 
 	/** class name to do input validation on this column */
 	private $inputValidator = null;
-	
+
 	/**
 	 * @var        Domain The domain object associated with this Column.
 	 */
@@ -152,7 +152,7 @@ class Column extends XMLElement {
 			$this->name = $this->getAttribute("name");
 			$this->phpName = $this->getAttribute("phpName");
 			$this->phpType = $this->getAttribute("phpType");
-			
+
 			$this->peerName = $this->getAttribute("peerName");
 
 			// retrieves the method for converting from specified name to a PHP name, defaulting to parent tables default method
@@ -176,7 +176,7 @@ class Column extends XMLElement {
 			$this->domain->replaceSqlType($this->getAttribute("sqlType"));
 			$this->domain->replaceSize($this->getAttribute("size"));
 			$this->domain->replaceScale($this->getAttribute("scale"));
-			
+
 			$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
 			if ($defval !== null) {
 				$this->domain->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
@@ -280,7 +280,7 @@ class Column extends XMLElement {
 	 *
 	 * The studly name is the PHP name with the first character lowercase.
 	 *
-	 * @return    string
+	 * @return     string
 	 */
 	public function getStudlyPhpName()
 	{
@@ -310,7 +310,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Get type to use in PHP sources.
-	 * 
+	 *
 	 * If no type has been specified, then uses results of getPhpNative().
 	 *
 	 * @return     string The type name.
@@ -691,7 +691,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isTextType($this->propelType);
 	}
-	
+
 	/**
 	 * Utility method to know whether column is a temporal column.
 	 * @return     boolean
@@ -700,7 +700,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isTemporalType($this->propelType);
 	}
-	
+
 	/**
 	 * String representation of the column. This is an xml representation.
 	 */
@@ -807,7 +807,7 @@ class Column extends XMLElement {
 		$defaultValue = $this->getDefaultValue();
 		if ($defaultValue !== null) {
 			$dflt .= "default ";
-			
+
 			if ($this->getDefaultValue()->isExpression()) {
 				$dflt .= $this->getDefaultValue()->getValue();
 			} else {
@@ -962,7 +962,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isPhpPrimitiveNumericType($this->getPhpType());
 	}
-	
+
 	/**
 	 * Returns true if the column's PHP native type is a class name.
 	 * @return     boolean
@@ -972,7 +972,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isPhpObjectType($this->getPhpType());
 	}
-	
+
 	/**
 	 * Get the platform/adapter impl.
 	 *

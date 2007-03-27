@@ -378,7 +378,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 			// FIXME -- why not? -because we'd have to alias the tables in the JOIN
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-			    
+
 				$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
 				$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
 				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);

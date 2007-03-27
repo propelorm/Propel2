@@ -34,19 +34,19 @@ interface Platform {
 
 	/** constant for native id method */
 	const SEQUENCE = "sequence";
-	
+
 	/**
 	 * Sets a database connection to use (for quoting, etc.).
-	 * @param      PDO $con The database connection to use in this Platform class. 
+	 * @param      PDO $con The database connection to use in this Platform class.
 	 */
 	public function setConnection(PDO $con = null);
-	
+
 	/**
 	 * Returns the database connection to use for this Platform class.
-	 * @return    PDO The database connection or NULL if none has been set.
+	 * @return     PDO The database connection or NULL if none has been set.
 	 */
 	public function getConnection();
-	
+
 	/**
 	 * Returns the short name of the database type that this platform represents.
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.

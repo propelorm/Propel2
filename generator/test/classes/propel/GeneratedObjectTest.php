@@ -60,7 +60,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
 
 	}
-	
+
 	/**
 	 * Test default return values.
 	 */
@@ -68,18 +68,18 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	{
 		$r = new Review();
 		$this->assertEquals('2001-01-01', $r->getReviewDate()->format('Y-m-d'));
-		
+
 		$this->assertFalse($r->isModified());
-		
+
 		$acct = new BookstoreEmployeeAccount();
 		$this->assertEquals(true, $acct->getEnabled());
 		$this->assertFalse($acct->isModified());
-		
+
 		$acct->setLogin("testuser");
 		$acct->setPassword("testpass");
 		$this->assertTrue($acct->isModified());
 	}
-	
+
 	/**
 	 * Tests the use of default expressions.
 	 * (Also indirectly tests the reload() method.)
@@ -89,27 +89,27 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
 			$this->fail("Cannot test default expressions with SQLite");
 		}
-		
+
 		$employee = new BookstoreEmployee();
 		$employee->setName("Johnny Walker");
-		
+
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($employee);
 		$acct->setLogin("test-login");
-		
+
 		$this->assertNull($acct->getCreated());
-		
+
 		$acct->save();
-		
+
 		// BookstoreEmployeeAccountPeer::removeInstanceFromPool($acct);
-		
+
 		$acct = BookstoreEmployeeAccountPeer::retrieveByPK($acct->getEmployeeId());
 		$this->assertNotNull($acct->getCreated(), "Expected a valid date after retrieving saved object.");
-		
+
 		$now = new DateTime("now");
 		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated()->format("Y-m-d"));
 	}
-	
+
 	/**
 	 * Test the behavior of date/time/values.
 	 * This requires that the model was built with propel.useDateTimeClass=true.
@@ -117,25 +117,25 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testTemporalValues_PreEpoch()
 	{
 		$r = new Review();
-		
+
 		$preEpochDate = new DateTime('1602-02-02');
-		
+
 		$r->setReviewDate($preEpochDate);
-		
+
 		$this->assertEquals('1602-02-02', $r->getReviewDate()->format("Y-m-d"));
-		
+
 		$r->setReviewDate('1702-02-02');
-		
+
 		$this->assertTrue($r->isModified());
-		
+
 		$this->assertEquals('1702-02-02', $r->getReviewDate()->format("Y-m-d"));
-		
+
 		// Now test for setting null
 		$r->setReviewDate(null);
 		$this->assertNull($r->getReviewDate());
-		
+
 	}
-	
+
 	/**
 	 * Test setting invalid date/time.
 	 */
@@ -150,7 +150,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			print "Caught expected PropelException: " . $x->__toString();
 		}
 	}
-	
+
 	/**
 	 * Testing creating & saving new object & instance pool.
 	 */
@@ -160,82 +160,82 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$emp->setName(md5(microtime()));
 		$emp->save();
 		$id = $emp->getId();
-		
+
 		$retrieved = BookstoreEmployeePeer::retrieveByPK($id);
 		$this->assertSame($emp, $retrieved, "Expected same object (from instance pool)");
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function testObjectInstances_Fkeys()
 	{
 		// Establish a relationship between one employee and account
-		// and then change the employee_id and ensure that the account 
+		// and then change the employee_id and ensure that the account
 		// is not pulling the old employee.
-		
+
 		$pub1 = new Publisher();
 		$pub1->setName('Publisher 1');
 		$pub1->save();
-		
+
 		$pub2 = new Publisher();
 		$pub2->setName('Publisher 2');
 		$pub2->save();
-		
+
 		$book = new Book();
 		$book->setTitle("Book Title");
 		$book->setISBN("1234");
 		$book->setPublisher($pub1);
 		$book->save();
-		
+
 		$this->assertSame($pub1, $book->getPublisher());
-		
+
 		// now change values behind the scenes
 		$con = Propel::getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
-		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "  
-						. " publisher_id = " . $pub2->getId() 
+		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+						. " publisher_id = " . $pub2->getId()
 						. " WHERE id = " . $book->getId());
-		
-		
+
+
 		$book2 = BookPeer::retrieveByPK($book->getId());
 		$this->assertSame($book, $book2, "Expected same book object instance");
-		
+
 		$this->assertEquals($pub2->getId(), $book->getPublisherId(), "Expected book to have new publisher id");
 		$this->assertSame($pub2, $book->getPublisher(), "Expected book to have new publisher object associated.");
-		
+
 		// Now let's set it back and also verify that reload() works ...
-		
-		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "  
-						. " publisher_id = " . $pub1->getId() 
+
+		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
+						. " publisher_id = " . $pub1->getId()
 						. " WHERE id = " . $book->getId());
-		
+
 		$book->reload();
-		
+
 		$this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have old publisher id (again).");
 		$this->assertSame($pub1, $book->getPublisher(), "Expected book to have old publisher object associated (again).");
-		
+
 	}
-	
+
 	/**
 	 * Test the reload() method.
 	 */
 	public function testReload()
 	{
 		$a = AuthorPeer::doSelectOne(new Criteria());
-		
+
 		$origName = $a->getFirstName();
-		
+
 		$a->setFirstName(md5(time()));
-		
+
 		$this->assertNotEquals($origName, $a->getFirstName());
 		$this->assertTrue($a->isModified());
-		
+
 		$a->reload();
-		
+
 		$this->assertEquals($origName, $a->getFirstName());
 		$this->assertFalse($a->isModified());
 	}
-	
+
 	/**
 	 * Test saving an object and getting correct number of affected rows from save().
 	 * This includes tests of cascading saves to fk-related objects.
@@ -359,14 +359,14 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$r->setBook($book);
 		$r->setRecommended(true);
 		$r->save();
-		
+
 		$id = $r->getId();
 		unset($r);
 
 		// clear the instance cache to force reload from database.
 		ReviewPeer::clearInstancePool();
 		BookPeer::clearInstancePool();
-		
+
 		// reload and verify that the types are the same
 		$r2 = ReviewPeer::retrieveByPK($id);
 
@@ -387,7 +387,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	{
 		$emp = new BookstoreEmployee();
 		$emp->setName(md5(microtime()));
-		
+
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($emp);
 		$acct->setLogin("foo");
@@ -414,68 +414,68 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			$acct3->save();
 		}
 	}
-	
+
 	/**
 	 * Test for correct reporting of isModified().
 	 */
 	public function testIsModified()
 	{
 		// 1) Basic test
-		
+
 		$a = new Author();
 		$a->setFirstName("John");
 		$a->setLastName("Doe");
 		$a->setAge(25);
-		
+
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after setting values.");
-		
+
 		$a->save();
-		
+
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-		
+
 		// 2) Test behavior with setting vars of different types
-		
+
 		// checking setting int col to string val
 		$a->setAge('25');
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting int column to string-cast of same value.");
-		
+
 		$a->setFirstName("John2");
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing string column value.");
-		
+
 		// checking setting string col to int val
 		$a->setFirstName("1");
 		$a->save();
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-		
+
 		$a->setFirstName(1);
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting string column to int-cast of same value.");
-		
+
 		// 3) Test for appropriate behavior of NULL
-		
-		// checking "" -> NULL 
+
+		// checking "" -> NULL
 		$a->setFirstName("");
 		$a->save();
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-		
+
 		$a->setFirstName(null);
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing empty string column value to NULL.");
-		
+
 		$a->setFirstName("John");
 		$a->setAge(0);
 		$a->save();
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-		
+
 		$a->setAge(null);
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
-		
+
 		$a->save();
 		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-		
+
 		$a->setAge(0);
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL-value int column to 0.");
-		
+
 	}
-	
+
 	/**
 	 * Test the BaseObject#equals().
 	 */
@@ -485,40 +485,40 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$c = new Book();
 		$c->setId($b->getId());
 		$this->assertTrue($b->equals($c), "Expected Book objects to be equal()");
-		
+
 		$a = new Author();
 		$a->setId($b->getId());
 		$this->assertFalse($b->equals($a), "Expected Book and Author with same primary key NOT to match.");
 	}
-	
+
 	/**
 	 * Test checking for non-default values.
-	 * @see http://propel.phpdb.org/trac/ticket/331
+	 * @see        http://propel.phpdb.org/trac/ticket/331
 	 */
 	public function testHasOnlyDefaultValues()
 	{
 		$emp = new BookstoreEmployee();
 		$emp->setName(md5(microtime()));
-		
+
 		$acct2 = new BookstoreEmployeeAccount();
-		
+
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setBookstoreEmployee($emp);
 		$acct->setLogin("foo");
 		$acct->setPassword("bar");
 		$acct->save();
-		
+
 		$this->assertFalse($acct->isModified(), "Expected BookstoreEmployeeAccount NOT to be modified after save().");
-		
+
 		$acct->setEnabled(true);
 		$acct->setPassword($acct2->getPassword());
-		
+
 		$this->assertTrue($acct->isModified(), "Expected BookstoreEmployeeAccount to be modified after setting default values.");
-		
+
 		$this->assertTrue($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to not have only default values.");
-		
+
 		$acct->setPassword("bar");
-		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");		
+		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");
 	}
-	
+
 }

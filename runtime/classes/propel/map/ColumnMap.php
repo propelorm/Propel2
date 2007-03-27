@@ -218,7 +218,7 @@ class ColumnMap {
 	{
 		return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME);
 	}
-	
+
 	/**
 	 * Whether this is a DATE/TIME/TIMESTAMP column.
 	 *

@@ -222,13 +222,13 @@ class BookstoreDataPopulator {
 		$bemp2->setSupervisor($bemp1);
 
 		$bemp2->save();
-		
+
 		$bempacct = new BookstoreEmployeeAccount();
 		$bempacct->setBookstoreEmployee($bemp1);
 		$bempacct->setLogin("john");
 		$bempacct->setPassword("johnp4ss");
 		$bempacct->save();
-		
+
 		// Add bookstores
 
 		$store = new Bookstore();
@@ -236,7 +236,7 @@ class BookstoreDataPopulator {
 		$store->setPopulationServed(5000000000); // world population
 		$store->setTotalBooks(300);
 		$store->save();
-		
+
 		$store = new Bookstore();
 		$store->setStoreName("Local Store");
 		$store->setPopulationServed(20);

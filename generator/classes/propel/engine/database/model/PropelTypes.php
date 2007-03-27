@@ -53,19 +53,19 @@ class PropelTypes {
 	const BU_TIMESTAMP = "BU_TIMESTAMP";
 
 	const BOOLEAN = "BOOLEAN";
-	
+
 	private static $TEXT_TYPES = array (
 						self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
 					);
-					
+
 	private static $LOB_TYPES = array (
 						self::VARBINARY, self::LONGVARBINARY, self::CLOB, self::BLOB
 					);
-	
+
 	private static $TEMPORAL_TYPES = array (
 						self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
 					);
-					
+
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
 	const LONGVARCHAR_NATIVE_TYPE = "string";
@@ -89,7 +89,7 @@ class PropelTypes {
 	const TIME_NATIVE_TYPE = "DateTime";
 	const TIMESTAMP_NATIVE_TYPE = "DateTime";
 	const BU_TIMESTAMP_NATIVE_TYPE = "string";
-	
+
 	/**
 	 * Mapping between Propel types and PHP native types.
 	 *
@@ -120,14 +120,14 @@ class PropelTypes {
 			self::BU_TIMESTAMP => self::BU_TIMESTAMP_NATIVE_TYPE,
 			self::BOOLEAN => self::BOOLEAN_NATIVE_TYPE,
 	);
-	
+
 	/**
 	 * Mapping between Propel types and Creole types (for rev-eng task)
 	 *
 	 * @var        array
 	 */
 	private static $propelTypeToCreoleTypeMap = array(
-	
+
 			self::CHAR => self::CHAR,
 			self::VARCHAR => self::VARCHAR,
 			self::LONGVARCHAR => self::LONGVARCHAR,
@@ -155,9 +155,9 @@ class PropelTypes {
 			// timestamps on Windows.
 			self::BU_DATE => self::VARCHAR,
 			self::BU_TIMESTAMP => self::VARCHAR,
-			
+
 	);
-	
+
 	/**
 	 * Mapping between Propel types and PDO type contants (for prepared statement setting).
 	 *
@@ -248,7 +248,7 @@ class PropelTypes {
 	{
 		return array_keys(self::$propelTypeToCreoleTypeMap);
 	}
-	
+
 	/**
 	 * Whether passed type is a temporal (date/time/timestamp) type.
 	 *
@@ -259,7 +259,7 @@ class PropelTypes {
 	{
 		return in_array($type, self::$TEMPORAL_TYPES);
 	}
-	
+
 	/**
 	 * Returns true if values for the type need to be quoted.
 	 *
@@ -280,7 +280,7 @@ class PropelTypes {
 	{
 		return in_array($type, self::$LOB_TYPES);
 	}
-	
+
 	/**
 	 * Convenience method to indicate whether a passed-in PHP type is a primitive.
 	 *
@@ -291,7 +291,7 @@ class PropelTypes {
 	{
 		return in_array($phpType, array("boolean", "int", "double", "float", "string"));
 	}
-	
+
 	/**
 	 * Convenience method to indicate whether a passed-in PHP type is a numeric primitive.
 	 *
@@ -302,7 +302,7 @@ class PropelTypes {
 	{
 		return in_array($phpType, array("boolean", "int", "double", "float"));
 	}
-	
+
 	/**
 	 * Convenience method to indicate whether a passed-in PHP type is an object.
 	 *

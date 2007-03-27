@@ -139,13 +139,13 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * @var        string
 	 */
 	private $password = null;
-	
+
 	/**
 	 * PDO Connection.
 	 * @var        PDO
 	 */
 	private $conn = false;
-	
+
 	/**
 	 * Return the data models that have been
 	 * processed.
@@ -287,7 +287,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	{
 		$this->dbEncoding = $v;
 	}
-	
+
 	/**
 	 * Set the DB connection url.
 	 *
@@ -317,7 +317,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	{
 		$this->password = $password;
 	}
-	
+
 	/**
 	 * Get the output directory.
 	 * @return     string
@@ -325,7 +325,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	public function getOutputDirectory() {
 		return $this->outputDirectory;
 	}
-	
+
 	/**
 	 * Nested creator, creates one Mapper for this task.
 	 *
@@ -366,7 +366,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 	/**
 	 * Gets the PDO connection, if URL specified.
-	 * @return     PDO Connection to use (for quoting, Platform class, etc.) or NULL if no connection params were specified. 
+	 * @return     PDO Connection to use (for quoting, Platform class, etc.) or NULL if no connection params were specified.
 	 */
 	public function getConnection()
 	{
@@ -377,9 +377,9 @@ abstract class AbstractPropelDataModelTask extends Task {
 					. " URL: " . $this->url . "\n"
 					. ($this->userId ? " user: " . $this->userId . "\n" : "")
 				. ($this->password ? " password: " . $this->password . "\n" : "");
-		
+
 				$this->log($buf, PROJECT_MSG_VERBOSE);
-		
+
 				// Set user + password to null if they are empty strings
 				if (!$this->userId) { $this->userId = null; }
 				if (!$this->password) { $this->password = null; }
@@ -421,13 +421,13 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 		$clazz = Phing::import($classpath);
 		$platform = new $clazz();
-		
+
 		if (!$platform instanceof Platform) {
 			throw new BuildException("Specified platform class ($classpath) does not implement Platform interface.", $this->getLocation());
 		}
-		
+
 		$platform->setConnection($this->getConnection());
-		
+
 		return $platform;
 	}
 

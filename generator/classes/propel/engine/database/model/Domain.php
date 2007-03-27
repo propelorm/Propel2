@@ -30,22 +30,22 @@ require_once 'propel/engine/database/model/XMLElement.php';
  * @package    propel.engine.database.model
  */
 class Domain extends XMLElement {
-	
+
 	/**
 	 * @var        string The name of this domain
 	 */
 	private $name;
-	
+
 	/**
 	 * @var        string Description for this domain.
 	 */
 	private $description;
-	
+
 	/**
 	 * @var        int Size
 	 */
 	private $size;
-	
+
 	/**
 	 * @var        int Scale
 	 */
@@ -55,17 +55,17 @@ class Domain extends XMLElement {
 	 * @var        int Propel type from schema
 	 */
 	private $propelType;
-	
+
 	/**
 	 * @var        string The SQL type to use for this column
 	 */
 	private $sqlType;
-	
+
 	/**
 	 * @var        ColumnDefaultValue A default value
 	 */
 	private $defaultValue;
-	
+
 	/**
 	 * @var        Database
 	 */
@@ -87,7 +87,7 @@ class Domain extends XMLElement {
 		$this->size = $size;
 		$this->scale = $scale;
 	}
-	
+
 	/**
 	 * Copy the values from current object into passed-in Domain.
 	 * @param      Domain $domain Domain to copy values into.
@@ -312,7 +312,7 @@ class Domain extends XMLElement {
 			$this->defaultValue = $value;
 		}
 	}
-	
+
 	/**
 	 * @return     Returns the sqlType.
 	 */
@@ -328,7 +328,7 @@ class Domain extends XMLElement {
 	{
 		$this->sqlType = $sqlType;
 	}
-	
+
 	/**
 	 * Replaces the SQL type if the new value is not null.
 	 * @param      string $sqlType The native SQL type to use for this domain.

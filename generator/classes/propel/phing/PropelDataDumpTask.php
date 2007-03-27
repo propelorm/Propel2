@@ -266,8 +266,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 		$buf = "Database settings:\n"
 			. " driver: " . ($this->databaseDriver ? $this->databaseDriver : "(default)" ). "\n"
 			. " URL: " . $this->databaseUrl . "\n"
-			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "") 
-			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : ""); 
+			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "")
+			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : "");
 
 		$this->log($buf, PROJECT_MSG_VERBOSE);
 
@@ -289,15 +289,15 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 					try {
 
 						$url = str_replace("@DB@", $database->getName(), $this->databaseUrl);
-						
+
 						if ($url !== $this->databaseUrl) {
 							$this->log("New (resolved) URL: " . $url, PROJECT_MSG_VERBOSE);
 						}
-						
+
 						if (empty($url)) {
 							throw new BuildException("Unable to connect to database; no PDO connection URL specified.", $this->getLocation());
 						}
-						
+
 						$this->conn = new PDO($url, $this->databaseUser, $this->databasePassword);
 						$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

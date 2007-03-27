@@ -35,37 +35,37 @@ class DefaultPlatform implements Platform {
 	private $schemaDomainMap;
 
 	/**
-	 * @var       PDO Database connection.
+	 * @var        PDO Database connection.
 	 */
 	private $con;
-	
+
 	/**
 	 * Default constructor.
-	 * @param     PDO $con Optional database connection to use in this platform.
+	 * @param      PDO $con Optional database connection to use in this platform.
 	 */
 	public function __construct(PDO $con = null)
 	{
 		$this->initialize();
 	}
-	
+
 	/**
 	 * Set the database connection to use for this Platform class.
-	 * @param     PDO $con Database connection to use in this platform.
+	 * @param      PDO $con Database connection to use in this platform.
 	 */
 	public function setConnection(PDO $con = null)
 	{
 		$this->con = $con;
 	}
-	
+
 	/**
 	 * Returns the database connection to use for this Platform class.
-	 * @return    PDO The database connection or NULL if none has been set.
+	 * @return     PDO The database connection or NULL if none has been set.
 	 */
 	public function getConnection()
 	{
 		return $this->con;
 	}
-	
+
 	protected function initialize()
 	{
 		$this->schemaDomainMap = array();
@@ -170,13 +170,13 @@ class DefaultPlatform implements Platform {
 			return "'" . $this->disconnectedEscapeText($text) . "'";
 		}
 	}
-	
+
 	/**
 	 * Method to escape text when no connection has been set.
-	 * 
+	 *
 	 * The subclasses can implement this using string replacement functions
 	 * or native DB methods.
-	 * 
+	 *
 	 * @param      string $text Text that needs to be escaped.
 	 * @return     string
 	 */
@@ -184,11 +184,11 @@ class DefaultPlatform implements Platform {
 	{
 		return str_replace("'", "''", $text);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
-	
+
 	/**
 	 * @see        Platform::quoteIdentifier()
 	 */

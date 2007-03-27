@@ -27,20 +27,20 @@
  * @package    propel.engine.database.model
  */
 class ColumnDefaultValue {
-	
+
 	const TYPE_VALUE = "value";
 	const TYPE_EXPR = "expr";
-	
+
 	/**
 	 * @var        string The default value, as specified in the schema.
 	 */
 	private $value;
-	
+
 	/**
-	 * @var        string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR). 
+	 * @var        string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
 	 */
 	private $type = DefaultValue::TYPE_VALUE;
-	
+
 	/**
 	 * Creates a new DefaultValue object.
 	 *
@@ -54,7 +54,7 @@ class ColumnDefaultValue {
 			$this->setType($type);
 		}
 	}
-	
+
 	/**
 	 * @return     string The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
 	 */
@@ -62,7 +62,7 @@ class ColumnDefaultValue {
 	{
 		return $this->type;
 	}
-	
+
 	/**
 	 * @param      string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
 	 */
@@ -70,7 +70,7 @@ class ColumnDefaultValue {
 	{
 		$this->type = $type;
 	}
-	
+
 	/**
 	 * Convenience method to indicate whether the value in this object is an expression (as opposed to simple value).
 	 *
@@ -80,7 +80,7 @@ class ColumnDefaultValue {
 	{
 		return ($this->type == self::TYPE_EXPR);
 	}
-	
+
 	/**
 	 * @return     string The value, as specified in the schema.
 	 */
@@ -96,6 +96,6 @@ class ColumnDefaultValue {
 	{
 		$this->value = $value;
 	}
-	
+
 
 }

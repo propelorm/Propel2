@@ -53,11 +53,11 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
 	}
-	
+
 	/**
 	 * Returns the type-casted and stringified default value for the specified Column.
 	 * This only works for scalar default values currently.
-	 * @return string The default value or NULL if there is none.
+	 * @return     string The default value or NULL if there is none.
 	 */
 	protected function getDefaultValueString(Column $col)
 	{
@@ -69,11 +69,11 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 			} elseif ($val instanceof DateTime) {
 				$defaultValue = 'new DateTime(' . var_export($val->format(DateTime::ISO8601), true) . ')';
 			}
-			
+
 		}
 		return $defaultValue;
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param      string &$script The script will be modified in this method.
@@ -138,7 +138,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
-		
+
 		$this->addHasOnlyDefaultValues($script);
 
 		$this->addHydrate($script);
@@ -222,10 +222,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
-			
+
 			$cptype = $col->getPhpType();
 			$clo=strtolower($col->getName());
-			
+
 			$script .= "
 
 	/**
@@ -236,7 +236,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Note: this column has a database default value of: (expression) ".$col->getDefaultValue()->getValue();
 				} else {
 					$script .= "
-	 * Note: this column has a database default value of: ". $this->getDefaultValueString($col);	
+	 * Note: this column has a database default value of: ". $this->getDefaultValueString($col);
 				}
 			}
 			$script .= "
@@ -322,11 +322,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	/**
 	 * Get the [optionally formatted] temporal [$clo] column value.
 	 * ".$col->getDescription()."
-	 * 
+	 *
 	 * This accessor only only work with unix epoch dates.  Consider building
 	 * with propel.useDateTimeClass or change this column type to the (deprecated) \"before-unix\"
 	 * column type (e.g. BU_TIMESTAMP or BU_DATE) if you need to support pre-/post-epoch dates.
-	 *  
+	 *
 	 * @param      string \$format The date/time format string (either date()-style or strftime()-style).
 	 *							If format is NULL, then the integer unix timestamp will be returned.
 	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL).
@@ -380,7 +380,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      PDO An optional PDO connection to use for fetching this lazy-loaded column.";
 		}
 		$script .= "
-		
+
 	 * @return     ".$col->getPhpType()."
 	 */
 	public function get$cfc(";
@@ -395,7 +395,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 ";
 		}
-		
+
 		// if the column has a default value (but not expression) associated with it,
 		// we can return that if the object is new column is unmodified
 		if ($col->getDefaultValue() && !$col->getDefaultValue()->isExpression()) {
@@ -405,7 +405,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 ";
 		}
-		
+
 		$script .= "
 		return \$this->$clo;
 	}
@@ -574,7 +574,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addTemporalMutator(&$script, Column $col)
 	{
 		$clo = strtolower($col->getName());
-		
+
 		$this->addMutatorOpen($script, $col);
 
 		$script .= "
@@ -586,16 +586,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					\$date = new DateTime(\$v);
 				}
 			} catch (Exception \$x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);  
+				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
 			}
 		} else {
 			\$date = \$v;
 		}
-		 		
+
 		// For date/time columns we have to compare the formatting
 		// See: http://bugs.php.net/bug.php?id=40691
 		if ((\$this->$clo === null)
-				|| (\$date === null) 
+				|| (\$date === null)
 				|| (\$this->".$clo."->format(DateTime::ISO8601) !== \$date->format(DateTime::ISO8601))) {
 			\$this->$clo = \$date;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
@@ -617,10 +617,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$defaultValue = $this->getDefaultValueString($col);
 
 		$this->addMutatorOpen($script, $col);
-		
+
 		// Perform some smart checking here to handle possible type discrepancies
-		// between the passed-in value and the value from the DB 
-		
+		// between the passed-in value and the value from the DB
+
 		if ($col->getPhpType() === "int") {
 			$script .= "
 		// Since the native PHP type for this column is integer,
@@ -634,11 +634,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		// Since the native PHP type for this column is string,
 		// we will cast the input to a string (if it is not).
 		if (\$v !== null && !is_string(\$v)) {
-			\$v = (string) \$v; 
+			\$v = (string) \$v;
 		}
 ";
 		}
-		
+
 		$script .= "
 		if (\$this->$clo !== \$v";
 		if ($defaultValue !== null) {
@@ -651,7 +651,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		$this->addMutatorClose($script, $col);
 	}
-	
+
 	/**
 	 * Adds the hasOnlyDefaultValues() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -662,39 +662,39 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
-	 * 
+	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
-	 * modified _and_ has some values set which are non-default. 
-	 * 
-	 * @return    boolean Whether the columns in this object are only been set with default values.
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
 	 */
 	public function hasOnlyDefaultValues()
 	{";
-		
+
 		$colsWithDefaults = array();
-		foreach($table->getColumns() as $col) {
+		foreach ($table->getColumns() as $col) {
 			$def = $col->getDefaultValue();
 			if ($def !== null && !$def->isExpression()) {
 				$colsWithDefaults[] = $col;
 			}
 		}
-			
+
 		$colconsts = array();
-		foreach($colsWithDefaults as $col) {
+		foreach ($colsWithDefaults as $col) {
 			$colconsts[] = $this->getColumnConstant($col);
 		}
-			
+
 		$script .= "
 			// First, ensure that we don't have any columns that have been modified which aren't default columns.
 			if (array_diff(\$this->modifiedColumns, array(".implode(",", $colconsts)."))) {
 				return false;
 			}
 ";
-		foreach($colsWithDefaults as $col) {
-			
+		foreach ($colsWithDefaults as $col) {
+
 			$clo = strtolower($col->getName());
 			$def = $col->getDefaultValue();
-			
+
 			// temporal columns use DateTime values
 			if ($def->getValue() instanceof DateTime) { // do a value comparison on objects
 				$script .= "
@@ -716,12 +716,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 		// otherwise, everything was equal, so return TRUE
 		return true;";
-		
+
 		$script .= "
 	} // hasOnlyDefaultValues()
 ";
 	}
-	
+
 	/**
 	 * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
 	 * @param      string &$script The script will be modified in this method.
@@ -741,7 +741,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @param      array \$row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
 	 * @param      int \$startcol 0-based offset column which indicates which restultset column to start with.
-	 * @param	   boolean \$rehydrate Whether this object is being re-hydrated from the database.
+	 * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
@@ -776,7 +776,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 			$script .= "
 			\$this->setNew(false);
-			
+
 			if (\$rehydrate) {
 				\$this->ensureConsistency();
 			}
@@ -801,10 +801,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Checks and repairs the internal consistency of the object.
-	 * 
+	 *
 	 * This method is executed after an already-instantiated object is re-hydrated
 	 * from the database.
-	 * 
+	 *
 	 * @throws     PropelException
 	 */
 	public function ensureConsistency()
@@ -813,7 +813,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
-	
+
 	/**
 	 *
 	 */
@@ -1023,8 +1023,8 @@ $script .= "
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, 
-     * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
 	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  \$arr     An array to populate the object from.
@@ -1045,7 +1045,7 @@ $script .= "
 	}
 ";
 	} // addFromArray
-	
+
 	/**
 	 * Adds a delete() method to remove the object form the datastore.
 	 * @param      string &$script The script will be modified in this method.
@@ -1096,7 +1096,7 @@ $script .= "
 	 * Reloads this object from datastore based on primary key.
 	 *
 	 * This will only work if the object has been saved and has a valid primary key set.
-	 * 
+	 *
 	 * @param      PDO \$con The (optional) PDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
@@ -1106,7 +1106,7 @@ $script .= "
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"Cannot reload a deleted object.\");
 		}
-		
+
 		if (\$this->isNew()) {
 			throw new PropelException(\"Cannot reload an unsaved object.\");
 		}
@@ -1114,14 +1114,14 @@ $script .= "
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
 		}
-		
+
 		// We don't need to alter the object instance pool; we're just modifying this instance
 		// already in the pool.
 
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
 		\$row = \$stmt->fetch(PDO::FETCH_NUM);
 		if (!\$row) {
-			throw new PropelException('Cannot find matching row in the database to reload object values.'); 
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
 		}
 		\$this->hydrate(\$row, 0, true); // rehydrate
 	}
