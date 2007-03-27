@@ -380,7 +380,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      PDO An optional PDO connection to use for fetching this lazy-loaded column.";
 		}
 		$script .= "
-
 	 * @return     ".$col->getPhpType()."
 	 */
 	public function get$cfc(";
