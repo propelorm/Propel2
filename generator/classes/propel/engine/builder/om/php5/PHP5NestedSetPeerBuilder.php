@@ -829,8 +829,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$sql = \"SELECT COUNT(*) AS level FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < ? AND \" . self::RIGHT_COL . \" > ?\";
 		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindParam(1, \$node->getLeftValue(), PDO::PARAM_INT);
-		\$stmt->bindParam(2, \$node->getRightValue(), PDO::PARAM_INT);
+		\$stmt->bindValue(1, \$node->getLeftValue(), PDO::PARAM_INT);
+		\$stmt->bindValue(2, \$node->getRightValue(), PDO::PARAM_INT);
 		\$stmt->execute();
 		\$row = \$stmt->fetch();
 		return \$row['level'];
