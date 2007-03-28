@@ -775,7 +775,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$results = $peerClassname::doSelect(\$c, \$con);
 
-		return array_shift(\$results);
+		\$parent = array_shift(\$results);
+		return (null === \$parent) ? false : \$parent;
 	}
 ";
 	}
