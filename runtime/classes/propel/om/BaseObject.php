@@ -71,6 +71,15 @@ abstract class BaseObject {
 	{
 		return in_array($col, $this->modifiedColumns);
 	}
+	
+	/**
+	 * Get the columns that have been modified in this object.
+	 * @return     array The modified column names. 
+	 */
+	public function getModifiedColumns()
+	{
+		return $this->modifiedColumns;
+	}
 
 	/**
 	 * Returns whether the object has ever been saved.  This will
