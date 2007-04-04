@@ -74,11 +74,11 @@ abstract class BaseObject {
 	
 	/**
 	 * Get the columns that have been modified in this object.
-	 * @return     array The modified column names. 
+	 * @return     array A unique list of the modified column names for this object. 
 	 */
 	public function getModifiedColumns()
 	{
-		return $this->modifiedColumns;
+		return array_unique($this->modifiedColumns);
 	}
 
 	/**
