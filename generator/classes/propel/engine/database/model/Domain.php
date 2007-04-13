@@ -285,8 +285,6 @@ class Domain extends XMLElement {
 			}
 			if ($this->propelType === PropelTypes::BOOLEAN) {
 				return $this->booleanValue($this->defaultValue->getValue());
-			} elseif (PropelTypes::isTemporalType($this->propelType)) {
-				return new DateTime($this->defaultValue->getValue());
 			} else {
 				return $this->defaultValue->getValue();
 			}

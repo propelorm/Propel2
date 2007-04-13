@@ -67,7 +67,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testDefaultValues()
 	{
 		$r = new Review();
-		$this->assertEquals('2001-01-01', $r->getReviewDate()->format('Y-m-d'));
+		$this->assertEquals('2001-01-01', $r->getReviewDate('Y-m-d'));
 
 		$this->assertFalse($r->isModified());
 
@@ -107,7 +107,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertNotNull($acct->getCreated(), "Expected a valid date after retrieving saved object.");
 
 		$now = new DateTime("now");
-		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated()->format("Y-m-d"));
+		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
 	}
 
 	/**
@@ -122,13 +122,13 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$r->setReviewDate($preEpochDate);
 
-		$this->assertEquals('1602-02-02', $r->getReviewDate()->format("Y-m-d"));
+		$this->assertEquals('1602-02-02', $r->getReviewDate(null)->format("Y-m-d"));
 
 		$r->setReviewDate('1702-02-02');
 
 		$this->assertTrue($r->isModified());
 
-		$this->assertEquals('1702-02-02', $r->getReviewDate()->format("Y-m-d"));
+		$this->assertEquals('1702-02-02', $r->getReviewDate(null)->format("Y-m-d"));
 
 		// Now test for setting null
 		$r->setReviewDate(null);
@@ -374,8 +374,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-		$this->assertType('DateTime', $r2->getReviewDate(), "Expected Book->getReviewDate() to return a DateTime.");
+		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
 

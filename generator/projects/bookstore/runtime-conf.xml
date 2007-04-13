@@ -41,10 +41,10 @@
 
 			<datasource id="bookstore">
 				<!-- the Propel adapter to use for this connection -->
-				<adapter>sqlite</adapter>
+				<adapter>mysql</adapter>
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
-					<dsn>sqlite2:/tmp/bookstore.db</dsn>
+					<dsn>mysql:host=localhost;dbname=test</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
 					<user>testuser</user>
@@ -61,6 +61,7 @@
 					</attributes>
 					
 					<settings>
+						<setting id="charset">utf8</setting>
 						<!-- for MySQL >= 4.1 you'll likely need this
 						<setting id="charset">utf8</setting>
 						-->

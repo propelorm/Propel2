@@ -63,13 +63,14 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	{
 		$defaultValue = null;
 		if (($val = $col->getPhpDefaultValue()) !== null) {
-			if (is_scalar($val)) {
+			if ($col->isPhpPrimitiveType()) {
 				settype($val, $col->getPhpType());
 				$defaultValue = var_export($val, true);
-			} elseif ($val instanceof DateTime) {
-				$defaultValue = 'new DateTime(' . var_export($val->format(DateTime::ISO8601), true) . ')';
+			} elseif ($col->isPhpObjectType()) {
+				$defaultValue = 'new '.$col->getPhpType().'(' . var_export($val, true) . ')';
+			} else {
+				throw new EngineException("Cannot get default value string for " . $col->getFullyQualifiedName());
 			}
-
 		}
 		return $defaultValue;
 	}
@@ -135,7 +136,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addConstants($script);
 			$this->addAttributes($script);
 		}
-
+		
+		$this->addConstructor($script);
+		$this->addApplyDefaultValues($script);
+		
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
 
@@ -211,7 +215,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addColumnAttributes($script);
 		}
 	}
-
+		
 	/**
 	 * Adds variables that store column values.
 	 * @param      string &$script The script will be modified in this method.
@@ -286,7 +290,67 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
+	
+	/**
+	 * Adds the constructor for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addConstructor()
+	 */
+	protected function addConstructor(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Initializes internal state of ".$this->getClassname()." object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		\$this->applyDefaultValues();
+	}
+";
+	}
+	
+	/**
+	 * Adds the applyDefaults() method, which is called from the constructor.
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addConstructor()
+	 */
+	protected function addApplyDefaultValues(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or 
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{";
+		// FIXME - Apply support for PHP default expressions here
+		// see: http://propel.phpdb.org/trac/ticket/378
 
+		$colsWithDefaults = array();
+		foreach ($table->getColumns() as $col) {
+			$def = $col->getDefaultValue();
+			if ($def !== null && !$def->isExpression()) {
+				$colsWithDefaults[] = $col;
+			}
+		}
+
+		$colconsts = array();
+		foreach ($colsWithDefaults as $col) {
+			$clo = strtolower($col->getName());	
+			$script .= "
+		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
+		}
+	$script .= "
+	}
+";
+		
+	}
+	
 	// --------------------------------------------------------------
 	//
 	// A C C E S S O R    M E T H O D S
@@ -328,9 +392,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * column type (e.g. BU_TIMESTAMP or BU_DATE) if you need to support pre-/post-epoch dates.
 	 *
 	 * @param      string \$format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the integer unix timestamp will be returned.";
+		if ($this->getBuildProperty("useDateTimeClass")) {
+			$script .= "
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL).";
+		} else {
+			$script .= "
+	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL).";
+		}
+		$script .= "
+	 * @throws     PropelException - if unable to convert the date/time value to DateTime object.
 	 */
 	public function get$cfc(\$format = ".var_export($defaultfmt, true)."";
 		if ($col->isLazyLoad()) $script .= ", \$con = null";
@@ -348,13 +419,29 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$this->$clo === null) {
 			return null;
 		}
+		
+		try {
+			\$dt = new DateTime(\$this->$clo);
+		} catch (Exception \$x) {
+			throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
+		}
+
 		if (\$format === null) {
-			// We cast here to maintain BC in API; obviously we will lose data if we're dealing with pre-/post-epoch dates.
-			return (int) \$this->".$clo."->format('U');
-		} elseif (strpos(\$format, '%') !== false) {
-			return strftime(\$format, \$this->".$clo."->format('U'));
+";
+		if ($this->getBuildProperty("useDateTimeClass")) {
+			$script .= "
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return \$dt;";
 		} else {
-			return \$this->".$clo."->format(\$format);
+			$script .= "
+			// We cast here to maintain BC in API; obviously we will lose data if we're dealing with pre-/post-epoch dates.
+			return (int) \$dt->format('U');";
+		}
+		$script .= "
+		} elseif (strpos(\$format, '%') !== false) {
+			return strftime(\$format, \$dt->format('U'));
+		} else {
+			return \$dt->format(\$format);
 		}
 	}
 ";
@@ -391,16 +478,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
 			\$this->load$cfc(\$con);
-		}
-";
-		}
-
-		// if the column has a default value (but not expression) associated with it,
-		// we can return that if the object is new column is unmodified
-		if ($col->getDefaultValue() && !$col->getDefaultValue()->isExpression()) {
-			$script .= "
-		if (\$this->$clo === null && \$this->isNew() && !\$this->isColumnModified(".$this->getColumnConstant($col).")) {
-			return ".$this->getDefaultValueString($col).";
 		}
 ";
 		}
@@ -458,14 +535,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			case PropelTypes::FLOAT:
 				$script .= "
 			\$this->$clo = (\$row[0] !== null) ? (float) \$row[\$startcol + $n] : null;";
-				break;
-			case PropelTypes::DATE:
-			case PropelTypes::TIME:
-			case PropelTypes::TIMESTAMP:
-			case PropelTypes::BU_DATE;
-			case PropelTypes::BU_TIMESTAMP;
-				$script .= "
-			\$this->$clo = (\$row[0] !== null) ? new DateTime(\$row[\$startcol + $n]) : null;";
 				break;
 			default:
 				$script .= "
@@ -545,13 +614,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$this->addMutatorOpen($script, $col);
 		$clo = strtolower($col->getName());
-		// Setting of LOB columns gets some special handling
-
-		if ($col->getPropelType() === PropelTypes::BLOB || $col->getPropelType() === PropelTypes::LONGVARBINARY ) {
-			$lobClass = 'Blob';
-		} else {
-			$lobClass = 'Clob';
-		}
 		$script .= "
 		// FIXME - LOBs need to be streams in PDO; I'm sure there will be special handling here.
 		if (\$this->$clo !== \$v) {
@@ -577,25 +639,29 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addMutatorOpen($script, $col);
 
 		$script .= "
-		if (\$v !== null && !(\$v instanceof DateTime)) {
+		if (\$v === null) {
+			\$date = null;
+		} elseif (\$v instanceof DateTime) {
+			\$date = \$v->format(DateTime::ISO8601);
+		} else {
+			// some string/numeric value passed
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$date = new DateTime(date(DATE_ISO8601, \$v));
+					\$dt = new DateTime(date(DateTime::ISO8601, \$v));
 				} else {
-					\$date = new DateTime(\$v);
+					\$dt = new DateTime(\$v);
 				}
 			} catch (Exception \$x) {
 				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
 			}
-		} else {
-			\$date = \$v;
+			\$date = \$dt->format(DateTime::ISO8601);
 		}
 
 		// For date/time columns we have to compare the formatting
 		// See: http://bugs.php.net/bug.php?id=40691
 		if ((\$this->$clo === null)
 				|| (\$date === null)
-				|| (\$this->".$clo."->format(DateTime::ISO8601) !== \$date->format(DateTime::ISO8601))) {
+				|| (\$this->$clo !== \$date)) { // FIXME - we could be doing a much better equality check here.
 			\$this->$clo = \$date;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}

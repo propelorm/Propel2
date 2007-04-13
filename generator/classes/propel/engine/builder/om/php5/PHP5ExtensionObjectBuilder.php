@@ -127,9 +127,31 @@ class ".$this->getClassname()." extends $baseClassname {
 	 */
 	protected function addClassBody(&$script)
 	{
-		// there is no class body
+		$this->addConstructor($script);
 	}
 
+		/**
+	 * Adds the applyDefaults() method, which is called from the constructor.
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addConstructor()
+	 */
+	protected function addConstructor(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Initializes internal state of ".$this->getClassname()." object.
+	 * @see parent::__construct()
+	 */
+	public function __construct()
+	{
+		// Make sure that parent constructor is always invoked, since that 
+		// is where any default values for this object are set.
+		parent::__construct();
+	}
+";
+	}
+	
 	/**
 	 * Closes class.
 	 * @param      string &$script The script will be modified in this method.

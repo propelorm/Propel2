@@ -85,9 +85,9 @@ class PropelTypes {
 	const LONGVARBINARY_NATIVE_TYPE = "string";
 	const BLOB_NATIVE_TYPE = "string";
 	const BU_DATE_NATIVE_TYPE = "string";
-	const DATE_NATIVE_TYPE = "DateTime";
-	const TIME_NATIVE_TYPE = "DateTime";
-	const TIMESTAMP_NATIVE_TYPE = "DateTime";
+	const DATE_NATIVE_TYPE = "string";
+	const TIME_NATIVE_TYPE = "string";
+	const TIMESTAMP_NATIVE_TYPE = "string";
 	const BU_TIMESTAMP_NATIVE_TYPE = "string";
 
 	/**
