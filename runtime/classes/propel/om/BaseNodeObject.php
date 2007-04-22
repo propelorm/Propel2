@@ -106,10 +106,9 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * Tests if object is equal to $node
 	 *
 	 * @param      object $node	Propel object for node to compare to
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject $node = null, PDO $con = null);
+	public function isEqualTo(BaseNodeObject $node = null);
 
 	/**
 	 * Tests if object has an ancestor

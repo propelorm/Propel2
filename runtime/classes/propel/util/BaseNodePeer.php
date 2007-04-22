@@ -289,38 +289,34 @@ interface BaseNodePeer {
 	 * Tests if node is valid
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isValid(BaseNodeObject $node = null, PDO $con = null);
+	static function isValid(BaseNodeObject $node = null);
 
 	/**
 	 * Tests if node is a root
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isRoot(BaseNodeObject $node = null, PDO $con = null);
+	static function isRoot(BaseNodeObject $node = null);
 
 	/**
 	 * Tests if node is a leaf
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isLeaf(BaseNodeObject $node = null, PDO $con = null);
+	static function isLeaf(BaseNodeObject $node = null);
 
 	/**
 	 * Tests if $node1 is a child of $node2
 	 *
 	 * @param      object $node1	Propel object for node
 	 * @param      object $node2	Propel object for node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isChildOf(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null, PDO $con = null);
+	static function isChildOf(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null);
 
 	/**
 	 * Tests if $node1 is a child of or equal to $node2
@@ -330,17 +326,16 @@ interface BaseNodePeer {
 	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isChildOfOrSiblingTo(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null, PDO $con = null);
+	static function isChildOfOrSiblingTo(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null);
 
 	/**
 	 * Tests if $node1 is equal to $node2
 	 *
 	 * @param      object $node1	Propel object for node
 	 * @param      object $node2	Propel object for node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function isEqualTo(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null, PDO $con = null);
+	static function isEqualTo(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null);
 
 	/**
 	 * Tests if $node has an ancestor
@@ -373,10 +368,9 @@ interface BaseNodePeer {
 	 * Tests if $node has children
 	 *
 	 * @param      object $node	Propel object for node
-	 * @param      PDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasChildren(BaseNodeObject $node = null, PDO $con = null);
+	static function hasChildren(BaseNodeObject $node = null);
 
 	/**
 	 * Deletes $node and all of its descendants

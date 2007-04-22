@@ -344,6 +344,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	protected function addSetParentNode(&$script)
 	{
 		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Sets the parentNode of the node in the tree
@@ -354,7 +355,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function setParentNode(\$node)
 	{
 		\$this->parentNode = \$node;
-		\$this->hasParentNode = is_object(\$node);
+		\$this->hasParentNode = $peerClassname::isValid(\$node);
 	}
 ";
 	}
@@ -362,6 +363,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	protected function addSetPrevSibling(&$script)
 	{
 		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Sets the previous sibling of the node in the tree
@@ -372,7 +374,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function setPrevSibling(\$node)
 	{
 		\$this->prevSibling = \$node;
-		\$this->hasPrevSibling = is_object(\$node);
+		\$this->hasPrevSibling = $peerClassname::isValid(\$node);
 	}
 ";
 	}
@@ -380,6 +382,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	protected function addSetNextSibling(&$script)
 	{
 		$objectClassName = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Sets the next sibling of the node in the tree
@@ -390,7 +393,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function setNextSibling(\$node)
 	{
 		\$this->nextSibling = \$node;
-		\$this->hasNextSibling = is_object(\$node);
+		\$this->hasNextSibling = $peerClassname::isValid(\$node);
 	}
 ";
 	}
@@ -531,12 +534,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Tests if object is equal to \$node
 	 *
 	 * @param      object \$node		Propel object for node to compare to
-	 * @param      PDO \$con      Connection to use.
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject \$node = null, PDO \$con = null)
+	public function isEqualTo(BaseNodeObject \$node = null)
 	{
-		return $peerClassname::isEqualTo(\$this, \$node, \$con);
+		return $peerClassname::isEqualTo(\$this, \$node);
 	}
 ";
 	}
@@ -554,7 +556,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function hasParent(PDO \$con = null)
 	{
 		if (null === \$this->hasParentNode) {
-			\$this->hasParentNode = $peerClassname::hasParent(\$this, \$con);
+			$peerClassname::hasParent(\$this, \$con);
 		}
 		return \$this->hasParentNode;
 	}
@@ -590,7 +592,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function hasPrevSibling(PDO \$con = null)
 	{
 		if (null === \$this->hasPrevSibling) {
-			\$this->hasPrevSibling = $peerClassname::hasPrevSibling(\$this, \$con);
+			$peerClassname::hasPrevSibling(\$this, \$con);
 		}
 		return \$this->hasPrevSibling;
 	}
@@ -610,7 +612,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function hasNextSibling(PDO \$con = null)
 	{
 		if (null === \$this->hasNextSibling) {
-			\$this->hasNextSibling = $peerClassname::hasNextSibling(\$this, \$con);
+			$peerClassname::hasNextSibling(\$this, \$con);
 		}
 		return \$this->hasNextSibling;
 	}
@@ -629,9 +631,9 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function retrieveParent(PDO \$con = null)
 	{
-		if (null === \$this->parentNode) {
+		if (null === \$this->hasParentNode) {
 			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
-			\$this->hasParentNode = is_object(\$this->parentNode);
+			\$this->hasParentNode = $peerClassname::isValid(\$this->parentNode, \$con);
 		}
 		return \$this->parentNode;
 	}

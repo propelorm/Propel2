@@ -382,7 +382,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function insertRoot(BaseNodeObject \$node = null, PDO \$con = null)
 	{
-		return $peerClassname::insertParent($peerClassname::retrieveRoot(\$con), \$node, \$con = null);
+		return $peerClassname::insertParent($peerClassname::retrieveRoot(\$con), \$node, \$con);
 	}
 ";
 	}
@@ -595,7 +595,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
 	 * @param      PDO \$con		Connection to use.
-	 * @return     mixed 		Propel object if exists else false
+	 * @return     mixed 		Propel object if exists else null
 	 */
 	static function retrievePrevSibling(BaseNodeObject \$node = null, PDO \$con = null)
 	{
@@ -760,7 +760,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
 	 * @param      PDO \$con		Connection to use.
-	 * @return     mixed 		Propel object if exists else false
+	 * @return     mixed 		Propel object if exists else null
 	 */
 	static function retrieveParent(BaseNodeObject \$node = null, PDO \$con = null)
 	{
@@ -776,7 +776,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$results = $peerClassname::doSelect(\$c, \$con);
 
 		\$parent = array_shift(\$results);
-		return (null === \$parent) ? false : \$parent;
+		\$node->setParentNode(\$parent);
+		return \$parent;
 	}
 ";
 	}
@@ -917,10 +918,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if node is valid
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isValid(BaseNodeObject \$node = null, PDO \$con = null)
+	static function isValid(BaseNodeObject \$node = null)
 	{
 		if (is_object(\$node) && \$node->getRightValue() > \$node->getLeftValue()) {
 			return true;
@@ -940,10 +940,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if node is a root
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isRoot(BaseNodeObject \$node = null, PDO \$con = null)
+	static function isRoot(BaseNodeObject \$node = null)
 	{
 		return (\$node->getLeftValue()==1);
 	}
@@ -959,10 +958,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if node is a leaf
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isLeaf(BaseNodeObject \$node = null, PDO \$con = null)
+	static function isLeaf(BaseNodeObject \$node = null)
 	{
 		return ((\$node->getRightValue()-\$node->getLeftValue())==1);
 	}
@@ -979,10 +977,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node1		Propel object for node
 	 * @param      $objectClassname \$node2		Propel object for node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isChildOf(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null, PDO \$con = null)
+	static function isChildOf(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null)
 	{
 		return ((\$node1->getLeftValue()>\$node2->getLeftValue()) and (\$node1->getRightValue()<\$node2->getRightValue()));
 	}
@@ -999,10 +996,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node1		Propel object for node
 	 * @param      $objectClassname \$node2		Propel object for node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isChildOfOrSiblingTo(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null, PDO \$con = null)
+	static function isChildOfOrSiblingTo(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null)
 	{
 		return ((\$node1->getLeftValue()>=\$node2->getLeftValue()) and (\$node1->getRightValue()<=\$node2->getRightValue()));
 	}
@@ -1019,10 +1015,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node1		Propel object for node
 	 * @param      $objectClassname \$node2		Propel object for node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function isEqualTo(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null, PDO \$con = null)
+	static function isEqualTo(BaseNodeObject \$node1 = null, BaseNodeObject \$node2 = null)
 	{
 		return ((\$node1->getLeftValue() == \$node2->getLeftValue()) and (\$node1->getRightValue() == \$node2->getRightValue()));
 	}
@@ -1043,7 +1038,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function hasParent(BaseNodeObject \$node = null, PDO \$con = null)
 	{
-		return $peerClassname::isValid($peerClassname::retrieveParent(\$node, \$con), \$con);
+		return $peerClassname::isValid($peerClassname::retrieveParent(\$node, \$con));
 	}
 ";
 	}
@@ -1062,7 +1057,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function hasPrevSibling(BaseNodeObject \$node = null, PDO \$con = null)
 	{
-		return $peerClassname::isValid($peerClassname::retrievePrevSibling(\$node, \$con), \$con);
+		return $peerClassname::isValid($peerClassname::retrievePrevSibling(\$node, \$con));
 	}
 ";
 	}
@@ -1081,7 +1076,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	static function hasNextSibling(BaseNodeObject \$node = null, PDO \$con = null)
 	{
-		return $peerClassname::isValid($peerClassname::retrieveNextSibling(\$node, \$con), \$con);
+		return $peerClassname::isValid($peerClassname::retrieveNextSibling(\$node, \$con));
 	}
 ";
 	}
@@ -1098,7 +1093,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasChildren(BaseNodeObject \$node = null, PDO \$con = null)
+	static function hasChildren(BaseNodeObject \$node = null)
 	{
 		return ((\$node->getRightValue()-\$node->getLeftValue())>1);
 	}
@@ -1261,7 +1256,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function shiftRParent(BaseNodeObject \$node = null, \$delta, PDO \$con = null)
 	{
-		if (\$node->hasParent()) {
+		if (\$node->hasParent(\$con)) {
 			\$parent = \$node->retrieveParent();
 			self::shiftRParent(\$parent, \$delta, \$con);
 		}
