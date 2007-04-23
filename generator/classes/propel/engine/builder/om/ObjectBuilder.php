@@ -71,7 +71,7 @@ abstract class ObjectBuilder extends OMBuilder {
 			} else {
 				$this->addDefaultAccessor($script, $col);
 			}
-			
+
 			if ($col->isLazyLoad()) {
 				$this->addLazyLoader($script, $col);
 			}

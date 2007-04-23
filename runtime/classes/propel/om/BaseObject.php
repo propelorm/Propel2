@@ -71,10 +71,10 @@ abstract class BaseObject {
 	{
 		return in_array($col, $this->modifiedColumns);
 	}
-	
+
 	/**
 	 * Get the columns that have been modified in this object.
-	 * @return     array A unique list of the modified column names for this object. 
+	 * @return     array A unique list of the modified column names for this object.
 	 */
 	public function getModifiedColumns()
 	{

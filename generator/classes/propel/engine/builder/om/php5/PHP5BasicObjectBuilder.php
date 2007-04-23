@@ -136,10 +136,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addConstants($script);
 			$this->addAttributes($script);
 		}
-		
+
 		$this->addConstructor($script);
 		$this->addApplyDefaultValues($script);
-		
+
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
 
@@ -215,7 +215,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addColumnAttributes($script);
 		}
 	}
-		
+
 	/**
 	 * Adds variables that store column values.
 	 * @param      string &$script The script will be modified in this method.
@@ -290,7 +290,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
-	
+
 	/**
 	 * Adds the constructor for this object.
 	 * @param      string &$script The script will be modified in this method.
@@ -310,7 +310,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
-	
+
 	/**
 	 * Adds the applyDefaults() method, which is called from the constructor.
 	 * @param      string &$script The script will be modified in this method.
@@ -322,7 +322,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Applies default values to this object.
-	 * This method should be called from the object's constructor (or 
+	 * This method should be called from the object's constructor (or
 	 * equivalent initialization method).
 	 * @see        __construct()
 	 */
@@ -341,16 +341,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$colconsts = array();
 		foreach ($colsWithDefaults as $col) {
-			$clo = strtolower($col->getName());	
+			$clo = strtolower($col->getName());
 			$script .= "
 		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
 		}
 	$script .= "
 	}
 ";
-		
+
 	}
-	
+
 	// --------------------------------------------------------------
 	//
 	// A C C E S S O R    M E T H O D S
@@ -419,7 +419,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$this->$clo === null) {
 			return null;
 		}
-		
+
 		try {
 			\$dt = new DateTime(\$this->$clo);
 		} catch (Exception \$x) {

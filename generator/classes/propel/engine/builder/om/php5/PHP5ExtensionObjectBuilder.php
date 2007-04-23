@@ -141,17 +141,17 @@ class ".$this->getClassname()." extends $baseClassname {
 		$script .= "
 	/**
 	 * Initializes internal state of ".$this->getClassname()." object.
-	 * @see parent::__construct()
+	 * @see        parent::__construct()
 	 */
 	public function __construct()
 	{
-		// Make sure that parent constructor is always invoked, since that 
+		// Make sure that parent constructor is always invoked, since that
 		// is where any default values for this object are set.
 		parent::__construct();
 	}
 ";
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param      string &$script The script will be modified in this method.

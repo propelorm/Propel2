@@ -285,9 +285,9 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	 */
 	public function testDoSelectJoin()
 	{
-		
+
 		BookPeer::clearInstancePool();
-		
+
 		$c = new Criteria();
 
 		$books = BookPeer::doSelect($c);
@@ -295,11 +295,11 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$size = strlen(serialize($obj));
 
 		BookPeer::clearInstancePool();
-		
+
 		$joinBooks = BookPeer::doSelectJoinAuthor($c);
 		$obj2 = $joinBooks[0];
 		$joinSize = strlen(serialize($obj2));
-		
+
 		$this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");
 
 		$this->assertTrue($joinSize > $size, "Expected a serialized join object to be larger than a non-join object.");
@@ -307,12 +307,12 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 	public function testObjectInstances()
 	{
-		
+
 		$sample = BookPeer::doSelectOne(new Criteria());
 		$samplePk = $sample->getPrimaryKey();
-		
+
 		// 1) make sure consecutive calls to retrieveByPK() return the same object.
-		
+
 		$b1 = BookPeer::retrieveByPK($samplePk);
 		$b2 = BookPeer::retrieveByPK($samplePk);
 
