@@ -633,7 +633,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	{
 		if (null === \$this->hasParentNode) {
 			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
-			\$this->hasParentNode = $peerClassname::isValid(\$this->parentNode, \$con);
+			\$this->hasParentNode = $peerClassname::isValid(\$this->parentNode);
 		}
 		return \$this->parentNode;
 	}
