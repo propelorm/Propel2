@@ -220,6 +220,15 @@ class ColumnMap {
 	}
 
 	/**
+	 * Whether this column is numeric (int, decimal, bigint etc).
+	 * @return     boolean
+	 */
+	public function isNumeric()
+	{
+		return ($this->type == PropelColumnTypes::NUMERIC || $this->type == PropelColumnTypes::DECIMAL || $this->type == PropelColumnTypes::TINYINT || $this->type == PropelColumnTypes::SMALLINT || $this->type == PropelColumnTypes::INTEGER || $this->type == PropelColumnTypes::BIGINT || $this->type == PropelColumnTypes::REAL || $this->type == PropelColumnTypes::FLOAT || $this->type == PropelColumnTypes::DOUBLE);
+	}
+
+	/**
 	 * Whether this is a DATE/TIME/TIMESTAMP column.
 	 *
 	 * @return     boolean
