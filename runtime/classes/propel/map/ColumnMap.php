@@ -181,11 +181,12 @@ class ColumnMap {
 	 *
 	 * @return     int The PDO::PARMA_* value
 	 */
+	 /*
 	public function getPhpType()
 	{
 		return PropelColumnTypes::getPhpType($this->type);
 	}
-
+	*/
 	/**
 	 * Get the PDO type of this column.
 	 *
