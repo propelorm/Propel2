@@ -302,6 +302,7 @@
 		<xs:attribute name="nodeKey" type="xs:string" use="optional"/>
 		<xs:attribute name="nestedSetLeftKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="nestedSetRightKey" type="xs:boolean" default="false"/>
+		<xs:attribute name="nestedSetScopeKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="require" type="xs:string" use="optional"/>
 	</xs:complexType>
 

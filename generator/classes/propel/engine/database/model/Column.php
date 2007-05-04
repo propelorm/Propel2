@@ -80,6 +80,7 @@ class Column extends XMLElement {
 	private $nodeKeySep;
 	private $isNestedSetLeftKey = false;
 	private $isNestedSetRightKey = false;
+	private $isNestedSetScopeKey = false;
 	private $isUnique = false;
 	private $isAutoIncrement = false;
 	private $isLazyLoad = false;
@@ -165,6 +166,7 @@ class Column extends XMLElement {
 
 			$this->isNestedSetLeftKey = $this->booleanValue($this->getAttribute("nestedSetLeftKey"));
 			$this->isNestedSetRightKey = $this->booleanValue($this->getAttribute("nestedSetRightKey"));
+			$this->isNestedSetScopeKey = $this->booleanValue($this->getAttribute("nestedSetScopeKey"));
 
 			$this->isNotNull = ($this->booleanValue($this->getAttribute("required"), false) || $this->isPrimaryKey); // primary keys are required
 
@@ -518,6 +520,22 @@ class Column extends XMLElement {
 	public function isNestedSetRightKey()
 	{
 		return $this->isNestedSetRightKey;
+	}
+
+	/**
+	 * Set if the column is the nested set scope key of a tree
+	 */
+	public function setNestedSetScopeKey($nssk)
+	{
+		$this->isNestedSetScopeKey = (boolean) $nssk;
+	}
+
+	/**
+	 * Return true if the column is a nested set scope key of a tree
+	 */
+	public function isNestedSetScopeKey()
+	{
+		return $this->isNestedSetScopeKey;
 	}
 
 	/**

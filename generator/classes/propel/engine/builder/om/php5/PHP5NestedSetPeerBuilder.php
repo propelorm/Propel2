@@ -195,6 +195,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		$left_colname = '';
 		$right_colname = '';
+		$scope_colname = '';
 
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
@@ -205,7 +206,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				$right_colname = $tableName . '.' . strtoupper($col->getName());
 			}
 
-			if (!empty($right_name) && !empty($left_colname)) {
+			if ($col->isNestedSetScopeKey()) {
+				$scope_colname = $tableName . '.' . strtoupper($col->getName());
+			}
+
+			if (!empty($right_name) && !empty($left_colname) && !empty($scope_colname)) {
 				break;
 			}
 		}
@@ -219,6 +224,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Right column for the set
 	 */
 	const RIGHT_COL = '$right_colname';
+	
+	/**
+	 * Scope column for the set
+	 */
+	 const SCOPE_COL = '$scope_colname';
 ";
 	}
 
