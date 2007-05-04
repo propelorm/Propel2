@@ -766,7 +766,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Gets ancestor for the given node if it exists
+	 * Gets immediate ancestor for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
 	 * @param      PDO \$con		Connection to use.
@@ -783,10 +783,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$c->add(\$c1);
 		\$c->addAscendingOrderByColumn(self::RIGHT_COL);
 
-		\$results = $peerClassname::doSelect(\$c, \$con);
-
-		\$parent = array_shift(\$results);
+		\$parent = $peerClassname::doSelectOne(\$c, \$con);
+		
 		\$node->setParentNode(\$parent);
+		
 		return \$parent;
 	}
 ";
