@@ -137,8 +137,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (isset(self::\$instances[\$key1])) {
-				\$obj1 = self::\$instances[\$key1];
+			if (self::getInstanceFromPool(\$key1) !== null) {
+				\$obj1 = self::getInstanceFromPool(\$key1);
 				\$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {
 ";
@@ -155,7 +155,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
-				self::\$instances[\$key1] = \$obj1;
+				self::addInstanceToPool(\$obj1);
 			} // if \$obj1 already loaded
 
 			\$key2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
@@ -348,8 +348,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (isset(self::\$instances[\$key1])) {
-				\$obj1 = self::\$instances[\$key1];
+			if (self::getInstanceFromPool(\$key1) !== null) {
+				\$obj1 = self::getInstanceFromPool(\$key1);
 				\$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {
 ";
@@ -368,7 +368,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
-				self::\$instances[\$key1] = \$obj1;
+				self::addInstanceToPool(\$obj1);
 			} // if obj1 already loaded
 ";
 
@@ -604,8 +604,8 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (isset(self::\$instances[\$key1])) {
-				\$obj1 = self::\$instances[\$key1];
+			if (self::getInstanceFromPool(\$key1) !== null) {
+				\$obj1 = self::getInstanceFromPool(\$key1);
 				\$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {
 ";
@@ -624,7 +624,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				// print \"->Adding \" . get_class(\$obj1) . \" \" . \$obj1 . \" into instance pool.\\n\";
-				self::\$instances[\$key1] = \$obj1;
+				self::addInstanceToPool(\$obj1);
 			} // if obj1 already loaded
 ";
 

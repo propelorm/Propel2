@@ -637,16 +637,20 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// print \"+Adding (by addInstanceToPool()) \" . get_class(\$obj) . \" \" . var_export(\$obj->getPrimaryKey(),true) . \" to instance pool.\\n\";
 	";
+                $script .= "
+		if (Propel::isInstancePoolingEnabled())
+		{";
 		$pk = $this->getTable()->getPrimaryKey();
 		if (count($pk) > 1) {
 			$script .= "
-		\$key = serialize(\$obj->getPrimaryKey());";
+			\$key = serialize(\$obj->getPrimaryKey());";
 		} else {
 			$script .= "
-		\$key = (string) \$obj->getPrimaryKey();";
+			\$key = (string) \$obj->getPrimaryKey();";
 		}
 		$script .= "
-		self::\$instances[\$key] = \$obj;
+			self::\$instances[\$key] = \$obj;
+		}
 	}
 ";
 	}
@@ -671,38 +675,40 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function removeInstanceFromPool(\$value)
 	{";
+                $script .= "
+		if (Propel::isInstancePoolingEnabled())
+		{";
 		$pk = $table->getPrimaryKey();
 
 		$script .= "
-		if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {
-		";
+			if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {";
 		if (count($pk) > 1) {
 			$script .= "
-			\$key = serialize(\$value->getPrimaryKey());";
+				\$key = serialize(\$value->getPrimaryKey());";
 		} else {
 			$script .= "
-			\$key = (string) \$value->getPrimaryKey();";
+				\$key = (string) \$value->getPrimaryKey();";
 		}
 
 		$script .= "
-		} elseif (".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
-			// assume we've been passed a primary key";
+			} elseif (".(count($pk) > 1 ? "is_array(\$value)" : "is_scalar(\$value)").") {
+				// assume we've been passed a primary key";
 
 		if ($pk > 1) {
 			$script .= "
-			\$key = serialize(\$value);";
+				\$key = serialize(\$value);";
 		} else {
 			$script .= "
-			\$key = (string) \$value;";
+				\$key = (string) \$value;";
 		}
 		$script .= "
-		} else {
-			\$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object; got \" . (is_object(\$value) ? get_class(\$value) . ' object.' : var_export(\$value,true)));
-			throw \$e;
+			} else {
+				\$e = new PropelException(\"Invalid value passed to removeInstanceFromPool().  Expected primary key or ".$this->getObjectClassname()." object; got \" . (is_object(\$value) ? get_class(\$value) . ' object.' : var_export(\$value,true)));
+				throw \$e;
+			}
+
+			unset(self::\$instances[\$key]);
 		}
-
-		unset(self::\$instances[\$key]);
-
 	} // removeInstanceFromPool()
 ";
 	} // addRemoveFromInstancePool()
@@ -835,8 +841,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// populate the object(s)
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (isset(self::\$instances[\$key])) {
-				\$obj = self::\$instances[\$key];
+			if (self::getInstanceFromPool(\$key) !== null) {
+				\$obj = self::getInstanceFromPool(\$key);
 				\$obj->hydrate(\$row, 0, true); // rehydrate
 				\$results[] = \$obj;
 			} else {
@@ -849,13 +855,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				self::\$instances[\$key] = \$obj;";
+				self::addInstanceToPool(\$obj);";
 		} else {
 			$script .= "
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				self::\$instances[\$key] = \$obj;";
+				self::addInstanceToPool(\$obj);";
 		}
 		$script .= "
 			} // if key exists

@@ -133,6 +133,11 @@ class Propel
 	private static $databaseMapClass = 'DatabaseMap';
 
 	/**
+	 * @var        bool Whether the object instance pooling is enabled
+	 */
+	private static $instancePoolingEnabled = true;
+
+	/**
 	 * @var        array A map of class names and their file paths for autoloading
 	 */
 	private static $autoloadMap = array(
@@ -587,6 +592,32 @@ class Propel
 	public static function setDatabaseMapClass($name)
 	{
 		self::$databaseMapClass = $name;
+	}
+
+	/**
+	 * Disable instance pooling.
+	 */
+	public static function disableInstancePooling()
+	{
+		self::$instancePoolingEnabled = false;
+	}
+	
+	/**
+	 * Enable instance pooling (enabled by default).
+	 */
+	public static function enableInstancePooling()
+	{
+		self::$instancePoolingEnabled = true;
+	}
+	
+	/**
+	 *  the instance pooling behaviour. True by default.
+	 *
+	 * @return     boolean Whether the pooling is enabled or not.
+	 */
+	public static function isInstancePoolingEnabled()
+	{
+		return self::$instancePoolingEnabled;
 	}
 }
 
