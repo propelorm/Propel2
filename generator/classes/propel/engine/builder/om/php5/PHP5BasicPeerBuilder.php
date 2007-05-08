@@ -632,29 +632,28 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * and retrieveByPK*() calls.
 	 *
 	 * @param      ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
+	 * @param      string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally). 
 	 */
-	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj)
+	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj, \$key = null)
 	{
-		// print \"+Adding (by addInstanceToPool()) \" . get_class(\$obj) . \" \" . var_export(\$obj->getPrimaryKey(),true) . \" to instance pool.\\n\";
-	";
-                $script .= "
-		if (Propel::isInstancePoolingEnabled())
-		{";
+		if (Propel::isInstancePoolingEnabled()) {
+			if (\$key === null) {";
 		$pk = $this->getTable()->getPrimaryKey();
 		if (count($pk) > 1) {
 			$script .= "
-			\$key = serialize(\$obj->getPrimaryKey());";
+				\$key = serialize(\$obj->getPrimaryKey());";
 		} else {
 			$script .= "
-			\$key = (string) \$obj->getPrimaryKey();";
+				\$key = (string) \$obj->getPrimaryKey();";
 		}
 		$script .= "
+			} // if key === null
 			self::\$instances[\$key] = \$obj;
 		}
 	}
 ";
-	}
-
+	} // addAddInstanceToPool()
+	
 	/**
 	 *  Creates a convenience method to remove objects form an instance pool.
 	 * @param      string &$script The script will be modified in this method.
@@ -676,8 +675,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	public static function removeInstanceFromPool(\$value)
 	{";
                 $script .= "
-		if (Propel::isInstancePoolingEnabled())
-		{";
+		if (Propel::isInstancePoolingEnabled()) {";
 		$pk = $table->getPrimaryKey();
 
 		$script .= "
@@ -841,8 +839,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// populate the object(s)
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (self::getInstanceFromPool(\$key) !== null) {
-				\$obj = self::getInstanceFromPool(\$key);
+			if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
 				\$obj->hydrate(\$row, 0, true); // rehydrate
 				\$results[] = \$obj;
 			} else {
@@ -855,13 +852,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				self::addInstanceToPool(\$obj);";
+				".$this->getPeerClassname()."::addInstanceToPool(\$obj, \$key);";
 		} else {
 			$script .= "
 				" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
 				\$obj->hydrate(\$row);
 				\$results[] = \$obj;
-				self::addInstanceToPool(\$obj);";
+				".$this->getPeerClassname()."::addInstanceToPool(\$obj, \$key);";
 		}
 		$script .= "
 			} // if key exists
