@@ -158,7 +158,8 @@ class BasePeer
 				Propel::log($sql, Propel::LOG_DEBUG);
 				$stmt = $con->prepare($sql);
 				self::populateStmtValues($stmt, $selectParams, $dbMap, $db);
-				$affectedRows = $stmt->execute();
+				$stmt->execute();
+				$affectedRows = $stmt->rowCount();
 			} catch (Exception $e) {
 				Propel::log($e->getMessage(), Propel::LOG_ERR);
 				throw new PropelException("Unable to execute DELETE statement.",$e);
@@ -194,7 +195,8 @@ class BasePeer
 			$sql = "DELETE FROM " . $tableName;
 			Propel::log($sql, Propel::LOG_DEBUG);
 			$stmt = $con->prepare($sql);
-			return $stmt->execute();
+			$stmt->execute();
+			return $stmt->rowCount();
 		} catch (Exception $e) {
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException("Unable to perform DELETE ALL operation.", $e);
