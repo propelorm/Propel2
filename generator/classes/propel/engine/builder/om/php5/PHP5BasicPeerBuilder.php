@@ -749,16 +749,17 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
 	 * @param      string \$key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     object or NULL if no instance exists for specified key.
+	 * @return     ".$this->getObjectClassname()." Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
 	 * @see        getPrimaryKeyHash()
 	 */
 	public static function getInstanceFromPool(\$key)
 	{
-		if (isset(self::\$instances[\$key])) {
-			return self::\$instances[\$key];
-		} else {
-			return null; // just to be explicit
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::\$instances[\$key])) {
+				return self::\$instances[\$key];
+			}
 		}
+		return null; // just to be explicit
 	}
 	";
 	}
