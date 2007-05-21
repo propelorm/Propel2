@@ -898,8 +898,9 @@ class Criteria implements IteratorAggregate {
 
 		try {
 
+			$params = array();
 			$sb .= "\nCurrent Query SQL (may not be complete or applicable): "
-			  . BasePeer::createSelectSql($this, $params=array());
+			  . BasePeer::createSelectSql($this, $params);
 
 			$sb .= "\nParameters to replace: " . var_export($params, true);
 
