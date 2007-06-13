@@ -1315,10 +1315,18 @@ $script .= "
 
 ";
 
-		foreach ($table->getReferrers() as $fk) {
-			$tblFK = $fk->getTable();
-			if ( $tblFK->getName() != $table->getName() ) {
-				$collName = $this->getRefFKCollVarName($fk);
+		foreach ($table->getReferrers() as $refFK) {
+			if ($refFK->isLocalPrimaryKey()) {
+				$varName = $this->getPKRefFKVarName($refFK);
+				$script .= "
+				if (\$this->$varName !== null) {
+					if (!\$this->".$varName."->validate(\$columns)) {
+						\$failureMap = array_merge(\$failureMap, \$this->".$varName."->getValidationFailures());
+					}
+				}
+";
+			} else {
+				$collName = $this->getRefFKCollVarName($refFK);
 				$script .= "
 				if (\$this->$collName !== null) {
 					foreach (\$this->$collName as \$referrerFK) {
@@ -1328,7 +1336,7 @@ $script .= "
 					}
 				}
 ";
-			} /* if tableFK !+ table */
+			}
 		} /* foreach getReferrers() */
 
 		$script .= "
