@@ -1161,7 +1161,7 @@ $script .= "
 	 *
 	 * This will only work if the object has been saved and has a valid primary key set.
 	 *
-	 * @param      PDO \$con The (optional) PDO connection to use.
+	 * @param      PDO \$con (optional) The PDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
 	 */
@@ -1195,9 +1195,9 @@ $script .= "
 			if ($col->isLazyLoad()) {
 				$clo = strtolower($col->getName());
 				$script .= "
-				// Reset the $clo lazy-load column
-				\$this->" . $clo . " = null;
-				\$this->".$clo."_isLoaded = false;
+		// Reset the $clo lazy-load column
+		\$this->" . $clo . " = null;
+		\$this->".$clo."_isLoaded = false;
 ";
 			}
 		}

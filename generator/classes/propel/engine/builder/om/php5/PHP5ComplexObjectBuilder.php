@@ -1521,4 +1521,88 @@ $script .= "
 ";
 	} // addCopyInto()
 
+	/**
+	 * Adds a reload() method to re-fetch the data for this object from the database.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addReload(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean \$deep (optional) Whether to also de-associated any related objects. 
+	 * @param      PDO \$con (optional) The PDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload(\$deep = false, PDO \$con = null)
+	{
+		if (\$this->isDeleted()) {
+			throw new PropelException(\"Cannot reload a deleted object.\");
+		}
+
+		if (\$this->isNew()) {
+			throw new PropelException(\"Cannot reload an unsaved object.\");
+		}
+
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
+		\$row = \$stmt->fetch(PDO::FETCH_NUM);
+		if (!\$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		\$this->hydrate(\$row, 0, true); // rehydrate
+";
+		
+		// support for lazy load columns
+		foreach($table->getColumns() as $col) {
+			if ($col->isLazyLoad()) {
+				$clo = strtolower($col->getName());
+				$script .= "
+		// Reset the $clo lazy-load column
+		\$this->" . $clo . " = null;
+		\$this->".$clo."_isLoaded = false;
+";
+			}
+		}
+		
+		$script .= "
+		if (\$deep) {  // also de-associate any related objects?
+";
+		
+		foreach ($table->getForeignKeys() as $fk) {
+			$varName = $this->getFKVarName($fk);
+			$script .= "
+			\$this->".$varName." = null;";
+		}
+
+		foreach ($table->getReferrers() as $refFK) {
+			if ($refFK->isLocalPrimaryKey()) {
+				$script .= "
+			\$this->".$this->getPKRefFKVarName($refFK)." = null;
+";
+			} else {
+				$script .= "	
+			\$this->".$this->getRefFKCollVarName($refFK)." = null;
+			\$this->".$this->getRefFKLastCriteriaVarName($refFK)." = null;
+";
+			}
+		}
+		
+		$script .= "
+		} // if (deep)
+	}
+";
+	} // addReload()
+
 } // PHP5ComplexObjectBuilder

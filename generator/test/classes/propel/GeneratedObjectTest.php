@@ -194,7 +194,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$con = Propel::getConnection(BookstoreEmployeeAccountPeer::DATABASE_NAME);
 		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
 						. " publisher_id = " . $pub2->getId()
-						. " WHERE id = " . $book->getId());
+		. " WHERE id = " . $book->getId());
 
 
 		$book2 = BookPeer::retrieveByPK($book->getId());
@@ -207,7 +207,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
 						. " publisher_id = " . $pub1->getId()
-						. " WHERE id = " . $book->getId());
+		. " WHERE id = " . $book->getId());
 
 		$book->reload();
 
@@ -233,6 +233,35 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$a->reload();
 
 		$this->assertEquals($origName, $a->getFirstName());
+		$this->assertFalse($a->isModified());
+		
+	}
+	
+	/**
+	 * Test reload(deep=true) method.
+	 */
+	public function testReloadDeep()
+	{
+		// arbitrary book
+		$b = BookPeer::doSelectOne(new Criteria());
+		
+		// arbitrary, different author
+		$c = new Criteria();
+		$c->add(AuthorPeer::ID, $b->getAuthorId(), Criteria::NOT_EQUAL);
+		$a = AuthorPeer::doSelectOne($c);
+
+		$origAuthor = $b->getAuthor();
+			
+		$b->setAuthor($a);
+		
+		print "\nOriginal author: " . $origAuthor->getLastName();
+		print "\nNew author: " . $a->getLastName();
+		$this->assertNotEquals($origAuthor, $b->getAuthor(), "Expected just-set object to be different from obj from DB");
+		$this->assertTrue($b->isModified());
+
+		$b->reload($deep=true);
+
+		$this->assertEquals($origAuthor, $b->getAuthor(), "Expected object in DB to be restored");
 		$this->assertFalse($a->isModified());
 	}
 
@@ -272,13 +301,13 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		// modify the related author
 		$author->setLastName("Kurlanski");
-  		$affected = $book->save();
+		$affected = $book->save();
 		$this->assertEquals(1, $affected, "Expected 1 affected row when saving book with updated author.");
 
 		// modify both the related author and the book
 		$author->setLastName("Kurlansky");
 		$book->setTitle("Salt: A World History");
-  		$affected = $book->save();
+		$affected = $book->save();
 		$this->assertEquals(2, $affected, "Expected 2 affected rows when saving updated book with updated author.");
 
 	}
@@ -520,5 +549,4 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setPassword("bar");
 		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");
 	}
-
 }
