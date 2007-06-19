@@ -206,6 +206,16 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
+	 * Whether this PDO drivers return value for column of specified type as a stream.
+	 * @param      string Column type (PropelTypes) to check whether driver returns it as a stream.
+	 * @return     boolean 
+	 */
+	public function isStreamColumnType($coltype)
+	{
+		return false;
+	}
+	
+	/**
 	 * @see        Platform::getBooleanString()
 	 */
 	public function getBooleanString($b)

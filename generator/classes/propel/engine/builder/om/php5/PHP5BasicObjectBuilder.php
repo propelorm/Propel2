@@ -345,7 +345,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
 		}
-	$script .= "
+		$script .= "
 	}
 ";
 
@@ -507,40 +507,33 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * the [$clo] column, since it is not populated by
 	 * the hydrate() method.
 	 *
-	 * @param      \$con PDO
+	 * @param      \$con PDO (optional) The PDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - any underlying error will be wrapped and re-thrown.
 	 */
-	protected function load$cfc(\$con = null)
+	protected function load$cfc(PDO \$con = null)
 	{
 		\$c = \$this->buildPkeyCriteria();
 		\$c->addSelectColumn(".$this->getColumnConstant($col).");
 		try {
 			\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$c, \$con);
-			\$row = \$stmt->fetch(PDO::FETCH_NUM);
-";
-		$clo = strtolower($col->getName());
-		switch($col->getType()) {
-			case PropelTypes::SMALLINT:
-			case PropelTypes::INTEGER:
-				$script .= "
-			\$this->$clo = (\$row[0] !== null) ? (int) \$row[\$startcol + $n] : null;";
-				break;
-			case PropelTypes::BOOLEAN:
-				$script .= "
-			\$this->$clo = (\$row[0] !== null) ? (boolean) \$row[\$startcol + $n] : null;";
-				break;
-			case PropelTypes::REAL:
-			case PropelTypes::DOUBLE:
-			case PropelTypes::FLOAT:
-				$script .= "
-			\$this->$clo = (\$row[0] !== null) ? (float) \$row[\$startcol + $n] : null;";
-				break;
-			default:
-				$script .= "
-			\$this->$clo = \$row[0];";
-		} // switch
+			\$row = \$stmt->fetch(PDO::FETCH_NUM);";
 
+		$clo = strtolower($col->getName());
+		if ($this->getPlatform()->isStreamColumnType($col->getType())) {
+			$script .= "
+			\$this->$clo = (\$row[0] !== null) ? stream_get_contents(\$row[0]) : null;";
+		} elseif ($col->isPhpPrimitiveType()) {
+			$script .= "
+			\$this->$clo = (\$row[0] !== null) ? (".$col->getPhpType().") \$row[0] : null;";
+		} elseif ($col->isPhpObjectType()) {
+			$script .= "
+			\$this->$clo = (\$row[0] !== null) ? new ".$col->getPhpType()."(\$row[0]) : null;";
+		} else {
+			$script .= "
+			\$this->$clo = \$row[0];";
+		}
+		
 		$script .= "
 			\$this->".$clo."_isLoaded = true;
 		} catch (Exception \$e) {
@@ -598,7 +591,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addMutatorClose(&$script, Column $col)
 	{
-				$script .= "
+		$script .= "
 	} // set".$col->getPhpName()."()
 ";
 	}
@@ -775,8 +768,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				return false;
 			}
 ";
-				} // if value instanceof DateTime
-			}
+			} // if value instanceof DateTime
+		}
 		$script .= "
 		// otherwise, everything was equal, so return TRUE
 		return true;";
@@ -793,6 +786,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addHydrate(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
 
 		$script .= "
 	/**
@@ -813,32 +807,34 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		try {
 ";
-			$n = 0;
-			foreach ($table->getColumns() as $col) {
-				if (!$col->isLazyLoad()) {
-					// $affix = CreoleTypes::getAffix(CreoleTypes::getCreoleCode($col->getType()));
-					$clo = strtolower($col->getName());
-					if ($col->isPhpPrimitiveType()) {
-						$script .= "
+		$n = 0;
+		foreach ($table->getColumns() as $col) {
+			if (!$col->isLazyLoad()) {
+				$clo = strtolower($col->getName());
+				if ($platform->isStreamColumnType($col->getType())) {
+					$script .= "
+			\$this->$clo = (\$row[\$startcol + $n] !== null) ? stream_get_contents(\$row[\$startcol + $n]) : null;";
+				} elseif ($col->isPhpPrimitiveType()) {
+					$script .= "
 			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
-					} elseif ($col->isPhpObjectType()) {
-						$script .= "
+				} elseif ($col->isPhpObjectType()) {
+					$script .= "
 			\$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";
-					} else {
-						$script .= "
+				} else {
+					$script .= "
 			\$this->$clo = \$row[\$startcol + $n];";
-					}
-					$n++;
-				} // if col->isLazyLoad()
-			} /* foreach */
+				}
+				$n++;
+			} // if col->isLazyLoad()
+		} /* foreach */
 
-			if ($this->getBuildProperty("addSaveMethod")) {
-				$script .= "
+		if ($this->getBuildProperty("addSaveMethod")) {
+			$script .= "
 			\$this->resetModified();
 ";
-			}
+		}
 
-			$script .= "
+		$script .= "
 			\$this->setNew(false);
 
 			if (\$rehydrate) {
@@ -1002,17 +998,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	public function getByPosition(\$pos)
 	{
 		switch(\$pos) {";
-	$i = 0;
-	foreach ($table->getColumns() as $col) {
-		$cfc = $col->getPhpName();
-		$cptype = $col->getPhpType();// not safe to use it because some methods may return objects (Blob)
-$script .= "
+		$i = 0;
+		foreach ($table->getColumns() as $col) {
+			$cfc = $col->getPhpName();
+			$cptype = $col->getPhpType();// not safe to use it because some methods may return objects (Blob)
+			$script .= "
 			case $i:
 				return \$this->get$cfc();
 				break;";
-		$i++;
-	} /* foreach */
-$script .= "
+			$i++;
+		} /* foreach */
+		$script .= "
 			default:
 				return null;
 				break;
@@ -1189,7 +1185,7 @@ $script .= "
 		}
 		\$this->hydrate(\$row, 0, true); // rehydrate
 ";
-		
+
 		// support for lazy load columns
 		foreach($this->getTable()->getColumns() as $col) {
 			if ($col->isLazyLoad()) {
@@ -1500,15 +1496,15 @@ $script .= "
 	public function setPrimaryKey(\$keys)
 	{
 ";
-			$i = 0;
-			foreach ($this->getTable()->getPrimaryKey() as $pk) {
-				$pktype = $pk->getPhpType();
-				$script .= "
+		$i = 0;
+		foreach ($this->getTable()->getPrimaryKey() as $pk) {
+			$pktype = $pk->getPhpType();
+			$script .= "
 		\$this->set".$pk->getPhpName()."(\$keys[$i]);
 ";
-				$i++;
-			} /* foreach ($table->getPrimaryKey() */
-			$script .= "
+			$i++;
+		} /* foreach ($table->getPrimaryKey() */
+		$script .= "
 	}
 ";
 	} // addSetPrimaryKey_MultiPK
