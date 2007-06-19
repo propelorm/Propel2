@@ -1188,6 +1188,21 @@ $script .= "
 			throw new PropelException('Cannot find matching row in the database to reload object values.');
 		}
 		\$this->hydrate(\$row, 0, true); // rehydrate
+";
+		
+		// support for lazy load columns
+		foreach($this->getTable()->getColumns() as $col) {
+			if ($col->isLazyLoad()) {
+				$clo = strtolower($col->getName());
+				$script .= "
+				// Reset the $clo lazy-load column
+				\$this->" . $clo . " = null;
+				\$this->".$clo."_isLoaded = false;
+";
+			}
+		}
+
+		$script .= "
 	}
 ";
 	} // addReload()
