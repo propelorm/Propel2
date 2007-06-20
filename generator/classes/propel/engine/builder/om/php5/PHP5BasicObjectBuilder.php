@@ -697,6 +697,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$v = (string) \$v;
 		}
 ";
+		} elseif ($col->getPhpType() === "boolean") {
+			$script .= "
+		// Make sure that the value will be a boolean (to keep the instance to 
+		// think it has changed when it went for instance from true to 1
+		\$v = \$v ? true : false;
+";		
 		}
 
 		$script .= "
