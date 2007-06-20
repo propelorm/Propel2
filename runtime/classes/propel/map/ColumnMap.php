@@ -347,7 +347,7 @@ class ColumnMap {
 	/**
 	 * Is null value allowed ?
 	 *
-	 * @return     boolean True if column may be null.
+	 * @return     boolean True if column may not be null.
 	 */
 	public function isNotNull()
 	{
