@@ -498,6 +498,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addLazyLoader(&$script, $col)
 	{
+		$platform = $this->getPlatform();
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
 
@@ -522,9 +523,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);";
 
 		$clo = strtolower($col->getName());
-		if ($this->getPlatform()->isStreamColumnType($col->getType())) {
+		if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 			$script .= "
-			\$this->$clo = (\$row[0] !== null) ? stream_get_contents(\$row[0]) : null;";
+			if (\$row[0] !== null) {
+				\$this->$clo = fopen('php://memory', 'r+');
+				fwrite(\$this->$clo, \$row[0]);
+				rewind(\$this->$clo);
+			} else { 
+				\$this->$clo = null;
+			}";
 		} elseif ($col->isPhpPrimitiveType()) {
 			$script .= "
 			\$this->$clo = (\$row[0] !== null) ? (".$col->getPhpType().") \$row[0] : null;";
@@ -610,14 +617,19 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addMutatorOpen($script, $col);
 		$clo = strtolower($col->getName());
 		$script .= "
-		// FIXME - LOBs need to be streams in PDO; I'm sure there will be special handling here.
-		if (\$this->$clo !== \$v) {
+		// Because BLOB columns are streams in PDO we have to assume that they are 
+		// always modified when a new value is passed in.  For example, the contents
+		// of the stream itself may have changed externally.		
+		if (!is_resource(\$v)) {
+			\$this->$clo = fopen('php://memory', 'r+');
+			fwrite(\$this->$clo, \$v);
+			rewind(\$this->$clo);
+		} else { // it's already a stream
 			\$this->$clo = \$v;
-			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
+		\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 ";
 		$this->addMutatorClose($script, $col);
-
 	} // addLobMutatorSnippet
 
 
@@ -820,9 +832,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($table->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				$clo = strtolower($col->getName());
-				if ($platform->isStreamColumnType($col->getType())) {
+				if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 					$script .= "
-			\$this->$clo = (\$row[\$startcol + $n] !== null) ? stream_get_contents(\$row[\$startcol + $n]) : null;";
+			if (\$row[\$startcol + $n] !== null) {
+				\$this->$clo = fopen('php://memory', 'r+');
+				fwrite(\$this->$clo, \$row[\$startcol + $n]);
+				rewind(\$this->$clo);
+			} else { 
+				\$this->$clo = null;
+			}";
 				} elseif ($col->isPhpPrimitiveType()) {
 					$script .= "
 			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";

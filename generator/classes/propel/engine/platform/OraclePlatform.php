@@ -88,12 +88,11 @@ class OraclePlatform extends DefaultPlatform {
 	}
 
 	/**
-	 * Whether this PDO drivers return value for column of specified type as a stream.
-	 * @param      string Column type (PropelTypes) to check whether driver returns it as a stream.
-	 * @return     boolean 
+	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
+	 * @return     boolean
 	 */
-	public function isStreamColumnType($coltype)
+	public function hasStreamBlobImpl()
 	{
-		return in_array($coltype, array(PropelTypes::BLOB));
+		return true;
 	}
 }

@@ -254,8 +254,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			
 		$b->setAuthor($a);
 		
-		print "\nOriginal author: " . $origAuthor->getLastName();
-		print "\nNew author: " . $a->getLastName();
 		$this->assertNotEquals($origAuthor, $b->getAuthor(), "Expected just-set object to be different from obj from DB");
 		$this->assertTrue($b->isModified());
 
@@ -548,5 +546,84 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$acct->setPassword("bar");
 		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");
+	}
+	
+	/**
+	 * Test the LOB results returned in a resultset.
+	 */
+	public function testLobResults()
+	{
+
+		$blob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.gif';
+		$clob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.txt';
+		
+		$book = BookPeer::doSelectOne(new Criteria());
+		
+		$m1 = new Media();
+		$m1->setBook($book);
+		$m1->setCoverImage(file_get_contents($blob_path));
+		$m1->setExcerpt(file_get_contents($clob_path));
+		$m1->save();
+		$m1_id = $m1->getId();
+		
+		$m1->reload();
+		
+		$img = $m1->getCoverImage();
+		$txt = $m1->getExcerpt();
+		
+		$this->assertType('resource', $img, "Expected results of BLOB method to be a resource.");
+		$this->assertType('string', $txt, "Expected results of CLOB method to be a string.");
+		
+		$stat = fstat($img);
+		$size = $stat['size'];
+		
+		$this->assertEquals(filesize($blob_path), $size, "Expected filesize to match stat(blobrsc)");
+		$this->assertEquals(filesize($clob_path), strlen($txt), "Expected filesize to match clob strlen");
+	}
+	
+	/**
+	 * Tests the setting of LOB (BLOB and CLOB) values.
+	 */
+	public function testLobSetting()
+	{
+		$blob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.gif';
+		$blob2_path = TESTS_BASE_DIR . '/etc/lob/propel.gif';
+		
+		$clob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.txt';
+		$book = BookPeer::doSelectOne(new Criteria());
+		
+		$m1 = new Media();
+		$m1->setBook($book);
+		$m1->setCoverImage(file_get_contents($blob_path));
+		$m1->setExcerpt(file_get_contents($clob_path));
+		$m1->save();
+		$m1_id = $m1->getId();
+		
+		$img = $m1->getCoverImage();
+		$this->assertType('resource', $img, "Expected results of BLOB method to be a resource.");
+		
+		// Test setting a BLOB column with file contents
+		$m1->setCoverImage(file_get_contents($blob2_path));
+		$m1->save();
+		
+		$this->assertType('resource', $m1->getCoverImage(), "Expected to get a resource back after setting BLOB with file contents.");
+		
+		$m1->reload();
+		$this->assertType('resource', $m1->getCoverImage(), "Expected to get a resource back after setting reloading object.");
+		
+		$fp = fopen("php://temp", "r+");
+		fwrite($fp, file_get_contents($blob2_path));
+		
+		$m1->setCoverImage($fp);
+		$this->assertTrue($m1->isModified(), "Expected Media object to be modified, despite fact that stream is to same data");
+		$m1->save();
+		
+		$stream = $m1->getCoverImage();
+		fwrite($stream, file_get_contents($blob_path)); // change the contents of the stream
+
+		$m1->setCoverImage($stream);
+		
+		$this->assertTrue($m1->isModified(), "Expected Media object to be modified when stream contents changed.");
+		
 	}
 }

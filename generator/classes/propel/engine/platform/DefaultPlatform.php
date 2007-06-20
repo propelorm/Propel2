@@ -206,11 +206,10 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * Whether this PDO drivers return value for column of specified type as a stream.
-	 * @param      string Column type (PropelTypes) to check whether driver returns it as a stream.
+	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean 
 	 */
-	public function isStreamColumnType($coltype)
+	public function hasStreamBlobImpl()
 	{
 		return false;
 	}

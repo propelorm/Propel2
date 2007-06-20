@@ -59,7 +59,7 @@ class PropelTypes {
 					);
 
 	private static $LOB_TYPES = array (
-						self::VARBINARY, self::LONGVARBINARY, self::CLOB, self::BLOB
+						self::VARBINARY, self::LONGVARBINARY, self::BLOB
 					);
 
 	private static $TEMPORAL_TYPES = array (
@@ -83,7 +83,7 @@ class PropelTypes {
 	const BINARY_NATIVE_TYPE = "string";
 	const VARBINARY_NATIVE_TYPE = "string";
 	const LONGVARBINARY_NATIVE_TYPE = "string";
-	const BLOB_NATIVE_TYPE = "string";
+	const BLOB_NATIVE_TYPE = "resource";
 	const BU_DATE_NATIVE_TYPE = "string";
 	const DATE_NATIVE_TYPE = "string";
 	const TIME_NATIVE_TYPE = "string";
