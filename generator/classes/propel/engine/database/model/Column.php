@@ -35,12 +35,15 @@ include_once 'propel/engine/database/model/ColumnDefaultValue.php';
  * @author     Jon S. Stevens <jon@latchkey.com> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
+ * @author     Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
  * @version    $Revision$
  * @package    propel.engine.database.model
  */
 class Column extends XMLElement {
 
 	const DEFAULT_TYPE = "VARCHAR";
+	const DEFAULT_VISIBILITY = 'public';
+	public static $valid_visibilities = array('public', 'protected', 'private');
 
 	private $name;
 	private $description;
@@ -48,6 +51,9 @@ class Column extends XMLElement {
 	private $phpNamingMethod;
 	private $isNotNull = false;
 	private $size;
+	private $namePrefix;
+	private $accessorVisibility;
+	private $mutatorVisibility;
 
 	/**
 	 * The name to use for the Peer constant that identifies this column.
@@ -153,7 +159,37 @@ class Column extends XMLElement {
 			$this->name = $this->getAttribute("name");
 			$this->phpName = $this->getAttribute("phpName");
 			$this->phpType = $this->getAttribute("phpType");
-
+			
+			if ($this->getAttribute("prefix", null) !== null) {
+			    $this->namePrefix = $this->getAttribute("prefix");
+			} elseif ($this->getTable()->getAttribute('columnPrefix', null) !== null) {
+			     $this->namePrefix = $this->getTable()->getAttribute('columnPrefix');
+			} else {
+			    $this->namePrefix = '';
+			}
+			
+			// Accessor visibility
+			if ($this->getAttribute('accessorVisibility', null) !==  null) {
+			    $this->setAccessorVisibility($this->getAttribute('accessorVisibility'));
+			} elseif ($this->getTable()->getAttribute('defaultAccessorVisibility', null) !== null) {
+			    $this->setAccessorVisibility($this->getTable()->getAttribute('defaultAccessorVisibility'));
+			} elseif ($this->getTable()->getDatabase()->getAttribute('defaultAccessorVisibility', null) !== null) {
+			    $this->setAccessorVisibility($this->getTable()->getDatabase()->getAttribute('defaultAccessorVisibility'));
+			} else {
+			    $this->setAccessorVisibility(self::DEFAULT_VISIBILITY);
+			}
+			
+			// Mutator visibility
+			if ($this->getAttribute('mutatorVisibility', null) !==  null) {
+			    $this->setMutatorVisibility($this->getAttribute('mutatorVisibility'));
+			} elseif ($this->getTable()->getAttribute('defaultMutatorVisibility', null) !== null) {
+			    $this->setMutatorVisibility($this->getTable()->getAttribute('defaultMutatorVisibility'));
+			} elseif ($this->getTable()->getDatabase()->getAttribute('defaultMutatorVisibility', null) !== null) {
+			    $this->setMutatorVisibility($this->getTable()->getDatabase()->getAttribute('defaultMutatorVisibility'));
+			} else {
+			    $this->setMutatorVisibility(self::DEFAULT_VISIBILITY);
+			}
+			
 			$this->peerName = $this->getAttribute("peerName");
 
 			// retrieves the method for converting from specified name to a PHP name, defaulting to parent tables default method
@@ -259,6 +295,8 @@ class Column extends XMLElement {
 			$inputs = array();
 			$inputs[] = $this->name;
 			$inputs[] = $this->phpNamingMethod;
+			$inputs[] = $this->namePrefix;
+
 			try {
 				$this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
 			} catch (EngineException $e) {
@@ -292,6 +330,56 @@ class Column extends XMLElement {
 		} else { // 0 or 1 chars (I suppose that's rare)
 			return strtolower($phpname);
 		}
+	}
+
+	/**
+	 * Get the visibility of the accessors of this column / attribute
+	 * @return     string
+	 */
+	public function getAccessorVisibility() {
+		if($this->accessorVisibility !== null) {
+			return $this->accessorVisibility;
+		} else {
+			return self::DEFAULT_VISIBILITY;
+		}
+	}
+	
+	/**
+	 * Set the visibility of the accessor methods for this column / attribute
+	 * @param      $newVisibility string
+	 */
+	public function setAccessorVisibility($newVisibility) {
+		if(in_array($newVisibility, self::$valid_visibilities)) {
+			$this->accessorVisibility = $newVisibility;
+		} else {
+			$this->accessorVisibility = self::DEFAULT_VISIBILITY;
+		}
+		
+	}
+
+	/**
+	 * Get the visibility of the mutator of this column / attribute
+	 * @return     string
+	 */
+	public function getMutatorVisibility() {
+		if($this->mutatorVisibility !== null) {
+			return $this->mutatorVisibility;
+		} else {
+			return self::DEFAULT_VISIBILITY;
+		}
+	}
+	
+	/**
+	 * Set the visibility of the mutator methods for this column / attribute
+	 * @param      $newVisibility string
+	 */
+	public function setMutatorVisibility($newVisibility) {
+		if(in_array($newVisibility, self::$valid_visibilities)) {
+			$this->mutatorVisibility = $newVisibility;
+		} else {
+			$this->mutatorVisibility = self::DEFAULT_VISIBILITY;
+		}
+		
 	}
 
 	/**

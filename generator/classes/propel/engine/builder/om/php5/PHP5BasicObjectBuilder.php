@@ -367,6 +367,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
+		$visibility=$col->getAccessorVisibility();
 
 		// these default values are based on the Creole defaults
 		// the date and time default formats are locale-sensitive
@@ -403,7 +404,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	 * @throws     PropelException - if unable to convert the date/time value to DateTime object.
 	 */
-	public function get$cfc(\$format = ".var_export($defaultfmt, true)."";
+	".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
 		if ($col->isLazyLoad()) $script .= ", \$con = null";
 		$script .= ")
 	{
@@ -457,6 +458,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
+		$visibility=$col->getAccessorVisibility();
 
 		$script .= "
 	/**
@@ -469,7 +471,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	 * @return     ".$col->getPhpType()."
 	 */
-	public function get$cfc(";
+	".$visibility." function get$cfc(";
 		if ($col->isLazyLoad()) $script .= "PDO \$con = null";
 		$script .= ")
 	{
@@ -561,6 +563,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
+		$visibility=$col->getMutatorVisibility();
 
 		$script .= "
 	/**
@@ -569,7 +572,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      ".$col->getPhpType()." \$v new value
 	 * @return     void
 	 */
-	public function set$cfc(\$v)
+	".$visibility." function set$cfc(\$v)
 	{";
 		if ($col->isLazyLoad()) {
 			$script .= "

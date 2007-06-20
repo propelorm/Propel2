@@ -155,6 +155,15 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<!-- Visibility for column accessor and mutator methods -->
+	<xs:simpleType name="visibility">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="public"/>
+			<xs:enumeration value="protected"/>
+			<xs:enumeration value="private"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<!-- Restrict column name to letters (upper- and lowercase), numbers and the _ -->
 	<xs:simpleType name="column_name">
 		<xs:restriction base="xs:string">
@@ -282,6 +291,9 @@
 		<xs:attribute name="name" type="column_name" use="required"/>
 		<xs:attribute name="phpName" type="php_name" use="optional"/>
 		<xs:attribute name="peerName" type="php_class" use="optional"/>
+		<xs:attribute name="prefix" type="column_name" use="optional"/>
+		<xs:attribute name="accessorVisibility" type="visibility" use="optional"/>
+		<xs:attribute name="mutatorVisibility" type="visibility" use="optional"/>
 		<xs:attribute name="primaryKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="required" type="xs:boolean" default="false"/>
 		<xs:attribute name="type" type="datatype" default="VARCHAR"/>
@@ -335,6 +347,9 @@
 		</xs:choice>
 		<xs:attribute name="name" type="table_name" use="required"/>
 		<xs:attribute name="phpName" type="php_class" use="optional"/>
+		<xs:attribute name="columnPrefix" type="column_name" use="optional"/>
+		<xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional"/>
+		<xs:attribute name="defaultMutatorVisibility" type="visibility" use="optional"/>
 		<xs:attribute name="idMethod" type="idmethod" use='optional'/>
 		<xs:attribute name="skipSql" type="xs:boolean" default="false"/>
 		<xs:attribute name="readOnly" type="xs:boolean" default="false"/>
@@ -358,6 +373,8 @@
 		<xs:attribute name="name" type="xs:string" use="optional"/>
 		<xs:attribute name="defaultIdMethod" type="dbidmethod" default="none"/>
 		<xs:attribute name="defaultTranslateMethod" type="xs:string" use="optional"/>
+		<xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional"/>
+		<xs:attribute name="defaultMutatorVisibility" type="visibility" use="optional"/>
 		<xs:attribute name="package" type="php_class" use="optional"/>
 		<xs:attribute name="baseClass" type="php_class" use="optional"/>
 		<xs:attribute name="basePeer" type="php_class" use="optional"/>
