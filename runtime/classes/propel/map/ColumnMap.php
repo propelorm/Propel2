@@ -198,12 +198,12 @@ class ColumnMap {
 	}
 
 	/**
-	 * Whether this is a BLOB or CLOB.
+	 * Whether this is a BLOB, LONGVARBINARY, or VARBINARY.
 	 * @return     boolean
 	 */
 	public function isLob()
 	{
-		return ($this->type == PropelColumnTypes::BLOB || $this->type == PropelColumnTypes::CLOB);
+		return ($this->type == PropelColumnTypes::BLOB || $this->type == PropelColumnTypes::VARBINARY || $this->type == PropelColumnTypes::LONGVARBINARY);
 	}
 
 	/**

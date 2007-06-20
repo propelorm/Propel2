@@ -476,7 +476,7 @@ class BasePeer
 				if ($pdoType == PDO::PARAM_BOOL && $db instanceof DBMySQL) {
 					$value = (int) $value;
 					$pdoType = PDO::PARAM_INT;
-				} else if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
+				} elseif (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
 					if ($type == PropelColumnTypes::TIMESTAMP) {
 						$value = date($db->getTimestampFormatter(), $value);
 					} else if ($type == PropelColumnTypes::DATE) {
@@ -484,7 +484,7 @@ class BasePeer
 					} else if ($type == PropelColumnTypes::TIME) {
 						$value = date($db->getTimeFormatter(), $value);
 					}
-				} else if ($value instanceof DateTime && $cMap->isTemporal()) { // it's a timestamp that needs to be formatted
+				} elseif ($value instanceof DateTime && $cMap->isTemporal()) { // it's a timestamp that needs to be formatted
 					if ($type == PropelColumnTypes::TIMESTAMP || $type == PropelColumnTypes::BU_TIMESTAMP) {
 						$value = $value->format($db->getTimestampFormatter());
 					} else if ($type == PropelColumnTypes::DATE || $type == PropelColumnTypes::BU_DATE) {
@@ -492,6 +492,10 @@ class BasePeer
 					} else if ($type == PropelColumnTypes::TIME) {
 						$value = $value->format($db->getTimeFormatter());
 					}
+				} elseif (is_resource($value) && $cMap->isLob()) {
+					// we always need to make sure that the stream is rewound, otherwise nothing will
+					// get written to database.
+					rewind($value);
 				}
 
 				if ($type == PropelColumnTypes::BLOB || $type == PropelColumnTypes::CLOB ) {

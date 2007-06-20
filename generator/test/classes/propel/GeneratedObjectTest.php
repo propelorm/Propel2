@@ -599,31 +599,52 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$m1->save();
 		$m1_id = $m1->getId();
 		
+		// 1) Assert that we've got a valid stream to start with
 		$img = $m1->getCoverImage();
 		$this->assertType('resource', $img, "Expected results of BLOB method to be a resource.");
 		
-		// Test setting a BLOB column with file contents
+		// 2) Test setting a BLOB column with file contents
 		$m1->setCoverImage(file_get_contents($blob2_path));
-		$m1->save();
-		
 		$this->assertType('resource', $m1->getCoverImage(), "Expected to get a resource back after setting BLOB with file contents.");
 		
+		// commit those changes & reload
+		$m1->save();
+		
+		// 3) Verify that we've got a valid resource after reload
 		$m1->reload();
 		$this->assertType('resource', $m1->getCoverImage(), "Expected to get a resource back after setting reloading object.");
 		
+		// 4) Test isModified() behavior
 		$fp = fopen("php://temp", "r+");
 		fwrite($fp, file_get_contents($blob2_path));
 		
 		$m1->setCoverImage($fp);
 		$this->assertTrue($m1->isModified(), "Expected Media object to be modified, despite fact that stream is to same data");
-		$m1->save();
 		
+		// 5) Test external modification of the stream (and re-setting it into the object)
 		$stream = $m1->getCoverImage();
 		fwrite($stream, file_get_contents($blob_path)); // change the contents of the stream
-
+		
 		$m1->setCoverImage($stream);
 		
 		$this->assertTrue($m1->isModified(), "Expected Media object to be modified when stream contents changed.");
+		$this->assertNotEquals(file_get_contents($blob2_path), stream_get_contents($m1->getCoverImage()));
 		
+		$m1->save();
+		
+		// 6) Assert that when we call the setter with a stream, that the file in db gets updated.
+
+		$m1->reload(); // start with a fresh copy from db
+		
+		// Ensure that object is set up correctly
+		$this->assertNotEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), "The object is not correctly set up to verify the stream-setting test.");
+		
+		$fp = fopen($blob_path, "r");
+		$m1->setCoverImage($fp);
+		$m1->save();
+		$m1->reload(); // refresh from db
+		
+		// Assert that we've updated the db
+		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), "Expected the updated BLOB value after setting with a stream.");
 	}
 }
