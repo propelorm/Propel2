@@ -463,6 +463,8 @@ abstract class AbstractPropelDataModelTask extends Task {
 					if (!class_exists('XSLTProcessor')) {
 						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", PROJECT_MSG_ERR);
 					} else {
+						// modify schema to include any external schema's (and remove the external-schema nodes)
+						$this->includeExternalSchemas($dom, $srcDir);
 						// normalize the document using normalizer stylesheet
 
 						$xsl = new XsltProcessor();
@@ -521,6 +523,31 @@ abstract class AbstractPropelDataModelTask extends Task {
 		$this->dataModelsLoaded = true;
 	}
 
+	/**
+	 * Replaces all external-schema nodes with the content of xml schema that node refers to
+	 *
+	 * Recurses to include any external schema referenced from in an included xml (and deeper)
+	 * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof 
+	 * users don't have those and adding some more informative exceptions would be better
+	 *
+	 * @param DomDocument $dom
+	 * @param string $srcDir
+	 * @return void (objects, DomDocument, are references by default in PHP 5, so returning it is useless)
+	 **/
+	protected function includeExternalSchemas(DomDocument $dom, $srcDir) { 
+		$databaseNode = $dom->getElementsByTagName("database")->item(0);
+		foreach ($dom->getElementsByTagName("external-schema") as $externalSchema) {
+			$include = $externalSchema->getAttribute("filename");
+			$externalSchema->parentNode->removeChild($externalSchema);
+			$externalSchemaFile = new PhingFile($srcDir, $include);
+			$externalSchemaDom = new DomDocument('1.0', 'UTF-8');
+			$externalSchemaDom->load($externalSchemaFile->getAbsolutePath());
+			$this->includeExternalSchemas($externalSchemaDom, $srcDir);
+			foreach ($externalSchemaDom->getElementsByTagName("table") as $tableNode) { // see xsd, datatase may only have table or external-schema, the latter was just deleted so this should cover everything
+				$databaseNode->appendChild($dom->importNode($tableNode, true));
+			}
+		}
+	}
 	/**
 	 * Joins the datamodels collected from schema.xml files into one big datamodel
 	 *
