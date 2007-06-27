@@ -151,14 +151,15 @@ PHP class or method name.
 
 <!ELEMENT rule EMPTY>
 <!ATTLIST rule
-  name (mask|maxLength|maxValue|minLength|minValue|required|unique|validValues) #REQUIRED
+  name (mask|maxLength|maxValue|minLength|minValue|required|unique|validValues|class) #REQUIRED
+  class CDATA #IMPLIED
   value CDATA #IMPLIED
   size ID #IMPLIED
   message CDATA #IMPLIED
 >
 
 <!ELEMENT vendor (parameter+)>
-<!ATTLIST validator
+<!ATTLIST vendor
   type CDATA #REQUIRED
 >
 
