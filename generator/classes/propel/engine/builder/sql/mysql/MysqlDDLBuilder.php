@@ -112,6 +112,13 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 
 		foreach ($table->getColumns() as $col) {
 			$entry = $this->getColumnDDL($col);
+			$colinfo = $col->getVendorSpecificInfo();
+			if ( isset ( $colinfo['Charset'] ) ) {
+				$entry .= ' CHARACTER SET '.$platform->quote($colinfo['Charset']);
+			}
+			if ( isset ( $colinfo['Collate'] ) ) {
+				$entry .= ' COLLATE '.$platform->quote($colinfo['Collate']);
+			}
 			if ($col->getDescription()) {
 				$entry .= " COMMENT ".$platform->quote($col->getDescription());
 			}
@@ -143,6 +150,26 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		}
 
 		$script .= "Type=$mysqlTableType";
+		
+		$dbVendorSpecific = $table->getDatabase()->getVendorSpecificInfo();
+		$tableVendorSpecific = $table->getVendorSpecificInfo();
+		$vendorSpecific = array_merge ( $dbVendorSpecific, $tableVendorSpecific );
+		if ( isset ( $vendorSpecific['Charset'] ) ) {
+			$script .= ' CHARACTER SET '.$platform->quote($vendorSpecific['Charset']);
+		}
+		if ( isset ( $vendorSpecific['Collate'] ) ) {
+			$script .= ' COLLATE '.$platform->quote($vendorSpecific['Collate']);
+		}
+		if ( isset ( $vendorSpecific['Checksum'] ) ) {
+			$script .= ' CHECKSUM='.$platform->quote($vendorSpecific['Checksum']);
+		}
+		if ( isset ( $vendorSpecific['Pack_Keys'] ) ) {
+			$script .= ' PACK_KEYS='.$platform->quote($vendorSpecific['Pack_Keys']);
+		}
+		if ( isset ( $vendorSpecific['Delay_key_write'] ) ) {
+			$script .= ' DELAY_KEY_WRITE='.$platform->quote($vendorSpecific['Delay_key_write']);
+		}
+
 		if ($table->getDescription()) {
 			$script .= " COMMENT=".$platform->quote($table->getDescription());
 		}
