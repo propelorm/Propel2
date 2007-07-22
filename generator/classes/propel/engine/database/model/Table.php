@@ -150,17 +150,21 @@ class Table extends XMLElement implements IDMethod {
 
 		// if idMethod is "native" and in fact there are no autoIncrement
 		// columns in the table, then change it to "none"
-		if ($this->getIdMethod() === IDMethod::NATIVE) {
-			$anyAutoInc = false;
-			foreach ($this->getColumns() as $col) {
-				if ($col->isAutoIncrement()) {
-					$anyAutoInc = true;
-					break;
-				}
+		$anyAutoInc = false;
+		$hasPK = false;
+		foreach ($this->getColumns() as $col) {
+			if ($col->isAutoIncrement()) {
+				$anyAutoInc = true;
 			}
-			if (!$anyAutoInc) {
-				$this->setIdMethod(IDMethod::NO_ID_METHOD);
+			if ($col->isPrimaryKey()) {
+				$hasPK = true;
 			}
+		}
+		if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
+			$this->setIdMethod(IDMethod::NO_ID_METHOD);
+		}
+		if (!$hasPK) {
+			throw new EngineException("Table '" . $this->getName() . "' does not define a primary key column!");
 		}
 	}
 
