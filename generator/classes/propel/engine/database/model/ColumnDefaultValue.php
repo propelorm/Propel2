@@ -39,7 +39,7 @@ class ColumnDefaultValue {
 	/**
 	 * @var        string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
 	 */
-	private $type = DefaultValue::TYPE_VALUE;
+	private $type = ColumnDefaultValue::TYPE_VALUE;
 
 	/**
 	 * Creates a new DefaultValue object.

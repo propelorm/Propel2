@@ -646,5 +646,52 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		// Assert that we've updated the db
 		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), "Expected the updated BLOB value after setting with a stream.");
+		
+		// 7) Assert that 'w' mode works
+		
 	}
+	
+	public function testLobSetting_WriteMode()
+	{
+		$blob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.gif';
+		$blob2_path = TESTS_BASE_DIR . '/etc/lob/propel.gif';
+		
+		$clob_path = TESTS_BASE_DIR . '/etc/lob/tin_drum.txt';
+		$book = BookPeer::doSelectOne(new Criteria());
+		
+		$m1 = new Media();
+		$m1->setBook($book);
+		$m1->setCoverImage(file_get_contents($blob_path));
+		$m1->setExcerpt(file_get_contents($clob_path));
+		$m1->save();
+		
+		MediaPeer::clearInstancePool();
+		
+		// make sure we have the latest from the db:
+		$m2 = MediaPeer::retrieveByPK($m1->getId());
+		
+		// now attempt to assign a temporary stream, opened in 'w' mode, to the db
+		
+		$stream = fopen("php://memory", 'w');
+		fwrite($stream, file_get_contents($blob2_path));
+		$m2->setCoverImage($stream);
+		$m2->save();
+		fclose($stream);
+		
+		$m2->reload();
+		$this->assertEquals(file_get_contents($blob2_path), stream_get_contents($m2->getCoverImage()), "Expected contents to match when setting stream w/ 'w' mode");		
+		
+		$stream2 = fopen("php://memory", 'w+');
+		fwrite($stream2, file_get_contents($blob_path));
+		rewind($stream2);
+		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($stream2), "Expecting setup to be correct");
+		
+		$m2->setCoverImage($stream2);
+		$m2->save();
+		$m2->reload();
+		
+		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m2->getCoverImage()), "Expected contents to match when setting stream w/ 'w+' mode");
+		
+	}
+	
 }
