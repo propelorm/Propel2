@@ -694,4 +694,19 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 	}
 	
+	
+	public function testDefaultFkColVal()
+	{
+		$sale = new BookstoreSale();
+		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default ID.");
+		
+		$bookstore = BookstorePeer::doSelectOne(new Criteria());
+		
+		$sale->setBookstore($bookstore);
+		$this->assertEquals($bookstore->getId(), $sale->getBookstoreId(), "Expected FK id to have changed when assigned a valid FK.");
+		
+		$sale->setBookstore(null);
+		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have reset to default ID.");
+	}
+	
 }

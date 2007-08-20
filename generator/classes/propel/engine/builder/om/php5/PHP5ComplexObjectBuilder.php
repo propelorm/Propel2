@@ -372,7 +372,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$colFK = $tblFK->getColumn($colFKName);
 			$script .= "
 		if (\$v === null) {
-			\$this->set".$column->getPhpName()."(".var_export($column->getDefaultValue(), true).");
+			\$this->set".$column->getPhpName()."(".$this->getDefaultValueString($column).");
 		} else {
 			\$this->set".$column->getPhpName()."(\$v->get".$colFK->getPhpName()."());
 		}

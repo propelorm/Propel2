@@ -201,4 +201,14 @@
 		<column name="total_books" type="INTEGER"/>
 	</table>
 	
+	<!--  test default values on foreign keys -->
+	<table name="bookstore_sale">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+		<column name="bookstore_id" type="INTEGER" required="false" default="1"/>
+		<column name="discount" type="TINYINT" description="Discount percentage"/>
+		<foreign-key foreignTable="bookstore" onDelete="cascade">
+			<reference local="bookstore_id" foreign="id" />
+		</foreign-key>
+	</table>
+	
 </database>
