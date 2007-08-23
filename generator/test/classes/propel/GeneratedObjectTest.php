@@ -707,6 +707,9 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		
 		$sale->setBookstore(null);
 		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have reset to default ID.");
+		
+		$sale->setPublisher(null);
+		$this->assertEquals(null, $sale->getPublisherId(), "Expected BookstoreSale object to have reset to NULL publisher ID.");
 	}
 	
 }

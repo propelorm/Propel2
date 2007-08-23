@@ -57,11 +57,11 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 	/**
 	 * Returns the type-casted and stringified default value for the specified Column.
 	 * This only works for scalar default values currently.
-	 * @return     string The default value or NULL if there is none.
+	 * @return     string The default value or 'NULL' if there is none.
 	 */
 	protected function getDefaultValueString(Column $col)
 	{
-		$defaultValue = null;
+		$defaultValue = var_export(null, true);
 		if (($val = $col->getPhpDefaultValue()) !== null) {
 			if ($col->isPhpPrimitiveType()) {
 				settype($val, $col->getPhpType());
@@ -686,8 +686,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$clo = strtolower($col->getName());
 
-		$defaultValue = $this->getDefaultValueString($col);
-
 		$this->addMutatorOpen($script, $col);
 
 		// Perform some smart checking here to handle possible type discrepancies
@@ -719,7 +717,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= "
 		if (\$this->$clo !== \$v";
-		if ($defaultValue !== null) {
+		if ($col->getDefaultValue() !== null) {
+			$defaultValue = $this->getDefaultValueString($col);
 			$script .= " || \$v === $defaultValue";
 		}
 		$script .= ") {
