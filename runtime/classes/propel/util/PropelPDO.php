@@ -96,11 +96,13 @@ class PropelPDO extends PDO {
 	 */
 	public function beginTransaction()
 	{
+		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ( $opcount === 0 ) {
-			parent::beginTransaction();
+			$return = parent::beginTransaction();
 		}
 		$this->incrementNestedTransactionCount();
+		return $return;
 	}
 
 	/**
@@ -109,13 +111,15 @@ class PropelPDO extends PDO {
 	 */
 	public function commit()
 	{
+		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			if ($opcount === 1) {
-				parent::commit();
+				$return = parent::commit();
 			}
 			$this->decrementNestedTransactionCount();
 		}
+		return $return;
 	}
 
 	/**
@@ -124,21 +128,23 @@ class PropelPDO extends PDO {
 	 */
 	public function rollback()
 	{
+		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			if ($opcount === 1) {
-				parent::rollback();
+				$return = parent::rollback();
 			}
 			$this->decrementNestedTransactionCount();
 		}
+		return $return;
 	}
 
 	/**
 	 * Overrides PDO::prepare() to add logging.
 	 */
-	public function prepare($sql)
+	public function prepare($sql,array $driver_options=array())
 	{
 		Propel::log($sql, Propel::LOG_DEBUG);
-		return parent::prepare($sql);
+		return parent::prepare($sql,$driver_options);
 	}
 }
