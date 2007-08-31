@@ -21,6 +21,7 @@
  */
 
 require_once 'propel/engine/builder/DataModelBuilder.php';
+require_once 'creole/CreoleTypes.php';
 
 /**
  * Baseclass for SQL data dump SQL building classes.
