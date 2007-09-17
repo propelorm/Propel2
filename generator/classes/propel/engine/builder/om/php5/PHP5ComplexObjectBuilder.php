@@ -412,7 +412,6 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	{
 		$table = $this->getTable();
 
-		$className = $this->getForeignTable($fk)->getPhpName();
 		$varName = $this->getFKVarName($fk);
 
 		$and = "";
@@ -441,9 +440,9 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 
-		#var_dump($pCollName);
-
 		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
+                $fkObjectBuilder = OMBuilder::getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
+                $className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
 
 		$script .= "
 
