@@ -734,7 +734,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
 
 		$peerClassname::hydrateDescendants(\$node, \$stmt);
-		return \$node->_children;
+		return \$node->getChildren(\$con);
 	}
 ";
 	}
