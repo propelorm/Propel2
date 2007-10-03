@@ -176,6 +176,7 @@ class Propel
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
 		'PropelPDO' => 'propel/util/PropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
+		'PropelDateTime' => 'propel/util/PropelDateTime.php',
 
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
 		'MatchValidator' => 'propel/validator/MatchValidator.php',

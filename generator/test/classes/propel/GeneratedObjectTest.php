@@ -135,7 +135,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertNull($r->getReviewDate());
 
 	}
-
+	
 	/**
 	 * Test setting invalid date/time.
 	 */
@@ -401,8 +401,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-		$this->assertType('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
+		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('PropelDateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
 

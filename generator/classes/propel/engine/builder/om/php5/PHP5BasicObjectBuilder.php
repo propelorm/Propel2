@@ -396,7 +396,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *							If format is NULL, then the integer unix timestamp will be returned.";
 		if ($this->getBuildProperty("useDateTimeClass")) {
 			$script .= "
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL).";
+	 * @return     mixed Formatted date/time value as string or PropelDateTime object (if format is NULL).";
 		} else {
 			$script .= "
 	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL).";
@@ -422,7 +422,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 
 		try {
-			\$dt = new DateTime(\$this->$clo);
+			\$dt = new PropelDateTime(\$this->$clo);
 		} catch (Exception \$x) {
 			throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
 		}
@@ -654,9 +654,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			// some string/numeric value passed
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$dt = new DateTime(date(DateTime::ISO8601, \$v));
+					\$dt = new PropelDateTime(date(DateTime::ISO8601, \$v));
 				} else {
-					\$dt = new DateTime(\$v);
+					\$dt = new PropelDateTime(\$v);
 				}
 			} catch (Exception \$x) {
 				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
