@@ -347,7 +347,7 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (null !== (".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
+			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
 				\$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {";
 
