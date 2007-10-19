@@ -256,7 +256,7 @@ abstract class ".$this->getClassname()." {
 
 		try {
 
-			\$con->begin();
+			\$con->beginTransaction();
 
 			// Move root tree to an invalid node path.
 			$nodePeerClassname::moveNodeSubTree('1', '0', \$con);
