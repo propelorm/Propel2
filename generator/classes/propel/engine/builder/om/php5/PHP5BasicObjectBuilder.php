@@ -466,13 +466,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * ".$col->getDescription();
 		if ($col->isLazyLoad()) {
 			$script .= "
-	 * @param      PDO An optional PDO connection to use for fetching this lazy-loaded column.";
+	 * @param      PropelPDO An optional PropelPDO connection to use for fetching this lazy-loaded column.";
 		}
 		$script .= "
 	 * @return     ".$col->getPhpType()."
 	 */
 	".$visibility." function get$cfc(";
-		if ($col->isLazyLoad()) $script .= "PDO \$con = null";
+		if ($col->isLazyLoad()) $script .= "PropelPDO \$con = null";
 		$script .= ")
 	{
 ";
@@ -510,11 +510,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * the [$clo] column, since it is not populated by
 	 * the hydrate() method.
 	 *
-	 * @param      \$con PDO (optional) The PDO connection to use.
+	 * @param      \$con PropelPDO (optional) The PropelPDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - any underlying error will be wrapped and re-thrown.
 	 */
-	protected function load$cfc(PDO \$con = null)
+	protected function load$cfc(PropelPDO \$con = null)
 	{
 		\$c = \$this->buildPkeyCriteria();
 		\$c->addSelectColumn(".$this->getColumnConstant($col).");
@@ -1142,13 +1142,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete(PDO \$con = null)
+	public function delete(PropelPDO \$con = null)
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"This object has already been deleted.\");
@@ -1183,11 +1183,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * This will only work if the object has been saved and has a valid primary key set.
 	 *
-	 * @param      PDO \$con (optional) The PDO connection to use.
+	 * @param      PropelPDO \$con (optional) The PropelPDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
 	 */
-	public function reload(PDO \$con = null)
+	public function reload(PropelPDO \$con = null)
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"Cannot reload a deleted object.\");
@@ -1264,7 +1264,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int The number of rows affected by this insert/update operation (for non-complex OM this will be at most 1).
 	 * @throws     PropelException
 	 */

@@ -241,11 +241,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Creates the supplied node as the root node.
 	 *
 	 * @param      $objectClassname \$node	Propel object for model
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     $objectClassname		Inserted propel object for model
 	 * @throws     PropelException
 	 */
-	static function createRoot(BaseNodeObject \$node = null, PDO \$con = null)
+	static function createRoot(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
@@ -267,10 +267,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Returns the root node for a given root id
 	 *
 	 * @param      int \$rootId		Root id to determine which root node to return
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     $objectClassname			Propel object for root node
 	 */
-	static function retrieveRoot(\$rootId = 1, PDO \$con = null)
+	static function retrieveRoot(\$rootId = 1, PropelPDO \$con = null)
 	{
 		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add(self::LEFT_COL, \$rootId, Criteria::EQUAL);
@@ -290,10 +290,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      $objectClassname \$child	Propel object for child node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsFirstChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PDO \$con = null)
+	static function insertAsFirstChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PropelPDO \$con = null)
 	{
 		\$newLeft = \$parent->getLeftValue() + 1;
 		\$newRight = \$parent->getLeftValue() + 2;
@@ -315,10 +315,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      $objectClassname \$child	Propel object for child node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsLastChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PDO \$con = null)
+	static function insertAsLastChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PropelPDO \$con = null)
 	{
 		\$newLeft = \$parent->getRightValue();
 		\$newRight = \$parent->getRightValue() + 1;
@@ -340,10 +340,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object for destination node
 	 * @param      $objectClassname \$sibling	Propel object for source node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsPrevSiblingOf(BaseNodeObject \$node = null, BaseNodeObject \$sibling = null, PDO \$con = null)
+	static function insertAsPrevSiblingOf(BaseNodeObject \$node = null, BaseNodeObject \$sibling = null, PropelPDO \$con = null)
 	{
 		\$newLeft = \$node->getLeftValue();
 		\$newRight = \$node->getLeftValue() + 1;
@@ -365,10 +365,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object for destination node
 	 * @param      $objectClassname \$sibling	Propel object for source node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsNextSiblingOf(BaseNodeObject \$node = null, BaseNodeObject \$sibling = null, PDO \$con = null)
+	static function insertAsNextSiblingOf(BaseNodeObject \$node = null, BaseNodeObject \$sibling = null, PropelPDO \$con = null)
 	{
 		\$newLeft = \$node->getRightValue() + 1;
 		\$newRight = \$node->getRightValue() + 2;
@@ -387,10 +387,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Inserts \$node as root node
 	 *
 	 * @param      $objectClassname \$node	Propel object as root node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertRoot(BaseNodeObject \$node = null, PDO \$con = null)
+	static function insertRoot(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::insertParent($peerClassname::retrieveRoot(\$con), \$node, \$con);
 	}
@@ -407,10 +407,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$child	Propel object to become child node
 	 * @param      $objectClassname \$parent	Propel object as parent node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertParent(BaseNodeObject \$child = null, BaseNodeObject \$parent = null, PDO \$con = null)
+	static function insertParent(BaseNodeObject \$child = null, BaseNodeObject \$parent = null, PropelPDO \$con = null)
 	{
 		self::shiftRLValues(\$child->getLeftValue(), 1, \$con);
 		self::shiftRLValues(\$child->getRightValue() + 2, 1, \$con);
@@ -429,10 +429,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Delete root node
 	 *
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     boolean		Deletion status
 	 */
-	static function deleteRoot(PDO \$con = null)
+	static function deleteRoot(PropelPDO \$con = null)
 	{
 		\$root = $peerClassname::retrieveRoot(\$con);
 		if ($peerClassname::getNumberOfChildren(\$root) == 1) {
@@ -453,10 +453,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Delete \$dest node
 	 *
 	 * @param      $objectClassname \$dest	Propel object node to delete
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     boolean		Deletion status
 	 */
-	static function deleteNode(BaseNodeObject \$dest = null, PDO \$con = null)
+	static function deleteNode(BaseNodeObject \$dest = null, PropelPDO \$con = null)
 	{
 		if (\$dest->getLeftValue() == 1) {
 			// deleting root implies conditions (see deleteRoot() method)
@@ -480,9 +480,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$parent		Propel object for parent node
 	 * @param      $objectClassname \$child		Propel object for child node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function moveToFirstChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PDO \$con = null)
+	static function moveToFirstChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PropelPDO \$con = null)
 	{
 		\$destLeft = \$parent->getLeftValue() + 1;
 		self::updateNode(\$child, \$destLeft, \$con);
@@ -500,9 +500,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$parent		Propel object for parent node
 	 * @param      $objectClassname \$child		Propel object for child node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function moveToLastChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PDO \$con = null)
+	static function moveToLastChildOf(BaseNodeObject \$parent = null, BaseNodeObject \$child = null, PropelPDO \$con = null)
 	{
 		\$destLeft = \$parent->getRightValue();
 		self::updateNode(\$child, \$destLeft, \$con);
@@ -520,9 +520,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$dest		Propel object for destination node
 	 * @param      $objectClassname \$node		Propel object for source node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function moveToPrevSiblingOf(BaseNodeObject \$dest = null, BaseNodeObject \$node = null, PDO \$con = null)
+	static function moveToPrevSiblingOf(BaseNodeObject \$dest = null, BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$destLeft = \$dest->getLeftValue();
 		self::updateNode(\$node, \$destLeft, \$con);
@@ -540,9 +540,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$dest		Propel object for destination node
 	 * @param      $objectClassname \$node		Propel object for source node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function moveToNextSiblingOf(BaseNodeObject \$dest = null, BaseNodeObject \$node = null, PDO \$con = null)
+	static function moveToNextSiblingOf(BaseNodeObject \$dest = null, BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$destLeft = \$dest->getRightValue();
 		\$destLeft = \$destLeft + 1;
@@ -560,10 +560,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets first child for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveFirstChild(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveFirstChild(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->add(self::LEFT_COL, \$node->getLeftValue() + 1, Criteria::EQUAL);
@@ -582,10 +582,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets last child for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveLastChild(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveLastChild(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->add(self::RIGHT_COL, \$node->getRightValue() - 1, Criteria::EQUAL);
@@ -604,10 +604,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets prev sibling for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else null
 	 */
-	static function retrievePrevSibling(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrievePrevSibling(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->add(self::RIGHT_COL, \$node->getLeftValue() - 1, Criteria::EQUAL);
@@ -627,10 +627,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets next sibling for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveNextSibling(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveNextSibling(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->add(self::LEFT_COL, \$node->getRightValue() + 1, Criteria::EQUAL);
@@ -648,9 +648,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Retrieves the entire tree from root
 	 *
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function retrieveTree(PDO \$con = null)
+	static function retrieveTree(PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -681,9 +681,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Retrieves the entire tree from parent \$node
 	 *
 	 * @param      $objectClassname \$node	Propel object for parent node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function retrieveBranch(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveBranch(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::retrieveDescendants(\$node, \$con);
 	}
@@ -699,9 +699,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets direct children for the node
 	 *
 	 * @param      $objectClassname \$node	Propel object for parent node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function retrieveChildren(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveChildren(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -723,9 +723,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets all descendants for the node
 	 *
 	 * @param      $objectClassname \$node	Propel object for parent node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function retrieveDescendants(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveDescendants(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -748,9 +748,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets all siblings for the node
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function retrieveSiblings(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveSiblings(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$parent = $peerClassname::retrieveParent(\$node, \$con);
 		\$siblings = $peerClassname::retrieveChildren(\$parent, \$con);
@@ -769,10 +769,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets immediate ancestor for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else null
 	 */
-	static function retrieveParent(BaseNodeObject \$node = null, PDO \$con = null)
+	static function retrieveParent(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
@@ -801,10 +801,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets ancestor for the given node if it exists
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveUndefined(PDO \$con = null)
+	static function retrieveUndefined(PropelPDO \$con = null)
 	{
 		\$c = new Criteria();
 		\$c1 = \$c->getNewCriterion(self::LEFT_COL, 0);
@@ -830,10 +830,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets level for the given node
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getLevel(BaseNodeObject \$node = null, PDO \$con = null)
+	static function getLevel(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
@@ -859,10 +859,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets number of direct children for given node
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getNumberOfChildren(BaseNodeObject \$node = null, PDO \$con = null)
+	static function getNumberOfChildren(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$children = $peerClassname::retrieveChildren(\$node);
 		return count(\$children);
@@ -879,10 +879,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Gets number of descendants for given node
 	 *
 	 * @param      $objectClassname \$node	Propel object for src node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getNumberOfDescendants(BaseNodeObject \$node = null, PDO \$con = null)
+	static function getNumberOfDescendants(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$right = \$node->getRightValue();
 		\$left = \$node->getLeftValue();
@@ -901,10 +901,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Returns path to a specific node as an array, useful to create breadcrumbs
 	 *
 	 * @param      $objectClassname \$node		Propel object of node to create path to
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     array			Array in order of heirarchy
 	 */
-	static function getPath(BaseNodeObject \$node = null, PDO \$con = null)
+	static function getPath(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$path = array();
 		\$path[] = \$node;
@@ -1043,10 +1043,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if \$node has an ancestor
 	 *
 	 * @param      $objectClassname \$node		Propel object for node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasParent(BaseNodeObject \$node = null, PDO \$con = null)
+	static function hasParent(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::isValid($peerClassname::retrieveParent(\$node, \$con));
 	}
@@ -1062,10 +1062,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if \$node has prev sibling
 	 *
 	 * @param      $objectClassname \$node		Propel object for node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasPrevSibling(BaseNodeObject \$node = null, PDO \$con = null)
+	static function hasPrevSibling(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::isValid($peerClassname::retrievePrevSibling(\$node, \$con));
 	}
@@ -1081,10 +1081,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if \$node has next sibling
 	 *
 	 * @param      $objectClassname \$node		Propel object for node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasNextSibling(BaseNodeObject \$node = null, PDO \$con = null)
+	static function hasNextSibling(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::isValid($peerClassname::retrieveNextSibling(\$node, \$con));
 	}
@@ -1100,7 +1100,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Tests if \$node has children
 	 *
 	 * @param      $objectClassname \$node		Propel object for node
-	 * @param      PDO \$con		Connection to use.
 	 * @return     bool
 	 */
 	static function hasChildren(BaseNodeObject \$node = null)
@@ -1119,9 +1118,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Deletes \$node and all of its descendants
 	 *
 	 * @param      $objectClassname \$node		Propel object for source node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	static function deleteDescendants(BaseNodeObject \$node = null, PDO \$con = null)
+	static function deleteDescendants(BaseNodeObject \$node = null, PropelPDO \$con = null)
 	{
 		\$left = \$node->getLeftValue();
 		\$right = \$node->getRightValue();
@@ -1153,10 +1152,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Returns a node given its primary key or the node itself
 	 *
 	 * @param      int/$objectClassname \$node	Primary key/instance of required node
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     object		Propel object for model
 	 */
-	static function getNode(\$node, PDO \$con = null)
+	static function getNode(\$node, PropelPDO \$con = null)
 	{
 		if (is_object(\$node)) {
 			return \$node;
@@ -1262,9 +1261,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object for parent node
 	 * @param      int \$delta	Value to be shifted by, can be negative
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	protected static function shiftRParent(BaseNodeObject \$node = null, \$delta, PDO \$con = null)
+	protected static function shiftRParent(BaseNodeObject \$node = null, \$delta, PropelPDO \$con = null)
 	{
 		if (\$node->hasParent(\$con)) {
 			\$parent = \$node->retrieveParent();
@@ -1285,10 +1284,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$node		Propel object for model
 	 * @param      int \$left		Left Value
 	 * @param      int \$right		Right Value
-	 * @param      PDO \$con			Connection to use.
+	 * @param      PropelPDO \$con			Connection to use.
 	 * @return     object			Inserted propel object for model
 	 */
-	protected static function insertNode(BaseNodeObject \$node = null, \$left, \$right, PDO \$con = null)
+	protected static function insertNode(BaseNodeObject \$node = null, \$left, \$right, PropelPDO \$con = null)
 	{
 		\$node->setLeftValue(\$left);
 		\$node->setRightValue(\$right);
@@ -1306,10 +1305,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Move \$node and its children to location \$dest and updates rest of tree
 	 *
 	 * @param      $objectClassname \$node Propel object for node to update
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @param      int	 Destination left value
 	 */
-	protected static function updateNode(BaseNodeObject \$node = null, \$destLeft, PDO \$con = null)
+	protected static function updateNode(BaseNodeObject \$node = null, \$destLeft, PropelPDO \$con = null)
 	{
 		\$left = \$node->getLeftValue();
 		\$right = \$node->getRightValue();
@@ -1347,9 +1346,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      int \$first		First node to be shifted
 	 * @param      int \$delta		Value to be shifted by, can be negative
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	protected static function shiftRLValues(\$first, \$delta, PDO \$con = null)
+	protected static function shiftRLValues(\$first, \$delta, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
@@ -1385,10 +1384,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      int \$first	First node to be shifted (L value)
 	 * @param      int \$last	Last node to be shifted (L value)
 	 * @param      int \$delta	Value to be shifted by, can be negative
-	 * @param      PDO \$con		Connection to use.
+	 * @param      PropelPDO \$con		Connection to use.
 	 * @return     array 		Shifted L and R values
 	 */
-	protected static function shiftRLRange(\$first, \$last, \$delta, PDO \$con = null)
+	protected static function shiftRLRange(\$first, \$last, \$delta, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);

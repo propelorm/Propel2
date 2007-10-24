@@ -449,11 +449,11 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	/**
 	 * Get the associated $className object
 	 *
-	 * @param      PDO Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     $className The associated $className object.
 	 * @throws     PropelException
 	 */
-	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(PDO \$con = null)
+	public function get".$this->getFKPhpNameAffix($fk, $plural = false)."(PropelPDO \$con = null)
 	{";
 		$script .= "
 		if (\$this->$varName === null && ($conditional)) {";
@@ -807,10 +807,10 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 *
 	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @throws     PropelException
 	 */
-	public function count$relCol(\$criteria = null, \$distinct = false, PDO \$con = null)
+	public function count$relCol(\$criteria = null, \$distinct = false, PropelPDO \$con = null)
 	{
 		";
 		$script .= "
@@ -861,12 +861,12 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * related $relCol from storage. If this ".$this->getObjectClassname()." is new, it will return
 	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @param      Criteria \$criteria
 	 * @return     array {$className}[]
 	 * @throws     PropelException
 	 */
-	public function get$relCol(\$criteria = null, PDO \$con = null)
+	public function get$relCol(\$criteria = null, PropelPDO \$con = null)
 	{
 		";
 		$script .= "
@@ -948,11 +948,11 @@ $script .= "
 	/**
 	 * Gets a single $className object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     $className
 	 * @throws     PropelException
 	 */
-	public function get".$this->getRefFKPhpNameAffix($refFK, $plural = false)."(PDO \$con = null)
+	public function get".$this->getRefFKPhpNameAffix($refFK, $plural = false)."(PropelPDO \$con = null)
 	{
 ";
 		$script .= "
@@ -1040,12 +1040,12 @@ $script .= "
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave(PDO \$con)
+	protected function doSave(PropelPDO \$con)
 	{
 		\$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!\$this->alreadyInSave) {
@@ -1181,12 +1181,12 @@ $script .= "
 	 * it inserts it; otherwise an update is performed.  This method
 	 * wraps the doSave() worker method in a transaction.
 	 *
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save(PDO \$con = null)
+	public function save(PropelPDO \$con = null)
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"You cannot save an object that has been deleted.\");
@@ -1534,11 +1534,11 @@ $script .= "
 	 * This will only work if the object has been saved and has a valid primary key set.
 	 *
 	 * @param      boolean \$deep (optional) Whether to also de-associated any related objects. 
-	 * @param      PDO \$con (optional) The PDO connection to use.
+	 * @param      PropelPDO \$con (optional) The PropelPDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
 	 */
-	public function reload(\$deep = false, PDO \$con = null)
+	public function reload(\$deep = false, PropelPDO \$con = null)
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"Cannot reload a deleted object.\");

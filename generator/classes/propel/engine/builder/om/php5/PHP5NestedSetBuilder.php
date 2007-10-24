@@ -245,11 +245,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Saves modified object data to the datastore.
 	 * If object is saved without left/right values, set them as undefined (0)
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function save(PDO \$con = null)
+	public function save(PropelPDO \$con = null)
 	{
 		\$left = \$this->getLeftValue();
 		\$right = \$this->getRightValue();
@@ -270,11 +270,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Removes this object and all descendants from datastore.
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function delete(PDO \$con = null)
+	public function delete(PropelPDO \$con = null)
 	{
 		\$right = \$this->getRightValue();
 		\$left = \$this->getLeftValue();
@@ -295,10 +295,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets the level if set, otherwise calculates this and returns it
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     int
 	 */
-	public function getLevel(PDO \$con = null)
+	public function getLevel(PropelPDO \$con = null)
 	{
 		if (null === \$this->level) {
 			\$this->level = $peerClassname::getLevel(\$this, \$con);
@@ -405,10 +405,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Get the path to the node in the tree
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     array
 	 */
-	public function getPath(PDO \$con = null)
+	public function getPath(PropelPDO \$con = null)
 	{
 		return $peerClassname::getPath(\$this, \$con);
 	}
@@ -422,10 +422,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets the number of children for the node (direct descendants)
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     int
 	 */
-	public function getNumberOfChildren(PDO \$con = null)
+	public function getNumberOfChildren(PropelPDO \$con = null)
 	{
 		return $peerClassname::getNumberOfChildren(\$this, \$con);
 	}
@@ -439,10 +439,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets the total number of descendants for the node
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     int
 	 */
-	public function getNumberOfDescendants(PDO \$con = null)
+	public function getNumberOfDescendants(PropelPDO \$con = null)
 	{
 		return $peerClassname::getNumberOfDescendants(\$this, \$con);
 	}
@@ -456,10 +456,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets the children for the node
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     array
 	 */
-	public function getChildren(PDO \$con = null)
+	public function getChildren(PropelPDO \$con = null)
 	{
 		\$this->getLevel();
 
@@ -479,10 +479,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets the descendants for the node
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     array
 	 */
-	public function getDescendants(PDO \$con = null)
+	public function getDescendants(PropelPDO \$con = null)
 	{
 		\$this->getLevel();
 		if (is_array(\$this->_children)) {
@@ -550,10 +550,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Tests if object has an ancestor
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     bool
 	 */
-	public function hasParent(PDO \$con = null)
+	public function hasParent(PropelPDO \$con = null)
 	{
 		if (null === \$this->hasParentNode) {
 			$peerClassname::hasParent(\$this, \$con);
@@ -586,10 +586,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Determines if the node has previous sibling
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     bool
 	 */
-	public function hasPrevSibling(PDO \$con = null)
+	public function hasPrevSibling(PropelPDO \$con = null)
 	{
 		if (null === \$this->hasPrevSibling) {
 			$peerClassname::hasPrevSibling(\$this, \$con);
@@ -606,10 +606,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Determines if the node has next sibling
 	 *
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     bool
 	 */
-	public function hasNextSibling(PDO \$con = null)
+	public function hasNextSibling(PropelPDO \$con = null)
 	{
 		if (null === \$this->hasNextSibling) {
 			$peerClassname::hasNextSibling(\$this, \$con);
@@ -626,10 +626,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveParent(PDO \$con = null)
+	public function retrieveParent(PropelPDO \$con = null)
 	{
 		if (null === \$this->hasParentNode) {
 			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
@@ -647,10 +647,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets first child if it exists
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveFirstChild(PDO \$con = null)
+	public function retrieveFirstChild(PropelPDO \$con = null)
 	{
 		if (\$this->hasChildren(\$con)) {
 			if (is_array(\$this->_children)) {
@@ -671,10 +671,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets last child if it exists
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveLastChild(PDO \$con = null)
+	public function retrieveLastChild(PropelPDO \$con = null)
 	{
 		if (\$this->hasChildren(\$con)) {
 			if (is_array(\$this->_children)) {
@@ -695,10 +695,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets prev sibling for the given node if it exists
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrievePrevSibling(PDO \$con = null)
+	public function retrievePrevSibling(PropelPDO \$con = null)
 	{
 		if (\$this->hasPrevSibling(\$con)) {
 			return \$this->prevSibling;
@@ -714,10 +714,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets next sibling for the given node if it exists
 	 *
-	 * @param      PDO \$con      Connection to use.
+	 * @param      PropelPDO \$con      Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveNextSibling(PDO \$con = null)
+	public function retrieveNextSibling(PropelPDO \$con = null)
 	{
 		if (\$this->hasNextSibling(\$con)) {
 			return \$this->nextSibling;
@@ -735,10 +735,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts as first child of destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject \$dest = null, PDO \$con = null)
+	public function insertAsFirstChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::insertAsFirstChildOf(\$dest, \$this, \$con);
 	}
@@ -753,10 +753,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts as last child of destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject \$dest = null, PDO \$con = null)
+	public function insertAsLastChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::insertAsLastChildOf(\$dest, \$this, \$con);
 	}
@@ -771,10 +771,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts \$node as previous sibling to destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject \$dest = null, PDO \$con = null)
+	public function insertAsPrevSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::insertAsPrevSiblingOf(\$dest, \$this, \$con);
 	}
@@ -789,10 +789,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts \$node as next sibling to destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PDO Connection to use.
+	 * @param      PropelPDO Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject \$dest = null, PDO \$con = null)
+	public function insertAsNextSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
 	{
 		return $peerClassname::insertAsNextSiblingOf(\$dest, \$this, \$con);
 	}

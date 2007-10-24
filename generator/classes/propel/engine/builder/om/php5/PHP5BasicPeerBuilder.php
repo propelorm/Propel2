@@ -492,10 +492,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      PDO \$con
+	 * @param      PropelPropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria \$criteria, \$distinct = false, PDO \$con = null)
+	public static function doCount(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -535,12 +535,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria \$criteria object used to create the SELECT statement.
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     ".$this->getObjectClassname()."
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria \$criteria, PDO \$con = null)
+	public static function doSelectOne(Criteria \$criteria, PropelPDO \$con = null)
 	{
 		\$critcopy = clone \$criteria;
 		\$critcopy->setLimit(1);
@@ -563,12 +563,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Method to do selects.
 	 *
 	 * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria \$criteria, PDO \$con = null)
+	public static function doSelect(Criteria \$criteria, PropelPDO \$con = null)
 	{
 		return ".$this->getPeerClassname()."::populateObjects(".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con));
 	}";
@@ -589,13 +589,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria \$criteria The Criteria object used to build the SELECT statement.
-	 * @param      PDO \$con The connection to use
+	 * @param      PropelPDO \$con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        ".$this->basePeerClassname."::doSelect()
 	 */
-	public static function doSelectStmt(Criteria \$criteria, PDO \$con = null)
+	public static function doSelectStmt(Criteria \$criteria, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
@@ -724,7 +724,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
-	 * @param      array \$row PDO resultset row.
+	 * @param      array \$row PropelPDO resultset row.
 	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
 	 * @return     string
 	 */
@@ -777,7 +777,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
-	 * @param      array \$row PDO resultset row.
+	 * @param      array \$row PropelPDO resultset row.
 	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
 	 * @return     string
 	 */
@@ -880,7 +880,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * The returned Class will contain objects of the default type or
 	 * objects that inherit from the default.
 	 *
-	 * @param      array \$row PDO result row.
+	 * @param      array \$row PropelPDO result row.
 	 * @param      int \$colnum Column to examine for OM class information (first is 0).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
@@ -1000,12 +1000,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Method perform an INSERT on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
 	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the INSERT statement.
-	 * @param      PDO \$con the PDO connection to use
+	 * @param      PropelPDO \$con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert(\$values, \$con = null)
+	public static function doInsert(\$values, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
@@ -1059,12 +1059,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Method perform an UPDATE on the database, given a ".$this->getObjectClassname()." or Criteria object.
 	 *
 	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object containing data that is used to create the UPDATE statement.
-	 * @param      PDO \$con The connection to use (specify PDO connection object to exert more control over transactions).
+	 * @param      PropelPDO \$con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate(\$values, PDO \$con = null)
+	public static function doUpdate(\$values, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
@@ -1154,13 +1154,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * @param      mixed \$values Criteria or ".$this->getObjectClassname()." object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      PDO \$con the connection to use
+	 * @param      PropelPDO \$con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete(\$values, PDO \$con = null)
+	 public static function doDelete(\$values, PropelPDO \$con = null)
 	 {
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME);
@@ -1319,10 +1319,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * This method should be used within a transaction if possible.
 	 *
 	 * @param      Criteria \$criteria
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
-	protected static function doOnDeleteCascade(Criteria \$criteria, PDO \$con)
+	protected static function doOnDeleteCascade(Criteria \$criteria, PropelPDO \$con)
 	{
 		// initialize var to track total num of affected rows
 		\$affectedRows = 0;
@@ -1400,10 +1400,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * This method should be used within a transaction if possible.
 	 *
 	 * @param      Criteria \$criteria
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     void
 	 */
-	protected static function doOnDeleteSetNull(Criteria \$criteria, PDO \$con)
+	protected static function doOnDeleteSetNull(Criteria \$criteria, PropelPDO \$con)
 	{
 
 		// first find the objects that are implicated by the \$criteria
@@ -1533,10 +1533,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Retrieve a single object by pkey.
 	 *
 	 * @param      mixed \$pk the primary key.
-	 * @param      PDO \$con the connection to use
+	 * @param      PropelPDO \$con the connection to use
 	 * @return     " .$this->getObjectClassname(). "
 	 */
-	public static function ".$this->getRetrieveMethodName()."(\$pk, PDO \$con = null)
+	public static function ".$this->getRetrieveMethodName()."(\$pk, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
@@ -1582,11 +1582,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Retrieve multiple objects by pkey.
 	 *
 	 * @param      array \$pks List of primary keys
-	 * @param      PDO \$con the connection to use
+	 * @param      PropelPDO \$con the connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function ".$this->getRetrieveMethodName()."s(\$pks, PDO \$con = null)
+	public static function ".$this->getRetrieveMethodName()."s(\$pks, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
@@ -1647,7 +1647,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	   ";
 	   }
 	   $script .= "
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     ".$this->getObjectClassname()."
 	 */
 	public static function ".$this->getRetrieveMethodName()."(";
@@ -1656,7 +1656,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$clo = strtolower($col->getName());
 			$script .= ($co++ ? "," : "") . " $".$clo;
 		} /* foreach */
-		$script .= ", PDO \$con = null) {
+		$script .= ", PropelPDO \$con = null) {
 		if (\$con === null) {
 			\$con = Propel::getConnection(self::DATABASE_NAME);
 		}

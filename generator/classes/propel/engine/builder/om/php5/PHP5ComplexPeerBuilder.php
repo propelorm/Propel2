@@ -226,10 +226,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -448,10 +448,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PDO \$con = null)
+	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
 		\$criteria = clone \$criteria;
 
@@ -713,10 +713,10 @@ class PHP5ComplexPeerBuilder extends PHP5BasicPeerBuilder {
 	 *
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      PDO \$con
+	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PDO \$con = null)
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
