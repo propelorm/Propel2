@@ -126,7 +126,6 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 		// "package" dependencies
 		$package->addPackageDepWithChannel( 'optional', 'creole', 'pear.phpdb.org', '1.1.0');
 		$package->addExtensionDep('required', 'pdo');
-		$package->addExtensionDep('required', 'xml');
 		$package->addExtensionDep('required', 'spl');
 		
 		// now we run this weird generateContents() method that apparently
