@@ -84,7 +84,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 	 *
 	 * @throws     IOException - if unable to store properties
 	 */
-	private function createSqlDbMap()
+	protected function createSqlDbMap()
 	{
 		if ($this->getSqlDbMap() === null) {
 			return;
