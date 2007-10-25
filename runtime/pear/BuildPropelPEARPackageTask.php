@@ -120,12 +120,16 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 		$package->addMaintainer('lead', 'david', 'David Zuelke', 'dz@bitxtender.com');
 
 		// "core" dependencies
-		$package->setPhpDep('5.0.0');
+		$package->setPhpDep('5.2.0');
 		$package->setPearinstallerDep('1.4.0');
 
 		// "package" dependencies
-		$package->addPackageDepWithChannel( 'required', 'creole', 'pear.phpdb.org', '1.1.0RC1');
-
+		$package->addPackageDepWithChannel( 'optional', 'creole', 'pear.phpdb.org', '1.1.0');
+		$package->addExtensionDep('required', 'pdo');
+		$package->addExtensionDep('required', 'xml');
+		$package->addExtensionDep('required', 'xsl');
+		$package->addExtensionDep('required', 'spl');
+		
 		// now we run this weird generateContents() method that apparently
 		// is necessary before we can add replacements ... ?
 		$package->generateContents();
