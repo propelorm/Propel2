@@ -527,14 +527,14 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * Replaces all external-schema nodes with the content of xml schema that node refers to
 	 *
 	 * Recurses to include any external schema referenced from in an included xml (and deeper)
-	 * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof 
+	 * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof
 	 * users don't have those and adding some more informative exceptions would be better
 	 *
-	 * @param DomDocument $dom
-	 * @param string $srcDir
-	 * @return void (objects, DomDocument, are references by default in PHP 5, so returning it is useless)
+	 * @param      DomDocument $dom
+	 * @param      string $srcDir
+	 * @return     void (objects, DomDocument, are references by default in PHP 5, so returning it is useless)
 	 **/
-	protected function includeExternalSchemas(DomDocument $dom, $srcDir) { 
+	protected function includeExternalSchemas(DomDocument $dom, $srcDir) {
 		$databaseNode = $dom->getElementsByTagName("database")->item(0);
 		foreach ($dom->getElementsByTagName("external-schema") as $externalSchema) {
 			$include = $externalSchema->getAttribute("filename");

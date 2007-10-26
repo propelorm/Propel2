@@ -150,7 +150,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		}
 
 		$script .= "Type=$mysqlTableType";
-		
+
 		$dbVendorSpecific = $table->getDatabase()->getVendorSpecificInfo();
 		$tableVendorSpecific = $table->getVendorSpecificInfo();
 		$vendorSpecific = array_merge ( $dbVendorSpecific, $tableVendorSpecific );

@@ -602,7 +602,7 @@ class Propel
 	{
 		self::$instancePoolingEnabled = false;
 	}
-	
+
 	/**
 	 * Enable instance pooling (enabled by default).
 	 */
@@ -610,7 +610,7 @@ class Propel
 	{
 		self::$instancePoolingEnabled = true;
 	}
-	
+
 	/**
 	 *  the instance pooling behaviour. True by default.
 	 *

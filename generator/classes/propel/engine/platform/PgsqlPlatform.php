@@ -119,7 +119,7 @@ class PgsqlPlatform extends DefaultPlatform {
 
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-	 * @return     boolean 
+	 * @return     boolean
 	 */
 	public function hasStreamBlobImpl()
 	{

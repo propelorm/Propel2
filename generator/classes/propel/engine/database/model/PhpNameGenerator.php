@@ -36,7 +36,7 @@ class PhpNameGenerator implements NameGenerator {
 	/**
 	 * <code>inputs</code> should consist of two (three) elements, the
 	 * original name of the database element and the method for
-	 * generating the name.  
+	 * generating the name.
 	 * The optional third element may contain a prefix that will be
 	 * stript from name prior to generate the resulting name.
 	 * There are currently three methods:
@@ -58,12 +58,12 @@ class PhpNameGenerator implements NameGenerator {
 	{
 		$schemaName = $inputs[0];
 		$method = $inputs[1];
-		
-		if(count($inputs)>2) {
-		    $prefix = $inputs[2];
-		    if($prefix != '' && substr($schemaName, 0, strlen($prefix)) == $prefix) {
-		        $schemaName = substr($schemaName, strlen($prefix));
-		    }
+
+		if (count($inputs)>2) {
+			$prefix = $inputs[2];
+			if ($prefix != '' && substr($schemaName, 0, strlen($prefix)) == $prefix) {
+				$schemaName = substr($schemaName, strlen($prefix));
+			}
 		}
 
 		$phpName = null;

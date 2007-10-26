@@ -127,7 +127,7 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 		$package->addPackageDepWithChannel( 'optional', 'creole', 'pear.phpdb.org', '1.1.0');
 		$package->addExtensionDep('required', 'pdo');
 		$package->addExtensionDep('required', 'spl');
-		
+
 		// now we run this weird generateContents() method that apparently
 		// is necessary before we can add replacements ... ?
 		$package->generateContents();

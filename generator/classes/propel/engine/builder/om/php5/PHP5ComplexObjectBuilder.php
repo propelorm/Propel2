@@ -441,8 +441,8 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 
 		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
-                $fkObjectBuilder = OMBuilder::getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
-                $className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
+		$fkObjectBuilder = OMBuilder::getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
+		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
 
 		$script .= "
 
@@ -1533,7 +1533,7 @@ $script .= "
 	 *
 	 * This will only work if the object has been saved and has a valid primary key set.
 	 *
-	 * @param      boolean \$deep (optional) Whether to also de-associated any related objects. 
+	 * @param      boolean \$deep (optional) Whether to also de-associated any related objects.
 	 * @param      PropelPDO \$con (optional) The PropelPDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
@@ -1562,9 +1562,9 @@ $script .= "
 		}
 		\$this->hydrate(\$row, 0, true); // rehydrate
 ";
-		
+
 		// support for lazy load columns
-		foreach($table->getColumns() as $col) {
+		foreach ($table->getColumns() as $col) {
 			if ($col->isLazyLoad()) {
 				$clo = strtolower($col->getName());
 				$script .= "
@@ -1574,11 +1574,11 @@ $script .= "
 ";
 			}
 		}
-		
+
 		$script .= "
 		if (\$deep) {  // also de-associate any related objects?
 ";
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$varName = $this->getFKVarName($fk);
 			$script .= "
@@ -1591,13 +1591,13 @@ $script .= "
 			\$this->".$this->getPKRefFKVarName($refFK)." = null;
 ";
 			} else {
-				$script .= "	
+				$script .= "
 			\$this->".$this->getRefFKCollVarName($refFK)." = null;
 			\$this->".$this->getRefFKLastCriteriaVarName($refFK)." = null;
 ";
 			}
 		}
-		
+
 		$script .= "
 		} // if (deep)
 	}

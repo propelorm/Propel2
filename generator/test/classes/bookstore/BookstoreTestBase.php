@@ -52,7 +52,7 @@ abstract class BookstoreTestBase extends PHPUnit2_Framework_TestCase {
 		$this->assertEquals(0, count(BookstoreEmployeePeer::doSelect(new Criteria())), "Expect bookstore_employee table to be empty.");
 		$this->assertEquals(0, count(BookstoreEmployeeAccountPeer::doSelect(new Criteria())), "Expect bookstore_employee_account table to be empty.");
 		$this->assertEquals(0, count(BookstoreSalePeer::doSelect(new Criteria())), "Expect bookstore_sale table to be empty.");
-		
+
 		BookPeer::clearInstancePool();
 		$this->assertEquals(0, count(BookPeer::$instances), "Expected 0 Book instances after clearInstancePool()");
 
@@ -76,7 +76,7 @@ abstract class BookstoreTestBase extends PHPUnit2_Framework_TestCase {
 
 		BookstoreSalePeer::clearInstancePool();
 		$this->assertEquals(0, count(BookstoreSalePeer::$instances), "Expected 0 BookstoreSale instances after clearInstancePool()");
-		
+
 		parent::tearDown();
 	}
 

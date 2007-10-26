@@ -127,10 +127,10 @@ class DBOracle extends DBAdapter {
 		if ($name === null) {
 			throw new PropelException("Unable to fetch next sequence ID without sequence name.");
 		}
-		
+
 		$stmt = $con->query("SELECT " . $name . ".nextval FROM dual");
 		$row = $stmt->fetch(PDO::FETCH_NUM);
-		
+
 		return $row[0];
 	}
 

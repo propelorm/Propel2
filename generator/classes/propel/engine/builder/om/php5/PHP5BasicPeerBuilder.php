@@ -674,7 +674,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function removeInstanceFromPool(\$value)
 	{";
-                $script .= "
+		$script .= "
 		if (Propel::isInstancePoolingEnabled()) {";
 		$pk = $table->getPrimaryKey();
 

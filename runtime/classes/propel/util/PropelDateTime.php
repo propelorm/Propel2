@@ -29,33 +29,33 @@
  */
 class PropelDateTime extends DateTime
 {
-	
+
 	/**
 	 * A string representation of the date, for serialization.
-	 * @var string
+	 * @var        string
 	 */
 	private $dateString;
-	
+
 	/**
 	 * PHP "magic" function called when object is serialized.
 	 * Sets an internal property with the date string and returns properties
 	 * of class that should be serialized.
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	function __sleep()
 	{
-		// Make serialization work as expected. 
-	    $this->dateString = $this->format('r');
-	    return array('dateString');
+		// Make serialization work as expected.
+		$this->dateString = $this->format('r');
+		return array('dateString');
 	}
-	
+
 	/**
 	 * PHP "magic" function called when object is restored from serialized state.
-	 * Calls DateTime constructor with previously stored string value of date. 
+	 * Calls DateTime constructor with previously stored string value of date.
 	 */
 	function __wakeup()
 	{
-	    parent::__construct($this->dateString);
+		parent::__construct($this->dateString);
 	}
 
 }
