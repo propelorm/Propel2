@@ -20,7 +20,7 @@
 	<xsl:template match='/database'>
 		<database>
 			<xsl:if test='not(boolean(@defaultIdMethod))'>
-				<xsl:attribute name='defaultIdMethod'>none</xsl:attribute>
+				<xsl:attribute name='defaultIdMethod'>native</xsl:attribute>
 			</xsl:if>
 			<xsl:if test='not(boolean(@defaultPhpNamingMethod))'>
 				<xsl:attribute name='defaultPhpNamingMethod'>underscore</xsl:attribute>
