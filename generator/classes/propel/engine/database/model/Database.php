@@ -68,7 +68,7 @@ class Database extends XMLElement {
 		$this->baseClass = $this->getAttribute("baseClass");
 		$this->basePeer = $this->getAttribute("basePeer");
 		$this->defaultPhpType = $this->getAttribute("defaultPhpType");
-		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod");
+		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);
 		$this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
 		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
 		$this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
