@@ -30,63 +30,63 @@
 interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * If object is saved without left/right values, set them as undefined (0)
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	public function save(PDO $con = null);
+	public function save(PropelPDO $con = null);
 
 	/**
 	 * Delete node and descendants
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	public function delete(PDO $con = null);
+	public function delete(PropelPDO $con = null);
 
 	/**
 	 * Gets the level if set, otherwise calculates this and returns it
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int
 	 */
-	public function getLevel(PDO $con = null);
+	public function getLevel(PropelPDO $con = null);
 
 	/**
 	 * Get the path to the node in the tree
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     array
 	 */
-	public function getPath(PDO $con = null);
+	public function getPath(PropelPDO $con = null);
 
 	/**
 	 * Gets the number of children for the node (direct descendants)
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int
 	 */
-	public function getNumberOfChildren(PDO $con = null);
+	public function getNumberOfChildren(PropelPDO $con = null);
 
 	/**
 	 * Gets the total number of desceandants for the node
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int
 	 */
-	public function getNumberOfDescendants(PDO $con = null);
+	public function getNumberOfDescendants(PropelPDO $con = null);
 
 	/**
 	 * Gets the children for the node
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     array
 	 */
-	public function getChildren(PDO $con = null);
+	public function getChildren(PropelPDO $con = null);
 
 	/**
 	 * Gets the descendants for the node
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
  	 * @return     array
 	 */
-	public function getDescendants(PDO $con = null);
+	public function getDescendants(PropelPDO $con = null);
 
 	/**
 	 * Determines if the node is the root node
@@ -113,10 +113,10 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Tests if object has an ancestor
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	public function hasParent(PDO $con = null);
+	public function hasParent(PropelPDO $con = null);
 
 	/**
 	 * Determines if the node has children / descendants
@@ -128,93 +128,93 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Determines if the node has previous sibling
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	public function hasPrevSibling(PDO $con = null);
+	public function hasPrevSibling(PropelPDO $con = null);
 
 	/**
 	 * Determines if the node has next sibling
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	public function hasNextSibling(PDO $con = null);
+	public function hasNextSibling(PropelPDO $con = null);
 
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveParent(PDO $con = null);
+	public function retrieveParent(PropelPDO $con = null);
 
 	/**
 	 * Gets first child if it exists
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveFirstChild(PDO $con = null);
+	public function retrieveFirstChild(PropelPDO $con = null);
 
 	/**
 	 * Gets last child if it exists
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveLastChild(PDO $con = null);
+	public function retrieveLastChild(PropelPDO $con = null);
 
 	/**
 	 * Gets prev sibling for the given node if it exists
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrievePrevSibling(PDO $con = null);
+	public function retrievePrevSibling(PropelPDO $con = null);
 
 	/**
 	 * Gets next sibling for the given node if it exists
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	public function retrieveNextSibling(PDO $con = null);
+	public function retrieveNextSibling(PropelPDO $con = null);
 
 	/**
 	 * Inserts as first child of destination node $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject $dest = null, PDO $con = null);
+	public function insertAsFirstChildOf(BaseNodeObject $dest = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject $dest = null, PDO $con = null);
+	public function insertAsLastChildOf(BaseNodeObject $dest = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as previous sibling to destination node $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject $dest = null, PDO $con = null);
+	public function insertAsPrevSiblingOf(BaseNodeObject $dest = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as next sibling to destination node $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject $dest = null, PDO $con = null);
+	public function insertAsNextSiblingOf(BaseNodeObject $dest = null, PropelPDO $con = null);
 
 } // BaseNodeObject

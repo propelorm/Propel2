@@ -31,259 +31,259 @@ interface BaseNodePeer {
 	 * Creates the supplied node as the root node.
 	 *
 	 * @param      object $node	Propel object for model
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function createRoot(BaseNodeObject $node = null, PDO $con = null);
+	static function createRoot(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Returns the root node for a given root id
 	 *
 	 * @param      int $rootId		Root id to determine which root node to return
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object			Propel object for root node
 	 */
-	static function retrieveRoot($rootId = 1, PDO $con = null);
+	static function retrieveRoot($rootId = 1, PropelPDO $con = null);
 
 	/**
 	 * Inserts $child as first child of destination node $parent
 	 *
 	 * @param      object $parent	Propel object for parent node
 	 * @param      object $child		Propel object for child node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsFirstChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PDO $con = null);
+	static function insertAsFirstChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $child as last child of destination node $parent
 	 *
 	 * @param      object $parent	Propel object for parent node
 	 * @param      object $child		Propel object for child node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsLastChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PDO $con = null);
+	static function insertAsLastChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $sibling as previous sibling to destination node $node
 	 *
 	 * @param      object $node	Propel object for destination node
 	 * @param      object $sibling	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsPrevSiblingOf(BaseNodeObject $node = null, BaseNodeObject $sibling = null, PDO $con = null);
+	static function insertAsPrevSiblingOf(BaseNodeObject $node = null, BaseNodeObject $sibling = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $sibling as next sibling to destination node $node
 	 *
 	 * @param      object $node	Propel object for destination node
 	 * @param      object $sibling	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertAsNextSiblingOf(BaseNodeObject $node = null, BaseNodeObject $sibling = null, PDO $con = null);
+	static function insertAsNextSiblingOf(BaseNodeObject $node = null, BaseNodeObject $sibling = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as root node
 	 *
 	 * @param      object $node	Propel object as root node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertRoot(BaseNodeObject $node = null, PDO $con = null);
+	static function insertRoot(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Inserts $parent as parent to destination node $child
 	 *
 	 * @param      object $child	Propel object to become child node
 	 * @param      object $parent	Propel object as parent node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertParent(BaseNodeObject $child = null, BaseNodeObject $parent = null, PDO $con = null);
+	static function insertParent(BaseNodeObject $child = null, BaseNodeObject $parent = null, PropelPDO $con = null);
 
 	/**
 	 * Delete root node
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     boolean		Deletion status
 	 */
-	static function deleteRoot(PDO $con = null);
+	static function deleteRoot(PropelPDO $con = null);
 
 	/**
 	 * Delete $dest node
 	 *
 	 * @param      object $dest	Propel object node to delete
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     boolean		Deletion status
 	 */
-	static function deleteNode(BaseNodeObject $dest = null, PDO $con = null);
+	static function deleteNode(BaseNodeObject $dest = null, PropelPDO $con = null);
 
 	/**
 	 * Moves $child to be first child of $parent
 	 *
 	 * @param      object $parent	Propel object for parent node
 	 * @param      object $child	Propel object for child node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function moveToFirstChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PDO $con = null);
+	static function moveToFirstChildOf(BaseNodeObject $parent = null, BaseNodeObject $child = null, PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be last child of $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
 	 * @param      object $node	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function moveToLastChildOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PDO $con = null);
+	static function moveToLastChildOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be prev sibling to $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
 	 * @param      object $node	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function moveToPrevSiblingOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PDO $con = null);
+	static function moveToPrevSiblingOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Moves $node to be next sibling to $dest
 	 *
 	 * @param      object $dest	Propel object for destination node
 	 * @param      object $node	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function moveToNextSiblingOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PDO $con = null);
+	static function moveToNextSiblingOf(BaseNodeObject $dest = null, BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets first child for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveFirstChild(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveFirstChild(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets last child for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveLastChild(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveLastChild(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets prev sibling for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrievePrevSibling(BaseNodeObject $node = null, PDO $con = null);
+	static function retrievePrevSibling(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets next sibling for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveNextSibling(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveNextSibling(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Retrieves the entire tree from root
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function retrieveTree(PDO $con = null);
+	static function retrieveTree(PropelPDO $con = null);
 
 	/**
 	 * Retrieves the entire tree from parent $node
 	 *
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function retrieveBranch(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveBranch(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets direct children for the node
 	 *
 	 * @param      object $node	Propel object for parent node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function retrieveChildren(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveChildren(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets all descendants for the node
 	 *
 	 * @param      object $node	Propel object for parent node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function retrieveDescendants(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveDescendants(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets all siblings for the node
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function retrieveSiblings(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveSiblings(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveParent(BaseNodeObject $node = null, PDO $con = null);
+	static function retrieveParent(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
-	static function retrieveUndefined(PDO $con = null);
+	static function retrieveUndefined(PropelPDO $con = null);
 
 	/**
 	 * Gets level for the given node
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getLevel(BaseNodeObject $node = null, PDO $con = null);
+	static function getLevel(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets number of direct children for given node
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getNumberOfChildren(BaseNodeObject $node = null, PDO $con = null);
+	static function getNumberOfChildren(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Gets number of descendants for given node
 	 *
 	 * @param      object $node	Propel object for src node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     int			Level for the given node
 	 */
-	static function getNumberOfDescendants(BaseNodeObject $node = null, PDO $con = null);
+	static function getNumberOfDescendants(BaseNodeObject $node = null, PropelPDO $con = null);
 
  	/**
 	 * Returns path to a specific node as an array, useful to create breadcrumbs
 	 *
 	 * @param      object $node	Propel object of node to create path to
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     array		Array in order of heirarchy
 	 */
-	static function getPath(BaseNodeObject $node = null, PDO $con = null);
+	static function getPath(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Tests if node is valid
@@ -323,7 +323,7 @@ interface BaseNodePeer {
 	 *
 	 * @param      object $node1	Propel object for node
 	 * @param      object $node2	Propel object for node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
 	static function isChildOfOrSiblingTo(BaseNodeObject $node1 = null, BaseNodeObject $node2 = null);
@@ -341,28 +341,28 @@ interface BaseNodePeer {
 	 * Tests if $node has an ancestor
 	 *
 	 * @param      object $node	Propel object for node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasParent(BaseNodeObject $node = null, PDO $con = null);
+	static function hasParent(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Tests if $node has prev sibling
 	 *
 	 * @param      object $node	Propel object for node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasPrevSibling(BaseNodeObject $node = null, PDO $con = null);
+	static function hasPrevSibling(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Tests if $node has next sibling
 	 *
 	 * @param      object $node	Propel object for node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     bool
 	 */
-	static function hasNextSibling(BaseNodeObject $node = null, PDO $con = null);
+	static function hasNextSibling(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Tests if $node has children
@@ -376,17 +376,17 @@ interface BaseNodePeer {
 	 * Deletes $node and all of its descendants
 	 *
 	 * @param      object $node	Propel object for source node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 */
-	static function deleteDescendants(BaseNodeObject $node = null, PDO $con = null);
+	static function deleteDescendants(BaseNodeObject $node = null, PropelPDO $con = null);
 
 	/**
 	 * Returns a node given its primary key or the node itself
 	 *
 	 * @param      int/object $node	Primary key/instance of required node
-	 * @param      PDO $con		Connection to use.
+	 * @param      PropelPDO $con		Connection to use.
 	 * @return     object		Propel object for model
 	 */
-	static function getNode($node, PDO $con = null);
+	static function getNode($node, PropelPDO $con = null);
 
 } // BaseNodePeer
