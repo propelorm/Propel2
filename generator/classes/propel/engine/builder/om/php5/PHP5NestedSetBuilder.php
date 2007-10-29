@@ -550,7 +550,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Tests if object has an ancestor
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     bool
 	 */
 	public function hasParent(PropelPDO \$con = null)
@@ -586,7 +586,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Determines if the node has previous sibling
 	 *
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     bool
 	 */
 	public function hasPrevSibling(PropelPDO \$con = null)
@@ -606,7 +606,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Determines if the node has next sibling
 	 *
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     bool
 	 */
 	public function hasNextSibling(PropelPDO \$con = null)
@@ -626,7 +626,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets ancestor for the given node if it exists
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
 	public function retrieveParent(PropelPDO \$con = null)
@@ -647,7 +647,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets first child if it exists
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
 	public function retrieveFirstChild(PropelPDO \$con = null)
@@ -671,7 +671,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets last child if it exists
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
 	public function retrieveLastChild(PropelPDO \$con = null)
@@ -695,7 +695,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets prev sibling for the given node if it exists
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
 	public function retrievePrevSibling(PropelPDO \$con = null)
@@ -714,7 +714,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	/**
 	 * Gets next sibling for the given node if it exists
 	 *
-	 * @param      PropelPDO \$con      Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     mixed 		Propel object if exists else false
 	 */
 	public function retrieveNextSibling(PropelPDO \$con = null)
@@ -735,7 +735,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts as first child of destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
 	public function insertAsFirstChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
@@ -753,7 +753,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts as last child of destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
 	public function insertAsLastChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
@@ -771,7 +771,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts \$node as previous sibling to destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
 	public function insertAsPrevSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
@@ -789,7 +789,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Inserts \$node as next sibling to destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
-	 * @param      PropelPDO Connection to use.
+	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
 	public function insertAsNextSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
