@@ -645,24 +645,26 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$clo = strtolower($col->getName());
 
 		$this->addMutatorOpen($script, $col);
-
+		
+		$fmt = var_export($this->getPlatform()->getTimestampFormatter(), true);
+		
 		$script .= "
 		if (\$v === null) {
 			\$date = null;
 		} elseif (\$v instanceof DateTime) {
-			\$date = \$v->format(DateTime::ISO8601);
+			\$date = \$v->format($fmt);
 		} else {
 			// some string/numeric value passed
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$dt = new PropelDateTime(date(DateTime::ISO8601, \$v));
+					\$dt = new PropelDateTime(date($fmt, \$v));
 				} else {
 					\$dt = new PropelDateTime(\$v);
 				}
 			} catch (Exception \$x) {
 				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
 			}
-			\$date = \$dt->format(DateTime::ISO8601);
+			\$date = \$dt->format($fmt);
 		}
 
 		// For date/time columns we have to compare the formatting

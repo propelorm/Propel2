@@ -142,4 +142,10 @@ interface Platform {
 	 * @return     boolean
 	 */
 	public function hasStreamBlobImpl();
+	
+	/**
+	 * Gets the preferred timestamp formatter for setting date/time values.
+	 * @return string
+	 */
+	public function getTimestampFormatter();
 }
