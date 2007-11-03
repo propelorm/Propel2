@@ -199,6 +199,7 @@
 		<column name="location" type="VARCHAR" size="100"/>
 		<column name="population_served" type="BIGINT" phpType="string"/>
 		<column name="total_books" type="INTEGER"/>
+		<column name="store_open_time" type="TIME"/>
 	</table>
 	
 	<!--  test default values on foreign keys -->
