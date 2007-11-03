@@ -30,13 +30,19 @@
 interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * If object is saved without left/right values, set them as undefined (0)
+	 *
 	 * @param      PropelPDO $con	Connection to use.
+	 * @return     void
+	 * @throws     PropelException
 	 */
 	public function save(PropelPDO $con = null);
 
 	/**
 	 * Delete node and descendants
+	 *
 	 * @param      PropelPDO $con	Connection to use.
+	 * @return     void
+	 * @throws     PropelException
 	 */
 	public function delete(PropelPDO $con = null);
 
