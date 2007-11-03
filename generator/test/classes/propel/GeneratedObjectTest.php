@@ -150,7 +150,34 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			print "Caught expected PropelException: " . $x->__toString();
 		}
 	}
+	
+	/**
+	 * Test setting TIME columns.
+	 */
+	public function testTimeSetting()
+	{
+		$store = new Bookstore();
+		$store->setStoreName("test");
+		$store->setStoreOpenTime("12:55");
+		$store->save();
+		
+		$store = new Bookstore();
+		$store->setStoreName("test2");
+		$store->setStoreOpenTime(new DateTime("12:55"));
+		$store->save();
+	}
 
+	/**
+	 * Test setting TIME columns.
+	 */
+	public function testDateSetting()
+	{
+		$r = new Review();
+		$r->setBook(BookPeer::doSelectOne(new Criteria()));
+		$r->setReviewDate(new DateTime('1999-12-20'));
+		$r->save();
+	}
+	
 	/**
 	 * Testing creating & saving new object & instance pool.
 	 */
@@ -401,7 +428,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
 		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
 		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('double', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
 		$this->assertType('PropelDateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
