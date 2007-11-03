@@ -35,7 +35,13 @@ class PropelDateTime extends DateTime
 	 * @var        string
 	 */
 	private $dateString;
-
+	
+	/**
+	 * A string representation of the time zone, for serialization.
+	 * @var        string
+	 */
+	private $tzString;
+	
 	/**
 	 * PHP "magic" function called when object is serialized.
 	 * Sets an internal property with the date string and returns properties
@@ -44,9 +50,11 @@ class PropelDateTime extends DateTime
 	 */
 	function __sleep()
 	{
-		// Make serialization work as expected.
-		$this->dateString = $this->format('r');
-		return array('dateString');
+		// We need to use a string without a time zone, due to 
+		// PHP bug: http://bugs.php.net/bug.php?id=40743 
+		$this->dateString = $this->format('Y-m-d H:i:s');
+		$this->tzString = $this->getTimeZone()->getName();
+		return array('dateString', 'tzString');
 	}
 
 	/**
@@ -55,7 +63,7 @@ class PropelDateTime extends DateTime
 	 */
 	function __wakeup()
 	{
-		parent::__construct($this->dateString);
+		parent::__construct($this->dateString, new DateTimeZone($this->tzString));
 	}
 
 }
