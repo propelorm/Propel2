@@ -141,6 +141,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		} // foreach
 
 		$script .= "
+		return \$this;
 	} // set$cfc()
 ";
 	} // addMutatorClose()

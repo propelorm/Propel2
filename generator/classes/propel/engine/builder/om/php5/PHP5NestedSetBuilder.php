@@ -315,11 +315,12 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Sets the level of the node in the tree
 	 *
 	 * @param      int \$v new value
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setLevel(\$level)
 	{
 		\$this->level = \$level;
+		return \$this;
 	}
 ";
 	}
@@ -332,11 +333,12 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Sets the children array of the node in the tree
 	 *
 	 * @param      array of $objectClassName \$children	array of Propel node object
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setChildren(\$children)
 	{
 		\$this->_children = \$children;
+		return \$this;
 	}
 ";
 	}
@@ -350,12 +352,13 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Sets the parentNode of the node in the tree
 	 *
 	 * @param      $objectClassName \$node Propel node object
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setParentNode(\$node)
 	{
 		\$this->parentNode = \$node;
 		\$this->hasParentNode = $peerClassname::isValid(\$node);
+		return \$this;
 	}
 ";
 	}
@@ -369,12 +372,13 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Sets the previous sibling of the node in the tree
 	 *
 	 * @param      $objectClassName \$node Propel node object
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setPrevSibling(\$node)
 	{
 		\$this->prevSibling = \$node;
 		\$this->hasPrevSibling = $peerClassname::isValid(\$node);
+		return \$this;
 	}
 ";
 	}
@@ -388,12 +392,13 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Sets the next sibling of the node in the tree
 	 *
 	 * @param      $objectClassName \$node Propel node object
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setNextSibling(\$node)
 	{
 		\$this->nextSibling = \$node;
 		\$this->hasNextSibling = $peerClassname::isValid(\$node);
+		return \$this;
 	}
 ";
 	}
@@ -860,11 +865,12 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Set the value left column
 	 *
 	 * @param      int \$v new value
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setLeftValue(\$v)
 	{
 		\$this->$left_col_setter_name(\$v);
+		return \$this;
 	}
 ";
 	}
@@ -884,11 +890,12 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Set the value of right column
 	 *
 	 * @param      int \$v new value
-	 * @return     void
+	 * @return     \$this
 	 */
 	public function setRightValue(\$v)
 	{
 		\$this->$right_col_setter_name(\$v);
+		return \$this;
 	}
 ";
 	}

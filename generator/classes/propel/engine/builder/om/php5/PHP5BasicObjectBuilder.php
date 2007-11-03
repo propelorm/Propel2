@@ -577,7 +577,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Set the value of [$clo] column.
 	 * ".$col->getDescription()."
 	 * @param      ".$col->getPhpType()." \$v new value
-	 * @return     void
+	 * @return     \$this
 	 */
 	".$visibility." function set$cfc(\$v)
 	{";
@@ -602,6 +602,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addMutatorClose(&$script, Column $col)
 	{
 		$script .= "
+		return \$this;
 	} // set".$col->getPhpName()."()
 ";
 	}
