@@ -24,7 +24,7 @@
 
 	<!--
 		=========================================================================================
-		PHPUnit2 Targets
+		PHPUnit Targets
 		~~~~~~~~~~~~~~~~
 		
 		=========================================================================================					
@@ -87,6 +87,6 @@
 		<property name="test.class" value="" override="true" />
 	</target>
 
-	<target name="phpunit" depends="initialize,reports" description="Executes the PHPUnit2 test suite" />
+	<target name="phpunit" depends="initialize,reports" description="Executes the PHPUnit test suite" />
 
 </project>

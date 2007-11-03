@@ -19,13 +19,13 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'PHPUnit2/Framework/TestCase.php';
+require_once 'PHPUnit/Framework/TestCase.php';
 include_once 'bookstore/BookstoreDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.
  */
-abstract class BookstoreTestBase extends PHPUnit2_Framework_TestCase {
+abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * This is run before each unit test; it populates the database.

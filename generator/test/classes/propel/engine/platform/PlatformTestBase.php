@@ -1,8 +1,8 @@
 <?php
 
-require_once 'PHPUnit2/Framework/TestCase.php';
+require_once 'PHPUnit/Framework/TestCase.php';
 
-class PlatformTestBase extends PHPUnit2_Framework_TestCase {
+class PlatformTestBase extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Platform object.

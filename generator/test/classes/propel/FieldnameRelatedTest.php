@@ -19,6 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
+require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'bookstore/BookstoreTestBase.php';
 
 /**
@@ -39,7 +40,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @author     Sven Fuchs <svenfuchs@artweb-design.de>
  */
-class FieldnameRelatedTest extends PHPUnit2_Framework_TestCase {
+class FieldnameRelatedTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * Tests if fieldname type constants are defined
