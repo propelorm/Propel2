@@ -54,6 +54,9 @@ class ColumnMap {
 
 	/** Is null value allowed ?*/
 	private $notNull = false;
+	
+	/** The default value for this column. */
+	private $defaultValue;
 
 	/** Name of the table that this column is related to. */
 	private $relatedTableName = "";
