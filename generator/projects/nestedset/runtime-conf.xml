@@ -25,7 +25,7 @@
 	#                   PEAR_LOG_DEBUG    7  <== DEFAULT
 	-->
 	<log>
-		<ident>propel-nestedsettest</ident>
+		<ident>propel-nestedset</ident>
 		<level>7</level>
 	</log>
 	<!--
@@ -36,15 +36,15 @@
 	# project uses several databases.
 	-->
 	<propel>
-		<datasources default="nestedsettest">
-			<datasource id="nestedsettest">
+		<datasources default="nestedset">
+			<datasource id="nestedset">
 				<!-- the Propel adapter (usually same as phptype of connection DSN) -->
 				<adapter>sqlite</adapter>				
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
 					<phptype>sqlite</phptype>
 					<hostspec>localhost</hostspec>
-					<database>./test/nestedsettest.db</database>
+					<database>./test/nestedset.db</database>
 					<username></username>
 					<password></password>
 				</connection>				
