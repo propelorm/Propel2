@@ -30,7 +30,7 @@ goto run
 goto cleanup
 
 :run
-%PHING_COMMAND% -f %PROPEL_GEN_HOME%\build.xml -Dusing.propel-gen=true -Dproject.dir=%*
+%PHING_COMMAND% -f "%PROPEL_GEN_HOME%\build.xml" -Dusing.propel-gen=true -Dproject.dir=%*
 goto cleanup
 
 :no_phingcommand
