@@ -124,7 +124,6 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 		$package->setPearinstallerDep('1.4.0');
 
 		// "package" dependencies
-		$package->addPackageDepWithChannel( 'optional', 'creole', 'pear.phpdb.org', '1.1.0');
 		$package->addExtensionDep('required', 'pdo');
 		$package->addExtensionDep('required', 'spl');
 
