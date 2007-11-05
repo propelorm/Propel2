@@ -114,7 +114,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      object $node	Propel object for node to compare to
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject $node = null);
+	public function isEqualTo(BaseNodeObject $node);
 
 	/**
 	 * Tests if object has an ancestor
@@ -190,37 +190,37 @@ interface BaseNodeObject extends IteratorAggregate {
 	/**
 	 * Inserts as first child of destination node $dest
 	 *
-	 * @param      object $dest	Propel object for destination node
+	 * @param      object $dest	Propel object for given destination node
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject $dest = null, PropelPDO $con = null);
+	public function insertAsFirstChildOf(BaseNodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $dest
 	 *
-	 * @param      object $dest	Propel object for destination node
+	 * @param      object $dest	Propel object for given destination node
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject $dest = null, PropelPDO $con = null);
+	public function insertAsLastChildOf(BaseNodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as previous sibling to destination node $dest
 	 *
-	 * @param      object $dest	Propel object for destination node
+	 * @param      object $dest	Propel object for given destination node
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject $dest = null, PropelPDO $con = null);
+	public function insertAsPrevSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Inserts $node as next sibling to destination node $dest
 	 *
-	 * @param      object $dest	Propel object for destination node
+	 * @param      object $dest	Propel object for given destination node
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject $dest = null, PropelPDO $con = null);
+	public function insertAsNextSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
 
 } // BaseNodeObject

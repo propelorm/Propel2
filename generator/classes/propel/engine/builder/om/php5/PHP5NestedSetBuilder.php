@@ -147,9 +147,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 		$this->addGetLeft($script);
 		$this->addGetRight($script);
+		$this->addGetScopeId($script);
 
 		$this->addSetLeft($script);
 		$this->addSetRight($script);
+		$this->addSetScopeId($script);
 	}
 
 	/**
@@ -276,9 +278,6 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function delete(PropelPDO \$con = null)
 	{
-		\$right = \$this->getRightValue();
-		\$left = \$this->getLeftValue();
-
 		// delete node first
 		parent::delete(\$con);
 
@@ -335,7 +334,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      array of $objectClassName \$children	array of Propel node object
 	 * @return     \$this
 	 */
-	public function setChildren(\$children)
+	public function setChildren(array \$children)
 	{
 		\$this->_children = \$children;
 		return \$this;
@@ -354,10 +353,9 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$node Propel node object
 	 * @return     \$this
 	 */
-	public function setParentNode(\$node)
+	public function setParentNode(BaseNodeObject \$node = null)
 	{
-		\$this->parentNode = \$node;
-		\$this->hasParentNode = $peerClassname::isValid(\$node);
+		\$this->parentNode = (true === (\$this->hasParentNode = $peerClassname::isValid(\$node))) ? \$node : null;
 		return \$this;
 	}
 ";
@@ -374,7 +372,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$node Propel node object
 	 * @return     \$this
 	 */
-	public function setPrevSibling(\$node)
+	public function setPrevSibling(BaseNodeObject \$node = null)
 	{
 		\$this->prevSibling = \$node;
 		\$this->hasPrevSibling = $peerClassname::isValid(\$node);
@@ -394,7 +392,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$node Propel node object
 	 * @return     \$this
 	 */
-	public function setNextSibling(\$node)
+	public function setNextSibling(BaseNodeObject \$node = null)
 	{
 		\$this->nextSibling = \$node;
 		\$this->hasNextSibling = $peerClassname::isValid(\$node);
@@ -442,7 +440,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Gets the total number of descendants for the node
+	 * Gets the total number of desceandants for the node
 	 *
 	 * @param      PropelPDO Connection to use.
 	 * @return     int
@@ -541,7 +539,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      object \$node		Propel object for node to compare to
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject \$node = null)
+	public function isEqualTo(BaseNodeObject \$node)
 	{
 		return $peerClassname::isEqualTo(\$this, \$node);
 	}
@@ -737,15 +735,15 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Inserts as first child of destination node \$dest
+	 * Inserts as first child of given destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
+	public function insertAsFirstChildOf(BaseNodeObject \$dest, PropelPDO \$con = null)
 	{
-		return $peerClassname::insertAsFirstChildOf(\$dest, \$this, \$con);
+		return $peerClassname::insertAsFirstChildOf(\$this, \$dest, \$con);
 	}
 ";
 	}
@@ -755,15 +753,15 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Inserts as last child of destination node \$dest
+	 * Inserts as last child of given destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsLastChildOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
+	public function insertAsLastChildOf(BaseNodeObject \$dest, PropelPDO \$con = null)
 	{
-		return $peerClassname::insertAsLastChildOf(\$dest, \$this, \$con);
+		return $peerClassname::insertAsLastChildOf(\$this, \$dest, \$con);
 	}
 ";
 	}
@@ -773,15 +771,15 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Inserts \$node as previous sibling to destination node \$dest
+	 * Inserts \$node as previous sibling to given destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
+	public function insertAsPrevSiblingOf(BaseNodeObject \$dest, PropelPDO \$con = null)
 	{
-		return $peerClassname::insertAsPrevSiblingOf(\$dest, \$this, \$con);
+		return $peerClassname::insertAsPrevSiblingOf(\$this, \$dest, \$con);
 	}
 ";
 	}
@@ -791,15 +789,15 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Inserts \$node as next sibling to destination node \$dest
+	 * Inserts \$node as next sibling to given destination node \$dest
 	 *
 	 * @param      object \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject \$dest = null, PropelPDO \$con = null)
+	public function insertAsNextSiblingOf(BaseNodeObject \$dest, PropelPDO \$con = null)
 	{
-		return $peerClassname::insertAsNextSiblingOf(\$dest, \$this, \$con);
+		return $peerClassname::insertAsNextSiblingOf(\$this, \$dest, \$con);
 	}
 ";
 	}
@@ -811,6 +809,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
 				$left_col_getter_name = 'get'.$col->getPhpName();
+				break;
 			}
 		}
 
@@ -834,6 +833,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetRightKey()) {
 				$right_col_getter_name = 'get'.$col->getPhpName();
+				break;
 			}
 		}
 
@@ -850,6 +850,35 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 ";
 	}
 
+	protected function addGetScopeId(&$script)
+	{
+		$table = $this->getTable();
+
+		$scope_col_getter_name = null;
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetScopeKey()) {
+				$scope_col_getter_name = 'get'.$col->getPhpName();
+				break;
+			}
+		}
+
+		$script .= "
+	/**
+	 * Wraps the getter for the scope value
+	 *
+	 * @return     int
+	 */
+	public function getScopeIdValue()
+	{";
+		if ($scope_col_getter_name) {
+			$script .= "
+		return \$this->$scope_col_getter_name();";
+		}
+		$script .= "
+	}
+";
+	}
+
 	protected function addSetLeft(&$script)
 	{
 		$table = $this->getTable();
@@ -857,6 +886,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
 				$left_col_setter_name = 'set'.$col->getPhpName();
+				break;
 			}
 		}
 
@@ -882,6 +912,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetRightKey()) {
 				$right_col_setter_name = 'set'.$col->getPhpName();
+				break;
 			}
 		}
 
@@ -898,6 +929,37 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 		return \$this;
 	}
 ";
+	}
+
+	protected function addSetScopeId(&$script)
+	{
+		$table = $this->getTable();
+
+		$scope_col_setter_name = null;
+		foreach ($table->getColumns() as $col) {
+			if ($col->isNestedSetScopeKey()) {
+				$scope_col_setter_name = 'set'.$col->getPhpName();
+				break;
+			}
+		}
+
+		$script .= "
+	/**
+	 * Set the value of scope column
+	 *
+	 * @param      int \$v new value
+	 * @return     void
+	 */
+	public function setScopeIdValue(\$v)
+	{";
+		if ($scope_col_setter_name) {
+			$script .= "
+		\$this->$scope_col_setter_name(\$v);";
+		}
+		$script .= "
+	}
+";
+
 	}
 
 } // PHP5NestedSetBuilder

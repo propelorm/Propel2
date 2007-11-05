@@ -438,7 +438,7 @@ abstract class ".$this->getClassname()." {
 
 		\$npath = $nodePeerClassname::NPATH_COLNAME;
 		//the following dot isn`t mean`t a nodeKeySeperator
-		\$setcol = substr(\$npath, strpos(\$npath, '.')+1);
+		\$setcol = substr(\$npath, strrpos(\$npath, '.')+1);
 		\$setcollen = $nodePeerClassname::NPATH_LEN;
 		\$db = Propel::getDb($peerClassname::DATABASE_NAME);
 
