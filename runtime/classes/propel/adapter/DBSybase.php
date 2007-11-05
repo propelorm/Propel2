@@ -99,4 +99,12 @@ class DBSybase extends DBAdapter {
 	{
 		return '[' . $text . ']';
 	}
+	
+	/**
+	 * @see        DBAdapter::random()
+	 */
+	public function random($seed = null)
+	{
+		return 'rand('.((int) $seed).')';
+	}
 }
