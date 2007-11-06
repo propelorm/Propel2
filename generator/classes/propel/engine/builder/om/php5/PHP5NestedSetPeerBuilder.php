@@ -120,6 +120,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$this->addInsertAsLastChildOf($script);
 		$this->addInsertAsPrevSiblingOf($script);
 		$this->addInsertAsNextSiblingOf($script);
+		$this->addInsertAsParentOf($script);
 
 		$this->addInsertRoot($script);
 		$this->addInsertParent($script);
@@ -194,6 +195,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$left_colname = '';
 		$right_colname = '';
 		$scope_colname = null;
+		$parent_colname = '';
 
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
@@ -204,7 +206,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				$right_colname = DataModelBuilder::prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
-			if ($col->isNestedSetScopeKey()) {
+			if ($col->isTreeScopeKey()) {
 				$scope_colname = DataModelBuilder::prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
@@ -239,10 +241,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Creates the supplied node as the root node.
 	 *
 	 * @param      $objectClassname \$node	Propel object for model
-	 * @param      PropelPDO \$con		Connection to use.
 	 * @throws     PropelException
 	 */
-	public static function createRoot(BaseNodeObject \$node, PropelPDO \$con = null)
+	public static function createRoot(BaseNodeObject \$node)
 	{
 		if (\$node->getLeftValue()) {
 			throw new Exception('Cannot turn an existing node into a root node.');
@@ -292,6 +293,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$child	Propel object for child node
 	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function insertAsFirstChildOf(BaseNodeObject \$child, BaseNodeObject \$parent, PropelPDO \$con = null)
 	{
@@ -325,6 +327,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$child		Propel object for child node
 	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function insertAsLastChildOf(BaseNodeObject \$child, BaseNodeObject \$parent, PropelPDO \$con = null)
 	{
@@ -361,6 +364,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$node		Propel object for destination node
 	 * @param      $objectClassname \$sibling	Propel object for source node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function insertAsPrevSiblingOf(BaseNodeObject \$node, BaseNodeObject \$sibling, PropelPDO \$con = null)
 	{
@@ -373,7 +377,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$node->setParentNode(\$sibling->retrieveParent());
 
 		\$sidv = null;
-		if( self::SCOPE_COL) {
+		if (self::SCOPE_COL) {
 			\$node->setScopeIdValue(\$sidv = \$sibling->getScopeIdValue());
 		}
 
@@ -394,7 +398,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$node		Propel object for destination node
 	 * @param      $objectClassname \$sibling	Propel object for source node
 	 * @param      PropelPDO \$con	Connection to use.
-	 * @return     object		Inserted propel object for model
+	 * @return     void
 	 */
 	public static function insertAsNextSiblingOf(BaseNodeObject \$node, BaseNodeObject \$sibling, PropelPDO \$con = null)
 	{
@@ -417,6 +421,51 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 ";
 	}
 
+	protected function addInsertAsParentOf(&$script)
+	{
+		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$script .= "
+	/**
+	 * Inserts node as parent of given node.
+	 *
+	 * @param      $objectClassname \$parent	Propel object for given parent node
+	 * @param      $objectClassname \$node	Propel object for given destination node
+	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
+	 * @throws     Exception      When trying to insert node as parent of a root node
+	 */
+	public static function insertAsParentOf(BaseNodeObject \$parent, BaseNodeObject \$node, PropelPDO \$con = null)
+	{
+		if (\$node->isRoot())
+		{
+			throw new Exception('Impossible to insert a node as parent of a root node');
+		}
+
+		\$sidv = null;
+		if (self::SCOPE_COL) {
+			\$sidv = \$node->getScopeIdValue();
+		}
+
+		self::shiftRLValues(\$node->getLeftValue(), 1, \$con, \$sidv);
+		self::shiftRLValues(\$node->getRightValue() + 2, 1, \$con, \$sidv);
+
+		if (self::SCOPE_COL) {
+			\$parent->setScopeIdValue(\$sidv);
+		}
+
+		\$parent->setLeftValue(\$node->getLeftValue());
+		\$parent->setRightValue(\$node->getRightValue() + 2);
+
+		\$previous_parent = \$node->retrieveParent();
+		\$parent->setParentNode(\$previous_parent);
+		\$node->setParentNode(\$parent);
+
+		\$node->save();
+	}
+";
+	}
+
 	protected function addInsertRoot(&$script)
 	{
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
@@ -427,7 +476,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      $objectClassname \$node	Propel object as root node
 	 * @param      PropelPDO \$con	Connection to use.
-	 * @return     object		Inserted propel object for model
+	 * @return     void
 	 */
 	public static function insertRoot(BaseNodeObject \$node, PropelPDO \$con = null)
 	{
@@ -436,7 +485,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$sidv = \$node->getScopeIdValue();
 		}
 
-		return $peerClassname::insertParent($peerClassname::retrieveRoot(\$sidv, \$con), \$node, \$con);
+		$peerClassname::insertAsParentOf($peerClassname::retrieveRoot(\$sidv, \$con), \$node, \$con);
 	}
 ";
 	}
@@ -452,20 +501,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$child	Propel object to become child node
 	 * @param      $objectClassname \$parent	Propel object as parent node
 	 * @param      PropelPDO \$con	Connection to use.
-	 * @return     object		Inserted propel object for model
+	 * @return     void
 	 */
 	public static function insertParent(BaseNodeObject \$child, BaseNodeObject \$parent, PropelPDO \$con = null)
 	{
-		\$sidv = null;
-		if (self::SCOPE_COL) {
-			\$sidv = \$child->getScopeIdValue();
-		}
-
-		self::shiftRLValues(\$child->getLeftValue(), 1, \$con, \$sidv);
-		self::shiftRLValues(\$child->getRightValue() + 2, 1, \$con, \$sidv);
-
-		\$parent->setLeftValue(\$child->getLeftValue());
-		\$parent->setRightValue(\$child->getRightValue() + 2);
+		self::insertAsParentOf(\$parent, \$child, \$con);
 	}
 ";
 	}
@@ -534,9 +574,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Moves \$child to be first child of \$parent
 	 *
-	 * @param      $objectClassname \$parent		Propel object for parent node
+	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      $objectClassname \$child		Propel object for child node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function moveToFirstChildOf(BaseNodeObject \$parent, BaseNodeObject \$child, PropelPDO \$con = null)
 	{
@@ -557,9 +598,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Moves \$child to be last child of \$parent
 	 *
-	 * @param      $objectClassname \$parent		Propel object for parent node
+	 * @param      $objectClassname \$parent	Propel object for parent node
 	 * @param      $objectClassname \$child		Propel object for child node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function moveToLastChildOf(BaseNodeObject \$parent, BaseNodeObject \$child, PropelPDO \$con = null)
 	{
@@ -580,9 +622,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Moves \$node to be prev sibling to \$dest
 	 *
-	 * @param      $objectClassname \$dest		Propel object for destination node
-	 * @param      $objectClassname \$node		Propel object for source node
+	 * @param      $objectClassname \$dest	Propel object for destination node
+	 * @param      $objectClassname \$node	Propel object for source node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function moveToPrevSiblingOf(BaseNodeObject \$dest, BaseNodeObject \$node, PropelPDO \$con = null)
 	{
@@ -603,9 +646,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Moves \$node to be next sibling to \$dest
 	 *
-	 * @param      $objectClassname \$dest		Propel object for destination node
-	 * @param      $objectClassname \$node		Propel object for source node
+	 * @param      $objectClassname \$dest	Propel object for destination node
+	 * @param      $objectClassname \$node	Propel object for source node
 	 * @param      PropelPDO \$con	Connection to use.
+	 * @return     void
 	 */
 	public static function moveToNextSiblingOf(BaseNodeObject \$dest, BaseNodeObject \$node, PropelPDO \$con = null)
 	{
@@ -970,7 +1014,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Returns path to a specific node as an array, useful to create breadcrumbs
 	 *
-	 * @param      $objectClassname \$node		Propel object of node to create path to
+	 * @param      $objectClassname \$node	Propel object of node to create path to
 	 * @param      PropelPDO \$con	Connection to use.
 	 * @return     array			Array in order of heirarchy
 	 */
@@ -1053,15 +1097,15 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Tests if \$node1 is a child of \$node2
+	 * Tests if \$child is a child of \$parent
 	 *
-	 * @param      $objectClassname \$node1		Propel object for node
-	 * @param      $objectClassname \$node2		Propel object for node
+	 * @param      $objectClassname \$child	Propel object for node
+	 * @param      $objectClassname \$parent	Propel object for node
 	 * @return     bool
 	 */
-	public static function isChildOf(BaseNodeObject \$node1, BaseNodeObject \$node2)
+	public static function isChildOf(BaseNodeObject \$child, BaseNodeObject \$parent)
 	{
-		return ((\$node1->getLeftValue()>\$node2->getLeftValue()) and (\$node1->getRightValue()<\$node2->getRightValue()));
+		return ((\$child->getLeftValue()>\$parent->getLeftValue()) && (\$child->getRightValue()<\$parent->getRightValue()));
 	}
 ";
 	}
