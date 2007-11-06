@@ -798,9 +798,14 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	protected function addRefFKCount(&$script, ForeignKey $refFK)
 	{
-		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+		$table = $this->getTable();
+		$tblFK = $refFK->getTable();
 
 		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($refFK->getTable());
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+
+		$collName = $this->getRefFKCollVarName($refFK);
+		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 
 		$script .= "
 	/**
@@ -811,29 +816,71 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * @param      PropelPDO \$con
 	 * @throws     PropelException
 	 */
-	public function count$relCol(\$criteria = null, \$distinct = false, PropelPDO \$con = null)
+	public function count$relCol(Criteria \$criteria = null, \$distinct = false, PropelPDO \$con = null)
 	{
 		";
+		
 		$script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
-		}
-		elseif (\$criteria instanceof Criteria)
-		{
+		} else {
 			\$criteria = clone \$criteria;
 		}
+		
+		if (\$distinct) {
+			\$criteria->setDistinct();				
+		}
+		
+		\$count = null;
+		
+		if (\$this->$collName === null) {
+			if (\$this->isNew()) {
+				\$count = 0;
+			} else {
 ";
-		foreach ($refFK->getForeignColumns() as $columnName) {
-			$column = $this->getTable()->getColumn($columnName);
-			$flmap = $refFK->getForeignLocalMapping();
-			$colFKName = $flmap[$columnName];
+		foreach ($refFK->getLocalColumns() as $colFKName) {
+			// $colFKName is local to the referring table (i.e. foreign to this table)
+			$lfmap = $refFK->getLocalForeignMapping();
+			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
 			$colFK = $refFK->getTable()->getColumn($colFKName);
+
 			$script .= "
-		\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
 ";
 		} // end foreach ($fk->getForeignColumns()
-		$script .="
-		return ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$distinct, \$con);
+
+		$script .= "
+				\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!\$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+";
+		foreach ($refFK->getLocalColumns() as $colFKName) {
+			// $colFKName is local to the referring table (i.e. foreign to this table)
+			$lfmap = $refFK->getLocalForeignMapping();
+			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
+			$colFK = $refFK->getTable()->getColumn($colFKName);
+			$script .= "
+
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
+";
+		} // foreach ($fk->getForeignColumns()
+$script .= "
+				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
+					\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
+				} else {
+					\$count = count(\$this->$collName);
+				}
+			} else {
+				\$count = count(\$this->$collName);
+			}
+		}
+		\$this->$lastCriteriaName = \$criteria;
+		return \$count;
 	}
 ";
 	} // addRefererCount

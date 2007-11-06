@@ -175,6 +175,8 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$r = new Review();
 		$r->setBook(BookPeer::doSelectOne(new Criteria()));
 		$r->setReviewDate(new DateTime('1999-12-20'));
+		$r->setReviewedBy("Hans");
+		$r->setRecommended(false);
 		$r->save();
 	}
 	
@@ -737,6 +739,49 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$sale->setPublisher(null);
 		$this->assertEquals(null, $sale->getPublisherId(), "Expected BookstoreSale object to have reset to NULL publisher ID.");
+	}
+	
+	public function testCountRefFk()
+	{
+		$book = new Book();
+		$book->setTitle("Test Book");
+		$book->setISBN("TT-EE-SS-TT");
+		
+		$num = 5;
+		
+		for($i=2; $i < $num + 2; $i++) {
+			$r = new Review();
+			$r->setReviewedBy('Hans ' . $num);
+			$dt = new DateTime("now");
+			$dt->modify("-".$i." weeks");
+			$r->setReviewDate($dt);
+			$r->setRecommended(($i % 2) == 0);
+			$book->addReview($r);
+		}
+		
+		$this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num");
+		$this->assertEquals($num, count($book->getReviews()), "Expected getReviews to return $num reviews");
+		
+		$book->save();
+		
+		BookPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		
+		$book = BookPeer::retrieveByPK($book->getId());
+		$this->assertEquals($num, $book->countReviews(), "Expected countReviews() to return $num (after save)");
+		$this->assertEquals($num, count($book->getReviews()), "Expected getReviews() to return $num (after save)");
+		
+		// Now set different criteria and expect different results
+		$c = new Criteria();
+		$c->add(ReviewPeer::RECOMMENDED, false);
+		$this->assertEquals(floor($num/2), $book->countReviews($c), "Expected " . floor($num/2) . " results from countReviews(recomm=false)");
+		
+		// Change Criteria, run again -- expect different.
+		$c = new Criteria();
+		$c->add(ReviewPeer::RECOMMENDED, true);
+		$this->assertEquals(ceil($num/2), count($book->getReviews($c)), "Expected " . ceil($num/2) . " results from getReviews(recomm=true)");
+		
+		$this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num with new empty Criteria");
 	}
 
 }
