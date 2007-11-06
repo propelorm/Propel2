@@ -498,6 +498,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Inserts \$parent as parent to destination node \$child
 	 *
+	 * @deprecated 1.3 - 2007/11/06 - Use insertAsParentOf() instead
 	 * @param      $objectClassname \$child	Propel object to become child node
 	 * @param      $objectClassname \$parent	Propel object as parent node
 	 * @param      PropelPDO \$con	Connection to use.
