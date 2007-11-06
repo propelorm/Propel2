@@ -91,7 +91,7 @@ interface BaseNodePeer {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object		Inserted propel object for model
 	 */
-	static function insertRoot(BaseNodeObject $node, PropelPDO $con = null);
+	public static function insertRoot(BaseNodeObject $node, PropelPDO $con = null);
 
 	/**
 	 * Inserts $parent as parent to destination node $child
@@ -99,9 +99,9 @@ interface BaseNodePeer {
 	 * @param      object $child	Propel object to become child node
 	 * @param      object $parent	Propel object as parent node
 	 * @param      PropelPDO $con	Connection to use.
-	 * @return     object		Inserted propel object for model
+	 * @return     void
 	 */
-	static function insertParent(BaseNodeObject $child, BaseNodeObject $parent, PropelPDO $con = null);
+	public static function insertParent(BaseNodeObject $child, BaseNodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Delete root node
