@@ -499,7 +499,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Inserts \$parent as parent to destination node \$child
 	 *
 	 * @deprecated 1.3 - 2007/11/06
-	 * @see        Use insertAsParentOf() instead
+	 * @see        insertAsParentOf()
 	 * @param      $objectClassname \$child	Propel object to become child node
 	 * @param      $objectClassname \$parent	Propel object as parent node
 	 * @param      PropelPDO \$con	Connection to use.
@@ -1354,6 +1354,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	protected static function hydrateChildren(BaseNodeObject \$node, PDOStatement \$stmt)
 	{
 		\$children = array();
+		\$prevRight = 0;
 		while (\$row = \$stmt->fetch()) {
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
 			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
@@ -1362,7 +1363,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
 
-			\$children[] = \$child;
+			if(\$child->getRightValue() > \$prevRight) {
+				\$children[] = \$child;
+				\$prevRight = \$child->getRightValue();
+			}
 
 			if (\$child->getRightValue() + 1 == \$node->getRightValue()) {
 				break;
