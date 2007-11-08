@@ -400,17 +400,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
 		
 		$defaultfmt = null;
-		
-		if (!$useDateTime) {
-			// these default values are based on the Creole defaults
-			// the date and time default formats are locale-sensitive
-			if ($col->getType() === PropelTypes::DATE) {
-				$defaultfmt = $this->getBuildProperty('defaultDateFormat');
-			} elseif ($col->getType() === PropelTypes::TIME) {
-				$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-			} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
-				$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
-			}
+				
+		// these default values are based on the Creole defaults
+		// the date and time default formats are locale-sensitive
+		if ($col->getType() === PropelTypes::DATE) {
+			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
+		} elseif ($col->getType() === PropelTypes::TIME) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
+		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
 		}
 
 		// if the default format property was an empty string, then we'll set it
