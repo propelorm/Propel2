@@ -22,10 +22,10 @@
 /**
  * DateTime subclass which supports serialization.
  *
- * Currently Propel is not using this for storing date/time objects 
- * within model objeects; however, we are keeping it in the repository 
+ * Currently Propel is not using this for storing date/time objects
+ * within model objeects; however, we are keeping it in the repository
  * because it is useful if you want to store a DateTime object in a session.
- * 
+ *
  * @author     Alan Pinstein
  * @author     Soenke Ruempler
  * @author     Hans Lellelid
@@ -39,17 +39,17 @@ class PropelDateTime extends DateTime
 	 * @var        string
 	 */
 	private $dateString;
-	
+
 	/**
 	 * A string representation of the time zone, for serialization.
 	 * @var        string
 	 */
 	private $tzString;
-	
+
 	/**
 	 * Convenience method to enable a more fluent API.
-	 * @param string $date Date/time value.
-	 * @param DateTimeZone $tz (optional) timezone
+	 * @param      string $date Date/time value.
+	 * @param      DateTimeZone $tz (optional) timezone
 	 */
 	public static function newInstance($date, DateTimeZone $tz = null)
 	{
@@ -59,7 +59,7 @@ class PropelDateTime extends DateTime
 			return new DateTime($date);
 		}
 	}
-	
+
 	/**
 	 * PHP "magic" function called when object is serialized.
 	 * Sets an internal property with the date string and returns properties
@@ -68,8 +68,8 @@ class PropelDateTime extends DateTime
 	 */
 	function __sleep()
 	{
-		// We need to use a string without a time zone, due to 
-		// PHP bug: http://bugs.php.net/bug.php?id=40743 
+		// We need to use a string without a time zone, due to
+		// PHP bug: http://bugs.php.net/bug.php?id=40743
 		$this->dateString = $this->format('Y-m-d H:i:s');
 		$this->tzString = $this->getTimeZone()->getName();
 		return array('dateString', 'tzString');

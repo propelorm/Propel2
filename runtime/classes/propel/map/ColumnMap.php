@@ -54,7 +54,7 @@ class ColumnMap {
 
 	/** Is null value allowed ?*/
 	private $notNull = false;
-	
+
 	/** The default value for this column. */
 	private $defaultValue;
 

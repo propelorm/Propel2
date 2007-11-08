@@ -820,20 +820,20 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function count$relCol(Criteria \$criteria = null, \$distinct = false, PropelPDO \$con = null)
 	{
 		";
-		
+
 		$script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		} else {
 			\$criteria = clone \$criteria;
 		}
-		
+
 		if (\$distinct) {
-			\$criteria->setDistinct();				
+			\$criteria->setDistinct();
 		}
-		
+
 		\$count = null;
-		
+
 		if (\$this->$collName === null) {
 			if (\$this->isNew()) {
 				\$count = 0;
@@ -1065,7 +1065,7 @@ $script .= "
 		if (\$v->get".$this->getFKPhpNameAffix($refFK, $plural = false)."() === null) {
 			\$v->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
-		
+
 		return \$this;
 	}
 ";

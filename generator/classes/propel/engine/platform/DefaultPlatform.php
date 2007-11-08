@@ -221,7 +221,7 @@ class DefaultPlatform implements Platform {
 
 	/**
 	 * Gets the preferred timestamp formatter for setting date/time values.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTimestampFormatter()
 	{
@@ -230,7 +230,7 @@ class DefaultPlatform implements Platform {
 
 	/**
 	 * Gets the preferred time formatter for setting date/time values.
-	 * @return string
+	 * @return     string
 	 */
 	public function getTimeFormatter()
 	{
@@ -239,7 +239,7 @@ class DefaultPlatform implements Platform {
 
 	/**
 	 * Gets the preferred date formatter for setting date/time values.
-	 * @return string
+	 * @return     string
 	 */
 	public function getDateFormatter()
 	{

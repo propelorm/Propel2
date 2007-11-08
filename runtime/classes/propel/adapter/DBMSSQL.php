@@ -37,14 +37,14 @@ class DBMSSQL extends DBSybase {
 	public function applyLimit(&$sql, $offset, $limit)
 	{
 		throw new PropelException("applyLimit() not yet implemented for MSSQL");
-		
+
 		/*
 		 * TODO - rewrite the incoming SQL to make it look like the SQL below.
 		 * See http://propel.phpdb.org/trac/ticket/453 for the original article link.
-		 * 
+		 *
 		 * SELECT * FROM (
 		 * 	SELECT TOP x * FROM (
-		 * 		SELECT TOP y fields 
+		 * 		SELECT TOP y fields
 		 * 		FROM table
 		 * 		WHERE conditions
 		 * 		ORDER BY table.field ASC) as foo

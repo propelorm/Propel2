@@ -894,7 +894,7 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function toString()
 	{
-		
+
 		$sb = "Criteria:";
 		try {
 
@@ -904,8 +904,8 @@ class Criteria implements IteratorAggregate {
 
 			$sb .= "\nParams: ";
 			$paramstr = array();
-			foreach($params as $param) {
-				$paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);  
+			foreach ($params as $param) {
+				$paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);
 			}
 			$sb .= implode(", ", $paramstr);
 

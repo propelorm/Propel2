@@ -99,7 +99,7 @@ class DBSybase extends DBAdapter {
 	{
 		return '[' . $text . ']';
 	}
-	
+
 	/**
 	 * @see        DBAdapter::random()
 	 */

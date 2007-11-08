@@ -108,10 +108,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$now = new DateTime("now");
 		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
-		
+
 		$acct->setCreated($now);
 		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
-		
+
 	}
 
 	/**
@@ -591,7 +591,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$acct->setPassword("bar");
 		$this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");
-		
+
 		// Test a default date/time value
 		$r = new Review();
 		$r->setReviewDate(new DateTime("now"));
@@ -770,7 +770,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$num = 5;
 
-		for($i=2; $i < $num + 2; $i++) {
+		for ($i=2; $i < $num + 2; $i++) {
 			$r = new Review();
 			$r->setReviewedBy('Hans ' . $num);
 			$dt = new DateTime("now");

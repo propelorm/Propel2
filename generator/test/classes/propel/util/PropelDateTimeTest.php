@@ -39,14 +39,14 @@ class PropelDateTimeTest extends BaseTestCase
 	{
 		$this->assertEquals($dt1->format('Y-m-d H:i:s'), $dt1->format('Y-m-d H:i:s'), sprintf($msg, "Dates w/ no timezone resolution were not the same."));
 		$this->assertEquals($dt1->getTimeZone()->getName(), $dt2->getTimeZone()->getName(), sprintf($msg, "timezones were not the same."));
-		
-		
+
+
 		// We do this last, because a PHP bug will make this true while the dates
 		// may not truly be equal.
-		// See: http://bugs.php.net/bug.php?id=40743 
+		// See: http://bugs.php.net/bug.php?id=40743
 		$this->assertTrue($dt1 == $dt2, sprintf($msg, "dates did not pass equality check (==)."));
 	}
-	
+
 	/**
 	 * Assert that two dates are equal.
 	 */
@@ -60,7 +60,7 @@ class PropelDateTimeTest extends BaseTestCase
 			}
 		}
 	}
-	
+
 	/**
 	 * Assert that two dates are not equal.
 	 */
@@ -68,27 +68,27 @@ class PropelDateTimeTest extends BaseTestCase
 	{
 		$this->assertTrue($dt1 != $dt2, $msg);
 	}
-	
+
 	/**
 	 * Ensure that our constructor matches DateTime constructor signature.
 	 */
 	public function testConstruct()
 	{
-		
+
 		// Because of a PHP bug ()
 		// we cannot use a timestamp format that includes a timezone.  It gets weird. :)
 		$now = date('Y-m-d H:i:s');
-		
+
 		$dt = new DateTime($now);
 		$pdt = new PropelDateTime($now);
 		$this->assertDatesEqual($dt, $pdt, "Expected DateTime == PropelDateTime: %s");
-		
+
 		$dt = new DateTime($now, new DateTimeZone('UTC'));
 		$pdt = new PropelDateTime($now, new DateTimeZone('America/New_York'));
 		$this->assertDatesNotEqual($dt, $pdt, "Expected DateTime != PropelDateTime: %s");
-		
+
 	}
-	
+
 	/**
 	 * Tests the ability to serialize() a PropelDateTime object.
 	 */
@@ -97,17 +97,17 @@ class PropelDateTimeTest extends BaseTestCase
 		$now = date('Y-m-d H:i:s');
 		$dt = new DateTime($now);
 		$pdt = new PropelDateTime($now);
-		
+
 		$this->assertDatesIdentical($dt, $pdt);
-		
+
 		// We expect these to be the same -- there's no time zone info
 		$ser = serialize($pdt);
 		unset($pdt);
-		
+
 		$pdt = unserialize($ser);
 		$this->assertDatesIdentical($dt, $pdt);
 	}
-	
+
 	/**
 	 * Tests the ability to serialize() a PropelDateTime object.
 	 */
@@ -116,17 +116,17 @@ class PropelDateTimeTest extends BaseTestCase
 		$now = date('Y-m-d H:i:s');
 		$dt = new DateTime($now, new DateTimeZone('America/New_York'));
 		$pdt = new PropelDateTime($now, new DateTimeZone('America/New_York'));
-		
+
 		$this->assertDatesIdentical($dt, $pdt);
-		
+
 		// We expect these to be the same -- there's no time zone info
 		$ser = serialize($pdt);
 		unset($pdt);
-		
+
 		$pdt = unserialize($ser);
 		$this->assertDatesIdentical($dt, $pdt);
 	}
-	
+
 	/**
 	 * Tests the ability to serialize() a PropelDateTime object.
 	 */
@@ -135,16 +135,16 @@ class PropelDateTimeTest extends BaseTestCase
 		$now = date('Y-m-d H:i:s');
 		$dt = new DateTime($now, new DateTimeZone('UTC'));
 		$pdt = new PropelDateTime($now, new DateTimeZone('America/New_York'));
-		
+
 		$this->assertDatesNotEqual($dt, $pdt);
-		
+
 		// We expect these to be the same -- there's no time zone info
 		$ser = serialize($pdt);
 		unset($pdt);
-		
+
 		$pdt = unserialize($ser);
 		$this->assertDatesNotEqual($dt, $pdt);
 	}
-	
-	
+
+
 }

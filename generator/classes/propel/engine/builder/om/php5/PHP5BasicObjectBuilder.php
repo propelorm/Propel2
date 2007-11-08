@@ -56,7 +56,7 @@ class PHP5BasicObjectBuilder extends ObjectBuilder {
 
 	/**
 	 * Returns the appropriate formatter (from platform) for a date/time column.
-	 * @param Column $col
+	 * @param      Column $col
 	 * @return     string
 	 */
 	protected function getTemporalFormatter(Column $col)
@@ -371,7 +371,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$clo = strtolower($col->getName());
 			$script .= "
 			\$this->".$clo." = ".$this->getDefaultValueString($col).";";
-				
+
 		}
 		$script .= "
 	}
@@ -396,11 +396,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
 		$visibility=$col->getAccessorVisibility();
-	
+
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
-		
+
 		$defaultfmt = null;
-				
+
 		// these default values are based on the Creole defaults
 		// the date and time default formats are locale-sensitive
 		if ($col->getType() === PropelTypes::DATE) {
@@ -610,7 +610,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Set the value of [$clo] column.
 	 * ".$col->getDescription()."
 	 * @param      ".$col->getPhpType()." \$v new value
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support) 
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */
 	".$visibility." function set$cfc(\$v)
 	{";
@@ -684,7 +684,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
 	 * ".$col->getDescription()."
 	 * @param      mixed \$v string, integer (timestamp), or DateTime value.
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support) 
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */
 	".$visibility." function set$cfc(\$v)
 	{";
@@ -706,7 +706,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} elseif (\$v instanceof DateTime) {
 			\$dt = \$v;
 		} else {
-			// some string/numeric value passed; we normalize that so that we can 
+			// some string/numeric value passed; we normalize that so that we can
 			// validate it.
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
@@ -718,21 +718,21 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
 			}
 		}
-		
+
 		if ( \$this->$clo !== null || \$dt !== null ) {
 			// (nested ifs are a little easier to read in this case)
-			
+
 			\$currNorm = (\$this->$clo !== null && \$tmpDt = new DateTime(\$this->$clo)) ? \$tmpDt->format($fmt) : null;
 			\$newNorm = (\$dt !== null) ? \$dt->format($fmt) : null;
-		 
+
 			if ( (\$currNorm !== \$newNorm) // normalized values don't match ";
-		
+
 		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
 			$defaultValue = $this->getDefaultValueString($col);
 			$script .= "
 					|| (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default";
 		}
-		
+
 		$script .= "
 					)
 			{

@@ -422,7 +422,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
 		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
 	}
-	
+
 	/**
 	 * Test passing null values to removeInstanceFromPool().
 	 */
@@ -435,5 +435,5 @@ class GeneratedPeerTest extends BookstoreTestBase {
 			$this->fail("Expected to get no exception when removing an instance from the pool.");
 		}
 	}
-	
+
 }

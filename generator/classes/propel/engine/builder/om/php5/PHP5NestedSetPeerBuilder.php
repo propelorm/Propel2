@@ -1363,7 +1363,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$child->hydrate(\$row);
 			\$child->setLevel(\$node->getLevel() + 1);
 
-			if(\$child->getRightValue() > \$prevRight) {
+			if (\$child->getRightValue() > \$prevRight) {
 				\$children[] = \$child;
 				\$prevRight = \$child->getRightValue();
 			}
