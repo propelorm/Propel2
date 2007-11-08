@@ -370,7 +370,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($colsWithDefaults as $col) {
 			$clo = strtolower($col->getName());
 			$script .= "
-			\$this->".$clo." = ".$this->getDefaultValueString($col).";";
+		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
 
 		}
 		$script .= "
