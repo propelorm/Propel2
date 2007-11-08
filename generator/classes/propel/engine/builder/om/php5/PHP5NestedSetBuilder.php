@@ -1021,6 +1021,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addSetLeft(&$script)
 	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
@@ -1035,7 +1036,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Set the value left column
 	 *
 	 * @param      int \$v new value
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 * @return     $objectClassName The current object (for fluent API support)
 	 */
 	public function setLeftValue(\$v)
 	{
@@ -1047,6 +1048,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addSetRight(&$script)
 	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
@@ -1061,7 +1063,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Set the value of right column
 	 *
 	 * @param      int \$v new value
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 * @return     $objectClassName The current object (for fluent API support)
 	 */
 	public function setRightValue(\$v)
 	{
@@ -1073,6 +1075,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
 	protected function addSetScopeId(&$script)
 	{
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
 		$table = $this->getTable();
 
 		$scope_col_setter_name = null;
@@ -1088,7 +1091,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * Set the value of scope column
 	 *
 	 * @param      int \$v new value
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 * @return     $objectClassName The current object (for fluent API support)
 	 */
 	public function setScopeIdValue(\$v)
 	{";
