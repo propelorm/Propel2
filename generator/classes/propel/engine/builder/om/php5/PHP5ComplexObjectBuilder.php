@@ -361,7 +361,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * Declares an association between this object and a $className object.
 	 *
 	 * @param      $className \$v
-	 * @return     void
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
 	public function set".$this->getFKPhpNameAffix($fk, $plural = false)."($className \$v = null)
@@ -400,7 +400,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		} // if fk->isLocalPrimaryKey
 
 		$script .= "
-
+		return \$this;
 	}
 ";
 	}
@@ -512,7 +512,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 * overridden in <code>".$table->getPhpName()."</code>.";
 		}
 		$script .= "
-	 * @return     void
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
 	public function set".$methodAffix."Key(\$key)
@@ -538,6 +538,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 ";
 		}
 		$script .= "
+		return \$this;
 	}
 ";
 	} // addFKByKeyMutator()
@@ -1053,6 +1054,7 @@ $script .= "
 	 * Sets a single $className object as related to this object by a one-to-one relationship.
 	 *
 	 * @param      $className \$l $className
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
 	public function set".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$v)
@@ -1063,6 +1065,8 @@ $script .= "
 		if (\$v->get".$this->getFKPhpNameAffix($refFK, $plural = false)."() === null) {
 			\$v->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
+		
+		return \$this;
 	}
 ";
 	} // addPKRefFKSet

@@ -148,4 +148,16 @@ interface Platform {
 	 * @return string
 	 */
 	public function getTimestampFormatter();
+	
+	/**
+	 * Gets the preferred date formatter for setting time values.
+	 * @return string
+	 */
+	public function getDateFormatter();
+	
+	/**
+	 * Gets the preferred time formatter for setting time values.
+	 * @return string
+	 */
+	public function getTimeFormatter();
 }

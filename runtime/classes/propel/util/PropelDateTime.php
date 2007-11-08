@@ -19,12 +19,16 @@
  * <http://propel.phpdb.org>.
  */
 
-
 /**
- * DateTime subclass to support serialization.
+ * DateTime subclass which supports serialization.
  *
+ * Currently Propel is not using this for storing date/time objects 
+ * within model objeects; however, we are keeping it in the repository 
+ * because it is useful if you want to store a DateTime object in a session.
+ * 
  * @author     Alan Pinstein
  * @author     Soenke Ruempler
+ * @author     Hans Lellelid
  * @package    propel.util
  */
 class PropelDateTime extends DateTime
@@ -41,6 +45,20 @@ class PropelDateTime extends DateTime
 	 * @var        string
 	 */
 	private $tzString;
+	
+	/**
+	 * Convenience method to enable a more fluent API.
+	 * @param string $date Date/time value.
+	 * @param DateTimeZone $tz (optional) timezone
+	 */
+	public static function newInstance($date, DateTimeZone $tz = null)
+	{
+		if ($tz) {
+			return new DateTime($date, $tz);
+		} else {
+			return new DateTime($date);
+		}
+	}
 	
 	/**
 	 * PHP "magic" function called when object is serialized.

@@ -218,7 +218,7 @@ class DefaultPlatform implements Platform {
 		$b = ($b === true || strtolower($b) === 'true' || $b === 1 || $b === '1' || strtolower($b) === 'y' || strtolower($b) === 'yes');
 		return ($b ? '1' : '0');
 	}
-	
+
 	/**
 	 * Gets the preferred timestamp formatter for setting date/time values.
 	 * @return string
@@ -227,4 +227,23 @@ class DefaultPlatform implements Platform {
 	{
 		return DateTime::ISO8601;
 	}
+
+	/**
+	 * Gets the preferred time formatter for setting date/time values.
+	 * @return string
+	 */
+	public function getTimeFormatter()
+	{
+		return 'H:i:s';
+	}
+
+	/**
+	 * Gets the preferred date formatter for setting date/time values.
+	 * @return string
+	 */
+	public function getDateFormatter()
+	{
+		return 'Y-m-d';
+	}
+
 }

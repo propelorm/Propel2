@@ -63,7 +63,7 @@
 			description="Author Id" />
 		<column name="reviewed_by" required="true" type="VARCHAR" size="128"
 			description="Reviewer Name" />
-		<column name="review_date" required="true" type="DATE" default="2001-01-01"
+		<column name="review_date" required="true" type="DATE" default="01 Jan 2001"
 			description="Date of Review" />
 		<column name="recommended" required="true" type="BOOLEAN"
 			description="Does reviewer recommend book?" />
