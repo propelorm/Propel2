@@ -384,7 +384,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$script .= "
 		\$this->$varName = \$v;
 ";
-		
+
 		// Now add bi-directional relationship binding, taking into account whether this is
 		// a one-to-one relationship.
 
@@ -403,7 +403,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			\$v->add".$this->getRefFKPhpNameAffix($fk, $plural = false)."(\$this);
 		}
 ";
-			
+
 		}
 
 		$script .= "
@@ -1550,7 +1550,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				//if ( $fk->getTable()->getName() != $table->getName() ) {
 
 				if ($fk->isLocalPrimaryKey()) {
-					
+
 					$afx = $this->getRefFKPhpNameAffix($fk, $plural = false);
 					$script .= "
 			\$relObj = \$this->get$afx();
@@ -1559,7 +1559,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			}
 ";
 				} else {
-					
+
 					$script .= "
 			foreach (\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
 				if (\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves

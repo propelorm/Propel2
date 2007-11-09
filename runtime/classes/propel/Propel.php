@@ -163,14 +163,14 @@ class Propel
 		'ValidatorMap' => 'propel/map/ValidatorMap.php',
 
 		'BaseObject' => 'propel/om/BaseObject.php',
-		'BaseNodeObject' => 'propel/om/BaseNodeObject.php',
+		'NodeObject' => 'propel/om/NodeObject.php',
 		'Persistent' => 'propel/om/Persistent.php',
 		'PreOrderNodeIterator' => 'propel/om/PreOrderNodeIterator.php',
 		'NestedSetPreOrderNodeIterator' => 'propel/om/NestedSetPreOrderNodeIterator.php',
 		'NestedSetRecursiveIterator' => 'propel/om/NestedSetRecursiveIterator.php',
 
 		'BasePeer' => 'propel/util/BasePeer.php',
-		'BaseNodePeer' => 'propel/util/BaseNodePeer.php',
+		'NodePeer' => 'propel/util/NodePeer.php',
 		'Criteria' => 'propel/util/Criteria.php',
 		'PeerInfo' => 'propel/util/PeerInfo.php',
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',

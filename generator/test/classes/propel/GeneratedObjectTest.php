@@ -804,7 +804,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num with new empty Criteria");
 	}
-	
+
 	/**
 	 * Test copyInto method.
 	 */
@@ -813,25 +813,25 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		// Test a "normal" object
 		$c = new Criteria();
 		$c->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
-		
+
 		$book = BookPeer::doSelectOne($c);
 		$reviews = $book->getReviews();
-		
+
 		$b2 = $book->copy(true);
 		$this->assertType('Book', $b2);
 		$this->assertNull($b2->getId());
-		
+
 		$r2 = $b2->getReviews();
-		
+
 		$this->assertEquals(count($reviews), count($r2));
-		
+
 		// Test a one-to-one object
 		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
 		$e2 = $emp->copy(true);
-		
+
 		$this->assertType('BookstoreEmployee', $e2);
 		$this->assertNull($e2->getId());
-		
+
 		$this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());
 	}
 

@@ -27,7 +27,7 @@
  * @version    $Revision$
  * @package    propel.om
  */
-interface BaseNodeObject extends IteratorAggregate {
+interface NodeObject extends IteratorAggregate {
 	/**
 	 * If object is saved without left/right values, set them as undefined (0)
 	 *
@@ -124,7 +124,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      Node $parent Propel node object
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function setParentNode(BaseNodeObject $parent = null);
+	public function setParentNode(NodeObject $parent = null);
 
 	/**
 	 * Sets the previous sibling of the node in the tree
@@ -132,7 +132,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      Node $node Propel node object
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function setPrevSibling(BaseNodeObject $node = null);
+	public function setPrevSibling(NodeObject $node = null);
 
 	/**
 	 * Sets the next sibling of the node in the tree
@@ -140,7 +140,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      Node $node Propel node object
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function setNextSibling(BaseNodeObject $node = null);
+	public function setNextSibling(NodeObject $node = null);
 
 	/**
 	 * Determines if the node is the root node
@@ -162,7 +162,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      object $node	Propel object for node to compare to
 	 * @return     bool
 	 */
-	public function isEqualTo(BaseNodeObject $node);
+	public function isEqualTo(NodeObject $node);
 
 	/**
 	 * Tests if object has an ancestor
@@ -242,7 +242,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsFirstChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+	public function insertAsFirstChildOf(NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Inserts as last child of destination node $parent
@@ -251,7 +251,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsLastChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+	public function insertAsLastChildOf(NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Inserts node as previous sibling to destination node $dest
@@ -260,7 +260,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsPrevSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+	public function insertAsPrevSiblingOf(NodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Inserts node as next sibling to destination node $dest
@@ -269,7 +269,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con	Connection to use.
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function insertAsNextSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+	public function insertAsNextSiblingOf(NodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Moves node to be first child of $parent
@@ -278,7 +278,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con Connection to use.
 	 * @return     void
 	 */
-	public function moveToFirstChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+	public function moveToFirstChildOf(NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Moves node to be last child of $parent
@@ -287,7 +287,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con Connection to use.
 	 * @return     void
 	 */
-	public function moveToLastChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+	public function moveToLastChildOf(NodeObject $parent, PropelPDO $con = null);
 
 	/**
 	 * Moves node to be prev sibling to $dest
@@ -296,7 +296,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con Connection to use.
 	 * @return     void
 	 */
-	public function moveToPrevSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+	public function moveToPrevSiblingOf(NodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Moves node to be next sibling to $dest
@@ -305,7 +305,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      PropelPDO $con Connection to use.
 	 * @return     void
 	 */
-	public function moveToNextSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+	public function moveToNextSiblingOf(NodeObject $dest, PropelPDO $con = null);
 
 	/**
 	 * Inserts node as parent of given node.
@@ -315,7 +315,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @return     void
 	 * @throws     Exception      When trying to insert node as parent of a root node
 	 */
-	public function insertAsParentOf(BaseNodeObject $node, PropelPDO $con = null);
+	public function insertAsParentOf(NodeObject $node, PropelPDO $con = null);
 
 	/**
 	 * Wraps the getter for the scope value
@@ -331,4 +331,4 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @return     object The current object (for fluent API support)
 	 */
 	public function setScopeIdValue($v);
-} // BaseNodeObject
+} // NodeObject
