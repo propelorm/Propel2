@@ -23,7 +23,7 @@
  * This interface defines methods that must be implemented by all
  * business objects within the system to handle Node object.
  *
- * @author     Heltem <heltme@o2php.com> (Propel)
+ * @author     Heltem <heltem@o2php.com> (Propel)
  * @version    $Revision$
  * @package    propel.om
  */
