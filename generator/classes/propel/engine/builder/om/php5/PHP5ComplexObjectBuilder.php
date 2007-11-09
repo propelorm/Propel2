@@ -53,7 +53,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 
 		foreach ($table->getReferrers() as $refFK) {
 			// if ($refFK->getTable()->getName() != $table->getName()) {
-				$this->addRefFKAttributes($script, $refFK);
+			$this->addRefFKAttributes($script, $refFK);
 			// }
 		}
 
@@ -379,7 +379,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		}
 ";
 
-			} /* foreach local col */
+		} /* foreach local col */
 
 		$script .= "
 		\$this->$varName = \$v;
@@ -589,7 +589,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 			$relCol2 = $this->getFKPhpNameAffix($fk2, $plural = false);
 
 			if ( $this->getRelatedBySuffix($refFK) != "" &&
-							($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
+			($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
 				$doJoinGet = false;
 			}
 
@@ -610,7 +610,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null)
 	{
 		";
-		$script .= "
+				$script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria();
 		}
@@ -870,7 +870,7 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
 ";
 		} // foreach ($fk->getForeignColumns()
-$script .= "
+		$script .= "
 				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
 					\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
 				} else {
@@ -963,8 +963,8 @@ $script .= "
 
 				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
 ";
-	} // foreach ($fk->getForeignColumns()
-$script .= "
+		} // foreach ($fk->getForeignColumns()
+		$script .= "
 				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
 					\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
@@ -1138,7 +1138,7 @@ $script .= "
 		expects to be passed a Criteria object that contains columns (which tell BasePeer
 		which table is being updated)
 		if ($table->hasAutoIncrementPrimaryKey()) {
-			$script .= " || \$this->isNew()";
+		$script .= " || \$this->isNew()";
 		}
 		*/
 
@@ -1537,13 +1537,26 @@ $script .= "
 				//HL: commenting out self-referrential check below
 				//		it seems to work as expected and is probably desireable to have those referrers from same table deep-copied.
 				//if ( $fk->getTable()->getName() != $table->getName() ) {
-				$script .= "
-			foreach (\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
-				if (\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
-				\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
-			}
+
+				if ($fk->isLocalPrimaryKey()) {
+					
+					$afx = $this->getRefFKPhpNameAffix($fk, $plural = false);
+					$script .= "
+			\$relObj = \$this->get$afx();
+			if (\$relObj) {
+				\$copyObj->set$afx(\$relObj->copy(\$deepCopy));
 			}
 ";
+				} else {
+					
+					$script .= "
+			foreach (\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
+				if (\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
+					\$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+				}
+			}
+";
+				}
 				// HL: commenting out close of self-referential check
 				// } /* if tblFK != table */
 			} /* foreach */
