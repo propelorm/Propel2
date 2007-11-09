@@ -132,7 +132,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      Node $node Propel node object
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function setPrevSibling(BaseNodeObject $node);
+	public function setPrevSibling(BaseNodeObject $node = null);
 
 	/**
 	 * Sets the next sibling of the node in the tree
@@ -140,7 +140,7 @@ interface BaseNodeObject extends IteratorAggregate {
 	 * @param      Node $node Propel node object
 	 * @return     object The current object (for fluent API support)
 	 */
-	public function setNextSibling(BaseNodeObject $node);
+	public function setNextSibling(BaseNodeObject $node = null);
 
 	/**
 	 * Determines if the node is the root node
