@@ -1120,6 +1120,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	/**
 	 * Tests if \$node1 is a child of or equal to \$node2
 	 *
+	 * @deprecated 1.3 - 2007/11/09
 	 * @param      $objectClassname \$node1		Propel object for node
 	 * @param      $objectClassname \$node2		Propel object for node
 	 * @return     bool
