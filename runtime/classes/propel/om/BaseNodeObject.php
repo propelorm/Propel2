@@ -47,6 +47,14 @@ interface BaseNodeObject extends IteratorAggregate {
 	public function delete(PropelPDO $con = null);
 
 	/**
+	 * Sets node properties to make it a root node.
+	 *
+	 * @return     object The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function makeRoot();
+
+	/**
 	 * Gets the level if set, otherwise calculates this and returns it
 	 *
 	 * @param      PropelPDO $con	Connection to use.
@@ -93,6 +101,46 @@ interface BaseNodeObject extends IteratorAggregate {
  	 * @return     array
 	 */
 	public function getDescendants(PropelPDO $con = null);
+
+	/**
+	 * Sets the level of the node in the tree
+	 *
+	 * @param      int $v new value
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setLevel($level);
+
+	/**
+	 * Sets the children array of the node in the tree
+	 *
+	 * @param      array of Node $children	array of Propel node object
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setChildren(array $children);
+
+	/**
+	 * Sets the parentNode of the node in the tree
+	 *
+	 * @param      Node $parent Propel node object
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setParentNode(BaseNodeObject $parent = null);
+
+	/**
+	 * Sets the previous sibling of the node in the tree
+	 *
+	 * @param      Node $node Propel node object
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setPrevSibling(BaseNodeObject $node);
+
+	/**
+	 * Sets the next sibling of the node in the tree
+	 *
+	 * @param      Node $node Propel node object
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setNextSibling(BaseNodeObject $node);
 
 	/**
 	 * Determines if the node is the root node
@@ -223,4 +271,64 @@ interface BaseNodeObject extends IteratorAggregate {
 	 */
 	public function insertAsNextSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
 
+	/**
+	 * Moves node to be first child of $parent
+	 *
+	 * @param      object $parent	Propel object for destination node
+	 * @param      PropelPDO $con Connection to use.
+	 * @return     void
+	 */
+	public function moveToFirstChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+
+	/**
+	 * Moves node to be last child of $parent
+	 *
+	 * @param      object $parent	Propel object for destination node
+	 * @param      PropelPDO $con Connection to use.
+	 * @return     void
+	 */
+	public function moveToLastChildOf(BaseNodeObject $parent, PropelPDO $con = null);
+
+	/**
+	 * Moves node to be prev sibling to $dest
+	 *
+	 * @param      object $dest	Propel object for destination node
+	 * @param      PropelPDO $con Connection to use.
+	 * @return     void
+	 */
+	public function moveToPrevSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+
+	/**
+	 * Moves node to be next sibling to $dest
+	 *
+	 * @param      object $dest	Propel object for destination node
+	 * @param      PropelPDO $con Connection to use.
+	 * @return     void
+	 */
+	public function moveToNextSiblingOf(BaseNodeObject $dest, PropelPDO $con = null);
+
+	/**
+	 * Inserts node as parent of given node.
+	 *
+	 * @param      object $node  Propel object for given destination node
+	 * @param      PropelPDO $con	Connection to use.
+	 * @return     void
+	 * @throws     Exception      When trying to insert node as parent of a root node
+	 */
+	public function insertAsParentOf(BaseNodeObject $node, PropelPDO $con = null);
+
+	/**
+	 * Wraps the getter for the scope value
+	 *
+	 * @return     int
+	 */
+	public function getScopeIdValue();
+
+	/**
+	 * Set the value of scope column
+	 *
+	 * @param      int $v new value
+	 * @return     object The current object (for fluent API support)
+	 */
+	public function setScopeIdValue($v);
 } // BaseNodeObject
