@@ -932,7 +932,6 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$node Propel object for destination node
 	 * @param      PropelPDO \$con	Connection to use.
 	 * @return     $objectClassName The current object (for fluent API support)
-	 * @throws     Exception      When trying to insert node as parent of a root node
 	 */
 	public function insertAsParentOf(BaseNodeObject \$node, PropelPDO \$con = null)
 	{

@@ -433,15 +433,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      $objectClassname \$node	Propel object for given destination node
 	 * @param      PropelPDO \$con	Connection to use.
 	 * @return     void
-	 * @throws     Exception      When trying to insert node as parent of a root node
 	 */
 	public static function insertAsParentOf(BaseNodeObject \$parent, BaseNodeObject \$node, PropelPDO \$con = null)
 	{
-		if (\$node->isRoot())
-		{
-			throw new Exception('Impossible to insert a node as parent of a root node');
-		}
-
 		\$sidv = null;
 		if (self::SCOPE_COL) {
 			\$sidv = \$node->getScopeIdValue();
@@ -1433,12 +1427,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		// correct values after source
 		self::shiftRLValues(\$right + 1, -\$treeSize, \$con, \$node->getScopeIdValue());
-
-		// don't get what this if for?
-		if (\$left <= \$destLeft) { // dst was shifted too?
-			\$newPos['left'] -= \$treeSize;
-			\$newPos['right'] -= \$treeSize;
-		}
 	}
 ";
 	}
