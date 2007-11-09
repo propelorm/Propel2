@@ -39,18 +39,18 @@ require_once 'bookstore/BookstoreTestBase.php';
 class GeneratedObjectRelTest extends BookstoreTestBase {
 
 	/**
-	 * Tests bi-directional setting of many-to-many relationships.
-	 * @link http://propel.phpdb.org/trac/ticket/508
+	 * Tests one side of a bi-directional setting of many-to-many relationships.
 	 */
 	public function testManyToMany_Dir1()
 	{
 		$list = new BookClubList();
 		$list->setGroupLeader('Archimedes Q. Porter');
-		$list->save();
+		// No save ...
 
 		$book = new Book();
 		$book->setTitle( "Jungle Expedition Handbook" );
 		$book->setISBN('TEST');
+		// No save ...
 		
 		$this->assertEquals(0, count($list->getBookListRels()) );
 		$this->assertEquals(0, count($book->getBookListRels()) );
@@ -61,7 +61,7 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$list->addBookListRel($xref);
 		
 		$this->assertEquals(1, count($list->getBookListRels()));
-		$this->assertEquals(0, count($book->getBookListRels()) );
+		$this->assertEquals(1, count($book->getBookListRels()) );
 		$this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
 		
 		$list->save();
@@ -73,19 +73,53 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 	}
 	
 	/**
-	 * Tests bi-directional setting of many-to-many relationships.
-	 * @link http://propel.phpdb.org/trac/ticket/508
+	 * Tests reverse setting of one of many-to-many relationship, with all saves cascaded.
 	 */
-	public function testManyToMany_Dir2()
+	public function testManyToMany_Dir2_Unsaved()
 	{
 		$list = new BookClubList();
 		$list->setGroupLeader('Archimedes Q. Porter');
-		$list->save();
+		// No save ...
 
 		$book = new Book();
 		$book->setTitle( "Jungle Expedition Handbook" );
 		$book->setISBN('TEST');
+		// No save (yet) ...
+		
+		$this->assertEquals(0, count($list->getBookListRels()) );
+		$this->assertEquals(0, count($book->getBookListRels()) );
+		$this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
 
+		$xref = new BookListRel();
+		$xref->setBookClubList($list);
+		$book->addBookListRel($xref);
+		
+		$this->assertEquals(1, count($list->getBookListRels()) );
+		$this->assertEquals(1, count($book->getBookListRels()) );
+		$this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
+		$book->save();
+		
+		$this->assertEquals(1, count($list->getBookListRels()) );
+		$this->assertEquals(1, count($book->getBookListRels()) );
+		$this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
+
+	}
+	
+	/**
+	 * Tests reverse setting of relationships, saving one of the objects first.
+	 * @link http://propel.phpdb.org/trac/ticket/508
+	 */
+	public function testManyToMany_Dir2_Saved()
+	{
+		$list = new BookClubList();
+		$list->setGroupLeader('Archimedes Q. Porter');
+		$list->save();
+		
+		$book = new Book();
+		$book->setTitle( "Jungle Expedition Handbook" );
+		$book->setISBN('TEST');	
+		// No save (yet) ...
+		
 		$this->assertEquals(0, count($list->getBookListRels()) );
 		$this->assertEquals(0, count($book->getBookListRels()) );
 		$this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
@@ -96,7 +130,7 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$xref->setBookClubList($list);
 		$book->addBookListRel($xref);
 		
-		$this->assertEquals(0, count($list->getBookListRels()) );
+		$this->assertEquals(1, count($list->getBookListRels()) );
 		$this->assertEquals(1, count($book->getBookListRels()) );
 		$this->assertEquals(0, count(BookListRelPeer::doSelect(new Criteria())) );
 		$book->save();

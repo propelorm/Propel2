@@ -384,20 +384,27 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 		$script .= "
 		\$this->$varName = \$v;
 ";
-		// Now, we must check to see whether this foreign key represents a one-to-one
-		// relationship with the foreign object.
-		// If the foreign key is also the local primary key, then this is a one-to-one relationship
+		
+		// Now add bi-directional relationship binding, taking into account whether this is
+		// a one-to-one relationship.
 
 		if ($fk->isLocalPrimaryKey()) {
-
 			$script .= "
-		// This foreign key represents a one-to-one relationship, since it is also the primary key,
-		// therefore, we will bind the relationship bi-directionally.
+		// Add binding for other direction of this 1:1 relationship.
 		if (\$v !== null) {
 			\$v->set".$this->getRefFKPhpNameAffix($fk, $plural = false)."(\$this);
 		}
 ";
-		} // if fk->isLocalPrimaryKey
+		} else {
+			$script .= "
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the $className object, it will not be re-added.
+		if (\$v !== null) {
+			\$v->add".$this->getRefFKPhpNameAffix($fk, $plural = false)."(\$this);
+		}
+";
+			
+		}
 
 		$script .= "
 		return \$this;
@@ -786,9 +793,13 @@ class PHP5ComplexObjectBuilder extends PHP5BasicObjectBuilder {
 	 */
 	public function add".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$l)
 	{
-		\$this->$collName = (array) \$this->$collName;
-		array_push(\$this->$collName, \$l);
-		\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
+		if (\$this->$collName === null) {
+			\$this->$collName = array();
+		}
+		if (!in_array(\$l, \$this->$collName, true)) { // only add it if the **same** object is not already associated
+			array_push(\$this->$collName, \$l);
+			\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
+		}
 	}
 ";
 	} // addRefererAdd
