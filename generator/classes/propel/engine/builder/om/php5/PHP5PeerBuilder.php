@@ -372,14 +372,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	const CLASSKEY_".strtoupper($child->getKey())." = '" . $child->getKey() . "';
 ";
 
-	if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
-		$script .= "
+					if (strtoupper($child->getClassname()) != strtoupper($child->getKey())) {
+						$script .= "
 	/** A key representing a particular subclass */
 	const CLASSKEY_".strtoupper($child->getClassname())." = '" . $child->getKey() . "';
 ";
-	}
+					}
 
-	$script .= "
+					$script .= "
 	/** A class that can be returned by this peer. */
 	const CLASSNAME_".strtoupper($child->getKey())." = '". $childBuilder->getClasspath() . "';
 ";
@@ -459,11 +459,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$table = $this->getTable();
 		$count_col = "*";
 		/*
-		* FIXME
-		* (HL) wanted to remove this because AFAIK count(*) is generally
-		* optimized in databases, and furthermore the code below isn't correct
-		* (multi-pkey needs to be accounted for)....
-		*/
+		 * FIXME
+		 * (HL) wanted to remove this because AFAIK count(*) is generally
+		 * optimized in databases, and furthermore the code below isn't correct
+		 * (multi-pkey needs to be accounted for)....
+		 */
 		if ($table->hasPrimaryKey()) {
 			$pk = $table->getPrimaryKey();
 			$count_col = DataModelBuilder::prefixTablename($table->getName())
@@ -775,7 +775,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 *
 	 * @param      array \$row PropelPDO resultset row.
 	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
-	 * @return     string
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
 	 */
 	public static function getPrimaryKeyHashFromRow(\$row, \$startcol = 0)
 	{";
@@ -792,6 +792,17 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			}
 		}
 
+		$cond = array();
+		foreach($pk as $part) {
+			$cond[] = $part . " === null";
+		}
+
+		$script .= "
+		// If the PK cannot be derived from the row, return NULL.
+		if (".implode(' && ', $cond).") {
+			return null; 
+		}
+";
 		// the general case is a single column
 		if (count($pk) == 1) {
 			$script .= "
@@ -1078,7 +1089,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$selectCriteria->add(".$this->getColumnConstant($col).", \$criteria->remove(".$this->getColumnConstant($col)."), \$comparison);
 ";
 			}  /* if col is prim key */
-	 	} /* foreach */
+		} /* foreach */
 
 		$script .= "
 		} else { // \$values is ".$this->getObjectClassname()." object
@@ -1118,15 +1129,15 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			\$con->beginTransaction();
 			";
-			if ($this->isDeleteCascadeEmulationNeeded()) {
-				$script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(), \$con);
+		if ($this->isDeleteCascadeEmulationNeeded()) {
+			$script .="\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(new Criteria(), \$con);
 			";
-			}
-			if ($this->isDeleteSetNullEmulationNeeded()) {
-				$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(new Criteria(), \$con);
+		}
+		if ($this->isDeleteSetNullEmulationNeeded()) {
+			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(new Criteria(), \$con);
 			";
-			}
-			$script .= "\$affectedRows += BasePeer::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
+		}
+		$script .= "\$affectedRows += BasePeer::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
@@ -1273,16 +1284,16 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// i'm not sure whether we can allow delete cascade for foreign keys
 				// within the same table?  perhaps we can?
 				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
-							&& $tblFK->getName() != $table->getName()) {
+				&& $tblFK->getName() != $table->getName()) {
 					$script .= "
 			// invalidate objects in ".$joinedTablePeerBuilder->getPeerClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
 			".$joinedTablePeerBuilder->getPeerClassname()."::clearInstancePool();
 ";
-  				} // if fk is on delete cascade
+				} // if fk is on delete cascade
 
-  			} // if (! for ref only)
+			} // if (! for ref only)
 
-  		} // foreach
+		} // foreach
 
 
 
@@ -1371,7 +1382,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			} // if not for ref only
 		} // foreach foreign keys
-			$script .= "
+		$script .= "
 		}
 		return \$affectedRows;
 	}
@@ -1427,11 +1438,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// i'm not sure whether we can allow delete setnull for foreign keys
 				// within the same table?  perhaps we can?
 				if ( $fk->getOnDelete() == ForeignKey::SETNULL &&
-						$fk->getTable()->getName() != $table->getName()) {
+				$fk->getTable()->getName() != $table->getName()) {
 
-							// backwards on purpose
-							$columnNamesF = $fk->getLocalColumns();
-							$columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
+					// backwards on purpose
+					$columnNamesF = $fk->getLocalColumns();
+					$columnNamesL = $fk->getForeignColumns(); // should be same num as foreign
 					$script .= "
 			// set fkey col in related $fkClassName rows to NULL
 			\$selectCriteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
@@ -1447,7 +1458,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					}
 
 					$script .= "
-			{$this->basePeerClassname}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+					{$this->basePeerClassname}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
 ";
 				} // if setnull && fkey table name != curr table name
 			} // if not for ref only
@@ -1507,9 +1518,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$columns[".$this->getColumnConstant($col)."] = \$obj->get".$col->getPhpName()."();
 ";
 			} // if
-  		} // foreach
+		} // foreach
 
-  		$script .= "
+		$script .= "
 		}
 
 		return {$this->basePeerClassname}::doValidate(".$this->getPeerClassname()."::DATABASE_NAME, ".$this->getPeerClassname()."::TABLE_NAME, \$columns);
@@ -1552,7 +1563,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// values
 			$i=0;
 			foreach ($table->getPrimaryKey() as $col) {
-	   			$script .= "
+				$script .= "
 		\$criteria->add(".$this->getColumnConstant($col).", \$pk[$i]);";
 				$i++;
 			}
@@ -1641,8 +1652,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$cptype = $col->getPhpType();
 			$script .= "@param $cptype $".$clo."
 	   ";
-	   }
-	   $script .= "
+		}
+		$script .= "
 	 * @param      PropelPDO \$con
 	 * @return     ".$this->getObjectClassname()."
 	 */
@@ -1689,7 +1700,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	}
 ";
 	}
-	
+
 	/**
 	 * Adds the complex OM methods to the base addSelectMethods() function.
 	 * @param      string &$script The script will be modified in this method.
@@ -1711,7 +1722,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
 			if ($tblFK->isForReferenceOnly()) {
-			   $includeJoinAll = false;
+				$includeJoinAll = false;
 			}
 		}
 
@@ -1726,6 +1737,25 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			}
 		}
 
+	}
+
+	/**
+	 * Get the column offsets of the primary key(s) for specified table.
+	 *
+	 * @param Table $tbl
+	 * @return array int[] The column offsets of the primary key(s).
+	 */
+	protected function getPrimaryKeyColOffsets(Table $tbl)
+	{
+		$offsets = array();
+		$idx = 0;
+		foreach($tbl->getColumns() as $col) {
+			if ($col->isPrimaryKey()) {
+				$offsets[] = $idx;
+			}
+			$idx++;
+		}
+		return $offsets;
 	}
 
 	/**
@@ -1786,7 +1816,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");"; //CHECKME
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
 						}
 						$script .= "
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
@@ -1813,31 +1843,34 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				\$obj1->hydrate(\$row);
 				".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
 			} // if \$obj1 already loaded
-
+			
 			\$key2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
-			\$obj2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key2);
-			if (!\$obj2) {
+			if (\$key2 !== null) {
+				\$obj2 = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key2);
+				if (!\$obj2) {
 ";
 						if ($joinTable->getChildrenColumn()) {
 							$script .= "
-				\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
+					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
 ";
 						} else {
 							$script .= "
-				\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 						}
 
 						$script .= "
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
-				\$obj2->hydrate(\$row, \$startcol);
+					\$obj2->hydrate(\$row, \$startcol);
 				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
-			} // if obj2 already loaded
-
-			// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")
-			\$obj2->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
-
+				} // if obj2 already loaded
+			
+				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")
+				\$obj2->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				
+			} // if joined row was not null
+			
 			\$results[] = \$obj1;
 		}
 		return \$results;
@@ -1910,7 +1943,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
 ";
 						}
 						$script .= "
@@ -1975,7 +2008,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
 		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
 ";
-			$index = $new_index;
+				$index = $new_index;
 
 			} // if fk->getForeignTableName != table->getName
 		} // foreach [sub] foreign keys
@@ -1992,9 +2025,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
 ";
-	  			}
+				}
 			}
 		}
 
@@ -2051,35 +2084,36 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// Add objects for joined $joinClassName rows
 
 			\$key$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
-
-			\$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
-			if (!\$obj$index) {
+			if (\$key$index !== null) {
+				\$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
+				if (!\$obj$index) {
 ";
 				if ($joinTable->getChildrenColumn()) {
 					$script .= "
-				\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
 ";
 				} else {
 					$script .= "
-				\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
 				} /* $joinTable->getChildrenColumn() */
 
 				$script .= "
 
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
-				" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
-				\$obj".$index."->hydrate(\$row, \$startcol$index);
-				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
-			} // if obj$index loaded
-
-			// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-			\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+					" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
+					\$obj".$index."->hydrate(\$row, \$startcol$index);
+					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
+				} // if obj$index loaded
+			
+				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
+				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+			} // if joined row not null
 ";
 
 			} // $fk->getForeignTableName() != $table->getName()
 		} //foreach foreign key
-
+		
 		$script .= "
 			\$results[] = \$obj1;
 		}
@@ -2140,7 +2174,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).");
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
 ";
 				}
 			} // if fk->getForeignTableName != table->getName
@@ -2174,7 +2208,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// -- these were existing in original Torque, so we should keep them for compatibility
 
 		$fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over
-											// getForeignKeys() will cause this to only execute one time.
+		// getForeignKeys() will cause this to only execute one time.
 		foreach ($fkeys as $fk ) {
 
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
@@ -2188,7 +2222,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
 
 
-		$script .= "
+			$script .= "
 
 	/**
 	 * Selects a collection of ".$this->getObjectClassname()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
@@ -2226,7 +2260,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
 		\$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
 ";
-					$index = $new_index;
+						$index = $new_index;
 					} // if joinClassName not excludeClassName
 				} // if subfk is not curr table
 			} // foreach [sub] foreign keys
@@ -2245,7 +2279,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).");
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
 ";
 						}
 					}
@@ -2279,59 +2313,62 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			} // if obj1 already loaded
 ";
 
-		$index = 1;
-		foreach ($table->getForeignKeys() as $subfk ) {
+			$index = 1;
+			foreach ($table->getForeignKeys() as $subfk ) {
 		  // want to cover this case, but the code is not there yet.
 		  if ( $subfk->getForeignTableName() != $table->getName() ) {
 
-				$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
+		  	$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 
-				$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
-				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+		  	$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
+		  	$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
 
-				$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
+		  	$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 
-				$interfaceName = $joinClassName;
-				if ($joinTable->getInterface()) {
-					$interfaceName = DataModelBuilder::prefixClassname($joinTable->getInterface());
-				}
+		  	$interfaceName = $joinClassName;
+		  	if ($joinTable->getInterface()) {
+		  		$interfaceName = DataModelBuilder::prefixClassname($joinTable->getInterface());
+		  	}
 
-				if ($joinClassName != $excludedClassName) {
+		  	if ($joinClassName != $excludedClassName) {
 
-					$index++;
+		  		$index++;
 
-					$script .= "
+		  		$script .= "
 				// Add objects for joined $joinClassName rows
 
 				\$key$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol$index);
-				\$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
-				if (!\$obj$index) {
+				if (\$key$index !== null) {
+					\$obj$index = ".$joinedTablePeerBuilder->getPeerClassname()."::getInstanceFromPool(\$key$index);
+					if (!\$obj$index) {
 	";
 
-					if ($joinTable->getChildrenColumn()) {
-						$script .= "
-					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+		  		if ($joinTable->getChildrenColumn()) {
+		  			$script .= "
+						\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
 ";
-					} else {
-						$script .= "
-					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+		  		} else {
+		  			$script .= "
+						\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
 ";
-					} /* $joinTable->getChildrenColumn() */
-					$script .= "
+		  		} /* $joinTable->getChildrenColumn() */
+		  		$script .= "
 
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
-				" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
-				\$obj".$index."->hydrate(\$row, \$startcol$index);
-				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
-			} // if \$obj$index already loaded
+					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+					" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
+					\$obj".$index."->hydrate(\$row, \$startcol$index);
+					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
+				} // if \$obj$index already loaded
 
-			// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-			\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
+				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				
+			} // if joined row is not null
 ";
 					} // if ($joinClassName != $excludedClassName) {
-			} // $subfk->getForeignTableName() != $table->getName()
-		} // foreach
-		$script .= "
+		  } // $subfk->getForeignTableName() != $table->getName()
+			} // foreach
+			$script .= "
 			\$results[] = \$obj1;
 		}
 		return \$results;
@@ -2350,7 +2387,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$table = $this->getTable();
 
 		$fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over
-											// getForeignKeys() will cause this to only execute one time.
+		// getForeignKeys() will cause this to only execute one time.
 		foreach ($fkeys as $fk ) {
 
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
@@ -2363,7 +2400,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			$excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
 
-		$script .= "
+			$script .= "
 
 	/**
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
@@ -2407,7 +2444,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).");
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
 ";
 						}
 					}
@@ -2426,5 +2463,5 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} // foreach fk
 
 	} // addDoCountJoinAllExcept
-	
+
 } // PHP5PeerBuilder
