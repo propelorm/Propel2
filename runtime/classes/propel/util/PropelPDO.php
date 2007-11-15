@@ -142,7 +142,7 @@ class PropelPDO extends PDO {
 	/**
 	 * Overrides PDO::prepare() to add logging.
 	 */
-	public function prepare($sql, array $driver_options = array())
+	public function prepare($sql, $driver_options = array())
 	{
 		Propel::log($sql, Propel::LOG_DEBUG);
 		return parent::prepare($sql, $driver_options);
