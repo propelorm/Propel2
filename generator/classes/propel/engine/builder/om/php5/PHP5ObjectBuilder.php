@@ -198,7 +198,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (!$table->isAlias()) {
 			$this->addGetPeer($script);
 		}
-		
+
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
 	}
@@ -231,7 +231,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addAttributes(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		$script .= "
 	/**
 	 * The Peer class.
@@ -244,7 +244,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (!$table->isAlias()) {
 			$this->addColumnAttributes($script);
 		}
-		
+
 		foreach ($table->getForeignKeys() as $fk) {
 			$this->addFKAttributes($script, $fk);
 		}
@@ -643,7 +643,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 	/**
 	 * Adds the close of the mutator (setter) method for a column.
-	 * 
+	 *
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col The current column.
 	 */
@@ -1589,11 +1589,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 }
 ";
 	}
-	
+
 	// --------------------------------------------------------------------
 	// Complex OM Methods
 	// --------------------------------------------------------------------
-		
+
 	/**
 	 * Convenience method to get the foreign Table object for an fkey.
 	 * @return     Table
@@ -3022,6 +3022,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 	} // addCopyInto()
 
-	
-	
+
+
 } // PHP5ObjectBuilder
