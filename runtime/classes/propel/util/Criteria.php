@@ -324,10 +324,10 @@ class Criteria implements IteratorAggregate {
 	}
 
 	/**
-	 * called by BasePeer to determine whether the sql command specified by
-	 * this criteria must be wrapped in a transaction.
+	 * Whether the sql command specified by this criteria must be wrapped 
+	 * in a transaction.
 	 *
-	 * @return     a <code>boolean</code> value
+	 * @return     boolean
 	 */
 	public function isUseTransaction()
 	{
@@ -337,8 +337,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return criteria related to columns in a table.
 	 *
-		 * @param      string $column Column name.
-	 * @return     A Criterion or null if $column is invalid.
+	 * @param      string $column Column name.
+	 * @return     Criterion A Criterion or null if $column is invalid.
 	 */
 	public function getCriterion($column)
 	{
@@ -353,10 +353,10 @@ class Criteria implements IteratorAggregate {
 	 * to this Criteria.  This can be used to chain the
 	 * Criterions to form a more complex where clause.
 	 *
-	 * @param      column String full name of column (for example TABLE.COLUMN).
+	 * @param      string $column Full name of column (for example TABLE.COLUMN).
 	 * @param      mixed $value
 	 * @param      string $comparison
-	 * @return     A Criterion.
+	 * @return     Criterion
 	 */
 	public function getNewCriterion($column, $value, $comparison = null)
 	{
@@ -366,12 +366,12 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return a String table name.
 	 *
-	 * @param      name A String with the name of the key.
-	 * @return     A String with the value of the object at key.
+	 * @param      string $name Name of the key.
+	 * @return     string The value of the object at key.
 	 */
 	public function getColumnName($name)
 	{
-		if ( isset ( $this->map[$name] ) ) {
+		if (isset($this->map[$name])) {
 			return $this->map[$name]->getColumn();
 		}
 		return null;
@@ -423,7 +423,7 @@ class Criteria implements IteratorAggregate {
 	 * Set the DatabaseMap name.  If <code>null</code> is supplied, uses value
 	 * provided by <code>Propel::getDefaultDB()</code>.
 	 *
-	 * @param      $dbName A String with the Database(Map) name.
+	 * @param      string $dbName The Database (Map) name.
 	 * @return     void
 	 */
 	public function setDbName($dbName = null)
@@ -434,12 +434,12 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Method to return a String table name.
 	 *
-	 * @param      $name A String with the name of the key.
-	 * @return     string A String with the value of table for criterion at key.
+	 * @param      string $name The name of the key.
+	 * @return     string The value of table for criterion at key.
 	 */
 	public function getTableName($name)
 	{
-		if ( isset ( $this->map[$name] ) ) {
+		if (isset($this->map[$name])) {
 			return $this->map[$name]->getTable();
 		}
 		return null;
@@ -453,7 +453,7 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function getValue($name)
 	{
-		if ( isset ( $this->map[$name] ) ) {
+		if (isset($this->map[$name])) {
 			return $this->map[$name]->getValue();
 		}
 		return null;
@@ -580,72 +580,44 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function addJoin($left, $right, $operator = null)
 	{
-		$this->joins [] = new Join($left, $right, $operator);
-
+		$this->joins[] = new Join($left, $right, $operator);
 		return $this;
 	}
 
 	/**
-	 * Get the array of Joins.  This method is meant to
-	 * be called by BasePeer.
-	 * @return     an array which contains objects of type Join,
-	 *         or an empty array if the criteria does not contains any joins
+	 * Get the array of Joins.
+	 * @return     array Join[]
 	 */
-	public function & getJoins()
+	public function getJoins()
 	{
-		// TODO: do we want to return by reference to the real array?
-		// objects arent cloned and it is then possible for the user
-		// to insert an invalid object or string into the stack
-		// someone who knows this better, please remove this comment if
-		// this functionality is wanted or remove the reference
 		return $this->joins;
 	}
 
 	/**
-	 * get one side of the set of possible joins.  This method is meant to
-	 * be called by BasePeer.
-	 * @return     array
-	 * @deprecated This method is no longer used by BasePeer.
-	 */
-	public function getJoinL()
-	{
-		throw new PropelException("getJoinL() in Criteria is no longer supported!");
-	}
-
-	/**
-	 * get one side of the set of possible joins.  This method is meant to
-	 * be called by BasePeer.
-	 * @return     array
-		 * @deprecated This method is no longer used by BasePeer.
-	 */
-	public function getJoinR()
-	{
-		throw new PropelException("getJoinR() in Criteria is no longer supported!");
-	}
-
-	/**
-	 * Adds "ALL " to the SQL statement.
-	 * @return     void
+	 * Adds "ALL" modifier to the SQL statement.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setAll()
 	{
 		$this->selectModifiers[] = self::ALL;
+		return $this;
 	}
 
 	/**
-	 * Adds "DISTINCT " to the SQL statement.
-	 * @return     void
+	 * Adds "DISTINCT" modifier to the SQL statement.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setDistinct()
 	{
 		$this->selectModifiers[] = self::DISTINCT;
+		return $this;
 	}
 
 	/**
 	 * Sets ignore case.
 	 *
 	 * @param      boolean $b True if case should be ignored.
-	 * @return     A modified Criteria object.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setIgnoreCase($b)
 	{
@@ -672,9 +644,8 @@ class Criteria implements IteratorAggregate {
 	 * multiple records but you are only interested in the first one then you
 	 * should be using setLimit(1).
 	 *
-	 * @param      b set to <code>true</code> if you expect the query to select just
-	 * one record.
-	 * @return     A modified Criteria object.
+	 * @param      boolean $b Set to TRUE if you expect the query to select just one record.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setSingleRecord($b)
 	{
@@ -696,7 +667,7 @@ class Criteria implements IteratorAggregate {
 	 * Set limit.
 	 *
 	 * @param      limit An int with the value for limit.
-	 * @return     A modified Criteria object.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setLimit($limit)
 	{
@@ -718,13 +689,13 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Set offset.
 	 *
-	 * @param      int $offset An int with the value for offset.
-	 * @return     A modified Criteria object.
+	 * @param      int $offset An int with the value for offset.  (Note this values is 
+	 * 							cast to a 32bit integer and may result in truncatation)
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function setOffset($offset)
 	{
-		// TODO: do we enforce int here? 32bit issue if we do
-		$this->offset = $offset;
+		$this->offset = (int) $offset;
 		return $this;
 	}
 
@@ -741,8 +712,8 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Add select column.
 	 *
-	 * @param      name A String with the name of the select column.
-	 * @return     A modified Criteria object.
+	 * @param      string $name Name of the select column.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function addSelectColumn($name)
 	{
@@ -764,7 +735,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Clears current select columns.
 	 *
-	 * @return     Criteria A modified Criteria object.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function clearSelectColumns() {
 		$this->selectColumns = $this->asColumns = array();
@@ -809,7 +780,7 @@ class Criteria implements IteratorAggregate {
 	 * Add order by column name, explicitly specifying descending.
 	 *
 	 * @param      string $name The name of the column to order by.
-	 * @return     Criteria The modified Criteria object.
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function addDescendingOrderByColumn($name)
 	{
@@ -830,7 +801,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Clear the order-by columns.
 	 *
-	 * @return     Criteria
+	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function clearOrderByColumns()
 	{
@@ -1083,8 +1054,8 @@ class Criteria implements IteratorAggregate {
 		if ($p3 !== null) {
 			// addOr(column, value, comparison)
 			$nc = new Criterion($this, $p1, $p2, $p3);
-						$oc = $this->getCriterion($p1);
-						if ($oc === null) {
+			$oc = $this->getCriterion($p1);
+			if ($oc === null) {
 				$this->map[$p1] = $nc;
 			} else {
 				$oc->addOr($nc);
