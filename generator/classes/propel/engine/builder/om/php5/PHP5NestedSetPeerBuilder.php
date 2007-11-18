@@ -634,7 +634,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function moveToPrevSiblingOf(NodeObject \$dest, NodeObject \$node, PropelPDO \$con = null)
 	{
-		if (\$parent->getScopeIdValue() != \$child->getScopeIdValue()) {
+		if (\$dest->getScopeIdValue() != \$node->getScopeIdValue()) {
 			throw new PropelException('Moving nodes across trees is not supported');
 		}
 		\$destLeft = \$dest->getLeftValue();
@@ -658,7 +658,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function moveToNextSiblingOf(NodeObject \$dest, NodeObject \$node, PropelPDO \$con = null)
 	{
-		if (\$parent->getScopeIdValue() != \$child->getScopeIdValue()) {
+		if (\$dest->getScopeIdValue() != \$node->getScopeIdValue()) {
 			throw new PropelException('Moving nodes across trees is not supported');
 		}
 		\$destLeft = \$dest->getRightValue();
