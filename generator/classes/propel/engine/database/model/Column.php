@@ -79,12 +79,12 @@ class Column extends XMLElement {
 	 * @var        string "string", "boolean", "int", "double"
 	 */
 	private $phpType;
-	
+
 	/**
-	 * @var Table
+	 * @var        Table
 	 */
 	private $parentTable;
-	
+
 	private $position;
 	private $isPrimaryKey = false;
 	private $isNodeKey = false;
@@ -635,7 +635,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set true if the column is UNIQUE
-	 * @param      boolean $u 
+	 * @param      boolean $u
 	 */
 	public function setUnique($u)
 	{

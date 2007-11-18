@@ -846,7 +846,7 @@ class Table extends XMLElement implements IDMethod {
 	{
 		return @$this->columnsByPhpName[$phpName];
 	}
-	
+
 	/**
 	 * Get all the foreign keys from this table to the specufued tabke.
 	 * @return     array ForeignKey[]
@@ -855,7 +855,7 @@ class Table extends XMLElement implements IDMethod {
 	{
 		$matches = array();
 		$keys = $this->getForeignKeys();
-		foreach($keys as $fk) {
+		foreach ($keys as $fk) {
 			if ($fk->getForeignTableName() === $tablename) {
 				$matches[] = $fk;
 			}
@@ -872,7 +872,7 @@ class Table extends XMLElement implements IDMethod {
 	public function getColumnForeignKeys($colname)
 	{
 		$matches = array();
-		foreach($this->foreignKeys as $fk) {
+		foreach ($this->foreignKeys as $fk) {
 			if (in_array($colname, $fk->getLocalColumns())) {
 				$matches[] = $fk;
 			}

@@ -280,10 +280,10 @@ class ForeignKey extends XMLElement {
 		}
 		return $h;
 	}
-	
+
 	/**
 	 * Get the foreign column mapped to specified local column.
-	 * @return string Column name.
+	 * @return     string Column name.
 	 */
 	public function getMappedForeignColumn($local)
 	{
@@ -293,10 +293,10 @@ class ForeignKey extends XMLElement {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the local column mapped to specified foreign column.
-	 * @return string Column name.
+	 * @return     string Column name.
 	 */
 	public function getMappedLocalColumn($foreign)
 	{
@@ -306,7 +306,7 @@ class ForeignKey extends XMLElement {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return an array of foreign column objects.
 	 * @return     array Column[]

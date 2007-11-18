@@ -219,24 +219,24 @@ class CriteriaTest extends BaseTestCase {
 	{
 		$adapters = array(new DBMySQL(), new DBPostgres());
 		$expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(?)", "TABLE.COLUMN ILIKE ?");
-		
+
 		$i =0;
-		foreach($adapters as $adapter) {
-			
+		foreach ($adapters as $adapter) {
+
 			Propel::setDB(null, $adapter);
 			$myCriteria = new Criteria();
-	
+
 			$myCriterion = $myCriteria->getNewCriterion(
 					"TABLE.COLUMN", "FoObAr", Criteria::LIKE);
 			$sb = "";
 			$params=array();
 			$myCriterion->appendPsTo($sb, $params);
 			$expected = "TABLE.COLUMN LIKE ?";
-	
+
 			$this->assertEquals($expected, $sb);
-	
+
 			$ignoreCriterion = $myCriterion->setIgnoreCase(true);
-	
+
 			$sb = "";
 			$params=array();
 			$ignoreCriterion->appendPsTo($sb, $params);

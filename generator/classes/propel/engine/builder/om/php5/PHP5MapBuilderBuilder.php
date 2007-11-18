@@ -248,7 +248,7 @@ class ".$this->getClassname()." implements MapBuilder {
 			}
 			if ($col->isPrimaryKey()) {
 				if ($col->isForeignKey()) {
-					foreach($col->getForeignKeys() as $fk) {
+					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
 		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";
@@ -260,7 +260,7 @@ class ".$this->getClassname()." implements MapBuilder {
 				}
 			} else {
 				if ($col->isForeignKey()) {
-					foreach($col->getForeignKeys() as $fk) {
+					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
 		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
 ";

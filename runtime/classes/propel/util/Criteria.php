@@ -324,7 +324,7 @@ class Criteria implements IteratorAggregate {
 	}
 
 	/**
-	 * Whether the sql command specified by this criteria must be wrapped 
+	 * Whether the sql command specified by this criteria must be wrapped
 	 * in a transaction.
 	 *
 	 * @return     boolean
@@ -689,7 +689,7 @@ class Criteria implements IteratorAggregate {
 	/**
 	 * Set offset.
 	 *
-	 * @param      int $offset An int with the value for offset.  (Note this values is 
+	 * @param      int $offset An int with the value for offset.  (Note this values is
 	 * 							cast to a 32bit integer and may result in truncatation)
 	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */

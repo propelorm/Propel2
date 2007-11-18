@@ -424,7 +424,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
 			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
 		}
-		
+
 		$handleMysqlDate = false;
 		if ($this->getPlatform() instanceof MysqlPlatform) {
 			if ($col->getType() === PropelTypes::TIMESTAMP) {
@@ -480,13 +480,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$this->$clo === null) {
 			return null;
 		}
-		
+
 ";
 		if ($handleMysqlDate) {
 			$script .= "
 		if (\$this->$clo === '$mysqlInvalidDateString') {
 			\$dt = new DateTime('@0', new DateTimeZone('UTC'));
-			// We have to explicitly specify and then change the time zone because of a 
+			// We have to explicitly specify and then change the time zone because of a
 			// DateTime bug: http://bugs.php.net/bug.php?id=43003
 			\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 		} else {
@@ -507,7 +507,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 ";
 		} // if handleMyqlDate
-		
+
 		$script .= "
 		if (\$format === null) {";
 		if ($useDateTime) {
@@ -686,12 +686,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$clo=strtolower($col->getName());
 
 		if ($col->isForeignKey()) {
-			
+
 			foreach ($col->getForeignKeys() as $fk) {
-			
+
 				$tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
 				$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
-								
+
 				$varName = $this->getFKVarName($fk);
 
 				$script .= "
@@ -707,9 +707,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
 
 			if ( $tblFK->getName() != $table->getName() ) {
-				
-				foreach($col->getForeignKeys() as $fk) {
-				
+
+				foreach ($col->getForeignKeys() as $fk) {
+
 					$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
 					$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
 
@@ -815,7 +815,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
 					\$dt = new DateTime('@'.\$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a 
+					// We have to explicitly specify and then change the time zone because of a
 					// DateTime bug: http://bugs.php.net/bug.php?id=43003
 					\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 				} else {
@@ -1703,7 +1703,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				throw $e;
 			}
 
-			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1 
+			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
 			|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// if there are seeral foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
@@ -2893,7 +2893,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 			if ($col->isForeignKey()) {
 				foreach ($col->getForeignKeys() as $fk) {
-				
+
 					$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
 					$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
 					$varName = $this->getFKVarName($fk);
