@@ -485,7 +485,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if ($handleMysqlDate) {
 			$script .= "
 		if (\$this->$clo === '$mysqlInvalidDateString') {
-			\$dt = new DateTime('@0');
+			\$dt = new DateTime('@0', new DateTimeZone('UTC'));
+			// We have to explicitly specify and then change the time zone because of a 
+			// DateTime bug: http://bugs.php.net/bug.php?id=43003
+			\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 		} else {
 			try {
 				\$dt = new DateTime(\$this->$clo);
@@ -811,7 +814,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			// validate it.
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$dt = new DateTime('@'.\$v);
+					\$dt = new DateTime('@'.\$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a 
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 				} else {
 					\$dt = new DateTime(\$v);
 				}
