@@ -260,8 +260,8 @@ class ForeignKey extends XMLElement {
 	}
 
 	/**
-	 * Return an array of local column names.
-	 * @return     array string[]
+	 * Return an array of local column objects.
+	 * @return     array Column[]
 	 */
 	public function getLocalColumns()
 	{
@@ -280,10 +280,36 @@ class ForeignKey extends XMLElement {
 		}
 		return $h;
 	}
-
+	
 	/**
-	 * Return an array of foreign column names.
-	 * @return     array string[]
+	 * Get the foreign column mapped to specified local column.
+	 * @return string Column name.
+	 */
+	public function getMappedForeignColumn($local)
+	{
+		$m = $this->getLocalForeignMapping();
+		if (isset($m[$local])) {
+			return $m[$local];
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the local column mapped to specified foreign column.
+	 * @return string Column name.
+	 */
+	public function getMappedLocalColumn($foreign)
+	{
+		$m = $this->getForeignLocalMapping();
+		if (isset($m[$foreign])) {
+			return $m[$foreign];
+		}
+		return null;
+	}
+	
+	/**
+	 * Return an array of foreign column objects.
+	 * @return     array Column[]
 	 */
 	public function getForeignColumns()
 	{

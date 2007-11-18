@@ -654,17 +654,20 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$clo=strtolower($col->getName());
 
 		if ($col->isForeignKey()) {
+			
+			foreach ($col->getForeignKeys() as $fk) {
+			
+				$tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
+				$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
+								
+				$varName = $this->getFKVarName($fk);
 
-			$tblFK = $table->getDatabase()->getTable($col->getRelatedTableName());
-			$colFK = $tblFK->getColumn($col->getRelatedColumnName());
-
-			$varName = $this->getFKVarName($col->getForeignKey());
-
-			$script .= "
+				$script .= "
 		if (\$this->$varName !== null && \$this->".$varName."->get".$colFK->getPhpName()."() !== \$v) {
 			\$this->$varName = null;
 		}
 ";
+			} // foreach fk
 		} /* if col is foreign key */
 
 		foreach ($col->getReferrers() as $refFK) {
@@ -672,21 +675,23 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
 
 			if ( $tblFK->getName() != $table->getName() ) {
+				
+				foreach($col->getForeignKeys() as $fk) {
+				
+					$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+					$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
 
-				$tblFK = $table->getDatabase()->getTable($col->getRelatedTableName());
-				$colFK = $tblFK->getColumn($col->getRelatedColumnName());
-
-				if ($refFK->isLocalPrimaryKey()) {
-					$varName = $this->getPKRefFKVarName($refFK);
-					$script .= "
+					if ($refFK->isLocalPrimaryKey()) {
+						$varName = $this->getPKRefFKVarName($refFK);
+						$script .= "
 		// update associated ".$tblFK->getPhpName()."
 		if (\$this->$varName !== null) {
 			\$this->{$varName}->set".$colFK->getPhpName()."(\$v);
 		}
 ";
-				} else {
-					$collName = $this->getRefFKCollVarName($refFK);
-					$script .= "
+					} else {
+						$collName = $this->getRefFKCollVarName($refFK);
+						$script .= "
 
 		// update associated ".$tblFK->getPhpName()."
 		if (\$this->$collName !== null) {
@@ -695,8 +700,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			  }
 		  }
 ";
-				} // if (isLocalPrimaryKey
-
+					} // if (isLocalPrimaryKey
+				} // foreach col->getPrimaryKeys()
 			} // if tablFk != table
 
 		} // foreach
@@ -1663,7 +1668,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				throw $e;
 			}
 
-			if ($column->isMultipleFK() || $fk->getForeignTableName() == $fk->getTable()->getName()) {
+			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1 
+			|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// if there are seeral foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
 				// instead of just getAuthor().  Currently we are doing the same
@@ -1993,22 +1999,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$lastTable = "";
 		foreach ($tblFK->getForeignKeys() as $fk2) {
-
-			// Add join methods if the fk2 table is not this table or
-			// the fk2 table references this table multiple times.
-
-			$doJoinGet = true;
-
-			if ( $fk2->getForeignTableName() == $table->getName() ) {
-				$doJoinGet = false;
-			}
-
-			foreach ($fk2->getLocalColumns() as $columnName) {
-				$column = $tblFK->getColumn($columnName);
-				if ($column->isMultipleFK()) {
-					$doJoinGet = true;
-				}
-			}
 
 			$tblFK2 = $this->getForeignTable($fk2);
 			$doJoinGet = !$tblFK2->isForReferenceOnly();
@@ -2867,17 +2857,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$clo=strtolower($col->getName());
 
 			if ($col->isForeignKey()) {
+				foreach ($col->getForeignKeys() as $fk) {
+				
+					$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+					$colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
+					$varName = $this->getFKVarName($fk);
 
-				$tblFK = $table->getDatabase()->getTable($col->getRelatedTableName());
-				$colFK = $tblFK->getColumn($col->getRelatedColumnName());
-
-				$varName = $this->getFKVarName($col->getForeignKey());
-
-				$script .= "
+					$script .= "
 		if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {
 			\$this->$varName = null;
 		}
 	";
+				} // foraech
 			} /* if col is foreign key */
 
 		} // foreach

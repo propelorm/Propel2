@@ -127,7 +127,7 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 
 					foreach ($tbl->getColumns() as $col) {
 						$dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
-						if ($col->getForeignKey() != null ) {
+						if (count($col->getForeignKeys()) > 0) {
 							$dotSyntax .= ' [FK]';
 						} elseif ($col->isPrimaryKey()) {
 							$dotSyntax .= ' [PK]';

@@ -846,29 +846,38 @@ class Table extends XMLElement implements IDMethod {
 	{
 		return @$this->columnsByPhpName[$phpName];
 	}
-
+	
 	/**
-	 * Return the first foreign key that includes col in it's list
-	 * of local columns.  Eg. Foreign key (a,b,c) refrences tbl(x,y,z)
-	 * will be returned of col is either a,b or c.
-	 * @param      string $col
-	 * @return     Return a Column object or null if it does not exist.
+	 * Get all the foreign keys from this table to the specufued tabke.
+	 * @return     array ForeignKey[]
 	 */
-	public function getForeignKey($col)
+	public function getForeignKeysReferencingTable($tablename)
 	{
-		$firstFK = null;
-		for ($i=0,$size=count($this->foreignKeys); $i < $size; $i++) {
-			$key = $this->foreignKeys[$i];
-			if (in_array($col, $key->getLocalColumns())) {
-				if ($firstFK === null) {
-					$firstFK = $key;
-				} else {
-					throw new EngineException($col . " has ben declared as a foreign key multiple times.  This is not"
-								       . " being handled properly. (Try moving foreign key declarations to the foreign table.)");
-				}
+		$matches = array();
+		$keys = $this->getForeignKeys();
+		foreach($keys as $fk) {
+			if ($fk->getForeignTableName() === $tablename) {
+				$matches[] = $fk;
 			}
 		}
-		return $firstFK;
+		return $matches;
+	}
+
+	/**
+	 * Return the foreign keys that includes col in it's list of local columns.
+	 * Eg. Foreign key (a,b,c) refrences tbl(x,y,z) will be returned of col is either a,b or c.
+	 * @param      string $col
+	 * @return     array ForeignKey[] or null if there is no FK for specified column.
+	 */
+	public function getColumnForeignKeys($colname)
+	{
+		$matches = array();
+		foreach($this->foreignKeys as $fk) {
+			if (in_array($colname, $fk->getLocalColumns())) {
+				$matches[] = $fk;
+			}
+		}
+		return $matches;
 	}
 
 	/**

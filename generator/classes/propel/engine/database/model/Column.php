@@ -79,7 +79,12 @@ class Column extends XMLElement {
 	 * @var        string "string", "boolean", "int", "double"
 	 */
 	private $phpType;
+	
+	/**
+	 * @var Table
+	 */
 	private $parentTable;
+	
 	private $position;
 	private $isPrimaryKey = false;
 	private $isNodeKey = false;
@@ -92,6 +97,7 @@ class Column extends XMLElement {
 	private $isLazyLoad = false;
 	private $defaultValue;
 	private $referrers;
+
 	// only one type is supported currently, which assumes the
 	// column either contains the classnames or a key to
 	// classnames specified in the schema.  Others may be
@@ -620,6 +626,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Return true if the column is a scope key of a tree
+	 * @return     boolean
 	 */
 	public function isTreeScopeKey()
 	{
@@ -628,6 +635,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set true if the column is UNIQUE
+	 * @param      boolean $u 
 	 */
 	public function setUnique($u)
 	{
@@ -635,7 +643,8 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Get the UNIQUE property
+	 * Get the UNIQUE property.
+	 * @return     boolean
 	 */
 	public function isUnique()
 	{
@@ -644,6 +653,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Return true if the column requires a transaction in Postgres
+	 * @return     boolean
 	 */
 	public function requiresTransactionInPostgres()
 	{
@@ -652,71 +662,29 @@ class Column extends XMLElement {
 
 	/**
 	 * Utility method to determine if this column is a foreign key.
+	 * @return     boolean
 	 */
 	public function isForeignKey()
 	{
-		return ($this->getForeignKey() !== null);
+		return (count($this->getForeignKeys()) > 0);
 	}
 
 	/**
-	 * Determine if this column is a foreign key that refers to the
-	 * same table as another foreign key column in this table.
+	 * Whether this column is a part of more than one foreign key.
+	 * @return     boolean
 	 */
-	public function isMultipleFK()
+	public function hasMultipleFK()
 	{
-		$fk = $this->getForeignKey();
-		if ($fk !== null) {
-			$fks = $this->parentTable->getForeignKeys();
-			for ($i=0, $len=count($fks); $i < $len; $i++) {
-				if ($fks[$i]->getForeignTableName() === $fk->getForeignTableName()
-				&& !in_array($this->name, $fks[$i]->getLocalColumns()) ) {
-					return true;
-				}
-			}
-		}
-
-		// No multiple foreign keys.
-		return false;
+		return (count($this->getForeignKeys()) > 1);
 	}
 
 	/**
-	 * get the foreign key object for this column
-	 * if it is a foreign key or part of a foreign key
+	 * Get the foreign key objects for this column (if it is a foreign key or part of a foreign key)
+	 * @return     array
 	 */
-	public function getForeignKey()
+	public function getForeignKeys()
 	{
-		return $this->parentTable->getForeignKey($this->name);
-	}
-
-	/**
-	 * Utility method to get the related table of this column if it is a foreign
-	 * key or part of a foreign key
-	 */
-	public function getRelatedTableName()
-	{
-		$fk = $this->getForeignKey();
-		return ($fk === null ? null : $fk->getForeignTableName());
-	}
-
-
-	/**
-	 * Utility method to get the related column of this local column if this
-	 * column is a foreign key or part of a foreign key.
-	 */
-	public function getRelatedColumnName()
-	{
-		$fk = $this->getForeignKey();
-		if ($fk === null) {
-			return null;
-		} else {
-			$m = $fk->getLocalForeignMapping();
-			$c = @$m[$this->name];
-			if ($c === null) {
-				return null;
-			} else {
-				return $c;
-			}
-		}
+		return $this->parentTable->getColumnForeignKeys($this->name);
 	}
 
 	/**

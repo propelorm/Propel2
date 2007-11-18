@@ -33,6 +33,7 @@ abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase {
 	public function setUp()
 	{
 		parent::setUp();
+		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 	}
 
@@ -76,7 +77,7 @@ abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase {
 
 		BookstoreSalePeer::clearInstancePool();
 		$this->assertEquals(0, count(BookstoreSalePeer::$instances), "Expected 0 BookstoreSale instances after clearInstancePool()");
-
+		
 		parent::tearDown();
 	}
 

@@ -245,7 +245,6 @@ class BookstoreDataPopulator {
 	}
 
 	public static function depopulate() {
-
 		AuthorPeer::doDeleteAll();
 		BookPeer::doDeleteAll();
 		PublisherPeer::doDeleteAll();
@@ -254,6 +253,10 @@ class BookstoreDataPopulator {
 		BookClubListPeer::doDeleteAll();
 		BookstoreEmployeePeer::doDeleteAll();
 		BookstoreEmployeeAccountPeer::doDeleteAll();
+		CustomerPeer::doDeleteAll();
+		ContestPeer::doDeleteAll();
+		BookstoreContestPeer::doDeleteAll();
+		BookstoreContestEntryPeer::doDeleteAll();
 		BookstorePeer::doDeleteAll();
 	}
 

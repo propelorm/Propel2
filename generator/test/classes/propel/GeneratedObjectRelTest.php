@@ -140,5 +140,40 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
 
 	}
+	
+	/**
+	 * Test behavior of columns that are implicated in multiple foreign keys.
+	 * @link http://propel.phpdb.org/trac/ticket/228
+	 */
+	public function testMultiFkImplication()
+	{
+		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry 
+		$b = new Bookstore();
+		$b->setStoreName("Foo!");
+		$b->save();
+		
+		$c = new Contest();
+		$c->setName("Bookathon Contest");
+		$c->save();
 
+		$bc = new BookstoreContest();
+		$bc->setBookstore($b);
+		$bc->setContest($c);
+		$bc->save();
+		
+		$c = new Customer();
+		$c->setName("Happy Customer");
+		$c->save();
+		
+		$bce = new BookstoreContestEntry();
+		$bce->setBookstore($b);
+		$bce->setBookstoreContest($bc);
+		$bce->setCustomer($c);
+		$bce->save();
+		
+		$bce->setBookstoreId(null);
+		
+		$this->assertNull($bce->getBookstoreContest());
+		$this->assertNull($bce->getBookstore());
+	}
 }
