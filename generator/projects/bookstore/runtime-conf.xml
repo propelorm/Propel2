@@ -41,10 +41,10 @@
 
 			<datasource id="bookstore">
 				<!-- the Propel adapter to use for this connection -->
-				<adapter>pgsql</adapter>
+				<adapter>mysql</adapter>
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
-					<dsn>pgsql:dbname=bookstore user=postgres</dsn>
+					<dsn>pgsql:dbname=test</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
 					<user>testuser</user>

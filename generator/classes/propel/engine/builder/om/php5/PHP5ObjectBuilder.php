@@ -416,14 +416,25 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$defaultfmt = null;
 
-		// these default values are based on the Creole defaults
-		// the date and time default formats are locale-sensitive
+		// Default date/time formatter strings are specified in build.properties
 		if ($col->getType() === PropelTypes::DATE) {
 			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
 		} elseif ($col->getType() === PropelTypes::TIME) {
 			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
 		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
 			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
+		}
+		
+		$handleMysqlDate = false;
+		if ($this->getPlatform() instanceof MysqlPlatform) {
+			if ($col->getType() === PropelTypes::TIMESTAMP) {
+				$handleMysqlDate = true;
+				$mysqlInvalidDateString = '0000-00-00 00:00:00';
+			} elseif ($col->getType() === PropelTypes::DATE) {
+				$handleMysqlDate = true;
+				$mysqlInvalidDateString = '0000-00-00';
+			}
+			// 00:00:00 is a valid time, so no need to check for that.
 		}
 
 		// if the default format property was an empty string, then we'll set it
@@ -445,10 +456,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *							If format is NULL, then the raw ".($useDateTime ? 'DateTime object' : 'unix timestamp integer')." will be returned.";
 		if ($useDateTime) {
 			$script .= "
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL).";
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
 		} else {
 			$script .= "
-	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL).";
+	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL), NULL if column is NULL".($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
 		}
 		$script .= "
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
@@ -469,15 +480,33 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$this->$clo === null) {
 			return null;
 		}
+		
+";
+		if ($handleMysqlDate) {
+			$script .= "
+		if (\$this->$clo === '$mysqlInvalidDateString') {
+			\$dt = new DateTime('@0');
+		} else {
+			try {
+				\$dt = new DateTime(\$this->$clo);
+			} catch (Exception \$x) {
+				throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
+			}
+		}
+";
+		} else {
+			$script .= "
 
 		try {
 			\$dt = new DateTime(\$this->$clo);
 		} catch (Exception \$x) {
 			throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
 		}
-
-		if (\$format === null) {
 ";
+		} // if handleMyqlDate
+		
+		$script .= "
+		if (\$format === null) {";
 		if ($useDateTime) {
 			$script .= "
 			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.

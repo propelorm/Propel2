@@ -253,7 +253,7 @@
 	<table name="customer">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
 		<column name="name" type="VARCHAR" size="255"/>
-		<column name="join_date" type="DATE" defaultExpr="CURRENT_DATE"/>
+		<column name="join_date" type="DATE" defaultExpr="now"/>
 	</table>
 	
 	<table name="contest">
