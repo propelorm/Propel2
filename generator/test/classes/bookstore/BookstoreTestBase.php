@@ -30,7 +30,7 @@ abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase {
 	/**
 	 * This is run before each unit test; it populates the database.
 	 */
-	public function setUp()
+	protected function setUp()
 	{
 		parent::setUp();
 		BookstoreDataPopulator::depopulate();
@@ -40,7 +40,7 @@ abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase {
 	/**
 	 * This is run after each unit test.  It empties the database.
 	 */
-	public function tearDown()
+	protected function tearDown()
 	{
 
 		BookstoreDataPopulator::depopulate();
