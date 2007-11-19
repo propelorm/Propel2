@@ -143,6 +143,12 @@ class Table extends XMLElement implements IDMethod {
 		if ($this->heavyIndexing) {
 			$this->doHeavyIndexing();
 		}
+		
+		// If there is no PK, then throw an error.  Propel 1.3 requires primary keys.
+		$pk = $this->getPrimaryKey();
+		if (empty($pk)) {
+			throw new EngineException("Table '".$this->getName()."' does not have a primary key defined.  Propel requires all tables to have a primary key.");	
+		}
 
 		// Name any indices which are missing a name using the
 		// appropriate algorithm.
