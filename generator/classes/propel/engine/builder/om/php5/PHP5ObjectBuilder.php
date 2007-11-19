@@ -81,7 +81,15 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 			if ($col->isTemporalType()) {
 				$fmt = $this->getTemporalFormatter($col);
 				try {
-					$defDt = new DateTime($val);
+					if ($this->getPlatform() instanceof MysqlPlatform &&
+					($val === '0000-00-00 00:00:00' || $val === '0000-00-00')) {
+						$defDt = new DateTime('@0', new DateTimeZone('UTC'));
+						$defDt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+						// We have to explicitly specify and then change the time zone because of a 
+						// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					} else {
+						$defDt = new DateTime($val);
+					}
 				} catch (Exception $x) {
 					throw new EngineException("Unable to parse default temporal value for " . $col->getFullyQualifiedName() . ": " .$this->getDefaultValueString($col), $x);
 				}
