@@ -772,9 +772,14 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$parent	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     $objectClassName The current object (for fluent API support)
+	 * @throws     PropelException - if this object already exists
 	 */
 	public function insertAsFirstChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
+		if(!\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must be new.\");
+		}
 		$peerClassname::insertAsFirstChildOf(\$this, \$parent, \$con);
 		return \$this;
 	}
@@ -792,9 +797,14 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$parent	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     $objectClassName The current object (for fluent API support)
+	 * @throws     PropelException - if this object already exists
 	 */
 	public function insertAsLastChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
+		if(!\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must be new.\");
+		}
 		$peerClassname::insertAsLastChildOf(\$this, \$parent, \$con);
 		return \$this;
 	}
@@ -812,9 +822,14 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     $objectClassName The current object (for fluent API support)
+	 * @throws     PropelException - if this object already exists
 	 */
 	public function insertAsPrevSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
+		if(!\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must be new.\");
+		}
 		$peerClassname::insertAsPrevSiblingOf(\$this, \$dest, \$con);
 		return \$this;
 	}
@@ -832,9 +847,14 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * @param      $objectClassName \$dest	Propel object for destination node
 	 * @param      PropelPDO \$con Connection to use.
 	 * @return     $objectClassName The current object (for fluent API support)
+	 * @throws     PropelException - if this object already exists
 	 */
 	public function insertAsNextSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
+		if(!\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must be new.\");
+		}
 		$peerClassname::insertAsNextSiblingOf(\$this, \$dest, \$con);
 		return \$this;
 	}
@@ -855,6 +875,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToFirstChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
+		if(\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must exist in tree.\");
+		}
 		$peerClassname::moveToFirstChildOf(\$parent, \$this, \$con);
 		return \$this;
 	}
@@ -875,6 +899,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToLastChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
+		if(\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must exist in tree.\");
+		}
 		$peerClassname::moveToLastChildOf(\$parent, \$this, \$con);
 		return \$this;
 	}
@@ -895,6 +923,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToPrevSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
+		if(\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must exist in tree.\");
+		}
 		$peerClassname::moveToPrevSiblingOf(\$dest, \$this, \$con);
 		return \$this;
 	}
@@ -915,6 +947,10 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToNextSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
+		if(\$this->isNew())
+		{
+			throw new PropelException(\"$objectClassName must exist in tree.\");
+		}
 		$peerClassname::moveToNextSiblingOf(\$dest, \$this, \$con);
 		return \$this;
 	}
