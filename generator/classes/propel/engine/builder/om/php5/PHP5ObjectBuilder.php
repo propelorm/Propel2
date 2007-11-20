@@ -1664,10 +1664,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
 	{
 		if ($fk->getPhpName()) {
-			return $fk->getPhpName() . ($plural ? 's' : '');
+			if ($plural) {
+				return $this->getPluralizer()->getPluralForm($fk->getPhpName());
+			} else {
+				return $fk->getPhpName();
+			}
 		} else {
 			$className = $this->getForeignTable($fk)->getPhpName();
-			return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk, true);
+			if ($plural) {
+				$className = $this->getPluralizer()->getPluralForm($className);
+			}
+			return $className . $this->getRelatedBySuffix($fk, true);
 		}
 	}
 
@@ -1684,10 +1691,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
 	{
 		if ($fk->getRefPhpName()) {
-			return $fk->getRefPhpName() . ($plural ? 's' : '');
+			if ($plural) {
+				return $this->getPluralizer()->getPluralForm($fk->getRefPhpName());
+			} else {
+				return $fk->getRefPhpName();
+			}
 		} else {
 			$className = $fk->getTable()->getPhpName();
-			return $className . ($plural ? 's' : '') . $this->getRelatedBySuffix($fk);
+			if ($plural) {
+				$className = $this->getPluralizer()->getPluralForm($className);
+			}
+			return $className . $this->getRelatedBySuffix($fk);
 		}
 	}
 
@@ -1706,9 +1720,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($fk->getLocalColumns() as $columnName) {
 			$column = $fk->getTable()->getColumn($columnName);
 			if (!$column) {
-				$e = new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
-				print $e;
-				throw $e;
+				throw new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
 			}
 
 			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1

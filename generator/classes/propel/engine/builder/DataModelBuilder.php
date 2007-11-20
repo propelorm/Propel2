@@ -75,7 +75,7 @@ abstract class DataModelBuilder {
 
 	/**
 	 * Imports and returns the classname of the builder class for specified 'type'.
-	 * @param      $type The "key" for class to load.
+	 * @param      string $type The "key" for class to load.
 	 * @return     string The unqualified classname.
 	 */
 	public static function getBuilderClass($type)
