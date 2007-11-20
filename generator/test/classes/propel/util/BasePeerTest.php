@@ -58,4 +58,34 @@ class BasePeerTest extends BookstoreTestBase {
 			$this->fail("Paring of nested functions failed: " . $x->getMessage());
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	public function testBigIntIgnoreCaseOrderBy()
+	{
+		// Some sample data
+		$b = new Bookstore();
+		$b->setStoreName("SortTest1")->setPopulationServed(2000)->save();
+		
+		$b = new Bookstore();
+		$b->setStoreName("SortTest2")->setPopulationServed(201)->save();
+		
+		$b = new Bookstore();
+		$b->setStoreName("SortTest3")->setPopulationServed(302)->save();
+		
+		$b = new Bookstore();
+		$b->setStoreName("SortTest4")->setPopulationServed(10000000)->save();
+		
+		$c = new Criteria();
+		$c->setIgnoreCase(true);
+		$c->add(BookstorePeer::STORE_NAME, 'SortTest%', Criteria::LIKE);
+		$c->addAscendingOrderByColumn(BookstorePeer::POPULATION_SERVED);
+		
+		$rows = BookstorePeer::doSelect($c);
+		$this->assertEquals('SortTest2', $rows[0]->getStoreName());
+		$this->assertEquals('SortTest3', $rows[1]->getStoreName());
+		$this->assertEquals('SortTest1', $rows[2]->getStoreName());
+		$this->assertEquals('SortTest4', $rows[3]->getStoreName());
+	}
 }

@@ -201,8 +201,8 @@ class Propel
 	{
 		if (self::$configuration === null) {
 			throw new PropelException("Propel cannot be initialized without "
-				. "a valid configuration. Please check the log files "
-				. "for further details.");
+			. "a valid configuration. Please check the log files "
+			. "for further details.");
 		}
 
 		self::configureLogging();
@@ -406,6 +406,20 @@ class Propel
 
 		return self::$dbMaps[$name];
 	}
+	
+	/**
+	 * Sets the database map object to use for specified datasource.
+	 *
+	 * @param      string $name The datasource name.
+	 * @param      DatabaseMap $map The database map object to use for specified datasource. 
+	 */
+	public static function setDatabaseMap($name, DatabaseMap $map)
+	{
+		if ($name === null) {
+			$name = self::getDefaultDB();
+		}
+		self::$dbMaps[$name] = $map;
+	}
 
 	/**
 	 * Gets an already-opened PDO connection or opens a new one for passed-in db name.
@@ -479,6 +493,20 @@ class Propel
 	}
 
 	/**
+	 * Sets the connection to use for specified datasource.
+	 *
+	 * @param      string $name The datasource name.
+	 * @param      PropelPDO $con The PDO connection object to use for specified datasource. 
+	 */
+	public static function setConnection($name, PropelPDO $con)
+	{
+		if ($name === null) {
+			$name = self::getDefaultDB();
+		}
+		self::$connectionMap[$name] = $con;
+	}
+
+	/**
 	 * Internal function to handle driver options or conneciton attributes in PDO.
 	 *
 	 * Process the INI file flags to be passed to each connection.
@@ -514,9 +542,9 @@ class Propel
 	}
 
 	/**
-	 * Returns database adapter for a specific connection pool.
+	 * Returns database adapter for a specific datasource.
 	 *
-	 * @param      string A database name.
+	 * @param      string The datasource name.
 	 *
 	 * @return     DBAdapter The corresponding database adapter.
 	 *
@@ -538,6 +566,20 @@ class Propel
 		}
 
 		return self::$adapterMap[$name];
+	}
+
+	/**
+	 * Sets a database adapter for specified datasource.
+	 *
+	 * @param      string $name The datasource name.
+	 * @param      DBAdapter $adapter The DBAdapter implementation to use.
+	 */
+	public static function setDB($name, DBAdapter $adapter)
+	{
+		if ($name === null) {
+			$name = self::getDefaultDB();
+		}
+		self::$adapterMap[$name] = $adapter;
 	}
 
 	/**
