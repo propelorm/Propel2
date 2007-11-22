@@ -31,6 +31,7 @@ require_once 'propel/engine/builder/om/OMBuilder.php';
  * methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    propel.engine.builder.om
  */
 abstract class ObjectBuilder extends OMBuilder {
 
