@@ -4,22 +4,30 @@
 	<property name="generator.dir" value="../generator" />
 
 	<target name="phpdoc">
-		<!-- build runtime docs -->
+		<phingcall target="phpdoc-runtime"/>
+		<phingcall target="phpdoc-generator"/>
+	</target>
+	
+	<target name="phpdoc-runtime" description="build runtime docs">
 		<phpdoc title="Propel Runtime" destdir="api/runtime" sourcecode="yes" output="HTML:Smarty:PHP">
 			<fileset dir="${runtime.dir}/classes">
 				<include name="**/*.php" />
 			</fileset>
 		</phpdoc>
-		<!-- build runtime docs -->
+	</target>
+
+	<target name="phpdoc-generator" description="build generator docs">
 		<phpdoc title="Propel Generator" destdir="api/generator" sourcecode="yes" output="HTML:Smarty:PHP">
 			<fileset dir="${generator.dir}/classes">
 				<include name="**/*.php" />
 			</fileset>
+			<!--
 			<projdocfileset dir="${generator.dir}">
 				<include name="README" />
 				<include name="INSTALL" />
 				<include name="CHANGELOG" />
 			</projdocfileset>
+			-->
 		</phpdoc>
 	</target>
 
