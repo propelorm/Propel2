@@ -220,15 +220,18 @@ class BookstoreDataPopulator {
 		$bemp2->setName("Pieter");
 		$bemp2->setJobTitle("Clerk");
 		$bemp2->setSupervisor($bemp1);
-
 		$bemp2->save();
 
+		$role = new AcctAccessRole();
+		$role->setName("Admin");
+		
 		$bempacct = new BookstoreEmployeeAccount();
 		$bempacct->setBookstoreEmployee($bemp1);
+		$bempacct->setAcctAccessRole($role);
 		$bempacct->setLogin("john");
 		$bempacct->setPassword("johnp4ss");
 		$bempacct->save();
-
+		
 		// Add bookstores
 
 		$store = new Bookstore();

@@ -1770,7 +1770,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			foreach ($table->getForeignKeys() as $fk) {
 
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-
+				
 				if (!$joinTable->isForReferenceOnly()) {
 
 					// FIXME - look into removing this next condition; it may not
@@ -1858,13 +1858,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 						$script .= "
 					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
-				" . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
+					" . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
 					\$obj2->hydrate(\$row, \$startcol);
-				".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
+					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
 				} // if obj2 already loaded
-
-				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")
-				\$obj2->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				
+				// Add the \$obj1 (".$this->getObjectClassname().") to \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")
+				\$obj2->".($fk->isLocalPrimaryKey() ? 'set' : 'add') . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
 
 			} // if joined row was not null
 
@@ -2003,7 +2003,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 				$script .= "
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
+		\$startcol$new_index = \$startcol$index + (".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 				$index = $new_index;
 
@@ -2104,7 +2104,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				} // if obj$index loaded
 
 				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				\$obj".$index."->".($fk->isLocalPrimaryKey() ? 'set' : 'add') . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
 			} // if joined row not null
 ";
 
@@ -2255,7 +2255,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 						$new_index = $index + 1;
 						$script .= "
 		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
-		\$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS;
+		\$startcol$new_index = \$startcol$index + (".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 						$index = $new_index;
 					} // if joinClassName not excludeClassName
@@ -2358,7 +2358,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				} // if \$obj$index already loaded
 
 				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-				\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				\$obj".$index."->".($fk->isLocalPrimaryKey() ? 'set' : 'add') . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
 
 			} // if joined row is not null
 ";

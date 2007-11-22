@@ -542,5 +542,38 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
 	}
+	
+	
+	/**
+	 * Test hydration of joined rows that contain lazy load columns.
+	 * @link       http://propel.phpdb.org/trac/ticket/464
+	 */
+	public function testHydrationJoinLazyLoad()
+	{
+		BookstoreEmployeeAccountPeer::doDeleteAll();
+		BookstoreEmployeePeer::doDeleteAll();
+		AcctAccessRolePeer::doDeleteAll();
+
+		$bemp2 = new BookstoreEmployee();
+		$bemp2->setName("Pieter");
+		$bemp2->setJobTitle("Clerk");
+		$bemp2->save();
+		
+		$role = new AcctAccessRole();
+		$role->setName("Admin");
+		
+		$bempacct = new BookstoreEmployeeAccount();
+		$bempacct->setBookstoreEmployee($bemp2);
+		$bempacct->setAcctAccessRole($role);
+		$bempacct->setLogin("john");
+		$bempacct->setPassword("johnp4ss");
+		$bempacct->save();
+		
+		$c = new Criteria();
+		$results = BookstoreEmployeeAccountPeer::doSelectJoinAll($c);
+		$o = $results[0];
+		
+		$this->assertEquals('Admin', $o->getAcctAccessRole()->getName());
+	}
 
 }
