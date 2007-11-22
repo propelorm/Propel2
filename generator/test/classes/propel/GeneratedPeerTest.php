@@ -533,13 +533,13 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
 		
 		// Now delete 2 of those rows 
-		ReaderFavoritePeer::doDelete(array(array(1,2), array(2,2)));
+		ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));
 		
 		$this->assertEquals(2, ReaderFavoritePeer::doCount(new Criteria()));
 		
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
-		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,1));
-		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,2));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
+		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
 	}
 
