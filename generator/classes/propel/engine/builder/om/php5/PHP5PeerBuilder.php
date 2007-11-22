@@ -1214,30 +1214,27 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// primary key is composite; we therefore, expect
 			// the primary key passed to be an array of pkey
 			// values
-			if (count(\$values) == count(\$values, COUNT_RECURSIVE))
-			{
+			if (count(\$values) == count(\$values, COUNT_RECURSIVE)) {
 				// array is not multi-dimensional
 				\$values = array(\$values);
 			}
-			\$vals = array();
-			foreach (\$values as \$value)
-			{
+			
+			foreach (\$values as \$value) {
 ";
 			$i=0;
 			foreach ($table->getPrimaryKey() as $col) {
-				$script .= "
-				\$vals[$i][] = \$value[$i];";
+				if ($i == 0) {
+					$script .= "
+				\$criterion = \$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]);";
+				} else {
+					$script .= "
+				\$criterion->addAnd(\$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]));";
+				}
 				$i++;
 			}
 			$script .= "
-			}
-";
-			$i=0;
-			foreach ($table->getPrimaryKey() as $col) {
-				$script .= "
-			\$criteria->add(".$this->getColumnConstant($col).", \$vals[$i], Criteria::IN);";
-				$i++;
-			}
+				\$criteria->addOr(\$criterion);
+			}";
 		} /* if count(table->getPrimaryKeys()) */
 
 		$script .= "
