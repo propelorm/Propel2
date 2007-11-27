@@ -323,4 +323,41 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 	{
 	}
 
+	/**
+	 * Builds the DDL SQL for a Column object.
+	 * @return     string
+	 */
+	public function getColumnDDL(Column $col)
+	{
+		$platform = $this->getPlatform();
+		$domain = $col->getDomain();
+
+		$sb = "";
+		$sb .= $this->quoteIdentifier($col->getName()) . " ";
+		$sb .= $domain->getSqlType();
+		if ($platform->hasSize($domain->getSqlType())) {
+			$sb .= $domain->printSize();
+		}
+		$sb .= " ";
+                if ($domain->getSqlType() == 'TIMESTAMP') {
+			$not_null_string = $col->getNotNullString();
+			$default_setting = $col->getDefaultSetting();
+
+			if ($not_null_string == '') {
+				$not_null_string = 'NULL';
+			}
+
+			if ($default_setting == '' && $not_null_string == 'NOT NULL') {
+				$default_setting = 'DEFAULT CURRENT_TIMESTAMP';
+			}
+
+			$sb .= $not_null_string . " " . $default_setting . " ";
+		} else {
+			$sb .= $col->getDefaultSetting() . " ";
+			$sb .= $col->getNotNullString() . " ";
+		}
+		$sb .= $col->getAutoIncrementString();
+
+		return trim($sb);
+	}
 }
