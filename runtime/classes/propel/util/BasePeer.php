@@ -360,10 +360,29 @@ class BasePeer
 					if ($db->useQuoteIdentifier()) {
 						$updateColumnName = $db->quoteIdentifier($updateColumnName);
 					}
-					$sql .= $updateColumnName . " = ?,";
+					if($updateValues->getComparison($col) != Criteria::CUSTOM)
+					{
+						$sql .= $updateColumnName . " = ?, ";
+					}
+					else
+					{
+						$param = $updateValues->get($col);
+						if(is_array($param))
+						{
+							$raw = $param['raw'];
+							$val = $param['value'];
+							$updateValues->put($col, $val);
+						}
+						else
+						{
+							$raw = $param;
+							$updateValues->remove($col);
+						}
+						$sql .= $updateColumnName . " = " . $raw . ", ";
+					}
 				}
 
-				$sql = substr($sql, 0, -1) . " WHERE " .  implode(" AND ", $whereClause);
+				$sql = substr($sql, 0, -2) . " WHERE " .  implode(" AND ", $whereClause);
 
 				$stmt = $con->prepare($sql);
 
