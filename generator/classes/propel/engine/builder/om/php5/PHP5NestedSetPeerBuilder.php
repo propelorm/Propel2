@@ -1460,33 +1460,34 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$leftUpdateCol = substr(self::LEFT_COL, strrpos(self::LEFT_COL, '.') + 1);
 		\$rightUpdateCol = substr(self::RIGHT_COL, strrpos(self::RIGHT_COL, '.') + 1);
-		// do that prepared thing so they must both execute to work
+
 		// Shift left column values
-		\$sql =	\"UPDATE \" . self::TABLE_NAME . \" SET \" . \$leftUpdateCol . \"=\" . self::LEFT_COL . \" + ? WHERE \" . self::LEFT_COL . \" >= ?\";
+		\$whereCriteria = new Criteria();
+		\$whereCriteria->add(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+
+		\$valuesCriteria = new Criteria();
+		\$param = array('raw' => \$leftUpdateCol . \" + ?\", 'value' => \$delta);
+		\$criterion = \$valuesCriteria->getNewCriterion(self::LEFT_COL, \$param, Criteria::CUSTOM);
 		if (self::SCOPE_COL) {
-			\$sql .= ' AND ' . self::SCOPE_COL . ' = ?';
+			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
-		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindParam(1, \$delta, PDO::PARAM_INT);
-		\$stmt->bindParam(2, \$first, PDO::PARAM_INT);
-		if (self::SCOPE_COL) {
-			\$stmt->bindParam(3, \$scopeId);
-		}
-		\$result = \$stmt->execute();
+		\$valuesCriteria->add(\$criterion);
+
+		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
-		\$sql =	\"UPDATE \" . self::TABLE_NAME . \" SET \" . \$rightUpdateCol . \"=\" . self::RIGHT_COL . \" + ? WHERE \" . self::RIGHT_COL . \" >= ?\";
-		if (self::SCOPE_COL) {
-			\$sql .= ' AND ' . self::SCOPE_COL . ' = ?';
-		}
-		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindParam(1, \$delta, PDO::PARAM_INT);
-		\$stmt->bindParam(2, \$first, PDO::PARAM_INT);
-		if (self::SCOPE_COL) {
-			\$stmt->bindParam(3, \$scopeId);
-		}
-		\$result = \$stmt->execute();
+		\$whereCriteria = new Criteria();
+		\$whereCriteria->add(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
 
+		\$valuesCriteria = new Criteria();
+		\$param = array('raw' => \$rightUpdateCol . \" + ?\", 'value' => \$delta);
+		\$criterion = \$valuesCriteria->getNewCriterion(self::RIGHT_COL, \$param, Criteria::CUSTOM);
+		if (self::SCOPE_COL) {
+			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
+		}
+		\$valuesCriteria->add(\$criterion);
+
+		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 	}
 ";
 	}
