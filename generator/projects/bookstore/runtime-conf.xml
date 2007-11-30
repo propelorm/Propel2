@@ -26,7 +26,7 @@
 	-->
 	<log>
 		<ident>propel-bookstore</ident>
-		<name>console</name>
+		<name>propel.log</name>
 		<level>7</level>
 	</log>
 	<!--
