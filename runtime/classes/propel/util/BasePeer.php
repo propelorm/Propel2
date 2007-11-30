@@ -30,6 +30,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Kaspars Jaudzems <kaspars.jaudzems@inbox.lv> (Propel)
+ * @author     Heltem <heltem@o2php.com> (Propel)
  * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
  * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
@@ -103,7 +104,7 @@ class BasePeer
 	 * Criteria.
 	 *
 	 * @param      Criteria $criteria The criteria to use.
-	 * @param      PDO $con A PDO connection object.
+	 * @param      PropelPDO $con A PropelPDO connection object.
 	 * @return     int	The number of rows affected by last statement execution.  For most
 	 * 				uses there is only one delete statement executed, so this number
 	 * 				will correspond to the number of rows affected by the call to this
@@ -111,7 +112,7 @@ class BasePeer
 	 * 				is returned (supported) by the PDO driver.
 	 * @throws     PropelException
 	 */
-	public static function doDelete(Criteria $criteria, PDO $con)
+	public static function doDelete(Criteria $criteria, PropelPDO $con)
 	{
 		$db = Propel::getDB($criteria->getDbName());
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
@@ -155,7 +156,6 @@ class BasePeer
 			// Execute the statement.
 			try {
 				$sql = "DELETE FROM " . $tableName . " WHERE " .  implode(" AND ", $whereClause);
-				Propel::log($sql, Propel::LOG_DEBUG);
 				$stmt = $con->prepare($sql);
 				self::populateStmtValues($stmt, $selectParams, $dbMap, $db);
 				$stmt->execute();
@@ -183,17 +183,16 @@ class BasePeer
 	 * </code>
 	 *
 	 * @param      string $tableName The name of the table to empty.
-	 * @param      PDO $con A PDO connection object.
+	 * @param      PropelPDO $con A PropelPDO connection object.
 	 * @return     int	The number of rows affected by the statement.  Note
 	 * 				that the return value does require that this information
 	 * 				is returned (supported) by the Creole db driver.
 	 * @throws     PropelException - wrapping SQLException caught from statement execution.
 	 */
-	public static function doDeleteAll($tableName, PDO $con)
+	public static function doDeleteAll($tableName, PropelPDO $con)
 	{
 		try {
 			$sql = "DELETE FROM " . $tableName;
-			Propel::log($sql, Propel::LOG_DEBUG);
 			$stmt = $con->prepare($sql);
 			$stmt->execute();
 			return $stmt->rowCount();
@@ -221,12 +220,12 @@ class BasePeer
 	 * inserted as specified in Criteria and null will be returned.
 	 *
 	 * @param      Criteria $criteria Object containing values to insert.
-	 * @param      PDO $con A PDO connection.
+	 * @param      PropelPDO $con A PropelPDO connection.
 	 * @return     mixed The primary key for the new row if (and only if!) the primary key
 	 *				is auto-generated.  Otherwise will return <code>null</code>.
 	 * @throws     PropelException
 	 */
-	public static function doInsert(Criteria $criteria, PDO $con) {
+	public static function doInsert(Criteria $criteria, PropelPDO $con) {
 
 		// the primary key
 		$id = null;
@@ -285,8 +284,6 @@ class BasePeer
 				. " (" . implode(",", $columns) . ")"
 				. " VALUES (" . substr(str_repeat("?,", count($columns)), 0, -1) . ")";
 
-			Propel::log($sql, Propel::LOG_DEBUG);
-
 			$stmt = $con->prepare($sql);
 			self::populateStmtValues($stmt, self::buildParams($qualifiedCols, $criteria), $dbMap, $db);
 			$stmt->execute();
@@ -321,7 +318,7 @@ class BasePeer
 	 *		clause.
 	 * @param      $updateValues A Criteria object containing values used in set
 	 *		clause.
-	 * @param      PDO $con The PDO connection object to use.
+	 * @param      PropelPDO $con The PropelPDO connection object to use.
 	 * @return     int	The number of rows affected by last update statement.  For most
 	 * 				uses there is only one update statement executed, so this number
 	 * 				will correspond to the number of rows affected by the call to this
@@ -329,7 +326,7 @@ class BasePeer
 	 * 				is returned (supported) by the Creole db driver.
 	 * @throws     PropelException
 	 */
-	public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, PDO $con) {
+	public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, PropelPDO $con) {
 
 		$db = Propel::getDB($selectCriteria->getDbName());
 		$dbMap = Propel::getDatabaseMap($selectCriteria->getDbName());
@@ -368,8 +365,6 @@ class BasePeer
 
 				$sql = substr($sql, 0, -1) . " WHERE " .  implode(" AND ", $whereClause);
 
-				Propel::log($sql, Propel::LOG_DEBUG);
-
 				$stmt = $con->prepare($sql);
 
 				// Replace '?' with the actual values
@@ -396,12 +391,12 @@ class BasePeer
 	 * Executes query build by createSelectSql() and returns ResultSet.
 	 *
 	 * @param      Criteria $criteria A Criteria.
-	 * @param      PDO $con A PDO connection to use.
+	 * @param      PropelPDO $con A PropelPDO connection to use.
 	 * @return     ResultSet The resultset.
 	 * @throws     PropelException
 	 * @see        createSelectSql()
 	 */
-	public static function doSelect(Criteria $criteria, PDO $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 		$db = Propel::getDB($criteria->getDbName());
