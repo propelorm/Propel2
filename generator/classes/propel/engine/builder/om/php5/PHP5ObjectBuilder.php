@@ -83,10 +83,9 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 				try {
 					if ($this->getPlatform() instanceof MysqlPlatform &&
 					($val === '0000-00-00 00:00:00' || $val === '0000-00-00')) {
-						$defDt = new DateTime('@0', new DateTimeZone('UTC'));
-						$defDt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-						// We have to explicitly specify and then change the time zone because of a 
-						// DateTime bug: http://bugs.php.net/bug.php?id=43003
+						// while technically this is not a default value of NULL,
+						// this seems to be closest in meaning.
+						$defDt = null;
 					} else {
 						$defDt = new DateTime($val);
 					}
@@ -493,10 +492,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if ($handleMysqlDate) {
 			$script .= "
 		if (\$this->$clo === '$mysqlInvalidDateString') {
-			\$dt = new DateTime('@0', new DateTimeZone('UTC'));
-			// We have to explicitly specify and then change the time zone because of a
-			// DateTime bug: http://bugs.php.net/bug.php?id=43003
-			\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+			// while technically this is not a default value of NULL,
+			// this seems to be closest in meaning.
+			return null;
 		} else {
 			try {
 				\$dt = new DateTime(\$this->$clo);
