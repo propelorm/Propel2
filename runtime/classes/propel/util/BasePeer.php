@@ -360,7 +360,7 @@ class BasePeer
 					if ($db->useQuoteIdentifier()) {
 						$updateColumnName = $db->quoteIdentifier($updateColumnName);
 					}
-					if($updateValues->getComparison($col) != Criteria::CUSTOM)
+					if($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL)
 					{
 						$sql .= $updateColumnName . " = ?, ";
 					}

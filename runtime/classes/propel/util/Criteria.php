@@ -72,6 +72,9 @@ class Criteria implements IteratorAggregate {
 
 	/** Comparison type. */
 	const CUSTOM = "CUSTOM";
+	
+	/** Comparison type for update */
+	const CUSTOM_EQUAL = "CUSTOM_EQUAL";
 
 	/** Comparison type. */
 	const DISTINCT = "DISTINCT ";

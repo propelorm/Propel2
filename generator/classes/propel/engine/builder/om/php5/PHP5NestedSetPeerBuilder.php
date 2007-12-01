@@ -1467,7 +1467,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$valuesCriteria = new Criteria();
 		\$param = array('raw' => \$leftUpdateCol . \" + ?\", 'value' => \$delta);
-		\$criterion = \$valuesCriteria->getNewCriterion(self::LEFT_COL, \$param, Criteria::CUSTOM);
+		\$criterion = \$valuesCriteria->getNewCriterion(self::LEFT_COL, \$param, Criteria::CUSTOM_EQUAL);
 		if (self::SCOPE_COL) {
 			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
@@ -1481,7 +1481,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$valuesCriteria = new Criteria();
 		\$param = array('raw' => \$rightUpdateCol . \" + ?\", 'value' => \$delta);
-		\$criterion = \$valuesCriteria->getNewCriterion(self::RIGHT_COL, \$param, Criteria::CUSTOM);
+		\$criterion = \$valuesCriteria->getNewCriterion(self::RIGHT_COL, \$param, Criteria::CUSTOM_EQUAL);
 		if (self::SCOPE_COL) {
 			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
