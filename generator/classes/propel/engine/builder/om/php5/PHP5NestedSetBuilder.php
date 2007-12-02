@@ -776,7 +776,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function insertAsFirstChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
-		if(!\$this->isNew())
+		if (!\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must be new.\");
 		}
@@ -801,7 +801,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function insertAsLastChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
-		if(!\$this->isNew())
+		if (!\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must be new.\");
 		}
@@ -826,7 +826,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function insertAsPrevSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
-		if(!\$this->isNew())
+		if (!\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must be new.\");
 		}
@@ -851,7 +851,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function insertAsNextSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
-		if(!\$this->isNew())
+		if (!\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must be new.\");
 		}
@@ -875,7 +875,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToFirstChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
-		if(\$this->isNew())
+		if (\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must exist in tree.\");
 		}
@@ -899,7 +899,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToLastChildOf(NodeObject \$parent, PropelPDO \$con = null)
 	{
-		if(\$this->isNew())
+		if (\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must exist in tree.\");
 		}
@@ -923,7 +923,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToPrevSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
-		if(\$this->isNew())
+		if (\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must exist in tree.\");
 		}
@@ -947,7 +947,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 */
 	public function moveToNextSiblingOf(NodeObject \$dest, PropelPDO \$con = null)
 	{
-		if(\$this->isNew())
+		if (\$this->isNew())
 		{
 			throw new PropelException(\"$objectClassName must exist in tree.\");
 		}

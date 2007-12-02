@@ -406,12 +406,12 @@ class Propel
 
 		return self::$dbMaps[$name];
 	}
-	
+
 	/**
 	 * Sets the database map object to use for specified datasource.
 	 *
 	 * @param      string $name The datasource name.
-	 * @param      DatabaseMap $map The database map object to use for specified datasource. 
+	 * @param      DatabaseMap $map The database map object to use for specified datasource.
 	 */
 	public static function setDatabaseMap($name, DatabaseMap $map)
 	{
@@ -496,7 +496,7 @@ class Propel
 	 * Sets the connection to use for specified datasource.
 	 *
 	 * @param      string $name The datasource name.
-	 * @param      PropelPDO $con The PDO connection object to use for specified datasource. 
+	 * @param      PropelPDO $con The PDO connection object to use for specified datasource.
 	 */
 	public static function setConnection($name, PropelPDO $con)
 	{

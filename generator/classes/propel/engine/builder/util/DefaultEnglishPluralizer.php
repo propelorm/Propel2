@@ -39,5 +39,5 @@ class DefaultEnglishPluralizer implements Pluralizer {
 	{
 		return $root . 's';
 	}
-	
+
 }

@@ -526,7 +526,7 @@ class CriteriaTest extends BaseTestCase {
 			addJoin("TABLE_A.FOO_ID", "TABLE_B.ID", Criteria::LEFT_JOIN)->
 			addJoin("TABLE_A.BAR_ID", "TABLE_C.ID")->
 			addSelectColumn("TABLE_A.ID");
-		
+
 		$db = Propel::getDB();
 		if ($db instanceof DBMySQL) {
 			$expect = 'SELECT TABLE_A.ID FROM (TABLE_A, TABLE_C)'
@@ -535,7 +535,7 @@ class CriteriaTest extends BaseTestCase {
 			$expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_C'
 					.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
 		}
-		
+
 		$result = BasePeer::createSelectSql($c, $params=array());
 
 		#print "Actual:   " . $result . "\n---\n";

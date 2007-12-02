@@ -1218,7 +1218,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// array is not multi-dimensional
 				\$values = array(\$values);
 			}
-			
+
 			foreach (\$values as \$value) {
 ";
 			$i=0;
@@ -1770,7 +1770,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			foreach ($table->getForeignKeys() as $fk) {
 
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-				
+
 				if (!$joinTable->isForReferenceOnly()) {
 
 					// FIXME - look into removing this next condition; it may not
@@ -1862,7 +1862,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					\$obj2->hydrate(\$row, \$startcol);
 					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
 				} // if obj2 already loaded
-				
+
 				// Add the \$obj1 (".$this->getObjectClassname().") to \$obj2 (".$joinedTablePeerBuilder->getObjectClassname().")
 				\$obj2->".($fk->isLocalPrimaryKey() ? 'set' : 'add') . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
 

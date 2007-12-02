@@ -224,14 +224,14 @@ class BookstoreDataPopulator {
 
 		$role = new AcctAccessRole();
 		$role->setName("Admin");
-		
+
 		$bempacct = new BookstoreEmployeeAccount();
 		$bempacct->setBookstoreEmployee($bemp1);
 		$bempacct->setAcctAccessRole($role);
 		$bempacct->setLogin("john");
 		$bempacct->setPassword("johnp4ss");
 		$bempacct->save();
-		
+
 		// Add bookstores
 
 		$store = new Bookstore();

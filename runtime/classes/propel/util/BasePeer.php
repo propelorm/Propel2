@@ -360,14 +360,14 @@ class BasePeer
 					if ($db->useQuoteIdentifier()) {
 						$updateColumnName = $db->quoteIdentifier($updateColumnName);
 					}
-					if($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL)
+					if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL)
 					{
 						$sql .= $updateColumnName . " = ?, ";
 					}
 					else
 					{
 						$param = $updateValues->get($col);
-						if(is_array($param))
+						if (is_array($param))
 						{
 							$raw = $param['raw'];
 							$val = $param['value'];
@@ -830,7 +830,7 @@ class BasePeer
 				}
 
 				$column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
-				
+
 				if ($column && $column->isText()) {
 					$orderByClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias") . $direction;
 					$selectClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");

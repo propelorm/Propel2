@@ -834,7 +834,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());
 	}
-	
+
 	/**
 	 * Test the toArray() method with new lazyLoad param.
 	 * @link       http://propel.phpdb.org/trac/ticket/527
@@ -844,24 +844,24 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$c = new Criteria();
 		$c->add(MediaPeer::COVER_IMAGE, null, Criteria::NOT_EQUAL);
 		$c->add(MediaPeer::EXCERPT, null, Criteria::NOT_EQUAL);
-		
+
 		$m = MediaPeer::doSelectOne($c);
 		if ($m === null) {
 			$this->fail("Test requires at least one media row w/ cover_image and excerpt NOT NULL");
 		}
-		
+
 		$arr1 = $m->toArray(BasePeer::TYPE_COLNAME);
 		$this->assertNotNull($arr1[MediaPeer::COVER_IMAGE]);
 		$this->assertType('resource', $arr1[MediaPeer::COVER_IMAGE]);
-		
+
 		$arr2 = $m->toArray(BasePeer::TYPE_COLNAME, false);
 		$this->assertNull($arr2[MediaPeer::COVER_IMAGE]);
 		$this->assertNull($arr2[MediaPeer::EXCERPT]);
-		
+
 		$diffKeys = array_keys(array_diff($arr1, $arr2));
-		
+
 		$expectedDiff = array(MediaPeer::COVER_IMAGE, MediaPeer::EXCERPT);
-		
+
 		$this->assertEquals($expectedDiff, $diffKeys);
 	}
 }

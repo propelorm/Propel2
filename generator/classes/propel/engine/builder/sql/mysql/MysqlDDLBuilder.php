@@ -339,7 +339,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 			$sb .= $domain->printSize();
 		}
 		$sb .= " ";
-		
+
 		if ($domain->getSqlType() == 'TIMESTAMP') {
 			$not_null_string = $col->getNotNullString();
 			$default_setting = $col->getDefaultSetting();

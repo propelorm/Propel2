@@ -34,5 +34,5 @@ interface Pluralizer {
 	 * @return     string The plural form of $root.
 	 */
 	public function getPluralForm($root);
-	
+
 }
