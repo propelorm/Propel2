@@ -837,7 +837,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	
 	/**
 	 * Test the toArray() method with new lazyLoad param.
-	 * @see http://propel.phpdb.org/trac/ticket/527
+	 * @link       http://propel.phpdb.org/trac/ticket/527
 	 */
 	public function testToArrayLazyLoad()
 	{

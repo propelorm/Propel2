@@ -524,16 +524,22 @@ class CriteriaTest extends BaseTestCase {
 		$c = new Criteria();
 		$c->clearSelectColumns()->
 			addJoin("TABLE_A.FOO_ID", "TABLE_B.ID", Criteria::LEFT_JOIN)->
-			addJoin("TABLE_A.BAR_ID", "TABLE_C.ID", Criteria::INNER_JOIN)->
+			addJoin("TABLE_A.BAR_ID", "TABLE_C.ID")->
 			addSelectColumn("TABLE_A.ID");
-
-		$expect = 'SELECT TABLE_A.ID FROM (TABLE_A, TABLE_C)'
+		
+		$db = Propel::getDB();
+		if ($db instanceof DBMySQL) {
+			$expect = 'SELECT TABLE_A.ID FROM (TABLE_A, TABLE_C)'
 					.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
-
+		} else {
+			$expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_C'
+					.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
+		}
+		
 		$result = BasePeer::createSelectSql($c, $params=array());
 
-		print "Actual:   " . $result . "\n---\n";
-		print "Expected: " . $expect . "\n";
+		#print "Actual:   " . $result . "\n---\n";
+		#print "Expected: " . $expect . "\n";
 
 		$this->assertEquals($expect, $result);
 	}
