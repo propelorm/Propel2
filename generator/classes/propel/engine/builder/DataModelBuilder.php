@@ -277,4 +277,22 @@ abstract class DataModelBuilder {
 		}
 		return $result;
 	}
+	
+	/**
+	* A Name to use for the serials (dependant sequence in PostgreSQL)
+	*/
+	public function getSerialName()
+	{
+		$table = $this->getTable();
+
+		if ($table->getIdMethod() != IDMethod::NATIVE || !$table->hasAutoIncrementPrimaryKey()) {
+			return null;
+		}
+		foreach ($table->getPrimaryKey() as $col) {
+			if ($col->isAutoIncrement()) {
+				return $table->getName() . '_' . $col->getName() . '_seq';
+			}
+		}
+		return null;
+	}
 }

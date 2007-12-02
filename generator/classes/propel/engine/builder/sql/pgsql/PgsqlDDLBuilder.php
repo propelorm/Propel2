@@ -128,7 +128,8 @@ class PgsqlDDLBuilder extends DDLBuilder {
 		$script .= "
 DROP TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))." CASCADE;
 ";
-		if ($table->getIdMethod() == "native") {
+
+		if ($table->getIdMethod() == "native" && $table->getIdMethodParameters() != null) {
 			$script .= "
 DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()))).";
 ";
@@ -169,7 +170,11 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		$lines = array();
 
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $this->getColumnDDL($col);
+			$colDDL = $this->getColumnDDL($col);
+			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
+				$colDDL = str_replace($col->getType(),'serial',$colDDL);
+			}
+			$lines[] = $colDDL;
 		}
 
 		if ($table->hasPrimaryKey()) {
@@ -223,7 +228,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($ta
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
-		if ($table->getIdMethod() == "native") {
+		if ($table->getIdMethod() == "native" && $table->getIdMethodParameters() != null) {
 			$script .= "
 CREATE SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()))).";
 ";

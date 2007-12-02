@@ -231,9 +231,9 @@ class ".$this->getClassname()." implements MapBuilder {
 			$script .= "
 		\$tMap->setPrimaryKeyMethodInfo('".$this->getSequenceName()."');
 ";
-		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
+		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SERIAL)) {
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$table->getName()."');
+		\$tMap->setPrimaryKeyMethodInfo('".$this->getSerialName()."');
 ";
 		}
 

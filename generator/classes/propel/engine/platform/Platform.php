@@ -29,12 +29,21 @@
  */
 interface Platform {
 
-	/** constant for native id method */
+	/**
+	 * Constant for auto-increment id method.
+	 */
 	const IDENTITY = "identity";
 
-	/** constant for native id method */
+	/**
+	 * Constant for sequence id method.
+	 */
 	const SEQUENCE = "sequence";
-
+	
+	/**
+	 * Constant for serial id method (postgresql).
+	 */
+	const SERIAL = "serial";
+	
 	/**
 	 * Sets a database connection to use (for quoting, etc.).
 	 * @param      PDO $con The database connection to use in this Platform class.

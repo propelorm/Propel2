@@ -56,7 +56,7 @@ class PgsqlPlatform extends DefaultPlatform {
 	 */
 	public function getNativeIdMethod()
 	{
-		return Platform::SEQUENCE;
+		return Platform::SERIAL;
 	}
 
 	/**
