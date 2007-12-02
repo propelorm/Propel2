@@ -367,18 +367,27 @@ class BasePeer
 					else
 					{
 						$param = $updateValues->get($col);
-						if (is_array($param))
+						$sql .= $updateColumnName . " = ";
+						if(is_array($param))
 						{
-							$raw = $param['raw'];
-							$val = $param['value'];
-							$updateValues->put($col, $val);
+							if(isset($param['raw']))
+							{
+								$sql .= $param['raw'] . ", ";
+							}
+							else
+							{
+								$sql .= "?, ";
+							}
+							if(isset($param['value']))
+							{
+								$updateValues->put($col, $param['value']);
+							}
 						}
 						else
 						{
-							$raw = $param;
 							$updateValues->remove($col);
+							$sql .= $param . ", ";
 						}
-						$sql .= $updateColumnName . " = " . $raw . ", ";
 					}
 				}
 
