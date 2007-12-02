@@ -81,18 +81,16 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 			if ($col->isTemporalType()) {
 				$fmt = $this->getTemporalFormatter($col);
 				try {
-					if ($this->getPlatform() instanceof MysqlPlatform &&
-					($val === '0000-00-00 00:00:00' || $val === '0000-00-00')) {
+					if (!($this->getPlatform() instanceof MysqlPlatform &&
+					($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
 						// while technically this is not a default value of NULL,
 						// this seems to be closest in meaning.
-						$defDt = null;
-					} else {
 						$defDt = new DateTime($val);
+						$defaultValue = var_export($defDt->format($fmt), true);
 					}
 				} catch (Exception $x) {
 					throw new EngineException("Unable to parse default temporal value for " . $col->getFullyQualifiedName() . ": " .$this->getDefaultValueString($col), $x);
 				}
-				$defaultValue = var_export($defDt->format($fmt), true);
 			} else {
 				if ($col->isPhpPrimitiveType()) {
 					settype($val, $col->getPhpType());
