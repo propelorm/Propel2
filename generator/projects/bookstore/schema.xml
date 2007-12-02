@@ -155,7 +155,7 @@
 			description="Employee job title" />
 		<column name="supervisor_id" type="INTEGER"
 			description="Fkey to supervisor." />
-		<column name="photo" type="BLOB" lazyLoad="true"/>
+		<column name="photo" type="BLOB" lazyLoad="true" />
 		<foreign-key foreignTable="bookstore_employee"
 			phpName="Supervisor" refPhpName="Subordinate">
 			<reference local="supervisor_id" foreign="id" />
@@ -173,25 +173,26 @@
 		<column name="enabled" type="BOOLEAN" default="true" />
 		<column name="created" type="TIMESTAMP"
 			defaultExpr="CURRENT_TIMESTAMP" />
-		<column name="role_id" type="INTEGER" required="false"/>
+		<column name="role_id" type="INTEGER" required="false" />
 		<foreign-key foreignTable="bookstore_employee"
 			onDelete="cascade">
 			<reference local="employee_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="acct_access_role" onDelete="setnull">
-			<reference local="role_id" foreign="id"/>
+		<foreign-key foreignTable="acct_access_role"
+			onDelete="setnull">
+			<reference local="role_id" foreign="id" />
 		</foreign-key>
 		<unique>
 			<unique-column name="login" />
 		</unique>
 	</table>
-	
+
 	<table name="acct_access_role">
 		<column name="id" type="INTEGER" primaryKey="true"
 			autoIncrement="true" description="Role ID number" />
-		<column name="name" type="VARCHAR" size="25" required="true"/>
+		<column name="name" type="VARCHAR" size="25" required="true" />
 	</table>
-	
+
 	<!--  book_reader, book_opinion, and reader_favorite test some foreign key issues  
 		(see: http://propel.phpdb.org/trac/ticket/228) -->
 	<table name="book_reader">
@@ -260,22 +261,24 @@
 			<reference local="publisher_id" foreign="id" />
 		</foreign-key>
 	</table>
-	
+
 	<table name="customer">
-		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-		<column name="name" type="VARCHAR" size="255"/>
-		<column name="join_date" type="DATE" defaultExpr="CURRENT_DATE"/>
+		<column name="id" type="INTEGER" primaryKey="true"
+			autoIncrement="true" />
+		<column name="name" type="VARCHAR" size="255" />
+		<column name="join_date" type="DATE" defaultExpr="CURRENT_DATE" />
 	</table>
-	
+
 	<table name="contest">
-		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-		<column name="name" type="VARCHAR" size="100"/>
+		<column name="id" type="INTEGER" primaryKey="true"
+			autoIncrement="true" />
+		<column name="name" type="VARCHAR" size="100" />
 	</table>
-	
+
 	<table name="bookstore_contest">
-		<column name="bookstore_id" type="INTEGER" primaryKey="true"/>
-		<column name="contest_id" type="INTEGER" primaryKey="true"/>
-		<column name="prize_book_id" type="INTEGER"/>
+		<column name="bookstore_id" type="INTEGER" primaryKey="true" />
+		<column name="contest_id" type="INTEGER" primaryKey="true" />
+		<column name="prize_book_id" type="INTEGER" />
 		<foreign-key foreignTable="bookstore" onDelete="CASCADE">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
@@ -288,20 +291,46 @@
 	</table>
 
 	<table name="bookstore_contest_entry">
-		<column name="bookstore_id" type="INTEGER" primaryKey="true"/>
-		<column name="contest_id" type="INTEGER" primaryKey="true"/>
-		<column name="customer_id" type="INTEGER" primaryKey="true"/>
-		<column name="entry_date" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
+		<column name="bookstore_id" type="INTEGER" primaryKey="true" />
+		<column name="contest_id" type="INTEGER" primaryKey="true" />
+		<column name="customer_id" type="INTEGER" primaryKey="true" />
+		<column name="entry_date" type="TIMESTAMP"
+			defaultExpr="CURRENT_TIMESTAMP" />
 		<foreign-key foreignTable="bookstore" onDelete="CASCADE">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
 		<foreign-key foreignTable="customer" onDelete="CASCADE">
 			<reference local="customer_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="bookstore_contest" onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore_contest"
+			onDelete="CASCADE">
 			<reference local="bookstore_id" foreign="bookstore_id" />
 			<reference local="contest_id" foreign="contest_id" />
 		</foreign-key>
+	</table>
+
+	<!--  Test NestedSet trees -->
+	<table name="book_category" treeMode="NestedSet"
+		description="Tree of categories (and sub-categories) for classifying books.">
+		<column name="id" type="INTEGER" primaryKey="true"
+			autoIncrement="true" description="Node Id" />
+		<column name="lft" required="true" nestedSetLeftKey="true"
+			type="INTEGER" description="Node Left Key" />
+		<column name="rgt" type="INTEGER" required="true"
+			nestedSetRightKey="true" description="Node Right Key" />
+		<column name="scope" type="INTEGER" required="true" default="0"
+			treeScopeKey="true" />
+		<column name="label" type="VARCHAR" size="64" required="true"
+			description="Category label" />
+		<index>
+			<index-column name="lft" />
+		</index>
+		<index>
+			<index-column name="rgt" />
+		</index>
+		<index>
+			<index-column name="scope" />
+		</index>
 	</table>
 
 </database>
