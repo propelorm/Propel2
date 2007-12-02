@@ -246,7 +246,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	public static function createRoot(NodeObject \$node)
 	{
 		if (\$node->getLeftValue()) {
-			throw new Exception('Cannot turn an existing node into a root node.');
+			throw new PropelException('Cannot turn an existing node into a root node.');
 		}
 
 		\$node->setLeftValue(1);
@@ -369,7 +369,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	public static function insertAsPrevSiblingOf(NodeObject \$node, NodeObject \$sibling, PropelPDO \$con = null)
 	{
 		if (\$sibling->isRoot()) {
-			throw new Exception('Root nodes cannot have siblings');
+			throw new PropelException('Root nodes cannot have siblings');
 		}
 
 		\$node->setLeftValue(\$sibling->getLeftValue());
@@ -406,7 +406,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	public static function insertAsNextSiblingOf(NodeObject \$node, NodeObject \$sibling, PropelPDO \$con = null)
 	{
 		if (\$sibling->isRoot()) {
-			throw new Exception('Root nodes cannot have siblings');
+			throw new PropelException('Root nodes cannot have siblings');
 		}
 
 		\$node->setLeftValue(\$sibling->getRightValue() + 1);
@@ -1463,29 +1463,49 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		// Shift left column values
 		\$whereCriteria = new Criteria();
-		\$whereCriteria->add(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+		\$criterion = \$whereCriteria->getNewCriterion(
+			self::LEFT_COL,
+			\$first,
+			Criteria::GREATER_EQUAL);
+
+		if (self::SCOPE_COL) {
+			\$criterion->addAnd(
+				\$whereCriteria->getNewCriterion(
+					self::SCOPE_COL,
+					\$scopeId,
+					Criteria::EQUAL));
+		}
+		\$whereCriteria->add(\$criterion);
 
 		\$valuesCriteria = new Criteria();
-		\$param = array('raw' => \$leftUpdateCol . \" + ?\", 'value' => \$delta);
-		\$criterion = \$valuesCriteria->getNewCriterion(self::LEFT_COL, \$param, Criteria::CUSTOM_EQUAL);
-		if (self::SCOPE_COL) {
-			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
-		}
-		\$valuesCriteria->add(\$criterion);
+		\$valuesCriteria->add(
+			self::LEFT_COL,
+			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
+			Criteria::CUSTOM_EQUAL);
 
 		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
 		\$whereCriteria = new Criteria();
-		\$whereCriteria->add(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+		\$criterion = \$whereCriteria->getNewCriterion(
+			self::RIGHT_COL,
+			\$first,
+			Criteria::GREATER_EQUAL);
+
+		if (self::SCOPE_COL) {
+			\$criterion->addAnd(
+				\$whereCriteria->getNewCriterion(
+					self::SCOPE_COL,
+					\$scopeId,
+					Criteria::EQUAL));
+		}
+		\$whereCriteria->add(\$criterion);
 
 		\$valuesCriteria = new Criteria();
-		\$param = array('raw' => \$rightUpdateCol . \" + ?\", 'value' => \$delta);
-		\$criterion = \$valuesCriteria->getNewCriterion(self::RIGHT_COL, \$param, Criteria::CUSTOM_EQUAL);
-		if (self::SCOPE_COL) {
-			\$criterion->addAnd(\$valuesCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
-		}
-		\$valuesCriteria->add(\$criterion);
+		\$valuesCriteria->add(
+		  self::RIGHT_COL,
+			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
+			Criteria::CUSTOM_EQUAL);
 
 		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 	}
@@ -1514,50 +1534,40 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$leftUpdateCol = substr(self::LEFT_COL, strrpos(self::LEFT_COL, '.') + 1);
 		\$rightUpdateCol = substr(self::RIGHT_COL, strrpos(self::RIGHT_COL, '.') + 1);
-		// do that prepared thing so they must both execute to work
+
 		// Shift left column values
-		\$sql = sprintf('UPDATE %s SET %s = %s + ? WHERE %s >= ? AND %s <= ?',
-			self::TABLE_NAME,
-			\$leftUpdateCol,
-			self::LEFT_COL,
-			self::LEFT_COL,
-			self::LEFT_COL);
-
+		\$whereCriteria = new Criteria();
+		\$criterion = \$whereCriteria->getNewCriterion(\$leftUpdateCol, \$first, Criteria::GREATER_EQUAL);
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(\$leftUpdateCol, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
-			\$sql .= ' AND ' . self::SCOPE_COL . ' = ?';
+			\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
+		\$whereCriteria->add(\$criterion);
 
-		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindValue(1, \$delta, PDO::PARAM_INT);
-		\$stmt->bindValue(2, \$first, PDO::PARAM_INT);
-		\$stmt->bindValue(3, \$last, PDO::PARAM_INT);
-		if (self::SCOPE_COL) {
-			\$stmt->bindValue(4, \$scopeId);
-		}
-		\$stmt->setFetchMode(PDO::FETCH_ASSOC);
-		\$result = \$stmt->execute();
+		\$valuesCriteria = new Criteria();
+		\$valuesCriteria->add(
+			self::LEFT_COL,
+			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
+			Criteria::CUSTOM_EQUAL);
+
+		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
-		\$sql = sprintf('UPDATE %s SET %s = %s + ? WHERE %s >= ? AND %s <= ?',
-			self::TABLE_NAME,
-			\$rightUpdateCol,
-			self::RIGHT_COL,
-			self::RIGHT_COL,
-			self::RIGHT_COL);
-
+		\$whereCriteria = new Criteria();
+		\$criterion = \$whereCriteria->getNewCriterion(\$rightUpdateCol, \$first, Criteria::GREATER_EQUAL);
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(\$rightUpdateCol, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
-			\$sql .= ' AND ' . self::SCOPE_COL . ' = ?';
+			\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
+		\$whereCriteria->add(\$criterion);
 
-		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindValue(1, \$delta, PDO::PARAM_INT);
-		\$stmt->bindValue(2, \$first, PDO::PARAM_INT);
-		\$stmt->bindValue(3, \$last, PDO::PARAM_INT);
-		if (self::SCOPE_COL) {
-			\$stmt->bindValue(4, \$scopeId);
-		}
-		\$stmt->setFetchMode(PDO::FETCH_ASSOC);
-		\$result = \$stmt->execute();
+		\$valuesCriteria = new Criteria();
+		\$valuesCriteria->add(
+			self::LEFT_COL,
+			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
+			Criteria::CUSTOM_EQUAL);
+
+		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		return array('left' => \$first + \$delta, 'right' => \$last + \$delta);
 	}
