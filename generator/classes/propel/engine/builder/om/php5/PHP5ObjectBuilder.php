@@ -2204,7 +2204,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$this->addPKRefFKGet($script, $refFK);
 				$this->addPKRefFKSet($script, $refFK);
 			} else {
-				$this->addRefFKInit($script, $refFK);
+				$this->addRefFKClear($script, $refFK);
 				$this->addRefFKGet($script, $refFK);
 				$this->addRefFKCount($script, $refFK);
 				$this->addRefFKAdd($script, $refFK);
@@ -2214,33 +2214,30 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 
 	/**
-	 * Adds the method that initializes the referrer fkey collection.
+	 * Adds the method that clears the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addRefFKInit(&$script, ForeignKey $refFK) {
+	protected function addRefFKClear(&$script, ForeignKey $refFK) {
 
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 		$collName = $this->getRefFKCollVarName($refFK);
 
 		$script .= "
 	/**
-	 * Temporary storage of $collName to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the $collName collection (array).
+	 * 
+	 * This does not modify the database; however, it will remove any associated objects, causing 
+	 * them to be refetched by subsequent calls to accessor method.
 	 *
 	 * @return     void
-	 * @deprecated - This method will be removed in 2.0 since arrays
-	 *				are automatically initialized in the add$relCol() method.
 	 * @see        add$relCol()
 	 */
-	public function init$relCol()
+	public function clear$relCol()
 	{
-		if (\$this->$collName === null) {
-			\$this->$collName = array();
-		}
+		\$this->$collName = null; // important to set this to NULL since that means it is uninitialized
 	}
 ";
-	} // addRefererInit()
+	} // addRefererClear()
 
 	/**
 	 * Adds the method that adds an object into the referrer fkey collection.
