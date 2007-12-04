@@ -543,4 +543,19 @@ class CriteriaTest extends BaseTestCase {
 
 		$this->assertEquals($expect, $result);
 	}
+	
+	/**
+	 * Test the Criteria::CUSTOM behavior.
+	 */
+	public function testCustomOperator()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn('A.COL');
+		$c->add('A.COL', 'date_part(\'YYYY\', A.COL) = \'2007\'', Criteria::CUSTOM);
+		
+		$expected = "SELECT A.COL FROM A WHERE date_part('YYYY', A.COL) = '2007'";
+		
+		$result = BasePeer::createSelectSql($c, $params=array());
+		$this->assertEquals($expected, $result);
+	}
 }
