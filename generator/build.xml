@@ -21,8 +21,7 @@
 <!-- in case ${project.dir} was specified on command line, we set the project.dir
      property here.  If it wasn't set, then this will be bogus, but it will
      be overridden by the "set-project-dir" target. -->    
-<property name="propel.project.dir" value="${project.dir}"/>
-<resolvepath propertyName="propel.project.dir" file="${propel.project.dir}" dir="${application.startdir}"/>
+<resolvepath propertyName="propel.project.dir" file="${project.dir}" dir="${application.startdir}"/>
 
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
@@ -101,6 +100,14 @@
 </target>
 
 <target name="configure" depends="set-project-dir,check-buildprops-for-propel-gen,check-buildprops">
+	<if>
+		<isset property="additional.properties"/>
+		<then>
+			<echo>Processing additional properties file: ${additional.properties}</echo>
+			<resolvepath propertyName="additional.properties.resolved" file="${additional.properties}" dir="${application.startdir}"/>
+			<property file="${additional.properties.resolved}"/>
+		</then>
+	</if>
 	<echo msg="Loading project-specific props from ${propel.project.dir}/${build.properties}"/>
 	<property file="${propel.project.dir}/${build.properties}"/>
 </target>

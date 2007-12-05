@@ -18,8 +18,7 @@
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
-<property name="propel.project.dir" value="${project.dir}"/>
-<resolvepath propertyName="propel.project.dir" file="${propel.project.dir}" dir="${application.startdir}"/>
+<resolvepath propertyName="propel.project.dir" file="${project.dir}" dir="${application.startdir}"/>
 
 <target name="projdircheckExists">
   <condition property="projDirExists">
@@ -48,6 +47,14 @@
 </target>
 
 <target name="configure" depends="projdircheck">
+	<if>
+		<isset property="additional.properties"/>
+		<then>
+			<echo>Processing additional properties file: ${additional.properties}</echo>
+			<resolvepath propertyName="additional.properties.resolved" file="${additional.properties}" dir="${application.startdir}"/>
+			<property file="${additional.properties.resolved}"/>
+		</then>
+	</if>
 	<echo msg="Loading project-specific props from ${project.dir}/build.properties"/>
 	<property file="${propel.project.dir}/build.properties"/>
 </target>
