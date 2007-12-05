@@ -47,7 +47,7 @@ class PHP5NestedSetBuilder extends ObjectBuilder {
 	 */
 	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname() . 'NestedSet';
+		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname() . 'NestedSet';
 	}
 
 	/**

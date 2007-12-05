@@ -51,7 +51,7 @@ class PHP5NodePeerBuilder extends PeerBuilder {
 	 */
 	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubNodePeerBuilder()->getClassname();
+		return $this->getBuildProperty('basePrefix') . $this->getStubNodePeerBuilder()->getUnprefixedClassname();
 	}
 
 	/**

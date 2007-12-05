@@ -51,7 +51,7 @@ class PHP5NestedSetPeerBuilder extends PeerBuilder {
 	 */
 	public function getUnprefixedClassname()
 	{
-		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getClassname() . 'NestedSetPeer';
+		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname() . 'NestedSetPeer';
 	}
 
 	/**
