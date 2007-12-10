@@ -91,6 +91,21 @@ class Propel
 	 * The Propel version.
 	 */
 	const VERSION = '1.3.0-dev';
+	
+	/**
+	 * The class name for a PDO object
+	 */
+	const CLASS_PDO = 'PDO';
+	
+		/**
+	 * The class name for a PropelPDO object
+	 */
+	const CLASS_PROPEL_PDO = 'PropelPDO';
+	
+		/**
+	 * The class name for a SlavePDO object
+	 */
+	const CLASS_SLAVE_PDO = 'SlavePDO';
 
 	/**
 	 * @var        string The db name that is specified as the default in the property file
@@ -175,6 +190,7 @@ class Propel
 		'PeerInfo' => 'propel/util/PeerInfo.php',
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
 		'PropelPDO' => 'propel/util/PropelPDO.php',
+		'SlavePDO' => 'propel/util/SlavePDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
 
@@ -438,10 +454,40 @@ class Propel
 
 		if (!isset(self::$connectionMap[$name])) {
 
+			// load connection parameter for master connection
 			$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
 			if ($conparams === null) {
 				throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
 			}
+			
+			// initialize master connection
+			$con = Propel::initConnection($conparams, $name, Propel::CLASS_PROPEL_PDO);
+			self::$connectionMap[$name] = $con;
+			
+			// load any slaves from the config file and add them to the master connection
+			$slaveparams = isset(self::$configuration['datasources'][$name]['slaves']) ? self::$configuration['datasources'][$name]['slaves'] : null;
+			if ($slaveparams != null) {
+				foreach ($slaveparams as $key => $slaveparam) {
+					$con->addSlave($slaveparam, $name);
+				}
+			}
+		}
+
+		return self::$connectionMap[$name];
+	}
+	
+	/**
+	 * Opens a new PDO connection for passed-in db name.
+	 *
+	 * @param      string[] connection paramters
+	 * @param 	   name
+	 * @param      boolean Initialize a PropelPDO (true, default) or a plain PDO (false)
+	 *
+	 * @return     object A database connection of the given class (PDO, PropelPDO, SlavePropelPDO)
+	 *
+	 * @throws     PropelException - if lower-level exception caught when trying to connect.
+	 */
+	public static function initConnection($conparams, $name, $class) {
 
 			$dsn = $conparams['dsn'];
 			if ($dsn === null) {
@@ -465,7 +511,6 @@ class Propel
 			try {
 				$con = new PropelPDO($dsn, $user, $password, $driver_options);
 				$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				self::$connectionMap[$name] = $con;
 			} catch (PDOException $e) {
 				throw new PropelException("Unable to open PDO connection", $e);
 			}
@@ -487,23 +532,8 @@ class Propel
 			// initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
 			$adapter = self::getDB($name);
 			$adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
-		}
-
-		return self::$connectionMap[$name];
-	}
-
-	/**
-	 * Sets the connection to use for specified datasource.
-	 *
-	 * @param      string $name The datasource name.
-	 * @param      PropelPDO $con The PDO connection object to use for specified datasource.
-	 */
-	public static function setConnection($name, PropelPDO $con)
-	{
-		if ($name === null) {
-			$name = self::getDefaultDB();
-		}
-		self::$connectionMap[$name] = $con;
+			
+			return $con;
 	}
 
 	/**
