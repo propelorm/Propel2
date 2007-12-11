@@ -170,7 +170,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$this->addHydrateChildren($script);
 
 		$this->addShiftRParent($script);
-		$this->addUpdateNode($script);
+		$this->addupdateDBNode($script);
 
 		$this->addShiftRLValues($script);
 		$this->addShiftRLRange($script);
@@ -590,7 +590,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			throw new PropelException('Moving nodes across trees is not supported');
 		}
 		\$destLeft = \$parent->getLeftValue() + 1;
-		self::updateNode(\$child, \$destLeft, \$con);
+		self::updateDBNode(\$child, \$destLeft, \$con);
 	}
 ";
 	}
@@ -614,7 +614,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			throw new PropelException('Moving nodes across trees is not supported');
 		}
 		\$destLeft = \$parent->getRightValue();
-		self::updateNode(\$child, \$destLeft, \$con);
+		self::updateDBNode(\$child, \$destLeft, \$con);
 	}
 ";
 	}
@@ -638,7 +638,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			throw new PropelException('Moving nodes across trees is not supported');
 		}
 		\$destLeft = \$dest->getLeftValue();
-		self::updateNode(\$node, \$destLeft, \$con);
+		self::updateDBNode(\$node, \$destLeft, \$con);
 	}
 ";
 	}
@@ -663,7 +663,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$destLeft = \$dest->getRightValue();
 		\$destLeft = \$destLeft + 1;
-		self::updateNode(\$node, \$destLeft, \$con);
+		self::updateDBNode(\$node, \$destLeft, \$con);
 	}
 ";
 	}
@@ -1407,7 +1407,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 ";
 	}
 
-	protected function addUpdateNode(&$script)
+	protected function addupdateDBNode(&$script)
 	{
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
 		$script .= "
@@ -1418,7 +1418,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * @param      PropelPDO \$con		Connection to use.
 	 * @param      int	 Destination left value
 	 */
-	protected static function updateNode(NodeObject \$node, \$destLeft, PropelPDO \$con = null)
+	protected static function updateDBNode(NodeObject \$node, \$destLeft, PropelPDO \$con = null)
 	{
 		\$left = \$node->getLeftValue();
 		\$right = \$node->getRightValue();
@@ -1433,7 +1433,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 
 		// now there's enough room next to target to move the subtree
-		\$newPos = self::shiftRLRange(\$left, \$right, \$destLeft - \$left, \$con, \$node->getScopeIdValue());
+		self::shiftRLRange(\$left, \$right, \$destLeft - \$left, \$con, \$node->getScopeIdValue());
 
 		// correct values after source
 		self::shiftRLValues(\$right + 1, -\$treeSize, \$con, \$node->getScopeIdValue());
