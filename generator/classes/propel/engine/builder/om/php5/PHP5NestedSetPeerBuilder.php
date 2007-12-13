@@ -1594,8 +1594,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		// Shift left column values
 		\$whereCriteria = new Criteria();
-		\$criterion = \$whereCriteria->getNewCriterion(\$leftUpdateCol, \$first, Criteria::GREATER_EQUAL);
-		\$criterion->addAnd(\$whereCriteria->getNewCriterion(\$leftUpdateCol, \$last, Criteria::LESS_EQUAL));
+		\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::LEFT_COL, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
 			\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
@@ -1611,8 +1611,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		// Shift right column values
 		\$whereCriteria = new Criteria();
-		\$criterion = \$whereCriteria->getNewCriterion(\$rightUpdateCol, \$first, Criteria::GREATER_EQUAL);
-		\$criterion->addAnd(\$whereCriteria->getNewCriterion(\$rightUpdateCol, \$last, Criteria::LESS_EQUAL));
+		\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
 			\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scopeId, Criteria::EQUAL));
 		}
@@ -1620,7 +1620,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$valuesCriteria = new Criteria();
 		\$valuesCriteria->add(
-			self::LEFT_COL,
+			self::RIGHT_COL,
 			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
 			Criteria::CUSTOM_EQUAL);
 
