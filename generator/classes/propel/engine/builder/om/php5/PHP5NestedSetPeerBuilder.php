@@ -1394,7 +1394,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 *
 	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	protected function updateLoadedNode(PropelPDO \$con = null)
+	protected static function updateLoadedNode(PropelPDO \$con = null)
 	{
 		if (Propel::isInstancePoolingEnabled())
 		{
