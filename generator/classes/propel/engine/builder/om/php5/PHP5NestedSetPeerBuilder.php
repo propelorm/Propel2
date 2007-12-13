@@ -1404,7 +1404,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				\$keys[] = \$obj->getPrimaryKey();
 			}
 
-			if(!empty(\$keys)
+			if(!empty(\$keys))
 			{
 				// We don't need to alter the object instance pool; we're just modifying this instance
 				// already in the pool.
