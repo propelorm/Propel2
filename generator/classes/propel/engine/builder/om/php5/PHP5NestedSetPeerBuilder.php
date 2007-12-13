@@ -1396,26 +1396,37 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected function updateLoadedNode(PropelPDO \$con = null)
 	{
-		\$keys = array();
-		foreach(self::\$instances as \$obj)
+		if (Propel::isInstancePoolingEnabled())
 		{
-			\$keys[] = \$obj->getPrimaryKey();
-		}
-		// We don't need to alter the object instance pool; we're just modifying this instance
-		// already in the pool.
+			\$keys = array();
+			foreach(self::\$instances as \$obj)
+			{
+				\$keys[] = \$obj->getPrimaryKey();
+			}
 
-		\$criteria = new Criteria(self::DATABASE_NAME);
+			if(!empty(\$keys)
+			{
+				// We don't need to alter the object instance pool; we're just modifying this instance
+				// already in the pool.
+
+				\$criteria = new Criteria(self::DATABASE_NAME);
 ";
-		foreach ($table->getColumns() as $col) {
-			if ($col->isPrimaryKey()) {
-				$script .= "
-		\$criteria->add(".$this->getColumnConstant($col).", \$keys, Criteria::IN);
+			foreach ($table->getColumns() as $col) {
+				if ($col->isPrimaryKey()) {
+					$script .= "
+				\$criteria->add(".$this->getColumnConstant($col).", \$keys, Criteria::IN);
 ";
-				break;
-			} /* if col is prim key */
-		} /* foreach */
-		$script .= "
-		$peerClassname::populateObjects($peerClassname::doSelectStmt(\$criteria, \$con));
+					break;
+				} /* if col is prim key */
+			} /* foreach */
+			$script .= "
+				$peerClassname::populateObjects($peerClassname::doSelectStmt(\$criteria, \$con));
+			}
+		}
+		else
+		{
+			// TODO: Do a refresh for all in-memory nodes with a tree traversal
+		}
 	}
 ";
 	}
