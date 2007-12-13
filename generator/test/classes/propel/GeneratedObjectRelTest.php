@@ -176,7 +176,7 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$this->assertNull($bce->getBookstoreContest());
 		$this->assertNull($bce->getBookstore());
 	}
-	
+
 	/**
 	 * Test the clearing of related object collection.
 	 * @link       http://propel.phpdb.org/trac/ticket/529
@@ -186,15 +186,15 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$book = new Book();
 		$book->setISBN("Foo-bar-baz");
 		$book->setTitle("The book title");
-		
+
 		// No save ...
-		
+
 		$r = new Review();
 		$r->setReviewedBy('Me');
 		$r->setReviewDate(new DateTime("now"));
-		
+
 		$book->addReview($r);
-		
+
 		// No save (yet) ...
 
 		$this->assertEquals(1, count($book->getReviews()) );

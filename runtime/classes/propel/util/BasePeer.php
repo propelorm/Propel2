@@ -368,9 +368,9 @@ class BasePeer
 					{
 						$param = $updateValues->get($col);
 						$sql .= $updateColumnName . " = ";
-						if(is_array($param))
+						if (is_array($param))
 						{
-							if(isset($param['raw']))
+							if (isset($param['raw']))
 							{
 								$sql .= $param['raw'] . ", ";
 							}
@@ -378,7 +378,7 @@ class BasePeer
 							{
 								$sql .= "?, ";
 							}
-							if(isset($param['value']))
+							if (isset($param['value']))
 							{
 								$updateValues->put($col, $param['value']);
 							}

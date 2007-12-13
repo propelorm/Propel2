@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PropelPDO.php 806 2007-11-15 00:44:47Z david $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -74,31 +74,31 @@ class SlavePDO extends PDO {
 		}
 		else throw new PropelException("No read access in SlavePDO");
 	}
-	
+
 	/**
-     * Overrides PDO::query() to split r/w queries
-     */
+	 * Overrides PDO::query() to split r/w queries
+	 */
 	public function query($sql, $fetch = null, $input3=null, $input4=null) {
 		if ($this->isReadOnly($sql)) {
 			return parent::query($sql, $fetch, $input4, $input4);
 		}
 		else throw new PropelException("No read access in SlavePDO");
 	}
-	
+
 	/**
-     * Overrides PDO::exec() to split r/w queries
-     */
+	 * Overrides PDO::exec() to split r/w queries
+	 */
 	public function exec($sql) {
 		if ($this->isReadOnly($sql)) {
 			return parent::exec($sql);
 		}
 		else throw new PropelException("No read access in SlavePDO");
 	}
-		
+
 	/**
 	 * Checks if a sql query is read only
-	 * 
-	 * @return boolean
+	 *
+	 * @return     boolean
 	 */
 	private function isReadOnly($sql) {
 		return PropelPDO::isReadOnly($sql);

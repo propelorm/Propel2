@@ -60,7 +60,7 @@ class BookstoreDataPopulator {
 		$rowling->setFirstName("J.K.");
 		$rowling->setLastName("Rowling");
 		// no save()
-		
+
 		$stephenson = new Author();
 		$stephenson->setFirstName("Neal");
 		$stephenson->setLastName("Stephenson");

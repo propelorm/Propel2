@@ -38,12 +38,12 @@ interface Platform {
 	 * Constant for sequence id method.
 	 */
 	const SEQUENCE = "sequence";
-	
+
 	/**
 	 * Constant for serial id method (postgresql).
 	 */
 	const SERIAL = "serial";
-	
+
 	/**
 	 * Sets a database connection to use (for quoting, etc.).
 	 * @param      PDO $con The database connection to use in this Platform class.

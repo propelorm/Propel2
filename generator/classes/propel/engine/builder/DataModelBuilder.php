@@ -277,7 +277,7 @@ abstract class DataModelBuilder {
 		}
 		return $result;
 	}
-	
+
 	/**
 	* A Name to use for the serials (dependant sequence in PostgreSQL)
 	*/

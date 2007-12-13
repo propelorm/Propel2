@@ -2225,8 +2225,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Clears out the $collName collection (array).
-	 * 
-	 * This does not modify the database; however, it will remove any associated objects, causing 
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
 	 *
 	 * @return     void

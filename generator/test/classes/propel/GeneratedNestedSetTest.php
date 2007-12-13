@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: GeneratedObjectTest.php 840 2007-12-02 15:53:17Z hans $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -40,46 +40,46 @@ class GeneratedNestedSetTest extends BookstoreTestBase {
 	protected function setUp()
 	{
 		parent::setUp();
-		
+
 		// TODO - maybe use multiple trees instead of having
 		// a meaningless top-level category 'Category'
 		$root = new BookCategory();
 		$root->makeRoot();
 		$root->setLabel('Category');
 		$root->save();
-		
+
 		$fiction = new BookCategory();
 		$fiction->setLabel('Fiction');
 		$fiction->insertAsLastChildOf($root);
 		$fiction->save();
-		
+
 		$mystery = new BookCategory();
 		$mystery->setLabel('Mystery');
 		$mystery->insertAsLastChildOf($fiction);
 		$mystery->save();
-		
+
 		$romance = new BookCategory();
 		$romance->setLabel('Romance');
 		$romance->insertAsLastChildOf($fiction);
 		$romance->save();
-		
+
 		$nonfiction = new BookCategory();
 		$nonfiction->setLabel("Non-fiction");
 		$nonfiction->insertAsNextSiblingOf($fiction);
 		$nonfiction->save();
-		
+
 		$biography = new BookCategory();
 		$biography->setLabel('Biography');
 		$biography->insertAsLastChildOf($nonfiction);
 		$biography->save();
-	
+
 	}
 
 	protected function tearDown()
 	{
 		parent::tearDown();
 	}
-	
+
 	public function testInsert()
 	{
 		$this->markTestIncomplete();
