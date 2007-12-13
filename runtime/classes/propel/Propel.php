@@ -487,53 +487,54 @@ class Propel
 	 *
 	 * @throws     PropelException - if lower-level exception caught when trying to connect.
 	 */
-	public static function initConnection($conparams, $name, $class) {
+	public static function initConnection($conparams, $name, $class)
+	{
 
-			$dsn = $conparams['dsn'];
-			if ($dsn === null) {
-				throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
-			}
+		$dsn = $conparams['dsn'];
+		if ($dsn === null) {
+			throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
+		}
 
-			$user = isset($conparams['user']) ? $conparams['user'] : null;
-			$password = isset($conparams['password']) ? $conparams['password'] : null;
+		$user = isset($conparams['user']) ? $conparams['user'] : null;
+		$password = isset($conparams['password']) ? $conparams['password'] : null;
 
-			// load any driver options from the config file
-			// driver options are those PDO settings that have to be passed during the connection construction
-			$driver_options = array();
-			if ( isset($conparams['options']) && is_array($conparams['options']) ) {
-				try {
-					self::processDriverOptions( $conparams['options'], $driver_options );
-				} catch (PropelException $e) {
-					throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
-				}
-			}
-
+		// load any driver options from the config file
+		// driver options are those PDO settings that have to be passed during the connection construction
+		$driver_options = array();
+		if ( isset($conparams['options']) && is_array($conparams['options']) ) {
 			try {
-				$con = new PropelPDO($dsn, $user, $password, $driver_options);
-				$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			} catch (PDOException $e) {
-				throw new PropelException("Unable to open PDO connection", $e);
+				self::processDriverOptions( $conparams['options'], $driver_options );
+			} catch (PropelException $e) {
+				throw new PropelException('Error processing driver options for datasource ['.$name.']', $e);
 			}
+		}
 
-			// load any connection options from the config file
-			// connection attributes are those PDO flags that have to be set on the initialized connection
-			if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
-				$attributes = array();
-				try {
-					self::processDriverOptions( $conparams['attributes'], $attributes );
-				} catch (PropelException $e) {
-					throw new PropelException('Error processing connection attributes for datasource ['.$name.']', $e);
-				}
-				foreach ($attributes as $key => $value) {
-					$con->setAttribute($key, $value);
-				}
+		try {
+			$con = new PropelPDO($dsn, $user, $password, $driver_options);
+			$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		} catch (PDOException $e) {
+			throw new PropelException("Unable to open PDO connection", $e);
+		}
+
+		// load any connection options from the config file
+		// connection attributes are those PDO flags that have to be set on the initialized connection
+		if (isset($conparams['attributes']) && is_array($conparams['attributes'])) {
+			$attributes = array();
+			try {
+				self::processDriverOptions( $conparams['attributes'], $attributes );
+			} catch (PropelException $e) {
+				throw new PropelException('Error processing connection attributes for datasource ['.$name.']', $e);
 			}
+			foreach ($attributes as $key => $value) {
+				$con->setAttribute($key, $value);
+			}
+		}
 
-			// initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
-			$adapter = self::getDB($name);
-			$adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+		// initialize the connection using the settings provided in the config file. this could be a "SET NAMES <charset>" query for MySQL, for instance
+		$adapter = self::getDB($name);
+		$adapter->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
 
-			return $con;
+		return $con;
 	}
 
 	/**
