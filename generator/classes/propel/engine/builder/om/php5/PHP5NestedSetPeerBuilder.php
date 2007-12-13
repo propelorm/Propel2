@@ -169,7 +169,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$this->addHydrateDescendants($script);
 		$this->addHydrateChildren($script);
 
-		$this->addShiftRParent($script);
+		$this->addUpdateLoadedNode($script);
 		$this->addupdateDBNode($script);
 
 		$this->addShiftRLValues($script);
@@ -310,8 +310,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		// Update database nodes
 		self::shiftRLValues(\$child->getLeftValue(), 2, \$con, \$sidv);
 
-		// Update \$parent nodes properties recursively
-		self::shiftRParent(\$parent, 2, \$con);
+		// Update all loaded nodes
+		self::updateLoadedNode(\$con);
 	}
 ";
 	}
@@ -347,8 +347,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		// Update database nodes
 		self::shiftRLValues(\$child->getLeftValue(), 2, \$con, \$sidv);
 
-		// Update \$parent nodes properties recursively
-		self::shiftRParent(\$parent, 2, \$con);
+		// Update all loaded nodes
+		self::updateLoadedNode(\$con);
 	}
 ";
 	}
@@ -384,8 +384,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		// Update database nodes
 		self::shiftRLValues(\$node->getLeftValue(), 2, \$con, \$sidv);
 
-		// Update \$parent nodes properties recursively
-		self::shiftRParent(\$sibling->retrieveParent(), 2, \$con);
+		// Update all loaded nodes
+		self::updateLoadedNode(\$con);
 	}
 ";
 	}
@@ -421,8 +421,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		// Update database nodes
 		self::shiftRLValues(\$node->getLeftValue(), 2, \$con, \$sidv);
 
-		// Update \$parent nodes properties recursively
-		self::shiftRParent(\$sibling->retrieveParent(), 2, \$con);
+		// Update all loaded nodes
+		self::updateLoadedNode(\$con);
 	}
 ";
 	}
@@ -463,8 +463,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		\$node->save(\$con);
 
-		// Update \$parent nodes properties recursively
-		self::shiftRParent(\$previous_parent, 2, \$con);
+		// Update all loaded nodes
+		self::updateLoadedNode(\$con);
 	}
 ";
 	}
@@ -1382,27 +1382,40 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 ";
 	}
 
-	protected function addShiftRParent(&$script)
+	protected function addUpdateLoadedNode(&$script)
 	{
-		$objectClassname = $this->getStubObjectBuilder()->getClassname();
+		$objectClassName = $this->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$table = $this->getTable();
+
 		$script .= "
 	/**
-	 * Adds '\$delta' to all parent R values.
-	 * '\$delta' can also be negative.
+	 * Reload all already loaded nodes to sync them with updated db
 	 *
-	 * @param      $objectClassname \$node	Propel object for parent node
-	 * @param      int \$delta	Value to be shifted by, can be negative
 	 * @param      PropelPDO \$con		Connection to use.
 	 */
-	protected static function shiftRParent(NodeObject \$node, \$delta, PropelPDO \$con = null)
+	protected function updateLoadedNode(PropelPDO \$con = null)
 	{
-		if (\$node->hasParent(\$con)) {
-			\$parent = \$node->retrieveParent();
-			self::shiftRParent(\$parent, \$delta, \$con);
+		\$keys = array();
+		foreach(self::\$instances as \$obj)
+		{
+			\$keys[] = \$obj->getPrimaryKey();
 		}
-		\$node->setRightValue(\$node->getRightValue() + \$delta);
-		\$node->save(\$con);
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		\$criteria = new Criteria(self::DATABASE_NAME);
+";
+		foreach ($table->getColumns() as $col) {
+			if ($col->isPrimaryKey()) {
+				$script .= "
+		\$criteria->add(".$this->getColumnConstant($col).", \$keys, Criteria::IN);
+";
+				break;
+			} /* if col is prim key */
+		} /* foreach */
+		$script .= "
+		$peerClassname::populateObjects($peerClassname::doSelectStmt(\$criteria, \$con));
 	}
 ";
 	}
@@ -1412,11 +1425,11 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
 		$script .= "
 	/**
-	 * Move \$node and its children to location \$dest and updates rest of tree
+	 * Move \$node and its children to location \$destLeft and updates rest of tree
 	 *
 	 * @param      $objectClassname \$node Propel object for node to update
+	 * @param      int	\$destLeft Destination left value
 	 * @param      PropelPDO \$con		Connection to use.
-	 * @param      int	 Destination left value
 	 */
 	protected static function updateDBNode(NodeObject \$node, \$destLeft, PropelPDO \$con = null)
 	{
