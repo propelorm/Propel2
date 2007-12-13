@@ -178,26 +178,21 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
 				$this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
 
+				$this->fp = fopen($outFile->getAbsolutePath().'.temp', 'wb');
+
 				try {
 					$dataXmlParser = new XmlToData($db, $this->dbEncoding);
-					$data = $dataXmlParser->parseFile($dataXMLFile->getAbsolutePath());
+					$data = $dataXmlParser->parseFile($dataXMLFile->getAbsolutePath(),array($this,'processRow'));
 				} catch (Exception $e) {
+					fclose($this->fp);
+					unlink($outFile->getAbsolutePath().'.temp');
 					throw new Exception("Exception parsing data XML: " . $e->getMessage());
 				}
 
-				$fp = fopen($outFile->getAbsolutePath(), 'w');
-
-				$currTable = null;
-				foreach ($data as $dataRow) {
-					if ($currTable !== $dataRow->getTable()) {
-						$currTable = $dataRow->getTable();
-						$builder = DataModelBuilder::builderFactory($currTable, 'datasql');
-					}
-					$sql = $builder->buildRowSql($dataRow);
-					fwrite($fp, $sql);
+				if ( $this->fp ) {
+					fclose($this->fp);
+					rename($outFile->getAbsolutePath().'.temp',$outFile->getAbsolutePath());
 				}
-
-				fclose($fp);
 
 				// Place the generated SQL file(s)
 				$p = new Properties();
@@ -216,4 +211,17 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 		} // foreach data xml file
 
 	} // main()
+	public function processRow(DataRow $dataRow) {
+		static $currTable = null;
+		static $builder;
+
+		if ($currTable !== $dataRow->getTable()) {
+			$currTable = $dataRow->getTable();
+			$builder = DataModelBuilder::builderFactory($currTable, 'datasql');
+		}
+		$sql = $builder->buildRowSql($dataRow);
+		fwrite($this->fp, $sql);
+
+	}
+
 }

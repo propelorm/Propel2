@@ -40,6 +40,7 @@ class XmlToData extends AbstractHandler {
 	private $data;
 
 	private $encoding;
+	private $callback;
 
 	public $parser;
 
@@ -62,8 +63,11 @@ class XmlToData extends AbstractHandler {
 	/**
 	 *
 	 */
-	public function parseFile($xmlFile)
+	public function parseFile($xmlFile,$callback=null)
 	{
+		if ( $callback ) {
+			$this->callback = $callback;
+		}
 		try {
 
 			$this->data = array();
@@ -112,7 +116,13 @@ class XmlToData extends AbstractHandler {
 					$col = $table->getColumnByPhpName($name);
 					$this->columnValues[] = new ColumnValue($col, iconv('utf-8',$this->encoding, $value));
 				}
-				$this->data[] = new DataRow($table, $this->columnValues);
+				$data = new DataRow($table, $this->columnValues);
+				if ( $this->callback ) {
+					call_user_func($this->callback,$data);
+					$data = null;
+				} else {
+					$this->data[] = $data;
+				}
 			}
 		} catch (Exception $e) {
 			print $e;
