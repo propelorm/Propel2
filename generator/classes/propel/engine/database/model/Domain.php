@@ -114,18 +114,15 @@ class Domain extends XMLElement {
 
 		//Name
 		$this->name = $this->getAttribute("name");
-
-		//Default column value.
-		$this->defaultValue = $this->getAttribute("default"); // may need to adjust -- e.g. for boolean values
-		$defType = strtolower($this->getAttribute("defaultType"));
-		if (!empty($defType)) {
-			if ($defType == self::DEFAULTTYPE_EXPR || $defType == self::DEFAULTTYPE_VALUE) {
-				$this->defaultValueType = $defType;
-			} else {
-				throw new EngineException("Invalid value for defaultType: " . $defType);
-			}
+		
+		// Default value
+		$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
+		if ($defval !== null) {
+			$this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+		} elseif ($this->getAttribute("defaultExpr") !== null) {
+			$this->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
 		}
-
+		
 		$this->size = $this->getAttribute("size");
 		$this->scale = $this->getAttribute("scale");
 		$this->description = $this->getAttribute("description");
@@ -133,20 +130,24 @@ class Domain extends XMLElement {
 
 	/**
 	 * Sets the owning database object (if this domain is being setup via XML).
+	 * @param      Database $database
 	 */
-	public function setDatabase(Database $database) {
+	public function setDatabase(Database $database)
+	{
 		$this->database = $database;
 	}
 
 	/**
 	 * Gets the owning database object (if this domain was setup via XML).
+	 * @return     Database
 	 */
-	public function getDatabase() {
+	public function getDatabase()
+	{
 		return $this->database;
 	}
 
 	/**
-	 * @return     Returns the description.
+	 * @return     string Returns the description.
 	 */
 	public function getDescription()
 	{
@@ -154,7 +155,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param      description The description to set.
+	 * @param      string $description The description to set.
 	 */
 	public function setDescription($description)
 	{
@@ -162,7 +163,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return     Returns the name.
+	 * @return     string Returns the name.
 	 */
 	public function getName()
 	{
@@ -170,7 +171,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param      name The name to set.
+	 * @param      string $name The name to set.
 	 */
 	public function setName($name)
 	{
@@ -178,7 +179,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return     Returns the scale.
+	 * @return     string Returns the scale.
 	 */
 	public function getScale()
 	{
@@ -186,7 +187,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param      scale The scale to set.
+	 * @param      string $scale The scale to set.
 	 */
 	public function setScale($scale)
 	{
@@ -196,7 +197,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the size if the new value is not null.
 	 *
-	 * @param      value The size to set.
+	 * @param      string $value The size to set.
 	 */
 	public function replaceScale($value)
 	{
@@ -206,7 +207,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return     Returns the size.
+	 * @return     int Returns the size.
 	 */
 	public function getSize()
 	{
@@ -214,7 +215,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @param      size The size to set.
+	 * @param      int $size The size to set.
 	 */
 	public function setSize($size)
 	{
@@ -224,7 +225,7 @@ class Domain extends XMLElement {
 	/**
 	 * Replaces the size if the new value is not null.
 	 *
-	 * @param      value The size to set.
+	 * @param      int $value The size to set.
 	 */
 	public function replaceSize($value)
 	{
@@ -250,9 +251,9 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * Replaces the default value if the new value is not null.
+	 * Replaces the type if the new value is not null.
 	 *
-	 * @param      value The defaultValue to set.
+	 * @param      string $value The tyep to set.
 	 */
 	public function replaceType($value)
 	{
@@ -312,7 +313,7 @@ class Domain extends XMLElement {
 	}
 
 	/**
-	 * @return     Returns the sqlType.
+	 * @return     string Returns the sqlType.
 	 */
 	public function getSqlType()
 	{
@@ -341,7 +342,7 @@ class Domain extends XMLElement {
 	/**
 	 * Return the size and scale in brackets for use in an sql schema.
 	 *
-	 * @return     size and scale or an empty String if there are no values
+	 * @return     string Size and scale or an empty String if there are no values
 	 *         available.
 	 */
 	public function printSize()

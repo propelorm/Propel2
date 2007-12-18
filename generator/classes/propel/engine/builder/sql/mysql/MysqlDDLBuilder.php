@@ -331,31 +331,45 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 	{
 		$platform = $this->getPlatform();
 		$domain = $col->getDomain();
+		$sqlType = $domain->getSqlType();
+		$notNullString = $col->getNotNullString();
+		$defaultSetting = $col->getDefaultSetting();
+			
+		// Special handling of TIMESTAMP/DATETIME types ...
+		// See: http://propel.phpdb.org/trac/ticket/538
+		if ($sqlType == 'DATETIME') {
+			$def = $domain->getDefaultValue();
+			if ($def && $def->isExpression()) { // DATETIME values can only have constant expressions
+				$sqlType = 'TIMESTAMP';
+			}
+		} elseif ($sqlType == 'DATE') {
+			$def = $domain->getDefaultValue();
+			if ($def && $def->isExpression()) { // DATE values don't support expressions in MySQL
+				throw new EngineException("DATE columns cannot have default *expressions* in MySQL.");
+			}
+		}
 
 		$sb = "";
 		$sb .= $this->quoteIdentifier($col->getName()) . " ";
-		$sb .= $domain->getSqlType();
-		if ($platform->hasSize($domain->getSqlType())) {
+		$sb .= $sqlType;
+		if ($platform->hasSize($sqlType)) {
 			$sb .= $domain->printSize();
 		}
 		$sb .= " ";
 
-		if ($domain->getSqlType() == 'TIMESTAMP') {
-			$not_null_string = $col->getNotNullString();
-			$default_setting = $col->getDefaultSetting();
-
-			if ($not_null_string == '') {
-				$not_null_string = 'NULL';
+		if ($sqlType == 'TIMESTAMP') {
+			$notNullString = $col->getNotNullString();
+			$defaultSetting = $col->getDefaultSetting();
+			if ($notNullString == '') {
+				$notNullString = 'NULL';
 			}
-
-			if ($default_setting == '' && $not_null_string == 'NOT NULL') {
-				$default_setting = 'DEFAULT CURRENT_TIMESTAMP';
+			if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
+				$defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
 			}
-
-			$sb .= $not_null_string . " " . $default_setting . " ";
+			$sb .= $notNullString . " " . $defaultSetting . " ";
 		} else {
-			$sb .= $col->getDefaultSetting() . " ";
-			$sb .= $col->getNotNullString() . " ";
+			$sb .= $defaultSetting . " ";
+			$sb .= $notNullString . " ";
 		}
 		$sb .= $col->getAutoIncrementString();
 
