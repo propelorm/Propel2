@@ -82,10 +82,16 @@ class PHP5PeerBuilder extends PeerBuilder {
  * $now
  *";
 		}
+
+		$extendingPeerClass = '';
+		if ($this->basePeerClassname !== 'BasePeer') {
+			$extendingPeerClass = ' extends ' . $this->basePeerClassname;
+		}
+
 		$script .= "
  * @package    ".$this->getPackage()."
  */
-abstract class ".$this->getClassname()." {
+abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 	}
 
