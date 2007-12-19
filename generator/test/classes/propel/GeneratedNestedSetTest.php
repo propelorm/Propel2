@@ -127,5 +127,23 @@ class GeneratedNestedSetTest extends CmsTestBase {
 		$this->assertPageTreeIntegrity();
 	}
 
+	/**
+	 * Test retrieveRoot() as true
+	 */
+	public function testRetrieveRootExist()
+	{
+		$pp = PagePeer::retrieveRoot(1);
+		$this->assertNotNull($pp, 'Node must exist and not be null');
+		$this->assertEquals(1, $pp->getLeftValue(), 'Node left value must be equal to 1');
+	}
+
+	/**
+	 * Test retrieveRoot() as false
+	 */
+	public function testRetrieveRootNotExist()
+	{
+		$pp = PagePeer::retrieveRoot(2);
+		$this->assertNull($pp, 'Root with such scopeId must not exist');
+	}
 
 }
