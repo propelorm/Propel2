@@ -1407,7 +1407,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			self::shiftRParent(\$parent, \$delta, \$con);
 		}
 		\$node->setRightValue(\$node->getRightValue() + \$delta);
-		\$node->save(\$con);
 	}
 ";
 	}
