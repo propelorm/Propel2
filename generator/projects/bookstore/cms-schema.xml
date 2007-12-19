@@ -5,7 +5,14 @@
 		<column name="Id" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
 		<column name="LeftChild" type="INTEGER" required="true" nestedSetLeftKey="true"/>
 		<column name="RightChild" type="INTEGER" required="true" nestedSetRightKey="true"/>
-		<column name="scopeId" type="INTEGER" required="true" default="0" treeScopeKey="true"/>
+		<column name="ScopeId" type="INTEGER" required="true" default="0" treeScopeKey="true"/>
+		<column name="Title" type="VARCHAR" size="255" />
+	</table>
+
+	<table name="Category" idMethod="native" treeMode="NestedSet">
+		<column name="Id" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
+		<column name="LeftChild" type="INTEGER" required="true" nestedSetLeftKey="true"/>
+		<column name="RightChild" type="INTEGER" required="true" nestedSetRightKey="true"/>
 		<column name="Title" type="VARCHAR" size="255" />
 	</table>
 
