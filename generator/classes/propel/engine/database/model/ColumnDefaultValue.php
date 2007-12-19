@@ -23,7 +23,7 @@
  * A class for holding a column default value.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision: 521 $
+ * @version    $Revision$
  * @package    propel.engine.database.model
  */
 class ColumnDefaultValue {
