@@ -309,28 +309,4 @@
 		</foreign-key>
 	</table>
 
-	<!--  Test NestedSet trees -->
-	<table name="book_category" treeMode="NestedSet"
-		description="Tree of categories (and sub-categories) for classifying books.">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" description="Node Id" />
-		<column name="lft" required="true" nestedSetLeftKey="true"
-			type="INTEGER" description="Node Left Key" />
-		<column name="rgt" type="INTEGER" required="true"
-			nestedSetRightKey="true" description="Node Right Key" />
-		<column name="scope" type="INTEGER" required="true" default="0"
-			treeScopeKey="true" />
-		<column name="label" type="VARCHAR" size="64" required="true"
-			description="Category label" />
-		<index>
-			<index-column name="lft" />
-		</index>
-		<index>
-			<index-column name="rgt" />
-		</index>
-		<index>
-			<index-column name="scope" />
-		</index>
-	</table>
-
 </database>
