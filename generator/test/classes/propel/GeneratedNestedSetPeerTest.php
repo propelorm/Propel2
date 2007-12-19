@@ -35,7 +35,7 @@ require_once 'cms/CmsTestBase.php';
  *
  * @see        CmsDataPopulator
  */
-class GeneratedNestedSetTest extends CmsTestBase {
+class GeneratedNestedSetPeerTest extends CmsTestBase {
 
 	/**
 	 * Test retrieveRoot() as true
