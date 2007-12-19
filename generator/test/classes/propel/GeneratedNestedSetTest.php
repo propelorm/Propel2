@@ -19,69 +19,102 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'bookstore/BookstoreTestBase.php';
+require_once 'cms/CmsTestBase.php';
 
 /**
  * Tests the generated nested-set Object classes.
  *
- * This test uses generated Bookstore classes to test the behavior of various
+ * This test uses generated Bookstore-Cms classes to test the behavior of various
  * object operations.  The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
  * The database is relaoded before every test and flushed after every test.  This
  * means that you can always rely on the contents of the databases being the same
- * for each test method in this class.  See the BookstoreDataPopulator::populate()
+ * for each test method in this class.  See the CmsDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
+ * @see        CmsDataPopulator
  */
-class GeneratedNestedSetTest extends BookstoreTestBase {
+class GeneratedNestedSetTest extends CmsTestBase {
 
-	protected function setUp()
+	/**
+	 * A convenience method to dump the page rows.
+	 */
+	private function showPageItems()
 	{
-		parent::setUp();
+		$tree = PagePeer::retrieveTree();
+		$iterator = new RecursiveIteratorIterator($tree, RecursiveIteratorIterator::SELF_FIRST);
 
-		// TODO - maybe use multiple trees instead of having
-		// a meaningless top-level category 'Category'
-		$root = new BookCategory();
-		$root->makeRoot();
-		$root->setLabel('Category');
-		$root->save();
-
-		$fiction = new BookCategory();
-		$fiction->setLabel('Fiction');
-		$fiction->insertAsLastChildOf($root);
-		$fiction->save();
-
-		$mystery = new BookCategory();
-		$mystery->setLabel('Mystery');
-		$mystery->insertAsLastChildOf($fiction);
-		$mystery->save();
-
-		$romance = new BookCategory();
-		$romance->setLabel('Romance');
-		$romance->insertAsLastChildOf($fiction);
-		$romance->save();
-
-		$nonfiction = new BookCategory();
-		$nonfiction->setLabel("Non-fiction");
-		$nonfiction->insertAsNextSiblingOf($fiction);
-		$nonfiction->save();
-
-		$biography = new BookCategory();
-		$biography->setLabel('Biography');
-		$biography->insertAsLastChildOf($nonfiction);
-		$biography->save();
-
+		foreach ($iterator as $item) { /* @var $item Page */
+			echo str_repeat('- ', $iterator->getDepth())
+			, $item->getId() , ': '
+			, $item->getTitle()
+			, ' [', $item->getLeftValue(), ':', $item->getRightValue() , ']'
+			. "\n";
+		}
 	}
 
-	protected function tearDown()
+	/**
+	 * Adds a new Page row with specified parent Id.
+	 *
+	 * @param      int $parentId
+	 */
+	protected function addNewChildPage($parentId)
 	{
-		parent::tearDown();
+		$db = Propel::getConnection(PagePeer::DATABASE_NAME);
+
+		//$db->beginTransaction();
+
+		$parent = PagePeer::retrieveByPK($parentId);
+		$page = new Page();
+		$page->setTitle('new page '.time());
+		$page->insertAsLastChildOf($parent);
+		$page->save();
+
+		//$db->commit();
 	}
 
-	public function testInsert()
+	public function testAdd()
 	{
-		$this->markTestIncomplete();
+		$db = Propel::getConnection(PagePeer::DATABASE_NAME);
+		
+		// I'm not sure if the specific ID matters, but this should match original
+		// code.  The ID will change with subsequent runs (e.g. the first time it will be 11)
+		$startId = $db->query('SELECT MIN(Id) FROM Page')->fetchColumn();
+		$this->addNewChildPage($startId + 10);
+			
+		$values = array();
+		$log = '';
+			
+		foreach($db->query('select * from page', PDO::FETCH_NUM) as $row) {
+			
+			list($id, $leftChild, $rightChild, $title) = $row;
+			
+			if (!in_array($leftChild, $values)) {
+				$values[] = (int) $leftChild;
+			} else {
+				throw new Exception('Duplicate value '.$leftChild);
+			}
+				
+			if (!in_array($rightChild, $values)) {
+				$values[] = (int) $rightChild;
+			} else {
+				throw new Exception('Duplicate value '.$rightChild);
+			}
+				
+			$log .= "[$id($leftChild:$rightChild)]";
+		}
+
+		sort($values);
+
+		if ($values[count($values)-1] != count($values)) {
+			$message = sprintf("Tree integrity NOT ok (%s)\n", $log);
+			$message .= sprintf('Integrity error: value count: %d, high value: %d', count($values), $values[count($values)-1]);
+			$this->fail($message);
+		}
+
+		// test passed
 	}
+
+
 }

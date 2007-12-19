@@ -38,8 +38,8 @@
 	-->
 	<propel>
 		<datasources default="bookstore">
-
 			<datasource id="bookstore">
+			
 				<!-- the Propel adapter to use for this connection -->
 				<adapter>pgsql</adapter>
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
@@ -72,6 +72,31 @@
 							<query>INSERT INTO BAR ('hey', 'there')</query>
 						</setting>
 						-->
+					</settings>
+				</connection>
+			</datasource>
+			
+			<datasource id="bookstore-cms">
+				<adapter>pgsql</adapter>
+				<connection>
+					<dsn>pgsql:dbname=bookstore user=postgres</dsn>
+					<!--
+					For MySQL and Oracle you must specify username + password separate from DSN:
+					<user>testuser</user>
+					<password>password</password>
+					-->
+					<options>
+						<option id="ATTR_PERSISTENT">false</option>
+					</options>
+					
+					<attributes>
+						<!-- for MySQL, you should also turn on prepared statement emulation, as prepared statements support is buggy in mysql driver
+						<option id="ATTR_EMULATE_PREPARES">true</option>
+						-->
+					</attributes>
+					
+					<settings>
+						<setting id="charset">utf8</setting>
 					</settings>
 				</connection>
 			</datasource>
