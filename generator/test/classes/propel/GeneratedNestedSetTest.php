@@ -160,11 +160,61 @@ class GeneratedNestedSetTest extends CmsTestBase {
 	 */
 	public function testPeerIsRootFalse()
 	{
-	  $c = new Criteria(PagePeer::DATABASE_NAME);
-	  $c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
+		$c = new Criteria(PagePeer::DATABASE_NAME);
+		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
 
-	  $school = PagePeer::doSelectOne($c);
+		$school = PagePeer::doSelectOne($c);
 		$this->assertFalse(PagePeer::isRoot($school), 'Node must not be root');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::retrieveParent() as true.
+	 */
+	public function testPeerRetrieveParentTrue()
+	{
+		$c = new Criteria(PagePeer::DATABASE_NAME);
+		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
+
+		$school = PagePeer::doSelectOne($c);
+		$parent = PagePeer::retrieveParent($school);
+		$this->assertNotNull($parent, 'Parent node must exist');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::retrieveParent() as false.
+	 */
+	public function testPeerRetrieveParentFalse()
+	{
+		$c = new Criteria(PagePeer::DATABASE_NAME);
+		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
+
+		$home = PagePeer::doSelectOne($c);
+		$parent = PagePeer::retrieveParent($home);
+		$this->assertNull($parent, 'Parent node must not exist and retrieved not be null');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::hasParent() as true.
+	 */
+	public function testPeerHasParentTrue()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
+
+		$school = PagePeer::doSelectOne($c);
+		$this->assertTrue($school->hasParent(), 'Node must have parent node');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::hasParent() as false
+	 */
+	public function testHasParentFalse()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
+
+		$home = PagePeer::doSelectOne($c);
+		$this->assertFalse($home->hasParent(), 'Root node must not have parent');
 	}
 
 }
