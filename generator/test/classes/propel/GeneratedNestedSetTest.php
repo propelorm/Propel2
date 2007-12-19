@@ -146,4 +146,25 @@ class GeneratedNestedSetTest extends CmsTestBase {
 		$this->assertNull($pp, 'Root with such scopeId must not exist');
 	}
 
+	/**
+	 * Test xxxNestedSetPeer::isRoot() as true
+	 */
+	public function testPeerIsRootTrue()
+	{
+		$pp = PagePeer::retrieveRoot(1);
+		$this->assertTrue(PagePeer::isRoot($pp), 'Node must be root');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::isRoot() as false
+	 */
+	public function testPeerIsRootFalse()
+	{
+	  $c = new Criteria(PagePeer::DATABASE_NAME);
+	  $c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
+
+	  $school = PagePeer::doSelectOne($c);
+		$this->assertFalse(PagePeer::isRoot($school), 'Node must not be root');
+	}
+
 }
