@@ -73,35 +73,33 @@ class GeneratedNestedSetTest extends CmsTestBase {
 
 		//$db->commit();
 	}
-
-	public function testAdd()
+	
+	/**
+	 * Asserts that the Page table tree integrity is intact.
+	 */
+	protected function assertPageTreeIntegrity()
 	{
 		$db = Propel::getConnection(PagePeer::DATABASE_NAME);
 		
-		// I'm not sure if the specific ID matters, but this should match original
-		// code.  The ID will change with subsequent runs (e.g. the first time it will be 11)
-		$startId = $db->query('SELECT MIN(Id) FROM Page')->fetchColumn();
-		$this->addNewChildPage($startId + 10);
-			
 		$values = array();
 		$log = '';
 			
-		foreach($db->query('select * from page', PDO::FETCH_NUM) as $row) {
+		foreach($db->query('SELECT Id, LeftChild, RightChild, Title FROM Page', PDO::FETCH_NUM) as $row) {
 			
 			list($id, $leftChild, $rightChild, $title) = $row;
 			
 			if (!in_array($leftChild, $values)) {
 				$values[] = (int) $leftChild;
 			} else {
-				throw new Exception('Duplicate value '.$leftChild);
+				$this->fail('Duplicate LeftChild value '.$leftChild);
 			}
 				
 			if (!in_array($rightChild, $values)) {
 				$values[] = (int) $rightChild;
 			} else {
-				throw new Exception('Duplicate value '.$rightChild);
+				$this->fail('Duplicate RightChild value '.$rightChild);
 			}
-				
+			
 			$log .= "[$id($leftChild:$rightChild)]";
 		}
 
@@ -112,8 +110,21 @@ class GeneratedNestedSetTest extends CmsTestBase {
 			$message .= sprintf('Integrity error: value count: %d, high value: %d', count($values), $values[count($values)-1]);
 			$this->fail($message);
 		}
+		
+	}
 
-		// test passed
+	/**
+	 * Tests adding a node to the Page tree.
+	 */
+	public function testAdd()
+	{
+		$db = Propel::getConnection(PagePeer::DATABASE_NAME);
+		
+		// I'm not sure if the specific ID matters, but this should match original
+		// code.  The ID will change with subsequent runs (e.g. the first time it will be 11)
+		$startId = $db->query('SELECT MIN(Id) FROM Page')->fetchColumn();
+		$this->addNewChildPage($startId + 10);
+		$this->assertPageTreeIntegrity();
 	}
 
 
