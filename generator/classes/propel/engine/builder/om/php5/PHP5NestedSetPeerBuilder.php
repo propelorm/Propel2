@@ -683,7 +683,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveFirstChild(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add(self::LEFT_COL, \$node->getLeftValue() + 1, Criteria::EQUAL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -708,7 +708,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveLastChild(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add(self::RIGHT_COL, \$node->getRightValue() - 1, Criteria::EQUAL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -733,7 +733,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrievePrevSibling(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add(self::RIGHT_COL, \$node->getLeftValue() - 1, Criteria::EQUAL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -759,7 +759,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveNextSibling(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add(self::LEFT_COL, \$node->getRightValue() + 1, Criteria::EQUAL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -782,7 +782,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveTree(\$scopeId = null, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$scopeId, Criteria::EQUAL);
@@ -836,7 +836,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveChildren(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -863,7 +863,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveDescendants(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->addAscendingOrderByColumn(self::LEFT_COL);
 		if (self::SCOPE_COL) {
 			\$c->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
@@ -912,7 +912,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function retrieveParent(NodeObject \$node, PropelPDO \$con = null)
 	{
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
 		\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_THAN);
 
@@ -1250,7 +1250,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$left = \$node->getLeftValue();
 		\$right = \$node->getRightValue();
 
-		\$c = new Criteria();
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c1 = \$c->getNewCriterion(self::LEFT_COL, \$left, Criteria::GREATER_THAN);
 		\$c2 = \$c->getNewCriterion(self::RIGHT_COL, \$right, Criteria::LESS_THAN);
 
@@ -1519,7 +1519,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$rightUpdateCol = substr(self::RIGHT_COL, strrpos(self::RIGHT_COL, '.') + 1);
 
 		// Shift left column values
-		\$whereCriteria = new Criteria();
+		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$criterion = \$whereCriteria->getNewCriterion(
 			self::LEFT_COL,
 			\$first,
@@ -1534,7 +1534,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$whereCriteria->add(\$criterion);
 
-		\$valuesCriteria = new Criteria();
+		\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$valuesCriteria->add(
 			self::LEFT_COL,
 			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
@@ -1543,7 +1543,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
-		\$whereCriteria = new Criteria();
+		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$criterion = \$whereCriteria->getNewCriterion(
 			self::RIGHT_COL,
 			\$first,
@@ -1558,7 +1558,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$whereCriteria->add(\$criterion);
 
-		\$valuesCriteria = new Criteria();
+		\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$valuesCriteria->add(
 		  self::RIGHT_COL,
 			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
@@ -1593,7 +1593,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$rightUpdateCol = substr(self::RIGHT_COL, strrpos(self::RIGHT_COL, '.') + 1);
 
 		// Shift left column values
-		\$whereCriteria = new Criteria();
+		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
 		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::LEFT_COL, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
@@ -1601,7 +1601,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$whereCriteria->add(\$criterion);
 
-		\$valuesCriteria = new Criteria();
+		\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$valuesCriteria->add(
 			self::LEFT_COL,
 			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
@@ -1610,7 +1610,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
-		\$whereCriteria = new Criteria();
+		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
 		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
 		if (self::SCOPE_COL) {
@@ -1618,7 +1618,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$whereCriteria->add(\$criterion);
 
-		\$valuesCriteria = new Criteria();
+		\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 		\$valuesCriteria->add(
 			self::RIGHT_COL,
 			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
