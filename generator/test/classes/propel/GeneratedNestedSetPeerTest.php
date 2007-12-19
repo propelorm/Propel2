@@ -125,4 +125,50 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 		$this->assertFalse(PagePeer::hasParent($home), 'Root node must not have parent');
 	}
 
+	/**
+	 * Test xxxNestedSetPeer::isValid() as true.
+	 */
+	public function testPeerIsValidTrue()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
+
+		$school = PagePeer::doSelectOne($c);
+		$this->assertTrue(PagePeer::isValid($school), 'Node is valid');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::isValid() as false
+	 */
+	public function testPeerIsValidFalse()
+	{
+		$page = new Page();
+		$this->assertFalse(PagePeer::isValid($page), 'Node is not saved');
+		$this->assertFalse(PagePeer::isValid(null), 'Null is invalid');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::isLeaf() as true.
+	 */
+	public function testPeerIsLeafTrue()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'simulator', Criteria::EQUAL);
+
+		$simulator = PagePeer::doSelectOne($c);
+		$this->assertTrue(PagePeer::isLeaf($simulator), 'Node is a leaf');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::isLeaf() as false
+	 */
+	public function testPeerIsLeafFalse()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'contact', Criteria::EQUAL);
+
+		$contact = PagePeer::doSelectOne($c);
+		$this->assertFalse(PagePeer::isLeaf($contact), 'Node is not a leaf');
+	}
+
 }

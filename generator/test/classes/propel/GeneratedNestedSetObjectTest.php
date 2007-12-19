@@ -61,7 +61,7 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 	/**
 	 * Test xxxNestedSet::retrieveParent() as true.
 	 */
-	public function testPeerRetrieveParentTrue()
+	public function testObjectRetrieveParentTrue()
 	{
 		$c = new Criteria(PagePeer::DATABASE_NAME);
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
@@ -73,7 +73,7 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 	/**
 	 * Test xxxNestedSet::retrieveParent() as false.
 	 */
-	public function testPeerRetrieveParentFalse()
+	public function testObjectRetrieveParentFalse()
 	{
 		$c = new Criteria(PagePeer::DATABASE_NAME);
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
@@ -85,7 +85,7 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 	/**
 	 * Test xxxNestedSet::hasParent() as true.
 	 */
-	public function testPeerHasParentTrue()
+	public function testObjectHasParentTrue()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
@@ -97,13 +97,37 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 	/**
 	 * Test xxxNestedSet::hasParent() as false
 	 */
-	public function testHasParentFalse()
+	public function testObjectHasParentFalse()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
 
 		$home = PagePeer::doSelectOne($c);
 		$this->assertFalse($home->hasParent(), 'Root node must not have parent');
+	}
+
+	/**
+	 * Test xxxNestedSet::isLeaf() as true.
+	 */
+	public function testObjectIsLeafTrue()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'simulator', Criteria::EQUAL);
+
+		$simulator = PagePeer::doSelectOne($c);
+		$this->assertTrue($simulator->isLeaf($simulator), 'Node is a leaf');
+	}
+
+	/**
+	 * Test xxxNestedSet::isLeaf() as false
+	 */
+	public function testObjectIsLeafFalse()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'contact', Criteria::EQUAL);
+
+		$contact = PagePeer::doSelectOne($c);
+		$this->assertFalse($contact->isLeaf($contact), 'Node is not a leaf');
 	}
 
 }
