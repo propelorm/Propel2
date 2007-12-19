@@ -116,7 +116,7 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 	/**
 	 * Test xxxNestedSetPeer::hasParent() as false
 	 */
-	public function testHasParentFalse()
+	public function testPeerHasParentFalse()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
