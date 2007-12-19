@@ -194,20 +194,25 @@ class BookstoreDataPopulator {
 
 	public static function depopulate()
 	{
+		AcctAccessRolePeer::doDeleteAll();
 		AuthorPeer::doDeleteAll();
-		BookPeer::doDeleteAll();
-		PublisherPeer::doDeleteAll();
-		ReviewPeer::doDeleteAll();
-		MediaPeer::doDeleteAll();
-		BookClubListPeer::doDeleteAll();
-		BookstoreEmployeePeer::doDeleteAll();
-		BookstoreEmployeeAccountPeer::doDeleteAll();
-		CustomerPeer::doDeleteAll();
-		ContestPeer::doDeleteAll();
+		BookstorePeer::doDeleteAll();
 		BookstoreContestPeer::doDeleteAll();
 		BookstoreContestEntryPeer::doDeleteAll();
-		BookstorePeer::doDeleteAll();
-		BookCategoryPeer::doDeleteAll();
+		BookstoreEmployeePeer::doDeleteAll();
+		BookstoreEmployeeAccountPeer::doDeleteAll();
+		BookstoreSalePeer::doDeleteAll();
+		BookClubListPeer::doDeleteAll();
+		BookOpinionPeer::doDeleteAll();
+		BookReaderPeer::doDeleteAll();
+		BookListRelPeer::doDeleteAll();
+		BookPeer::doDeleteAll();
+		ContestPeer::doDeleteAll();
+		CustomerPeer::doDeleteAll();
+		MediaPeer::doDeleteAll();
+		PublisherPeer::doDeleteAll();
+		ReaderFavoritePeer::doDeleteAll();
+		ReviewPeer::doDeleteAll();
 	}
 
 }
