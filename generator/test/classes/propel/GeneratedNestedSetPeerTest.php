@@ -134,7 +134,7 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
 
 		$school = PagePeer::doSelectOne($c);
-		$this->assertTrue(PagePeer::isValid($school), 'Node is valid');
+		$this->assertTrue(PagePeer::isValid($school), 'Node must be valid');
 	}
 
 	/**
@@ -143,8 +143,8 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 	public function testPeerIsValidFalse()
 	{
 		$page = new Page();
-		$this->assertFalse(PagePeer::isValid($page), 'Node is not saved');
-		$this->assertFalse(PagePeer::isValid(null), 'Null is invalid');
+		$this->assertFalse(PagePeer::isValid($page), 'Node must not be saved');
+		$this->assertFalse(PagePeer::isValid(null), 'Null must be invalid');
 	}
 
 	/**
@@ -156,7 +156,7 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 		$c->add(PagePeer::TITLE, 'simulator', Criteria::EQUAL);
 
 		$simulator = PagePeer::doSelectOne($c);
-		$this->assertTrue(PagePeer::isLeaf($simulator), 'Node is a leaf');
+		$this->assertTrue(PagePeer::isLeaf($simulator), 'Node must be a leaf');
 	}
 
 	/**
@@ -168,7 +168,31 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 		$c->add(PagePeer::TITLE, 'contact', Criteria::EQUAL);
 
 		$contact = PagePeer::doSelectOne($c);
-		$this->assertFalse(PagePeer::isLeaf($contact), 'Node is not a leaf');
+		$this->assertFalse(PagePeer::isLeaf($contact), 'Node must not be a leaf');
+	}
+	
+	/**
+	 * Test xxxNestedSetPeer::createRoot()
+	 */
+	public function testPeerCreateRoot()
+	{
+		$page = new Page();
+		PagePeer::createRoot($page);
+		$this->assertEquals(1, $page->getLeftValue(), 'Node left value must equal 1');
+		$this->assertEquals(2, $page->getRightValue(), 'Node right value must equal 2');
+	}
+
+	/**
+	 * Test xxxNestedSetPeer::createRoot() exception
+	 * @expectedException PropelException
+	 */
+	public function testPeerCreateRootException()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
+
+		$home = PagePeer::doSelectOne($c);
+		PagePeer::createRoot($home);
 	}
 
 }

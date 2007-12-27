@@ -115,7 +115,7 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 		$c->add(PagePeer::TITLE, 'simulator', Criteria::EQUAL);
 
 		$simulator = PagePeer::doSelectOne($c);
-		$this->assertTrue($simulator->isLeaf($simulator), 'Node is a leaf');
+		$this->assertTrue($simulator->isLeaf($simulator), 'Node must be a leaf');
 	}
 
 	/**
@@ -127,7 +127,31 @@ class GeneratedNestedSetObjectTest extends CmsTestBase {
 		$c->add(PagePeer::TITLE, 'contact', Criteria::EQUAL);
 
 		$contact = PagePeer::doSelectOne($c);
-		$this->assertFalse($contact->isLeaf($contact), 'Node is not a leaf');
+		$this->assertFalse($contact->isLeaf($contact), 'Node must not be a leaf');
+	}
+
+	/**
+	 * Test xxxNestedSet::makeRoot()
+	 */
+	public function testObjectMakeRoot()
+	{
+		$page = new Page();
+		$page->makeRoot();
+		$this->assertEquals(1, $page->getLeftValue(), 'Node left value must equal 1');
+		$this->assertEquals(2, $page->getRightValue(), 'Node right value must equal 2');
+	}
+
+	/**
+	 * Test xxxNestedSet::makeRoot() exception
+	 * @expectedException PropelException
+	 */
+	public function testObjectMakeRootException()
+	{
+		$c = new Criteria();
+		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
+
+		$home = PagePeer::doSelectOne($c);
+		$home->makeRoot();
 	}
 
 }
