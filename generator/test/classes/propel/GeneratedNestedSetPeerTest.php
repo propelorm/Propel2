@@ -143,7 +143,7 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 	public function testPeerIsValidFalse()
 	{
 		$page = new Page();
-		$this->assertFalse(PagePeer::isValid($page), 'Node must not be saved');
+		$this->assertFalse(PagePeer::isValid($page), 'Node left and right values must be invalid');
 		$this->assertFalse(PagePeer::isValid(null), 'Null must be invalid');
 	}
 
