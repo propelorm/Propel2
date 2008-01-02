@@ -30,28 +30,15 @@
 class DBSQLite extends DBAdapter {
 	
 	/**
-	 * For SQLite, this method actually just verifies that any specified charset
-	 * matches the sqlite_libencoding().
-	 * 
-	 * Note that there are some cases where this will actually report an in appropriate error.
-	 * Specifically, w/ PHP, the fact that SQLite was compiled to support ISO-8859-1 actually means
-	 * that it can handle any 8-bit charset.  See note on http://www.php.net/sqlite_libencoding for 
-	 * more information about this method.
-	 * 
-	 * If you do _not_ want to have the charset validated, just remove the <setting id="charset"> from
-	 * your runtime configuration file.
+	 * For SQLite this method has no effect, since SQLite doesn't support specifying a character
+	 * set (or, another way to look at it, it doesn't require a single character set per DB).
 	 *  
 	 * @param      PDO   A PDO connection instance.
 	 * @param      string The charset encoding.
 	 * @throws     PropelException If the specified charset doesn't match sqlite_libencoding()
 	 */
 	public function setCharset(PDO $con, $charset)
-	{		
-		$supported_n = strtolower(str_replace('-', '', sqlite_libencoding()));
-		$charset_n = strtolower(str_replace('-', '', $charset));
-		if ($supported_n != $charset_n) {
-			throw new PropelException("Cannot set charset '$charset', as SQLite was compiled with charset '$supported'"); 
-		}
+	{
 	}
 
 	/**
