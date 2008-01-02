@@ -191,7 +191,7 @@ class PropelPDO extends PDO {
 		Propel::log($sql, Propel::LOG_DEBUG);
 		if ($this->isForSlave($sql)) {
 			if ($slave = $this->getSlave()) {
-				$slave->exec($sql);
+				return $slave->exec($sql);
 			}
 		}
 		return parent::exec($sql);
