@@ -40,8 +40,8 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	/**
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */
-	public function t3estDoDelete_MultiTable() {
-
+	public function testDoDelete_MultiTable() {
+		
 		$selc = new Criteria();
 		$selc->add(BookPeer::TITLE, "Harry Potter and the Order of the Phoenix");
 		$hp = BookPeer::doSelectOne($selc);
