@@ -21,8 +21,7 @@
  */
 
 /**
- * This DatabaseHandler is used when you do not have a database
- * installed.
+ * This adapter  is used when you do not have a database installed.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Jon S. Stevens <jon@clearink.com> (Torque)
@@ -33,9 +32,9 @@
 class DBNone extends DBAdapter {
 
 	/**
-	 * @see        DBAdapter::init()
+	 * @see        DBAdapter::initConnection()
 	 */
-	public function init($url, $username, $password)
+	public function initConnection(PDO $con, array $settings)
 	{
 	}
 

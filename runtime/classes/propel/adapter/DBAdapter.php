@@ -84,23 +84,45 @@ abstract class DBAdapter {
 	/**
 	 * This method is called after a connection was created to run necessary
 	 * post-initialization queries or code.
+	 * 
+	 * If a charset was specified, this will be set before any other queries
+	 * are executed.
 	 *
 	 * This base method runs queries specified using the "query" setting.
 	 *
 	 * @param      PDO   A PDO connection instance.
 	 * @param      array An array of settings.
+	 * @see        setCharset()
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
+		if (isset($settings['charset']['value'])) {
+			$this->setCharset($con, $settings['charset']['value']);
+		}
 		if (isset($settings['queries']) && is_array($settings['queries'])) {
 			foreach ($settings['queries'] as $queries) {
 				foreach ((array)$queries as $query) {
-					$con->query($query);
+					$con->exec($query);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Sets the character encoding using SQL standard SET NAMES statement.
+	 * 
+	 * This method is invoked from the default initConnection() method and must 
+	 * be overridden for an RDMBS which does _not_ support this SQL standard.
+	 *
+	 * @param      PDO   A PDO connection instance.
+	 * @param      string The charset encoding.
+	 * @see        initConnection()
+	 */
+	protected function setCharset(PDO $con, $charset)
+	{
+		$con->exec("SET NAMES '" . $charset . "'");
+	}
+	
 	/**
 	 * This method is used to ignore case.
 	 *

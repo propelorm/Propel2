@@ -21,15 +21,88 @@
 */
 
 /**
- * This is used to connect to a MSSQL database.  For now, this class
- * simply extends the adaptor for Sybase.
+ * This is used to connect to a MSSQL database.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @version    $Revision$
  * @package    propel.adapter
  */
-class DBMSSQL extends DBSybase {
+class DBMSSQL extends DBAdapter {
+	
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param      in The string to transform to upper case.
+	 * @return     The upper case string.
+	 */
+	public function toUpperCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
 
+	/**
+	 * This method is used to ignore case.
+	 *
+	 * @param      in The string whose case to ignore.
+	 * @return     The string in a case that can be ignored.
+	 */
+	public function ignoreCase($in)
+	{
+		return "UPPER(" . $in . ")";
+	}
+
+	/**
+	 * Returns SQL which concatenates the second string to the first.
+	 *
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
+	 */
+	public function concatString($s1, $s2)
+	{
+		return "($s1 + $s2)";
+	}
+
+	/**
+	 * Returns SQL which extracts a substring.
+	 *
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
+	 */
+	public function subString($s, $pos, $len)
+	{
+		return "SUBSTRING($s, $pos, $len)";
+	}
+
+	/**
+	 * Returns SQL which calculates the length (in chars) of a string.
+	 *
+	 * @param      string String to calculate length of.
+	 * @return     string
+	 */
+	public function strLength($s)
+	{
+		return "LEN($s)";
+	}
+
+	/**
+	 * @see        DBAdapter::quoteIdentifier()
+	 */
+	public function quoteIdentifier($text)
+	{
+		return '[' . $text . ']';
+	}
+
+	/**
+	 * @see        DBAdapter::random()
+	 */
+	public function random($seed = null)
+	{
+		return 'rand('.((int) $seed).')';
+	}
+	
 	/**
 	* Simulated Limit/Offset
 	* This rewrites the $sql query to apply the offset and limit.
@@ -128,11 +201,6 @@ class DBMSSQL extends DBSybase {
 		$modified_sql.= ') deriveda '.$inverted_order.') derivedb '.$order_by;
 		$sql = $modified_sql;
 
-	}
-
-	public function random($seed=NULL)
-	{
-		return 'NEWID()';
 	}
 
 }
