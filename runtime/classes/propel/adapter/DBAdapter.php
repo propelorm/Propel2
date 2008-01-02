@@ -118,7 +118,7 @@ abstract class DBAdapter {
 	 * @param      string The charset encoding.
 	 * @see        initConnection()
 	 */
-	protected function setCharset(PDO $con, $charset)
+	public function setCharset(PDO $con, $charset)
 	{
 		$con->exec("SET NAMES '" . $charset . "'");
 	}

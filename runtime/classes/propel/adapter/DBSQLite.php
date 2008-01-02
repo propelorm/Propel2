@@ -45,10 +45,11 @@ class DBSQLite extends DBAdapter {
 	 * @param      string The charset encoding.
 	 * @throws     PropelException If the specified charset doesn't match sqlite_libencoding()
 	 */
-	protected function setCharset(PDO $con, $charset)
+	public function setCharset(PDO $con, $charset)
 	{		
-		$supported = sqlite_libencoding();
-		if (strcasecmp($charset, $supported) !== 0) {
+		$supported_n = strtolower(str_replace('-', '', sqlite_libencoding()));
+		$charset_n = strtolower(str_replace('-', '', $charset));
+		if ($supported_n != $charset_n) {
 			throw new PropelException("Cannot set charset '$charset', as SQLite was compiled with charset '$supported'"); 
 		}
 	}
