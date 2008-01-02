@@ -481,13 +481,12 @@ class Propel
 	 *
 	 * @param      string[] connection paramters
 	 * @param      name
-	 * @param      boolean Initialize a PropelPDO (true, default) or a plain PDO (false)
 	 *
 	 * @return     object A database connection of the given class (PDO, PropelPDO, SlavePropelPDO)
 	 *
 	 * @throws     PropelException - if lower-level exception caught when trying to connect.
 	 */
-	public static function initConnection($conparams, $name, $class)
+	public static function initConnection($conparams, $name)
 	{
 
 		$dsn = $conparams['dsn'];
