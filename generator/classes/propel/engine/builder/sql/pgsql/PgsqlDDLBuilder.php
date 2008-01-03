@@ -172,7 +172,11 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 		foreach ($table->getColumns() as $col) {
 			$colDDL = $this->getColumnDDL($col);
 			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
-				$colDDL = str_replace($col->getType(),'serial',$colDDL);
+				if($col->getType() === PropelTypes::BIGINT) {
+					$colDDL = str_replace($col->getType(),'bigserial',$colDDL);
+				} else {
+					$colDDL = str_replace($col->getType(),'serial',$colDDL);
+				}
 			}
 			$lines[] = $colDDL;
 		}
