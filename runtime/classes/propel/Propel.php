@@ -207,7 +207,9 @@ class Propel
 		'PropelPDO' => 'propel/util/PropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
-
+		'DebugPDO' => 'propel/util/DebugPDO.php',
+		'DebugPDOStatement' => 'propel/util/DebugPDOStatement.php',
+	
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
 		'MatchValidator' => 'propel/validator/MatchValidator.php',
 		'MaxLengthValidator' => 'propel/validator/MaxLengthValidator.php',
