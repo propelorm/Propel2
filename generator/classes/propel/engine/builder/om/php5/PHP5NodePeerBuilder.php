@@ -206,7 +206,7 @@ abstract class ".$this->getClassname()." {
 	public static function createNewRootNode(\$obj, PropelPDO \$con = null)
 	{
 		if (\$con === null)
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 
 		try {
 			\$con->beginTransaction();
@@ -252,7 +252,7 @@ abstract class ".$this->getClassname()." {
 	public static function insertNewRootNode(\$obj, PropelPDO \$con = null)
 	{
 		if (\$con === null)
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 
 		try {
 
@@ -427,7 +427,7 @@ abstract class ".$this->getClassname()." {
 			throw new PropelException('Cannot move a node subtree within itself.');
 
 		if (\$con === null)
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 
 		/**
 		 * Example:
@@ -496,7 +496,7 @@ abstract class ".$this->getClassname()." {
 	public static function deleteNodeSubTree(\$nodePath, PropelPDO \$con = null)
 	{
 		if (\$con === null)
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 
 		/**
 		 * DELETE FROM table

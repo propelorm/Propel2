@@ -430,7 +430,7 @@ class BasePeer
 		$db = Propel::getDB($criteria->getDbName());
 
 		if ($con === null) {
-			$con = Propel::getConnection($criteria->getDbName());
+			$con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
 		}
 
 		$stmt = null;

@@ -663,7 +663,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			throw new PropelException('Invalid beforeNode.');
 
 		if (\$con === null)
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 
 		try {
 

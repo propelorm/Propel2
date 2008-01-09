@@ -948,7 +948,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	public static function getLevel(NodeObject \$node, PropelPDO \$con = null)
 	{
 		if (\$con === null) {
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		\$sql = \"SELECT COUNT(*) AS level FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < ? AND \" . self::RIGHT_COL . \" > ?\";
@@ -1511,7 +1511,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	protected static function shiftRLValues(\$first, \$delta, PropelPDO \$con = null, \$scopeId = null)
 	{
 		if (\$con === null) {
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		\$leftUpdateCol = substr(self::LEFT_COL, strrpos(self::LEFT_COL, '.') + 1);
@@ -1585,7 +1585,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	protected static function shiftRLRange(\$first, \$last, \$delta, PropelPDO \$con = null, \$scopeId = null)
 	{
 		if (\$con === null) {
-			\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		\$leftUpdateCol = substr(self::LEFT_COL, strrpos(self::LEFT_COL, '.') + 1);

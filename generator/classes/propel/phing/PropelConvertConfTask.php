@@ -268,8 +268,14 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			if ( !in_array( $k, array_keys($ar) ) ) {
 				$ar[$k] = $child;
 			} else {
-				// if the $ar[$k] element is not already an array, then we need to make it one
-				if ( !is_array( $ar[$k] ) ) { $ar[$k] = array( $ar[$k] ); }
+				// (This only applies to nested nodes that do not have an @id attribute)
+				
+				// if the $ar[$k] element is not already an array, then we need to make it one.
+				// this is a bit of a hack, but here we check to also make sure that if it is an
+				// array, that it has numeric keys.  this distinguishes it from simply having other
+				// nested element data.
+				
+				if ( !is_array($ar[$k]) || !isset($ar[$k][0]) ) { $ar[$k] = array($ar[$k]); }
 				$ar[$k][] = $child;
 			}
 
