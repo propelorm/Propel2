@@ -854,7 +854,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
-				\$obj->hydrate(\$row, 0, true); // rehydrate
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// \$obj->hydrate(\$row, 0, true); // rehydrate
 				\$results[] = \$obj;
 			} else {
 		";
@@ -1828,7 +1830,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
-				\$obj1->hydrate(\$row, 0, true); // rehydrate
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {
 ";
 						if ($table->getChildrenColumn()) {
@@ -2041,7 +2045,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
-				\$obj1->hydrate(\$row, 0, true); // rehydrate
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {";
 
 		if ($table->getChildrenColumn()) {
@@ -2296,7 +2302,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
-				\$obj1->hydrate(\$row, 0, true); // rehydrate
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {";
 			if ($table->getChildrenColumn()) {
 				$script .= "

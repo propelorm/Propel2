@@ -81,8 +81,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	}
 
 	/**
-	 * Tests the use of default expressions.
-	 * (Also indirectly tests the reload() method.)
+	 * Tests the use of default expressions and the reloadOnInsert and reloadOnUpdate attributes.
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/378
+	 * @link       http://propel.phpdb.org/trac/ticket/555
 	 */
 	public function testDefaultExpresions()
 	{
@@ -97,13 +99,15 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setBookstoreEmployee($employee);
 		$acct->setLogin("test-login");
 
-		$this->assertNull($acct->getCreated());
+		$this->assertNull($acct->getCreated(), "Expected created column to be NULL.");
+		$this->assertNull($acct->getAuthenticator(), "Expected authenticator column to be NULL.");
 
 		$acct->save();
 
-		// BookstoreEmployeeAccountPeer::removeInstanceFromPool($acct);
-
 		$acct = BookstoreEmployeeAccountPeer::retrieveByPK($acct->getEmployeeId());
+
+		$this->assertNotNull($acct->getAuthenticator(), "Expected a valid (non-NULL) authenticator column after save.");
+		$this->assertEquals('Password', $acct->getAuthenticator(), "Expected authenticator='Password' after save.");
 		$this->assertNotNull($acct->getCreated(), "Expected a valid date after retrieving saved object.");
 
 		$now = new DateTime("now");
@@ -112,6 +116,134 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$acct->setCreated($now);
 		$this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
 
+		// Unfortunately we can't really test the conjunction of reloadOnInsert and reloadOnUpdate when using just
+		// default values. (At least not in a cross-db way.)
+	}
+
+	/**
+	 * Tests the use of default expressions and the reloadOnInsert attribute.
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/378
+	 * @link       http://propel.phpdb.org/trac/ticket/555
+	 */
+	public function testDefaultExpresions_ReloadOnInsert()
+	{
+		if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+			$this->markTestSkipped("Cannot test default date expressions with SQLite");
+		}
+
+		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
+		$b = new Bookstore();
+		$b->setStoreName("Foo!");
+		$b->save();
+
+		$c = new Contest();
+		$c->setName("Bookathon Contest");
+		$c->save();
+
+		$bc = new BookstoreContest();
+		$bc->setBookstore($b);
+		$bc->setContest($c);
+		$bc->save();
+
+		$c = new Customer();
+		$c->setName("Happy Customer");
+		$c->save();
+
+		$bce = new BookstoreContestEntry();
+		$bce->setBookstore($b);
+		$bce->setBookstoreContest($bc);
+		$bce->setCustomer($c);
+		$bce->save();
+
+		$this->assertNotNull($bce->getEntryDate(), "Expected a non-null entry_date after save.");
+	}
+
+	/**
+	 * Tests the overriding reloadOnInsert at runtime.
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/378
+	 * @link       http://propel.phpdb.org/trac/ticket/555
+	 */
+	public function testDefaultExpresions_ReloadOnInsert_Override()
+	{
+		if (Propel::getDb(BookstoreEmployeePeer::DATABASE_NAME) instanceof DBSqlite) {
+			$this->markTestSkipped("Cannot test default date expressions with SQLite");
+		}
+
+		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
+		$b = new Bookstore();
+		$b->setStoreName("Foo!");
+		$b->save();
+
+		$c = new Contest();
+		$c->setName("Bookathon Contest");
+		$c->save();
+
+		$bc = new BookstoreContest();
+		$bc->setBookstore($b);
+		$bc->setContest($c);
+		$bc->save();
+
+		$c = new Customer();
+		$c->setName("Happy Customer");
+		$c->save();
+
+		$bce = new BookstoreContestEntry();
+		$bce->setBookstore($b);
+		$bce->setBookstoreContest($bc);
+		$bce->setCustomer($c);
+		$bce->save(null, $skipReload=true);
+
+		$this->assertNull($bce->getEntryDate(), "Expected a NULL entry_date after save.");
+	}
+
+	/**
+	 * Tests the use of default expressions and the reloadOnUpdate attribute.
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/555
+	 */
+	public function testDefaultExpresions_ReloadOnUpdate()
+	{
+		$sale = new BookstoreSale();
+		$sale->setSaleName("Spring Sale");
+		$sale->save();
+
+		$this->assertEquals(1, $sale->getBookstoreId(), "Expected bookstore_id = 1 default value");
+
+		// Expect that default values are set, but not default expressions
+		$this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
+
+		$sale->setSaleName("Winter Clearance");
+		$sale->save();
+		// Since reloadOnUpdate = true, we expect the discount to be set now.
+
+		$this->assertNotNull($sale->getDiscount(), "Expected discount to be non-NULL after save.");
+	}
+
+	/**
+	 * Tests the overriding reloadOnUpdate at runtime.
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/378
+	 * @link       http://propel.phpdb.org/trac/ticket/555
+	 */
+	public function testDefaultExpresions_ReloadOnUpdate_Override()
+	{
+		$sale = new BookstoreSale();
+		$sale->setSaleName("Spring Sale");
+		$sale->save();
+
+		$this->assertEquals(1, $sale->getBookstoreId(), "Expected bookstore_id = 1 default value");
+
+		// Expect that default values are set, but not default expressions
+		$this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
+
+		$sale->setSaleName("Winter Clearance");
+		$sale->save(null, $skipReload=true);
+		
+		// Since reloadOnUpdate = true, we expect the discount to be set now.
+
+		$this->assertNull($sale->getDiscount(), "Expected NULL value for discount after save.");
 	}
 
 	/**
@@ -245,10 +377,14 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$book2 = BookPeer::retrieveByPK($book->getId());
 		$this->assertSame($book, $book2, "Expected same book object instance");
 
+		$this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have OLD publisher id before reload()");
+
+		$book->reload();
+
 		$this->assertEquals($pub2->getId(), $book->getPublisherId(), "Expected book to have new publisher id");
 		$this->assertSame($pub2, $book->getPublisher(), "Expected book to have new publisher object associated.");
 
-		// Now let's set it back and also verify that reload() works ...
+		// Now let's set it back, just to be double sure ...
 
 		$con->exec("UPDATE " . BookPeer::TABLE_NAME . " SET "
 		. " publisher_id = " . $pub1->getId()

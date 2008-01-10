@@ -79,7 +79,9 @@ class Table extends XMLElement implements IDMethod {
 	private $heavyIndexing;
 	private $forReferenceOnly;
 	private $treeMode;
-
+	private $reloadOnInsert;
+	private $reloadOnUpdate;
+	
 	/**
 	 * Constructs a table object with a name
 	 *
@@ -126,6 +128,9 @@ class Table extends XMLElement implements IDMethod {
 		$this->description = $this->getAttribute("description");
 		$this->enterface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
 		$this->treeMode = $this->getAttribute("treeMode");
+		
+		$this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
+		$this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
 	}
 
 	/**
@@ -670,6 +675,24 @@ class Table extends XMLElement implements IDMethod {
 	{
 		$this->skipSql = $v;
 	}
+	
+	/**
+	 * Whether to force object to reload on INSERT.
+	 * @return     boolean
+	 */
+	public function isReloadOnInsert()
+	{
+		return $this->reloadOnInsert;
+	}
+	
+	/**
+	 * Whether to force object to reload on UPDATE.
+	 * @return     boolean
+	 */
+	public function isReloadOnUpdate()
+	{
+		return $this->reloadOnUpdate;
+	}
 
 	/**
 	 * PhpName of om object this entry references.
@@ -995,7 +1018,19 @@ class Table extends XMLElement implements IDMethod {
 					. $this->treeMode
 					. '"';
 		}
-
+		
+		if ($this->reloadOnInsert) {
+			$result .= " reloadOnInsert=\""
+					. ($this->reloadOnInsert ? "true" : "false")
+					. '"';
+		}
+		
+		if ($this->reloadOnUpdate) {
+			$result .= " reloadOnUpdate=\""
+					. ($this->reloadOnUpdate ? "true" : "false")
+					. '"';
+		}
+		
 		if ($this->forReferenceOnly) {
 			$result .= " forReferenceOnly=\""
 				  . ($this->forReferenceOnly ? "true" : "false")

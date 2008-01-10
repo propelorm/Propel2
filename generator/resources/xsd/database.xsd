@@ -363,6 +363,8 @@
 		<xs:attribute name="heavyIndexing" type="xs:boolean" use="optional"/>
 		<xs:attribute name="description" type="xs:string"/>
 		<xs:attribute name="treeMode" type="treemode" use="optional"/>
+		<xs:attribute name="reloadOnInsert" type="xs:boolean" default="false"/>
+		<xs:attribute name="reloadOnUpdate" type="xs:boolean" default="false"/>
 	</xs:complexType>
 
 	<xs:complexType name="database">

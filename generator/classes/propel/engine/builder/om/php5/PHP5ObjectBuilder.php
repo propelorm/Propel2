@@ -2569,30 +2569,42 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addDoSave(&$script)
 	{
 		$table = $this->getTable();
-
+		
+		$reloadOnUpdate = $table->isReloadOnUpdate();
+		$reloadOnInsert = $table->isReloadOnInsert();
+		
 		$script .= "
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      PropelPDO \$con
+	 * @param      PropelPDO \$con";
+		if ($reloadOnUpdate || $reloadOnInsert) {
+			$script .= "
+	 * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
+		}
+		$script .= "
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave(PropelPDO \$con)
+	protected function doSave(PropelPDO \$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
 	{
 		\$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!\$this->alreadyInSave) {
 			\$this->alreadyInSave = true;
 ";
+		if ($reloadOnInsert || $reloadOnUpdate) {
+			$script .= "
+			\$reloadObject = false;
+";
+		}
 
 		if (count($table->getForeignKeys())) {
 
 			$script .= "
-
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
 			// method.  This object relates to these object(s) by a
@@ -2629,7 +2641,14 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= ") {
 				if (\$this->isNew()) {
-					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);
+					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);";
+		if ($reloadOnInsert) {
+			$script .= "
+					if (!\$skipReload) {
+						\$reloadObject = true;
+					}";
+		}
+		$script .= "
 					\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
@@ -2649,7 +2668,14 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= "
 					\$this->setNew(false);
-				} else {
+				} else {";
+		if ($reloadOnUpdate) {
+			$script .= "
+					if (!\$skipReload) {
+						\$reloadObject = true;
+					}";
+		}
+		$script .= "
 					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -2683,6 +2709,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} /* foreach getReferrers() */
 		$script .= "
 			\$this->alreadyInSave = false;
+";
+		if ($reloadOnInsert || $reloadOnUpdate) {
+			$script .= "
+			if (\$reloadObject) {
+				\$this->reload(\$con);
+			}
+";
+		}
+		$script .= "
 		}
 		return \$affectedRows;
 	} // doSave()
@@ -2712,18 +2747,45 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addSave(&$script)
 	{
+		$table = $this->getTable();
+		$reloadOnUpdate = $table->isReloadOnUpdate();
+		$reloadOnInsert = $table->isReloadOnInsert();
+		
 		$script .= "
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
+	 * 
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave() 
+	 * method.  This method wraps all precipitate database operations in a 
+	 * single transaction.";
+		if ($reloadOnUpdate) {
+			$script .= "
+	 * 
+	 * Since this table was configured to reload rows on update, the object will
+	 * be reloaded from the database if an UPDATE operation is performed (unless 
+	 * the \$skipReload parameter is TRUE).";
+		}
+		if ($reloadOnInsert) {
+			$script .= "
+	 * 
+	 * Since this table was configured to reload rows on insert, the object will
+	 * be reloaded from the database if an INSERT operation is performed (unless 
+	 * the \$skipReload parameter is TRUE).";
+		}
+		$script .= "
 	 *
-	 * @param      PropelPDO \$con
+	 * @param      PropelPDO \$con";
+		if ($reloadOnUpdate || $reloadOnInsert) {
+			$script .= "
+	 * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
+		}
+		$script .= "	 
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save(PropelPDO \$con = null)
+	public function save(PropelPDO \$con = null".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
 	{
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"You cannot save an object that has been deleted.\");
@@ -2735,7 +2797,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		try {
 			\$con->beginTransaction();
-			\$affectedRows = \$this->doSave(\$con);
+			\$affectedRows = \$this->doSave(\$con, \$skipReload);
 			\$con->commit();
 			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
