@@ -201,4 +201,33 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$book->clearReviews();
 		$this->assertEquals(0, count($book->getReviews()));
 	}
+	
+	/**
+	 * This tests to see whether modified objects are being silently overwritten by calls to fk accessor methods.
+	 * @link       http://propel.phpdb.org/trac/ticket/509#comment:5
+	 */
+	public function testModifiedObjectOverwrite()
+	{
+		$author = new Author();
+		$author->setFirstName("John");
+		$author->setLastName("Public");
+		
+		$books = $author->getBooks(); // empty, of course
+		$this->assertEquals(array(), $books, "Expected empty array.");
+		
+		$book = new Book();
+		$book->setTitle("A sample book");
+		$book->setISBN("INITIAL ISBN");
+		
+		$author->addBook($book);
+		
+		$author->save();
+		
+		$book->setISBN("MODIFIED ISBN");
+		
+		$books = $author->getBooks();
+		$this->assertEquals(1, count($books), "Expected 1 book.");
+		$this->assertSame($book, $books[0], "Expected the same object to be returned by fk accessor.");
+		$this->assertEquals("MODIFIED ISBN", $books[0]->getISBN(), "Expected the modified value NOT to have been overwritten.");
+	}
 }
