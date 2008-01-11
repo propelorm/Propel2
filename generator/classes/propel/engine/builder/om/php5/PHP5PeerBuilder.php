@@ -518,11 +518,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-			return (int) \$row[0];
+			\$count = (int) \$row[0];
 		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+			\$count = 0; // no rows returned; we infer that means 0 matches.
 		}
+		\$stmt->closeCursor();
+		return \$count;
 	}";
 	}
 
@@ -879,6 +880,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$script .= "
 			} // if key exists
 		}
+		\$stmt->closeCursor();
 		return \$results;
 	}";
 	}
@@ -1880,6 +1882,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			\$results[] = \$obj1;
 		}
+		\$stmt->closeCursor();
 		return \$results;
 	}
 ";
@@ -1956,11 +1959,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 						$script .= "
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-			return (int) \$row[0];
+			\$count = (int) \$row[0];
 		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+			\$count = 0; // no rows returned; we infer that means 0 matches.
 		}
+		\$stmt->closeCursor();
+		return \$count;
 	}
 ";
 					} // if fk table name != this table name
@@ -2126,6 +2130,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$script .= "
 			\$results[] = \$obj1;
 		}
+		\$stmt->closeCursor();
 		return \$results;
 	}
 ";
@@ -2192,11 +2197,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$script .= "
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-			return (int) \$row[0];
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+			\$count = (int) \$row[0];
+		} else {			
+			\$count = 0; // no rows returned; we infer that means 0 matches.
 		}
+		\$stmt->closeCursor();
+		return \$count;
 	}
 ";
 	} // end addDoCountJoinAll()
@@ -2382,6 +2388,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 			\$results[] = \$obj1;
 		}
+		\$stmt->closeCursor();
 		return \$results;
 	}
 ";
@@ -2464,11 +2471,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-			return (int) \$row[0];
+			\$count = (int) \$row[0];
 		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+			\$count = 0; // no rows returned; we infer that means 0 matches.
 		}
+		\$stmt->closeCursor();
+		return \$count;
 	}
 ";
 		} // foreach fk

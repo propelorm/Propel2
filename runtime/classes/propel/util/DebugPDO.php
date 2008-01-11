@@ -141,13 +141,27 @@ class DebugPDO extends PropelPDO {
 	{
 		$this->queryCount++;
 	}
-
+	
+	/**
+     * Overrides PDO::prepare() to add logging.
+     * .
+     * @param  string $sql
+     * @param  array
+     * @return PDOStatement
+     */
+    public function prepare($sql, $driver_options = array())
+    {
+		$this->log('prepare: ' . $sql);
+		return parent::prepare($sql, $driver_options);
+	}
+	
 	/**
 	 * overridden for query counting
 	 * @return		 int
 	 */
 	public function exec($sql)
 	{
+		$this->log('exec: ' . $sql);
 		$this->incrementQueryCount();
 		return parent::exec($sql);
 	}
@@ -158,8 +172,10 @@ class DebugPDO extends PropelPDO {
 	 */
 	public function query()
 	{
+		$args = func_get_args();
+		$this->log('query: ' . $args[0]);
 		$this->incrementQueryCount();
-		return call_user_func_array(array($this, 'parent::query'), func_get_args());
+		return call_user_func_array(array($this, 'parent::query'), $args);
 	}
 
 	/**

@@ -46,7 +46,14 @@ class PropelPDO extends PDO {
 	 * @var        int
 	 */
 	protected $nestedTransactionCount = 0;
-
+	
+	/**
+	 * Cache of prepared statements (PDOStatement) keyed by md5 of SQL.
+	 *
+	 * @var        array [md5(sql) => PDOStatement]
+	 */
+	protected $preparedStatements = array();
+	
 	/**
 	 * Gets the current transaction depth.
 	 * @return     int
@@ -105,7 +112,7 @@ class PropelPDO extends PDO {
 		$this->incrementNestedTransactionCount();
 		return $return;
 	}
-
+    
 	/**
 	 * Overrides PDO::commit() to only commit the transaction if we are in the outermost
 	 * transaction nesting level.
@@ -138,6 +145,33 @@ class PropelPDO extends PDO {
 			$this->decrementNestedTransactionCount();
 		}
 		return $return;
+	}
+	
+	/**
+     * Overrides PDO::prepare() to add query caching support.
+     * .
+     * @param  string $sql
+     * @param  array
+     * @return PDOStatement
+     */
+    public function prepare($sql, $driver_options = array())
+    {
+		$key = md5($sql);
+		if(!isset($this->preparedStatements[$key])) {
+			$stmt = parent::prepare($sql, $driver_options);
+			$this->preparedStatements[$key] = $stmt;
+			return $stmt;
+		} else {
+			return $this->preparedStatements[$key];
+		}
+	}
+	
+	/**
+	 * Clears any stored prepared statements for this connection.
+	 */
+	public function clearStatementCache()
+	{
+		$this->preparedStatements = array();
 	}
 
 }

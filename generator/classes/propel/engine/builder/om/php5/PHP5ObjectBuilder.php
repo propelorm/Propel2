@@ -604,8 +604,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$c->addSelectColumn(".$this->getColumnConstant($col).");
 		try {
 			\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$c, \$con);
-			\$row = \$stmt->fetch(PDO::FETCH_NUM);";
-
+			\$row = \$stmt->fetch(PDO::FETCH_NUM);
+			\$stmt->closeCursor();";
+			
 		$clo = strtolower($col->getName());
 		if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 			$script .= "
@@ -1342,6 +1343,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$this->buildPkeyCriteria(), \$con);
 		\$row = \$stmt->fetch(PDO::FETCH_NUM);
+		\$stmt->closeCursor();
 		if (!\$row) {
 			throw new PropelException('Cannot find matching row in the database to reload object values.');
 		}

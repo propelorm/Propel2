@@ -92,6 +92,11 @@ class GeneratedObjectTest extends BookstoreTestBase {
 			$this->markTestSkipped("Cannot test default expressions with SQLite");
 		}
 
+		$b = new Bookstore();
+		$b->setId(1);
+		$b->setStoreName("Foo!");
+		$b->save();
+		
 		$employee = new BookstoreEmployee();
 		$employee->setName("Johnny Walker");
 
@@ -133,10 +138,11 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		}
 
 		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
+		
 		$b = new Bookstore();
-		$b->setStoreName("Foo!");
+		$b->setStoreName("Barnes & Noble");
 		$b->save();
-
+		
 		$c = new Contest();
 		$c->setName("Bookathon Contest");
 		$c->save();
@@ -173,7 +179,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
 		$b = new Bookstore();
-		$b->setStoreName("Foo!");
+		$b->setStoreName("Barnes & Noble");
 		$b->save();
 
 		$c = new Contest();
@@ -205,11 +211,15 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testDefaultExpresions_ReloadOnUpdate()
 	{
+		$b = new Bookstore();
+		$b->setId(1);
+		$b->setStoreName("Foo!");
+		$b->save();
+		
 		$sale = new BookstoreSale();
+		$sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
 		$sale->setSaleName("Spring Sale");
 		$sale->save();
-
-		$this->assertEquals(1, $sale->getBookstoreId(), "Expected bookstore_id = 1 default value");
 
 		// Expect that default values are set, but not default expressions
 		$this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
@@ -229,11 +239,15 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	 */
 	public function testDefaultExpresions_ReloadOnUpdate_Override()
 	{
+		$b = new Bookstore();
+		$b->setId(1);
+		$b->setStoreName("Foo!");
+		$b->save();
+		
 		$sale = new BookstoreSale();
+		$sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
 		$sale->setSaleName("Spring Sale");
 		$sale->save();
-
-		$this->assertEquals(1, $sale->getBookstoreId(), "Expected bookstore_id = 1 default value");
 
 		// Expect that default values are set, but not default expressions
 		$this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
@@ -884,7 +898,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testDefaultFkColVal()
 	{
 		$sale = new BookstoreSale();
-		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default ID.");
+		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default bookstore_id of 1.");
 
 		$bookstore = BookstorePeer::doSelectOne(new Criteria());
 
