@@ -2799,7 +2799,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		try {
 			\$con->beginTransaction();
-			\$affectedRows = \$this->doSave(\$con, \$skipReload);
+			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").");
 			\$con->commit();
 			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
