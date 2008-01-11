@@ -729,8 +729,8 @@ class Propel
 	 */
 	public static function close()
 	{
-		foreach (self::$connectionMap as $con) {
-			$con = null; // close for PDO
+		foreach (self::$connectionMap as $idx => $cons) {
+			unset(self::$connectionMap[$idx]);
 		}
 	}
 
