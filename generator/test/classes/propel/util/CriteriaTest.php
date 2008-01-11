@@ -13,17 +13,31 @@ include_once 'propel/util/BasePeer.php';
  */
 class CriteriaTest extends BaseTestCase {
 
-	/** The criteria to use in the test. */
-	private $c;
-
 	/**
-	 * Initializes the criteria.
+	 * The criteria to use in the test.
+	 * @var        Criteria
 	 */
-	public function setUp()
+	private $c;
+	
+	/**
+	 * DB adapter saved for later.
+	 *
+	 * @var        DBAdapter
+	 */
+	private $savedAdapter;
+	
+	protected function setUp()
 	{
 		parent::setUp();
 		$this->c = new Criteria();
+		$this->savedAdapter = Propel::getDB(null);
 		Propel::setDB(null, new DBSQLite());
+	}
+	
+	protected function tearDown()
+	{
+		Propel::setDB(null, $this->savedAdapter);
+		parent::tearDown();
 	}
 
 	/**
