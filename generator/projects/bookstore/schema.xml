@@ -244,6 +244,10 @@
 		<column name="population_served" type="BIGINT" />
 		<column name="total_books" type="INTEGER" />
 		<column name="store_open_time" type="TIME" />
+		<column name="website" type="VARCHAR" size="255"/>
+		<validator column="website">
+			<rule name="match" value="/^((ht|f)tp(s?)\:\/\/[a-zA-Z0-9\-\._]+(\.[a-zA-Z0-9\-\._]+){2,}(\/?)([a-zA-Z0-9\-\.\?\,'\/\\\+&amp;amp;%\$#_]*)?$|$)/" message="wrong url"/>
+		</validator>
 	</table>
 
 	<!--  test default values on foreign keys, default expr w/ reloadOnUpdate="true" -->
