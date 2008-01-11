@@ -54,7 +54,7 @@ class BasePeerTest extends BookstoreTestBase {
 				$this->markTestSkipped();
 			}
 			$stmt = BookPeer::doSelectStmt( $c );
-		} catch (Exception $x) {
+		} catch (PropelException $x) {
 			$this->fail("Paring of nested functions failed: " . $x->getMessage());
 		}
 	}
