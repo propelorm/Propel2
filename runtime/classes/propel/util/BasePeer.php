@@ -272,7 +272,7 @@ class BasePeer
 			$qualifiedCols = $criteria->keys(); // we need table.column cols when populating values
 			$columns = array(); // but just 'column' cols for the SQL
 			foreach ($qualifiedCols as $qualifiedCol) {
-				$columns[] = substr($qualifiedCol, strpos($qualifiedCol, '.') + 1);
+				$columns[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
 			}
 
 			// add identifiers
@@ -355,7 +355,7 @@ class BasePeer
 
 				$sql = "UPDATE " . $tableName . " SET ";
 				foreach ($updateTablesColumns[$tableName] as $col) {
-					$updateColumnName = substr($col, strpos($col, '.') + 1);
+					$updateColumnName = substr($col, strrpos($col, '.') + 1);
 					// add identifiers for the actual database?
 					if ($db->useQuoteIdentifier()) {
 						$updateColumnName = $db->quoteIdentifier($updateColumnName);
@@ -647,8 +647,8 @@ class BasePeer
 
 			$selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
 
-			$parenPos = strpos($columnName, '(');
-			$dotPos = strpos($columnName, '.');
+			$parenPos = strrpos($columnName, '(');
+			$dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
 
 			// [HL] I think we really only want to worry about adding stuff to
 			// the fromClause if this function has a TABLE.COLUMN in it at all.
@@ -807,7 +807,7 @@ class BasePeer
 
 				// Split orderByColumn (i.e. "table.column DESC")
 
-				$dotPos = strpos($orderByColumn, '.');
+				$dotPos = strrpos($orderByColumn, '.'); 
 
 				if ($dotPos !== false) {
 					$tableName = substr($orderByColumn, 0, $dotPos);

@@ -388,7 +388,7 @@ class Criteria implements IteratorAggregate {
 	{
 		$tables = array();
 		foreach ( array_keys ( $this->map ) as $key) {
-			$t = substr ( $key, 0, strpos ( $key, '.' ) );
+			$t = substr ( $key, 0, strrpos ( $key, '.' ) ); 
 			if ( ! isset ( $tables[$t] ) ) {
 				$tables[$t] = array( $key );
 			} else {
@@ -1194,8 +1194,10 @@ class Criterion  {
 	 */
 	public function __construct(Criteria $outer, $column, $value, $comparison = null)
 	{
-		list($this->table, $this->column) = explode('.', $column);
 		$this->value = $value;
+		$dotPos = strrpos($column,'.'); 
+ 		$this->table = substr($column, 0, $dotPos); 
+ 		$this->column = substr($column, $dotPos+1, strlen($column));
 		$this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
 		$this->init($outer);
 	}
@@ -1672,12 +1674,12 @@ class Join
 
 	public function getLeftColumnName()
 	{
-		return substr($this->leftColumn, strpos($this->leftColumn, '.') + 1);
+		return substr($this->leftColumn, strrpos($this->leftColumn, '.') + 1);
 	}
 
 	public function getLeftTableName()
 	{
-		return substr($this->leftColumn, 0, strpos($this->leftColumn, '.'));
+		return substr($this->leftColumn, 0, strrpos($this->leftColumn, '.'));
 	}
 
 	/**
@@ -1690,12 +1692,12 @@ class Join
 
 	public function getRightColumnName()
 	{
-		return substr($this->rightColumn, strpos($this->rightColumn, '.') + 1);
+		return substr($this->rightColumn, strrpos($this->rightColumn, '.') + 1);
 	}
 
 	public function getRightTableName()
 	{
-		return substr($this->rightColumn, 0, strpos($this->rightColumn, '.'));
+		return substr($this->rightColumn, 0, strrpos($this->rightColumn, '.')); 
 	}
 
 	/**
