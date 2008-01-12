@@ -2120,7 +2120,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				} // if obj$index loaded
 
 				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-				\$obj".$index."->".($fk->isLocalPrimaryKey() ? 'set' : 'add') . $joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);
+				".($fk->isLocalPrimaryKey() ? 
+				"\$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");" : 
+				"\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);")." 
 			} // if joined row not null
 ";
 
