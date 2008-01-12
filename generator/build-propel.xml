@@ -476,6 +476,7 @@
       xmlConfFile="${propel.conf.dir}/${propel.runtime.conf.file}"
       outputDirectory="${propel.phpconf.dir}"
       outputFile="${propel.runtime.phpconf.file}"
+      packageObjectModel="${propel.packageObjectModel}"
       outputClassmapFile="${propel.runtime.phpconf-classmap.file}">
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"
