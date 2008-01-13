@@ -73,7 +73,7 @@ class DebugPDO extends PropelPDO {
 	 * @param      array $driver_options
 	 * @throws     PDOException - if there is an error during connection initialization
 	 */
-	public function __construct()
+	public function __construct($dsn, $username = null, $password = null, $driver_options = array())
 	{
 		parent::__construct($dsn, $username, $password, $driver_options);
 		$this->configureStatementClass($suppress=true);
