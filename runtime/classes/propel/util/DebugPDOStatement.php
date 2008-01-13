@@ -35,7 +35,14 @@ class DebugPDOStatement extends PDOStatement {
 	 * @var        DebugPDO
 	 */
 	protected $pdo;
-
+	
+	protected $typeMap = array(	PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
+								PDO::PARAM_INT => "PDO::PARAM_INT",
+								PDO::PARAM_STR => "PDO::PARAM_STR",
+								PDO::PARAM_LOB => "PDO::PARAM_LOB",
+								PDO::PARAM_NULL => "PDO::PARAM_NULL",
+								);
+								
 	/**
 	 * Construct a new statement class with reference to main DebugPDO object.
 	 */
@@ -53,5 +60,23 @@ class DebugPDOStatement extends PDOStatement {
 		$this->pdo->incrementQueryCount();
 		return parent::execute($input_parameters);
 	}
-
+	
+	/**
+	 * Binds value to PDOStatement.
+	 *
+	 * @param int $pos
+	 * @param mixed $value
+	 * @param int $type
+	 * @return boolean
+	 */
+	public function bindValue($pos, $value, $type = null)
+	{
+		$typestr = isset($this->typeMap[$type]) ? $this->typeMap[$type] : '(default)';
+		if ($type == PDO::PARAM_LOB) {
+			$this->pdo->log("Binding [LOB value] at position ".$pos." w/ PDO  type " . $typestr);
+		} else {
+			$this->pdo->log("Binding " . var_export($value, true) . " at position $pos w/ PDO type " . $typestr);
+		}
+		return parent::bindValue($pos, $value, $type);
+	}
 }

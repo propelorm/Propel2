@@ -520,13 +520,7 @@ class BasePeer
 					// get written to database.
 					rewind($value);
 				}
-
-				if ($type == PropelColumnTypes::BLOB || $type == PropelColumnTypes::CLOB ) {
-					Propel::log("Binding [LOB value] at position $i w/ Propel type $type and PDO type $pdoType", Propel::LOG_DEBUG);
-				} else {
-					Propel::log("Binding " . var_export($value, true) . " at position $i w/ Propel type $type and PDO type $pdoType", Propel::LOG_DEBUG);
-				}
-
+				
 				$stmt->bindValue($i++, $value, $pdoType);
 			}
 		} // foreach
