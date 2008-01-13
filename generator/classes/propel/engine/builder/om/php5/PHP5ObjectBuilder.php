@@ -206,6 +206,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
+		$this->addClearAllReferences($script);
 	}
 
 	/**
@@ -3135,6 +3136,57 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 	} // addCopyInto()
 
-
+	
+	/**
+	 * Adds clearAllReferencers() method which resets all the collections of referencing
+	 * fk objects.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addClearAllReferences(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 * 
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 * 
+	 * @param      boolean \$deep Whether to also clear the references on all associated objects. 
+	 */
+	public function clearAllReferences(\$deep = false)
+	{
+		if (\$deep) {";
+		$vars = array();
+		foreach ($this->getTable()->getReferrers() as $refFK) {
+			if ($refFK->isLocalPrimaryKey()) {
+				$varName = $this->getPKRefFKVarName($refFK);
+				$vars[] = $varName;
+				$script .= "
+			\$this->{$varName}->clearAllReferences(\$deep);";
+			} else {
+				$varName = $this->getRefFKCollVarName($refFK);
+				$vars[] = $varName;
+				$script .= "
+			foreach(\$this->$varName as \$o) {
+				\$o->clearAllReferences(\$deep);
+			}";
+			}
+		}
+		
+		$script .= "
+		} // if (\$deep)
+";
+		
+		foreach($vars as $varName) {
+			$script .= "
+		\$this->$varName = null;";
+		}
+		
+		$script .= "
+	}
+";
+	}
 
 } // PHP5ObjectBuilder
