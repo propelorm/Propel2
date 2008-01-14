@@ -869,27 +869,36 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addMutatorOpen($script, $col);
 
-		// Perform type-casting to ensure that we can use type-sensitive
-		// checking in muators.
-		if ($col->isPhpPrimitiveType()) {
+		// Check if this is a auto increment column, if it is, setting the value is not allowed
+		if ($col->isAutoIncrement() ) {
 			$script .= "
-		if (\$v !== null) {
-			\$v = (".$col->getPhpType().") \$v;
-		}
+		throw new PropelException(\"Attempt to illegally set an autoincrement column.\");
 ";
 		}
+		else {
 
-		$script .= "
-		if (\$this->$clo !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$defaultValue = $this->getDefaultValueString($col);
-			$script .= " || \$v === $defaultValue";
-		}
-		$script .= ") {
-			\$this->$clo = \$v;
-			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
-		}
+			// Perform type-casting to ensure that we can use type-sensitive
+			// checking in muators.
+			if ($col->isPhpPrimitiveType()) {
+				$script .= "
+			if (\$v !== null) {
+				\$v = (".$col->getPhpType().") \$v;
+			}
 ";
+			}
+	
+			$script .= "
+			if (\$this->$clo !== \$v";
+			if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+				$defaultValue = $this->getDefaultValueString($col);
+				$script .= " || \$v === $defaultValue";
+			}
+			$script .= ") {
+				\$this->$clo = \$v;
+				\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+			}
+";
+		}
 		$this->addMutatorClose($script, $col);
 	}
 
