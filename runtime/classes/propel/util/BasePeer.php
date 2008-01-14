@@ -846,8 +846,8 @@ class BasePeer
 
 		// from / join tables quoten if it is necessary
 		if ($db->useQuoteIdentifier()) {
-			$fromClause = array_map(array($db, 'quoteIdentifier'), $fromClause);
-			$joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifier'), $joinClause);
+			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
+			$joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
 		}
 
 		// build from-clause

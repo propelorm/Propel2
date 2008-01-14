@@ -204,6 +204,15 @@ abstract class DBAdapter {
 	}
 
 	/**
+	 * Quotes a database table which could have space seperating it from an alias, both should be identified seperately
+	 * @param      string $table The table name to quo
+	 * @return     string The quoted table name
+	 **/
+	public function quoteIdentifierTable($table) {
+		return implode(" ", array_map(array($this, "quoteIdentifier"), explode(" ", $table) ) );
+	}
+
+	/**
 	 * Returns the native ID method for this RDBMS.
 	 * @return     int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
 	 */
