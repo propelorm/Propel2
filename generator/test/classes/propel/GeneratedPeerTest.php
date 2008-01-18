@@ -219,7 +219,6 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$name = "A Sample Publisher - " . time();
 
 		$values = new Criteria();
-		$values->add(PublisherPeer::ID, 1);
 		$values->add(PublisherPeer::NAME, $name);
 		PublisherPeer::doInsert($values);
 

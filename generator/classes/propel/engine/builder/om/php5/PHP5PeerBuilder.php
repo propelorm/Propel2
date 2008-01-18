@@ -1039,7 +1039,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$cfc = $col->getPhpName();
 			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none") {
 				$script .= "
-		\$criteria->remove(".$this->getColumnConstant($col)."); // remove pkey col since this table uses auto-increment
+		if(\$criteria->containsKey(".$this->getColumnConstant($col).")) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
+		}
 ";
 			}
 		}

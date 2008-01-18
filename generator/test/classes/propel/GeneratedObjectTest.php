@@ -93,7 +93,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		}
 
 		$b = new Bookstore();
-		$b->setId(1);
 		$b->setStoreName("Foo!");
 		$b->save();
 		
@@ -212,7 +211,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testDefaultExpresions_ReloadOnUpdate()
 	{
 		$b = new Bookstore();
-		$b->setId(1);
 		$b->setStoreName("Foo!");
 		$b->save();
 		
@@ -240,7 +238,6 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testDefaultExpresions_ReloadOnUpdate_Override()
 	{
 		$b = new Bookstore();
-		$b->setId(1);
 		$b->setStoreName("Foo!");
 		$b->save();
 		
@@ -1025,5 +1022,21 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$b->setWebsite("http://this.is.valid.com/foo.bar");
 		$res = $b->validate();
 		$this->assertTrue($res, "Expected URL to validate");
+	}
+	
+	/**
+	 * Test that setting the auto-increment primary key will result in exception.
+	 */
+	public function testSettingAutoIncrementPK()
+	{
+		$b = new Bookstore();
+		$b->setId(1);
+		$b->setStoreName("Test");
+		try {
+			$b->save();
+			$this->fail("Expected setting auto-increment primary key to result in Exception");
+		} catch (Exception $x) {
+			$this->assertType('PropelException', $x);
+		}
 	}
 }
