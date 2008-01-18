@@ -1038,5 +1038,17 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		} catch (Exception $x) {
 			$this->assertType('PropelException', $x);
 		}
+		
+		// ... but we should silently ignore NULL values, since these are really
+		// the same as "not set" in PHP world.
+		$b = new Bookstore();
+		$b->setId(null);
+		$b->setStoreName("Test2");
+		try {
+			$b->save();
+		} catch (Exception $x) {
+			$this->fail("Expected no exception when setting auto-increment primary key to NULL");
+		}
+		// success ...
 	}
 }
