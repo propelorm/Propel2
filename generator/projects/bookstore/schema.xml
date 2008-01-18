@@ -29,8 +29,7 @@
 				message="Book title must not be longer than ${value} characters." />
 		</validator>
 		<validator column="isbn" translate="none">
-			<rule name="notMatch" value="/[^\d-]+/"
-				message="The ISBN contains invalid characters." />
+			<rule name="class" class="bookstore.validator.ISBNValidator" message="ISBN does not validate!"/>
 		</validator>
 	</table>
 

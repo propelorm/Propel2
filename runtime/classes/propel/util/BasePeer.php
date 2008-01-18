@@ -908,7 +908,7 @@ class BasePeer
 		try {
 			$v = isset(self::$validatorMap[$classname]) ? self::$validatorMap[$classname] : null;
 			if ($v === null) {
-				$cls = substr('.'.$classname, strrpos('.'.$classname, '.') + 1);
+				$cls = Propel::importClass($classname);
 				$v = new $cls();
 				self::$validatorMap[$classname] = $v;
 			}

@@ -39,9 +39,9 @@ class ValidatorTest extends BookstoreTestBase
 {
 
 	/**
-	* Test minLength validator.
-	* This also tests the ${value} substitution.
-	*/
+	 * Test minLength validator.
+	 * This also tests the ${value} substitution.
+	 */
 	public function testDoValidate_MinLength()
 	{
 		$book = new Book();
@@ -55,8 +55,8 @@ class ValidatorTest extends BookstoreTestBase
 	}
 
 	/**
-	* Test unique validator.
-	*/
+	 * Test unique validator.
+	 */
 	public function testDoValidate_Unique()
 	{
 		$book = new Book();
@@ -95,9 +95,9 @@ class ValidatorTest extends BookstoreTestBase
 
 		/* Make sure correct columns failed */
 		$expectedCols = array(
-			AuthorPeer::LAST_NAME,
-			BookPeer::TITLE,
-			ReviewPeer::REVIEWED_BY
+		AuthorPeer::LAST_NAME,
+		BookPeer::TITLE,
+		ReviewPeer::REVIEWED_BY
 		);
 		$returnedCols = array_keys($failures);
 
@@ -135,8 +135,8 @@ class ValidatorTest extends BookstoreTestBase
 
 		/* Make sure correct columns failed */
 		$expectedCols = array(
-			AuthorPeer::LAST_NAME,
-			ReviewPeer::REVIEWED_BY
+		AuthorPeer::LAST_NAME,
+		ReviewPeer::REVIEWED_BY
 		);
 
 		$returnedCols = array_keys($failures);
@@ -192,6 +192,25 @@ class ValidatorTest extends BookstoreTestBase
 		$validator = $failures[AuthorPeer::EMAIL]->getValidator();
 		$this->assertTrue($validator instanceof MatchValidator, "Expected validator that failed to be MatchValidator");
 
+	}
+
+	public function testDoValidate_CustomValidator()
+	{
+		$book = new Book();
+		$book->setTitle("testDoValidate_CustomValidator"); // (valid)
+		$book->setISBN("Foo.Bar.Baz"); // (invalid)
+		
+		$res = $book->validate();
+
+		$this->assertFalse($res, "Expected validation to fail.");
+
+		$failures = $book->getValidationFailures();
+		
+		$this->assertEquals(1, count($failures), "Expected 1 column to fail validation.");
+		$this->assertEquals(array(BookPeer::ISBN), array_keys($failures), "Expected EMAIL to fail validation.");
+		
+		$validator = $failures[BookPeer::ISBN]->getValidator();
+		$this->assertType('ISBNValidator', $validator, "Expected validator that failed to be ISBNValidator");
 	}
 
 	protected function assertSingleValidation($ret, $expectedMsg)
