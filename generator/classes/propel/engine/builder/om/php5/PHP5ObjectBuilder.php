@@ -2681,6 +2681,22 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
+";
+		
+		// We need to rewind any LOB columns
+		foreach($table->getColumns() as $col) {
+			$clo = strtolower($col->getName());
+			if ($col->isLobType()) {
+				$script .= "
+				// Rewind the $clo LOB column, since PDO does not rewind after inserting value. 
+				if (\$this->$clo !== null && is_resource(\$this->$clo)) {
+					rewind(\$this->$clo);
+				}
+				";
+			}
+		}
+		
+		$script .= "
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 ";
