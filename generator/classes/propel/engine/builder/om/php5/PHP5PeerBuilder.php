@@ -818,8 +818,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 		return (string) ".$pk[0].";";
 		} else {
-		  foreach ($pk as $pos => $key) {
-		    $pk[$pos] = "(" . $ktype[$pos] . ") " . $key;
+			foreach ($pk as $pos => $key) {
+				$pk[$pos] = "(" . $ktype[$pos] . ") " . $key;
 			}
 			$script .= "
 		return serialize(array(".implode(', ', $pk)."));";
