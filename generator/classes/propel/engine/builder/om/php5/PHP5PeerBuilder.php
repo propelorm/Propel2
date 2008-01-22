@@ -1560,23 +1560,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
-		if (count($table->getPrimaryKey()) === 1) {
-			$pkey = $table->getPrimaryKey();
-			$col = array_shift($pkey);
-			$script .= "
+		$pkey = $table->getPrimaryKey();
+		$col = array_shift($pkey);
+		$script .= "
 		\$criteria->add(".$this->getColumnConstant($col).", \$pk);
 ";
-		} else {
-			// primary key is composite; we therefore, expect
-			// the primary key passed to be an array of pkey
-			// values
-			$i=0;
-			foreach ($table->getPrimaryKey() as $col) {
-				$script .= "
-		\$criteria->add(".$this->getColumnConstant($col).", \$pk[$i]);";
-				$i++;
-			}
-		} /* if count(table.PrimaryKeys) */
 		$script .= "
 
 		\$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
@@ -1613,30 +1601,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$objs = array();
 		} else {
 			\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
-		if (count($table->getPrimaryKey()) == 1) {
-			$k1 = $table->getPrimaryKey();
-			$script .= "
+		$k1 = $table->getPrimaryKey();
+		$script .= "
 			\$criteria->add(".$this->getColumnConstant($k1[0]).", \$pks, Criteria::IN);";
-		} else {
-			$script .= "
-			foreach (\$pks as \$pk) {";
-			$i = 0;
-			foreach ($table->getPrimaryKey() as $col) {
-				$script .= "
-				\$c{$i} = \$criteria->getNewCriterion(".$this->getPeerClassname($col).", \$pk[$i], Criteria::EQUAL);";
-				$j = $i - 1;
-				if ($i > 0) {
-					$script .= "
-				\$c{$j}->addAnd(\$c{$i});";
-				} /* if $i > 0 */
-				$i++;
-			} /* foreach */
-
-			$script .= "
-
-				\$criteria->addOr(\$c0);
-			}";
-		} /* if count prim keys == 1 */
 		$script .= "
 			\$objs = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
 		}
