@@ -790,10 +790,13 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// We have to iterate through all the columns so that we know the offset of the primary
 		// key columns.
 		$n = 0;
+		$pk = array();
+		$ktype = array();
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
 					$pk[] = "\$row[\$startcol + $n]";
+					$ktype[] = $col->getPhpType();
 				}
 				$n++;
 			}
@@ -815,8 +818,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= "
 		return (string) ".$pk[0].";";
 		} else {
+		  foreach ($pk as $pos => $key) {
+		    $pk[$pos] = "(" . $ktype[$pos] . ") " . $key;
+			}
 			$script .= "
-		return serialize(array(".implode(',', $pk)."));";
+		return serialize(array(".implode(', ', $pk)."));";
 		}
 
 		$script .= "
