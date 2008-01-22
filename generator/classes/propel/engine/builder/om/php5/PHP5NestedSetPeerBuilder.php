@@ -342,9 +342,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$child->setScopeIdValue(\$sidv = \$parent->getScopeIdValue());
 		}
 
-		\$newLeft = \$parent->getRightValue();
-		\$newRight = \$parent->getRightValue() + 1;
-
 		// Update database nodes
 		self::shiftRLValues(\$child->getLeftValue(), 2, \$con, \$sidv);
 
@@ -1439,25 +1436,43 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			{
 				// We don't need to alter the object instance pool; we're just modifying this instance
 				// already in the pool.
-
-				\$criteria = new Criteria(self::DATABASE_NAME);
-";
-			foreach ($table->getColumns() as $col) {
-				if ($col->isPrimaryKey()) {
-					$script .= "
-				// TODO : Need to support the multiple field primary key
+				\$criteria = new Criteria(self::DATABASE_NAME);";
+		if (count($table->getPrimaryKey()) === 1) {
+			$pkey = $table->getPrimaryKey();
+			$col = array_shift($pkey);
+			$script .= "
 				\$criteria->add(".$this->getColumnConstant($col).", \$keys, Criteria::IN);
 ";
-					break;
-				} /* if col is prim key */
-			} /* foreach */
+		} else {
+			// TODO : Need to support the multiple field primary key
+			$fields = array();
+			foreach ($table->getPrimaryKey() as $k => $col) {
+				$fields[] = $this->getColumnConstant($col);
+			};
+			$script .= "
+				foreach (\$keys as \$values) {
+					\$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
+			unset($fields[0]);
+			foreach ($fields as $k => $col) {
+				$script .= "
+
+					\$cton2 = \$criteria->getNewCriterion(" . $col . ", \$values[$k]);
+					\$cton->addAnd(\$cton2);";
+			}
+			$script .= "
+
+					// add to Criteria
+					\$criteria->addOr(\$cton);
+				}";
+			}
+
 			$script .= "
 				\$stmt = $peerClassname::doSelectStmt(\$criteria, \$con);
 				while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 					\$key = $peerClassname::getPrimaryKeyHashFromRow(\$row, 0);
 					if (null !== (\$object = $peerClassname::getInstanceFromPool(\$key))) {";
 			$n = 0;
-			foreach ($this->getTable()->getColumns() as $col) {
+			foreach ($table->getColumns() as $col) {
 				if ($col->isNestedSetLeftKey()) {
 					$script .= "
 						\$object->setLeftValue(\$row[$n]);";
