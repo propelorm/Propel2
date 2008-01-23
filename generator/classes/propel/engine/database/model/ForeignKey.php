@@ -355,6 +355,32 @@ class ForeignKey extends XMLElement {
 	}
 
 	/**
+	 * Whether this foreign key is matched by an invertes foreign key (on foreign table).
+	 * 
+	 * This is to prevent duplicate columns being generated for a 1:1 relationship that is represented
+	 * by foreign keys on both tables.  I don't know if that's good practice ... but hell, why not
+	 * support it.
+	 *   
+	 * @param      ForeignKey $fk
+	 * @return     boolean
+	 * @link       http://propel.phpdb.org/trac/ticket/549
+	 */
+	public function isMatchedByInverseFK()
+	{
+		$foreignTable = $this->getForeignTable();
+		$map = $this->getForeignLocalMapping();
+		
+		foreach($foreignTable->getForeignKeys() as $refFK) {
+			$fkMap = $refFK->getLocalForeignMapping();
+			if ($map == $fkMap) { // compares keys and values, but doesn't care about order
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * String representation of the foreign key. This is an xml representation.
 	 */
 	public function toString()
