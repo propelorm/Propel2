@@ -791,22 +791,22 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// key columns.
 		$n = 0;
 		$pk = array();
-		$ktype = array();
+		$cond = array();
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
-					$pk[] = "\$row[\$startcol + $n]";
-					$ktype[] = $col->getPhpType();
+					$part = "\$row[\$startcol + $n]"; 
+					$cond[] = $part . " === null";
+					if ($col->isPhpPrimitiveType()) {
+						$pk[] = "(".$col->getPhpType().") " . $part;
+					} else {
+						$pk[] = $part;
+					}
 				}
 				$n++;
 			}
 		}
-
-		$cond = array();
-		foreach ($pk as $part) {
-			$cond[] = $part . " === null";
-		}
-
+		
 		$script .= "
 		// If the PK cannot be derived from the row, return NULL.
 		if (".implode(' && ', $cond).") {
@@ -816,11 +816,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// the general case is a single column
 		if (count($pk) == 1) {
 			$script .= "
-		return (string) ".$pk[0].";";
+		return ".$pk[0].";";
 		} else {
-			foreach ($pk as $pos => $key) {
-				$pk[$pos] = "(" . $ktype[$pos] . ") " . $key;
-			}
 			$script .= "
 		return serialize(array(".implode(', ', $pk)."));";
 		}
