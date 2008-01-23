@@ -67,7 +67,7 @@ DROP SEQUENCE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($this->
 
 		$script .= "
 
-CREATE TABLE ".DataModelBuilder::prefixTablename($table->getName())."
+CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
 (
 	";
 
@@ -105,11 +105,11 @@ CREATE TABLE ".DataModelBuilder::prefixTablename($table->getName())."
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
 	ALTER TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
-		ADD CONSTRAINT ".substr($tableName,0,$length)."_PK
+		ADD CONSTRAINT ".$this->quoteIdentifier(substr($tableName,0,$length))."_PK
 	PRIMARY KEY (";
 			$delim = "";
 			foreach ($table->getPrimaryKey() as $col) {
-				$script .= $delim . $col->getName();
+				$script .= $delim . $this->quoteIdentifier($col->getName());
 				$delim = ",";
 			}
 	$script .= ");
