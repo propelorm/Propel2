@@ -452,6 +452,44 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
 		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
 	}
+	
+	/**
+	 * Tests the doCount() method with limit/offset.
+	 */
+	public function testDoCountLimitOffset()
+	{
+		BookPeer::doDeleteAll();
+		
+		for($i=0; $i < 25; $i++) {
+			$b = new Book();
+			$b->setTitle("Book $i");
+			$b->setISBN("ISBN $i");
+			$b->save();
+		}
+		
+		$c = new Criteria();
+		$totalCount = BookPeer::doCount($c);
+		
+		$this->assertEquals(25, $totalCount);
+		
+		$c2 = new Criteria();
+		$c2->setLimit(10);
+		$this->assertEquals(10, BookPeer::doCount($c2));
+		
+		$c3 = new Criteria();
+		$c3->setOffset(10);
+		$this->assertEquals(15, BookPeer::doCount($c3));
+		
+		$c4 = new Criteria();
+		$c4->setOffset(5);
+		$c4->setLimit(5);
+		$this->assertEquals(5, BookPeer::doCount($c4));
+		
+		$c5 = new Criteria();
+		$c5->setOffset(20);
+		$c5->setLimit(10);
+		$this->assertEquals(5, BookPeer::doCount($c5));
+	}
 
 	/**
 	 * Test passing null values to removeInstanceFromPool().
