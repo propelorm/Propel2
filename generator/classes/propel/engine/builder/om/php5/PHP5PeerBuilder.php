@@ -453,35 +453,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	}
 ";
 	} // addAddSelectColumns()
-
-
-
-	/**
-	 * Adds the COUNT constants.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addCountConstants(&$script)
-	{
-		$table = $this->getTable();
-		$count_col = "*";
-		/*
-		 * FIXME
-		 * (HL) wanted to remove this because AFAIK count(*) is generally
-		 * optimized in databases, and furthermore the code below isn't correct
-		 * (multi-pkey needs to be accounted for)....
-		 */
-		if ($table->hasPrimaryKey()) {
-			$pk = $table->getPrimaryKey();
-			$count_col = DataModelBuilder::prefixTablename($table->getName())
-			. "." . strtoupper($pk[0]->getName());
-		}
-
-		$script .= "
-	const COUNT = 'COUNT($count_col)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT $count_col)';
-";
-	}
-
+	
 	/**
 	 * Adds the doCount() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -493,30 +465,32 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria \$criteria
-	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
 	public static function doCount(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		\$criteria->clearSelectColumns()->clearOrderByColumns();
-		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
-		} else {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+			
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach (\$criteria->getGroupByColumns() as \$column)
-		{
-			\$criteria->addSelectColumn(\$column);
+		
+		if (!\$criteria->getSelectColumns()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-
-		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
+		
+		// Set the correct dbName
+		\$criteria->setDbName(self::DATABASE_NAME);
+		
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+		// BasePeer returns a PDOStatement
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+		
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {
@@ -526,7 +500,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		return \$count;
 	}";
 	}
-
+	
 	/**
 	 * Adds the doSelectOne() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -1897,7 +1871,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
 	 * @param      Criteria \$c
-	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
@@ -1905,31 +1879,34 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		\$criteria->clearSelectColumns()->clearOrderByColumns();
-		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
-		} else {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach (\$criteria->getGroupByColumns() as \$column)
-		{
-			\$criteria->addSelectColumn(\$column);
+		
+		if (!\$criteria->getSelectColumns()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+		}
+		
+		// Set the correct dbName
+		\$criteria->setDbName(self::DATABASE_NAME);
+		
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 ";
+
 						$lfMap = $fk->getLocalForeignMapping();
 						foreach ($fk->getLocalColumns() as $columnName ) {
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
-";
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
 						}
 						$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
+		
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+		
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {
@@ -1945,7 +1922,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} // if count(fk) > 1
 
 	} // addDoCountJoin()
-
+	
 	/**
 	 * Adds the doSelectJoinAll() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -2111,6 +2088,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	} // end addDoSelectJoinAll()
 
+
 	/**
 	 * Adds the doCountJoinAll() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -2126,26 +2104,28 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria \$c
-	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
 	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
+		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		\$criteria->clearSelectColumns()->clearOrderByColumns();
-		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
-		} else {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach (\$criteria->getGroupByColumns() as \$column)
-		{
-			\$criteria->addSelectColumn(\$column);
+		
+		if (!\$criteria->getSelectColumns()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
+		}
+		
+		// Set the correct dbName
+		\$criteria->setDbName(self::DATABASE_NAME);
+		
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 ";
 
@@ -2162,17 +2142,17 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
-";
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
 				}
 			} // if fk->getForeignTableName != table->getName
 		} // foreach [sub] foreign keys
 
 		$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+		
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
-		} else {			
+		} else {
 			\$count = 0; // no rows returned; we infer that means 0 matches.
 		}
 		\$stmt->closeCursor();
@@ -2180,7 +2160,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	}
 ";
 	} // end addDoCountJoinAll()
-
+	
 	/**
 	 * Adds the doSelectJoinAllExcept*() methods.
 	 * @param      string &$script The script will be modified in this method.
@@ -2398,7 +2378,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
 	 * @param      Criteria \$c
-	 * @param      boolean \$distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
@@ -2406,21 +2386,22 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		\$criteria->clearSelectColumns()->clearOrderByColumns();
-		if (\$distinct || in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT_DISTINCT);
-		} else {
-			\$criteria->addSelectColumn(".$this->getPeerClassname()."::COUNT);
+		
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach (\$criteria->getGroupByColumns() as \$column)
-		{
-			\$criteria->addSelectColumn(\$column);
+		
+		if (!\$criteria->getSelectColumns()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-";
+		
+		// Set the correct dbName
+		\$criteria->setDbName(self::DATABASE_NAME);
+		
+		if (\$con === null) {
+			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	";
 
 			foreach ($table->getForeignKeys() as $subfk) {
 				// want to cover this case, but the code is not there yet.
@@ -2443,7 +2424,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				}
 			} // foreach fkeys
 			$script .= "
-		\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$criteria, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
+		
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {

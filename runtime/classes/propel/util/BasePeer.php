@@ -281,8 +281,8 @@ class BasePeer
 			}
 
 			$sql = "INSERT INTO " . $tableName
-				. " (" . implode(",", $columns) . ")"
-				. " VALUES (" . substr(str_repeat("?,", count($columns)), 0, -1) . ")";
+			. " (" . implode(",", $columns) . ")"
+			. " VALUES (" . substr(str_repeat("?,", count($columns)), 0, -1) . ")";
 
 			$stmt = $con->prepare($sql);
 			self::populateStmtValues($stmt, self::buildParams($qualifiedCols, $criteria), $dbMap, $db);
@@ -416,11 +416,11 @@ class BasePeer
 	}
 
 	/**
-	 * Executes query build by createSelectSql() and returns ResultSet.
+	 * Executes query build by createSelectSql() and returns the resultset statement.
 	 *
 	 * @param      Criteria $criteria A Criteria.
 	 * @param      PropelPDO $con A PropelPDO connection to use.
-	 * @return     ResultSet The resultset.
+	 * @return     PDOStatement The resultset.
 	 * @throws     PropelException
 	 * @see        createSelectSql()
 	 */
@@ -435,47 +435,98 @@ class BasePeer
 
 		$stmt = null;
 
+		if ($criteria->isUseTransaction()) $con->beginTransaction();
+
 		try {
-
-			// Transaction support exists for (only?) Postgres, which must
-			// have SELECT statements that include bytea columns wrapped w/
-			// transactions.
-			if ($criteria->isUseTransaction()) Transaction::begin($con);
-
+			
 			$params = array();
 			$sql = self::createSelectSql($criteria, $params);
 
- 			$stmt = $con->prepare($sql);
-
- 			// FIXME - add SQL-modification for LIMIT/OFFSET into DBAdapters & createSelectSql method.
-			// $stmt->setLimit($criteria->getLimit());
-			// $stmt->setOffset($criteria->getOffset());
+			$stmt = $con->prepare($sql);
 
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
 
 			$stmt->execute();
 
-			if ($criteria->isUseTransaction()) Transaction::commit($con);
+			if ($criteria->isUseTransaction()) $con->commit();
 
 		} catch (Exception $e) {
 			if ($stmt) $stmt = null; // close
-			if ($criteria->isUseTransaction()) Transaction::rollback($con);
+			if ($criteria->isUseTransaction()) $con->rollBack();
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException($e);
 		}
 
 		return $stmt;
 	}
+	
+	/**
+	 * Executes a COUNT query using a sub-select created by createSelectSql() and returns the statement.
+	 *
+	 * @param      Criteria $criteria A Criteria.
+	 * @param      PropelPDO $con A PropelPDO connection to use.
+	 * @return     PDOStatement The resultset statement.
+	 * @throws     PropelException
+	 * @see        createSelectSql()
+	 */
+	public static function doCount(Criteria $criteria, PropelPDO $con = null)
+	{
+		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
+		$db = Propel::getDB($criteria->getDbName());
 
+		if ($con === null) {
+			$con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
+		}
+
+		$stmt = null;
+
+		if ($criteria->isUseTransaction()) $con->beginTransaction();
+
+		try {
+			
+			$params = array();
+			$selectSql = self::createSelectSql($criteria, $params);
+			
+			$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
+			$stmt = $con->prepare($sql);
+
+			self::populateStmtValues($stmt, $params, $dbMap, $db);
+
+			$stmt->execute();
+
+			if ($criteria->isUseTransaction()) $con->commit();
+
+		} catch (Exception $e) {
+			if ($stmt) $stmt = null; // close
+			if ($criteria->isUseTransaction()) $con->rollBack();
+			Propel::log($e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException($e);
+		}
+
+		return $stmt;
+	}
+	
 	/**
 	 * Populates values in a prepared statement.
 	 *
-	 * @param      PreparedStatement $stmt
+	 * This method is designed to work with the createSelectSql() method, which creates
+	 * both the SELECT SQL statement and populates a passed-in array of parameter
+	 * values that should be substituted.
+	 *
+	 * <code>
+	 * $params = array();
+	 * $sql = BasePeer::createSelectSql($criteria, $params);
+	 * BasePeer::populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()), Propel::getDB($criteria->getDbName()));
+	 * </code>
+	 * 
+	 * @param      PDOStatement $stmt
 	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
 	 * @param      DatabaseMap $dbMap
 	 * @return     int The number of params replaced.
+	 * @see        createSelectSql()
+	 * @see        doSelect()
 	 */
-	private static function populateStmtValues($stmt, $params, DatabaseMap $dbMap, DBAdapter $db)
+	private static function populateStmtValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap, DBAdapter $db)
 	{
 		$i = 1;
 		foreach ($params as $param) {
@@ -520,7 +571,7 @@ class BasePeer
 					// get written to database.
 					rewind($value);
 				}
-				
+
 				$stmt->bindValue($i++, $value, $pdoType);
 			}
 		} // foreach
@@ -698,10 +749,10 @@ class BasePeer
 				}
 
 				$ignoreCase =
-					(($criteria->isIgnoreCase()
-						|| $someCriteria[$i]->isIgnoreCase())
-						&& ($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType() == "string" )
-						 );
+				(($criteria->isIgnoreCase()
+				|| $someCriteria[$i]->isIgnoreCase())
+				&& ($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType() == "string" )
+				);
 
 				$someCriteria[$i]->setIgnoreCase($ignoreCase);
 			}
@@ -788,7 +839,7 @@ class BasePeer
 			$havingString = $sb;
 		}
 
-		 if (!empty($orderBy)) {
+		if (!empty($orderBy)) {
 
 			foreach ($orderBy as $orderByColumn) {
 
@@ -801,7 +852,7 @@ class BasePeer
 
 				// Split orderByColumn (i.e. "table.column DESC")
 
-				$dotPos = strrpos($orderByColumn, '.'); 
+				$dotPos = strrpos($orderByColumn, '.');
 
 				if ($dotPos !== false) {
 					$tableName = substr($orderByColumn, 0, $dotPos);
@@ -861,13 +912,13 @@ class BasePeer
 
 		// Build the SQL from the arrays we compiled
 		$sql =  "SELECT "
-				.($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
-				.implode(", ", $selectClause)
-				." FROM "  . $from
-				.($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
-				.($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
-				.($havingString ? " HAVING ".$havingString : "")
-				.($orderByClause ? " ORDER BY ".implode(",", $orderByClause) : "");
+		.($selectModifiers ? implode(" ", $selectModifiers) . " " : "")
+		.implode(", ", $selectClause)
+		." FROM "  . $from
+		.($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
+		.($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
+		.($havingString ? " HAVING ".$havingString : "")
+		.($orderByClause ? " ORDER BY ".implode(",", $orderByClause) : "");
 
 		// APPLY OFFSET & LIMIT to the query.
 		if ($criteria->getLimit() || $criteria->getOffset()) {
@@ -897,12 +948,12 @@ class BasePeer
 	}
 
 	/**
-	* This function searches for the given validator $name under propel/validator/$name.php,
-	* imports and caches it.
-	*
-	* @param      string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
-	* @return     Validator object or null if not able to instantiate validator class (and error will be logged in this case)
-	*/
+	 * This function searches for the given validator $name under propel/validator/$name.php,
+	 * imports and caches it.
+	 *
+	 * @param      string $classname The dot-path name of class (e.g. myapp.propel.MyValidator)
+	 * @return     Validator object or null if not able to instantiate validator class (and error will be logged in this case)
+	 */
 	public static function getValidator($classname)
 	{
 		try {
