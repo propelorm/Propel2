@@ -144,6 +144,8 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 			$vendorSpecific = $table->getVendorSpecificInfo();
 			if (isset($vendorSpecific['Type'])) {
 				$mysqlTableType = $vendorSpecific['Type'];
+			} elseif (isset($vendorSpecific['Engine'])) {
+				$mysqlTableType = $vendorSpecific['Engine'];
 			} else {
 				$mysqlTableType = 'MyISAM';
 			}
