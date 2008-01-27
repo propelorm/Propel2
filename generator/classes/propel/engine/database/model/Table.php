@@ -789,6 +789,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns an Array containing all the columns in the table
+	 * @return array Column[]
 	 */
 	public function getColumns()
 	{
@@ -819,6 +820,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns an Array containing all the validators in the table
+	 * @return array Validator[]
 	 */
 	public function getValidators()
 	{
@@ -826,7 +828,8 @@ class Table extends XMLElement implements IDMethod {
 	}
 
 	/**
-	 * Returns an Array containing all the FKs in the table
+	 * Returns an Array containing all the FKs in the table.
+	 * @return array ForeignKey[]
 	 */
 	public function getForeignKeys()
 	{

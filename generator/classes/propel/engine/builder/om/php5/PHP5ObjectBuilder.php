@@ -50,7 +50,52 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
 	}
+	
+	/**
+	 * Validates the current table to make sure that it won't 
+	 * result in generated code that will not parse.
+	 * 
+	 * This method may emit warnings for code which may cause problems
+	 * and will throw exceptions for errors that will definitely cause 
+	 * problems. 
+	 */
+	protected function validateModel()
+	{
+		parent::validateModel();
+		
+		$table = $this->getTable();
+		
+		// Check to see whether any generated foreign key names
+		// will conflict with column names.
+		
+		$colPhpNames = array();
+		$fkPhpNames = array();
+		
+		foreach($table->getColumns() as $col) {
+			$colPhpNames[] = $col->getPhpName();
+		}
 
+		foreach($table->getForeignKeys() as $fk) {
+			$fkPhpNames[] = $this->getFKPhpNameAffix($fk, $plural = false);
+		}
+		
+		$intersect = array_intersect($colPhpNames, $fkPhpNames); 
+		if (!empty($intersect)) {
+			throw new EngineException("One or more of your column names for [" . $table->getName() . "] table conflict with foreign key names (" . implode(", ", $intersect) . ")");
+		}
+		
+		// Check foreign keys to see if there are any foreign keys that
+		// are also matched with an inversed referencing foreign key
+		// (this is currently unsupported behavior)
+		// see: http://propel.phpdb.org/trac/ticket/549
+		
+		foreach($table->getForeignKeys() as $fk) {
+			if ($fk->isMatchedByInverseFK()) {
+				throw new EngineException("The 1:1 relationship expressed by foreign key " . $fk->getName() . " is defined in both directions; Propel does not currently support this (if you must have both foreign key constraints, consider adding this constraint with a custom SQL file.)" );
+			}
+		}
+	}
+	
 	/**
 	 * Returns the appropriate formatter (from platform) for a date/time column.
 	 * @param      Column $col
