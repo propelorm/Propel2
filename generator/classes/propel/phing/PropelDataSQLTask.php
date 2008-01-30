@@ -23,7 +23,7 @@
 include_once 'propel/engine/database/model/AppData.php';
 include_once 'propel/engine/database/model/Database.php';
 include_once 'propel/engine/database/transform/XmlToAppData.php';
-include_once 'propel/engine/database/transform/XmlToData.php';
+include_once 'propel/engine/builder/util/transform/XmlToDataSQL.php';
 
 /**
  * Task that transforms XML datadump files into files containing SQL INSERT statements.
@@ -175,23 +175,15 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 				$db->setPlatform($platform);
 
 				$outFile = $this->getMappedFile($dataXMLFilename);
-
+				$sqlWriter = new FileWriter($outFile);
+				
 				$this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
 
-				$this->fp = fopen($outFile->getAbsolutePath().'.temp', 'wb');
-
 				try {
-					$dataXmlParser = new XmlToData($db, $this->dbEncoding);
-					$data = $dataXmlParser->parseFile($dataXMLFile->getAbsolutePath(),array($this,'processRow'));
+					$dataXmlParser = new XmlToDataSQL($db, $this->dbEncoding);
+					$dataXmlParser->transform($dataXMLFile, $sqlWriter);
 				} catch (Exception $e) {
-					fclose($this->fp);
-					unlink($outFile->getAbsolutePath().'.temp');
-					throw new Exception("Exception parsing data XML: " . $e->getMessage());
-				}
-
-				if ( $this->fp ) {
-					fclose($this->fp);
-					rename($outFile->getAbsolutePath().'.temp',$outFile->getAbsolutePath());
+					throw new BuildException("Exception parsing data XML: " . $e->getMessage(), $x);
 				}
 
 				// Place the generated SQL file(s)
@@ -211,17 +203,5 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 		} // foreach data xml file
 
 	} // main()
-	public function processRow(DataRow $dataRow) {
-		static $currTable = null;
-		static $builder;
-
-		if ($currTable !== $dataRow->getTable()) {
-			$currTable = $dataRow->getTable();
-			$builder = DataModelBuilder::builderFactory($currTable, 'datasql');
-		}
-		$sql = $builder->buildRowSql($dataRow);
-		fwrite($this->fp, $sql);
-
-	}
 
 }

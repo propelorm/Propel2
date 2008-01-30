@@ -31,6 +31,68 @@ require_once 'propel/engine/builder/sql/DataSQLBuilder.php';
 class PgsqlDataSQLBuilder extends DataSQLBuilder {
 
 	/**
+	 * The largets serial value encountered this far.
+	 *
+	 * @var        int
+	 */
+	private $maxSeqVal;
+	
+	/**
+	 * The DDLBuilder class which is used to get sequence names.
+	 *
+	 * @var        DDLBuilder
+	 */
+	private $ddlBuilder;
+	
+	/**
+	 * Construct a new PgsqlDataSQLBuilder object.
+	 *
+	 * @param      Table $table
+	 */
+	public function __construct(Table $table)
+	{
+		parent::__construct($table);
+		$this->ddlBuilder = DataModelBuilder::builderFactory($table, 'ddl');
+	}
+	
+	/**
+	 * The main method in this class, returns the SQL for INSERTing data into a row.
+	 * @param      DataRow $row The row to process.
+	 * @return     string
+	 */
+	public function buildRowSql(DataRow $row)
+	{
+		$sql = parent::buildRowSql($row);
+		
+		$table = $this->getTable();
+		
+		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
+			foreach ($row->getColumnValues() as $colValue) {
+				if ($colValue->getColumn()->isAutoIncrement()) {
+					if ($colValue->getValue() > $this->maxSeqVal) {
+						print "Setting maxSeqValue = " . $colValue->getValue() . PHP_EOL;
+						$this->maxSeqVal = $colValue->getValue(); 
+					}
+				}
+			}
+		}
+		
+		return $sql;
+	}
+	
+	public function getTableEndSql()
+	{
+		$table = $this->getTable();
+		$sql = "";
+		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
+			$seqname = DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()));
+			$sql .= "SELECT pg_catalog.setval('$seqname', ".((int)$this->maxSeqVal).");
+";
+		}
+		return $sql;
+	}
+	
+	/**
 	 * Get SQL value to insert for Postgres BOOLEAN column.
 	 * @param      boolean $value
 	 * @return     string The representation of boolean for Postgres ('t' or 'f').
