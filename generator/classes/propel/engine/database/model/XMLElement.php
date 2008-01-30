@@ -28,8 +28,18 @@
  */
 abstract class XMLElement {
 
+	/**
+	 * The name => value attributes from XML.
+	 *
+	 * @var        array
+	 */
 	protected $attributes = array();
 
+	/**
+	 * Any vendor-specific details that may be represtented in the XML.
+	 *
+	 * @var        array
+	 */
 	protected $vendorSpecificInfo = array();
 
 	/**
@@ -42,7 +52,8 @@ abstract class XMLElement {
 	 * It calls a setupObject() method that must be implemented by the child class.
 	 * @param      array $attributes The attributes for the XML tag.
 	 */
-	public function loadFromXML($attributes) {
+	public function loadFromXML($attributes)
+	{
 		$this->attributes = array_change_key_case($attributes, CASE_LOWER);
 		$this->setupObject();
 	}
@@ -52,7 +63,8 @@ abstract class XMLElement {
 	 * All attribute names (keys) are lowercase.
 	 * @return     array
 	 */
-	public function getAttributes() {
+	public function getAttributes()
+	{
 		return $this->attributes;
 	}
 
@@ -63,7 +75,8 @@ abstract class XMLElement {
 	 * @param      mixed $defaultValue The default value to use in case the attribute is not set.
 	 * @return     mixed The value of the attribute or $defaultValue if not set.
 	 */
-	public function getAttribute($name, $defaultValue = null) {
+	public function getAttribute($name, $defaultValue = null)
+	{
 		$name = strtolower($name);
 		if (isset($this->attributes[$name])) {
 			return $this->attributes[$name];
@@ -77,7 +90,8 @@ abstract class XMLElement {
 	 * This is to support the default value when used w/ a boolean column.
 	 * @return     value
 	 */
-	protected function booleanValue($val) {
+	protected function booleanValue($val)
+	{
 		if (is_numeric($val)) {
 			return (bool) $val;
 		} else {
@@ -135,7 +149,29 @@ abstract class XMLElement {
 	{
 		return $this->vendorSpecificInfo;
 	}
-
-
-
+	
+	/**
+	 * Appends DOM elements to represent this object in XML.
+	 * @param      DOMNode $node
+	 */
+	public function appendXml(DOMNode $node)
+	{
+		$node->appendChild($node->ownerDocument->createElement('foo'));
+	}
+	
+	/**
+	 * String representation of the current object.
+	 * 
+	 * This is an xml representation with the XML declaration removed.
+	 * 
+	 * @see appendXml()
+	 */
+	public function toString()
+	{
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+		$this->appendXml($doc);
+		$xmlstr = $doc->saveXML();
+		return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
+	}
 }

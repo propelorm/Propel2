@@ -104,22 +104,16 @@ class IdMethodParameter extends XMLElement {
 	}
 
 	/**
-	 * XML representation of the foreign key.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = " <id-method-parameter";
-
-		if ($this->getName() !== null) {
-			$result .= " name=\""
-				  . $this->getName()
-				  . '"';
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+		
+		$paramNode = $node->appendChild($doc->createElement('id-method-parameter'));
+		if ($this->getName()) {
+			$paramNode->setAttribute('name', $this->getName());
 		}
-
-		$result .= " value=\""
-			  . $this->getValue()
-			  .  "\">\n";
-
-		return $result;
+		$paramNode->setAttribute('value', $this->getValue());
 	}
 }

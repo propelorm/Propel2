@@ -1,15 +1,34 @@
 <?php
+/*
+ *  $Id$
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://propel.phpdb.org>.
+ */
 
-require_once 'propel/engine/reverse/SchemaParser.php';
+require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
 
 /**
- * Postgresql metadata parser.
+ * Postgresql database schema parser.
  *
  * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Revision: 1.11 $
+ * @version   $Revision$
  * @package   creole.drivers.pgsql.metadata
  */
-class PgsqlSchemaParser extends SchemaParser {
+class PgsqlSchemaParser extends BaseSchemaParser {
 
     /**
      * Map PostgreSQL native types to Propel types.
@@ -45,6 +64,13 @@ class PgsqlSchemaParser extends SchemaParser {
     );
     
     /**
+     * Map to hold reverse type mapping (initialized on-demand).
+     *
+     * @var        array
+     */
+    private static $reverseTypeMap;
+    
+    /**
      * Gets a mapped Propel type for specified native type.
      *
      * @param      string $nativeType
@@ -57,7 +83,21 @@ class PgsqlSchemaParser extends SchemaParser {
         }
         return null;
     }
-            
+
+    /**
+     * Give a best guess at the native type.
+     *
+     * @param      string $propelType
+     * @return     string The native SQL type that best matches the specified Propel type.
+     */
+    protected function getMappedNativeType($propelType)
+    {
+    	if (self::$reverseTypeMap === null) {
+            self::$reverseTypeMap = array_flip(self::$nativeToPropelTypeMap);
+        }
+        return isset(self::$reverseTypeMap[$propelType]) ? self::$reverseTypeMap[$propelType] : null;
+    }
+    
     /**
      * 
      */
@@ -101,12 +141,16 @@ class PgsqlSchemaParser extends SchemaParser {
             $tableWraps[] = $wrap;
         }
         
-        // Now populate columns, fkeys, indexes, etc.
+        // Now populate only columns.
         foreach($tableWraps as $wrap) {
-        	$this->addColumns($wrap->table, $wrap->oid);
-        	$this->addForeignKeys($wrap->table, $wrap->oid);
-        	$this->addIndexes($wrap->table, $wrap->oid);
-        	$this->addPrimaryKey($wrap->table, $wrap->oid);
+        	$this->addColumns($wrap->table, $wrap->oid, $version);
+        }
+        
+        // Now add indexes and constraints.
+        foreach($tableWraps as $wrap) {
+        	$this->addForeignKeys($wrap->table, $wrap->oid, $version);
+        	$this->addIndexes($wrap->table, $wrap->oid, $version);
+        	$this->addPrimaryKey($wrap->table, $wrap->oid, $version);
         }
         
         // TODO - Handle Sequences ...
@@ -210,12 +254,14 @@ class PgsqlSchemaParser extends SchemaParser {
             
             $column = new Column($name);
             $column->setTable($table);
-            $column->setType($propelType);
+            $column->setDomainForType($propelType);
             // We may want to provide an option to include this:
-            // $column->getDomain()->setSqlType($type);
-            $column->setSize($size);
-            $column->setScale($scale);
-            $column->setDefaultValue($default);
+            // $column->getDomain()->replaceSqlType($type);
+            $column->getDomain()->replaceSize($size);
+            $column->getDomain()->replaceScale($scale);
+            if ($default !== null) {
+            	$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
+            }
             $column->setAutoIncrement($autoincrement);
             $column->setNotNull(!$is_nullable);
             
@@ -237,8 +283,7 @@ class PgsqlSchemaParser extends SchemaParser {
         } // if ($intTypmod == -1)
 
         // Numeric Datatype?
-        if ($strName == PgSQLTypes::getNativeType (CreoleTypes::NUMERIC))
-        {
+        if ($strName == $this->getMappedNativeType(PropelTypes::NUMERIC)) {
             $intLen = ($intTypmod - 4) >> 16;
             $intPrec = ($intTypmod - 4) & 0xffff;
             $intLen = sprintf ("%ld", $intLen);
@@ -248,9 +293,9 @@ class PgsqlSchemaParser extends SchemaParser {
             } // if ($intPrec)
             $arrRetVal['length'] = $intLen;
             $arrRetVal['scale'] = $intPrec;
-        } // if ($strName == PgSQLTypes::getNativeType (CreoleTypes::NUMERIC))
-        elseif ($strName == PgSQLTypes::getNativeType (CreoleTypes::TIME) || $strName == 'timetz'
-            || $strName == PgSQLTypes::getNativeType (CreoleTypes::TIMESTAMP) || $strName == 'timestamptz'
+        } // if ($strName == $this->getMappedNativeType(PropelTypes::NUMERIC))
+        elseif ($strName == $this->getMappedNativeType(PropelTypes::TIME) || $strName == 'timetz'
+            || $strName == $this->getMappedNativeType(PropelTypes::TIMESTAMP) || $strName == 'timestamptz'
             || $strName == 'interval' || $strName == 'bit')
         {
             $arrRetVal['length'] = sprintf ("%ld", $intTypmod);
@@ -300,7 +345,6 @@ class PgsqlSchemaParser extends SchemaParser {
 
         $stmt = null; // cleanup
         return $arrDomain;
-        
     } // private function processDomain($strDomain)
 
     /**
@@ -309,7 +353,6 @@ class PgsqlSchemaParser extends SchemaParser {
     protected function addForeignKeys(Table $table, $oid, $version)
     {
         $database = $table->getDatabase();
-        
         $stmt = $this->dbh->prepare("SELECT
                                           conname,
                                           confupdtype,
@@ -325,52 +368,52 @@ class PgsqlSchemaParser extends SchemaParser {
                                          LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
                                     WHERE
                                          contype='f'
-                                         AND conrelid = %d
+                                         AND conrelid = ?
                                          AND a2.attnum = ct.conkey[1]
                                          AND a1.attnum = ct.confkey[1]
                                     ORDER BY conname");
-          $stmt->bindValue(1, $oid, PDO::PARAM_INT);
-          $stmt->execute();
-    
-          $foreignKeys = array(); // local store to avoid duplicates
+		$stmt->bindValue(1, $oid);
+		$stmt->execute();
+    	
+		$foreignKeys = array(); // local store to avoid duplicates
           
-        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            
-            $name = $row['conname'];
-            $local_table = $row['fktab'];
-            $local_column = $row['fkcol'];
-            $foreign_table = $row['reftab'];
-            $foreign_column = $row['refcol'];
+		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			
+			$name = $row['conname'];
+			$local_table = $row['fktab'];
+			$local_column = $row['fkcol'];
+			$foreign_table = $row['reftab'];
+			$foreign_column = $row['refcol'];
 
             // On Update
             switch ($row['confupdtype']) {
               case 'c':
-                $onupdate = ForeignKeyInfo::CASCADE; break;
+                $onupdate = ForeignKey::CASCADE; break;
               case 'd':
-                $onupdate = ForeignKeyInfo::SETDEFAULT; break;
+                $onupdate = ForeignKey::SETDEFAULT; break;
               case 'n':
-                $onupdate = ForeignKeyInfo::SETNULL; break;
+                $onupdate = ForeignKey::SETNULL; break;
               case 'r':
-                $onupdate = ForeignKeyInfo::RESTRICT; break;
+                $onupdate = ForeignKey::RESTRICT; break;
               default:
               case 'a':
                 //NOACTION is the postgresql default
-                $onupdate = ForeignKeyInfo::NONE; break;
+                $onupdate = ForeignKey::NONE; break;
             }
             // On Delete
             switch ($row['confdeltype']) {
               case 'c':
-                $ondelete = ForeignKeyInfo::CASCADE; break;
+                $ondelete = ForeignKey::CASCADE; break;
               case 'd':
-                $ondelete = ForeignKeyInfo::SETDEFAULT; break;
+                $ondelete = ForeignKey::SETDEFAULT; break;
               case 'n':
-                $ondelete = ForeignKeyInfo::SETNULL; break;
+                $ondelete = ForeignKey::SETNULL; break;
               case 'r':
-                $ondelete = ForeignKeyInfo::RESTRICT; break;
+                $ondelete = ForeignKey::RESTRICT; break;
               default:
               case 'a':
                 //NOACTION is the postgresql default
-                $ondelete = ForeignKeyInfo::NONE; break;
+                $ondelete = ForeignKey::NONE; break;
             }
 
             $foreignTable = $database->getTable($foreign_table);
@@ -381,14 +424,22 @@ class PgsqlSchemaParser extends SchemaParser {
             
             if (!isset($foreignKeys[$name])) {
                 $fk = new ForeignKey($name);
+                $fk->setForeignTableName($foreignTable->getName());
                 $fk->setOnDelete($ondelete);
                 $fk->setOnUpdate($onupdate);
                 $table->addForeignKey($fk);
                 $foreignKeys[$name] = $fk;
             }
+            if (!$foreignColumn) {
+            	print "FOREIGN COL WAS EMPTY!\n";
+            	print "\$foreign_column = $foreign_column\n";
+            	var_dump($foreignTable->getName());
+            	foreach($foreignTable->getColumns() as $col) {
+            		print "::" . $col->getName() . "\n";
+            	}
+            }
             $foreignKeys[$name]->addReference($localColumn, $foreignColumn);
         }
-        
     }
 
     /**
@@ -396,7 +447,6 @@ class PgsqlSchemaParser extends SchemaParser {
      */
     protected function addIndexes(Table $table, $oid, $version)
     {
-    
 		$stmt = $this->dbh->prepare("SELECT
 										DISTINCT ON(cls.relname)
 										cls.relname as idxname,
@@ -404,10 +454,10 @@ class PgsqlSchemaParser extends SchemaParser {
 	                                    indisunique
 	                                FROM pg_index idx
 	                                     JOIN pg_class cls ON cls.oid=indexrelid
-	                                WHERE indrelid = %d AND NOT indisprimary
+	                                WHERE indrelid = ? AND NOT indisprimary
 	                                ORDER BY cls.relname");
 		                                
-		$stmt->bindValue(1, $oid, PDO::PARAM_INT);
+		$stmt->bindValue(1, $oid);
 		$stmt->execute();
 		
 		$stmt2 = $this->dbh->prepare("SELECT a.attname
@@ -451,12 +501,7 @@ class PgsqlSchemaParser extends SchemaParser {
 	 */
 	protected function addPrimaryKey(Table $table, $oid, $version)
     {
-
-        // columns have to be loaded first
-        if (!$this->colsLoaded) $this->initColumns();
-
-        // Primary Keys
-        
+    	
         $stmt = $this->dbh->prepare("SELECT
 										DISTINCT ON(cls.relname)
 										cls.relname as idxname,
@@ -464,7 +509,7 @@ class PgsqlSchemaParser extends SchemaParser {
 										indisunique
 									FROM pg_index idx
 										JOIN pg_class cls ON cls.oid=indexrelid
-									WHERE indrelid = %s AND indisprimary
+									WHERE indrelid = ? AND indisprimary
 									ORDER BY cls.relname");
 		$stmt->bindValue(1, $oid);
 		$stmt->execute();
@@ -473,17 +518,18 @@ class PgsqlSchemaParser extends SchemaParser {
         // adding each column for that key.
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $arrColumns = explode (' ', $row['indkey']);
-            foreach ($arrColumns as $intColNum) {
-                $stmt2 = $this->dbh->prepare("SELECT a.attname
+			$arrColumns = explode (' ', $row['indkey']);
+			foreach ($arrColumns as $intColNum) {
+				$stmt2 = $this->dbh->prepare("SELECT a.attname
 												FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
 												WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
 												ORDER BY a.attnum");
 				$stmt2->bindValue(1, $oid);
-				$stmt2->bindValud(2, $intColNum);
+				$stmt2->bindValue(2, $intColNum);
+				$stmt2->execute();
                 
-                $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
-                $table->getColumn($row2['attname'])->setPrimaryKey(true);
+				$row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+				$table->getColumn($row2['attname'])->setPrimaryKey(true);
                 
             } // foreach ($arrColumns as $intColNum)
         }

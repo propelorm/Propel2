@@ -38,19 +38,15 @@ class Validator extends XMLElement {
 
 	private $columnName;
 	private $column;
-	private $ruleList;
+	private $ruleList = array();
 	private $translate;
-	private $table;
-
+	
 	/**
-	 * Creates a new column and set the name
+	 * Parent table.
 	 *
-	 * @param      name validator name
+	 * @var        Table
 	 */
-	public function __construct()
-	{
-		$this->ruleList = array();
-	}
+	private $table;
 
 	/**
 	 * Sets up the Validator object based on the attributes that were passed to loadFromXML().
@@ -162,25 +158,21 @@ class Validator extends XMLElement {
 	}
 
 	/**
-	 * Gets XML (string) representation of this Validator.
-	 * @return     string
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = "<validator column=\"" . $this->columnName . "\"";
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
+		
+		$valNode = $node->appendChild($doc->createElement('validator'));
+		$valNode->setAttribute('column', $this->columnName);
+		
 		if ($this->translate !== null) {
-			$result .= " translate=\"".$this->translate."\"";
-		}
-		$result .= ">\n";
-
-		if ($this->ruleList !== null) {
-			for ($i=0,$_i=count($this->ruleList); $i < $_i; $i++) {
-				$result .= $this->ruleList[$i]->toString();
-			}
+			$valNode->setAttribute('translate', $this->translate);
 		}
 
-		$result .= "</validator>\n";
-
-		return $result;
+		foreach($this->ruleList as $rule) {
+			$rule->appendXml($valNode);
+		}
 	}
 }

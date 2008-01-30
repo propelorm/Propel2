@@ -1,7 +1,6 @@
 <?php
-
 /*
- *  $Id: DatabaseInfo.php,v 1.15 2005/11/08 04:24:50 hlellelid Exp $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -17,17 +16,19 @@
  *
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information please see
- * <http://creole.phpdb.org>.
+ * <http://propel.phpdb.org>.
  */
+
+require_once 'propel/engine/database/reverse/SchemaParser.php';
 
 /**
  * Base class for reverse engineering a database schema.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision: 1.15 $
+ * @version    $Revision$
  * @package    propel.engine.database.reverse
  */
-abstract class SchemaParser {
+abstract class BaseSchemaParser implements SchemaParser {
 
 	/**
 	 * The database connection.
@@ -41,7 +42,14 @@ abstract class SchemaParser {
 	 * @var        array string[]
 	 */
 	protected $warnings = array();
-
+	
+	/**
+	 * GeneratorConfig object holding build properties.
+	 *
+	 * @var        GeneratorConfig
+	 */
+	private $generatorConfig;
+	
 	/**
 	 * @param      PDO $dbh Optional database connection
 	 */
@@ -71,6 +79,7 @@ abstract class SchemaParser {
 
 	/**
 	 * Pushes a message onto the stack of warnings.
+	 * 
 	 * @param      string $msg The warning message.
 	 */
 	protected function warn($msg)
@@ -80,13 +89,48 @@ abstract class SchemaParser {
 
 	/**
 	 * Gets array of warning messages.
+	 * 
 	 * @return     array string[]
 	 */
 	public function getWarnings()
 	{
 		return $this->warnings;
 	}
-
+	
+	/**
+	 * Sets the GeneratorConfig to use in the parsing.
+	 *
+	 * @param      GeneratorConfig $config
+	 */
+	public function setGeneratorConfig(GeneratorConfig $config)
+	{
+		$this->generatorConfig = $config;
+	}
+	
+	/**
+	 * Gets the GeneratorConfig option.
+	 * 
+	 * @return     GeneratorConfig
+	 */
+	public function getGeneratorConfig()
+	{
+		return $this->generatorConfig;
+	}
+	
+	/**
+	 * Gets a specific propel (renamed) property from the build.
+	 *
+	 * @param      string $name
+	 * @return     mixed
+	 */
+	public function getBuildProperty($name)
+	{
+		if ($this->generatorConfig !== null) {
+			return $this->generatorConfig->getBuildProperty($name);
+		}
+		return null;
+	}
+	
 	/**
 	 * Gets a mapped Propel type for specified native type.
 	 *

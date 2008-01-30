@@ -58,6 +58,9 @@
    <taskdef
     name="propel-creole-transform"
     classname="propel.phing.PropelCreoleTransformTask" classpathRef="propelclasses"/>
+   <taskdef
+    name="propel-schema-reverse"
+    classname="propel.phing.PropelSchemaReverseTask" classpathRef="propelclasses"/>
 
   <taskdef
     name="propel-sql"
@@ -273,7 +276,7 @@
   </target>
 
   <!-- ================================================================ -->
-  <!-- C R E O L E  TO  X M L                                               -->
+  <!-- C R E O L E   T O   X M L                                        -->
   <!-- ================================================================ -->
 
   <target
@@ -291,6 +294,34 @@
       dbSchema="${propel.database.schema}"
       dbEncoding="${propel.database.encoding}"
       dbUrl="${propel.database.creole.url}"
+      outputFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
+      samePhpName="${propel.samePhpName}"
+      addVendorInfo="${propel.addVendorInfo}"
+      addValidators="${propel.addValidators}"
+    />
+
+  </target>
+  
+  <!-- ================================================================ -->
+  <!-- N E W   R E V E R S E   T O   X M L                              -->
+  <!-- ================================================================ -->
+
+  <target
+    name="reverse"
+    description="==> generate xml schema from reverse-engineered database (new)">
+
+    <echo message="+-----------------------------------------------+"/>
+    <echo message="|                                               |"/>
+    <echo message="| Generating XML from PDO connection !          |"/>
+    <echo message="|                                               |"/>
+    <echo message="+-----------------------------------------------+"/>
+
+    <propel-schema-reverse
+      dbSchema="${propel.database.schema}"
+      dbEncoding="${propel.database.encoding}"
+      url="${propel.database.buildUrl}"
+      userId="${propel.database.user}"
+      password="${propel.database.password}"
       outputFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
       samePhpName="${propel.samePhpName}"
       addVendorInfo="${propel.addVendorInfo}"

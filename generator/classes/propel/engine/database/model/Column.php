@@ -63,18 +63,6 @@ class Column extends XMLElement {
 	private $peerName;
 
 	/**
-	 * Type as defined in schema.xml
-	 * @var        string
-	 */
-	private $propelType;
-
-	/**
-	 * Type corresponding to Creole type
-	 * @var        int
-	 */
-	private $creoleType;
-
-	/**
 	 * Native PHP type (scalar or class name)
 	 * @var        string "string", "boolean", "int", "double"
 	 */
@@ -154,12 +142,14 @@ class Column extends XMLElement {
 		try {
 			$dom = $this->getAttribute("domain");
 			if ($dom)  {
-				$this->domain = new Domain();
-				$this->domain->copy($this->getTable()->getDatabase()->getDomain($dom));
+				$this->getDomain()->copy($this->getTable()->getDatabase()->getDomain($dom));
 			} else {
-				$this->domain = new Domain();
-				$this->domain->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
-				$this->setType(strtoupper($this->getAttribute("type")));
+				$type = strtoupper($this->getAttribute("type"));
+				if ($type) {
+					$this->getDomain()->copy($this->getPlatform()->getDomainForType($type));
+				} else {
+					$this->getDomain()->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
+				}
 			}
 
 			$this->name = $this->getAttribute("name");
@@ -217,15 +207,15 @@ class Column extends XMLElement {
 			$this->isLazyLoad = $this->booleanValue($this->getAttribute("lazyLoad"));
 
 			// Add type, size information to associated Domain object
-			$this->domain->replaceSqlType($this->getAttribute("sqlType"));
-			$this->domain->replaceSize($this->getAttribute("size"));
-			$this->domain->replaceScale($this->getAttribute("scale"));
+			$this->getDomain()->replaceSqlType($this->getAttribute("sqlType"));
+			$this->getDomain()->replaceSize($this->getAttribute("size"));
+			$this->getDomain()->replaceScale($this->getAttribute("scale"));
 
 			$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
 			if ($defval !== null) {
-				$this->domain->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+				$this->getDomain()->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
 			} elseif ($this->getAttribute("defaultExpr") !== null) {
-				$this->domain->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
+				$this->getDomain()->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
 			}
 
 			$this->inheritanceType = $this->getAttribute("inheritance");
@@ -241,11 +231,14 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Gets domain for this column.
+	 * Gets domain for this column, creating a new empty domain object if none is set.
 	 * @return     Domain
 	 */
 	public function getDomain()
 	{
+		if ($this->domain === null) {
+			$this->domain = new Domain();
+		}
 		return $this->domain;
 	}
 
@@ -710,35 +703,48 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Sets the colunm type
+	 * Sets the domain up for specified Propel type.
+	 * 
+	 * Calling this method will implicitly overwrite any previously set type,
+	 * size, scale (or other domain attributes).
+	 *
+	 * @param      string $propelType
+	 */
+	public function setDomainForType($propelType)
+	{
+		$this->getDomain()->copy($this->getPlatform()->getDomainForType($propelType));
+	}
+	
+	/**
+	 * Sets the propel colunm type.
+	 * @param      string $propelType
+	 * @see        Domain::setType()
 	 */
 	public function setType($propelType)
 	{
-		$this->domain = new Domain();
-		$this->domain->copy($this->getPlatform()->getDomainForType($propelType));
-
-		$this->propelType = $propelType;
+		$this->getDomain()->setType($propelType);
 		if ($propelType == PropelTypes::VARBINARY|| $propelType == PropelTypes::LONGVARBINARY || $propelType == PropelTypes::BLOB) {
 			$this->needsTransactionInPostgres = true;
 		}
 	}
 
 	/**
-	 * Returns the column Creole type as a string.
+	 * Returns the Propel column type as a string.
 	 * @return     string The constant representing Creole type: e.g. "VARCHAR".
+	 * @see        Domain::getType()
 	 */
 	public function getType()
 	{
-		return PropelTypes::getCreoleType($this->propelType);
+		return $this->getDomain()->getType();
 	}
 
 	/**
-	 * Returns the column Creole type as a string.
-	 * @return     string The constant representing Creole type: e.g. "VARCHAR".
+	 * Returns the column PDO type integer for this column's Propel type.
+	 * @return     int The integer value representing PDO type param: e.g. PDO::PARAM_INT
 	 */
 	public function getPDOType()
 	{
-		return PropelTypes::getPDOType($this->propelType);
+		return PropelTypes::getPDOType($this->getType());
 	}
 
 	/**
@@ -746,7 +752,7 @@ class Column extends XMLElement {
 	 */
 	public function getPropelType()
 	{
-		return $this->propelType;
+		return $this->getType();
 	}
 
 	/**
@@ -755,7 +761,7 @@ class Column extends XMLElement {
 	 */
 	public function isLobType()
 	{
-		return PropelTypes::isLobType($this->propelType);
+		return PropelTypes::isLobType($this->getType());
 	}
 
 	/**
@@ -763,7 +769,7 @@ class Column extends XMLElement {
 	 */
 	public function isTextType()
 	{
-		return PropelTypes::isTextType($this->propelType);
+		return PropelTypes::isTextType($this->getType());
 	}
 
 	/**
@@ -772,57 +778,68 @@ class Column extends XMLElement {
 	 */
 	public function isTemporalType()
 	{
-		return PropelTypes::isTemporalType($this->propelType);
+		return PropelTypes::isTemporalType($this->getType());
 	}
 
 	/**
-	 * String representation of the column. This is an xml representation.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = "	<column name=\"" . $this->name . '"';
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
+		
+		$colNode = $node->appendChild($doc->createElement('column'));
+		$colNode->setAttribute('name', $this->name);
+		
 		if ($this->phpName !== null) {
-			$result .= " phpName=\"" . $this->phpName . '"';
+			$colNode->setAttribute('phpName', $this->phpName);
 		}
+		
 		if ($this->isPrimaryKey) {
-			$result .= " primaryKey=\"" . ($this->isPrimaryKey ? "true" : "false"). '"';
+			$colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
 		}
-
+		
 		if ($this->isNotNull) {
-			$result .= " required=\"true\"";
+			$colNode->setAttribute('required', 'true');
 		} else {
-			$result .= " required=\"false\"";
+			$colNode->setAttribute('required', 'false');
 		}
 
-		$result .= " type=\"" . $this->propelType . '"';
-
-		if ($this->domain->getSize() !== null) {
-			$result .= " size=\"" . $this->domain->getSize() . '"';
+		$colNode->setAttribute('type', $this->getType());
+		
+		$domain = $this->getDomain();
+		
+		if ($domain->getSize() !== null) {
+			$colNode->setAttribute('size', $domain->getSize());
 		}
 
-		if ($this->domain->getScale() !== null) {
-			$result .= " scale=\"" . $this->domain->getScale() . '"';
+		if ($domain->getScale() !== null) {
+			$colNode->setAttribute('scale', $domain->getScale());
 		}
 
-		if ($this->domain->getDefaultValue() !== null) {
-			$result .= " default=\"" . $this->domain->getDefaultValue() . '"';
-		}
-
-		if ($this->isInheritance()) {
-			$result .= " inheritance=\"" . $this->inheritanceType
-			. '"';
-		}
-
-		if ($this->isNodeKey()) {
-			$result .= " nodeKey=\"true\"";
-			if ($this->getNodeKeySep() !== null) {
-				$result .= " nodeKeySep=\"" . $this->nodeKeySep . '"';
+		if ($domain->getDefaultValue() !== null) {
+			$def = $domain->getDefaultValue();
+			if ($def->isExpression()) {
+				$colNode->setAttribute('defaultExpr', $def->getValue());
+			} else {
+				$colNode->setAttribute('defaultValue', $def->getValue());
 			}
 		}
 
-		// Close the column.
-		$result .= " />\n";
+		if ($this->isInheritance()) {
+			$colNode->setAttribute('inheritance', $this->inheritanceType);
+			foreach($this->inheritanceList as $inheritance) {
+				$inheritance->appendXml($colNode);
+			}
+		}
 
+		if ($this->isNodeKey()) {
+			$colNode->setAttribute('nodeKey', 'true');
+			if ($this->getNodeKeySep() !== null) {
+				$colNode->setAttribute('nodeKeySep', $this->nodeKeySep);
+			}
+		}
+		
 		return $result;
 	}
 
@@ -1008,13 +1025,13 @@ class Column extends XMLElement {
 
 	/**
 	 * Return a string representation of the native PHP type which corresponds
-	 * to the Creole type of this column. Use in the generation of Base objects.
+	 * to the propel type of this column. Use in the generation of Base objects.
 	 *
 	 * @return     string PHP datatype used by propel.
 	 */
 	public function getPhpNative()
 	{
-		return PropelTypes::getPhpNative($this->propelType);
+		return PropelTypes::getPhpNative($this->getType());
 	}
 
 	/**

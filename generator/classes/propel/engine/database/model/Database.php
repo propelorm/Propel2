@@ -47,7 +47,6 @@ class Database extends XMLElement {
 	private $baseClass;
 	private $basePeer;
 	private $defaultIdMethod;
-	private $defaultPhpType;
 	private $defaultPhpNamingMethod;
 	private $defaultTranslateMethod;
 	private $dbParent;
@@ -56,7 +55,17 @@ class Database extends XMLElement {
 	private $heavyIndexing;
 
 	private $domainMap = array();
-
+	
+	/**
+	 * Constructs a new Database object.
+	 *
+	 * @param      string $name
+	 */
+	public function __construct($name = null)
+	{
+		$this->name = $name;
+	}
+	
 	/**
 	 * Sets up the Database object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
@@ -67,7 +76,6 @@ class Database extends XMLElement {
 		$this->pkg = $this->getAttribute("package");
 		$this->baseClass = $this->getAttribute("baseClass");
 		$this->basePeer = $this->getAttribute("basePeer");
-		$this->defaultPhpType = $this->getAttribute("defaultPhpType");
 		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);
 		$this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
 		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
@@ -222,9 +230,23 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of heavyIndexing.
+	 * 
+	 * This is a synonym for getHeavyIndexing().
+	 * 
 	 * @return     boolean Value of heavyIndexing.
+	 * @see        getHeavyIndexing()
 	 */
 	public function isHeavyIndexing()
+	{
+		return $this->getHeavyIndexing();
+	}
+	
+	/**
+	 * Get the value of heavyIndexing.
+	 * 
+	 * @return     boolean Value of heavyIndexing.
+	 */
+	public function getHeavyIndexing()
 	{
 		return $this->heavyIndexing;
 	}
@@ -326,7 +348,7 @@ class Database extends XMLElement {
 			$this->domainMap[ $domain->getName() ] = $domain;
 			return $domain;
 		} else {
-			$domain = new Table();
+			$domain = new Domain();
 			$domain->setDatabase($this);
 			$domain->loadFromXML($data);
 			return $this->addDomain($domain); // call self w/ different param
@@ -337,11 +359,12 @@ class Database extends XMLElement {
 	 * Get already configured Domain object by name.
 	 * @return     Domain
 	 */
-	public function getDomain($domainName) {
-		if (!isset($this->domainMap[$domainName])) {
-			return null;
+	public function getDomain($domainName)
+	{
+		if (isset($this->domainMap[$domainName])) {
+			return $this->domainMap[$domainName];
 		}
-		return $this->domainMap[$domainName];
+		return null; // just to be explicit
 	}
 
 	public function doFinalInitialization()
@@ -439,24 +462,54 @@ class Database extends XMLElement {
 	}
 
 	/**
-	 * Creats a string representation of this Database.
-	 * The representation is given in xml format.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = "<database name=\"" . $this->getName() . '"'
-			. " package=\"" . $this->getPackage() . '"'
-			. " defaultIdMethod=\"" . $this->getDefaultIdMethod()
-			. '"'
-			. " baseClass=\"" . $this->getBaseClass() . '"'
-			. " basePeer=\"" . $this->getBasePeer() . '"'
-			. ">\n";
-
-		for ($i=0, $size=count($this->tableList); $i < $size; $i++) {
-			$result .= $this->tableList[$i]->toString();
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
+		
+		$dbNode = $node->appendChild($doc->createElement('database'));
+		
+		$dbNode->setAttribute('name', $this->name);
+		
+		if ($this->pkg) {
+			$dbNode->setAttribute('package', $this->pkg);
 		}
+		
+		if ($this->defaultIdMethod) {
+			$dbNode->setAttribute('defaultIdMethod', $this->defaultIdMethod);
+		}
+		
+		if ($this->baseClass) {
+			$dbNode->setAttribute('baseClass', $this->baseClass);
+		}
+		
+		if ($this->basePeer) {
+			$dbNode->setAttribute('basePeer', $this->basePeer);
+		}
+		
+		if ($this->defaultPhpNamingMethod) {
+			$dbNode->setAttribute('defaultPhpNamingMethod', $this->defaultPhpNamingMethod);
+		}
+		
+		if ($this->defaultTranslateMethod) {
+			$dbNode->setAttribute('defaultTranslateMethod', $this->defaultTranslateMethod);
+		}
+		
+		/*
+		
+		FIXME - Before we can add support for domains in the schema, we need
+		to have a method of the Column that indicates whether the column was mapped
+		to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
 
-		$result .= "</database>";
+		foreach($this->domainMap as $domain) {
+			$domain->appendXml($dbNode);
+		}
+		*/
+		
+		foreach($this->tableList as $table) {
+			$table->appendXml($dbNode);
+		}
 
 		return $result;
 	}

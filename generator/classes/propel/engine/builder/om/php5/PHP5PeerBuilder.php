@@ -169,7 +169,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	protected function addConstantsAndAttributes(&$script)
 	{
-		$tableName = DataModelBuilder::prefixTableName($this->getTable()->getName());
+		$tableName = $this->prefixTableName($this->getTable()->getName());
 		$dbName = $this->getDatabase()->getName();
 		$script .= "
 	/** the default database name for this class */
@@ -222,7 +222,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			$script .= "
 	/** the column name for the ".strtoupper($col->getName()) ." field */
-	const ".$this->getColumnName($col) ." = '".DataModelBuilder::prefixTablename($this->getTable()->getName()).".".strtoupper($col->getName())."';
+	const ".$this->getColumnName($col) ." = '".$this->prefixTablename($this->getTable()->getName()).".".strtoupper($col->getName())."';
 ";
 		} // foreach
 	}
@@ -1287,7 +1287,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
 
-			$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
+			$joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
 			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 
 			if (!$tblFK->isForReferenceOnly()) {
@@ -1360,7 +1360,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
 
-			$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
+			$joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
 			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 
 			if (!$tblFK->isForReferenceOnly()) {
@@ -1442,7 +1442,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// $fk is the foreign key in the other table, so localTableName will
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
-			$refTablePeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
+			$refTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
 
 			if (!$tblFK->isForReferenceOnly()) {
 				// we can't perform operations on tables that are
@@ -1764,9 +1764,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					// aliasing the table if it is the same table.
 					if ( $fk->getForeignTableName() != $table->getName() ) {
 
-						$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
-						$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
-						$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+						$thisTableObjectBuilder = $this->getNewObjectBuilder($table);
+						$joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
+						$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 						$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 
@@ -1888,9 +1888,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 					if ( $fk->getForeignTableName() != $table->getName() ) {
 
-						$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
-						$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
-						$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+						$thisTableObjectBuilder = $this->getNewObjectBuilder($table);
+						$joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
+						$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 						$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 
@@ -1990,7 +1990,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 				$new_index = $index + 1;
 
-				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+				$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 				$joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 
 				$script .= "
@@ -2006,7 +2006,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// want to cover this case, but the code is not there yet.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+				$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 				$joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 				$lfMap = $fk->getLocalForeignMapping();
@@ -2057,16 +2057,16 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
-				$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
-				$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
-				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+				$thisTableObjectBuilder = $this->getNewObjectBuilder($table);
+				$joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
+				$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 
 				$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 				$interfaceName = $joinClassName;
 
 				if ($joinTable->getInterface()) {
-					$interfaceName = DataModelPeer::prefixClassname($joinTable->getInterface());
+					$interfaceName = $this->prefixClassname($joinTable->getInterface());
 				}
 
 				$index++;
@@ -2162,7 +2162,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			// want to cover this case, but the code is not there yet.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
-				$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+				$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 				$joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 
@@ -2213,9 +2213,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			$excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
-			$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
-			$excludedTableObjectBuilder = OMBuilder::getNewObjectBuilder($excludedTable);
-			$excludedTablePeerBuilder = OMBuilder::getNewPeerBuilder($excludedTable);
+			$thisTableObjectBuilder = $this->getNewObjectBuilder($table);
+			$excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
+			$excludedTablePeerBuilder = $this->getNewPeerBuilder($excludedTable);
 
 			$excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
 
@@ -2249,7 +2249,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// FIXME - why not?
 				if ( !($subfk->getForeignTableName() == $table->getName())) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
-					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+					$joinTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 					$joinClassName = $joinTablePeerBuilder->getObjectClassname();
 
 					if ($joinClassName != $excludedClassName) {
@@ -2267,7 +2267,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// want to cover this case, but the code is not there yet.
 				if ( $subfk->getForeignTableName() != $table->getName() ) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
-					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+					$joinTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 					$joinClassName = $joinTablePeerBuilder->getObjectClassname();
 
 					if ($joinClassName != $excludedClassName)
@@ -2320,14 +2320,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		  	$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
 
-		  	$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($joinTable);
-		  	$joinedTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+		  	$joinedTableObjectBuilder = $this->getNewObjectBuilder($joinTable);
+		  	$joinedTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 
 		  	$joinClassName = $joinedTableObjectBuilder->getObjectClassname();
 
 		  	$interfaceName = $joinClassName;
 		  	if ($joinTable->getInterface()) {
-		  		$interfaceName = DataModelBuilder::prefixClassname($joinTable->getInterface());
+		  		$interfaceName = $this->prefixClassname($joinTable->getInterface());
 		  	}
 
 		  	if ($joinClassName != $excludedClassName) {
@@ -2395,9 +2395,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 			$excludedTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
-			$thisTableObjectBuilder = OMBuilder::getNewObjectBuilder($table);
-			$excludedTableObjectBuilder = OMBuilder::getNewObjectBuilder($excludedTable);
-			$excludedTablePeerBuilder = OMBuilder::getNewPeerBuilder($excludedTable);
+			$thisTableObjectBuilder = $this->getNewObjectBuilder($table);
+			$excludedTableObjectBuilder = $this->getNewObjectBuilder($excludedTable);
+			$excludedTablePeerBuilder = $this->getNewPeerBuilder($excludedTable);
 
 			$excludedClassName = $excludedTableObjectBuilder->getObjectClassname();
 
@@ -2436,7 +2436,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				// want to cover this case, but the code is not there yet.
 				if ( $subfk->getForeignTableName() != $table->getName() ) {
 					$joinTable = $table->getDatabase()->getTable($subfk->getForeignTableName());
-					$joinTablePeerBuilder = OMBuilder::getNewPeerBuilder($joinTable);
+					$joinTablePeerBuilder = $this->getNewPeerBuilder($joinTable);
 					$joinClassName = $joinTablePeerBuilder->getObjectClassname();
 
 					if ($joinClassName != $excludedClassName)

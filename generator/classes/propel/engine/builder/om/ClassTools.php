@@ -47,13 +47,16 @@ class ClassTools {
 	/**
 	 * Gets the path to be used in include()/require() statement.
 	 *
-	 * Supports two function signatures:
+	 * Supports multiple function signatures:
+	 * 
 	 * (1) getFilePath($dotPathClass);
 	 * (2) getFilePath($dotPathPrefix, $className);
+	 * (3) getFilePath($dotPathPrefix, $className, $extension);
 	 *
 	 * @param      string $path dot-path to class or to package prefix.
 	 * @param      string $classname class name
-	 * @return     string
+	 * @param      string $extension The extension to use on the file.
+	 * @return     string The constructed file path.
 	 */
 	public static function getFilePath($path, $classname = null, $extension = '.php')
 	{

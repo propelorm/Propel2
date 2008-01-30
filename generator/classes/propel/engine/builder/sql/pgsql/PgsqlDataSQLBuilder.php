@@ -38,13 +38,6 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	private $maxSeqVal;
 	
 	/**
-	 * The DDLBuilder class which is used to get sequence names.
-	 *
-	 * @var        DDLBuilder
-	 */
-	private $ddlBuilder;
-	
-	/**
 	 * Construct a new PgsqlDataSQLBuilder object.
 	 *
 	 * @param      Table $table
@@ -52,7 +45,6 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	public function __construct(Table $table)
 	{
 		parent::__construct($table);
-		$this->ddlBuilder = DataModelBuilder::builderFactory($table, 'ddl');
 	}
 	
 	/**
@@ -85,7 +77,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 		$table = $this->getTable();
 		$sql = "";
 		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
-			$seqname = DataModelBuilder::prefixTablename(strtolower($this->getSequenceName()));
+			$seqname = $this->prefixTablename(strtolower($this->getSequenceName()));
 			$sql .= "SELECT pg_catalog.setval('$seqname', ".((int)$this->maxSeqVal).");
 ";
 		}

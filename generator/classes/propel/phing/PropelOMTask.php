@@ -103,9 +103,9 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	{
 		// check to make sure task received all correct params
 		$this->validate();
-
-		DataModelBuilder::setBuildProperties($this->getPropelProperties());
-
+			
+		$generatorConfig = $this->getGeneratorConfig();
+		
 		foreach ($this->getDataModels() as $dataModel) {
 			$this->log("Processing Datamodel : " . $dataModel->getName());
 
@@ -125,7 +125,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// these files are always created / overwrite any existing files
 						foreach (array('peer', 'object', 'mapbuilder') as $target) {
-							$builder = DataModelBuilder::builderFactory($table, $target);
+							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->build($builder);
 						}
 
@@ -135,7 +135,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// these classes are only generated if they don't already exist
 						foreach (array('peerstub', 'objectstub') as $target) {
-							$builder = DataModelBuilder::builderFactory($table, $target);
+							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->build($builder, $overwrite=false);
 						}
 
@@ -148,7 +148,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 							$col = $table->getChildrenColumn();
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
-									$builder = DataModelBuilder::builderFactory($table, 'objectmultiextend');
+									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
 									$builder->setChild($child);
 									$this->build($builder, $overwrite=false);
 								} // foreach
@@ -162,7 +162,7 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 
 						// Create [empty] interface if it does not already exist
 						if ($table->getInterface()) {
-							$builder = DataModelBuilder::builderFactory($table, 'interface');
+							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
 							$this->build($builder, $overwrite=false);
 						}
 
@@ -174,24 +174,25 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 							switch($table->treeMode()) {
 								case 'NestedSet':
 									foreach (array('nestedsetpeer', 'nestedset') as $target) {
-										$builder = DataModelBuilder::builderFactory($table, $target);
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$this->build($builder);
 									}
 								break;
 
 								case 'MaterializedPath':
 									foreach (array('nodepeer', 'node') as $target) {
-										$builder = DataModelBuilder::builderFactory($table, $target);
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$this->build($builder);
 									}
 
 									foreach (array('nodepeerstub', 'nodestub') as $target) {
-										$builder = DataModelBuilder::builderFactory($table, $target);
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$this->build($builder, $overwrite=false);
 									}
 								break;
 
 								case 'AdjacencyList':
+									// No implementation for this yet.
 								default:
 								break;
 							}

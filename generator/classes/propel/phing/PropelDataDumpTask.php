@@ -314,16 +314,14 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	}
 
 	/**
-	 * Gets ResultSet of query to fetch all data from a table.
+	 * Gets PDOStatement of query to fetch all data from a table.
 	 * @param      string $tableName
-	 * @return     ResultSet
+	 * @param      Platform $platform
+	 * @return     PDOStatement
 	 */
-	private function getTableDataStmt($tableName) {
-		// Set Statement object in associated PropelDataDump
-		// instance.
-		$stmt = $this->conn->prepare("SELECT * FROM " . $this->getPlatformForTargetDatabase()->quoteIdentifier ( $tableName ) );
-		$stmt->execute();
-		return $stmt;
+	private function getTableDataStmt($tableName, Platform $platform)
+	{
+		return $this->conn->query("SELECT * FROM " . $platform->quoteIdentifier( $tableName ) );
 	}
 
 	/**
@@ -331,8 +329,8 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 	 * @param      Database $database
 	 * @return     DOMDocument
 	 */
-	private function createXMLDoc(Database $database) {
-
+	private function createXMLDoc(Database $database)
+	{
 		$doc = new DOMDocument('1.0', 'utf-8');
 		$doc->formatOutput = true; // pretty printing
 		$doc->appendChild($doc->createComment("Created by data/dump/Control.tpl template."));
@@ -340,12 +338,14 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 		$dsNode = $doc->createElement("dataset");
 		$dsNode->setAttribute("name", "all");
 		$doc->appendChild($dsNode);
-
+		
+		$platform = $this->getGeneratorConfig()->getConfiguredPlatform($this->conn);
+		
 		$this->log("Building DOM tree containing data from tables:");
 
 		foreach ($database->getTables() as $tbl) {
 			$this->log("\t+ " . $tbl->getName());
-			$stmt = $this->getTableDataStmt($tbl->getName());
+			$stmt = $this->getTableDataStmt($tbl->getName(), $platform);
 			while ($row = $stmt->fetch()) {
 				$rowNode = $doc->createElement($tbl->getPhpName());
 				foreach ($tbl->getColumns() as $col) {

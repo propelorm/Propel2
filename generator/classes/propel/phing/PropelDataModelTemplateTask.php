@@ -172,16 +172,14 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	}
 
 	/**
-	 * Adds the propel.xxx properties to the passed Capsule context, changing names to just xxx.
-	 *
-	 * Also, move xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
+	 * Adds the propel build properties to the passed Capsule context.
 	 *
 	 * @param      Capsule $context
-	 * @see        getPropelProperties()
+	 * @see        GeneratorConfig::getBuildProperties()
 	 */
 	public function populateContextProperties(Capsule $context)
 	{
-		foreach ($this->getPropelProperties() as $key => $propValue) {
+		foreach ($this->getGeneratorConfig()->getBuildProperties() as $key => $propValue) {
 			$this->log('Adding property ${' . $key . '} to context', PROJECT_MSG_DEBUG);
 			$context->put($key, $propValue);
 		}

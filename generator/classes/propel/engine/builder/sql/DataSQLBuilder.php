@@ -92,7 +92,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 		$platform = $this->getPlatform();
 		$table = $this->getTable();
 
-		$sql .= "INSERT INTO ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($this->getTable()->getName()))." (";
+		$sql .= "INSERT INTO ".$this->quoteIdentifier($this->prefixTablename($this->getTable()->getName()))." (";
 
 		// add column names to SQL
 		$colNames = array();

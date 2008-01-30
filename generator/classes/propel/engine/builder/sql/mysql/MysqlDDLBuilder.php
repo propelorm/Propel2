@@ -66,7 +66,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 	protected function addDropStatements(&$script)
 	{
 		$script .= "
-DROP TABLE IF EXISTS ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($this->getTable()->getName())).";
+DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->prefixTablename($this->getTable()->getName())).";
 ";
 	}
 
@@ -104,7 +104,7 @@ DROP TABLE IF EXISTS ".$this->quoteIdentifier(DataModelBuilder::prefixTablename(
 
 		$script .= "
 
-CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->getName()))."
+CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
 (
 	";
 
@@ -277,7 +277,7 @@ CREATE TABLE ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($table->
 			}
 			$str = "CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
 		FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).")
-		REFERENCES ".$this->quoteIdentifier(DataModelBuilder::prefixTablename($fk->getForeignTableName())) . " (".$this->getColumnList($fk->getForeignColumns()).")";
+		REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName())) . " (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$str .= "
 		ON UPDATE ".$fk->getOnUpdate();

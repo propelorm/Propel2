@@ -109,7 +109,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
 	 */
 	protected function getParentClassFilePath()
 	{
-		return $this->getFilePath($this->getParentClasspath());
+		return ClassTools::getFilePath($this->getParentClasspath());
 	}
 
 	/**

@@ -46,25 +46,13 @@ class Index extends XMLElement {
 	private $indexColumnSizes = array();
 
 	/**
-	 * Creates a new instance with default characteristics (no name or
-	 * parent table, small column list size allocation, non-unique).
+	 * Creates a new Index instance.
 	 *
-	 * @param      Table $table
-	 * @param      array $indexColumns
+	 * @param      string $name
 	 */
-	public function __construct(Table $table, $indexColumns = array())
+	public function __construct($name=null)
 	{
-		$this->indexColumns = $indexColumns;
-		$this->setTable($table);
-		if (!empty($indexColumns)) {
-
-			$this->createName();
-
-			if (self::DEBUG) {
-				print("Created Index named " . $this->getName()
-						. " with " . count($indexColumns) . " columns\n");
-			}
-		}
+		$this->indexName = $name;
 	}
 
 	private function createName()
@@ -183,14 +171,37 @@ class Index extends XMLElement {
 
 	/**
 	 * Adds a new column to an index.
-	 * @param      array $attrib The attribute array from XML parser.
+	 * @param      mixed $data Column or attributes from XML.
 	 */
-	public function addColumn($attrib)
+	public function addColumn($data)
 	{
-		$name = $attrib["name"];
-		$this->indexColumns[] = $name;
-		if (isset($attrib["size"])) {
-			$this->indexColumnSizes[$name] = $attrib["size"];
+		if ($data instanceof Column) {
+			$column = $data;
+			$this->indexColumns[] = $column->getName();
+			if ($column->getSize()) {
+				$this->indexColumnSizes[$column->getName()] = $column->getSize();
+			}
+		} else {
+			$attrib = $data;
+			$name = $attrib["name"];
+			$this->indexColumns[] = $name;
+			if (isset($attrib["size"])) {
+				$this->indexColumnSizes[$name] = $attrib["size"];
+			}
+		}
+	}
+	
+	/**
+	 * Sets array of columns to use for index.
+	 *
+	 * @param      array $indexColumns Column[]
+	 */
+	public function setColumns(array $indexColumns)
+	{
+		$this->indexColumns = array();
+		$this->indexColumnSizes = array();
+		foreach($indexColumns as $col) {
+			$this->addColumn($col);
 		}
 	}
 
@@ -254,23 +265,18 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * String representation of the index. This is an xml representation.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-
-		$result = " <index name=\""
-			  . $this->getName()
-			  .'"';
-
-		$result .= ">\n";
-
-		for ($i=0, $size=count($this->indexColumns); $i < $size; $i++) {
-			$result .= "  <index-column name=\""
-				. $this->indexColumns[$i]
-				. "\"/>\n";
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+		
+		$idxNode = $node->appendChild($doc->createElement('index'));
+		$idxNode->setAttribute('name', $this->getName());
+		
+		foreach($this->indexColumns as $colname) {
+			$idxColNode = $idxNode->appendChild($doc->createElement('index-column'));
+			$idxColNode->setAttribute('name', $colname);
 		}
-		$result .= " </index>\n";
-		return $result;
 	}
 }

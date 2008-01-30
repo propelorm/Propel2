@@ -176,28 +176,29 @@ class Rule extends XMLElement {
 	 */
 	public function getMessage()
 	{
-	  $message = str_replace('${value}', $this->getValue(), $this->message);
-	  return $message;
+		$message = str_replace('${value}', $this->getValue(), $this->message);
+		return $message;
 	}
 
 	/**
-	 * Create XML (string) representation of this object.
-	 * @return     string
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-	  $result = "<rule name=\"" . $this->getName() . "\" ";
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+		
+		$ruleNode = $node->appendChild($doc->createElement('rule'));
+		$ruleNode->setAttribute('name', $this->getName());
 
-	  if ($this->getValue() !== null) {
-		$result .= "value=\"" . $this->getValue(). "\" ";
-	  }
-	  if ($this->getClass() !== null) {
-		  $result .= "class=\"".$this->getClass()."\" ";
-	  }
-	  $result .= "message=\"" . $this->getMessage() . "\" ";
-	  $result .= "/>\n";
-
-	  return $result;
+		if ($this->getValue() !== null) {
+			$ruleNode->setAttribute('value', $this->getValue());
+		}
+		
+		if ($this->getClass() !== null) {
+			$ruleNode->setAttribute('class', $this->getClass());
+		}
+		
+		$ruleNode->setAttribute('message', $this->getMessage());
 	}
 
 }

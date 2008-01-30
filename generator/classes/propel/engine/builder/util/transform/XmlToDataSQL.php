@@ -32,11 +32,18 @@ require_once 'phing/parser/AbstractHandler.php';
 class XmlToDataSQL extends AbstractHandler {
 
 	/**
+	 * The GeneratorConfig associated with the build.
+	 *
+	 * @var        GeneratorConfig
+	 */
+	private $generatorConfig;
+	
+	/**
 	 * The database.
 	 *
-	 * @var Database
+	 * @var        Database
 	 */
-	private        $database;
+	private $database;
 
 	/**
 	 * The output writer for the SQL file.
@@ -97,10 +104,13 @@ class XmlToDataSQL extends AbstractHandler {
 	 * the XML file.
 	 *
 	 * @param      Database $database
+	 * @param      GeneratorConfig $config
+	 * @param      string $encoding Database encoding
 	 */
-	public function __construct(Database $database, $encoding = 'iso-8859-1')
+	public function __construct(Database $database, GeneratorConfig $config, $encoding = 'iso-8859-1')
 	{
 		$this->database = $database;
+		$this->generatorConfig = $config;
 		$this->encoding = $encoding;
 	}
 
@@ -117,7 +127,7 @@ class XmlToDataSQL extends AbstractHandler {
 		// Reset some vars just in case this is being run multiple times.
 		$this->currTableName = $this->currBuilder = null;
 
-		$this->builderClazz = DataModelBuilder::getBuilderClass('datasql');
+		$this->builderClazz = $this->generatorConfig->getBuilderClassname('datasql');
 
 		try {
 			$fr = new FileReader($xmlFile);
@@ -173,7 +183,7 @@ class XmlToDataSQL extends AbstractHandler {
 					}
 						
 					$this->currTableName = $table->getName();
-					$this->currBuilder = DataModelBuilder::builderFactory($table, 'datasql');
+					$this->currBuilder = $this->generatorConfig->getConfiguredBuilder($table, 'datasql');
 						
 					$this->sqlWriter->write($this->currBuilder->getTableStartSql());
 				}

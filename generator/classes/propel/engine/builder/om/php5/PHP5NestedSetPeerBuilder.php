@@ -200,15 +200,15 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
-				$left_colname = DataModelBuilder::prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$left_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
 			if ($col->isNestedSetRightKey()) {
-				$right_colname = DataModelBuilder::prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$right_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
 			if ($col->isTreeScopeKey()) {
-				$scope_colname = DataModelBuilder::prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$scope_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
 			if (!empty($right_name) && !empty($left_colname) && !empty($scope_colname)) {

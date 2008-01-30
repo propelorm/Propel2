@@ -32,8 +32,20 @@ include_once 'propel/engine/database/model/PropelTypes.php';
  */
 class DefaultPlatform implements Platform {
 
+	/**
+	 * Mapping from Propel types to Domain objects.
+	 *
+	 * @var        array
+	 */
 	private $schemaDomainMap;
-
+	
+	/**
+	 * GeneratorConfig object holding build properties.
+	 *
+	 * @var        GeneratorConfig
+	 */
+	private $generatorConfig;
+	
 	/**
 	 * @var        PDO Database connection.
 	 */
@@ -45,6 +57,7 @@ class DefaultPlatform implements Platform {
 	 */
 	public function __construct(PDO $con = null)
 	{
+		if ($con) $this->setConnection($con);
 		$this->initialize();
 	}
 
@@ -56,7 +69,41 @@ class DefaultPlatform implements Platform {
 	{
 		$this->con = $con;
 	}
-
+	
+	/**
+	 * Sets the GeneratorConfig to use in the parsing.
+	 *
+	 * @param      GeneratorConfig $config
+	 */
+	public function setGeneratorConfig(GeneratorConfig $config)
+	{
+		$this->generatorConfig = $config;
+	}
+	
+	/**
+	 * Gets the GeneratorConfig option.
+	 * 
+	 * @return     GeneratorConfig
+	 */
+	public function getGeneratorConfig()
+	{
+		return $this->generatorConfig;
+	}
+	
+	/**
+	 * Gets a specific propel (renamed) property from the build.
+	 *
+	 * @param      string $name
+	 * @return     mixed
+	 */
+	protected function getBuildProperty($name)
+	{
+		if ($this->generatorConfig !== null) {
+			return $this->generatorConfig->getBuildProperty($name);
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns the database connection to use for this Platform class.
 	 * @return     PDO The database connection or NULL if none has been set.
@@ -65,7 +112,10 @@ class DefaultPlatform implements Platform {
 	{
 		return $this->con;
 	}
-
+	
+	/**
+	 * Initialize the type -> Domain mapping.
+	 */
 	protected function initialize()
 	{
 		$this->schemaDomainMap = array();

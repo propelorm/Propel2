@@ -143,7 +143,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
 		$targetDatabase = $this->getTargetDatabase();
 
-		$platform = $this->getPlatformForTargetDatabase();
+		$platform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
 		// Load the Data XML -> DB Name properties
 		$map = new Properties();
@@ -153,10 +153,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 			throw new BuildException("Cannot open and process the datadbmap!", $ioe);
 		}
 
-		DataModelBuilder::setBuildProperties($this->getPropelProperties());
-
-		// Parse each file in teh data -> db map
-
+		// Parse each file in the data -> db map
 		foreach ($map->keys() as $dataXMLFilename) {
 
 			$dataXMLFile = new PhingFile($this->srcDir, $dataXMLFilename);

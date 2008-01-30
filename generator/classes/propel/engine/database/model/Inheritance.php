@@ -141,24 +141,18 @@ class Inheritance extends XMLElement {
 	}
 
 	/**
-	 * String representation of the foreign key. This is an xml representation.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = " <inheritance key=\""
-			  . $this->key
-			  . "\" class=\""
-			  . $this->className
-			  . '"';
-
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+		
+		$inherNode = $node->appendChild($doc->createElement('inheritance'));
+		$inherNode->setAttribute('key', $this->key);
+		$inherNode->setAttribute('class', $this->className);
+		
 		if ($this->ancestor !== null) {
-			$result .= " extends=\""
-				  . $this->ancestor
-				  . '"';
+			$inherNode->setAttribute('extends', $this->ancestor);
 		}
-
-		$result .= "/>";
-
-		return $result;
 	}
 }

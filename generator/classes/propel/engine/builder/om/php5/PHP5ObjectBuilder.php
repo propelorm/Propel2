@@ -1888,7 +1888,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 		$tblFK = $this->getForeignTable($fk);
 
-		$joinTableObjectBuilder = OMBuilder::getNewObjectBuilder($tblFK);
+		$joinTableObjectBuilder = $this->getNewObjectBuilder($tblFK);
 
 		$className = $joinTableObjectBuilder->getObjectClassname();
 		$varName = $this->getFKVarName($fk);
@@ -1985,8 +1985,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 
-		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($this->getForeignTable($fk));
-		$fkObjectBuilder = OMBuilder::getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
+		$fkPeerBuilder = $this->getNewPeerBuilder($this->getForeignTable($fk));
+		$fkObjectBuilder = $this->getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
 		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
 
 		$script .= "
@@ -2101,7 +2101,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 
-		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($tblFK);
+		$fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
 
 		$lastTable = "";
 		foreach ($tblFK->getForeignKeys() as $fk2) {
@@ -2217,7 +2217,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addRefFKAttributes(&$script, ForeignKey $refFK)
 	{
-		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		if ($refFK->isLocalPrimaryKey()) {
@@ -2296,7 +2296,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$tblFK = $refFK->getTable();
 
-		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		$collName = $this->getRefFKCollVarName($refFK);
@@ -2334,7 +2334,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		
-		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($refFK->getTable());
+		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
@@ -2428,7 +2428,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$tblFK = $refFK->getTable();
 		
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		$fkPeerBuilder = OMBuilder::getNewPeerBuilder($refFK->getTable());
+		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
@@ -2520,8 +2520,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 		$tblFK = $refFK->getTable();
 
-		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
-		$joinedTablePeerBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$joinedTablePeerBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		$varName = $this->getPKRefFKVarName($refFK);
@@ -2577,7 +2577,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$tblFK = $refFK->getTable();
 
-		$joinedTableObjectBuilder = OMBuilder::getNewObjectBuilder($refFK->getTable());
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		$varName = $this->getPKRefFKVarName($refFK);

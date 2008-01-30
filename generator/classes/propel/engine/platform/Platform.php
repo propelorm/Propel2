@@ -57,6 +57,20 @@ interface Platform {
 	public function getConnection();
 
 	/**
+	 * Sets the GeneratorConfig which contains any generator build properties.
+	 *
+	 * @param      GeneratorConfig $config
+	 */
+	public function setGeneratorConfig(GeneratorConfig $config);
+	
+	/**
+	 * Gets the GeneratorConfig object.
+	 * 
+	 * @return     GeneratorConfig
+	 */
+	public function getGeneratorConfig();
+	
+	/**
 	 * Returns the short name of the database type that this platform represents.
 	 * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
 	 * @return     string

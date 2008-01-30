@@ -22,6 +22,7 @@
 
 //include_once 'phing/tasks/ext/CapsuleTask.php';
 require_once 'phing/Task.php';
+include_once 'propel/engine/GeneratorConfig.php';
 include_once 'propel/engine/database/model/AppData.php';
 include_once 'propel/engine/database/model/Database.php';
 include_once 'propel/engine/database/transform/XmlToAppData.php';
@@ -145,6 +146,13 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * @var        PDO
 	 */
 	private $conn = false;
+	
+	/**
+	 * An initialized GeneratorConfig object containing the converted Phing props.
+	 *
+	 * @var        GeneratorConfig
+	 */
+	private $generatorConfig;
 
 	/**
 	 * Return the data models that have been
@@ -395,43 +403,6 @@ abstract class AbstractPropelDataModelTask extends Task {
 	}
 
 	/**
-	 * Get the Platform class based on the target database type.
-	 * @return     Platform Object that implements the Platform interface.
-	 */
-	protected function getPlatformForTargetDatabase()
-	{
-
-		$classpath = $this->getPropelProperty("platformClass");
-		if (empty($classpath)) {
-			throw new BuildException("Unable to find class path for '$propname' property.");
-		}
-
-		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
-		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
-		$lastdotpos = strrpos($classpath, '.');
-		if ($lastdotpos !== null) {
-			$classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
-		} else {
-			$classpath = ucfirst($classpath);
-		}
-
-		if (empty($classpath)) {
-			throw new BuildException("Unable to find class path for '$propname' property.");
-		}
-
-		$clazz = Phing::import($classpath);
-		$platform = new $clazz();
-
-		if (!$platform instanceof Platform) {
-			throw new BuildException("Specified platform class ($classpath) does not implement Platform interface.", $this->getLocation());
-		}
-
-		$platform->setConnection($this->getConnection());
-
-		return $platform;
-	}
-
-	/**
 	 * Gets all matching XML schema files and loads them into data models for class.
 	 * @return     void
 	 */
@@ -446,7 +417,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 			$dataModelFiles = $ds->getIncludedFiles();
 
-			$platform = $this->getPlatformForTargetDatabase();
+			$platform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
 			// Make a transaction for each file
 			foreach ($dataModelFiles as $dmFilename) {
@@ -595,45 +566,18 @@ abstract class AbstractPropelDataModelTask extends Task {
 	}
 
 	/**
-	 * Fetches the propel.xxx properties from project, renaming the propel.xxx properties to just xxx.
-	 *
-	 * Also, renames any xxx.yyy properties to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-	 *
-	 * @return     array Assoc array of properties.
+	 * Gets the GeneratorConfig object for this task or creates it on-demand.
+	 * @return     GeneratorConfig
 	 */
-	protected function getPropelProperties()
+	protected function getGeneratorConfig()
 	{
-		$allProps = $this->getProject()->getProperties();
-		$renamedPropelProps = array();
-		foreach ($allProps as $key => $propValue) {
-			if (strpos($key, "propel.") === 0) {
-				$newKey = substr($key, strlen("propel."));
-				$j = strpos($newKey, '.');
-				while ($j !== false) {
-					$newKey =  substr($newKey, 0, $j) . ucfirst(substr($newKey, $j + 1));
-					$j = strpos($newKey, '.');
-				}
-				$renamedPropelProps[$newKey] = $propValue;
-			}
+		if ($this->generatorConfig === null) {
+			$this->generatorConfig = new GeneratorConfig();
+			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties()); 
 		}
-		return $renamedPropelProps;
+		return $this->generatorConfig;
 	}
-
-	/**
-	 * Fetches a single propel.xxx property from project, using "converted" property names.
-	 * @see        getPropelProperties()
-	 * @param      string $name Name of property to fetch (in converted CamelCase)
-	 * @return     string The value of the property (or NULL if not set)
-	 */
-	protected function getPropelProperty($name)
-	{
-		$props = $this->getPropelProperties();
-		if (isset($props[$name])) {
-			return $props[$name];
-		}
-		return null; // just to be explicit
-	}
-
+	
 	/**
 	 * Checks this class against Basic requrements of any propel datamodel task.
 	 *

@@ -37,33 +37,28 @@ include_once 'propel/engine/database/model/Index.php';
 class Unique extends Index {
 
 	/**
-	 * Default constructor.
-	 */
-	public function __construct(Table $table, $indexColumns = array())
-	{
-	}
-
-	/**
 	 * Returns <code>true</code>.
 	 */
 	public function isUnique()
 	{
 		return true;
 	}
-
+	
 	/**
-	 * String representation of the index. This is an xml representation.
+	 * @see XMLElement::appendXml(DOMNode)
 	 */
-	public function toString()
+	public function appendXml(DOMNode $node)
 	{
-		$result = " <unique name=\"" . $this->getName() . "\">\n";
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
+		
+		$uniqueNode = $node->appendChild($doc->createElement('unique'));
+		$uniqueNode->setAttribute('name', $this->getName());
 		$columns = $this->getColumns();
-		for ($i=0, $size=count($columns); $i < $size; $i++) {
-			$result .= "  <unique-column name=\""
-				. $columns[$i]
-				. "\"/>\n";
+		foreach($this->getColumns() as $colname) {
+			$uniqueColNode = $uniqueNode->appendChild($doc->createElement('unique-column'));
+			$uniqueColNode->setAttribute('name', $colname);
 		}
-		$result .= " </unique>\n";
-		return $result;
 	}
+	
+	
 }
