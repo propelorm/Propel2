@@ -43,11 +43,30 @@ abstract class SchemaParser {
 	protected $warnings = array();
 
 	/**
+	 * @param      PDO $dbh Optional database connection
+	 */
+	public function __construct(PDO $dbh = null)
+	{
+		if ($dbh) $this->setConnection($dbh);
+	}
+	
+	/**
+	 * Sets the database connection.
+	 *
 	 * @param      PDO $dbh
 	 */
-	public function __construct(PDO $dbh)
+	public function setConnection(PDO $dbh)
 	{
-		$this->dbh = $con;
+		$this->dbh = $dbh;
+	}
+	
+	/**
+	 * Gets the database connection.
+	 * @return     PDO
+	 */
+	public function getConnection()
+	{
+		return $this->dbh;
 	}
 
 	/**
