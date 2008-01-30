@@ -144,7 +144,7 @@ class PropelCreoleTransformTask extends Task {
 		'required' => PropelCreoleTransformTask::VALIDATORS_REQUIRED,
 		'unique' => PropelCreoleTransformTask::VALIDATORS_UNIQUE,
 		'all' => PropelCreoleTransformTask::VALIDATORS_ALL,
-		);
+	);
 
 	/**
 	 * Defines messages that are added to validators
@@ -156,74 +156,74 @@ class PropelCreoleTransformTask extends Task {
 		'maxlength' => array (
 			'msg' => 'The field %s must be not longer than %s characters.',
 			'var' => array('colName', 'value')
-			),
+	),
 		'maxvalue' => array (
 			'msg' => 'The field %s must be not greater than %s.',
 			'var' => array('colName', 'value')
-			),
+	),
 		'type' => array (
 			'msg' => 'The field %s is not a valid value.',
 			'var' => array('colName')
-			),
+	),
 		'required' => array (
 			'msg' => 'The field %s is required.',
 			'var' => array('colName')
-			),
+	),
 		'unique' => array (
 			'msg' => 'This %s already exists in table %s.',
 			'var' => array('colName', 'tableName')
-			),
-			);
+	),
+	);
 
-			public function getDbSchema()
-			{
-				return $this->dbSchema;
-			}
+	public function getDbSchema()
+	{
+		return $this->dbSchema;
+	}
 
-			public function setDbSchema($dbSchema)
-			{
-				$this->dbSchema = $dbSchema;
-			}
+	public function setDbSchema($dbSchema)
+	{
+		$this->dbSchema = $dbSchema;
+	}
 
-			public function setDbUrl($v)
-			{
-				$this->dbUrl = $v;
-			}
+	public function setDbUrl($v)
+	{
+		$this->dbUrl = $v;
+	}
 
-			public function setDbDriver($v)
-			{
-				$this->dbDriver = $v;
-			}
+	public function setDbDriver($v)
+	{
+		$this->dbDriver = $v;
+	}
 
-			public function setDbUser($v)
-			{
-				$this->dbUser = $v;
-			}
+	public function setDbUser($v)
+	{
+		$this->dbUser = $v;
+	}
 
-			public function setDbPassword($v)
-			{
-				$this->dbPassword = $v;
-			}
+	public function setDbPassword($v)
+	{
+		$this->dbPassword = $v;
+	}
 
-			public function setDbEncoding($v)
-			{
-	   $this->dbEncoding = $v;
-			}
+	public function setDbEncoding($v)
+	{
+		$this->dbEncoding = $v;
+	}
 
-			public function setOutputFile($v)
-			{
-				$this->xmlSchema = $v;
-			}
+	public function setOutputFile($v)
+	{
+		$this->xmlSchema = $v;
+	}
 
-			public function setSamePhpName($v)
-			{
-				$this->samePhpName = $v;
-			}
+	public function setSamePhpName($v)
+	{
+		$this->samePhpName = $v;
+	}
 
-			public function setAddVendorInfo($v)
-			{
-				$this->addVendorInfo = (boolean) $v;
-			}
+	public function setAddVendorInfo($v)
+	{
+		$this->addVendorInfo = (boolean) $v;
+	}
 
 	/**
 	 * Sets set validator bitfield from propel.addValidators property
