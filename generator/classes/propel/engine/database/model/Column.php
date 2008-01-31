@@ -795,16 +795,6 @@ class Column extends XMLElement {
 			$colNode->setAttribute('phpName', $this->phpName);
 		}
 		
-		if ($this->isPrimaryKey) {
-			$colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
-		}
-		
-		if ($this->isNotNull) {
-			$colNode->setAttribute('required', 'true');
-		} else {
-			$colNode->setAttribute('required', 'false');
-		}
-
 		$colNode->setAttribute('type', $this->getType());
 		
 		$domain = $this->getDomain();
@@ -815,6 +805,20 @@ class Column extends XMLElement {
 
 		if ($domain->getScale() !== null) {
 			$colNode->setAttribute('scale', $domain->getScale());
+		}
+		
+		if ($this->isPrimaryKey) {
+			$colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
+		}
+		
+		if ($this->isAutoIncrement) {
+			$colNode->setAttribute('autoIncrement', var_export($this->isAutoIncrement, true));
+		}
+		
+		if ($this->isNotNull) {
+			$colNode->setAttribute('required', 'true');
+		} else {
+			$colNode->setAttribute('required', 'false');
 		}
 
 		if ($domain->getDefaultValue() !== null) {

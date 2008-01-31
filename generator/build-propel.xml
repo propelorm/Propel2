@@ -317,6 +317,7 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-schema-reverse
+      databaseName="${propel.project}"
       dbSchema="${propel.database.schema}"
       dbEncoding="${propel.database.encoding}"
       url="${propel.database.buildUrl}"

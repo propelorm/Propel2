@@ -53,11 +53,11 @@ class PropelSchemaReverseTask extends PDOTask {
 	protected $dbSchema;
 	
 	/**
-	 * The name of the database.
+	 * The datasource name (used for <database name=""> in schema.xml)
 	 *
 	 * @var        string
 	 */
-	protected $dbName;
+	protected $databaseName;
 	
 	/**
 	 * DOM document produced.
@@ -232,26 +232,25 @@ class PropelSchemaReverseTask extends PDOTask {
 	}
 	
 	/**
-	 * Gets the database name.
+	 * Gets the datasource name.
 	 *
 	 * @return     string
 	 */
-	public function getDbName()
+	public function getDatabaseName()
 	{
-		return $this->dbName;
+		return $this->databaseName;
 	}
 	
 	/**
-	 * Sets the database name.
+	 * Sets the datasource name.
 	 * 
-	 * This is not necessary for the connection, but will be used as the <database name="">
-	 * value in the generated schema.xml
+	 * This will be used as the <database name=""> value in the generated schema.xml
 	 *
 	 * @param      string $v
 	 */
-	public function setDbName($v)
+	public function setDatabaseName($v)
 	{
-		$this->dbName = $v;
+		$this->databaseName = $v;
 	}
 	
 	/**
@@ -323,6 +322,10 @@ class PropelSchemaReverseTask extends PDOTask {
 	 */
 	public function main()
 	{
+		if (!$this->getDatabaseName()) {
+			throw new BuildException("databaseName attribute is required for schema reverse engineering", $this->getLocation());
+		}
+		
 		//(not yet supported) $this->log("schema : " . $this->dbSchema);
 		//DocumentTypeImpl docType = new DocumentTypeImpl(null, "database", null,
 		//	   "http://jakarta.apache.org/turbine/dtd/database.dtd");
@@ -373,8 +376,11 @@ class PropelSchemaReverseTask extends PDOTask {
 		$config = $this->getGeneratorConfig();
 		$con = $this->getConnection();
 		
-		$database = new Database($this->getDbName());
+		$database = new Database($this->getDatabaseName());
 		$database->setPlatform($config->getConfiguredPlatform($con));
+		
+		// Some defaults ...
+		$database->setDefaultIdMethod(IDMethod::NATIVE);
 		
 		$parser = $config->getConfiguredSchemaParser($con);
 		
