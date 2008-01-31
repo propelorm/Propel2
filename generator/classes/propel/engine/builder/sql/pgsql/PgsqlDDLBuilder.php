@@ -129,7 +129,7 @@ class PgsqlDDLBuilder extends DDLBuilder {
 DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." CASCADE;
 ";
 
-		if ($table->getIdMethod() == "native" && $table->getIdMethodParameters() != null) {
+		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters()) {
 			$script .= "
 DROP SEQUENCE ".$this->quoteIdentifier($this->prefixTablename(strtolower($this->getSequenceName()))).";
 ";
@@ -224,6 +224,37 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getNam
 	}
 
 	/**
+	 * Override to provide sequence names that conform to postgres' standard when
+	 * no id-method-parameter specified.
+	 * 
+	 * @see        DataModelBuilder::getSequenceName()
+	 * @return     string
+	 */
+	public function getSequenceName()
+	{
+		$table = $this->getTable();
+		static $longNamesMap = array();
+		$result = null;
+		if ($table->getIdMethod() == IDMethod::NATIVE) {
+			$idMethodParams = $table->getIdMethodParameters();
+			if (empty($idMethodParams)) {
+				$result = null;
+				// We're going to ignore a check for max length (mainly
+				// because I'm not sure how Postgres would handle this w/ SERIAL anyway)
+				foreach($table->getColumns() as $col) {
+					if ($col->isAutoIncrement()) {
+						$result = $table->getName() . '_' . $col->getName() . '_seq';
+						break; // there's only one auto-increment column allowed
+					}
+				}
+			} else {
+				$result = $idMethodParams[0]->getValue();
+			}
+		}
+		return $result;
+	}
+	
+	/**
 	 * Adds CREATE SEQUENCE statements for this table.
 	 *
 	 */
@@ -232,7 +263,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getNam
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 
-		if ($table->getIdMethod() == "native" && $table->getIdMethodParameters() != null) {
+		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters() != null) {
 			$script .= "
 CREATE SEQUENCE ".$this->quoteIdentifier($this->prefixTablename(strtolower($this->getSequenceName()))).";
 ";

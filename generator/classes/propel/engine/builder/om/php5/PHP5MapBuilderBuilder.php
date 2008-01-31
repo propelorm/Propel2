@@ -195,7 +195,8 @@ class ".$this->getClassname()." implements MapBuilder {
 
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-
+		$ddlBuilder = $this->getDDLBuilder();
+		
 		$script .= "
 	/**
 	 * The doBuild() method builds the DatabaseMap
@@ -227,13 +228,9 @@ class ".$this->getClassname()." implements MapBuilder {
 			$script .= "
 		\$tMap->setPrimaryKeyMethodInfo('".$imp->getValue()."');
 ";
-		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SEQUENCE)) {
+		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == Platform::SEQUENCE || $platform->getNativeIdMethod() == Platform::SERIAL)) {
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$this->getSequenceName()."');
-";
-		} elseif ($table->getIdMethod() == "native" && ($platform->getNativeIdMethod() == Platform::SERIAL)) {
-			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$this->getSerialName()."');
+		\$tMap->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');
 ";
 		}
 

@@ -62,7 +62,6 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 			foreach ($row->getColumnValues() as $colValue) {
 				if ($colValue->getColumn()->isAutoIncrement()) {
 					if ($colValue->getValue() > $this->maxSeqVal) {
-						print "Setting maxSeqValue = " . $colValue->getValue() . PHP_EOL;
 						$this->maxSeqVal = $colValue->getValue(); 
 					}
 				}
@@ -77,7 +76,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 		$table = $this->getTable();
 		$sql = "";
 		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
-			$seqname = $this->prefixTablename(strtolower($this->getSequenceName()));
+			$seqname = $this->prefixTablename($this->getDDLBuilder()->getSequenceName());
 			$sql .= "SELECT pg_catalog.setval('$seqname', ".((int)$this->maxSeqVal).");
 ";
 		}

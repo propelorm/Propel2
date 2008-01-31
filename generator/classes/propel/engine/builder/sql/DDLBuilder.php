@@ -48,7 +48,40 @@ abstract class DDLBuilder extends DataModelBuilder {
 		$this->addForeignKeys($script);
 		return $script;
 	}
-
+	
+	/**
+	 * Gets the name to use for creating a sequence for the current table.
+	 * 
+	 * This will create a new name or use one specified in an id-method-parameter
+	 * tag, if specified.
+	 * 
+	 * @return     string Sequence name for this table.
+	 */
+	public function getSequenceName()
+	{
+		$table = $this->getTable();
+		static $longNamesMap = array();
+		$result = null;
+		if ($table->getIdMethod() == IDMethod::NATIVE) {
+			$idMethodParams = $table->getIdMethodParameters();
+			if (empty($idMethodParams)) {
+				$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
+				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
+					if (!isset($longNamesMap[$table->getName()])) {
+						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
+					}
+					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
+				}
+				else {
+					$result = $table->getName() . "_SEQ";
+				}
+			} else {
+				$result = $idMethodParams[0]->getValue();
+			}
+		}
+		return $result;
+	}
+	
 	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string

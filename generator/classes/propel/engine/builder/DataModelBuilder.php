@@ -55,6 +55,103 @@ abstract class DataModelBuilder {
 	 * @var        array string[]
 	 */
 	private $warnings = array();
+	
+	/**
+	 * Peer builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $peerBuilder;
+
+	/**
+	 * Stub Peer builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $stubPeerBuilder;
+
+	/**
+	 * Object builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $objectBuilder;
+
+	/**
+	 * Stub Object builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $stubObjectBuilder;
+
+	/**
+	 * MapBuilder builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $mapBuilderBuilder;
+
+	/**
+	 * Stub Interface builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $interfaceBuilder;
+
+	/**
+	 * Stub child object for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $multiExtendObjectBuilder;
+
+	/**
+	 * Node object builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $nodeBuilder;
+
+	/**
+	 * Node peer builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $nodePeerBuilder;
+
+	/**
+	 * Stub node object builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $stubNodeBuilder;
+
+	/**
+	 * Stub node peer builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $stubNodePeerBuilder;
+
+	/**
+	 * NestedSet object builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $nestedSetBuilder;
+
+	/**
+	 * NestedSet peer builder for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $nestedSetPeerBuilder;
+
+	/**
+	 * The DDL builder for current table.
+	 * @var        DDLBuilder
+	 */
+	private $ddlBuilder;
+	
+	/**
+	 * The Data-SQL builder for current table.
+	 * @var        DataSQLBuilder 
+	 */
+	private $dataSqlBuilder;
+	
+	/**
+	 * The Pluralizer class to use.
+	 * @var        Pluralizer
+	 */
+	private $pluralizer;
+	
 
 	/**
 	 * Creates new instance of DataModelBuilder subclass.
@@ -63,6 +160,226 @@ abstract class DataModelBuilder {
 	public function __construct(Table $table)
 	{
 		$this->table = $table;
+	}
+	
+	/**
+	 * Returns new or existing Peer builder class for this table.
+	 * @return     PeerBuilder
+	 */
+	public function getPeerBuilder()
+	{
+		if (!isset($this->peerBuilder)) {
+			$this->peerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peer');
+		}
+		return $this->peerBuilder;
+	}
+
+	/**
+	 * Returns new or existing Pluralizer class.
+	 * @return     Pluralizer
+	 */
+	public function getPluralizer()
+	{
+		if (!isset($this->pluralizer)) {
+			$this->pluralizer = $this->getGeneratorConfig()->getConfiguredPluralizer();
+		}
+		return $this->pluralizer;
+	}
+
+	/**
+	 * Returns new or existing stub Peer builder class for this table.
+	 * @return     PeerBuilder
+	 */
+	public function getStubPeerBuilder()
+	{
+		if (!isset($this->stubPeerBuilder)) {
+			$this->stubPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peerstub');
+		}
+		return $this->stubPeerBuilder;
+	}
+
+	/**
+	 * Returns new or existing Object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getObjectBuilder()
+	{
+		if (!isset($this->objectBuilder)) {
+			$this->objectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
+		}
+		return $this->objectBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub Object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getStubObjectBuilder()
+	{
+		if (!isset($this->stubObjectBuilder)) {
+			$this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub'); 
+		}
+		return $this->stubObjectBuilder;
+	}
+
+	/**
+	 * Returns new or existing MapBuilder builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getMapBuilderBuilder()
+	{
+		if (!isset($this->mapBuilderBuilder)) {
+			$this->mapBuilderBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'mapbuilder'); 
+		}
+		return $this->mapBuilderBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub Interface builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getInterfaceBuilder()
+	{
+		if (!isset($this->interfaceBuilder)) {
+			$this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface'); 
+		}
+		return $this->interfaceBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub child object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getMultiExtendObjectBuilder()
+	{
+		if (!isset($this->multiExtendObjectBuilder)) {
+			$this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend'); 
+		}
+		return $this->multiExtendObjectBuilder;
+	}
+
+	/**
+	 * Returns new or existing node Object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getNodeBuilder()
+	{
+		if (!isset($this->nodeBuilder)) {
+			$this->nodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'node');
+		}
+		return $this->nodeBuilder;
+	}
+
+	/**
+	 * Returns new or existing node Peer builder class for this table.
+	 * @return     PeerBuilder
+	 */
+	public function getNodePeerBuilder()
+	{
+		if (!isset($this->nodePeerBuilder)) {
+			$this->nodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeer');
+		}
+		return $this->nodePeerBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub node Object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getStubNodeBuilder()
+	{
+		if (!isset($this->stubNodeBuilder)) {
+			$this->stubNodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodestub');
+		}
+		return $this->stubNodeBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub node Peer builder class for this table.
+	 * @return     PeerBuilder
+	 */
+	public function getStubNodePeerBuilder()
+	{
+		if (!isset($this->stubNodePeerBuilder)) {
+			$this->stubNodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeerstub');
+		}
+		return $this->stubNodePeerBuilder;
+	}
+
+	/**
+	 * Returns new or existing nested set object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getNestedSetBuilder()
+	{
+		if (!isset($this->nestedSetBuilder)) {
+			$this->nestedSetBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedset');
+		}
+		return $this->nestedSetBuilder;
+	}
+
+	/**
+	 * Returns new or existing nested set Peer builder class for this table.
+	 * @return     PeerBuilder
+	 */
+	public function getNestedSetPeerBuilder()
+	{
+		if (!isset($this->nestedSetPeerBuilder)) {
+			$this->nestedSetPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedsetpeer');
+		}
+		return $this->nestedSetPeerBuilder;
+	}
+	
+	/**
+	 * Returns new or existing ddl builder class for this table.
+	 * @return     DDLBuilder
+	 */
+	public function getDDLBuilder()
+	{
+		if (!isset($this->ddlBuilder)) {
+			$this->ddlBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'ddl');
+		}
+		return $this->ddlBuilder;
+	}
+	
+	/**
+	 * Returns new or existing data sql builder class for this table.
+	 * @return     DataSQLBuilder
+	 */
+	public function getDataSQLBuilder()
+	{
+		if (!isset($this->dataSqlBuilder)) {
+			$this->dataSqlBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'datasql');
+		}
+		return $this->dataSqlBuilder;
+	}
+
+	/**
+	 * Convenience method to return a NEW Peer class builder instance
+	 * .
+	 * This is used very frequently from the peer and object builders to get
+	 * a peer builder for a RELATED table.
+	 * 
+	 * @param      Table $table
+	 * @return     PeerBuilder
+	 */
+	public function getNewPeerBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peer');
+	}
+
+	/**
+	 * Convenience method to return a NEW Object class builder instance.
+	 * 
+	 * This is used very frequently from the peer and object builders to get
+	 * an object builder for a RELATED table.
+	 * 
+	 * @param      Table $table
+	 * @return     ObjectBuilder
+	 */
+	public function getNewObjectBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
 	}
 	
 	/**
@@ -193,50 +510,5 @@ abstract class DataModelBuilder {
 	{
 		return $this->getBuildProperty('tablePrefix') . $identifier;
 	}
-
-	/**
-	 * A name to use for creating a sequence if one is not specified.
-	 */
-	public function getSequenceName()
-	{
-		$table = $this->getTable();
-		static $longNamesMap = array();
-		$result = null;
-		if ($table->getIdMethod() == IDMethod::NATIVE) {
-			$idMethodParams = $table->getIdMethodParameters();
-			if ($idMethodParams === null) {
-				$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
-				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
-					if (!isset($longNamesMap[$table->getName()])) {
-						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
-					}
-					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
-				}
-				else {
-					$result = $table->getName() . "_SEQ";
-				}
-			} else {
-				$result = $idMethodParams[0]->getValue();
-			}
-		}
-		return $result;
-	}
-
-	/**
-	* A Name to use for the serials (dependant sequence in PostgreSQL)
-	*/
-	public function getSerialName()
-	{
-		$table = $this->getTable();
-
-		if ($table->getIdMethod() != IDMethod::NATIVE || !$table->hasAutoIncrementPrimaryKey()) {
-			return null;
-		}
-		foreach ($table->getPrimaryKey() as $col) {
-			if ($col->isAutoIncrement()) {
-				return $table->getName() . '_' . $col->getName() . '_seq';
-			}
-		}
-		return null;
-	}
+	
 }
