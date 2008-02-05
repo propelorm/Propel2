@@ -482,18 +482,27 @@ class BasePeer
 
 		if ($criteria->isUseTransaction()) $con->beginTransaction();
 
+		$needsComplexCount = ($criteria->getGroupByColumns() || $criteria->getOffset()  
+								|| $criteria->getLimit() || $criteria->getHaving() || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()));
+			
 		try {
 			
 			$params = array();
-			$selectSql = self::createSelectSql($criteria, $params);
 			
-			$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
+			/*if ($needsComplexCount) { */
+				$selectSql = self::createSelectSql($criteria, $params);
+				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
+			/*} else {
+				// Replace SELECT columns with COUNT(*)
+				$criteria->clearSelectColumns()->addSelectColumn('COUNT(*)');
+				$sql = self::createSelectSql($criteria, $params);
+				// FIXME - We don't have the table name since we just cleared the SELECT columns .... ! 
+			}*/
+			
 			$stmt = $con->prepare($sql);
-
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
-
 			$stmt->execute();
-
+			
 			if ($criteria->isUseTransaction()) $con->commit();
 
 		} catch (Exception $e) {

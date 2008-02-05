@@ -511,8 +511,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
-		// Set the correct dbName
-		\$criteria->setDbName(self::DATABASE_NAME);
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		\$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 		
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
