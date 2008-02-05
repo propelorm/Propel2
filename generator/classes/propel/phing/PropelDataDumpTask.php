@@ -269,7 +269,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 			. ($this->databaseUser ? " user: " . $this->databaseUser . "\n" : "")
 			. ($this->databasePassword ? " password: " . $this->databasePassword . "\n" : "");
 
-		$this->log($buf, PROJECT_MSG_VERBOSE);
+		$this->log($buf, Project::MSG_VERBOSE);
 
 		// 1) First create the Data XML -> database name map.
 		$this->createDataDbMap();
@@ -291,7 +291,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 						$url = str_replace("@DB@", $database->getName(), $this->databaseUrl);
 
 						if ($url !== $this->databaseUrl) {
-							$this->log("New (resolved) URL: " . $url, PROJECT_MSG_VERBOSE);
+							$this->log("New (resolved) URL: " . $url, Project::MSG_VERBOSE);
 						}
 
 						if (empty($url)) {
@@ -305,7 +305,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 						$doc->save($outFile->getAbsolutePath());
 
 					} catch (SQLException $se) {
-						$this->log("SQLException while connecting to DB: ". $se->getMessage(), PROJECT_MSG_ERR);
+						$this->log("SQLException while connecting to DB: ". $se->getMessage(), Project::MSG_ERR);
 						throw new BuildException($se);
 					}
 				} // if databaseName && database->getName == databaseName

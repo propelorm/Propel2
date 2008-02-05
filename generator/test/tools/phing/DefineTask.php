@@ -41,10 +41,10 @@ class DefineTask extends Task {
 		}
 		$const = strtoupper($this->name);
 		if (defined($const)) {
-			 $this->log("The constant $const has already been defined!", PROJECT_MSG_ERR);
+			 $this->log("The constant $const has already been defined!", Project::MSG_ERR);
 		} else {
 			define($const, $this->value);
-			$this->log("Defined $const with value " . var_export($this->value, true), PROJECT_MSG_INFO);
+			$this->log("Defined $const with value " . var_export($this->value, true), Project::MSG_INFO);
 		}
 	}
 }

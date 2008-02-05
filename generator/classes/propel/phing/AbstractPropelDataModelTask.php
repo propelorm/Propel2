@@ -275,7 +275,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	public function setOutputDirectory(PhingFile $outputDirectory) {
 		try {
 			if (!$outputDirectory->exists()) {
-				$this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),PROJECT_MSG_VERBOSE);
+				$this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),Project::MSG_VERBOSE);
 				if (!$outputDirectory->mkdirs()) {
 					throw new IOException("Unable to create Ouptut directory: " . $outputDirectory->getAbsolutePath());
 				}
@@ -386,7 +386,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 					. ($this->userId ? " user: " . $this->userId . "\n" : "")
 				. ($this->password ? " password: " . $this->password . "\n" : "");
 
-				$this->log($buf, PROJECT_MSG_VERBOSE);
+				$this->log($buf, Project::MSG_VERBOSE);
 
 				// Set user + password to null if they are empty strings
 				if (!$this->userId) { $this->userId = null; }
@@ -395,7 +395,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 					$this->conn = new PDO($this->url, $this->userId, $this->password);
 					$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				} catch (PDOException $x) {
-					$this->log("Unable to create a PDO connection: " . $x->getMessage(), PROJECT_MSG_WARN);
+					$this->log("Unable to create a PDO connection: " . $x->getMessage(), Project::MSG_WARN);
 				}
 			}
 		}
@@ -430,9 +430,9 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 				// normalize (or transform) the XML document using XSLT
 				if ($this->xslFile) {
-					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), PROJECT_MSG_VERBOSE);
+					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), Project::MSG_VERBOSE);
 					if (!class_exists('XSLTProcessor')) {
-						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", PROJECT_MSG_ERR);
+						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", Project::MSG_ERR);
 					} else {
 						// modify schema to include any external schema's (and remove the external-schema nodes)
 						$this->includeExternalSchemas($dom, $srcDir);
@@ -446,7 +446,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 						// now overwrite previous vars to point to newly transformed file
 						$xmlFile = new PhingFile($srcDir, $newXmlFilename);
 						$transformed->save($xmlFile->getAbsolutePath());
-						$this->log("\t- Using new (post-transformation) XML file: " . $xmlFile->getPath(), PROJECT_MSG_VERBOSE);
+						$this->log("\t- Using new (post-transformation) XML file: " . $xmlFile->getPath(), Project::MSG_VERBOSE);
 
 						$dom = new DomDocument('1.0', 'UTF-8');
 						$dom->load($xmlFile->getAbsolutePath());
@@ -455,7 +455,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 
 				// validate the XML document using XSD schema
 				if ($this->validate && $this->xsdFile) {
-					$this->log("Validating XML doc (".$xmlFile->getPath().") using schema file " . $this->xsdFile->getPath(), PROJECT_MSG_VERBOSE);
+					$this->log("Validating XML doc (".$xmlFile->getPath().") using schema file " . $this->xsdFile->getPath(), Project::MSG_VERBOSE);
 					if (!$dom->schemaValidate($this->xsdFile->getAbsolutePath())) {
 						throw new BuildException("XML schema file (".$xmlFile->getPath().") does not validate.  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).");		throw new EngineException("XML schema does not validate (using schema file $xsdFile).  See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).", $this->getLocation());
 					}

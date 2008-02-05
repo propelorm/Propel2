@@ -182,7 +182,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
 						$ddl .= $builder->build();
 						foreach ($builder->getWarnings() as $warning) {
-							$this->log($warning, PROJECT_MSG_WARN);
+							$this->log($warning, Project::MSG_WARN);
 						}
 					} else {
 						$this->log("\t + (skipping) " . $table->getName());

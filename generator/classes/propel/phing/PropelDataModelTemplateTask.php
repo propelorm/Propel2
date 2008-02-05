@@ -180,7 +180,7 @@ class PropelDataModelTemplateTask extends AbstractPropelDataModelTask {
 	public function populateContextProperties(Capsule $context)
 	{
 		foreach ($this->getGeneratorConfig()->getBuildProperties() as $key => $propValue) {
-			$this->log('Adding property ${' . $key . '} to context', PROJECT_MSG_DEBUG);
+			$this->log('Adding property ${' . $key . '} to context', Project::MSG_DEBUG);
 			$context->put($key, $propValue);
 		}
 	}

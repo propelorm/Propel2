@@ -301,7 +301,7 @@ class PropelSchemaReverseTask extends PDOTask {
 			// eval the expression
 			eval("\$v = $v;");
 		} else {
-			$this->log("\n\nERROR: NO VALIDATORS ADDED!\n\nThere is an error in propel.addValidators build property.\n\nAllowed tokens are: " . implode(', ', array_keys(self::$validatorBitMap)) . "\n\nAllowed operators are (like in php.ini):\n\n|    bitwise OR\n&    bitwise AND\n~    bitwise NOT\n\n", PROJECT_MSG_ERR);
+			$this->log("\n\nERROR: NO VALIDATORS ADDED!\n\nThere is an error in propel.addValidators build property.\n\nAllowed tokens are: " . implode(', ', array_keys(self::$validatorBitMap)) . "\n\nAllowed operators are (like in php.ini):\n\n|    bitwise OR\n&    bitwise AND\n~    bitwise NOT\n\n", Project::MSG_ERR);
 			$v = self::VALIDATORS_NONE;
 		}
 		$this->validatorBits = $v;
@@ -348,7 +348,7 @@ class PropelSchemaReverseTask extends PDOTask {
 			$out->close();
 			
 		} catch (Exception $e) {
-			$this->log("There was an error building XML from metadata: " . $e->getMessage(), PROJECT_MSG_ERR);
+			$this->log("There was an error building XML from metadata: " . $e->getMessage(), Project::MSG_ERR);
 		}
 		
 		$this->log("Schema reverse engineering finished");
