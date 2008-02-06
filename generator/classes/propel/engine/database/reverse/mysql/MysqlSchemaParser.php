@@ -149,7 +149,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$propelType = $this->getMappedPropelType($nativeType);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
-				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
+				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
 			}
 
 			$column = new Column($name);
