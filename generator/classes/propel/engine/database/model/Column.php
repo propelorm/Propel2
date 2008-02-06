@@ -530,11 +530,12 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Set if the column is a primary key or not
+	 * Set whether the column is a primary key or not.
+	 * @param boolean $v
 	 */
-	public function setPrimaryKey($pk)
+	public function setPrimaryKey($v)
 	{
-		$this->isPrimaryKey = (boolean) $pk;
+		$this->isPrimaryKey = (boolean) $v;
 	}
 
 	/**

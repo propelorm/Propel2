@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: PgsqlSchemaParser.php 949 2008-01-30 22:41:59Z hans $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -111,14 +111,9 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	 * Adds Columns to the specified table.
 	 *
 	 * @param      Table $table The Table model class to add columns to.
-	 * @param      int $oid The table OID
-	 * @param      string $version The database version.
 	 */
 	protected function addColumns(Table $table)
 	{
-
-		// Get the columns, types, etc.
-		// Based on code from pgAdmin3 (http://www.pgadmin.org/)
 		$stmt = $this->dbh->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
 
 		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
