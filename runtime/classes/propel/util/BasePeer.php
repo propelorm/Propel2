@@ -461,7 +461,8 @@ class BasePeer
 	}
 	
 	/**
-	 * Executes a COUNT query using a sub-select created by createSelectSql() and returns the statement.
+	 * Executes a COUNT query using either a simple SQL rewrite or, for more complex queries, a 
+	 * sub-select of the SQL created by createSelectSql() and returns the statement.
 	 *
 	 * @param      Criteria $criteria A Criteria.
 	 * @param      PropelPDO $con A PropelPDO connection to use.
@@ -489,15 +490,14 @@ class BasePeer
 			
 			$params = array();
 			
-			/*if ($needsComplexCount) { */
+			if ($needsComplexCount) {
 				$selectSql = self::createSelectSql($criteria, $params);
 				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
-			/*} else {
+			} else {
 				// Replace SELECT columns with COUNT(*)
 				$criteria->clearSelectColumns()->addSelectColumn('COUNT(*)');
-				$sql = self::createSelectSql($criteria, $params);
-				// FIXME - We don't have the table name since we just cleared the SELECT columns .... ! 
-			}*/
+				$sql = self::createSelectSql($criteria, $params); 
+			}
 			
 			$stmt = $con->prepare($sql);
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
@@ -903,7 +903,11 @@ class BasePeer
 				}
 			}
 		}
-
+		
+		if (empty($fromClause) && $criteria->getPrimaryTableName()) {
+			$fromClause[] = $criteria->getPrimaryTableName();
+		}
+		
 		// from / join tables quoten if it is necessary
 		if ($db->useQuoteIdentifier()) {
 			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);

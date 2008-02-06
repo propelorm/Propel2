@@ -139,7 +139,15 @@ class Criteria implements IteratorAggregate {
 
 	/** The name of the database. */
 	private $dbName;
-
+	
+	/**
+	 * The primary table for this Criteria. 
+	 * Useful in cases where there are no select or where 
+	 * columns.
+	 * @var string
+	 */
+	private $primaryTableName;
+	
 	/** The name of the database as given in the contructor. */
 	private $originalDbName;
 
@@ -433,7 +441,35 @@ class Criteria implements IteratorAggregate {
 	{
 		$this->dbName = ($dbName === null ? Propel::getDefaultDB() : $dbName);
 	}
-
+	
+	/**
+	 * Get the primary table for this Criteria.
+	 * 
+	 * This is useful for cases where a Criteria may not contain
+	 * any SELECT columns or WHERE columns.  This must be explicitly
+	 * set, of course, in order to be useful.
+	 * 
+	 * @return string
+	 */
+	public function getPrimaryTableName()
+	{
+		return $this->primaryTableName; 
+	}
+	
+	/**
+	 * Sets the primary table for this Criteria.
+	 * 
+	 * This is useful for cases where a Criteria may not contain
+	 * any SELECT columns or WHERE columns.  This must be explicitly
+	 * set, of course, in order to be useful.
+	 * 
+	 * @param string $v
+	 */
+	public function setPrimaryTableName($tableName)
+	{
+		$this->primaryTableName = $tableName;
+	}
+	
 	/**
 	 * Method to return a String table name.
 	 *
