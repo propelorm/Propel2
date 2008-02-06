@@ -1110,19 +1110,19 @@ class Table extends XMLElement implements IDMethod {
 	}
 
 	/**
-	 * Set the parent of the table
+	 * Set the database that contains this table.
 	 *
-	 * @param      parent the parant database
+	 * @param      Database $db
 	 */
-	public function setDatabase($parent)
+	public function setDatabase(Database $db)
 	{
-		$this->database = $parent;
+		$this->database = $db;
 	}
 
 	/**
-	 * Get the parent of the table
+	 * Get the database that contains this table.
 	 *
-	 * @return     the parant database
+	 * @return     Database
 	 */
 	public function getDatabase()
 	{
@@ -1132,7 +1132,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Flag to determine if code/sql gets created for this table.
 	 * Table will be skipped, if return true.
-	 * @return     value of forReferenceOnly.
+	 * @return     boolean
 	 */
 	public function isForReferenceOnly()
 	{
@@ -1142,7 +1142,7 @@ class Table extends XMLElement implements IDMethod {
 	/**
 	 * Flag to determine if code/sql gets created for this table.
 	 * Table will be skipped, if set to true.
-	 * @param      v  Value to assign to forReferenceOnly.
+	 * @param      boolean $v
 	 */
 	public function setForReferenceOnly($v)
 	{
@@ -1245,6 +1245,14 @@ class Table extends XMLElement implements IDMethod {
 		
 		foreach($this->idMethodParameters as $param) {
 			$param->appendXml($tableNode);
+		}
+		
+		foreach($this->indices as $index) {
+			$index->appendXml($tableNode);
+		}
+		
+		foreach($this->unices as $unique) {
+			$unique->appendXml($tableNode);
 		}
 	}
 

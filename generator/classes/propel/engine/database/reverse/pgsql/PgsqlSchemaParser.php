@@ -26,7 +26,7 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
  *
  * @author    Hans Lellelid <hans@xmpl.org>
  * @version   $Revision$
- * @package   creole.drivers.pgsql.metadata
+ * @package   propel.engine.database.reverse.pgsql
  */
 class PgsqlSchemaParser extends BaseSchemaParser {
 
@@ -34,69 +34,48 @@ class PgsqlSchemaParser extends BaseSchemaParser {
      * Map PostgreSQL native types to Propel types.
      * @var array
      */
-    private static $nativeToPropelTypeMap = array (
-                "int2" => PropelTypes::SMALLINT,
-                "int4" => PropelTypes::INTEGER, 
-                "oid" => PropelTypes::INTEGER,
-                "int8" => PropelTypes::BIGINT,
-                "cash"  => PropelTypes::DOUBLE,
-                "money"  => PropelTypes::DOUBLE,
-                "numeric" => PropelTypes::NUMERIC,
-                "float4" => PropelTypes::REAL,
-                "float8" => PropelTypes::DOUBLE,
-                "bpchar" => PropelTypes::CHAR, 
-                "char" => PropelTypes::CHAR, 
-                "char2" => PropelTypes::CHAR, 
-                "char4" => PropelTypes::CHAR, 
-                "char8" => PropelTypes::CHAR, 
-                "char16" => PropelTypes::CHAR,
-                "varchar" => PropelTypes::VARCHAR, 
-                "text" => PropelTypes::VARCHAR, 
-                "name" => PropelTypes::VARCHAR, 
-                "filename" => PropelTypes::VARCHAR,
-                "bytea" => PropelTypes::BLOB,
-                "bool" => PropelTypes::BOOLEAN,
-                "date" => PropelTypes::DATE,
-                "time" => PropelTypes::TIME,
-                "abstime" => PropelTypes::TIMESTAMP, 
-                "timestamp" => PropelTypes::TIMESTAMP, 
-                "timestamptz" => PropelTypes::TIMESTAMP,
-    );
+	 /** Map MySQL native types to Creole (JDBC) types. */
+    private static $pgsqlTypeMap = array(
+				'tinyint' => PropelTypes::TINYINT,
+				'smallint' => PropelTypes::SMALLINT,
+				'mediumint' => PropelTypes::SMALLINT,
+				'int' => PropelTypes::INTEGER,
+				'integer' => PropelTypes::INTEGER,
+				'bigint' => PropelTypes::BIGINT,
+				'int24' => PropelTypes::BIGINT,
+				'real' => PropelTypes::REAL,
+				'float' => PropelTypes::FLOAT,
+				'decimal' => PropelTypes::DECIMAL,
+				'numeric' => PropelTypes::NUMERIC,
+				'double' => PropelTypes::DOUBLE,
+				'char' => PropelTypes::CHAR,
+				'varchar' => PropelTypes::VARCHAR,
+				'date' => PropelTypes::DATE,
+				'time' => PropelTypes::TIME,
+				'year' => PropelTypes::YEAR,
+				'datetime' => PropelTypes::TIMESTAMP,
+				'timestamp' => PropelTypes::TIMESTAMP,
+				'tinyblob' => PropelTypes::BINARY,
+				'blob' => PropelTypes::VARBINARY,
+				'mediumblob' => PropelTypes::VARBINARY,
+				'longblob' => PropelTypes::VARBINARY,
+				'longtext' => PropelTypes::LONGVARCHAR,
+				'tinytext' => PropelTypes::VARCHAR,
+				'mediumtext' => PropelTypes::LONGVARCHAR,
+				'text' => PropelTypes::LONGVARCHAR,
+				'enum' => PropelTypes::CHAR,
+				'set' => PropelTypes::CHAR,
+	);
     
     /**
-     * Map to hold reverse type mapping (initialized on-demand).
-     *
-     * @var        array
-     */
-    private static $reverseTypeMap;
-    
-    /**
-     * Gets a mapped Propel type for specified native type.
-     *
-     * @param      string $nativeType
-     * @return     string The mapped Propel type.
-     */
-    protected function getMappedPropelType($nativeType)
-    {
-        if (isset(self::$nativeToPropelTypeMap[$nativeType])) {
-            return self::$nativeToPropelTypeMap[$nativeType];
-        }
-        return null;
-    }
-
-    /**
-     * Give a best guess at the native type.
-     *
-     * @param      string $propelType
-     * @return     string The native SQL type that best matches the specified Propel type.
-     */
-    protected function getMappedNativeType($propelType)
-    {
-    	if (self::$reverseTypeMap === null) {
-            self::$reverseTypeMap = array_flip(self::$nativeToPropelTypeMap);
-        }
-        return isset(self::$reverseTypeMap[$propelType]) ? self::$reverseTypeMap[$propelType] : null;
-    }
+	 * Gets a type mapping from native types to Propel types
+	 *
+	 * @return     array
+	 */
+	protected function getTypeMapping()
+	{
+		return self::$pgsqlTypeMap;
+	}
     
     /**
      * 
@@ -430,14 +409,7 @@ class PgsqlSchemaParser extends BaseSchemaParser {
                 $table->addForeignKey($fk);
                 $foreignKeys[$name] = $fk;
             }
-            if (!$foreignColumn) {
-            	print "FOREIGN COL WAS EMPTY!\n";
-            	print "\$foreign_column = $foreign_column\n";
-            	var_dump($foreignTable->getName());
-            	foreach($foreignTable->getColumns() as $col) {
-            		print "::" . $col->getName() . "\n";
-            	}
-            }
+            
             $foreignKeys[$name]->addReference($localColumn, $foreignColumn);
         }
     }
