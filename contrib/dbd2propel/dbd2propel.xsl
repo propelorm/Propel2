@@ -7,7 +7,7 @@
 DB Designer XML to Propel Schema XML
 
 ==== Author: Jonathan Graham <jkgraham@gmail.com>
-==== Version: 0.4 (2006-11-13) (http://blog.tooleshed.com/?p=6)
+==== Version: 0.5 (2008-01-25) (http://blog.tooleshed.com/?p=6)
 ==== Description:
 This XSL will transform a DB Designer 4 database model XML file into a
 Propel database schema file.  This allows you to design your database
@@ -32,6 +32,7 @@ Benedicto Franco Jr. - MULTIPLE FOREIGN KEY, DATABASE NAME
 Martin Kreidenweis <martin@kreidenweis.com> - Bug fixes, INDEX
 Michiel Hakvoort - onDelete
 Michel D'HOOGE - FULLTEXT
+Oleg Marchuk <kingoleg@mail.ru> - version 0.5
 
 ==== Software:
 Propel: http://propel.phpdb.org/
@@ -45,6 +46,7 @@ version 0.1 (2004-11-08) - initial version
 version 0.2 (2006-10-18) - Added Peter and Benedicto's updates.
 version 0.3 (2006-11-05) - added non-unique-INDEXes and onDelete
 version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, changed license to LGPL
+version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixed size in ENUM and spaces in relation names
 
 -->
 
@@ -98,7 +100,14 @@ version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, c
 		
 		<!-- ==== type ==== -->
 		<xsl:attribute name="type">
-			<xsl:value-of select="$datatype"/>
+			<xsl:choose>
+				<xsl:when test="$datatype = 'ENUM'">
+					<xsl:value-of select="'CHAR'" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$datatype"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:attribute>
 
 		<xsl:if test="$dtpclean != ''">
@@ -109,8 +118,8 @@ version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, c
 					<xsl:with-param name="dtype"><xsl:value-of select="$datatype"/></xsl:with-param>
 				</xsl:call-template>
 			</xsl:attribute>
-		
-			<xsl:if test="contains('FLOAT,DOUBLE',$datatype)">
+
+			<xsl:if test="contains('FLOAT,DOUBLE,DECIMAL',$datatype)">
 				<!-- ==== scale ==== --> 
 				<xsl:attribute name="scale">
 					<xsl:value-of select="substring-after($dtpclean,',')"/>
@@ -218,7 +227,7 @@ version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, c
 
 		<!-- name -->
 		<xsl:attribute name="name">
-			<xsl:value-of select="$relation/@RelationName"/>
+			<xsl:value-of select="translate($relation/@RelationName, ' ', '_')"/>
 		</xsl:attribute>
 
 		<!-- onDelete -->
@@ -264,6 +273,7 @@ version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, c
 		<xsl:when test="$type = 'DATETIME'" >TIMESTAMP</xsl:when> 
 		<xsl:when test="$type = 'TEXT'" >LONGVARCHAR</xsl:when> 
 		<xsl:when test="$type = 'BOOL'" >BOOLEAN</xsl:when> 
+		<xsl:when test="$type = 'GEOMETRY'" >BLOB</xsl:when> 
 		<xsl:otherwise> 
 			<xsl:value-of select="$type"/>
 		</xsl:otherwise> 
@@ -278,9 +288,12 @@ version 0.4 (2006-11-13) - added support for index names and FULLTEXT indexes, c
 	<xsl:param name="dtype"/>
 
 	<xsl:choose> 
-		<xsl:when test="contains('FLOAT,DOUBLE',$dtype)" > 
+		<xsl:when test="contains('FLOAT,DOUBLE,DECIMAL',$dtype)" > 
 			<xsl:value-of select="substring-before($dtpc,',')"/>
-		</xsl:when> 
+		</xsl:when>
+		<xsl:when test="$dtype = 'ENUM'">
+			<xsl:value-of select="''" />
+		</xsl:when>	
 		<xsl:otherwise> 
 			<xsl:value-of select="$dtpc"/>
 		</xsl:otherwise> 
