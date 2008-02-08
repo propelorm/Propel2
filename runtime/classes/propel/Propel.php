@@ -644,10 +644,10 @@ class Propel
 	private static function processDriverOptions($source, &$write_to)
 	{
 		foreach ($source as $option => $optiondata) {
-			if (is_string($option) && strpos($option, 'PDO::') !== false) {
+			if (is_string($option) && strpos($option, '::') !== false) {
 				$key = $option;
 			} elseif (is_string($option)) {
-				$key = 'PDO::' . $option;
+				$key = 'PropelPDO::' . $option;
 			}
 			if (!defined($key)) {
 				throw new PropelException("Invalid PDO option/attribute name specified: ".$key);
@@ -655,7 +655,7 @@ class Propel
 			$key = constant($key);
 
 			$value = $optiondata['value'];
-			if (is_string($value) && strpos($value, 'PDO::') !== false) {
+			if (is_string($value) && strpos($value, '::') !== false) {
 				if (!defined($value)) {
 					throw new PropelException("Invalid PDO option/attribute value specified: ".$value);
 				}
@@ -730,6 +730,7 @@ class Propel
 	public static function close()
 	{
 		foreach (self::$connectionMap as $idx => $cons) {
+			// Propel::log("Closing connections for " . $idx, Propel::LOG_DEBUG);
 			unset(self::$connectionMap[$idx]);
 		}
 	}
