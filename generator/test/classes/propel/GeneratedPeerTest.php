@@ -89,7 +89,8 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	/**
 	 * Test that cascading deletes are happening correctly (whether emulated or native).
 	 */
-	public function testDoDelete_Cascade() {
+	public function testDoDelete_Cascade_Simple()
+	{
 
 		// The 'media' table will cascade from book deletes
 
@@ -111,6 +112,73 @@ class GeneratedPeerTest extends BookstoreTestBase {
 			$this->assertNull($obj, "Expect NULL when retrieving on no matching Media.");
 
 	}
+	
+	/**
+	 * Test that cascading deletes are happening correctly for composite pk.
+	 * @link       http://propel.phpdb.org/trac/ticket/544
+	 */
+	public function testDoDelete_Cascade_CompositePK()
+	{
+		
+		$origBceCount = BookstoreContestEntryPeer::doCount(new Criteria());
+		 
+		$cust1 = new Customer();
+		$cust1->setName("Cust1");
+		$cust1->save();
+		
+		$cust2 = new Customer();
+		$cust2->setName("Cust2");
+		$cust2->save();
+		
+		$c1 = new Contest();
+		$c1->setName("Contest1");
+		$c1->save();
+		
+		$c2 = new Contest();
+		$c2->setName("Contest2");
+		$c2->save();
+		
+		$store1 = new Bookstore();
+		$store1->setStoreName("Store1");
+		$store1->save();
+		
+		$bc1 = new BookstoreContest();
+		$bc1->setBookstore($store1);
+		$bc1->setContest($c1);
+		$bc1->save();
+		
+		$bc2 = new BookstoreContest();
+		$bc2->setBookstore($store1);
+		$bc2->setContest($c2);
+		$bc2->save();
+		
+		$bce1 = new BookstoreContestEntry();
+		$bce1->setEntryDate("now");
+		$bce1->setCustomer($cust1);
+		$bce1->setBookstoreContest($bc1);
+		$bce1->save();
+		
+		$bce2 = new BookstoreContestEntry();
+		$bce2->setEntryDate("now");
+		$bce2->setCustomer($cust1);
+		$bce2->setBookstoreContest($bc2);
+		$bce2->save();
+		
+		// Now, if we remove $bc1, we expect *only* bce1 to be no longer valid.
+		
+		BookstoreContestPeer::doDelete($bc1);
+		
+		$newCount = BookstoreContestEntryPeer::doCount(new Criteria());
+		
+		$this->assertEquals($origBceCount + 1, $newCount, "Expected new number of rows in BCE to be orig + 1");
+		
+		$bcetest = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c1->getId(), $cust1->getId());
+		$this->assertNull($bcetest, "Expected BCE for store1 to be cascade deleted.");
+		
+		$bcetest2 = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c2->getId(), $cust1->getId());
+		$this->assertNotNull($bcetest2, "Expected BCE for store2 to NOT be cascade deleted.");
+		
+	}
 
 	/**
 	 * Test that onDelete="SETNULL" is happening correctly (whether emulated or native).
@@ -120,7 +188,6 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		// The 'author_id' column in 'book' table will be set to null when author is deleted.
 
 		// 1) Get an arbitrary book
-
 			$c = new Criteria();
 			$book = BookPeer::doSelectOne($c);
 			$bookId = $book->getId();

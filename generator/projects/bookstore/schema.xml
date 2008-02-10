@@ -156,7 +156,7 @@
 			description="Fkey to supervisor." />
 		<column name="photo" type="BLOB" lazyLoad="true" />
 		<foreign-key foreignTable="bookstore_employee"
-			phpName="Supervisor" refPhpName="Subordinate">
+			phpName="Supervisor" refPhpName="Subordinate" onDelete="SETNULL">
 			<reference local="supervisor_id" foreign="id" />
 		</foreign-key>
 	</table>
