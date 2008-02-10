@@ -295,13 +295,7 @@ class Column extends XMLElement {
 			$inputs[] = $this->name;
 			$inputs[] = $this->phpNamingMethod;
 			$inputs[] = $this->namePrefix;
-
-			try {
-				$this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
-			} catch (EngineException $e) {
-				print $e->getMessage() . "\n";
-				print $e->getTraceAsString();
-			}
+			return NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
 		}
 		return $this->phpName;
 	}
@@ -772,6 +766,15 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isTextType($this->getType());
 	}
+	
+	/**
+	 * Utility method to see if the column is numeric type.
+	 * @return     boolean
+	 */
+	public function isNumericType()
+	{
+		return PropelTypes::isNumericType($this->getType());
+	}
 
 	/**
 	 * Utility method to know whether column is a temporal column.
@@ -793,7 +796,7 @@ class Column extends XMLElement {
 		$colNode->setAttribute('name', $this->name);
 		
 		if ($this->phpName !== null) {
-			$colNode->setAttribute('phpName', $this->phpName);
+			$colNode->setAttribute('phpName', $this->getPhpName());
 		}
 		
 		$colNode->setAttribute('type', $this->getType());
@@ -844,8 +847,6 @@ class Column extends XMLElement {
 				$colNode->setAttribute('nodeKeySep', $this->nodeKeySep);
 			}
 		}
-		
-		return $result;
 	}
 
 	/**

@@ -194,7 +194,7 @@ class Rule extends XMLElement {
 			$ruleNode->setAttribute('value', $this->getValue());
 		}
 		
-		if ($this->getClass() !== null) {
+		if ($this->classname !== null) {
 			$ruleNode->setAttribute('class', $this->getClass());
 		}
 		

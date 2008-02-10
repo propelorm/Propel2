@@ -20,25 +20,25 @@
  */
 
 /**
- * A validator for valid values (e.g. for enum fields)
+ * A validator for validating the (PHP) type of the value submitted.
  *
  * <code>
- *   <column name="address_type" type="VARCHAR" required="true" default="delivery" />
+ *   <column name="some_int" type="INTEGER" required="true"/>
  *
- *   <validator column="address_type">
- *     <rule name="validValues" value="account|delivery" message="Please select a valid address type." />
+ *   <validator column="some_int">
+ *     <rule name="type" value="integer" message="Please specify an integer value for some_int column." />
  *   </validator>
  * </code>
  *
- * @author     Michael Aichler <aichler@mediacluster.de>
+ * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
  * @package    propel.validator
  */
-class ValidValuesValidator implements BasicValidator
+class TypeValidator implements BasicValidator
 {
 
-	public function isValid (ValidatorMap $map, $str)
+	public function isValid(ValidatorMap $map, $value)
 	{
-		return in_array($str, preg_split("/[|,]/", $map->getValue()));
+		return (gettype($value) == $map->getValue());
 	}
 }

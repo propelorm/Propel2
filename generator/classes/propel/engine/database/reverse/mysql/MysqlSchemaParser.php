@@ -120,11 +120,11 @@ class MysqlSchemaParser extends BaseSchemaParser {
 
 			$name = $row['Field'];
 			$is_nullable = ($row['Null'] == 'YES');
-			$is_auto_increment = (strpos($row['Extra'], 'auto_increment') !== false);
+			$autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
 			$size = null;
 			$precision = null;
 			$scale = null;
-
+			
 			if (preg_match('/^(\w+)[\(]?([\d,]*)[\)]?( |$)/', $row['Type'], $matches)) {
 				//            colname[1]   size/precision[2]
 				$nativeType = $matches[1];

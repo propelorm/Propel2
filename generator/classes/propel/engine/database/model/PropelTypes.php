@@ -65,7 +65,11 @@ class PropelTypes {
 	private static $TEMPORAL_TYPES = array (
 						self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
 					);
-
+	
+	private static $NUMERIC_TYPES = array (
+						self::SMALLINT, self::TINYINT, self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE, self::NUMERIC, self::DECIMAL, self::REAL
+					);
+	
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
 	const LONGVARCHAR_NATIVE_TYPE = "string";
@@ -269,6 +273,17 @@ class PropelTypes {
 	public static function isTextType($type)
 	{
 		return in_array($type, self::$TEXT_TYPES);
+	}
+	
+	/**
+	 * Returns true if values for the type are numeric.
+	 *
+	 * @param      string $type The Propel type to check.
+	 * @return     boolean True if values for the type need to be quoted.
+	 */
+	public static function isNumericType($type)
+	{
+		return in_array($type, self::$NUMERIC_TYPES);
 	}
 
 	/**

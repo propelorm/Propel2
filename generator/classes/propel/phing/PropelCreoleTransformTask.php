@@ -226,27 +226,30 @@ class PropelCreoleTransformTask extends Task {
 	}
 
 	/**
-	 * Sets set validator bitfield from propel.addValidators property
+	 * Sets set validator bitfield from a comma-separated list of "validator bit" names.
 	 *
-	 * @param      string $v The propel.addValidators property
+	 * @param      string $v The comma-separated list of which validators to add.
 	 * @return     void
 	 */
 	public function setAddValidators($v)
-	{
+	{	
+		$validKeys = array_keys(self::$validatorBitMap);
+		
 		// lowercase input
 		$v = strtolower($v);
-		// make it a bit expression
-		$v = str_replace(
-		array_keys(self::$validatorBitMap), self::$validatorBitMap, $v);
-		// check if it's a valid boolean expression
-		if (!preg_match('/[^\d|&~ ]/', $v)) {
-			// eval the expression
-			eval("\$v = $v;");
-		} else {
-			$this->log("\n\nERROR: NO VALIDATORS ADDED!\n\nThere is an error in propel.addValidators build property.\n\nAllowed tokens are: " . implode(', ', array_keys(self::$validatorBitMap)) . "\n\nAllowed operators are (like in php.ini):\n\n|    bitwise OR\n&    bitwise AND\n~    bitwise NOT\n\n", Project::MSG_ERR);
-			$v = self::VALIDATORS_NONE;
+		
+		$bits = self::VALIDATORS_NONE;
+		
+		$exprs = explode(',', $v);
+		foreach($exprs as $expr) {
+			$expr = trim($expr);
+			if (!isset(self::$validatorBitMap[$expr])) {
+				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
+			}
+			$bits |= self::$validatorBitMap[$expr];
 		}
-		$this->validatorBits = $v;
+		
+		$this->validatorBits = $bits;
 	}
 
 	public function isSamePhpName()
@@ -650,12 +653,11 @@ class PropelCreoleTransformTask extends Task {
 	/**
 	 * Checks whether to add validators of specified type or not
 	 *
-	 * @param      string $type The validator type
+	 * @param      int $type The validator type constant.
 	 * @return     boolean
 	 */
 	protected function isValidatorRequired($type) {
-		$type = strtolower($type);
-		return ($this->validatorBits & self::$validatorBitMap[$type] ? true : false);
+		return (($this->validatorBits & $type) === $type); 
 	}
 
 	/**
@@ -698,16 +700,16 @@ class PropelCreoleTransformTask extends Task {
 		$colType = $column->getType();
 		$colSize = $column->getSize();
 
-		if ($this->isValidatorRequired('required')) {
+		if ($this->isValidatorRequired(self::VALIDATORS_REQUIRED)) {
 			$ruleInfo = array('type' => 'required');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
 		$isPrimarykeyCol = in_array($colName, $this->getTablePkCols($table));
-		if ($this->isValidatorRequired('unique') && $isPrimarykeyCol) {
+		if ($this->isValidatorRequired(self::VALIDATORS_UNIQUE) && $isPrimarykeyCol) {
 			$ruleInfo = array('type' => 'unique');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
-		if ($this->isValidatorRequired('maxLength') &&
+		if ($this->isValidatorRequired(self::VALIDATORS_MAXLENGTH) &&
 		$colSize > 0 && in_array($colType, array(
 		CreoleTypes::CHAR,
 		CreoleTypes::VARCHAR,
@@ -715,7 +717,7 @@ class PropelCreoleTransformTask extends Task {
 			$ruleInfo = array('type' => 'maxLength', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
-		if ($this->isValidatorRequired('maxValue') &&
+		if ($this->isValidatorRequired(self::VALIDATORS_MAXVALUE) &&
 		$colSize > 0 && in_array($colType, array(
 		CreoleTypes::SMALLINT,
 		CreoleTypes::TINYINT,
@@ -732,7 +734,7 @@ class PropelCreoleTransformTask extends Task {
 			$ruleInfo = array('type' => 'maxValue', 'value' => $colSize);
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
-		if ($this->isValidatorRequired('type') &&
+		if ($this->isValidatorRequired(self::VALIDATORS_TYPE) &&
 		$colSize > 0 && in_array($colType, array(
 		CreoleTypes::SMALLINT,
 		CreoleTypes::TINYINT,
@@ -741,7 +743,7 @@ class PropelCreoleTransformTask extends Task {
 			$ruleInfo = array('type' => 'type', 'value' => '[^\d]+');
 			$this->validatorInfos[$tableName][$colName][] = $ruleInfo;
 		}
-		if ($this->isValidatorRequired('type') &&
+		if ($this->isValidatorRequired(self::VALIDATORS_TYPE) &&
 		$colSize > 0 && in_array($colType, array(
 		CreoleTypes::FLOAT,
 		CreoleTypes::DOUBLE,

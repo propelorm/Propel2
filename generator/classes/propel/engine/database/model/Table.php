@@ -554,26 +554,23 @@ class Table extends XMLElement implements IDMethod {
 	 */
 	public function addValidator($data)
 	{
-	 if ($data instanceof Validator)
-	 {
-	  $validator = $data;
-	  $col = $this->getColumn($validator->getColumnName());
-	  if ($col == null) {
-	  	throw new EngineException("Failed adding validator to table '" . $this->getName() .
-		  "': column '" . $validator->getColumnName() . "' does not exist !");
-	  }
-	  $validator->setColumn($col);
-	  $validator->setTable($this);
-	  $this->validatorList[] = $validator;
-	  return $validator;
-	 }
-	 else
-	 {
-	  $validator = new Validator();
-	  $validator->setTable($this);
-	  $validator->loadFromXML($data);
-	  return $this->addValidator($validator);
-	 }
+		if ($data instanceof Validator) {
+			$validator = $data;
+			$col = $this->getColumn($validator->getColumnName());
+			if ($col == null) {
+				throw new EngineException("Failed adding validator to table '" . $this->getName() .
+				"': column '" . $validator->getColumnName() . "' does not exist !");
+			}
+			$validator->setColumn($col);
+			$validator->setTable($this);
+			$this->validatorList[] = $validator;
+			return $validator;
+		} else {
+			$validator = new Validator();
+			$validator->setTable($this);
+			$validator->loadFromXML($data);
+			return $this->addValidator($validator);
+		}
 	}
 
 	/**

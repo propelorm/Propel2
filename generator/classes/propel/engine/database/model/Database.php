@@ -510,7 +510,5 @@ class Database extends XMLElement {
 		foreach($this->tableList as $table) {
 			$table->appendXml($dbNode);
 		}
-
-		return $result;
 	}
 }

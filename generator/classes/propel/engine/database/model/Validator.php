@@ -36,9 +36,25 @@ class Validator extends XMLElement {
 	const TRANSLATE_NONE = "none";
 	const TRANSLATE_GETTEXT = "gettext";
 
-	private $columnName;
+	/**
+	 * The column this validator applies to.
+	 *
+	 * @var        Column
+	 */
 	private $column;
+	
+	/**
+	 * The rules for the validation.
+	 *
+	 * @var        array Rule[]
+	 */
 	private $ruleList = array();
+	
+	/**
+	 * The translation mode.
+	 *
+	 * @var        string
+	 */
 	private $translate;
 	
 	/**
@@ -54,7 +70,7 @@ class Validator extends XMLElement {
 	 */
 	protected function setupObject()
 	{
-		$this->columnName = $this->getAttribute("column");
+		$this->column = $this->getTable()->getColumn($this->getAttribute("column"));
 		$this->translate = $this->getAttribute("translate", $this->getTable()->getDatabase()->getDefaultTranslateMethod());;
 	}
 
@@ -97,7 +113,7 @@ class Validator extends XMLElement {
 	 */
 	public function getColumnName()
 	{
-		return $this->columnName;
+		return $this->column->getName();
 	}
 
 	/**
@@ -165,7 +181,7 @@ class Validator extends XMLElement {
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
 		
 		$valNode = $node->appendChild($doc->createElement('validator'));
-		$valNode->setAttribute('column', $this->columnName);
+		$valNode->setAttribute('column', $this->getColumnName());
 		
 		if ($this->translate !== null) {
 			$valNode->setAttribute('translate', $this->translate);
