@@ -79,15 +79,12 @@ class PgsqlDDLBuilder extends DDLBuilder {
 	 **/
 	protected function getSchema()
 	{
-
 		$table = $this->getTable();
-		$schema = $table->getVendorSpecificInfo();
-		if (!empty($schema) && isset($schema['schema'])) {
-			return $schema['schema'];
+		$vi = $table->getVendorInfoForType($this->getPlatform()->getDatabaseType());
+		if ($vi->hasParameter('schema')) {
+			return $vi->getParameter('schema');
 		}
-
 		return null;
-
 	}
 
 	/**
