@@ -1165,9 +1165,9 @@ class Table extends XMLElement implements IDMethod {
 	}
 
 	/**
-	 * Returns a XML representation of this table.
+	 * Appends XML nodes to passed-in DOMNode.
 	 *
-	 * @return     XML representation of this table
+	 * @param      DOMNode $node
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -1251,6 +1251,11 @@ class Table extends XMLElement implements IDMethod {
 		foreach($this->unices as $unique) {
 			$unique->appendXml($tableNode);
 		}
+		
+		foreach($this->vendorInfos as $vi) {
+			$vi->appendXml($tableNode);
+		}
+		
 	}
 
 	/**

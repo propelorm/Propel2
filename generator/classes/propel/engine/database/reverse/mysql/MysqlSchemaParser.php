@@ -29,12 +29,17 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
  * @package   propel.engine.database.reverse.mysql
  */
 class MysqlSchemaParser extends BaseSchemaParser {
- 
+
+	/**
+	 * @var        boolean
+	 */
+	private $addVendorInfo = false;
+
 	/**
 	 * Map MySQL native types to Propel types.
 	 * @var array
 	 */
-    private static $mysqlTypeMap = array(
+	private static $mysqlTypeMap = array(
 		'tinyint' => PropelTypes::TINYINT,
 		'smallint' => PropelTypes::SMALLINT,
 		'mediumint' => PropelTypes::SMALLINT,
@@ -75,12 +80,14 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	{
 		return self::$mysqlTypeMap;
 	}
-	
+
 	/**
 	 *
 	 */
 	public function parse(Database $database)
 	{
+		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
+		
 		$stmt = $this->dbh->query("SHOW TABLES");
 			
 		// First load the tables (important that this happen before filling out details of tables)
@@ -91,19 +98,21 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$database->addTable($table);
 			$tables[] = $table;
 		}
-
+		
 		// Now populate only columns.
 		foreach($tables as $table) {
 			$this->addColumns($table);
 		}
-
+		
 		// Now add indexes and constraints.
 		foreach($tables as $table) {
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
+			if ($this->addVendorInfo) {
+				$this->addTableVendorInfo($table);
+			}
 		}
-			
 	}
 
 
@@ -124,7 +133,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$size = null;
 			$precision = null;
 			$scale = null;
-			
+
 			if (preg_match('/^(\w+)[\(]?([\d,]*)[\)]?( |$)/', $row['Type'], $matches)) {
 				//            colname[1]   size/precision[2]
 				$nativeType = $matches[1];
@@ -165,6 +174,11 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$column->setAutoIncrement($autoincrement);
 			$column->setNotNull(!$is_nullable);
 
+			if ($this->addVendorInfo) {
+				$vi = $this->getNewVendorInfoObject($row);
+				$column->addVendorInfo($vi);
+			}
+
 			$table->addColumn($column);
 		}
 
@@ -177,10 +191,10 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	protected function addForeignKeys(Table $table)
 	{
 		$database = $table->getDatabase();
-		
+
 		$stmt = $this->dbh->query("SHOW CREATE TABLE `" . $table->getName(). "`");
 		$row = $stmt->fetch(PDO::FETCH_NUM);
-		
+
 		$foreignKeys = array(); // local store to avoid duplicates
 
 		// Get the information on all the foreign keys
@@ -210,7 +224,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 						}
 					}
 				}
-				
+
 				$foreignTable = $database->getTable($ftbl);
 				$foreignColumn = $foreignTable->getColumn($fcol);
 				$localColumn   = $table->getColumn($lcol);
@@ -225,9 +239,9 @@ class MysqlSchemaParser extends BaseSchemaParser {
 				}
 				$foreignKeys[$name]->addReference($localColumn, $foreignColumn);
 			}
-				
+
 		}
-		
+
 	}
 
 	/**
@@ -256,6 +270,10 @@ class MysqlSchemaParser extends BaseSchemaParser {
 				} else {
 					$indexes[$name] = new Index($name);
 				}
+				if ($this->addVendorInfo) {
+					$vi = $this->getNewVendorInfoObject($row);
+					$indexes[$name]->addVendorInfo($vi);
+				}
 				$table->addIndex($indexes[$name]);
 			}
 
@@ -282,5 +300,17 @@ class MysqlSchemaParser extends BaseSchemaParser {
 		}
 	}
 
+	/**
+	 * Adds vendor-specific info for table.
+	 *
+	 * @param Table $table
+	 */
+	protected function addTableVendorInfo(Table $table)
+	{
+		$stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		$vi = $this->getNewVendorInfoObject($row);
+		$table->addVendorInfo($vi);
+	}
 }
 

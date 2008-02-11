@@ -55,7 +55,7 @@ class Database extends XMLElement {
 	private $heavyIndexing;
 
 	private $domainMap = array();
-	
+
 	/**
 	 * Constructs a new Database object.
 	 *
@@ -65,7 +65,7 @@ class Database extends XMLElement {
 	{
 		$this->name = $name;
 	}
-	
+
 	/**
 	 * Sets up the Database object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
@@ -230,9 +230,9 @@ class Database extends XMLElement {
 
 	/**
 	 * Get the value of heavyIndexing.
-	 * 
+	 *
 	 * This is a synonym for getHeavyIndexing().
-	 * 
+	 *
 	 * @return     boolean Value of heavyIndexing.
 	 * @see        getHeavyIndexing()
 	 */
@@ -240,10 +240,10 @@ class Database extends XMLElement {
 	{
 		return $this->getHeavyIndexing();
 	}
-	
+
 	/**
 	 * Get the value of heavyIndexing.
-	 * 
+	 *
 	 * @return     boolean Value of heavyIndexing.
 	 */
 	public function getHeavyIndexing()
@@ -380,23 +380,23 @@ class Database extends XMLElement {
 			// FIXME: Handle idMethod="native" via DB adapter.
 			/*
 
-			 --- REMOVING THIS BECAUSE IT'S ANNOYING
+			--- REMOVING THIS BECAUSE IT'S ANNOYING
 
 			if ($currTable->getIdMethod() == IDMethod::NATIVE ) {
-				$columns = $currTable->getColumns();
-				$foundOne = false;
-				for ($j=0, $cLen=count($columns); $j < $cLen && !$foundOne; $j++) {
-					$foundOne = $columns[$j]->isAutoIncrement();
-				}
+			$columns = $currTable->getColumns();
+			$foundOne = false;
+			for ($j=0, $cLen=count($columns); $j < $cLen && !$foundOne; $j++) {
+			$foundOne = $columns[$j]->isAutoIncrement();
+			}
 
-				if (!$foundOne) {
-					$errorMessage = "Table '" . $currTable->getName()
-							. "' is set to use native id generation, but it does not "
-							. "have a column which declared as the one to "
-							. "auto increment (i.e. autoIncrement=\"true\")";
+			if (!$foundOne) {
+			$errorMessage = "Table '" . $currTable->getName()
+			. "' is set to use native id generation, but it does not "
+			. "have a column which declared as the one to "
+			. "auto increment (i.e. autoIncrement=\"true\")";
 
-					throw new BuildException($errorMessage);
-				}
+			throw new BuildException($errorMessage);
+			}
 			}
 			*/
 
@@ -409,8 +409,8 @@ class Database extends XMLElement {
 				$foreignTable = $this->getTable($currFK->getForeignTableName());
 				if ($foreignTable === null) {
 					throw new BuildException("ERROR!! Attempt to set foreign"
-							. " key to nonexistent table, "
-							. $currFK->getForeignTableName() . "!");
+					. " key to nonexistent table, "
+					. $currFK->getForeignTableName() . "!");
 				}
 
 				$referrers = $foreignTable->getReferrers();
@@ -430,9 +430,9 @@ class Database extends XMLElement {
 					// that we can do, if it is to occur.
 					if ($local === null) {
 						throw new BuildException("ERROR!! Attempt to define foreign"
-								. " key with nonexistent column, "
-								. $localColumnNames[$k] . ", in table, "
-								. $currTable->getName() . "!");
+						. " key with nonexistent column, "
+						. $localColumnNames[$k] . ", in table, "
+						. $currTable->getName() . "!");
 					}
 
 					//check for foreign pk's
@@ -450,9 +450,9 @@ class Database extends XMLElement {
 					// external reference or a misspelling
 					if ($foreign === null) {
 						throw new BuildException("ERROR!! Attempt to set foreign"
-								. " key to nonexistent column, "
-								. $foreignColumnNames[$k] . ", in table, "
-								. $foreignTable->getName() . "!");
+						. " key to nonexistent column, "
+						. $foreignColumnNames[$k] . ", in table, "
+						. $foreignTable->getName() . "!");
 					} else {
 						$foreign->addReferrer($currFK);
 					}
@@ -466,49 +466,53 @@ class Database extends XMLElement {
 	 */
 	public function appendXml(DOMNode $node)
 	{
-		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
-		
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+
 		$dbNode = $node->appendChild($doc->createElement('database'));
-		
+
 		$dbNode->setAttribute('name', $this->name);
-		
+
 		if ($this->pkg) {
 			$dbNode->setAttribute('package', $this->pkg);
 		}
-		
+
 		if ($this->defaultIdMethod) {
 			$dbNode->setAttribute('defaultIdMethod', $this->defaultIdMethod);
 		}
-		
+
 		if ($this->baseClass) {
 			$dbNode->setAttribute('baseClass', $this->baseClass);
 		}
-		
+
 		if ($this->basePeer) {
 			$dbNode->setAttribute('basePeer', $this->basePeer);
 		}
-		
+
 		if ($this->defaultPhpNamingMethod) {
 			$dbNode->setAttribute('defaultPhpNamingMethod', $this->defaultPhpNamingMethod);
 		}
-		
+
 		if ($this->defaultTranslateMethod) {
 			$dbNode->setAttribute('defaultTranslateMethod', $this->defaultTranslateMethod);
 		}
-		
+
 		/*
-		
+
 		FIXME - Before we can add support for domains in the schema, we need
 		to have a method of the Column that indicates whether the column was mapped
 		to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
 
 		foreach($this->domainMap as $domain) {
-			$domain->appendXml($dbNode);
+		$domain->appendXml($dbNode);
 		}
 		*/
-		
+		foreach($this->vendorInfos as $vi) {
+			$vi->appendXml($dbNode);
+		}
+
 		foreach($this->tableList as $table) {
 			$table->appendXml($dbNode);
 		}
+		
 	}
 }

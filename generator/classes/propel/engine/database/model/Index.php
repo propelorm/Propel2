@@ -74,7 +74,7 @@ class Index extends XMLElement {
 		}
 
 		$this->indexName = NameFactory::generateName(
-				NameFactory::CONSTRAINT_GENERATOR, $inputs);
+		NameFactory::CONSTRAINT_GENERATOR, $inputs);
 	}
 
 	/**
@@ -190,7 +190,7 @@ class Index extends XMLElement {
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets array of columns to use for index.
 	 *
@@ -270,13 +270,17 @@ class Index extends XMLElement {
 	public function appendXml(DOMNode $node)
 	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
-		
+
 		$idxNode = $node->appendChild($doc->createElement('index'));
 		$idxNode->setAttribute('name', $this->getName());
-		
+
 		foreach($this->indexColumns as $colname) {
 			$idxColNode = $idxNode->appendChild($doc->createElement('index-column'));
 			$idxColNode->setAttribute('name', $colname);
+		}
+
+		foreach($this->vendorInfos as $vi) {
+			$vi->appendXml($idxNode);
 		}
 	}
 }

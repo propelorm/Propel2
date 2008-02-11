@@ -109,15 +109,17 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 	";
 
 		$lines = array();
-
+		
+		$databaseType = $this->getPlatform()->getDatabaseType();
+		
 		foreach ($table->getColumns() as $col) {
 			$entry = $this->getColumnDDL($col);
-			$colinfo = $col->getVendorSpecificInfo();
-			if ( isset ( $colinfo['Charset'] ) ) {
-				$entry .= ' CHARACTER SET '.$platform->quote($colinfo['Charset']);
+			$colinfo = $col->getVendorInfoForType($databaseType);
+			if ( $colinfo->hasParameter('Charset') ) {
+				$entry .= ' CHARACTER SET '.$platform->quote($colinfo->getParamter('Charset'));
 			}
-			if ( isset ( $colinfo['Collate'] ) ) {
-				$entry .= ' COLLATE '.$platform->quote($colinfo['Collate']);
+			if ( $colinfo->hasParameter('Collate') ) {
+				$entry .= ' COLLATE '.$platform->quote($colinfo->getParamter('Collate'));
 			}
 			if ($col->getDescription()) {
 				$entry .= " COMMENT ".$platform->quote($col->getDescription());
@@ -141,11 +143,11 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 
 		$mysqlTableType = $this->getBuildProperty("mysqlTableType");
 		if (!$mysqlTableType) {
-			$vendorSpecific = $table->getVendorSpecificInfo();
-			if (isset($vendorSpecific['Type'])) {
-				$mysqlTableType = $vendorSpecific['Type'];
-			} elseif (isset($vendorSpecific['Engine'])) {
-				$mysqlTableType = $vendorSpecific['Engine'];
+			$vendorSpecific = $table->getVendorInfoForType($this->getPlatform()->getDatabaseType());
+			if ($vendorSpecific->hasParameter('Type')) {
+				$mysqlTableType = $vendorSpecific->getParameter('Type');
+			} elseif ($vendorSpecific->hasParameter('Engine')) {
+				$mysqlTableType = $vendorSpecific->getParameter('Engine');
 			} else {
 				$mysqlTableType = 'MyISAM';
 			}
@@ -153,25 +155,26 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 
 		$script .= "Type=$mysqlTableType";
 
-		$dbVendorSpecific = $table->getDatabase()->getVendorSpecificInfo();
-		$tableVendorSpecific = $table->getVendorSpecificInfo();
-		$vendorSpecific = array_merge ( $dbVendorSpecific, $tableVendorSpecific );
-		if ( isset ( $vendorSpecific['Charset'] ) ) {
-			$script .= ' CHARACTER SET '.$platform->quote($vendorSpecific['Charset']);
+		$dbVendorSpecific = $table->getDatabase()->getVendorInfoForType($databaseType);
+		$tableVendorSpecific = $table->getVendorInfoForType($databaseType);
+		$vendorSpecific = $dbVendorSpecific->getMergedVendorInfo($tableVendorSpecific);
+		
+		if ( $vendorSpecific->hasParameter('Charset') ) {
+			$script .= ' CHARACTER SET '.$platform->quote($vendorSpecific->getParameter('Charset'));
 		}
-		if ( isset ( $vendorSpecific['Collate'] ) ) {
-			$script .= ' COLLATE '.$platform->quote($vendorSpecific['Collate']);
+		if ( $vendorSpecific->hasParameter('Collate') ) {
+			$script .= ' COLLATE '.$platform->quote($vendorSpecific->getParameter('Collate'));
 		}
-		if ( isset ( $vendorSpecific['Checksum'] ) ) {
-			$script .= ' CHECKSUM='.$platform->quote($vendorSpecific['Checksum']);
+		if ( $vendorSpecific->hasParameter('Checksum') ) {
+			$script .= ' CHECKSUM='.$platform->quote($vendorSpecific->getParameter('Checksum'));
 		}
-		if ( isset ( $vendorSpecific['Pack_Keys'] ) ) {
-			$script .= ' PACK_KEYS='.$platform->quote($vendorSpecific['Pack_Keys']);
+		if ( $vendorSpecific->hasParameter('Pack_Keys') ) {
+			$script .= ' PACK_KEYS='.$platform->quote($vendorSpecific->getParameter('Pack_Keys'));
 		}
-		if ( isset ( $vendorSpecific['Delay_key_write'] ) ) {
-			$script .= ' DELAY_KEY_WRITE='.$platform->quote($vendorSpecific['Delay_key_write']);
+		if ( $vendorSpecific->hasParameter('Delay_key_write') ) {
+			$script .= ' DELAY_KEY_WRITE='.$platform->quote($vendorSpecific->getParameter('Delay_key_write'));
 		}
-
+		
 		if ($table->getDescription()) {
 			$script .= " COMMENT=".$platform->quote($table->getDescription());
 		}
@@ -211,8 +214,8 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		}
 
 		foreach ($table->getIndices() as $index ) {
-			$vendor = $index->getVendorSpecificInfo();
-			$lines[] .= (($vendor && $vendor['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $this->quoteIdentifier($index->getName()) . "(" . $this->getIndexColumnList($index) . ")";
+			$vendorInfo = $index->getVendorInfoForType($platform->getDatabaseType());
+			$lines[] .= (($vendorInfo && $vendorInfo->getParameter('Index_type') == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $this->quoteIdentifier($index->getName()) . "(" . $this->getIndexColumnList($index) . ")";
 		}
 
 	}

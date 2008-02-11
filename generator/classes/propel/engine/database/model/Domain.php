@@ -114,7 +114,7 @@ class Domain extends XMLElement {
 
 		//Name
 		$this->name = $this->getAttribute("name");
-		
+
 		// Default value
 		$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
 		if ($defval !== null) {
@@ -122,7 +122,7 @@ class Domain extends XMLElement {
 		} elseif ($this->getAttribute("defaultExpr") !== null) {
 			$this->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
 		}
-		
+
 		$this->size = $this->getAttribute("size");
 		$this->scale = $this->getAttribute("scale");
 		$this->description = $this->getAttribute("description");
@@ -356,4 +356,57 @@ class Domain extends XMLElement {
 		}
 	}
 
+	/*
+	 * 	$schemaType = strtoupper($this->getAttribute("type"));
+		$this->copy($this->getDatabase()->getPlatform()->getDomainForType($schemaType));
+
+		//Name
+		$this->name = $this->getAttribute("name");
+
+		// Default value
+		$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
+		if ($defval !== null) {
+		$this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
+		} elseif ($this->getAttribute("defaultExpr") !== null) {
+		$this->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
+		}
+
+		$this->size = $this->getAttribute("size");
+		$this->scale = $this->getAttribute("scale");
+		$this->description = $this->getAttribute("description");
+		*/
+
+	/**
+	 * @see        XMLElement::appendXml(DOMNode)
+	 */
+	public function appendXml(DOMNode $node)
+	{
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+
+		$domainNode = $node->appendChild($doc->createElement('domain'));
+		$domainNode->setAttribute('type', $this->getType());
+		$domainNode->setAttribute('name', $this->getName());
+
+		$def = $this->getDefaultValue();
+		if ($def) {
+			if ($def->isExpression()) {
+				$domainNode->setAttribute('defaultExpr', $def->getValue());
+			} else {
+				$domainNode->setAttribute('defaultValue', $def->getValue());
+			}
+		}
+
+		if ($this->size) {
+			$domainNode->setAttribute('size', $this->size);
+		}
+
+		if ($this->scale) {
+			$domainNode->setAttribute('scale', $this->scale);
+		}
+
+		if ($this->description) {
+			$domainNode->setAttribute('description', $this->description);
+		}
+	}
+	
 }

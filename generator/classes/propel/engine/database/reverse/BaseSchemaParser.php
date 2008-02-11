@@ -182,5 +182,18 @@ abstract class BaseSchemaParser implements SchemaParser {
         }
         return isset($this->reverseTypeMap[$propelType]) ? $this->reverseTypeMap[$propelType] : null;
     }
+    
+	/**
+	 * Gets a new VendorInfo object for this platform with specified params.
+	 *
+	 * @param      array $params
+	 */
+	protected function getNewVendorInfoObject(array $params)
+	{
+		$type = $this->getGeneratorConfig()->getConfiguredPlatform()->getDatabaseType();
+		$vi = new VendorInfo($type);
+		$vi->setParameters($params);
+		return $vi;
+	}
 }
 

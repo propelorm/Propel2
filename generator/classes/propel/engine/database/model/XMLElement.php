@@ -19,6 +19,8 @@
  * <http://propel.phpdb.org>.
  */
 
+include_once 'propel/engine/database/model/VendorInfo.php';
+
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).
  *
@@ -36,12 +38,12 @@ abstract class XMLElement {
 	protected $attributes = array();
 
 	/**
-	 * Any vendor-specific details that may be represtented in the XML.
+	 * Any associated vendor-specific information objects.
 	 *
-	 * @var        array
+	 * @var        array VendorInfo[]
 	 */
-	protected $vendorSpecificInfo = array();
-
+	protected $vendorInfos = array();
+	
 	/**
 	 * Replaces the old loadFromXML() so that we can use loadFromXML() to load the attribs into the class.
 	 */
@@ -98,65 +100,44 @@ abstract class XMLElement {
 			return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
 		}
 	}
-
-	/**
-	 * Sets vendor specific parameter that applies to this object.
-	 * @param      string $name
-	 * @param      string $value
-	 */
-	public function setVendorParameter($name, $value)
-	{
-		$this->vendorSpecificInfo[$name] = $value;
-	}
-
-	/**
-	 * Whether specified vendor specific information is set.
-	 * @param      string $name
-	 * @return     boolean
-	 */
-	public function hasVendorParameter($name)
-	{
-		return isset($this->vendorSpecificInfo[$name]);
-	}
-
-	/**
-	 * Returns specified vendor specific information is set.
-	 * @param      string $name
-	 * @return     string
-	 */
-	public function getVendorParameter($name)
-	{
-		if (isset($this->vendorSpecificInfo[$name])) {
-			return $this->vendorSpecificInfo[$name];
-		}
-		return null; // just to be explicit
-	}
-
-	/**
-	 * Sets vendor specific information for this object.
-	 * @param      array $info
-	 */
-	public function setVendorSpecificInfo($info)
-	{
-		$this->vendorSpecificInfo = $info;
-	}
-
-	/**
-	 * Retrieves vendor specific information for this object.
-	 * @return     array
-	 */
-	public function getVendorSpecificInfo()
-	{
-		return $this->vendorSpecificInfo;
-	}
 	
 	/**
 	 * Appends DOM elements to represent this object in XML.
 	 * @param      DOMNode $node
 	 */
-	public function appendXml(DOMNode $node)
+	abstract public function appendXml(DOMNode $node);
+	
+	/**
+	 * Sets an associated VendorInfo object.
+	 *
+	 * @param      mixed $data VendorInfo object or XML attrib data (array)
+	 * @return     VendorInfo
+	 */
+	public function addVendorInfo($data)
 	{
-		$node->appendChild($node->ownerDocument->createElement('foo'));
+		if ($data instanceof VendorInfo) {
+			$vi = $data;
+			$this->vendorInfos[$vi->getType()] = $vi;
+			return $vi;
+		} else {
+			$vi = new VendorInfo();
+			$vi->loadFromXML($data);
+			return $this->addVendorInfo($vi); // call self w/ different param
+		}
+	}
+	
+	/**
+	 * Gets the any associated VendorInfo object.
+	 * @return     VendorInfo
+	 */
+	public function getVendorInfoForType($type)
+	{
+		if (isset($this->vendorInfos[$type])) {
+			return $this->vendorInfos[$type];
+		} else {
+			// return an empty object
+			return new VendorInfo();
+		}
 	}
 	
 	/**

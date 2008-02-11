@@ -699,7 +699,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Sets the domain up for specified Propel type.
-	 * 
+	 *
 	 * Calling this method will implicitly overwrite any previously set type,
 	 * size, scale (or other domain attributes).
 	 *
@@ -709,7 +709,7 @@ class Column extends XMLElement {
 	{
 		$this->getDomain()->copy($this->getPlatform()->getDomainForType($propelType));
 	}
-	
+
 	/**
 	 * Sets the propel colunm type.
 	 * @param      string $propelType
@@ -766,7 +766,7 @@ class Column extends XMLElement {
 	{
 		return PropelTypes::isTextType($this->getType());
 	}
-	
+
 	/**
 	 * Utility method to see if the column is numeric type.
 	 * @return     boolean
@@ -790,19 +790,19 @@ class Column extends XMLElement {
 	 */
 	public function appendXml(DOMNode $node)
 	{
-		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
-		
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+
 		$colNode = $node->appendChild($doc->createElement('column'));
 		$colNode->setAttribute('name', $this->name);
-		
+
 		if ($this->phpName !== null) {
 			$colNode->setAttribute('phpName', $this->getPhpName());
 		}
-		
+
 		$colNode->setAttribute('type', $this->getType());
-		
+
 		$domain = $this->getDomain();
-		
+
 		if ($domain->getSize() !== null) {
 			$colNode->setAttribute('size', $domain->getSize());
 		}
@@ -810,15 +810,15 @@ class Column extends XMLElement {
 		if ($domain->getScale() !== null) {
 			$colNode->setAttribute('scale', $domain->getScale());
 		}
-		
+
 		if ($this->isPrimaryKey) {
 			$colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
 		}
-		
+
 		if ($this->isAutoIncrement) {
 			$colNode->setAttribute('autoIncrement', var_export($this->isAutoIncrement, true));
 		}
-		
+
 		if ($this->isNotNull) {
 			$colNode->setAttribute('required', 'true');
 		} else {
@@ -846,6 +846,10 @@ class Column extends XMLElement {
 			if ($this->getNodeKeySep() !== null) {
 				$colNode->setAttribute('nodeKeySep', $this->nodeKeySep);
 			}
+		}
+
+		foreach($this->vendorInfos as $vi) {
+			$vi->appendXml($colNode);
 		}
 	}
 

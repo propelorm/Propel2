@@ -202,7 +202,7 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currDB, $attributes['type']);
+						$this->currVendorObject = $this->currDB->addVendorInfo($attributes);
 					break;
 
 					default:
@@ -229,15 +229,15 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currTable, $attributes['type']);
+						$this->currVendorObject = $this->currTable->addVendorInfo($attributes);
 					break;
 
-		  case "validator":
+		  			case "validator":
 					  $this->currValidator = $this->currTable->addValidator($attributes);
-		  break;
+		  			break;
 
-		  case "id-method-parameter":
-			$this->currTable->addIdMethodParameter($attributes);
+		  			case "id-method-parameter":
+						$this->currTable->addIdMethodParameter($attributes);
 					break;
 
 					default:
@@ -252,7 +252,7 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currColumn, $attributes['type']);
+						$this->currVendorObject = $this->currColumn->addVendorInfo($attributes);
 					break;
 
 					default:
@@ -267,7 +267,7 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currFK, $attributes['type']);
+						$this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
 					break;
 
 					default:
@@ -282,7 +282,7 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currIndex, $attributes['type']);
+						$this->currVendorObject = $this->currIndex->addVendorInfo($attributes);
 					break;
 
 					default:
@@ -297,26 +297,26 @@ class XmlToAppData extends AbstractHandler {
 					break;
 
 					case "vendor":
-						$this->currVendorObject = new ObjectWithVendorSpecificData($this->currUnique, $attributes['type']);
+						$this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
 					break;
 
 					default:
 						$this->_throwInvalidTagException($name);
 				}
-	  } elseif ($parentTag == "validator") {
-		switch($name) {
-		  case "rule":
-					  $this->currValidator->addRule($attributes);
-		  break;
-		  default:
-			$this->_throwInvalidTagException($name);
-		}
+			} elseif ($parentTag == "validator") {
+				switch($name) {
+					case "rule":
+						$this->currValidator->addRule($attributes);
+					break;
+					default:
+						$this->_throwInvalidTagException($name);
+				}
 			} elseif ($parentTag == "vendor") {
 
 				switch($name) {
 					case "parameter":
-						if ($this->currVendorObject->isCompatible($this->platform->getDatabaseType())) {
-							$this->currVendorObject->setVendorParameter($attributes['name'], iconv('utf-8',$this->encoding, $attributes['value']));
+						if ($this->platform->getDatabaseType() == $this->currVendorObject->getType()) {
+							$this->currVendorObject->addParameter($attributes);
 						}
 					break;
 
@@ -326,8 +326,8 @@ class XmlToAppData extends AbstractHandler {
 
 			} else {
 				// it must be an invalid tag
-		$this->_throwInvalidTagException($name);
-	  }
+				$this->_throwInvalidTagException($name);
+			}
 
 			$this->pushCurrentSchemaTag($name);
 
@@ -389,32 +389,5 @@ class XmlToAppData extends AbstractHandler {
 	protected function isAlreadyParsed($filePath)
 	{
 		return isset($this->schemasTagsStack[$filePath]);
-	}
-}
-
-/**
- * Utility class used for objects with vendor data.
- *
- * @package    propel.engine.database.transform
- */
-class ObjectWithVendorSpecificData
-{
-	protected $object;
-	protected $vendorType;
-
-	public function __construct($object, $vendorType)
-	{
-		$this->object = $object;
-		$this->vendorType = $vendorType;
-	}
-
-	public function isCompatible($type)
-	{
-		return ($this->vendorType == $type);
-	}
-
-	public function setVendorParameter($name, $value)
-	{
-		$this->object->setVendorParameter($name, $value);
 	}
 }
