@@ -786,7 +786,8 @@ class PropelCreoleTransformTask extends Task {
 		$colName = $column->getName();
 		$tableName = $column->getTable()->getName();
 		$msg = self::$validatorMessages[strtolower($type)];
-		array_unshift($tmp = compact($msg['var']), $msg['msg']);
+		$tmp = compact($msg['var']);
+		array_unshift($tmp, $msg['msg']);
 		$msg = call_user_func_array('sprintf', $tmp);
 
 		// add node
