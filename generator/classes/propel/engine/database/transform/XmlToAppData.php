@@ -315,11 +315,8 @@ class XmlToAppData extends AbstractHandler {
 
 				switch($name) {
 					case "parameter":
-						if ($this->platform->getDatabaseType() == $this->currVendorObject->getType()) {
 							$this->currVendorObject->addParameter($attributes);
-						}
 					break;
-
 					default:
 						$this->_throwInvalidTagException($name);
 				}
