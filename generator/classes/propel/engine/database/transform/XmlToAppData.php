@@ -315,7 +315,7 @@ class XmlToAppData extends AbstractHandler {
 
 				switch($name) {
 					case "parameter":
-							$this->currVendorObject->addParameter($attributes);
+						$this->currVendorObject->addParameter($attributes);
 					break;
 					default:
 						$this->_throwInvalidTagException($name);
