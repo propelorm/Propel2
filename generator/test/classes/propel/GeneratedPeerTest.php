@@ -41,7 +41,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */
 	public function testDoDelete_MultiTable() {
-		
+
 		$selc = new Criteria();
 		$selc->add(BookPeer::TITLE, "Harry Potter and the Order of the Phoenix");
 		$hp = BookPeer::doSelectOne($selc);
@@ -96,88 +96,88 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		// 1) Assert the row exists right now
 
-			$medias = MediaPeer::doSelect(new Criteria());
-			$this->assertTrue(count($medias) > 0, "Expected to find at least one row in 'media' table.");
-			$media = $medias[0];
-			$mediaId = $media->getId();
+		$medias = MediaPeer::doSelect(new Criteria());
+		$this->assertTrue(count($medias) > 0, "Expected to find at least one row in 'media' table.");
+		$media = $medias[0];
+		$mediaId = $media->getId();
 
 		// 2) Delete the owning book
 
-			$owningBookId = $media->getBookId();
-			BookPeer::doDelete($owningBookId);
+		$owningBookId = $media->getBookId();
+		BookPeer::doDelete($owningBookId);
 
 		// 3) Assert that the media row is now also gone
 
-			$obj = MediaPeer::retrieveByPK($mediaId);
-			$this->assertNull($obj, "Expect NULL when retrieving on no matching Media.");
+		$obj = MediaPeer::retrieveByPK($mediaId);
+		$this->assertNull($obj, "Expect NULL when retrieving on no matching Media.");
 
 	}
-	
+
 	/**
 	 * Test that cascading deletes are happening correctly for composite pk.
 	 * @link       http://propel.phpdb.org/trac/ticket/544
 	 */
 	public function testDoDelete_Cascade_CompositePK()
 	{
-		
+
 		$origBceCount = BookstoreContestEntryPeer::doCount(new Criteria());
-		 
+			
 		$cust1 = new Customer();
 		$cust1->setName("Cust1");
 		$cust1->save();
-		
+
 		$cust2 = new Customer();
 		$cust2->setName("Cust2");
 		$cust2->save();
-		
+
 		$c1 = new Contest();
 		$c1->setName("Contest1");
 		$c1->save();
-		
+
 		$c2 = new Contest();
 		$c2->setName("Contest2");
 		$c2->save();
-		
+
 		$store1 = new Bookstore();
 		$store1->setStoreName("Store1");
 		$store1->save();
-		
+
 		$bc1 = new BookstoreContest();
 		$bc1->setBookstore($store1);
 		$bc1->setContest($c1);
 		$bc1->save();
-		
+
 		$bc2 = new BookstoreContest();
 		$bc2->setBookstore($store1);
 		$bc2->setContest($c2);
 		$bc2->save();
-		
+
 		$bce1 = new BookstoreContestEntry();
 		$bce1->setEntryDate("now");
 		$bce1->setCustomer($cust1);
 		$bce1->setBookstoreContest($bc1);
 		$bce1->save();
-		
+
 		$bce2 = new BookstoreContestEntry();
 		$bce2->setEntryDate("now");
 		$bce2->setCustomer($cust1);
 		$bce2->setBookstoreContest($bc2);
 		$bce2->save();
-		
+
 		// Now, if we remove $bc1, we expect *only* bce1 to be no longer valid.
-		
+
 		BookstoreContestPeer::doDelete($bc1);
-		
+
 		$newCount = BookstoreContestEntryPeer::doCount(new Criteria());
-		
+
 		$this->assertEquals($origBceCount + 1, $newCount, "Expected new number of rows in BCE to be orig + 1");
-		
+
 		$bcetest = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c1->getId(), $cust1->getId());
 		$this->assertNull($bcetest, "Expected BCE for store1 to be cascade deleted.");
-		
+
 		$bcetest2 = BookstoreContestEntryPeer::retrieveByPK($store1->getId(), $c2->getId(), $cust1->getId());
 		$this->assertNotNull($bcetest2, "Expected BCE for store2 to NOT be cascade deleted.");
-		
+
 	}
 
 	/**
@@ -188,19 +188,19 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		// The 'author_id' column in 'book' table will be set to null when author is deleted.
 
 		// 1) Get an arbitrary book
-			$c = new Criteria();
-			$book = BookPeer::doSelectOne($c);
-			$bookId = $book->getId();
-			$authorId = $book->getAuthorId();
-			unset($book);
+		$c = new Criteria();
+		$book = BookPeer::doSelectOne($c);
+		$bookId = $book->getId();
+		$authorId = $book->getAuthorId();
+		unset($book);
 
 		// 2) Delete the author for that book
-			AuthorPeer::doDelete($authorId);
+		AuthorPeer::doDelete($authorId);
 
 		// 3) Assert that the book.author_id column is now NULL
 
-			$book = BookPeer::retrieveByPK($bookId);
-			$this->assertNull($book->getAuthorId(), "Expect the book.author_id to be NULL after the author was removed.");
+		$book = BookPeer::retrieveByPK($bookId);
+		$this->assertNull($book->getAuthorId(), "Expect the book.author_id to be NULL after the author was removed.");
 
 	}
 
@@ -210,15 +210,15 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	public function testDoDelete_ByPK() {
 
 		// 1) get an arbitrary book
-			$book = BookPeer::doSelectOne(new Criteria());
-			$bookId = $book->getId();
+		$book = BookPeer::doSelectOne(new Criteria());
+		$bookId = $book->getId();
 
 		// 2) now delete that book
-			BookPeer::doDelete($bookId);
+		BookPeer::doDelete($bookId);
 
 		// 3) now make sure it's gone
-			$obj = BookPeer::retrieveByPK($bookId);
-			$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
+		$obj = BookPeer::retrieveByPK($bookId);
+		$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
 	}
 
@@ -228,17 +228,17 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	public function testDoDelete_ByObj() {
 
 		// 1) get an arbitrary book
-			$book = BookPeer::doSelectOne(new Criteria());
-			$bookId = $book->getId();
+		$book = BookPeer::doSelectOne(new Criteria());
+		$bookId = $book->getId();
 
 		// 2) now delete that book
-			BookPeer::doDelete($book);
+		BookPeer::doDelete($book);
 
 		// 3) now make sure it's gone
-			$obj = BookPeer::retrieveByPK($bookId);
-			$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
+		$obj = BookPeer::retrieveByPK($bookId);
+		$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
-		}
+	}
 
 
 	/**
@@ -519,43 +519,64 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
 		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
 	}
-	
+
 	/**
 	 * Tests the doCount() method with limit/offset.
 	 */
 	public function testDoCountLimitOffset()
 	{
 		BookPeer::doDeleteAll();
-		
+
 		for($i=0; $i < 25; $i++) {
 			$b = new Book();
 			$b->setTitle("Book $i");
 			$b->setISBN("ISBN $i");
 			$b->save();
 		}
-		
+
 		$c = new Criteria();
 		$totalCount = BookPeer::doCount($c);
-		
+
 		$this->assertEquals(25, $totalCount);
-		
+
 		$c2 = new Criteria();
 		$c2->setLimit(10);
 		$this->assertEquals(10, BookPeer::doCount($c2));
-		
+
 		$c3 = new Criteria();
 		$c3->setOffset(10);
 		$this->assertEquals(15, BookPeer::doCount($c3));
-		
+
 		$c4 = new Criteria();
 		$c4->setOffset(5);
 		$c4->setLimit(5);
 		$this->assertEquals(5, BookPeer::doCount($c4));
-		
+
 		$c5 = new Criteria();
 		$c5->setOffset(20);
 		$c5->setLimit(10);
 		$this->assertEquals(5, BookPeer::doCount($c5));
+	}
+
+	/**
+	 * Test doCountJoin*() methods.
+	 */
+	public function testDoCountJoin()
+	{
+		BookPeer::doDeleteAll();
+
+		for($i=0; $i < 25; $i++) {
+			$b = new Book();
+			$b->setTitle("Book $i");
+			$b->setISBN("ISBN $i");
+			$b->save();
+		}
+
+		$c = new Criteria();
+		$totalCount = BookPeer::doCount($c);
+		
+		$this->assertEquals($totalCount, BookPeer::doCountJoinAuthor($c));
+		$this->assertEquals($totalCount, BookPeer::doCountJoinPublisher($c));
 	}
 
 	/**
