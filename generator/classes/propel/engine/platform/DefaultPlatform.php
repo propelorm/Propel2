@@ -122,11 +122,18 @@ class DefaultPlatform implements Platform {
 		foreach (PropelTypes::getPropelTypes() as $type) {
 			$this->schemaDomainMap[$type] = new Domain($type);
 		}
-		$this->schemaDomainMap[PropelTypes::BU_DATE] = new Domain("DATE");
-		$this->schemaDomainMap[PropelTypes::BU_TIMESTAMP] = new Domain("TIMESTAMP");
-		$this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain("INTEGER");
+		// BU_* no longer needed, so map these to the DATE/TIMESTAMP domains
+		$this->schemaDomainMap[PropelTypes::BU_DATE] = new Domain(PropelTypes::DATE);
+		$this->schemaDomainMap[PropelTypes::BU_TIMESTAMP] = new Domain(PropelTypes::TIMESTAMP);
+		
+		// Boolean is a bit special, since typically it must be mapped to INT type.
+		$this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN, "INTEGER");
 	}
-
+	
+	/**
+	 * Adds a mapping entry for specified Domain.
+	 * @param      Domain $domain
+	 */
 	protected function setSchemaDomainMapping(Domain $domain)
 	{
 		$this->schemaDomainMap[$domain->getType()] = $domain;
@@ -172,14 +179,11 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
-	 * @return     Only produces a SQL fragment if null values are
-	 * disallowed.
+	 * @return     string Returns the SQL fragment to use if null values are disallowed.
 	 * @see        Platform::getNullString(boolean)
 	 */
 	public function getNullString($notNull)
 	{
-		// TODO: Check whether this is true for all DBs.  Also verify
-		// the old Sybase templates.
 		return ($notNull ? "NOT NULL" : "");
 	}
 
@@ -193,7 +197,6 @@ class DefaultPlatform implements Platform {
 
 	/**
 	 * @see        Platform::hasScale(String)
-	 * TODO collect info for all platforms
 	 */
 	public function hasScale($sqlType)
 	{
@@ -202,7 +205,6 @@ class DefaultPlatform implements Platform {
 
 	/**
 	 * @see        Platform::hasSize(String)
-	 * TODO collect info for all platforms
 	 */
 	public function hasSize($sqlType)
 	{

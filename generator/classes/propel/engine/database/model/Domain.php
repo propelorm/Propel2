@@ -355,27 +355,7 @@ class Domain extends XMLElement {
 			return "";
 		}
 	}
-
-	/*
-	 * 	$schemaType = strtoupper($this->getAttribute("type"));
-		$this->copy($this->getDatabase()->getPlatform()->getDomainForType($schemaType));
-
-		//Name
-		$this->name = $this->getAttribute("name");
-
-		// Default value
-		$defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
-		if ($defval !== null) {
-		$this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
-		} elseif ($this->getAttribute("defaultExpr") !== null) {
-		$this->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
-		}
-
-		$this->size = $this->getAttribute("size");
-		$this->scale = $this->getAttribute("scale");
-		$this->description = $this->getAttribute("description");
-		*/
-
+	
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
@@ -386,7 +366,11 @@ class Domain extends XMLElement {
 		$domainNode = $node->appendChild($doc->createElement('domain'));
 		$domainNode->setAttribute('type', $this->getType());
 		$domainNode->setAttribute('name', $this->getName());
-
+		
+		if ($this->sqlType !== $this->getType()) {
+			$domainNode->setAttribute('sqlType', $this->sqlType);
+		}
+		
 		$def = $this->getDefaultValue();
 		if ($def) {
 			if ($def->isExpression()) {
