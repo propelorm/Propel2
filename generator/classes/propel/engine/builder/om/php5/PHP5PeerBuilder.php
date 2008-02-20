@@ -1959,6 +1959,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
 		
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+		
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
 		}
@@ -2192,6 +2197,11 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
+		
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
 		
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
