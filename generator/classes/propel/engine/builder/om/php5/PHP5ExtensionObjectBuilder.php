@@ -113,7 +113,7 @@ require '".$requiredClassFilePath."';
  *
  * @package    ".$this->getPackage()."
  */
-class ".$this->getClassname()." extends $baseClassname {
+".($table->isAbstract() ? "abstract " : "")."class ".$this->getClassname()." extends $baseClassname {
 ";
 	}
 
