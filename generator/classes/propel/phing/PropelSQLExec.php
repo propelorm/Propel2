@@ -348,10 +348,10 @@ class PropelSQLExec extends Task {
 
 		try {
 
-			$buf = "Database settings:\n"
-			. " URL: " . $url . "\n"
-			. ($this->userId ? " user: " . $this->userId . "\n" : "")
-			. ($this->password ? " password: " . $this->password . "\n" : "");
+			$buf = "Database settings:" . PHP_EOL
+			. " URL: " . $url . PHP_EOL
+			. ($this->userId ? " user: " . $this->userId . PHP_EOL : "")
+			. ($this->password ? " password: " . $this->password . PHP_EOL : "");
 
 			$this->log($buf, Project::MSG_VERBOSE);
 
@@ -424,10 +424,10 @@ class PropelSQLExec extends Task {
 	 * Developer note:  must be public in order to be called from
 	 * sudo-"inner" class PropelSQLExecTransaction.
 	 *
-	 * @param      Reader $reader
-	 * @param      $out Optional output stream.
-	 * @throws     PDOException
-	 * @throws     IOException
+	 * @param Reader $reader
+	 * @param $out Optional output stream.
+	 * @throws PDOException
+	 * @throws IOException
 	 */
 	public function runStatements(Reader $reader, $out = null)
 	{
@@ -438,77 +438,133 @@ class PropelSQLExec extends Task {
 
 		$in = new BufferedReader($reader);
 
-		try {
-			while (($line = $in->readLine()) !== null) {
-				$line = trim($line);
-				$line = ProjectConfigurator::replaceProperties($this->project, $line,
-						$this->project->getProperties());
+		$parser['pointer'] = 0;
+		$parser['isInString'] = false;
+		$parser['stringQuotes'] = "";
+		$parser['backslashCount'] = 0;
+		$parser['parsedString'] = "";
+			
+		$sqlParts = array();
+			
+		while (($line = $in->readLine()) !== null) {
+			
+			$line = trim($line);
+			$line = ProjectConfigurator::replaceProperties($this->project, $line,
+			$this->project->getProperties());
 
-				if (StringHelper::startsWith("//", $line) ||
-					StringHelper::startsWith("--", $line) ||
-					StringHelper::startsWith("#", $line)) {
-					continue;
+			if (StringHelper::startsWith("//", $line) 
+				|| StringHelper::startsWith("--", $line)
+		 		|| StringHelper::startsWith("#", $line)) {
+				continue;
+			}
+
+			if (strlen($line) > 4 && strtoupper(substr($line,0, 4)) == "REM ") {
+				continue;
+			}
+
+			if($sqlBacklog !== "") {
+				$sql = $sqlBacklog;
+				$sqlBacklog = "";
+			}
+
+			$sql .= " " . $line . PHP_EOL;
+
+			// SQL defines "--" as a comment to EOL
+			// and in Oracle it may contain a hint
+			// so we cannot just remove it, instead we must end it
+			if (strpos($line, "--") !== false) {
+				$sql .= PHP_EOL;
+			}
+
+			// DELIM_ROW doesn't need this (as far as i can tell)
+			if($this->delimiterType == self::DELIM_NORMAL) {
+				
+				// old regex, being replaced due to segfaults:
+				// See: http://propel.phpdb.org/trac/ticket/294
+				//$reg = "#((?:\"(?:\\\\.|[^\"])*\"?)+|'(?:\\\\.|[^'])*'?|" . preg_quote($this->delimiter) . ")#";
+				//$sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
+
+				$i = $parser['pointer'];
+				$c = strlen($sql);
+				while ($i < $c) {
+					
+					$char = $sql[$i];
+
+					switch($char) {
+						case "\\":
+							$parser['backslashCount']++;
+							$this->log("c$i: found ".$parser['backslashCount']." backslash(es)", Project::MSG_VERBOSE);
+							break;
+						case "'":
+						case "\"":
+							if ($parser['isInString'] && $parser['stringQuotes'] == $char) {
+								if (($parser['backslashCount'] & 1) == 0) {
+									#$this->log("$i: out of string", Project::MSG_VERBOSE);
+									$parser['isInString'] = false;
+								} else {
+									$this->log("c$i: rejected quoted delimiter", Project::MSG_VERBOSE);
+								}
+
+							} elseif (!$parser['isInString']) {
+								$parser['stringQuotes']	= $char;
+								$parser['isInString'] = true;
+								#$this->log("$i: into string with $parser['stringQuotes']", Project::MSG_VERBOSE);
+							}
+							break;
+					}
+
+					if ($char == $this->delimiter && !$parser['isInString']) {
+						$this->log("c$i: valid end of command found!", Project::MSG_VERBOSE);
+						$sqlParts[] = $parser['parsedString'];
+						$sqlParts[] = $this->delimiter;
+						break;
+					}
+					$parser['parsedString'] .= $char;
+					if ($char !== "\\") {
+						if ($parser['backslashCount']) $this->log("$i: backslash reset", Project::MSG_VERBOSE);
+						$parser['backslashCount'] = 0;
+					}
+					$i++;
+					$parser['pointer']++;
 				}
 
-				if (strlen($line) > 4
-						&& strtoupper(substr($line,0, 4)) == "REM ") {
-					continue;
-				}
+				$sqlBacklog = "";
+				foreach($sqlParts as $sqlPart) {
+					// we always want to append, even if it's a delim (which will be stripped off later)
+					$sqlBacklog .= $sqlPart;
 
-				if ($sqlBacklog !== "")
-				{
-					$sql = $sqlBacklog;
-					$sqlBacklog = "";
-				}
-
-				$sql .= " " . $line . "\n";
-
-				// SQL defines "--" as a comment to EOL
-				// and in Oracle it may contain a hint
-				// so we cannot just remove it, instead we must end it
-				if (strpos($line, "--") !== false) {
-					$sql .= "\n";
-				}
-
-				// DELIM_ROW doesn't need this (as far as i can tell)
-				if ($this->delimiterType == self::DELIM_NORMAL) {
-
-					$reg = "#((?:\"(?:\\\\.|[^\"])*\"?)+|'(?:\\\\.|[^'])*'?|" . preg_quote($this->delimiter) . ")#";
-
-					$sqlParts = preg_split($reg, $sql, 0, PREG_SPLIT_DELIM_CAPTURE);
-					$sqlBacklog = "";
-					foreach ($sqlParts as $sqlPart) {
-						// we always want to append, even if it's a delim (which will be stripped off later)
-						$sqlBacklog .= $sqlPart;
-
-						// we found a single (not enclosed by ' or ") delimiter, so we can use all stuff before the delim as the actual query
-						if ($sqlPart === $this->delimiter) {
-							$sql = $sqlBacklog;
-							$sqlBacklog = "";
-							$hasQuery = true;
-						}
+					// we found a single (not enclosed by ' or ") delimiter, so we can use all stuff before the delim as the actual query
+					if($sqlPart === $this->delimiter) {
+						$sql = $sqlBacklog;
+						$sqlBacklog = "";
+						$hasQuery = true;
 					}
 				}
-
-				if ($hasQuery || ($this->delimiterType == self::DELIM_ROW && $line == $this->delimiter)) {
-					// this assumes there is always a delimter on the end of the SQL statement.
-					$sql = StringHelper::substring($sql, 0, strlen($sql) - 1 - strlen($this->delimiter));
-					$this->log("SQL: " . $sql, Project::MSG_VERBOSE);
-					$this->execSQL($sql, $out);
-					$sql = "";
-					$hasQuery = false;
-				}
 			}
 
-			// Catch any statements not followed by ;
-			if ($sql !== "") {
+			if ($hasQuery || ($this->delimiterType == self::DELIM_ROW && $line == $this->delimiter)) {
+				// this assumes there is always a delimter on the end of the SQL statement.
+				$sql = StringHelper::substring($sql, 0, strlen($sql) - 1 - strlen($this->delimiter));
+				$this->log("SQL: " . $sql, Project::MSG_VERBOSE);
 				$this->execSQL($sql, $out);
+				$sql = "";
+				$hasQuery = false;
+
+				$parser['pointer'] = 0;
+				$parser['isInString'] = false;
+				$parser['stringQuotes'] = "";
+				$parser['backslashCount'] = 0;
+				$parser['parsedString'] = "";
+				$sqlParts = array();
 			}
-		} catch (PDOException $e) {
-			throw $e;
+		}
+
+		// Catch any statements not followed by ;
+		if ($sql !== "") {
+			$this->execSQL($sql, $out);
 		}
 	}
-
+	
 	/**
 	 * Exec the sql statement.
 	 *
