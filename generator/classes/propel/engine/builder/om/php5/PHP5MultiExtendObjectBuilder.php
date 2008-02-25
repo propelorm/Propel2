@@ -180,10 +180,9 @@ class ".$this->getClassname()." extends ".$this->getParentClassname()." {
 	 * Constructs a new ".$this->getChild()->getClassname()." class, setting the ".$col->getName()." column to ".$this->getPeerClassname()."::$const.
 	 */
 	public function __construct()
-	{
-";
-
+	{";
 		$script .= "
+		parent::__construct();
 		\$this->set$cfc(".$this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");
 	}
 ";
