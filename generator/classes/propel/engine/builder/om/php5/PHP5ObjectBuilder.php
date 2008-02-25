@@ -2254,6 +2254,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$this->addPKRefFKSet($script, $refFK);
 			} else {
 				$this->addRefFKClear($script, $refFK);
+				$this->addRefFKInit($script, $refFK);
 				$this->addRefFKGet($script, $refFK);
 				$this->addRefFKCount($script, $refFK);
 				$this->addRefFKAdd($script, $refFK);
@@ -2289,6 +2290,32 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	} // addRefererClear()
 
 	/**
+	 * Adds the method that initializes the referrer fkey collection.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addRefFKInit(&$script, ForeignKey $refFK) {
+
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+		$collName = $this->getRefFKCollVarName($refFK);
+
+		$script .= "
+	/**
+	 * Initializes the $collName collection (array).
+	 * 
+	 * By default this just sets the $collName collection to an empty array (like clear$collName());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate 
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 * 
+	 * @return     void
+	 */
+	public function init$relCol()
+	{
+		\$this->$collName = array();
+	}
+";
+	} // addRefererInit()
+	
+	/**
 	 * Adds the method that adds an object into the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
 	 */
@@ -2313,7 +2340,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	public function add".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$l)
 	{
 		if (\$this->$collName === null) {
-			\$this->$collName = array();
+			\$this->init".$this->getRefFKPhpNameAffix($refFK, $plural = true)."();
 		}
 		if (!in_array(\$l, \$this->$collName, true)) { // only add it if the **same** object is not already associated
 			array_push(\$this->$collName, \$l);
