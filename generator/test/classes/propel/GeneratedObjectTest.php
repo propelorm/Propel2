@@ -310,6 +310,10 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$store->setStoreOpenTime(strtotime('12:55'));
 		$store->save();
 		$this->assertEquals('12:55', $store->getStoreOpenTime(null)->format('H:i'));
+		
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setCreated(time());
+		$this->assertEquals(date('Y-m-d H:i'), $acct->getCreated('Y-m-d H:i')); 
 	}
 
 	/**
