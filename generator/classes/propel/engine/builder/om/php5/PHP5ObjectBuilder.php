@@ -838,7 +838,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	/**
 	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
 	 * ".$col->getDescription()."
-	 * @param      mixed \$v string, integer (timestamp), or DateTime value.
+	 * @param      mixed \$v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */
 	".$visibility." function set$cfc(\$v)
@@ -856,7 +857,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$fmt = var_export($this->getTemporalFormatter($col), true);
 
 		$script .= "
-		if (\$v === null) {
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now') 
+		// -- which is unexpected, to say the least.
+		if (\$v === null || \$v === '') {
 			\$dt = null;
 		} elseif (\$v instanceof DateTime) {
 			\$dt = \$v;

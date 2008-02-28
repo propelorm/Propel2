@@ -319,7 +319,18 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$review->setReviewDate(time());
 		$this->assertEquals(date('Y-m-d'), $review->getReviewDate('Y-m-d'));
 	}
-
+	
+	/**
+	 * Test setting empty temporal values.
+	 * @link http://propel.phpdb.org/trac/ticket/586
+	 */
+	public function testTemporalValues_Empty()
+	{
+		$review = new Review();
+		$review->setReviewDate('');
+		$this->assertNull($review->getReviewDate());
+	}
+	
 	/**
 	 * Test setting TIME columns.
 	 */
