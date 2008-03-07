@@ -168,7 +168,7 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		$package->setPearinstallerDep('1.4.0');
 
 		// "package" dependencies
-		$package->addPackageDepWithChannel( 'required', 'phing', 'pear.phing.info', '2.2.0');
+		$package->addPackageDepWithChannel( 'required', 'phing', 'pear.phing.info', '2.3.0');
 		$package->addPackageDepWithChannel( 'optional', 'creole', 'pear.phpdb.org', '1.1.0');
 
 		$package->addExtensionDep('required', 'pdo');

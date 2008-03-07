@@ -1801,7 +1801,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$table = $this->getTable();
 		$className = $this->getObjectClassname();
 		$countFK = count($table->getForeignKeys());
-
+		$join_behavior = $this->getJoinBehavior();
+				
 		if ($countFK >= 1) {
 
 			foreach ($table->getForeignKeys() as $fk) {
@@ -1824,12 +1825,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/**
 	 * Selects a collection of $className objects pre-filled with their $joinClassName objects.
-	 *
+	 * @param      Criteria  \$c
+	 * @param      PropelPDO \$con
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of $className objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
+	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
 	{
 		\$c = clone \$c;
 
@@ -1848,7 +1851,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);";
 						}
 						$script .= "
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
@@ -1927,6 +1930,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$table = $this->getTable();
 		$className = $this->getObjectClassname();
 		$countFK = count($table->getForeignKeys());
+		$join_behavior = $this->getJoinBehavior();
 
 		if ($countFK >= 1) {
 
@@ -1952,9 +1956,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -1985,7 +1990,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName] );
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);";
 						}
 						$script .= "
 		
@@ -2015,17 +2020,21 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		$table = $this->getTable();
 		$className = $this->getObjectClassname();
+		$join_behavior = $this->getJoinBehavior();
 
 		$script .= "
 
 	/**
 	 * Selects a collection of $className objects pre-filled with all related objects.
 	 *
+	 * @param      Criteria  \$c
+	 * @param      PropelPDO \$con
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of $className objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria \$c, \$con = null)
+	public static function doSelectJoinAll(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
 	{
 		\$c = clone \$c;
 
@@ -2070,7 +2079,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);
 ";
 				}
 			}
@@ -2181,7 +2190,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	protected function addDoCountJoinAll(&$script)
 	{
 		$table = $this->getTable();
-		$className = $this->getObjectClassname();
+		$className = $this->getObjectClassname();		
+		$join_behavior = $this->getJoinBehavior();
 
 		$script .= "
 
@@ -2191,9 +2201,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
+	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -2232,7 +2243,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 					$column = $table->getColumn($columnName);
 					$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 					$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);";
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);";
 				}
 			} // if fk->getForeignTableName != table->getName
 		} // foreach [sub] foreign keys
@@ -2258,7 +2269,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	protected function addDoSelectJoinAllExcept(&$script)
 	{
 		$table = $this->getTable();
-
+		$join_behavior = $this->getJoinBehavior();
+		
 		// ------------------------------------------------------------------------
 		// doSelectJoinAllExcept*()
 		// ------------------------------------------------------------------------
@@ -2286,11 +2298,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * Selects a collection of ".$this->getObjectClassname()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
 	 *
+	 * @param      Criteria  \$c
+	 * @param      PropelPDO \$con
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of ".$this->getObjectClassname()." objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null)
+	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
 	{
 		\$c = clone \$c;
 
@@ -2338,7 +2353,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
+		\$c->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);
 ";
 						}
 					}
@@ -2447,7 +2462,8 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	protected function addDoCountJoinAllExcept(&$script)
 	{
 		$table = $this->getTable();
-
+		$join_behavior = $this->getJoinBehavior();
+		
 		$fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over
 		// getForeignKeys() will cause this to only execute one time.
 		foreach ($fkeys as $fk ) {
@@ -2470,9 +2486,10 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
+     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
@@ -2507,7 +2524,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 							$column = $table->getColumn($columnName);
 							$columnFk = $joinTable->getColumn( $lfMap[$columnName]);
 							$script .= "
-		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", Criteria::LEFT_JOIN);
+		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);
 ";
 						}
 					}
@@ -2528,5 +2545,15 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} // foreach fk
 
 	} // addDoCountJoinAllExcept
+
+	/**
+	 * returns the desired join behavior as set in the build properties
+	 * see trac ticket #588, #491
+	 * 
+	 */
+	protected function getJoinBehavior()
+	{
+		return $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
+	}
 
 } // PHP5PeerBuilder

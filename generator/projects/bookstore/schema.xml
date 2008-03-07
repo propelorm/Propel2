@@ -161,7 +161,7 @@
 		</foreign-key>
 	</table>
 
-	<!-- Test one-to-one relationship, default values -->
+	<!-- Test one-to-one (1:1) relationship, default values -->
 	<table name="bookstore_employee_account" reloadOnInsert="true"
 		reloadOnUpdate="true"
 		description="A table that represents a bookstore employees login credentials.">
