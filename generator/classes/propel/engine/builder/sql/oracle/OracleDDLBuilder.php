@@ -105,7 +105,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
 	ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
-		ADD CONSTRAINT ".$this->quoteIdentifier(substr($tableName,0,$length))."_PK
+		ADD CONSTRAINT ".$this->quoteIdentifier(substr($tableName,0,$length)."_PK")."
 	PRIMARY KEY (";
 			$delim = "";
 			foreach ($table->getPrimaryKey() as $col) {
