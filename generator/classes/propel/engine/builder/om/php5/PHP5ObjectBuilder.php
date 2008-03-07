@@ -2409,7 +2409,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$colFK = $refFK->getTable()->getColumn($colFKName);
 
 			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName()."); 
 ";
 		} // end foreach ($fk->getForeignColumns()
 
@@ -2430,7 +2430,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$colFK = $refFK->getTable()->getColumn($colFKName);
 			$script .= "
 
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName().");
 ";
 		} // foreach ($fk->getForeignColumns()
 		$script .= "
@@ -2503,7 +2503,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$colFK = $refFK->getTable()->getColumn($colFKName);
 
 			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName().");
 ";
 		} // end foreach ($fk->getForeignColumns()
 
@@ -2525,7 +2525,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$colFK = $refFK->getTable()->getColumn($colFKName);
 			$script .= "
 
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$localColumn->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName()."); 
 ";
 		} // foreach ($fk->getForeignColumns()
 		$script .= "
