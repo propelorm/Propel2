@@ -1172,7 +1172,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(new Criteria(".$this->getPeerClassname() . "::DATABASE_NAME), \$con);
 			";
 		}
-		$script .= "\$affectedRows += BasePeer::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
+		$script .= "\$affectedRows += {$this->basePeerClassname}::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
