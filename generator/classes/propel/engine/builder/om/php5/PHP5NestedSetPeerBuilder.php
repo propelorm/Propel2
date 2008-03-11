@@ -1584,7 +1584,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
 			Criteria::CUSTOM_EQUAL);
 
-		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+		{$this->basePeerClassname}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
 		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -1608,7 +1608,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
 			Criteria::CUSTOM_EQUAL);
 
-		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+		{$this->basePeerClassname}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 	}
 ";
 	}
@@ -1651,7 +1651,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			array('raw' => \$leftUpdateCol . ' + ?', 'value' => \$delta),
 			Criteria::CUSTOM_EQUAL);
 
-		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+		{$this->basePeerClassname}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		// Shift right column values
 		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -1668,7 +1668,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			array('raw' => \$rightUpdateCol . ' + ?', 'value' => \$delta),
 			Criteria::CUSTOM_EQUAL);
 
-		BasePeer::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+		{$this->basePeerClassname}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 		return array('left' => \$first + \$delta, 'right' => \$last + \$delta);
 	}
