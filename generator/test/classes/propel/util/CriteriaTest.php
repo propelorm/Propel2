@@ -18,14 +18,14 @@ class CriteriaTest extends BaseTestCase {
 	 * @var        Criteria
 	 */
 	private $c;
-	
+
 	/**
 	 * DB adapter saved for later.
 	 *
 	 * @var        DBAdapter
 	 */
 	private $savedAdapter;
-	
+
 	protected function setUp()
 	{
 		parent::setUp();
@@ -33,7 +33,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->savedAdapter = Propel::getDB(null);
 		Propel::setDB(null, new DBSQLite());
 	}
-	
+
 	protected function tearDown()
 	{
 		Propel::setDB(null, $this->savedAdapter);

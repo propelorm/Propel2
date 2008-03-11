@@ -141,16 +141,16 @@ class Inheritance extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
-		
+
 		$inherNode = $node->appendChild($doc->createElement('inheritance'));
 		$inherNode->setAttribute('key', $this->key);
 		$inherNode->setAttribute('class', $this->className);
-		
+
 		if ($this->ancestor !== null) {
 			$inherNode->setAttribute('extends', $this->ancestor);
 		}

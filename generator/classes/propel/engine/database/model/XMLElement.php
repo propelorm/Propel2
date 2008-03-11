@@ -43,7 +43,7 @@ abstract class XMLElement {
 	 * @var        array VendorInfo[]
 	 */
 	protected $vendorInfos = array();
-	
+
 	/**
 	 * Replaces the old loadFromXML() so that we can use loadFromXML() to load the attribs into the class.
 	 */
@@ -100,13 +100,13 @@ abstract class XMLElement {
 			return (in_array(strtolower($val), array('true', 't', 'y', 'yes'), true) ? true : false);
 		}
 	}
-	
+
 	/**
 	 * Appends DOM elements to represent this object in XML.
 	 * @param      DOMNode $node
 	 */
 	abstract public function appendXml(DOMNode $node);
-	
+
 	/**
 	 * Sets an associated VendorInfo object.
 	 *
@@ -125,7 +125,7 @@ abstract class XMLElement {
 			return $this->addVendorInfo($vi); // call self w/ different param
 		}
 	}
-	
+
 	/**
 	 * Gets the any associated VendorInfo object.
 	 * @return     VendorInfo
@@ -139,13 +139,13 @@ abstract class XMLElement {
 			return new VendorInfo();
 		}
 	}
-	
+
 	/**
 	 * String representation of the current object.
-	 * 
+	 *
 	 * This is an xml representation with the XML declaration removed.
-	 * 
-	 * @see appendXml()
+	 *
+	 * @see        appendXml()
 	 */
 	public function toString()
 	{

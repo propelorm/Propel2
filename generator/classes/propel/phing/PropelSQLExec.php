@@ -424,10 +424,10 @@ class PropelSQLExec extends Task {
 	 * Developer note:  must be public in order to be called from
 	 * sudo-"inner" class PropelSQLExecTransaction.
 	 *
-	 * @param Reader $reader
-	 * @param $out Optional output stream.
-	 * @throws PDOException
-	 * @throws IOException
+	 * @param      Reader $reader
+	 * @param      $out Optional output stream.
+	 * @throws     PDOException
+	 * @throws     IOException
 	 */
 	public function runStatements(Reader $reader, $out = null)
 	{
@@ -443,16 +443,16 @@ class PropelSQLExec extends Task {
 		$parser['stringQuotes'] = "";
 		$parser['backslashCount'] = 0;
 		$parser['parsedString'] = "";
-			
+
 		$sqlParts = array();
-			
+
 		while (($line = $in->readLine()) !== null) {
-			
+
 			$line = trim($line);
 			$line = ProjectConfigurator::replaceProperties($this->project, $line,
 			$this->project->getProperties());
 
-			if (StringHelper::startsWith("//", $line) 
+			if (StringHelper::startsWith("//", $line)
 				|| StringHelper::startsWith("--", $line)
 		 		|| StringHelper::startsWith("#", $line)) {
 				continue;
@@ -462,7 +462,7 @@ class PropelSQLExec extends Task {
 				continue;
 			}
 
-			if($sqlBacklog !== "") {
+			if ($sqlBacklog !== "") {
 				$sql = $sqlBacklog;
 				$sqlBacklog = "";
 			}
@@ -477,8 +477,8 @@ class PropelSQLExec extends Task {
 			}
 
 			// DELIM_ROW doesn't need this (as far as i can tell)
-			if($this->delimiterType == self::DELIM_NORMAL) {
-				
+			if ($this->delimiterType == self::DELIM_NORMAL) {
+
 				// old regex, being replaced due to segfaults:
 				// See: http://propel.phpdb.org/trac/ticket/294
 				//$reg = "#((?:\"(?:\\\\.|[^\"])*\"?)+|'(?:\\\\.|[^'])*'?|" . preg_quote($this->delimiter) . ")#";
@@ -487,7 +487,7 @@ class PropelSQLExec extends Task {
 				$i = $parser['pointer'];
 				$c = strlen($sql);
 				while ($i < $c) {
-					
+
 					$char = $sql[$i];
 
 					switch($char) {
@@ -529,12 +529,12 @@ class PropelSQLExec extends Task {
 				}
 
 				$sqlBacklog = "";
-				foreach($sqlParts as $sqlPart) {
+				foreach ($sqlParts as $sqlPart) {
 					// we always want to append, even if it's a delim (which will be stripped off later)
 					$sqlBacklog .= $sqlPart;
 
 					// we found a single (not enclosed by ' or ") delimiter, so we can use all stuff before the delim as the actual query
-					if($sqlPart === $this->delimiter) {
+					if ($sqlPart === $this->delimiter) {
 						$sql = $sqlBacklog;
 						$sqlBacklog = "";
 						$hasQuery = true;
@@ -564,7 +564,7 @@ class PropelSQLExec extends Task {
 			$this->execSQL($sql, $out);
 		}
 	}
-	
+
 	/**
 	 * Exec the sql statement.
 	 *

@@ -50,52 +50,52 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 	{
 		return $this->getBuildProperty('basePrefix') . $this->getStubObjectBuilder()->getUnprefixedClassname();
 	}
-	
+
 	/**
-	 * Validates the current table to make sure that it won't 
+	 * Validates the current table to make sure that it won't
 	 * result in generated code that will not parse.
-	 * 
+	 *
 	 * This method may emit warnings for code which may cause problems
-	 * and will throw exceptions for errors that will definitely cause 
-	 * problems. 
+	 * and will throw exceptions for errors that will definitely cause
+	 * problems.
 	 */
 	protected function validateModel()
 	{
 		parent::validateModel();
-		
+
 		$table = $this->getTable();
-		
+
 		// Check to see whether any generated foreign key names
 		// will conflict with column names.
-		
+
 		$colPhpNames = array();
 		$fkPhpNames = array();
-		
-		foreach($table->getColumns() as $col) {
+
+		foreach ($table->getColumns() as $col) {
 			$colPhpNames[] = $col->getPhpName();
 		}
 
-		foreach($table->getForeignKeys() as $fk) {
+		foreach ($table->getForeignKeys() as $fk) {
 			$fkPhpNames[] = $this->getFKPhpNameAffix($fk, $plural = false);
 		}
-		
-		$intersect = array_intersect($colPhpNames, $fkPhpNames); 
+
+		$intersect = array_intersect($colPhpNames, $fkPhpNames);
 		if (!empty($intersect)) {
 			throw new EngineException("One or more of your column names for [" . $table->getName() . "] table conflict with foreign key names (" . implode(", ", $intersect) . ")");
 		}
-		
+
 		// Check foreign keys to see if there are any foreign keys that
 		// are also matched with an inversed referencing foreign key
 		// (this is currently unsupported behavior)
 		// see: http://propel.phpdb.org/trac/ticket/549
-		
-		foreach($table->getForeignKeys() as $fk) {
+
+		foreach ($table->getForeignKeys() as $fk) {
 			if ($fk->isMatchedByInverseFK()) {
 				throw new EngineException("The 1:1 relationship expressed by foreign key " . $fk->getName() . " is defined in both directions; Propel does not currently support this (if you must have both foreign key constraints, consider adding this constraint with a custom SQL file.)" );
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the appropriate formatter (from platform) for a date/time column.
 	 * @param      Column $col
@@ -652,7 +652,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$stmt = ".$this->getPeerClassname()."::doSelectStmt(\$c, \$con);
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);
 			\$stmt->closeCursor();";
-			
+
 		$clo = strtolower($col->getName());
 		if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 			$script .= "
@@ -857,7 +857,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$fmt = var_export($this->getTemporalFormatter($col), true);
 
 		$script .= "
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now') 
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
 		// -- which is unexpected, to say the least.
 		if (\$v === null || \$v === '') {
 			\$dt = null;
@@ -2305,11 +2305,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Initializes the $collName collection (array).
-	 * 
+	 *
 	 * By default this just sets the $collName collection to an empty array (like clear$collName());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate 
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
-	 * 
+	 *
 	 * @return     void
 	 */
 	public function init$relCol()
@@ -2318,7 +2318,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	} // addRefererInit()
-	
+
 	/**
 	 * Adds the method that adds an object into the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
@@ -2362,9 +2362,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$table = $this->getTable();
 		$tblFK = $refFK->getTable();
-	
+
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-		
+
 		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
@@ -2457,7 +2457,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 		$table = $this->getTable();
 		$tblFK = $refFK->getTable();
-		
+
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
@@ -2648,10 +2648,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addDoSave(&$script)
 	{
 		$table = $this->getTable();
-		
+
 		$reloadOnUpdate = $table->isReloadOnUpdate();
 		$reloadOnInsert = $table->isReloadOnInsert();
-		
+
 		$script .= "
 	/**
 	 * Performs the work of inserting or updating the row in the database.
@@ -2758,20 +2758,20 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
 ";
-		
+
 		// We need to rewind any LOB columns
-		foreach($table->getColumns() as $col) {
+		foreach ($table->getColumns() as $col) {
 			$clo = strtolower($col->getName());
 			if ($col->isLobType()) {
 				$script .= "
-				// Rewind the $clo LOB column, since PDO does not rewind after inserting value. 
+				// Rewind the $clo LOB column, since PDO does not rewind after inserting value.
 				if (\$this->$clo !== null && is_resource(\$this->$clo)) {
 					rewind(\$this->$clo);
 				}
 				";
 			}
 		}
-		
+
 		$script .= "
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
@@ -2845,27 +2845,27 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 		$reloadOnUpdate = $table->isReloadOnUpdate();
 		$reloadOnInsert = $table->isReloadOnInsert();
-		
+
 		$script .= "
 	/**
 	 * Persists this object to the database.
-	 * 
+	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
-	 * All modified related objects will also be persisted in the doSave() 
-	 * method.  This method wraps all precipitate database operations in a 
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
 	 * single transaction.";
 		if ($reloadOnUpdate) {
 			$script .= "
-	 * 
+	 *
 	 * Since this table was configured to reload rows on update, the object will
-	 * be reloaded from the database if an UPDATE operation is performed (unless 
+	 * be reloaded from the database if an UPDATE operation is performed (unless
 	 * the \$skipReload parameter is TRUE).";
 		}
 		if ($reloadOnInsert) {
 			$script .= "
-	 * 
+	 *
 	 * Since this table was configured to reload rows on insert, the object will
-	 * be reloaded from the database if an INSERT operation is performed (unless 
+	 * be reloaded from the database if an INSERT operation is performed (unless
 	 * the \$skipReload parameter is TRUE).";
 		}
 		$script .= "
@@ -2875,7 +2875,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 	 * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
 		}
-		$script .= "	 
+		$script .= "
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
@@ -3228,7 +3228,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 	} // addCopyInto()
 
-	
+
 	/**
 	 * Adds clearAllReferencers() method which resets all the collections of referencing
 	 * fk objects.
@@ -3240,12 +3240,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	/**
 	 * Resets all collections of referencing foreign keys.
-	 * 
+	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
 	 * with circular references.  This is currently necessary when using Propel in certain
 	 * daemon or large-volumne/high-memory operations.
-	 * 
-	 * @param      boolean \$deep Whether to also clear the references on all associated objects. 
+	 *
+	 * @param      boolean \$deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences(\$deep = false)
 	{
@@ -3261,21 +3261,21 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$varName = $this->getRefFKCollVarName($refFK);
 				$vars[] = $varName;
 				$script .= "
-			foreach(\$this->$varName as \$o) {
+			foreach (\$this->$varName as \$o) {
 				\$o->clearAllReferences(\$deep);
 			}";
 			}
 		}
-		
+
 		$script .= "
 		} // if (\$deep)
 ";
-		
-		foreach($vars as $varName) {
+
+		foreach ($vars as $varName) {
 			$script .= "
 		\$this->$varName = null;";
 		}
-		
+
 		$script .= "
 	}
 ";

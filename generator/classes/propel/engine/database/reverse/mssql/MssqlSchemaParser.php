@@ -24,19 +24,19 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
 /**
  * Microsoft SQL Server database schema parser.
  *
- * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Revision$
- * @package   propel.engine.database.reverse.mssql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.engine.database.reverse.mssql
  */
 class MssqlSchemaParser extends BaseSchemaParser {
 
 	/**
 	 * Map MSSQL native types to Propel types.
-	 * @var array
+	 * @var        array
 	 */
 	private static $mssqlTypeMap = array(
 		"binary" => CreoleTypes::BINARY,
-		"bit" => PropelTypes::BOOLEAN, 
+		"bit" => PropelTypes::BOOLEAN,
 		"char" => PropelTypes::CHAR,
 		"datetime" => PropelTypes::TIMESTAMP,
 		"decimal() identity"  => PropelTypes::DECIMAL,
@@ -45,23 +45,23 @@ class MssqlSchemaParser extends BaseSchemaParser {
 		"int" => PropelTypes::INTEGER,
 		"int identity" => PropelTypes::INTEGER,
 		"integer" => PropelTypes::INTEGER,
-		"money" => PropelTypes::DECIMAL, 
-		"nchar" => PropelTypes::CHAR, 
-		"ntext" => PropelTypes::LONGVARCHAR, 
+		"money" => PropelTypes::DECIMAL,
+		"nchar" => PropelTypes::CHAR,
+		"ntext" => PropelTypes::LONGVARCHAR,
 		"numeric() identity" => PropelTypes::NUMERIC,
-		"numeric" => PropelTypes::NUMERIC,  
+		"numeric" => PropelTypes::NUMERIC,
 		"nvarchar" => PropelTypes::VARCHAR,
-		"real" => PropelTypes::REAL, 
+		"real" => PropelTypes::REAL,
 		"float" => PropelTypes::FLOAT,
-		"smalldatetime" => PropelTypes::TIMESTAMP, 
-		"smallint" => PropelTypes::SMALLINT, 
+		"smalldatetime" => PropelTypes::TIMESTAMP,
+		"smallint" => PropelTypes::SMALLINT,
 		"smallint identity" => PropelTypes::SMALLINT,
 		"smallmoney" => PropelTypes::DECIMAL,
 		"sysname" => PropelTypes::VARCHAR,
 		"text" => PropelTypes::LONGVARCHAR,
 		"timestamp" => PropelTypes::BINARY,
-		"tinyint identity" => PropelTypes::TINYINT, 
-		"tinyint" => PropelTypes::TINYINT, 
+		"tinyint identity" => PropelTypes::TINYINT,
+		"tinyint" => PropelTypes::TINYINT,
 		"uniqueidentifier" => PropelTypes::CHAR,
 		"varbinary" => PropelTypes::VARBINARY,
 		"varchar" => PropelTypes::VARCHAR,
@@ -88,7 +88,7 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	public function parse(Database $database)
 	{
 		$stmt = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
-			
+
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -99,17 +99,17 @@ class MssqlSchemaParser extends BaseSchemaParser {
 		}
 
 		// Now populate only columns.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addColumns($table);
 		}
 
 		// Now add indexes and constraints.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
 		}
-			
+
 	}
 
 
@@ -122,7 +122,7 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	{
 		$stmt = $this->dbh->query("sp_columns '" . $table->getName() . "'");
 
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 			$name = $row['COLUMN_NAME'];
 			$type = $row['TYPE_NAME'];
@@ -169,17 +169,17 @@ class MssqlSchemaParser extends BaseSchemaParser {
 		$database = $table->getDatabase();
 
 		$stmt = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
-                            		FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
-                                      INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND 
-                                      CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
-                                      INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
-                                      INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
-                            		WHERE (ccu1.table_name = '".$table->getName()."')");
+									FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
+								      INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
+								      CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
+								      INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
+								      INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
+									WHERE (ccu1.table_name = '".$table->getName()."')");
 
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 
 		$foreignKeys = array(); // local store to avoid duplicates
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 			$lcol = $row['COLUMN_NAME'];
 			$ftbl = $row['FK_TABLE_NAME'];
@@ -211,7 +211,7 @@ class MssqlSchemaParser extends BaseSchemaParser {
 		$stmt = $this->dbh->query("sp_indexes_rowset " . $table->getName());
 
 		$indexes = array();
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$colName = $row["COLUMN_NAME"];
 			$name = $row['INDEX_NAME'];
 
@@ -230,20 +230,19 @@ class MssqlSchemaParser extends BaseSchemaParser {
 	 */
 	protected function addPrimaryKey(Table $table)
 	{
-		$stmt = $this->dbh->query("SELECT COLUMN_NAME 
-                        FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
-                                INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON 
-                      INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
-                        WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND 
-                      (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME
+						FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+								INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
+					  INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
+						WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
+					  (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
 
 		// Loop through the returned results, grouping the same key_name together
 		// adding each column for that key.
-		while($row = $stmt->fetch(PDO::FETCH_NUM)) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
 			$table->getColumn($name)->setPrimaryKey(true);
 		}
 	}
 
 }
-

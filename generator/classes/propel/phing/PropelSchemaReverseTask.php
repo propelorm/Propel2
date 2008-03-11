@@ -256,7 +256,7 @@ class PropelSchemaReverseTask extends PDOTask {
 	/**
 	 * Sets the output name for the XML file.
 	 *
-	 * @param    PhingFile $v
+	 * @param      PhingFile $v
 	 */
 	public function setOutputFile(PhingFile $v)
 	{
@@ -266,7 +266,7 @@ class PropelSchemaReverseTask extends PDOTask {
 	/**
 	 * Set whether to use the column name as phpName without any translation.
 	 *
-	 * @param    boolean $v
+	 * @param      boolean $v
 	 */
 	public function setSamePhpName($v)
 	{
@@ -299,7 +299,7 @@ class PropelSchemaReverseTask extends PDOTask {
 		$bits = self::VALIDATORS_NONE;
 
 		$exprs = explode(',', $v);
-		foreach($exprs as $expr) {
+		foreach ($exprs as $expr) {
 			$expr = trim($expr);
 			if (!isset(self::$validatorBitMap[$expr])) {
 				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
@@ -426,40 +426,40 @@ class PropelSchemaReverseTask extends PDOTask {
 	 */
 	protected function addValidators(Database $database)
 	{
-		
+
 		$platform = $this->getGeneratorConfig()->getConfiguredPlatform();
-		
-		foreach($database->getTables() as $table) {
-			
+
+		foreach ($database->getTables() as $table) {
+
 			$set = new PropelSchemaReverse_ValidatorSet();
-			
-			foreach($table->getColumns() as $col) {
-				
+
+			foreach ($table->getColumns() as $col) {
+
 				if ($col->isNotNull() && $this->isValidatorRequired(self::VALIDATORS_REQUIRED)) {
 					$validator = $set->getValidator($col);
 					$validator->addRule($this->getValidatorRule($col, 'required'));
 				}
-			
-				if (in_array($col->getType(), array(PropelTypes::CHAR, PropelTypes::VARCHAR, PropelTypes::LONGVARCHAR)) 
+
+				if (in_array($col->getType(), array(PropelTypes::CHAR, PropelTypes::VARCHAR, PropelTypes::LONGVARCHAR))
 						&& $col->getSize() && $this->isValidatorRequired(self::VALIDATORS_MAXLENGTH)) {
 					$validator = $set->getValidator($col);
 					$validator->addRule($this->getValidatorRule($col, 'maxLength', $col->getSize()));
 				}
-				
+
 				if ($col->isNumericType() && $this->isValidatorRequired(self::VALIDATORS_MAXVALUE)) {
 					$this->log("WARNING: maxValue validator added for column ".$col->getName().". You will have to adjust the size value manually.", Project::MSG_WARN);
 					$validator = $set->getValidator($col);
 					$validator->addRule($this->getValidatorRule($col, 'maxSize', 'REPLACEME'));
 				}
-				
+
 				if ($col->isPhpPrimitiveType() && $this->isValidatorRequired(self::VALIDATORS_TYPE)) {
 					$validator = $set->getValidator($col);
 					$validator->addRule($this->getValidatorRule($col, 'type', $col->getPhpType()));
 				}
-				
+
 			}
-			
-			foreach($table->getUnices() as $unique) {
+
+			foreach ($table->getUnices() as $unique) {
 				$colnames = $unique->getColumns();
 				if (count($colnames) == 1) { // currently 'unique' validator only works w/ single columns.
 					$col = $table->getColumn($colnames[0]);
@@ -467,21 +467,21 @@ class PropelSchemaReverseTask extends PDOTask {
 					$validator->addRule($this->getValidatorRule($col, 'unique'));
 				}
 			}
-				
-			foreach($set->getValidators() as $validator) {
+
+			foreach ($set->getValidators() as $validator) {
 				$table->addValidator($validator);
 			}
 
 		} // foreach table
-		
+
 	}
 
 	/**
 	 * Gets validator rule for specified type (string).
 	 *
-	 * @param Column $column The column that is being validated.
-	 * @param string $type The type (string) for validator (e.g. 'required').
-	 * @param mixed $value The value for the validator (if applicable)
+	 * @param      Column $column The column that is being validated.
+	 * @param      string $type The type (string) for validator (e.g. 'required').
+	 * @param      mixed $value The value for the validator (if applicable)
 	 */
 	protected function getValidatorRule(Column $column, $type, $value = null)
 	{
@@ -497,9 +497,9 @@ class PropelSchemaReverseTask extends PDOTask {
 	/**
 	 * Gets the message for a specified rule.
 	 *
-	 * @param Column $column
-	 * @param string $type
-	 * @param mixed $value
+	 * @param      Column $column
+	 * @param      string $type
+	 * @param      mixed $value
 	 */
 	protected function getRuleMessage(Column $column, $type, $value)
 	{
@@ -520,14 +520,14 @@ class PropelSchemaReverseTask extends PDOTask {
  * @package    propel.phing
  */
 class PropelSchemaReverse_ValidatorSet {
-	
+
 	/**
 	 * Map of column names to validators.
 	 *
-	 * @var array Validator[]
+	 * @var        array Validator[]
 	 */
 	private $validators = array();
-	
+
 	/**
 	 * Gets a single validator for specified column name.
 	 * @param      Column $column
@@ -542,7 +542,7 @@ class PropelSchemaReverse_ValidatorSet {
 		}
 		return $this->validators[$key];
 	}
-	
+
 	/**
 	 * Gets all validators.
 	 * @return     array Validator[]

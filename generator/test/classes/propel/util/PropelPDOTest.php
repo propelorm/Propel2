@@ -36,7 +36,7 @@ class PropelPDOTest extends BookstoreTestBase
 		$this->assertFalse($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
 		$con->setAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES, true);
 		$this->assertTrue($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
-		
+
 		$con->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
 		$this->assertEquals(PDO::CASE_LOWER, $con->getAttribute(PDO::ATTR_CASE));
 	}

@@ -121,7 +121,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	{
 
 		$origBceCount = BookstoreContestEntryPeer::doCount(new Criteria());
-			
+
 		$cust1 = new Customer();
 		$cust1->setName("Cust1");
 		$cust1->save();
@@ -527,7 +527,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	{
 		BookPeer::doDeleteAll();
 
-		for($i=0; $i < 25; $i++) {
+		for ($i=0; $i < 25; $i++) {
 			$b = new Book();
 			$b->setTitle("Book $i");
 			$b->setISBN("ISBN $i");
@@ -565,7 +565,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 	{
 		BookPeer::doDeleteAll();
 
-		for($i=0; $i < 25; $i++) {
+		for ($i=0; $i < 25; $i++) {
 			$b = new Book();
 			$b->setTitle("Book $i");
 			$b->setISBN("ISBN $i");
@@ -574,7 +574,7 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		$c = new Criteria();
 		$totalCount = BookPeer::doCount($c);
-		
+
 		$this->assertEquals($totalCount, BookPeer::doCountJoinAuthor($c));
 		$this->assertEquals($totalCount, BookPeer::doCountJoinPublisher($c));
 	}

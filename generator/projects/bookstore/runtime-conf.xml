@@ -45,12 +45,12 @@
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
 					<classname>DebugPDO</classname>
-					<dsn>mysql:dbname=test</dsn>
+					<dsn>mysql:dbname=bookstore</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
-					<user>testuser</user>
-					<password>password</password>
 					-->
+					<user>bookstore</user>
+					<password>wTCj32PHEpemrbK9</password>
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
 					</options>
@@ -79,12 +79,13 @@
 			<datasource id="bookstore-cms">
 				<adapter>mysql</adapter>
 				<connection>
-					<dsn>mysql:dbname=test</dsn>
+					<classname>DebugPDO</classname>
+					<dsn>mysql:dbname=bookstore</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
-					<user>testuser</user>
-					<password>password</password>
 					-->
+					<user>bookstore</user>
+					<password>wTCj32PHEpemrbK9</password>
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
 					</options>

@@ -462,7 +462,7 @@ class Database extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -502,17 +502,17 @@ class Database extends XMLElement {
 		to have a method of the Column that indicates whether the column was mapped
 		to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
 
-		foreach($this->domainMap as $domain) {
+		foreach ($this->domainMap as $domain) {
 		$domain->appendXml($dbNode);
 		}
 		*/
-		foreach($this->vendorInfos as $vi) {
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($dbNode);
 		}
 
-		foreach($this->tableList as $table) {
+		foreach ($this->tableList as $table) {
 			$table->appendXml($dbNode);
 		}
-		
+
 	}
 }

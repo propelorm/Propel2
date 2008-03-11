@@ -232,23 +232,23 @@ class PropelCreoleTransformTask extends Task {
 	 * @return     void
 	 */
 	public function setAddValidators($v)
-	{	
+	{
 		$validKeys = array_keys(self::$validatorBitMap);
-		
+
 		// lowercase input
 		$v = strtolower($v);
-		
+
 		$bits = self::VALIDATORS_NONE;
-		
+
 		$exprs = explode(',', $v);
-		foreach($exprs as $expr) {
+		foreach ($exprs as $expr) {
 			$expr = trim($expr);
 			if (!isset(self::$validatorBitMap[$expr])) {
 				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
 			}
 			$bits |= self::$validatorBitMap[$expr];
 		}
-		
+
 		$this->validatorBits = $bits;
 	}
 
@@ -657,7 +657,7 @@ class PropelCreoleTransformTask extends Task {
 	 * @return     boolean
 	 */
 	protected function isValidatorRequired($type) {
-		return (($this->validatorBits & $type) === $type); 
+		return (($this->validatorBits & $type) === $type);
 	}
 
 	/**

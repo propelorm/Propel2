@@ -24,9 +24,9 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
 /**
  * SQLite database schema parser.
  *
- * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Revision$
- * @package   propel.engine.database.reverse.mysql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.engine.database.reverse.mysql
  */
 class SqliteSchemaParser extends BaseSchemaParser {
 
@@ -36,7 +36,7 @@ class SqliteSchemaParser extends BaseSchemaParser {
 	 * There really aren't any SQLite native types, so we're just
 	 * using the MySQL ones here.
 	 *
-	 * @var array
+	 * @var        array
 	 */
 	private static $sqliteTypeMap = array(
 		'tinyint' => PropelTypes::TINYINT,
@@ -86,7 +86,7 @@ class SqliteSchemaParser extends BaseSchemaParser {
 	public function parse(Database $database)
 	{
 		$stmt = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
-			
+
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -97,15 +97,15 @@ class SqliteSchemaParser extends BaseSchemaParser {
 		}
 
 		// Now populate only columns.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addColumns($table);
 		}
 
 		// Now add indexes and constraints.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addIndexes($table);
 		}
-			
+
 	}
 
 
@@ -120,8 +120,8 @@ class SqliteSchemaParser extends BaseSchemaParser {
 	{
 		$stmt = $this->dbh->query("PRAGMA table_info('" . $table->getName() . "')");
 
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-				
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
 			$name = $row['name'];
 
 			$fulltype = $row['type'];
@@ -151,7 +151,7 @@ class SqliteSchemaParser extends BaseSchemaParser {
 				$propelType = Column::DEFAULT_TYPE;
 				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$type.") that Propel does not support.");
 			}
-				
+
 			$column = new Column($name);
 			$column->setTable($table);
 			$column->setDomainForType($propelType);
@@ -165,13 +165,13 @@ class SqliteSchemaParser extends BaseSchemaParser {
 			$column->setAutoIncrement($autoincrement);
 			$column->setNotNull($not_null);
 
-				
+
 			if (($row['pk'] == 1) || (strtolower($type) == 'integer')) {
 				$column->setPrimaryKey(true);
 			}
 
 			$table->addColumn($column);
-			
+
 		}
 
 
@@ -181,24 +181,23 @@ class SqliteSchemaParser extends BaseSchemaParser {
 	 * Load indexes for this table
 	 */
 	protected function addIndexes(Table $table)
-	{	 
+	{
 		$stmt = $this->dbh->query("PRAGMA index_list('" . $table->getName() . "')");
-		
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			
+
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
 			$name = $row['name'];
 			$index = new Index($name);
-						
+
 			$stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
-			while($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+			while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
 				$colname = $row2['name'];
 				$index->addColumn($table->getColumn($colname));
 			}
-			
+
 			$table->addIndex($index);
-			
+
 		}
 	}
 
 }
-

@@ -45,27 +45,27 @@ class PropelPDO extends PDO {
 	 * Attribute to use to set whether to cache prepared statements.
 	 */
 	const PROPEL_ATTR_CACHE_PREPARES = -1;
-	
+
 	/**
 	 * The current transaction depth.
 	 * @var        int
 	 */
 	protected $nestedTransactionCount = 0;
-	
+
 	/**
 	 * Cache of prepared statements (PDOStatement) keyed by md5 of SQL.
 	 *
 	 * @var        array [md5(sql) => PDOStatement]
 	 */
 	protected $preparedStatements = array();
-	
+
 	/**
 	 * Whether to cache prepared statements.
 	 *
 	 * @var        boolean
 	 */
 	protected $cachePreparedStatements = false;
-	
+
 	/**
 	 * Gets the current transaction depth.
 	 * @return     int
@@ -124,7 +124,7 @@ class PropelPDO extends PDO {
 		$this->incrementNestedTransactionCount();
 		return $return;
 	}
-    
+
 	/**
 	 * Overrides PDO::commit() to only commit the transaction if we are in the outermost
 	 * transaction nesting level.
@@ -158,10 +158,10 @@ class PropelPDO extends PDO {
 		}
 		return $return;
 	}
-	
+
 	/**
 	 * Sets a connection attribute.
-	 * 
+	 *
 	 * This is overridden here to provide support for setting Propel-specific attributes
 	 * too.
 	 *
@@ -178,10 +178,10 @@ class PropelPDO extends PDO {
 				parent::setAttribute($attribute, $value);
 		}
 	}
-	
+
 	/**
 	 * Gets a connection attribute.
-	 * 
+	 *
 	 * This is overridden here to provide support for setting Propel-specific attributes
 	 * too.
 	 *
@@ -197,31 +197,31 @@ class PropelPDO extends PDO {
 				return parent::getAttribute($attribute);
 		}
 	}
-	
+
 	/**
-     * Overrides PDO::prepare() to add query caching support if the 
-     * PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
-     * .
-     * @param      string $sql
-     * @param      array
-     * @return     PDOStatement
-     */
-    public function prepare($sql, $driver_options = array())
-    {
-    	if ($this->cachePreparedStatements) {
+	 * Overrides PDO::prepare() to add query caching support if the
+	 * PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
+	 * .
+	 * @param      string $sql
+	 * @param      array
+	 * @return     PDOStatement
+	 */
+	public function prepare($sql, $driver_options = array())
+	{
+		if ($this->cachePreparedStatements) {
 			$key = $sql;
-			if(!isset($this->preparedStatements[$key])) {
+			if (!isset($this->preparedStatements[$key])) {
 				$stmt = parent::prepare($sql, $driver_options);
 				$this->preparedStatements[$key] = $stmt;
 				return $stmt;
 			} else {
 				return $this->preparedStatements[$key];
 			}
-    	} else {
-    		return parent::prepare($sql, $driver_options);
-    	}
+		} else {
+			return parent::prepare($sql, $driver_options);
+		}
 	}
-	
+
 	/**
 	 * Clears any stored prepared statements for this connection.
 	 */

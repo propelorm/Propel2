@@ -199,16 +199,16 @@ class ValidatorTest extends BookstoreTestBase
 		$book = new Book();
 		$book->setTitle("testDoValidate_CustomValidator"); // (valid)
 		$book->setISBN("Foo.Bar.Baz"); // (invalid)
-		
+
 		$res = $book->validate();
 
 		$this->assertFalse($res, "Expected validation to fail.");
 
 		$failures = $book->getValidationFailures();
-		
+
 		$this->assertEquals(1, count($failures), "Expected 1 column to fail validation.");
 		$this->assertEquals(array(BookPeer::ISBN), array_keys($failures), "Expected EMAIL to fail validation.");
-		
+
 		$validator = $failures[BookPeer::ISBN]->getValidator();
 		$this->assertType('ISBNValidator', $validator, "Expected validator that failed to be ISBNValidator");
 	}

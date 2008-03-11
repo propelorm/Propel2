@@ -968,7 +968,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns an Array containing all the columns in the table
-	 * @return array Column[]
+	 * @return     array Column[]
 	 */
 	public function getColumns()
 	{
@@ -999,7 +999,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns an Array containing all the validators in the table
-	 * @return array Validator[]
+	 * @return     array Validator[]
 	 */
 	public function getValidators()
 	{
@@ -1008,7 +1008,7 @@ class Table extends XMLElement implements IDMethod {
 
 	/**
 	 * Returns an Array containing all the FKs in the table.
-	 * @return array ForeignKey[]
+	 * @return     array ForeignKey[]
 	 */
 	public function getForeignKeys()
 	{
@@ -1171,7 +1171,7 @@ class Table extends XMLElement implements IDMethod {
 	 */
 	public function appendXml(DOMNode $node)
 	{
-		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$tableNode = $node->appendChild($doc->createElement('table'));
 		$tableNode->setAttribute('name', $this->getName());
@@ -1228,34 +1228,34 @@ class Table extends XMLElement implements IDMethod {
 			$tableNode->setAttribute('basePeer', $this->basePeer);
 		}
 
-		foreach($this->columnList as $col) {
+		foreach ($this->columnList as $col) {
 			$col->appendXml($tableNode);
 		}
-		
-		foreach($this->validatorList as $validator) {
+
+		foreach ($this->validatorList as $validator) {
 			$validator->appendXml($tableNode);
 		}
-		
-		foreach($this->foreignKeys as $fk) {
+
+		foreach ($this->foreignKeys as $fk) {
 			$fk->appendXml($tableNode);
 		}
-		
-		foreach($this->idMethodParameters as $param) {
+
+		foreach ($this->idMethodParameters as $param) {
 			$param->appendXml($tableNode);
 		}
-		
-		foreach($this->indices as $index) {
+
+		foreach ($this->indices as $index) {
 			$index->appendXml($tableNode);
 		}
-		
-		foreach($this->unices as $unique) {
+
+		foreach ($this->unices as $unique) {
 			$unique->appendXml($tableNode);
 		}
-		
-		foreach($this->vendorInfos as $vi) {
+
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($tableNode);
 		}
-		
+
 	}
 
 	/**

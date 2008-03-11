@@ -31,7 +31,7 @@
  * @package    propel.adapter
  */
 class DBMySQL extends DBAdapter {
-	
+
 	/**
 	 * This method is used to ignore case.
 	 *

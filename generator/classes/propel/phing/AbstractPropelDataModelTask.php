@@ -146,7 +146,7 @@ abstract class AbstractPropelDataModelTask extends Task {
 	 * @var        PDO
 	 */
 	private $conn = false;
-	
+
 	/**
 	 * An initialized GeneratorConfig object containing the converted Phing props.
 	 *
@@ -573,11 +573,11 @@ abstract class AbstractPropelDataModelTask extends Task {
 	{
 		if ($this->generatorConfig === null) {
 			$this->generatorConfig = new GeneratorConfig();
-			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties()); 
+			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
 		}
 		return $this->generatorConfig;
 	}
-	
+
 	/**
 	 * Checks this class against Basic requrements of any propel datamodel task.
 	 *

@@ -84,7 +84,7 @@ abstract class DBAdapter {
 	/**
 	 * This method is called after a connection was created to run necessary
 	 * post-initialization queries or code.
-	 * 
+	 *
 	 * If a charset was specified, this will be set before any other queries
 	 * are executed.
 	 *
@@ -110,8 +110,8 @@ abstract class DBAdapter {
 
 	/**
 	 * Sets the character encoding using SQL standard SET NAMES statement.
-	 * 
-	 * This method is invoked from the default initConnection() method and must 
+	 *
+	 * This method is invoked from the default initConnection() method and must
 	 * be overridden for an RDMBS which does _not_ support this SQL standard.
 	 *
 	 * @param      PDO   A PDO connection instance.
@@ -122,7 +122,7 @@ abstract class DBAdapter {
 	{
 		$con->exec("SET NAMES '" . $charset . "'");
 	}
-	
+
 	/**
 	 * This method is used to ignore case.
 	 *

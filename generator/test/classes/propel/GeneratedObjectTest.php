@@ -95,7 +95,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$b = new Bookstore();
 		$b->setStoreName("Foo!");
 		$b->save();
-		
+
 		$employee = new BookstoreEmployee();
 		$employee->setName("Johnny Walker");
 
@@ -137,11 +137,11 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		}
 
 		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
-		
+
 		$b = new Bookstore();
 		$b->setStoreName("Barnes & Noble");
 		$b->save();
-		
+
 		$c = new Contest();
 		$c->setName("Bookathon Contest");
 		$c->save();
@@ -213,7 +213,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$b = new Bookstore();
 		$b->setStoreName("Foo!");
 		$b->save();
-		
+
 		$sale = new BookstoreSale();
 		$sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
 		$sale->setSaleName("Spring Sale");
@@ -240,7 +240,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$b = new Bookstore();
 		$b->setStoreName("Foo!");
 		$b->save();
-		
+
 		$sale = new BookstoreSale();
 		$sale->setBookstore(BookstorePeer::doSelectOne(new Criteria()));
 		$sale->setSaleName("Spring Sale");
@@ -251,7 +251,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$sale->setSaleName("Winter Clearance");
 		$sale->save(null, $skipReload=true);
-		
+
 		// Since reloadOnUpdate = true, we expect the discount to be set now.
 
 		$this->assertNull($sale->getDiscount(), "Expected NULL value for discount after save.");
@@ -289,7 +289,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	public function testSetTemporalValue_Invalid()
 	{
 		$this->markTestSkipped();
-		// FIXME - Figure out why this doesn't work (causes a PHP ERROR instead of throwing Exception) in 
+		// FIXME - Figure out why this doesn't work (causes a PHP ERROR instead of throwing Exception) in
 		// the Phing+PHPUnit context
 		$r = new Review();
 		try {
@@ -310,19 +310,19 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$store->setStoreOpenTime(strtotime('12:55'));
 		$store->save();
 		$this->assertEquals('12:55', $store->getStoreOpenTime(null)->format('H:i'));
-		
+
 		$acct = new BookstoreEmployeeAccount();
 		$acct->setCreated(time());
 		$this->assertEquals(date('Y-m-d H:i'), $acct->getCreated('Y-m-d H:i'));
-		
+
 		$review = new Review();
 		$review->setReviewDate(time());
 		$this->assertEquals(date('Y-m-d'), $review->getReviewDate('Y-m-d'));
 	}
-	
+
 	/**
 	 * Test setting empty temporal values.
-	 * @link http://propel.phpdb.org/trac/ticket/586
+	 * @link       http://propel.phpdb.org/trac/ticket/586
 	 */
 	public function testTemporalValues_Empty()
 	{
@@ -330,7 +330,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$review->setReviewDate('');
 		$this->assertNull($review->getReviewDate());
 	}
-	
+
 	/**
 	 * Test setting TIME columns.
 	 */
@@ -428,7 +428,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$this->assertSame($pub1, $book->getPublisher(), "Expected book to have old publisher object associated (again).");
 
 	}
-	
+
 	/**
 	 * Test the effect of typecast on primary key values and instance pool retrieval.
 	 */
@@ -438,25 +438,25 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$reader->setName("Tester");
 		$reader->save();
 		$readerId = $reader->getId();
-		
+
 		$book = new Book();
 		$book->setTitle("BookTest");
 		$book->setISBN("TEST");
 		$book->save();
 		$bookId = $book->getId();
-		
+
 		$opinion = new BookOpinion();
 		$opinion->setBookId((string)$bookId);
 		$opinion->setReaderId((string)$readerId);
 		$opinion->setRating("BAD!");
 		$opinion->setRecommendToFriend(false);
 		$opinion->save();
-		
-		
+
+
 		$opinion2 = BookOpinionPeer::retrieveByPK($bookId, $readerId);
-		
+
 		$this->assertSame($opinion, $opinion2, "Expected same object to be retrieved from differently type-casted primary key values.");
-		
+
 	}
 
 	/**
@@ -913,7 +913,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$this->assertEquals($expectedDiff, $diffKeys);
 	}
-	
+
 	/**
 	 * Test regexp validator for ticket:542
 	 * @link       http://propel.phpdb.org/trac/ticket/542
@@ -925,7 +925,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$res = $b->validate();
 		$this->assertTrue($res, "Expected URL to validate");
 	}
-	
+
 	/**
 	 * Test that setting the auto-increment primary key will result in exception.
 	 */
@@ -940,7 +940,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		} catch (Exception $x) {
 			$this->assertType('PropelException', $x);
 		}
-		
+
 		// ... but we should silently ignore NULL values, since these are really
 		// the same as "not set" in PHP world.
 		$b = new Bookstore();

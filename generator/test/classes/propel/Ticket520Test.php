@@ -29,7 +29,7 @@ class Ticket520Test extends BookstoreTestBase {
 	}
 
 	public function testNewObjectsWithCriteria() {
-		
+
 		$a = new Author();
 		$a->setFirstName("Douglas");
 		$a->setLastName("Adams");

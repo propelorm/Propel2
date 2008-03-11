@@ -48,13 +48,13 @@ abstract class DDLBuilder extends DataModelBuilder {
 		$this->addForeignKeys($script);
 		return $script;
 	}
-	
+
 	/**
 	 * Gets the name to use for creating a sequence for the current table.
-	 * 
+	 *
 	 * This will create a new name or use one specified in an id-method-parameter
 	 * tag, if specified.
-	 * 
+	 *
 	 * @return     string Sequence name for this table.
 	 */
 	public function getSequenceName()
@@ -81,7 +81,7 @@ abstract class DDLBuilder extends DataModelBuilder {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string

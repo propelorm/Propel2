@@ -525,7 +525,7 @@ class Column extends XMLElement {
 
 	/**
 	 * Set whether the column is a primary key or not.
-	 * @param boolean $v
+	 * @param      boolean $v
 	 */
 	public function setPrimaryKey($v)
 	{
@@ -786,7 +786,7 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -836,7 +836,7 @@ class Column extends XMLElement {
 
 		if ($this->isInheritance()) {
 			$colNode->setAttribute('inheritance', $this->inheritanceType);
-			foreach($this->inheritanceList as $inheritance) {
+			foreach ($this->inheritanceList as $inheritance) {
 				$inheritance->appendXml($colNode);
 			}
 		}
@@ -848,7 +848,7 @@ class Column extends XMLElement {
 			}
 		}
 
-		foreach($this->vendorInfos as $vi) {
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($colNode);
 		}
 	}

@@ -37,7 +37,7 @@ class XmlToDataSQL extends AbstractHandler {
 	 * @var        GeneratorConfig
 	 */
 	private $generatorConfig;
-	
+
 	/**
 	 * The database.
 	 *
@@ -177,14 +177,14 @@ class XmlToDataSQL extends AbstractHandler {
 
 				if ($this->currTableName !== $table->getName()) {
 					// new table encountered
-						
+
 					if ($this->currBuilder !== null) {
 						$this->sqlWriter->write($this->currBuilder->getTableEndSql());
 					}
-						
+
 					$this->currTableName = $table->getName();
 					$this->currBuilder = $this->generatorConfig->getConfiguredBuilder($table, 'datasql');
-						
+
 					$this->sqlWriter->write($this->currBuilder->getTableStartSql());
 				}
 
@@ -192,7 +192,7 @@ class XmlToDataSQL extends AbstractHandler {
 				$this->sqlWriter->write($this->currBuilder->buildRowSql($data));
 
 			}
-				
+
 		} catch (Exception $e) {
 			// Exceptions have traditionally not bubbled up nicely from the expat parser,
 			// so we also print the stack trace here.

@@ -36,7 +36,7 @@
  * @package    propel.engine.builder
  */
 abstract class DataModelBuilder {
-	
+
 	/**
 	 * The current table.
 	 * @var        Table
@@ -49,13 +49,13 @@ abstract class DataModelBuilder {
 	 * @var        GeneratorConfig
 	 */
 	private $generatorConfig;
-	
+
 	/**
 	 * An array of warning messages that can be retrieved for display (e.g. as part of phing build process).
 	 * @var        array string[]
 	 */
 	private $warnings = array();
-	
+
 	/**
 	 * Peer builder class for current table.
 	 * @var        DataModelBuilder
@@ -139,19 +139,19 @@ abstract class DataModelBuilder {
 	 * @var        DDLBuilder
 	 */
 	private $ddlBuilder;
-	
+
 	/**
 	 * The Data-SQL builder for current table.
-	 * @var        DataSQLBuilder 
+	 * @var        DataSQLBuilder
 	 */
 	private $dataSqlBuilder;
-	
+
 	/**
 	 * The Pluralizer class to use.
 	 * @var        Pluralizer
 	 */
 	private $pluralizer;
-	
+
 
 	/**
 	 * Creates new instance of DataModelBuilder subclass.
@@ -161,7 +161,7 @@ abstract class DataModelBuilder {
 	{
 		$this->table = $table;
 	}
-	
+
 	/**
 	 * Returns new or existing Peer builder class for this table.
 	 * @return     PeerBuilder
@@ -217,7 +217,7 @@ abstract class DataModelBuilder {
 	public function getStubObjectBuilder()
 	{
 		if (!isset($this->stubObjectBuilder)) {
-			$this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub'); 
+			$this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
 		}
 		return $this->stubObjectBuilder;
 	}
@@ -229,7 +229,7 @@ abstract class DataModelBuilder {
 	public function getMapBuilderBuilder()
 	{
 		if (!isset($this->mapBuilderBuilder)) {
-			$this->mapBuilderBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'mapbuilder'); 
+			$this->mapBuilderBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'mapbuilder');
 		}
 		return $this->mapBuilderBuilder;
 	}
@@ -241,7 +241,7 @@ abstract class DataModelBuilder {
 	public function getInterfaceBuilder()
 	{
 		if (!isset($this->interfaceBuilder)) {
-			$this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface'); 
+			$this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
 		}
 		return $this->interfaceBuilder;
 	}
@@ -253,7 +253,7 @@ abstract class DataModelBuilder {
 	public function getMultiExtendObjectBuilder()
 	{
 		if (!isset($this->multiExtendObjectBuilder)) {
-			$this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend'); 
+			$this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
 		}
 		return $this->multiExtendObjectBuilder;
 	}
@@ -329,7 +329,7 @@ abstract class DataModelBuilder {
 		}
 		return $this->nestedSetPeerBuilder;
 	}
-	
+
 	/**
 	 * Returns new or existing ddl builder class for this table.
 	 * @return     DDLBuilder
@@ -341,7 +341,7 @@ abstract class DataModelBuilder {
 		}
 		return $this->ddlBuilder;
 	}
-	
+
 	/**
 	 * Returns new or existing data sql builder class for this table.
 	 * @return     DataSQLBuilder
@@ -359,7 +359,7 @@ abstract class DataModelBuilder {
 	 * .
 	 * This is used very frequently from the peer and object builders to get
 	 * a peer builder for a RELATED table.
-	 * 
+	 *
 	 * @param      Table $table
 	 * @return     PeerBuilder
 	 */
@@ -370,10 +370,10 @@ abstract class DataModelBuilder {
 
 	/**
 	 * Convenience method to return a NEW Object class builder instance.
-	 * 
+	 *
 	 * This is used very frequently from the peer and object builders to get
 	 * an object builder for a RELATED table.
-	 * 
+	 *
 	 * @param      Table $table
 	 * @return     ObjectBuilder
 	 */
@@ -381,7 +381,7 @@ abstract class DataModelBuilder {
 	{
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
 	}
-	
+
 	/**
 	 * Gets the GeneratorConfig object.
 	 *
@@ -391,10 +391,10 @@ abstract class DataModelBuilder {
 	{
 		return $this->generatorConfig;
 	}
-	
+
 	/**
 	 * Get a specific [name transformed] build property.
-	 * 
+	 *
 	 * @param      string $name
 	 * @return     string
 	 */
@@ -405,26 +405,26 @@ abstract class DataModelBuilder {
 		}
 		return null; // just to be explicit
 	}
-	
+
 	/**
 	 * Sets the GeneratorConfig object.
 	 *
-	 * @param     GeneratorConfig $v
+	 * @param      GeneratorConfig $v
 	 */
 	public function setGeneratorConfig(GeneratorConfig $v)
 	{
 		$this->generatorConfig = $v;
 	}
-	
+
 	/**
 	 * Sets the table for this builder.
-	 * @param     Table $table
+	 * @param      Table $table
 	 */
 	public function setTable(Table $table)
 	{
 		$this->table = $table;
 	}
-	
+
 	/**
 	 * Returns the current Table object.
 	 * @return     Table
@@ -455,7 +455,7 @@ abstract class DataModelBuilder {
 			return $this->getTable()->getDatabase();
 		}
 	}
-	
+
 	/**
 	 * Pushes a message onto the stack of warnings.
 	 * @param      string $msg The warning message.
@@ -501,7 +501,7 @@ abstract class DataModelBuilder {
 	{
 		return $this->getBuildProperty('classPrefix') . $identifier;
 	}
-	
+
 	/**
 	 * Returns the name of the current table being built, with a possible prefix.
 	 * @return     string
@@ -510,5 +510,5 @@ abstract class DataModelBuilder {
 	{
 		return $this->getBuildProperty('tablePrefix') . $identifier;
 	}
-	
+
 }

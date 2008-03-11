@@ -109,11 +109,11 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 
 		$phpconf = self::simpleXmlToArray($xml);
 		$phpconfClassmap = array();
-		
+
 		// $this->log(var_export($phpconf,true));
 
 		// Create a map of all PHP classes and their filepaths for this data model
-		
+
 		$generatorConfig = $this->getGeneratorConfig();
 
 		foreach ($this->getDataModels() as $dataModel) {
@@ -121,7 +121,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			foreach ($dataModel->getDatabases() as $database) {
 
 				$classMap = array();
-				
+
 				// $this->log("Processing class mappings in database: " . $database->getName());
 
 				//print the tables
@@ -218,7 +218,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 		if (!file_put_contents($outfile->getAbsolutePath(), $output)) {
 			throw new BuildException("Error creating output file: " . $outfile->getAbsolutePath(), $this->getLocation());
 		}
-			
+
 
 	} // main()
 
@@ -269,12 +269,12 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 				$ar[$k] = $child;
 			} else {
 				// (This only applies to nested nodes that do not have an @id attribute)
-				
+
 				// if the $ar[$k] element is not already an array, then we need to make it one.
 				// this is a bit of a hack, but here we check to also make sure that if it is an
 				// array, that it has numeric keys.  this distinguishes it from simply having other
 				// nested element data.
-				
+
 				if ( !is_array($ar[$k]) || !isset($ar[$k][0]) ) { $ar[$k] = array($ar[$k]); }
 				$ar[$k][] = $child;
 			}

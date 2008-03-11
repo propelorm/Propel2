@@ -1439,12 +1439,12 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		if (Propel::isInstancePoolingEnabled())
 		{
 			\$keys = array();
-			foreach(self::\$instances as \$obj)
+			foreach (self::\$instances as \$obj)
 			{
 				\$keys[] = \$obj->getPrimaryKey();
 			}
 
-			if(!empty(\$keys))
+			if (!empty(\$keys))
 			{
 				// We don't need to alter the object instance pool; we're just modifying this instance
 				// already in the pool.

@@ -37,14 +37,14 @@ require_once 'bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  */
 class GeneratedObjectLobTest extends BookstoreTestBase {
-	
+
 	/**
 	 * Array of filenames pointing to blob/clob files indexed by the basename.
 	 *
-	 * @var array string[]
+	 * @var        array string[]
 	 */
 	protected $sampleLobFiles = array();
-	
+
 	protected function setUp()
 	{
 		parent::setUp();
@@ -52,27 +52,27 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 		$this->sampleLobFiles['tin_drum.txt'] = TESTS_BASE_DIR . '/etc/lob/tin_drum.txt';
 		$this->sampleLobFiles['propel.gif'] = TESTS_BASE_DIR . '/etc/lob/propel.gif';
 	}
-	
+
 	/**
 	 * Gets a LOB filename.
 	 *
-	 * @param string $basename Basename of LOB filename to return (if left blank, will choose random file).
-	 * @return string
-	 * @throws Exception - if specified basename doesn't correspond to a registered LOB filename
+	 * @param      string $basename Basename of LOB filename to return (if left blank, will choose random file).
+	 * @return     string
+	 * @throws     Exception - if specified basename doesn't correspond to a registered LOB filename
 	 */
 	protected function getLobFile($basename = null)
 	{
 		if ($basename === null) {
 			$basename = array_rand($this->sampleLobFiles);
 		}
-		
+
 		if (isset($this->sampleLobFiles[$basename])) {
 			return $this->sampleLobFiles[$basename];
 		} else {
 			throw new Exception("Invalid base LOB filename: $basename");
 		}
 	}
-	
+
 	/**
 	 * Test the LOB results returned in a resultset.
 	 */
@@ -109,19 +109,19 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 	/**
 	 * Test to make sure that file pointer is not when it is fetched
 	 * from the object.
-	 * 
+	 *
 	 * This is actually a test for correct behavior and does not completely fix
 	 * the associated ticket (which was resolved wontfix).
-	 * 
+	 *
 	 * This does test the rewind-after-save functionality, however.
-	 * 
-	 * @link        http://propel.phpdb.org/trac/ticket/531
+	 *
+	 * @link       http://propel.phpdb.org/trac/ticket/531
 	 */
 	public function testLobRepeatRead()
 	{
 		$blob_path = $this->getLobFile('tin_drum.gif');
 		$clob_path = $this->getLobFile('tin_drum.txt');
-		
+
 		$book = BookPeer::doSelectOne(new Criteria());
 
 		$m1 = new Media();
@@ -129,29 +129,29 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 		$m1->setCoverImage(file_get_contents($blob_path));
 		$m1->setExcerpt(file_get_contents($clob_path));
 		$m1->save();
-		
+
 		$img = $m1->getCoverImage();
-		
+
 		// 1) Assert that this resource has been rewound.
 
 		$this->assertEquals(0, ftell($img), "Expected position of cursor in file pointer to be 0");
-		
+
 		// 1) Assert that we've got a valid stream to start with
-		
+
 		$this->assertType('resource', $img, "Expected results of BLOB method to be a resource.");
-		
+
 		// read first 100 bytes
 		$firstBytes = fread($img, 100);
-		
+
 		$img2 = $m1->getCoverImage();
 		$this->assertSame($img, $img2, "Assert that the two resources are the same.");
 
 		// read next 100 bytes
 		$nextBytes = fread($img, 100);
-		
+
 		$this->assertNotEquals(bin2hex($firstBytes), bin2hex($nextBytes), "Expected the first 100 and next 100 bytes to not be identical.");
 	}
-	
+
 	/**
 	 * Tests the setting of LOB (BLOB and CLOB) values.
 	 */
@@ -264,5 +264,5 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m2->getCoverImage()), "Expected contents to match when setting stream w/ 'w+' mode");
 
 	}
-	
+
 }

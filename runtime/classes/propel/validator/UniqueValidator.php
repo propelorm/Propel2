@@ -43,19 +43,19 @@ class UniqueValidator implements BasicValidator
 	public function isValid (ValidatorMap $map, $str)
 	{
 		$column = $map->getColumn();
-		
+
 		$c = new Criteria();
 		$c->add($column->getFullyQualifiedName(), $str, Criteria::EQUAL);
-		
+
 		$isValid = false;
 
 		$table = $column->getTable()->getPhpName();
-		
+
 		$clazz = $table . 'Peer';
 		$count = call_user_func(array($clazz, 'doCount'), $c);
-		
+
 		$isValid = ($count === 0);
-		
+
 		return $isValid;
 	}
 }

@@ -170,7 +170,7 @@ class GeneratedNestedSetPeerTest extends CmsTestBase {
 		$contact = PagePeer::doSelectOne($c);
 		$this->assertFalse(PagePeer::isLeaf($contact), 'Node must not be a leaf');
 	}
-	
+
 	/**
 	 * Test xxxNestedSetPeer::createRoot()
 	 */

@@ -30,17 +30,17 @@ require_once 'propel/engine/database/model/PropelTypes.php';
  * @package    propel.engine.builder.sql
  */
 abstract class DataSQLBuilder extends DataModelBuilder {
-	
+
 	/**
 	 * Perform any reset between runs of this builder.
-	 * 
+	 *
 	 * This can be used, for example, to clear any stored start/end SQL.
 	 */
 	public static function reset()
 	{
 		// does nothing by default
 	}
-	
+
 	/**
 	 * Gets any SQL to place at the start of all the row inserts.
 	 *
@@ -50,7 +50,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * Gets any SQL to place at the end of all the row inserts.
 	 *
@@ -60,7 +60,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * Gets any SQL to place before row inserts for a new table.
 	 *
@@ -70,7 +70,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * Gets any SQL to place at the end of row inserts for a table.
 	 *
@@ -80,7 +80,7 @@ abstract class DataSQLBuilder extends DataModelBuilder {
 	{
 		return '';
 	}
-	
+
 	/**
 	 * The main method in this class, returns the SQL for INSERTing data into a row.
 	 * @param      DataRow $row The row to process.

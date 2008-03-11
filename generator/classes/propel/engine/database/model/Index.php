@@ -200,7 +200,7 @@ class Index extends XMLElement {
 	{
 		$this->indexColumns = array();
 		$this->indexColumnSizes = array();
-		foreach($indexColumns as $col) {
+		foreach ($indexColumns as $col) {
 			$this->addColumn($col);
 		}
 	}
@@ -265,7 +265,7 @@ class Index extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -274,12 +274,12 @@ class Index extends XMLElement {
 		$idxNode = $node->appendChild($doc->createElement('index'));
 		$idxNode->setAttribute('name', $this->getName());
 
-		foreach($this->indexColumns as $colname) {
+		foreach ($this->indexColumns as $colname) {
 			$idxColNode = $idxNode->appendChild($doc->createElement('index-column'));
 			$idxColNode->setAttribute('name', $colname);
 		}
 
-		foreach($this->vendorInfos as $vi) {
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($idxNode);
 		}
 	}

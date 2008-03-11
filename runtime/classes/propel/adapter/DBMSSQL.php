@@ -28,7 +28,7 @@
  * @package    propel.adapter
  */
 class DBMSSQL extends DBAdapter {
-	
+
 	/**
 	 * This method is used to ignore case.
 	 *
@@ -102,7 +102,7 @@ class DBMSSQL extends DBAdapter {
 	{
 		return 'rand('.((int) $seed).')';
 	}
-	
+
 	/**
 	* Simulated Limit/Offset
 	* This rewrites the $sql query to apply the offset and limit.

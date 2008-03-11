@@ -438,7 +438,7 @@ class BasePeer
 		if ($criteria->isUseTransaction()) $con->beginTransaction();
 
 		try {
-			
+
 			$params = array();
 			$sql = self::createSelectSql($criteria, $params);
 
@@ -459,9 +459,9 @@ class BasePeer
 
 		return $stmt;
 	}
-	
+
 	/**
-	 * Executes a COUNT query using either a simple SQL rewrite or, for more complex queries, a 
+	 * Executes a COUNT query using either a simple SQL rewrite or, for more complex queries, a
 	 * sub-select of the SQL created by createSelectSql() and returns the statement.
 	 *
 	 * @param      Criteria $criteria A Criteria.
@@ -483,26 +483,26 @@ class BasePeer
 
 		if ($criteria->isUseTransaction()) $con->beginTransaction();
 
-		$needsComplexCount = ($criteria->getGroupByColumns() || $criteria->getOffset()  
+		$needsComplexCount = ($criteria->getGroupByColumns() || $criteria->getOffset()
 								|| $criteria->getLimit() || $criteria->getHaving() || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()));
-			
+
 		try {
-			
+
 			$params = array();
-			
+
 			if ($needsComplexCount) {
 				$selectSql = self::createSelectSql($criteria, $params);
 				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
 			} else {
 				// Replace SELECT columns with COUNT(*)
 				$criteria->clearSelectColumns()->addSelectColumn('COUNT(*)');
-				$sql = self::createSelectSql($criteria, $params); 
+				$sql = self::createSelectSql($criteria, $params);
 			}
-			
+
 			$stmt = $con->prepare($sql);
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
-			
+
 			if ($criteria->isUseTransaction()) $con->commit();
 
 		} catch (Exception $e) {
@@ -514,7 +514,7 @@ class BasePeer
 
 		return $stmt;
 	}
-	
+
 	/**
 	 * Populates values in a prepared statement.
 	 *
@@ -527,7 +527,7 @@ class BasePeer
 	 * $sql = BasePeer::createSelectSql($criteria, $params);
 	 * BasePeer::populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()), Propel::getDB($criteria->getDbName()));
 	 * </code>
-	 * 
+	 *
 	 * @param      PDOStatement $stmt
 	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
 	 * @param      DatabaseMap $dbMap
@@ -903,11 +903,11 @@ class BasePeer
 				}
 			}
 		}
-		
+
 		if (empty($fromClause) && $criteria->getPrimaryTableName()) {
 			$fromClause[] = $criteria->getPrimaryTableName();
 		}
-		
+
 		// from / join tables quoten if it is necessary
 		if ($db->useQuoteIdentifier()) {
 			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);

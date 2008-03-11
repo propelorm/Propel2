@@ -34,34 +34,34 @@ require_once 'propel/engine/builder/om/PeerBuilder.php';
 class PHP5PeerBuilder extends PeerBuilder {
 
 	/**
-	 * Validates the current table to make sure that it won't 
+	 * Validates the current table to make sure that it won't
 	 * result in generated code that will not parse.
-	 * 
+	 *
 	 * This method may emit warnings for code which may cause problems
-	 * and will throw exceptions for errors that will definitely cause 
-	 * problems. 
+	 * and will throw exceptions for errors that will definitely cause
+	 * problems.
 	 */
 	protected function validateModel()
 	{
 		parent::validateModel();
-		
+
 		$table = $this->getTable();
-		
+
 		// Check to see if any of the column constants are PHP reserved words.
 		$colConstants = array();
-		
-		foreach($table->getColumns() as $col) {
+
+		foreach ($table->getColumns() as $col) {
 			$colConstants[] = $this->getColumnName($col);
 		}
-		
+
 		$reservedConstants = array_map('strtoupper', ClassTools::getPhpReservedWords());
-		
+
 		$intersect = array_intersect($reservedConstants, $colConstants);
 		if (!empty($intersect)) {
-			throw new EngineException("One or more of your column names for [" . $table->getName() . "] table conflict with a PHP reserved word (" . implode(", ", $intersect) . ")");			
+			throw new EngineException("One or more of your column names for [" . $table->getName() . "] table conflict with a PHP reserved word (" . implode(", ", $intersect) . ")");
 		}
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return     string
@@ -482,7 +482,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	}
 ";
 	} // addAddSelectColumns()
-	
+
 	/**
 	 * Adds the doCount() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -502,29 +502,29 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we may modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-		
+
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
 		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
-		
+
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
 		}
-		
+
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-		
+
 		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		\$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-		
+
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		// BasePeer returns a PDOStatement
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
-		
+
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {
@@ -534,7 +534,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		return \$count;
 	}";
 	}
-	
+
 	/**
 	 * Adds the doSelectOne() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -624,7 +624,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		return ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
 	}";
 	}
-	
+
 	/**
 	 * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
 	 *
@@ -634,7 +634,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		$pkphp = (array) $pkphp; // make it an array if it is not.
 		$script = "";
-		if (count($pkphp) > 1) {			
+		if (count($pkphp) > 1) {
 			$script .= "serialize(array(";
 			$i = 0;
 			foreach ($pkphp as $pkvar) {
@@ -646,7 +646,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		}
 		return $script;
 	}
-	
+
 	/**
 	 * Creates a convenience method to add objects to an instance pool.
 	 * @param      string &$script The script will be modified in this method.
@@ -671,9 +671,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if (\$key === null) {";
-		
+
 		$pks = $this->getTable()->getPrimaryKey();
-		
+
 		$php = array();
 		foreach ($pks as $pk) {
 			$php[] = '$obj->get' . $pk->getPhpName() . '()';
@@ -714,21 +714,21 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 			if (is_object(\$value) && \$value instanceof ".$this->getObjectClassname().") {";
-		
+
 			$php = array();
 			foreach ($pks as $pk) {
 				$php[] = '$value->get' . $pk->getPhpName() . '()';
 			}
 			$script .= "
 				\$key = ".$this->getInstancePoolKeySnippet($php).";";
-			
+
 		$script .= "
 			} elseif (".(count($pks) > 1 ? "is_array(\$value) && count(\$value) === " . count($pks) : "is_scalar(\$value)").") {
 				// assume we've been passed a primary key";
 
 		if (count($pks) > 1) {
 			$php = array();
-			for($i=0; $i < count($pks); $i++) {
+			for ($i=0; $i < count($pks); $i++) {
 				$php[] = "\$value[$i]";
 			}
 		} else {
@@ -829,14 +829,14 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
-					$part = "\$row[\$startcol + $n]"; 
+					$part = "\$row[\$startcol + $n]";
 					$cond[] = $part . " === null";
 					$pk[] = $part;
 				}
 				$n++;
 			}
 		}
-		
+
 		$script .= "
 		// If the PK cannot be derived from the row, return NULL.
 		if (".implode(' && ', $cond).") {
@@ -1062,7 +1062,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$cfc = $col->getPhpName();
 			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none") {
 				$script .= "
-		if(\$criteria->containsKey(".$this->getColumnConstant($col).")) {
+		if (\$criteria->containsKey(".$this->getColumnConstant($col).")) {
 			throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
 		}
 ";
@@ -1234,7 +1234,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} else {
 			// it must be the primary key
 
-			
+
 
 			\$criteria = new Criteria(self::DATABASE_NAME);";
 
@@ -1243,12 +1243,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$col = array_shift($pkey);
 			$script .= "
 			\$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);
-			
-			foreach((array) \$values as \$singleval) {
+
+			foreach ((array) \$values as \$singleval) {
 				// we can invalidate the cache for this single object
 				".$this->getPeerClassname()."::removeInstanceFromPool(\$singleval);
 			}";
-			
+
 		} else {
 			$script .= "
 			// primary key is composite; we therefore, expect
@@ -1274,7 +1274,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			}
 			$script .= "
 				\$criteria->addOr(\$criterion);
-				
+
 				// we can invalidate the cache for this single PK
 				".$this->getPeerClassname()."::removeInstanceFromPool(\$value);
 			}";
@@ -1302,12 +1302,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(\$criteria, \$con);
 			";
 		}
-		
+
 		if ($this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded()) {
 			$script .= "
-				// Because this db requires some delete cascade/set null emulation, we have to 
+				// Because this db requires some delete cascade/set null emulation, we have to
 				// clear the cached instance *after* the emulation has happened (since
-				// instances get re-added by the select statement contained therein). 
+				// instances get re-added by the select statement contained therein).
 				if (\$values instanceof Criteria) {
 					".$this->getPeerClassname()."::clearInstancePool();
 				} else { // it's a PK or object
@@ -1592,7 +1592,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$table = $this->getTable();
 		$pks = $table->getPrimaryKey();
 		$col = $pks[0];
-		
+
 		$script .= "
 	/**
 	 * Retrieve a single object by pkey.
@@ -1603,7 +1603,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static function ".$this->getRetrieveMethodName()."(\$pk, PropelPDO \$con = null)
 	{
-	
+
 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getInstancePoolKeySnippet('$pk')."))) {
 			return \$obj;
 		}
@@ -1611,12 +1611,12 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
-		
+
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 		\$criteria->add(".$this->getColumnConstant($col).", \$pk);
-		
+
 		\$v = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
-		
+
 		return !empty(\$v) > 0 ? \$v[0] : null;
 	}
 ";
@@ -1682,22 +1682,22 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * @return     ".$this->getObjectClassname()."
 	 */
 	public static function ".$this->getRetrieveMethodName()."(";
-		
+
 		$php = array();
 		foreach ($table->getPrimaryKey() as $col) {
 			$clo = strtolower($col->getName());
 			$php[] = '$' . $clo;
 		} /* foreach */
-		
+
 		$script .= implode(', ', $php);
-		
+
 		$script .= ", PropelPDO \$con = null) {
-		\$key = ".$this->getInstancePoolKeySnippet($php).";"; 
+		\$key = ".$this->getInstancePoolKeySnippet($php).";";
  		$script .= "
- 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) { 
+ 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
  			return \$obj;
 		}
-		
+
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -1810,7 +1810,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				$joinTable = $table->getDatabase()->getTable($fk->getForeignTableName());
 
 				if (!$joinTable->isForReferenceOnly()) {
-					
+
 					// This condition is necessary because Propel lacks a system for
 					// aliasing the table if it is the same table.
 					if ( $fk->getForeignTableName() != $table->getName() ) {
@@ -1963,23 +1963,23 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-		
+
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
 		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
-		
+
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
 		}
-		
+
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-		
+
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
-		
+
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -1993,9 +1993,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		\$criteria->addJoin(".$this->getColumnConstant($column).", ".$joinedTablePeerBuilder->getColumnConstant($columnFk).", \$join_behavior);";
 						}
 						$script .= "
-		
+
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
-		
+
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {
@@ -2011,7 +2011,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		} // if count(fk) > 1
 
 	} // addDoCountJoin()
-	
+
 	/**
 	 * Adds the doSelectJoinAll() method.
 	 * @param      string &$script The script will be modified in this method.
@@ -2048,7 +2048,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 ";
 		$index = 2;
 		foreach ($table->getForeignKeys() as $fk) {
-			
+
 			// Want to cover this case, but the code is not there yet.
 			// Propel lacks a system for aliasing tables of the same name.
 			if ( $fk->getForeignTableName() != $table->getName() ) {
@@ -2163,9 +2163,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 				} // if obj$index loaded
 
 				// Add the \$obj1 (".$this->getObjectClassname().") to the collection in \$obj".$index." (".$joinedTablePeerBuilder->getObjectClassname().")
-				".($fk->isLocalPrimaryKey() ? 
-				"\$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");" : 
-				"\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);")." 
+				".($fk->isLocalPrimaryKey() ?
+				"\$obj1->set".$joinedTablePeerBuilder->getObjectClassname()."(\$obj".$index.");" :
+				"\$obj".$index."->add".$joinedTableObjectBuilder->getRefFKPhpNameAffix($fk, $plural = false)."(\$obj1);")."
 			} // if joined row not null
 ";
 
@@ -2208,23 +2208,23 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-		
+
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
 		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
-		
+
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
 		}
-		
+
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-		
+
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
-		
+
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -2250,7 +2250,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		$script .= "
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
-		
+
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {
@@ -2261,7 +2261,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	}
 ";
 	} // end addDoCountJoinAll()
-	
+
 	/**
 	 * Adds the doSelectJoinAllExcept*() methods.
 	 * @param      string &$script The script will be modified in this method.
@@ -2493,18 +2493,18 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		// we're going to modify criteria, so copy it first
 		\$criteria = clone \$criteria;
-		
+
 		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
 			\$criteria->setDistinct();
 		}
-		
+
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-		
+
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
-		
+
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -2532,7 +2532,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			} // foreach fkeys
 			$script .= "
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
-		
+
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
 		} else {

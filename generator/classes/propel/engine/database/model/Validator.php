@@ -42,21 +42,21 @@ class Validator extends XMLElement {
 	 * @var        Column
 	 */
 	private $column;
-	
+
 	/**
 	 * The rules for the validation.
 	 *
 	 * @var        array Rule[]
 	 */
 	private $ruleList = array();
-	
+
 	/**
 	 * The translation mode.
 	 *
 	 * @var        string
 	 */
 	private $translate;
-	
+
 	/**
 	 * Parent table.
 	 *
@@ -174,20 +174,20 @@ class Validator extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
-		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument; 
-		
+		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+
 		$valNode = $node->appendChild($doc->createElement('validator'));
 		$valNode->setAttribute('column', $this->getColumnName());
-		
+
 		if ($this->translate !== null) {
 			$valNode->setAttribute('translate', $this->translate);
 		}
 
-		foreach($this->ruleList as $rule) {
+		foreach ($this->ruleList as $rule) {
 			$rule->appendXml($valNode);
 		}
 	}

@@ -40,14 +40,14 @@ class DebugPDO extends PropelPDO {
 	 * @var        int
 	 */
 	protected $queryCount = 0;
-	
+
 	/**
 	 * The statement class to use.
 	 *
 	 * @var        string
 	 */
 	protected $statementClass = 'DebugPDOStatement';
-	
+
 	/**
 	 * Configured BasicLogger (or compatible) logger.
 	 *
@@ -78,10 +78,10 @@ class DebugPDO extends PropelPDO {
 		parent::__construct($dsn, $username, $password, $driver_options);
 		$this->configureStatementClass($suppress=true);
 	}
-	
+
 	/**
 	 * Configures the PDOStatement class for this connection.
-	 * @param      boolean $suppressError Whether to suppress an exception if the statement class cannot be set.  
+	 * @param      boolean $suppressError Whether to suppress an exception if the statement class cannot be set.
 	 * @throws     PropelException if the statement class cannot be set (and $suppressError is false)
 	 */
 	protected function configureStatementClass($suppressError = false)
@@ -90,10 +90,10 @@ class DebugPDO extends PropelPDO {
 		if (!$this->getAttribute(PDO::ATTR_PERSISTENT)) {
 			$this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array($this->getStatementClass(), array($this)));
 		} elseif (!$suppressError) {
-			throw new PropelException('Extending PDOStatement is not supported with persistent connections.');			
+			throw new PropelException('Extending PDOStatement is not supported with persistent connections.');
 		}
 	}
-	
+
 	/**
 	 * Sets the custom classname to use for PDOStatement.
 	 *
@@ -107,7 +107,7 @@ class DebugPDO extends PropelPDO {
 		$this->statementClass = $classname;
 		$this->configureStatementClass();
 	}
-	
+
 	/**
 	 * Gets the custom classname to use for PDOStatement.
 	 * @return     string
@@ -119,15 +119,15 @@ class DebugPDO extends PropelPDO {
 
 	/**
 	 * Gets the query count
-	 * @return		 int
-	 * @throws       PropelException - if persistent connection is used (since unable to override PDOStatement in that case).
+	 * @return     int
+	 * @throws     PropelException - if persistent connection is used (since unable to override PDOStatement in that case).
 	 */
 	public function getQueryCount()
 	{
 		// extending PDOStatement is not supported with persistent connections
 		if ($this->getAttribute(PDO::ATTR_PERSISTENT)) {
 			throw new PropelException('Extending PDOStatement is not supported with persistent connections. ' .
-																'Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. ' . 
+																'Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. ' .
 																'Either don\'t use persistent connections or don\'t call PropelPDO::getQueryCount()');
 		}
 		return $this->queryCount;
@@ -135,29 +135,29 @@ class DebugPDO extends PropelPDO {
 
 	/**
 	 * increments the query count
-	 * @return		 int
+	 * @return     int
 	 */
 	public function incrementQueryCount()
 	{
 		$this->queryCount++;
 	}
-	
+
 	/**
-     * Overrides PDO::prepare() to add logging.
-     * .
-     * @param  string $sql
-     * @param  array
-     * @return PDOStatement
-     */
-    public function prepare($sql, $driver_options = array())
-    {
+	 * Overrides PDO::prepare() to add logging.
+	 * .
+	 * @param      string $sql
+	 * @param      array
+	 * @return     PDOStatement
+	 */
+	public function prepare($sql, $driver_options = array())
+	{
 		$this->log('prepare: ' . $sql);
 		return parent::prepare($sql, $driver_options);
 	}
-	
+
 	/**
 	 * overridden for query counting
-	 * @return		 int
+	 * @return     int
 	 */
 	public function exec($sql)
 	{
@@ -168,7 +168,7 @@ class DebugPDO extends PropelPDO {
 
 	/**
 	 * Overridden for query counting and logging.
-	 * @return		 int
+	 * @return     int
 	 */
 	public function query()
 	{
@@ -181,7 +181,7 @@ class DebugPDO extends PropelPDO {
 	/**
 	 * Sets the logging level to use for logging SQL statements.
 	 *
-	 * @param int $level
+	 * @param      int $level
 	 */
 	public function setLogLevel($level)
 	{

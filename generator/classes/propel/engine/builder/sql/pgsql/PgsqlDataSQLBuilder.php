@@ -36,7 +36,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	 * @var        int
 	 */
 	private $maxSeqVal;
-	
+
 	/**
 	 * Construct a new PgsqlDataSQLBuilder object.
 	 *
@@ -46,7 +46,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	{
 		parent::__construct($table);
 	}
-	
+
 	/**
 	 * The main method in this class, returns the SQL for INSERTing data into a row.
 	 * @param      DataRow $row The row to process.
@@ -55,22 +55,22 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 	public function buildRowSql(DataRow $row)
 	{
 		$sql = parent::buildRowSql($row);
-		
+
 		$table = $this->getTable();
-		
+
 		if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IDMethod::NATIVE) {
 			foreach ($row->getColumnValues() as $colValue) {
 				if ($colValue->getColumn()->isAutoIncrement()) {
 					if ($colValue->getValue() > $this->maxSeqVal) {
-						$this->maxSeqVal = $colValue->getValue(); 
+						$this->maxSeqVal = $colValue->getValue();
 					}
 				}
 			}
 		}
-		
+
 		return $sql;
 	}
-	
+
 	public function getTableEndSql()
 	{
 		$table = $this->getTable();
@@ -82,7 +82,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder {
 		}
 		return $sql;
 	}
-	
+
 	/**
 	 * Get SQL value to insert for Postgres BOOLEAN column.
 	 * @param      boolean $value

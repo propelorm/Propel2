@@ -338,9 +338,9 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask {
 		$dsNode = $doc->createElement("dataset");
 		$dsNode->setAttribute("name", "all");
 		$doc->appendChild($dsNode);
-		
+
 		$platform = $this->getGeneratorConfig()->getConfiguredPlatform($this->conn);
-		
+
 		$this->log("Building DOM tree containing data from tables:");
 
 		foreach ($database->getTables() as $tbl) {

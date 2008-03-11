@@ -36,13 +36,13 @@ require_once 'bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  */
 class CharacterEncodingTest extends BookstoreTestBase {
-	
+
 	/**
 	 * Database adapter.
-	 * @var DBAdapter
+	 * @var        DBAdapter
 	 */
 	private $adapter;
-	
+
 	public function setUp()
 	{
 		parent::setUp();
@@ -50,51 +50,51 @@ class CharacterEncodingTest extends BookstoreTestBase {
 			throw new Exception("Character-encoding tests require iconv extension to be loaded.");
 		}
 	}
-	
+
 	public function testUtf8()
 	{
 		$db = Propel::getDB(BookPeer::DATABASE_NAME);
-		
+
 		$title = "Смерть на брудершафт. Младенец и черт";
 		//        1234567890123456789012345678901234567
 		//                 1         2         3
-		
+
 		$a = new Author();
 		$a->setFirstName("Б.");
 		$a->setLastName("АКУНИН");
-		
+
 		$p = new Publisher();
 		$p->setName("Детектив российский, остросюжетная проза");
-		
+
 		$b = new Book();
 		$b->setTitle($title);
 		$b->setISBN("B-59246");
 		$b->setAuthor($a);
 		$b->setPublisher($p);
 		$b->save();
-		
+
 		$b->reload();
-		
+
 		$this->assertEquals(37, iconv_strlen($b->getTitle(), 'utf-8'), "Expected 37 characters (not bytes) in title.");
 		$this->assertTrue(strlen($b->getTitle()) > iconv_strlen($b->getTitle(), 'utf-8'), "Expected more bytes than characters in title.");
-		
+
 	}
-	
+
 	public function testInvalidCharset()
 	{
 		$db = Propel::getDB(BookPeer::DATABASE_NAME);
 		if ($db instanceof DBSQLite) {
 			$this->markTestSkipped();
 		}
-		
+
 		$a = new Author();
 		$a->setFirstName("Б.");
 		$a->setLastName("АКУНИН");
 		$a->save();
-		
+
 		$authorNameWindows1251 = iconv("utf-8", "windows-1251", $a->getLastName());
 		$a->setLastName($authorNameWindows1251);
-		
+
 		// Different databases seem to handle invalid data differently (no surprise, I guess...)
 		if ($db instanceof DBPostgres) {
 			try {
@@ -103,16 +103,16 @@ class CharacterEncodingTest extends BookstoreTestBase {
 			} catch (Exception $x) {
 				print $x;
 			}
-				
+
 		} else {
-			
+
 			// No exception is thrown by MySQL ... (others need to be tested still)
 			$a->save();
 			$a->reload();
-			
+
 			$this->assertEquals("",$a->getLastName(), "Expected last_name to be empty (after inserting invalid charset data)");
 		}
-		
+
 	}
 
 }

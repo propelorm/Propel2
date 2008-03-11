@@ -173,7 +173,7 @@ class PropelDataSQLTask extends AbstractPropelDataModelTask {
 
 				$outFile = $this->getMappedFile($dataXMLFilename);
 				$sqlWriter = new FileWriter($outFile);
-				
+
 				$this->log("Creating SQL from XML data dump file: " . $dataXMLFile->getAbsolutePath());
 
 				try {

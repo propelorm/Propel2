@@ -151,16 +151,16 @@ class PropelSQLTask extends AbstractPropelDataModelTask {
 		$targetDatabase = $this->getTargetDatabase();
 
 		$generatorConfig = $this->getGeneratorConfig();
-		
+
 		$builderClazz = $generatorConfig->getBuilderClassname('ddl');
 
 		foreach ($dataModels as $package => $dataModel) {
 
 			foreach ($dataModel->getDatabases() as $database) {
-				
-				// Clear any start/end DLL 
+
+				// Clear any start/end DLL
 				call_user_func(array($builderClazz, 'reset'));
-				
+
 				// file we are going to create
 				if (!$this->packageObjectModel) {
 					$name = $dataModel->getName();

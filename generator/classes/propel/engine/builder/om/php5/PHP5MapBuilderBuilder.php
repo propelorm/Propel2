@@ -196,7 +196,7 @@ class ".$this->getClassname()." implements MapBuilder {
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		$ddlBuilder = $this->getDDLBuilder();
-		
+
 		$script .= "
 	/**
 	 * The doBuild() method builds the DatabaseMap

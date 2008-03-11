@@ -209,7 +209,7 @@ class Propel
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
 		'DebugPDO' => 'propel/util/DebugPDO.php',
 		'DebugPDOStatement' => 'propel/util/DebugPDOStatement.php',
-	
+
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
 		'MatchValidator' => 'propel/validator/MatchValidator.php',
 		'MaxLengthValidator' => 'propel/validator/MaxLengthValidator.php',
@@ -527,7 +527,7 @@ class Propel
 			return self::$connectionMap[$name]['master'];
 
 		} else {
-				
+
 			if (!isset(self::$connectionMap[$name]['slave'])) {
 
 				// we've already ensured that the configuration exists, in previous if-statement
@@ -546,14 +546,14 @@ class Propel
 							throw new PropelException('No connection information in your runtime configuration file for SLAVE ['.$randkey.'] to datasource ['.$name.']');
 						}
 					}
-					
+
 					// initialize master connection
 					$con = Propel::initConnection($conparams, $name);
 					self::$connectionMap[$name]['slave'] = $con;
 				}
 
 			} // if datasource slave not set
-				
+
 			return self::$connectionMap[$name]['slave'];
 
 		} // if mode == CONNECTION_WRITE
@@ -750,18 +750,18 @@ class Propel
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Include once a file specified in DOT notation and reutrn unqualified clasname.
-	 * 
+	 *
 	 * Typically, Propel uses autoload is used to load classes and expects that all classes
-	 * referenced within Propel are included in Propel's autoload map.  This method is only 
-	 * called when a specific non-Propel classname was specified -- for example, the 
+	 * referenced within Propel are included in Propel's autoload map.  This method is only
+	 * called when a specific non-Propel classname was specified -- for example, the
 	 * classname of a validator in the schema.xml.  This method will attempt to include that
 	 * class via autoload and then relative to a location on the include_path.
 	 *
-	 * @param string $class dot-path to clas (e.g. path.to.my.ClassName).
-	 * @return string unqualified classname
+	 * @param      string $class dot-path to clas (e.g. path.to.my.ClassName).
+	 * @return     string unqualified classname
 	 */
 	public static function importClass($path) {
 
@@ -789,7 +789,7 @@ class Propel
 		// return qualified name
 		return $class;
 	}
-	
+
 	/**
 	 * Set your own class-name for Database-Mapping. Then
 	 * you can change the whole TableMap-Model, but keep its

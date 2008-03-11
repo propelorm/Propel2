@@ -181,23 +181,23 @@ class Rule extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
-		
+
 		$ruleNode = $node->appendChild($doc->createElement('rule'));
 		$ruleNode->setAttribute('name', $this->getName());
 
 		if ($this->getValue() !== null) {
 			$ruleNode->setAttribute('value', $this->getValue());
 		}
-		
+
 		if ($this->classname !== null) {
 			$ruleNode->setAttribute('class', $this->getClass());
 		}
-		
+
 		$ruleNode->setAttribute('message', $this->getMessage());
 	}
 

@@ -21,20 +21,20 @@
  */
 
 /**
- * A class that holds build properties and provide a class loading mechanism for the generator.  
+ * A class that holds build properties and provide a class loading mechanism for the generator.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.engine
  */
 class GeneratorConfig {
-	
+
 	/**
 	 * The build properties.
 	 *
 	 * @var        array
 	 */
 	private $buildProperties = array();
-	
+
 	/**
 	 * Construct a new GeneratorConfig.
 	 * @param      mixed $props Array or Iterator
@@ -43,7 +43,7 @@ class GeneratorConfig {
 	{
 		if ($props) $this->setBuildProperties($props);
 	}
-	
+
 	/**
 	 * Gets the build properties.
 	 * @return     array
@@ -52,19 +52,19 @@ class GeneratorConfig {
 	{
 		return $this->buildProperties;
 	}
-	
+
 	/**
 	 * Parses the passed-in properties, renaming and saving eligible properties in this object.
 	 *
-	 * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties 
+	 * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties
 	 * to xxxYyy as PHP doesn't like the xxx.yyy syntax.
-	 * 
+	 *
 	 * @param      mixed $props Array or Iterator
 	 */
 	public function setBuildProperties($props)
 	{
 		$this->buildProperties = array();
-		
+
 		$renamedPropelProps = array();
 		foreach ($props as $key => $propValue) {
 			if (strpos($key, "propel.") === 0) {
@@ -78,7 +78,7 @@ class GeneratorConfig {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets a specific propel (renamed) property from the build.
 	 *
@@ -87,9 +87,9 @@ class GeneratorConfig {
 	 */
 	public function getBuildProperty($name)
 	{
-		return isset($this->buildProperties[$name]) ? $this->buildProperties[$name] : null; 
+		return isset($this->buildProperties[$name]) ? $this->buildProperties[$name] : null;
 	}
-	
+
 	/**
 	 * Sets a specific propel (renamed) property from the build.
 	 *
@@ -98,12 +98,12 @@ class GeneratorConfig {
 	 */
 	public function setBuildProperty($name, $value)
 	{
-		$this->buildProperties[$name] = $value; 
+		$this->buildProperties[$name] = $value;
 	}
-	
+
 	/**
 	 * Resolves and returns the class name based on the specified property value.
-	 * 
+	 *
 	 * @param      string $propname The name of the property that holds the class path (dot-path notation).
 	 * @return     string The class name.
 	 * @throws     BuildException If the classname cannot be determined or class cannot be loaded.
@@ -114,7 +114,7 @@ class GeneratorConfig {
 		if (empty($classpath)) {
 			throw new BuildException("Unable to find class path for '$propname' property.");
 		}
-		
+
 		// This is a slight hack to workaround camel case inconsistencies for the DDL classes.
 		// Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
 		$lastdotpos = strrpos($classpath, '.');
@@ -129,10 +129,10 @@ class GeneratorConfig {
 		}
 
 		$clazz = Phing::import($classpath);
-		
+
 		return $clazz;
 	}
-	
+
 	/**
 	 * Resolves and returns the builder class name.
 	 *
@@ -144,10 +144,10 @@ class GeneratorConfig {
 		$propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
 		return $this->getClassname($propname);
 	}
-	
+
 	/**
 	 * Creates and configures a new Platform class.
-	 * 
+	 *
 	 * @param      PDO $con
 	 * @return     Platform
 	 */
@@ -159,12 +159,12 @@ class GeneratorConfig {
 		if (!$platform instanceof Platform) {
 			throw new BuildException("Specified platform class ($clazz) does not implement Platform interface.", $this->getLocation());
 		}
-		
+
 		$platform->setConnection($con);
 		$platform->setGeneratorConfig($this);
 		return $platform;
 	}
-	
+
 	/**
 	 * Creates and configures a new SchemaParser class for specified platform.
 	 * @param      PDO $con
@@ -181,7 +181,7 @@ class GeneratorConfig {
 		$parser->setGeneratorConfig($this);
 		return $parser;
 	}
-	
+
 	/**
 	 * Gets a configured data model builder class for specified table and based on type.
 	 *
@@ -196,7 +196,7 @@ class GeneratorConfig {
 		$builder->setGeneratorConfig($this);
 		return $builder;
 	}
-	
+
 	/**
 	 * Gets a configured Pluralizer class.
 	 *

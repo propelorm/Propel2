@@ -45,7 +45,7 @@ class Unique extends Index {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -54,12 +54,12 @@ class Unique extends Index {
 		$uniqueNode = $node->appendChild($doc->createElement('unique'));
 		$uniqueNode->setAttribute('name', $this->getName());
 		$columns = $this->getColumns();
-		foreach($this->getColumns() as $colname) {
+		foreach ($this->getColumns() as $colname) {
 			$uniqueColNode = $uniqueNode->appendChild($doc->createElement('unique-column'));
 			$uniqueColNode->setAttribute('name', $colname);
 		}
 
-		foreach($this->vendorInfos as $vi) {
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($uniqueNode);
 		}
 	}

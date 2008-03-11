@@ -355,7 +355,7 @@ class Domain extends XMLElement {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
@@ -366,11 +366,11 @@ class Domain extends XMLElement {
 		$domainNode = $node->appendChild($doc->createElement('domain'));
 		$domainNode->setAttribute('type', $this->getType());
 		$domainNode->setAttribute('name', $this->getName());
-		
+
 		if ($this->sqlType !== $this->getType()) {
 			$domainNode->setAttribute('sqlType', $this->sqlType);
 		}
-		
+
 		$def = $this->getDefaultValue();
 		if ($def) {
 			if ($def->isExpression()) {
@@ -392,5 +392,5 @@ class Domain extends XMLElement {
 			$domainNode->setAttribute('description', $this->description);
 		}
 	}
-	
+
 }

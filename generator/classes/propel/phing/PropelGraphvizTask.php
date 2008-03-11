@@ -146,12 +146,12 @@ class PropelGraphvizTask extends AbstractPropelDataModelTask {
 					++$count;
 
 					foreach ($tbl->getColumns() as $col) {
-                        $fk = $col->getForeignKeys();
-                        if ( count($fk) == 0 or $fk === null ) continue;
-                        if ( count($fk) > 1 ) throw( new Exception("not sure what to do here...") );
-                        $fk = $fk[0];   // try first one
-                        $dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
-                        $dotSyntax .= "\n";
+						$fk = $col->getForeignKeys();
+						if ( count($fk) == 0 or $fk === null ) continue;
+						if ( count($fk) > 1 ) throw( new Exception("not sure what to do here...") );
+						$fk = $fk[0];   // try first one
+						$dotSyntax .= 'node'.$tbl->getName() .':cols -> node'.$fk->getForeignTableName() . ':table [label="' . $col->getName() . '=' . implode(',', $fk->getForeignColumns()) . ' "];';
+						$dotSyntax .= "\n";
 					}
 				}
 

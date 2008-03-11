@@ -388,7 +388,7 @@ class ForeignKey extends XMLElement {
 		$foreignTable = $this->getForeignTable();
 		$map = $this->getForeignLocalMapping();
 
-		foreach($foreignTable->getForeignKeys() as $refFK) {
+		foreach ($foreignTable->getForeignKeys() as $refFK) {
 			$fkMap = $refFK->getLocalForeignMapping();
 			if ($map == $fkMap) { // compares keys and values, but doesn't care about order
 				return true;
@@ -399,7 +399,7 @@ class ForeignKey extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{
@@ -432,7 +432,7 @@ class ForeignKey extends XMLElement {
 			$refNode->setAttribute('foreign', $this->foreignColumns[$i]);
 		}
 
-		foreach($this->vendorInfos as $vi) {
+		foreach ($this->vendorInfos as $vi) {
 			$vi->appendXml($fkNode);
 		}
 	}

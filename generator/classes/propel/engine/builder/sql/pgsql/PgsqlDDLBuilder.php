@@ -169,7 +169,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		foreach ($table->getColumns() as $col) {
 			$colDDL = $this->getColumnDDL($col);
 			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
-				if($col->getType() === PropelTypes::BIGINT) {
+				if ($col->getType() === PropelTypes::BIGINT) {
 					$colDDL = str_replace($col->getType(),'bigserial',$colDDL);
 				} else {
 					$colDDL = str_replace($col->getType(),'serial',$colDDL);
@@ -223,7 +223,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getNam
 	/**
 	 * Override to provide sequence names that conform to postgres' standard when
 	 * no id-method-parameter specified.
-	 * 
+	 *
 	 * @see        DataModelBuilder::getSequenceName()
 	 * @return     string
 	 */
@@ -238,7 +238,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getNam
 				$result = null;
 				// We're going to ignore a check for max length (mainly
 				// because I'm not sure how Postgres would handle this w/ SERIAL anyway)
-				foreach($table->getColumns() as $col) {
+				foreach ($table->getColumns() as $col) {
 					if ($col->isAutoIncrement()) {
 						$result = $table->getName() . '_' . $col->getName() . '_seq';
 						break; // there's only one auto-increment column allowed
@@ -250,7 +250,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($this->prefixTablename($table->getNam
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Adds CREATE SEQUENCE statements for this table.
 	 *

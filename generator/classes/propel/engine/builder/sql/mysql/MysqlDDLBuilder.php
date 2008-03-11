@@ -109,9 +109,9 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 	";
 
 		$lines = array();
-		
+
 		$databaseType = $this->getPlatform()->getDatabaseType();
-		
+
 		foreach ($table->getColumns() as $col) {
 			$entry = $this->getColumnDDL($col);
 			$colinfo = $col->getVendorInfoForType($databaseType);
@@ -158,7 +158,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		$dbVendorSpecific = $table->getDatabase()->getVendorInfoForType($databaseType);
 		$tableVendorSpecific = $table->getVendorInfoForType($databaseType);
 		$vendorSpecific = $dbVendorSpecific->getMergedVendorInfo($tableVendorSpecific);
-		
+
 		if ( $vendorSpecific->hasParameter('Charset') ) {
 			$script .= ' CHARACTER SET '.$platform->quote($vendorSpecific->getParameter('Charset'));
 		}
@@ -174,7 +174,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		if ( $vendorSpecific->hasParameter('Delay_key_write') ) {
 			$script .= ' DELAY_KEY_WRITE='.$platform->quote($vendorSpecific->getParameter('Delay_key_write'));
 		}
-		
+
 		if ($table->getDescription()) {
 			$script .= " COMMENT=".$platform->quote($table->getDescription());
 		}
@@ -339,7 +339,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		$sqlType = $domain->getSqlType();
 		$notNullString = $col->getNotNullString();
 		$defaultSetting = $col->getDefaultSetting();
-			
+
 		// Special handling of TIMESTAMP/DATETIME types ...
 		// See: http://propel.phpdb.org/trac/ticket/538
 		if ($sqlType == 'DATETIME') {

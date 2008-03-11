@@ -24,9 +24,9 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
 /**
  * Mysql database schema parser.
  *
- * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Revision$
- * @package   propel.engine.database.reverse.mysql
+ * @author     Hans Lellelid <hans@xmpl.org>
+ * @version    $Revision$
+ * @package    propel.engine.database.reverse.mysql
  */
 class MysqlSchemaParser extends BaseSchemaParser {
 
@@ -37,7 +37,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 
 	/**
 	 * Map MySQL native types to Propel types.
-	 * @var array
+	 * @var        array
 	 */
 	private static $mysqlTypeMap = array(
 		'tinyint' => PropelTypes::TINYINT,
@@ -87,9 +87,9 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	public function parse(Database $database)
 	{
 		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
-		
+
 		$stmt = $this->dbh->query("SHOW TABLES");
-			
+
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -98,14 +98,14 @@ class MysqlSchemaParser extends BaseSchemaParser {
 			$database->addTable($table);
 			$tables[] = $table;
 		}
-		
+
 		// Now populate only columns.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addColumns($table);
 		}
-		
+
 		// Now add indexes and constraints.
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
@@ -125,7 +125,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	{
 		$stmt = $this->dbh->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
 
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 			$name = $row['Field'];
 			$is_nullable = ($row['Null'] == 'YES');
@@ -255,11 +255,11 @@ class MysqlSchemaParser extends BaseSchemaParser {
 		// adding each column for that key.
 
 		$indexes = array();
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$colName = $row["Column_name"];
 			$name = $row["Key_name"];
 
-			if($name == "PRIMARY") {
+			if ($name == "PRIMARY") {
 				continue;
 			}
 
@@ -290,7 +290,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 
 		// Loop through the returned results, grouping the same key_name together
 		// adding each column for that key.
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			// Skip any non-primary keys.
 			if ($row['Key_name'] !== 'PRIMARY') {
 				continue;
@@ -303,7 +303,7 @@ class MysqlSchemaParser extends BaseSchemaParser {
 	/**
 	 * Adds vendor-specific info for table.
 	 *
-	 * @param Table $table
+	 * @param      Table $table
 	 */
 	protected function addTableVendorInfo(Table $table)
 	{
@@ -313,4 +313,3 @@ class MysqlSchemaParser extends BaseSchemaParser {
 		$table->addVendorInfo($vi);
 	}
 }
-

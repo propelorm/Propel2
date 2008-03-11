@@ -40,14 +40,14 @@ interface SchemaParser {
 	 * @param      PDO $dbh
 	 */
 	public function setConnection(PDO $dbh);
-	
+
 	/**
 	 * Sets the GeneratorConfig to use in the parsing.
 	 *
 	 * @param      GeneratorConfig $config
 	 */
 	public function setGeneratorConfig(GeneratorConfig $config);
-	
+
 	/**
 	 * Gets a specific propel (renamed) property from the build.
 	 *
@@ -55,7 +55,7 @@ interface SchemaParser {
 	 * @return     mixed
 	 */
 	public function getBuildProperty($name);
-	
+
 	/**
 	 * Gets array of warning messages.
 	 * @return     array string[]
@@ -69,4 +69,3 @@ interface SchemaParser {
 	 */
 	public function parse(Database $database);
 }
-

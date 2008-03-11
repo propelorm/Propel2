@@ -118,7 +118,7 @@ class VendorInfo extends XMLElement {
 		}
 		return null; // just to be explicit
 	}
-	
+
 	/**
 	 * Whether parameter exists.
 	 *
@@ -148,7 +148,7 @@ class VendorInfo extends XMLElement {
 	{
 		return $this->parameters;
 	}
-	
+
 	/**
 	 * Gets a new merged VendorInfo object.
 	 * @param      VendorInfo $info
@@ -163,7 +163,7 @@ class VendorInfo extends XMLElement {
 	}
 
 	/**
-	 * @see XMLElement::appendXml(DOMNode)
+	 * @see        XMLElement::appendXml(DOMNode)
 	 */
 	public function appendXml(DOMNode $node)
 	{

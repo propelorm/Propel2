@@ -103,9 +103,9 @@ class PropelOMTask extends AbstractPropelDataModelTask {
 	{
 		// check to make sure task received all correct params
 		$this->validate();
-			
+
 		$generatorConfig = $this->getGeneratorConfig();
-		
+
 		foreach ($this->getDataModels() as $dataModel) {
 			$this->log("Processing Datamodel : " . $dataModel->getName());
 

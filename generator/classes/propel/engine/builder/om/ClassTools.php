@@ -48,7 +48,7 @@ class ClassTools {
 	 * Gets the path to be used in include()/require() statement.
 	 *
 	 * Supports multiple function signatures:
-	 * 
+	 *
 	 * (1) getFilePath($dotPathClass);
 	 * (2) getFilePath($dotPathPrefix, $className);
 	 * (3) getFilePath($dotPathPrefix, $className, $extension);
@@ -107,11 +107,11 @@ class ClassTools {
 		}
 		return $interface;
 	}
-	
+
 	/**
 	 * Gets a list of PHP reserved words.
 	 *
-	 * @return array string[]
+	 * @return     array string[]
 	 */
 	public static function getPhpReservedWords()
 	{

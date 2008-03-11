@@ -139,15 +139,15 @@ class Criteria implements IteratorAggregate {
 
 	/** The name of the database. */
 	private $dbName;
-	
+
 	/**
-	 * The primary table for this Criteria. 
-	 * Useful in cases where there are no select or where 
+	 * The primary table for this Criteria.
+	 * Useful in cases where there are no select or where
 	 * columns.
-	 * @var string
+	 * @var        string
 	 */
 	private $primaryTableName;
-	
+
 	/** The name of the database as given in the contructor. */
 	private $originalDbName;
 
@@ -396,7 +396,7 @@ class Criteria implements IteratorAggregate {
 	{
 		$tables = array();
 		foreach ( array_keys ( $this->map ) as $key) {
-			$t = substr ( $key, 0, strrpos ( $key, '.' ) ); 
+			$t = substr ( $key, 0, strrpos ( $key, '.' ) );
 			if ( ! isset ( $tables[$t] ) ) {
 				$tables[$t] = array( $key );
 			} else {
@@ -441,35 +441,35 @@ class Criteria implements IteratorAggregate {
 	{
 		$this->dbName = ($dbName === null ? Propel::getDefaultDB() : $dbName);
 	}
-	
+
 	/**
 	 * Get the primary table for this Criteria.
-	 * 
+	 *
 	 * This is useful for cases where a Criteria may not contain
 	 * any SELECT columns or WHERE columns.  This must be explicitly
 	 * set, of course, in order to be useful.
-	 * 
-	 * @return string
+	 *
+	 * @return     string
 	 */
 	public function getPrimaryTableName()
 	{
-		return $this->primaryTableName; 
+		return $this->primaryTableName;
 	}
-	
+
 	/**
 	 * Sets the primary table for this Criteria.
-	 * 
+	 *
 	 * This is useful for cases where a Criteria may not contain
 	 * any SELECT columns or WHERE columns.  This must be explicitly
 	 * set, of course, in order to be useful.
-	 * 
-	 * @param string $v
+	 *
+	 * @param      string $v
 	 */
 	public function setPrimaryTableName($tableName)
 	{
 		$this->primaryTableName = $tableName;
 	}
-	
+
 	/**
 	 * Method to return a String table name.
 	 *
@@ -1231,8 +1231,8 @@ class Criterion  {
 	public function __construct(Criteria $outer, $column, $value, $comparison = null)
 	{
 		$this->value = $value;
-		$dotPos = strrpos($column,'.'); 
- 		$this->table = substr($column, 0, $dotPos); 
+		$dotPos = strrpos($column,'.');
+ 		$this->table = substr($column, 0, $dotPos);
  		$this->column = substr($column, $dotPos+1, strlen($column));
 		$this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
 		$this->init($outer);
@@ -1733,7 +1733,7 @@ class Join
 
 	public function getRightTableName()
 	{
-		return substr($this->rightColumn, 0, strrpos($this->rightColumn, '.')); 
+		return substr($this->rightColumn, 0, strrpos($this->rightColumn, '.'));
 	}
 
 	/**
