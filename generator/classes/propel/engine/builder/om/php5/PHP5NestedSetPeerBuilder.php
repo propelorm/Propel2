@@ -1393,8 +1393,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	}
 
 	/**
-	 * TODO : Fix this broken in-memory nodes updater
-	 * Don't trust it
+	 * @deprecated 1.3 - 2008/03/11
+	 * Won't be fixed, defect by design
+	 * Never trust it
 	 */
 	protected function addShiftRParent(&$script)
 	{
@@ -1405,6 +1406,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 * Adds '\$delta' to all parent R values.
 	 * '\$delta' can also be negative.
 	 *
+	 * @deprecated 1.3 - 2008/03/11
 	 * @param      $objectClassname \$node	Propel object for parent node
 	 * @param      int \$delta	Value to be shifted by, can be negative
 	 * @param      PropelPDO \$con		Connection to use.
@@ -1456,7 +1458,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				\$criteria->add(".$this->getColumnConstant($col).", \$keys, Criteria::IN);
 ";
 		} else {
-			// TODO : Need to support the multiple field primary key
 			$fields = array();
 			foreach ($table->getPrimaryKey() as $k => $col) {
 				$fields[] = $this->getColumnConstant($col);
@@ -1498,11 +1499,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 					}
 				}
 			}
-		}
-		else
-		{
-			// FIX: Do a refresh for all in-memory nodes with a real tree traversal
-			self::shiftRParent(\$node, \$delta, \$con);
 		}
 	}
 ";
