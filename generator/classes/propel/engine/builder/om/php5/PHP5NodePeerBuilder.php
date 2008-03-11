@@ -461,13 +461,24 @@ abstract class ".$this->getClassname()." {
 				   \"SET \$setcol=\" . \$db->concatString('?', \$db->subString(\$npath, '?', '?')) . \" \" .
 				   \"WHERE \$npath = ? OR \$npath LIKE ?\";
 
-			\$stmt = \$con->prepareStatement(\$sql);
+			/*\$stmt = \$con->prepareStatement(\$sql);
 			\$stmt->setString(1, \$dstPath);
 			\$stmt->setInt(2, strlen(\$srcPath)+1);
 			\$stmt->setInt(3, \$setcollen);
 			\$stmt->setString(4, \$srcPath);
 			\$stmt->setString(5, \$srcPath . $nodePeerClassname::NPATH_SEP . '%');
-			\$stmt->executeUpdate();
+			\$stmt->executeUpdate();*/
+			
+			// fixing tree mode (schmunk)
+			\$stmt = \$con->prepare(\$sql);
+			\$stmt->bindValue(1, \$dstPath); // string
+			\$srcPathPlus1 = strlen(\$srcPath)+1;
+			\$stmt->bindValue(2, \$srcPathPlus1); // int
+			\$stmt->bindValue(3, \$setcollen);// int
+			\$stmt->bindValue(4, \$srcPath);// string
+			\$srcPathWC = \$srcPath . LVirtualNodesSiteNodePeer::NPATH_SEP . '%';
+			\$stmt->bindValue(5, \$srcPathWC); // string
+			\$stmt->execute();			
 		// <hack>
 		}
 		// </hack>
@@ -735,9 +746,11 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 		// populate the object(s)
-		while (\$rs->next())
+		// --- while (\$rs->next())
+		foreach(\$rs->fetchAll() AS \$row)
 		{
-			if (!isset(\$nodes[\$rs->getString(1)]))
+			// --- if (!isset(\$nodes[\$rs->getString(1)]))
+			if (!isset(\$nodes[\$row[0]]))
 			{
 ";
 		if ($table->getChildrenColumn()) {
@@ -750,14 +763,19 @@ abstract class ".$this->getClassname()." {
 
 		$script .= "
 		" . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
-				\$obj->hydrate(\$rs);
+				// --- \$obj->hydrate(\$rs);
+				\$obj->hydrate(\$row);
 
-				\$nodes[\$rs->getString(1)] = new $nodeObjectClassname(\$obj);
+				// --- \$nodes[\$rs->getString(1)] = new $nodeObjectClassname(\$obj);
+				\$nodes[\$row[0]] = new $nodeObjectClassname(\$obj);
 			}
 
-			\$node = \$nodes[\$rs->getString(1)];
+			// --- \$node = \$nodes[\$rs->getString(1)];
+			\$node = \$nodes[\$row[0]];
 
-			if (\$node->getNodePath() === \$rs->getString(\$targetfld))
+			// --- if (\$node->getNodePath() === \$rs->getString(\$targetfld))
+			// ---	\$targets[\$node->getNodePath()] = \$node;
+			if (\$node->getNodePath() === \$row[\$targetfld])
 				\$targets[\$node->getNodePath()] = \$node;
 		}
 
