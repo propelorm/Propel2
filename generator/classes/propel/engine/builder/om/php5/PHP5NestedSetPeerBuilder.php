@@ -645,7 +645,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		self::updateDBNode(\$node, \$destLeft, \$con);
 
 		// Update all loaded nodes
-		self::updateLoadedNode(\$parent, 2, \$con);
+		self::updateLoadedNode(\$dest->retrieveParent(), 2, \$con);
 	}
 ";
 	}
@@ -673,7 +673,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		self::updateDBNode(\$node, \$destLeft, \$con);
 
 		// Update all loaded nodes
-		self::updateLoadedNode(\$parent, 2, \$con);
+		self::updateLoadedNode(\$dest->retrieveParent(), 2, \$con);
 	}
 ";
 	}
