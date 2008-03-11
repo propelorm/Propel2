@@ -1438,17 +1438,14 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	protected static function updateLoadedNode(NodeObject \$node, \$delta, PropelPDO \$con = null)
 	{
-		if (Propel::isInstancePoolingEnabled())
-		{
+		if (Propel::isInstancePoolingEnabled()) {
 			\$keys = array();
-			foreach (self::\$instances as \$obj)
-			{
+			foreach (self::\$instances as \$obj) {
 				\$keys[] = \$obj->getPrimaryKey();
 			}
 
-			if (!empty(\$keys))
-			{
-				// We don't need to alter the object instance pool; we're just modifying this instance
+			if (!empty(\$keys)) {
+				// We don't need to alter the object instance pool; we're just modifying these ones
 				// already in the pool.
 				\$criteria = new Criteria(self::DATABASE_NAME);";
 		if (count($table->getPrimaryKey()) === 1) {
@@ -1463,18 +1460,23 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				$fields[] = $this->getColumnConstant($col);
 			};
 			$script .= "
+
+				// Loop on each instances in pool
 				foreach (\$keys as \$values) {
+				  // Create initial Criterion
 					\$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
 			unset($fields[0]);
 			foreach ($fields as $k => $col) {
 				$script .= "
 
-					\$cton2 = \$criteria->getNewCriterion(" . $col . ", \$values[$k]);
-					\$cton->addAnd(\$cton2);";
+					// Create next criterion
+					\$nextcton = \$criteria->getNewCriterion(" . $col . ", \$values[$k]);
+					// And merge it with the first
+					\$cton->addAnd(\$nextcton);";
 			}
 			$script .= "
 
-					// add to Criteria
+					// Add final Criterion to Criteria
 					\$criteria->addOr(\$cton);
 				}";
 			}
