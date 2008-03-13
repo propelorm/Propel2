@@ -464,7 +464,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$visibility=$col->getAccessorVisibility();
 
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
-
+		$dateTimeClass = $this->getBuildProperty('dateTimeClass');
+		if (!$dateTimeClass) {
+			$dateTimeClass = 'DateTime';
+		}
+		
 		$defaultfmt = null;
 
 		// Default date/time formatter strings are specified in build.properties
@@ -507,7 +511,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *							If format is NULL, then the raw ".($useDateTime ? 'DateTime object' : 'unix timestamp integer')." will be returned.";
 		if ($useDateTime) {
 			$script .= "
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
+	 * @return     mixed Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
 		} else {
 			$script .= "
 	 * @return     mixed Formatted date/time value as string or (integer) unix timestamp (if format is NULL), NULL if column is NULL".($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '');
@@ -541,9 +545,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			return null;
 		} else {
 			try {
-				\$dt = new DateTime(\$this->$clo);
+				\$dt = new $dateTimeClass(\$this->$clo);
 			} catch (Exception \$x) {
-				throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
+				throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to $dateTimeClass: \" . var_export(\$this->$clo, true), \$x);
 			}
 		}
 ";
@@ -551,9 +555,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 
 		try {
-			\$dt = new DateTime(\$this->$clo);
+			\$dt = new $dateTimeClass(\$this->$clo);
 		} catch (Exception \$x) {
-			throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to DateTime: \" . var_export(\$this->$clo, true), \$x);
+			throw new PropelException(\"Internally stored date/time/timestamp value could not be converted to $dateTimeClass: \" . var_export(\$this->$clo, true), \$x);
 		}
 ";
 		} // if handleMyqlDate
@@ -562,7 +566,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$format === null) {";
 		if ($useDateTime) {
 			$script .= "
-			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			// Because propel.useDateTimeClass is TRUE, we return a $dateTimeClass object.
 			return \$dt;";
 		} else {
 			$script .= "
@@ -833,7 +837,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
 		$visibility=$col->getMutatorVisibility();
-
+		
+		$dateTimeClass = $this->getBuildProperty('dateTimeClass');
+		if (!$dateTimeClass) {
+			$dateTimeClass = 'DateTime';
+		}
+		
 		$script .= "
 	/**
 	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
@@ -868,12 +877,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			// validate it.
 			try {
 				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$dt = new DateTime('@'.\$v, new DateTimeZone('UTC'));
+					\$dt = new $dateTimeClass('@'.\$v, new DateTimeZone('UTC'));
 					// We have to explicitly specify and then change the time zone because of a
 					// DateTime bug: http://bugs.php.net/bug.php?id=43003
 					\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 				} else {
-					\$dt = new DateTime(\$v);
+					\$dt = new $dateTimeClass(\$v);
 				}
 			} catch (Exception \$x) {
 				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
@@ -883,7 +892,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if ( \$this->$clo !== null || \$dt !== null ) {
 			// (nested ifs are a little easier to read in this case)
 
-			\$currNorm = (\$this->$clo !== null && \$tmpDt = new DateTime(\$this->$clo)) ? \$tmpDt->format($fmt) : null;
+			\$currNorm = (\$this->$clo !== null && \$tmpDt = new $dateTimeClass(\$this->$clo)) ? \$tmpDt->format($fmt) : null;
 			\$newNorm = (\$dt !== null) ? \$dt->format($fmt) : null;
 
 			if ( (\$currNorm !== \$newNorm) // normalized values don't match ";
