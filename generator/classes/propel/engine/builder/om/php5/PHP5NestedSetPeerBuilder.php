@@ -1500,6 +1500,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			$script .= "
 					}
 				}
+				\$stmt->closeCursor();
 			}
 		}
 	}
