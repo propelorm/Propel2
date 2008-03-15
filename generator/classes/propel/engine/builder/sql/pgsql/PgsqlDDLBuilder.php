@@ -167,12 +167,13 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		$lines = array();
 
 		foreach ($table->getColumns() as $col) {
+			/* @var $col Column */
 			$colDDL = $this->getColumnDDL($col);
 			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
 				if ($col->getType() === PropelTypes::BIGINT) {
-					$colDDL = str_replace($col->getType(),'bigserial',$colDDL);
+					$colDDL = str_replace($col->getDomain()->getSqlType(), 'bigserial', $colDDL);
 				} else {
-					$colDDL = str_replace($col->getType(),'serial',$colDDL);
+					$colDDL = str_replace($col->getDomain()->getSqlType(), 'serial', $colDDL);
 				}
 			}
 			$lines[] = $colDDL;
