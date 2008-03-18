@@ -2473,7 +2473,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
-
+		
+		$className = $fkPeerBuilder->getObjectClassname();
+		
 		$script .= "
 	/**
 	 * Gets an array of $className objects which contain a foreign key that references this object.
@@ -2510,9 +2512,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$lfmap = $refFK->getLocalForeignMapping();
 			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
 			$colFK = $refFK->getTable()->getColumn($colFKName);
-
+			
+			$clo = strtolower($localColumn->getName());
+			
 			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName().");
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
 ";
 		} // end foreach ($fk->getForeignColumns()
 
@@ -2532,9 +2536,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$lfmap = $refFK->getLocalForeignMapping();
 			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
 			$colFK = $refFK->getTable()->getColumn($colFKName);
+			$clo = strtolower($localColumn->getName());
 			$script .= "
 
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName()."); 
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo); 
 ";
 		} // foreach ($fk->getForeignColumns()
 		$script .= "
