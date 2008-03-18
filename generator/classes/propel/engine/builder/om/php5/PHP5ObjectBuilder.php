@@ -2379,14 +2379,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
-
+		
+		$className = $fkPeerBuilder->getObjectClassname();
+		
 		$script .= "
 	/**
-	 * Returns the number of related $relCol.
+	 * Returns the number of related $className objects.
 	 *
 	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct
 	 * @param      PropelPDO \$con
+	 * @return     int Count of related $className objects.
 	 * @throws     PropelException
 	 */
 	public function count$relCol(Criteria \$criteria = null, \$distinct = false, PropelPDO \$con = null)
@@ -2416,9 +2419,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$lfmap = $refFK->getLocalForeignMapping();
 			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
 			$colFK = $refFK->getTable()->getColumn($colFKName);
-
+			$clo = strtolower($localColumn->getName());
 			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName()."); 
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo); 
 ";
 		} // end foreach ($fk->getForeignColumns()
 
@@ -2437,9 +2440,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$lfmap = $refFK->getLocalForeignMapping();
 			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
 			$colFK = $refFK->getTable()->getColumn($colFKName);
+			$clo = strtolower($localColumn->getName());
 			$script .= "
 
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->".$localColumn->getName().");
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
 ";
 		} // foreach ($fk->getForeignColumns()
 		$script .= "
