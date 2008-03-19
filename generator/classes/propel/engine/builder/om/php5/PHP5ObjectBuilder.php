@@ -2172,12 +2172,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					$colFKName = $flMap[$columnName];
 					$colFK = $tblFK->getColumn($colFKName);
 					if ($colFK === null) {
-						$e = new Exception("Column $colFKName not found in " . $tblFK->getName());
-						print $e;
-						throw $e;
+						throw new EngineException("Column $colFKName not found in " . $tblFK->getName());
 					}
+					$clo = strtolower($column->getName());
 					$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
+				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
 ";
 				} // end foreach ($fk->getForeignColumns()
 
@@ -2194,8 +2193,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					$flMap = $refFK->getForeignLocalMapping();
 					$colFKName = $flMap[$columnName];
 					$colFK = $tblFK->getColumn($colFKName);
+					$clo = strtolower($column->getName());
 					$script .= "
-			\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->get".$column->getPhpName()."());
+			\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
 ";
 				} /* end foreach ($fk->getForeignColumns() */
 
@@ -2587,8 +2587,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{
 ";
 		$script .= "
-		if (\$this->$varName === null && !\$this->isNew()) {
-";
+		if (\$this->$varName === null && !\$this->isNew()) {";
 
 		$lfmap = $refFK->getLocalForeignMapping();
 
@@ -2604,12 +2603,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$params = array();
 		foreach ($tblFK->getPrimaryKey() as $col) {
 			$localColumn = $table->getColumn($lfmap[$col->getName()]);
-			$params[] = "\$this->get".$localColumn->getPhpName()."()";
+			$clo = strtolower($localColumn->getName());
+			$params[] = "\$this->$clo";
 		}
 
 		$script .= "
 			\$this->$varName = ".$joinedTableObjectBuilder->getPeerClassname()."::retrieveByPK(".implode(", ", $params).", \$con);
-		} // if (\$this->$varName === null)
+		}
 
 		return \$this->$varName;
 	}
