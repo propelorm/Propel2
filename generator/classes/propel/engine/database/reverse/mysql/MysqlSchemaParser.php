@@ -198,16 +198,26 @@ class MysqlSchemaParser extends BaseSchemaParser {
 		$foreignKeys = array(); // local store to avoid duplicates
 
 		// Get the information on all the foreign keys
-		$regEx = '/CONSTRAINT `([^`]+)` FOREIGN KEY \(`([^`]*)`\) REFERENCES `([^`]*)` \(`([^`]*)`\)(.*)/';
+		$regEx = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^`]*)` \((.+)\)(.*)/';
 		if (preg_match_all($regEx,$row[1],$matches)) {
 			$tmpArray = array_keys($matches[0]);
 			foreach ($tmpArray as $curKey) {
 				$name = $matches[1][$curKey];
-				$lcol = $matches[2][$curKey];
+				$rawlcol = $matches[2][$curKey];
 				$ftbl = $matches[3][$curKey];
-				$fcol = $matches[4][$curKey];
+				$rawfcol = $matches[4][$curKey];
 				$fkey = $matches[5][$curKey];
-
+				
+				$lcols = array();
+				foreach(preg_split('/`, `/', $rawlcol) as $piece) {
+					$lcols[] = trim($piece, '` ');
+				}
+				
+				$fcols = array();
+				foreach(preg_split('/`, `/', $rawfcol) as $piece) {
+					$fcols[] = trim($piece, '` ');
+				}
+				
 				//typical for mysql is RESTRICT
 				$fkactions = array(
 					'ON DELETE'	=> ForeignKey::RESTRICT,
@@ -224,10 +234,18 @@ class MysqlSchemaParser extends BaseSchemaParser {
 						}
 					}
 				}
-
+				
+				$localColumns = array();
+				$foreignColumns = array();
+				
 				$foreignTable = $database->getTable($ftbl);
-				$foreignColumn = $foreignTable->getColumn($fcol);
-				$localColumn   = $table->getColumn($lcol);
+				
+				foreach($fcols as $fcol) {
+					$foreignColumns[] = $foreignTable->getColumn($fcol);
+				}
+				foreach($lcols as $lcol) {
+					$localColumns[] = $table->getColumn($lcol);
+				}
 
 				if (!isset($foreignKeys[$name])) {
 					$fk = new ForeignKey($name);
@@ -237,7 +255,11 @@ class MysqlSchemaParser extends BaseSchemaParser {
 					$table->addForeignKey($fk);
 					$foreignKeys[$name] = $fk;
 				}
-				$foreignKeys[$name]->addReference($localColumn, $foreignColumn);
+				
+				for($i=0; $i < count($localColumns); $i++) {
+					$foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
+				}
+				
 			}
 
 		}
