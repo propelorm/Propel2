@@ -351,6 +351,7 @@
 		<xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional"/>
 		<xs:attribute name="defaultMutatorVisibility" type="visibility" use="optional"/>
 		<xs:attribute name="idMethod" type="idmethod" use='optional'/>
+		<xs:attribute name="allowPkInsert" type="xs:boolean" default="false" use="optional"/>
 		<xs:attribute name="skipSql" type="xs:boolean" default="false"/>
 		<xs:attribute name="readOnly" type="xs:boolean" default="false"/>
 		<xs:attribute name="abstract" type="xs:boolean" default="false"/>

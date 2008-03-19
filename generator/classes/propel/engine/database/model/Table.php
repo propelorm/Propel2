@@ -121,6 +121,13 @@ class Table extends XMLElement implements IDMethod {
 	private $idMethod;
 
 	/**
+	 * Wether an INSERT with set PK is allowed on tables with IDMethod::NATIVE
+	 *
+	 * @var        boolean
+	 */
+	private $allowPkInsert;
+
+	/**
 	 * Strategry to use for converting column name to phpName.
 	 *
 	 * @var        string
@@ -294,6 +301,7 @@ class Table extends XMLElement implements IDMethod {
 		$this->name = $this->getAttribute("name");
 		$this->phpName = $this->getAttribute("phpName");
 		$this->idMethod = $this->getAttribute("idMethod", $this->getDatabase()->getDefaultIdMethod());
+		$this->allowPkInsert = $this->booleanValue($this->getAttribute("allowPkInsert"));
 
 		// retrieves the method for converting from specified name to a PHP name.
 		$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
@@ -817,6 +825,17 @@ class Table extends XMLElement implements IDMethod {
 			return $this->idMethod;
 		}
 	}
+
+	/**
+	 * Whether we allow to insert primary key colums
+	 *
+	 * @return     boolean
+	 */
+	public function allowPkInsert()
+	{
+		return $this->allowPkInsert;
+	}
+
 
 	/**
 	 * Set the method for generating pk's

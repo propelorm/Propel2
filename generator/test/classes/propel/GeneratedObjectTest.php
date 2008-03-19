@@ -953,4 +953,38 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		}
 		// success ...
 	}
+	
+	/**
+	 * Checks wether we are allowed to specify the primary key on a 
+	 * table with allowPkInsert=true set
+         *
+	 * saves the object, gets it from data-source again and then compares
+	 * them for equality (thus the instance pool is also checked) 
+	 */
+	public function testAllowPkInsertOnIdMethodNativeTable()
+	{
+		$cu = new Customer;
+		$cu->setPrimaryKey(100000);
+		
+		$cu->save();
+		
+		$cu2 = CustomerPeer::retrieveByPk(100000);
+				
+		$this->assertSame($cu, $cu2);
+	}
+	
+	/**
+	 * test the forbiddenness of setting the PK with idMethod=native
+	 */
+	public function testDontAllowPkInsertOnIdMethodNativeTable()
+	{
+		$b = new Book;
+		$b->setPrimaryKey(1000);
+		try {
+			$b->save();
+			$this->fail("Propel must throw an exception if a PK was set by the user and the table has idMethod=native");
+		} catch (PropelException $e) {
+			// [SR] as of XXX this throws an exception so everything is fine
+		}
+	}
 }

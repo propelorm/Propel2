@@ -268,7 +268,7 @@
 		</foreign-key>
 	</table>
 
-	<table name="customer">
+	<table name="customer" allowPkInsert="true">
 		<column name="id" type="INTEGER" primaryKey="true"
 			autoIncrement="true" />
 		<column name="name" type="VARCHAR" size="255" />

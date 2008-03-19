@@ -1060,7 +1060,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 		foreach ($table->getColumns() as $col) {
 			$cfc = $col->getPhpName();
-			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none") {
+			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && !$table->allowPkInsert()) {
 				$script .= "
 		if (\$criteria->containsKey(".$this->getColumnConstant($col).")) {
 			throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
