@@ -832,7 +832,7 @@ class Table extends XMLElement implements IDMethod {
 	 *
 	 * @return     boolean
 	 */
-	public function allowPkInsert()
+	public function isAllowPkInsert()
 	{
 		return $this->allowPkInsert;
 	}
