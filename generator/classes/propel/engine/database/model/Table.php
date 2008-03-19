@@ -827,7 +827,8 @@ class Table extends XMLElement implements IDMethod {
 	}
 
 	/**
-	 * Whether we allow to insert primary key colums
+	 * Whether we allow to insert primary keys on tables with
+	 * idMethod=native
 	 *
 	 * @return     boolean
 	 */
