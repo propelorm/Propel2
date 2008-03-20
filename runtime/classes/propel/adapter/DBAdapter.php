@@ -285,7 +285,8 @@ abstract class DBAdapter {
 	 * @return     boolean
 	 * @deprecated
 	 */
-	public function useQuoteIdentifier() {
+	public function useQuoteIdentifier()
+	{
 		return false;
 	}
 
@@ -293,7 +294,12 @@ abstract class DBAdapter {
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
-
-	public abstract function random($seed=NULL);
+	
+	/**
+	 * Gets the SQL string that this adapter uses for getting a random number.
+	 *
+	 * @param      mixed $seed (optional) seed value for databases that support this
+	 */
+	public abstract function random($seed = null);
 
 }

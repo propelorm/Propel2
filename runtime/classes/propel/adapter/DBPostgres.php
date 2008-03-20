@@ -141,7 +141,10 @@ class DBPostgres extends DBAdapter {
 			$sql .= " OFFSET ".$offset;
 		}
 	}
-
+	
+	/**
+	 * @see        DBAdapter::random()
+	 */
 	public function random($seed=NULL)
 	{
 		return 'random()';
