@@ -960,17 +960,17 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		\$sql = \"SELECT COUNT(*) AS level FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < ? AND \" . self::RIGHT_COL . \" > ?\";
+		\$sql = \"SELECT COUNT(*) AS level FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < :left AND \" . self::RIGHT_COL . \" > :right\";
 
 		if (self::SCOPE_COL) {
-			\$sql .= ' AND ' . self::SCOPE_COL . ' = ?';
+			\$sql .= ' AND ' . self::SCOPE_COL . ' = :scope';
 		}
 
 		\$stmt = \$con->prepare(\$sql);
-		\$stmt->bindValue(1, \$node->getLeftValue(), PDO::PARAM_INT);
-		\$stmt->bindValue(2, \$node->getRightValue(), PDO::PARAM_INT);
+		\$stmt->bindValue(':left', \$node->getLeftValue(), PDO::PARAM_INT);
+		\$stmt->bindValue(':right', \$node->getRightValue(), PDO::PARAM_INT);
 		if (self::SCOPE_COL) {
-			\$stmt->bindValue(3, \$node->getScopeIdValue());
+			\$stmt->bindValue(':scope', \$node->getScopeIdValue());
 		}
 		\$stmt->execute();
 		\$row = \$stmt->fetch();

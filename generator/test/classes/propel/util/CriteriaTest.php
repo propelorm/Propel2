@@ -91,10 +91,10 @@ class CriteriaTest extends BaseTestCase {
 
 		$crit2->addAnd($crit3)->addOr($crit4->addAnd($crit5));
 		$expect =
-			"((myTable2.myColumn2=? "
-				. "AND myTable3.myColumn3=?) "
-			. "OR (myTable4.myColumn4=? "
-				. "AND myTable5.myColumn5=?))";
+			"((myTable2.myColumn2=:p1 "
+				. "AND myTable3.myColumn3=:p2) "
+			. "OR (myTable4.myColumn4=:p3 "
+				. "AND myTable5.myColumn5=:p4))";
 
 		$sb = "";
 		$params = array();
@@ -117,10 +117,10 @@ class CriteriaTest extends BaseTestCase {
 
 		$crit6->addAnd($crit7)->addOr($crit8)->addAnd($crit9);
 		$expect =
-			"(((myTable2.myColumn2=? "
-					. "AND myTable3.myColumn3=?) "
-				. "OR myTable4.myColumn4=?) "
-					. "AND myTable5.myColumn5=?)";
+			"(((myTable2.myColumn2=:p1 "
+					. "AND myTable3.myColumn3=:p2) "
+				. "OR myTable4.myColumn4=:p3) "
+					. "AND myTable5.myColumn5=:p4)";
 
 		$sb = "";
 		$params = array();
@@ -173,7 +173,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->c->add($cn1->addAnd($cn2));
 		$expect =
 			"SELECT  FROM INVOICE WHERE "
-			. "(INVOICE.COST>=? AND INVOICE.COST<=?)";
+			. "(INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)";
 
 		$expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => 1000),
 								array('table' => 'INVOICE', 'column' => 'COST', 'value' => 5000),
@@ -204,8 +204,8 @@ class CriteriaTest extends BaseTestCase {
 
 		$expect =
 			"SELECT  FROM INVOICE WHERE "
-			. "((INVOICE.COST>=? AND INVOICE.COST<=?) "
-			. "OR (INVOICE.COST>=? AND INVOICE.COST<=?))";
+			. "((INVOICE.COST>=:p1 AND INVOICE.COST<=:p2) "
+			. "OR (INVOICE.COST>=:p3 AND INVOICE.COST<=:p4))";
 
 		$expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
 								array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
@@ -232,7 +232,7 @@ class CriteriaTest extends BaseTestCase {
 	public function testCriterionIgnoreCase()
 	{
 		$adapters = array(new DBMySQL(), new DBPostgres());
-		$expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(?)", "TABLE.COLUMN ILIKE ?");
+		$expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1");
 
 		$i =0;
 		foreach ($adapters as $adapter) {
@@ -245,7 +245,7 @@ class CriteriaTest extends BaseTestCase {
 			$sb = "";
 			$params=array();
 			$myCriterion->appendPsTo($sb, $params);
-			$expected = "TABLE.COLUMN LIKE ?";
+			$expected = "TABLE.COLUMN LIKE :p1";
 
 			$this->assertEquals($expected, $sb);
 
@@ -268,7 +268,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->c = new Criteria();
 		$this->c->add("TABLE.COLUMN", true);
 
-		$expect = "SELECT  FROM TABLE WHERE TABLE.COLUMN=?";
+		$expect = "SELECT  FROM TABLE WHERE TABLE.COLUMN=:p1";
 		$expect_params = array( array('table' => 'TABLE', 'column' => 'COLUMN', 'value' => true),
 							   );
 		try {
@@ -331,7 +331,7 @@ class CriteriaTest extends BaseTestCase {
 		$c->add("TABLE.SOME_COLUMN", array(), Criteria::IN);
 		$c->add("TABLE.OTHER_COLUMN", array(1, 2, 3), Criteria::IN);
 
-		$expect = "SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (?,?,?)";
+		$expect = "SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (:p1,:p2,:p3)";
 		try {
 			$result = BasePeer::createSelectSql($c, $params=array());
 		} catch (PropelException $e) {
@@ -350,7 +350,7 @@ class CriteriaTest extends BaseTestCase {
 		$myCriterion->addOr($c->getNewCriterion("TABLE.COLUMN2", array(1,2), Criteria::IN));
 		$c->add($myCriterion);
 
-		$expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (?,?))";
+		$expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (:p1,:p2))";
 		try {
 			$result = BasePeer::createSelectSql($c, $params=array());
 		} catch (PropelException $e) {

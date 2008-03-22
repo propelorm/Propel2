@@ -1404,7 +1404,7 @@ class Criterion  {
 	 * Appends a Prepared Statement representation of the Criterion
 	 * onto the buffer.
 	 *
-	 * @param      string &$sb The stringbuffer that will receive the Prepared Statement
+	 * @param      string &$sb The string that will receive the Prepared Statement
 	 * @param      array $params A list to which Prepared Statement parameters
 	 * will be appended
 	 * @return     void
@@ -1441,14 +1441,17 @@ class Criterion  {
 
 			// OPTION 1:  table.column IN (?, ?) or table.column NOT IN (?, ?)
 			if ($this->comparison === Criteria::IN || $this->comparison === Criteria::NOT_IN) {
-
+				
+				$_bindParams = array(); // the param names used in query building
+				$_idxstart = count($params);
 				$valuesLength = 0;
 				foreach ( (array) $this->value as $value ) {
-					$valuesLength++;
+					$valuesLength++; // increment this first to correct for wanting bind params to start with :p1
 					$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $value);
+					$_bindParams[] = ':p'.($_idxstart + $valuesLength);
 				}
 				if ( $valuesLength !== 0 ) {
-					$sb .= $field . $this->comparison . '(' . substr(str_repeat("?,", $valuesLength), 0, -1) . ')';
+					$sb .= $field . $this->comparison . '(' . implode(',', $_bindParams) . ')';
 				} else {
 					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
 				}
@@ -1472,19 +1475,19 @@ class Criterion  {
 						$field = $db->ignoreCase($field);
 					}
 				}
-
+				
+				$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
+				
 				$sb .= $field . $this->comparison;
 
 				// If selection is case insensitive use SQL UPPER() function
 				// on criteria or, if Postgres we are using ILIKE, so not necessary.
 				if ($this->ignoreStringCase && !($db instanceof DBPostgres)) {
-					$sb .= $db->ignoreCase('?');
+					$sb .= $db->ignoreCase(':p'.count($params));
 				} else {
-					$sb .= '?';
+					$sb .= ':p'.count($params);
 				}
-
-				$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
-
+				
 			// OPTION 3:  table.column = ? or table.column >= ? etc. (traditional expressions, the default)
 			} else {
 
@@ -1496,17 +1499,17 @@ class Criterion  {
 					if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME || $this->value === Criteria::CURRENT_TIMESTAMP) {
 						$sb .= $field . $this->comparison . $this->value;
 					} else {
+						
+						$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
+						
 						// default case, it is a normal col = value expression; value
 						// will be replaced w/ '?' and will be inserted later using PDO bindValue()
 						if ($this->ignoreStringCase) {
-							$sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase("?");
+							$sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase(':p'.count($params));
 						} else {
-							$sb .= $field . $this->comparison . "?";
+							$sb .= $field . $this->comparison . ':p'.count($params);
 						}
-						// need to track the field in params, because
-						// we'll need it to determine the correct setter
-						// method later on (e.g. field 'review.DATE' => setDate());
-						$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
+						
 					}
 				} else {
 

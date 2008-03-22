@@ -280,9 +280,15 @@ class BasePeer
 				$columns = array_map(array($adapter, 'quoteIdentifier'), $columns);
 			}
 
-			$sql = "INSERT INTO " . $tableName
-			. " (" . implode(",", $columns) . ")"
-			. " VALUES (" . substr(str_repeat("?,", count($columns)), 0, -1) . ")";
+			$sql = 'INSERT INTO ' . $tableName
+			. ' (' . implode(',', $columns) . ')'
+			. ' VALUES (';
+			// . substr(str_repeat("?,", count($columns)), 0, -1) . 
+			for($p=1, $cnt=count($columns); $p <= $cnt; $p++) {
+				$sql .= ':p'.$p;
+				if ($p !== $cnt) $sql .= ',';
+			}
+			$sql .= ')';
 
 			$stmt = $con->prepare($sql);
 			self::populateStmtValues($stmt, self::buildParams($qualifiedCols, $criteria), $dbMap, $db);
@@ -342,61 +348,65 @@ class BasePeer
 		foreach ($tablesColumns as $tableName => $columns) {
 
 			$whereClause = array();
-
-			$selectParams = array();
-			foreach ($columns as $colName) {
-				$sb = "";
-				$selectCriteria->getCriterion($colName)->appendPsTo($sb, $selectParams);
-				$whereClause[] = $sb;
-			}
+			
+			$params = array();
 
 			$stmt = null;
 			try {
 
 				$sql = "UPDATE " . $tableName . " SET ";
+				$p = 1;
 				foreach ($updateTablesColumns[$tableName] as $col) {
 					$updateColumnName = substr($col, strrpos($col, '.') + 1);
 					// add identifiers for the actual database?
 					if ($db->useQuoteIdentifier()) {
 						$updateColumnName = $db->quoteIdentifier($updateColumnName);
 					}
-					if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL)
-					{
-						$sql .= $updateColumnName . " = ?, ";
-					}
-					else
-					{
+					if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL) {
+						$sql .= $updateColumnName . '=:p'.$p++.', ';
+					} else {
 						$param = $updateValues->get($col);
-						$sql .= $updateColumnName . " = ";
-						if (is_array($param))
-						{
-							if (isset($param['raw']))
-							{
-								$sql .= $param['raw'] . ", ";
+						$sql .= $updateColumnName . ' = ';
+						if (is_array($param)) {
+							if (isset($param['raw'])) {
+								$raw = $param['raw'];
+								$rawcvt = '';
+								// parse the $params['raw'] for ? chars
+								for($r=0,$len=strlen($raw); $r < $len; $r++) {
+									if ($raw{$r} == '?') {
+										$rawcvt .= ':p'.$p++;
+									} else {
+										$rawcvt .= $raw{$r};
+									}
+								}
+								$sql .= $rawcvt . ', ';
+							} else {
+								$sql .= ':p'.$p++.', ';
 							}
-							else
-							{
-								$sql .= "?, ";
-							}
-							if (isset($param['value']))
-							{
+							if (isset($param['value'])) {
 								$updateValues->put($col, $param['value']);
 							}
-						}
-						else
-						{
+						} else {
 							$updateValues->remove($col);
-							$sql .= $param . ", ";
+							$sql .= $param . ', ';
 						}
 					}
 				}
-
+				
+				$params = self::buildParams($updateTablesColumns[$tableName], $updateValues);
+				
+				foreach ($columns as $colName) {
+					$sb = "";
+					$selectCriteria->getCriterion($colName)->appendPsTo($sb, $params);
+					$whereClause[] = $sb;
+				}
+			
 				$sql = substr($sql, 0, -2) . " WHERE " .  implode(" AND ", $whereClause);
 
 				$stmt = $con->prepare($sql);
 
-				// Replace '?' with the actual values
-				self::populateStmtValues($stmt, array_merge(self::buildParams($updateTablesColumns[$tableName], $updateValues), $selectParams), $dbMap, $db);
+				// Replace ':p?' with the actual values
+				self::populateStmtValues($stmt, $params, $dbMap, $db);
 
 				$stmt->execute();
 
@@ -545,8 +555,7 @@ class BasePeer
 
 			if ($value === null) {
 
-				$stmt->bindValue($i++, null, PDO::PARAM_NULL);
-				// $stmt->setNull($i++);
+				$stmt->bindValue(':p'.$i++, null, PDO::PARAM_NULL);
 
 			} else {
 
@@ -581,7 +590,7 @@ class BasePeer
 					rewind($value);
 				}
 
-				$stmt->bindValue($i++, $value, $pdoType);
+				$stmt->bindValue(':p'.$i++, $value, $pdoType);
 			}
 		} // foreach
 	}
