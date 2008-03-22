@@ -84,7 +84,7 @@
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
 					<user>bookstore</user>
-					<password>wTCj32PHEpemrbK9</password>
+					<password></password>
 					-->
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
