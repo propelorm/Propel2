@@ -3274,13 +3274,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$varName = $this->getPKRefFKVarName($refFK);
 				$vars[] = $varName;
 				$script .= "
-			\$this->{$varName}->clearAllReferences(\$deep);";
+			if (\$this->$varName) {
+				\$this->{$varName}->clearAllReferences(\$deep);
+			}";
 			} else {
 				$varName = $this->getRefFKCollVarName($refFK);
 				$vars[] = $varName;
 				$script .= "
-			foreach ((array) \$this->$varName as \$o) {
-				\$o->clearAllReferences(\$deep);
+			if (\$this->$varName) {
+				foreach((array) \$this->$varName as \$o) {
+					\$o->clearAllReferences(\$deep);
+				}
 			}";
 			}
 		}
