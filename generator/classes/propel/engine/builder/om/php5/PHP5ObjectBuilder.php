@@ -3279,7 +3279,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$varName = $this->getRefFKCollVarName($refFK);
 				$vars[] = $varName;
 				$script .= "
-			foreach (\$this->$varName as \$o) {
+			foreach ((array) \$this->$varName as \$o) {
 				\$o->clearAllReferences(\$deep);
 			}";
 			}
