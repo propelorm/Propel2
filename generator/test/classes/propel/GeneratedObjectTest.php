@@ -972,19 +972,4 @@ class GeneratedObjectTest extends BookstoreTestBase {
 				
 		$this->assertSame($cu, $cu2);
 	}
-	
-	/**
-	 * test the forbiddenness of setting the PK with idMethod=native
-	 */
-	public function testDontAllowPkInsertOnIdMethodNativeTable()
-	{
-		$b = new Book;
-		$b->setPrimaryKey(1000);
-		try {
-			$b->save();
-			$this->fail("Propel must throw an exception if a PK was set by the user and the table has idMethod=native");
-		} catch (PropelException $e) {
-			// [SR] as of XXX this throws an exception so everything is fine
-		}
-	}
 }
