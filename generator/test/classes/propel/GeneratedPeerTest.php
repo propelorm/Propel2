@@ -648,6 +648,11 @@ class GeneratedPeerTest extends BookstoreTestBase {
 
 		for ($i=1; $i <= 2; $i++) {
 			for ($j=1; $j <= 2; $j++) {
+				$bo = new BookOpinion();
+				$bo->setBookId($i);
+				$bo->setReaderId($j);
+				$bo->save();
+				
 				$rf = new ReaderFavorite();
 				$rf->setBookId($i);
 				$rf->setReaderId($j);
@@ -701,4 +706,43 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$this->assertEquals('Admin', $o->getAcctAccessRole()->getName());
 	}
 
+	/**
+	 * Testing foreign keys with multiple referrer columns.
+	 * @link       http://propel.phpdb.org/trac/ticket/606
+	 */
+	public function testMultiColFk()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		ReaderFavoritePeer::doDeleteAll();
+		
+		$b1 = new Book();
+		$b1->setTitle("Book1");
+		$b1->setISBN("ISBN-1");
+		$b1->save();
+		
+		$r1 = new BookReader();
+		$r1-> setName("Me");
+		$r1->save();
+		
+		$bo1 = new BookOpinion();
+		$bo1->setBookId($b1->getId());
+		$bo1->setReaderId($r1->getId());
+		$bo1->setRating(9);
+		$bo1->setRecommendToFriend(true);
+		$bo1->save();
+		
+		$rf1 = new ReaderFavorite();
+		$rf1->setReaderId($r1->getId());
+		$rf1->setBookId($b1->getId());
+		$rf1->save();
+		
+		$c = new Criteria(ReaderFavoritePeer::DATABASE_NAME);
+		$c->add(ReaderFavoritePeer::BOOK_ID, $b1->getId());
+		$c->add(ReaderFavoritePeer::READER_ID, $r1->getId());
+		
+		// This will produce an error!
+		$results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
+		$this->assertEquals(1, count($results), "Expected 1 result");
+	}
 }
