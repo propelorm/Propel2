@@ -619,7 +619,10 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function addJoin($left, $right, $operator = null)
 	{
-		$this->joins[] = new Join($left, $right, $operator);
+		$j = new Join($left, $right, $operator);
+		if (!in_array($j, $this->joins)) { // compare equality, NOT identity
+			$this->joins[] = $j;
+		}
 		return $this;
 	}
 
