@@ -225,12 +225,12 @@
 		<foreign-key foreignTable="book_reader" onDelete="cascade">
 			<reference local="reader_id" foreign="id" />
 		</foreign-key>
-		<!-- 
-			<foreign-key foreignTable="book_opinion" onDelete="cascade">
+		
+		<foreign-key foreignTable="book_opinion" onDelete="cascade">
 			<reference local="book_id" foreign="book_id"/>
 			<reference local="reader_id" foreign="reader_id"/>
-			</foreign-key>
-		-->
+		</foreign-key>
+		
 	</table>
 
 	<!--  Test some custom php column types. -->
