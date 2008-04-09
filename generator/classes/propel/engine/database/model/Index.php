@@ -125,7 +125,7 @@ class Index extends XMLElement {
 				// still no name
 			}
 		}
-		return $this->indexName;
+		return substr($this->indexName, 0, $this->getTable()->getDatabase()->getPlatform()->getMaxColumnNameLength());
 	}
 
 	/**
