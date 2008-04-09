@@ -84,7 +84,6 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 );
 ";
 		$this->addPrimaryKey($script);
-		$this->addIndices($script);
 		$this->addSequences($script);
 
 	}
