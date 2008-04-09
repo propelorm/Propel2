@@ -64,8 +64,8 @@ abstract class DDLBuilder extends DataModelBuilder {
 		$result = null;
 		if ($table->getIdMethod() == IDMethod::NATIVE) {
 			$idMethodParams = $table->getIdMethodParameters();
+			$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
 			if (empty($idMethodParams)) {
-				$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
 				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
 					if (!isset($longNamesMap[$table->getName()])) {
 						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
@@ -73,10 +73,10 @@ abstract class DDLBuilder extends DataModelBuilder {
 					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
 				}
 				else {
-					$result = $table->getName() . "_SEQ";
+					$result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
 				}
 			} else {
-				$result = $idMethodParams[0]->getValue();
+				$result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
 			}
 		}
 		return $result;
