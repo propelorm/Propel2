@@ -883,6 +883,43 @@ class GeneratedObjectTest extends BookstoreTestBase {
 
 		$this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());
 	}
+	
+	/**
+	 * Test copying when an object has composite primary key.
+	 * @link http://propel.phpdb.org/trac/ticket/618
+	 */
+	public function testCopy_CompositePK()
+	{
+		$br = new BookReader();
+		$br->setName("TestReader");
+		$br->save();
+		$br->copy();
+		
+		$b = new Book();
+		$b->setTitle("TestBook");
+		$b->setISBN("XX-XX-XX-XX");
+		$b->save();
+		
+		$op = new BookOpinion();
+		$op->setBookReader($br);
+		$op->setBook($b);
+		$op->setRating(10);
+		$op->setRecommendToFriend(true);
+		$op->save();
+		
+		
+		$br2 = $br->copy(true);
+		
+		$this->assertNull($br2->getId());
+		
+		$opinions = $br2->getBookOpinions();
+		$this->assertEquals(1, count($opinions), "Expected to have a related BookOpinion after copy()");
+		
+		// We DO expect the reader_id to be null
+		$this->assertNull($opinions[0]->getReaderId());
+		// but we DO NOT expect the book_id to be null 
+		$this->assertEquals($op->getBookId(), $opinions[0]->getBookId());
+	}
 
 	/**
 	 * Test the toArray() method with new lazyLoad param.
