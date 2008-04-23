@@ -797,7 +797,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$c->add(self::SCOPE_COL, \$scopeId, Criteria::EQUAL);
 		}
 		\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
-		if (false !== (\$row = \$stmt->fetch())) {
+		if (false !== (\$row = \$stmt->fetch(PDO::FETCH_NUM))) {
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
 			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
@@ -806,7 +806,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$root->setLevel(0);
 			$peerClassname::hydrateDescendants(\$root, \$stmt);
 			$peerClassname::addInstanceToPool(\$root);
-
+			
+			\$stmt->closeCursor();
 			return \$root;
 		}
 		return false;
@@ -1320,12 +1321,18 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$descendants = array();
 		\$children = array();
 		\$prevSibling = null;
-		while (\$row = \$stmt->fetch()) {
-			\$omClass = $peerClassname::getOMClass(\$row, 0);
-			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
-			" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
-			\$child->hydrate(\$row);
+		// set the class once to avoid overhead in the loop
+		\$cls = $peerClassname::getOMClass();
+		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
+			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {
+				" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
+				\$child->hydrate(\$row);
+			}
+
 			\$child->setLevel(\$node->getLevel() + 1);
 			\$child->setParentNode(\$node);
 			if (!empty(\$prevSibling)) {
@@ -1369,12 +1376,18 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		\$children = array();
 		\$prevRight = 0;
-		while (\$row = \$stmt->fetch()) {
-			\$omClass = $peerClassname::getOMClass(\$row, 0);
-			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
-			" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
-			\$child->hydrate(\$row);
+		// set the class once to avoid overhead in the loop
+		\$cls = $peerClassname::getOMClass();
+		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+
+		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
+			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {
+				" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
+				\$child->hydrate(\$row);
+			}
+
 			\$child->setLevel(\$node->getLevel() + 1);
 
 			if (\$child->getRightValue() > \$prevRight) {
