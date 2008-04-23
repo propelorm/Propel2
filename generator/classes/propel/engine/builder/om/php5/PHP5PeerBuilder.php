@@ -756,14 +756,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		$script .= "
 	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 * Clear the instance pool.
 	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array \$row PropelPDO resultset row.
-	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
-	 * @return     string
+	 * @return     void
 	 */
 	public static function clearInstancePool()
 	{
