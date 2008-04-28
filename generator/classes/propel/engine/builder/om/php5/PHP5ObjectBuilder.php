@@ -3178,7 +3178,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 
 		foreach ($table->getColumns() as $col) {
-			if (!in_array($col, $autoIncCols)) {
+			if (!in_array($col, $autoIncCols, true)) {
 				$script .= "
 		\$copyObj->set".$col->getPhpName()."(\$this->".strtolower($col->getName()).");
 ";
