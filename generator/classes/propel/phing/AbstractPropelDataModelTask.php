@@ -511,7 +511,11 @@ abstract class AbstractPropelDataModelTask extends Task {
 		while ($externalSchema = $externalSchemaNodes->item(0)) {
 			$include = $externalSchema->getAttribute("filename");
 			$externalSchema->parentNode->removeChild($externalSchema);
-			$externalSchemaFile = new PhingFile($srcDir, $include);
+			if (strpos($srcDir->getPath(), "/") === 0) {
+				$externalSchemaFile = new PhingFile($include);
+			} else {
+				$externalSchemaFile = new PhingFile($srcDir, $include);
+			}
 			$externalSchemaDom = new DomDocument('1.0', 'UTF-8');
 			$externalSchemaDom->load($externalSchemaFile->getAbsolutePath());
 			$this->includeExternalSchemas($externalSchemaDom, $srcDir);
