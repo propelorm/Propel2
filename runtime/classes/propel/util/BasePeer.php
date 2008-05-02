@@ -769,7 +769,7 @@ class BasePeer
 				$ignoreCase =
 				(($criteria->isIgnoreCase()
 				|| $someCriteria[$i]->isIgnoreCase())
-				&& ($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType() == "string" )
+				&& (strpos($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType(), "VARCHAR") !== false)
 				);
 
 				$someCriteria[$i]->setIgnoreCase($ignoreCase);
