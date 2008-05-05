@@ -320,42 +320,80 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 
 		foreach ($table->getColumns() as $col) {
+			$this->addColumnAttributeComment($script, $col);
+			$this->addColumnAttributeDeclaration($script, $col);
+			if ($col->isLazyLoad() ) {
+				$this->addColumnAttributeLoaderComment($script, $col);
+				$this->addColumnAttributeLoaderDeclaration($script, $col);
+			}
+		}
+	}
 
-			$cptype = $col->getPhpType();
-			$clo=strtolower($col->getName());
+	/**
+	 * Add comment about the attribute (variable) that stores column values
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeComment(&$script, Column $col) {
+		$cptype = $col->getPhpType();
+		$clo = strtolower($col->getName());
 
-			$script .= "
+		$script .= "
 	/**
 	 * The value for the $clo field.";
-			if ($col->getDefaultValue()) {
-				if ($col->getDefaultValue()->isExpression()) {
-					$script .= "
+		if ($col->getDefaultValue()) {
+			if ($col->getDefaultValue()->isExpression()) {
+				$script .= "
 	 * Note: this column has a database default value of: (expression) ".$col->getDefaultValue()->getValue();
-				} else {
-					$script .= "
+			} else {
+				$script .= "
 	 * Note: this column has a database default value of: ". $this->getDefaultValueString($col);
-				}
 			}
-			$script .= "
+		}
+		$script .= "
 	 * @var        $cptype
 	 */
+		";
+	}
+
+	/**
+	 * Adds the declaration of a column value storage attribute
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeDeclaration(&$script, Column $col) {
+		$clo = strtolower($col->getName());
+		$script .= "
 	protected \$" . $clo . ";
 ";
+	}
 
-			if ($col->isLazyLoad()) {
-				$script .= "
+	/**
+	 * Adds the comment about the attribute keeping track if an attribute value has been loaded
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeLoaderComment(&$script, Column $col) {
+		$script .= "
 	/**
 	 * Whether the lazy-loaded $clo value has been loaded from database.
 	 * This is necessary to avoid repeated lookups if $clo column is NULL in the db.
 	 * @var        boolean
 	 */
+		";
+	}
+
+	/** 
+	 * Adds the declaration of the attribute keeping track of an attribute's loaded state
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeLoaderDeclaration(&$script, Column $col) { 
+		$clo = strtolower($col->getName());
+		$script .= "
 	protected \$".$clo."_isLoaded = false;
 ";
-			}
-
-		}  // foreach col
-
-	} // addColumnAttributes()
+	}
 
 	/**
 	 * Adds the getPeer() method.
@@ -364,6 +402,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addGetPeer(&$script)
 	{
+		$this->addGetPeerComment($script);
+		$this->addGetPeerFunctionOpen($script);
+		$this->addGetPeerFunctionBody($script);
+		$this->addGetPeerFunctionClose($script);
+	}
+
+	/**
+	 * Add the comment for the getPeer method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addGetPeerComment(&$script) {
 		$script .= "
 	/**
 	 * Returns a peer instance associated with this om.
@@ -374,14 +423,42 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @return     ".$this->getPeerClassname()."
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration (function opening) for the getPeer method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addGetPeerFunctionOpen(&$script) { 
+		$script .= "
 	public function getPeer()
 	{
+		";
+	}
+
+	/**
+	 * Adds the body of the getPeer method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addGetPeerFunctionBody(&$script) { 
+		$script .= "
 		if (self::\$peer === null) {
 			" . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassname()) . "
 		}
 		return self::\$peer;
+		";
 	}
-";
+
+	/**
+	 * Add the function close for the getPeer method
+	 * Note: this is just a } and the body ends with a return statement, so it's quite useless. But it's here anyway for consisency, cause there's a close function for all functions and in some other instances, they are useful
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addGetPeerFunctionClose(&$script) {
+		$script .= "
+	}
+		";
 	}
 
 	/**
@@ -391,17 +468,54 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addConstructor(&$script)
 	{
-		$table = $this->getTable();
+		$this->addConstructorComment($script);
+		$this->addConstructorOpen($script);
+		$this->addConstructorBody($script);
+		$this->addConstructorClose($script);
+	}
+
+	/**
+	 * Adds the comment for the constructor
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addConstructorComment(&$script) {
 		$script .= "
 	/**
 	 * Initializes internal state of ".$this->getClassname()." object.
 	 * @see        applyDefaults()
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the constructor
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addConstructorOpen(&$script) {
+		$script .= "
 	public function __construct()
 	{
-		\$this->applyDefaultValues();
+		";
 	}
-";
+
+	/**
+	 * Adds the function body for the constructor
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addConstructorBody(&$script) {
+		$script .= "
+		\$this->applyDefaultValues();
+		";
+	}
+
+	/**
+	 * Adds the function close for the constructor
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addConstructorClose(&$script) {
+		$script .= "
+	}
+		";
 	}
 
 	/**
@@ -410,8 +524,19 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        addConstructor()
 	 */
 	protected function addApplyDefaultValues(&$script)
-	{
-		$table = $this->getTable();
+	{	
+		$this->addApplyDefaultValuesComment($script);
+		$this->addApplyDefaultValuesOpen($script);
+		$this->addApplyDefaultValuesBody($script);
+		$this->addApplyDefaultValuesClose($script);
+	}
+
+	/**
+	 * Adds the comment for the applyDefaults method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addApplyDefaultValues()
+	 **/
+	protected function addApplyDefaultValuesComment(&$script) {
 		$script .= "
 	/**
 	 * Applies default values to this object.
@@ -419,8 +544,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * equivalent initialization method).
 	 * @see        __construct()
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the applyDefaults method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addApplyDefaultValues()
+	 **/
+	protected function addApplyDefaultValuesOpen(&$script) {
+		 $script .= "
 	public function applyDefaultValues()
-	{";
+	{
+		";
+	}
+
+	/**
+	 * Adds the function body of the applyDefault method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addApplyDefaultValues()
+	 **/
+	protected function addApplyDefaultValuesBody(&$script) {
+		$table = $this->getTable();
 		// FIXME - Apply support for PHP default expressions here
 		// see: http://propel.phpdb.org/trac/ticket/378
 
@@ -439,10 +584,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
 
 		}
+	}
+
+
+	/**
+	 * Adds the function close for the applyDefaults method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addApplyDefaultValues()
+	 **/
+	protected function addApplyDefaultValuesClose(&$script) {
 		$script .= "
 	}
 ";
-
 	}
 
 	// --------------------------------------------------------------
@@ -457,29 +610,30 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      Column $col The current column.
 	 * @see        parent::addColumnAccessors()
 	 */
-	protected function addTemporalAccessor(&$script, $col)
+	protected function addTemporalAccessor(&$script, Column $col)
 	{
-		$cfc=$col->getPhpName();
-		$clo=strtolower($col->getName());
-		$visibility=$col->getAccessorVisibility();
+		$this->addTemporalAccessorComment($script, $col);
+		$this->addTemporalAccessorOpen($script, $col);
+		$this->addTemporalAccessorBody($script, $col);
+		$this->addTemporalAccessorClose($script, $col);
+	} // addTemporalAccessor
 
+	
+	/**
+	 * Adds the comment for a temporal accessor
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addTemporalAccessor
+	 **/
+	protected function addTemporalAccessorComment(&$script, Column $col) {
+		$clo = strtolower($col->getName());
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
+		
 		$dateTimeClass = $this->getBuildProperty('dateTimeClass');
 		if (!$dateTimeClass) {
 			$dateTimeClass = 'DateTime';
 		}
 		
-		$defaultfmt = null;
-
-		// Default date/time formatter strings are specified in build.properties
-		if ($col->getType() === PropelTypes::DATE) {
-			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
-		} elseif ($col->getType() === PropelTypes::TIME) {
-			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
-		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
-			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
-		}
-
 		$handleMysqlDate = false;
 		if ($this->getPlatform() instanceof MysqlPlatform) {
 			if ($col->getType() === PropelTypes::TIMESTAMP) {
@@ -491,10 +645,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			}
 			// 00:00:00 is a valid time, so no need to check for that.
 		}
-
-		// if the default format property was an empty string, then we'll set it
-		// to NULL, which will return the "native" integer timestamp
-		if (empty($defaultfmt)) { $defaultfmt = null; }
 
 		$script .= "
 	/**
@@ -519,11 +669,80 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
+		";
+	}
+
+
+	/**
+	 * Adds the function declaration for a temporal accessor
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addTemporalAccessor
+	 **/
+	protected function addTemporalAccessorOpen(&$script, Column $col) { 
+		$cfc = $col->getPhpName();
+		
+		$defaultfmt = null;
+
+		// Default date/time formatter strings are specified in build.properties
+		if ($col->getType() === PropelTypes::DATE) {
+			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
+		} elseif ($col->getType() === PropelTypes::TIME) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
+		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
+		}
+		if (empty($defaultfmt)) { $defaultfmt = null; }
+
+		$script .= "
 	".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
 		if ($col->isLazyLoad()) $script .= ", \$con = null";
 		$script .= ")
 	{
-";
+		";
+	}
+
+	/**
+	 * Adds the body of the temporal accessor
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addTemporalAccessor
+	 **/
+	protected function addTemporalAccessorBody(&$script, Column $col) {
+		$cfc=$col->getPhpName();
+		$clo=strtolower($col->getName());
+		
+		$useDateTime = $this->getBuildProperty('useDateTimeClass');
+		
+		$dateTimeClass = $this->getBuildProperty('dateTimeClass');
+		if (!$dateTimeClass) {
+			$dateTimeClass = 'DateTime';
+		}
+		
+		$defaultfmt = null;
+
+		// Default date/time formatter strings are specified in build.properties
+		if ($col->getType() === PropelTypes::DATE) {
+			$defaultfmt = $this->getBuildProperty('defaultDateFormat');
+		} elseif ($col->getType() === PropelTypes::TIME) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeFormat');
+		} elseif ($col->getType() === PropelTypes::TIMESTAMP) {
+			$defaultfmt = $this->getBuildProperty('defaultTimeStampFormat');
+		}
+		if (empty($defaultfmt)) { $defaultfmt = null; }
+		
+		$handleMysqlDate = false;
+		if ($this->getPlatform() instanceof MysqlPlatform) {
+			if ($col->getType() === PropelTypes::TIMESTAMP) {
+				$handleMysqlDate = true;
+				$mysqlInvalidDateString = '0000-00-00 00:00:00';
+			} elseif ($col->getType() === PropelTypes::DATE) {
+				$handleMysqlDate = true;
+				$mysqlInvalidDateString = '0000-00-00';
+			}
+			// 00:00:00 is a valid time, so no need to check for that.
+		}
+		
 		if ($col->isLazyLoad()) {
 			$script .= "
 		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
@@ -579,9 +798,21 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} else {
 			return \$dt->format(\$format);
 		}
+		";
 	}
-";
-	} // addTemporalAccessor
+
+
+	/**
+	 * Adds the body of the temporal accessor
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addTemporalAccessorClose
+	 **/
+	protected function addTemporalAccessorClose(&$script, Column $col) {
+		$script .= "
+	}
+		";
+	}
 
 	/**
 	 * Adds a normal (non-temporal) getter method.
@@ -589,11 +820,22 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      Column $col The current column.
 	 * @see        parent::addColumnAccessors()
 	 */
-	protected function addDefaultAccessor(&$script, $col)
+	protected function addDefaultAccessor(&$script, Column $col)
 	{
-		$cfc=$col->getPhpName();
+		$this->addDefaultAccessorComment($script, $col);
+		$this->addDefaultAccessorOpen($script, $col);
+		$this->addDefaultAccessorBody($script, $col);
+		$this->addDefaultAccessorClose($script, $col);
+	}
+
+	/**
+	 * Add the comment for a default accessor method (a getter)
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addDefaultAccessorComment(&$script, Column $col) { 
 		$clo=strtolower($col->getName());
-		$visibility=$col->getAccessorVisibility();
 
 		$script .= "
 	/**
@@ -606,10 +848,35 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 	 * @return     ".$col->getPhpType()."
 	 */
+	";
+	}
+
+	/**
+	 * Adds the function declaration for a default accessor
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addDefaultAccessorOpen(&$script, Column $col) { 
+		$cfc = $col->getPhpName();
+		$visibility = $col->getAccessorVisibility();
+
+		$script .= "
 	".$visibility." function get$cfc(";
 		if ($col->isLazyLoad()) $script .= "PropelPDO \$con = null";
 		$script .= ")
 	{";
+	}
+
+	/**
+	 * Adds the function body for a default accessor method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addDefaultAccessorBody(&$script, Column $col) {		
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
 		if ($col->isLazyLoad()) {
 			$script .= "
 		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
@@ -620,6 +887,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= "
 		return \$this->$clo;
+		";
+	}
+
+	/**
+	 * Adds the function close for a default accessor method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addDefaultAccessorClose(&$script, Column $col) {		
+		$script .= "
 	}
 ";
 	}
@@ -630,10 +908,21 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      Column $col The current column.
 	 * @see        parent::addColumnAccessors()
 	 */
-	protected function addLazyLoader(&$script, $col)
+	protected function addLazyLoader(&$script, Column $col)
 	{
-		$platform = $this->getPlatform();
-		$cfc=$col->getPhpName();
+		$this->addLazyLoaderComment($script, $col);
+		$this->addLazyLoaderOpen($script, $col);
+		$this->addLazyLoaderBody($script, $col);
+		$this->addLazyLoaderClose($script, $col);
+	}
+
+	/**
+	 * Adds the comment for the lazy loader method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addLazyLoader()
+	 **/
+	protected function addLazyLoaderComment(&$script, Column $col) {
 		$clo=strtolower($col->getName());
 
 		$script .= "
@@ -648,8 +937,35 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return     void
 	 * @throws     PropelException - any underlying error will be wrapped and re-thrown.
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the lazy loader method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addLazyLoader()
+	 **/
+	protected function addLazyLoaderOpen(&$script, Column $col) {
+		$cfc=$col->getPhpName();
+
+		$script .= "
 	protected function load$cfc(PropelPDO \$con = null)
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the lazy loader method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addLazyLoader()
+	 **/
+	protected function addLazyLoaderBody(&$script, Column $col) {
+		$platform = $this->getPlatform();
+		$clo = strtolower($col->getName());
+
+		$script .= "
 		\$c = \$this->buildPkeyCriteria();
 		\$c->addSelectColumn(".$this->getColumnConstant($col).");
 		try {
@@ -657,7 +973,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);
 			\$stmt->closeCursor();";
 
-		$clo = strtolower($col->getName());
 		if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 			$script .= "
 			if (\$row[0] !== null) {
@@ -683,12 +998,20 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error loading value for [$clo] column on demand.\", \$e);
 		}
+		";
 	}
-";
 
+	/**
+	 * Adds the function close for the lazy loader
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addLazyLoader()
+	 **/
+	protected function addLazyLoaderClose(&$script, Column $col) {
+		$script .= "
+	}
+		";
 	} // addLazyLoader()
-
-
 
 	// --------------------------------------------------------------
 	//
@@ -703,10 +1026,19 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addMutatorOpen(&$script, Column $col)
 	{
-		$cfc=$col->getPhpName();
-		$clo=strtolower($col->getName());
-		$visibility=$col->getMutatorVisibility();
+		$this->addMutatorComment($script, $col);
+		$this->addMutatorOpenOpen($script, $col);
+		$this->addMutatorOpenBody($script, $col);
+	}
 
+	/**
+	 * Adds the comment for a mutator
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addMutatorOpen()
+	 **/
+	protected function addMutatorComment(&$script, Column $col) {	
+		$clo = strtolower($col->getName());
 		$script .= "
 	/**
 	 * Set the value of [$clo] column.
@@ -714,8 +1046,33 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      ".$col->getPhpType()." \$v new value
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */
+		";
+	}
+
+	/** 
+	 * Adds the mutator function declaration
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addMutatorOpen()
+	 **/
+	protected function addMutatorOpenOpen(&$script, Column $col) {	
+		$cfc = $col->getPhpName();
+		$visibility = $col->getMutatorVisibility();
+
+		$script .= "
 	".$visibility." function set$cfc(\$v)
 	{";
+	}
+
+	/**
+	 * Adds the mutator open body part 
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addMutatorOpen()
+	 **/
+	protected function addMutatorOpenBody(&$script, Column $col) {	
+		$clo = strtolower($col->getName());
+
 		if ($col->isLazyLoad()) {
 			$script .= "
 		// explicitly set the is-loaded flag to true for this lazy load col;
@@ -725,7 +1082,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$this->".$clo."_isLoaded = true;
 ";
 		}
-
 	}
 
 	/**
@@ -736,6 +1092,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addMutatorClose(&$script, Column $col)
 	{
+		$this->addMutatorCloseBody($script, $col);
+		$this->addMutatorCloseClose($script, $col);
+	}
+
+	/**
+	 * Adds the body of the close part of a mutator
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addMutatorClose()
+	 **/
+	protected function addMutatorCloseBody(&$script, Column $col) {	
 		$table = $this->getTable();
 		$cfc=$col->getPhpName();
 		$clo=strtolower($col->getName());
@@ -792,15 +1159,24 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			} // if tablFk != table
 
 		} // foreach
+	}
 
+	/**
+	 * Adds the close for the mutator close 
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addMutatorClose()
+	 **/
+	protected function addMutatorCloseClose(&$script, Column $col) {	
 		$script .= "
 		return \$this;
+
 	} // set$cfc()
 ";
 	}
 
 	/**
-	 * Adds a setter for date/time/timestamp columns.
+	 * Adds a setter for BLOB columns.
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col The current column.
 	 * @see        parent::addColumnMutators()
@@ -824,7 +1200,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 		$this->addMutatorClose($script, $col);
 	} // addLobMutatorSnippet
-
 
 	/**
 	 * Adds a setter method for date/time/timestamp columns.
@@ -956,7 +1331,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addHasOnlyDefaultValues(&$script)
 	{
-		$table = $this->getTable();
+		$this->addHasOnlyDefaultValuesComment($script);
+		$this->addHasOnlyDefaultValuesOpen($script);
+		$this->addHasOnlyDefaultValuesBody($script);
+		$this->addHasOnlyDefaultValuesClose($script);
+	}
+
+	/**
+	 * Adds the comment for the hasOnlyDefaultValues method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHasOnlyDefaultValues
+	 **/
+	protected function addHasOnlyDefaultValuesComment(&$script) {
 		$script .= "
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -966,9 +1352,27 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @return     boolean Whether the columns in this object are only been set with default values.
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the hasOnlyDefaultValues method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHasOnlyDefaultValues
+	 **/
+	protected function addHasOnlyDefaultValuesOpen(&$script) {
+		$script .= "
 	public function hasOnlyDefaultValues()
 	{";
+	}
 
+	/**
+	 * Adds the function body for the hasOnlyDefaultValues method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHasOnlyDefaultValues
+	 **/
+	protected function addHasOnlyDefaultValuesBody(&$script) {
+		$table = $this->getTable();
 		$colsWithDefaults = array();
 		foreach ($table->getColumns() as $col) {
 			$def = $col->getDefaultValue();
@@ -999,10 +1403,17 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			}
 ";
 		}
+	}
+
+	/**
+	 * Adds the function close for the hasOnlyDefaultValues method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHasOnlyDefaultValues
+	 **/
+	protected function addHasOnlyDefaultValuesClose(&$script) {
 		$script .= "
 		// otherwise, everything was equal, so return TRUE
 		return true;";
-
 		$script .= "
 	} // hasOnlyDefaultValues()
 ";
@@ -1014,9 +1425,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addHydrate(&$script)
 	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
+		$this->addHydrateComment($script);
+		$this->addHydrateOpen($script);
+		$this->addHydrateBody($script);
+		$this->addHydrateClose($script);
+	}
 
+	/**
+	 * Adds the comment for the hydrate method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHydrate()
+	 */
+	protected function addHydrateComment(&$script) {
 		$script .= "
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
@@ -1032,8 +1452,30 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the hydrate method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHydrate()
+	 */
+	protected function addHydrateOpen(&$script) {
+		$script .= "
 	public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
 	{
+		";
+	}
+	
+	/**
+	 * Adds the function body for the hydrate method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHydrate()
+	 */
+	protected function addHydrateBody(&$script) {
+		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		$script .= "
 		try {
 ";
 		$n = 0;
@@ -1082,17 +1524,37 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error populating ".$table->getPhpName()." object\", \$e);
 		}
+		";
 	}
-";
-
-	} // addHydrate()
 
 	/**
-	 *
+	 * Adds the function close for the hydrate method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addHydrate()
 	 */
+	protected function addHydrateClose(&$script) {
+		$script .= "
+	}
+		";
+	}
+
+	/**
+	 * Adds the buildPkeyCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
 	protected function addBuildPkeyCriteria(&$script) {
+		$this->addBuildPkeyCriteriaComment($script);
+		$this->addBuildPkeyCriteriaOpen($script);
+		$this->addBuildPkeyCriteriaBody($script);
+		$this->addBuildPkeyCriteriaClose($script);
+	}
 
-
+	/**
+	 * Adds the comment for the buildPkeyCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildPkeyCriteria()
+	 **/
+	protected function addBuildPkeyCriteriaComment(&$script) {
 		$script .= "
 	/**
 	 * Builds a Criteria object containing the primary key for this object.
@@ -1102,8 +1564,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @return     Criteria The Criteria object containing value(s) for primary key(s).
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the buildPkeyCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildPkeyCriteria()
+	 **/
+	protected function addBuildPkeyCriteriaOpen(&$script) {
+		$script .= "
 	public function buildPkeyCriteria()
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the buildPkeyCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildPkeyCriteria()
+	 **/
+	protected function addBuildPkeyCriteriaBody(&$script) {
+		$script .= "
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
 		foreach ($this->getTable()->getColumns() as $col) {
@@ -1113,28 +1595,67 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
 			}
 		}
+	}
 
+	/**
+	 * Adds the function close for the buildPkeyCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildPkeyCriteria()
+	 **/
+	protected function addBuildPkeyCriteriaClose(&$script) {
 		$script .= "
 
 		return \$criteria;
 	}
 ";
-
 	}
 
 	/**
-	 *
-	 */
+	 * Adds the buildCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
 	protected function addBuildCriteria(&$script)
 	{
+		$this->addBuildCriteriaComment($script);
+		$this->addBuildCriteriaOpen($script);
+		$this->addBuildCriteriaBody($script);
+		$this->addBuildCriteriaClose($script);
+	}
+
+	/**
+	 * Adds comment for the buildCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildCriteria()
+	 **/
+	protected function addBuildCriteriaComment(&$script) {
 		$script .= "
 	/**
 	 * Build a Criteria object containing the values of all modified columns in this object.
 	 *
 	 * @return     Criteria The Criteria object containing all modified values.
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration of the buildCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildCriteria()
+	 **/
+	protected function addBuildCriteriaOpen(&$script) {
+		$script .= "
 	public function buildCriteria()
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body of the buildCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildCriteria()
+	 **/
+	protected function addBuildCriteriaBody(&$script) {
+		$script .= "
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
 ";
 		foreach ($this->getTable()->getColumns() as $col) {
@@ -1142,15 +1663,38 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 		if (\$this->isColumnModified(".$this->getColumnConstant($col).")) \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
 		}
-		$script .= "
+	}
 
+	/**
+	 * Adds the function close of the buildCriteria method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addBuildCriteria()
+	 **/
+	protected function addBuildCriteriaClose(&$script) {
+		$script .= "
 		return \$criteria;
 	}
 ";
-	} // addBuildCriteria()
+	} 
 
+	/**
+	 * Adds the toArray method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
 	protected function addToArray(&$script)
 	{
+		$this->addToArrayComment($script);
+		$this->addToArrayOpen($script);
+		$this->addToArrayBody($script);
+		$this->addToArrayClose($script);
+	}
+
+	/**
+	 * Adds the comment of the toArray method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addToArray()
+	 **/
+	protected function addToArrayComment(&$script) {
 		$script .= "
 	/**
 	 * Exports the object as an array.
@@ -1163,8 +1707,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration of the toArray method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addToArray()
+	 **/
+	protected function addToArrayOpen(&$script) {
+		$script .= "
 	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true)
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body of the toArray method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addToArray()
+	 **/
+	protected function addToArrayBody(&$script) {
+		$script .= "
 		\$keys = ".$this->getPeerClassname()."::getFieldNames(\$keyType);
 		\$result = array(";
 		foreach ($this->getTable()->getColumns() as $num => $col) {
@@ -1178,13 +1742,39 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 		);
+		";
+	}
+
+	/**
+	 * Adds the function close of the toArray method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addToArray()
+	 **/
+	protected function addToArrayClose(&$script) {
+		$script .= "
 		return \$result;
 	}
 ";
 	} // addToArray()
 
+	/**
+	 * Adds the getByName method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
 	protected function addGetByName(&$script)
 	{
+		$this->addGetByNameComment($script);
+		$this->addGetByNameOpen($script);
+		$this->addGetByNameBody($script);
+		$this->addGetByNameClose($script);
+	}
+
+	/**
+	 * Adds the comment for the getByName method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByName
+	 **/
+	protected function addGetByNameComment(&$script) {
 		$script .= "
 	/**
 	 * Retrieves a field from the object by name passed in as a string.
@@ -1195,17 +1785,63 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the getByName method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByName
+	 **/
+	protected function addGetByNameOpen(&$script) {
+		$script .= "
 	public function getByName(\$name, \$type = BasePeer::TYPE_PHPNAME)
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the getByName method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByName
+	 **/
+	protected function addGetByNameBody(&$script) {
+		$script .= "
 		\$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
-		return \$this->getByPosition(\$pos);
+		\$field = \$this->getByPosition(\$pos);
+		";
+	}
+
+	/**
+	 * Adds the function close for the getByName method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByName
+	 **/
+	protected function addGetByNameClose(&$script) {
+		$script .= "
+		return \$field;
 	}
 ";
 	}
 
+	/**
+	 * Adds the getByPosition method
+	 * @param      string &$script The script will be modified in this method.
+	 **/
 	protected function addGetByPosition(&$script)
 	{
-		$table = $this->getTable();
+		$this->addGetByPositionComment($script);
+		$this->addGetByPositionOpen($script);
+		$this->addGetByPositionBody($script);
+		$this->addGetByPositionClose($script);
+	}
+
+	/**
+	 * Adds comment for the getByPosition method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByPosition
+	 **/
+	protected function addGetByPositionComment(&$script) {
 		$script .= "
 	/**
 	 * Retrieves a field from the object by Position as specified in the xml schema.
@@ -1214,8 +1850,29 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      int \$pos position in xml schema
 	 * @return     mixed Value of field at \$pos
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the getByPosition method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByPosition
+	 **/
+	protected function addGetByPositionOpen(&$script) {
+		$script .= "
 	public function getByPosition(\$pos)
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the getByPosition method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByPosition
+	 **/
+	protected function addGetByPositionBody(&$script) {
+		$table = $this->getTable();
+		$script .= "
 		switch(\$pos) {";
 		$i = 0;
 		foreach ($table->getColumns() as $col) {
@@ -1232,6 +1889,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				return null;
 				break;
 		} // switch()
+		";
+	}
+
+	/**
+	 * Adds the function close for the getByPosition method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addGetByPosition
+	 **/
+	protected function addGetByPositionClose(&$script) {
+		$script .= "
 	}
 ";
 	}
@@ -1331,6 +1998,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addDelete(&$script)
 	{
+		$this->addDeleteComment($script);
+		$this->addDeleteOpen($script);
+		$this->addDeleteBody($script);
+		$this->addDeleteClose($script);
+	}
+
+	/**
+	 * Adds the comment for the delete function
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addDelete()
+	 **/
+	protected function addDeleteComment(&$script) { 
 		$script .= "
 	/**
 	 * Removes this object from datastore and sets delete attribute.
@@ -1341,8 +2020,28 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the delete function
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addDelete()
+	 **/
+	protected function addDeleteOpen(&$script) { 
+		$script .= "
 	public function delete(PropelPDO \$con = null)
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the delete function
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addDelete()
+	 **/
+	protected function addDeleteBody(&$script) { 
+		$script .= "
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"This object has already been deleted.\");
 		}
@@ -1360,6 +2059,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$con->rollback();
 			throw \$e;
 		}
+		";
+	}
+
+	/**
+	 * Adds the function close for the delete function
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addDelete()
+	 **/
+	protected function addDeleteClose(&$script) { 
+		$script .= "
 	}
 ";
 	} // addDelete()
@@ -2860,6 +3569,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addSave(&$script)
 	{
+		$this->addSaveComment($script);
+		$this->addSaveOpen($script);
+		$this->addSaveBody($script);
+		$this->addSaveClose($script);
+	}
+
+	/**
+	 * Adds the comment for the save method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addSave()
+	 **/
+	protected function addSaveComment(&$script) { 
 		$table = $this->getTable();
 		$reloadOnUpdate = $table->isReloadOnUpdate();
 		$reloadOnInsert = $table->isReloadOnInsert();
@@ -2898,8 +3619,35 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
+		";
+	}
+
+	/**
+	 * Adds the function declaration for the save method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addSave()
+	 **/
+	protected function addSaveOpen(&$script) { 
+		$table = $this->getTable();
+		$reloadOnUpdate = $table->isReloadOnUpdate();
+		$reloadOnInsert = $table->isReloadOnInsert();
+		$script .= "
 	public function save(PropelPDO \$con = null".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
 	{
+		";
+	}
+
+	/**
+	 * Adds the function body for the save method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addSave()
+	 **/
+	protected function addSaveBody(&$script) { 
+		$table = $this->getTable();
+		$reloadOnUpdate = $table->isReloadOnUpdate();
+		$reloadOnInsert = $table->isReloadOnInsert();
+
+		$script .= "
 		if (\$this->isDeleted()) {
 			throw new PropelException(\"You cannot save an object that has been deleted.\");
 		}
@@ -2918,9 +3666,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$con->rollback();
 			throw \$e;
 		}
+		";
+	}
+
+	/**
+	 * Adds the function close for the save method
+	 * @param      string &$script The script will be modified in this method.
+	 * @see        addSave()
+	 **/
+	protected function addSaveClose(&$script) { 
+		$script .= "
 	}
 ";
-
 	}
 
 	/**
