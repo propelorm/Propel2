@@ -814,10 +814,18 @@ class BasePeer
 			}
 
 			// build the condition
-			if ($ignoreCase) {
-				$condition = $db->ignoreCase($join->getLeftColumn()) . '=' . $db->ignoreCase($join->getRightColumn());
-			} else {
-				$condition = $join->getLeftColumn() . '=' . $join->getRightColumn();
+			$left = $join->getLeftColumns();
+			$right = $join->getRightColumns();
+			$condition = "";
+			for ($i = 0; $i < count($left); $i++) {
+				if ($ignoreCase) {
+					$condition .= $db->ignoreCase($left[$i]) . '=' . $db->ignoreCase($right[$i]);
+				} else {
+					$condition .= $left[$i] . '=' . $right[$i];
+				}
+				if ($i + 1 < count($left) ) {
+					$condition .= " AND ";
+				}
 			}
 
 			// add 'em to the queues..

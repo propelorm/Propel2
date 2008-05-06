@@ -1692,6 +1692,15 @@ class Join
 	 */
 	public function __construct($leftColumn, $rightColumn, $joinType = null)
 	{
+		if (!is_array($leftColumn) ) {
+			$leftColumn = array($leftColumn);
+		}
+		if (!is_array($rightColumn) ) {
+			$rightColumn = array($rightColumn);
+		}
+		if (count($leftColumn) != count($rightColumn) ) {
+			throw new PropelException("Unable to create join because the left column count isn't equal to the right column count");
+		}
 		$this->leftColumn = $leftColumn;
 		$this->rightColumn = $rightColumn;
 		$this->joinType = $joinType;
@@ -1709,37 +1718,52 @@ class Join
 	/**
 	 * @return     the left column of the join condition
 	 */
-	public function getLeftColumn()
+	public function getLeftColumn($index = 0)
 	{
+		return $this->leftColumn[$index];
+	}
+	
+	/**
+	 * @return     all right columns of the join condition
+	 */
+	public function getLeftColumns() {
 		return $this->leftColumn;
 	}
 
-	public function getLeftColumnName()
+
+	public function getLeftColumnName($index = 0)
 	{
-		return substr($this->leftColumn, strrpos($this->leftColumn, '.') + 1);
+		return substr($this->leftColumn[$index], strrpos($this->leftColumn[$index], '.') + 1);
 	}
 
-	public function getLeftTableName()
+	public function getLeftTableName($index = 0)
 	{
-		return substr($this->leftColumn, 0, strrpos($this->leftColumn, '.'));
+		return substr($this->leftColumn[$index], 0, strrpos($this->leftColumn[$index], '.'));
 	}
 
 	/**
 	 * @return     the right column of the join condition
 	 */
-	public function getRightColumn()
+	public function getRightColumn($index = 0)
 	{
+		return $this->rightColumn[$index];
+	}
+	
+	/**
+	 * @return     all right columns of the join condition
+	 */
+	public function getRightColumns() {
 		return $this->rightColumn;
 	}
 
-	public function getRightColumnName()
+	public function getRightColumnName($index = 0)
 	{
-		return substr($this->rightColumn, strrpos($this->rightColumn, '.') + 1);
+		return substr($this->rightColumn[$index], strrpos($this->rightColumn[$index], '.') + 1);
 	}
 
-	public function getRightTableName()
+	public function getRightTableName($index = 0)
 	{
-		return substr($this->rightColumn, 0, strrpos($this->rightColumn, '.'));
+		return substr($this->rightColumn[$index], 0, strrpos($this->rightColumn[$index], '.'));
 	}
 
 	/**
