@@ -352,8 +352,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 	 * @var        $cptype
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -379,8 +378,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Whether the lazy-loaded $clo value has been loaded from database.
 	 * This is necessary to avoid repeated lookups if $clo column is NULL in the db.
 	 * @var        boolean
-	 */
-		";
+	 */";
 	}
 
 	/** 
@@ -422,8 +420,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
 	 * @return     ".$this->getPeerClassname()."
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -433,8 +430,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addGetPeerFunctionOpen(&$script) { 
 		$script .= "
 	public function getPeer()
-	{
-		";
+	{";
 	}
 
 	/**
@@ -458,7 +454,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addGetPeerFunctionClose(&$script) {
 		$script .= "
 	}
-		";
+";
 	}
 
 	/**
@@ -483,8 +479,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	/**
 	 * Initializes internal state of ".$this->getClassname()." object.
 	 * @see        applyDefaults()
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -494,8 +489,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addConstructorOpen(&$script) {
 		$script .= "
 	public function __construct()
-	{
-		";
+	{";
 	}
 
 	/**
@@ -504,8 +498,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addConstructorBody(&$script) {
 		$script .= "
-		\$this->applyDefaultValues();
-		";
+		\$this->applyDefaultValues();";
 	}
 
 	/**
@@ -515,7 +508,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addConstructorClose(&$script) {
 		$script .= "
 	}
-		";
+";
 	}
 
 	/**
@@ -543,8 +536,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * This method should be called from the object's constructor (or
 	 * equivalent initialization method).
 	 * @see        __construct()
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -555,8 +547,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addApplyDefaultValuesOpen(&$script) {
 		 $script .= "
 	public function applyDefaultValues()
-	{
-		";
+	{";
 	}
 
 	/**
@@ -668,8 +659,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
-	 */
-		";
+	 */";
 	}
 
 
@@ -683,6 +673,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$cfc = $col->getPhpName();
 		
 		$defaultfmt = null;
+                $visibility = $col->getAccessorVisibility();
 
 		// Default date/time formatter strings are specified in build.properties
 		if ($col->getType() === PropelTypes::DATE) {
@@ -698,8 +689,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
 		if ($col->isLazyLoad()) $script .= ", \$con = null";
 		$script .= ")
-	{
-		";
+	{";
 	}
 
 	/**
@@ -709,8 +699,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        addTemporalAccessor
 	 **/
 	protected function addTemporalAccessorBody(&$script, Column $col) {
-		$cfc=$col->getPhpName();
-		$clo=strtolower($col->getName());
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
 		
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
 		
@@ -798,7 +788,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} else {
 			return \$dt->format(\$format);
 		}
-		";
+	";
 	}
 
 
@@ -811,7 +801,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addTemporalAccessorClose(&$script, Column $col) {
 		$script .= "
 	}
-		";
+";
 	}
 
 	/**
@@ -847,8 +837,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 	 * @return     ".$col->getPhpType()."
-	 */
-	";
+	 */";
 	}
 
 	/**
@@ -886,8 +875,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 
 		$script .= "
-		return \$this->$clo;
-		";
+		return \$this->$clo;";
 	}
 
 	/**
@@ -923,7 +911,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        addLazyLoader()
 	 **/
 	protected function addLazyLoaderComment(&$script, Column $col) {
-		$clo=strtolower($col->getName());
+		$clo = strtolower($col->getName());
 
 		$script .= "
 	/**
@@ -936,8 +924,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      \$con PropelPDO (optional) The PropelPDO connection to use.
 	 * @return     void
 	 * @throws     PropelException - any underlying error will be wrapped and re-thrown.
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -947,12 +934,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        addLazyLoader()
 	 **/
 	protected function addLazyLoaderOpen(&$script, Column $col) {
-		$cfc=$col->getPhpName();
-
+		$cfc = $col->getPhpName();
 		$script .= "
 	protected function load$cfc(PropelPDO \$con = null)
-	{
-		";
+	{";
 	}
 
 	/**
@@ -1010,7 +995,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addLazyLoaderClose(&$script, Column $col) {
 		$script .= "
 	}
-		";
+	";
 	} // addLazyLoader()
 
 	// --------------------------------------------------------------
@@ -1045,8 +1030,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * ".$col->getDescription()."
 	 * @param      ".$col->getPhpType()." \$v new value
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
-	 */
-		";
+	 */";
 	}
 
 	/** 
@@ -1072,7 +1056,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addMutatorOpenBody(&$script, Column $col) {	
 		$clo = strtolower($col->getName());
-
+                $cfc = $col->getPhpName();
 		if ($col->isLazyLoad()) {
 			$script .= "
 		// explicitly set the is-loaded flag to true for this lazy load col;
@@ -1104,8 +1088,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addMutatorCloseBody(&$script, Column $col) {	
 		$table = $this->getTable();
-		$cfc=$col->getPhpName();
-		$clo=strtolower($col->getName());
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
 
 		if ($col->isForeignKey()) {
 
@@ -1168,6 +1152,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @see        addMutatorClose()
 	 **/
 	protected function addMutatorCloseClose(&$script, Column $col) {	
+		$cfc = $col->getPhpName();
 		$script .= "
 		return \$this;
 
@@ -1209,9 +1194,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addTemporalMutator(&$script, Column $col)
 	{
-		$cfc=$col->getPhpName();
-		$clo=strtolower($col->getName());
-		$visibility=$col->getMutatorVisibility();
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+		$visibility = $col->getMutatorVisibility();
 		
 		$dateTimeClass = $this->getBuildProperty('dateTimeClass');
 		if (!$dateTimeClass) {
@@ -1351,8 +1336,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * modified _and_ has some values set which are non-default.
 	 *
 	 * @return     boolean Whether the columns in this object are only been set with default values.
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1451,8 +1435,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      boolean \$rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1463,8 +1446,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addHydrateOpen(&$script) {
 		$script .= "
 	public function hydrate(\$row, \$startcol = 0, \$rehydrate = false)
-	{
-		";
+	{";
 	}
 	
 	/**
@@ -1535,7 +1517,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addHydrateClose(&$script) {
 		$script .= "
 	}
-		";
+";
 	}
 
 	/**
@@ -1563,8 +1545,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * of whether or not they have been modified.
 	 *
 	 * @return     Criteria The Criteria object containing value(s) for primary key(s).
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1575,8 +1556,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addBuildPkeyCriteriaOpen(&$script) {
 		$script .= "
 	public function buildPkeyCriteria()
-	{
-		";
+	{";
 	}
 
 	/**
@@ -1633,8 +1613,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * Build a Criteria object containing the values of all modified columns in this object.
 	 *
 	 * @return     Criteria The Criteria object containing all modified values.
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1645,8 +1624,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addBuildCriteriaOpen(&$script) {
 		$script .= "
 	public function buildCriteria()
-	{
-		";
+	{";
 	}
 
 	/**
@@ -1706,8 +1684,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param      boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1718,8 +1695,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addToArrayOpen(&$script) {
 		$script .= "
 	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true)
-	{
-		";
+	{";
 	}
 
 	/**
@@ -1784,8 +1760,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
 	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1796,8 +1771,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addGetByNameOpen(&$script) {
 		$script .= "
 	public function getByName(\$name, \$type = BasePeer::TYPE_PHPNAME)
-	{
-		";
+	{";
 	}
 
 	/**
@@ -1849,8 +1823,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 *
 	 * @param      int \$pos position in xml schema
 	 * @return     mixed Value of field at \$pos
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -1861,8 +1834,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addGetByPositionOpen(&$script) {
 		$script .= "
 	public function getByPosition(\$pos)
-	{
-		";
+	{";
 	}
 
 	/**
@@ -2019,8 +1991,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -2031,8 +2002,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addDeleteOpen(&$script) { 
 		$script .= "
 	public function delete(PropelPDO \$con = null)
-	{
-		";
+	{";
 	}
 
 	/**
@@ -4061,3 +4031,4 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 
 } // PHP5ObjectBuilder
+
