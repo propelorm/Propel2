@@ -386,6 +386,12 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals('INNER JOIN', $j->getJoinType());
 		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
 		$this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
+
+		$j = new Join(array('TABLE_A.COL_1', 'TABLE_A.COL_2'), array('TABLE_B.COL_1', 'TABLE_B.COL_2'), Criteria::INNER_JOIN);
+		$this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn(0));
+		$this->assertEquals('TABLE_A.COL_2', $j->getLeftColumn(1));
+		$this->assertEquals('TABLE_B.COL_1', $j->getRightColumn(0));
+		$this->assertEquals('TABLE_B.COL_2', $j->getRightColumn(1));
 	}
 
 	public function testAddingJoin ()

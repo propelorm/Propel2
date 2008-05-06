@@ -745,4 +745,47 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
 		$this->assertEquals(1, count($results), "Expected 1 result");
 	}
+	/**
+	 * Testing foreign keys with multiple referrer columns.
+	 * @link       http://propel.phpdb.org/trac/ticket/606
+	 */
+	public function testMultiColJoin()
+	{
+		BookstoreContestPeer::doDeleteAll();
+		BookstoreContestEntryPeer::doDeleteAll();
+		$contest = new BookstoreContest();
+		$contest->setBookstoreId(1);
+		$contest->setContestId(1);
+		$contest->save();
+		$contest = new BookstoreContest();
+		$contest->setBookstoreId(2);
+		$contest->setContestId(1);
+		$contest->save();
+
+		$entry = new BookstoreContestEntry();
+		$entry->setBookstoreId(1);
+		$entry->setContestId(1);
+		$entry->setCustomerId(1);
+		$entry->save();
+		$entry = new BookstoreContestEntry();
+		$entry->setBookstoreId(1);
+		$entry->setContestId(1);
+		$entry->setCustomerId(2);
+		$entry->save();
+		$entry = new BookstoreContestEntry();
+		$entry->setBookstoreId(1);
+		$entry->setContestId(2);
+		$entry->setCustomerId(1);
+		$entry->save();
+
+		$c = new Criteria();
+		$c->addJoin(array(BookstoreContestEntryPeer::BOOKSTORE_ID, BookstoreContestEntryPeer::CONTEST_ID), array(BookstoreContestPeer::BOOKSTORE_ID, BookstoreContestPeer::CONTEST_ID) );
+
+		$results = BookstoreContestEntryPeer::doSelect($c);
+		$this->assertEquals(2, count($results) );
+		foreach ($results as $result) {
+			$this->assertEquals(1, $result->getBookstoreId() );
+			$this->assertEquals(1, $result->getContestId() );
+		}
+	}
 }
