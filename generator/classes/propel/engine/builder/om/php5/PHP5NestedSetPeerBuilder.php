@@ -1310,6 +1310,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Hydrate recursively the descendants of the given node
@@ -1321,14 +1322,30 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		\$descendants = array();
 		\$children = array();
 		\$prevSibling = null;
+";
 
+		if (!$table->getChildrenColumn()) {
+			$script .= "
 		// set the class once to avoid overhead in the loop
 		\$cls = $peerClassname::getOMClass();
 		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+";
+		}
 
+		$script .= "
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {
+			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {";
+
+		if ($table->getChildrenColumn()) {
+			$script .= "
+				// class must be set each time from the record row
+				\$cls = ".$peerClassname."::getOMClass(\$row, 0);
+				\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+";
+		}
+
+		$script .= "
 				" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
 				\$child->hydrate(\$row);
 			}
@@ -1366,6 +1383,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		$objectClassname = $this->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$table = $this->getTable();
 		$script .= "
 	/**
 	 * Hydrate the children of the given node
@@ -1376,14 +1394,30 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	{
 		\$children = array();
 		\$prevRight = 0;
+";
 
+		if (!$table->getChildrenColumn()) {
+			$script .= "
 		// set the class once to avoid overhead in the loop
 		\$cls = $peerClassname::getOMClass();
 		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+";
+		}
 
+		$script .= "
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
-			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {
+			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {";
+			
+		if ($table->getChildrenColumn()) {
+			$script .= "
+				// class must be set each time from the record row
+				\$cls = ".$peerClassname."::getOMClass(\$row, 0);
+				\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+";
+		}
+
+		$script .= "
 				" . $this->buildObjectInstanceCreationCode('$child', '$cls') . "
 				\$child->hydrate(\$row);
 			}
