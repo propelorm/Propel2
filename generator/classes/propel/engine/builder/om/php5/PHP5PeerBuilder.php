@@ -1797,7 +1797,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		$className = $this->getObjectClassname();
 		$countFK = count($table->getForeignKeys());
 		$join_behavior = $this->getJoinBehavior();
-				
+
 		if ($countFK >= 1) {
 
 			foreach ($table->getForeignKeys() as $fk) {
@@ -2229,7 +2229,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	protected function addDoCountJoinAll(&$script)
 	{
 		$table = $this->getTable();
-		$className = $this->getObjectClassname();		
+		$className = $this->getObjectClassname();
 		$join_behavior = $this->getJoinBehavior();
 
 		$script .= "
@@ -2325,7 +2325,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		$table = $this->getTable();
 		$join_behavior = $this->getJoinBehavior();
-		
+
 		// ------------------------------------------------------------------------
 		// doSelectJoinAllExcept*()
 		// ------------------------------------------------------------------------
@@ -2533,7 +2533,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	{
 		$table = $this->getTable();
 		$join_behavior = $this->getJoinBehavior();
-		
+
 		$fkeys = $table->getForeignKeys();  // this sep assignment is necessary otherwise sub-loops over
 		// getForeignKeys() will cause this to only execute one time.
 		foreach ($fkeys as $fk ) {
@@ -2556,7 +2556,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * @param      Criteria \$c
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
-     * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
+	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
 	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
@@ -2634,7 +2634,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * returns the desired join behavior as set in the build properties
 	 * see trac ticket #588, #491
-	 * 
+	 *
 	 */
 	protected function getJoinBehavior()
 	{
