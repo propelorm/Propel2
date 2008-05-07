@@ -442,8 +442,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (self::\$peer === null) {
 			" . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassname()) . "
 		}
-		return self::\$peer;
-		";
+		return self::\$peer;";
 	}
 
 	/**
@@ -1155,7 +1154,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$cfc = $col->getPhpName();
 		$script .= "
 		return \$this;
-
 	} // set$cfc()
 ";
 	}
@@ -1505,8 +1503,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error populating ".$table->getPhpName()." object\", \$e);
-		}
-		";
+		}";
 	}
 
 	/**
@@ -1650,6 +1647,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addBuildCriteriaClose(&$script) {
 		$script .= "
+
 		return \$criteria;
 	}
 ";
@@ -2028,8 +2026,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} catch (PropelException \$e) {
 			\$con->rollback();
 			throw \$e;
-		}
-		";
+		}";
 	}
 
 	/**
@@ -3588,8 +3585,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
-	 */
-		";
+	 */";
 	}
 
 	/**
@@ -3603,8 +3599,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$reloadOnInsert = $table->isReloadOnInsert();
 		$script .= "
 	public function save(PropelPDO \$con = null".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
-	{
-		";
+	{";
 	}
 
 	/**
@@ -3635,8 +3630,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} catch (PropelException \$e) {
 			\$con->rollback();
 			throw \$e;
-		}
-		";
+		}";
 	}
 
 	/**
