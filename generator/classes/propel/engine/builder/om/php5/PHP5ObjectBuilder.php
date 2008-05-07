@@ -786,8 +786,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			return strftime(\$format, \$dt->format('U'));
 		} else {
 			return \$dt->format(\$format);
-		}
-	";
+		}";
 	}
 
 
@@ -981,8 +980,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$this->".$clo."_isLoaded = true;
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error loading value for [$clo] column on demand.\", \$e);
-		}
-		";
+		}";
 	}
 
 	/**
@@ -993,8 +991,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addLazyLoaderClose(&$script, Column $col) {
 		$script .= "
-	}
-	";
+	}";
 	} // addLazyLoader()
 
 	// --------------------------------------------------------------
@@ -1715,8 +1712,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			}
 		}
 		$script .= "
-		);
-		";
+		);";
 	}
 
 	/**
@@ -1780,8 +1776,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	protected function addGetByNameBody(&$script) {
 		$script .= "
 		\$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
-		\$field = \$this->getByPosition(\$pos);
-		";
+		\$field = \$this->getByPosition(\$pos);";
 	}
 
 	/**
@@ -1858,8 +1853,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			default:
 				return null;
 				break;
-		} // switch()
-		";
+		} // switch()";
 	}
 
 	/**
@@ -2826,8 +2820,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * actually need in ".$table->getPhpName().".
 	 */
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$join_behavior = $join_behavior)
-	{
-		";
+	{";
 				$script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -3069,8 +3062,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @throws     PropelException
 	 */
 	public function count$relCol(Criteria \$criteria = null, \$distinct = false, PropelPDO \$con = null)
-	{
-		";
+	{";
 
 		$script .= "
 		if (\$criteria === null) {
@@ -3171,8 +3163,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @throws     PropelException
 	 */
 	public function get$relCol(\$criteria = null, PropelPDO \$con = null)
-	{
-		";
+	{";
+
 		$script .= "
 		if (\$criteria === null) {
 			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
@@ -3462,7 +3454,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				if (\$this->$clo !== null && is_resource(\$this->$clo)) {
 					rewind(\$this->$clo);
 				}
-				";
+";
 			}
 		}
 
@@ -3820,8 +3812,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					$script .= "
 		if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {
 			\$this->$varName = null;
-		}
-	";
+		}";
 				} // foraech
 			} /* if col is foreign key */
 
