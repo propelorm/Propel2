@@ -496,7 +496,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 **/
 	protected function addConstructorBody(&$script) {
-		$table = $this->getTable();
 		$script .= "
 		\$this->applyDefaultValues();";
 	}
