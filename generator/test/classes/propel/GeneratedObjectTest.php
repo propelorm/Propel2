@@ -69,7 +69,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$r = new Review();
 		$this->assertEquals('2001-01-01', $r->getReviewDate('Y-m-d'));
 
-		$this->assertFalse($r->isModified(), "expected isModified() to be falseb");
+		$this->assertFalse($r->isModified(), "expected isModified() to be false");
 
 		$acct = new BookstoreEmployeeAccount();
 		$this->assertEquals(true, $acct->getEnabled());
@@ -1008,5 +1008,15 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$cu2 = CustomerPeer::retrieveByPk(100000);
 				
 		$this->assertSame($cu, $cu2);
+	}
+	/**
+	 * Checks if it is allowed to save new, empty objects with a auto increment column
+	 */
+	public function testAllowEmptyWithAutoIncrement()
+	{
+		$bookreader = new BookReader();
+		$bookreader->save();
+				
+		$this->assertFalse($bookreader->isNew() );
 	}
 }

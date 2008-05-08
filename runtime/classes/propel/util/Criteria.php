@@ -323,6 +323,19 @@ class Criteria implements IteratorAggregate {
 	}
 
 	/**
+	 * Does this Criteria object contain the specified key and does it have a value set for the key 
+	 *
+	 * @param      string $column [table.]column
+	 * @return     boolean True if this Criteria object contain the specified key and a value for that key
+	 */
+	public function keyContainsValue($column)
+	{
+		// must use array_key_exists() because the key could
+		// exist but have a NULL value (that'd be valid).
+		return (array_key_exists($column, $this->map) && ($this->map[$key] !== null) );
+	}
+
+	/**
 	 * Will force the sql represented by this criteria to be executed within
 	 * a transaction.  This is here primarily to support the oid type in
 	 * postgresql.  Though it can be used to require any single sql statement

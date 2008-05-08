@@ -1325,6 +1325,24 @@ class Table extends XMLElement implements IDMethod {
 	}
 
 	/**
+	 * Gets the auto increment PK
+	 *
+	 * @return    Column if any auto increment PK column
+	 */
+	public function getAutoIncrementPrimaryKey()
+	{
+		if ($this->getIdMethod() != IDMethod::NO_ID_METHOD) {
+			$pks =$this->getPrimaryKey();
+			foreach ($pks as $pk) {
+				if ($pk->isAutoIncrement()) {
+					return $pk;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns all parts of the primary key, separated by commas.
 	 *
 	 * @return     A CSV list of primary key parts.

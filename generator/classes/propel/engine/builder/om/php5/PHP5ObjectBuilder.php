@@ -496,6 +496,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 **/
 	protected function addConstructorBody(&$script) {
+		$table = $this->getTable();
 		$script .= "
 		\$this->applyDefaultValues();";
 	}
@@ -3389,20 +3390,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 			} // foreach foreign k
 		} // if (count(foreign keys))
+		
+		if ($table->hasAutoIncrementPrimaryKey() ) {
+		$script .= "
+		if (\$this->isNew() ) {
+			\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";
+		}";
+		}
 
 		$script .= "
 
 			// If this object has been modified, then save it to the database.
 			if (\$this->isModified()";
-
-		/*
-		FIXME: this doesn't work right now because the BasePeer::doInsert() method
-		expects to be passed a Criteria object that contains columns (which tell BasePeer
-		which table is being updated)
-		if ($table->hasAutoIncrementPrimaryKey()) {
-		$script .= " || \$this->isNew()";
-		}
-		*/
 
 		$script .= ") {
 				if (\$this->isNew()) {
