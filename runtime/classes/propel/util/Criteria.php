@@ -332,7 +332,7 @@ class Criteria implements IteratorAggregate {
 	{
 		// must use array_key_exists() because the key could
 		// exist but have a NULL value (that'd be valid).
-		return (array_key_exists($column, $this->map) && ($this->map[$column] !== null) );
+		return (array_key_exists($column, $this->map) && ($this->map[$column]->getValue() !== null) );
 	}
 
 	/**

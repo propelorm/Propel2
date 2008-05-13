@@ -257,7 +257,7 @@ class BasePeer
 
 		// pk will be null if there is no primary key defined for the table
 		// we're inserting into.
-		if ($pk !== null && $useIdGen && !$criteria->containsKey($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
+		if ($pk !== null && $useIdGen && !$criteria->keyContainsValue($pk->getFullyQualifiedName()) && $db->isGetIdBeforeInsert()) {
 			try {
 				$id = $db->getId($con, $keyInfo);
 			} catch (Exception $e) {
