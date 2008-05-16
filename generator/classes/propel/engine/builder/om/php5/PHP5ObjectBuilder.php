@@ -3392,9 +3392,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		
 		if ($table->hasAutoIncrementPrimaryKey() ) {
 		$script .= "
-		if (\$this->isNew() ) {
-			\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";
-		}";
+			if (\$this->isNew() ) {
+				\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";
+			}";
 		}
 
 		$script .= "
