@@ -186,7 +186,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = ".$this->getTable()->getNumLazyLoadColumns().";
-
 ";
 		$this->addColumnNameConstants($script);
 		$this->addInheritanceColumnConstants($script);
@@ -219,7 +218,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	protected function addColumnNameConstants(&$script)
 	{
 		foreach ($this->getTable()->getColumns() as $col) {
-
 			$script .= "
 	/** the column name for the ".strtoupper($col->getName()) ." field */
 	const ".$this->getColumnName($col) ." = '".$this->prefixTablename($this->getTable()->getName()).".".strtoupper($col->getName())."';
@@ -2313,8 +2311,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		}
 		\$stmt->closeCursor();
 		return \$count;
-	}
-";
+	}";
 	} // end addDoCountJoinAll()
 
 	/**
