@@ -1984,7 +1984,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-
+		
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
 
@@ -2258,7 +2260,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-
+		
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
 
@@ -2568,7 +2572,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 		if (!\$criteria->getSelectColumns()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
-
+		
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		
 		// Set the correct dbName
 		\$criteria->setDbName(self::DATABASE_NAME);
 
