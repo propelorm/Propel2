@@ -933,11 +933,12 @@ class BasePeer
 
 		// build from-clause
 		$from = '';
-		if (!empty($joinClause) && count($fromClause) > 1 && ($db instanceof DBMySQL)) {
-			$from .= "(" . implode(", ", $fromClause) . ")";
+		if (!empty($joinClause) && count($fromClause) > 1) {
+			$from .= implode(" CROSS JOIN ", $fromClause);
 		} else {
 			$from .= implode(", ", $fromClause);
 		}
+		
 		$from .= $joinClause ? ' ' . implode(' ', $joinClause) : '';
 
 		// Build the SQL from the arrays we compiled

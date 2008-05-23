@@ -547,14 +547,16 @@ class CriteriaTest extends BaseTestCase {
 			addJoin("TABLE_A.BAR_ID", "TABLE_C.ID")->
 			addSelectColumn("TABLE_A.ID");
 
-		$db = Propel::getDB();
-		if ($db instanceof DBMySQL) {
-			$expect = 'SELECT TABLE_A.ID FROM (TABLE_A, TABLE_C)'
+		# These are no longer different, see http://propel.phpdb.org/trac/ticket/283#comment:8
+		#$db = Propel::getDB();
+		#
+		#if ($db instanceof DBMySQL) {
+		#	$expect = 'SELECT TABLE_A.ID FROM (TABLE_A CROSS JOIN TABLE_C)'
+		#			.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
+		#} else {
+			$expect = 'SELECT TABLE_A.ID FROM TABLE_A CROSS JOIN TABLE_C'
 					.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
-		} else {
-			$expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_C'
-					.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
-		}
+		#}
 
 		$result = BasePeer::createSelectSql($c, $params=array());
 
