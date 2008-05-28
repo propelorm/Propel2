@@ -198,17 +198,22 @@ class DebugPDO extends PropelPDO {
 	}
 
 	/**
-	 * Logs the SQL using the Propel::log() method.
+	 * Logs the SQL using the Propel::log() method or registered logger class.
 	 *
 	 * @param      string $msg Message to log.
-	 * @param      int $level Log level.
+	 * @param      int $level (optional) Log level to use; will use setLogLevel() specified level by default. 
+	 * @see        setLogger()
+	 * @see
 	 */
-	public function log($msg)
+	public function log($msg, $level = null)
 	{
+		if ($level === null) {
+			$level = $this->logLevel; 
+		}
 		if ($this->logger) {
-			$this->logger->log($msg, $this->logLevel);
+			$this->logger->log($msg, $level);
 		} else {
-			Propel::log($msg, $this->logLevel);
+			Propel::log($msg, $level);
 		}
 	}
 

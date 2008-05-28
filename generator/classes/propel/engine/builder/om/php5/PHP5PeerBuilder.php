@@ -510,7 +510,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->setDistinct();
 		}
 
-		if (!\$criteria->getSelectColumns()) {
+		if (!\$criteria->hasSelectClause()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 
@@ -610,7 +610,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!\$criteria->getSelectColumns()) {
+		if (!\$criteria->hasSelectClause()) {
 			\$criteria = clone \$criteria;
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
@@ -1981,7 +1981,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->setDistinct();
 		}
 
-		if (!\$criteria->getSelectColumns()) {
+		if (!\$criteria->hasSelectClause()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
@@ -2257,7 +2257,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->setDistinct();
 		}
 
-		if (!\$criteria->getSelectColumns()) {
+		if (!\$criteria->hasSelectClause()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
@@ -2569,7 +2569,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$criteria->setDistinct();
 		}
 
-		if (!\$criteria->getSelectColumns()) {
+		if (!\$criteria->hasSelectClause()) {
 			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		

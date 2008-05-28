@@ -583,7 +583,7 @@ class CriteriaTest extends BaseTestCase {
 	
 	/**
 	 * Tests adding duplicate joins.
-	 * @link http://propel.phpdb.org/trac/ticket/613
+	 * @link       http://propel.phpdb.org/trac/ticket/613
 	 */
 	public function testAddJoin_Duplicate()
 	{
@@ -604,5 +604,21 @@ class CriteriaTest extends BaseTestCase {
 		$c->addJoin("tbl.COL3", "tbl.COL4");
 		$this->assertEquals(4, count($c->getJoins()), "Expected new col join to be added.");
 		
+	}
+	
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/634
+	 */
+	public function testHasSelectClause()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn("foo");
+		
+		$this->assertTrue($c->hasSelectClause());
+		
+		$c = new Criteria();
+		$c->addAsColumn("foo", "bar");
+		
+		$this->assertTrue($c->hasSelectClause());
 	}
 }

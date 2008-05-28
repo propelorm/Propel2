@@ -775,7 +775,21 @@ class Criteria implements IteratorAggregate {
 		$this->selectColumns[] = $name;
 		return $this;
 	}
-
+	
+	/**
+	 * Whether this Criteria has any select columns.
+	 * 
+	 * This will include columns added with addAsColumn() method.
+	 *
+	 * @return     boolean
+	 * @see        addAsColumn()
+	 * @see        addSelectColumn()
+	 */
+	public function hasSelectClause()
+	{
+		return (!empty($this->selectColumns) || !empty($this->asColumns));
+	}
+	
 	/**
 	 * Get select columns.
 	 *
