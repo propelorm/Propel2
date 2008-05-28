@@ -42,7 +42,9 @@ class PgsqlSchemaParser extends BaseSchemaParser {
 				'smallint' => PropelTypes::SMALLINT,
 				'mediumint' => PropelTypes::SMALLINT,
 				'int' => PropelTypes::INTEGER,
+				'int4' => PropelTypes::INTEGER,
 				'integer' => PropelTypes::INTEGER,
+				'int8' => PropelTypes::BIGINT,
 				'bigint' => PropelTypes::BIGINT,
 				'int24' => PropelTypes::BIGINT,
 				'real' => PropelTypes::REAL,
@@ -59,16 +61,8 @@ class PgsqlSchemaParser extends BaseSchemaParser {
 				'datetime' => PropelTypes::TIMESTAMP,
 				'timestamp' => PropelTypes::TIMESTAMP,
 				'timestamptz' => PropelTypes::TIMESTAMP,
-				'tinyblob' => PropelTypes::BINARY,
-				'blob' => PropelTypes::VARBINARY,
-				'mediumblob' => PropelTypes::VARBINARY,
-				'longblob' => PropelTypes::VARBINARY,
-				'longtext' => PropelTypes::LONGVARCHAR,
-				'tinytext' => PropelTypes::VARCHAR,
-				'mediumtext' => PropelTypes::LONGVARCHAR,
+				'bytea' => PropelTypes::BLOB,
 				'text' => PropelTypes::LONGVARCHAR,
-				'enum' => PropelTypes::CHAR,
-				'set' => PropelTypes::CHAR,
 	);
 
 	/**
