@@ -169,6 +169,16 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 							}
 						}
 
+						$basePeer = $table->getBasePeer();
+						if ( $basePeer !== null ) {
+							$className = ClassTools::classname($basePeer);
+							if (!isset($classMap[$className])) {
+								$classPath = ClassTools::getFilePath($basePeer);
+								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
+								$classMap[$className] = $classPath;
+							}
+						}
+						
 						// -----------------------------------------------------------------------------------------
 						// Create tree Node classes
 						// -----------------------------------------------------------------------------------------
