@@ -1262,8 +1262,14 @@ class Criterion  {
 	{
 		$this->value = $value;
 		$dotPos = strrpos($column,'.');
- 		$this->table = substr($column, 0, $dotPos);
- 		$this->column = substr($column, $dotPos+1, strlen($column));
+		if ($dotPos === false) {
+			// no dot => aliased column
+			$this->table = null;
+			$this->column = $column;
+		} else {
+			$this->table = substr($column, 0, $dotPos); 
+			$this->column = substr($column, $dotPos+1, strlen($column));
+		}
 		$this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
 		$this->init($outer);
 	}

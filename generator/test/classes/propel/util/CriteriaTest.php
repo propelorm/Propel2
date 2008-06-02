@@ -621,4 +621,18 @@ class CriteriaTest extends BaseTestCase {
 		
 		$this->assertTrue($c->hasSelectClause());
 	}
+	
+	/**
+	 * Tests including aliases in criterion objects.
+	 * @link       http://propel.phpdb.org/trac/ticket/636
+	 */
+	public function testAliasInCriterion()
+	{
+		$c = new Criteria(); 
+		$c->addAsColumn("column_alias", "tbl.COL1");
+		$crit = $c->getNewCriterion("column_alias", "FOO");
+		$this->assertNull($crit->getTable());
+		$this->assertEquals("column_alias", $crit->getColumn());
+		$c->addHaving($crit); // produces invalid SQL referring to '.olumn_alias'
+	}
 }
