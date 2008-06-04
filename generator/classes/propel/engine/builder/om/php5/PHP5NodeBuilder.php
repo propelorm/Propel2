@@ -664,11 +664,10 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 
 		if (\$con === null)
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
-
-		try {
-
-			if (!\$this->obj->isNew()) \$con->beginTransaction();
-
+		
+		if (!\$this->obj->isNew()) \$con->beginTransaction();
+		
+		try {	
 			if (\$beforeNode)
 			{
 				// Inserting before a node.
@@ -978,11 +977,10 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 		if (!\$this->obj->isNew())
 		{
 			// Shift nodes in database.
-
+			
+			\$con->beginTransaction();
+			
 			try {
-
-				\$con->beginTransaction();
-
 				\$n = \$lastIdx - \$offsetIdx + 1;
 				\$i = \$direction < 1 ? \$offsetIdx : \$lastIdx;
 

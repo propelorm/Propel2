@@ -2011,9 +2011,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		\$con->beginTransaction();
 		try {
-			\$con->beginTransaction();
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);
 			\$this->setDeleted(true);
 			\$con->commit();
@@ -3610,9 +3610,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		\$con->beginTransaction();
 		try {
-			\$con->beginTransaction();
 			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");
 			\$con->commit();
 			".$this->getPeerClassname()."::addInstanceToPool(\$this);
