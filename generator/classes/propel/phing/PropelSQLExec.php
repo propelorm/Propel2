@@ -390,7 +390,7 @@ class PropelSQLExec extends Task {
 
 			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
 				try {
-					$this->conn->rollback();
+					$this->conn->rollBack();
 				} catch (PDOException $ex) {
 					// do nothing.
 					System::println("Rollback failed.");
@@ -401,7 +401,7 @@ class PropelSQLExec extends Task {
 		} catch (PDOException $e) {
 			if (!$this->autocommit && $this->conn !== null && $this->onError == "abort") {
 				try {
-					$this->conn->rollback();
+					$this->conn->rollBack();
 				} catch (PDOException $ex) {
 					// do nothing.
 					System::println("Rollback failed");

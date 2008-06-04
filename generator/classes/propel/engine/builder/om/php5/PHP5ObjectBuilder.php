@@ -2018,7 +2018,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$this->setDeleted(true);
 			\$con->commit();
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}";
 	}
@@ -3618,7 +3618,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}";
 	}

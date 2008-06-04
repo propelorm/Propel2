@@ -1073,7 +1073,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$pk = ".$this->basePeerClassname."::doInsert(\$criteria, \$con);
 			\$con->commit();
 		} catch(PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}
 
@@ -1169,7 +1169,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}
 	}
@@ -1349,7 +1349,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}
 	}

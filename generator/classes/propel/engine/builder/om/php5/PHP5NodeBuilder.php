@@ -721,7 +721,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 			\$this->attachChildNode(\$node);
 
 		} catch (SQLException \$e) {
-			if (!\$this->obj->isNew()) \$con->rollback();
+			if (!\$this->obj->isNew()) \$con->rollBack();
 			throw new PropelException(\$e);
 		}
 	}
@@ -997,7 +997,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 				\$con->commit();
 
 			} catch (SQLException \$e) {
-				\$con->rollback();
+				\$con->rollBack();
 				throw new PropelException(\$e);
 			}
 		}

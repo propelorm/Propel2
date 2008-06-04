@@ -220,7 +220,7 @@ abstract class ".$this->getClassname()." {
 
 			\$con->commit();
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}
 
@@ -269,7 +269,7 @@ abstract class ".$this->getClassname()." {
 
 			\$con->commit();
 		} catch (PropelException \$e) {
-			\$con->rollback();
+			\$con->rollBack();
 			throw \$e;
 		}
 
