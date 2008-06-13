@@ -911,11 +911,10 @@ class BasePeer
 
 				$column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
 
-				if ($column && $column->isText()) {
+				if ($criteria->isIgnoreCase() && $column && $column->isText()) {
 					$orderByClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias") . $direction;
 					$selectClause[] = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
-				}
-				else {
+				} else {
 					$orderByClause[] = $orderByColumn;
 				}
 			}
