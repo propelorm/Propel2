@@ -388,6 +388,8 @@
       databaseDriver="${propel.database.driver}"
       dbEncoding="${propel.database.encoding}"
       databaseUrl="${propel.database.url}"
+      databaseUser="${propel.database.user}"
+      databasePassword="${propel.database.password}"
       outputDirectory="${propel.schema.dir}">
       <mapper type="glob" from="${propel.datadump.mapper.from}" to="${propel.datadump.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
