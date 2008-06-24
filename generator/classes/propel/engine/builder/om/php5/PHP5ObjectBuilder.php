@@ -4008,6 +4008,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$this->$varName = null;";
 		}
 
+		foreach ($table->getForeignKeys() as $fk) {
+			$className = $this->getForeignTable($fk)->getPhpName();
+			$varName = $this->getFKVarName($fk);
+			$script .= "
+			\$this->$varName = null;";
+		}
+
 		$script .= "
 	}
 ";
