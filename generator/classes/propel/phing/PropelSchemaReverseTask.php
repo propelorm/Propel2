@@ -301,10 +301,12 @@ class PropelSchemaReverseTask extends PDOTask {
 		$exprs = explode(',', $v);
 		foreach ($exprs as $expr) {
 			$expr = trim($expr);
-			if (!isset(self::$validatorBitMap[$expr])) {
-				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
+			if(!empty($expr)) {
+  			if (!isset(self::$validatorBitMap[$expr])) {
+  				throw new BuildException("Unable to interpret validator in expression ('$v'): " . $expr);
+  			}
+  			$bits |= self::$validatorBitMap[$expr];
 			}
-			$bits |= self::$validatorBitMap[$expr];
 		}
 
 		$this->validatorBits = $bits;
