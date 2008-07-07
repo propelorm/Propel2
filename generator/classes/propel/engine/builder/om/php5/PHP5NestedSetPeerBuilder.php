@@ -193,43 +193,51 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		$table = $this->getTable();
 		$tableName = $table->getName();
 
-		$left_colname = '';
-		$right_colname = '';
-		$scope_colname = null;
-		$parent_colname = '';
+		$colname = array();
 
 		foreach ($table->getColumns() as $col) {
 			if ($col->isNestedSetLeftKey()) {
-				$left_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$colname['left'] = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
 			if ($col->isNestedSetRightKey()) {
-				$right_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$colname['right'] = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
 			if ($col->isTreeScopeKey()) {
-				$scope_colname = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
+				$colname['scope'] = $this->prefixTablename($tableName) . '.' . strtoupper($col->getName());
 			}
 
-			if (!empty($right_name) && !empty($left_colname) && !empty($scope_colname)) {
+			if (3 == count($colname)) {
 				break;
 			}
 		}
+
+		if(!isset($colname['left'])) {
+			throw new EngineException("One column must have nestedSetLeftKey attribute set to true for [" . $table->getName() . "] table");
+		}
+
+		if(!isset($colname['right'])) {
+			throw new EngineException("One column must have nestedSetRightKey attribute set to true for [" . $table->getName() . "] table");
+		}
+
+		$colname['scope'] = isset($colname['scope']) ? $colname['scope'] : null;
+
 		$script .= "
 	/**
 	 * Left column for the set
 	 */
-	const LEFT_COL = " . var_export($left_colname, true) . ";
+	const LEFT_COL = " . var_export($colname['left'], true) . ";
 
 	/**
 	 * Right column for the set
 	 */
-	const RIGHT_COL = " . var_export($right_colname, true) . ";
+	const RIGHT_COL = " . var_export($colname['right'], true) . ";
 
 	/**
 	 * Scope column for the set
 	 */
-	 const SCOPE_COL = " . var_export($scope_colname, true) . ";
+	const SCOPE_COL = " . var_export($colname['scope'], true) . ";
 ";
 	}
 
