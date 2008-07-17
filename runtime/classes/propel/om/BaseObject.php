@@ -52,6 +52,13 @@ abstract class BaseObject {
 	protected $modifiedColumns = array();
 
 	/**
+	 * Empty constructor (this allows people with their own BaseObject implementation to use its constructor)
+	 */
+	public function __construct() {
+
+	}
+
+	/**
 	 * Returns whether the object has been modified.
 	 *
 	 * @return     boolean True if the object has been modified.

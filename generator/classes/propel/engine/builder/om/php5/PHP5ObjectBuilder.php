@@ -497,6 +497,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addConstructorBody(&$script) {
 		$script .= "
+		parent::__construct();
 		\$this->applyDefaultValues();";
 	}
 
