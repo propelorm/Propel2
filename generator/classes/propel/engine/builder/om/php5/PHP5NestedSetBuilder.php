@@ -272,7 +272,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 			$peerClassname::insertAsLastChildOf(\$root, \$this, \$con);
 		}
 
-    return parent::save(\$con);
+		return parent::save(\$con);
 	}
 ";
 	}
