@@ -259,7 +259,8 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	 * If object is saved without left/right values, set them as undefined (0)
 	 *
 	 * @param      PropelPDO Connection to use.
-	 * @return     void
+	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+	 *                 May be unreliable with parent/children/brother changes
 	 * @throws     PropelException
 	 */
 	public function save(PropelPDO \$con = null)
@@ -271,7 +272,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 			$peerClassname::insertAsLastChildOf(\$root, \$this, \$con);
 		}
 
-		parent::save(\$con);
+    return parent::save(\$con);
 	}
 ";
 	}
