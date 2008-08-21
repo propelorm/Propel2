@@ -635,4 +635,26 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals("column_alias", $crit->getColumn());
 		$c->addHaving($crit); // produces invalid SQL referring to '.olumn_alias'
 	}
+	
+	/**
+	 * Test whether GROUP BY is being respected in equals() check.
+	 * @link       http://propel.phpdb.org/trac/ticket/674
+	 */
+	public function testEqualsGroupBy()
+	{
+		$c1 = new Criteria();
+		$c1->addGroupByColumn('GBY1');
+		
+		$c2 = new Criteria();
+		$c2->addGroupByColumn('GBY2');
+		
+		$this->assertFalse($c2->equals($c1), "Expected Criteria NOT to be the same with different GROUP BY columns");
+		
+		$c3 = new Criteria();
+		$c3->addGroupByColumn('GBY1');
+		$c4 = new Criteria();
+		$c4->addGroupByColumn('GBY1');
+		$this->assertTrue($c4->equals($c3), "Expected Criteria objects to match.");
+	}
+	
 }
