@@ -2641,36 +2641,42 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$table = $this->getTable();
 
 		$varName = $this->getFKVarName($fk);
-
+		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
+		
+		$fkPeerBuilder = $this->getNewPeerBuilder($this->getForeignTable($fk));
+		$fkObjectBuilder = $this->getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
+		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
+		
 		$and = "";
 		$comma = "";
 		$conditional = "";
-		$arglist = "";
+		$argmap = array(); // foreign -> local mapping
 		$argsize = 0;
 		foreach ($fk->getLocalColumns() as $columnName) {
+			
+			$lfmap = $fk->getLocalForeignMapping();
+			
+			$localColumn = $table->getColumn($columnName);
+			$foreignColumn = $fk->getForeignTable()->getColumn($lfmap[$columnName]);
+			
 			$column = $table->getColumn($columnName);
 			$cptype = $column->getPhpType();
 			$clo = strtolower($column->getName());
-
-			// FIXME: is this correct? what about negative numbers?
+			
 			if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
-				$conditional .= $and . "\$this->". $clo ." > 0";
+				$conditional .= $and . "\$this->". $clo ." != 0";
 			} elseif ($cptype == "string") {
 				$conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
 			} else {
 				$conditional .= $and . "\$this->" . $clo ." !== null";
 			}
-			$arglist .= $comma . "\$this->" . $clo;
+			
+			$argmap[] = array('foreign' => $foreignColumn, 'local' => $localColumn);
 			$and = " && ";
 			$comma = ", ";
 			$argsize = $argsize + 1;
 		}
-
-		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
-
-		$fkPeerBuilder = $this->getNewPeerBuilder($this->getForeignTable($fk));
-		$fkObjectBuilder = $this->getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
-		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
+		
 
 		$script .= "
 
@@ -2686,7 +2692,16 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 		if (\$this->$varName === null && ($conditional)) {";
 		$script .= "
-			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::".$fkPeerBuilder->getRetrieveMethodName()."($arglist, \$con);";
+			\$c = new Criteria(".$fkPeerBuilder->getPeerClassname()."::DATABASE_NAME);";
+		foreach ($argmap as $el) {
+			$fcol = $el['foreign'];
+			$lcol = $el['local'];
+			$clo = strtolower($lcol->getName());
+			$script .= "
+			\$c->add(".$fkPeerBuilder->getColumnConstant($fcol).", \$this->".$clo.");";
+		}
+			$script .= "
+			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::doSelectOne(\$c, \$con);";
 		if ($fk->isLocalPrimaryKey()) {
 			$script .= "
 			// Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.

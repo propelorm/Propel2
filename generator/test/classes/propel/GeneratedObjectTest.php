@@ -448,7 +448,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$opinion = new BookOpinion();
 		$opinion->setBookId((string)$bookId);
 		$opinion->setReaderId((string)$readerId);
-		$opinion->setRating("BAD!");
+		$opinion->setRating(5);
 		$opinion->setRecommendToFriend(false);
 		$opinion->save();
 
@@ -994,7 +994,7 @@ class GeneratedObjectTest extends BookstoreTestBase {
 	/**
 	 * Checks wether we are allowed to specify the primary key on a 
 	 * table with allowPkInsert=true set
-         *
+	 *
 	 * saves the object, gets it from data-source again and then compares
 	 * them for equality (thus the instance pool is also checked) 
 	 */
@@ -1018,5 +1018,40 @@ class GeneratedObjectTest extends BookstoreTestBase {
 		$bookreader->save();
 				
 		$this->assertFalse($bookreader->isNew() );
+	}
+	
+	/**
+	 * Test foreign key relationships based on references to unique cols but not PK.
+	 * @link       http://propel.phpdb.org/trac/ticket/691
+	 */
+	public function testUniqueFkRel()
+	{
+		$employee = new BookstoreEmployee();
+		$employee->setName("Johnny Walker");
+
+		$acct = new BookstoreEmployeeAccount();
+		$acct->setBookstoreEmployee($employee);
+		$acct->setLogin("test-login");
+		$acct->save();
+		$acctId = $acct->getEmployeeId();
+		
+		$al = new AcctAuditLog();
+		$al->setBookstoreEmployeeAccount($acct);
+		$al->save();
+		$alId = $al->getId();
+		
+		BookstoreEmployeePeer::clearInstancePool();
+		BookstoreEmployeeAccountPeer::clearInstancePool();
+		AcctAuditLogPeer::clearInstancePool();
+		
+		$al2 = AcctAuditLogPeer::retrieveByPK($alId);
+		/* @var $al2 AcctAuditLog */
+		$mapacct = $al2->getBookstoreEmployeeAccount();
+		$lookupacct = BookstoreEmployeeAccountPeer::retrieveByPK($acctId);
+		
+		$logs = $lookupacct->getAcctAuditLogs();
+		
+		$this->assertTrue(count($logs) == 1, "Expected 1 audit log result.");
+		$this->assertEquals($logs[0]->getId(), $al->getId(), "Expected returned audit log to match created audit log.");
 	}
 }

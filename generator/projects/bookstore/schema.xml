@@ -188,7 +188,16 @@
 			<unique-column name="login" />
 		</unique>
 	</table>
-
+	
+	<table name="acct_audit_log">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+		<column name="uid" type="VARCHAR" size="32" required="true" />
+		<column name="message" type="VARCHAR" size="255" />
+		<foreign-key foreignTable="bookstore_employee_account" onDelete="CASCADE">
+			<reference local="uid" foreign="login" />
+		</foreign-key> 
+	</table>
+	
 	<table name="acct_access_role">
 		<column name="id" type="INTEGER" primaryKey="true"
 			autoIncrement="true" description="Role ID number" />
