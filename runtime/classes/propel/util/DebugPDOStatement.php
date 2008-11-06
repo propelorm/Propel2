@@ -69,7 +69,7 @@ class DebugPDOStatement extends PDOStatement {
 	 * @param      int $type
 	 * @return     boolean
 	 */
-	public function bindValue($pos, $value, $type = null)
+	public function bindValue($pos, $value, $type = PDO::PARAM_STR)
 	{
 		$typestr = isset($this->typeMap[$type]) ? $this->typeMap[$type] : '(default)';
 		if ($type == PDO::PARAM_LOB) {
