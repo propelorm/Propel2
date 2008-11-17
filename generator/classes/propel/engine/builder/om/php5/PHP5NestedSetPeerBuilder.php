@@ -1044,15 +1044,15 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 	 */
 	public static function getPath(NodeObject \$node, PropelPDO \$con = null)
 	{
-    \$criteria = new Criteria();
-    if (self::SCOPE_COL) {
-      \$criteria->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
-    }
-    \$criteria->add(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_EQUAL);
-    \$criteria->add(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_EQUAL);
-    \$criteria->addAscendingOrderByColumn(self::LEFT_COL);
+		\$criteria = new Criteria();
+		if (self::SCOPE_COL) {
+			\$criteria->add(self::SCOPE_COL, \$node->getScopeIdValue(), Criteria::EQUAL);
+		}
+		\$criteria->add(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_EQUAL);
+		\$criteria->add(self::RIGHT_COL, \$node->getRightValue(), Criteria::GREATER_EQUAL);
+		\$criteria->addAscendingOrderByColumn(self::LEFT_COL);
 
-    return self::doSelect(\$criteria, \$con);
+		return self::doSelect(\$criteria, \$con);
 	}
 ";
 	}
