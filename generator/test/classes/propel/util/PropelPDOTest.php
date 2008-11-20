@@ -40,5 +40,96 @@ class PropelPDOTest extends BookstoreTestBase
 		$con->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
 		$this->assertEquals(PDO::CASE_LOWER, $con->getAttribute(PDO::ATTR_CASE));
 	}
-
+	
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/699
+	 */
+	public function testRollBack_NestedRethrow()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
+		if ($driver == "mysql") {
+			$this->markTestSkipped();
+		}
+		
+		$con->beginTransaction();
+		try {
+			
+			$a = new Author();
+			$a->setFirstName('Test');
+			$a->setLastName('User');
+			$a->save($con);
+			$authorId = $a->getId();
+			
+			$this->assertTrue($authorId !== null, "Expected valid new author ID");
+			
+			$con->beginTransaction();
+			try {
+				$con->exec('INVALID SQL');
+				$this->fail("Expected exception on invalid SQL");
+			} catch (Exception $x) {
+				$con->rollBack();
+				throw $x;
+			}
+			
+			$con->commit();
+		} catch (Exception $x) {
+			$con->rollBack();
+		}
+		
+		AuthorPeer::clearInstancePool();
+		$at = AuthorPeer::retrieveByPK($authorId);
+		$this->assertNull($at, "Expected no author result for rolled-back save.");
+	}
+	
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/699
+	 */
+	public function testRollBack_NestedSwallow()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
+		if ($driver == "mysql") {
+			$this->markTestSkipped();
+		}
+		
+		$con->beginTransaction();
+		try {
+			
+			$a = new Author();
+			$a->setFirstName('Test');
+			$a->setLastName('User');
+			$a->save($con);
+			$authorId = $a->getId();
+			
+			$this->assertTrue($authorId !== null, "Expected valid new author ID");
+			
+			$con->beginTransaction();
+			try {
+				$con->exec('INVALID SQL');
+				$this->fail("Expected exception on invalid SQL");
+			} catch (Exception $x) {
+				$con->rollBack();
+				// NO RETHROW
+			}
+			
+			$a2 = new Author();
+			$a2->setFirstName('Test2');
+			$a2->setLastName('User2');
+			$authorId2 = $a2->save($con);
+			 
+			$con->commit(); // this should not do anything!
+			
+		} catch (Exception $x) {
+			$this->fail("No outside rollback expected.");
+		}
+		
+		AuthorPeer::clearInstancePool();
+		$at = AuthorPeer::retrieveByPK($authorId);
+		$this->assertNull($at, "Expected no author result for rolled-back save.");
+		
+		$at2 = AuthorPeer::retrieveByPK($authorId2);
+		$this->assertNull($at2, "Expected no author2 result for rolled-back save.");
+	}
+	
 }

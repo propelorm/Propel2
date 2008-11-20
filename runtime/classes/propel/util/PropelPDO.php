@@ -143,18 +143,22 @@ class PropelPDO extends PDO {
 	}
 
 	/**
-	 * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
-	 * transaction nesting level.
+	 * Overrides PDO::rollBack() to always rollback the transaction and reset the 
+	 * nested transaction count to 0.
+	 * @return     boolean Whether operation was successful.
 	 */
 	public function rollBack()
 	{
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
-			if ($opcount === 1) {
-				$return = parent::rollBack();
-			}
-			$this->decrementNestedTransactionCount();
+			// If we're in a transaction, always roll it back
+			// regardless of nesting level.
+			$return = parent::rollBack();
+			
+			// reset nested transaction count to 0 so that we don't
+			// try to commit (or rollback) the transaction outside this scope.
+			$this->nestedTransactionCount = 0;
 		}
 		return $return;
 	}
