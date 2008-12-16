@@ -844,7 +844,8 @@ class BasePeer
 
 		// Unique from clause elements
 		$fromClause = array_unique($fromClause);
-
+		$fromClause = array_diff($fromClause, array(''));
+		
 		// tables should not exist in both the from and join clauses
 		if ($joinTables && $fromClause) {
 			foreach ($fromClause as $fi => $ftable) {
