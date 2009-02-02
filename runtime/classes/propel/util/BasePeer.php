@@ -557,7 +557,7 @@ class BasePeer
 
 				$stmt->bindValue(':p'.$i++, null, PDO::PARAM_NULL);
 
-			} elseif (isset($tableMap) ) {
+			} elseif (isset($tableName) ) {
 
 				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
 				$type = $cMap->getType();

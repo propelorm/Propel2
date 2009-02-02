@@ -41,11 +41,11 @@
 			<datasource id="bookstore">
 			
 				<!-- the Propel adapter to use for this connection -->
-				<adapter>mysql</adapter>
+				<adapter>sqlite</adapter>
 				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
 				<connection>
 					<classname>DebugPDO</classname>
-					<dsn>mysql:dbname=test</dsn>
+					<dsn>sqlite:dbname=test</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
 					<user>bookstore</user>
@@ -77,10 +77,10 @@
 			</datasource>
 			
 			<datasource id="bookstore-cms">
-				<adapter>mysql</adapter>
+				<adapter>sqlite</adapter>
 				<connection>
 					<classname>DebugPDO</classname>
-					<dsn>mysql:dbname=test</dsn>
+					<dsn>sqlite:dbname=test</dsn>
 					<!--
 					For MySQL and Oracle you must specify username + password separate from DSN:
 					<user>bookstore</user>
