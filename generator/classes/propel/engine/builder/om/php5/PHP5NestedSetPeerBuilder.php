@@ -809,8 +809,12 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$omClass = $peerClassname::getOMClass(\$row, 0);
 			\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 
-			" . $this->buildObjectInstanceCreationCode('$root', '$cls') . "
-			\$root->hydrate(\$row);
+			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
+			if (null === (\$root = ".$peerClassname."::getInstanceFromPool(\$key))) {
+				" . $this->buildObjectInstanceCreationCode('$root', '$cls') . "
+				\$root->hydrate(\$row);
+			}
+
 			\$root->setLevel(0);
 			$peerClassname::hydrateDescendants(\$root, \$stmt);
 			$peerClassname::addInstanceToPool(\$root);
