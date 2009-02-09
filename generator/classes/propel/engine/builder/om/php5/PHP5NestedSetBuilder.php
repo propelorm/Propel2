@@ -520,9 +520,6 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	public function getDescendants(PropelPDO \$con = null)
 	{
 		\$this->getLevel();
-		if (is_array(\$this->_children)) {
-			return \$this->_children;
-		}
 
 		return $peerClassname::retrieveDescendants(\$this, \$con);
 	}
