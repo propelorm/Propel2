@@ -1369,6 +1369,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 				\$prevSibling->setNextSibling(\$child);
 			}
 
+			\$descendants[] = \$child;
+
 			if (\$child->hasChildren()) {
 				\$descendants = array_merge(\$descendants, $peerClassname::hydrateDescendants(\$child, \$stmt));
 			} else {
@@ -1376,7 +1378,6 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			}
 
 			\$children[] = \$child;
-			\$descendants[] = \$child;
 			\$prevSibling = \$child;
 
 			$peerClassname::addInstanceToPool(\$child);
