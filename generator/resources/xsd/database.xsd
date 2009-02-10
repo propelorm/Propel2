@@ -137,7 +137,7 @@
 	
 	<xs:simpleType name="sql_type">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[\w_\[\]]+"/>
+			<xs:pattern value="[\w\s\[\]\(\),\.']+"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
