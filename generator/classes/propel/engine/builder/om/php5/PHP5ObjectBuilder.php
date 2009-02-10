@@ -3140,7 +3140,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				\$count = count(\$this->$collName);
 			}
 		}
-		\$this->$lastCriteriaName = \$criteria;
 		return \$count;
 	}
 ";
