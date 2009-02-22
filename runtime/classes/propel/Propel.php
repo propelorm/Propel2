@@ -138,7 +138,7 @@ class Propel
 	private static $connectionMap = array();
 
 	/**
-	 * @var        array Propel-specific configuration.
+	 * @var        PropelConfiguration Propel-specific configuration.
 	 */
 	private static $configuration;
 
@@ -204,6 +204,7 @@ class Propel
 		'Criteria' => 'propel/util/Criteria.php',
 		'PeerInfo' => 'propel/util/PeerInfo.php',
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
+		'PropelConfiguration' => 'propel/util/PropelConfiguration.php',
 		'PropelPDO' => 'propel/util/PropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
@@ -239,10 +240,6 @@ class Propel
 
 		self::configureLogging();
 
-		// Support having the configuration stored within a 'propel' sub-section or at the top-level
-		if (isset(self::$configuration['propel']) && is_array(self::$configuration['propel'])) {
-			self::$configuration = self::$configuration['propel'];
-		}
 
 		// reset the connection map (this should enable runtime changes of connection params)
 		self::$connectionMap = array();
@@ -267,10 +264,11 @@ class Propel
 	 */
 	public static function configure($configFile)
 	{
-		self::$configuration = include($configFile);
-		if (self::$configuration === false) {
+		$configuration = include($configFile);
+		if ($configuration === false) {
 			throw new PropelException("Unable to open configuration file: " . var_export($configFile, true));
 		}
+		self::setConfiguration($configuration);
 	}
 
 	/**
@@ -319,21 +317,51 @@ class Propel
 	/**
 	 * Sets the configuration for Propel and all dependencies.
 	 *
-	 * @param      array The Configuration
+	 * @param      mixed The Configuration (array or PropelConfiguration)
 	 */
 	public static function setConfiguration($c)
 	{
+		if (is_array($c)) {
+
+			/* For some reason the array generated from runtime-conf.xml has separate
+			 * 'log' section and 'propel' sections. To maintain backward compatibility
+			 * we need to remove 'propel' section BUT of course first save the 'log' section.
+			 *
+			 * So here goes...
+			 */
+
+			$log = array();
+			if (isset($c['propel']) && isset($c['log'])) { //looks like the original array from the myproject-conf.php
+				$log = $c['log'];
+			}
+
+			// Support having the configuration stored within a 'propel' sub-section or at the top-level
+			if (isset($c['propel']) && is_array($c['propel'])) {
+				$c = $c['propel'];
+			}
+
+			if ($log) {
+				$c['log'] = $log;
+			}
+
+			$c = new PropelConfiguration($c);
+		}
 		self::$configuration = $c;
 	}
 
 	/**
 	 * Get the configuration for this component.
 	 *
-	 * @return     array The Configuration
+	 * @param      int - PropelConfiguration::TYPE_ARRAY: return the configuration as an array
+	 *                   (for backward compatibility this is the default)
+	 *                 - PropelConfiguration::TYPE_ARRAY_FLAT: return the configuration as a flat array
+	 *                   ($config['name.space.item'])
+	 *                 - PropelConfiguration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
+	 * @return     mixed The Configuration (array or PropelConfiguration)
 	 */
-	public static function getConfiguration()
+	public static function getConfiguration($type = PropelConfiguration::TYPE_ARRAY)
 	{
-		return self::$configuration;
+		return self::$configuration->getParameters($type);
 	}
 
 	/**
