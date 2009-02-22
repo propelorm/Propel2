@@ -22,21 +22,32 @@
 /**
  * PDOStatement that provides some enhanced functionality needed by Propel.
  *
- * Simply adds the ability to count the number of queries executed and log the queries.
+ * Simply adds the ability to count the number of queries executed and log the queries/method calls.
  *
  * @author     Oliver Schonrock <oliver@realtsp.com>
+ * @author     Jarno Rantanen <jarno.rantanen@tkk.fi>
  * @since      2007-07-12
  * @package    propel.util
  */
-class DebugPDOStatement extends PDOStatement {
+class DebugPDOStatement extends PDOStatement
+{
 
 	/**
-	 * the pdo connection from which we were created
+	 * The PDO connection from which this instance was created.
+	 * 
 	 * @var        DebugPDO
 	 */
 	protected $pdo;
-
-	protected $typeMap = array(	PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
+	
+	/**
+	 * Hashmap for resolving the PDO::PARAM_* class constants to their human-readable names.
+	 * 
+	 * This is only used in logging the binding of variables.
+	 * 
+	 * @see        self::bindValue()
+	 * @var        array
+	 */
+	protected static $typeMap = array(	PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
 								PDO::PARAM_INT => "PDO::PARAM_INT",
 								PDO::PARAM_STR => "PDO::PARAM_STR",
 								PDO::PARAM_LOB => "PDO::PARAM_LOB",
@@ -44,7 +55,10 @@ class DebugPDOStatement extends PDOStatement {
 								);
 
 	/**
-	 * Construct a new statement class with reference to main DebugPDO object.
+	 * Construct a new statement class with reference to main DebugPDO object from
+	 * which this instance was created.
+	 * 
+	 * @param      DebugPDO $pdo Reference to the parent PDO instance.
 	 */
 	protected function __construct(DebugPDO $pdo)
 	{
@@ -52,31 +66,43 @@ class DebugPDOStatement extends PDOStatement {
 	}
 
 	/**
-	 * Overridden for query counting.
-	 * @return     int
+	 * Executes a prepared statement.  Returns a boolean value indicating success.
+	 * 
+	 * Overridden for query counting and logging.
+	 * 
+	 * @return     bool
 	 */
 	public function execute($input_parameters = null)
 	{
+		$debug	= $this->pdo->getDebugSnapshot();
+		$return	= parent::execute($input_parameters);
+		
 		$this->pdo->incrementQueryCount();
-		return parent::execute($input_parameters);
+		$this->pdo->log('', null, __METHOD__, $debug);
+		
+		return $return;
 	}
 
 	/**
-	 * Binds value to PDOStatement.
+	 * Binds a value to a corresponding named or question mark placeholder in the SQL statement
+	 * that was use to prepare the statement.  Returns a boolean value indicating success.
 	 *
-	 * @param      int $pos
-	 * @param      mixed $value
-	 * @param      int $type
+	 * @param      int $pos Parameter identifier (for determining what to replace in the query).
+	 * @param      mixed $value The value to bind to the parameter.
+	 * @param      int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
 	 * @return     boolean
 	 */
 	public function bindValue($pos, $value, $type = PDO::PARAM_STR)
 	{
-		$typestr = isset($this->typeMap[$type]) ? $this->typeMap[$type] : '(default)';
-		if ($type == PDO::PARAM_LOB) {
-			$this->pdo->log("Binding [LOB value] at position ".$pos." w/ PDO  type " . $typestr);
-		} else {
-			$this->pdo->log("Binding " . var_export($value, true) . " at position $pos w/ PDO type " . $typestr);
-		}
-		return parent::bindValue($pos, $value, $type);
+		$debug		= $this->pdo->getDebugSnapshot();
+		$typestr	= isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
+		$return		= parent::bindValue($pos, $value, $type);
+		$valuestr	= $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
+		$msg		= "Binding $valuestr at position $pos w/ PDO type $typestr";
+		
+		$this->pdo->log($msg, null, __METHOD__, $debug);
+		
+		return $return;
 	}
+	
 }
