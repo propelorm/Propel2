@@ -205,6 +205,7 @@ class Propel
 		'PeerInfo' => 'propel/util/PeerInfo.php',
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
 		'PropelConfiguration' => 'propel/util/PropelConfiguration.php',
+		'PropelConfigurationIterator' => 'propel/util/PropelConfigurationIterator.php',
 		'PropelPDO' => 'propel/util/PropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
@@ -331,7 +332,7 @@ class Propel
 			 */
 
 			$log = array();
-			if (isset($c['propel']) && isset($c['log'])) { //looks like the original array from the myproject-conf.php
+			if (isset($c['propel']) && isset($c['log'])) { //looks like the original array from myproject-conf.php
 				$log = $c['log'];
 			}
 

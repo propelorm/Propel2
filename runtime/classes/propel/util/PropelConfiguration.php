@@ -1,5 +1,36 @@
 <?php
+/*
+ *  $Id$
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://propel.phpdb.org>.
+ */
 
+/**
+ * PropelConfiguration is a container for all Propel's configuration data.
+ *
+ * PropelConfiguration implements ArrayAccess interface so the configuration
+ * can be accessed as an array or using a simple getter and setter. The whole
+ * configuration can also be retrieved as a nested arrays, flat array or as a
+ * PropelConfiguration instance.
+ *
+ * @author     Veikko Mäkinen <veikko@veikko.fi>
+ * @version    $Revision$
+ * @package    propel
+ */
 class PropelConfiguration implements ArrayAccess
 {
 	const TYPE_ARRAY = 1;
@@ -13,26 +44,43 @@ class PropelConfiguration implements ArrayAccess
 	*/
 	protected $parameters = array();
 
+	/**
+	 * Construct a new configuration container
+	 *
+	 * @param      array $parameters
+	 */
 	public function __construct(array $parameters = array())
 	{
 		$this->parameters = $parameters;
 	}
 
+	/**
+	 * @see        http://www.php.net/ArrayAccess
+	 */
 	public function offsetExists($offset)
 	{
 		return isset($this->parameter[$offset]) || array_key_exists($offset, $this->parameters);
 	}
 
+	/**
+	 * @see        http://www.php.net/ArrayAccess
+	 */
 	public function offsetSet($offset, $value)
 	{
 		$this->parameter[$offset] = $value;
 	}
 
+	/**
+	 * @see        http://www.php.net/ArrayAccess
+	 */
 	public function offsetGet($offset)
 	{
 		return $this->parameters[$offset];
 	}
 
+	/**
+	 * @see        http://www.php.net/ArrayAccess
+	 */
 	public function offsetUnset($offset)
 	{
 		unset($this->parameters[$offset]);
@@ -104,13 +152,30 @@ class PropelConfiguration implements ArrayAccess
 				return $this->toFlatArray();
 			case PropelConfiguration::TYPE_OBJECT:
 				return $this;
+			default:
+				throw new PropelException('Unknown configuration type: '. var_export($type, true));
 		}
 
 	}
 
+
+	/**
+	 * Get the configuration as a flat array. ($array['name.space.item'] = 'value')
+	 *
+	 * @return     array
+	 */
 	protected function toFlatArray()
 	{
-		throw new PropelException('Configuration array flatning not yet supported');
+		$result = array();
+		$it = new PropelConfigurationIterator(new RecursiveArrayIterator($this->parameters), RecursiveIteratorIterator::SELF_FIRST);
+		foreach($it as $key => $value) {
+			$ns = $it->getDepth() ? $it->getNamespace() . '.'. $key : $key;
+			if ($it->getNodeType() == PropelConfigurationIterator::NODE_ITEM) {
+				$result[$ns] = $value;
+			}
+		}
+
+		return $result;
 	}
 
 }
