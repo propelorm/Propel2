@@ -47,6 +47,17 @@ interface NameGenerator {
 	const CONV_METHOD_UNDERSCORE = "underscore";
 
 	/**
+	 * Heavier method for converting schema table and column names 
+	 * to PHP names. Similar to {@link #CONV_METHOD_UNDERSCORE} but
+	 * this one will pass only letters and numbers through and will
+	 * use as separator any character that is not a letter or a number
+	 * inside the string to be converted. The <code>CONV_METHOD_XXX</code> 
+	 * constants define how names for columns and tales in the 
+	 * database schema will be converted to PHP source names. 
+	 */
+	const CONV_METHOD_CLEAN = "clean";
+	
+	/**
 	 * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
 	 * converted to lowercase.
 	 *

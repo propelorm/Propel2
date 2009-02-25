@@ -27,7 +27,7 @@ require_once 'propel/engine/database/reverse/BaseSchemaParser.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Guillermo Gutierrez <ggutierrez@dailycosas.net> (Adaptation)
  * @version    $Revision: 1010 $
- * @package    propel.engine.database.reverse.mysql
+ * @package    propel.engine.database.reverse.oracle
  */
 class OracleSchemaParser extends BaseSchemaParser {
 
@@ -36,39 +36,33 @@ class OracleSchemaParser extends BaseSchemaParser {
 	 *
 	 * There really aren't any Oracle native types, so we're just
 	 * using the MySQL ones here.
+	 * 
+	 * Left as unsupported: 
+	 *   BFILE, 
+	 *   RAW, 
+	 *   ROWID
+	 * 
+	 * Supported but non existant as a specific type in Oracle: 
+	 *   DECIMAL (NUMBER with scale), 
+	 *   DOUBLE (FLOAT with precision = 126) 
 	 *
 	 * @var        array
 	 */
 	private static $oracleTypeMap = array(
-		'tinyint' => PropelTypes::TINYINT,
-		'smallint' => PropelTypes::SMALLINT,
-		'mediumint' => PropelTypes::SMALLINT,
-		'int' => PropelTypes::INTEGER,
-		'integer' => PropelTypes::INTEGER,
-		'bigint' => PropelTypes::BIGINT,
-		'int24' => PropelTypes::BIGINT,
-		'real' => PropelTypes::REAL,
-		'float' => PropelTypes::FLOAT,
-		'decimal' => PropelTypes::DECIMAL,
-		'numeric' => PropelTypes::NUMERIC,
-		'double' => PropelTypes::DOUBLE,
-		'char' => PropelTypes::CHAR,
-		'varchar' => PropelTypes::VARCHAR,
-		'date' => PropelTypes::DATE,
-		'time' => PropelTypes::TIME,
-		'year' => PropelTypes::INTEGER,
-		'datetime' => PropelTypes::TIMESTAMP,
-		'timestamp' => PropelTypes::TIMESTAMP,
-		'tinyblob' => PropelTypes::BINARY,
-		'blob' => PropelTypes::BLOB,
-		'mediumblob' => PropelTypes::BLOB,
-		'longblob' => PropelTypes::BLOB,
-		'longtext' => PropelTypes::CLOB,
-		'tinytext' => PropelTypes::VARCHAR,
-		'mediumtext' => PropelTypes::LONGVARCHAR,
-		'text' => PropelTypes::LONGVARCHAR,
-		'enum' => PropelTypes::CHAR,
-		'set' => PropelTypes::CHAR,
+		'BLOB'		=> PropelTypes::BLOB,
+		'CHAR'		=> PropelTypes::CHAR,
+		'CLOB'		=> PropelTypes::CLOB,
+		'DATE'		=> PropelTypes::DATE,
+		'DECIMAL'	=> PropelTypes::DECIMAL,
+		'DOUBLE'	=> PropelTypes::DOUBLE,
+		'FLOAT'		=> PropelTypes::FLOAT,
+		'LONG'		=> PropelTypes::LONGVARCHAR,
+		'NCHAR'		=> PropelTypes::CHAR,
+		'NCLOB'		=> PropelTypes::CLOB,
+		'NUMBER'	=> PropelTypes::BIGINT,
+		'NVARCHAR2'	=> PropelTypes::VARCHAR,
+		'TIMESTAMP'	=> PropelTypes::TIMESTAMP,
+		'VARCHAR2'	=> PropelTypes::VARCHAR,
 	);
 
 	/**
@@ -82,176 +76,155 @@ class OracleSchemaParser extends BaseSchemaParser {
 	}
 
 	/**
-	 *
+	 * Searches for tables in the database. Maybe we want to search also the views.
+	 * @param	Database $database The Database model class to add tables to.
 	 */
 	public function parse(Database $database)
 	{
-		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
-
-		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$name = $row[0];
-			$table = new Table($name);
+		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
+		/* @var stmt PDOStatement */
+		// First load the tables (important that this happen before filling out details of tables)
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$table = new Table($row['OBJECT_NAME']);
 			$database->addTable($table);
+			// Add columns, primary keys and indexes.
+			$this->addColumns($table);
+			$this->addPrimaryKey($table);
+			$this->addIndexes($table);
 			$tables[] = $table;
 		}
-
-		// Now populate only columns.
 		foreach ($tables as $table) {
-			$this->addColumns($table);
+			$this->addForeignKeys($table);
 		}
-
-		// Now add indexes and constraints.
-		foreach ($tables as $table) {
-			$this->addIndexes($table);
-		}
-
 	}
-
 
 	/**
 	 * Adds Columns to the specified table.
 	 *
 	 * @param      Table $table The Table model class to add columns to.
-	 * @param      int $oid The table OID
-	 * @param      string $version The database version.
 	 */
 	protected function addColumns(Table $table)
 	{
 		$stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
-
+		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-			$name = $row['COLUMN_NAME'];
-
-			$type = $row["DATA_TYPE"];
-			$nativeType = $type;
-			$isNullable = ($row['NULLABLE'] == 'Y');
 			$size = $row["DATA_LENGTH"];
-			//$precision = $row["DATA_PRECISION"]; // NOT USED
 			$scale = $row["DATA_SCALE"];
-			$autoIncrement = false; // YET TO BE PARSED
 			$default = $row['DATA_DEFAULT'];
-
-
-			$propelType = $this->getMappedPropelType($nativeType);
+			$type = $row["DATA_TYPE"];
+			$isNullable = ($row['NULLABLE'] == 'Y');
+			if ($type == "NUMBER" && $row["DATA_SCALE"] > 0) {
+				$type = "DECIMAL";
+			}
+			if ($type == "FLOAT"&& $row["DATA_PRECISION"] == 126) {
+				$type = "DOUBLE";
+			}
+			if (strpos($type, 'TIMESTAMP(') !== false) {
+				$type = substr($type, 0, strpos($type, '('));
+				$default = "0000-00-00 00:00:00";
+				$size = null;
+				$scale = null;
+			}
+			if ($type == "DATE") {
+				$default = "0000-00-00";
+				$size = null;
+				$scale = null;
+			}
+				
+			$propelType = $this->getMappedPropelType($type);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
-				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+				$this->warn("Column [" . $table->getName() . "." . $row['COLUMN_NAME']. "] has a column type (".$row["DATA_TYPE"].") that Propel does not support.");
 			}
 
-			$column = new Column($name);
+			$column = new Column($row['COLUMN_NAME']);
+			$column->setPhpName(); // Prevent problems with strange col names
 			$column->setTable($table);
 			$column->setDomainForType($propelType);
-			// We may want to provide an option to include this:
-			// $column->getDomain()->replaceSqlType($type);
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
 				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
 			}
-			$column->setAutoIncrement($autoIncrement);
+			$column->setAutoIncrement(false); // Not yet supported
 			$column->setNotNull(!$isNullable);
-
 			$table->addColumn($column);
 		}
-		$this->addPrimaryKey($table);
-		$this->addForeignKeys($table);
+		
 	} // addColumn()
 
 	/**
-	 * Load indexes for this table
+	 * Adds Indexes to the specified table.
+	 *
+	 * @param      Table $table The Table model class to add columns to.
 	 */
 	protected function addIndexes(Table $table)
 	{
-		$stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "'");
-
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-			$name = $row['INDEX_NAME'];
-			$index = new Index($name);
-			$colname = $row['COLUMN_NAME'];
-			$index->addColumn($table->getColumn($colname));
-
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+		/* @var stmt PDOStatement */
+		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		if (count($rows) > 0) {
+			$index = new Index($rows[0]['INDEX_NAME']);
+			foreach($rows AS $row) {
+				$index->addColumn($row['COLUMN_NAME']);
+			}
 			$table->addIndex($index);
 		}
 	}
 	
 	/**
 	 * Load foreign keys for this table.
+	 * 
+	 * @param      Table $table The Table model class to add FKs to
 	 */
 	protected function addForeignKeys(Table $table)
-	{
-		$database = $table->getDatabase();
-
-		$stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
+	{	
+		// local store to avoid duplicates
+		$foreignKeys = array(); 
 		
-		$foreignKeys = array(); // local store to avoid duplicates
-
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {			
-			$name = $row['CONSTRAINT_NAME'];
+		$stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
+		/* @var stmt PDOStatement */
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			// Local reference
+			$stmt2 = $this->dbh->query("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['CONSTRAINT_NAME']."' AND TABLE_NAME = '" . $table->getName(). "'");
+			/* @var stmt2 PDOStatement */
+			$localReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
 			
-			$stmt2 = $this->dbh->query("SELECT CON.CONSTRAINT_NAME, CON.TABLE_NAME, COL.COLUMN_NAME FROM USER_CONS_COLUMNS COL, USER_CONSTRAINTS CON WHERE COL.CONSTRAINT_NAME = CON.CONSTRAINT_NAME AND COL.CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
-			$foreignKeyCols = $stmt2->fetch(PDO::FETCH_ASSOC);
-			if (!is_array($foreignKeyCols[0])) {
-				$foreignRows[0] = $foreignKeyCols;
-			} else {
-				$foreignRows = $foreignKeyCols;
-			}
-			
-			$stmt2 = $this->dbh->query("SELECT CON.CONSTRAINT_NAME, CON.TABLE_NAME, COL.COLUMN_NAME FROM USER_CONS_COLUMNS COL, USER_CONSTRAINTS CON WHERE COL.CONSTRAINT_NAME = CON.CONSTRAINT_NAME AND COL.CONSTRAINT_NAME = '".$row['CONSTRAINT_NAME']."'");
-			$localKeyCols = $stmt2->fetch(PDO::FETCH_ASSOC);
-			if (!is_array($localKeyCols[0])) {
-				$localRows[0] = $localKeyCols;
-			} else {
-				$localRows = $localKeyCols;
-			}
-			
-			print_r($foreignRows);
-			
-			$localColumns = array();
-			$foreignColumns = array();
-			
-			$foreignTable = $database->getTable($foreignRows[0]["TABLE_NAME"]);
-			
-			foreach($foreignRows as $foreignCol) {
-				$foreignColumns[] = $foreignTable->getColumn($foreignCol["COLUMN_NAME"]);
-			}
-			foreach($localRows as $localCol) {
-				$localColumns[] = $table->getColumn($localCol['COLUMN_NAME']);
-			}
-			
-			if (!isset($foreignKeys[$name])) {
-				$fk = new ForeignKey($name);
-				$fk->setForeignTableName($foreignTable->getName());
+			// Foreign reference
+			$stmt2 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
+			$foreignReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
+						
+			if (!isset($foreignKeys[$row["CONSTRAINT_NAME"]])) {
+				$fk = new ForeignKey($row["CONSTRAINT_NAME"]);
+				$fk->setForeignTableName($foreignReferenceInfo['TABLE_NAME']);
 				$fk->setOnDelete($row["DELETE_RULE"]);
 				$fk->setOnUpdate($row["DELETE_RULE"]);
+				$fk->addReference(array("local" => $localReferenceInfo['COLUMN_NAME'], "foreign" => $foreignReferenceInfo['COLUMN_NAME']));
 				$table->addForeignKey($fk);
-				$foreignKeys[$name] = $fk;
+				$foreignKeys[$row["CONSTRAINT_NAME"]] = $fk;
 			}
-			
-			for($i=0; $i < count($localColumns); $i++) {
-				$foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
-			}
-			
 		}
-
 	}
 
 	/**
 	 * Loads the primary key for this table.
+	 * 
+	 * @param      Table $table The Table model class to add PK to. 
 	 */
 	protected function addPrimaryKey(Table $table)
 	{
-		$stmt = $this->dbh->query("SELECT COL.COLUMN_NAME FROM USER_CONS_COLUMNS COL, USER_CONSTRAINTS CON WHERE COL.TABLE_NAME = '" . $table->getName() . "' AND COL.TABLE_NAME = CON.TABLE_NAME AND COL.CONSTRAINT_NAME = CON.CONSTRAINT_NAME AND CON.CONSTRAINT_TYPE = 'P'");
-
-		// Loop through the returned results, grouping the same key_name together
-		// adding each column for that key.
-		
+		$stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '".$table->getName()."' AND CONS.CONSTRAINT_TYPE = 'P'");
+		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			// This fixes a strange behavior by PDO. Sometimes the
+			// row values are inside an index 0 of an array
+			if (array_key_exists(0, $row)) {
+				$row = $row[0];
+			}
 			$table->getColumn($row['COLUMN_NAME'])->setPrimaryKey(true);
-		}
+		}	
 	}
 
 }
+

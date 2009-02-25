@@ -285,27 +285,34 @@ class Column extends XMLElement {
 	}
 
 	/**
-	 * Get name to use in PHP sources
+	 * Get name to use in PHP sources. It will set & return
+	 * a self-generated phpName from it's name if it's
+	 * not already set.
 	 * @return     string
 	 */
 	public function getPhpName()
 	{
 		if ($this->phpName === null) {
-			$inputs = array();
-			$inputs[] = $this->name;
-			$inputs[] = $this->phpNamingMethod;
-			$inputs[] = $this->namePrefix;
-			return NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
+			$this->setPhpName();
 		}
 		return $this->phpName;
 	}
 
 	/**
-	 * Set name to use in PHP sources
+	 * Set name to use in PHP sources.
+	 * 
+	 * It will generate a phpName from it's name if no
+	 * $phpName is passed.
+	 * 
+	 * @param 	String $phpName PhpName to be set
 	 */
-	public function setPhpName($phpName)
+	public function setPhpName($phpName = null)
 	{
-		$this->phpName = $phpName;
+		if ($phpName == null) {
+			$this->phpName = self::generatePhpName($this->name, PhpNameGenerator::CONV_METHOD_CLEAN, $this->namePrefix);
+		} else {
+			$this->phpName = $phpName;
+		}
 	}
 
 	/**
@@ -1102,5 +1109,9 @@ class Column extends XMLElement {
 		$sb .= $this->getNotNullString() . " ";
 		$sb .= $this->getAutoIncrementString();
 		return trim($sb);
+	}
+	
+	public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
+		return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
 	}
 }

@@ -68,16 +68,19 @@ class PhpNameGenerator implements NameGenerator {
 
 		$phpName = null;
 
-		if ($method == self::CONV_METHOD_UNDERSCORE) {
-			$phpName = $this->underscoreMethod($schemaName);
-		} elseif ($method == self::CONV_METHOD_PHPNAME) {
-			$phpName = $this->phpnameMethod($schemaName);
-		} else if ($method == self::CONV_METHOD_NOCHANGE) {
-			$phpName = $this->nochangeMethod($schemaName);
-		} else {
-			// if for some reason nothing is defined then we default
-			// to the traditional method.
-			$phpName = $this->underscoreMethod($schemaName);
+		switch ($method) {
+			case self::CONV_METHOD_CLEAN:
+				$phpName = $this->cleanMethod($schemaName);
+				break;
+			case self::CONV_METHOD_PHPNAME:
+				$phpName = $this->phpnameMethod($schemaName);
+				break;
+			case self::CONV_METHOD_NOCHANGE:
+				$phpName = $this->nochangeMethod($schemaName);
+				break;
+			case self::CONV_METHOD_UNDERSCORE:
+			default:
+				$phpName = $this->underscoreMethod($schemaName);
 		}
 
 		return $phpName;
@@ -103,6 +106,34 @@ class PhpNameGenerator implements NameGenerator {
 		while ($tok) {
 			$name .= ucfirst(strtolower($tok));
 			$tok = strtok(self::STD_SEPARATOR_CHAR);
+		}
+		return $name;
+	}
+	
+	/**
+	 * Converts a database schema name to php object name.  Removes
+	 * any character that is not a letter or a number and capitilizes 
+	 * first letter of the name, the first letter of each alphanumeric 
+	 * block and converts the rest of the letters to lowercase.
+	 * 
+	 * T$NAMA$RFO_max => TNamaRfoMax
+	 *
+	 * @param      string $schemaName name to be converted.
+	 * @return     string Converted name.
+	 * @see        NameGenerator
+	 * @see        #underscoreMethod()
+	 */
+	protected function cleanMethod($schemaName)
+	{
+		$name = "";
+		$regexp = '/([a-z0-9]+)/i';
+		$matches = array();
+		if (preg_match_all($regexp, $schemaName, $matches)) {
+			foreach($matches[1] AS $tok) {
+				$name .= ucfirst(strtolower($tok));
+			}
+		} else {
+			return $schemaName;
 		}
 		return $name;
 	}
