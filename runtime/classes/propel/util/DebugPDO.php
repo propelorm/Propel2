@@ -48,6 +48,9 @@
  * - debugpdo.logging.details.slow.threshold (default: 0.1)
  *   Method calls taking more seconds than this threshold are considered slow 
  * 
+ * - debugpdo.logging.details.onlyslow.enabled (default: false)
+ *   Suppress logging of non-slow queries.
+ * 
  * - debugpdo.logging.details.time.enabled (default: false)
  *   Enables logging of method execution times
  * 
@@ -114,6 +117,8 @@
  */
 class DebugPDO extends PropelPDO
 {
+    const DEFAULT_SLOW_THRESHOLD        = 0.1;
+    const DEFAULT_ONLYSLOW_ENABLED      = false;
 	
 	/**
 	 * Count of queries performed.
@@ -149,13 +154,9 @@ class DebugPDO extends PropelPDO
 	 * @var        array
 	 */
 	protected static $defaultLogMethods = array(
-		'DebugPDO::__construct',
-		'DebugPDO::prepare',
 		'DebugPDO::exec',
 		'DebugPDO::query',
-		'DebugPDO::__destruct',
 		'DebugPDOStatement::execute',
-		'DebugPDOStatement::bindValue',
 		);
 	
 	/**
@@ -355,6 +356,13 @@ class DebugPDO extends PropelPDO
 		// If a logging level wasn't provided, use the default one
 		if ($level === null)
 			$level = $this->logLevel;
+
+        // Determine if this query is slow enough to warrant logging
+        if ($this->getLoggingConfig("details.onlyslow.enabled", self::DEFAULT_ONLYSLOW_ENABLED))
+        {
+            $now = $this->getDebugSnapshot();
+            if ($now['microtime'] - $debugSnapshot['microtime'] < $this->getLoggingConfig("details.slow.threshold", self::DEFAULT_SLOW_THRESHOLD)) return;
+        }
 		
 		// If the necessary additional parameters were given, get the debug log prefix for the log line
 		if ($methodName && $debugSnapshot)
@@ -429,7 +437,7 @@ class DebugPDO extends PropelPDO
 			switch ($detailName) {
 				
 				case 'slow';
-					$value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig("details.$detailName.threshold", 0.1) ? 'YES' : '   ';
+					$value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig("details.$detailName.threshold", self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
 					break;
 				
 				case 'time':

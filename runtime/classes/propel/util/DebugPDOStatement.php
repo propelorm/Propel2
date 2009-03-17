@@ -54,6 +54,11 @@ class DebugPDOStatement extends PDOStatement
 								PDO::PARAM_NULL => "PDO::PARAM_NULL",
 								);
 
+    /**
+     * @var array The values that have been bound
+     */
+    protected $boundValues = array();
+
 	/**
 	 * Construct a new statement class with reference to main DebugPDO object from
 	 * which this instance was created.
@@ -64,6 +69,22 @@ class DebugPDOStatement extends PDOStatement
 	{
 		$this->pdo = $pdo;
 	}
+
+    public function getExecutedQueryString()
+    {
+        $sql = $this->queryString;
+
+        $matches = array();
+        if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches))
+        {
+            for ($i = 0; $i < count($matches[1]); $i++) {
+                $pos = $matches[1][$i];
+                $sql = str_replace($pos, $this->boundValues[$pos], $sql);
+            }
+        }
+
+        return $sql;
+    }
 
 	/**
 	 * Executes a prepared statement.  Returns a boolean value indicating success.
@@ -78,7 +99,7 @@ class DebugPDOStatement extends PDOStatement
 		$return	= parent::execute($input_parameters);
 		
 		$this->pdo->incrementQueryCount();
-		$this->pdo->log('', null, __METHOD__, $debug);
+		$this->pdo->log($this->getExecutedQueryString(), null, __METHOD__, $debug);
 		
 		return $return;
 	}
@@ -99,6 +120,8 @@ class DebugPDOStatement extends PDOStatement
 		$return		= parent::bindValue($pos, $value, $type);
 		$valuestr	= $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
 		$msg		= "Binding $valuestr at position $pos w/ PDO type $typestr";
+
+        $this->boundValues[$pos] = $valuestr;
 		
 		$this->pdo->log($msg, null, __METHOD__, $debug);
 		
