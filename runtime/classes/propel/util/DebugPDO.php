@@ -42,14 +42,14 @@
  * - debugpdo.logging.methods (default: DebugPDO::$defaultLogMethods)
  *   An array of method names ("Class::method") to be included in method call logging
  * 
+ * - debugpdo.logging.onlyslow (default: false)
+ *   Suppress logging of non-slow queries.
+ * 
  * - debugpdo.logging.details.slow.enabled (default: false)
  *   Enables flagging of slow method calls
  * 
  * - debugpdo.logging.details.slow.threshold (default: 0.1)
  *   Method calls taking more seconds than this threshold are considered slow 
- * 
- * - debugpdo.logging.details.onlyslow.enabled (default: false)
- *   Suppress logging of non-slow queries.
  * 
  * - debugpdo.logging.details.time.enabled (default: false)
  *   Enables logging of method execution times
@@ -358,7 +358,7 @@ class DebugPDO extends PropelPDO
 			$level = $this->logLevel;
 
         // Determine if this query is slow enough to warrant logging
-        if ($this->getLoggingConfig("details.onlyslow.enabled", self::DEFAULT_ONLYSLOW_ENABLED))
+        if ($this->getLoggingConfig("onlyslow", self::DEFAULT_ONLYSLOW_ENABLED))
         {
             $now = $this->getDebugSnapshot();
             if ($now['microtime'] - $debugSnapshot['microtime'] < $this->getLoggingConfig("details.slow.threshold", self::DEFAULT_SLOW_THRESHOLD)) return;
