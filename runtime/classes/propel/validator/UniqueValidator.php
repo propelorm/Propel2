@@ -47,9 +47,7 @@ class UniqueValidator implements BasicValidator
 		$c = new Criteria();
 		$c->add($column->getFullyQualifiedName(), $str, Criteria::EQUAL);
 
-		$isValid = false;
-
-		$table = $column->getTable()->getPhpName();
+		$table = $column->getTable()->getClassName();
 
 		$clazz = $table . 'Peer';
 		$count = call_user_func(array($clazz, 'doCount'), $c);
