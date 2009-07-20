@@ -96,4 +96,14 @@ class MssqlPlatform extends DefaultPlatform {
 		return '[' . $text . ']';
 	}
 
+   /**
+   * Gets the preferred timestamp formatter for setting date/time values.
+   * @return     string
+   */
+  public function getTimestampFormatter()
+  {
+    return 'Y-m-d H:i:s';
+  }
+
+
 }
