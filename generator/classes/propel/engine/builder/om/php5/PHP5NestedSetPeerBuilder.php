@@ -1618,8 +1618,8 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
-		\$leftUpdateCol = substr(self::LEFT_COL, strrpos(self::LEFT_COL, '.') + 1);
-		\$rightUpdateCol = substr(self::RIGHT_COL, strrpos(self::RIGHT_COL, '.') + 1);
+		\$leftUpdateCol = self::LEFT_COL;
+		\$rightUpdateCol = self::RIGHT_COL;
 
 		// Shift left column values
 		\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
