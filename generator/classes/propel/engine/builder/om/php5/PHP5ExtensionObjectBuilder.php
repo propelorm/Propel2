@@ -57,7 +57,7 @@ class PHP5ExtensionObjectBuilder extends ObjectBuilder {
 			break;
 
 			case 'MaterializedPath':
-			case "AdjacencyList":
+			case 'AdjacencyList':
 			default:
 				$requiredClassFilePath = $this->getObjectBuilder()->getClassFilePath();
 			break;

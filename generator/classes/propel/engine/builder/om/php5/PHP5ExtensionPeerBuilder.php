@@ -57,7 +57,7 @@ class PHP5ExtensionPeerBuilder extends PeerBuilder {
 			break;
 
 			case 'MaterializedPath':
-			case "AdjacencyList":
+			case 'AdjacencyList':
 			default:
 				$requiredClassFilePath = $this->getPeerBuilder()->getClassFilePath();
 			break;
@@ -84,7 +84,7 @@ require '".$requiredClassFilePath."';
 			break;
 
 			case 'MaterializedPath':
-			case "AdjacencyList":
+			case 'AdjacencyList':
 			default:
 				$baseClassname = $this->getPeerBuilder()->getClassname();
 			break;
