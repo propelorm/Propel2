@@ -3110,7 +3110,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} // end foreach ($fk->getForeignColumns()
 
 		$script .= "
-				\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
+				\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, false, \$con);
 			}
 		} else {
 			// criteria has no effect for a new object
@@ -3132,7 +3132,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		} // foreach ($fk->getForeignColumns()
 		$script .= "
 				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
-					\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, \$con);
+					\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, false, \$con);
 				} else {
 					\$count = count(\$this->$collName);
 				}
