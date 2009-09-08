@@ -1,0 +1,168 @@
+= More on Criteria =
+
+The '''Criteria''' class is Propel's suggestion for simplifying SQL queries.  Using a '''Criteria''' object -- and the implicitly created, logically inter-related '''Criterion''' objects, you can construct queries of significant complexity without writing SQL.  We do still recommend that you use SQL when it proves to be simpler, though.
+
+== Criteria Operators ==
+
+When you add clauses to a Criteria, you can specify different operators.  The officially supported set of operators exist as constants in the Criteria class.  (The default operator is Criteria::EQUAL).
+
+Here is a list of the official operators (note, you would reference these using Criteria:: prefix -- e.g. '''Criteria::EQUALS''').
+ * EQUAL (default)
+ * NOT_EQUAL
+ * GREATER_THAN
+ * LESS_THAN
+ * GREATER_EQUAL
+ * LESS_EQUAL 
+ * LIKE
+ * NOT_LIKE
+ * IN
+ * CUSTOM
+ * CUSTOM_EQUAL (used in BasePeer::doUpdate() method)
+
+=== NULLs and Equality ===
+
+There are Criteria::ISNULL and Criteria::ISNOTNULL operators; however, it is just as easy (and probably more intuitive) to use the default equality operator:
+
+{{{
+#!php
+<?php
+
+// this:
+$c = new Criteria();
+$c->add(BookPeer::PUBLISHER_ID, null, Criteria::NOT_EQUAL);
+
+// ... is equivalent to:
+$c = new Criteria();
+$c->add(BookPeer::PUBLISHER_ID, null, Criteria::ISNOTNULL);
+
+// ... and, similarly for equality checking, this:
+$c = new Criteria();
+$c->add(BookPeer::PUBLISHER_ID, null);
+
+// ... is equivalent to:
+$c = new Criteria();
+$c->add(BookPeer::PUBLISHER_ID, null);
+
+}}}
+
+=== Criteria::CUSTOM ===
+
+The Criteria::CUSTOM operator allows you to write your own condition.  In fact the column name is not used, though you still must specify it since it is used by Propel to create the clause map.
+
+{{{
+#!php
+<?php
+$con = Propel::getConnection(ReviewPeer::DATABASE_NAME);
+
+$c = new Criteria();
+$c->add(ReviewPeer::REVIEW_DATE, 'to_date('.ReviewPeer::REVIEW_DATE.', \'YYYY-MM-DD\') = '.$con->quote($date->format('Y-m-d'), Criteria::CUSTOM);
+}}}
+
+=== Criteria::CUSTOM_EQUAL ===
+
+The Criteria::CUSTOM_EQUAL operator allows you to write your own condition for UPDATE queries when you need to use a specific value for a field set.
+
+{{{
+#!sql
+UPDATE some SET my_first_field = my_first_field + 1, my_secund_field = CONCAT(my_first_field, 'suffix') WHERE my_third_field = 3
+}}}
+
+{{{
+#!php
+<?php
+
+// Strip table reference before field name
+$firstField = substr(SomePeer::MY_FIRST_FIELD, strrpos(SomePeer::MY_FIRST_FIELD, '.') + 1);
+
+// Build WHERE criteria
+$selc = new Criteria(SomePeer::DATABASE_NAME);
+$selc->add(SomePeer::MY_THIRD_FIELD, 3);
+
+// Build updated field criteria
+$updc = new Criteria(SomePeer::DATABASE_NAME);
+$updc->add(SomePeer::MY_FIRST_FIELD, array('raw' => $firstField . ' + ?', 'value' => 100), Criteria::CUSTOM_EQUAL);
+
+BasePeer::doUpdate($selc, $updc, $con);
+}}}
+
+=== Your Own Operators ===
+
+You can also specify your own operators as strings instead of using the built-in constants.  Note that doing so, however, may make your application less portable.
+
+{{{
+#!php
+<?php
+
+$c = new Criteria();
+$c->add(BookPeer::TITLE, 'War\s+and', '~*'); // case-insensitive regex in PostgreSQL
+}}}
+
+== Case Sensitivity ==
+
+If you specify that a Criteria is case-insensitive, then special considerations will be made for matching and sorting (order by) on text columns.  ''The specifics depend greatly on which RDBMS you are using.''
+
+A query constructed with the following Criteria:
+{{{
+#!php
+<?php
+
+$c = new Criteria();
+$c->setIgnoreCase(true);
+$c->add(BookPeer::TITLE, 'war%', Criteria::LIKE);
+$c->addAscendingOrderByColumn(BookPeer::TITLE);
+}}}
+
+... will result in something like this in PostgreSQL:
+
+{{{
+#!sql
+SELECT .... FROM book WHERE book.TITLE ILIKE 'war%' ORDER BY UPPER(book.TITLE)
+}}}
+
+''Note that the operator used is {{{ILIKE}}} because in PostgreSQL LIKE is not case-sensitive like it is in MySQL.''
+
+== Joins ==
+
+You can add joins in a Criteria using the '''addJoin(left-col, right-col[, join-type])''' method.  For example:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addJoin(ReviewPeer::BOOK_ID, BookPeer::ID, Criteria::INNER_JOIN);
+$c->add(ReviewPeer::REVIEWER, $someVar);
+}}}
+
+Supported JOIN types include:
+ * Criteria::LEFT_JOIN
+ * Criteria::RIGHT_JOIN
+ * Criteria::INNER_JOIN
+
+The default JOIN type is implicit join (and while this has the same effect as INNER JOIN it is represented differently at the SQL level).
+
+As of svn revision 1036 Criteria supports multiple join conditions. For example:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addJoin(array(ReaderFavoritePeer::BOOK_ID,ReaderFavoritePeer::READER_ID), array(BookOpinionPeer::BOOK_ID,BookOpinionPeer::READER_ID) );
+}}}
+
+Will create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID.
+
+
+== Customizing Select Columns ==
+
+If you wish to use Criteria to execute a query that will ''not'' be used to hydrate a Propel result set, you can customize the select columns.  ''(Note that Propel requires complete result sets in order to populate objects, so custom select columns should only be used for queries that are not used to populate objects.)''
+
+{{{
+#!php
+<?php
+$m_criteria = new Criteria();
+$m_criteria->clearSelectColumns()->addSelectColumn(YourProjectnamePeer::COL_NAME);
+$stmt = BasePeer::doSelectStmt($m_criteria);
+while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+  echo $row[0];
+}
+}}}
