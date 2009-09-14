@@ -394,7 +394,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals('TABLE_B.COL_2', $j->getRightColumn(1));
 	}
 
-	public function testAddingJoin ()
+	public function testAddStraightJoin ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("*");
@@ -410,7 +410,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingMultipleJoins ()
+	public function testAddMultipleJoins ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("*");
@@ -428,7 +428,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingLeftJoin ()
+	public function testAddLeftJoin ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("TABLE_A.*");
@@ -445,7 +445,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingMultipleLeftJoins ()
+	public function testAddMultipleLeftJoins ()
 	{
 		// Fails.. Suspect answer in the chunk starting at BasePeer:605
 		$c = new Criteria();
@@ -465,7 +465,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingRightJoin ()
+	public function testAddRightJoin ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("*");
@@ -481,7 +481,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingMultipleRightJoins ()
+	public function testAddMultipleRightJoins ()
 	{
 		// Fails.. Suspect answer in the chunk starting at BasePeer:605
 		$c = new Criteria();
@@ -501,7 +501,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingInnerJoin ()
+	public function testAddInnerJoin ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("*");
@@ -517,7 +517,7 @@ class CriteriaTest extends BaseTestCase {
 		$this->assertEquals($expect, $result);
 	}
 
-	public function testAddingMultipleInnerJoin ()
+	public function testAddMultipleInnerJoin ()
 	{
 		$c = new Criteria();
 		$c->addSelectColumn("*");
@@ -559,13 +559,45 @@ class CriteriaTest extends BaseTestCase {
 		#}
 
 		$result = BasePeer::createSelectSql($c, $params=array());
+		$this->assertEquals($expect, $result);
+	}
+	
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/167
+	 */
+	public function testAddJoinArray()
+	{
+		$c = new Criteria();
+		$c->clearSelectColumns()->
+			addJoin(array('TABLE_A.FOO_ID'), array('TABLE_B.ID'), Criteria::LEFT_JOIN)->
+			addSelectColumn("TABLE_A.ID");
+				
+		$expect = 'SELECT TABLE_A.ID FROM TABLE_A'
+			    		.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID)';
 
-		#print "Actual:   " . $result . "\n---\n";
-		#print "Expected: " . $expect . "\n";
-
+		$result = BasePeer::createSelectSql($c, $params=array());
 		$this->assertEquals($expect, $result);
 	}
 
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/167
+	 */
+	public function testAddJoinArrayMultiple()
+	{
+		$c = new Criteria();
+		$c->clearSelectColumns()->
+			addJoin(
+			  array('TABLE_A.FOO_ID', 'TABLE_A.BAR'), 
+			  array('TABLE_B.ID', 'TABLE_B.BAZ'), 
+			  Criteria::LEFT_JOIN)->
+			addSelectColumn("TABLE_A.ID");
+				
+		$expect = 'SELECT TABLE_A.ID FROM TABLE_A'
+			    		.' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
+
+		$result = BasePeer::createSelectSql($c, $params=array());
+		$this->assertEquals($expect, $result);
+	}
 	/**
 	 * Test the Criteria::CUSTOM behavior.
 	 */
