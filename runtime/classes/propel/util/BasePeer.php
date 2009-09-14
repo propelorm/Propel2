@@ -785,15 +785,11 @@ class BasePeer
 
 		}
 
-		// handle RIGHT (straight) joins
-		// Loop through the joins,
+		// Handle joins
 		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
 		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
-		// New Code.
-		foreach ((array) $criteria->getJoins() as $join) { // we'll only loop if there's actually something here
-
+		foreach ((array) $criteria->getJoins() as $join) { 
 			// The join might have been established using an alias name
-
 			$leftTable = $join->getLeftTableName();
 			$leftTableAlias = '';
 			if ($realTable = $criteria->getTableForAlias($leftTable)) {
@@ -816,28 +812,29 @@ class BasePeer
 			}
 
 			// build the condition
-			$left = $join->getLeftColumns();
-			$right = $join->getRightColumns();
-			$condition = "";
-			for ($i = 0; $i < count($left); $i++) {
+			$condition = '';
+			foreach ($join->getConditions() as $index => $conditionDesc)
+			{
 				if ($ignoreCase) {
-					$condition .= $db->ignoreCase($left[$i]) . '=' . $db->ignoreCase($right[$i]);
+					$condition .= $db->ignoreCase($conditionDesc['left']) . $conditionDesc['operator'] . $db->ignoreCase($conditionDesc['right']);
 				} else {
-					$condition .= $left[$i] . '=' . $right[$i];
+					$condition .= implode($conditionDesc);
 				}
-				if ($i + 1 < count($left) ) {
-					$condition .= " AND ";
+				if ($index + 1 < $join->countConditions()) {
+					$condition .= ' AND ';
 				}
 			}
 
 			// add 'em to the queues..
 			if ($joinType = $join->getJoinType()) {
+			  // real join
 				if (!$fromClause) {
 					$fromClause[] = $leftTable . $leftTableAlias;
 				}
 				$joinTables[] = $rightTable . $rightTableAlias;
 				$joinClause[] = $join->getJoinType() . ' ' . $rightTable . $rightTableAlias . " ON ($condition)";
 			} else {
+			  // implicit join, translates to a where
 				$fromClause[] = $leftTable . $leftTableAlias;
 				$fromClause[] = $rightTable . $rightTableAlias;
 				$whereClause[] = $condition;

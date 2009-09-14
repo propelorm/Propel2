@@ -165,15 +165,15 @@ Supported JOIN types include:
  * `Criteria::RIGHT_JOIN`
  * `Criteria::INNER_JOIN`
 
-Criteria also supports multiple join conditions. Just use arrays for the left and right part of the join condition. For example, to create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID, use the following syntax:
+Criteria also supports multiple join conditions with the `addJoinMultiple()` method. For example, to create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID, use the following syntax:
 
 {{{
 #!php
 <?php
 $c = new Criteria();
-$c->addJoin(
-  array(ReaderFavoritePeer::BOOK_ID, ReaderFavoritePeer::READER_ID),
-  array(BookOpinionPeer::BOOK_ID, BookOpinionPeer::READER_ID),
+$c->addJoinMultiple(array(
+    array(ReaderFavoritePeer::BOOK_ID, BookOpinionPeer::BOOK_ID),
+    array(ReaderFavoritePeer::READER_ID, BookOpinionPeer::READER_ID))
   Criteria::INNER_JOIN);
 }}}
 {{{
@@ -181,8 +181,27 @@ $c->addJoin(
 // SQL result
 SELECT ...
 FROM reader_favorite 
-INNER JOIN book_opinion ON reader_favorite.BOOK_ID = book_opinion.BOOK_ID 
-                       AND reader_favorite.READER_ID = book_opinion.READER_ID
+INNER JOIN book_opinion ON (reader_favorite.BOOK_ID = book_opinion.BOOK_ID 
+                        AND reader_favorite.READER_ID = book_opinion.READER_ID)
+}}}
+
+You can add a third operator to each join condition to allow complex joins:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addJoinMultiple(array(
+    array(Book::USER_ID, UserPeer::ID))
+    array(UserPeer::RANK, 12, Criteria::GREATER_THAN),
+  Criteria::LEFT_JOIN);
+}}}
+{{{
+#!sql
+// SQL result
+SELECT ...
+FROM book
+LEFT JOIN user ON (book.USER_ID = user.ID AND user.RANK > 12)
 }}}
 
 == Customizing Select Columns ==
