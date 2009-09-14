@@ -123,7 +123,7 @@ SELECT .... FROM book WHERE book.TITLE ILIKE 'war%' ORDER BY UPPER(book.TITLE)
 
 == Joins ==
 
-You can add joins in a Criteria using the '''addJoin(left-col, right-col[, join-type])''' method.  For example:
+You can add joins in a Criteria using the '''`addJoin(left-col, right-col[, join-type])`''' method.  For example:
 
 {{{
 #!php
@@ -132,25 +132,58 @@ $c = new Criteria();
 $c->addJoin(ReviewPeer::BOOK_ID, BookPeer::ID, Criteria::INNER_JOIN);
 $c->add(ReviewPeer::REVIEWER, $someVar);
 }}}
+{{{
+#!sql
+// SQL result
+SELECT ... 
+FROM review 
+INNER JOIN book ON review.BOOK_ID = book.ID 
+WHERE review.REVIEWER = '$somevar'
+}}}
 
-Supported JOIN types include:
- * Criteria::LEFT_JOIN
- * Criteria::RIGHT_JOIN
- * Criteria::INNER_JOIN
-
-The default JOIN type is implicit join (and while this has the same effect as INNER JOIN it is represented differently at the SQL level).
-
-As of svn revision 1036 Criteria supports multiple join conditions. For example:
+If you omit the join type, the join translates to an implicit join. While this has the same effect as INNER JOIN it is represented differently at the SQL level:
 
 {{{
 #!php
 <?php
 $c = new Criteria();
-$c->addJoin(array(ReaderFavoritePeer::BOOK_ID,ReaderFavoritePeer::READER_ID), array(BookOpinionPeer::BOOK_ID,BookOpinionPeer::READER_ID) );
+$c->addJoin(ReviewPeer::BOOK_ID, BookPeer::ID);
+$c->add(ReviewPeer::REVIEWER, $someVar);
+}}}
+{{{
+#!sql
+// SQL result
+SELECT ... 
+FROM review, book 
+WHERE review.BOOK_ID = book.ID 
+  AND review.REVIEWER = '$somevar'
 }}}
 
-Will create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID.
+Supported JOIN types include:
+ * `null` (implicit join)
+ * `Criteria::LEFT_JOIN`
+ * `Criteria::RIGHT_JOIN`
+ * `Criteria::INNER_JOIN`
 
+Criteria also supports multiple join conditions. Just use arrays for the left and right part of the join condition. For example, to create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID, use the following syntax:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addJoin(
+  array(ReaderFavoritePeer::BOOK_ID, ReaderFavoritePeer::READER_ID),
+  array(BookOpinionPeer::BOOK_ID, BookOpinionPeer::READER_ID),
+  Criteria::INNER_JOIN);
+}}}
+{{{
+#!sql
+// SQL result
+SELECT ...
+FROM reader_favorite 
+INNER JOIN book_opinion ON reader_favorite.BOOK_ID = book_opinion.BOOK_ID 
+                       AND reader_favorite.READER_ID = book_opinion.READER_ID
+}}}
 
 == Customizing Select Columns ==
 
