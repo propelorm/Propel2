@@ -741,10 +741,10 @@ class GeneratedPeerTest extends BookstoreTestBase {
 		$c->add(ReaderFavoritePeer::BOOK_ID, $b1->getId());
 		$c->add(ReaderFavoritePeer::READER_ID, $r1->getId());
 		
-		// This will produce an error!
 		$results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
 		$this->assertEquals(1, count($results), "Expected 1 result");
 	}
+	
 	/**
 	 * Testing foreign keys with multiple referrer columns.
 	 * @link       http://propel.phpdb.org/trac/ticket/606

@@ -1840,28 +1840,31 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 ";
 
 						$lfMap = $fk->getLocalForeignMapping();
-						$left = array();
-						$right = array();
-						foreach ($fk->getLocalColumns() as $columnName ) {
-							array_push($left, $this->getColumnConstant($table->getColumn($columnName) ) );
-							array_push($right, $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) ) );
+						$lftCols = $fk->getLocalColumns();
+						if (count($lftCols) == 1)
+						{
+						  // simple foreign key
+						  $lftCol = $lftCols[0];
+						  $script .= sprintf("
+  	\$c->addJoin(%s, %s, \$join_behavior);\n",
+  		          $this->getColumnConstant($table->getColumn($lftCol) ),
+  		          $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$lftCol] ) ));
 						}
+						else
+						{
+						  // composite foreign key
+						  $script .= "
+  	\$c->addMultipleJoin(array(\n";
+						  foreach ($lftCols as $columnName ) {
+						    $script .= sprintf("        array(%s, %s),\n", 
+  							  $this->getColumnConstant($table->getColumn($columnName) ),
+  							  $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) )
+  							);
+  						}
+  						$script .= "      ), \$join_behavior);\n";
+						}
+
 						$script .= "
-		\$c->addJoin(array(";
-						foreach ($left as $lCol) {
-							$script .= $lCol;
-							if ($lCol != $left[count($left)]) {
-								$script .= ",";
-							}
-						}
-						$script .= "), array(";
-						foreach ($right as $rCol) {
-							$script .= $rCol;
-							if ($rCol != $right[count($right)]) {
-								$script .= ",";
-							}
-						}
-						$script .= "), \$join_behavior);
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
 		\$results = array();
 
