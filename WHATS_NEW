@@ -1,0 +1,44 @@
+= What's new in Propel 1.4? =
+
+== Joins with multiple conditions ==
+
+You can now create joins with any number of conditions and any comparator using the new `Criteria::addMultipleJoin()` method.
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addMultipleJoin(array(
+    array(ReaderFavoritePeer::BOOK_ID, BookOpinionPeer::BOOK_ID),
+    array(ReaderFavoritePeer::READER_ID, BookOpinionPeer::READER_ID))
+  Criteria::INNER_JOIN);
+}}}
+{{{
+#!sql
+// SQL result
+SELECT ...
+FROM reader_favorite 
+INNER JOIN book_opinion ON (reader_favorite.BOOK_ID = book_opinion.BOOK_ID 
+                        AND reader_favorite.READER_ID = book_opinion.READER_ID)
+}}}
+
+You can add a third operator to each join condition to allow complex joins:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addMultipleJoin(array(
+    array(Book::USER_ID, UserPeer::ID))
+    array(UserPeer::RANK, 12, Criteria::GREATER_THAN),
+  Criteria::LEFT_JOIN);
+}}}
+{{{
+#!sql
+// SQL result
+SELECT ...
+FROM book
+LEFT JOIN user ON (book.USER_ID = user.ID AND user.RANK > 12)
+}}}
+
+Note that the former way to define a composite join using arrays as arguments of `addJoin()` is deprecated. 
