@@ -1761,6 +1761,9 @@ class Criterion  {
 */
 class Join
 {
+  // default comparison type
+	const EQUAL = "=";
+	
 	// the left parts of the join condition
 	protected $left = array();
 
@@ -1820,7 +1823,7 @@ class Join
 	 * @param string $joinType The type of the join. Valid join types are null (implicit join),
 	 *                         Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
 	 */
-	public function addCondition($left, $right, $operator = Criteria::EQUAL)
+	public function addCondition($left, $right, $operator = self::EQUAL)
 	{
 		$this->left[] = $left;
 		$this->right[] = $right;
