@@ -165,13 +165,13 @@ Supported JOIN types include:
  * `Criteria::RIGHT_JOIN`
  * `Criteria::INNER_JOIN`
 
-Criteria also supports multiple join conditions with the `addJoinMultiple()` method. For example, to create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID, use the following syntax:
+Criteria also supports multiple join conditions with the `addMultipleJoin()` method. For example, to create a join between the ReaderFavorite table and the BookOpinion table on both BOOK_ID and READER_ID, use the following syntax:
 
 {{{
 #!php
 <?php
 $c = new Criteria();
-$c->addJoinMultiple(array(
+$c->addMultipleJoin(array(
     array(ReaderFavoritePeer::BOOK_ID, BookOpinionPeer::BOOK_ID),
     array(ReaderFavoritePeer::READER_ID, BookOpinionPeer::READER_ID))
   Criteria::INNER_JOIN);
@@ -191,7 +191,7 @@ You can add a third operator to each join condition to allow complex joins:
 #!php
 <?php
 $c = new Criteria();
-$c->addJoinMultiple(array(
+$c->addMultipleJoin(array(
     array(Book::USER_ID, UserPeer::ID))
     array(UserPeer::RANK, 12, Criteria::GREATER_THAN),
   Criteria::LEFT_JOIN);
