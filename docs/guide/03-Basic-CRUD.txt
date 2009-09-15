@@ -1,12 +1,12 @@
 = Basic C.R.U.D. Operations =
 
-This guide will show you how to perform basic C.R.U.D. (Create, Retrieve, Update, Delete) operations on your database using Propel.  For consistency we'll use the simplified bookstore example data model from the [wiki:Users/Documentation/1.3/QuickStart Quickstart Guide].
+This guide will show you how to perform basic C.R.U.D. (Create, Retrieve, Update, Delete) operations on your database using Propel. For consistency, the simplified bookstore example data model from the [wiki:Users/Documentation/1.3/QuickStart Quickstart Guide] will be used.
 
 The examples in this guide assume that you have already [wiki:Users/Documentation/1.3/Installation installed] and [wiki:Users/Documentation/1.3/QuickStart gotten started using] Propel.
 
-== CREATE ==
+== Create ==
 
-To add new data to the database, we instantiate the Propel-generated objects and then call the ''save()'' method.  Propel will generate the appropriate INSERT SQL from the instantiated object.
+To add new data to the database, instantiate a Propel-generated object and then call the ''save()'' method. Propel will generate the appropriate INSERT SQL from the instantiated object.
 
 === Simple INSERT ===
 
@@ -16,6 +16,7 @@ In its simplest form, inserting a new row would look like this:
 #!php
 <?php
 /* initialize Propel, etc. */
+include_once 'bookstore/Author.php';
 
 $author = new Author();
 $author->setFirstName("Jack");
@@ -31,34 +32,48 @@ INSERT INTO author (first_name, last_name) VALUES ('Jack', 'London');
 
 === Related Row Insert ===
 
-Propel makes inserting related rows simple, by automatically "cascading" INSERT statements when a new object has other related objects added to it.  In this example, we create new Author and Publisher objects, which are then added to a new Book object; all 3 objects will be saved when the ''Book->save()'' method is invoked.
+Propel creates setters for related objects that simplify the foreign key handling. You don't actually have to define a foreign key value. Instead, just set a related object, as follows:
 
 {{{
 #!php
 <?php
 /* initialize Propel, etc. */
 
-// 1) Create an Author (row of 'author' table)
-
 include_once 'bookstore/Author.php';
-
 $author = new Author();
 $author->setFirstName("Leo");
 $author->setLastName("Tolstoy");
-// note: we don't save this yet
-
-// 2) Create a Publisher (row of 'publisher' table)
-
-include_once 'bookstore/Publisher.php';
-
-$pub = new Publisher();
-$pub->setName("Viking Press");
-// note: we don't save this yet
-
-// 3) Create a Book (row of 'book' table)
+$author->save();
 
 include_once 'bookstore/Book.php';
+$book = new Book();
+$book->setTitle("War & Peace");
+// associate the $author object with the current $book
+$book->setAuthor($author);
+$book->save();
+}}}
 
+Internally, the call to `Book::setAuthor($author)` translates into `Book::setAuthorId($author->getId())`. But you don't actually have to save a Propel object before associating it to another. In fact, Propel automatically "cascades" INSERT statements when a new object has other related objects added to it.
+
+The following example shows how to create new Author and Publisher objects, which are then added to a new Book object; all 3 objects are saved when the `Book::save()` method is eventually invoked.
+
+{{{
+#!php
+<?php
+/* initialize Propel, etc. */
+
+include_once 'bookstore/Author.php';
+$author = new Author();
+$author->setFirstName("Leo");
+$author->setLastName("Tolstoy");
+// no need to save the author yet
+
+include_once 'bookstore/Publisher.php';
+$pub = new Publisher();
+$pub->setName("Viking Press");
+// no need to the publisher yet
+
+include_once 'bookstore/Book.php';
 $book = new Book();
 $book->setTitle("War & Peace");
 $book->setIsbn("0140444173");
@@ -67,225 +82,184 @@ $book->setAuthor($author);
 $book->save(); // saves all 3 objects!
 }}}
 
-Because Propel knows whether an object has been saved or not, it would have also worked to save() the objects before adding them as relations to the ''Book'' object.  (You may wish to read the wiki:Users/Documentation/1.3/Relationships page for more on working with related rows.)
+Refer to the [wiki:Users/Documentation/1.4/Relationships Relationships] page for more on working with related rows.
 
-== RETRIEVE ==
+== Retrieve ==
 
 Retrieving objects from the database, also referred to as ''hydrating'' objects, is essentially the process of executing a SELECT query against the database and populating a new instance of the appropriate object with the contents of each returned row.
 
-In Propel, you use the generated ''Peer'' classes to select existing rows from the database.  The Peer classes are classes with exclusively static methods for performing operations on a particular table.  There are several methods generated to assist you in selecting a single object or querying for multiple objects from the database.
+In Propel, you use the generated ''Peer'' classes to select existing rows from the database. The Peer classes are classes with exclusively static methods for performing operations on a particular table.  There are several methods generated to assist you in selecting a single object or querying for multiple objects from the database.
 
 === Retrieving by Primary Key ===
 
-The simplest way to retrieve an object (row) from the database, is to use the generated ''retrieveByPK()'' method.  This method must be passed the primary key value for the object you wish to retrieve.
+The simplest way to retrieve an object (row) from the database, is to use the generated `retrieveByPK()` method.  This method must be passed the primary key value for the object you wish to retrieve.
 
-==== Single-Col PK ==== 
-
-Usually your table will have a single column as a primary key, which means that the ''retrieveByPK()'' method will accept a single parameter.
+Usually, tables have a single column as a primary key. In these cases, the `retrieveByPK()` method accepts a single parameter.
 
 {{{
 #!php
 <?php
-
 $firstBook = BookPeer::retrieveByPK(1);
 // now $firstBook is a Book object, or NULL if no match was found.
 }}}
 
-==== Multi-Col PK ====
+In some cases, a primary key may consist of more than one column. In that case `retrieveByPK()` accepts multiple parameters, one for each primary key column.
 
-In some cases, your primary key may consist of more than one column.  In that case the ''retrieveByPK()'' method will be created to accept multiple parameters, one for each primary key column.
-
-For example, if we had a table with a multi-column primary key, defined like this:
-{{{
-#!xml
-   <table name="multicolpk_example" phpName="MultiColPKExample">
-      <column name="id1" type="INTEGER" primaryKey="true"/>
-      <column name="id2" type="INTEGER" primaryKey="true"/>
-      <!-- other columns ... -->
-   </table>
-}}}
-
-... then your ''retrieveByPK()'' method would be invoked like this:
+You can also select multiple objects based on their primary keys, by calling the generated `retrieveByPKs()` method. It takes as a parameter an array of primary keys:
 
 {{{
 #!php
 <?php
-
-$myObject = MultiColPKExamplePeer::retrieveByPK(1,2);
-}}}
-
-==== Getting Multiple Objects By PK ====
-
-You can also select multiple objects based on their primary keys, by calling the generated ''retrieveByPKs()'' method, which takes as a parameter an array of primary keys:
-
-{{{
-#!php
-<?php
-
 $selectedBooks = BookPeer::retrieveByPKs(array(1,2,3,4,5,6,7));
 // $selectedBooks is an array of Book objects
 }}}
 
-''Note that this only works for tables with single-column primary keys.''
+Note that this only works for tables with single-column primary keys.
+
+=== Reading Object Properties ===
+
+Propel maps the columns of a table into properties of the generated objects. For each property, you can use a generated getter to access it.
+
+{{{
+#!php
+<?php
+$book = BookPeer::retrieveByPK(1);
+echo $book->getFirstName();
+echo $book->getLastName();
+}}}
+
+The definition of a foreign key in the schema results in a foreign object getter:
+
+{{{
+#!php
+<?php
+$pub = $book->getPublisher();
+$author = $book->getAuthor();
+}}}
 
 === Querying the Database ===
 
-To select multiple rows by criteria other than the primary key, we have two choices: 1) use Propel's ''Criteria'' class, or 2) write custom SQL.  The ''Criteria'' class provides a relatively simple approach to constructing a query.  It's database neutrality and logical simplicity make it a good choice for expressing many common queries; however, for a very complex query, it may prove more effective (and less painful) to simply use a custom SQL query to hydrate your Propel objects.
+To select multiple rows by criteria other than by the primary key, you can either use Propel's `Criteria` class, or write custom SQL. 
+
+The `Criteria` class provides a relatively simple approach to constructing a query. Its database neutrality and logical simplicity make it a good choice for expressing many common queries; however, for a very complex query, it may prove more effective (and less painful) to simply use a custom SQL query to hydrate your Propel objects.
 
 ==== Simple Criteria ====
 
-Here are some examples of simple Criteria being used to return multiple objects.
+An empty `Criteria` object carries no condition.
+{{{
+#!php
+<?php
+$c = new Criteria();
+$authors = AuthorPeer::doSelect($c);
+// $authors contains an array of Author objects
+// one object for every row of the author table
+foreach($authors as $author) {
+  echo $author->getFirstName();
+}
+}}}
 
-'''Example 1:''' Find all authors with first name Karl but last name is _not_ Marx.
+Each of the Propel-generated Peer classes have a `doSelect()` method accepting a `Criteria` as parameter. This method tranlates the Criteria into SQL, executes the SQL query, and populates (hydrates) Propel objects with the results.
+
+To add a simple condition to a Criteria, simply call the `Criteria::add($column, $value)` method. For example, to find all authors with first name "Karl", create a Criteria as follows:
 
 {{{
 #!php
 <?php
-
 $c = new Criteria();
 $c->add(AuthorPeer::FIRST_NAME, "Karl");
-$c->add(AuthorPeer::LAST_NAME, "Marx", Criteria::NOT_EQUAL);
-
 $authors = AuthorPeer::doSelect($c);
-// $authors contains array of Author objects
 }}}
 
-... results in SQL query like:
+This results in SQL query like:
 {{{
 #!sql
-SELECT ... FROM author WHERE author.FIRST_NAME = 'Karl' AND author.LAST_NAME <> 'Marx';
+SELECT * FROM author WHERE author.FIRST_NAME = 'Karl';
 }}}
 
-'''Example 2:'''  Find all authors with last name of Tolstoy, Dostoevsky, or Bakhtin
+Notice that you should use the Peer column constants to designate columns in Criteria. These constants are generated according to the column name in the database by uppercasing them, so the `AuthorPeer::FIRST_NAME` refers to the `first_name` column of the author table.
 
-{{{
-#!php
-<?php
+Also, when you pass a value as second argument to `Criteria::add()`, this value is escaped using the PDO type of the column passed as first argument. This protects you from SQL injection risks.
 
-$c = new Criteria();
-$c->add(AuthorPeer::LAST_NAME, array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
-
-$authors = AuthorPeer::doSelect($c);
-// $authors contains array of Author objects
-}}}
-
-... results in SQL query like:
+Pretty much any SQL statement can be built using the Criteria API. For instance, in order to hydrate Author objects from the following query:
 {{{
 #!sql
-SELECT ... FROM author WHERE author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin');
+SELECT book.* 
+FROM book INNER JOIN author ON book.AUTHOR_ID = author.ID 
+WHERE book.ISBN = '0140444173' author.FIRST_NAME = 'Leo'
+ORDER BY author.LAST_NAME ASC, book.TITLE ASC
+LIMIT 10;
 }}}
 
-
-==== Logically Complex Criteria ====
-
-When you need to express logical relationships (AND, OR, etc.) between different criteria clauses, you need to manually combine individual ''Criterion'' objects together.  The ''Criterion'' objects are the components that are transparently assembled into the ''Criteria'' object when you use the ''Criteria->add()'' method.
-
-'''Example 1:''' Find all authors with first name "Leo" OR last name of "Tolstoy", "Dostoevsky", or "Bakhtin"
-
+...you can build the following Criteria:
 {{{
 #!php
 <?php
-
 $c = new Criteria();
-$cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
-$cton2 = $c->getNewCriterion(AuthorPeer::LAST_NAME,  array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
- 
-// combine them
-$cton1->addOr($cton2);
- 
-// add to Criteria
-$c->add($cton1);
-}}}
-
-... results in SQL query like:
-{{{
-#!sql
-SELECT ... FROM author WHERE (author.FIRST_NAME = 'Leo' OR author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin'));
-}}}
-
-There are also some ''Criteria'' shortcuts if you want to perform a query with logical relationships between clauses ''that reference the same column''.
-
-'''Example 2:''' Find all authors with first name 'Leo' or 'Karl'
-
-Using verbose ''Criterion'' approach, this looks like:
-{{{
-#!php
-<?php
-
-$c = new Criteria();
-$cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
-$cton2 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Karl");
- 
-// combine them
-$cton1->addOr($cton2);
- 
-// add to Criteria
-$c->add($cton1);
-}}}
-
-Using shorthand ''Criteria'' methods:
-{{{
-#!php
-<?php
-
-$c = new Criteria();
+$c->add(BookPeer::ISBN, '0140444173');
+$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
 $c->add(AuthorPeer::FIRST_NAME, "Leo");
-$c->addOr(AuthorPeer::FIRST_NAME, "Karl");
+$c->addAscendingOrderByColumn(AuthorPeer::LAST_NAME);
+$c->addAscendingOrderByColumn(BookPeer::TITLE);
+$c->setLimit(10);
+$authors = AuthorPeer::doSelect($c);
 }}}
 
-It is important to note that these shorthand ''Criteria'' methods have a number of limitations -- primarily that they only work for single column relationships.  From the author's perspective, it is not adviseable to use these methods when you need to express logical relationships between clause since they obscure the actual relationsihps between the ''Criterion'' objects and can easily lead to difficult-to-debug query generation issues.  (These methods will probably change or go away in Propel 2.)
+
+Refer to the [wiki:Users/Documentation/1.4/Criteria Criteria] page detailed Criteria usage and examples.
 
 ==== Using Custom SQL ====
 
-Propel is designed to work with you rather than against you.  In many cases writing a complex query using ''Criteria'' ends up being really messy and even less intelligible or maintainable than a standard SQL query.  Propel was created to work the inherent limitations of a database-neutral ''Criteria'' system by making it easy for you to use your own SQL queries to hydrate result sets.
+Propel is designed to work with you rather than against you. In some cases writing a complex query using `Criteria` ends up being really messy and even less intelligible or maintainable than a standard SQL query.  Propel was created to work the inherent limitations of a database-neutral `Criteria` system by making it easy for you to use your own SQL queries to hydrate result sets.
 
-So, with only a little bit more work, you can also get objects from your database using SQL.  Using SQL to query the database introduces us to the generated ''populateObjects()'' method in our Peer classes -- which is called behind the scenes by the ''doSelect()'' method.  This method expects to be passed a Creole ''!ResultSet'' object, numerically indexed (i.e. which was created using !ResultSet::FETCHMODE_NUM option to ''executeQuery()'').
-
-'''Example 1:''' Use sub-selects to populate database
+As Propel uses PDO to query the underlying database, you can always write custom queries using the PDO syntax. For instance, if you have to use a sub-select:
 
 {{{
 #!php
 <?php
-
-$con = Propel::getConnection(DATABASE_NAME);
-
-$sql = "SELECT books.* FROM books WHERE NOT EXISTS (SELECT id FROM review WHERE book_id = book.id)";  
+$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+$sql = "SELECT * FROM book WHERE id NOT IN "
+        ."(SELECT book_review.book_id FROM book_review"
+        ." INNER JOIN author ON (book_review.author_id=author.ID)"
+        ." WHERE author.last_name = :name)";
 $stmt = $con->prepare($sql);
-$stmt->execute();
-
-$books = BookPeer::populateObjects($stmt);
+$stmt->execute(array(':name' => 'Tolstoy');
 }}}
 
-Important things to remember when using custom SQL to populate Propel:
-  * !ResultSet column must be numerically indexed
-  * !ResultSet must contain all columns in the object
-  * !ResultSet must have columns ''in the same order'' as they are defined in the {{{schema.xml}}} file
-
-== UPDATE ==
-
-Updating database rows basically involves retrieving objects, modifying the contents, and then saving them.  In practice, for Propel, this is a combination of what we've already seen in the RETRIEVE and CREATE sections.
+With only a little bit more work, you can also populate `Book` objects from the resulting statement. Just use the resulting statement as the parameter to the generated `populateObjects()` method in you Peer class -- which is called behind the scenes by the `doSelect()` method:
 
 {{{
 #!php
 <?php
+$books = BookPeer::populateObjects($stmt);
+// $books contains an array of Book objects
+}}}
 
+There are a few important things to remember when using custom SQL to populate Propel:
+  * The resultset columns must be numerically indexed
+  * The resultset must contain all columns in the object
+  * The resultset must have columns ''in the same order'' as they are defined in the `schema.xml` file
+
+
+== Update ==
+
+Updating database rows basically involves retrieving objects, modifying the contents, and then saving them. In practice, for Propel, this is a combination of what you've already seen in the previous sections:
+
+{{{
+#!php
+<?php
 // 1) Fetch an object by primary key
-
 $myBook = BookPeer::retrieveByPK(1);
 
 // 2) update the values & save() it.
-
 $myBook ->setTitle("War & Peace");
 $myBook->save();
 }}}
 
-There's really not much more to it than that.  Of course you can also update relationships in a similar fashion to what was already shown in the CREATE section.
+There's really not much more to it than that. Of course you can also update relationships in a similar fashion to what was already shown in the CREATE section.
 
 {{{
 #!php
 <?php
-/* initialize Propel, etc. */
-
 // 1) retrieve an Author
 $author = AuthorPeer::retrieveByPK(1);
 
@@ -293,7 +267,6 @@ $author = AuthorPeer::retrieveByPK(1);
 $book = BookPeer::retrieveByPK(1);
 
 // 3) now blindly set $author as the author for $book!
-
 $book->setAuthor($author);
 $book->save();
 }}}
@@ -304,14 +277,13 @@ Deleting objects can be accomplished using the Peer classes or the object classe
 
 === Using Peer === 
 
-You can use the generated ''doDelete()'' method of the generated Peer classes to delete rows from your tables.  You can pass this method a primary key, an instance of the appropriate object, or even a Criteria object (however this isn't very useful, since you can only delete by primary key).
+You can use the generated `doDelete()` method of the generated Peer classes to delete rows from your tables.  You can pass this method a primary key, an instance of the appropriate object, or even a `Criteria` object (however this isn't very useful, since you can only delete by primary key).
 
 '''Example 1:''' Delete using primary key
 
 {{{
 #!php
 <?php
-
 BookPeer::doDelete(1);
 }}}
 
@@ -320,14 +292,13 @@ BookPeer::doDelete(1);
 {{{
 #!php
 <?php
-
 $book = BookPeer::retrieveByPK(1);
 BookPeer::doDelete($book);
 }}}
 
 === Using Object === 
 
-For consistency with other C.R.U.D. operations, you can also delete a database row using the object class.  Some people prefer to do it this way, instantiating an object and then calling the ''delete()'' method on it.  Others feel that this is "weird" since then you are left with an object that doesn't actually point to a database row.  Whatever - you are free to choose :)
+For consistency with other C.R.U.D. operations, you can also delete a database row using the object class by calling the `delete()` method on it:
 
 {{{
 #!php

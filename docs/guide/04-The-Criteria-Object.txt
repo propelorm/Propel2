@@ -4,24 +4,55 @@ The '''Criteria''' class is Propel's suggestion for simplifying SQL queries.  Us
 
 == Criteria Operators ==
 
-When you add clauses to a Criteria, you can specify different operators.  The officially supported set of operators exist as constants in the Criteria class.  (The default operator is Criteria::EQUAL).
+The `Criteria::add()` method accepts an additional `$operator` parameter. Most of the common SQL conditions can be formulated using one of these operators. For example, here is how to find all authors with first name "Karl" but last name _not_ "Marx"
 
-Here is a list of the official operators (note, you would reference these using Criteria:: prefix -- e.g. '''Criteria::EQUALS''').
- * EQUAL (default)
- * NOT_EQUAL
- * GREATER_THAN
- * LESS_THAN
- * GREATER_EQUAL
- * LESS_EQUAL 
- * LIKE
- * NOT_LIKE
- * IN
- * CUSTOM
- * CUSTOM_EQUAL (used in BasePeer::doUpdate() method)
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(AuthorPeer::FIRST_NAME, "Karl");
+$c->add(AuthorPeer::LAST_NAME, "Marx", Criteria::NOT_EQUAL);
+$authors = AuthorPeer::doSelect($c);
+// $authors contains array of Author objects
+}}}
+... results in SQL query like:
+{{{
+#!sql
+SELECT * FROM author WHERE author.FIRST_NAME = 'Karl' AND author.LAST_NAME <> 'Marx';
+}}}
+
+Here is how to find all authors with last name "Tolstoy", "Dostoevsky", or "Bakhtin":
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(AuthorPeer::LAST_NAME, array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
+$authors = AuthorPeer::doSelect($c);
+}}}
+... results in SQL query like:
+{{{
+#!sql
+SELECT * FROM author WHERE author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin');
+}}}
+
+
+Here is a list of the official operators, defined as constants in the `Criteria` class:
+ * `Criteria::EQUAL` (default, '=' in SQL)
+ * `Criteria::NOT_EQUAL` ('<>')
+ * `Criteria::GREATER_THAN` ('>')
+ * `Criteria::LESS_THAN` ('<')
+ * `Criteria::GREATER_EQUAL` ('>=')
+ * `Criteria::LESS_EQUAL` ('<=')
+ * `Criteria::LIKE` ('LIKE')
+ * `Criteria::NOT_LIKE` ('NOT LIKE')
+ * `Criteria::IN` ('IN')
+ * `Criteria::CUSTOM` (to create custom conditions, see below)
+ * `Criteria::CUSTOM_EQUAL` (used in BasePeer::doUpdate() method, see below)
 
 === NULLs and Equality ===
 
-There are Criteria::ISNULL and Criteria::ISNOTNULL operators; however, it is just as easy (and probably more intuitive) to use the default equality operator:
+There are `Criteria::ISNULL` and `Criteria::ISNOTNULL` operators; however, it is just as easy (and probably more intuitive) to use the default equality operator:
 
 {{{
 #!php
@@ -96,6 +127,110 @@ You can also specify your own operators as strings instead of using the built-in
 $c = new Criteria();
 $c->add(BookPeer::TITLE, 'War\s+and', '~*'); // case-insensitive regex in PostgreSQL
 }}}
+
+== Limit and Offset ==
+
+You can limit the number of results by setting the limit and the offset in Criteria:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->setLimit(10);
+$c->setOffset(30);
+$authors = AuthorPeer::doSelect($c);
+}}}
+
+This results in SQL query like:
+{{{
+#!sql
+SELECT * FROM author LIMIT 10 OFFSET 30;
+}}}
+
+Naturally, the resulting SQL query depends on the database model used.
+
+Tip: Propel offers a `PropelPager` class for automating paginated lists of resuls. 
+
+== Ordering Results ==
+
+Use `Criteria::addAscendingOrderByColumn()` or `Criteria::addDescendingOrderByColumn()` to define an order in a query:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addAscendingOrderByColumn(AuthorPeer::LAST_NAME);
+$authors = AuthorPeer::doSelect($c);
+}}}
+
+This results in SQL query like:
+{{{
+#!sql
+SELECT * FROM author ORDER BY author.LAST_NAME ASC;
+}}}
+
+== Grouping Results ==
+
+Use `Criteria::addGroupByColumn()` to add a GROUIP BY statement to your SQL query.
+
+== Logically Complex Criteria ==
+
+When you need to express logical relationships (AND, OR, etc.) between different criteria clauses, you need to manually combine individual ''Criterion'' objects together.  The ''Criterion'' objects are the components that are transparently assembled into the ''Criteria'' object when you use the ''Criteria->add()'' method.
+
+'''Example 1:''' Find all authors with first name "Leo" OR last name of "Tolstoy", "Dostoevsky", or "Bakhtin"
+
+{{{
+#!php
+<?php
+
+$c = new Criteria();
+$cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
+$cton2 = $c->getNewCriterion(AuthorPeer::LAST_NAME,  array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
+ 
+// combine them
+$cton1->addOr($cton2);
+ 
+// add to Criteria
+$c->add($cton1);
+}}}
+
+... results in SQL query like:
+{{{
+#!sql
+SELECT ... FROM author WHERE (author.FIRST_NAME = 'Leo' OR author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin'));
+}}}
+
+There are also some ''Criteria'' shortcuts if you want to perform a query with logical relationships between clauses ''that reference the same column''.
+
+'''Example 2:''' Find all authors with first name 'Leo' or 'Karl'
+
+Using verbose ''Criterion'' approach, this looks like:
+{{{
+#!php
+<?php
+
+$c = new Criteria();
+$cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
+$cton2 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Karl");
+ 
+// combine them
+$cton1->addOr($cton2);
+ 
+// add to Criteria
+$c->add($cton1);
+}}}
+
+Using shorthand ''Criteria'' methods:
+{{{
+#!php
+<?php
+
+$c = new Criteria();
+$c->add(AuthorPeer::FIRST_NAME, "Leo");
+$c->addOr(AuthorPeer::FIRST_NAME, "Karl");
+}}}
+
+It is important to note that these shorthand ''Criteria'' methods have a number of limitations -- primarily that they only work for single column relationships.  From the author's perspective, it is not adviseable to use these methods when you need to express logical relationships between clause since they obscure the actual relationsihps between the ''Criterion'' objects and can easily lead to difficult-to-debug query generation issues.  (These methods will probably change or go away in Propel 2.)
 
 == Case Sensitivity ==
 
