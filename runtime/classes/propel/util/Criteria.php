@@ -1797,7 +1797,6 @@ class Join
 		  if (!is_array($leftColumn)) {
 		    // simple join
 		    $this->addCondition($leftColumn, $rightColumn);
-		    $this->count++;
 		  } else {
 		    // join with multiple conditions
 		    if (count($leftColumn) != count($rightColumn) ) {
@@ -1806,7 +1805,6 @@ class Join
 		    foreach ($leftColumn as $key => $value)
 		    {
 		      $this->addCondition($value, $rightColumn[$key]);
-		      $this->count++;
 		    }
 		  }
 		  $this->setJoinType($joinType);
@@ -1869,7 +1867,7 @@ class Join
 	
 	public function getOperators()
 	{
-	  return $this->operators;
+	  return $this->operator;
 	}
   
 	/**
