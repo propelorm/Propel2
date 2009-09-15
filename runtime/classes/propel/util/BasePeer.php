@@ -545,7 +545,7 @@ class BasePeer
 	 * @see        createSelectSql()
 	 * @see        doSelect()
 	 */
-	private static function populateStmtValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap, DBAdapter $db)
+	public static function populateStmtValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap, DBAdapter $db)
 	{
 		$i = 1;
 		foreach ($params as $param) {
@@ -679,8 +679,8 @@ class BasePeer
 	 * @return     string
 	 * @throws     PropelException Trouble creating the query string.
 	 */
-	public static function createSelectSql(Criteria $criteria, &$params) {
-
+	public static function createSelectSql(Criteria $criteria, &$params)
+	{
 		$db = Propel::getDB($criteria->getDbName());
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
@@ -782,7 +782,6 @@ class BasePeer
 			$sb = "";
 			$criterion->appendPsTo($sb, $params);
 			$whereClause[] = $sb;
-
 		}
 
 		// Handle joins
@@ -956,7 +955,6 @@ class BasePeer
 		}
 
 		return $sql;
-
 	}
 
 	/**
@@ -966,7 +964,8 @@ class BasePeer
 	 * @param      Criteria $values
 	 * @return     array params array('column' => ..., 'table' => ..., 'value' => ...)
 	 */
-	private static function buildParams($columns, Criteria $values) {
+	private static function buildParams($columns, Criteria $values)
+	{
 		$params = array();
 		foreach ($columns as $key) {
 			if ($values->containsKey($key)) {

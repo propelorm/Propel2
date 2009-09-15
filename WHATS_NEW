@@ -41,4 +41,16 @@ FROM book
 LEFT JOIN user ON (book.USER_ID = user.ID AND user.RANK > 12)
 }}}
 
-Note that the former way to define a composite join using arrays as arguments of `addJoin()` is deprecated. 
+Note that the former way to define a composite join using arrays as arguments of `addJoin()` is deprecated.
+
+== `BasePeer::populateStmtValues()` is now public ==
+
+You can now use a SQL query of your own, or modify the one returned by `BasePeer::createSelectSql()`, and use the binding capabilities of Propel to populate a query with a set of values. Propel uses the PDO type of the column to do the binding, so this method may save you some hassle: 
+
+{{{
+$sql = BasePeer::createSelectSql($criteria, $params);
+$sql = "INSERT INTO temp_table_name $sql";
+$stmt = $con->prepare($sql);
+BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+$stmt->execute();
+}}}
