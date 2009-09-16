@@ -20,7 +20,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'bookstore/BookstoreDataPopulator.php';
+include_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.

@@ -20,7 +20,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'cms/CmsDataPopulator.php';
+include_once 'tools/helpers/cms/CmsDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.

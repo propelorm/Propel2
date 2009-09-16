@@ -20,7 +20,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Tests some of the methods of generated Object classes. These are:
@@ -39,6 +39,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  * behaviour. The tests will run faster this way.
  *
  * @author     Sven Fuchs <svenfuchs@artweb-design.de>
+ * @package    misc
  */
 class FieldnameRelatedTest extends PHPUnit_Framework_TestCase {
 

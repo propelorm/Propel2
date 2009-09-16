@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tests/BaseTestCase.php';
+require_once 'tools/helpers/BaseTestCase.php';
 include_once 'propel/engine/database/model/NameFactory.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
 include_once 'propel/engine/database/model/AppData.php';

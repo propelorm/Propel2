@@ -19,7 +19,8 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
 
 /**
  * Tests the validator classes.
@@ -34,6 +35,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @see        BookstoreDataPopulator
  * @author     Michael Aichler <aichler@mediacluster.de>
+ * @package    runtime.validator
  */
 class ValidatorTest extends BookstoreTestBase
 {

@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'cms/CmsTestBase.php';
+require_once 'tools/helpers/cms/CmsTestBase.php';
 
 /**
  * Tests the generated nested-set Object classes.

@@ -1,10 +1,14 @@
 <?php
-require_once 'bookstore/BookstoreTestBase.php';
+
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /* It's only fair to admit that these tests were carefully crafted
 after studying the current implementation to make it look as bad as
 possible. I am really sorry. :-( */
 
+/**
+ * @package misc
+ */
 class Ticket520Test extends BookstoreTestBase {
 
 	public function testNewObjectsAvailableWhenSaveNotCalled() {

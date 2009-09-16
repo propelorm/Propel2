@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../etc/lob');
+define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../../etc/lob');
 
 /**
  * Populates data needed by the bookstore unit tests.

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'tests/BaseTestCase.php';
+require_once 'tools/helpers/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 
 /**

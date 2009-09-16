@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Tests the character encoding support of the adapter.
@@ -34,9 +34,10 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    misc
  */
-class CharacterEncodingTest extends BookstoreTestBase {
-
+class CharacterEncodingTest extends BookstoreTestBase
+{
 	/**
 	 * Database adapter.
 	 * @var        DBAdapter

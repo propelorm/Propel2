@@ -112,14 +112,15 @@
             
             <!-- Summary part -->
             <xsl:call-template name="summary"/>
-            <hr size="1" width="95%" align="left"/>
             
             <!-- Package List part -->
             <xsl:call-template name="packagelist"/>
+
             <hr size="1" width="95%" align="left"/>
             
             <!-- For each package create its part -->
             <xsl:call-template name="packages"/>
+
             <hr size="1" width="95%" align="left"/>
             
             <!-- For each class create the  part -->
@@ -137,8 +138,6 @@
     <!-- of the package name.                                               -->
     <!-- ================================================================== -->
     <xsl:template name="packagelist">   
-        <h2>Packages</h2>
-        Note: package statistics are not computed recursively, they only sum up all of its testsuites numbers.
         <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
             <xsl:call-template name="testsuite.test.header"/>
             <!-- list all packages recursively -->
@@ -180,6 +179,7 @@
     <!-- Name | Tests | Errors | Failures | Time                            -->
     <!-- ================================================================== -->
     <xsl:template name="packages">
+        <h2>Packages</h2>
         <!-- create an anchor to this package name -->
         <xsl:for-each select="/testsuites/testsuite[not(./@package = preceding-sibling::testsuite/@package)]">
             <xsl:sort select="@package"/>
@@ -192,13 +192,12 @@
                     <!-- match the testsuites of this package -->
                     <xsl:apply-templates select="/testsuites/testsuite[./@package = current()/@package]" mode="print.test"/>
                 </table>
-                <a href="#top">Back to top</a>
-                <p/>
                 <p/>
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template name="classes">
+    <xsl:template name="classes">        
+        <h2>Test Cases</h2>
         <xsl:for-each select="testsuite">
             <xsl:sort select="@name"/>
             <!-- create an anchor to this class name -->
@@ -219,8 +218,6 @@
                 <xsl:apply-templates select="./testcase" mode="print.test"/>
             </table>
             <p/>
-            
-            <a href="#top">Back to top</a>
         </xsl:for-each>
     </xsl:template>
     
