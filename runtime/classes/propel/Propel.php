@@ -202,6 +202,7 @@ class Propel
 		'BasePeer' => 'propel/util/BasePeer.php',
 		'NodePeer' => 'propel/util/NodePeer.php',
 		'Criteria' => 'propel/util/Criteria.php',
+		'Join'     => 'propel/util/Join.php',
 		'PeerInfo' => 'propel/util/PeerInfo.php',
 		'PropelColumnTypes' => 'propel/util/PropelColumnTypes.php',
 		'PropelConfiguration' => 'propel/util/PropelConfiguration.php',
