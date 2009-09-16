@@ -1,1 +1,72 @@
-See http://propel.phpdb.org/trac/wiki/Development/Guidelines/WritingUnitTests for up to date information on the unit tests
+= Running The Propel Unit Tests =
+
+== Install PHPUnit ==
+
+{{{
+> pear channel-discover pear.phpunit.de
+> pear install phpunit/phpunit
+}}}
+
+== Configure the Database to be Used in the Tests ==
+
+You must configure both the generator and the runtime connection settings.
+{{{
+// in test/projects/bookstore/build.properties
+propel.database = mysql
+propel.database.url = mysql:dbname=test
+propel.mysqlTableType = InnoDB
+propel.disableIdentifierQuoting=true
+# For MySQL or Oracle, you also need to specify username & password
+propel.database.user = myusername
+propel.database.password = p@ssw0rd
+}}}
+
+{{{
+// in test/projects/bookstore/runtime-conf.xml
+<datasource id="bookstore">
+  <!-- the Propel adapter to use for this connection -->
+  <adapter>mysql</adapter>
+  <!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
+  <connection>
+      <classname>DebugPDO</classname>
+      <dsn>mysql:dbname=test</dsn>
+      <user>myusername</user>
+      <password>p@ssw0rd</password>
+      <options>
+        <option id="ATTR_PERSISTENT">false</option>
+      </options>
+      <attributes>
+        <!-- For MySQL, you should also turn on prepared statement emulation,
+                        as prepared statements support is buggy in mysql driver -->
+        <option id="ATTR_EMULATE_PREPARES">true</option>
+      </attributes>
+      <settings>
+        <!--  Set the character set for client connection -->
+        <setting id="charset">utf8</setting>
+      </settings>
+  </connection>
+</datasource>
+}}}
+
+== Build the Propel Model and Initialize the Database ==
+
+{{{
+> cd /path/to/propel/test
+> ../generator/bin/propel-gen projects/bookstore
+> mysqladmin create test
+> ../generator/bin/propel-gen projects/bookstore insert-sql
+}}}
+
+== Run the Unit Tests ==
+
+Run all the unit tests at once using Phing:
+{{{
+> cd /path/to/propel/test
+> phing -f test.xml
+}}}
+
+To run a single test, specify the classname (minus 'Test' ending) on the commandline, using the `test` property. For example to run only GeneratedObjectTest: 
+
+{{{
+> phing -f test.xml -Dtest=GeneratedObject
+}}}
