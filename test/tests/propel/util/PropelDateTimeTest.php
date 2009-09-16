@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'classes/propel/BaseTestCase.php';
+require_once 'tests/propel/BaseTestCase.php';
 require_once 'propel/util/PropelDateTime.php';
 
 /**

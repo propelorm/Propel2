@@ -32,7 +32,7 @@
 	<property name="test.class" value="${test}" />
 
 	<resolvepath propertyName="tests.dir.resolved" file="${tests.phpunit.dir}" />
-	<resolvepath propertyName="tests.classes.dir.resolved" file="${tests.phpunit.dir}/classes" />
+	<resolvepath propertyName="tests.classes.dir.resolved" file="${tests.phpunit.dir}/tests" />
 	<resolvepath propertyName="propel-generator.classes.dir.resolved" file="../generator/classes" />
 	<resolvepath propertyName="propel-runtime.classes.dir.resolved" file="../runtime/classes" />
 	<resolvepath propertyName="bookstore.classes.dir.resolved" file="projects/bookstore/build/classes" />

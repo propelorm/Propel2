@@ -1,6 +1,6 @@
 <?php
 
-require_once 'classes/propel/BaseTestCase.php';
+require_once 'tests/propel/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 include_once 'propel/util/BasePeer.php';
 
