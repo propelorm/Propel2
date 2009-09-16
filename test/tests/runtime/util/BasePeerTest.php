@@ -26,6 +26,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    runtime.util
  */
 class BasePeerTest extends BookstoreTestBase {
 

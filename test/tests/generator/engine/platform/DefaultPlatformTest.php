@@ -1,9 +1,11 @@
 <?php
 
-require_once 'propel/engine/platform/PlatformTestBase.php';
-
+require_once 'generator/engine/platform/PlatformTestBase.php';
+/**
+ *
+ * @package    generator.engine.platform 
+ */
 class DefaultPlatformTest extends PlatformTestBase {
-
 
 	protected function setUp()
 	{

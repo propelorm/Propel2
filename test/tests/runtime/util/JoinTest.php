@@ -1,6 +1,6 @@
 <?php
 
-require_once 'tests/propel/BaseTestCase.php';
+require_once 'tests/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 
 /**
@@ -8,6 +8,7 @@ include_once 'propel/util/Criteria.php';
  *
  * @author     François Zaninotto
  * @version    $Id: JoinTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @package    runtime.util
  */
 class JoinTest extends BaseTestCase 
 {

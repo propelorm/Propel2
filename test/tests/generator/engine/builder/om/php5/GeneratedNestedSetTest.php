@@ -34,9 +34,10 @@ require_once 'cms/CmsTestBase.php';
  * method for the exact contents of the database.
  *
  * @see        CmsDataPopulator
+ * @package    generator.engine.builder.om.php5
  */
-class GeneratedNestedSetTest extends CmsTestBase {
-
+class GeneratedNestedSetTest extends CmsTestBase
+{
 	/**
 	 * A convenience method to dump the page rows.
 	 */

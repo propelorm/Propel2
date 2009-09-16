@@ -25,7 +25,7 @@ require_once 'propel/util/PropelPDO.php';
 /**
  * Test for PropelPDO subclass.
  *
- * @package    propel.util
+ * @package    runtime.util
  */
 class PropelPDOTest extends BookstoreTestBase
 {

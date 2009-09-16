@@ -34,165 +34,165 @@ require_once 'cms/CmsTestBase.php';
  * method for the exact contents of the database.
  *
  * @see        CmsDataPopulator
+ * @package    generator.engine.builder.om.php5
  */
-class GeneratedNestedSetPeerTest extends CmsTestBase {
-
+class GeneratedNestedSetObjectTest extends CmsTestBase
+{
 	/**
-	 * Test retrieveRoot() as true
+	 * Test xxxNestedSet::isRoot() as true
 	 */
-	public function testRetrieveRootExist()
+	public function testObjectIsRootTrue()
 	{
 		$pp = PagePeer::retrieveRoot(1);
-		$this->assertNotNull($pp, 'Node must exist and not be null');
-		$this->assertEquals(1, $pp->getLeftValue(), 'Node left value must be equal to 1');
+		$this->assertTrue($pp->isRoot(), 'Node must be root');
 	}
 
 	/**
-	 * Test retrieveRoot() as false
+	 * Test xxxNestedSet::isRoot() as false
 	 */
-	public function testRetrieveRootNotExist()
-	{
-		$pp = PagePeer::retrieveRoot(2);
-		$this->assertNull($pp, 'Root with such scopeId must not exist');
-	}
-
-	/**
-	 * Test xxxNestedSetPeer::isRoot() as true
-	 */
-	public function testPeerIsRootTrue()
-	{
-		$pp = PagePeer::retrieveRoot(1);
-		$this->assertTrue(PagePeer::isRoot($pp), 'Node must be root');
-	}
-
-	/**
-	 * Test xxxNestedSetPeer::isRoot() as false
-	 */
-	public function testPeerIsRootFalse()
+	public function testObjectIsRootFalse()
 	{
 		$c = new Criteria(PagePeer::DATABASE_NAME);
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
 
 		$school = PagePeer::doSelectOne($c);
-		$this->assertFalse(PagePeer::isRoot($school), 'Node must not be root');
+		$this->assertFalse($school->isRoot(), 'Node must not be root');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::retrieveParent() as true.
+	 * Test xxxNestedSet::retrieveParent() as true.
 	 */
-	public function testPeerRetrieveParentTrue()
+	public function testObjectRetrieveParentTrue()
 	{
 		$c = new Criteria(PagePeer::DATABASE_NAME);
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
 
 		$school = PagePeer::doSelectOne($c);
-		$this->assertNotNull(PagePeer::retrieveParent($school), 'Parent node must exist');
+		$this->assertNotNull($school->retrieveParent(), 'Parent node must exist');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::retrieveParent() as false.
+	 * Test xxxNestedSet::retrieveParent() as false.
 	 */
-	public function testPeerRetrieveParentFalse()
+	public function testObjectRetrieveParentFalse()
 	{
 		$c = new Criteria(PagePeer::DATABASE_NAME);
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
 
 		$home = PagePeer::doSelectOne($c);
-		$this->assertNull(PagePeer::retrieveParent($home), 'Parent node must not exist and retrieved not be null');
+		$this->assertNull($home->retrieveParent(), 'Parent node must not exist and retrieved not be null');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::hasParent() as true.
+	 * Test xxxNestedSet::hasParent() as true.
 	 */
-	public function testPeerHasParentTrue()
+	public function testObjectHasParentTrue()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
 
 		$school = PagePeer::doSelectOne($c);
-		$this->assertTrue(PagePeer::hasParent($school), 'Node must have parent node');
+		$this->assertTrue($school->hasParent(), 'Node must have parent node');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::hasParent() as false
+	 * Test xxxNestedSet::hasParent() as false
 	 */
-	public function testPeerHasParentFalse()
+	public function testObjectHasParentFalse()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
 
 		$home = PagePeer::doSelectOne($c);
-		$this->assertFalse(PagePeer::hasParent($home), 'Root node must not have parent');
+		$this->assertFalse($home->hasParent(), 'Root node must not have parent');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::isValid() as true.
+	 * Test xxxNestedSet::isLeaf() as true.
 	 */
-	public function testPeerIsValidTrue()
-	{
-		$c = new Criteria();
-		$c->add(PagePeer::TITLE, 'school', Criteria::EQUAL);
-
-		$school = PagePeer::doSelectOne($c);
-		$this->assertTrue(PagePeer::isValid($school), 'Node must be valid');
-	}
-
-	/**
-	 * Test xxxNestedSetPeer::isValid() as false
-	 */
-	public function testPeerIsValidFalse()
-	{
-		$page = new Page();
-		$this->assertFalse(PagePeer::isValid($page), 'Node left and right values must be invalid');
-		$this->assertFalse(PagePeer::isValid(null), 'Null must be invalid');
-	}
-
-	/**
-	 * Test xxxNestedSetPeer::isLeaf() as true.
-	 */
-	public function testPeerIsLeafTrue()
+	public function testObjectIsLeafTrue()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'simulator', Criteria::EQUAL);
 
 		$simulator = PagePeer::doSelectOne($c);
-		$this->assertTrue(PagePeer::isLeaf($simulator), 'Node must be a leaf');
+		$this->assertTrue($simulator->isLeaf($simulator), 'Node must be a leaf');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::isLeaf() as false
+	 * Test xxxNestedSet::isLeaf() as false
 	 */
-	public function testPeerIsLeafFalse()
+	public function testObjectIsLeafFalse()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'contact', Criteria::EQUAL);
 
 		$contact = PagePeer::doSelectOne($c);
-		$this->assertFalse(PagePeer::isLeaf($contact), 'Node must not be a leaf');
+		$this->assertFalse($contact->isLeaf($contact), 'Node must not be a leaf');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::createRoot()
+	 * Test xxxNestedSet::makeRoot()
 	 */
-	public function testPeerCreateRoot()
+	public function testObjectMakeRoot()
 	{
 		$page = new Page();
-		PagePeer::createRoot($page);
+		$page->makeRoot();
 		$this->assertEquals(1, $page->getLeftValue(), 'Node left value must equal 1');
 		$this->assertEquals(2, $page->getRightValue(), 'Node right value must equal 2');
 	}
 
 	/**
-	 * Test xxxNestedSetPeer::createRoot() exception
+	 * Test xxxNestedSet::makeRoot() exception
 	 * @expectedException PropelException
 	 */
-	public function testPeerCreateRootException()
+	public function testObjectMakeRootException()
 	{
 		$c = new Criteria();
 		$c->add(PagePeer::TITLE, 'home', Criteria::EQUAL);
 
 		$home = PagePeer::doSelectOne($c);
-		PagePeer::createRoot($home);
+		$home->makeRoot();
 	}
 
+	/**
+	 * Test xxxNestedSet::getDescendants()
+	 */
+	public function testPeerGetDescendants()
+	{
+		$nodesWithoutPool = array();
+		CategoryPeer::clearInstancePool();
+		$cat = CategoryPeer::retrieveRoot(1);
+		$children = $cat->getDescendants();
+		foreach($children as $child)
+		{
+			$nodesWithoutPool[] = $child->getTitle();
+		}
+		$this->assertEquals($nodesWithoutPool, array('Cat_1_1', 'Cat_1_1_1', 'Cat_1_1_1_1'));
+	}
+
+	/**
+	 * Test xxxNestedSet::getDescendantsTwice()
+	 */
+	public function testPeerGetDescendantsTwice()
+	{
+		$nodesWithoutPool = array();
+		$nodesWithPool = array();
+
+		CategoryPeer::clearInstancePool();
+		$cat = CategoryPeer::retrieveRoot(1);
+		$children = $cat->getDescendants();
+		foreach($children as $child)
+		{
+			$nodesWithoutPool[] = $child->getTitle();
+		}
+
+		$cat = CategoryPeer::retrieveRoot(1);
+		$children = $cat->getDescendants();
+		foreach($children as $child)
+		{
+			$nodesWithPool[] = $child->getTitle();
+		}
+		$this->assertEquals($nodesWithoutPool, $nodesWithPool, 'Retrieved nodes must be the same with and without InstancePooling');
+	}
 }

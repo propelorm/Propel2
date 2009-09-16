@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tests/propel/BaseTestCase.php';
+require_once 'tests/BaseTestCase.php';
 include_once 'propel/engine/database/model/NameFactory.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
 include_once 'propel/engine/database/model/AppData.php';
@@ -39,9 +39,10 @@ include_once 'propel/engine/database/model/AppData.php';
  *
  * @author     <a href="mailto:dlr@collab.net">Daniel Rall</a>
  * @version    $Id$
+ * @package    generator.engine.database.model
  */
-class NameFactoryTest extends BaseTestCase {
-
+class NameFactoryTest extends BaseTestCase
+{
 	/** The database to mimic in generating the SQL. */
 	const DATABASE_TYPE = "mysql";
 

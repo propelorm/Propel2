@@ -35,6 +35,7 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    generator.engine.builder.om.php5
  */
 class GeneratedObjectLobTest extends BookstoreTestBase {
 

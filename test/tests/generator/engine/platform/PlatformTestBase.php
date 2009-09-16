@@ -2,8 +2,12 @@
 
 require_once 'PHPUnit/Framework/TestCase.php';
 
-class PlatformTestBase extends PHPUnit_Framework_TestCase {
-
+/**
+ * 
+ * @package    generator.engine.platform
+ */
+class PlatformTestBase extends PHPUnit_Framework_TestCase
+{
 	/**
 	 * Platform object.
 	 *

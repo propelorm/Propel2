@@ -34,9 +34,10 @@ require_once 'bookstore/BookstoreTestBase.php';
  *
  * @see        BookstoreDataPopulator
  * @author     Hans Lellelid <hans@xmpl.org>
+ * @package    generator.engine.builder.om.php5
  */
-class GeneratedPeerTest extends BookstoreTestBase {
-
+class GeneratedPeerTest extends BookstoreTestBase
+{
 	/**
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */

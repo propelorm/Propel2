@@ -1,9 +1,13 @@
 <?php
 
-require_once 'propel/engine/platform/DefaultPlatformTest.php';
+require_once 'generator/engine/platform/DefaultPlatformTest.php';
 
-class SqlitePlatformTest extends DefaultPlatformTest {
-
+/**
+ * 
+ * @package    generator.engine.platform
+ */
+class SqlitePlatformTest extends DefaultPlatformTest
+{
 	/**
 	 * @var        PDO The PDO connection to SQLite DB.
 	 */

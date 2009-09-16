@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tests/propel/BaseTestCase.php';
+require_once 'tests/BaseTestCase.php';
 require_once 'propel/util/PropelDateTime.php';
 
 /**
@@ -27,7 +27,7 @@ require_once 'propel/util/PropelDateTime.php';
  *
  * @author     Alan Pinstein
  * @author     Soenke Ruempler
- * @package    propel.util
+ * @package    runtime.util
  */
 class PropelDateTimeTest extends BaseTestCase
 {

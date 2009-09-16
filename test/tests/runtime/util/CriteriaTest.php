@@ -1,6 +1,6 @@
 <?php
 
-require_once 'tests/propel/BaseTestCase.php';
+require_once 'tests/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 include_once 'propel/util/BasePeer.php';
 
@@ -10,6 +10,7 @@ include_once 'propel/util/BasePeer.php';
  * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
  * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
  * @version    $Id$
+ * @package    runtime.util
  */
 class CriteriaTest extends BaseTestCase {
 

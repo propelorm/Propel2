@@ -21,7 +21,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'propel/engine/database/model/Column.php';
+include_once 'propel/engine/database/transform/XmlToAppData.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
 
 /**
@@ -29,34 +29,36 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
  *
  * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
  * @version    $Revision$
+ * @package    generator.engine.database.model
  */
-class ColumnTest extends PHPUnit_Framework_TestCase {
+class TableTest extends PHPUnit_Framework_TestCase {
+
+	private $xmlToAppData;
+	private $appData;
 
 	/**
-	 * Tests static Column::makeList() method.
-	 * @deprecated - Column::makeList() is deprecated and set to be removed in 1.3
+	 * test if the tables get the package name from the properties file
+	 *
 	 */
-	public function testMakeList()
-	{
-		$expected = "`Column0`, `Column1`, `Column2`, `Column3`, `Column4`";
-		$objArray = array();
-		for ($i=0; $i<5; $i++) {
-			$c = new Column();
-			$c->setName("Column" . $i);
-			$objArray[] = $c;
-		}
+	public function testIdMethodHandling() {
+		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 
-		$list = Column::makeList($objArray, new MySQLPlatform());
-		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
+		//$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
+		$this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
 
-		$strArray = array();
-		for ($i=0; $i<5; $i++) {
-			$strArray[] = "Column" . $i;
-		}
+		$db = $this->appData->getDatabase("iddb");
+		$expected = IDMethod::NATIVE;
+		$result = $db->getDefaultIdMethod();
+		$this->assertEquals($expected, $result);
 
-		$list = Column::makeList($strArray, new MySQLPlatform());
-		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
+		$table2 = $db->getTable("table_native");
+		$expected = IDMethod::NATIVE;
+		$result = $table2->getIdMethod();
+		$this->assertEquals($expected, $result);
 
+		$table = $db->getTable("table_none");
+		$expected = IDMethod::NO_ID_METHOD;
+		$result = $table->getIdMethod();
+		$this->assertEquals($expected, $result);
 	}
-
 }
