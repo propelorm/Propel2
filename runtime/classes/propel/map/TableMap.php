@@ -55,9 +55,6 @@ class TableMap {
 	/** The PHP name of the table. */
 	private $phpName;
 
-	/** The prefix on the table name. */
-	private $prefix;
-
 	/** The Classname for this table */
 	private $classname;
 
@@ -85,10 +82,14 @@ class TableMap {
 
 	/**
 	 * Normalizes the column name, removing table prefix and uppercasing.
+	 *
+	 * article.first_name becomes FIRST_NAME
+	 *
 	 * @param      string $name
 	 * @return     string Normalized column name.
 	 */
-	private function normalizeColName($name) {
+	protected function normalizeColName($name)
+	{
 		if (false !== ($pos = strpos($name, '.'))) {
 			$name = substr($name, $pos + 1);
 		}
@@ -99,15 +100,18 @@ class TableMap {
 	/**
 	 * Does this table contain the specified column?
 	 *
-	 * @param      string $name name of the column
+	 * @param      mixed   $name name of the column or ColumnMap instance
+	 * @param      boolean $normalize Normalize the column name (if column name not like FIRST_NAME)
 	 * @return     boolean True if the table contains the column.
 	 */
-	public function containsColumn($name)
+	public function containsColumn($name, $normalize = true)
 	{
-		if (!is_string($name)) {
+		if ($name instanceof ColumnMap) {
 			$name = $name->getColumnName();
+		} else if($normalize) {
+		  $name = $this->normalizeColName($name);
 		}
-		return isset($this->columns[$this->normalizeColName($name)]);
+		return isset($this->columns[$name]);
 	}
 
 	/**
@@ -148,28 +152,6 @@ class TableMap {
 	public function setPhpName($phpName)
 	{
 		$this->phpName = $phpName;
-	}
-
-	/**
-	 * Get table prefix name.
-	 *
-	 * @return     string A String with the prefix.
-	 */
-	public function getPrefix()
-	{
-		return $this->prefix;
-	}
-
-	/**
-	 * Set table prefix name.
-	 *
-	 * @param      string $prefix The prefix for the table name (ie: SCARAB for
-	 * SCARAB_PROJECT).
-	 * @return     void
-	 */
-	public function setPrefix($prefix)
-	{
-		$this->prefix = $prefix;
 	}
 
 	/**
@@ -237,14 +219,17 @@ class TableMap {
 	/**
 	 * Get a ColumnMap for the named table.
 	 *
-	 * @param      string $name A String with the name of the table.
+	 * @param      string    $name A String with the name of the table.
+	 * @param      boolean   $normalize Normalize the column name (if column name not like FIRST_NAME)
 	 * @return     ColumnMap A ColumnMap.
 	 * @throws     PropelException if the column is undefined
 	 */
-	public function getColumn($name)
+	public function getColumn($name, $normalize = true)
 	{
-		$name = $this->normalizeColName($name);
-		if (!isset($this->columns[$name])) {
+	  if ($normalize) {
+	    $name = $this->normalizeColName($name);
+	  }
+		if (!$this->containsColumn($name, false)) {
 			throw new PropelException("Cannot fetch ColumnMap for undefined column: " . $name);
 		}
 		return $this->columns[$name];
@@ -392,31 +377,62 @@ class TableMap {
 		$this->pkInfo = $pkInfo;
 	}
 
+  // Deprecated methods and attributres, to be removed
 	//---Utility methods for doing intelligent lookup of table names
 
+	/** 
+	 * The prefix on the table name. 
+	 * @deprecated Not used anywhere in Propel
+	 */
+	private $prefix;
+
+	/**
+	 * Get table prefix name.
+	 *
+	 * @deprecated Not used anywhere in Propel
+	 * @return     string A String with the prefix.
+	 */
+	public function getPrefix()
+	{
+		return $this->prefix;
+	}
+
+	/**
+	 * Set table prefix name.
+	 *
+	 * @deprecated Not used anywhere in Propel
+	 * @param      string $prefix The prefix for the table name (ie: SCARAB for
+	 * SCARAB_PROJECT).
+	 * @return     void
+	 */
+	public function setPrefix($prefix)
+	{
+		$this->prefix = $prefix;
+	}
+	
 	/**
 	 * Tell me if i have PREFIX in my string.
 	 *
+	 * @deprecated Not used anywhere in Propel
 	 * @param      data A String.
 	 * @return     boolean True if prefix is contained in data.
 	 */
-	private function hasPrefix($data)
+	protected function hasPrefix($data)
 	{
-		return (substr($data, $this->getPrefix()) !== false);
+		return (strpos($data, $this->prefix) === 0);
 	}
 
 	/**
-	 * Removes the PREFIX.
+	 * Removes the PREFIX if found
 	 *
+	 * @deprecated Not used anywhere in Propel
 	 * @param      string $data A String.
 	 * @return     string A String with data, but with prefix removed.
 	 */
-	private function removePrefix($data)
+	protected function removePrefix($data)
 	{
-		return substr($data, strlen($this->getPrefix()));
+		return $this->hasPrefix($data) ? substr($data, strlen($this->prefix)) : $data;
 	}
-
-
 
 	/**
 	 * Removes the PREFIX, removes the underscores and makes
@@ -424,23 +440,18 @@ class TableMap {
 	 *
 	 * SCARAB_FOO_BAR becomes FooBar.
 	 *
+	 * @deprecated Not used anywhere in Propel. At buildtime, use Column::generatePhpName() for that purpose
 	 * @param      data A String.
 	 * @return     string A String with data processed.
 	 */
 	public final function removeUnderScores($data)
 	{
-		$tmp = null;
-		$out = "";
-		if ($this->hasPrefix($data)) {
-			$tmp = $this->removePrefix($data);
-		} else {
-			$tmp = $data;
-		}
-
-		$tok = strtok($tmp, "_");
+		$out = '';
+    $tmp = $this->removePrefix($data);
+		$tok = strtok($tmp, '_');
 		while ($tok) {
 			$out .= ucfirst($tok);
-			$tok = strtok("_");
+			$tok = strtok('_');
 		}
 		return $out;
 	}
@@ -448,6 +459,7 @@ class TableMap {
 	/**
 	 * Makes the first letter caps and the rest lowercase.
 	 *
+	 * @deprecated Not used anywhere in Propel.
 	 * @param      string $data A String.
 	 * @return     string A String with data processed.
 	 */
