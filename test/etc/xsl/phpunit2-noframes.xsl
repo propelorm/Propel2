@@ -144,6 +144,7 @@
             <xsl:for-each select="./testsuite[not(./@package = preceding-sibling::testsuite/@package)]">
                 <xsl:sort select="@package"/>
                 <xsl:variable name="testsuites-in-package" select="/testsuites/testsuite[./@package = current()/@package]"/>
+                <xsl:variable name="assertionCount" select="sum($testsuites-in-package/@assertions)"/>
                 <xsl:variable name="testCount" select="sum($testsuites-in-package/@tests)"/>
                 <xsl:variable name="errorCount" select="sum($testsuites-in-package/@errors)"/>
                 <xsl:variable name="failureCount" select="sum($testsuites-in-package/@failures)"/>
@@ -159,6 +160,7 @@
                         </xsl:choose>
                     </xsl:attribute>
                     <td><a href="#{@package}"><xsl:value-of select="@package"/></a></td>
+                    <td><xsl:value-of select="$assertionCount"/></td>
                     <td><xsl:value-of select="$testCount"/></td>
                     <td><xsl:value-of select="$errorCount"/></td>
                     <td><xsl:value-of select="$failureCount"/></td>
@@ -223,6 +225,7 @@
     
     <xsl:template name="summary">
         <h2>Summary</h2>
+        <xsl:variable name="assertionCount" select="sum(testsuite/@assertions)"/>
         <xsl:variable name="testCount" select="sum(testsuite/@tests)"/>
         <xsl:variable name="errorCount" select="sum(testsuite/@errors)"/>
         <xsl:variable name="failureCount" select="sum(testsuite/@failures)"/>
@@ -230,6 +233,7 @@
         <xsl:variable name="successRate" select="($testCount - $failureCount - $errorCount) div $testCount"/>
         <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
         <tr valign="top">
+            <th>Assertions</th>
             <th>Tests</th>
             <th>Failures</th>
             <th>Errors</th>
@@ -243,6 +247,7 @@
                     <xsl:when test="$errorCount &gt; 0">Error</xsl:when>
                 </xsl:choose>
             </xsl:attribute>
+            <td><xsl:value-of select="$assertionCount"/></td>
             <td><xsl:value-of select="$testCount"/></td>
             <td><xsl:value-of select="$failureCount"/></td>
             <td><xsl:value-of select="$errorCount"/></td>
@@ -291,6 +296,7 @@
 <xsl:template match="testsuite" mode="header">
     <tr valign="top">
         <th width="80%">Name</th>
+        <th>Assertions</th>
         <th>Tests</th>
         <th>Errors</th>
         <th>Failures</th>
@@ -302,6 +308,7 @@
 <xsl:template name="testsuite.test.header">
     <tr valign="top">
         <th width="80%">Name</th>
+        <th>Assertions</th>
         <th>Tests</th>
         <th>Errors</th>
         <th>Failures</th>
@@ -315,7 +322,8 @@
         <th>Name</th>
         <th>Status</th>
         <th width="80%">Type</th>
-        <th nowrap="nowrap">Time(s)</th>
+        <th>Assertions</th>
+        <th nowrap="nowrap">Time (s)</th>
     </tr>
 </xsl:template>
 
@@ -333,6 +341,7 @@
     
         <!-- print testsuite information -->
         <td><a href="#{@name}"><xsl:value-of select="@name"/></a></td>
+        <td><xsl:value-of select="@assertions"/></td>
         <td><xsl:value-of select="@tests"/></td>
         <td><xsl:value-of select="@errors"/></td>
         <td><xsl:value-of select="@failures"/></td>
@@ -366,6 +375,7 @@
                 <td></td>
             </xsl:otherwise>
         </xsl:choose>
+        <td><xsl:value-of select="@assertions"/></td>
         <td>
             <xsl:call-template name="display-time">
                 <xsl:with-param name="value" select="@time"/>
