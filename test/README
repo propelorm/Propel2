@@ -11,7 +11,7 @@
 
 You must configure both the generator and the runtime connection settings.
 {{{
-// in test/projects/bookstore/build.properties
+// in test/fixtures/bookstore/build.properties
 propel.database = mysql
 propel.database.url = mysql:dbname=test
 propel.mysqlTableType = InnoDB
@@ -22,7 +22,7 @@ propel.database.password = p@ssw0rd
 }}}
 
 {{{
-// in test/projects/bookstore/runtime-conf.xml
+// in test/fixtures/bookstore/runtime-conf.xml
 <datasource id="bookstore">
   <!-- the Propel adapter to use for this connection -->
   <adapter>mysql</adapter>
@@ -52,9 +52,9 @@ propel.database.password = p@ssw0rd
 
 {{{
 > cd /path/to/propel/test
-> ../generator/bin/propel-gen projects/bookstore
+> ../generator/bin/propel-gen fixtures/bookstore
 > mysqladmin create test
-> ../generator/bin/propel-gen projects/bookstore insert-sql
+> ../generator/bin/propel-gen fixtures/bookstore insert-sql
 }}}
 
 == Run the Unit Tests ==
