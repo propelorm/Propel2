@@ -309,7 +309,7 @@ class TableMap {
 	 * @param      string $defaultValue The default value for this column.
 	 * @return     ColumnMap The newly created column.
 	 */
-	public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $pk = null, $fkTable = null, $fkColumn = null)
+	public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $pk = false, $fkTable = null, $fkColumn = null)
 	{
 
 		$col = new ColumnMap($name, $this);

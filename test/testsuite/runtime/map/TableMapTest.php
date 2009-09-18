@@ -125,4 +125,35 @@ class TableMapTest extends PHPUnit_Framework_TestCase
       $this->fail('getColumn accepts a $normalize parameter to skip name normalization');
     } catch(PropelException $e) {}
   }
+  
+  public function testGetColumns()
+  {
+    $this->assertEquals(array(), $this->tmap->getColumns(), 'getColumns returns an empty array when no columns were added');
+    $column1 = $this->tmap->addColumn('BAR', 'Bar', 'INTEGER');
+    $column2 = $this->tmap->addColumn('BAZ', 'Baz', 'INTEGER');
+    $this->assertEquals(array('BAR' => $column1, 'BAZ' => $column2), $this->tmap->getColumns(), 'getColumns returns the columns indexed by name');
+  }
+  
+  public function testAddPrimaryKey()
+  {
+    $column1 = $this->tmap->addPrimaryKey('BAR', 'Bar', 'INTEGER');
+    $this->assertTrue($column1->isPrimaryKey(), 'Columns added by way of addPrimaryKey() are primary keys');
+    $column2 = $this->tmap->addColumn('BAZ', 'Baz', 'INTEGER');
+    $this->assertFalse($column2->isPrimaryKey(), 'Columns added by way of addColumn() are not primary keys by default');
+    $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, true);
+    $this->assertTrue($column3->isPrimaryKey(), 'Columns added by way of addColumn() can be defined as primary keys');
+    $column4 = $this->tmap->addForeignKey('BAZZZ', 'Bazzz', 'INTEGER', 'Table1', 'column1');
+    $this->assertFalse($column4->isPrimaryKey(), 'Columns added by way of addForeignKey() are not primary keys');
+    $column5 = $this->tmap->addForeignPrimaryKey('BAZZZZ', 'Bazzzz', 'INTEGER', 'table1', 'column1');
+    $this->assertTrue($column5->isPrimaryKey(), 'Columns added by way of addForeignPrimaryKey() are primary keys');
+  }
+  
+  public function testGetPrimaryKeyColumns()
+  {
+    $this->assertEquals(array(), $this->tmap->getPrimaryKeyColumns(), 'getPrimaryKeyColumns() returns an empty array by default');
+    $column1 = $this->tmap->addPrimaryKey('BAR', 'Bar', 'INTEGER');
+    $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, true);
+    $expected = array($column1, $column3);
+    $this->assertEquals($expected, $this->tmap->getPrimaryKeyColumns(), 'getPrimaryKeyColumns() returns an  array of the table primary keys');
+  }
 }
