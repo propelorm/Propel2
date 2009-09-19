@@ -374,6 +374,32 @@ class ColumnMap {
   {
     return $this->relatedColumnName;
   }
+  
+  /**
+   * Get the TableMap object that this column is related to.
+   *
+   * @return     TableMap The related TableMap object
+   * @throws     PropelException when called on a column with no foreign key
+   */
+  public function getRelatedTable()
+  {
+    if ($this->relatedTableName) {
+      return $this->table->getDatabaseMap()->getTable($this->relatedTableName);
+    } else {
+      throw new PropelException("Cannot fetch RelatedTable for column with no foreign key: " . $this->columnName);
+    }
+  }
+  
+  /**
+   * Get the TableMap object that this column is related to.
+   *
+   * @return     ColumnMap The related ColumnMap object
+   * @throws     PropelException when called on a column with no foreign key
+   */
+  public function getRelatedColumn()
+  {
+    return $this->getRelatedTable()->getColumn($this->relatedColumnName);
+  }
 
   public function addValidator($validator)
   {

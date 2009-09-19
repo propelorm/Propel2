@@ -4,6 +4,22 @@ require_once 'PHPUnit/Framework/TestCase.php';
 include_once 'propel/map/ColumnMap.php';
 include_once 'propel/map/TableMap.php';
 
+class FakeTableBuilder implements MapBuilder
+{
+  public function doBuild()
+  {
+  }
+  
+  public function isBuilt()
+  {
+    return true;
+  }
+
+  public function getDatabaseMap()
+  {
+  }
+}
+
 /**
  * Test class for TableMap.
  *
@@ -20,7 +36,8 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
   protected function setUp()
   {
     parent::setUp();
-    $this->tmap = new TableMap('foo', new DatabaseMap('foodb'));
+    $this->dmap = new DatabaseMap('foodb');
+    $this->tmap = new TableMap('foo', $this->dmap);
     $this->columnName = 'bar';
     $this->cmap = new ColumnMap($this->columnName, $this->tmap);
   }
@@ -78,6 +95,33 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
     $this->assertNull($this->cmap->getDefaultValue(), 'defaultValue is empty until set');
     $this->cmap->setDefaultValue('FooBar');
     $this->assertEquals('FooBar', $this->cmap->getDefaultValue(), 'defaultValue is set by setDefaultValue()');
+  }
+  
+  public function testGetForeignKey()
+  {
+    $this->assertFalse($this->cmap->isForeignKey(), 'foreignKey is false by default');
+    try
+    {
+      $this->cmap->getRelatedTable();
+      $this->fail('getRelatedTable throws an exception when called on a column with no foreign key');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getRelatedTable throws an exception when called on a column with no foreign key');
+    }
+    try
+    {
+      $this->cmap->getRelatedColumn();
+      $this->fail('getRelatedColumn throws an exception when called on a column with no foreign key');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getRelatedColumn throws an exception when called on a column with no foreign key');
+    }
+    $relatedTmap = $this->dmap->addTable('foo2');
+    // required to let the database map use the foreign TableMap
+    $this->dmap->addTableBuilder('foo2', new FakeTableBuilder());
+    $relatedCmap = $relatedTmap->addColumn('BAR2', 'Bar2', 'INTEGER');
+    $this->cmap->setForeignKey('foo2', 'BAR2');
+    $this->assertTrue($this->cmap->isForeignKey(), 'foreignKey is true after setting the foreign key via setForeignKey()');
+    $this->assertEquals($relatedTmap, $this->cmap->getRelatedTable(), 'getRelatedTable returns the related TableMap object');
+    $this->assertEquals($relatedCmap, $this->cmap->getRelatedColumn(), 'getRelatedColumn returns the related ColumnMap object');
   }
 
 }

@@ -47,9 +47,11 @@ Note that the former way to define a composite join using arrays as arguments of
 
 A few methods were added to the Map classes to ease runtime introspection:
 {{{
-Array TableMap::getPrimaryKeys() // List of the ColumnMap objects corresponding to the table primary keys
-Array TableMap::getForeignKeys() // List of the ColumnMap objects corresponding to the table foreign keys
-String TableMap::getPackage()    // Package of the table
+Array     TableMap::getPrimaryKeys()    // List of the ColumnMap objects corresponding to the table primary keys
+Array     TableMap::getForeignKeys()    // List of the ColumnMap objects corresponding to the table foreign keys
+String    TableMap::getPackage()        // Package of the table
+TableMap  ColumnMap::getRelatedTable()  // Related TableMap object by foreign key
+ColumnMap ColumnMap::getRelatedColumn() // Related ColumnMap object by foreign key
 }}}
 
 == `BasePeer::populateStmtValues()` is now public ==
