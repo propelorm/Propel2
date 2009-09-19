@@ -123,5 +123,15 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($relatedTmap, $this->cmap->getRelatedTable(), 'getRelatedTable returns the related TableMap object');
     $this->assertEquals($relatedCmap, $this->cmap->getRelatedColumn(), 'getRelatedColumn returns the related ColumnMap object');
   }
+  
+  public function testNormalizeName()
+  {
+    $this->assertEquals('', ColumnMap::normalizeName(''), 'normalizeColumnName() returns an empty string when passed an empty string');
+    $this->assertEquals('BAR', ColumnMap::normalizeName('bar'), 'normalizeColumnName() uppercases the input');
+    $this->assertEquals('BAR_BAZ', ColumnMap::normalizeName('bar_baz'), 'normalizeColumnName() does not mind underscores');
+    $this->assertEquals('BAR', ColumnMap::normalizeName('FOO.BAR'), 'normalizeColumnName() removes table prefix');
+    $this->assertEquals('BAR', ColumnMap::normalizeName('BAR'), 'normalizeColumnName() leaves normalized column names unchanged');
+    $this->assertEquals('BAR_BAZ', ColumnMap::normalizeName('foo.bar_baz'), 'normalizeColumnName() can do all the above at the same time');
+  }
 
 }

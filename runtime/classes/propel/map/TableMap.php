@@ -266,7 +266,7 @@ class TableMap {
     if ($name instanceof ColumnMap) {
       $name = $name->getColumnName();
     } else if($normalize) {
-      $name = self::normalizeColumnName($name);
+      $name = ColumnMap::normalizeName($name);
     }
     return isset($this->columns[$name]);
   }
@@ -282,7 +282,7 @@ class TableMap {
   public function getColumn($name, $normalize = true)
   {
     if ($normalize) {
-      $name = self::normalizeColumnName($name);
+      $name = ColumnMap::normalizeName($name);
     }
     if (!$this->containsColumn($name, false)) {
       throw new PropelException("Cannot fetch ColumnMap for undefined column: " . $name);
@@ -394,23 +394,6 @@ class TableMap {
       $col->addValidator($validator);
     }
   }
-  
-  /**
-   * Normalizes the column name, removing table prefix and uppercasing.
-   *
-   * article.first_name becomes FIRST_NAME
-   *
-   * @param      string $name
-   * @return     string Normalized column name.
-   */
-  public static function normalizeColumnName($name)
-  {
-    if (false !== ($pos = strpos($name, '.'))) {
-      $name = substr($name, $pos + 1);
-    }
-    $name = strtoupper($name);
-    return $name;
-  }
 
   // Deprecated methods and attributres, to be removed
   
@@ -431,13 +414,13 @@ class TableMap {
    * Normalizes the column name, removing table prefix and uppercasing.
    * article.first_name becomes FIRST_NAME
    *
-   * @deprecated Use normalizeColumName() instead (static method)
+   * @deprecated Use ColumnMap::normalizeColumName() instead
    * @param      string $name
    * @return     string Normalized column name.
    */
   protected function normalizeColName($name)
   {
-    return self::normalizeColumnName($name);
+    return ColumnMap::normalizeName($name);
   }
   
   /**

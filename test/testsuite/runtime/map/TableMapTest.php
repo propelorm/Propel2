@@ -77,16 +77,6 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('barr', $this->tmap->getPackage(), 'Package is set by setPackage()');
   }
   
-  public function testNormalizeColumnName()
-  {
-    $this->assertEquals('', TableMap::normalizeColumnName(''), 'normalizeColumnName() returns an empty string when passed an empty string');
-    $this->assertEquals('BAR', TableMap::normalizeColumnName('bar'), 'normalizeColumnName() uppercases the input');
-    $this->assertEquals('BAR_BAZ', TableMap::normalizeColumnName('bar_baz'), 'normalizeColumnName() does not mind underscores');
-    $this->assertEquals('BAR', TableMap::normalizeColumnName('FOO.BAR'), 'normalizeColumnName() removes table prefix');
-    $this->assertEquals('BAR', TableMap::normalizeColumnName('BAR'), 'normalizeColumnName() leaves normalized column names unchanged');
-    $this->assertEquals('BAR_BAZ', TableMap::normalizeColumnName('foo.bar_baz'), 'normalizeColumnName() can do all the above at the same time');
-  }
-  
   public function testHasColumn()
   {
     $this->assertFalse($this->tmap->hasColumn('BAR'), 'hascolumn() returns false when the column is not in the table map');

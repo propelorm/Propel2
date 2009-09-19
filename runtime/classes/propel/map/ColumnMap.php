@@ -430,6 +430,23 @@ class ColumnMap {
     }
   }
   
+  /**
+   * Normalizes the column name, removing table prefix and uppercasing.
+   *
+   * article.first_name becomes FIRST_NAME
+   *
+   * @param      string $name
+   * @return     string Normalized column name.
+   */
+  public static function normalizeName($name)
+  {
+    if (false !== ($pos = strpos($name, '.'))) {
+      $name = substr($name, $pos + 1);
+    }
+    $name = strtoupper($name);
+    return $name;
+  }
+  
   // deprecated methods
   
   /**
