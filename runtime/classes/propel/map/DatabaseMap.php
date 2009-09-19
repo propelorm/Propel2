@@ -157,7 +157,7 @@ class DatabaseMap {
    * Get a ColumnMap for the column by name.
    * Name must be fully qualified, e.g. book.AUTHOR_ID
    *
-   * @param      squalifiedColumnName $name Name of the column.
+   * @param      $qualifiedColumnName Name of the column.
    * @return     ColumnMap A TableMap
    * @throws     PropelException if the table is undefined, or if the table is undefined
    */  
