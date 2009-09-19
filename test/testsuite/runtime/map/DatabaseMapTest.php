@@ -124,4 +124,26 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     $this->assertTrue($this->databaseMap->hasTable('foo2'), 'hasTable() returns true as long as the table has a builder');
     $this->assertEquals($this->databaseMap->getTable('foo2'), TestDatabaseBuilder::getTmap(), 'getTable() builds the table if it was not built before');
   }
+  
+  public function testGetColumn()
+  {
+    try
+    {
+      $this->databaseMap->getColumn('foo.BAR');
+      $this->fail('getColumn() throws an exception when called on column of an inexistent table');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getColumn() throws an exception when called on column of an inexistent table');
+    }
+    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder());
+    $tmap = $this->databaseMap->addTable('foo');
+    try
+    {
+      $this->databaseMap->getColumn('foo.BAR');
+      $this->fail('getColumn() throws an exception when called on an inexistent column of an existent table');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getColumn() throws an exception when called on an inexistent column of an existent table');
+    }
+    $column = $tmap->addColumn('BAR', 'Bar', 'INTEGER');
+    $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
+  }
 }

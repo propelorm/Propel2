@@ -152,6 +152,20 @@ class DatabaseMap {
   {
     $this->tableBuilders[$tableName] = $builder;
   }
+
+  /**
+   * Get a ColumnMap for the column by name.
+   * Name must be fully qualified, e.g. book.AUTHOR_ID
+   *
+   * @param      squalifiedColumnName $name Name of the column.
+   * @return     ColumnMap A TableMap
+   * @throws     PropelException if the table is undefined, or if the table is undefined
+   */  
+  public function getColumn($qualifiedColumnName)
+  {
+    list($tableName, $columnName) = explode('.', $qualifiedColumnName);
+    return $this->getTable($tableName)->getColumn($columnName, false);
+  }
   
   // deprecated methods
   
