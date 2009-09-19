@@ -5,7 +5,7 @@ include_once 'propel/map/ColumnMap.php';
 include_once 'propel/map/TableMap.php';
 include_once 'propel/map/DatabaseMap.php';
 
-class FakeTableBuilder implements MapBuilder
+class FakeTableBuilder2 implements MapBuilder
 {
   public function doBuild()
   {
@@ -105,7 +105,7 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     }
     $tmap = $this->databaseMap->addTable('foo');
     $this->assertFalse($this->databaseMap->hasTable('foo'), 'hasTable() returns false as long as the table has no builder');
-    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder());
+    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder2());
     $this->assertTrue($this->databaseMap->hasTable('foo'), 'hasTable() returns true when the table has a builder');
     $this->assertEquals($tmap, $this->databaseMap->getTable('foo'), 'getTable() returns a table by name when it was built');
   }
@@ -134,7 +134,7 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     } catch(PropelException $e) {
       $this->assertTrue(true, 'getColumn() throws an exception when called on column of an inexistent table');
     }
-    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder());
+    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder2());
     $tmap = $this->databaseMap->addTable('foo');
     try
     {
