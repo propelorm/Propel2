@@ -211,6 +211,7 @@ class ".$this->getClassname()." implements MapBuilder {
 		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
 		\$tMap->setPhpName('".$table->getPhpName()."');
 		\$tMap->setClassname('" . $this->getObjectClassname() . "');
+		\$tMap->setPackage('" . parent::getPackage() . "');
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "

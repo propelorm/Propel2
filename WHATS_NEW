@@ -45,7 +45,12 @@ Note that the former way to define a composite join using arrays as arguments of
 
 == Better Introspection at Runtime ==
 
-`TableMap` objects now have a `getPrimaryKeys()` and a `getForeignKeys()` method that return an array of `ColumnMap` objects corresponding to the primary and foreign keys defined for the table.
+A few methods were added to the Map classes to ease runtime introspection:
+{{{
+Array TableMap::getPrimaryKeys() // List of the ColumnMap objects corresponding to the table primary keys
+Array TableMap::getForeignKeys() // List of the ColumnMap objects corresponding to the table foreign keys
+String TableMap::getPackage()    // Package of the table
+}}}
 
 == `BasePeer::populateStmtValues()` is now public ==
 

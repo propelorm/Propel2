@@ -58,6 +58,9 @@ class TableMap {
   // The Classname for this table
   protected $classname;
 
+  // The Package for this table
+  protected $package;
+  
   // Whether to use an id generator for pkey
   protected $useIdGenerator;
   
@@ -142,6 +145,25 @@ class TableMap {
     return $this->classname;
   }
   
+  /**
+   * Set the Package of the Table
+   *
+   * @param      string $package The Package
+   */
+  public function setPackage($package)
+  {
+    $this->package = $package;
+  }
+
+  /**
+   * Get the Package of the table.
+   * @return     string
+   */
+  public function getPackage()
+  {
+    return $this->package;
+  }
+    
   /**
    * Set whether or not to use Id generator for primary key.
    * @param      boolean $bit

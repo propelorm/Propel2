@@ -70,6 +70,13 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('FooBarClass', $this->tmap->getClassName(), 'ClassName is set by setClassName()');
   }
   
+  public function testPackage()
+  {
+    $this->assertNull($this->tmap->getPackage(), 'Package is empty until set');
+    $this->tmap->setPackage('barr');
+    $this->assertEquals('barr', $this->tmap->getPackage(), 'Package is set by setPackage()');
+  }
+  
   public function testNormalizeColumnName()
   {
     $this->assertEquals('', TableMap::normalizeColumnName(''), 'normalizeColumnName() returns an empty string when passed an empty string');
