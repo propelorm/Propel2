@@ -99,6 +99,35 @@ class ColumnMap {
   }
 
   /**
+   * Get the table map this column belongs to.
+   * @return     TableMap
+   */
+  public function getTable()
+  {
+    return $this->table;
+  }
+
+  /**
+   * Get the name of the table this column is in.
+   *
+   * @return     string A String with the table name.
+   */
+  public function getTableName()
+  {
+    return $this->table->getName();
+  }
+  
+  /**
+   * Get the table name + column name.
+   *
+   * @return     string A String with the full column name.
+   */
+  public function getFullyQualifiedName()
+  {
+    return $this->getTableName() . "." . $this->columnName;
+  }
+
+  /**
    * Set the php anme of this column.
    *
    * @param      string $phpName A string representing the PHP name.
@@ -118,36 +147,7 @@ class ColumnMap {
   {
     return $this->phpName;
   }
-
-  /**
-   * Get the table name + column name.
-   *
-   * @return     string A String with the full column name.
-   */
-  public function getFullyQualifiedName()
-  {
-    return $this->table->getName() . "." . $this->columnName;
-  }
-
-  /**
-   * Get the table map this column belongs to.
-   * @return     TableMap
-   */
-  public function getTable()
-  {
-    return $this->table;
-  }
-
-  /**
-   * Get the name of the table this column is in.
-   *
-   * @return     string A String with the table name.
-   */
-  public function getTableName()
-  {
-    return $this->table->getName();
-  }
-
+  
   /**
    * Set the Propel type of this column.
    *
@@ -170,17 +170,6 @@ class ColumnMap {
   }
 
   /**
-   * Get the PHP type of this column.
-   *
-   * @return     int The PDO::PARMA_* value
-   */
-   /*
-  public function getPhpType()
-  {
-    return PropelColumnTypes::getPhpType($this->type);
-  }
-  */
-  /**
    * Get the PDO type of this column.
    *
    * @return     int The PDO::PARMA_* value
@@ -199,6 +188,17 @@ class ColumnMap {
     return ($this->type == PropelColumnTypes::BLOB || $this->type == PropelColumnTypes::VARBINARY || $this->type == PropelColumnTypes::LONGVARBINARY);
   }
 
+  /**
+   * Whether this is a DATE/TIME/TIMESTAMP column.
+   *
+   * @return     boolean
+   * @since      1.3
+   */
+  public function isTemporal()
+  {
+    return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME || $this->type == PropelColumnTypes::BU_DATE  || $this->type == PropelColumnTypes::BU_TIMESTAMP);
+  }
+  
   /**
    * Whether this is a DATE/TIME/TIMESTAMP column that is post-epoch (1970).
    *
@@ -223,17 +223,6 @@ class ColumnMap {
   }
 
   /**
-   * Whether this is a DATE/TIME/TIMESTAMP column.
-   *
-   * @return     boolean
-   * @since      1.3
-   */
-  public function isTemporal()
-  {
-    return ($this->type == PropelColumnTypes::TIMESTAMP || $this->type == PropelColumnTypes::DATE || $this->type == PropelColumnTypes::TIME || $this->type == PropelColumnTypes::BU_DATE  || $this->type == PropelColumnTypes::BU_TIMESTAMP);
-  }
-
-  /**
    * Whether this column is a text column (varchar, char, longvarchar).
    * @return     boolean
    */
@@ -252,6 +241,16 @@ class ColumnMap {
   {
     $this->size = $size;
   }
+  
+  /**
+   * Get the size of this column.
+   *
+   * @return     int An int specifying the size.
+   */
+  public function getSize()
+  {
+    return $this->size;
+  }
 
   /**
    * Set if this column is a primary key or not.
@@ -262,6 +261,16 @@ class ColumnMap {
   public function setPrimaryKey($pk)
   {
     $this->pk = $pk;
+  }
+  
+  /**
+   * Is this column a primary key?
+   *
+   * @return     boolean True if column is a primary key.
+   */
+  public function isPrimaryKey()
+  {
+    return $this->pk;
   }
 
   /**
@@ -274,7 +283,27 @@ class ColumnMap {
   {
     $this->notNull = $nn;
   }
+  
+  /**
+   * Is null value allowed ?
+   *
+   * @return     boolean True if column may not be null.
+   */
+  public function isNotNull()
+  {
+    return ($this->notNull || $this->isPrimaryKey());
+  }
 
+  /**
+   * Sets the default value for this column.
+   * @param      mixed $defaultValue the default value for the column
+   * @return     void
+   */
+  public function setDefaultValue($defaultValue)
+  {
+    $this->defaultValue = $defaultValue;
+  }
+  
   /**
    * Gets the default value for this column.
    * @return     mixed String or NULL
@@ -302,51 +331,6 @@ class ColumnMap {
     }
   }
 
-  public function addValidator($validator)
-  {
-    $this->validators[] = $validator;
-  }
-
-  public function hasValidators()
-  {
-    return count($this->validators) > 0;
-  }
-
-  public function getValidators()
-  {
-    return $this->validators;
-  }
-
-  /**
-   * Get the size of this column.
-   *
-   * @return     int An int specifying the size.
-   */
-  public function getSize()
-  {
-    return $this->size;
-  }
-
-  /**
-   * Is this column a primary key?
-   *
-   * @return     boolean True if column is a primary key.
-   */
-  public function isPrimaryKey()
-  {
-    return $this->pk;
-  }
-
-  /**
-   * Is null value allowed ?
-   *
-   * @return     boolean True if column may not be null.
-   */
-  public function isNotNull()
-  {
-    return ($this->notNull || $this->isPrimaryKey());
-  }
-
   /**
    * Is this column a foreign key?
    *
@@ -360,7 +344,7 @@ class ColumnMap {
       return false;
     }
   }
-
+  
   /**
    * Get the table.column that this column is related to.
    *
@@ -391,6 +375,21 @@ class ColumnMap {
     return $this->relatedColumnName;
   }
 
+  public function addValidator($validator)
+  {
+    $this->validators[] = $validator;
+  }
+
+  public function hasValidators()
+  {
+    return count($this->validators) > 0;
+  }
+
+  public function getValidators()
+  {
+    return $this->validators;
+  }
+  
   /**
    * Performs DB-specific ignore case, but only if the column type necessitates it.
    * @param      string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
