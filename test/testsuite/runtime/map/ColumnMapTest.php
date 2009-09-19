@@ -24,13 +24,11 @@ class FakeTableBuilder implements MapBuilder
  * Test class for TableMap.
  *
  * @author     François Zaninotto
- * @version    $Id: JoinTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id: ColumnMapTest.php 1121 2009-09-14 17:20:11Z francois $
  * @package    runtime.map
  */
 class ColumnMapTest extends PHPUnit_Framework_TestCase 
 { 
-  protected $savedAdapter;
-  
   protected $databaseMap;
 
   protected function setUp()

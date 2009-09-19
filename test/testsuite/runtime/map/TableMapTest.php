@@ -26,13 +26,11 @@ class TestableTableMap extends TableMap
  * Test class for TableMap.
  *
  * @author     François Zaninotto
- * @version    $Id: JoinTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id: TableMapTest.php 1121 2009-09-14 17:20:11Z francois $
  * @package    runtime.map
  */
 class TableMapTest extends PHPUnit_Framework_TestCase 
 { 
-  protected $savedAdapter;
-  
   protected $databaseMap;
 
   protected function setUp()
