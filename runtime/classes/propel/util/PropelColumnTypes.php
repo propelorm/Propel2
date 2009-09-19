@@ -56,34 +56,6 @@ class PropelColumnTypes {
 
 	const BOOLEAN = "BOOLEAN";
 
-	/*
-	private static $propelToPhpMap = array(
-		self::CHAR 			=> "string",
-		self::VARCHAR 		=> "string",
-		self::LONGVARCHAR 	=> "string",
-		self::CLOB 			=> "string",
-		self::NUMERIC 		=> "PARAM_STR",
-		self::DECIMAL 		=> "PARAM_STR",
-		self::TINYINT 		=> "PARAM_INT",
-		self::SMALLINT 		=> "PARAM_INT",
-		self::INTEGER 		=> "PARAM_INT",
-		self::BIGINT 		=> "PARAM_STR",
-		self::REAL 			=> "PARAM_STR",
-		self::FLOAT 		=> "PARAM_STR",
-		self::DOUBLE 		=> "PARAM_STR",
-		self::BINARY 		=> "PARAM_STR",
-		self::VARBINARY 	=> "PARAM_STR",
-		self::LONGVARBINARY => "PARAM_STR",
-		self::BLOB 			=> "PARAM_LOB",
-		self::DATE 			=> "PARAM_STR",
-		self::TIME 			=> "PARAM_STR",
-		self::TIMESTAMP 	=> "PARAM_STR",
-		self::BU_DATE 		=> "PARAM_STR",
-		self::BU_TIMESTAMP 	=> "PARAM_STR",
-		self::BOOLEAN 		=> "PARAM_BOOL",
-	);
-	*/
-
 	private static $propelToPdoMap = array(
 		self::CHAR 			=> PDO::PARAM_STR,
 		self::VARCHAR 		=> PDO::PARAM_STR,
@@ -109,19 +81,6 @@ class PropelColumnTypes {
 		self::BU_TIMESTAMP 	=> PDO::PARAM_STR,
 		self::BOOLEAN 		=> PDO::PARAM_BOOL,
 	);
-
-	/**
-	 * Return native PHP type which corresponds to the Propel type provided.
-	 *
-	 * @param      $propelType The Propel type.
-	 * @return     string Name of the native PHP type
-	 */
-	 /*
-	public static function getPhpType($propelType)
-	{
-		return self::$propelToPhpMap[$propelType];
-	}
-	*/
 
 	/**
 	 * Resturns the PDO type (PDO::PARAM_* constant) value for the Propel type provided.
