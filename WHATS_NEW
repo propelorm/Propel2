@@ -43,6 +43,10 @@ LEFT JOIN user ON (book.USER_ID = user.ID AND user.RANK > 12)
 
 Note that the former way to define a composite join using arrays as arguments of `addJoin()` is deprecated.
 
+== Better Introspection at Runtime ==
+
+`TableMap` objects now have a `getPrimaryKeys()` and a `getForeignKeys()` method that return an array of `ColumnMap` objects corresponding to the primary and foreign keys defined for the table.
+
 == `BasePeer::populateStmtValues()` is now public ==
 
 You can now use a SQL query of your own, or modify the one returned by `BasePeer::createSelectSql()`, and use the binding capabilities of Propel to populate a query with a set of values. Propel uses the PDO type of the column to do the binding, so this method may save you some hassle: 
