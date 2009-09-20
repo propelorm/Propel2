@@ -146,4 +146,30 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     $column = $tmap->addColumn('BAR', 'Bar', 'INTEGER');
     $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
   }
+  
+  public function testGetTableByPhpName()
+  {
+    try
+    {
+      $this->databaseMap->getTableByPhpName('Foo');
+      $this->fail('getTableByPhpName() throws an exception when called on an inexistent table');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on an inexistent table');
+    }
+    $this->databaseMap->addTableBuilder('foo', new FakeTableBuilder2());
+    $tmap = $this->databaseMap->addTable('foo');
+    try
+    {
+      $this->databaseMap->getTableByPhpName('Foo');
+      $this->fail('getTableByPhpName() throws an exception when called on a table with no phpName');
+    } catch(PropelException $e) {
+      $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on a table with no phpName');
+    }
+    $this->databaseMap->addPhpName('Foo', 'foo');
+    $this->assertEquals($tmap, $this->databaseMap->getTableByPhpName('Foo'), 'getTableByPhpName() returns tableMap when phpName was set by way of addPhpName()');
+    $this->databaseMap->addTableBuilder('foo2', new FakeTableBuilder2());
+    $tmap2 = $this->databaseMap->addTable('foo2');
+    $tmap2->setPhpName('Foo2');
+    $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
+  }
 }

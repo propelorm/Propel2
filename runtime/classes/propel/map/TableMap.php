@@ -114,6 +114,7 @@ class TableMap {
   public function setPhpName($phpName)
   {
     $this->phpName = $phpName;
+    $this->dbMap->addPhpName($phpName, $this->tableName);
   }
   
   /**

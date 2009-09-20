@@ -47,6 +47,7 @@ Note that the former way to define a composite join using arrays as arguments of
 
 A few methods were added to the Map classes to ease runtime introspection:
 {{{
+TableMap  DatabaseMap::getTableByPhpName($name) // TableMap object by object model name, e.g. 'Book'
 ColumnMap DatabaseMap::getColumn($name) // ColumnMap object by fully qualified name, e.g. book.AUTHOR_ID
 TableMap  ColumnMap::getRelatedTable()  // Related TableMap object by foreign key
 ColumnMap ColumnMap::getRelatedColumn() // Related ColumnMap object by foreign key

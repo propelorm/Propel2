@@ -47,7 +47,10 @@ class DatabaseMap {
 
   // Name of the tables in the database
   protected $tables = array();
-
+  
+  // phpNames of the tables in the database
+  protected $tablesByPhpName = array();
+  
   /**
    * The table MapBuilder objects that will initialize tables (on demand).
    * @var        array Map of table builders (name => MapBuilder)
@@ -180,5 +183,22 @@ class DatabaseMap {
   {
     return $this->hasTable($table);
   }
-
+  
+  public function addPhpName($phpName, $name)
+  {
+    $this->tablesByPhpName[$phpName] = $name;
+  }
+  
+  public function getTableByPhpName($phpName)
+  {
+    if (array_key_exists($phpName, $this->tablesByPhpName)) {
+      return $this->getTable($this->tablesByPhpName[$phpName]);
+    } else if (class_exists($phpName . 'Peer')) {
+      // call a constant on the class to trigger TableMapBuilder via autoloading
+      constant($phpName . 'Peer::TABLE_NAME');
+      return $this->getTable($this->tablesByPhpName[$phpName]);
+    } else {
+      throw new PropelException("Cannot fetch TableMap for undefined table phpName: " . $phpName);
+    }
+  }
 }
