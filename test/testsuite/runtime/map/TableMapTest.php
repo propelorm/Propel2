@@ -166,6 +166,48 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($expected, $this->tmap->getForeignKeys(), 'getForeignKeys() returns an array of the table foreign keys');
   }
   
+  public function testLazyLoadRelations()
+  {
+    try {
+      $this->tmap->getRelation('Bar');
+      $this->fail('getRelation() throws an exception when called on a table with no relation builder');    
+    } catch (PropelException $e) {
+      $this->assertTrue(true, 'getRelation() throws an exception when called on a table with no relation builder');
+    }
+    $this->tmap->setRelationsBuilder('get_class');
+    $this->assertEquals(array(), $this->tmap->getRelations(), 'Adding a builder allows relations to be initialized');
+    try {
+      $this->tmap->getRelation('Bar');
+      $this->fail('getRelation() throws an exception when called on an inexistent relation');    
+    } catch (PropelException $e) {
+      $this->assertTrue(true, 'getRelation() throws an exception when called on  an inexistent relation');
+    }
+    $foreigntmap = $this->databaseMap->addTable('bar');
+    $rmap1 = $this->tmap->addRelation('Bar', 'bar', RelationMap::HAS_ONE);
+    $rmap2 = $this->tmap->getRelation('Bar');
+    $this->assertEquals($rmap1, $rmap2, 'getRelation() returns the relations set by setRelation()');
+  }
+  
+  public function testAddRelation()
+  {
+    // in order to call addRelation() without using a map builder, the following trick is necessary
+    $this->tmap->setRelationsBuilder('get_class');
+    $this->tmap->getRelations();
+    // now on to the test
+    $foreigntmap1 = $this->databaseMap->addTable('bar');
+    $rmap1 = $this->tmap->addRelation('Bar', 'bar', RelationMap::HAS_ONE);
+    $this->assertEquals($rmap1->getLocalTable(), $this->tmap, 'adding a relation with HAS_ONE sets the local table to the current table');    
+    $this->assertEquals($rmap1->getForeignTable(), $foreigntmap1, 'adding a relation with HAS_ONE sets the foreign table according to the name given');
+    $this->assertEquals(RelationMap::HAS_ONE, $rmap1->getType(), 'adding a relation with HAS_ONE sets the foreign table type accordingly');
+    $foreigntmap2 = $this->databaseMap->addTable('baz');
+    $rmap2 = $this->tmap->addRelation('Bazz', 'baz', RelationMap::HAS_MANY);
+    $this->assertEquals($rmap2->getForeignTable(), $this->tmap, 'adding a relation with HAS_MANY sets the foreign table to the current table');    
+    $this->assertEquals($rmap2->getLocalTable(), $foreigntmap2, 'adding a relation with HAS_MANY sets the local table according to the name given');
+    $this->assertEquals(RelationMap::HAS_MANY, $rmap2->getType(), 'adding a relation with HAS_MANY sets the foreign table type accordingly');
+    $expectedRelations = array('Bar' => $rmap1, 'Bazz' => $rmap2);
+    $this->assertEquals($expectedRelations, $this->tmap->getRelations(), 'getRelations() returns an associative array of all the relations');
+  }
+
   // deprecated method
   public function testNormalizeColName()
   {

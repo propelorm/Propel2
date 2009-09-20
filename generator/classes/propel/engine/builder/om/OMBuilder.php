@@ -204,4 +204,113 @@ abstract class OMBuilder extends DataModelBuilder {
 		return $class;
 	}
 
+	/**
+	 * Convenience method to get the foreign Table object for an fkey.
+	 * @return     Table
+	 */
+	protected function getForeignTable(ForeignKey $fk)
+	{
+		return $this->getTable()->getDatabase()->getTable($fk->getForeignTableName());
+	}
+
+	/**
+	 * Gets the PHP method name affix to be used for fkeys for the current table (not referrers to this table).
+	 *
+	 * The difference between this method and the getRefFKPhpNameAffix() method is that in this method the
+	 * classname in the affix is the foreign table classname.
+	 *
+	 * @param      ForeignKey $fk The local FK that we need a name for.
+	 * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+	 * @return     string
+	 */
+	public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
+	{
+		if ($fk->getPhpName()) {
+			if ($plural) {
+				return $this->getPluralizer()->getPluralForm($fk->getPhpName());
+			} else {
+				return $fk->getPhpName();
+			}
+		} else {
+			$className = $this->getForeignTable($fk)->getPhpName();
+			if ($plural) {
+				$className = $this->getPluralizer()->getPluralForm($className);
+			}
+			return $className . $this->getRelatedBySuffix($fk, true);
+		}
+	}
+
+	/**
+	 * Gets the PHP method name affix to be used for referencing foreign key methods and variable names (e.g. set????(), $coll???).
+	 *
+	 * The difference between this method and the getFKPhpNameAffix() method is that in this method the
+	 * classname in the affix is the classname of the local fkey table.
+	 *
+	 * @param      ForeignKey $fk The referrer FK that we need a name for.
+	 * @param      boolean $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
+	 * @return     string
+	 */
+	public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
+	{
+		if ($fk->getRefPhpName()) {
+			if ($plural) {
+				return $this->getPluralizer()->getPluralForm($fk->getRefPhpName());
+			} else {
+				return $fk->getRefPhpName();
+			}
+		} else {
+			$className = $fk->getTable()->getPhpName();
+			if ($plural) {
+				$className = $this->getPluralizer()->getPluralForm($className);
+			}
+			return $className . $this->getRelatedBySuffix($fk);
+		}
+	}
+
+	/**
+	 * Gets the "RelatedBy*" suffix (if needed) that is attached to method and variable names.
+	 *
+	 * The related by suffix is based on the local columns of the foreign key.  If there is more than
+	 * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix
+	 * will be appended.
+	 *
+	 * @return     string
+	 */
+	protected function getRelatedBySuffix(ForeignKey $fk, $columnCheck = false)
+	{
+		$relCol = "";
+		foreach ($fk->getLocalColumns() as $columnName) {
+			$column = $fk->getTable()->getColumn($columnName);
+			if (!$column) {
+				throw new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
+			}
+
+			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
+			|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
+				// if there are seeral foreign keys that point to the same table
+				// then we need to generate methods like getAuthorRelatedByColName()
+				// instead of just getAuthor().  Currently we are doing the same
+				// for self-referential foreign keys, to avoid confusion.
+				$relCol .= $column->getPhpName();
+			}
+		}
+
+		#var_dump($fk->getForeignTableName() . ' - ' .$fk->getTableName() . ' - ' . $this->getTable()->getName());
+
+		#$fk->getForeignTableName() != $this->getTable()->getName() &&
+		// @todo comment on it
+		if ($columnCheck && !$relCol && $fk->getTable()->getColumn($fk->getForeignTableName())) {
+			foreach ($fk->getLocalColumns() as $columnName) {
+				$column = $fk->getTable()->getColumn($columnName);
+				$relCol .= $column->getPhpName();
+			}
+		}
+
+
+		if ($relCol != "") {
+			$relCol = "RelatedBy" . $relCol;
+		}
+
+		return $relCol;
+	}
 }

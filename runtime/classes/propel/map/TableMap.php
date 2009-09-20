@@ -69,10 +69,19 @@ class TableMap {
   
   // The foreign key columns in the table
   protected $foreignKeys = array();
+
+  // The relationships in the table
+  protected $relations = array();
+  
+  // Relation builder - should be a callable
+  protected $relationsBuilder;
+
+  // Relations are lazy loaded. This property tells if the relations are loaded or not
+  protected $relationsBuilt = false;
   
   // Object to store information that is needed if the for generating primary keys
   protected $pkInfo;
-
+  
   /**
    * Construct a new TableMap.
    *
@@ -394,6 +403,94 @@ class TableMap {
       $validator->setMessage($message);
       $col->addValidator($validator);
     }
+  }
+
+  /**
+   * Set a callable to build the relationships
+   * Typically, a the callable should be a method of the map builder
+   * 
+   * @param array $builder Callable used to build the relations
+   */
+  public function setRelationsBuilder($builder)
+  {
+    if (!is_callable($builder))
+    {
+      throw new PropelException('The relations builder must be a callable');
+    }
+    $this->relationsBuilder = $builder;
+  }
+  
+  /**
+   * Calls the table map builder to build the relations
+   * Relations are lazy loaded for performance reasons
+   *
+   * @throws PropelException If relationBuilder is not set
+   */
+  public function buildRelations()
+  {
+    if (is_null($this->relationsBuilder))
+    {
+      throw new PropelException("Cannot build relations as long as a relation builder callable is not set.");
+    }
+    call_user_func($this->relationsBuilder, $this);
+    $this->relationsBuilt = true;
+  }  
+  
+  /**
+   * Adds a RelationMap to the table
+   * 
+   * @param      string $name The relation name
+   * @param      string $tableName The related table name
+   * @param      integar $type The relation type (either RelationMap::HAS_ONE, or RelationMap::HAS_MANY) 
+   */
+  public function addRelation($name, $tableName, $type)
+  {
+    $relation = new RelationMap($name);
+    if ($type == RelationMap::HAS_ONE) {
+      $relation->setType(RelationMap::HAS_ONE);
+      $relation->setLocalTable($this);
+      $relation->setForeignTable($this->dbMap->getTable($tableName));
+    } else {
+      $relation->setType(RelationMap::HAS_MANY);
+      $relation->setForeignTable($this);
+      $relation->setLocalTable($this->dbMap->getTable($tableName));
+    } 
+    $this->relations[$name] = $relation;
+    return $relation;
+  }
+
+  /**
+   * Gets a RelationMap of the table by relation name
+   *
+   * @param       String $name The relation name 
+   * @return      RelationMap The relation object
+   * @throws      PropelException When called on an inexistent relation
+   */
+  public function getRelation($name)
+  {
+    if(!$this->relationsBuilt)
+    {
+      $this->buildRelations();
+    }
+    if (!array_key_exists($name, $this->relations))
+    {
+      throw new PropelException('Calling getRelation() on an unknown relation, ' . $name);
+    }
+    return $this->relations[$name];
+  }
+
+  /**
+   * Gets the RelationMap objects of the table
+   * 
+   * @return      Array list of RelationMap objects
+   */
+  public function getRelations()
+  {
+    if(!$this->relationsBuilt)
+    {
+      $this->buildRelations();
+    }
+    return $this->relations;
   }
 
   // Deprecated methods and attributres, to be removed

@@ -106,6 +106,7 @@ class ".$this->getClassname()." implements MapBuilder {
 		$this->addIsBuilt($script);
 		$this->addGetDatabaseMap($script);
 		$this->addDoBuild($script);
+		$this->addBuildRelations($script);
 	}
 
 	/**
@@ -207,35 +208,32 @@ class ".$this->getClassname()." implements MapBuilder {
 	public function doBuild()
 	{
 		\$this->dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
-
+    // table
 		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
 		\$tMap->setPhpName('".$table->getPhpName()."');
 		\$tMap->setClassname('" . $this->getObjectClassname() . "');
-		\$tMap->setPackage('" . parent::getPackage() . "');
-";
+		\$tMap->setPackage('" . parent::getPackage() . "');";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-		\$tMap->setUseIdGenerator(true);
-";
+		\$tMap->setUseIdGenerator(true);";
 		} else {
 			$script .= "
-		\$tMap->setUseIdGenerator(false);
-";
+		\$tMap->setUseIdGenerator(false);";
 		}
 
 		if ($table->getIdMethodParameters()) {
 			$params = $table->getIdMethodParameters();
 			$imp = $params[0];
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$imp->getValue()."');
-";
+		\$tMap->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
 		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == Platform::SEQUENCE || $platform->getNativeIdMethod() == Platform::SERIAL)) {
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');
-";
+		\$tMap->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');";
 		}
 
 		// Add columns to map
+			$script .= "
+		// columns";
 		foreach ($table->getColumns() as $col) {
 			$cfc=$col->getPhpName();
 			$cup=strtoupper($col->getName());
@@ -248,49 +246,75 @@ class ".$this->getClassname()." implements MapBuilder {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
-";
+		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");";
 					}
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");
-";
+		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");";
 				}
 			} else {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");
-";
+		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");";
 					}
 			} else {
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");
-";
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");";
 				}
 			} // if col-is prim key
 		} // foreach
 
+		// validators
+    $script .= "
+		// validators";
 		foreach ($table->getValidators() as $val) {
 			$col = $val->getColumn();
 			$cup = strtoupper($col->getName());
 			foreach ($val->getRules() as $rule) {
 				if ($val->getTranslate() !== Validator::TRANSLATE_NONE) {
 					$script .= "
-		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));
-";
+		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));";
 				} else {
 					$script .= "
-		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', '".str_replace("'", "\'", $rule->getMessage())."');
-";
+		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', '".str_replace("'", "\'", $rule->getMessage())."');";
 				} // if ($rule->getTranslation() ...
   			} // foreach rule
 		}  // foreach validator
 
 		$script .= "
+		// relationships (lazy loaded)
+		\$tMap->setRelationsBuilder(array(\$this, 'doBuildRelations'));
 	} // doBuild()
 ";
 
 	}
 
+	/**
+	 * Adds the method that build the RelationMap objects
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addBuildRelations(&$script)
+	{
+		$script .= "
+	/**
+	 * Build the RelationMap objects for this table relationships
+	 */
+	public function doBuildRelations(\$tmap)
+	{";
+    foreach ($this->getTable()->getForeignKeys() as $fkey)
+    {
+      $script .= "
+    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTableName() . "', RelationMap::HAS_ONE);";
+    }
+    foreach ($this->getTable()->getReferrers() as $fkey)
+    {
+      $script .= "
+    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTableName() . "', RelationMap::HAS_MANY);";
+    }
+    $script .= "
+	} // buildRelations()
+";
+	}
+	
 } // PHP5ExtensionPeerBuilder
