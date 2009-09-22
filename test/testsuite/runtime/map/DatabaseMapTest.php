@@ -172,4 +172,9 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     $tmap2->setPhpName('Foo2');
     $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
   }
+  public function testGetTableByPhpNameNotLoaded()
+  {
+    $this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a MapBuilder when the Peer class is generated and autoloaded');
+  }
+  
 }

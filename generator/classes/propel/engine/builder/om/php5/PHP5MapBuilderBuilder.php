@@ -304,13 +304,25 @@ class ".$this->getClassname()." implements MapBuilder {
 	{";
     foreach ($this->getTable()->getForeignKeys() as $fkey)
     {
+      $columnMapping = 'array(';
+      foreach ($fkey->getLocalForeignMapping() as $key => $value)
+      {
+        $columnMapping .= "'$key' => '$value', ";
+      }
+      $columnMapping .= ')';
       $script .= "
-    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTableName() . "', RelationMap::HAS_ONE);";
+    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping);";
     }
     foreach ($this->getTable()->getReferrers() as $fkey)
     {
+      $columnMapping = 'array(';
+      foreach ($fkey->getForeignLocalMapping() as $key => $value)
+      {
+        $columnMapping .= "'$key' => '$value', ";
+      }
+      $columnMapping .= ')';
       $script .= "
-    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTableName() . "', RelationMap::HAS_MANY);";
+    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping);";
     }
     $script .= "
 	} // buildRelations()

@@ -53,7 +53,14 @@ TableMap  ColumnMap::getRelatedTable()  // Related TableMap object by foreign ke
 ColumnMap ColumnMap::getRelatedColumn() // Related ColumnMap object by foreign key
 Array     TableMap::getPrimaryKeys()    // List of the ColumnMap objects corresponding to the table primary keys
 Array     TableMap::getForeignKeys()    // List of the ColumnMap objects corresponding to the table foreign keys
+Arrat     TableMap::getRelations()      // List of the table relationships, as RelationMap objects
 String    TableMap::getPackage()        // Package of the table
+}}}
+
+Also, it is now much easier to get the name of the Propel object class from the Peer class:
+{{{
+echo BookPeer::getOMClass()                    => 'bookstore.Book'
+echo BookPeer::getOMClass($withPrefix = false) => 'Book'
 }}}
 
 == `BasePeer::populateStmtValues()` is now public ==

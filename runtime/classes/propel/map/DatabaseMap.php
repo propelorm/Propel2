@@ -151,9 +151,12 @@ class DatabaseMap {
    *
    * @param      string $tableName The name of the table.
    */
-  public function addTableBuilder($tableName, MapBuilder $builder)
+  public function addTableBuilder($tableName, MapBuilder $builder, $phpName = null)
   {
     $this->tableBuilders[$tableName] = $builder;
+    if(!is_null($phpName)) {
+      $this->addPhpName($phpName, $tableName);
+    }
   }
 
   /**
