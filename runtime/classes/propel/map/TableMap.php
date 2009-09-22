@@ -440,25 +440,53 @@ class TableMap {
    * Adds a RelationMap to the table
    * 
    * @param      string $name The relation name
-   * @param      string $tableName The related table name
-   * @param      integar $type The relation type (either RelationMap::HAS_ONE, or RelationMap::HAS_MANY) 
+   * @param      string $tablePhpName The related table name
+   * @param      integer $type The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY, or RelationMAp::ONE_TO_ONE) 
+   * @param      array $columnMapping An associative array mapping column names (local => foreign)
+   * @return     RelationMap the built RelationMap object
    */
-  public function addRelation($name, $tableName, $type)
+  public function addRelation($name, $tablePhpName, $type, $columnMapping = array())
   {
+    // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
+    // and this method autoloads the mapbuilder if the table isn't built yet
     $relation = new RelationMap($name);
-    if ($type == RelationMap::HAS_ONE) {
-      $relation->setType(RelationMap::HAS_ONE);
+    $relation->setType($type);
+    // set tables
+    if ($type == RelationMap::MANY_TO_ONE) {
       $relation->setLocalTable($this);
-      $relation->setForeignTable($this->dbMap->getTable($tableName));
+      $relation->setForeignTable($this->dbMap->getTableByPhpName($tablePhpName));
     } else {
-      $relation->setType(RelationMap::HAS_MANY);
+      $relation->setLocalTable($this->dbMap->getTableByPhpName($tablePhpName));
       $relation->setForeignTable($this);
-      $relation->setLocalTable($this->dbMap->getTable($tableName));
-    } 
+      $columnMapping  = array_flip($columnMapping);
+    }
+    // set columns
+    foreach ($columnMapping as $key => $value)
+    {
+      $relation->addColumnMapping(
+        $relation->getLocalTable()->getColumn($key),
+        $relation->getForeignTable()->getColumn($value)
+      );
+    }
     $this->relations[$name] = $relation;
     return $relation;
   }
 
+  /**
+   * Gets a RelationMap of the table by relation name
+   *
+   * @param       String $name The relation name 
+   * @return      boolean true if the relation exists
+   */
+  public function hasRelation($name)
+  {
+    if(!$this->relationsBuilt)
+    {
+      $this->buildRelations();
+    }
+    return array_key_exists($name, $this->relations);
+  }
+  
   /**
    * Gets a RelationMap of the table by relation name
    *

@@ -41,15 +41,17 @@
 class RelationMap {
 
   const
-    HAS_ONE = 1,
-    HAS_MANY = 2;
+    MANY_TO_ONE = 1,
+    ONE_TO_MANY = 2,
+    ONE_TO_ONE = 3;
     
   protected 
     $name,
     $type,
     $localTable,
     $foreignTable,
-    $columnMapping,
+    $localColumns = array(),
+    $foreignColumns = array(),
     $onUpdate, $onDelete;
 
   /**
@@ -130,5 +132,51 @@ class RelationMap {
   public function getForeignTable()
   {
     return $this->foreignTable;
+  }
+  
+  /**
+   * Add a column mapping
+   *
+   * @param   ColumnMap $local The local column
+   * @param   ColumnMap $foreign The foreign column
+   */
+  public function addColumnMapping(ColumnMap $local, ColumnMap $foreign)
+  {
+    $this->localColumns[] = $local;
+    $this->foreignColumns[] = $foreign;
+  }
+  
+  /**
+   * Get an associative array mapping local column names to foreign column names
+   *
+   * @return Array Associative array (local => foreign) of fully qualified column names
+   */
+  public function getColumnMappings()
+  {
+    $h = array();
+    for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+      $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
+    }
+    return $h;
+  }
+  
+  /**
+   * Get the local columns
+   *
+   * @return      Array list of ColumnMap objects
+   */
+  public function getLocalColumns()
+  {
+    return $this->localColumns;
+  }
+  
+  /**
+   * Get the foreign columns
+   *
+   * @return      Array list of ColumnMap objects
+   */
+  public function getForeignColumns()
+  {
+    return $this->foreignColumns;
   }
 }

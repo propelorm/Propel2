@@ -47,7 +47,29 @@ class RelationMapTest extends PHPUnit_Framework_TestCase
   public function testType()
   {
     $this->assertNull($this->rmap->getType(), 'A new relation has no type');
-    $this->rmap->setType(RelationMap::HAS_MANY);
-    $this->assertEquals(RelationMap::HAS_MANY, $this->rmap->getType(), 'The type is set by setType()');
+    $this->rmap->setType(RelationMap::ONE_TO_MANY);
+    $this->assertEquals(RelationMap::ONE_TO_MANY, $this->rmap->getType(), 'The type is set by setType()');
+  }
+  
+  public function testColumns()
+  {
+    $this->assertEquals(array(), $this->rmap->getLocalColumns(), 'A new relation has no local columns');
+    $this->assertEquals(array(), $this->rmap->getForeignColumns(), 'A new relation has no foreign columns');
+    $tmap1 = new TableMap('foo', $this->databaseMap);
+    $col1 = $tmap1->addColumn('FOO1', 'Foo1PhpName', 'INTEGER');
+    $tmap2 = new TableMap('bar', $this->databaseMap);
+    $col2 = $tmap2->addColumn('BAR1', 'Bar1PhpName', 'INTEGER');
+    $this->rmap->addColumnMapping($col1, $col2);
+    $this->assertEquals(array($col1), $this->rmap->getLocalColumns(), 'addColumnMapping() adds a local table');
+    $this->assertEquals(array($col2), $this->rmap->getForeignColumns(), 'addColumnMapping() adds a foreign table');
+    $expected = array('foo.FOO1' => 'bar.BAR1');
+    $this->assertEquals($expected, $this->rmap->getColumnMappings(), 'getColumnMappings() returns an associative array of column mappings');
+    $col3 = $tmap1->addColumn('FOOFOO', 'FooFooPhpName', 'INTEGER');
+    $col4 = $tmap2->addColumn('BARBAR', 'BarBarPhpName', 'INTEGER');
+    $this->rmap->addColumnMapping($col3, $col4);
+    $this->assertEquals(array($col1, $col3), $this->rmap->getLocalColumns(), 'addColumnMapping() adds a local table');
+    $this->assertEquals(array($col2, $col4), $this->rmap->getForeignColumns(), 'addColumnMapping() adds a foreign table');
+    $expected = array('foo.FOO1' => 'bar.BAR1', 'foo.FOOFOO' => 'bar.BARBAR');
+    $this->assertEquals($expected, $this->rmap->getColumnMappings(), 'getColumnMappings() returns an associative array of column mappings');
   }
 }
