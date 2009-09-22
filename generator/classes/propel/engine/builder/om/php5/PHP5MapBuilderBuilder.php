@@ -310,8 +310,10 @@ class ".$this->getClassname()." implements MapBuilder {
         $columnMapping .= "'$key' => '$value', ";
       }
       $columnMapping .= ')';
+      $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
+      $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping);";
+    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
     }
     foreach ($this->getTable()->getReferrers() as $fkey)
     {
@@ -321,8 +323,10 @@ class ".$this->getClassname()." implements MapBuilder {
         $columnMapping .= "'$key' => '$value', ";
       }
       $columnMapping .= ')';
+      $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
+      $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping);";
+    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
     }
     $script .= "
 	} // buildRelations()

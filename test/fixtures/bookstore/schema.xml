@@ -17,7 +17,7 @@
 		<foreign-key foreignTable="publisher" onDelete="SETNULL">
 			<reference local="publisher_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="author" onDelete="SETNULL">
+		<foreign-key foreignTable="author" onDelete="SETNULL" onUpdate="cascade">
 			<reference local="author_id" foreign="id" />
 		</foreign-key>
 		<validator column="title" translate="none">

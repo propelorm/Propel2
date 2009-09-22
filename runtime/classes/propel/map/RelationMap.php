@@ -179,4 +179,44 @@ class RelationMap {
   {
     return $this->foreignColumns;
   }
+  
+  /**
+   * Set the onUpdate behavior
+   *
+   * @param      string $onUpdate
+   */
+  public function setOnUpdate($onUpdate)
+  {
+    $this->onUpdate = $onUpdate;
+  }
+
+  /**
+   * Get the onUpdate behavior
+   *
+   * @return      integer the relation type
+   */
+  public function getOnUpdate()
+  {
+    return $this->onUpdate;
+  }
+  
+  /**
+   * Set the onDelete behavior
+   *
+   * @param      string $onDelete
+   */
+  public function setOnDelete($onDelete)
+  {
+    $this->onDelete = $onDelete;
+  }
+
+  /**
+   * Get the onDelete behavior
+   *
+   * @return      integer the relation type
+   */
+  public function getOnDelete()
+  {
+    return $this->onDelete;
+  }
 }

@@ -44,11 +44,17 @@ class RelationMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($tmap2, $this->rmap->getForeignTable(), 'The foreign table is set by setForeignTable()');
   }
   
-  public function testType()
+  public function testProperties()
   {
-    $this->assertNull($this->rmap->getType(), 'A new relation has no type');
-    $this->rmap->setType(RelationMap::ONE_TO_MANY);
-    $this->assertEquals(RelationMap::ONE_TO_MANY, $this->rmap->getType(), 'The type is set by setType()');
+    $properties = array('type', 'onUpdate', 'onDelete');
+    foreach ($properties as $property)
+    {
+      $getter = 'get' . ucfirst($property);
+      $setter = 'set' . ucfirst($property);
+      $this->assertNull($this->rmap->$getter(), "A new relation has no $property");
+      $this->rmap->$setter('foo_value');
+      $this->assertEquals('foo_value', $this->rmap->$getter(), "The $property is set by setType()");
+    }
   }
   
   public function testColumns()

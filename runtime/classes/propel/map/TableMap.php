@@ -445,12 +445,14 @@ class TableMap {
    * @param      array $columnMapping An associative array mapping column names (local => foreign)
    * @return     RelationMap the built RelationMap object
    */
-  public function addRelation($name, $tablePhpName, $type, $columnMapping = array())
+  public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null)
   {
     // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
     // and this method autoloads the mapbuilder if the table isn't built yet
     $relation = new RelationMap($name);
     $relation->setType($type);
+    $relation->setOnUpdate($onUpdate);
+    $relation->setOnDelete($onDelete);
     // set tables
     if ($type == RelationMap::MANY_TO_ONE) {
       $relation->setLocalTable($this);

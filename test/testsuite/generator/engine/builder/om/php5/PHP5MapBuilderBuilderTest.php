@@ -67,4 +67,17 @@ class PHP5MapBuilderBuilderTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($expectedMapping, $rfTable->getRelation('BookOpinion')->getColumnMappings(), 'The map builder adds all columns for composite foreign keys');
   }
   
+  public function testRelationOnDelete()
+  {
+    $bookTable = $this->databaseMap->getTableByPhpName('Book');
+    $this->assertEquals('SET NULL', $bookTable->getRelation('Publisher')->getOnDelete(), 'The map builder adds columns with the correct onDelete');
+  }
+  
+  public function testRelationOnUpdate()
+  {
+    $bookTable = $this->databaseMap->getTableByPhpName('Book');
+    $this->assertNull($bookTable->getRelation('Publisher')->getOnUpdate(), 'The map builder adds columns with onDelete null by default');
+    $this->assertEquals('CASCADE', $bookTable->getRelation('Author')->getOnUpdate(), 'The map builder adds columns with the correct onUpdate');
+  }
+  
 }
