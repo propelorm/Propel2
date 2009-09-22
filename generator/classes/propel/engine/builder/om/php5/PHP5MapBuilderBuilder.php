@@ -235,32 +235,33 @@ class ".$this->getClassname()." implements MapBuilder {
 			$script .= "
 		// columns";
 		foreach ($table->getColumns() as $col) {
-			$cfc=$col->getPhpName();
 			$cup=strtoupper($col->getName());
+		  $cfc=$col->getPhpName();
 			if (!$col->getSize()) {
 				$size = "null";
 			} else {
 				$size = $col->getSize();
 			}
+			$default = $col->getDefaultValueString();
 			if ($col->isPrimaryKey()) {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");";
+		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
 					}
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");";
+		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
 				}
 			} else {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.");";
+		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
 					}
 			} else {
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.");";
+		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
 				}
 			} // if col-is prim key
 		} // foreach

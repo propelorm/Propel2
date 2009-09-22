@@ -932,6 +932,29 @@ class Column extends XMLElement {
 	}
 
 	/**
+	 * Return a string that will give this column a default value in PHP
+	 * @return     string
+	 */
+	public function getDefaultValueString()
+	{
+		$defaultValue = $this->getDefaultValue();
+		if ($defaultValue !== null) {
+			  if ($this->isNumericType()) {
+			    $dflt = $defaultValue->getValue();
+			  } elseif ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
+					$dflt = $this->getPlatform()->quote($defaultValue->getValue());
+				} elseif ($this->getType() == PropelTypes::BOOLEAN) {
+					$dflt = $defaultValue->getValue() ? "true" : "false";
+				} else {
+					$dflt = "'" . $defaultValue->getValue() . "'";
+				}
+		} else {
+		  $dflt = "null";
+		}
+		return $dflt;
+	}
+	
+	/**
 	 * Set a string that will give this column a default value.
 	 */
 	public function setDefaultValue($def)

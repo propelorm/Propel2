@@ -17,6 +17,16 @@ class PHP5MapBuilderBuilderTest extends PHPUnit_Framework_TestCase
   {
     $this->databaseMap = Propel::getDatabaseMap('bookstore');
   }
+  
+  public function testColumnDefaultValue()
+  {
+    $table = $this->databaseMap->getTableByPhpName('BookstoreEmployeeAccount');
+    $this->assertNull($table->getColumn('login')->getDefaultValue(), 'null default values are correctly mapped');
+    $this->assertEquals('\'@\'\'34\"', $table->getColumn('password')->getDefaultValue(), 'string default values are correctly escaped and mapped');
+    $this->assertTrue($table->getColumn('enabled')->getDefaultValue(), 'boolean default values are correctly mapped');
+    $this->assertEquals('CURRENT_TIMESTAMP', $table->getColumn('created')->getDefaultValue(), 'expression default values are correctly mapped');
+    
+  }
 
   public function testRelationCount()
   {
