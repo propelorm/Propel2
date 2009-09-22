@@ -153,11 +153,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 // NOTE: This static code cannot call methods on the ".$this->getPeerClassname()." class, because it is not defined yet.
 // If you need to use overridden methods, you can add this code to the bottom of the ".$this->getPeerClassname()." class:
 //
-// Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getPeerClassname()."::TABLE_NAME, ".$this->getPeerClassname()."::getMapBuilder());
+// Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getPeerClassname()."::TABLE_NAME, ".$this->getPeerClassname()."::getMapBuilder(), ".$this->getClassname()."::OM_CLASS);
 //
 // Doing so will effectively overwrite the registration below.
 
-Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getClassname()."::TABLE_NAME, ".$this->getClassname()."::getMapBuilder());
+Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getClassname()."::TABLE_NAME, ".$this->getClassname()."::getMapBuilder(), ".$this->getClassname()."::OM_CLASS);
 
 ";
 	}
@@ -169,14 +169,18 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	protected function addConstantsAndAttributes(&$script)
 	{
-		$tableName = $this->prefixTableName($this->getTable()->getName());
 		$dbName = $this->getDatabase()->getName();
+	  $tableName = $this->prefixTableName($this->getTable()->getName());
+	  $tablePhpName = $this->getTable()->isAbstract() ? '' : $this->getTable()->getPhpName();
 		$script .= "
 	/** the default database name for this class */
 	const DATABASE_NAME = '$dbName';
 
 	/** the table name for this class */
 	const TABLE_NAME = '$tableName';
+
+	/** the related Propel class for this table */
+	const OM_CLASS = '$tablePhpName';
 
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = '".$this->getStubObjectBuilder()->getClasspath()."';
@@ -991,15 +995,17 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/**
 	 * The class that the Peer will make instances of.
 	 *
-	 * This uses a dot-path notation which is tranalted into a path
+	 * If \$withPrefix is true, the returned path
+	 * uses a dot-path notation which is tranalted into a path
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
+	 * @param      boolean $withPrefix Whether or not to return the path wit hthe class name 
 	 * @return     string path.to.ClassName
 	 */
-	public static function getOMClass()
+	public static function getOMClass(\$withPrefix = true)
 	{
-		return ".$this->getPeerClassname()."::CLASS_DEFAULT;
+		return \$withPrefix ? ".$this->getPeerClassname()."::CLASS_DEFAULT : ".$this->getPeerClassname()."::OM_CLASS;
 	}
 ";
 	}
@@ -1017,7 +1023,7 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 * This method must be overridden by the stub subclass, because
 	 * ".$this->getObjectClassname()." is declared abstract in the schema.
 	 */
-	abstract public static function getOMClass();
+	abstract public static function getOMClass(\$withPrefix = true);
 ";
 	}
 
