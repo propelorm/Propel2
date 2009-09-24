@@ -1,11 +1,20 @@
 = Running The Propel Unit Tests =
 
+== Background ==
+
+Propel uses [http://www.phpunit.de PHPUnit 3.9] to test the build and runtime frameworks.
+
+You can find the unit test classes and support files in the [browser:branches/1.4/test/testsuite] directory. 
+
 == Install PHPUnit ==
 
+In order to run the tests, you must install PHPUnit:
 {{{
 > pear channel-discover pear.phpunit.de
-> pear install phpunit/phpunit
+> pear install phpunit/PHPUnit-3.3.9
 }}}
+
+Tip: The latest release of PHPUnit (3.4) is not totally BC with the 3.3, and doesn't have a Phing adapter yet. That's why the Propel unit tests still use PHPUnit version 3.3.
 
 == Configure the Database to be Used in the Tests ==
 
@@ -70,3 +79,48 @@ To run a single test, specify the classname (minus 'Test' ending) on the command
 {{{
 > phing -f test.xml -Dtest=GeneratedObject
 }}}
+
+Tip: If you want to set up custom Phing properties for your unit tests, create a `test.properties` file inside the main `test/` directory. Phing will automatically try to load it if it exists.
+
+== How the Tests Work ==
+
+Every method in the test classes that begins with 'test' is run as a test case by PHPUnit.  All tests are run in isolation; the `setUp()` method is called at the beginning of ''each'' test and the `tearDown()` method is called at the end.
+
+The [browser:branches/1.4/test/tools/helpers/bookstore/BookstoreTestBase.php BookstoreTestBase] class specifies `setUp()` and `tearDown()` methods which populate and depopulate, respectively, the database.  This means that every unit test is run with a cleanly populated database.  To see the sample data that is populated, take a look at the [browser:branches/1.4/test/tools/helpers/bookstore/BookstoreDataPopulator.php BookstoreDataPopulator] class. You can also add data to this class, if needed by your tests; however, proceed cautiously when changing existing data in there as there may be unit tests that depend on it. More typically, you can simply create the data you need from within your test method. It will be deleted by the `tearDown()` method, so no need to clean up after yourself.
+
+== Writing Tests ==
+
+If you've made a change to a template or to Propel behavior, the right thing to do is write a unit test that ensures that it works properly -- and continues to work in the future.
+
+Writing a unit test often means adding a method to one of the existing test classes. For example, let's test a feature in the Propel templates that supports saving of objects when only default values have been specified. Just add a `testSaveWithDefaultValues()` method to the [browser:branches/1.4/test/testsuite/generator/engine/builder/om/php5/GeneratedObjectTest.php GeneratedObjectTest] class, as follows:
+
+{{{
+#!php
+<?php
+/** 
+ * Test saving object when only default values are set.
+ */
+public function testSaveWithDefaultValues() {
+  
+  // Relies on a default value of 'Penguin' specified in schema
+  // for publisher.name col.
+  
+  $pub = new Publisher();
+  $pub->setName('Penguin');
+    // in the past this wouldn't have marked object as modified
+    // since 'Penguin' is the value that's already set for that attrib
+  $pub->save();
+  
+  // if getId() returns the new ID, then we know save() worked.
+  $this->assertTrue($pub->getId() !== null, "Expect Publisher->save() to work  with only default values.");
+}
+?>
+}}}
+
+Run the test again using the command line to check that it passes:
+
+{{{
+> phing -f test.xml -Dtest=GeneratedObject
+}}}
+
+You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The Phing task will find these files automatically and run them.
