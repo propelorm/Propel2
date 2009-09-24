@@ -184,7 +184,7 @@ class DatabaseMap {
    */
   public function containsTable($name)
   {
-    return $this->hasTable($table);
+    return $this->hasTable($name);
   }
   
   public function addPhpName($phpName, $name)
