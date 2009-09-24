@@ -1170,7 +1170,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		// Because BLOB columns are streams in PDO we have to assume that they are
 		// always modified when a new value is passed in.  For example, the contents
 		// of the stream itself may have changed externally.
-		if (!is_resource(\$v)) {
+		if (!is_resource(\$v) && \$v !== null) {
 			\$this->$clo = fopen('php://memory', 'r+');
 			fwrite(\$this->$clo, \$v);
 			rewind(\$this->$clo);

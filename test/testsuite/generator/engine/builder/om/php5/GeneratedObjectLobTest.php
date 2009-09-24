@@ -154,6 +154,35 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 	}
 
 	/**
+	 * Tests the setting of null LOBs
+	 */
+	public function testLobNulls()
+	{
+		$book = BookPeer::doSelectOne(new Criteria());
+
+		$m1 = new Media();
+		$m1->setBook($book);
+		$this->assertTrue($m1->getCoverImage() === null, "Initial LOB value for a new object should be null.");
+
+		$m1->save();
+		$m1_id = $m1->getId();
+
+		$m2 = new Media();
+		$m2->setBook($book);
+		$m2->setCoverImage(null);
+		$this->assertTrue($m2->getCoverImage() === null, "Setting a LOB to null should cause accessor to return null.");
+
+		$m2->save();
+		$m2_id = $m2->getId();
+
+		$m1->reload();
+		$this->assertTrue($m1->getCoverImage() === null, "Default null LOB value should be null after a reload.");
+
+		$m2->reload();
+		$this->assertTrue($m2->getCoverImage() === null, "LOB value set to null should be null after a reload.");
+	}
+
+	/**
 	 * Tests the setting of LOB (BLOB and CLOB) values.
 	 */
 	public function testLobSetting()
