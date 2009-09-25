@@ -59,5 +59,13 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
 
 	}
+	
+	public function testPhpNamingMethod()
+	{
+	  $bookTmap = Propel::getDatabaseMap(BookPeer::DATABASE_NAME)->getTable(BookPeer::TABLE_NAME);
+	  $this->assertEquals('AuthorId', $bookTmap->getColumn('AUTHOR_ID')->getPhpName(), 'setPhpName() uses the default phpNamingMethod');
+	  $pageTmap = Propel::getDatabaseMap(PagePeer::DATABASE_NAME)->getTable(PagePeer::TABLE_NAME);
+	  $this->assertEquals('LeftChild', $pageTmap->getColumn('LEFTCHILD')->getPhpName(), 'setPhpName() uses the configured phpNamingMethod');
+	}
 
 }

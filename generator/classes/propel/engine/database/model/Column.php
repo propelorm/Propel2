@@ -309,7 +309,7 @@ class Column extends XMLElement {
 	public function setPhpName($phpName = null)
 	{
 		if ($phpName == null) {
-			$this->phpName = self::generatePhpName($this->name, PhpNameGenerator::CONV_METHOD_CLEAN, $this->namePrefix);
+			$this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
 		} else {
 			$this->phpName = $phpName;
 		}
