@@ -1,0 +1,73 @@
+= Working with LOB Columns =
+
+Propel uses PHP streams internally for storing ''Binary'' Locator Objects (BLOBs).  This choice was made because PDO itself uses streams as a convention when returning LOB columns in a resultset and when binding values to prepared statements.  Unfortunately, not all PDO drivers support this (see, for example, http://bugs.php.net/bug.php?id=40913); in those cases, Propel creates a {{{php://temp}}} stream to hold the LOB contents and thus provide a consistent API.
+
+Note that CLOB (''Character'' Locator Objects) are treated as strings in Propel, as there is no convention for them to be treated as streams by PDO.
+
+== Getting BLOB Values ==
+
+BLOB values will be returned as PHP stream resources from the accessor methods.  Alternatively, if the value is NULL in the database, then the accessors will return the PHP value NULL.
+
+{{{
+#!php
+<?php
+$media = MediaPeer::retrieveByPK(1);
+$fp = $media->getCoverImage();
+if ($fp !== null) {
+  echo stream_get_contents($fp);
+}
+}}}
+
+== Setting BLOB Values ==
+
+When setting a BLOB column, you can either pass in a stream or the blob contents.
+
+=== Setting using a stream ===
+{{{
+#!php
+<?php
+
+$fp = fopen("/path/to/file.ext", "rb");
+
+$media = new Media();
+$media->setCoverImage($fp);
+}}}
+
+=== Setting using file contents ===
+{{{
+#!php
+<?php
+
+$media = new Media();
+$media->setCoverImage(file_get_contents("/path/to/file.ext"));
+}}}
+
+Regardless of which setting method you choose, the BLOB will always be represented internally as a stream resource -- ''and subsequent calls to the accessor methods will return a stream.''
+
+For example:
+{{{
+#!php
+<?php
+
+$media = new Media();
+$media->setCoverImage(file_get_contents("/path/to/file.ext"));
+
+$fp = $media->getCoverImage();
+print gettype($fp); // "resource"
+}}}
+
+=== Setting BLOB columns and isModified() ===
+
+Note that because a stream contents may be externally modified, ''mutator methods for BLOB columns will always set the '''isModified()''' to report true'' -- even if the stream has the same identity as the stream that was returned.
+
+For example:
+{{{
+#!php
+<?php
+
+$media = MediaPeer::retrieveByPK(1);
+$fp = $media->getCoverImage();
+$media->setCoverImage($fp);
+
+var_export($media->isModified()); // TRUE
+}}}

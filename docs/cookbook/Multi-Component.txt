@@ -1,0 +1,108 @@
+= Multi-Component Data Model =
+
+Propel comes along with packaging capabilities that allow you to more easily integrate Propel into a packaged or modularized application.
+
+== Schema files ==
+
+You can use as many schema.xml files as you want. Probably you'll want to have one schema file per package. Your schema files have to be named (*.)schema.xml, i.e. names like schema.xml, package1.schema.xml, core.package1.schema.xml are all acceptable. These files ''have'' to be located in your project directory.
+
+In the bookstore-packaged example you'll find the following schema files:
+
+ * author.schema.xml
+ * book.schema.xml
+ * club.schema.xml
+ * media.schema.xml
+ * publisher.schema.xml
+ * review.schema.xml
+ * log.schema.xml
+
+Each schema file has to contain a database tag that has its package attribute set to the package name where ''all'' of the tables in this schema file/database belong to. 
+
+For example, in the bookstore-packaged example the author.schema.xml contains the following database  tag:
+{{{
+<database package="core.author" name="bookstore" [...]>
+}}}
+
+That means, that the Author OM classes will be created in a subdirectory core/author/ of the build output directory.
+
+You can have more than one schema file that belong to one package. For example, in the the bookstore-packaged example both of the book.schema.xml and media.schema.xml belong to the same package "core.book".
+
+== The build property packageObjectModel == 
+
+The build property propel.packageObjectModel enables the packaged build process. 
+
+To switch this on, simply add the following line to your build.properties file in your project directory:
+{{{
+propel.packageObjectModel = true
+}}}
+
+== The OM build ==
+
+To run the packaged bookstore example build simply go to your Propel/generator/ directory and type:
+{{{
+phing -Dproject=bookstore-packaged
+}}}
+This should run without any complaints. When you have a look at the projects/bookstore-packaged/build/classes directory, the following directory tree should have been created:
+{{{
+addon/
+   club/
+      BookClubList.php
+      BookClubListPeer.php
+      BookListRel.php
+      BookListRelPeer.php
+core/
+   author/
+      Author.php
+      AuthorPeer.php
+   book/
+      Book.php
+      BookPeer.php
+
+      Media.php
+      MediaPeer.php
+   publisher/
+      Publisher.php
+      PublisherPeer.php
+   review/
+      Review.php
+      ReviewPeer.php
+util/
+   log/
+      BookstoreLog.php
+      BookstoreLogPeer.php
+}}}
+(The additional subdirectories map/ and om/ in each of these directories have been omitted for clarity.)
+
+You can further tweak the location where Propel puts the created files by changing the '''propel.output.dir''' build property. By default this property is set to: 
+{{{
+propel.output.dir = ${propel.home}/projects/${propel.project}/build
+}}}
+You can change it to use any other directory as your build directory.
+
+== The SQL build ==
+
+When you have run the bookstore-packaged build successfully and have a look at the build/sql/ directory, you will see that for each package (that is specified as a package attribute in the schema file database tags) one sql file has been created:
+
+ * addon.club.schema.sql
+ * core.author.schema.sql
+ * core.book.schema.sql
+ * core.publisher.schema.sql
+ * core.review.schema.sql
+ * util.log.schema.sql
+ 
+These files contain the CREATE TABLE SQL statements necessary for each package.
+
+When you now run the insert-sql task by typing:
+{{{
+phing -Dproject=bookstore-packaged insert-sql
+}}}
+these SQL statements will be executed on a SQLite database located in the Propel/generator/test/ directory.
+
+== Running the test file ==
+
+To test the generated OM classes you might wish to run a test on them. 
+{{{
+cd test
+php bookstore-packaged-test.php
+}}}
+This will execute a series of tests for the most important features of the OM classes and should run without any errors.

@@ -1,0 +1,153 @@
+= Customizing Build =
+It is possible to customize the Propel build process by overriding values in your propel __build.properties__ file. For maximum flexibility, you can even create your own Phing __build.xml__ file.
+
+== Customizing the build.properties ==
+The easiest way to customize your Propel build is to simply specify build properties in your project's __build.properties__ file.
+
+=== Understanding Phing build properties ===
+''Properties'' are essentially variables. These variables can be specified on the commandline or in ''properties files''.
+
+For example, here's how a property might be specified on the commandline:
+{{{
+$> phing -Dpropertyname=value
+}}}
+
+More typically, properties are stored in files and loaded by Phing. For those not familiar with Java properties files, these files look like PHP INI files; the main difference is that values in properties files can be references to other properties (a feature that will probably exist in in INI files in PHP 5.1).
+
+'''Importantly:''' properties, once loaded, are not overridden by properties with the same name unless explicitly told to do so. In the Propel build process, the order of precedence for property values is as follows:
+ 1. Commandline properties
+ 1. Project __build.properties__
+ 1. Top-level __build.properties__
+ 1. Top-level __default.properties__
+
+This means, for example, that values specified in the project's __build.properties__ files will override those in the top-level __build.properties__ and __default.properties__ files.
+
+=== Changing values ===
+To get an idea of what you can modify in Propel, simply look through the __build.properties__ and __default.properties__ files.
+
+''Note, however, that some of the current values exist for legacy reasons and will be cleaned up in Propel 1.1.''
+
+==== New build output directories ====
+This can easily be customized on a project-by-project basis. For example, here is a __build.properties__ file for the ''bookstore ''project that puts the generated classes in __/var/www/bookstore/classes__ and puts the generated SQL in __/var/www/bookstore/db/sql__:
+{{{
+propel.project = bookstore
+propel.database = sqlite
+propel.database.url = sqlite://localhost/./test/bookstore.db
+propel.targetPackage = bookstore
+
+# directories
+prope.output.dir = /var/www/bookstore
+propel.php.dir = ${propel.output.dir}/classes
+propel.phpconf.dir = ${propel.output.dir}/conf
+propel.sql.dir = ${propel.output.dir}/db/sql
+}}}
+
+The ''targetPackage'' property is also used in determining the path of the generated classes. In the example above, the __Book.php__ class will be located at __/var/www/bookstore/classes/bookstore/Book.php__. You can change this __bookstore__ subdir by altering the ''targetPackage'' property:
+{{{
+propel.targetPackage = propelom
+}}}
+
+Now the class will be located at __/var/www/bookstore/classes/propelom/Book.php__
+
+''Note that you can override the targetPackage property by specifying a package="" attribute in the <database> tag or even the <table> tag of the schema.xml.''
+
+== Creating a custom build.xml file ==
+
+If you want to make more major changes to the way the build script works, you can setup your own Phing build script. This actually is not a very scary task, and once you've managed to create a Phing build script, you'll probably want to create build targets for other aspects of your project (e.g. running batch unit tests is now supported in Phing 2.1-CVS).
+
+To start with, I suggest taking a look at the __build-propel.xml__ script (the build.xml script is just a wrapper script). Note, however, that the __build-propel.xml__ script does a lot & has a lot of complexity that is designed to make it easy to configure using properties (so, don't be scared).
+
+Without going into too much detail about how Phing works, the important thing is that Phing build scripts XML and they are grouped into ''targets'' which are kinda like functions. The actual work of the scripts is performed by ''tasks'', which are PHP5 classes that extend the base Phing ''Task'' class and implement its abstract methods. Propel provides some Phing tasks that work with templates to create the object model.
+
+=== Step 1: register the needed tasks ===
+
+The Propel tasks must be registered so that Phing can find them. This is done using the ''<taskdef>'' tag. You can see this near the top of the __build-propel.xml__ file.
+
+For example, here is how we register the ''propel-om'' task, which is the task that creates the PHP classes for your object model:
+{{{
+<taskdef
+    name="propel-om"
+    classname="propel.phing.PropelOMTask"/>
+}}}
+
+Simple enough. Phing will now associate the ''<propel-data-model>'' tag with the ''PropelOMTask'' class, which it expects to find at __propel/phing/PropelOMTask.php__ (on your ''include_path''). If Propel generator classes are not on your ''include_path'', you can specify that path in your ''<taskdef>'' tag:
+{{{
+<taskdef
+    name="propel-om"
+    classname="propel.phing.PropelOMTask"
+    classpath="/path/to/propel-generator/classes"/>
+}}}
+
+Or, for maximum re-usability, you can create a ''<path>'' object, and then reference it (this is the way __build-propel.xml__ does it):
+{{{
+  <path id="propelclasses">
+      <pathelement dir="/path/to/propel-generator/classes"/>
+  </path>
+  
+  <taskdef
+    name="propel-om"
+    classname="propel.phing.PropelOMTask"
+    classpathRef="propelclasses"/>
+}}}
+
+=== Step 2: invoking the new task ===
+
+Now that the ''<propel-om>'' task has been registered with Phing, it can be invoked in your build file.
+{{{
+<propel-om
+      outputDirectory="/var/www/bookstore/classes"
+      targetDatabase="mysql"
+      targetPackage="bookstore"
+      templatePath="/path/to/propel-generator/templates"
+      targetPlatform="php5">
+    <schemafileset dir="/var/www/bookstore/db/model" includes="*schema.xml"/>
+</propel-om>
+}}}
+
+In the example above, it's worth pointing out that the ''<propel-om>'' task can actually transform multiple __schema.xml__ files, which is why there is a ''<schemafileset>'' sub-element. Phing ''filesets'' are beyond the scope of this HOWTO, but hopefully the above example is obvious enough.
+
+=== Step 3: putting it together into a build.xml file ===
+
+Now that we've seen the essential elements of our custom build file, it's time to look at how to assemble them into a working whole:
+{{{
+<?xml version="1.0">
+<project name="propel" default="om">
+ 
+ <!-- set properties we use later -->
+ <property name="propelgen.home" value="/path/to/propel-generator"/>
+ <property name="out.dir" value="/var/www/bookstore"/>
+
+ <!-- register task -->
+  <path id="propelclasses">
+      <pathelement dir="${propelgen.home}/classes"/>
+  </path>
+  
+  <taskdef
+    name="propel-om"
+    classname="propel.phing.PropelOMTask"
+    classpathRef="propelclasses"/>
+
+ 
+ <!-- this [default] target performs the work -->
+ <target name="om" description="build propel om">
+  <propel-om
+    outputDirectory="${out.dir}/classes"
+    targetDatabase="mysql"
+    targetPackage="bookstore"
+    templatePath="${propelgen.home}/templates"
+    targetPlatform="php5">
+      <schemafileset dir="${out.dir}/db/model" includes="*schema.xml"/>
+  </propel-om>
+ </target>
+
+</project>
+}}}
+
+If that build script was named __build.xml__ then it could be executed by simply running ''phing'' in the directory where it is located:
+{{{
+$> phing om
+}}}
+
+Actually, specifying the ''om'' target is not necessary since it is the default.
+
+Refer to the __build-propel.xml__ file for examples of how to use the other Propel Phing tasks -- e.g. ''<propel-sql>'' for generating the DDL SQL, ''<propel-sql-exec>'' for inserting the SQL, etc.

@@ -1,0 +1,148 @@
+= Existing Databases =
+
+The following topics are targeted for developers who already have a working database solution in place, but would like to use Propel to work with the data.
+
+Propel provides a number of ''targets'', which are essentially functions in the Phing (XML) build file, to make it easy to work with existing data.
+
+----
+
+'''Important Note'''
+
+Propel 1.3 offers two options for reverse engineering databases:
+ 1. You can use the new (beta-quality!) "reverse" target which uses Propel's own reverse engineering classes or 
+ 1. You can continue to use the "creole" target which requires you have Creole installed and that you use a special Creole-style DSN pointing to your database.
+
+----
+
+== Before You Get Started ==
+
+Before you attempt to import an existing database, you should make sure that Propel is properly installed. The ''Installation'' chapter of the [wiki:Users/Documentation/1.3/UserGuide User Guide] provides a walk-through on getting Propel installed.  '''If you are planning to use Creole for reverse engineering, make sure you have also installed the optional [http://creole.phpdb.org Creole] package.'''
+
+This document will describe how to work with existing databases if you are using the PEAR-installed form of Propel (which is the assumed default).  You can certainly apply these instructions to other more advanced installations of Propel (e.g. from SVN).
+
+This examples in this document are for unix/Linux operating systems; however, these instructions should translate easily to Windows.
+
+== Working with Database Structures ==
+
+Propel uses an abstract XML schema file to represent databases. Propel builds the SQL specific to a database based on this schema. Propel also provides a way to reverse-engineer the generic schema file based on database metadata. Propel can optionally use the Creole package's reverse-engineering functionality for this task or its own build-in "schema parser" code (which for 1.3 is based very closely on the Creole code).
+
+=== Creating an XML Schema from DB Structure ===
+
+==== (New) Using Propel's Reverse ====
+
+''Note: the reverse engineering classes may not be able to provide the same level of detail for all databases. In particular, metadata information for SQLite is often very basic since SQLite is a typeless database.''
+
+To generate a schema file, create a new directory for your project & specify the connection information in your __build.properties__ file for that project. For example, to create a new project, ''legacyapp'', follow these steps:
+
+ 1. Create the ''legacyapp'' project directory anywhere on your filesystem:
+{{{
+$> mkdir legacyapp
+$> cd legacyapp
+}}}
+ 1. Create a __build.properties__ file in ''legacyapp'' dir with the DB connection parameters for your existing database, e.g.:
+{{{
+propel.project = legacyapp
+
+# The Propel driver to use for generating SQL, etc.
+propel.database = mysql
+
+# This must be a PDO DSN
+propel.database.url = mysql:dbname=legacyapp
+propel.database.user = root
+# propel.database.password = 
+}}}
+ 1. Run the '''reverse''' target to generate the __schema.xml__:
+{{{
+$> propel-gen ./ reverse
+}}}
+ 1. Pay attention to any errors/warnings issued by Phing during the target execution and then examine the generated __schema.xml__ file to make any corrections needed.
+ 1. '''You're done! ''' Now you have a __schema.xml__ file in the ''legacyapp'' project directory. You can now run the default Propel build to generate all the classes.
+
+The generated __schema.xml__ file should be used as a guide, not a final answer. There are some datatypes that Propel may not be familiar with; also some datatypes are simply not supported by Propel (e.g. arrays in PostgreSQL). Unfamiliar datatypes will be reported as warnings and substituted with a default VARCHAR datatype.
+
+==== Using Creole ====
+
+The '''creole''' target of the Propel build file is designed specifically to generate a schema based on an existing database. This target uses the metadata classes from the Creole db abstraction layer to provide information about the database.
+
+''Note: the Creole metadata classes may not be able to provide the same level of detail for all databases. In particular, metadata information for SQLite is often very basic since SQLite is a typeless database.''
+
+To generate a schema file, create a new directory for your project & specify the connection information in your __build.properties__ file for that project. For example, to create a new project, ''legacyapp'', follow these steps:
+
+ 1. Create the ''legacyapp'' project directory anywhere on your filesystem:
+{{{
+$> mkdir legacyapp
+$> cd legacyapp
+}}}
+ 1. Create a __build.properties__ file in ''legacyapp'' dir with the DB connection parameters for your existing database, e.g.:
+{{{
+propel.project = legacyapp
+
+# The Propel driver to use for generating SQL, etc.
+propel.database = mysql
+
+# This must be a Creole DSN (not PDO!)
+propel.database.creole.url = mysql://root@localhost/legacyapp
+}}}
+ 1. Run the '''creole''' target to generate the __schema.xml__:
+{{{
+$> propel-gen ./ creole
+}}}
+ 1. Pay attention to any errors/warnings issued by Phing during the target execution and then examine the generated __schema.xml__ file to make any corrections needed.
+ 1. '''You're done! ''' Now you have a __schema.xml__ file in the ''legacyapp'' project directory. You can now run the default Propel build to generate all the classes.
+
+The generated __schema.xml__ file should be used as a guide, not a final answer. There are some datatypes that Propel may not be familiar with; also some datatypes are simply not supported by Propel (e.g. arrays in PostgreSQL).
+
+=== Migrating Structure to a New RDBMS ===
+
+Because Propel has both the ability to create XML schema files based on existing database structures and to create RDBMS-specific DDL SQL from the XML schema file, you can use Propel to convert one database into another.
+
+To do this you would simply:
+ 1. Follow the steps above to create the __schema.xml__ file from existing db.
+ 1. Then you would change the target database type and specify connection URL for new database in project __build.properties__ file:
+{{{
+propel.database = pgsql
+propel.database.url = pgsql://unix+localhost/newlegacyapp
+}}}
+ 1. And then run the '''sql''' build target to generate the new DDL:
+{{{
+$> propel-gen ./ sql
+}}}
+ 1. And (optionally) the '''insert-sql''' target to create the new database:
+{{{
+$> propel-gen ./ insert-sql
+}}}
+
+== Working with Database Data ==
+
+Propel also provides several targets to aid in working with database data. The most important of these are '''datadump''' and '''datasql'''. The first dumps data to XML and the second converts the XML data dump to a ready-to-insert SQL file.
+
+'''Important:''' Both of these targets require that you already have generated the __schema.xml__ for your database.
+
+=== Dumping Data to XML ===
+
+Once you have created (or reverse-engineered) your __schema.xml__ file, you can run the '''datadump''' task to dump data from the database into a __data.xml__ file.
+
+For example, in the course of running the __bookstore-test.php__ script, data is added to the database. If we were to take a snapshot before the cleanup operations happened, we would have data in the tables. To output the data to the __data.xml__ file, we would execute:
+{{{
+$> propel-gen ./ datadump
+}}}
+
+In the publisher table we have a row like this:
+||'''publisher_id'''||'''name'''||
+||1||William Morrow||
+
+In the generated __data.xml__ file, that row would be represented like this:
+{{{
+<dataset name="all">
+ ...
+  <Publisher PublisherId="1" Name="William Morrow"/>
+ ...
+</dataset>
+}}}
+
+=== Creating SQL from XML ===
+To create the SQL files from the XML, run the '''datasql''' task:
+{{{
+$> propel-gen ./ datasql
+}}}
+The generated SQL is placed in the __build/sql/__ directory and will be inserted when you run the ''insert-sql'' target.

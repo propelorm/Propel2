@@ -1,0 +1,181 @@
+= !NestedSet support in Propel =
+
+== Description ==
+
+With !NestedSet implementation, trees are stored using different approach in databases: [http://www.sitepoint.com/article/hierarchical-data-database]
+
+Nested Set implementation requires three dedicated fields in table structure
+
+    * left
+    * right
+
+Plus an optional fields for multi nested set support
+    * scope
+
+''NB: fields name are free and must be defined in schema.xml''
+
+To enable !NestedSet support in table, schema.xml must define some specific attributes:
+'''treeMode''' which must take the value '''!NestedSet'''
+
+{{{
+#!xml
+  <table name="menu" idMethod="native" treeMode="NestedSet">
+}}}
+
+Then, left and right field must be defined that way '''nestedSetLeftKey''' as a boolean value as '''nestedSetRightKey'''
+
+{{{
+#!xml
+    <column name="lft" type="INTEGER" required="true" default="0" nestedSetLeftKey="true"/>
+    <column name="rgt" type="INTEGER" required="true" default="0" nestedSetRightKey="true"/>
+}}}
+
+For multi nestedset support, an other column must be defined with boolean attribute '''treeScopeKey''' set to true
+{{{
+#!xml
+    <column name="scope" type="INTEGER" required="true" default="0" treeScopeKey="true"/>
+}}}
+
+And then, let's the propel generator automagically create all the needed model and stub classes.
+
+== !NestedSet usage in Propel ==
+
+''ex:''
+'''schema.xml''' extract
+{{{
+#!xml
+  <table name="menu" idMethod="native" treeMode="NestedSet">
+    <column name="id" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
+    <column name="lft" type="INTEGER" required="true" default="0" nestedSetLeftKey="true"/>
+    <column name="rgt" type="INTEGER" required="true" default="0" nestedSetRightKey="true"/>
+    <column name="scope" type="INTEGER" required="true" default="0" treeScopeKey="true"/>
+    <column name="text" type="VARCHAR" size="128" required="true" default=""/>
+    <column name="link" type="VARCHAR" size="255" required="true" default=""/>
+    <index name="lft">
+      <index-column name="lft"/>
+    </index>
+    <index name="rgt">
+      <index-column name="rgt"/>
+    </index>
+    <index name="scope">
+      <index-column name="scope"/>
+    </index>
+  </table>
+}}}
+
+=== !NestedSet insertion ===
+{{{
+#!php
+<?php
+
+$root = new Menu();
+$root->setText('Google');
+$root->setLink('http://www.google.com');
+
+$root->makeRoot();
+$root->save();
+
+$menu = new Menu();
+$menu->setText('Google Mail');
+$menu->setLink('http://mail.google.com');
+$menu->insertAsLastChildOf($root);
+$menu->save();
+
+$child = new Menu();
+$child->setText('Google Maps');
+$child->setLink('http://maps.google.com');
+$child->insertAsLastChildOf($root);
+$child->save();
+
+$sibling = new Menu();
+$sibling->setText('Yahoo!');
+$sibling->setLink('http://www.yahoo.com');
+$sibling->insertAsNextSiblingOf($root);
+$sibling->save();
+
+$child = new Menu();
+$child->setText('Yahoo! Mail');
+$child->setLink('http://mail.yahoo.com');
+$child->insertAsLastChildOf($sibling);
+$child->save();
+}}}
+
+=== Multi !NestedSet insertion ===
+{{{
+#!php
+<?php
+
+// Create first root node
+$root = new Menu();
+$root->setText('Google');
+$root->setLink('http://www.google.com');
+
+$root->makeRoot();
+$root->setScopeIdValue(1); // Tree 1
+$root->save();
+
+$menu = new Menu();
+$menu->setText('Google Mail');
+$menu->setLink('http://mail.google.com');
+$menu->insertAsLastChildOf($root);
+$menu->save();
+
+// Create secund root node
+$root2 = new Menu();
+$root2->setText('Yahoo!');
+$root2->setLink('http://www.yahoo.com');
+
+$root2->makeRoot();
+$root2->setScopeIdValue(2); // Tree 2
+$root2->save();
+
+$menu = new Menu();
+$menu->setText('Yahoo! Mail');
+$menu->setLink('http://mail.yahoo.com');
+$menu->insertAsLastChildOf($root2);
+$menu->save();
+}}}
+
+=== Tree retrieval ===
+{{{
+#!php
+<?php
+class myMenuOutput extends RecursiveIteratorIterator {
+  function __construct(Menu $m) {
+    parent::__construct($m, self::SELF_FIRST);
+  }
+
+  function beginChildren() {
+    echo str_repeat("\t", $this->getDepth());
+  }
+
+  function endChildren() {
+    echo str_repeat("\t", $this->getDepth() - 1);
+  }
+}
+
+$menu = MenuPeer::retrieveTree($scopeId);
+$it = new myMenuOutput($menu);
+foreach($it as $m) {
+  echo $m->getText(), '[', $m->getLeftValue(), '-', $m->getRightValue(), "]\n";
+}
+}}}
+=== Tree traversal ===
+
+!NestetSet implementation use the [http://somabo.de/talks/200504_php_quebec_spl_for_the_masses.pdf SPL RecursiveIterator] as suggested by soenke 
+
+== !NestedSet known broken behaviour ==
+
+=== Issue description ===
+For every changes applied on the tree, several entries in the database can be involved. So all already loaded nodes have to be refreshed with their new left/right values.
+
+=== InstancePool enabled ===
+In order to refresh all loaded nodes, an automatic internal call is made after each tree change to retrieve all instance in InstancePool and update them.
+And it works fine.
+
+=== InstancePool disabled ===
+When InstancePool is disabled, their is no way to retrieve references to all already loaded node and get them updated.
+So in most case, all loaded nodes are not updated and it leads to an inconsistency state.
+So, workaround is to do an explicit reload for any node you use after tree change.
+
+

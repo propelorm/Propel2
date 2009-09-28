@@ -1,0 +1,266 @@
+= Build Properties Reference =
+
+Here is a list of properties that can be set to affect how Propel builds database files.  For a complete list, see the {{{default.properties}}} file that is bundled with your version of Propel generator (this will be in PEAR's data directory if you are using a PEAR-installed version of Propel).
+
+First, some conventions:
+
+  *  Text surrounded by a '''/''' is text that you would provide and is not defined in the language. (i.e. a table name is a good example of this.)
+  *  Items where you have an alternative choice have a '''|''' character between them (i.e. true|false)
+  *  Alternative choices may be delimited by '''{''' and '''}''' to indicate that this is the default option, if not overridden elsewhere.
+
+== Where to Specify Properties ==
+
+=== In the Project build.properties File ===
+
+The most natural place to specify properties for a file are in the project's {{{build.properties}}} file.  This file is expected to be found in the project directory.
+
+=== In a global build.properties file ===
+
+You can also create a {{{global build.properties}}} file in the same directory as Propel's {{{default.properties}}} file.  For users who have installed Propel using PEAR, this will be in PEAR data directory structure.
+
+=== On the Command Line ===
+
+You can also specify properties on the commandline when you invoke Propel:
+
+{{{
+$ propel-gen /path/to/project -Dpropel.someOtherProperty=value
+}}}
+
+''Note that there is '''no space''' between the -D and the property name.''
+
+== The Properties ==
+
+=== General Build Settings ===
+
+{{{
+propel.project = Your-Project-Name
+}}}
+
+The name of your project.  This affects names of generated files, etc.
+
+{{{
+propel.targetPackage = {propel.project}
+}}}
+
+The package to use for the generated classes.  This affects the value of the @package phpdoc tag, ''and it also affects the directory that the classes are placed in.''  By default this will be the same as the project.
+
+{{{
+propel.packageObjectModel = true|{false}
+}}}
+
+(TODO) Whether to break generated objects out into different directories based on package.
+
+{{{
+propel.schema.validate = {true}|false
+}}}
+
+Whether to validate the schema using the XSD file.  If you find that the validator is giving you problems with a schema that you think is valid, please let us know so that we can fix the validation.
+
+=== Database Settings ===
+
+{{{
+propel.database = pgsql|mysql|sqlite|mssql|oracle
+}}}
+
+The Propel platform that will be used to determine how to build the SQL DDL, etc.
+
+
+{{{
+propel.database.url = /PDO database connection string/
+propel.database.user =
+propel.database.password =
+}}}
+
+Propel will use this information as the default to connect to your database.  Note that for PDO some drivers (e.g. mysql, oracle) require that you specify the username and password separately from the DSN, which is why they are available as options.
+
+
+{{{
+propel.database.buildUrl = /PDO database connection string, defaults to use ${propel.database.url}/
+}}}
+
+This property is used by Propel to connect to a database to reverse engineer or data dump.  The default is to use the database connection defined by the ''propel.database.url'' property.
+
+
+{{{
+propel.database.createUrl = /PDO database connection string, defaults to use ${propel.database.url}/
+}}}
+
+This property is used by Propel for creating a database.  Of course, Propel is unable to create many databases because they do not provide a SQL method for creation; therefore, it is usually recommended that you actually create your database by hand.
+
+{{{
+propel.database.schema = /schema-name/
+}}}
+
+Where supported by the RDBMS, you can specify a schema name for Propel to use.
+
+{{{
+propel.database.encoding =
+}}}
+The encoding to use for the database.  This can affect things such as transforming charsets when exporting to XML, etc.
+
+=== Creole Reverse-Engineering Settings ===
+
+{{{
+# by default leave the driver blank, so that bundled driver is used by Creole
+propel.database.creole.driver =
+propel.database.creole.url =
+}}}
+
+For reverse engineering the database, Propel uses Creole, which has its own driver syntax.
+
+{{{
+propel.samePhpName = true|{false}
+}}}
+Whether to specify PHP names that are the same as the column names.
+
+{{{
+propel.addVendorInfo = {true}|false
+}}}
+Whether to add the vendor info.  This is currently only used for MySQL, but does provide additional information (such as full-text indexes) which can affect the generation of the DDL from the schema.
+
+{{{
+propel.addValidators = {none}|maxvalue|type|required|unique|all
+}}}
+Which Propel validators to add to the generated schema (based on the db constraints).
+
+=== Customizing Generated Object Model ===
+
+{{{
+propel.addGenericAccessors = true|{false}
+propel.addGenericMutators = true|{false}
+}}}
+Whether to add generic getter/setter methods -- e.g. '''getByName()''', '''setByName()'''.
+
+{{{
+propel.addTimeStamp = {true}|false
+}}}
+Whether to add a timestamp to the phpdoc header of generated OM classes.
+
+{{{
+propel.basePrefix = {Base}|/YourPrefix/
+}}}
+The prefix to use for the base (super) classes that are generated. 
+
+{{{
+propel.classPrefix = {empty}|string;
+}}}
+Some sort of "namespacing": All Propel classes with get the Prefix "My_ORM_Prefix_" just like "My_ORM_Prefix_BookPeer".
+
+{{{
+propel.complexObjectModel = {true}|false
+}}}
+Whether to use the complex object model.  Note that using the complex OM is default and probably will be the only option moving forward.
+
+{{{
+propel.disableIdentifierQuoting = true|{false}
+}}}
+Identifier quoting is only implemented at the DDL layer at this point. Since this may result in undesired behavior (especially in Postgres), it can be disabled by setting this property to true.
+
+{{{
+propel.useLeftJoinsInDoJoinMethods = {true}|false
+}}}
+Set whether the '''doSelectJoin*()''' methods use LEFT JOIN or INNER JOIN (see ticket:491 and ticket:588 to understand more about why this might be important).
+
+
+
+=== Date/Time Settings ===
+
+{{{
+propel.useDateTimeClass = true|{false}
+}}}
+This is how you enable full use of the new DateTime class in Propel.  Setting this to true means that getter methods for date/time/timestamp columns will return a DateTime object ''when the default format is empty''.  Note that the current default of ''false'' is only for backwards compatibility; in the future ''true'' will be the only option here.
+
+{{{
+propel.dateTimeClass = {DateTime}|string
+}}}
+Specify a custom DateTime subclass that you wish to have Propel use for temporal values.
+
+{{{
+propel.defaultTimeStampFormat = {Y-m-d H:i:s}|string
+propel.defaultTimeFormat = {%X}|string
+propel.defaultDateFormat = {%x}|string
+}}}
+These are the default formats that will be used when fetching values from temporal columns in Propel.  You can always specify these when calling the methods directly, but for methods like getByName() it is nice to change the defaults.
+
+To have these methods return DateTime objects instead, you should set these to empty values, for example:
+{{{
+propel.defaultTimeStampFormat =
+}}}
+
+=== Directories ===
+
+{{{
+propel.project.dir = default-depends-on-installation-type
+}}}
+
+''This is not necessarily a property you can change.'' The project directory is the directory where you project files (build.properties, schema.xml, runtime-conf.xml, etc.) are located.  For example, if you use the {{{propel-gen}}} script, this value will get overridden to the path you pass to {{{propel-gen}}}.
+
+{{{
+propel.output.dir = ${propel.project.dir}/build
+}}}
+The default top-level directory for output of classes, sql, config, etc.
+
+{{{
+propel.schema.dir = ${propel.project.dir}
+}}}
+The directory where Propel expects to find your schema.xml file.
+
+{{{
+propel.conf.dir = ${propel.project.dir}
+}}}
+The directory where Propel expects to find your {{{runtime-conf.xml}}} file.
+
+{{{
+propel.php.dir = ${propel.output.dir}/classes
+}}}
+The directory where Propel will create generated object model classes.
+
+{{{
+propel.phpconf.dir = ${propel.output.dir}/conf
+}}}
+The directory where Propel will place the php-ified version of your {{{runtime-conf.xml}}}.
+
+{{{
+propel.sql.dir = ${propel.output.dir}/sql
+}}}
+The directory where Propel will place generated DDL (or data insert statements, etc.)
+
+
+=== Overriding Builder Classes ===
+
+{{{
+# Object Model builders
+propel.builder.peer.class = propel.engine.builder.om.php5.PHP5ComplexPeerBuilder
+propel.builder.object.class = propel.engine.builder.om.php5.PHP5ComplexObjectBuilder
+propel.builder.objectstub.class = propel.engine.builder.om.php5.PHP5ExtensionObjectBuilder
+propel.builder.peerstub.class = propel.engine.builder.om.php5.PHP5ExtensionPeerBuilder
+
+propel.builder.objectmultiextend.class = propel.engine.builder.om.php5.PHP5MultiExtendObjectBuilder
+
+propel.builder.mapbuilder.class = propel.engine.builder.om.php5.PHP5MapBuilderBuilder
+
+propel.builder.interface.class = propel.engine.builder.om.php5.PHP5InterfaceBuilder
+
+propel.builder.node.class = propel.engine.builder.om.php5.PHP5NodeBuilder
+propel.builder.nodepeer.class = propel.engine.builder.om.php5.PHP5NodePeerBuilder
+propel.builder.nodestub.class = propel.engine.builder.om.php5.PHP5ExtensionNodeBuilder
+propel.builder.nodepeerstub.class = propel.engine.builder.om.php5.PHP5ExtensionNodePeerBuilder
+
+propel.builder.nestedset.class = propel.engine.builder.om.php5.PHP5NestedSetBuilder
+propel.builder.nestedsetpeer.class = propel.engine.builder.om.php5.PHP5NestedSetPeerBuilder
+
+# SQL builders
+
+propel.builder.ddl.class = propel.engine.builder.sql.${propel.database}.${propel.database}DDLBuilder
+propel.builder.datasql.class = propel.engine.builder.sql.${propel.database}.${propel.database}DataSQLBuilder
+
+# Platform classes
+
+propel.platform.class = propel.engine.platform.${propel.database}Platform
+
+# Pluralizer class (used to generate plural forms)
+
+propel.builder.pluralizer.class = propel.engine.builder.util.DefaultEnglishPluralizer
+}}}
+
+As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes.

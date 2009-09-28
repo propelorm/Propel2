@@ -1,0 +1,36 @@
+= Transactions =
+
+Propel uses transactions internally to encapsulate atomic actions, like deleting a row & cascade deleting related rows. You can also specify your own transaction points in Propel.
+
+Note that because PDO does not support nested transactions (even for databases that do) the outer-most transactions points specified will be the true begin/commit/rollback points; internally nested transactions will not actually cause new transactions to start, since their operations are already encapsulated by the outer transaction.
+
+To set your own transaction points, you need to retrieve the ''PDO'' connection object and call the ''beginTransaction()'' and ''commit()'' methods yourself.  You should also catch any exceptions and call ''rollback()''; note, however, that typically a PDOException will typically indicate that a transaction has been rolled back anyway at the database level (you probably shouldn't rely on that behavior, though).
+
+{{{
+  // get the Connection object from Propel
+  $con = Propel::getConnection(MyPeer::DATABASE_NAME);
+  $con->beginTransaction();
+  
+  try {
+
+    SomeOtherUtil::doDeleteFromFilesystem($files);    
+    $obj1->save($con);
+    $obj2->save($con);  
+    MyPeer::doDelete($obj3, $con);
+
+    $pdo->commit();
+
+  } catch (Exception $e) {
+     $pdo->rollback();
+     throw $e;
+  }
+}
+}}}
+
+In the example above if any of the ''save()'' or ''doDelete()'' methods throw an exception (i.e. are unable to perform their delete action) then the entire group of statements will be rolled back.
+
+Also note in the example above that the $con is passed to the ''save()'' and ''delete()'' methods. Technically this is unnecessary, since the transaction has been started on the Connection object that will be returned by ''Propel::getConnection()'' (remember everything by reference in PHP5), but I find it useful as a reminder to pass in the connection when there are outside-set qualities of the connection being used (in this case, that a transaction has been started). Also, it avoids an unnecessary call to ''Propel::getConnection()'' within the methods.
+
+= Limitations =
+
+Currently there is no support for row locking (e.g. ''SELECT blah FOR UPDATE''), this is to be scheduled to be fixed in Propel 2.0.
