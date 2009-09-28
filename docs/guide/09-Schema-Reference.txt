@@ -155,6 +155,7 @@ According to the schema, {{{name}}} is the only required attribute.  Also, the {
     [autoIncrement = "true|{false}"]
     [lazyLoad = "true|{false}"]
     [description = "/Column Description/"]
+    [primaryString = "true|{false}"]
     [phpNamingMethod = "nochange|underscore|phpname"]
     [inheritance = "single|{false}"]
     [inputValidator = "NameOfInputValidatorClass"]
@@ -167,6 +168,7 @@ According to the schema, {{{name}}} is the only required attribute.  Also, the {
 
  * {{{defaultValue}}} The default value that the object will have for this column in the PHP instance after creating a "new Object". This value is always interpreted as a string.
  * {{{defaultExpr}}} The default value for this column as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the column.
+ * {{{primaryString}}} A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
 
 === <foreign-key> element ===
 

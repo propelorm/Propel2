@@ -1055,4 +1055,13 @@ class GeneratedObjectTest extends BookstoreTestBase
 		$this->assertTrue(count($logs) == 1, "Expected 1 audit log result.");
 		$this->assertEquals($logs[0]->getId(), $al->getId(), "Expected returned audit log to match created audit log.");
 	}
+	
+	public function testAddPrimaryString()
+	{
+	  $this->assertFalse(method_exists('Author', '__toString'), 'addPrimaryString() does not add a __toString() method if no column has the primaryString attribute');
+	  $this->assertTrue(method_exists('Book', '__toString'), 'addPrimaryString() adds a __toString() method if a column has the primaryString attribute');
+	  $book = new Book();
+	  $book->setTitle('foo');
+	  $this->assertEquals((string) $book, 'foo', 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
+	}
 }

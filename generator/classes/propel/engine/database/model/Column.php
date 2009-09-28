@@ -85,6 +85,7 @@ class Column extends XMLElement {
 	private $isLazyLoad = false;
 	private $defaultValue;
 	private $referrers;
+	private $isPrimaryString = false;
 
 	// only one type is supported currently, which assumes the
 	// column either contains the classnames or a key to
@@ -191,6 +192,8 @@ class Column extends XMLElement {
 			// retrieves the method for converting from specified name to a PHP name, defaulting to parent tables default method
 			$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->parentTable->getDatabase()->getDefaultPhpNamingMethod());
 
+			$this->isPrimaryString = $this->booleanValue($this->getAttribute("primaryString"));
+			
 			$this->isPrimaryKey = $this->booleanValue($this->getAttribute("primaryKey"));
 
 			$this->isNodeKey = $this->booleanValue($this->getAttribute("nodeKey"));
@@ -528,6 +531,25 @@ class Column extends XMLElement {
 	public function getNotNullString()
 	{
 		return $this->getTable()->getDatabase()->getPlatform()->getNullString($this->isNotNull());
+	}
+
+	/**
+	 * Set whether the column is the primary string, 
+	 * i.e. whether its value is the default string representation of the table
+	 * @param      boolean $v
+	 */
+	public function setPrimaryString($v)
+	{
+		$this->isPrimaryString = (boolean) $v;
+	}
+
+	/**
+	 * Return true if the column is the primary string,
+	 * i.e. if its value is the default string representation of the table
+	 */
+	public function isPrimaryString()
+	{
+		return $this->isPrimaryString;
 	}
 
 	/**

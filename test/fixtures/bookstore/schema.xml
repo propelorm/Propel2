@@ -5,7 +5,7 @@
 		<column name="id" required="true" primaryKey="true"
 			autoIncrement="true" type="INTEGER" description="Book Id" />
 		<column name="title" type="VARCHAR" required="true"
-			description="Book Title" />
+			description="Book Title" primaryString="true" />
 		<column name="isbn" required="true" type="VARCHAR" size="24"
 			phpName="ISBN" description="ISBN Number" />
 		<column name="price" required="false" type="FLOAT"

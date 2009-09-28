@@ -43,6 +43,40 @@ LEFT JOIN user ON (book.USER_ID = user.ID AND user.RANK > 12)
 
 Note that the former way to define a composite join using arrays as arguments of `addJoin()` is deprecated.
 
+== Generated `__toString()` in Base Object ==
+
+Propel can generate a `__toString()` method for your Model objects if you define a column as `primaryString` in the schema:
+
+{{{
+// in the schema
+<table name="book" phpName="Book">
+  ..
+  <column name="title" type="varchar" size="125" primaryString="true" />
+  ..
+</table>
+}}}   
+
+After a model build, the generated `BaseBook` class offers the following magic method:
+
+{{{
+#!php
+<?php
+public function __toString()
+{
+  return (string) $this->getTitle();
+}
+}}}
+
+That means that the default string representation of `Book` objects is the value of the `title` column:
+
+{{{
+#!php
+<?php
+$book = new book();
+$book->setTitle('War And Peace');
+echo $book; // 'War And Peace'
+}}}
+
 == Better Introspection at Runtime ==
 
 A few methods were added to the Map classes to ease runtime introspection:

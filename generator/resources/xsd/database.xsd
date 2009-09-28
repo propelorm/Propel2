@@ -316,6 +316,7 @@
 		<xs:attribute name="nestedSetRightKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="treeScopeKey" type="xs:boolean" default="false"/>
 		<xs:attribute name="require" type="xs:string" use="optional"/>
+		<xs:attribute name="primaryString" type="xs:boolean" default="false"/>
 	</xs:complexType>
 
 	<xs:complexType name="foreign-key">

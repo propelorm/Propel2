@@ -252,6 +252,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
 		$this->addClearAllReferences($script);
+		
+		$this->addPrimaryString($script);
 	}
 
 	/**
@@ -3924,5 +3926,31 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	}
 ";
 	}
+
+  /**
+   * Adds a magic __toString() method if a string column was defined as primary string
+	 * @param      string &$script The script will be modified in this method.
+   */
+  protected function addPrimaryString(&$script)
+  {
+    foreach ($this->getTable()->getColumns() as $column)
+    {
+      if ($column->isPrimaryString())
+      {
+        $script .= "
+	/**
+	 * Return the string representation of this object
+	 *
+	 * @return string The value of the '{$column->getName()}' column
+	 */
+  public function __toString()
+  {
+    return (string) \$this->get{$column->getPhpName()}();
+  }
+";
+        break;
+      }
+    }
+  }
 
 } // PHP5ObjectBuilder

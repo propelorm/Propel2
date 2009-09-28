@@ -96,6 +96,7 @@ PHP class or method name.
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"
+  primaryString (true|false) "false"
 >
 
 <!ELEMENT inheritance EMPTY>
