@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id$
+ *  $Id: PHP5MapBuilderBuilder.php 1159 2009-09-22 15:24:20Z francois $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,15 +23,12 @@
 require_once 'propel/engine/builder/om/OMBuilder.php';
 
 /**
- * Generates the PHP5 map builder class for user object model (OM).
- *
- * This class replaces the MapBuilder.tpl, with the intent of being easier for users
- * to customize (through extending & overriding).
+ * Generates the PHP5 table map class for user object model (OM).
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.engine.builder.om.php5
  */
-class PHP5MapBuilderBuilder extends OMBuilder {
+class PHP5TableMapBuilder extends OMBuilder {
 
 	/**
 	 * Gets the package for the map builder classes.
@@ -48,7 +45,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 	 */
 	public function getUnprefixedClassname()
 	{
-		return $this->getTable()->getPhpName() . 'MapBuilder';
+		return $this->getTable()->getPhpName() . 'TableMap';
 	}
 
 	/**
@@ -69,7 +66,7 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 		$script .= "
 
 /**
- * This class adds structure of '".$table->getName()."' table to '".$table->getDatabase()->getName()."' DatabaseMap object.
+ * This class defines the structure of the '".$table->getName()."' table.
  *
  *";
 		if ($this->getBuildProperty('addTimeStamp')) {
@@ -82,14 +79,14 @@ class PHP5MapBuilderBuilder extends OMBuilder {
 		}
 		$script .= "
  *
- * These statically-built map classes are used by Propel to do runtime db structure discovery.
+ * This map class is used by Propel to do runtime db structure discovery.
  * For example, the createSelectSql() method checks the type of a given column used in an
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
  * @package    ".$this->getPackage()."
  */
-class ".$this->getClassname()." implements MapBuilder {
+class ".$this->getClassname()." extends TableMap {
 ";
 	}
 
@@ -102,15 +99,12 @@ class ".$this->getClassname()." implements MapBuilder {
 	{
 		$this->addConstants($script);
 		$this->addAttributes($script);
-
-		$this->addIsBuilt($script);
-		$this->addGetDatabaseMap($script);
-		$this->addDoBuild($script);
+		$this->addInitialize($script);
 		$this->addBuildRelations($script);
 	}
 
 	/**
-	 * Adds any constants needed for this MapBuilder class.
+	 * Adds any constants needed for this TableMap class.
 	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addConstants(&$script)
@@ -124,17 +118,11 @@ class ".$this->getClassname()." implements MapBuilder {
 	}
 
 	/**
-	 * Adds any attributes needed for this MapBuilder class.
+	 * Adds any attributes needed for this TableMap class.
 	 * @param      string &$script The script will be modified in this method.
 	 */
 	protected function addAttributes(&$script)
 	{
-		$script .= "
-	/**
-	 * The database map.
-	 */
-	private \$dbMap;
-";
 	}
 
 	/**
@@ -149,49 +137,10 @@ class ".$this->getClassname()." implements MapBuilder {
 	}
 
 	/**
-	 * Adds the method that indicates whether this map has already been built.
+	 * Adds the addInitialize() method to the  table map class.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addIsBuilt(&$script)
-	{
-		$script .= "
-	/**
-	 * Tells us if this DatabaseMapBuilder is built so that we
-	 * don't have to re-build it every time.
-	 *
-	 * @return     boolean true if this DatabaseMapBuilder is built, false otherwise.
-	 */
-	public function isBuilt()
-	{
-		return (\$this->dbMap !== null);
-	}
-";
-	}
-
-	/**
-	 * Adds the DatabaseMap accessor method.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addGetDatabaseMap(&$script)
-	{
-		$script .= "
-	/**
-	 * Gets the databasemap this map builder built.
-	 *
-	 * @return     the databasemap
-	 */
-	public function getDatabaseMap()
-	{
-		return \$this->dbMap;
-	}
-";
-	}
-
-	/**
-	 * Adds the main doBuild() method to the map builder class.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addDoBuild(&$script)
+	protected function addInitialize(&$script)
 	{
 
 		$table = $this->getTable();
@@ -200,35 +149,35 @@ class ".$this->getClassname()." implements MapBuilder {
 
 		$script .= "
 	/**
-	 * The doBuild() method builds the DatabaseMap
+	 * Initialize the table attributes, columns and validators
+	 * Relations are not initialized by this method since they are lazy loaded
 	 *
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function doBuild()
+	public function initialize()
 	{
-		\$this->dbMap = Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME);
-    // table
-		\$tMap = \$this->dbMap->addTable(".$this->getPeerClassname()."::TABLE_NAME);
-		\$tMap->setPhpName('".$table->getPhpName()."');
-		\$tMap->setClassname('" . $this->getObjectClassname() . "');
-		\$tMap->setPackage('" . parent::getPackage() . "');";
+	  // attributes
+		\$this->setName('".$table->getName()."');
+		\$this->setPhpName('".$table->getPhpName()."');
+		\$this->setClassname('" . $this->getObjectClassname() . "');
+		\$this->setPackage('" . parent::getPackage() . "');";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-		\$tMap->setUseIdGenerator(true);";
+		\$this->setUseIdGenerator(true);";
 		} else {
 			$script .= "
-		\$tMap->setUseIdGenerator(false);";
+		\$this->setUseIdGenerator(false);";
 		}
 
 		if ($table->getIdMethodParameters()) {
 			$params = $table->getIdMethodParameters();
 			$imp = $params[0];
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
+		\$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
 		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == Platform::SEQUENCE || $platform->getNativeIdMethod() == Platform::SERIAL)) {
 			$script .= "
-		\$tMap->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');";
+		\$this->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');";
 		}
 
 		// Add columns to map
@@ -247,21 +196,21 @@ class ".$this->getClassname()." implements MapBuilder {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
+		\$this->addForeignPrimaryKey('$cup', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
 					}
 				} else {
 					$script .= "
-		\$tMap->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
+		\$this->addPrimaryKey('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
 				}
 			} else {
 				if ($col->isForeignKey()) {
 					foreach ($col->getForeignKeys() as $fk) {
 						$script .= "
-		\$tMap->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
+		\$this->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
 					}
 			} else {
 					$script .= "
-		\$tMap->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
+		\$this->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
 				}
 			} // if col-is prim key
 		} // foreach
@@ -275,18 +224,16 @@ class ".$this->getClassname()." implements MapBuilder {
 			foreach ($val->getRules() as $rule) {
 				if ($val->getTranslate() !== Validator::TRANSLATE_NONE) {
 					$script .= "
-		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));";
+		\$this->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', ".$val->getTranslate()."('".str_replace("'", "\'", $rule->getMessage())."'));";
 				} else {
 					$script .= "
-		\$tMap->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', '".str_replace("'", "\'", $rule->getMessage())."');";
+		\$this->addValidator('$cup', '".$rule->getName()."', '".$rule->getClass()."', '".str_replace("'", "\'", $rule->getValue())."', '".str_replace("'", "\'", $rule->getMessage())."');";
 				} // if ($rule->getTranslation() ...
   			} // foreach rule
 		}  // foreach validator
 
 		$script .= "
-		// relationships (lazy loaded)
-		\$tMap->setRelationsBuilder(array(\$this, 'doBuildRelations'));
-	} // doBuild()
+	} // initialize()
 ";
 
 	}
@@ -301,7 +248,7 @@ class ".$this->getClassname()." implements MapBuilder {
 	/**
 	 * Build the RelationMap objects for this table relationships
 	 */
-	public function doBuildRelations(\$tmap)
+	public function buildRelations()
 	{";
     foreach ($this->getTable()->getForeignKeys() as $fkey)
     {
@@ -314,7 +261,7 @@ class ".$this->getClassname()." implements MapBuilder {
       $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
       $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$tmap->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
+    \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
     }
     foreach ($this->getTable()->getReferrers() as $fkey)
     {
@@ -327,11 +274,11 @@ class ".$this->getClassname()." implements MapBuilder {
       $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
       $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$tmap->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
+    \$this->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
     }
     $script .= "
 	} // buildRelations()
 ";
 	}
 	
-} // PHP5ExtensionPeerBuilder
+} // PHP5TableMapBuilder

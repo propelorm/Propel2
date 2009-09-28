@@ -81,12 +81,6 @@ abstract class DataModelBuilder {
 	private $stubObjectBuilder;
 
 	/**
-	 * MapBuilder builder class for current table.
-	 * @var        DataModelBuilder
-	 */
-	private $mapBuilderBuilder;
-
-	/**
 	 * Stub Interface builder class for current table.
 	 * @var        DataModelBuilder
 	 */
@@ -220,18 +214,6 @@ abstract class DataModelBuilder {
 			$this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
 		}
 		return $this->stubObjectBuilder;
-	}
-
-	/**
-	 * Returns new or existing MapBuilder builder class for this table.
-	 * @return     ObjectBuilder
-	 */
-	public function getMapBuilderBuilder()
-	{
-		if (!isset($this->mapBuilderBuilder)) {
-			$this->mapBuilderBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'mapbuilder');
-		}
-		return $this->mapBuilderBuilder;
 	}
 
 	/**

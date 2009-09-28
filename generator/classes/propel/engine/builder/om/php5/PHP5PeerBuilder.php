@@ -128,39 +128,36 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * Closes class.
 	 * Adds closing brace at end of class and the static map builder registration code.
 	 * @param      string &$script The script will be modified in this method.
-	 * @see        addStaticMapBuilderRegistration()
+	 * @see        addStaticTableMapRegistration()
 	 */
 	protected function addClassClose(&$script)
 	{
 		$script .= "
 } // " . $this->getClassname() . "
 ";
-		$this->addStaticMapBuilderRegistration($script);
+		$this->addStaticTableMapRegistration($script);
 	}
 
 	/**
 	 * Adds the static map builder registration code.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addStaticMapBuilderRegistration(&$script)
+	protected function addStaticTableMapRegistration(&$script)
 	{
 		$table = $this->getTable();
-		$mapBuilderFile = $this->getMapBuilderBuilder()->getClassFilePath();
 
 		$script .= "
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+// This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-// NOTE: This static code cannot call methods on the ".$this->getPeerClassname()." class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the ".$this->getPeerClassname()." class:
-//
-// Propel::getDatabaseMap(".$this->getPeerClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getPeerClassname()."::TABLE_NAME, ".$this->getPeerClassname()."::getMapBuilder(), ".$this->getClassname()."::OM_CLASS);
-//
-// Doing so will effectively overwrite the registration below.
-
-Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilder(".$this->getClassname()."::TABLE_NAME, ".$this->getClassname()."::getMapBuilder(), ".$this->getClassname()."::OM_CLASS);
+".$this->getClassName()."::buildTableMap();
 
 ";
 	}
+
+  public function getTableMapClass()
+  {
+    return ($this->getTable()->isAbstract() ? '' : $this->getTable()->getPhpName()) . 'TableMap';
+  }
 
 	/**
 	 * Adds constant and variable declarations that go at the top of the class.
@@ -185,6 +182,9 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = '".$this->getStubObjectBuilder()->getClasspath()."';
 
+	/** the related TableMap class for this table */
+	const TM_CLASS = '".$this->getTableMapClass()."';
+	
 	/** The total number of columns. */
 	const NUM_COLUMNS = ".$this->getTable()->getNumColumns().";
 
@@ -203,11 +203,6 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	 */
 	public static \$instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
-	private static \$mapBuilder = null;
 ";
 
 		$this->addFieldNamesAttribute($script);
@@ -365,23 +360,24 @@ Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME)->addTableBuilde
 	} // addTranslateFieldName()
 
 	/**
-	 * Adds the getMapBuilder() method.
+	 * Adds the buildTableMap() method.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addGetMapBuilder(&$script)
+	protected function addBuildTableMap(&$script)
 	{
 		$script .= "
 	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
+	 * Add a TableMap instance to the database for this peer class.
 	 */
-	public static function getMapBuilder()
+	public static function buildTableMap()
 	{
-		if (self::\$mapBuilder === null) {
-			self::\$mapBuilder = new ".$this->getMapBuilderBuilder()->getClassname()."();
-		}
-		return self::\$mapBuilder;
-	}";
+	  \$dbMap = Propel::getDatabaseMap(".$this->getClassname()."::DATABASE_NAME);
+	  if (!\$dbMap->hasTable(".$this->getClassname()."::TABLE_NAME))
+	  {
+	    \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
+	  }
+	}
+";
 	}
 
 	/**

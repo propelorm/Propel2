@@ -141,7 +141,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 						// -----------------------------------------------------------------------------------------
 						// (this code is based on PropelOMTask)
 
-						foreach (array('mapbuilder', 'peerstub', 'objectstub') as $target) {
+						foreach (array('tablemap', 'peerstub', 'objectstub') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 							$classMap[$builder->getClassname()] = $builder->getClassFilePath();

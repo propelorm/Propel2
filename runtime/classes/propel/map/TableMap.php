@@ -27,13 +27,7 @@
  * The propel.map classes are abstract building-block classes for modeling
  * the database at runtime.  These classes are similar (a lite version) to the
  * propel.engine.database.model classes, which are build-time modeling classes.
- * These classes in themselves do not do any database metadata lookups, but instead
- * are used by the MapBuilder classes that were generated for your datamodel. The
- * MapBuilder that was created for your datamodel build a representation of your
- * database by creating instances of the DatabaseMap, TableMap, ColumnMap, etc.
- * classes. See propel/templates/om/php5/MapBuilder.tpl and the classes generated
- * by that template for your datamodel to further understand how these are put
- * together.
+ * These classes in themselves do not do any database metadata lookups.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
@@ -44,7 +38,7 @@
 class TableMap {
 
   // The columns in the table
-  protected $columns;
+  protected $columns = array();
 
   // The database this table belongs to
   protected $dbMap;
@@ -72,9 +66,6 @@ class TableMap {
 
   // The relationships in the table
   protected $relations = array();
-  
-  // Relation builder - should be a callable
-  protected $relationsBuilder;
 
   // Relations are lazy loaded. This property tells if the relations are loaded or not
   protected $relationsBuilt = false;
@@ -85,16 +76,32 @@ class TableMap {
   /**
    * Construct a new TableMap.
    *
-   * @param      string $tableName The name of the table.
-   * @param      DatabaseMap $containingDB A DatabaseMap that this table belongs to.
    */
-  public function __construct($tableName, DatabaseMap $containingDB)
+  public function __construct($name = null, $dbMap = null)
   {
-    $this->tableName = $tableName;
-    $this->dbMap = $containingDB;
-    $this->columns = array();
+    if(!is_null($name)) $this->setName($name);
+    if(!is_null($dbMap)) $this->setDatabaseMap($dbMap);
+    $this->initialize();
+  }
+  
+  /**
+   * Initialize the TableMap to build columns, relations, etc
+   * This method should be overridden by descendents
+   */
+  public function initialize()
+  {
   }
 
+  /**
+   * Set the DatabaseMap containing this TableMap.
+   *
+   * @param     DatabaseMap $dbMap A DatabaseMap.
+   */
+  public function setDatabaseMap(DatabaseMap $dbMap)
+  {
+    $this->dbMap = $dbMap;
+  }
+  
   /**
    * Get the DatabaseMap containing this TableMap.
    *
@@ -105,6 +112,16 @@ class TableMap {
     return $this->dbMap;
   }
 
+  /**
+   * Set the name of the Table.
+   *
+   * @param      string $name The name of the table.
+   */
+  public function setName($name)
+  {
+    $this->tableName = $name;
+  }
+  
   /**
    * Get the name of the Table.
    *
@@ -123,7 +140,6 @@ class TableMap {
   public function setPhpName($phpName)
   {
     $this->phpName = $phpName;
-    $this->dbMap->addPhpName($phpName, $this->tableName);
   }
   
   /**
@@ -405,36 +421,14 @@ class TableMap {
       $col->addValidator($validator);
     }
   }
-
-  /**
-   * Set a callable to build the relationships
-   * Typically, a the callable should be a method of the map builder
-   * 
-   * @param array $builder Callable used to build the relations
-   */
-  public function setRelationsBuilder($builder)
-  {
-    if (!is_callable($builder))
-    {
-      throw new PropelException('The relations builder must be a callable');
-    }
-    $this->relationsBuilder = $builder;
-  }
   
   /**
-   * Calls the table map builder to build the relations
+   * Build relations
    * Relations are lazy loaded for performance reasons
-   *
-   * @throws PropelException If relationBuilder is not set
+   * This method should be overridden by descendents
    */
   public function buildRelations()
   {
-    if (is_null($this->relationsBuilder))
-    {
-      throw new PropelException("Cannot build relations as long as a relation builder callable is not set.");
-    }
-    call_user_func($this->relationsBuilder, $this);
-    $this->relationsBuilt = true;
   }  
   
   /**
@@ -449,7 +443,7 @@ class TableMap {
   public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null)
   {
     // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
-    // and this method autoloads the mapbuilder if the table isn't built yet
+    // and this method autoloads the TableMap if the table isn't loaded yet
     $relation = new RelationMap($name);
     $relation->setType($type);
     $relation->setOnUpdate($onUpdate);
@@ -483,11 +477,7 @@ class TableMap {
    */
   public function hasRelation($name)
   {
-    if(!$this->relationsBuilt)
-    {
-      $this->buildRelations();
-    }
-    return array_key_exists($name, $this->relations);
+    return array_key_exists($name, $this->getRelations());
   }
   
   /**
@@ -499,11 +489,7 @@ class TableMap {
    */
   public function getRelation($name)
   {
-    if(!$this->relationsBuilt)
-    {
-      $this->buildRelations();
-    }
-    if (!array_key_exists($name, $this->relations))
+    if (!array_key_exists($name, $this->getRelations()))
     {
       throw new PropelException('Calling getRelation() on an unknown relation, ' . $name);
     }
@@ -512,6 +498,7 @@ class TableMap {
 
   /**
    * Gets the RelationMap objects of the table
+   * This method will build the relations if they are not built yet
    * 
    * @return      Array list of RelationMap objects
    */
@@ -520,6 +507,7 @@ class TableMap {
     if(!$this->relationsBuilt)
     {
       $this->buildRelations();
+      $this->relationsBuilt = true;
     }
     return $this->relations;
   }

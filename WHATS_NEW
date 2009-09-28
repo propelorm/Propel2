@@ -63,6 +63,48 @@ echo BookPeer::getOMClass()                    => 'bookstore.Book'
 echo BookPeer::getOMClass($withPrefix = false) => 'Book'
 }}}
 
+== MapBuilders are gone ==
+
+Runtime introspection used to rely on runtime builder classes for TableMap objects, called MapBuilders. These classes are not generated anymore by Propel. Instead, Propel generates TableMap classes that are easier to deal with. 
+
+The standard way to get a TableMap through the Peer classes works just the same as before:
+
+{{{
+#!php
+<?php
+$bookTableMap = BookPeer::getTableMap();
+}}}
+
+But building TableMaps by hand is a lot easier:
+
+{{{
+#!php
+<?php
+// Propel 1.3 way to initialize a TableMap
+$className = 'Book';
+$mapBuilderClass = $className . 'MapBuilder';
+$mapBuilder = new $mapBuilderClass();
+if (!$mapBuilder->isBuilt())
+{
+  $mapBuilder->doBuild();
+}
+$bookTableMap = $databaseMap->getTable('book');
+
+// Propel 1.4 way to initialize a TableMap
+$className = 'Book';
+$tableMapClass = $className . 'TableMap';
+$bookTableMap = $databaseMap->addTableFromMapClass($tableMapClass);
+}}}
+
+Note that if you want to make sure that all the tables related to a given table have their TableMaps loaded, you just need to ask for the table relations:
+
+{{{
+#!php
+<?php
+// build all the TableMap objects of tables related to Book
+$relations = $bookTableMap->getRelations();
+}}}
+
 == `BasePeer::populateStmtValues()` is now public ==
 
 You can now use a SQL query of your own, or modify the one returned by `BasePeer::createSelectSql()`, and use the binding capabilities of Propel to populate a query with a set of values. Propel uses the PDO type of the column to do the binding, so this method may save you some hassle: 

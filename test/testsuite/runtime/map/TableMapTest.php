@@ -22,6 +22,26 @@ class TestableTableMap extends TableMap
   }
 }
 
+class FooTableMap extends TableMap
+{ 
+  public $rmap;
+  public function buildRelations()
+  {
+    $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
+  }
+}
+
+class BarTableMap extends TableMap
+{
+  public function initialize()
+  {
+    $this->setName('bar');
+    $this->setPhpName('Bar');
+  }
+}
+
+
+
 /**
  * Test class for TableMap.
  *
@@ -38,7 +58,7 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     parent::setUp();
     $this->databaseMap = new DatabaseMap('foodb');
     $this->tableName = 'foo';
-    $this->tmap = new TestableTableMap($this->tableName, $this->databaseMap);
+    $this->tmap = new TableMap($this->tableName, $this->databaseMap);
   }
 
   protected function tearDown()
@@ -49,30 +69,29 @@ class TableMapTest extends PHPUnit_Framework_TestCase
 
   public function testConstructor()
   {
-    $this->assertEquals($this->tableName, $this->tmap->getName(), 'constructor sets the table name');
-    $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor sets the database map');
     $this->assertEquals(array(), $this->tmap->getColumns(), 'A new table map has no columns');
+    $this->assertEquals($this->tableName, $this->tmap->getName(), 'constructor can set the table name');
+    $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
+    try {
+      $tmap = new TableMap();
+      $this->assertTrue(true, 'A table map can be instanciated with no parameters');
+    } catch (Exception $e) {
+      $this->fail('A table map can be instanciated with no parameters');
+    }
   }
   
-  public function testPhpName()
+  public function testProperties()
   {
-    $this->assertNull($this->tmap->getPhpName(), 'phpName is empty until set');
-    $this->tmap->setPhpName('FooBar');
-    $this->assertEquals('FooBar', $this->tmap->getPhpName(), 'phpName is set by getPhpName()');
-  }
-  
-  public function testClassName()
-  {
-    $this->assertNull($this->tmap->getClassName(), 'ClassName is empty until set');
-    $this->tmap->setClassName('FooBarClass');
-    $this->assertEquals('FooBarClass', $this->tmap->getClassName(), 'ClassName is set by setClassName()');
-  }
-  
-  public function testPackage()
-  {
-    $this->assertNull($this->tmap->getPackage(), 'Package is empty until set');
-    $this->tmap->setPackage('barr');
-    $this->assertEquals('barr', $this->tmap->getPackage(), 'Package is set by setPackage()');
+    $tmap = new TableMap();
+    $properties = array('name', 'phpName', 'className', 'package');
+    foreach ($properties as $property)
+    {
+      $getter = 'get' . ucfirst($property);
+      $setter = 'set' . ucfirst($property);
+      $this->assertNull($tmap->$getter(), "A new relation has no $property");
+      $tmap->$setter('foo_value');
+      $this->assertEquals('foo_value', $tmap->$getter(), "The $property is set by setType()");
+    }
   }
   
   public function testHasColumn()
@@ -170,38 +189,28 @@ class TableMapTest extends PHPUnit_Framework_TestCase
   {
     try {
       $this->tmap->getRelation('Bar');
-      $this->fail('getRelation() throws an exception when called on a table with no relation builder');    
+      $this->fail('getRelation() throws an exception when called on a table with no relations');    
     } catch (PropelException $e) {
-      $this->assertTrue(true, 'getRelation() throws an exception when called on a table with no relation builder');
+      $this->assertTrue(true, 'getRelation() throws an exception when called on a table with no relations');
     }
-    $this->tmap->setRelationsBuilder('get_class');
-    $this->assertEquals(array(), $this->tmap->getRelations(), 'Adding a builder allows relations to be initialized');
-    try {
-      $this->tmap->getRelation('Bar');
-      $this->fail('getRelation() throws an exception when called on an inexistent relation');    
-    } catch (PropelException $e) {
-      $this->assertTrue(true, 'getRelation() throws an exception when called on  an inexistent relation');
-    }
-    $foreigntmap = $this->databaseMap->addTable('bar');
-    $foreigntmap->setPhpName('Bar');
-    $rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
-    $rmap2 = $this->tmap->getRelation('Bar');
-    $this->assertEquals($rmap1, $rmap2, 'getRelation() returns the relations set by setRelation()');
-  }
-  
-  public function buildRelations($tmap)
-  {
-    $this->rmap1 = $tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
-    $this->rmap2 = $tmap->addRelation('Bazz', 'Baz', RelationMap::ONE_TO_MANY);
+    $foreigntmap = new BarTableMap();
+    $this->databaseMap->addTableObject($foreigntmap);
+    $localtmap = new FooTableMap();
+    $this->databaseMap->addTableObject($localtmap);
+    $rmap = $localtmap->getRelation('Bar');
+    $this->assertEquals($rmap, $localtmap->rmap, 'getRelation() returns the relations lazy loaded by buildRelations()');
   }
   
   public function testAddRelation()
   {
-    $foreigntmap1 = $this->databaseMap->addTable('bar');
+    $foreigntmap1 = new TableMap('bar');
     $foreigntmap1->setPhpName('Bar');
-    $foreigntmap2 = $this->databaseMap->addTable('baz');
+    $this->databaseMap->addTableObject($foreigntmap1);
+    $foreigntmap2 = new TableMap('baz');
     $foreigntmap2->setPhpName('Baz');
-    $this->tmap->setRelationsBuilder(array($this, 'buildRelations'));
+    $this->databaseMap->addTableObject($foreigntmap2);
+    $this->rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
+    $this->rmap2 = $this->tmap->addRelation('Bazz', 'Baz', RelationMap::ONE_TO_MANY);
     $this->tmap->getRelations();
     // now on to the test
     $this->assertEquals($this->rmap1->getLocalTable(), $this->tmap, 'adding a relation with HAS_ONE sets the local table to the current table');    
@@ -219,12 +228,13 @@ class TableMapTest extends PHPUnit_Framework_TestCase
   // deprecated method
   public function testNormalizeColName()
   {
-    $this->assertEquals('', $this->tmap->normalizeColName(''), 'normalizeColName returns an empty string when passed an empty string');
-    $this->assertEquals('BAR', $this->tmap->normalizeColName('bar'), 'normalizeColName uppercases the input');
-    $this->assertEquals('BAR_BAZ', $this->tmap->normalizeColName('bar_baz'), 'normalizeColName does not mind underscores');
-    $this->assertEquals('BAR', $this->tmap->normalizeColName('FOO.BAR'), 'normalizeColName removes table prefix');
-    $this->assertEquals('BAR', $this->tmap->normalizeColName('BAR'), 'normalizeColName leaves normalized column names unchanged');
-    $this->assertEquals('BAR_BAZ', $this->tmap->normalizeColName('foo.bar_baz'), 'normalizeColName can do all the above at the same time');
+    $tmap = new TestableTableMap();
+    $this->assertEquals('', $tmap->normalizeColName(''), 'normalizeColName returns an empty string when passed an empty string');
+    $this->assertEquals('BAR', $tmap->normalizeColName('bar'), 'normalizeColName uppercases the input');
+    $this->assertEquals('BAR_BAZ', $tmap->normalizeColName('bar_baz'), 'normalizeColName does not mind underscores');
+    $this->assertEquals('BAR', $tmap->normalizeColName('FOO.BAR'), 'normalizeColName removes table prefix');
+    $this->assertEquals('BAR', $tmap->normalizeColName('BAR'), 'normalizeColName leaves normalized column names unchanged');
+    $this->assertEquals('BAR_BAZ', $tmap->normalizeColName('foo.bar_baz'), 'normalizeColName can do all the above at the same time');
   }
   
   // deprecated method
@@ -242,10 +252,10 @@ class TableMapTest extends PHPUnit_Framework_TestCase
   // deprecated methods
   public function testPrefix()
   {
-    $tmap = $this->tmap;
+    $tmap = new TestableTableMap();
     $this->assertNull($tmap->getPrefix(), 'prefix is empty until set');
     $this->assertFalse($tmap->hasPrefix('barbaz'), 'hasPrefix returns false when prefix is not set');
-    $this->tmap->setPrefix('bar');
+    $tmap->setPrefix('bar');
     $this->assertEquals('bar', $tmap->getPrefix(), 'prefix is set by setPrefix()');
     $this->assertTrue($tmap->hasPrefix('barbaz'), 'hasPrefix returns true when prefix is set and found in string');
     $this->assertFalse($tmap->hasPrefix('baz'), 'hasPrefix returns false when prefix is set and not found in string');

@@ -188,7 +188,6 @@ class Propel
 
 		'ColumnMap'    => 'propel/map/ColumnMap.php',
 		'DatabaseMap'  => 'propel/map/DatabaseMap.php',
-		'MapBuilder'   => 'propel/map/MapBuilder.php',
 		'TableMap'     => 'propel/map/TableMap.php',
 		'RelationMap'  => 'propel/map/RelationMap.php',
 		'ValidatorMap' => 'propel/map/ValidatorMap.php',

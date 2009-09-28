@@ -4,22 +4,6 @@ require_once 'PHPUnit/Framework/TestCase.php';
 include_once 'propel/map/ColumnMap.php';
 include_once 'propel/map/TableMap.php';
 
-class FakeTableBuilder implements MapBuilder
-{
-  public function doBuild()
-  {
-  }
-  
-  public function isBuilt()
-  {
-    return true;
-  }
-
-  public function getDatabaseMap()
-  {
-  }
-}
-
 /**
  * Test class for TableMap.
  *
@@ -114,7 +98,6 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
     }
     $relatedTmap = $this->dmap->addTable('foo2');
     // required to let the database map use the foreign TableMap
-    $this->dmap->addTableBuilder('foo2', new FakeTableBuilder());
     $relatedCmap = $relatedTmap->addColumn('BAR2', 'Bar2', 'INTEGER');
     $this->cmap->setForeignKey('foo2', 'BAR2');
     $this->assertTrue($this->cmap->isForeignKey(), 'foreignKey is true after setting the foreign key via setForeignKey()');

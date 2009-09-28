@@ -3,13 +3,13 @@
 require_once 'PHPUnit/Framework/TestCase.php';
 
 /**
- * Test class for PHP5MapBuilderBuilder.
+ * Test class for PHP5TableMapBuilder.
  *
  * @author     François Zaninotto
- * @version    $Id: PHP5MapBuilderBuilder.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id: PHP5TableMapBuilderTest.php 1121 2009-09-14 17:20:11Z francois $
  * @package    generator.engine.builder.om.php5
  */
-class PHP5MapBuilderBuilderTest extends PHPUnit_Framework_TestCase 
+class PHP5TableMapBuilderTest extends PHPUnit_Framework_TestCase 
 { 
   protected $databaseMap;
 
