@@ -77,6 +77,30 @@ $book->setTitle('War And Peace');
 echo $book; // 'War And Peace'
 }}}
 
+== New Peer constant: OM_CLASS ==
+
+Did you ever try to get the Propel Model class related to a Peer class? If you did, you probably noticed that the only available constant providing this information also contained package information:
+
+{{{
+#!php
+<?php
+// in BaseBookPeer.php
+/** A class that can be returned by this peer. */
+const CLASS_DEFAULT = 'bookstore.Book';
+}}}
+
+This can be useful if you don't use autoloading; but if you do, retrieving the actual Propel model class name involved some string operations to remove the package information. This is no more necessary in Propel 1.4, since the Peer classes offer a new constant:
+
+{{{
+#!php
+<?php
+// in BaseBookPeer.php
+/** the related Propel class for this table */
+const OM_CLASS = 'Book';
+}}}
+
+The generated Peer methods now use this constant and avoid string operations. Therefore, they should be slightly faster.
+
 == Better Introspection at Runtime ==
 
 A few methods were added to the Map classes to ease runtime introspection:

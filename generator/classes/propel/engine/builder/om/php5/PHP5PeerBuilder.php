@@ -862,8 +862,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		if (!$table->getChildrenColumn()) {
 			$script .= "
 		// set the class once to avoid overhead in the loop
-		\$cls = ".$this->getPeerClassname()."::getOMClass();
-		\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);";
+		\$cls = ".$this->getPeerClassname()."::getOMClass(false);";
 		}
 
 		$script .= "
@@ -1881,14 +1880,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 						if ($table->getChildrenColumn()) {
 							$script .= "
 				\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 						} else {
 							$script .= "
-				\$omClass = ".$this->getPeerClassname()."::getOMClass();
+				\$cls = ".$this->getPeerClassname()."::getOMClass(false);
 ";
 						}
 						$script .= "
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
@@ -1902,15 +1901,15 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 						if ($joinTable->getChildrenColumn()) {
 							$script .= "
 					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
+					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 						} else {
 							$script .= "
-					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+					\$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
 ";
 						}
 
 						$script .= "
-					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 					" . $this->buildObjectInstanceCreationCode('$obj2', '$cls') . "
 					\$obj2->hydrate(\$row, \$startcol);
 					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj2, \$key2);
@@ -2144,15 +2143,15 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		if ($table->getChildrenColumn()) {
 			$script .= "
 				\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+        \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 		} else {
 			$script .= "
-				\$omClass = ".$this->getPeerClassname()."::getOMClass();
+				\$cls = ".$this->getPeerClassname()."::getOMClass(false);
 ";
 		}
 
 		$script .= "
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
@@ -2191,16 +2190,15 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				if ($joinTable->getChildrenColumn()) {
 					$script .= "
 					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+          \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 				} else {
 					$script .= "
-					\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+					\$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
 ";
 				} /* $joinTable->getChildrenColumn() */
 
 				$script .= "
-
-					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 					" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
 					\$obj".$index."->hydrate(\$row, \$startcol$index);
 					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
@@ -2450,15 +2448,15 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			if ($table->getChildrenColumn()) {
 				$script .= "
 				\$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
+				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 			} else {
 				$script .= "
-				\$omClass = ".$this->getPeerClassname()."::getOMClass();
+				\$cls = ".$this->getPeerClassname()."::getOMClass(false);
 ";
 			}
 
 			$script .= "
-				\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 				" . $this->buildObjectInstanceCreationCode('$obj1', '$cls') . "
 				\$obj1->hydrate(\$row);
 				".$this->getPeerClassname()."::addInstanceToPool(\$obj1, \$key1);
@@ -2498,15 +2496,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		  		if ($joinTable->getChildrenColumn()) {
 		  			$script .= "
 						\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
+            \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 ";
 		  		} else {
 		  			$script .= "
-						\$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass();
+						\$cls = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(false);
 ";
 		  		} /* $joinTable->getChildrenColumn() */
 		  		$script .= "
-
-					\$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
 					" . $this->buildObjectInstanceCreationCode('$obj' . $index, '$cls') . "
 					\$obj".$index."->hydrate(\$row, \$startcol$index);
 					".$joinedTablePeerBuilder->getPeerClassname()."::addInstanceToPool(\$obj$index, \$key$index);
