@@ -2417,7 +2417,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 							array_push($right, $joinTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) ) );
 						}
 						$script .= "
-				\$c->addJoin(array(";
+	  \$c->addJoin(array(";
 						foreach ($left as $lCol) {
 							$script .= $lCol;
 							if ($lCol != $left[count($left)]) {
