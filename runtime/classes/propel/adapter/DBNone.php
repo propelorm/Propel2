@@ -95,5 +95,21 @@ class DBNone extends DBAdapter {
 	{
 		return strlen($s);
 	}
+	
+	/**
+	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
+	 */
+	public function applyLimit(&$sql, $offset, $limit)
+	{		
+	}
 
+	/**
+	 * Gets the SQL string that this adapter uses for getting a random number.
+	 *
+	 * @param      mixed $seed (optional) seed value for databases that support this
+	 */
+	public function random($seed = null)
+	{
+	}
+	
 }
