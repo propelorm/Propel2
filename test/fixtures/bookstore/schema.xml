@@ -2,18 +2,12 @@
 <database name="bookstore" defaultIdMethod="native">
 
 	<table name="book" description="Book Table">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER" description="Book Id" />
-		<column name="title" type="VARCHAR" required="true"
-			description="Book Title" primaryString="true" />
-		<column name="isbn" required="true" type="VARCHAR" size="24"
-			phpName="ISBN" description="ISBN Number" />
-		<column name="price" required="false" type="FLOAT"
-			description="Price of the book." />
-		<column name="publisher_id" required="false" type="INTEGER"
-			description="Foreign Key Publisher" />
-		<column name="author_id" required="false" type="INTEGER"
-			description="Foreign Key Author" />
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+		<column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+		<column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
+		<column name="price" required="false" type="FLOAT" description="Price of the book." />
+		<column name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
+		<column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
 		<foreign-key foreignTable="publisher" onDelete="SETNULL">
 			<reference local="publisher_id" foreign="id" />
 		</foreign-key>
@@ -21,12 +15,9 @@
 			<reference local="author_id" foreign="id" />
 		</foreign-key>
 		<validator column="title" translate="none">
-			<rule name="unique"
-				message="Book title already in database." />
-			<rule name="minLength" value="10"
-				message="Book title must be more than ${value} characters long." />
-			<rule name="maxLength" value="255"
-				message="Book title must not be longer than ${value} characters." />
+			<rule name="unique" message="Book title already in database." />
+			<rule name="minLength" value="10" message="Book title must be more than ${value} characters long." />
+			<rule name="maxLength" value="255" message="Book title must not be longer than ${value} characters." />
 		</validator>
 		<validator column="isbn" translate="none">
 			<rule name="class" class="bookstore.validator.ISBNValidator" message="ISBN does not validate!"/>
@@ -34,99 +25,68 @@
 	</table>
 
 	<table name="publisher" description="Publisher Table">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER" description="Publisher Id" />
-		<column name="name" required="true" type="VARCHAR" size="128"
-			default="Penguin" description="Publisher Name" />
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
+		<column name="name" required="true" type="VARCHAR" size="128" default="Penguin" description="Publisher Name" />
 	</table>
 
 	<table name="author" description="Author Table">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER" description="Author Id" />
-		<column name="first_name" required="true" type="VARCHAR"
-			size="128" description="First Name" />
-		<column name="last_name" required="true" type="VARCHAR"
-			size="128" description="Last Name" />
-		<column name="email" type="VARCHAR" size="128"
-			description="E-Mail Address" />
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
+		<column name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
+		<column name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
+		<column name="email" type="VARCHAR" size="128" description="E-Mail Address" />
 		<column name="age" type="INTEGER" description="The authors age" />
 		<validator column="last_name" translate="none">
-			<rule name="required"
-				message="The last name field is required." />
+			<rule name="required" message="The last name field is required." />
 		</validator>
 		<validator column="email" translate="none">
-			<rule name="match"
-				value="/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9])+(\.[a-zA-Z0-9_-]+)+$/"
-				message="Please enter a valid email address." />
+			<rule name="match" value="/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9])+(\.[a-zA-Z0-9_-]+)+$/" message="Please enter a valid email address." />
 		</validator>
 		<validator column="age" translate="none">
-			<rule name="minValue" value="0"
-				message="Please enter a positive number." />
-			<rule name="maxValue" value="100"
-				message="Impressive age! Just kidding, hm?" />
+			<rule name="minValue" value="0" message="Please enter a positive number." />
+			<rule name="maxValue" value="100" message="Impressive age! Just kidding, hm?" />
 		</validator>
 	</table>
 
 	<table name="review" description="Book Review">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER" description="Author Id" />
-		<column name="reviewed_by" required="true" type="VARCHAR"
-			size="128" description="Reviewer Name" />
-		<column name="review_date" required="true" type="DATE"
-			default="2001-01-01" description="Date of Review" />
-		<column name="recommended" required="true" type="BOOLEAN"
-			description="Does reviewer recommend book?" />
-		<column name="status" type="VARCHAR" size="8"
-			description="The status of this review." />
-		<column name="book_id" required="true" type="INTEGER"
-			description="Book ID for this review" />
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
+		<column name="reviewed_by" required="true" type="VARCHAR" size="128" description="Reviewer Name" />
+		<column name="review_date" required="true" type="DATE" default="2001-01-01" description="Date of Review" />
+		<column name="recommended" required="true" type="BOOLEAN" description="Does reviewer recommend book?" />
+		<column name="status" type="VARCHAR" size="8" description="The status of this review." />
+		<column name="book_id" required="true" type="INTEGER" description="Book ID for this review" />
 		<foreign-key foreignTable="book" onDelete="CASCADE">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
 		<validator column="reviewed_by" translate="none">
-			<rule name="required"
-				message="The reviewed by field is required." />
+			<rule name="required" message="The reviewed by field is required." />
 		</validator>
 		<validator column="status" translate="none">
-			<rule name="validValues" value="new|reviewed|archived"
-				message="Invalid status. (new, reviewed, archived)" />
+			<rule name="validValues" value="new|reviewed|archived" message="Invalid status. (new, reviewed, archived)" />
 		</validator>
 	</table>
 
 	<!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
 	<table name="media">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER" description="Media Id" />
-		<column name="cover_image" type="BLOB" lazyLoad="true"
-			description="The image of the book cover." />
-		<column name="excerpt" type="CLOB" lazyLoad="true"
-			description="An excerpt from the book." />
-		<column name="book_id" required="true" type="INTEGER"
-			description="Book ID for this media collection." />
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Media Id" />
+		<column name="cover_image" type="BLOB" lazyLoad="true" description="The image of the book cover." />
+		<column name="excerpt" type="CLOB" lazyLoad="true" description="An excerpt from the book." />
+		<column name="book_id" required="true" type="INTEGER" description="Book ID for this media collection." />
 		<foreign-key foreignTable="book" onDelete="CASCADE">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
 	</table>
 
 	<!-- this table exists to test the many-to-many -->
-	<table name="book_club_list"
-		description="Reading list for a book club.">
-		<column name="id" required="true" primaryKey="true"
-			autoIncrement="true" type="INTEGER"
-			description="Unique ID for a school reading list." />
-		<column name="group_leader" required="true" type="VARCHAR"
-			size="100"
-			description="The name of the teacher in charge of summer reading." />
-		<column name="theme" required="false" type="VARCHAR" size="50"
-			description="The theme, if applicable, for the reading list." />
+	<table name="book_club_list" description="Reading list for a book club.">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Unique ID for a school reading list." />
+		<column name="group_leader" required="true" type="VARCHAR" size="100" description="The name of the teacher in charge of summer reading." />
+		<column name="theme" required="false" type="VARCHAR" size="50" description="The theme, if applicable, for the reading list." />
 	</table>
 
 	<table name="book_x_list" phpName="BookListRel"
 		description="Cross-reference table for many-to-many relationship between book rows and book_club_list rows.">
-		<column name="book_id" primaryKey="true" type="INTEGER"
-			description="Fkey to book.id" />
-		<column name="book_club_list_id" primaryKey="true"
-			type="INTEGER" description="Fkey to book_club_list.id" />
+		<column name="book_id" primaryKey="true" type="INTEGER" description="Fkey to book.id" />
+		<column name="book_club_list_id" primaryKey="true" type="INTEGER" description="Fkey to book_club_list.id" />
 		<foreign-key foreignTable="book" onDelete="CASCADE">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
@@ -138,50 +98,34 @@
 	<!-- test self-referencing foreign keys and inheritance-->
 	<table name="bookstore_employee"
 		description="Hierarchical table to represent employees of a bookstore.">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" description="Employee ID number" />
-		<column name="class_key" type="INTEGER" required="true"
-			default="0" inheritance="single">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Employee ID number" />
+		<column name="class_key" type="INTEGER" required="true" default="0" inheritance="single">
 			<inheritance key="0" class="BookstoreEmployee" />
-			<inheritance key="1" class="BookstoreManager"
-				extends="BookstoreEmployee" />
-			<inheritance key="2" class="BookstoreCashier"
-				extends="BookstoreEmployee" />
+			<inheritance key="1" class="BookstoreManager" extends="BookstoreEmployee" />
+			<inheritance key="2" class="BookstoreCashier" extends="BookstoreEmployee" />
 		</column>
-		<column name="name" type="VARCHAR" size="32"
-			description="Employee name" />
-		<column name="job_title" type="VARCHAR" size="32"
-			description="Employee job title" />
-		<column name="supervisor_id" type="INTEGER"
-			description="Fkey to supervisor." />
+		<column name="name" type="VARCHAR" size="32" description="Employee name" />
+		<column name="job_title" type="VARCHAR" size="32" description="Employee job title" />
+		<column name="supervisor_id" type="INTEGER" description="Fkey to supervisor." />
 		<column name="photo" type="BLOB" lazyLoad="true" />
-		<foreign-key foreignTable="bookstore_employee"
-			phpName="Supervisor" refPhpName="Subordinate" onDelete="SETNULL">
+		<foreign-key foreignTable="bookstore_employee" phpName="Supervisor" refPhpName="Subordinate" onDelete="SETNULL">
 			<reference local="supervisor_id" foreign="id" />
 		</foreign-key>
 	</table>
 
 	<!-- Test one-to-one (1:1) relationship, default values -->
-	<table name="bookstore_employee_account" reloadOnInsert="true"
-		reloadOnUpdate="true"
-		description="A table that represents a bookstore employees login credentials.">
-		<column name="employee_id" type="INTEGER" primaryKey="true"
-			description="Primary key for the account ..." />
+	<table name="bookstore_employee_account" reloadOnInsert="true" reloadOnUpdate="true" description="A table that represents a bookstore employees login credentials.">
+		<column name="employee_id" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
 		<column name="login" type="VARCHAR" size="32" />
-		<column name="password" type="VARCHAR" size="100"
-			default="'@''34&quot;" />
+		<column name="password" type="VARCHAR" size="100" default="'@''34&quot;" />
 		<column name="enabled" type="BOOLEAN" default="true" />
-		<column name="created" type="TIMESTAMP"
-			defaultExpr="CURRENT_TIMESTAMP" />
+		<column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
 		<column name="role_id" type="INTEGER" required="false" />
-		<column name="authenticator" type="VARCHAR" size="32"
-			defaultExpr="'Password'" />
-		<foreign-key foreignTable="bookstore_employee"
-			onDelete="cascade">
+		<column name="authenticator" type="VARCHAR" size="32" defaultExpr="'Password'" />
+		<foreign-key foreignTable="bookstore_employee" onDelete="cascade">
 			<reference local="employee_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="acct_access_role"
-			onDelete="setnull">
+		<foreign-key foreignTable="acct_access_role" onDelete="setnull">
 			<reference local="role_id" foreign="id" />
 		</foreign-key>
 		<unique>
@@ -199,16 +143,14 @@
 	</table>
 	
 	<table name="acct_access_role">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" description="Role ID number" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Role ID number" />
 		<column name="name" type="VARCHAR" size="25" required="true" />
 	</table>
 
 	<!--  book_reader, book_opinion, and reader_favorite test some foreign key issues  
 		(see: http://propel.phpdb.org/trac/ticket/228) -->
 	<table name="book_reader">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" description="Book reader ID number" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Book reader ID number" />
 		<column name="name" type="VARCHAR" size="50" />
 	</table>
 
@@ -244,10 +186,8 @@
 
 	<!--  Test some custom php column types. -->
 	<table name="bookstore">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" description="Book store ID number" />
-		<column name="store_name" type="VARCHAR" size="50"
-			required="true" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Book store ID number" />
+		<column name="store_name" type="VARCHAR" size="50" required="true" />
 		<column name="location" type="VARCHAR" size="100" />
 		<column name="population_served" type="BIGINT" />
 		<column name="total_books" type="INTEGER" />
@@ -260,15 +200,11 @@
 
 	<!--  test default values on foreign keys, default expr w/ reloadOnUpdate="true" -->
 	<table name="bookstore_sale" reloadOnUpdate="true">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" />
-		<column name="bookstore_id" type="INTEGER" required="false"
-			default="1" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+		<column name="bookstore_id" type="INTEGER" required="false" default="1" />
 		<column name="publisher_id" type="INTEGER" required="false" />
-		<column name="sale_name" type="VARCHAR" size="100"
-			required="false" />
-		<column name="discount" type="TINYINT"
-			description="Discount percentage" defaultExpr="10" />
+		<column name="sale_name" type="VARCHAR" size="100" required="false" />
+		<column name="discount" type="TINYINT" description="Discount percentage" defaultExpr="10" />
 		<foreign-key foreignTable="bookstore" onDelete="cascade">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
@@ -278,15 +214,13 @@
 	</table>
 
 	<table name="customer" allowPkInsert="true">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="VARCHAR" size="255" />
 		<column name="join_date" type="DATE" />
 	</table>
 
 	<table name="contest">
-		<column name="id" type="INTEGER" primaryKey="true"
-			autoIncrement="true" />
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="VARCHAR" size="100" />
 	</table>
 
@@ -309,16 +243,14 @@
 		<column name="bookstore_id" type="INTEGER" primaryKey="true" />
 		<column name="contest_id" type="INTEGER" primaryKey="true" />
 		<column name="customer_id" type="INTEGER" primaryKey="true" />
-		<column name="entry_date" type="TIMESTAMP"
-			defaultExpr="CURRENT_TIMESTAMP" />
+		<column name="entry_date" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
 		<foreign-key foreignTable="bookstore" onDelete="CASCADE">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
 		<foreign-key foreignTable="customer" onDelete="CASCADE">
 			<reference local="customer_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="bookstore_contest"
-			onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore_contest" onDelete="CASCADE">
 			<reference local="bookstore_id" foreign="bookstore_id" />
 			<reference local="contest_id" foreign="contest_id" />
 		</foreign-key>
