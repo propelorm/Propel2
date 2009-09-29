@@ -42,7 +42,7 @@ PHP class or method name.
      note: the interface="true", requires that useManagers=true in the
      properties file.
 -->
-<!ELEMENT table (column+,(foreign-key|index|unique|id-method-parameter|validator|vendor)*)>
+<!ELEMENT table (column+,(foreign-key|index|unique|id-method-parameter|validator|behavior|vendor)*)>
 <!ATTLIST table
   name CDATA #REQUIRED
   phpName CDATA #IMPLIED
@@ -124,6 +124,11 @@ PHP class or method name.
 >
 
 <!ELEMENT index (index-column+)>
+<!ATTLIST index
+  name CDATA #IMPLIED
+>
+
+<!ELEMENT behavior (parameter+)>
 <!ATTLIST index
   name CDATA #IMPLIED
 >

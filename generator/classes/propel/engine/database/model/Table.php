@@ -29,6 +29,8 @@ include_once 'propel/engine/database/model/Unique.php';
 include_once 'propel/engine/database/model/ForeignKey.php';
 include_once 'propel/engine/database/model/IdMethodParameter.php';
 include_once 'propel/engine/database/model/Validator.php';
+include_once 'propel/engine/database/model/Behavior.php';
+
 
 /**
  * Data about a table used in an application.
@@ -745,6 +747,43 @@ class Table extends XMLElement implements IDMethod {
 			$unique->loadFromXML($unqdata);
 			return $this->addUnique($unique);
 		}
+	}
+
+
+	/**
+	 * Adds a new Behavior to the table
+	 */
+	public function addBehavior($bdata)
+	{
+		if ($bdata instanceof Behavior) {
+			$behavior = $bdata;
+			$behavior->setTable($this);
+			$this->behaviors[$behavior->getName()] = $behavior;
+			return $behavior;
+		} else {
+			$behavior = new Behavior($this);
+			$behavior->loadFromXML($bdata);
+			return $this->addBehavior($behavior);
+		}
+	}
+	
+	/**
+	 * Get the table behaviors
+	 * @return Array of Behavior objects
+	 */
+	public function getBehaviors()
+	{
+	  return $this->behaviors;
+	}
+	
+	/**
+	 * Get one table behavior by name
+	 * @param string $name the brhavior name
+	 * @return Behavior a behavior object
+	 */
+	public function getBehavior($name)
+	{
+	  return $this->behaviors[$name];
 	}
 
 	/**

@@ -155,4 +155,13 @@ abstract class XMLElement {
 		$xmlstr = $doc->saveXML();
 		return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
 	}
+	
+	/**
+	 * Magic string method
+	 * @see toString()
+	 */
+	public function __toString()
+	{
+	  return $this->toString();
+	}
 }

@@ -283,6 +283,13 @@
 		<xs:attribute name="foreign" type="column_name" use="required"/>
 	</xs:complexType>
 
+	<xs:complexType name="behavior">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="parameter" type="parameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:choice>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+	</xs:complexType>
+
 	<xs:complexType name="column">
 		<xs:choice maxOccurs="unbounded">
 			<xs:element name="inheritance" type="inheritance" minOccurs="0" maxOccurs="unbounded"/>
@@ -344,6 +351,7 @@
 			<xs:element name="unique" type="unique" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="id-method-parameter" type="id-method-parameter" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="behavior" type="behavior" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:choice>
 		<xs:attribute name="name" type="table_name" use="required"/>

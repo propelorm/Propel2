@@ -52,6 +52,7 @@ class XmlToAppData extends AbstractHandler {
 	private $currIndex;
 	private $currUnique;
 	private $currValidator;
+	private $currBehavior;
 	private $currVendorObject;
 
 	private $isForReferenceOnly;
@@ -232,14 +233,18 @@ class XmlToAppData extends AbstractHandler {
 						$this->currVendorObject = $this->currTable->addVendorInfo($attributes);
 					break;
 
-		  			case "validator":
+		  		case "validator":
 					  $this->currValidator = $this->currTable->addValidator($attributes);
-		  			break;
+		  		break;
 
-		  			case "id-method-parameter":
+		  		case "id-method-parameter":
 						$this->currTable->addIdMethodParameter($attributes);
 					break;
-
+          
+					case "behavior":
+					  $this->currBehavior = $this->currTable->addBehavior($attributes);
+					break;
+					
 					default:
 						$this->_throwInvalidTagException($name);
 				}
@@ -298,6 +303,16 @@ class XmlToAppData extends AbstractHandler {
 
 					case "vendor":
 						$this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
+					break;
+
+					default:
+						$this->_throwInvalidTagException($name);
+				}
+			} elseif ($parentTag == "behavior") {
+
+				switch($name) {
+					case "parameter":
+						$this->currBehavior->addParameter($attributes);
 					break;
 
 					default:
