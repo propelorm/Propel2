@@ -4,14 +4,23 @@
 
 Propel uses [http://www.phpunit.de PHPUnit 3.9] to test the build and runtime frameworks.
 
-You can find the unit test classes and support files in the [browser:branches/1.4/test/testsuite] directory. 
+You can find the unit test classes and support files in the [browser:branches/1.4/test/testsuite] directory.
 
 == Install PHPUnit ==
 
-In order to run the tests, you must install PHPUnit:
+In order to run the tests, you must install PHPUnit, PEAR:Log, and Phing:
 {{{
 > pear channel-discover pear.phpunit.de
 > pear install phpunit/PHPUnit-3.3.9
+}}}
+
+{{{
+> pear channel-discover pear.phing.info
+> pear install phing/phing-2.3.3
+}}}
+
+{{{
+> pear install log
 }}}
 
 Tip: The latest release of PHPUnit (3.4) is not totally BC with the 3.3, and doesn't have a Phing adapter yet. That's why the Propel unit tests still use PHPUnit version 3.3.
@@ -74,7 +83,7 @@ Run all the unit tests at once using Phing:
 > phing -f test.xml
 }}}
 
-To run a single test, specify the classname (minus 'Test' ending) on the commandline, using the `test` property. For example to run only GeneratedObjectTest: 
+To run a single test, specify the classname (minus 'Test' ending) on the commandline, using the `test` property. For example to run only GeneratedObjectTest:
 
 {{{
 > phing -f test.xml -Dtest=GeneratedObject
@@ -97,20 +106,20 @@ Writing a unit test often means adding a method to one of the existing test clas
 {{{
 #!php
 <?php
-/** 
+/**
  * Test saving object when only default values are set.
  */
 public function testSaveWithDefaultValues() {
-  
+
   // Relies on a default value of 'Penguin' specified in schema
   // for publisher.name col.
-  
+
   $pub = new Publisher();
   $pub->setName('Penguin');
     // in the past this wouldn't have marked object as modified
     // since 'Penguin' is the value that's already set for that attrib
   $pub->save();
-  
+
   // if getId() returns the new ID, then we know save() worked.
   $this->assertTrue($pub->getId() !== null, "Expect Publisher->save() to work  with only default values.");
 }
