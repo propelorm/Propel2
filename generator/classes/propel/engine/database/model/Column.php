@@ -964,7 +964,7 @@ class Column extends XMLElement {
 			  if ($this->isNumericType()) {
 			    $dflt = $defaultValue->getValue();
 			  } elseif ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
-					$dflt = $this->getPlatform()->quote($defaultValue->getValue());
+					$dflt = "'" . str_replace("'", "\'", $defaultValue->getValue()) . "'";
 				} elseif ($this->getType() == PropelTypes::BOOLEAN) {
 					$dflt = $defaultValue->getValue() ? "true" : "false";
 				} else {
