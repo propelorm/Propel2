@@ -34,36 +34,36 @@ class Behavior extends XMLElement {
   protected $name;
   protected $parameters = array();
   
-	public function setName($name)
-	{
-	  $this->name = $name;
-	}	
+  public function setName($name)
+  {
+    $this->name = $name;
+  }  
   
   public function getName()
-	{
-	  return $this->name;
-	}
+  {
+    return $this->name;
+  }
   
-	public function setTable(Table $table)
-	{
-	  $this->table = $table;
-	}
+  public function setTable(Table $table)
+  {
+    $this->table = $table;
+  }
 
-	public function getTable()
-	{
-	  return $this->table;
-	}
+  public function getTable()
+  {
+    return $this->table;
+  }
 
-	public function addParameter($attribute)
-	{
-	  $attribute = array_change_key_case($attribute, CASE_LOWER);
-	  $this->parameters[$attribute['name']] = $attribute['value'];
-	}
-	
-	public function getParameters()
-	{
-	  return $this->parameters;
-	}
+  public function addParameter($attribute)
+  {
+    $attribute = array_change_key_case($attribute, CASE_LOWER);
+    $this->parameters[$attribute['name']] = $attribute['value'];
+  }
+  
+  public function getParameters()
+  {
+    return $this->parameters;
+  }
 
   public function getParameter($name)
   {
@@ -79,28 +79,28 @@ class Behavior extends XMLElement {
   }
   
   /**
-	 * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
-	 * @see        parent::loadFromXML()
-	 */
-	protected function setupObject()
-	{
-		$this->name = $this->getAttribute("name");
-	}
-		
-	/**
-	 * @see        parent::appendXml(DOMNode)
-	 */
-	public function appendXml(DOMNode $node)
-	{
-		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
+   * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
+   * @see        parent::loadFromXML()
+   */
+  protected function setupObject()
+  {
+    $this->name = $this->getAttribute("name");
+  }
+    
+  /**
+   * @see        parent::appendXml(DOMNode)
+   */
+  public function appendXml(DOMNode $node)
+  {
+    $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
-		$bNode = $node->appendChild($doc->createElement('behavior'));
-		$bNode->setAttribute('name', $this->getName());
+    $bNode = $node->appendChild($doc->createElement('behavior'));
+    $bNode->setAttribute('name', $this->getName());
 
-		foreach ($this->parameters as $name => $value) {
-			$parameterNode = $bNode->appendChild($doc->createElement('parameter'));
-			$parameterNode->setAttribute('name', $name);
-			$parameterNode->setAttribute('value', $value);
-		}
-	}  
+    foreach ($this->parameters as $name => $value) {
+      $parameterNode = $bNode->appendChild($doc->createElement('parameter'));
+      $parameterNode->setAttribute('name', $name);
+      $parameterNode->setAttribute('value', $value);
+    }
+  }  
 }

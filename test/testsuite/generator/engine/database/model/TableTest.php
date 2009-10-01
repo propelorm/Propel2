@@ -34,58 +34,58 @@ include_once 'propel/engine/GeneratorConfig.php';
  */
 class TableTest extends PHPUnit_Framework_TestCase {
 
-	private $xmlToAppData;
-	private $appData;
+  private $xmlToAppData;
+  private $appData;
 
-	/**
-	 * test if the tables get the package name from the properties file
-	 *
-	 */
-	public function testIdMethodHandling() {
-		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+  /**
+   * test if the tables get the package name from the properties file
+   *
+   */
+  public function testIdMethodHandling() {
+    $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 
-		//$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
-		$this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
+    //$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
+    $this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
 
-		$db = $this->appData->getDatabase("iddb");
-		$expected = IDMethod::NATIVE;
-		$result = $db->getDefaultIdMethod();
-		$this->assertEquals($expected, $result);
+    $db = $this->appData->getDatabase("iddb");
+    $expected = IDMethod::NATIVE;
+    $result = $db->getDefaultIdMethod();
+    $this->assertEquals($expected, $result);
 
-		$table2 = $db->getTable("table_native");
-		$expected = IDMethod::NATIVE;
-		$result = $table2->getIdMethod();
-		$this->assertEquals($expected, $result);
+    $table2 = $db->getTable("table_native");
+    $expected = IDMethod::NATIVE;
+    $result = $table2->getIdMethod();
+    $this->assertEquals($expected, $result);
 
-		$table = $db->getTable("table_none");
-		$expected = IDMethod::NO_ID_METHOD;
-		$result = $table->getIdMethod();
-		$this->assertEquals($expected, $result);
-	}
-	
-	public function testGeneratorConfig()
-	{
-	  $xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
-		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
-		$config = new GeneratorConfig();
-		$config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
-		$table->getDatabase()->getAppData()->getPlatform()->setGeneratorConfig($config);
-		$this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
-		$this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
-	}
-	
-	public function testAddBehavior()
-	{
-	  $platform = new MysqlPlatform();
-		$config = new GeneratorConfig();
-		$config->setBuildProperties(array(
-		  'propel.behavior.timestampable.class' => 'propel.engine.behavior.timestampable.TimestampableBehavior'
-		));
-		$platform->setGeneratorConfig($config);
-	  $xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
-		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
-		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
-	}
+    $table = $db->getTable("table_none");
+    $expected = IDMethod::NO_ID_METHOD;
+    $result = $table->getIdMethod();
+    $this->assertEquals($expected, $result);
+  }
+  
+  public function testGeneratorConfig()
+  {
+    $xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
+    $config = new GeneratorConfig();
+    $config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
+    $table->getDatabase()->getAppData()->getPlatform()->setGeneratorConfig($config);
+    $this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
+    $this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
+  }
+  
+  public function testAddBehavior()
+  {
+    $platform = new MysqlPlatform();
+    $config = new GeneratorConfig();
+    $config->setBuildProperties(array(
+      'propel.behavior.timestampable.class' => 'propel.engine.behavior.timestampable.TimestampableBehavior'
+    ));
+    $platform->setGeneratorConfig($config);
+    $xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
+    $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
+  }
 }

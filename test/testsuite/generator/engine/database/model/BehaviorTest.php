@@ -33,64 +33,64 @@ include_once 'propel/engine/platform/MysqlPlatform.php';
  */
 class BehaviorTest extends PHPUnit_Framework_TestCase {
 
-	private $xmlToAppData;
-	private $appData;
+  private $xmlToAppData;
+  private $appData;
   
-	public function testSetupObject()
-	{
-	  $b = new Behavior();
-	  $b->loadFromXML(array('name' => 'foo'));
-	  $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
-	}
-	
-	public function testName()
-	{
-	  $b = new Behavior();
-	  $this->assertNull($b->getName(), 'Behavior name is null by default');
-	  $b->setName('foo');
-	  $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
-	}
-	
-	public function testTable()
-	{
-	  $b = new Behavior();
-	  $this->assertNull($b->getTable(), 'Behavior Table is null by default');
-	  $t = new Table();
-	  $t->setName('fooTable');
-	  $b->setTable($t);
-	  $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
-	}
-	
-	public function testParameters()
-	{
-	  $b = new Behavior();
-	  $this->assertEquals($b->getParameters(), array(), 'Behavior parameters is an empty array by default');
-	  $b->addParameter(array('name' => 'foo', 'value' => 'bar'));
-	  $this->assertEquals($b->getParameters(), array('foo' => 'bar'), 'addParameter() sets a parameter from an associative array');
-	  $b->addParameter(array('name' => 'foo2', 'value' => 'bar2'));
-	  $this->assertEquals($b->getParameters(), array('foo' => 'bar', 'foo2' => 'bar2'), 'addParameter() adds a parameter from an associative array');
-	  $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
-	  $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
-	  $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');	 
-	}
-	
-	/**
-	 * test if the tables get the package name from the properties file
-	 *
-	 */
-	public function testXmlToAppData() {
-		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+  public function testSetupObject()
+  {
+    $b = new Behavior();
+    $b->loadFromXML(array('name' => 'foo'));
+    $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
+  }
+  
+  public function testName()
+  {
+    $b = new Behavior();
+    $this->assertNull($b->getName(), 'Behavior name is null by default');
+    $b->setName('foo');
+    $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
+  }
+  
+  public function testTable()
+  {
+    $b = new Behavior();
+    $this->assertNull($b->getTable(), 'Behavior Table is null by default');
+    $t = new Table();
+    $t->setName('fooTable');
+    $b->setTable($t);
+    $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
+  }
+  
+  public function testParameters()
+  {
+    $b = new Behavior();
+    $this->assertEquals($b->getParameters(), array(), 'Behavior parameters is an empty array by default');
+    $b->addParameter(array('name' => 'foo', 'value' => 'bar'));
+    $this->assertEquals($b->getParameters(), array('foo' => 'bar'), 'addParameter() sets a parameter from an associative array');
+    $b->addParameter(array('name' => 'foo2', 'value' => 'bar2'));
+    $this->assertEquals($b->getParameters(), array('foo' => 'bar', 'foo2' => 'bar2'), 'addParameter() adds a parameter from an associative array');
+    $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
+    $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
+    $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');   
+  }
+  
+  /**
+   * test if the tables get the package name from the properties file
+   *
+   */
+  public function testXmlToAppData() {
+    $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+    $this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
     $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
-		$behaviors = $table->getBehaviors();
+    $behaviors = $table->getBehaviors();
     $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
-		$behavior = $table->getBehavior('timestampable');
-		$this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
-		$this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on'), 'XmlToAppData sets the behavior parameters correctly');
-	}
-	
-	public function testMofifyTable() {
-	  $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
-	  $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
-	}
+    $behavior = $table->getBehavior('timestampable');
+    $this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
+    $this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on'), 'XmlToAppData sets the behavior parameters correctly');
+  }
+  
+  public function testMofifyTable() {
+    $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
+    $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
+  }
 }
