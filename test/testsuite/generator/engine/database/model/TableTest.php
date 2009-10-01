@@ -23,6 +23,7 @@
 require_once 'PHPUnit/Framework/TestCase.php';
 include_once 'propel/engine/database/transform/XmlToAppData.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
+include_once 'propel/engine/GeneratorConfig.php';
 
 /**
  * Tests for package handling.
@@ -60,5 +61,31 @@ class TableTest extends PHPUnit_Framework_TestCase {
 		$expected = IDMethod::NO_ID_METHOD;
 		$result = $table->getIdMethod();
 		$this->assertEquals($expected, $result);
+	}
+	
+	public function testGeneratorConfig()
+	{
+	  $xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+		$table = $appData->getDatabase("bookstore-behavior")->getTable('b_user');
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
+		$table->getDatabase()->getAppData()->getPlatform()->setGeneratorConfig($config);
+		$this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
+		$this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
+	}
+	
+	public function testAddBehavior()
+	{
+	  $platform = new MysqlPlatform();
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array(
+		  'propel.behavior.timestampable.class' => 'propel.engine.behavior.timestampable.TimestampableBehavior'
+		));
+		$platform->setGeneratorConfig($config);
+	  $xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
+		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+		$table = $appData->getDatabase("bookstore-behavior")->getTable('b_user');
+		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
 	}
 }

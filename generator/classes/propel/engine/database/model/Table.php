@@ -749,6 +749,10 @@ class Table extends XMLElement implements IDMethod {
 		}
 	}
 
+  public function getGeneratorConfig()
+  {
+    return $this->getDatabase()->getAppData()->getPlatform()->getGeneratorConfig();
+  }
 
 	/**
 	 * Adds a new Behavior to the table
@@ -761,7 +765,8 @@ class Table extends XMLElement implements IDMethod {
 			$this->behaviors[$behavior->getName()] = $behavior;
 			return $behavior;
 		} else {
-			$behavior = new Behavior($this);
+		  $class = $this->getGeneratorConfig() ? $this->getGeneratorConfig()->getConfiguredBehavior($bdata['name']) : 'Behavior';
+			$behavior = new $class($this);
 			$behavior->loadFromXML($bdata);
 			return $this->addBehavior($behavior);
 		}

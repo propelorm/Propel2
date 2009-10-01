@@ -208,4 +208,16 @@ class GeneratorConfig {
 		$pluralizer = new $classname();
 		return $pluralizer;
 	}
+	
+	/**
+	 * Gets a configured behavior class
+   *
+	 * @param string $name a behavior name
+	 * @return string a behavior class name
+	 */
+	public function getConfiguredBehavior($name)
+	{
+	  $propname = 'behavior' . ucfirst(strtolower($name)) . 'Class';
+	  return $this->getClassname($propname);
+	}
 }
