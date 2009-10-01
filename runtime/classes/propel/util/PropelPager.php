@@ -96,11 +96,12 @@
  *
  *
  * @author     Rob Halff <info@rhalff.com>
+ * @author	   Niklas Närhinen <niklas@narhinen.net>
  * @version    $Revision$
  * @copyright  Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
  * @package    propel.util
  */
-class PropelPager {
+class PropelPager implements Countable, Iterator {
 
 	private $recordCount;
 	private $pages;
@@ -111,6 +112,9 @@ class PropelPager {
 	private $countCriteria;
 	private $page;
 	private $rs = null;
+	
+	//Iterator vars
+	private $currentKey = 0;
 
 	/** @var        int Start row (offset) */
 	protected $start = 0;
@@ -538,6 +542,66 @@ class PropelPager {
 	public function setMax($v)
 	{
 		$this->max = $v;
+	}
+	
+	/**
+	 * Returns the count of the current page's records
+	 * @return 	int
+	 */
+	public function count()
+	{
+		return count($this->getResult());
+	}
+	
+	/**
+	 * Returns the current element of the iterator
+	 * @return mixed
+	 */
+	public function current()
+	{
+		if (!isset($this->rs)) {
+			$this->doRs();
+		}
+		return $this->rs[$this->currentKey];
+	}
+	
+	/**
+	 * Returns the current key of the iterator
+	 * @return int
+	 */
+	public function key()
+	{
+		return $this->currentKey;
+	}
+	
+	/**
+	 * Advances the iterator to the next element
+	 * @return void
+	 */
+	public function next()
+	{
+		$this->currentKey++;
+	}
+	
+	/**
+	 * Resets the iterator to the first element
+	 * @return void
+	 */
+	public function rewind()
+	{
+		$this->currentKey = 0;
+	}
+	
+	/**
+	 * Checks if the current key exists in the container
+	 * @return boolean
+	 */
+	public function valid()
+	{
+		if (!isset($this->rs)) {
+			$this->doRs();
+		}
+		return in_array($this->currentKey, array_keys($this->rs));
 	}
 
 }
