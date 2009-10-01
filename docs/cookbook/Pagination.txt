@@ -76,6 +76,23 @@ A call to `PropelPager::getResults()` makes a call to `BookPeer::doSelect($crite
 Book count: <?php echo $pager->getTotalRecordCount() ?>
 }}}
 
+== Using The Iterator Interface ==
+
+`PropelPager` implements the `Countable` and `Iterator` interfaces. That means that you can replace some of the method calls by php statements, as if the `$pager` object was an array:
+
+{{{
+#!php
+<?php
+if(count($pager)) // if the current page has results
+{
+  foreach($pager as $book) // get pager results and iterate on them
+  {
+    echo $book->getTitle();
+  }
+}
+}}}
+
+ 
 == Pager Options ==
 
 The `PropelPager` constructor allows fine customization of the query to be executed:

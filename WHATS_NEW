@@ -101,6 +101,28 @@ const OM_CLASS = 'Book';
 
 The generated Peer methods now use this constant and avoid string operations. Therefore, they should be slightly faster.
 
+== PropelPager Implements Countable and Iterator Interfaces ==
+
+Did you know Propel offered a pagination utility class? It just got better, by now supporting the `Countable` and `Iterator` interfaces. That means that you can manipulate a `PropelPager` object as if it was an array:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(BookPeer::AUTHOR, $authorId);
+$pager = new PropelPager($c, 'BookPeer', 'doSelect', $page = 1, $rowsPerPage = 20);
+
+if(count($pager)) // if the current page has results
+{
+  foreach($pager as $book) // get pager results and iterate on them
+  {
+    echo $book->getTitle();
+  }
+}
+}}}
+
+Note that the `PropelPager` utility has a brand new documentation in the [wiki:Users/Documentation/1.4#HowTos HowTos] section. 
+
 == Better Introspection at Runtime ==
 
 A few methods were added to the Map classes to ease runtime introspection:
