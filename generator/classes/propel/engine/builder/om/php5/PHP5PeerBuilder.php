@@ -467,13 +467,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 *		 rethrown wrapped into a PropelException.
 	 */
 	public static function addSelectColumns(Criteria \$criteria)
-	{
-";
+	{";
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				$script .= "
-		\$criteria->addSelectColumn(".$this->getPeerClassname()."::".$this->getColumnName($col).");
-";
+		\$criteria->addSelectColumn(".$this->getPeerClassname()."::".$this->getColumnName($col).");";
 			} // if !col->isLazyLoad
 		} // foreach
 		$script .="
@@ -491,37 +489,37 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
-	 * @param      Criteria \$c
+	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria \$c, \$distinct = false, PropelPDO \$con = null)
+	public static function doCount(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null)
 	{
 		// we may modify criteria, so copy it first
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		\$c->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
 
-		if (\$distinct && !in_array(Criteria::DISTINCT, \$c->getSelectModifiers())) {
-			\$c->setDistinct();
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
 
-		if (!\$c->hasSelectClause()) {
-			".$this->getPeerClassname()."::addSelectColumns(\$c);
+		if (!\$criteria->hasSelectClause()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 
-		\$c->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		\$c->setDbName(self::DATABASE_NAME); // Set the correct dbName
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		\$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		// BasePeer returns a PDOStatement
-		\$stmt = ".$this->basePeerClassname."::doCount(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
@@ -874,8 +872,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				// See http://propel.phpdb.org/trac/ticket/509
 				// \$obj->hydrate(\$row, 0, true); // rehydrate
 				\$results[] = \$obj;
-			} else {
-		";
+			} else {";
 		if ($table->getChildrenColumn()) {
 			$script .= "
 				// class must be set each time from the record row
@@ -1414,18 +1411,18 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 					$script .= "
 
 			// delete related $fkClassName objects
-			\$c = new Criteria(".$joinedTablePeerBuilder->getPeerClassname()."::DATABASE_NAME);
+			\$criteria = new Criteria(".$joinedTablePeerBuilder->getPeerClassname()."::DATABASE_NAME);
 			";
 					for ($x=0,$xlen=count($columnNamesF); $x < $xlen; $x++) {
 						$columnFK = $tblFK->getColumn($columnNamesF[$x]);
 						$columnL = $table->getColumn($columnNamesL[$x]);
 
 						$script .= "
-			\$c->add(".$joinedTablePeerBuilder->getColumnConstant($columnFK) .", \$obj->get".$columnL->getPhpName()."());";
+			\$criteria->add(".$joinedTablePeerBuilder->getColumnConstant($columnFK) .", \$obj->get".$columnL->getPhpName()."());";
 					}
 
 					$script .= "
-			\$affectedRows += ".$joinedTablePeerBuilder->getPeerClassname()."::doDelete(\$c, \$con);";
+			\$affectedRows += ".$joinedTablePeerBuilder->getPeerClassname()."::doDelete(\$criteria, \$con);";
 
 				} // if cascade && fkey table name != curr table name
 
@@ -1796,7 +1793,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		  // simple foreign key
 		  $lftCol = $lftCols[0];
 		  $script .= sprintf("
-		\$c->addJoin(%s, %s, \$join_behavior);\n",
+		\$criteria->addJoin(%s, %s, \$join_behavior);\n",
         $this->getColumnConstant($table->getColumn($lftCol) ),
         $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$lftCol] ) ));
 		}
@@ -1804,7 +1801,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		{
 		  // composite foreign key
 		  $script .= "
-		\$c->addMultipleJoin(array(\n";
+		\$criteria->addMultipleJoin(array(\n";
 		  foreach ($lftCols as $columnName ) {
 		    $script .= sprintf("        array(%s, %s),\n", 
 				  $this->getColumnConstant($table->getColumn($columnName) ),
@@ -1849,31 +1846,31 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 	/**
 	 * Selects a collection of $className objects pre-filled with their $joinClassName objects.
-	 * @param      Criteria  \$c
+	 * @param      Criteria  \$criteria
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of $className objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
+	public static function doSelectJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
 	{
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// Set the correct dbName if it has not been overridden
-		if (\$c->getDbName() == Propel::getDefaultDB()) {
-			\$c->setDbName(self::DATABASE_NAME);
+		if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+			\$criteria->setDbName(self::DATABASE_NAME);
 		}
 
-		".$this->getPeerClassname()."::addSelectColumns(\$c);
+		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
-		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 ";
 
             $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
 
 						$script .= "
-		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
 		\$results = array();
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
@@ -1972,34 +1969,34 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
-	 * @param      Criteria \$c
+	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
+	public static function doCountJoin".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		\$c->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
 
-		if (\$distinct && !in_array(Criteria::DISTINCT, \$c->getSelectModifiers())) {
-			\$c->setDistinct();
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
 
-		if (!\$c->hasSelectClause()) {
-			".$this->getPeerClassname()."::addSelectColumns(\$c);
+		if (!\$criteria->hasSelectClause()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
-		\$c->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		
 		// Set the correct dbName
-		\$c->setDbName(self::DATABASE_NAME);
+		\$criteria->setDbName(self::DATABASE_NAME);
 
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -2007,7 +2004,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
             $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
             $script .= "
-		\$stmt = ".$this->basePeerClassname."::doCount(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
@@ -2040,23 +2037,23 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Selects a collection of $className objects pre-filled with all related objects.
 	 *
-	 * @param      Criteria  \$c
+	 * @param      Criteria  \$criteria
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of $className objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
+	public static function doSelectJoinAll(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
 	{
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// Set the correct dbName if it has not been overridden
-		if (\$c->getDbName() == Propel::getDefaultDB()) {
-			\$c->setDbName(self::DATABASE_NAME);
+		if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+			\$criteria->setDbName(self::DATABASE_NAME);
 		}
 
-		".$this->getPeerClassname()."::addSelectColumns(\$c);
+		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 		$index = 2;
@@ -2072,7 +2069,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				$joinClassName = $joinedTablePeerBuilder->getObjectClassname();
 
 				$script .= "
-		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 		\$startcol$new_index = \$startcol$index + (".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 				$index = $new_index;
@@ -2090,7 +2087,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		$script .= "
-		\$stmt = ".$this->basePeerClassname."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
 		\$results = array();
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
@@ -2201,34 +2198,34 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria \$c
+	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria \$c, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
+	public static function doCountJoinAll(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		\$c->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
 
-		if (\$distinct && !in_array(Criteria::DISTINCT, \$c->getSelectModifiers())) {
-			\$c->setDistinct();
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
 
-		if (!\$c->hasSelectClause()) {
-			".$this->getPeerClassname()."::addSelectColumns(\$c);
+		if (!\$criteria->hasSelectClause()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
-		\$c->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		\$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		
 		// Set the correct dbName
-		\$c->setDbName(self::DATABASE_NAME);
+		\$criteria->setDbName(self::DATABASE_NAME);
 
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -2245,7 +2242,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		} // foreach [sub] foreign keys
 
 		$script .= "
-		\$stmt = ".$this->basePeerClassname."::doCount(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
@@ -2293,25 +2290,25 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Selects a collection of ".$this->getObjectClassname()." objects pre-filled with all related objects except ".$thisTableObjectBuilder->getFKPhpNameAffix($fk).".
 	 *
-	 * @param      Criteria  \$c
+	 * @param      Criteria  \$criteria
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     array Array of ".$this->getObjectClassname()." objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$con = null, \$join_behavior = $join_behavior)
+	public static function doSelectJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$con = null, \$join_behavior = $join_behavior)
 	{
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// Set the correct dbName if it has not been overridden
-		// \$c->getDbName() will return the same object if not set to another value
+		// \$criteria->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if (\$c->getDbName() == Propel::getDefaultDB()) {
-			\$c->setDbName(self::DATABASE_NAME);
+		if (\$criteria->getDbName() == Propel::getDefaultDB()) {
+			\$criteria->setDbName(self::DATABASE_NAME);
 		}
 
-		".$this->getPeerClassname()."::addSelectColumns(\$c);
+		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 			$index = 2;
@@ -2326,7 +2323,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 					if ($joinClassName != $excludedClassName) {
 						$new_index = $index + 1;
 						$script .= "
-		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$c);
+		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 		\$startcol$new_index = \$startcol$index + (".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
 ";
 						$index = $new_index;
@@ -2349,7 +2346,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			} // foreach fkeys
 			$script .= "
 
-		\$stmt = ".$this->basePeerClassname ."::doSelect(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname ."::doSelect(\$criteria, \$con);
 		\$results = array();
 
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
@@ -2470,34 +2467,34 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	/**
 	 * Returns the number of rows matching criteria, joining the related ".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)." table
 	 *
-	 * @param      Criteria \$c
+	 * @param      Criteria \$criteria
 	 * @param      boolean \$distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO \$con
 	 * @param      String    \$join_behavior the type of joins to use, defaults to $join_behavior
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$c, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
+	public static function doCountJoinAllExcept".$thisTableObjectBuilder->getFKPhpNameAffix($fk, $plural = false)."(Criteria \$criteria, \$distinct = false, PropelPDO \$con = null, \$join_behavior = $join_behavior)
 	{
 		// we're going to modify criteria, so copy it first
-		\$c = clone \$c;
+		\$criteria = clone \$criteria;
 
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		\$c->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+		\$criteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
 		
-		if (\$distinct && !in_array(Criteria::DISTINCT, \$c->getSelectModifiers())) {
-			\$c->setDistinct();
+		if (\$distinct && !in_array(Criteria::DISTINCT, \$criteria->getSelectModifiers())) {
+			\$criteria->setDistinct();
 		}
 
-		if (!\$c->hasSelectClause()) {
-			".$this->getPeerClassname()."::addSelectColumns(\$c);
+		if (!\$criteria->hasSelectClause()) {
+			".$this->getPeerClassname()."::addSelectColumns(\$criteria);
 		}
 		
-		\$c->clearOrderByColumns(); // ORDER BY should not affect count
+		\$criteria->clearOrderByColumns(); // ORDER BY should not affect count
 		
 		// Set the correct dbName
-		\$c->setDbName(self::DATABASE_NAME);
+		\$criteria->setDbName(self::DATABASE_NAME);
 
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -2518,7 +2515,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				}
 			} // foreach fkeys
 			$script .= "
-		\$stmt = ".$this->basePeerClassname."::doCount(\$c, \$con);
+		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
 		if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$count = (int) \$row[0];
