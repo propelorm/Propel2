@@ -35,7 +35,46 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
 
 	private $xmlToAppData;
 	private $appData;
-
+  
+	public function testSetupObject()
+	{
+	  $b = new Behavior();
+	  $b->loadFromXML(array('name' => 'foo'));
+	  $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
+	}
+	
+	public function testName()
+	{
+	  $b = new Behavior();
+	  $this->assertNull($b->getName(), 'Behavior name is null by default');
+	  $b->setName('foo');
+	  $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
+	}
+	
+	public function testTable()
+	{
+	  $b = new Behavior();
+	  $this->assertNull($b->getTable(), 'Behavior Table is null by default');
+	  $t = new Table();
+	  $t->setName('fooTable');
+	  $b->setTable($t);
+	  $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
+	}
+	
+	public function testParameters()
+	{
+	  $b = new Behavior();
+	  $this->assertEquals($b->getParameters(), array(), 'Behavior parameters is an empty array by default');
+	  $b->addParameter(array('name' => 'foo', 'value' => 'bar'));
+	  $this->assertEquals($b->getParameters(), array('foo' => 'bar'), 'addParameter() sets a parameter from an associative array');
+	  $b->addParameter(array('name' => 'foo2', 'value' => 'bar2'));
+	  $this->assertEquals($b->getParameters(), array('foo' => 'bar', 'foo2' => 'bar2'), 'addParameter() adds a parameter from an associative array');
+	  $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
+	  $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
+	  $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');
+	 
+	}
+	
 	/**
 	 * test if the tables get the package name from the properties file
 	 *
