@@ -95,7 +95,7 @@ class PHP5TableMapBuilderTest extends PHPUnit_Framework_TestCase
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals($bookTable->getBehaviors(), array(), 'getBehaviors() returns an empty array when no behaviors are registered');
     $tmap = Propel::getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
-    $expectedBehaviorParams = array('timestampable' => array('add_columns' => 'false', 'create_column' => 'created_on', 'update_column' => 'updated_at'));
+    $expectedBehaviorParams = array('timestampable' => array('add_columns' => 'false', 'create_column' => 'created_on', 'update_column' => 'updated_on'));
     $this->assertEquals($tmap->getBehaviors(), $expectedBehaviorParams, 'The map builder creates a getBehaviors() method to retrieve behaviors parameters when behaviors are registered');
   }  
 }

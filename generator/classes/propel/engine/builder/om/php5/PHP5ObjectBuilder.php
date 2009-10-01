@@ -2016,8 +2016,24 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		
 		\$con->beginTransaction();
-		try {
-			".$this->getPeerClassname()."::doDelete(\$this, \$con);
+		try {";
+
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preDelete'))
+		{
+      $this->applyBehaviorModifier('preDelete', $script);
+		}
+
+		$script .= "
+			".$this->getPeerClassname()."::doDelete(\$this, \$con);";
+
+		// apply behaviors
+		if ($this->hasBehaviorModifier('postDelete'))
+		{
+      $this->applyBehaviorModifier('postDelete', $script);
+		}
+
+		$script .= "
 			\$this->setDeleted(true);
 			\$con->commit();
 		} catch (PropelException \$e) {
@@ -3519,8 +3535,57 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		
 		\$con->beginTransaction();
-		try {
-			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");
+		\$isInsert = \$this->isNew();
+		try {";
+		
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preSave'))
+		{
+      $this->applyBehaviorModifier('preSave', $script);
+		}
+		if ($this->hasBehaviorModifier('preUpdate'))
+		{
+		  $script .= "
+		  if(!\$isInsert) {";
+      $this->applyBehaviorModifier('preUpdate', $script);
+      $script .= "
+      }";
+		}
+		if ($this->hasBehaviorModifier('preInsert'))
+		{
+		  $script .= "
+		  if(\$isInsert) {";
+      $this->applyBehaviorModifier('preInsert', $script);
+      $script .= "
+      }";
+		}
+		
+		$script .= "
+			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
+
+		// apply behaviors
+		if ($this->hasBehaviorModifier('postSave'))
+		{
+      $this->applyBehaviorModifier('postSave', $script);
+		}
+		if ($this->hasBehaviorModifier('postUpdate'))
+		{
+		  $script .= "
+		  if(!\$isInsert) {";
+      $this->applyBehaviorModifier('postUpdate', $script);
+      $script .= "
+      }";
+		}
+		if ($this->hasBehaviorModifier('postInsert'))
+		{
+		  $script .= "
+		  if(\$isInsert) {";
+      $this->applyBehaviorModifier('postInsert', $script);
+      $script .= "
+      }";
+		}
+
+		$script .= "
 			\$con->commit();
 			".$this->getPeerClassname()."::addInstanceToPool(\$this);
 			return \$affectedRows;
@@ -3933,10 +3998,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
    */
   protected function addPrimaryString(&$script)
   {
-    foreach ($this->getTable()->getColumns() as $column)
-    {
-      if ($column->isPrimaryString())
-      {
+    foreach ($this->getTable()->getColumns() as $column) {
+      if ($column->isPrimaryString()) {
         $script .= "
 	/**
 	 * Return the string representation of this object
@@ -3950,6 +4013,33 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
         break;
       }
+    }
+  }
+
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @return boolean
+   */
+  public function hasBehaviorModifier($hookName)
+  {
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      if(method_exists($behavior->getObjectBuilderModifier(), $hookName)) { 
+        return true;
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	 * @param string &$script The script will be modified in this method.
+   */
+  public function applyBehaviorModifier($hookName, &$script)
+  {
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      $script .= call_user_func(array($behavior->getObjectBuilderModifier(), $hookName));
     }
   }
 

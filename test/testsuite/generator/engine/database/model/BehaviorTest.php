@@ -86,7 +86,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
     $behavior = $table->getBehavior('timestampable');
     $this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
-    $this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on'), 'XmlToAppData sets the behavior parameters correctly');
+    $this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on', 'update_column' => 'updated_on'), 'XmlToAppData sets the behavior parameters correctly');
   }
   
   public function testMofifyTable() {

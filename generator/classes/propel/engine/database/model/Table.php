@@ -385,7 +385,7 @@ class Table extends XMLElement implements IDMethod {
     // execute behavior table modifiers
     foreach ($this->getBehaviors() as $behavior)
     {
-      $behavior->modifyTable();
+      $behavior->getTableModifier()->modifyTable();
     }
   }
 

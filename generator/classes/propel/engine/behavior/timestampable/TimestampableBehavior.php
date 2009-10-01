@@ -4,7 +4,7 @@ class TimestampableBehavior extends Behavior
 {
   // default parameters value
   protected $parameters = array(
-    'add_columns'    => 'true',
+    'add_columns'   => 'true',
     'create_column' => 'created_at',
     'update_column' => 'updated_at'
   );
@@ -22,5 +22,40 @@ class TimestampableBehavior extends Behavior
         'type' => 'TIMESTAMP'
       ));
     }
-  }  
+  }
+  
+  /**
+   * Get the setter of one of the columns of the behavior
+   * 
+   * @param  string $column One of the behavior colums, 'create_column' or 'update_column'
+   * @return string The related setter, 'setCreatedOn' or 'setUpdatedOn'
+   */
+  protected function getColumnSetter($column)
+  {
+    return 'set' . $this->getTable()->getColumn($this->getParameter($column))->getPhpName();
+  }
+  
+  /**
+   * Add code in ObjectBuilder::preSave
+   *
+   * @return string The code to put at the hook
+   */
+  public function preSave()
+  {
+    return "
+			// timestampable behavior
+			\$this->" . $this->getColumnSetter('update_column') . "(time());";
+  }
+  
+  /**
+   * Add code in ObjectBuilder::preInsert
+   *
+   * @return string The code to put at the hook
+   */
+  public function preInsert()
+  {
+    return "
+				// timestampable behavior
+				\$this->" . $this->getColumnSetter('create_column') . "(time());";    
+  }
 }

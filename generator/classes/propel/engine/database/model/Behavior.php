@@ -102,5 +102,25 @@ class Behavior extends XMLElement {
       $parameterNode->setAttribute('name', $name);
       $parameterNode->setAttribute('value', $value);
     }
+  }
+  
+  public function getTableModifier()
+  {
+    return $this;
   }  
+  
+  public function getObjectBuilderModifier()
+  {
+    return $this;
+  }
+
+  public function getPeerBuilderModifier()
+  {
+    return $this;
+  }
+  
+  public function getTableMapBuilderModifier()
+  {
+    return $this;
+  }
 }
