@@ -1,0 +1,97 @@
+= Getting a Paginated List Of Results =
+
+The `PropelPager` class allows you to get nicely paginated resultsets from your database. It contains a lot of useful helper methods to ease paging query results. 
+
+== Building a Pager Query ==
+ 
+Here is how to retrieve a list of Books from a specific author, 30 results per page:
+{{{
+#!php
+<?php
+$criteria = new Criteria();
+$criteria->add(BookPeer::AUTHOR, $authorId);
+$pager = new PropelPager($criteria, 'BookPeer', 'doSelect', $page = 1, $rowsPerPage = 30);
+}}}
+
+So instead of calling `BookPeer::doSelect()` directly, the above code asks a `PropelPager` object to do it. The pager object adds limit and offset statements to the criteria, but doesn't execute the query yet.
+
+== Displaying Pagination Links ==
+
+Now let's see how to use the pager object to display a nice pagination navigation looking like the following:
+
+{{{
+  [<<First]  [<Previous] [1] [2] [3]  4  [5] [6] [7] [Next>] [Last>>]
+}}}
+
+{{{
+#!php
+<?php
+<?php if (!$pager->atFirstPage()): ?> 
+  <!-- Links for first and previous pages -->
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $pager->getFirstPage() ?>">First</a>
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $pager->getPrev() ?>">Previsous</a>
+<?php endif; ?>
+
+<!-- Links to the 3 previous pages -->
+<?php foreach ($pager->getPrevLinks(3) as $link): ?>
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $link ?>"><?php echo $link ?></a>
+<?php endforeach; ?>
+}
+
+<!-- Current page -->
+<?php echo $pager->getPage() ?>
+
+<!-- Links to the next 3 pages -->
+<?php foreach ($pager->getNextLinks(3) as $link): ?>
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $link ?>"><?php echo $link ?></a>
+<?php endforeach; ?>
+
+<?php if (!$pager->atLastPage()): ?> 
+  <!-- Links for next and last pages -->
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $pager->getNext() ?>">Next</a>
+  <a href="authors/<?php echo $authorId ?>/books/<?php echo $pager->getLastPage() ?>">Last</a>
+<?php endif; ?>
+}}}
+
+In order to display this navigation, the pager object executes one simple query that counts the results. The actual `Book` objects are not queried nor hydrated until you ask for the pager results.
+
+== Getting Objects From A Pager ==
+
+A call to `PropelPager::getResults()` makes a call to `BookPeer::doSelect($criteria)` in the background and returns the same array of `Book` objects you are used to dealing with:
+
+{{{
+#!php
+<?php
+<-- Get results -->
+<table>
+<?php foreach ($pager->getResults() as $book): ?>
+  <tr>
+    <td><?php echo $book->getTitle() ?></td>
+    <td><?php echo $book->getISBN() ?></td>
+  </tr>
+<?php endforeach; ?>
+</table>
+
+<!-- Get total record count -->
+Book count: <?php echo $pager->getTotalRecordCount() ?>
+}}}
+
+== Pager Options ==
+
+The `PropelPager` constructor allows fine customization of the query to be executed:
+{{{
+#!php
+<?php
+new PropelPager($criteria, 'BookPeer', 'doSelect', $page = 1, $rowsPerPage = 30);
+}}}
+
+This line initializes the pager with the given arguments:
+ * The `Criteria` object containing any amount of criterions (or an empty criteria)
+ * The Peer class used to fetch data
+ * The method used, can have joins (e.g. 'doSelectJoinXXX')
+ * The Current page, defaults to 1
+ * The number of rows per page, defaults to 25
+
+== Going Further ==
+
+Check the api documentation of PropelPager for more details: [http://propel.phpdb.org/docs/api/1.4/runtime/propel-util/PropelPager.html]
