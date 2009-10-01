@@ -71,6 +71,14 @@ class Behavior extends XMLElement {
   }
   
   /**
+   * This method is automatically called when the database model is finished
+   * Override it to add columns to the current table
+   */
+  public function modifyTable()
+  {
+  }
+  
+  /**
 	 * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
 	 * @see        parent::loadFromXML()
 	 */

@@ -218,6 +218,12 @@ class GeneratorConfig {
 	public function getConfiguredBehavior($name)
 	{
 	  $propname = 'behavior' . ucfirst(strtolower($name)) . 'Class';
-	  return $this->getClassname($propname);
+	  try {
+	    $ret = $this->getClassname($propname);
+	  } catch (BuildException $e) {
+	    // class path not configured
+	    $ret = false;
+	  }
+	  return $ret;	  
 	}
 }

@@ -284,6 +284,13 @@ class Table extends XMLElement implements IDMethod {
 	 */
 	private $reloadOnUpdate;
 
+  /**
+   * List of behaviors registered for this table
+   * 
+   * @var array
+   */
+  protected $behaviors = array();
+
 	/**
 	 * Constructs a table object with a name
 	 *
@@ -369,8 +376,16 @@ class Table extends XMLElement implements IDMethod {
 		if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
 			$this->setIdMethod(IDMethod::NO_ID_METHOD);
 		}
+		
+		// check that the table has a primary key
 		if (!$hasPK) {
 			throw new EngineException("Table '" . $this->getName() . "' does not define a primary key column!");
+		}
+		
+		// execute behavior table modifiers
+		foreach ($this->getBehaviors() as $behavior)
+		{
+		  $behavior->modifyTable();
 		}
 	}
 
@@ -749,13 +764,43 @@ class Table extends XMLElement implements IDMethod {
 		}
 	}
 
+  /**
+   * Retrieves the configuration object, filled by build.properties
+   *
+   * @return GeneratorConfig
+   */
   public function getGeneratorConfig()
   {
     return $this->getDatabase()->getAppData()->getPlatform()->getGeneratorConfig();
   }
+  
+  /**
+   * Find the best class name for a given behavior
+   * Looks in build.properties for path like propel.behavior.[bname].class
+   * If not found, tries to autoload [Bname]Behavior
+   * If no success, returns 'Behavior'
+   * 
+   * @param  string $bname behavior name, e.g. 'timestampable'
+   * @return string        behavior class name, e.g. 'TimestampableBehavior'
+   */
+  public function getConfiguredBehavior($bname)
+  {
+    if ($config = $this->getGeneratorConfig()) {
+      if ($class = $config->getConfiguredBehavior($bname)) {
+        return $class;
+      }
+    }
+    // first fallback: maybe the behavior is loaded or autoloaded
+    if(class_exists($class = ucfirst(strtolower($bname)). 'Behavior')) {
+      return $class;
+    }
+    // second fallback: use parent behavior class (mostly for unit tests)
+    return 'Behavior';
+  }
 
 	/**
 	 * Adds a new Behavior to the table
+	 * @return Behavior A behavior instance
 	 */
 	public function addBehavior($bdata)
 	{
@@ -765,8 +810,8 @@ class Table extends XMLElement implements IDMethod {
 			$this->behaviors[$behavior->getName()] = $behavior;
 			return $behavior;
 		} else {
-		  $class = $this->getGeneratorConfig() ? $this->getGeneratorConfig()->getConfiguredBehavior($bdata['name']) : 'Behavior';
-			$behavior = new $class($this);
+		  $class = $this->getConfiguredBehavior($bdata['name']);
+			$behavior = new $class();
 			$behavior->loadFromXML($bdata);
 			return $this->addBehavior($behavior);
 		}

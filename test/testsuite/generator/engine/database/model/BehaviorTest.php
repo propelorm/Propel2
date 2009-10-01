@@ -71,8 +71,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
 	  $this->assertEquals($b->getParameters(), array('foo' => 'bar', 'foo2' => 'bar2'), 'addParameter() adds a parameter from an associative array');
 	  $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
 	  $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
-	  $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');
-	 
+	  $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');	 
 	}
 	
 	/**
@@ -82,11 +81,16 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
 	public function testXmlToAppData() {
 		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 		$this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
-    $table = $this->appData->getDatabase("bookstore-behavior")->getTable('b_user');
+    $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
 		$behaviors = $table->getBehaviors();
     $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
 		$behavior = $table->getBehavior('timestampable');
-		$this->assertEquals($behavior->getTable()->getName(), 'b_user', 'XmlToAppData sets the behavior table correctly');
-		$this->assertEquals($behavior->getParameters(), array('create_column' => 'created_at'), 'XmlToAppData sets the behavior parameters correctly');
+		$this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
+		$this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on'), 'XmlToAppData sets the behavior parameters correctly');
+	}
+	
+	public function testMofifyTable() {
+	  $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
+	  $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
 	}
 }
