@@ -512,6 +512,17 @@ class TableMap {
     return $this->relations;
   }
 
+  /**
+   * 
+   * Gets the list of behaviors registered for this table
+   *
+   * @return array
+   */
+  public function getBehaviors()
+  {
+    return array();
+  }
+
   // Deprecated methods and attributres, to be removed
   
   /**
@@ -550,7 +561,7 @@ class TableMap {
   {
     return array_values($this->primaryKeys);
   }
-  
+    
   //---Utility methods for doing intelligent lookup of table names
 
   /** 

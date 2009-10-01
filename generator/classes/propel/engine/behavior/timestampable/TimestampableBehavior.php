@@ -22,6 +22,5 @@ class TimestampableBehavior extends Behavior
         'type' => 'TIMESTAMP'
       ));
     }
-  }
-
+  }  
 }

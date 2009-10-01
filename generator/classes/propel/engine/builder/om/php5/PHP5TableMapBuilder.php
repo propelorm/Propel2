@@ -101,6 +101,7 @@ class ".$this->getClassname()." extends TableMap {
 		$this->addAttributes($script);
 		$this->addInitialize($script);
 		$this->addBuildRelations($script);
+		$this->addGetBehaviors($script);
 	}
 
 	/**
@@ -279,6 +280,42 @@ class ".$this->getClassname()." extends TableMap {
     $script .= "
 	} // buildRelations()
 ";
+	}
+
+	/**
+	 * Adds the behaviors getter
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addGetBehaviors(&$script)
+	{
+	  if ($behaviors = $this->getTable()->getBehaviors())
+	  {
+  		$script .= "
+	/**
+	 * 
+	 * Gets the list of behaviors registered for this table
+	 * 
+	 * @return array Associative array (name => parameters) of behaviors
+	 */
+	public function getBehaviors()
+	{
+		return array(";
+      foreach ($behaviors as $behavior)
+      {        
+        $script .= "
+			'{$behavior->getName()}' => array(";
+        foreach ($behavior->getParameters() as $key => $value)
+        {
+          $script .= "'$key' => '$value', ";
+        }
+        $script .= "),";
+      }
+      $script .= "
+		);
+	} // getBehaviors()
+";
+    }
+
 	}
 	
 } // PHP5TableMapBuilder
