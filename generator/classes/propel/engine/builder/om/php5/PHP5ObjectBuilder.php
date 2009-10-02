@@ -253,6 +253,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addRefFKMethods($script);
 		$this->addClearAllReferences($script);
 		
+		// apply behaviors
+		if ($this->hasBehaviorModifier('objectMethods'))
+		{
+      $this->applyBehaviorModifier('objectMethods', $script);
+		}
+		
 		$this->addPrimaryString($script);
 	}
 
@@ -310,6 +316,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
+		
+		// apply behaviors
+		if ($this->hasBehaviorModifier('objectAttributes'))
+		{
+      $this->applyBehaviorModifier('objectAttributes', $script);
+		}
 	}
 
 	/**
@@ -4023,12 +4035,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
    */
   public function hasBehaviorModifier($hookName)
   {
-    foreach ($this->getTable()->getBehaviors() as $behavior) {
-      if(method_exists($behavior->getObjectBuilderModifier(), $hookName)) { 
-        return true;
-      }
-      return false;
-    }
+    return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
   }
 
   /**
@@ -4038,9 +4045,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
    */
   public function applyBehaviorModifier($hookName, &$script)
   {
-    foreach ($this->getTable()->getBehaviors() as $behavior) {
-      $script .= call_user_func(array($behavior->getObjectBuilderModifier(), $hookName));
-    }
+    return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script);
   }
 
 } // PHP5ObjectBuilder

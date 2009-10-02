@@ -1,0 +1,153 @@
+= Behaviors =
+
+Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way. 
+
+= When Do You Need Behaviors? = 
+
+When several of your custom model classes end up with similar methods added, it is time to refactor the common code.
+
+For example, you may want to keep track of the creation date of every row in all your tables. Let's call this the "Timestampable behavior", because then all of your rows have a timestamp marking their creation. In order to achieve this behavior, you can add a `created_at` column to all your tables by hand:
+
+{{{
+<table name="book">
+  ...
+  <column name="created_at" type="timestamp" />
+</table>
+<table name="author">
+  ...
+  <column name="created_at" type="timestamp" />
+</table>
+}}}
+
+You must also modify the model code to update the new column value on insertion:
+
+{{{
+class Book extends BaseBook
+{
+  public function preInsert()
+  {
+    $this->setCreatedAt(time());
+  }
+}
+
+class Author extends BaseAuthor
+{
+  public function preInsert()
+  {
+    $this->setCreatedAt(time());
+  }
+}
+}}} 
+
+Even if the code of this example is very simple, the repetition of code is already too much. Just imagine a more complex behavior, and you will understand that using the copy-and-paste technique soon leads to a maintenance nightmare.
+
+Propel offers three ways to achieve the refactoring of the common behavior. The first one is to use a custom builder during the build process. This can work if all of your models share one single behavior. The second way is to use table inheritance. The inherited methods then offer limited capabilities. And the third way is to use Propel behaviors. This is the right way to refactor common model logic.
+
+Behaviors are special objects that use events called during the build process to enhance the generated model classes. Behaviors can add attributes and methods to both the Peer and model classes, they can modify the course of some of the generated methods, and they can even modify the structure of a database by adding columns or tables.
+
+For instance, Propel bundles a behavior called `timestampable`, which does exatcly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
+
+{{{
+<table name="book">
+  ...
+  <behavior name="timestampable" />
+</table>
+<table name="author">
+  ...
+  <behavior name="timestampable" />
+</table>
+}}}
+
+Then rebuild your model, and there you go: two columns, `created_at` and `updated_at`, were automatically added to both the `book` and `author` tables. Besides, the generated `BaseBook` and `BaseAuthor` classes already contain the code necessary to auto-set the current time on creation and on insertion.
+
+= Bundled Behaviors =
+
+Propel currently bundles one behavior. Check the behavior documentation for details on usage:
+
+* TimestampableBehavior
+
+Behaviors bundled with Propel require no further installation and work out of the box.
+
+= Customizing Behaviors =
+
+Behaviors often offer some parameters to tweak their effect. For instance, the `timestampable` behavior allows you to customize the names of the columns added to store the creation date and the update date. The behavior customization occurs in the `schema.xml`, inside `<parameter>` tags nested in the `<behavior>` tag. So let's set the behavior to use `created_on` instead of `created_at` for the creation date column name (and same for the update date column):
+
+{{{
+<table name="book">
+  ...
+  <behavior name="timestampable">
+    <parameter name="create_column" value="created_on" />
+    <parameter name="update_column" value="updated_on" />
+  </behavior>
+</table>
+}}}
+
+The `timestampable` behavior also offers a way to disable the column addition, which is useful if the creation and update date columns are already declared. As above, the customization uses a `<parameter>` tag:
+
+{{{
+<table name="author">
+  ...
+  <column name="creation_date" type="timestamp" />
+  <column name="update_date" type="timestamp" />
+  <behavior name="timestampable">
+    <parameter name="add_columns" value="false" />
+    <parameter name="create_column" value="creation_date" />
+    <parameter name="update_column" value="update_date" />
+  </behavior>
+</table>
+}}}
+
+= Using Third-Party Behaviors =
+
+As a Propel behavior can be packaged into a single class, behaviors are quite easy to reuse and distribute across several projects. All you need to do is to copy the behavior file into your project, and declare it in `build.properties`, as follows:
+
+{{{
+# ----------------------------------
+#  B E H A V I O R   S E T T I N G S
+# ----------------------------------
+
+propel.behavior.timestampable.class = propel.engine.behavior.timestampable.TimestampableBehavior
+# Add your custom behavior pathes here
+propel.behavior.formidable.class = path.to.FormidableBehavior
+}}}
+
+Propel will then find the `FormidableBehavior` class whenever you use the `formidable` behavior in your schema:
+
+{{{
+<table name="author">
+  ...
+  <behavior name="timestampable" />
+  <behavior name="formidable" />
+</table>
+}}}
+
+Tip: If you use autoloading during the build process, and if the behavior classes benefit from the autoloading, then you don't even need to declare the path to the behavior class.
+
+= Writing a Behavior =
+
+Behaviors can modify their table, and even add another table, by implementing the `modifyTable` method. In this method, use `$this->getTable()` to retrieve the table buildtime model and manipulate it.
+
+Behaviors can add code to the generated model object by implementing one of the following methods:
+
+{{{
+objectAttributes() // add attributes to the object
+objectMethods()    // add methods to the object
+preInsert()        // add code to be executed before insertion of a new object
+postInsert()       // add code to be executed after insertion of a new object
+preUpdate()        // add code to be executed before update of an existing object
+postUpdate()       // add code to be executed after update of an existing object
+preSave()          // add code to be executed before saving an object (new or existing)
+postSave()         // add code to be executed after saving an object (new or existing)
+preDelete()        // add code to be executed before deleting an object
+postDelete()       // add code to be executed after deleting an object
+}}}
+
+Behaviors can also add code to the generated peer objects by implementing one of the following methods:
+
+{{{
+staticAttributes() // add static attributes to the peer class
+staticMethods()    // add static methods to the peer class
+preSelect()        // adds code before every select query
+}}}
+
+Check the behaviors bundled with Propel to see how to implement your own behavior.

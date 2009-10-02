@@ -1,5 +1,35 @@
 = What's new in Propel 1.4? =
 
+== Behaviors ==
+
+You can now package and reuse behaviors across your models. For instance, keeping the date of creation of an object and the date of latest update is as simple as declaring the `timestampable` behavior in the table declaration:
+
+{{{
+<table name="book">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" />
+  <behavior name="timestampable" />
+</table>
+}}}
+
+Rebuild your model, and you now have two new columns in the `book` table automatically set to the creation and update dates:
+
+{{{
+#!php
+<?php
+$b = new Book();
+$b->setTitle('War And Peace');
+$b->save();
+echo $b->getCreatedAt(); // 2009-10-02 18:14:23
+echo $b->getUpdatedAt(); // 2009-10-02 18:14:23
+$b->setTitle('Anna Karenina');
+$b->save();
+echo $b->getCreatedAt(); // 2009-10-02 18:14:23
+echo $b->getUpdatedAt(); // 2009-10-02 18:14:25
+}}}
+
+This new feature is so powerful that it requires a documentation on its own. Read it in the [wiki:Users/Documentation/1.4#HowTos HowTos] section.
+
 == Joins with multiple conditions ==
 
 You can now create joins with any number of conditions and any comparator using the new `Criteria::addMultipleJoin()` method.

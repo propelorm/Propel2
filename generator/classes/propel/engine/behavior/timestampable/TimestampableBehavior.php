@@ -9,6 +9,9 @@ class TimestampableBehavior extends Behavior
     'update_column' => 'updated_at'
   );
   
+  /**
+   * Add the create_column and update_columns to the current table
+   */
   public function modifyTable()
   {
     if ($this->getParameter('add_columns') == 'true')

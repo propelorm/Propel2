@@ -132,6 +132,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 */
 	protected function addClassClose(&$script)
 	{
+	  // apply behaviors
+		if ($this->hasBehaviorModifier('staticMethods'))
+		{
+      $this->applyBehaviorModifier('staticMethods', $script);
+		}
+		
 		$script .= "
 } // " . $this->getClassname() . "
 ";
@@ -205,9 +211,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 ";
 
+		// apply behaviors
+		if ($this->hasBehaviorModifier('staticAttributes'))
+		{
+      $this->applyBehaviorModifier('staticAttributes', $script);
+		}
+		
 		$this->addFieldNamesAttribute($script);
 		$this->addFieldKeysAttribute($script);
-
 	}
 
 	/**
@@ -517,7 +528,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_READ);
+		}";
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preSelect'))
+		{
+      $this->applyBehaviorModifier('preSelect', $script);
 		}
+		$script .= "
 		// BasePeer returns a PDOStatement
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
@@ -614,7 +631,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		// Set the correct dbName
-		\$criteria->setDbName(self::DATABASE_NAME);
+		\$criteria->setDbName(self::DATABASE_NAME);";
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preSelect'))
+		{
+      $this->applyBehaviorModifier('preSelect', $script);
+		}
+		$script .= "
 
 		// BasePeer returns a PDOStatement
 		return ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
@@ -1868,7 +1891,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 
             $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
-
+        		// apply behaviors
+        		if ($this->hasBehaviorModifier('preSelect'))
+        		{
+              $this->applyBehaviorModifier('preSelect', $script);
+        		}
 						$script .= "
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
 		\$results = array();
@@ -2003,6 +2030,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 ";
             $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
+         		// apply behaviors
+        		if ($this->hasBehaviorModifier('preSelect'))
+        		{
+              $this->applyBehaviorModifier('preSelect', $script);
+        		}
             $script .= "
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
@@ -2085,7 +2117,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
 			}
 		}
-
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preSelect'))
+		{
+      $this->applyBehaviorModifier('preSelect', $script);
+		}
 		$script .= "
 		\$stmt = ".$this->basePeerClassname."::doSelect(\$criteria, \$con);
 		\$results = array();
@@ -2240,7 +2276,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= $this->addCriteriaJoin($fk, $table, $joinTable, $joinedTablePeerBuilder);
 			} // if fk->getForeignTableName != table->getName
 		} // foreach [sub] foreign keys
-
+		// apply behaviors
+		if ($this->hasBehaviorModifier('preSelect'))
+		{
+      $this->applyBehaviorModifier('preSelect', $script);
+		}
 		$script .= "
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
@@ -2344,6 +2384,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 					}
 				}
 			} // foreach fkeys
+			// apply behaviors
+  		if ($this->hasBehaviorModifier('preSelect'))
+  		{
+        $this->applyBehaviorModifier('preSelect', $script);
+  		}
 			$script .= "
 
 		\$stmt = ".$this->basePeerClassname ."::doSelect(\$criteria, \$con);
@@ -2514,6 +2559,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 					}
 				}
 			} // foreach fkeys
+			// apply behaviors
+  		if ($this->hasBehaviorModifier('preSelect'))
+  		{
+        $this->applyBehaviorModifier('preSelect', $script);
+  		}
 			$script .= "
 		\$stmt = ".$this->basePeerClassname."::doCount(\$criteria, \$con);
 
@@ -2540,4 +2590,23 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		return $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 	}
 
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @return boolean
+   */
+  public function hasBehaviorModifier($hookName)
+  {
+    return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
+  }
+
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	 * @param string &$script The script will be modified in this method.
+   */
+  public function applyBehaviorModifier($hookName, &$script)
+  {
+    return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script);
+  }
 } // PHP5PeerBuilder

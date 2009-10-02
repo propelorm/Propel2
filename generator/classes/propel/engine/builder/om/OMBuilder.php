@@ -313,4 +313,35 @@ abstract class OMBuilder extends DataModelBuilder {
 
 		return $relCol;
 	}
+	
+	/**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @param string $modifier The name of the modifier object providing the method in the behavior
+   * @return boolean
+   */
+  public function hasBehaviorModifier($hookName, $modifier)
+  {
+    $modifierGetter = 'get' . $modifier;
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      if(method_exists($behavior->$modifierGetter(), $hookName)) { 
+        return true;
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Checks whether any registered behavior on that table has a modifier for a hook
+   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+   * @param string $modifier The name of the modifier object providing the method in the behavior
+	 * @param string &$script The script will be modified in this method.
+   */
+  public function applyBehaviorModifier($hookName, $modifier, &$script)
+  {
+    $modifierGetter = 'get' . $modifier;
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      $script .= call_user_func(array($behavior->$modifierGetter(), $hookName));
+    }
+  }
 }
