@@ -3539,44 +3539,44 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		try {";
 		
 		// apply behaviors
-    $this->applyBehaviorModifier('preSave', $script);
+    $this->applyBehaviorModifier('preSave', $script, "			");
 		if ($this->hasBehaviorModifier('preUpdate'))
 		{
 		  $script .= "
-		  if(!\$isInsert) {";
-      $this->applyBehaviorModifier('preUpdate', $script);
+			if(!\$isInsert) {";
+      $this->applyBehaviorModifier('preUpdate', $script, "				");
       $script .= "
-      }";
+			}";
 		}
 		if ($this->hasBehaviorModifier('preInsert'))
 		{
 		  $script .= "
-		  if(\$isInsert) {";
-      $this->applyBehaviorModifier('preInsert', $script);
+			if(\$isInsert) {";
+      $this->applyBehaviorModifier('preInsert', $script, "				");
       $script .= "
-      }";
+			}";
 		}
 		
 		$script .= "
 			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
 
 		// apply behaviors
-    $this->applyBehaviorModifier('postSave', $script);
+    $this->applyBehaviorModifier('postSave', $script, "			");
 		if ($this->hasBehaviorModifier('postUpdate'))
 		{
 		  $script .= "
-		  if(!\$isInsert) {";
-      $this->applyBehaviorModifier('postUpdate', $script);
+			if(!\$isInsert) {";
+      $this->applyBehaviorModifier('postUpdate', $script, "				");
       $script .= "
-      }";
+			}";
 		}
 		if ($this->hasBehaviorModifier('postInsert'))
 		{
 		  $script .= "
-		  if(\$isInsert) {";
-      $this->applyBehaviorModifier('postInsert', $script);
+			if(\$isInsert) {";
+      $this->applyBehaviorModifier('postInsert', $script, "				");
       $script .= "
-      }";
+			}";
 		}
 
 		$script .= "
