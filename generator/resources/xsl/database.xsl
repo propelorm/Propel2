@@ -31,6 +31,7 @@
 			<xsl:apply-templates select='@*'/>
 			<xsl:apply-templates select='external-schema'/>
 			<xsl:apply-templates select='table'/>
+			<xsl:apply-templates select='behavior'/>
 		</database>
 	</xsl:template>
 

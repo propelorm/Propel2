@@ -381,6 +381,7 @@
 		<xs:choice maxOccurs="unbounded">
 			<xs:element name="external-schema" type="external-schema" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="table" type="table" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element name="behavior" type="behavior" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:choice>
 		<xs:attribute name="name" type="xs:string" use="optional"/>
 		<xs:attribute name="defaultIdMethod" type="dbidmethod" default="none"/>

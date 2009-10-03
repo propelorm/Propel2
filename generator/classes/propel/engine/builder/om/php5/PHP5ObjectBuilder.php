@@ -254,10 +254,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addClearAllReferences($script);
 		
 		// apply behaviors
-		if ($this->hasBehaviorModifier('objectMethods'))
-		{
-      $this->applyBehaviorModifier('objectMethods', $script);
-		}
+    $this->applyBehaviorModifier('objectMethods', $script);
 		
 		$this->addPrimaryString($script);
 	}
@@ -318,10 +315,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addAlreadyInValidationAttribute($script);
 		
 		// apply behaviors
-		if ($this->hasBehaviorModifier('objectAttributes'))
-		{
-      $this->applyBehaviorModifier('objectAttributes', $script);
-		}
+    $this->applyBehaviorModifier('objectAttributes', $script);
 	}
 
 	/**
@@ -2031,19 +2025,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		try {";
 
 		// apply behaviors
-		if ($this->hasBehaviorModifier('preDelete'))
-		{
-      $this->applyBehaviorModifier('preDelete', $script);
-		}
+    $this->applyBehaviorModifier('preDelete', $script);
 
 		$script .= "
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);";
 
 		// apply behaviors
-		if ($this->hasBehaviorModifier('postDelete'))
-		{
-      $this->applyBehaviorModifier('postDelete', $script);
-		}
+    $this->applyBehaviorModifier('postDelete', $script);
 
 		$script .= "
 			\$this->setDeleted(true);
@@ -3551,10 +3539,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		try {";
 		
 		// apply behaviors
-		if ($this->hasBehaviorModifier('preSave'))
-		{
-      $this->applyBehaviorModifier('preSave', $script);
-		}
+    $this->applyBehaviorModifier('preSave', $script);
 		if ($this->hasBehaviorModifier('preUpdate'))
 		{
 		  $script .= "
@@ -3576,10 +3561,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
 
 		// apply behaviors
-		if ($this->hasBehaviorModifier('postSave'))
-		{
-      $this->applyBehaviorModifier('postSave', $script);
-		}
+    $this->applyBehaviorModifier('postSave', $script);
 		if ($this->hasBehaviorModifier('postUpdate'))
 		{
 		  $script .= "

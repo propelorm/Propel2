@@ -341,7 +341,10 @@ abstract class OMBuilder extends DataModelBuilder {
   {
     $modifierGetter = 'get' . $modifier;
     foreach ($this->getTable()->getBehaviors() as $behavior) {
-      $script .= call_user_func(array($behavior->$modifierGetter(), $hookName));
+      $modifier = $behavior->$modifierGetter();
+      if(method_exists($modifier, $hookName)) { 
+        $script .= $modifier->$hookName();
+      }
     }
   }
 }

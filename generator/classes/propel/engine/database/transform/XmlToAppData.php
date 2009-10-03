@@ -190,7 +190,7 @@ class XmlToAppData extends AbstractHandler {
 						$this->parseFile($xmlFile);
 					break;
 
-		  case "domain":
+    		  case "domain":
 					  $this->currDB->addDomain($attributes);
 				  break;
 
@@ -204,6 +204,10 @@ class XmlToAppData extends AbstractHandler {
 
 					case "vendor":
 						$this->currVendorObject = $this->currDB->addVendorInfo($attributes);
+					break;
+
+					case "behavior":
+					  $this->currBehavior = $this->currDB->addBehavior($attributes);
 					break;
 
 					default:

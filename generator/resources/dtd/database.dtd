@@ -21,7 +21,7 @@ PHP class or method name.
               to lowercase.
 -->
 
-<!ELEMENT database (external-schema*, table+)>
+<!ELEMENT database (external-schema*, table+, behavior+)>
 <!ATTLIST database
   name CDATA #IMPLIED
   defaultIdMethod (native|none) "none"

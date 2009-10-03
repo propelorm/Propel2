@@ -140,6 +140,31 @@ abstract class XMLElement {
 		}
 	}
 
+  /**
+   * Find the best class name for a given behavior
+   * Looks in build.properties for path like propel.behavior.[bname].class
+   * If not found, tries to autoload [Bname]Behavior
+   * If no success, returns 'Behavior'
+   * 
+   * @param  string $bname behavior name, e.g. 'timestampable'
+   * @return string        behavior class name, e.g. 'TimestampableBehavior'
+   */
+  public function getConfiguredBehavior($bname)
+  {
+    if ($config = $this->getGeneratorConfig()) {
+      if ($class = $config->getConfiguredBehavior($bname)) {
+        return $class;
+      }
+    }
+    // first fallback: maybe the behavior is loaded or autoloaded
+    $gen = new PhpNameGenerator();
+    if(class_exists($class = $gen->generateName($bname, PhpNameGenerator::CONV_METHOD_PHPNAME) . 'Behavior')) {
+      return $class;
+    }
+    // second fallback: use parent behavior class (mostly for unit tests)
+    return 'Behavior';
+  }
+
 	/**
 	 * String representation of the current object.
 	 *

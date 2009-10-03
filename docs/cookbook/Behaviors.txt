@@ -2,13 +2,14 @@
 
 Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way. 
 
-= When Do You Need Behaviors? = 
+== When Do You Need Behaviors? = =
 
 When several of your custom model classes end up with similar methods added, it is time to refactor the common code.
 
 For example, you may want to keep track of the creation date of every row in all your tables. Let's call this the "Timestampable behavior", because then all of your rows have a timestamp marking their creation. In order to achieve this behavior, you can add a `created_at` column to all your tables by hand:
 
 {{{
+#!xml
 <table name="book">
   ...
   <column name="created_at" type="timestamp" />
@@ -22,6 +23,8 @@ For example, you may want to keep track of the creation date of every row in all
 You must also modify the model code to update the new column value on insertion:
 
 {{{
+#!php
+<?php
 class Book extends BaseBook
 {
   public function preInsert()
@@ -48,6 +51,7 @@ Behaviors are special objects that use events called during the build process to
 For instance, Propel bundles a behavior called `timestampable`, which does exatcly the same thing as described above. But instead of adding columns and methods by hand, all you have to do is to declare it in a `<behavior>` tag in your `schema.xml`, as follows:
 
 {{{
+#!xml
 <table name="book">
   ...
   <behavior name="timestampable" />
@@ -60,7 +64,7 @@ For instance, Propel bundles a behavior called `timestampable`, which does exatc
 
 Then rebuild your model, and there you go: two columns, `created_at` and `updated_at`, were automatically added to both the `book` and `author` tables. Besides, the generated `BaseBook` and `BaseAuthor` classes already contain the code necessary to auto-set the current time on creation and on insertion.
 
-= Bundled Behaviors =
+== Bundled Behaviors ==
 
 Propel currently bundles one behavior. Check the behavior documentation for details on usage:
 
@@ -68,11 +72,12 @@ Propel currently bundles one behavior. Check the behavior documentation for deta
 
 Behaviors bundled with Propel require no further installation and work out of the box.
 
-= Customizing Behaviors =
+== Customizing Behaviors ==
 
 Behaviors often offer some parameters to tweak their effect. For instance, the `timestampable` behavior allows you to customize the names of the columns added to store the creation date and the update date. The behavior customization occurs in the `schema.xml`, inside `<parameter>` tags nested in the `<behavior>` tag. So let's set the behavior to use `created_on` instead of `created_at` for the creation date column name (and same for the update date column):
 
 {{{
+#!xml
 <table name="book">
   ...
   <behavior name="timestampable">
@@ -85,6 +90,7 @@ Behaviors often offer some parameters to tweak their effect. For instance, the `
 The `timestampable` behavior also offers a way to disable the column addition, which is useful if the creation and update date columns are already declared. As above, the customization uses a `<parameter>` tag:
 
 {{{
+#!xml
 <table name="author">
   ...
   <column name="creation_date" type="timestamp" />
@@ -97,11 +103,12 @@ The `timestampable` behavior also offers a way to disable the column addition, w
 </table>
 }}}
 
-= Using Third-Party Behaviors =
+== Using Third-Party Behaviors ==
 
 As a Propel behavior can be packaged into a single class, behaviors are quite easy to reuse and distribute across several projects. All you need to do is to copy the behavior file into your project, and declare it in `build.properties`, as follows:
 
 {{{
+#!ini
 # ----------------------------------
 #  B E H A V I O R   S E T T I N G S
 # ----------------------------------
@@ -114,6 +121,7 @@ propel.behavior.formidable.class = path.to.FormidableBehavior
 Propel will then find the `FormidableBehavior` class whenever you use the `formidable` behavior in your schema:
 
 {{{
+#!xml
 <table name="author">
   ...
   <behavior name="timestampable" />
@@ -123,7 +131,26 @@ Propel will then find the `FormidableBehavior` class whenever you use the `formi
 
 Tip: If you use autoloading during the build process, and if the behavior classes benefit from the autoloading, then you don't even need to declare the path to the behavior class.
 
-= Writing a Behavior =
+== Applying a Behavior To All Tables ==
+
+You can add a `<behavior>` tag directly under the `<database>` tag. That way, the behavior will be applied to all the tables of the database.
+
+{{{
+#!xml
+<database name="propel">
+  <behavior name="timestampable" />
+  <table name="book">
+    ...
+  </table>
+  <table name="author">
+    ...
+  </table>
+</database>
+}}}
+
+In this example, both the `book` and `author` table benefit from the `timestampable` behavior, and therefore automatically update their `created_at` and `updated_at` columns upon saving.
+
+== Writing a Behavior ==
 
 Behaviors can modify their table, and even add another table, by implementing the `modifyTable` method. In this method, use `$this->getTable()` to retrieve the table buildtime model and manipulate it.
 

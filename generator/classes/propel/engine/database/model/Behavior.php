@@ -31,6 +31,7 @@ include_once 'propel/engine/database/model/Index.php';
 class Behavior extends XMLElement {
 
   protected $table;
+  protected $database;
   protected $name;
   protected $parameters = array();
   
@@ -54,6 +55,16 @@ class Behavior extends XMLElement {
     return $this->table;
   }
 
+  public function setDatabase(Database $database)
+  {
+    $this->database = $database;
+  }
+
+  public function getDatabase()
+  {
+    return $this->database;
+  }
+  
   public function addParameter($attribute)
   {
     $attribute = array_change_key_case($attribute, CASE_LOWER);
@@ -69,9 +80,23 @@ class Behavior extends XMLElement {
   {
     return $this->parameters[$name];
   }
+
+  /**
+   * This method is automatically called on database behaviors when the database model is finished
+   * Propagate the behavior to the tables of the database
+   * Override this method to have a database behavior do something special
+   */
+  public function modifyDatabase()
+  {
+    foreach ($this->getDatabase()->getTables() as $table)
+    {
+      $b = clone $this;
+      $table->addBehavior($b);
+    }
+  }
   
   /**
-   * This method is automatically called when the database model is finished
+   * This method is automatically called on table behaviors when the database model is finished
    * Override it to add columns to the current table
    */
   public function modifyTable()

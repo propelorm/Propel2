@@ -83,7 +83,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
     $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
     $behaviors = $table->getBehaviors();
-    $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
+    $this->assertEquals(count($behaviors), 2, 'XmlToAppData ads as many behaviors as there are behaviors tags');
     $behavior = $table->getBehavior('timestampable');
     $this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
     $this->assertEquals($behavior->getParameters(), array('add_columns' => 'false', 'create_column' => 'created_on', 'update_column' => 'updated_on'), 'XmlToAppData sets the behavior parameters correctly');
@@ -92,5 +92,16 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
   public function testMofifyTable() {
     $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
     $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
+  }
+  
+  public function testModifyDatabase()
+  {
+    $tmap = Propel::getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
+    $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
+    $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
+    $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
+    $tmap = Propel::getDatabaseMap(Table3Peer::DATABASE_NAME)->getTable(Table3Peer::TABLE_NAME);
+    $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
+
   }
 }
