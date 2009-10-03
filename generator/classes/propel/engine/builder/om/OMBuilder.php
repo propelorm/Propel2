@@ -337,13 +337,14 @@ abstract class OMBuilder extends DataModelBuilder {
    * @param string $modifier The name of the modifier object providing the method in the behavior
 	 * @param string &$script The script will be modified in this method.
    */
-  public function applyBehaviorModifier($hookName, $modifier, &$script)
+  public function applyBehaviorModifier($hookName, $modifier, &$script, $tab = "		")
   {
     $modifierGetter = 'get' . $modifier;
     foreach ($this->getTable()->getBehaviors() as $behavior) {
       $modifier = $behavior->$modifierGetter();
       if(method_exists($modifier, $hookName)) { 
-        $script .= $modifier->$hookName();
+        $script .= "\n" . $tab . '// ' . $behavior->getName() . " behavior\n";
+        $script .= preg_replace('/^/m', $tab, $modifier->$hookName());
       }
     }
   }

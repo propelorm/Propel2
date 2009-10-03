@@ -133,7 +133,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addClassClose(&$script)
 	{
 	  // apply behaviors
-    $this->applyBehaviorModifier('staticMethods', $script);
+    $this->applyBehaviorModifier('staticMethods', $script, "	");
 		
 		$script .= "
 } // " . $this->getClassname() . "
@@ -209,7 +209,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 
 		// apply behaviors
-    $this->applyBehaviorModifier('staticAttributes', $script);
+    $this->applyBehaviorModifier('staticAttributes', $script, "	");
 		
 		$this->addFieldNamesAttribute($script);
 		$this->addFieldKeysAttribute($script);
@@ -2592,8 +2592,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @param string &$script The script will be modified in this method.
    */
-  public function applyBehaviorModifier($hookName, &$script)
+  public function applyBehaviorModifier($hookName, &$script, $tab = "		")
   {
-    return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script);
+    return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script, $tab);
   }
 } // PHP5PeerBuilder

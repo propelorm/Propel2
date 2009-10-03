@@ -254,7 +254,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addClearAllReferences($script);
 		
 		// apply behaviors
-    $this->applyBehaviorModifier('objectMethods', $script);
+    $this->applyBehaviorModifier('objectMethods', $script, "	");
 		
 		$this->addPrimaryString($script);
 	}
@@ -315,7 +315,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addAlreadyInValidationAttribute($script);
 		
 		// apply behaviors
-    $this->applyBehaviorModifier('objectAttributes', $script);
+    $this->applyBehaviorModifier('objectAttributes', $script, "	");
 	}
 
 	/**
@@ -2025,13 +2025,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		try {";
 
 		// apply behaviors
-    $this->applyBehaviorModifier('preDelete', $script);
+    $this->applyBehaviorModifier('preDelete', $script, "			");
 
 		$script .= "
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);";
 
 		// apply behaviors
-    $this->applyBehaviorModifier('postDelete', $script);
+    $this->applyBehaviorModifier('postDelete', $script, "			");
 
 		$script .= "
 			\$this->setDeleted(true);
@@ -4025,9 +4025,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @param string &$script The script will be modified in this method.
    */
-  public function applyBehaviorModifier($hookName, &$script)
+  public function applyBehaviorModifier($hookName, &$script, $tab = "		")
   {
-    return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script);
+    return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script, $tab);
   }
 
 } // PHP5ObjectBuilder

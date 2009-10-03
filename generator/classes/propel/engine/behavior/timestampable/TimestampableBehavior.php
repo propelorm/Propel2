@@ -45,9 +45,7 @@ class TimestampableBehavior extends Behavior
    */
   public function preSave()
   {
-    return "
-			// timestampable behavior
-			\$this->" . $this->getColumnSetter('update_column') . "(time());";
+    return "\$this->" . $this->getColumnSetter('update_column') . "(time());";
   }
   
   /**
@@ -57,8 +55,6 @@ class TimestampableBehavior extends Behavior
    */
   public function preInsert()
   {
-    return "
-				// timestampable behavior
-				\$this->" . $this->getColumnSetter('create_column') . "(time());";    
+    return "\$this->" . $this->getColumnSetter('create_column') . "(time());";    
   }
 }
