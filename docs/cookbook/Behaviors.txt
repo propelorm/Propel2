@@ -2,7 +2,7 @@
 
 Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way. 
 
-== When Do You Need Behaviors? = =
+== When Do You Need Behaviors? ==
 
 When several of your custom model classes end up with similar methods added, it is time to refactor the common code.
 
