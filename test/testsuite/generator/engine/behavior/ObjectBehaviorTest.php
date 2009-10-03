@@ -139,4 +139,10 @@ class ObjectBehaviorTest extends PHPUnit_Framework_TestCase
     $this->assertTrue(method_exists($t, 'hello'), 'objectMethods hook is called when adding methods');
     $this->assertEquals($t->hello(), 'hello', 'objectMethods hook is called when adding methods');
   }
+  
+  public function testObjectFilter()
+  {
+    $t = new Table3();
+    $this->assertTrue(class_exists('testObjectFilter'), 'objectFilter hook allows complete manipulation of the generated script');
+  }
 }

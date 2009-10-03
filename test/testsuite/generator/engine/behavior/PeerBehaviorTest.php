@@ -57,4 +57,10 @@ class PeerBehaviorTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($con->preSelect, 1, 'preSelect hook is called in doSelectStmt()');
     // and for the doSelectJoin and doCountJoin methods, well just believe my word
   }
+  
+  public function testPeerFilter()
+  {
+    Table3Peer::TABLE_NAME;
+    $this->assertTrue(class_exists('testPeerFilter'), 'peerFilter hook allows complete manipulation of the generated script');
+  }
 }

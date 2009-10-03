@@ -102,6 +102,11 @@ class TestAllHooksObjectBuilderModifier
   {
     return 'public function hello() { return "hello"; }';
   }
+  
+  public function objectFilter(&$string)
+  {
+    $string .= 'class testObjectFilter {}';
+  }
 }
 
 class TestAllHooksPeerBuilderModifier
@@ -120,4 +125,10 @@ class TestAllHooksPeerBuilderModifier
   {
     return '$con->preSelect = 1;';
   }
+
+  public function peerFilter(&$string)
+  {
+    $string .= 'class testPeerFilter {}';
+  }
+
 }

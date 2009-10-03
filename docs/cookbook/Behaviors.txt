@@ -157,24 +157,26 @@ Behaviors can modify their table, and even add another table, by implementing th
 Behaviors can add code to the generated model object by implementing one of the following methods:
 
 {{{
-objectAttributes() // add attributes to the object
-objectMethods()    // add methods to the object
-preInsert()        // add code to be executed before insertion of a new object
-postInsert()       // add code to be executed after insertion of a new object
-preUpdate()        // add code to be executed before update of an existing object
-postUpdate()       // add code to be executed after update of an existing object
-preSave()          // add code to be executed before saving an object (new or existing)
-postSave()         // add code to be executed after saving an object (new or existing)
-preDelete()        // add code to be executed before deleting an object
-postDelete()       // add code to be executed after deleting an object
+objectAttributes()     // add attributes to the object
+objectMethods()        // add methods to the object
+preInsert()            // add code to be executed before insertion of a new object
+postInsert()           // add code to be executed after insertion of a new object
+preUpdate()            // add code to be executed before update of an existing object
+postUpdate()           // add code to be executed after update of an existing object
+preSave()              // add code to be executed before saving an object (new or existing)
+postSave()             // add code to be executed after saving an object (new or existing)
+preDelete()            // add code to be executed before deleting an object
+postDelete()           // add code to be executed after deleting an object
+objectFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
 Behaviors can also add code to the generated peer objects by implementing one of the following methods:
 
 {{{
-staticAttributes() // add static attributes to the peer class
-staticMethods()    // add static methods to the peer class
-preSelect()        // adds code before every select query
+staticAttributes()   // add static attributes to the peer class
+staticMethods()      // add static methods to the peer class
+preSelect()          // adds code before every select query
+peerFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
 Check the behaviors bundled with Propel to see how to implement your own behavior.

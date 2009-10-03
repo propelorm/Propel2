@@ -155,6 +155,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ".$this->getClassName()."::buildTableMap();
 
 ";
+    $this->applyBehaviorModifier('peerFilter', $script, "");
 	}
 
   public function getTableMapClass()

@@ -268,6 +268,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 } // " . $this->getClassname() . "
 ";
+    $this->applyBehaviorModifier('objectFilter', $script, "");
 	}
 
 	/**
