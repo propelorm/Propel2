@@ -224,7 +224,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addEnsureConsistency($script);
 
 		$this->addManipulationMethods($script);
-		$this->addValidationMethods($script);
+
+    if ($this->isAddValidateMethod())
+    {
+      $this->addValidationMethods($script);
+    }
 
 		if ($this->isAddGenericAccessors()) {
 			$this->addGetByName($script);

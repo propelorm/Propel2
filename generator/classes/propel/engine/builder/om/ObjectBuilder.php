@@ -148,4 +148,13 @@ abstract class ObjectBuilder extends OMBuilder {
 		return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
 	}
 
+	/**
+	 * Whether to add the validate() method.
+	 * This is based on the build property propel.addValidateMethod
+	 */
+	protected function isAddValidateMethod()
+	{
+		return $this->getBuildProperty('addValidateMethod');
+	}
+
 }
