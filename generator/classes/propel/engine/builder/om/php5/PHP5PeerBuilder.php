@@ -1074,6 +1074,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
 		}
 ";
+				if (!$this->getPlatform()->supportsInsertNullPk())
+				{
+				  $script .= "
+		// remove pkey col since this table uses auto-increment and passing a null value for it is not valid 
+		\$criteria->remove(".$this->getColumnConstant($col).");
+";
+				}
 			}
 		}
 		$script .= "

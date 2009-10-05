@@ -145,7 +145,13 @@ interface Platform {
 	 * @return     boolean
 	 */
 	public function supportsNativeDeleteTrigger();
-
+  
+	/**
+	 * Whether RDBMS supports INSERT null values in autoincremented primary keys
+	 * @return     boolean
+	 */
+	public function supportsInsertNullPk();
+	
 	/**
 	 * Returns the boolean value for the RDBMS.
 	 *

@@ -81,6 +81,14 @@ class MssqlPlatform extends DefaultPlatform {
 	}
 
 	/**
+	 * @see        Platform::supportsInsertNullPk()
+	 */
+	public function supportsInsertNullPk()
+	{
+		return false;
+	}
+	
+	/**
 	 * @see        Platform::hasSize(String)
 	 */
 	public function hasSize($sqlType)

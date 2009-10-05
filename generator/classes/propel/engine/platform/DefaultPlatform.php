@@ -254,6 +254,14 @@ class DefaultPlatform implements Platform {
 	}
 
 	/**
+	 * @see        Platform::supportsInsertNullPk()
+	 */
+	public function supportsInsertNullPk()
+	{
+		return true;
+	}
+	
+	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean
 	 */
