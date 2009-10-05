@@ -1292,7 +1292,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addMutatorOpen($script, $col);
 
 		// Perform type-casting to ensure that we can use type-sensitive
-		// checking in muators.
+		// checking in mutators.
 		if ($col->isPhpPrimitiveType()) {
 			$script .= "
 		if (\$v !== null) {
@@ -1304,8 +1304,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 		if (\$this->$clo !== \$v";
 		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$defaultValue = $this->getDefaultValueString($col);
-			$script .= " || \$v === $defaultValue";
+			$script .= " || \$this->isNew()";
 		}
 		$script .= ") {
 			\$this->$clo = \$v;
@@ -1370,17 +1369,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			}
 		}
 
-		$colconsts = array();
-		foreach ($colsWithDefaults as $col) {
-			$colconsts[] = $this->getColumnConstant($col);
-		}
-
-		$script .= "
-			// First, ensure that we don't have any columns that have been modified which aren't default columns.
-			if (array_diff(\$this->modifiedColumns, array(".implode(",", $colconsts)."))) {
-				return false;
-			}
-";
 		foreach ($colsWithDefaults as $col) {
 
 			$clo = strtolower($col->getName());

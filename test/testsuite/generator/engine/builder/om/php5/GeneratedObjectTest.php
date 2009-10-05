@@ -61,6 +61,24 @@ class GeneratedObjectTest extends BookstoreTestBase
 		$this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
 
 	}
+	
+	/**
+	 * Test isModified() to be false after setting default value second time
+	 */
+	public function testDefaultValueSetTwice()
+	{
+    $pub = new Publisher();
+    $pub->setName('Penguin');
+    $pub->save();
+  
+    $pubId = $pub->getId();
+    
+    PublisherPeer::clearInstancePool();
+    
+    $pub2 = PublisherPeer::retrieveByPK($pubId);
+    $pub2->setName('Penguin');
+    $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
+	}
 
 	/**
 	 * Test default return values.
