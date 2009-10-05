@@ -212,8 +212,10 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$this->addAttributes($script);
 		}
 
-		$this->addConstructor($script);
-		$this->addApplyDefaultValues($script);
+    if ($this->hasDefaultValues()) {
+      $this->addApplyDefaultValues($script);
+      $this->addConstructor($script);
+    }
 
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);

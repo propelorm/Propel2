@@ -127,7 +127,9 @@ require '".$requiredClassFilePath."';
 	 */
 	protected function addClassBody(&$script)
 	{
-		$this->addConstructor($script);
+	  if ($this->hasDefaultValues()) {
+	    $this->addConstructor($script);
+	  }
 	}
 
 		/**

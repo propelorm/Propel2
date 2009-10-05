@@ -80,6 +80,12 @@ class GeneratedObjectTest extends BookstoreTestBase
     $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
 	}
 
+  public function testHasApplyDefaultValues()
+  {
+    $this->assertTrue(method_exists('Publisher', 'applyDefaultValues'), 'Tables with default values should have an applyDefaultValues() method');
+    $this->assertFalse(method_exists('Book', 'applyDefaultValues'), 'Tables with no default values should not have an applyDefaultValues() method');
+  }
+
 	/**
 	 * Test default return values.
 	 */
