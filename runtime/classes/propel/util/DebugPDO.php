@@ -108,6 +108,7 @@
  *             $config->setParameter('debugpdo.logging.details.slow.threshold', 1.5);
  *             $config->setParameter('debugpdo.logging.details.time.enabled', true);
  * 
+ * @author     Francois Zaninotto
  * @author     Cameron Brunner <cameron.brunner@gmail.com>
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Christian Abegg <abegg.ch@gmail.com>
@@ -117,8 +118,8 @@
  */
 class DebugPDO extends PropelPDO
 {
-    const DEFAULT_SLOW_THRESHOLD        = 0.1;
-    const DEFAULT_ONLYSLOW_ENABLED      = false;
+	const DEFAULT_SLOW_THRESHOLD        = 0.1;
+	const DEFAULT_ONLYSLOW_ENABLED      = false;
 	
 	/**
 	 * Count of queries performed.
@@ -126,6 +127,13 @@ class DebugPDO extends PropelPDO
 	 * @var        int
 	 */
 	protected $queryCount = 0;
+	
+	/**
+	 * SQL code of the latest performed query.
+	 * 
+	 * @var        string
+	 */
+	protected $lastExecutedQuery;
 
 	/**
 	 * The statement class to use.
@@ -157,7 +165,7 @@ class DebugPDO extends PropelPDO
 		'DebugPDO::exec',
 		'DebugPDO::query',
 		'DebugPDOStatement::execute',
-		);
+	);
 	
 	/**
 	 * Creates a DebugPDO instance representing a connection to a database.
@@ -253,6 +261,26 @@ class DebugPDO extends PropelPDO
 	}
 
 	/**
+	 * Get the SQL code for the latest query executed by Propel
+	 * 
+	 * @return string Executable SQL code
+	 */
+	public function getLastExecutedQuery() 
+	{ 
+		return $this->lastExecutedQuery; 
+	}
+	
+	/**
+	 * Set the SQL code for the latest query executed by Propel
+	 * 
+	 * @param string $query Executable SQL code
+	 */
+	public function setLastExecutedQuery($query) 
+	{ 
+		$this->lastExecutedQuery = $query; 
+	}
+
+	/**
 	 * Prepares a statement for execution and returns a statement object.
 	 * 
 	 * Overrides PDO::prepare() to add logging and query counting.
@@ -283,8 +311,9 @@ class DebugPDO extends PropelPDO
 		$debug	= $this->getDebugSnapshot();
 		$return	= parent::exec($sql);
 
-		$this->incrementQueryCount();
 		$this->log($sql, null, __METHOD__, $debug);
+		$this->setLastExecutedQuery($sql); 	
+		$this->incrementQueryCount();
 		
 		return $return;
 	}
@@ -304,8 +333,10 @@ class DebugPDO extends PropelPDO
 		$args	= func_get_args();
 		$return	= call_user_func_array(array($this, 'parent::query'), $args);
 		
+		$sql = $args[0];
+		$this->log($sql, null, __METHOD__, $debug);
+		$this->setLastExecutedQuery($sql);
 		$this->incrementQueryCount();
-		$this->log($args[0], null, __METHOD__, $debug);
 		
 		return $return;
 	}

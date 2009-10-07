@@ -7,6 +7,8 @@ Behaviors are a great way to package model extensions for reusability. They are 
 The `save()` and `delete()` methods of your generated objects are easy to override. In fact, Propel looks for one of the following methods in your objects and executes them when needed:
 
 {{{
+#!php
+<?php
 // save() hooks
 preInsert()            // code executed before insertion of a new object
 postInsert()           // code executed after insertion of a new object

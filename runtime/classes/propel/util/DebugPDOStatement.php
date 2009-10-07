@@ -47,17 +47,18 @@ class DebugPDOStatement extends PDOStatement
 	 * @see        self::bindValue()
 	 * @var        array
 	 */
-	protected static $typeMap = array(	PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
-								PDO::PARAM_INT => "PDO::PARAM_INT",
-								PDO::PARAM_STR => "PDO::PARAM_STR",
-								PDO::PARAM_LOB => "PDO::PARAM_LOB",
-								PDO::PARAM_NULL => "PDO::PARAM_NULL",
-								);
+	protected static $typeMap = array(
+		PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
+		PDO::PARAM_INT => "PDO::PARAM_INT",
+		PDO::PARAM_STR => "PDO::PARAM_STR",
+		PDO::PARAM_LOB => "PDO::PARAM_LOB",
+		PDO::PARAM_NULL => "PDO::PARAM_NULL",
+	);
 
-    /**
-     * @var array The values that have been bound
-     */
-    protected $boundValues = array();
+  /**
+   * @var array The values that have been bound
+   */
+  protected $boundValues = array();
 
 	/**
 	 * Construct a new statement class with reference to main DebugPDO object from
@@ -70,21 +71,20 @@ class DebugPDOStatement extends PDOStatement
 		$this->pdo = $pdo;
 	}
 
-    public function getExecutedQueryString()
-    {
-        $sql = $this->queryString;
-
-        $matches = array();
-        if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches))
-        {
-            for ($i = 0; $i < count($matches[1]); $i++) {
-                $pos = $matches[1][$i];
-                $sql = str_replace($pos, $this->boundValues[$pos], $sql);
-            }
-        }
-
-        return $sql;
-    }
+	public function getExecutedQueryString()
+	{
+		$sql = $this->queryString;
+		
+		$matches = array();
+		if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
+			for ($i = 0; $i < count($matches[1]); $i++) {
+				$pos = $matches[1][$i];
+				$sql = str_replace($pos, $this->boundValues[$pos], $sql);
+			}
+		}
+		
+		return $sql;
+	}
 
 	/**
 	 * Executes a prepared statement.  Returns a boolean value indicating success.
@@ -98,8 +98,10 @@ class DebugPDOStatement extends PDOStatement
 		$debug	= $this->pdo->getDebugSnapshot();
 		$return	= parent::execute($input_parameters);
 		
+		$sql = $this->getExecutedQueryString();
+		$this->pdo->log($sql, null, __METHOD__, $debug);
+		$this->pdo->setLastExecutedQuery($sql); 
 		$this->pdo->incrementQueryCount();
-		$this->pdo->log($this->getExecutedQueryString(), null, __METHOD__, $debug);
 		
 		return $return;
 	}
@@ -121,7 +123,7 @@ class DebugPDOStatement extends PDOStatement
 		$valuestr	= $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
 		$msg		= "Binding $valuestr at position $pos w/ PDO type $typestr";
 
-        $this->boundValues[$pos] = $valuestr;
+    $this->boundValues[$pos] = $valuestr;
 		
 		$this->pdo->log($msg, null, __METHOD__, $debug);
 		
