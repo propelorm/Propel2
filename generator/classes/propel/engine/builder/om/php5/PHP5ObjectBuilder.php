@@ -2018,19 +2018,34 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		
 		\$con->beginTransaction();
 		try {";
-
-		// apply behaviors
-    $this->applyBehaviorModifier('preDelete', $script, "			");
-
-		$script .= "
+		if($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
+			$script .= "
+			\$ret = \$this->preDelete(\$con);";
+			// apply behaviors
+			$this->applyBehaviorModifier('preDelete', $script, "			");
+			$script .= "
+			if (\$ret) {
+				".$this->getPeerClassname()."::doDelete(\$this, \$con);
+				\$this->postDelete(\$con);";
+			// apply behaviors
+			$this->applyBehaviorModifier('postDelete', $script, "				");
+			$script .= "
+				\$this->setDeleted(true);
+				\$con->commit();
+			}";
+		} else {
+			// apply behaviors
+			$this->applyBehaviorModifier('preDelete', $script, "			");
+			$script .= "
 			".$this->getPeerClassname()."::doDelete(\$this, \$con);";
-
-		// apply behaviors
-    $this->applyBehaviorModifier('postDelete', $script, "			");
+			// apply behaviors
+			$this->applyBehaviorModifier('postDelete', $script, "			");
+			$script .= "
+			\$this->setDeleted(true);
+			\$con->commit();";
+		}
 
 		$script .= "
-			\$this->setDeleted(true);
-			\$con->commit();
 		} catch (PropelException \$e) {
 			\$con->rollBack();
 			throw \$e;
@@ -3533,51 +3548,84 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		\$isInsert = \$this->isNew();
 		try {";
 		
-		// apply behaviors
-    $this->applyBehaviorModifier('preSave', $script, "			");
-		if ($this->hasBehaviorModifier('preUpdate'))
-		{
-		  $script .= "
+		if($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
+			// save with runtime hools
+			$script .= "
+			\$ret = \$this->preSave(\$con);";
+			$this->applyBehaviorModifier('preSave', $script, "			");
+			$script .= "
+			if (\$isInsert) {
+				\$ret = \$ret && \$this->preInsert(\$con);";
+			$this->applyBehaviorModifier('preInsert', $script, "				");
+			$script .= "
+			} else {
+				\$ret = \$ret && \$this->preUpdate(\$con);";
+			$this->applyBehaviorModifier('preUpdate', $script, "				");
+			$script .= "
+			}
+			if (\$ret) {
+				\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");
+				if (\$isInsert) {
+					\$this->postInsert(\$con);";
+			$this->applyBehaviorModifier('postInsert', $script, "					");
+			$script .= "
+				} else {
+					\$this->postUpdate(\$con);";
+			$this->applyBehaviorModifier('postUpdate', $script, "					");
+			$script .= "
+				}
+				\$this->postSave(\$con);";
+				$this->applyBehaviorModifier('postSave', $script, "				");
+				$script .= "
+				\$con->commit();
+				".$this->getPeerClassname()."::addInstanceToPool(\$this);
+				return \$affectedRows;
+			}";
+		} else {
+			// save without runtime hooks
+	    $this->applyBehaviorModifier('preSave', $script, "			");
+			if ($this->hasBehaviorModifier('preUpdate'))
+			{
+			  $script .= "
 			if(!\$isInsert) {";
-      $this->applyBehaviorModifier('preUpdate', $script, "				");
-      $script .= "
+	      $this->applyBehaviorModifier('preUpdate', $script, "				");
+	      $script .= "
 			}";
-		}
-		if ($this->hasBehaviorModifier('preInsert'))
-		{
-		  $script .= "
+			}
+			if ($this->hasBehaviorModifier('preInsert'))
+			{
+			  $script .= "
 			if(\$isInsert) {";
-      $this->applyBehaviorModifier('preInsert', $script, "				");
-      $script .= "
+	    	$this->applyBehaviorModifier('preInsert', $script, "				");
+	      $script .= "
 			}";
+			}
+			$script .= "
+			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
+	    $this->applyBehaviorModifier('postSave', $script, "			");
+			if ($this->hasBehaviorModifier('postUpdate'))
+			{
+			  $script .= "
+			if(!\$isInsert) {";
+	      $this->applyBehaviorModifier('postUpdate', $script, "				");
+	      $script .= "
+			}";
+			}
+			if ($this->hasBehaviorModifier('postInsert'))
+			{
+			  $script .= "
+			if(\$isInsert) {";
+	      $this->applyBehaviorModifier('postInsert', $script, "				");
+	      $script .= "
+			}";
+			}
+			$script .= "
+			\$con->commit();
+			".$this->getPeerClassname()."::addInstanceToPool(\$this);
+			return \$affectedRows;";
 		}
 		
 		$script .= "
-			\$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
-
-		// apply behaviors
-    $this->applyBehaviorModifier('postSave', $script, "			");
-		if ($this->hasBehaviorModifier('postUpdate'))
-		{
-		  $script .= "
-			if(!\$isInsert) {";
-      $this->applyBehaviorModifier('postUpdate', $script, "				");
-      $script .= "
-			}";
-		}
-		if ($this->hasBehaviorModifier('postInsert'))
-		{
-		  $script .= "
-			if(\$isInsert) {";
-      $this->applyBehaviorModifier('postInsert', $script, "				");
-      $script .= "
-			}";
-		}
-
-		$script .= "
-			\$con->commit();
-			".$this->getPeerClassname()."::addInstanceToPool(\$this);
-			return \$affectedRows;
 		} catch (PropelException \$e) {
 			\$con->rollBack();
 			throw \$e;

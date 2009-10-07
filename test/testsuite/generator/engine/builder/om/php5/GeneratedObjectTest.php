@@ -1088,4 +1088,137 @@ class GeneratedObjectTest extends BookstoreTestBase
 	  $book->setTitle('foo');
 	  $this->assertEquals((string) $book, 'foo', 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
 	}
+
+	public function testPreInsert()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$this->assertEquals('PreInsertedFirstname', $author->getFirstName());
+	}
+
+	public function testPreUpdate()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$author->setNew(false);
+		$author->save();
+		$this->assertEquals('PreUpdatedFirstname', $author->getFirstName());
+	}
+
+	public function testPostInsert()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$this->assertEquals('PostInsertedLastName', $author->getLastName());
+	}
+
+	public function testPostUpdate()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$author->setNew(false);
+		$author->save();
+		$this->assertEquals('PostUpdatedLastName', $author->getLastName());
+	}
+	
+	public function testPreSave()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$this->assertEquals('pre@save.com', $author->getEmail());
+	}
+
+	public function testPostSave()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$this->assertEquals(115, $author->getAge());
+	}
+
+	public function testPreDelete()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$author->delete();
+		$this->assertEquals("Pre-Deleted", $author->getFirstName());
+	}
+
+	public function testPostDelete()
+	{
+		$author = new TestAuthor();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save();
+		$author->delete();
+		$this->assertEquals("Post-Deleted", $author->getLastName());
+	}
+
+}
+
+class TestAuthor extends Author {
+	public function preInsert(PropelPDO $con)
+	{
+		parent::preInsert($con);
+		$this->setFirstName('PreInsertedFirstname');
+		return true;
+	}
+
+	public function postInsert(PropelPDO $con)
+	{
+		parent::postInsert($con);
+		$this->setLastName('PostInsertedLastName');
+	}
+
+	public function preUpdate(PropelPDO $con)
+	{
+		parent::preUpdate($con);
+		$this->setFirstName('PreUpdatedFirstname');
+		return true;
+	}
+
+	public function postUpdate(PropelPDO $con)
+	{
+		parent::postUpdate($con);
+		$this->setLastName('PostUpdatedLastName');
+	}
+
+	public function preSave(PropelPDO $con)
+	{
+		parent::preSave($con);
+		$this->setEmail("pre@save.com");
+		return true;
+	}
+
+	public function postSave(PropelPDO $con)
+	{
+		parent::postSave($con);
+		$this->setAge(115);
+	}
+
+	public function preDelete(PropelPDO $con)
+	{
+		parent::preDelete($con);
+		$this->setFirstName("Pre-Deleted");
+		return true;
+	}
+
+	public function postDelete(PropelPDO $con)
+	{
+		parent::postDelete($con);
+		$this->setLastName("Post-Deleted");
+	}
 }

@@ -1,5 +1,44 @@
 = What's new in Propel 1.4? =
 
+== Pre and Post Hooks For `save()` And `delete()` Methods == 
+
+The `save()` and `delete()` methods of your generated objects are now easier to override. In fact, Propel looks for one of the following methods in your objects and executes them when needed:
+
+{{{
+preInsert()            // code executed before insertion of a new object
+postInsert()           // code executed after insertion of a new object
+preUpdate()            // code executed before update of an existing object
+postUpdate()           // code executed after update of an existing object
+preSave()              // code executed before saving an object (new or existing)
+postSave()             // code executed after saving an object (new or existing)
+preDelete()            // code executed before deleting an object
+postDelete()           // code executed after deleting an object
+}}}
+
+So for instance, you can force the update of a `created_at` column in a `book` table before every insertion as follows:
+
+{{{
+#!php
+<?php
+class Book extends BaseBook
+{
+  public function preInsert(PropelPDO $con = null)
+  {
+    $this->setCreatedAt(time());
+  }
+}
+}}}
+
+Since this new feature adds a small overhead to write operations, you can deactivate it in your build properties by setting `propel.addHooks` to `false`.
+
+{{{
+#!ini
+# -------------------
+#  TEMPLATE VARIABLES
+# -------------------
+propel.addHooks = false
+}}}
+
 == Behaviors ==
 
 You can now package and reuse behaviors across your models. For instance, keeping the date of creation of an object and the date of latest update is as simple as declaring the `timestampable` behavior in the table declaration:
