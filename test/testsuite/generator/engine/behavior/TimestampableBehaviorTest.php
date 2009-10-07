@@ -27,7 +27,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  *
  * @author     François Zaninotto
  * @version    $Revision: 1133 $
- * @package    generator.engine.timestampable
+ * @package    generator.engine.behavior
  */
 class TimestampableBehaviorTest extends PHPUnit_Framework_TestCase 
 {
@@ -41,7 +41,6 @@ class TimestampableBehaviorTest extends PHPUnit_Framework_TestCase
     $this->assertEquals(count($table1->getColumns()), 4, 'Timestampable does not add two columns when add_column is false');
     $this->assertTrue(method_exists('Table1', 'getCreatedOn'), 'Timestamplable allows customization of create_column name');
     $this->assertTrue(method_exists('Table1', 'getUpdatedOn'), 'Timestamplable allows customization of update_column name');
-
   }
   
   public function testPreSave()

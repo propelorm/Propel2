@@ -104,6 +104,18 @@ class Behavior extends XMLElement {
   }
   
   /**
+   * Retrieve a column object using a name stored in the behavior parameters
+   * Useful for table behaviors
+   * 
+   * @param  string    $param Name of the parameter storing the column name
+   * @return ColumnMap        The column of the table supporting the behavior
+   */
+  public function getColumnForParameter($param)
+  {
+  	return $this->getTable()->getColumn($this->getParameter($param));
+  }
+  
+  /**
    * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
    * @see        parent::loadFromXML()
    */

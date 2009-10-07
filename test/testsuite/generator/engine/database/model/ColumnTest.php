@@ -22,7 +22,9 @@
 
 require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'propel/engine/database/model/Column.php';
+include_once 'propel/engine/database/transform/XmlToAppData.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
+
 
 /**
  * Tests for package handling.
@@ -66,6 +68,14 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	  $this->assertEquals('AuthorId', $bookTmap->getColumn('AUTHOR_ID')->getPhpName(), 'setPhpName() uses the default phpNamingMethod');
 	  $pageTmap = Propel::getDatabaseMap(PagePeer::DATABASE_NAME)->getTable(PagePeer::TABLE_NAME);
 	  $this->assertEquals('LeftChild', $pageTmap->getColumn('LEFTCHILD')->getPhpName(), 'setPhpName() uses the configured phpNamingMethod');
+	}
+	
+	public function testGetConstantName()
+	{
+		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $column = $appData->getDatabase("bookstore-behavior")->getTable('table1')->getColumn('title');
+    $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
 	}
 
 }

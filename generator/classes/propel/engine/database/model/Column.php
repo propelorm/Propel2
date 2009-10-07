@@ -385,6 +385,23 @@ class Column extends XMLElement {
 
   }
 
+	/**
+	 * Get the column constant name (e.g. PeerName::COLUMN_NAME).
+	 *
+	 * @return     string A column constant name for insertion into PHP code
+	 */
+	public function getConstantName()
+	{
+		$classname = $this->getTable()->getPhpName() . 'Peer';
+		// was it overridden in schema.xml ?
+		if ($this->getPeerName()) {
+			$const = strtoupper($this->getPeerName());
+		} else {
+			$const = strtoupper($this->getName());
+		}
+		return $classname.'::'.$const;
+	}
+
   /**
    * Get the Peer constant name that will identify this column.
    * @return     string

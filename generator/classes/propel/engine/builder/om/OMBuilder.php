@@ -180,7 +180,7 @@ abstract class OMBuilder extends DataModelBuilder {
 			throw $e;
 		}
 		if ($classname === null) {
-			$classname = $this->getPeerClassname();
+			return $col->getConstantName();
 		}
 		// was it overridden in schema.xml ?
 		if ($col->getPeerName()) {

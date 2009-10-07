@@ -35,7 +35,7 @@ class TimestampableBehavior extends Behavior
    */
   protected function getColumnSetter($column)
   {
-    return 'set' . $this->getTable()->getColumn($this->getParameter($column))->getPhpName();
+    return 'set' . $this->getColumnForParameter($column)->getPhpName();
   }
   
   /**
