@@ -340,6 +340,25 @@ class ColumnMap {
   }
   
   /**
+   * Get the RelationMap object for this foreign key
+   */
+  public function getRelation()
+  {
+    if(!$this->relatedTableName) return null;
+    foreach ($this->getTable()->getRelations() as $name => $relation)
+    {
+      if($relation->getType() == RelationMap::MANY_TO_ONE)
+      {
+        if ($relation->getForeignTable()->getName() == $this->getRelatedTableName()
+         && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings()))
+        {
+          return $relation;
+        }
+      }
+    }
+  }
+  
+  /**
    * Get the table.column that this column is related to.
    *
    * @return     string A String with the full name for the related column.

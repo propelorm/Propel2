@@ -105,6 +105,19 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($relatedCmap, $this->cmap->getRelatedColumn(), 'getRelatedColumn returns the related ColumnMap object');
   }
   
+  public function testGetRelation()
+  {
+    $bookTable = BookPeer::getTableMap();
+    $titleColumn = $bookTable->getColumn('TITLE');
+    $this->assertNull($titleColumn->getRelation(), 'getRelation() returns null for non-foreign key columns');
+    $publisherColumn = $bookTable->getColumn('PUBLISHER_ID');
+    $this->assertEquals($publisherColumn->getRelation(), $bookTable->getRelation('Publisher'), 'getRelation() returns the RelationMap object for this foreign key');
+    $bookstoreTable = BookstoreEmployeePeer::getTableMap();
+    $supervisorColumn = $bookstoreTable->getColumn('SUPERVISOR_ID');
+    $this->assertEquals($supervisorColumn->getRelation(), $supervisorColumn->getRelation('Supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
+    
+  }
+  
   public function testNormalizeName()
   {
     $this->assertEquals('', ColumnMap::normalizeName(''), 'normalizeColumnName() returns an empty string when passed an empty string');

@@ -105,13 +105,14 @@ echo $bookPublisherIdColumn->getRelatedName();       // 'publisher.ID'
 echo $bookPublisherIdColumn->getRelatedTableName();  // 'publisher'
 echo $bookPublisherIdColumn->getRelatedColumnName(); // 'ID'
 $publisherTable = $bookPublisherIdColumn->getRelatedTable();
+$publisherRelation = $bookPublisherIdColumn->getRelation();
 }}}
 
 == RelationMaps ==
 
 To get an insight on all the relationships of a table, including the ones relying on a foreign key located in another table, you must use the `RelationMap` objects related to a table.
 
-There are two ways to access the `RelationMap` instances related to a `TableMap`. If you know the relation name, you can access the related `RelationMap` using `TableMap::getRelation($relationName)`. Note that the relation name is the phpName of the related table, unless the foreign key defines a phpName in the schema.
+If you know its name, you can retrieve a `RelationMap` object using `TableMap::getRelation($relationName)`. Note that the relation name is the phpName of the related table, unless the foreign key defines a phpName in the schema. For instance, the name of the `RelationMap` object related to the `book.PUBLISHER_ID` column is 'Publisher'.
 
 {{{
 #!php
@@ -119,9 +120,16 @@ There are two ways to access the `RelationMap` instances related to a `TableMap`
 $publisherRelation = $bookTable->getRelation('Publisher');
 }}}
 
-The second way is to retrieve all the relations by calling `TableMap::getRelations()` and to iterate over the array of RelationMap objects that it returns.
+alternatively, you can access a `RelationMap` from a foreign key column using `ColumnMap::getRelation()`, as follows:
 
-Once you have a `RelationMap` object, you can introspect it using any of the following methods:
+{{{
+#!php
+<?php
+$publisherRelation = $bookTable->getColumn('publisher_id')->getRelation();
+}}}
+
+Once you have a `RelationMap` instance, inspect its properties using any of the following methods:
+
 {{{
 #!php
 <?php
@@ -150,3 +158,7 @@ $bookTable   = $reviewRelation->getForeignTable();
 print_r($reviewRelation->getColumnMappings());
   // array('review.BOOK_ID' => 'book.ID')
 }}}
+
+To retrieve all the relations of a table, call `TableMap::getRelations()`. You can then iterate over an array of `RelationMap` objects.
+
+Tip: RelationMap objects are lazy-loaded, which means that the `TableMap` will not instanciate any relation object until you call `getRelations()`. This allows the `TableMap` to remain lightweight for when you don't use 
