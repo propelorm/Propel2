@@ -163,6 +163,7 @@ require '".$requiredClassFilePath."';
 		$script .= "
 } // " . $this->getClassname() . "
 ";
+		$this->applyBehaviorModifier('extensionObjectFilter', $script, "");
 	}
 
 } // PHP5ExtensionObjectBuilder

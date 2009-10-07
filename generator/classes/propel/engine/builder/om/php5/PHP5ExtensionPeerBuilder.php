@@ -139,6 +139,7 @@ class ".$this->getClassname()." extends $baseClassname {
 		$script .= "
 } // " . $this->getClassname() . "
 ";
+		$this->applyBehaviorModifier('extensionPeerFilter', $script, "");
 	}
 
 

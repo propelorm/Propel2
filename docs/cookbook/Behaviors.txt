@@ -128,9 +128,10 @@ Then rebuild your model, and there you go: two columns, `created_at` and `update
 
 == Bundled Behaviors ==
 
-Propel currently bundles one behavior. Check the behavior documentation for details on usage:
+Propel currently bundles two behaviors. Check the behavior documentation for details on usage:
 
-* TimestampableBehavior
+* timestampable
+* alternative_coding_standard
 
 Behaviors bundled with Propel require no further installation and work out of the box.
 

@@ -27,7 +27,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  *
  * @author     François Zaninotto
  * @version    $Revision: 1133 $
- * @package    generator.engine.behavior.timestampable
+ * @package    generator.engine.timestampable
  */
 class TimestampableBehaviorTest extends PHPUnit_Framework_TestCase 
 {

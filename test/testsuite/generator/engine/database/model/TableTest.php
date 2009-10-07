@@ -80,7 +80,7 @@ class TableTest extends PHPUnit_Framework_TestCase {
     $platform = new MysqlPlatform();
     $config = new GeneratorConfig();
     $config->setBuildProperties(array(
-      'propel.behavior.timestampable.class' => 'propel.engine.behavior.timestampable.TimestampableBehavior'
+      'propel.behavior.timestampable.class' => 'propel.engine.behavior.TimestampableBehavior'
     ));
     $platform->setGeneratorConfig($config);
     $xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
