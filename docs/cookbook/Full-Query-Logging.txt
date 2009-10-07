@@ -1,6 +1,6 @@
 = Full Query Logging =
 
-Propel 1.3 provides a '''DebugPDO''' subclass of PHP's `PDO`, which provides various logging facilities related the the active database connection, and includes full query logging.
+Propel provides a '''DebugPDO''' subclass of PHP's `PDO`, which provides various logging facilities related the the active database connection, and includes full query logging.
 
 == Configuring Propel to use DebugPDO ==
 

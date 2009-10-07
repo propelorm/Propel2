@@ -5,6 +5,8 @@
 The `save()` and `delete()` methods of your generated objects are now easier to override. In fact, Propel looks for one of the following methods in your objects and executes them when needed:
 
 {{{
+#!php
+<?php
 preInsert()            // code executed before insertion of a new object
 postInsert()           // code executed after insertion of a new object
 preUpdate()            // code executed before update of an existing object
@@ -44,6 +46,7 @@ propel.addHooks = false
 You can now package and reuse behaviors across your models. For instance, keeping the date of creation of an object and the date of latest update is as simple as declaring the `timestampable` behavior in the table declaration:
 
 {{{
+#!xml
 <table name="book">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
@@ -69,7 +72,7 @@ echo $b->getUpdatedAt(); // 2009-10-02 18:14:25
 
 This new feature is so powerful that it requires a documentation on its own. Read it in the [wiki:Users/Documentation/1.4#HowTos HowTos] section.
 
-Propel 1.4 already bundles a few behaviors. Check the above documentatoin for more details.
+Propel 1.4 already bundles a few behaviors. Check the documentation linked above for more details.
 
 == Joins with multiple conditions ==
 
@@ -141,7 +144,7 @@ That's all. After this change, Propel logs all the queries executed at runtime i
 {{{
 time:  0.002 sec | mem: 1.4 MB | INSERT INTO publisher (`ID`,`NAME`) VALUES (NULL,'William Morrow')
 time:  0.000 sec | mem: 1.4 MB | INSERT INTO author (`ID`,`FIRST_NAME`,`LAST_NAME`) VALUES (NULL,'J.K.','Rowling')
-time:  0.000 sec | mem: 1.6 MB | INSERT INTO book (`ID`,`TITLE`,`ISBN`,`PRICE`,`PUBLISHER_ID`,`AUTHOR_ID`) VALUES (NULL,'Harry time:  0.000 sec | mem:Potter and the Order of the Phoenix','043935806X',10.99,53,58)
+time:  0.000 sec | mem: 1.6 MB | INSERT INTO book (`ID`,`TITLE`,`ISBN`,`PRICE`,`PUBLISHER_ID`,`AUTHOR_ID`) VALUES (NULL,'Harry Potter and the Order of the Phoenix','043935806X',10.99,53,58)
 time:  0.000 sec | mem: 1.7 MB | INSERT INTO review (`ID`,`REVIEWED_BY`,`REVIEW_DATE`,`RECOMMENDED`,`BOOK_ID`) VALUES (NULL,'Washington Post','2009-10-04',1,52)
 ...
 time:  0.001 sec | mem: 2.1 MB | SELECT bookstore_employee_account.EMPLOYEE_ID, bookstore_employee_account.LOGIN FROM `bookstore_employee_account` WHERE bookstore_employee_account.EMPLOYEE_ID=25
