@@ -23,6 +23,8 @@ In order to run the tests, you must install PHPUnit, PEAR:Log, and Phing:
 > pear install log
 }}}
 
+Ensure that test/reports/phpunit2-noframes.html and test/reports/test-results.xml are read write by all.
+
 Tip: The latest release of PHPUnit (3.4) is not totally BC with the 3.3, and doesn't have a Phing adapter yet. That's why the Propel unit tests still use PHPUnit version 3.3.
 
 == Configure the Database to be Used in the Tests ==
