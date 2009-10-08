@@ -125,6 +125,8 @@ In addition, Propel can log the time and memory spent on every query, or only on
 
 Last but not least, you can check the number of executer queries and the SQL code of the latest executed query at runtime.
 
+Propel 1.2 users may not find these features spectacular, but by switching from Creole to PDO, Propel lost its powerful logging abilities in version 1.3. Propel 1.4 logging is now on par with Propel 1.2 logging again.
+
 All this is possible thanks to a new connection class, called `DebugPDO`. To enable it, just change the connection `<classname>` to 'DebugPDO' in the `runtime-conf.xml` file, as follows:
 
 {{{
