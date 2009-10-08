@@ -208,9 +208,11 @@ class Propel
 		'PropelConfiguration' => 'propel/util/PropelConfiguration.php',
 		'PropelConfigurationIterator' => 'propel/util/PropelConfigurationIterator.php',
 		'PropelPDO' => 'propel/util/PropelPDO.php',
+		'MssqlPropelPDO' => 'propel/util/MssqlPropelPDO.php',
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
 		'DebugPDO' => 'propel/util/DebugPDO.php',
+    'MssqlPropelDebugPDO' => 'propel/util/MssqlPropelDebugPDO.php',	
 		'DebugPDOStatement' => 'propel/util/DebugPDOStatement.php',
 
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
