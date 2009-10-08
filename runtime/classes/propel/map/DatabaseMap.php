@@ -36,15 +36,16 @@
  * @version    $Revision$
  * @package    propel.map
  */
-class DatabaseMap {
+class DatabaseMap
+{
 
-  // Name of the database
+  /** @var string Name of the database. */
   protected $name;
 
-  // Name of the tables in the database
+  /** @var array TableMap[] Tables in the database, using table name as key */ 
   protected $tables = array();
   
-  // phpNames of the tables in the database
+  /** @var array TableMap[] Tables in the database, using table phpName as key */
   protected $tablesByPhpName = array();
 
   /**
@@ -186,4 +187,14 @@ class DatabaseMap {
       throw new PropelException("Cannot fetch TableMap for undefined table phpName: " . $phpName);
     }
   }
+  
+  /** 
+   * Convenience method to get the DBAdapter registered with Propel for this database. 
+   * @return  DBAdapter
+   * @see     Propel::getDB(string) 
+   */ 
+  public function getDBAdapter() 
+  { 
+    return Propel::getDB($this->name); 
+  }  
 }
