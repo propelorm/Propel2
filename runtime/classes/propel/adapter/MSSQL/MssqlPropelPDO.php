@@ -1,8 +1,12 @@
 <?php
 
-class MssqlDebugPDO extends DebugPDO
+/**
+ * dblib doesn't support transactions so we need to add a workaround for transactions, last insert ID, and quoting
+ *
+ * @package    propel.adapter.MSSQL
+ */
+class MssqlPropelPDO extends PropelPDO
 {
-
   /**
    * Begin a transaction.
    *
@@ -75,5 +79,4 @@ class MssqlDebugPDO extends DebugPDO
   {
     return true;
   }
-
 }
