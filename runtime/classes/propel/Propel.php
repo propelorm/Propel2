@@ -212,8 +212,9 @@ class Propel
 		'PropelPager' => 'propel/util/PropelPager.php',
 		'PropelDateTime' => 'propel/util/PropelDateTime.php',
 		'DebugPDO' => 'propel/util/DebugPDO.php',
-    'MssqlPropelDebugPDO' => 'propel/util/MssqlPropelDebugPDO.php',	
+    'MssqlDebugPDO' => 'propel/util/MssqlDebugPDO.php',	
 		'DebugPDOStatement' => 'propel/util/DebugPDOStatement.php',
+    'MssqlDateTime' => 'propel/util/MssqlDateTime.class.php',
 
 		'BasicValidator' => 'propel/validator/BasicValidator.php',
 		'MatchValidator' => 'propel/validator/MatchValidator.php',
