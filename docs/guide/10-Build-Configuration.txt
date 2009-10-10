@@ -132,9 +132,24 @@ propel.addGenericMutators = true|{false}
 Whether to add generic getter/setter methods -- e.g. '''getByName()''', '''setByName()'''.
 
 {{{
-propel.addTimeStamp = {true}|false
+propel.addTimeStamp = true|{false}
 }}}
 Whether to add a timestamp to the phpdoc header of generated OM classes.
+
+{{{
+propel.addValidateMethod = {true}|false
+}}}
+Whether to add `validate()` method to your classes. Set to false if you don't use Propel validation. 
+
+{{{
+propel.addIncludes = {true}|false
+}}}
+Whether to add `require` statements on the generated stub classes. Set to false if you autoload every classe at runtime.
+
+{{{
+propel.addHooks = {true}|false
+}}}
+whether to support pre- and post- hooks on `save()` and `delete()` methods. Set to false if you never use these hooks for a small speed boost.
 
 {{{
 propel.basePrefix = {Base}|/YourPrefix/
@@ -145,11 +160,6 @@ The prefix to use for the base (super) classes that are generated.
 propel.classPrefix = {empty}|string;
 }}}
 Some sort of "namespacing": All Propel classes with get the Prefix "My_ORM_Prefix_" just like "My_ORM_Prefix_BookPeer".
-
-{{{
-propel.complexObjectModel = {true}|false
-}}}
-Whether to use the complex object model.  Note that using the complex OM is default and probably will be the only option moving forward.
 
 {{{
 propel.disableIdentifierQuoting = true|{false}
@@ -237,7 +247,7 @@ propel.builder.peerstub.class = propel.engine.builder.om.php5.PHP5ExtensionPeerB
 
 propel.builder.objectmultiextend.class = propel.engine.builder.om.php5.PHP5MultiExtendObjectBuilder
 
-propel.builder.mapbuilder.class = propel.engine.builder.om.php5.PHP5MapBuilderBuilder
+propel.builder.tablemap.class = propel.engine.builder.om.php5.PHP5TableMapBuilder
 
 propel.builder.interface.class = propel.engine.builder.om.php5.PHP5InterfaceBuilder
 
@@ -263,4 +273,4 @@ propel.platform.class = propel.engine.platform.${propel.database}Platform
 propel.builder.pluralizer.class = propel.engine.builder.util.DefaultEnglishPluralizer
 }}}
 
-As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes.
+As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes
