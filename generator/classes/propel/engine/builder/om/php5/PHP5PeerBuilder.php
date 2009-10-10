@@ -781,6 +781,53 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	}
 
 	/**
+	 * Adds method to clear the instance pool of related tables.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addClearRelatedInstancePool(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Method to invalidate the instance pool of all tables related to " . $table->getName() . "
+	 * by a foreign key with ON DELETE CASCADE
+	 */
+	public static function clearRelatedInstancePool()
+	{";
+		// Handle ON DELETE CASCADE for updating instance pool
+
+		foreach ($table->getReferrers() as $fk) {
+
+			// $fk is the foreign key in the other table, so localTableName will
+			// actually be the table name of other table
+			$tblFK = $fk->getTable();
+
+			$joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
+			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
+
+			if (!$tblFK->isForReferenceOnly()) {
+				// we can't perform operations on tables that are
+				// not within the schema (i.e. that we have no map for, etc.)
+
+				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
+
+				// i'm not sure whether we can allow delete cascade for foreign keys
+				// within the same table?  perhaps we can?
+				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
+				&& $tblFK->getName() != $table->getName()) {
+					$script .= "
+		// invalidate objects in ".$joinedTablePeerBuilder->getPeerClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
+		".$joinedTablePeerBuilder->getPeerClassname()."::clearInstancePool();
+";
+				} // if fk is on delete cascade
+			} // if (! for ref only)
+		} // foreach
+		$script .= "
+	}
+";
+	}
+
+	/**
 	 * Adds method to get an the instance from the pool, given a key.
 	 * @param      string &$script The script will be modified in this method.
 	 */
@@ -1188,6 +1235,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			";
 		}
 		$script .= "\$affectedRows += {$this->basePeerClassname}::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
+			// Because this db requires some delete cascade/set null emulation, we have to
+			// clear the cached instance *after* the emulation has happened (since
+			// instances get re-added by the select statement contained therein).
+			".$this->getPeerClassname()."::clearInstancePool();
+			self::clearRelatedInstancePool();
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
@@ -1333,41 +1385,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 		$script .= "
 			\$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
-";
-		// Handle ON DELETE CASCADE for updating instance pool
-
-		foreach ($table->getReferrers() as $fk) {
-
-			// $fk is the foreign key in the other table, so localTableName will
-			// actually be the table name of other table
-			$tblFK = $fk->getTable();
-
-			$joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
-			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
-
-			if (!$tblFK->isForReferenceOnly()) {
-				// we can't perform operations on tables that are
-				// not within the schema (i.e. that we have no map for, etc.)
-
-				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
-
-				// i'm not sure whether we can allow delete cascade for foreign keys
-				// within the same table?  perhaps we can?
-				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
-				&& $tblFK->getName() != $table->getName()) {
-					$script .= "
-			// invalidate objects in ".$joinedTablePeerBuilder->getPeerClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
-			".$joinedTablePeerBuilder->getPeerClassname()."::clearInstancePool();
-";
-				} // if fk is on delete cascade
-
-			} // if (! for ref only)
-
-		} // foreach
-
-
-
-		$script .= "
+			self::clearRelatedInstancePool();
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {

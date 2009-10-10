@@ -70,6 +70,7 @@ abstract class PeerBuilder extends OMBuilder {
 		$this->addRemoveInstanceFromPool($script);
 		$this->addGetInstanceFromPool($script);
 		$this->addClearInstancePool($script);
+		$this->addClearRelatedInstancePool($script);
 
 		$this->addGetPrimaryKeyHash($script);
 		$this->addPopulateObjects($script); // <-- there's PDO code in here

@@ -252,6 +252,18 @@ class GeneratedPeerTest extends BookstoreTestBase
 	}
 
 	/**
+	 * Test the state of the instance pool after a doDeleteAll() call.
+	 */
+	public function testDoDeleteAllInstancePool()
+	{
+		$review = ReviewPeer::doSelectOne(new Criteria);
+		$book = $review->getBook();
+		BookPeer::doDeleteAll();
+		$this->assertNull(BookPeer::retrieveByPk($book->getId()), 'doDeleteAll invalidates instance pool');
+		$this->assertNull(ReviewPeer::retrieveByPk($review->getId()), 'doDeleteAll invalidates instance pool of releted tables with ON DELETE CASCADE');
+	}
+
+	/**
 	 * Test the doDeleteAll() method when onDelete="CASCADE".
 	 */
 	public function testDoDeleteAll_Cascade() {
