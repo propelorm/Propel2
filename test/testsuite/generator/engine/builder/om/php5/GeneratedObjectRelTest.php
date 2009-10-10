@@ -231,4 +231,17 @@ class GeneratedObjectRelTest extends BookstoreTestBase {
 		$this->assertSame($book, $books[0], "Expected the same object to be returned by fk accessor.");
 		$this->assertEquals("MODIFIED ISBN", $books[0]->getISBN(), "Expected the modified value NOT to have been overwritten.");
 	}
+
+	public function testFKGetterUseInstancePool()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$author = AuthorPeer::doSelectOne(new Criteria(), $con);
+		// populate book instance pool
+		$books = $author->getBooks(null, $con);
+		$sql = $con->getLastExecutedQuery();
+		$author = $books[0]->getAuthor($con);
+		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
+	}
 }

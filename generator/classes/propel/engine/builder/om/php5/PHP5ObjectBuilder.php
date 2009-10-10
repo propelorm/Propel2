@@ -2595,6 +2595,9 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$argsize = $argsize + 1;
 		}
 		
+		// If the related column is a primary kay and if it's a simple association,
+		// The use retrieveByPk() instead of doSelect() to take advantage of instance pooling
+		$useRetrieveByPk = count($argmap) == 1 && $argmap[0]['foreign']->isPrimaryKey();
 
 		$script .= "
 
@@ -2609,17 +2612,22 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	{";
 		$script .= "
 		if (\$this->$varName === null && ($conditional)) {";
-		$script .= "
-			\$c = new Criteria(".$fkPeerBuilder->getPeerClassname()."::DATABASE_NAME);";
-		foreach ($argmap as $el) {
-			$fcol = $el['foreign'];
-			$lcol = $el['local'];
-			$clo = strtolower($lcol->getName());
+		if ($useRetrieveByPk) {
 			$script .= "
+			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::retrieveByPk(\$this->$clo);";
+		} else {
+			$script .= "
+			\$c = new Criteria(".$fkPeerBuilder->getPeerClassname()."::DATABASE_NAME);";
+			foreach ($argmap as $el) {
+				$fcol = $el['foreign'];
+				$lcol = $el['local'];
+				$clo = strtolower($lcol->getName());
+				$script .= "
 			\$c->add(".$fkPeerBuilder->getColumnConstant($fcol).", \$this->".$clo.");";
-		}
+			}
 			$script .= "
 			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::doSelectOne(\$c, \$con);";
+		}
 		if ($fk->isLocalPrimaryKey()) {
 			$script .= "
 			// Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
