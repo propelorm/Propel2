@@ -1239,7 +1239,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			// clear the cached instance *after* the emulation has happened (since
 			// instances get re-added by the select statement contained therein).
 			".$this->getPeerClassname()."::clearInstancePool();
-			self::clearRelatedInstancePool();
+			".$this->getPeerClassname()."::clearRelatedInstancePool();
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
@@ -1385,7 +1385,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 		$script .= "
 			\$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
-			self::clearRelatedInstancePool();
+			".$this->getPeerClassname()."::clearRelatedInstancePool();
 			\$con->commit();
 			return \$affectedRows;
 		} catch (PropelException \$e) {
