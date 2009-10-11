@@ -5,7 +5,8 @@ require_once 'generator/engine/platform/PlatformTestBase.php';
  *
  * @package    generator.engine.platform 
  */
-class DefaultPlatformTest extends PlatformTestBase {
+class DefaultPlatformTest extends PlatformTestBase
+{
 
 	protected function setUp()
 	{

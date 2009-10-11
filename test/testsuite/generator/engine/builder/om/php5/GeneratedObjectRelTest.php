@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests relationships between generated Object classes.
@@ -37,7 +37,14 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    generator.engine.builder.om.php5
  */
-class GeneratedObjectRelTest extends BookstoreTestBase {
+class GeneratedObjectRelTest extends BookstoreEmptyTestBase
+{
+
+	protected function setUp()
+	{
+		parent::setUp();
+		BookstoreDataPopulator::populate();
+	}
 
 	/**
 	 * Tests one side of a bi-directional setting of many-to-many relationships.

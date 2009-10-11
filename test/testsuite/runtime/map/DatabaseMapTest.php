@@ -153,7 +153,10 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     
   public function testGetTableByPhpNameNotLoaded()
   {
-    $this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
+  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");
+		require_once 'bookstore/map/BookTableMap.php';
+  	require_once 'bookstore/BookPeer.php';
+		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
   }
   
 }

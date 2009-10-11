@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests the generated Peer classes.
@@ -36,8 +36,14 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    generator.engine.builder.om.php5
  */
-class GeneratedPeerTest extends BookstoreTestBase
+class GeneratedPeerTest extends BookstoreEmptyTestBase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		BookstoreDataPopulator::populate();
+	}
+	
 	/**
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */

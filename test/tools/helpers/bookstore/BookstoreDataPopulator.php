@@ -194,7 +194,6 @@ class BookstoreDataPopulator {
 
 	public static function depopulate()
 	{
-		AcctAccessRolePeer::doDeleteAll();
 		AuthorPeer::doDeleteAll();
 		BookstorePeer::doDeleteAll();
 		BookstoreContestPeer::doDeleteAll();

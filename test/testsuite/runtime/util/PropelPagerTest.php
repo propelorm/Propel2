@@ -1,5 +1,5 @@
 <?php
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Test the utility class PropelPager
@@ -8,7 +8,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @version    $Id: PropelPagerTest.php
  * @package    runtime.util
  */
-class PropelPagerTest extends BookstoreTestBase
+class PropelPagerTest extends BookstoreEmptyTestBase
 {
   private $authorId;
   private $books;
@@ -16,7 +16,8 @@ class PropelPagerTest extends BookstoreTestBase
   protected function setUp()
   {
     parent::setUp();
-
+		BookstoreDataPopulator::populate();
+		
     $cr = new Criteria();
     $cr->add(AuthorPeer::LAST_NAME, "Rowling");
     $cr->add(AuthorPeer::FIRST_NAME, "J.K.");

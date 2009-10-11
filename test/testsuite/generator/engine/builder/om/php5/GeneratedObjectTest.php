@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests the generated Object classes.
@@ -37,8 +37,14 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    generator.engine.builder.om.php5
  */
-class GeneratedObjectTest extends BookstoreTestBase
+class GeneratedObjectTest extends BookstoreEmptyTestBase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		require_once 'tools/helpers/bookstore/behavior/TestAuthor.php';
+	}
+
 	/**
 	 * Test saving an object after setting default values for it.
 	 */
@@ -377,6 +383,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testTemporalValues_DateSetting()
 	{
+		BookstoreDataPopulator::populate();
+
 		$r = new Review();
 		$r->setBook(BookPeer::doSelectOne(new Criteria()));
 		$r->setReviewDate(new DateTime('1999-12-20'));
@@ -489,6 +497,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testReload()
 	{
+		BookstoreDataPopulator::populate();
 		$a = AuthorPeer::doSelectOne(new Criteria());
 
 		$origName = $a->getFirstName();
@@ -510,6 +519,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testReloadDeep()
 	{
+		BookstoreDataPopulator::populate();
+		
 		// arbitrary book
 		$b = BookPeer::doSelectOne(new Criteria());
 
@@ -581,7 +592,9 @@ class GeneratedObjectTest extends BookstoreTestBase
 	/**
 	 * Test deleting an object using the delete() method.
 	 */
-	public function testDelete() {
+	public function testDelete()
+	{
+		BookstoreDataPopulator::populate();
 
 		// 1) grab an arbitrary object
 		$book = BookPeer::doSelectOne(new Criteria());
@@ -628,6 +641,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testOneToOne()
 	{
+		BookstoreDataPopulator::populate();
+
 		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
 
 		$acct = new BookstoreEmployeeAccount();
@@ -644,6 +659,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testTypeSensitive()
 	{
+		BookstoreDataPopulator::populate();
+
 		$book = BookPeer::doSelectOne(new Criteria());
 
 		$r = new Review();
@@ -774,6 +791,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testEquals()
 	{
+		BookstoreDataPopulator::populate();
+
 		$b = BookPeer::doSelectOne(new Criteria());
 		$c = new Book();
 		$c->setId($b->getId());
@@ -821,6 +840,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 
 	public function testDefaultFkColVal()
 	{
+		BookstoreDataPopulator::populate();
+
 		$sale = new BookstoreSale();
 		$this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default bookstore_id of 1.");
 
@@ -884,6 +905,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testCopyInto_Deep()
 	{
+		BookstoreDataPopulator::populate();
+
 		// Test a "normal" object
 		$c = new Criteria();
 		$c->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
@@ -952,6 +975,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 	 */
 	public function testToArrayLazyLoad()
 	{
+		BookstoreDataPopulator::populate();
+
 		$c = new Criteria();
 		$c->add(MediaPeer::COVER_IMAGE, null, Criteria::NOT_EQUAL);
 		$c->add(MediaPeer::EXCERPT, null, Criteria::NOT_EQUAL);
@@ -1165,60 +1190,5 @@ class GeneratedObjectTest extends BookstoreTestBase
 		$author->save();
 		$author->delete();
 		$this->assertEquals("Post-Deleted", $author->getLastName());
-	}
-
-}
-
-class TestAuthor extends Author {
-	public function preInsert(PropelPDO $con)
-	{
-		parent::preInsert($con);
-		$this->setFirstName('PreInsertedFirstname');
-		return true;
-	}
-
-	public function postInsert(PropelPDO $con)
-	{
-		parent::postInsert($con);
-		$this->setLastName('PostInsertedLastName');
-	}
-
-	public function preUpdate(PropelPDO $con)
-	{
-		parent::preUpdate($con);
-		$this->setFirstName('PreUpdatedFirstname');
-		return true;
-	}
-
-	public function postUpdate(PropelPDO $con)
-	{
-		parent::postUpdate($con);
-		$this->setLastName('PostUpdatedLastName');
-	}
-
-	public function preSave(PropelPDO $con)
-	{
-		parent::preSave($con);
-		$this->setEmail("pre@save.com");
-		return true;
-	}
-
-	public function postSave(PropelPDO $con)
-	{
-		parent::postSave($con);
-		$this->setAge(115);
-	}
-
-	public function preDelete(PropelPDO $con)
-	{
-		parent::preDelete($con);
-		$this->setFirstName("Pre-Deleted");
-		return true;
-	}
-
-	public function postDelete(PropelPDO $con)
-	{
-		parent::postDelete($con);
-		$this->setLastName("Post-Deleted");
 	}
 }

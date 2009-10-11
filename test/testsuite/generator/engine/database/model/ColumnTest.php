@@ -64,6 +64,8 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	
 	public function testPhpNamingMethod()
 	{
+		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
 	  $bookTmap = Propel::getDatabaseMap(BookPeer::DATABASE_NAME)->getTable(BookPeer::TABLE_NAME);
 	  $this->assertEquals('AuthorId', $bookTmap->getColumn('AUTHOR_ID')->getPhpName(), 'setPhpName() uses the default phpNamingMethod');
 	  $pageTmap = Propel::getDatabaseMap(PagePeer::DATABASE_NAME)->getTable(PagePeer::TABLE_NAME);

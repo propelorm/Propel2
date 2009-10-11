@@ -1,8 +1,6 @@
 <?php 
 
-
-require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
+include_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests a functional scenario using the Bookstore model
@@ -11,13 +9,8 @@ include_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    misc
  */
-class BookstoreTest extends PHPUnit_Framework_TestCase
+class BookstoreTest extends BookstoreEmptyTestBase
 {
-	protected function setUp()
-	{
-		parent::setUp();
-		BookstoreDataPopulator::depopulate();
-	}
 	
 	public function testScenario()
 	{

@@ -1,8 +1,11 @@
 <?php
 
-require_once 'tools/helpers//BaseTestCase.php';
+require_once 'tools/helpers/BaseTestCase.php';
 include_once 'propel/util/Criteria.php';
 include_once 'propel/util/BasePeer.php';
+
+set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
 
 /**
  * Test class for Criteria.
@@ -12,7 +15,8 @@ include_once 'propel/util/BasePeer.php';
  * @version    $Id$
  * @package    runtime.util
  */
-class CriteriaTest extends BaseTestCase {
+class CriteriaTest extends BaseTestCase
+{
 
   /**
    * The criteria to use in the test.

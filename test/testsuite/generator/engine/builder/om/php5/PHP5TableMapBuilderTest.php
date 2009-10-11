@@ -1,6 +1,6 @@
 <?php
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Test class for PHP5TableMapBuilder.
@@ -9,12 +9,13 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @version    $Id: PHP5TableMapBuilderTest.php 1121 2009-09-14 17:20:11Z francois $
  * @package    generator.engine.builder.om.php5
  */
-class PHP5TableMapBuilderTest extends PHPUnit_Framework_TestCase 
+class PHP5TableMapBuilderTest extends BookstoreTestBase 
 { 
   protected $databaseMap;
 
   protected function setUp()
   {
+  	parent::setUp();
     $this->databaseMap = Propel::getDatabaseMap('bookstore');
   }
   

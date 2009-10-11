@@ -21,7 +21,9 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'propel/engine/database/transform/XmlToAppData.php';
+include_once 'propel/engine/platform/MysqlPlatform.php';
+include_once 'propel/engine/database/model/Behavior.php';
+include_once 'propel/engine/database/model/Table.php';
 include_once 'propel/engine/platform/MysqlPlatform.php';
 
 /**
@@ -80,6 +82,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
    */
   public function testXmlToAppData()
   {
+  	include_once 'propel/engine/database/transform/XmlToAppData.php';
     $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
     $this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
     $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
@@ -92,12 +95,17 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
   
   public function testMofifyTable()
   {
+  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
     $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
     $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
   }
   
   public function testModifyDatabase()
   {
+  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		require_once 'propel/Propel.php';
+		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
     $tmap = Propel::getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
     $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
     $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);

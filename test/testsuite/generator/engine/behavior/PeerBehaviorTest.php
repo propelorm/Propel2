@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Tests the generated Peer behavior hooks.
@@ -27,7 +27,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @author     Francois Zaninotto
  * @package    generator.engine.behavior
  */
-class PeerBehaviorTest extends PHPUnit_Framework_TestCase
+class PeerBehaviorTest extends BookstoreTestBase
 {
   public function testStaticAttributes()
   {

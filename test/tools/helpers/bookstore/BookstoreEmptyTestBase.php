@@ -1,6 +1,7 @@
+
 <?php
 /*
- *  $Id$
+ *  $Id: BookstoreTestBase.php 1139 2009-09-17 14:28:19Z francois $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,24 +20,21 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
-include_once 'tools/helpers/cms/CmsDataPopulator.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.
  */
-abstract class CmsTestBase extends PHPUnit_Framework_TestCase {
-
+abstract class BookstoreEmptyTestBase extends BookstoreTestBase
+{
 	/**
 	 * This is run before each unit test; it populates the database.
 	 */
 	protected function setUp()
 	{
 		parent::setUp();
-		CmsDataPopulator::depopulate();
-		CmsDataPopulator::populate();
+		BookstoreDataPopulator::depopulate();
 	}
 
 	/**
@@ -44,7 +42,7 @@ abstract class CmsTestBase extends PHPUnit_Framework_TestCase {
 	 */
 	protected function tearDown()
 	{
-		CmsDataPopulator::depopulate();
+		BookstoreDataPopulator::depopulate();
 		parent::tearDown();
 	}
 

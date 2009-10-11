@@ -20,8 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 /**
  * Tests for SoftDeleteBehavior class
  *
@@ -29,11 +28,12 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @version		$Revision: 1133 $
  * @package		generator.engine.behavior
  */
-class SoftDeleteBehaviorTest extends PHPUnit_Framework_TestCase 
+class SoftDeleteBehaviorTest extends BookstoreTestBase 
 {
 	
 	protected function setUp()
 	{
+		parent::setUp();
 		Table4Peer::disableSoftDelete();
 		Table4Peer::doDeleteAll();
 		Table4Peer::enableSoftDelete();

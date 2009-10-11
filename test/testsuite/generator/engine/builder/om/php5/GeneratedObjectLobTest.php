@@ -19,7 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests the generated Object classes and LOB behavior.
@@ -37,7 +37,8 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    generator.engine.builder.om.php5
  */
-class GeneratedObjectLobTest extends BookstoreTestBase {
+class GeneratedObjectLobTest extends BookstoreEmptyTestBase
+{
 
 	/**
 	 * Array of filenames pointing to blob/clob files indexed by the basename.
@@ -49,6 +50,7 @@ class GeneratedObjectLobTest extends BookstoreTestBase {
 	protected function setUp()
 	{
 		parent::setUp();
+		BookstoreDataPopulator::populate();
 		$this->sampleLobFiles['tin_drum.gif'] = TESTS_BASE_DIR . '/etc/lob/tin_drum.gif';
 		$this->sampleLobFiles['tin_drum.txt'] = TESTS_BASE_DIR . '/etc/lob/tin_drum.txt';
 		$this->sampleLobFiles['propel.gif'] = TESTS_BASE_DIR . '/etc/lob/propel.gif';

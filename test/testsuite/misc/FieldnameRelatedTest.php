@@ -20,7 +20,6 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Tests some of the methods of generated Object classes. These are:
@@ -41,8 +40,17 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Sven Fuchs <svenfuchs@artweb-design.de>
  * @package    misc
  */
-class FieldnameRelatedTest extends PHPUnit_Framework_TestCase {
-
+class FieldnameRelatedTest extends PHPUnit_Framework_TestCase
+{
+	protected function setUp()
+	{
+		parent::setUp();
+		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		require_once 'bookstore/map/BookTableMap.php';
+		require_once 'bookstore/BookPeer.php';
+		require_once 'bookstore/Book.php';
+	}
+	
 	/**
 	 * Tests if fieldname type constants are defined
 	 */
@@ -55,8 +63,8 @@ class FieldnameRelatedTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Tests the Base[Object]Peer::getFieldNames() method
 	 */
-	public function testGetFieldNames () {
-
+	public function testGetFieldNames ()
+	{
 		$types = array(
 			BasePeer::TYPE_PHPNAME,
 			BasePeer::TYPE_COLNAME,

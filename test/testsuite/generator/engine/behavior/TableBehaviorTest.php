@@ -29,6 +29,14 @@ require_once 'PHPUnit/Framework/TestCase.php';
  */
 class TableBehaviorTest extends PHPUnit_Framework_TestCase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		require_once 'behavior/map/Table3TableMap.php';
+		require_once 'behavior/Table3Peer.php';
+	}
+
   public function testModifyTable()
   {
     $t = Table3Peer::getTableMap();

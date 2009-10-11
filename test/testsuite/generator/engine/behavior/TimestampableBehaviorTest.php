@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Tests for TimestampableBehavior class
@@ -29,7 +29,7 @@ require_once 'PHPUnit/Framework/TestCase.php';
  * @version    $Revision: 1133 $
  * @package    generator.engine.behavior
  */
-class TimestampableBehaviorTest extends PHPUnit_Framework_TestCase 
+class TimestampableBehaviorTest extends BookstoreTestBase 
 {
   public function testParameters()
   {

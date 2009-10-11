@@ -19,8 +19,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
-require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests the validator classes.
@@ -37,9 +36,16 @@ require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
  * @author     Michael Aichler <aichler@mediacluster.de>
  * @package    runtime.validator
  */
-class ValidatorTest extends BookstoreTestBase
+class ValidatorTest extends BookstoreEmptyTestBase
 {
 
+	protected function setUp()
+	{
+		parent::setUp();
+		BookstoreDataPopulator::populate();
+		require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
+	}
+	
 	/**
 	 * Test minLength validator.
 	 * This also tests the ${value} substitution.

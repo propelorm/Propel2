@@ -107,6 +107,8 @@ class ColumnMapTest extends PHPUnit_Framework_TestCase
   
   public function testGetRelation()
   {
+		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
     $bookTable = BookPeer::getTableMap();
     $titleColumn = $bookTable->getColumn('TITLE');
     $this->assertNull($titleColumn->getRelation(), 'getRelation() returns null for non-foreign key columns');

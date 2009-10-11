@@ -32,8 +32,8 @@ include_once 'propel/engine/GeneratorConfig.php';
  * @version    $Revision$
  * @package    generator.engine.database.model
  */
-class TableTest extends PHPUnit_Framework_TestCase {
-
+class TableTest extends PHPUnit_Framework_TestCase
+{
   private $xmlToAppData;
   private $appData;
 
