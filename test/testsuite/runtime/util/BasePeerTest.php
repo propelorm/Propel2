@@ -65,6 +65,8 @@ class BasePeerTest extends BookstoreTestBase {
 	 */
 	public function testBigIntIgnoreCaseOrderBy()
 	{
+		BookstorePeer::doDeleteAll();
+
 		// Some sample data
 		$b = new Bookstore();
 		$b->setStoreName("SortTest1")->setPopulationServed(2000)->save();
@@ -95,7 +97,6 @@ class BasePeerTest extends BookstoreTestBase {
 	 */
 	public function testMixedJoinOrder()
 	{
-		$this->markTestIncomplete();
 		$c = new Criteria(BookPeer::DATABASE_NAME);
 		$c->addSelectColumn(BookPeer::ID);
 		$c->addSelectColumn(BookPeer::TITLE);
@@ -107,6 +108,6 @@ class BasePeerTest extends BookstoreTestBase {
 		$sql = BasePeer::createSelectSql($c, $params);
 
 		$expectedSql = "SELECT book.ID, book.TITLE FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID), author WHERE book.AUTHOR_ID=author.ID";
-		// print $sql . "\n";
+		$this->assertEquals($expectedSql, $sql);
 	}
 }
