@@ -74,7 +74,7 @@ EOT;
 if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
 	\$criteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
 } else {
-	self::enableSoftDelete();
+	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
 }
 EOT;
   }
@@ -121,6 +121,7 @@ public function isSoftDeleteEnabled()
 public function forceDelete(PropelPDO \$con = null)
 {
 	\$this->disableSoftDelete();
+	{$this->getTable()->getPhpName()}Peer::disableSoftDelete();
 	\$this->delete(\$con);
 }
 
@@ -171,6 +172,57 @@ public static function isSoftDeleteEnabled()
 {
 	return self::\$softDelete;
 }
+
+/**
+ * Soft delete records, given a {$this->getTable()->getPhpName()} or Criteria object OR a primary key value.
+ *
+ * @param      mixed \$values Criteria or {$this->getTable()->getPhpName()} object or primary key or array of primary keys
+ *              which is used to create the DELETE statement
+ * @param      PropelPDO \$con the connection to use
+ * @return     int 	The number of affected rows (if supported by underlying database driver).
+ * @throws     PropelException Any exceptions caught during processing will be
+ *		          rethrown wrapped into a PropelException.
+ */
+public static function doSoftDelete(\$values, PropelPDO \$con = null)
+{
+	if (\$values instanceof Criteria) {
+		// rename for clarity
+		\$criteria = clone \$values;
+	} elseif (\$values instanceof {$this->getTable()->getPhpName()}) {
+		// create criteria based on pk values
+		\$criteria = \$values->buildPkeyCriteria();
+	} else {
+		// it must be the primary key
+		\$criteria = new Criteria(self::DATABASE_NAME);
+		\$criteria->add({$this->getTable()->getPhpName()}Peer::ID, (array) \$values, Criteria::IN);
+	}
+	\$criteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, time());
+	return {$this->getTable()->getPhpName()}Peer::doUpdate(\$criteria, \$con);
+}
+
+/**
+ * Delete or soft delete records, depending on {$this->getTable()->getPhpName()}Peer::\$softDelete
+ *
+ * @param      mixed \$values Criteria or {$this->getTable()->getPhpName()} object or primary key or array of primary keys
+ *              which is used to create the DELETE statement
+ * @param      PropelPDO \$con the connection to use
+ * @return     int 	The number of affected rows (if supported by underlying database driver).
+ * @throws     PropelException Any exceptions caught during processing will be
+ *		          rethrown wrapped into a PropelException.
+ */
+public static function doDelete2(\$values, PropelPDO \$con = null)
+{
+	if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
+		return {$this->getTable()->getPhpName()}Peer::doSoftDelete(\$values, \$con);
+	} else {
+		return {$this->getTable()->getPhpName()}Peer::doForceDelete(\$values, \$con);
+	}	
+}
 EOT;
+  }
+  
+  public function peerFilter(&$script)
+  {
+  	$script = str_replace(array('public static function doDelete(', 'public static function doDelete2('), array('public static function doForceDelete(', 'public static function doDelete('), $script);
   }
 }

@@ -58,6 +58,63 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'enableSoftDelete() enables the static soft delete');		
 	}
 	
+	public function testStaticDoForceDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		Table4Peer::doForceDelete($t1);
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(0, Table4Peer::doCount(new Criteria()), 'doForceDelete() actually deletes records');
+	}
+	
+	public function testStaticDoSoftDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		$t3 = new Table4();
+		$t3->save();
+		// softDelete with a criteria
+		$c = new Criteria();
+		$c->add(Table4Peer::ID, $t1->getId());
+		Table4Peer::doSoftDelete($c);
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(3, Table4Peer::doCount(new Criteria()), 'doSoftDelete() keeps deleted record in the database');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(2, Table4Peer::doCount(new Criteria()), 'doSoftDelete() marks deleted record as deleted');
+		// softDelete with a value
+		Table4Peer::doSoftDelete(array($t2->getId()));
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(3, Table4Peer::doCount(new Criteria()), 'doSoftDelete() keeps deleted record in the database');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(1, Table4Peer::doCount(new Criteria()), 'doSoftDelete() marks deleted record as deleted');
+		// softDelete with an object
+		Table4Peer::doSoftDelete($t3);
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(3, Table4Peer::doCount(new Criteria()), 'doSoftDelete() keeps deleted record in the database');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Peer::doCount(new Criteria()), 'doSoftDelete() marks deleted record as deleted');
+	}
+	
+	public function testStaticDoDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		Table4Peer::disableSoftDelete();
+		Table4Peer::doDelete($t1);
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Peer::doCount(new Criteria()), 'doDelete() calls doForceDelete() when soft delete is disabled');
+		Table4Peer::enableSoftDelete();
+		Table4Peer::doDelete($t2);
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Peer::doCount(new Criteria()), 'doDelete() calls doSoftDelete() when soft delete is enabled');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Peer::doCount(new Criteria()), 'doDelete() calls doSoftDelete() when soft delete is enabled');
+	}
+	
 	public function testSoftDeleteStatus()
 	{
 		$t = new Table4();
