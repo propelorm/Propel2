@@ -132,9 +132,9 @@ Then rebuild your model, and there you go: two columns, `created_at` and `update
 
 Propel currently bundles three behaviors. Check the behavior documentation for details on usage:
 
-* [wiki:Users/Documentation/1.4/Behaviors/timestampable timestampable]
-* [wiki:Users/Documentation/1.4/Behaviors/soft_delete soft_delete]
-* [wiki:Users/Documentation/1.4/Behaviors/alternative_coding_standard alternative_coding_standard]
+ * [wiki:Users/Documentation/1.4/Behaviors/timestampable timestampable]
+ * [wiki:Users/Documentation/1.4/Behaviors/soft_delete soft_delete]
+ * [wiki:Users/Documentation/1.4/Behaviors/alternative_coding_standards alternative_coding_standards]
 
 Behaviors bundled with Propel require no further installation and work out of the box.
 
