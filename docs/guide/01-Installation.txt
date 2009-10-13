@@ -45,7 +45,7 @@ Tip: If you want to install non-stable versions of Propel, you'll also want to c
 > pear config-set preferred_state beta
 }}}
 
-== Dependencies for Tarball and Subversion Versions ==
+=== Dependencies for Tarball and Subversion Versions ===
 
 The Propel generator uses [http://phing.info/ Phing 2.2.x] to manage command line tasks; both the generator and the runtime classes use [http://pear.php.net/package/Log/ PEAR Log] to log events.
 
@@ -92,7 +92,7 @@ Once this is done, you'll need to setup your PHP environment to use this library
 
 Note: `branches/1.4` is currently more uptodate code than `trunk`; trunk is what will become 2.0, however it has had very little work done to it in a long time.
 
-== Setting Up PHP for Propel ===
+== Setting Up PHP for Propel ==
 
 The following instructions are only required if you installed Propel from a tarball, or from Subversion. 
 === Generator Setup ====
@@ -108,7 +108,7 @@ You can call it directly from the command line:
 
 In order to allow an easier execution the script, you can also:
 
- * add the propel generator's ``bin/` directory to your PATH, 
+ * add the propel generator's `bin/` directory to your PATH, 
  * or copy the `propel-gen` script to a location on your PAH, 
  * or (on Linux systems) create a symlink. For example:
 
