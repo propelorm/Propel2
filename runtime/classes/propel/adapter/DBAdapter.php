@@ -55,6 +55,7 @@ abstract class DBAdapter {
 		'mysql' => 'DBMySQL',
 		'mysqli' => 'DBMySQLi',
 		'mssql' => 'DBMSSQL',
+    'dblib' => 'DBMSSQL',
 		'sybase' => 'DBSybase',
 		'oracle' => 'DBOracle',
 		'pgsql' => 'DBPostgres',
@@ -294,7 +295,7 @@ abstract class DBAdapter {
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
-	
+
 	/**
 	 * Gets the SQL string that this adapter uses for getting a random number.
 	 *
