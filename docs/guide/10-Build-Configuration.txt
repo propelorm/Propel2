@@ -149,7 +149,7 @@ Whether to add `require` statements on the generated stub classes. Set to false 
 {{{
 propel.addHooks = {true}|false
 }}}
-whether to support pre- and post- hooks on `save()` and `delete()` methods. Set to false if you never use these hooks for a small speed boost.
+Whether to support pre- and post- hooks on `save()` and `delete()` methods. Set to false if you never use these hooks for a small speed boost.
 
 {{{
 propel.basePrefix = {Base}|/YourPrefix/
