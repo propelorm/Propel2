@@ -15,7 +15,7 @@ Tip: Propel uses the PDO and SPL components, which are bundled and enabled by de
 
 == Propel Components ==
 
-The Propel library is made of two components: a ''generator'', and a ''runtime library''. These components are not co-dependent, and can be installed independently from each other. 
+The Propel library is made of two components: a '''generator''', and a '''runtime library'''. These components are not co-dependent, and can be installed independently from each other. 
 
 The generator is needed to build the object model, but is not required for running applications that use Propel. 
 
@@ -154,7 +154,7 @@ You can test that the '''Propel generator''' component is properly installed by 
 
 {{{
 #!sh
-> /usr/local/propel/generator/bin/propel-gen
+> propel-gen
 }}}
 
 The script should output a few lines before displaying a 'BUILD FAILED' message, which is normal - you haven't defined a database model yet.
