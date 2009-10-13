@@ -61,10 +61,10 @@ If you want to force the real deletion of an object, call the `forceDelete()` me
 <?php
 $book->forceDelete();
 echo $book->isDeleted(); // true
-$book = BookPeer::doSelect(new Criteria()); // empty array
+$books = BookPeer::doSelect(new Criteria()); // empty array
 }}}
 
-The static Peer method `doDelete()` also performs a soft deletion, unless you disable the behavior on the peer class:
+The static Peer methods `doDelete()` and `doDeleteAll()` also perform a soft deletion, unless you disable the behavior on the peer class:
 
 {{{
 #!php
@@ -74,15 +74,19 @@ $b->setTitle('War And Peace');
 $b->save();
 
 BookPeer::doDelete($b);
-echo $b->isDeleted(); // false
-echo $b->getDeletedAt(); // 2009-10-02 18:17:12
-
+$books = BookPeer::doSelect(new Criteria()); // empty array
+// the rows look deleted, but they are still there
 BookPeer::disableSoftDelete();
-BookPeer::doDelete($b);
-echo $b->isDeleted(); // true
-}}}
+$books = BookPeer::doSelect(new Criteria());
+$book = $books[0];
+echo $book->getTitle(); // 'War And Peace'
 
-Note: The `doDeleteAll()` peer method still performs a true delete.
+// To perform a true deletion, disable the softDelete feature
+BookPeer::disableSoftDelete();
+BookPeer::doDeleteAll();
+// Alternatively, use doForceDelete()
+BookPeer::doForceDeleteAll();
+}}}
 
 == Parameters ==
 
