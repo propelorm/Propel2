@@ -8,9 +8,9 @@ In the `schema.xml`, use the `<behavior>` tag to add the `alternative_coding_sta
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="alternative_coding_standards" />
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="alternative_coding_standards" />
 </table>
 }}}
 
@@ -74,15 +74,15 @@ Each of the new coding style rules has corresponding parameter in the behavior d
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="alternative_coding_standards">
-		<parameter name="brackets_newline" value="true" />
-		<parameter name="remove_closing_comments" value="true" />
-		<parameter name="use_whitespace" value="true" />
-		<parameter name="tab_size" value="2" />
-		<parameter name="strip_comments" value="false" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="alternative_coding_standards">
+    <parameter name="brackets_newline" value="true" />
+    <parameter name="remove_closing_comments" value="true" />
+    <parameter name="use_whitespace" value="true" />
+    <parameter name="tab_size" value="2" />
+    <parameter name="strip_comments" value="false" />
+  </behavior>
 </table>
 }}}
 

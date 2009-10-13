@@ -8,9 +8,9 @@ In the `schema.xml`, use the `<behavior>` tag to add the `timestampable` behavio
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="timestampable" />
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="timestampable" />
 </table>
 }}}
 
@@ -37,13 +37,13 @@ By default, the behavior adds two columns to the model. If these columns are alr
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<column name="created_at" type="TIMESTAMP" />
-	<column name="updated_at" type="TIMESTAMP" />
-	<behavior name="timestampable">
-		<parameter name="add_columns" value="false" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="created_at" type="TIMESTAMP" />
+  <column name="updated_at" type="TIMESTAMP" />
+  <behavior name="timestampable">
+    <parameter name="add_columns" value="false" />
+  </behavior>
 </table>
 }}}
 
@@ -52,15 +52,15 @@ You can also change the name of the columns by setting the `create_column` and `
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<column name="my_create_date" type="TIMESTAMP" />
-	<column name="my_update_date" type="TIMESTAMP" />
-	<behavior name="timestampable">
-		<parameter name="add_columns" value="false" />
-		<parameter name="create_column" value="my_create_date" />
-		<parameter name="update_column" value="my_update_date" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="my_create_date" type="TIMESTAMP" />
+  <column name="my_update_date" type="TIMESTAMP" />
+  <behavior name="timestampable">
+    <parameter name="add_columns" value="false" />
+    <parameter name="create_column" value="my_create_date" />
+    <parameter name="update_column" value="my_update_date" />
+  </behavior>
 </table>
 }}}
 
@@ -69,12 +69,12 @@ If you keep the `add_columns` parameter to 'true' by set custom column names, th
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="timestampable">
-		<parameter name="create_column" value="my_create_date" />
-		<parameter name="update_column" value="my_update_date" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="timestampable">
+    <parameter name="create_column" value="my_create_date" />
+    <parameter name="update_column" value="my_update_date" />
+  </behavior>
 </table>
 }}}
 

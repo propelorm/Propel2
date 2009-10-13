@@ -8,9 +8,9 @@ In the `schema.xml`, use the `<behavior>` tag to add the `soft_delete` behavior 
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="soft_delete" />
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="soft_delete" />
 </table>
 }}}
 
@@ -95,12 +95,12 @@ By default, the behavior adds one column to the model. If this column is already
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<column name="deleted_at" type="TIMESTAMP" />
-	<behavior name="soft_delete">
-		<parameter name="add_columns" value="false" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="deleted_at" type="TIMESTAMP" />
+  <behavior name="soft_delete">
+    <parameter name="add_columns" value="false" />
+  </behavior>
 </table>
 }}}
 
@@ -109,13 +109,13 @@ You can also change the name of the column by setting the `deleted_column` param
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<column name="my_deletion_date" type="TIMESTAMP" />
-	<behavior name="soft_delete">
-		<parameter name="add_columns" value="false" />
-		<parameter name="deleted_column" value="my_deletion_date" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="my_deletion_date" type="TIMESTAMP" />
+  <behavior name="soft_delete">
+    <parameter name="add_columns" value="false" />
+    <parameter name="deleted_column" value="my_deletion_date" />
+  </behavior>
 </table>
 }}}
 
@@ -124,11 +124,11 @@ If you keep the `add_columns` parameter to 'true' by set custom column name, the
 {{{
 #!xml
 <table name="book">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="title" type="VARCHAR" required="true" primaryString="true" />
-	<behavior name="soft_delete">
-		<parameter name="deleted_column" value="my_deletion_date" />
-	</behavior>
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <behavior name="soft_delete">
+    <parameter name="deleted_column" value="my_deletion_date" />
+  </behavior>
 </table>
 }}}
 
