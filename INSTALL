@@ -1,7 +1,4 @@
+I N S T A L L I N G    P R O P E L
+==================================
 
-  I N S T A L L I N G    P R O P E L
-  ==================================
-
-  The installation instructions are maintained on the Propel website.  Please visit
-  http://propel.phpdb.org/trac/wiki/Users/Documentation/1.3/UserGuide for a link to
-  the installation instructions.
+See docs/guide/01-Installation.txt for detailed installation instructions.

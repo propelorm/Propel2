@@ -35,13 +35,10 @@ See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.3&resolution=f
 	<fileset dir="${propelgen.home}" id="data">
 		<!--<include name="build.xml"/>-->
 		<include name="build-propel.xml"/>
-		<include name="projects/bookstore/*"/>
-		<include name="projects/treetest/*"/>
 		<include name="pear/pear-build.xml"/>
 		<include name="pear/pear-propel*"/>
 		<include name="pear/build.properties"/>
 		<include name="default.properties"/>
-		<include name="templates/**"/>
 		<include name="resources/**"/>
 	</fileset>
 

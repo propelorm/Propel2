@@ -161,7 +161,7 @@ Check the [wiki:Users/Documentation/1.4/Full-Query-Logging Full Query Logging Do
 Propel can generate a `__toString()` method for your Model objects if you define a column as `primaryString` in the schema:
 
 {{{
-// in the schema
+#!xml
 <table name="book" phpName="Book">
   ..
   <column name="title" type="varchar" size="125" primaryString="true" />
