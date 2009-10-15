@@ -70,5 +70,11 @@ class PropelConfigurationTest extends PHPUnit_Framework_TestCase
   	$this->assertEquals($this->testArray, $conf->getParameters(), 'setParameter accepts a flat array');
   }
   
-
+  public function testArrayAccess()
+  {
+    $conf = new PropelConfiguration($this->testArray);
+    $expected = array('fooo' => 'bar', 'fi' => array('fooooo' => 'bara'));
+  	$this->assertEquals($expected, $conf['foo'], 'PropelConfiguration implements ArrayAccess for OffsetGet');
+  	$this->assertEquals('bar', $conf['foo']['fooo'], 'Array access allows deep access');
+  }
 }
