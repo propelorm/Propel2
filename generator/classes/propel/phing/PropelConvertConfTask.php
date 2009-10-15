@@ -112,12 +112,16 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			$phpconf['propel']['log'] = $phpconf['log'];
 			unset($phpconf['log']);
 		}
+
+		if(isset($phpconf['propel'])) {
+			$phpconf = $phpconf['propel'];
+		}
 			
 		// add generator version
-		$phpconf['propel']['generator_version'] = $this->getGeneratorConfig()->getBuildProperty('version');
+		$phpconf['generator_version'] = $this->getGeneratorConfig()->getBuildProperty('version');
 		
 		// add classmap
-		$phpconf['propel']['classmap'] = $this->getClassMap();
+		$phpconf['classmap'] = $this->getClassMap();
 		
 		// Write resulting PHP data to output file:
 
