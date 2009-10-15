@@ -22,7 +22,7 @@
   	</and>
   	<then>
 	    <property file="${propel.home}/build.properties"/>
-	</then>
+    </then>
   </if>
 
   <!--
@@ -61,7 +61,6 @@
    <taskdef
     name="propel-schema-reverse"
     classname="propel.phing.PropelSchemaReverseTask" classpathRef="propelclasses"/>
-
   <taskdef
     name="propel-sql"
     classname="propel.phing.PropelSQLTask" classpathRef="propelclasses"/>
@@ -185,17 +184,16 @@
 
   <target name="sql-template">
     <propel-sql
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       targetDatabase="${propel.database}"
       packageObjectModel="${propel.packageObjectModel}"
       url="${propel.database.url}"
       userId="${propel.database.user}"
-      password="${propel.database.password}"
-      >
+      password="${propel.database.password}">
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"
@@ -223,21 +221,20 @@
     depends="create-db-check,mysqli-check"
     description="==> generates the target database">
 
-	<fail message="create-db target temporarily disabled, while we replace creole components."/>
+    <fail message="create-db target temporarily disabled, while we replace creole components."/>
 
 	<!--
     <propel-data-model
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       controlTemplate="${propel.template.sqlDbInit}"
       outputDirectory="${propel.sql.dir}"
       outputFile="create-db.sql"
       targetDatabase="${propel.database}"
       dbEncoding="${propel.database.encoding}"
       templatePath="${propel.templatePath}"
-      packageObjectModel="${propel.packageObjectModel}"
-      >
+      packageObjectModel="${propel.packageObjectModel}">
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.create-db.includes}"
         excludes="${propel.schema.create-db.excludes}"
@@ -347,16 +344,15 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-sql
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.sql.dir}"
       sqldbmap="${propel.sql.dir}/sqldb.map"
       dbEncoding="${propel.database.encoding}"
       targetDatabase="${propel.database}"
       datadbmap="${propel.schema.dir}/datadb.map"
-      srcDir="${propel.schema.dir}"
-      >
+      srcDir="${propel.schema.dir}">
       <mapper type="glob" from="${propel.datasql.mapper.from}" to="${propel.datasql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.datadtd.includes}"
@@ -380,9 +376,9 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-dump
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       targetDatabase="${propel.database}"
       datadbmap="${propel.schema.dir}/datadb.map"
       databaseDriver="${propel.database.driver}"
@@ -416,9 +412,9 @@
     <echo message="+-----------------------------------------------+"/>
 
     <propel-data-dtd
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       targetDatabase="${propel.database}"
       outputDirectory="${propel.output.dir}"
       templatePath="${propel.templatePath}">
@@ -468,15 +464,14 @@
 
   <target name="om-template">
     <propel-om
-	  validate="${propel.schema.validate}"
-	  xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
       outputDirectory="${propel.php.dir}"
       targetDatabase="${propel.database}"
       targetPackage="${propel.targetPackage}"
       targetPlatform="${propel.targetPlatform}"
-      packageObjectModel="${propel.packageObjectModel}"
-      >
+      packageObjectModel="${propel.packageObjectModel}">
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.om.includes}"
         excludes="${propel.schema.om.excludes}"
@@ -498,20 +493,18 @@
     <echo message="| array dump for improved performance.     |"/>
     <echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
-
-
-	<echo>Output file: ${propel.runtime.phpconf.file}</echo>
-	<echo>XMLFile: ${propel.conf.dir}/${propel.runtime.conf.file}</echo>
+    
+    <echo>Output file: ${propel.runtime.phpconf.file}</echo>
+    <echo>XMLFile: ${propel.conf.dir}/${propel.runtime.conf.file}</echo>
 
     <propel-convert-conf
       targetDatabase="${propel.database}"
       xsd="${propel.schema.xsd.file}"
-	  xsl="${propel.schema.xsl.file}"
+      xsl="${propel.schema.xsl.file}"
       xmlConfFile="${propel.conf.dir}/${propel.runtime.conf.file}"
       outputDirectory="${propel.phpconf.dir}"
       outputFile="${propel.runtime.phpconf.file}"
-      packageObjectModel="${propel.packageObjectModel}"
-      outputClassmapFile="${propel.runtime.phpconf-classmap.file}">
+      packageObjectModel="${propel.packageObjectModel}">
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"
         excludes="${propel.schema.sql.excludes}"

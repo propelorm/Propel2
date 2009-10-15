@@ -96,139 +96,43 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			throw new BuildException("No outputFile specified.", $this->getLocation());
 		}
 
-		if (!$this->outputClassmapFile) {
-			// We'll create a default one for BC
-			$this->outputClassmapFile = 'classmap-' . $this->outputFile;
-		}
-
 		// Create a PHP array from the XML file
 
 		$xmlDom = new DOMDocument();
 		$xmlDom->load($this->xmlConfFile->getAbsolutePath());
 		$xml = simplexml_load_string($xmlDom->saveXML());
-
 		$phpconf = self::simpleXmlToArray($xml);
-		$phpconfClassmap = array();
-
-		// $this->log(var_export($phpconf,true));
-
-		// Create a map of all PHP classes and their filepaths for this data model
-
-		$generatorConfig = $this->getGeneratorConfig();
-
-		foreach ($this->getDataModels() as $dataModel) {
-
-			foreach ($dataModel->getDatabases() as $database) {
-
-				$classMap = array();
-
-				// $this->log("Processing class mappings in database: " . $database->getName());
-
-				//print the tables
-				foreach ($database->getTables() as $table) {
-
-					if (!$table->isForReferenceOnly()) {
-
-						// $this->log("\t+ " . $table->getName());
-
-						// Classes that I'm assuming do not need to be mapped (because they will be required by subclasses):
-						//	- base peer and object classes
-						//	- interfaces
-						//	- base node peer and object classes
-
-						// -----------------------------------------------------------------------------------------
-						// Add Peer & Object stub classes and MapBuilder classes
-						// -----------------------------------------------------------------------------------------
-						// (this code is based on PropelOMTask)
-
-						foreach (array('tablemap', 'peerstub', 'objectstub') as $target) {
-							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
-						}
-
-						if ($table->getChildrenColumn()) {
-							$col = $table->getChildrenColumn();
-							if ($col->isEnumeratedClasses()) {
-								foreach ($col->getChildren() as $child) {
-									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
-									$builder->setChild($child);
-									$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-									$classMap[$builder->getClassname()] = $builder->getClassFilePath();
-								}
-							}
-						}
-
-						$baseClass = $table->getBaseClass();
-						if ( $baseClass !== null ) {
-							$className = ClassTools::classname($baseClass);
-							if (!isset($classMap[$className])) {
-								$classPath = ClassTools::getFilePath($baseClass);
-								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
-								$classMap[$className] = $classPath;
-							}
-						}
-
-						$basePeer = $table->getBasePeer();
-						if ( $basePeer !== null ) {
-							$className = ClassTools::classname($basePeer);
-							if (!isset($classMap[$className])) {
-								$classPath = ClassTools::getFilePath($basePeer);
-								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
-								$classMap[$className] = $classPath;
-							}
-						}
-						
-						// -----------------------------------------------------------------------------------------
-						// Create tree Node classes
-						// -----------------------------------------------------------------------------------------
-
-						if ('MaterializedPath' == $table->treeMode()) {
-							foreach (array('nodepeerstub', 'nodestub') as $target) {
-								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
-							}
-						} // if Table->treeMode() == 'MaterializedPath'
-
-					} // if (!$table->isReferenceOnly())
-				}
-
-				$phpconfClassmap['propel']['datasources'][$database->getName()]['classes'] = $classMap;
-			}
+		
+		/* For some reason the array generated from runtime-conf.xml has separate
+		 * 'log' section and 'propel' sections. To maintain backward compatibility
+		 * we need to put 'log' back into the 'propel' section.
+		 */
+		$log = array();
+		if (isset($phpconf['log'])) {
+			$phpconf['propel']['log'] = $phpconf['log'];
+			unset($phpconf['log']);
 		}
-
-		//		$phpconf['propel']['classes'] = $classMap;
-
+			
+		// add generator version
 		$phpconf['propel']['generator_version'] = $this->getGeneratorConfig()->getBuildProperty('version');
-
+		
+		// add classmap
+		$phpconf['propel']['classmap'] = $this->getClassMap();
+		
 		// Write resulting PHP data to output file:
 
 		$outfile = new PhingFile($this->outputDirectory, $this->outputFile);
-
-		$output = '<' . '?' . "php\n";
-		$output .= "// This file generated by Propel " . $phpconf['propel']['generator_version'] . " convert-props target".($this->getGeneratorConfig()->getBuildProperty('addTimestamp') ? " on " . strftime("%c") : '') . "\n";
+		$output = "<?php\n";
+		$output .= "// This file generated by Propel " . $phpconf['propel']['generator_version'] . " convert-conf target".($this->getGeneratorConfig()->getBuildProperty('addTimestamp') ? " on " . strftime("%c") : '') . "\n";
 		$output .= "// from XML runtime conf file " . $this->xmlConfFile->getPath() . "\n";
-		$output .= "return array_merge_recursive(";
+		$output .= "return ";
 		$output .= var_export($phpconf, true);
-		$output .= ", include(dirname(__FILE__) . DIRECTORY_SEPARATOR . '".$this->outputClassmapFile."'));";
+		$output .= ";";
 
 		$this->log("Creating PHP runtime conf file: " . $outfile->getPath());
 		if (!file_put_contents($outfile->getAbsolutePath(), $output)) {
 			throw new BuildException("Error creating output file: " . $outfile->getAbsolutePath(), $this->getLocation());
 		}
-
-		$outfile = new PhingFile($this->outputDirectory, $this->outputClassmapFile);
-		$output = '<' . '?' . "php\n";
-		$output .= "// This file generated by Propel " . $phpconf['propel']['generator_version'] . " convert-props target".($this->getGeneratorConfig()->getBuildProperty('addTimestamp') ? " on " . strftime("%c") : '') . "\n";
-		$output .= "return ";
-		$output .= var_export($phpconfClassmap, true);
-		$output .= ";";
-		$this->log("Creating PHP classmap runtime file: " . $outfile->getPath());
-		if (!file_put_contents($outfile->getAbsolutePath(), $output)) {
-			throw new BuildException("Error creating output file: " . $outfile->getAbsolutePath(), $this->getLocation());
-		}
-
 
 	} // main()
 
@@ -310,5 +214,95 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask {
 			$value = true;
 		}
 		return $value;
+	}
+	
+	/**
+	 * Lists data model classes and builds an associative array className => classPath
+	 * To be used for autoloading
+	 * @return array
+	 */
+	protected function getClassMap()
+	{
+		$phpconfClassmap = array();
+
+		$generatorConfig = $this->getGeneratorConfig();
+
+		foreach ($this->getDataModels() as $dataModel) {
+
+			foreach ($dataModel->getDatabases() as $database) {
+
+				$classMap = array();
+
+				foreach ($database->getTables() as $table) {
+
+					if (!$table->isForReferenceOnly()) {
+
+						// Classes that I'm assuming do not need to be mapped (because they will be required by subclasses):
+						//	- base peer and object classes
+						//	- interfaces
+						//	- base node peer and object classes
+
+						// -----------------------------------------------------
+						// Add Peer & Object stub classes and MapBuilder classes
+						// -----------------------------------------------------
+						// (this code is based on PropelOMTask)
+
+						foreach (array('tablemap', 'peerstub', 'objectstub') as $target) {
+							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+						}
+
+						if ($col = $table->getChildrenColumn()) {
+							if ($col->isEnumeratedClasses()) {
+								foreach ($col->getChildren() as $child) {
+									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
+									$builder->setChild($child);
+									$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+									$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+								}
+							}
+						}
+
+						$baseClass = $table->getBaseClass();
+						if ( $baseClass !== null ) {
+							$className = ClassTools::classname($baseClass);
+							if (!isset($classMap[$className])) {
+								$classPath = ClassTools::getFilePath($baseClass);
+								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
+								$classMap[$className] = $classPath;
+							}
+						}
+
+						$basePeer = $table->getBasePeer();
+						if ( $basePeer !== null ) {
+							$className = ClassTools::classname($basePeer);
+							if (!isset($classMap[$className])) {
+								$classPath = ClassTools::getFilePath($basePeer);
+								$this->log('Adding class mapping: ' . $className . ' => ' . $classPath);
+								$classMap[$className] = $classPath;
+							}
+						}
+						
+						// ------------------------
+						// Create tree Node classes
+						// ------------------------
+
+						if ('MaterializedPath' == $table->treeMode()) {
+							foreach (array('nodepeerstub', 'nodestub') as $target) {
+								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+							}
+						}
+
+					} // if (!$table->isReferenceOnly())
+				}
+
+				$phpconfClassmap = array_merge($phpconfClassmap, $classMap);
+			}
+		}
+		
+		return $phpconfClassmap;
 	}
 }
