@@ -89,17 +89,21 @@ class PropelConfiguration implements ArrayAccess
 	/**
 	 * Get parameter value from the container
 	 *
-	 * @param      string $name
-	 * @param      mixed $default Default value to be used if the
-	 *                            requested value is not found
-	 * @return     mixed Parameter value or the default
+	 * @param      string $name    Parameter name
+	 * @param      mixed  $default Default value to be used if the
+	 *                             requested value is not found
+	 * @return     mixed           Parameter value or the default
 	 */
 	public function getParameter($name, $default = null)
 	{
 		$ret = $this->parameters;
 		$parts = explode('.', $name); //name.space.name
 		while ($part = array_shift($parts)) {
-			$ret = $ret[$part];
+			if (array_key_exists($part, $ret)) {
+				$ret = $ret[$part];
+			} else {
+				return $default;
+			}
 		}
 		return $ret;
 	}

@@ -52,7 +52,15 @@ class PropelConfigurationTest extends PHPUnit_Framework_TestCase
   	$this->assertEquals('bara', $conf->getParameter('foo.fi.fooooo'), 'getParameter accepts a flat key');  	
   	$this->assertEquals('bar2', $conf->getParameter('baz'), 'getParameter accepts a flat key');  	
   }
-  
+
+	public function testGetParameterDefault()
+	{
+  	$conf = new PropelConfiguration($this->testArray);
+  	$this->assertEquals('bar', $conf->getParameter('foo.fooo'), 'getParameter accepts a flat key');  	
+		$this->assertEquals('', $conf->getParameter('foo.fooo2'), 'getParameter returns null for nonexistent keys');  	
+		$this->assertEquals('babar', $conf->getParameter('foo.fooo3', 'babar'), 'getParameter accepts a default value');  	
+	} 
+	 
   public function testSetParameter()
   {
   	$conf = new PropelConfiguration(array());
