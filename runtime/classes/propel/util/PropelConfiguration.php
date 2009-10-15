@@ -96,24 +96,12 @@ class PropelConfiguration implements ArrayAccess
 	 */
 	public function getParameter($name, $default = null)
 	{
+		$ret = $this->parameters;
 		$parts = explode('.', $name); //name.space.name
-		$name =  array_pop($parts); //actual name
-
-		$section = $this->parameters;
-		for($i=0; $i<count($parts); ++$i) {
-			if(isset($section[$parts[$i]])) {
-				$section = $section[$parts[$i]];
-			}
-			else { //namespace was not found, return default
-				return $default;
-			}
+		while ($part = array_shift($parts)) {
+			$ret = $ret[$part];
 		}
-
-		if(isset($section[$name]) || array_key_exists($name, $section)) {
-			return $section[$name];
-		}
-
-		return $default;
+		return $ret;
 	}
 
 	/**
@@ -124,17 +112,12 @@ class PropelConfiguration implements ArrayAccess
 	 */
 	public function setParameter($name, $value)
 	{
+		$param = &$this->parameters;
 		$parts = explode('.', $name); //name.space.name
-		$name =  array_pop($parts); //actual name
-
-		$section =& $this->parameters;
-		for($i=0; $i<count($parts); ++$i) {
-			if(!isset($section[$parts[$i]]) || !is_array($section[$parts[$i]])) { //yes, this will overwrite if the namespace was used for a scalar value
-				$section[$parts[$i]] = array();
-			}
-			$section =& $section[$parts[$i]];
+		while ($part = array_shift($parts)) {
+			$param = &$param[$part];
 		}
-		$section[$name] = $value;
+		$param = $value;
 	}
 
 	/**
