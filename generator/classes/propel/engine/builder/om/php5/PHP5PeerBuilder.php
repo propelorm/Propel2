@@ -884,7 +884,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				if ($col->isPrimaryKey()) {
-					$part = "\$row[\$startcol + $n]";
+					$part = $n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]";
 					$cond[] = $part . " === null";
 					$pk[] = $part;
 				}
