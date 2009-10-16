@@ -238,18 +238,28 @@ Note that the `PropelPager` utility has a brand new documentation in the [wiki:U
 
 == Better Introspection at Runtime ==
 
-A few methods were added to the Map classes to ease runtime introspection:
+A few methods were added to the Map classes to ease runtime introspection, as well as a new `RelationMap` class to describe database relationships:
 {{{
 TableMap    DatabaseMap::getTableByPhpName($name) // TableMap object by object model name, e.g. 'Book'
 ColumnMap   DatabaseMap::getColumn($name) // ColumnMap object by fully qualified name, e.g. book.AUTHOR_ID
-TableMap    ColumnMap::getRelatedTable()  // Related TableMap object by foreign key
-ColumnMap   ColumnMap::getRelatedColumn() // Related ColumnMap object by foreign key
-RelationMap ColumnMap::getRelation()      // Related RelationMap object   
 Array       TableMap::getPrimaryKeys()    // List of the ColumnMap objects corresponding to the table primary keys
 Array       TableMap::getForeignKeys()    // List of the ColumnMap objects corresponding to the table foreign keys
 Array       TableMap::getRelations()      // List of the table relationships, as RelationMap objects
 String      TableMap::getPackage()        // Package of the table
+mixed       ColumnMap::getDefaultValue()  // Default value defined in the schema for this column
+TableMap    ColumnMap::getRelatedTable()  // Related TableMap object by foreign key
+ColumnMap   ColumnMap::getRelatedColumn() // Related ColumnMap object by foreign key
+RelationMap ColumnMap::getRelation()      // Related RelationMap object   
+integer     RelationMap::getType()        // RelationMap::ONE_TO_MANY, RelationMap::MANY_TO_ONE, or RelationMap::ONE_TO_ONE
+string      RelationMap::getOnDelete()    // ON DELETE directive, e.g. 'SET NULL'
+TableMap    RelationMap::getLocalTable()  // Local TableMap object (the one bearing the fkey)
+TabkeMap    RelationMap::getForeignTable()   // Foreign TableMap object
+Array       RelationMap::getColumnMappings() // List of local => foreign column for this relation, e.g array('book.PUBLISHER_ID' => 'publisher.ID')
+Array       RelationMap::getLocalColumns()   // List of the ColumnMap objects on the local side of the relation
+Array       RelationMap::getForeignColumns() // List of the ColumnMap objects on the foreign side of the relation
 }}}
+
+Check the new [wiki:Users/Documentation/1.4/Runtime-Introspection Runtime Introspection] documentation in the [wiki:Users/Documentation/1.4#HowTos HowTos] section for a complete description of the introspection API.
 
 Also, it is now much easier to get the name of the Propel object class from the Peer class:
 {{{
