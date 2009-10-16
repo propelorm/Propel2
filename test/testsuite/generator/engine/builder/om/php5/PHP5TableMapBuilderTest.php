@@ -25,6 +25,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertNull($table->getColumn('login')->getDefaultValue(), 'null default values are correctly mapped');
     $this->assertEquals('\'@\'\'34"', $table->getColumn('password')->getDefaultValue(), 'string default values are correctly escaped and mapped');
     $this->assertTrue($table->getColumn('enabled')->getDefaultValue(), 'boolean default values are correctly mapped');
+    $this->assertFalse($table->getColumn('not_enabled')->getDefaultValue(), 'boolean default values are correctly mapped');
     $this->assertEquals('CURRENT_TIMESTAMP', $table->getColumn('created')->getDefaultValue(), 'expression default values are correctly mapped');
     
   }
