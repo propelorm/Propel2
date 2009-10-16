@@ -119,6 +119,7 @@
 		<column name="login" type="VARCHAR" size="32" />
 		<column name="password" type="VARCHAR" size="100" default="'@''34&quot;" />
 		<column name="enabled" type="BOOLEAN" default="true" />
+		<column name="not_enabled" type="BOOLEAN" default="false" />
 		<column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
 		<column name="role_id" type="INTEGER" required="false" />
 		<column name="authenticator" type="VARCHAR" size="32" defaultExpr="'Password'" />
