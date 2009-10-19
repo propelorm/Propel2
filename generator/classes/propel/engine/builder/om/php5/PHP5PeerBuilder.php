@@ -1702,13 +1702,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Retrieve object using using composite pkey values.
-	 * ";
+	 * Retrieve object using using composite pkey values.";
 		foreach ($table->getPrimaryKey() as $col) {
 			$clo = strtolower($col->getName());
 			$cptype = $col->getPhpType();
-			$script .= "@param      $cptype $".$clo."
-	   ";
+			$script .= "
+	 * @param      $cptype $".$clo;
 		}
 		$script .= "
 	 * @param      PropelPDO \$con
