@@ -30,10 +30,17 @@ define('_LOB_SAMPLE_FILE_PATH', dirname(__FILE__) . '/../../../etc/lob');
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  */
-class BookstoreDataPopulator {
+class BookstoreDataPopulator
+{
 
-	public static function populate()
+	public static function populate($con = null)
 	{
+		if($con === null)
+		{
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		}
+		$con->beginTransaction();
+		
 		// Add publisher records
 		// ---------------------
 
@@ -43,7 +50,7 @@ class BookstoreDataPopulator {
 
 		$morrow = new Publisher();
 		$morrow->setName("William Morrow");
-		$morrow->save();
+		$morrow->save($con);
 		$morrow_id = $morrow->getId();
 
 		$penguin = new Publisher();
@@ -53,7 +60,7 @@ class BookstoreDataPopulator {
 
 		$vintage = new Publisher();
 		$vintage->setName("Vintage");
-		$vintage->save();
+		$vintage->save($con);
 		$vintage_id = $vintage->getId();
 
 		$rowling = new Author();
@@ -64,19 +71,19 @@ class BookstoreDataPopulator {
 		$stephenson = new Author();
 		$stephenson->setFirstName("Neal");
 		$stephenson->setLastName("Stephenson");
-		$stephenson->save();
+		$stephenson->save($con);
 		$stephenson_id = $stephenson->getId();
 
 		$byron = new Author();
 		$byron->setFirstName("George");
 		$byron->setLastName("Byron");
-		$byron->save();
+		$byron->save($con);
 		$byron_id = $byron->getId();
 
 		$grass = new Author();
 		$grass->setFirstName("Gunter");
 		$grass->setLastName("Grass");
-		$grass->save();
+		$grass->save($con);
 		$grass_id = $grass->getId();
 
 		$phoenix = new Book();
@@ -85,7 +92,7 @@ class BookstoreDataPopulator {
 		$phoenix->setAuthor($rowling);
 		$phoenix->setPublisher($scholastic);
 		$phoenix->setPrice(10.99);
-		$phoenix->save();
+		$phoenix->save($con);
 		$phoenix_id = $phoenix->getId();
 
 		$qs = new Book();
@@ -94,7 +101,7 @@ class BookstoreDataPopulator {
 		$qs->setPrice(11.99);
 		$qs->setAuthor($stephenson);
 		$qs->setPublisher($morrow);
-		$qs->save();
+		$qs->save($con);
 		$qs_id = $qs->getId();
 
 		$dj = new Book();
@@ -103,7 +110,7 @@ class BookstoreDataPopulator {
 		$dj->setPrice(12.99);
 		$dj->setAuthor($byron);
 		$dj->setPublisher($penguin);
-		$dj->save();
+		$dj->save($con);
 		$dj_id = $dj->getId();
 
 		$td = new Book();
@@ -112,7 +119,7 @@ class BookstoreDataPopulator {
 		$td->setPrice(13.99);
 		$td->setAuthor($grass);
 		$td->setPublisher($vintage);
-		$td->save();
+		$td->save($con);
 		$td_id = $td->getId();
 
 		$r1 = new Review();
@@ -120,7 +127,7 @@ class BookstoreDataPopulator {
 		$r1->setReviewedBy("Washington Post");
 		$r1->setRecommended(true);
 		$r1->setReviewDate(time());
-		$r1->save();
+		$r1->save($con);
 		$r1_id = $r1->getId();
 
 		$r2 = new Review();
@@ -128,7 +135,7 @@ class BookstoreDataPopulator {
 		$r2->setReviewedBy("New York Times");
 		$r2->setRecommended(false);
 		$r2->setReviewDate(time());
-		$r2->save();
+		$r2->save($con);
 		$r2_id = $r2->getId();
 
 		$blob_path = _LOB_SAMPLE_FILE_PATH . '/tin_drum.gif';
@@ -138,7 +145,7 @@ class BookstoreDataPopulator {
 		$m1->setBook($td);
 		$m1->setCoverImage(file_get_contents($blob_path));
 		$m1->setExcerpt(file_get_contents($clob_path));
-		$m1->save();
+		$m1->save($con);
 
 		// Add book list records
 		// ---------------------
@@ -165,7 +172,7 @@ class BookstoreDataPopulator {
 		$bemp2->setName("Pieter");
 		$bemp2->setJobTitle("Clerk");
 		$bemp2->setSupervisor($bemp1);
-		$bemp2->save();
+		$bemp2->save($con);
 
 		$role = new AcctAccessRole();
 		$role->setName("Admin");
@@ -175,7 +182,7 @@ class BookstoreDataPopulator {
 		$bempacct->setAcctAccessRole($role);
 		$bempacct->setLogin("john");
 		$bempacct->setPassword("johnp4ss");
-		$bempacct->save();
+		$bempacct->save($con);
 
 		// Add bookstores
 
@@ -183,35 +190,43 @@ class BookstoreDataPopulator {
 		$store->setStoreName("Amazon");
 		$store->setPopulationServed(5000000000); // world population
 		$store->setTotalBooks(300);
-		$store->save();
+		$store->save($con);
 
 		$store = new Bookstore();
 		$store->setStoreName("Local Store");
 		$store->setPopulationServed(20);
 		$store->setTotalBooks(500000);
-		$store->save();
+		$store->save($con);
+		
+		$con->commit();
 	}
 
-	public static function depopulate()
+	public static function depopulate($con = null)
 	{
-		AuthorPeer::doDeleteAll();
-		BookstorePeer::doDeleteAll();
-		BookstoreContestPeer::doDeleteAll();
-		BookstoreContestEntryPeer::doDeleteAll();
-		BookstoreEmployeePeer::doDeleteAll();
-		BookstoreEmployeeAccountPeer::doDeleteAll();
-		BookstoreSalePeer::doDeleteAll();
-		BookClubListPeer::doDeleteAll();
-		BookOpinionPeer::doDeleteAll();
-		BookReaderPeer::doDeleteAll();
-		BookListRelPeer::doDeleteAll();
-		BookPeer::doDeleteAll();
-		ContestPeer::doDeleteAll();
-		CustomerPeer::doDeleteAll();
-		MediaPeer::doDeleteAll();
-		PublisherPeer::doDeleteAll();
-		ReaderFavoritePeer::doDeleteAll();
-		ReviewPeer::doDeleteAll();
+		if($con === null)
+		{
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		}
+		$con->beginTransaction();
+		AuthorPeer::doDeleteAll($con);
+		BookstorePeer::doDeleteAll($con);
+		BookstoreContestPeer::doDeleteAll($con);
+		BookstoreContestEntryPeer::doDeleteAll($con);
+		BookstoreEmployeePeer::doDeleteAll($con);
+		BookstoreEmployeeAccountPeer::doDeleteAll($con);
+		BookstoreSalePeer::doDeleteAll($con);
+		BookClubListPeer::doDeleteAll($con);
+		BookOpinionPeer::doDeleteAll($con);
+		BookReaderPeer::doDeleteAll($con);
+		BookListRelPeer::doDeleteAll($con);
+		BookPeer::doDeleteAll($con);
+		ContestPeer::doDeleteAll($con);
+		CustomerPeer::doDeleteAll($con);
+		MediaPeer::doDeleteAll($con);
+		PublisherPeer::doDeleteAll($con);
+		ReaderFavoritePeer::doDeleteAll($con);
+		ReviewPeer::doDeleteAll($con);
+		$con->commit();
 	}
 
 }

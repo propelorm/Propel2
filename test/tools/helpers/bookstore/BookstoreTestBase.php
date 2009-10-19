@@ -28,5 +28,24 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  */
 abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase
 {
+	protected $con;
+	
+	/**
+	 * This is run before each unit test; it populates the database.
+	 */
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$this->con->beginTransaction();
+	}
 
+	/**
+	 * This is run after each unit test.  It empties the database.
+	 */
+	protected function tearDown()
+	{
+		parent::tearDown();
+		$this->con->commit();
+	}
 }

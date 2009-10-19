@@ -34,7 +34,7 @@ abstract class BookstoreEmptyTestBase extends BookstoreTestBase
 	protected function setUp()
 	{
 		parent::setUp();
-		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::depopulate($this->con);
 	}
 
 	/**
@@ -42,7 +42,7 @@ abstract class BookstoreEmptyTestBase extends BookstoreTestBase
 	 */
 	protected function tearDown()
 	{
-		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::depopulate($this->con);
 		parent::tearDown();
 	}
 

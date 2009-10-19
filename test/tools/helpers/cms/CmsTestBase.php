@@ -27,16 +27,20 @@ include_once 'tools/helpers/cms/CmsDataPopulator.php';
 /**
  * Base class contains some methods shared by subclass test cases.
  */
-abstract class CmsTestBase extends PHPUnit_Framework_TestCase {
-
+abstract class CmsTestBase extends PHPUnit_Framework_TestCase
+{
+	protected $con;
+	
 	/**
 	 * This is run before each unit test; it populates the database.
 	 */
 	protected function setUp()
 	{
 		parent::setUp();
-		CmsDataPopulator::depopulate();
-		CmsDataPopulator::populate();
+		$this->con = Propel::getConnection(PagePeer::DATABASE_NAME);
+		$this->con->beginTransaction();
+		CmsDataPopulator::depopulate($this->con);
+		CmsDataPopulator::populate($this->con);
 	}
 
 	/**
@@ -44,7 +48,8 @@ abstract class CmsTestBase extends PHPUnit_Framework_TestCase {
 	 */
 	protected function tearDown()
 	{
-		CmsDataPopulator::depopulate();
+		CmsDataPopulator::depopulate($this->con);
+		$this->con->commit();
 		parent::tearDown();
 	}
 
