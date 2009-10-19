@@ -161,4 +161,4 @@ print_r($reviewRelation->getColumnMappings());
 
 To retrieve all the relations of a table, call `TableMap::getRelations()`. You can then iterate over an array of `RelationMap` objects.
 
-Tip: RelationMap objects are lazy-loaded, which means that the `TableMap` will not instanciate any relation object until you call `getRelations()`. This allows the `TableMap` to remain lightweight for when you don't use 
+Tip: RelationMap objects are lazy-loaded, which means that the `TableMap` will not instanciate any relation object until you call `getRelations()`. This allows the `TableMap` to remain lightweight for when you don't use relationship introspection.
