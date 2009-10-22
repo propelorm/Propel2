@@ -19,15 +19,17 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'propel/util/PropelPDO.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
 
 /**
  * Test for PropelPDO subclass.
  *
  * @package    runtime.util
  */
-class PropelPDOTest extends BookstoreTestBase
+class PropelPDOTest extends PHPUnit_Framework_TestCase
 {
 
 	public function testSetAttribute()
@@ -41,16 +43,75 @@ class PropelPDOTest extends BookstoreTestBase
 		$this->assertEquals(PDO::CASE_LOWER, $con->getAttribute(PDO::ATTR_CASE));
 	}
 	
-	/**
-	 * @link       http://propel.phpdb.org/trac/ticket/699
-	 */
-	public function testRollBack_NestedRethrow()
+	public function testNestedTransactionCommit()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
-		if ($driver == "mysql") {
-			$this->markTestSkipped();
+		
+		$this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is equal to 0 before transaction');
+		$this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction by default');
+		
+		$con->beginTransaction();
+		
+		$this->assertEquals(1, $con->getNestedTransactionCount(), 'nested transaction is incremented after main transaction begin');
+		$this->assertTrue($con->isInTransaction(), 'PropelPDO is in transaction after main transaction begin');
+		
+		try {
+			
+			$a = new Author();
+			$a->setFirstName('Test');
+			$a->setLastName('User');
+			$a->save($con);
+			$authorId = $a->getId();
+			$this->assertNotNull($authorId, "Expected valid new author ID");
+			
+			$con->beginTransaction();
+
+			$this->assertEquals(2, $con->getNestedTransactionCount(), 'nested transaction is incremented after nested transaction begin');
+			$this->assertTrue($con->isInTransaction(), 'PropelPDO is in transaction after nested transaction begin');
+
+			try {
+
+				$a2 = new Author();
+				$a2->setFirstName('Test2');
+				$a2->setLastName('User2');
+				$a2->save($con);
+				$authorId2 = $a2->getId();
+				$this->assertNotNull($authorId2, "Expected valid new author ID");
+				
+				$con->commit();
+				
+				$this->assertEquals(1, $con->getNestedTransactionCount(), 'nested transaction decremented after nested transaction commit');
+				$this->assertTrue($con->isInTransaction(), 'PropelPDO is in transaction after main transaction commit');
+
+			} catch (Exception $e) {
+				$con->rollBack();
+				throw $e;
+			}
+			
+			$con->commit();
+			
+			$this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction decremented after main transaction commit');
+			$this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction after main transaction commit');
+
+		} catch (Exception $e) {
+			$con->rollBack();
 		}
+		
+		AuthorPeer::clearInstancePool();
+		$at = AuthorPeer::retrieveByPK($authorId);
+		$this->assertNotNull($at, "Committed transaction is persisted in database");
+		$at2 = AuthorPeer::retrieveByPK($authorId2);
+		$this->assertNotNull($at2, "Committed transaction is persisted in database");
+	}
+
+	/**
+	 * @link       http://propel.phpdb.org/trac/ticket/699
+	 */
+	public function testNestedTransactionRollBackRethrow()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 		
 		$con->beginTransaction();
 		try {
@@ -61,14 +122,22 @@ class PropelPDOTest extends BookstoreTestBase
 			$a->save($con);
 			$authorId = $a->getId();
 			
-			$this->assertTrue($authorId !== null, "Expected valid new author ID");
+			$this->assertNotNull($authorId, "Expected valid new author ID");
 			
 			$con->beginTransaction();
+
+			$this->assertEquals(2, $con->getNestedTransactionCount(), 'nested transaction is incremented after nested transaction begin');
+			$this->assertTrue($con->isInTransaction(), 'PropelPDO is in transaction after nested transaction begin');
+
 			try {
 				$con->exec('INVALID SQL');
 				$this->fail("Expected exception on invalid SQL");
-			} catch (Exception $x) {
+			} catch (PDOException $x) {
 				$con->rollBack();
+
+				$this->assertEquals(1, $con->getNestedTransactionCount(), 'nested transaction decremented after nested transaction rollback');
+				$this->assertTrue($con->isInTransaction(), 'PropelPDO is in transaction after main transaction rollback');
+
 				throw $x;
 			}
 			
@@ -79,19 +148,16 @@ class PropelPDOTest extends BookstoreTestBase
 		
 		AuthorPeer::clearInstancePool();
 		$at = AuthorPeer::retrieveByPK($authorId);
-		$this->assertNull($at, "Expected no author result for rolled-back save.");
+		$this->assertNull($at, "Rolled back transaction is not persisted in database");
 	}
 	
 	/**
 	 * @link       http://propel.phpdb.org/trac/ticket/699
 	 */
-	public function testRollBack_NestedSwallow()
+	public function testNestedTransactionRollBackSwallow()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
-		if ($driver == "mysql") {
-			$this->markTestSkipped();
-		}
 		
 		$con->beginTransaction();
 		try {
@@ -100,36 +166,84 @@ class PropelPDOTest extends BookstoreTestBase
 			$a->setFirstName('Test');
 			$a->setLastName('User');
 			$a->save($con);
-			$authorId = $a->getId();
-			
-			$this->assertTrue($authorId !== null, "Expected valid new author ID");
+			$authorId = $a->getId();	
+			$this->assertNotNull($authorId, "Expected valid new author ID");
 			
 			$con->beginTransaction();
 			try {
+
+				$a2 = new Author();
+				$a2->setFirstName('Test2');
+				$a2->setLastName('User2');
+				$a2->save($con);
+				$authorId2 = $a2->getId();
+				$this->assertNotNull($authorId2, "Expected valid new author ID");
+
 				$con->exec('INVALID SQL');
 				$this->fail("Expected exception on invalid SQL");
-			} catch (Exception $x) {
+			} catch (PDOException $e) {
 				$con->rollBack();
 				// NO RETHROW
 			}
 			
-			$a2 = new Author();
-			$a2->setFirstName('Test2');
-			$a2->setLastName('User2');
-			$authorId2 = $a2->save($con);
+			$a3 = new Author();
+			$a3->setFirstName('Test2');
+			$a3->setLastName('User2');
+			$a3->save($con);
+			$authorId3 = $a3->getId();
+			$this->assertNotNull($authorId3, "Expected valid new author ID");
 			 
-			$con->commit(); // this should not do anything!
-			
-		} catch (Exception $x) {
-			$this->fail("No outside rollback expected.");
+			$con->commit();
+			$this->fail("Commit fails after a nested rollback");
+		} catch (PropelException $e) {
+			$this->assertTrue(true, "Commit fails after a nested rollback");
+			$this->assertEquals('Cannot commit because a nested transaction was rolled back', $e->getMessage(), "Commit() throws an exception when called after a nested rollback");
+			$con->rollback();
 		}
 		
 		AuthorPeer::clearInstancePool();
 		$at = AuthorPeer::retrieveByPK($authorId);
-		$this->assertNull($at, "Expected no author result for rolled-back save.");
-		
+		$this->assertNull($at, "Rolled back transaction is not persisted in database");		
 		$at2 = AuthorPeer::retrieveByPK($authorId2);
-		$this->assertNull($at2, "Expected no author2 result for rolled-back save.");
+		$this->assertNull($at2, "Rolled back transaction is not persisted in database");
+		$at3 = AuthorPeer::retrieveByPK($authorId3);
+		$this->assertNull($at3, "Rolled back nested transaction is not persisted in database");
+	}
+
+	public function testNestedTransactionForceRollBack()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
+		
+		// main transaction		
+		$con->beginTransaction();
+			
+		$a = new Author();
+		$a->setFirstName('Test');
+		$a->setLastName('User');
+		$a->save($con);
+		$authorId = $a->getId();
+		
+		// nested transaction
+		$con->beginTransaction();
+
+		$a2 = new Author();
+		$a2->setFirstName('Test2');
+		$a2->setLastName('User2');
+		$a2->save($con);
+		$authorId2 = $a2->getId();
+		
+		// force rollback
+		$con->forceRollback();
+		
+		$this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is null after nested transaction forced rollback');
+		$this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction after nested transaction force rollback');
+		
+		AuthorPeer::clearInstancePool();
+		$at = AuthorPeer::retrieveByPK($authorId);
+		$this->assertNull($at, "Rolled back transaction is not persisted in database");		
+		$at2 = AuthorPeer::retrieveByPK($authorId2);
+		$this->assertNull($at2, "Forced Rolled back nested transaction is not persisted in database");
 	}
 	
 }

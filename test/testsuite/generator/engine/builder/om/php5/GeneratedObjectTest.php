@@ -695,6 +695,9 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	 */
 	public function testSaveUnique()
 	{
+	  // The whole test is in a transaction, but this test needs real transactions
+	  $this->con->commit();
+	  
 		$emp = new BookstoreEmployee();
 		$emp->setName(md5(microtime()));
 
@@ -723,6 +726,8 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 			$acct3->setLogin("foo2");
 			$acct3->save();
 		}
+		
+		$this->con->beginTransaction();
 	}
 
 	/**
@@ -1018,6 +1023,9 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	 */
 	public function testSettingAutoIncrementPK()
 	{
+	  // The whole test is in a transaction, but this test needs real transactions
+	  $this->con->commit();
+
 		$b = new Bookstore();
 		$b->setId(1);
 		$b->setStoreName("Test");
@@ -1039,6 +1047,8 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 			$this->fail("Expected no exception when setting auto-increment primary key to NULL");
 		}
 		// success ...
+		
+		$this->con->beginTransaction();
 	}
 	
 	/**

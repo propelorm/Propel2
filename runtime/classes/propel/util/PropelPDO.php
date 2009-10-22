@@ -65,6 +65,12 @@ class PropelPDO extends PDO {
 	 * @var        boolean
 	 */
 	protected $cachePreparedStatements = false;
+	
+	/**
+	 * Whether the final commit is possible
+	 * Is false if a nested transaction is rolled back
+	 */
+	protected $isUncommitable = false;
 
 	/**
 	 * Gets the current transaction depth.
@@ -110,7 +116,7 @@ class PropelPDO extends PDO {
 	{
 		return ($this->getNestedTransactionCount() > 0);
 	}
-
+	
 	/**
 	 * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
 	 */
@@ -120,6 +126,7 @@ class PropelPDO extends PDO {
 		$opcount = $this->getNestedTransactionCount();
 		if ( $opcount === 0 ) {
 			$return = parent::beginTransaction();
+			$this->isUncommitable = false;
 		}
 		$this->incrementNestedTransactionCount();
 		return $return;
@@ -135,7 +142,11 @@ class PropelPDO extends PDO {
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
 			if ($opcount === 1) {
-				$return = parent::commit();
+				if ($this->isUncommitable) {
+					throw new PropelException('Cannot commit because a nested transaction was rolled back');
+				} else {
+					$return = parent::commit();
+				}
 			}
 			$this->decrementNestedTransactionCount();
 		}
@@ -143,11 +154,31 @@ class PropelPDO extends PDO {
 	}
 
 	/**
-	 * Overrides PDO::rollBack() to always rollback the transaction and reset the 
-	 * nested transaction count to 0.
+	 * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
+	 * transaction nesting level
 	 * @return     boolean Whether operation was successful.
 	 */
 	public function rollBack()
+	{
+		$return = true;
+		$opcount = $this->getNestedTransactionCount();
+		if ($opcount > 0) {
+			if ($opcount === 1) { 
+				$return = parent::rollBack(); 
+			} else {
+				$this->isUncommitable = true;
+			}
+			$this->decrementNestedTransactionCount(); 
+		}
+		return $return;
+	}
+
+	/**
+	* Rollback the whole transaction, even if this is a nested rollback
+	* and reset the nested transaction count to 0.
+	* @return     boolean Whether operation was successful.
+	*/
+	public function forceRollBack()
 	{
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
@@ -162,7 +193,7 @@ class PropelPDO extends PDO {
 		}
 		return $return;
 	}
-
+  
 	/**
 	 * Sets a connection attribute.
 	 *

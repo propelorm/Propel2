@@ -32,7 +32,7 @@ public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
   
     $con->commit();
   
-  } catch (PropelException $e) {
+  } catch (Exception $e) {
      $con->rollback();
      throw $e;
   }
@@ -41,7 +41,7 @@ public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 
 The transaction statements are `beginTransaction()`, `commit()` and `rollback()`, which are methods of the PDO connection object. Transaction methods are typically used inside a `try/catch` block. The exception is rethrown after rolling back the transaction: That ensures that the user knows that something wrong happenned.
 
-In this example, if something wrong happens while saving either one of the two accounts, a `PropelException` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
+In this example, if something wrong happens while saving either one of the two accounts, an `Exception` is thrown, and the whole operation is rolled back. That means that the transfer is cancelled, with an insurance that the money hasn't vanished (that's the A in ACID, which stands for "Atomicity"). If both account modifications work as expected, the whole transaction is committed, meaning that the data changes enclosed in the transaction are persisted in the database.
 
 Tip: In order to build a transaction, you need a connection object. The connection object for a Propel model is always available through `Propel::getConnection([ModelName]Peer::DATABASE_NAME)`.
 
@@ -122,7 +122,7 @@ class Book extends BaseBook
     
       $con->commit();
     
-    } catch (PropelException $e) {
+    } catch (Exception $e) {
        $con->rollback();
        throw $e;
     }
@@ -149,7 +149,7 @@ function deleteBooksWithNoPrice(PropelPDO $con)
     $c->add(BookPeer::PRICE, null, Criteria::ISNULL);
     BookPeer::doDelete($c, $con); 
     $con->commit();
-  } catch (PropelException $e) {
+  } catch (Exception $e) {
      $con->rollback();
      throw $e;
   }
@@ -163,7 +163,7 @@ function deleteAuthorsWithNoEmail(PropelPDO $con)
     $c->add(AuthorPeer::EMAIL, null, Criteria::ISNULL);
     AuthorPeer::doDelete($c, $con); 
     $con->commit();
-  } catch (PropelException $e) {
+  } catch (Exception $e) {
      $con->rollback();
      throw $e;
   }
@@ -176,7 +176,7 @@ function cleanup(PropelPDO $con)
     deleteBooksWithNoPrice($con);
     deleteAuthorsWithNoEmail($con);
     $con->commit();
-  } catch (PropelException $e) {
+  } catch (Exception $e) {
      $con->rollback();
      throw $e;
   }  
