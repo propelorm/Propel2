@@ -215,7 +215,7 @@ class Column extends XMLElement {
       $this->getDomain()->replaceScale($this->getAttribute("scale"));
 
       $defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
-      if ($defval !== null) {
+      if ($defval !== null && strtolower($defval) !== 'null') {
         $this->getDomain()->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
       } elseif ($this->getAttribute("defaultExpr") !== null) {
         $this->getDomain()->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
@@ -978,15 +978,15 @@ class Column extends XMLElement {
   {
     $defaultValue = $this->getDefaultValue();
     if ($defaultValue !== null) {
-        if ($this->isNumericType()) {
-          $dflt = (float) $defaultValue->getValue();
-        } elseif ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
-          $dflt = "'" . str_replace("'", "\'", $defaultValue->getValue()) . "'";
-        } elseif ($this->getType() == PropelTypes::BOOLEAN) {
-          $dflt = $this->booleanValue($defaultValue->getValue()) ? 'true' : 'false';
-        } else {
-          $dflt = "'" . $defaultValue->getValue() . "'";
-        }
+      if ($this->isNumericType()) {
+        $dflt = (float) $defaultValue->getValue();
+      } elseif ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
+        $dflt = "'" . str_replace("'", "\'", $defaultValue->getValue()) . "'";
+      } elseif ($this->getType() == PropelTypes::BOOLEAN) {
+        $dflt = $this->booleanValue($defaultValue->getValue()) ? 'true' : 'false';
+      } else {
+        $dflt = "'" . $defaultValue->getValue() . "'";
+      }
     } else {
       $dflt = "null";
     }
