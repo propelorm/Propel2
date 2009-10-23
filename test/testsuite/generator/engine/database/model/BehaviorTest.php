@@ -74,6 +74,8 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
     $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
     $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');   
+    $b->setParameters(array('foo3' => 'bar3', 'foo4' => 'bar4'));
+    $this->assertEquals($b->getParameters(), array('foo3' => 'bar3', 'foo4' => 'bar4'), 'setParameters() changes the whole parameter array');
   }
   
   /**

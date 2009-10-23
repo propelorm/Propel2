@@ -65,12 +65,33 @@ class Behavior extends XMLElement {
     return $this->database;
   }
   
+  /**
+   * Add a parameter
+   * Expects an associative array looking like array('name' => 'foo', 'value' => bar)
+   *
+   * @param array associative array with name and value keys
+   */
   public function addParameter($attribute)
   {
     $attribute = array_change_key_case($attribute, CASE_LOWER);
     $this->parameters[$attribute['name']] = $attribute['value'];
   }
   
+  /**
+   * Overrides the behavior parameters
+   * Expects an associative array looking like array('foo' => 'bar')
+   *
+   * @param array associative array
+   */
+  public function setParameters($parameters)
+  {
+    $this->parameters = $parameters;
+  }
+  
+  /**
+   * Get the associative array of parameters
+   * @return array 
+   */
   public function getParameters()
   {
     return $this->parameters;
