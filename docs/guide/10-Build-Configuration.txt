@@ -287,7 +287,7 @@ If you want to add more behaviors, write their path following the same model:
 propel.behavior.my_behavior.class = my.custom.path.to.MyBehaviorClass
 }}}
 
-Behaviors are enabled on a per-table basis in the `schema.yml`. However, you can add behaviors for all your schemas, provided that you define them in the `propel.behavior.default` setting:
+Behaviors are enabled on a per-table basis in the `schema.xml`. However, you can add behaviors for all your schemas, provided that you define them in the `propel.behavior.default` setting:
 
 {{{
 propel.behavior.default = soft_delete,my_behavior
