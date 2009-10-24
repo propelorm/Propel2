@@ -351,12 +351,6 @@ class Table extends XMLElement implements IDMethod {
       $this->doHeavyIndexing();
     }
 
-    // If there is no PK, then throw an error.  Propel 1.3 requires primary keys.
-    $pk = $this->getPrimaryKey();
-    if (empty($pk)) {
-      throw new EngineException("Table '".$this->getName()."' does not have a primary key defined.  Propel requires all tables to have a primary key.");
-    }
-
     // Name any indices which are missing a name using the
     // appropriate algorithm.
     $this->doNaming();
@@ -364,22 +358,13 @@ class Table extends XMLElement implements IDMethod {
     // if idMethod is "native" and in fact there are no autoIncrement
     // columns in the table, then change it to "none"
     $anyAutoInc = false;
-    $hasPK = false;
     foreach ($this->getColumns() as $col) {
       if ($col->isAutoIncrement()) {
         $anyAutoInc = true;
       }
-      if ($col->isPrimaryKey()) {
-        $hasPK = true;
-      }
     }
     if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
       $this->setIdMethod(IDMethod::NO_ID_METHOD);
-    }
-    
-    // check that the table has a primary key
-    if (!$hasPK) {
-      throw new EngineException("Table '" . $this->getName() . "' does not define a primary key column!");
     }
     
     // execute behavior table modifiers
@@ -387,6 +372,13 @@ class Table extends XMLElement implements IDMethod {
     {
       $behavior->getTableModifier()->modifyTable();
     }
+    
+    // If there is no PK, then throw an error.  Propel 1.3 requires primary keys.
+    $pk = $this->getPrimaryKey();
+    if (empty($pk)) {
+      throw new EngineException("Table '".$this->getName()."' does not have a primary key defined.  Propel requires all tables to have a primary key.");
+    }
+
   }
 
   /**
@@ -1352,8 +1344,7 @@ class Table extends XMLElement implements IDMethod {
   public function getPrimaryKey()
   {
     $pk = array();
-    for ($i=0,$_i=count($this->columnList); $i < $_i; $i++) {
-      $col = $this->columnList[$i];
+    foreach ($this->columnList as $col) {
       if ($col->isPrimaryKey()) {
         $pk[] = $col;
       }
