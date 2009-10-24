@@ -216,6 +216,13 @@ You can add a `<behavior>` tag directly under the `<database>` tag. That way, th
 
 In this example, both the `book` and `author` table benefit from the `timestampable` behavior, and therefore automatically update their `created_at` and `updated_at` columns upon saving.
 
+Going one step further, you can even apply a behavior to all the databases of your project, provided the behavior doesn't need parameters - or can use default parameters. To add a behavior to all databases, simply declare it in the project's `build.properties` under the `propel.behavior.default` key, as follows:
+
+{{{
+#!ini
+propel.behavior.default = soft_delete, timestampable
+}}}
+
 == Writing a Behavior ==
 
 Behaviors can modify their table, and even add another table, by implementing the `modifyTable` method. In this method, use `$this->getTable()` to retrieve the table buildtime model and manipulate it.

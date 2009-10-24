@@ -422,6 +422,17 @@ class Database extends XMLElement {
 
 	public function doFinalInitialization()
 	{
+	  $config = $this->getGeneratorConfig();
+    if($config && ($defaultBehaviors = $config->getBuildProperty('behaviorDefault')))
+    {
+      // add generic behaviors from build.properties 
+      $defaultBehaviors = explode(',', $defaultBehaviors);
+      foreach ($defaultBehaviors as $behavior)
+      {
+        $this->addBehavior(array('name' => $behavior));
+      }
+    }
+    
     // execute behavior database modifiers
     foreach ($this->getBehaviors() as $behavior)
     {
