@@ -273,7 +273,7 @@ propel.builder.pluralizer.class = propel.engine.builder.util.DefaultEnglishPlura
 
 As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes
 
-== Adding Behaviors ==
+=== Adding Behaviors ===
 
 {{{
 propel.behavior.timestampable.class = propel.engine.behavior.TimestampableBehavior
