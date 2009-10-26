@@ -429,7 +429,7 @@ class Database extends XMLElement {
       $defaultBehaviors = explode(',', $defaultBehaviors);
       foreach ($defaultBehaviors as $behavior)
       {
-        $this->addBehavior(array('name' => $behavior));
+        $this->addBehavior(array('name' => trim($behavior)));
       }
     }
     
