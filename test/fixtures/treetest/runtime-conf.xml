@@ -43,8 +43,7 @@
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
 					<phptype>sqlite</phptype>
-					<hostspec>localhost</hostspec>
-					<database>./test/treetest.db</database>
+					<dsn>sqlite:/var/tmp/treetest.db</dsn>
 					<username></username>
 					<password></password>
 				</connection>				

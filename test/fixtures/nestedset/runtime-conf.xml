@@ -43,8 +43,7 @@
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
 					<phptype>sqlite</phptype>
-					<hostspec>localhost</hostspec>
-					<database>./test/nestedset.db</database>
+					<dsn>sqlite:/var/tmp/nestedset.db</dsn>
 					<username></username>
 					<password></password>
 				</connection>				
