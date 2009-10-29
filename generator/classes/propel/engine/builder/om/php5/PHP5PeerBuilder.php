@@ -1128,6 +1128,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		\$criteria->remove(".$this->getColumnConstant($col).");
 ";
 				}
+			} elseif ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && $table->isAllowPkInsert() && !$this->getPlatform()->supportsInsertNullPk()) {
+				  $script .= "
+		// remove pkey col if it is null since this table does not accept that
+		if (\$criteria->containsKey(".$this->getColumnConstant($col).") && !\$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
+			\$criteria->remove(".$this->getColumnConstant($col).");
+		}
+";
 			}
 		}
 		$script .= "
