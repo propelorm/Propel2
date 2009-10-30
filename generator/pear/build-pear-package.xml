@@ -19,8 +19,8 @@
 	<property name="build.src.dir" value="${build.base.dir}/${pkgname}"/>
 
 	<!-- some default properties -->
-	<property name="notes"><![CDATA[This is a beta release for the 1.3 branch of the Propel Generator.
-See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.3&resolution=fixed&order=priority for CHANGELOG.
+	<property name="notes"><![CDATA[This is a beta release for the 1.4 branch of the Propel Generator.
+See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.4&resolution=fixed&order=priority for CHANGELOG.
 	]]></property>
 	<property name="state" value="beta"/>
 
