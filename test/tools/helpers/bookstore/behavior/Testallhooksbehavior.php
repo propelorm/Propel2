@@ -53,82 +53,82 @@ class TestAllHooksTableModifier
 
 class TestAllHooksObjectBuilderModifier
 { 
-  public function objectAttributes()
+  public function objectAttributes($builder)
   {
     return 'public $customAttribute = 1;';
   }
   
-  public function preSave()
+  public function preSave($builder)
   {
-    return '$this->preSave = 1;$this->preSaveIsAfterSave = isset($affectedRows);';
+    return '$this->preSave = 1;$this->preSaveIsAfterSave = isset($affectedRows);$this->preSaveBuilder="' . get_class($builder) . '";';
   }
   
-  public function postSave()
+  public function postSave($builder)
   {
-    return '$this->postSave = 1;$this->postSaveIsAfterSave = isset($affectedRows);';
+    return '$this->postSave = 1;$this->postSaveIsAfterSave = isset($affectedRows);$this->postSaveBuilder="' . get_class($builder) . '";';
   }
 
-  public function preInsert()
+  public function preInsert($builder)
   {
-    return '$this->preInsert = 1;$this->preInsertIsAfterSave = isset($affectedRows);';
+    return '$this->preInsert = 1;$this->preInsertIsAfterSave = isset($affectedRows);$this->preInsertBuilder="' . get_class($builder) . '";';
   }
   
-  public function postInsert()
+  public function postInsert($builder)
   {
-    return '$this->postInsert = 1;$this->postInsertIsAfterSave = isset($affectedRows);';
+    return '$this->postInsert = 1;$this->postInsertIsAfterSave = isset($affectedRows);$this->postInsertBuilder="' . get_class($builder) . '";';
   }
   
-  public function preUpdate()
+  public function preUpdate($builder)
   {
-    return '$this->preUpdate = 1;$this->preUpdateIsAfterSave = isset($affectedRows);';
+    return '$this->preUpdate = 1;$this->preUpdateIsAfterSave = isset($affectedRows);$this->preUpdateBuilder="' . get_class($builder) . '";';
   }
   
-  public function postUpdate()
+  public function postUpdate($builder)
   {
-    return '$this->postUpdate = 1;$this->postUpdateIsAfterSave = isset($affectedRows);';
+    return '$this->postUpdate = 1;$this->postUpdateIsAfterSave = isset($affectedRows);$this->postUpdateBuilder="' . get_class($builder) . '";';
   }
   
-  public function preDelete()
+  public function preDelete($builder)
   {
-    return '$this->preDelete = 1;$this->preDeleteIsBeforeDelete = isset(Table3Peer::$instances[$this->id]);';
+    return '$this->preDelete = 1;$this->preDeleteIsBeforeDelete = isset(Table3Peer::$instances[$this->id]);$this->preDeleteBuilder="' . get_class($builder) . '";';
   }
   
-  public function postDelete()
+  public function postDelete($builder)
   {
-    return '$this->postDelete = 1;$this->postDeleteIsBeforeDelete = isset(Table3Peer::$instances[$this->id]);';
+    return '$this->postDelete = 1;$this->postDeleteIsBeforeDelete = isset(Table3Peer::$instances[$this->id]);$this->postDeleteBuilder="' . get_class($builder) . '";';
   }
   
-  public function objectMethods()
+  public function objectMethods($builder)
   {
-    return 'public function hello() { return "hello"; }';
+    return 'public function hello() { return "' . get_class($builder) .'"; }';
   }
   
-  public function objectFilter(&$string)
+  public function objectFilter(&$string, $builder)
   {
-    $string .= 'class testObjectFilter {}';
+    $string .= 'class testObjectFilter { const FOO = "' . get_class($builder) . '"; }';
   }
 }
 
 class TestAllHooksPeerBuilderModifier
 { 
-  public function staticAttributes()
+  public function staticAttributes($builder)
   {
-    return 'public static $customStaticAttribute = 1;';
+    return 'public static $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';
   }
   
-  public function staticMethods()
+  public function staticMethods($builder)
   {
-    return 'public static function hello() { return "hello"; }';
+    return 'public static function hello() { return "' . get_class($builder) . '"; }';
   }
   
-  public function preSelect()
+  public function preSelect($builder)
   {
-    return '$con->preSelect = 1;';
+    return '$con->preSelect = "' . get_class($builder) . '";';
   }
 
-  public function peerFilter(&$string)
+  public function peerFilter(&$string, $builder)
   {
-    $string .= 'class testPeerFilter {}';
+    $string .= 'class testPeerFilter { const FOO = "' . get_class($builder) . '"; }';
   }
 
 }
