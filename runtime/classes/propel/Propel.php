@@ -90,7 +90,7 @@ class Propel
 	/**
 	 * The Propel version.
 	 */
-	const VERSION = '1.4.0-dev';
+	const VERSION = '1.5.0-dev';
 
 	/**
 	 * The class name for a PDO object.
