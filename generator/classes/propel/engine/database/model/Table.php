@@ -355,6 +355,12 @@ class Table extends XMLElement implements IDMethod {
     // appropriate algorithm.
     $this->doNaming();
 
+    // execute behavior table modifiers
+    foreach ($this->getBehaviors() as $behavior)
+    {
+      $behavior->getTableModifier()->modifyTable();
+    }
+    
     // if idMethod is "native" and in fact there are no autoIncrement
     // columns in the table, then change it to "none"
     $anyAutoInc = false;
@@ -367,13 +373,7 @@ class Table extends XMLElement implements IDMethod {
       $this->setIdMethod(IDMethod::NO_ID_METHOD);
     }
     
-    // execute behavior table modifiers
-    foreach ($this->getBehaviors() as $behavior)
-    {
-      $behavior->getTableModifier()->modifyTable();
-    }
-    
-    // If there is no PK, then throw an error.  Propel 1.3 requires primary keys.
+    // If there is no PK, then throw an error. Propel 1.3 requires primary keys.
     $pk = $this->getPrimaryKey();
     if (empty($pk)) {
       throw new EngineException("Table '".$this->getName()."' does not have a primary key defined.  Propel requires all tables to have a primary key.");

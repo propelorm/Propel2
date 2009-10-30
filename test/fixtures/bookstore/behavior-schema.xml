@@ -42,8 +42,8 @@
 		<column name="deleted_on" type="TIMESTAMP" />
 		<behavior name="soft_delete">
 			<parameter name="add_columns" value="false" />
-		  <parameter name="deleted_column" value="deleted_on" />
+			<parameter name="deleted_column" value="deleted_on" />
 		</behavior>
 	</table>
-
+	
 </database>
