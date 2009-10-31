@@ -19,7 +19,7 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
- 
+
 /**
  * Gives a model class the ability to track creation and last modification dates
  * Uses two additional columns storing the creation and update date
