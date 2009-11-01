@@ -24,4 +24,26 @@
 			<parameter name="type" value="BIGINT" />
 		</behavior>
 	</table>
+	
+	<table name="table9">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="nested_set" />
+	</table>
+
+	<table name="table10">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<column name="my_left_column" type="INTEGER" required="false"/>
+		<column name="my_right_column" type="INTEGER" required="false"/>
+		<column name="my_scope_column" type="INTEGER" required="false"/>
+		<behavior name="nested_set">
+			<parameter name="add_columns" value="false" />
+			<parameter name="left_column" value="my_left_column" />
+			<parameter name="right_column" value="my_right_column" />
+			<parameter name="use_scope" value="true" />
+			<parameter name="scope_column" value="my_scope_column" />
+		</behavior>
+	</table>
+	
 </database>
