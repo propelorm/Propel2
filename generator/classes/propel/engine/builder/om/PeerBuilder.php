@@ -296,4 +296,14 @@ abstract class PeerBuilder extends OMBuilder {
   {
     return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script, $tab);
   }
+  
+  /**
+   * Get the BasePeer class name for the current table (e.g. 'BasePeer')
+   * 
+   * @return string The Base Peer Class name
+   */
+  public function getBasePeerClassname()
+  {
+  	return $this->basePeerClassname;
+  }
 }

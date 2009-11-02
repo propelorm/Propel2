@@ -21,12 +21,13 @@
  */
 
 require_once dirname(__FILE__) . '/NestedSetBehaviorObjectBuilderModifier.php';
+require_once dirname(__FILE__) . '/NestedSetBehaviorPeerBuilderModifier.php';
  
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
  * @author     François Zaninotto
- * @package    propel.engine.behavior.nestedSet
+ * @package    propel.engine.behavior.nestedset
  */
 class NestedSetBehavior extends Behavior
 {
@@ -39,7 +40,7 @@ class NestedSetBehavior extends Behavior
     'scope_column' => 'tree_scope'
   );
 
-  protected $objectBuilderModifier;
+  protected $objectBuilderModifier, $peerBuilderModifier;
       
   /**
    * Add the left, right and scope to the current table
@@ -73,5 +74,19 @@ class NestedSetBehavior extends Behavior
     }
     return $this->objectBuilderModifier;
   }
+  
+  public function getPeerBuilderModifier()
+  {
+    if (is_null($this->peerBuilderModifier))
+    {
+      $this->peerBuilderModifier = new NestedSetBehaviorPeerBuilderModifier($this);
+    }
+    return $this->peerBuilderModifier;
+  }
+  
+  public function useScope()
+	{
+		return $this->getParameter('use_scope') == 'true';
+	}
 
 }
