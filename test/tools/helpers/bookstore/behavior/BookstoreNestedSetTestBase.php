@@ -41,8 +41,7 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		$c->addAscendingOrderBycolumn(Table9Peer::TITLE);
 		$nodes = Table9Peer::doSelect($c);
 		$tree = array();
-		foreach ($nodes as $node)
-		{
+		foreach ($nodes as $node) {
 			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
 		}
 		return $tree;
@@ -97,8 +96,7 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		$c->addAscendingOrderBycolumn(Table10Peer::TITLE);
 		$nodes = Table10Peer::doSelect($c);
 		$tree = array();
-		foreach ($nodes as $node)
-		{
+		foreach ($nodes as $node) {
 			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
 		}
 		return $tree;

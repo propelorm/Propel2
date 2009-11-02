@@ -369,22 +369,22 @@ public function insertAsFirstChildOf($objectClassname \$parent, PropelPDO \$con 
 	\$this->setLeftValue(\$parent->getLeftValue() + 1);
 	\$this->setRightValue(\$parent->getLeftValue() + 2);
 	\$this->setParent(\$parent);";
-	if ($this->behavior->useScope())
-	{
-		$script .= "
+		if ($this->behavior->useScope())
+		{
+			$script .= "
 	\$sidv = \$parent->getScopeValue();
 	\$this->setScopeValue(\$sidv);
 	
 	// Update database nodes
 	$peerClassname::shiftRLValues(\$this->getLeftValue(), 2, \$con, \$sidv);";
-	} else {
-		$script .= "
+		} else {
+			$script .= "
 	
 	// Update database nodes
 	$peerClassname::shiftRLValues(\$this->getLeftValue(), 2, \$con);";
-	}
-	
-	$script .="
+		}
+		
+		$script .="
 
 	// Update all loaded nodes
 	$peerClassname::updateLoadedNodes(\$con);

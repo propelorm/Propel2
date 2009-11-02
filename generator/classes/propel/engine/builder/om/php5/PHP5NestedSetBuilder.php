@@ -635,19 +635,19 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 	{
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
-/**
- * Determines if the node has next sibling
- *
- * @param      PropelPDO \$con Connection to use.
- * @return     bool
- */
-public function hasNextSibling(PropelPDO \$con = null)
-{
-	if (null === \$this->hasNextSibling) {
-		$peerClassname::hasNextSibling(\$this, \$con);
+	/**
+	 * Determines if the node has next sibling
+	 *
+	 * @param      PropelPDO \$con Connection to use.
+	 * @return     bool
+	 */
+	public function hasNextSibling(PropelPDO \$con = null)
+	{
+		if (null === \$this->hasNextSibling) {
+			$peerClassname::hasNextSibling(\$this, \$con);
+		}
+		return \$this->hasNextSibling;
 	}
-	return \$this->hasNextSibling;
-}
 ";
 	}
 
@@ -655,20 +655,20 @@ public function hasNextSibling(PropelPDO \$con = null)
 	{
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
-/**
- * Gets ancestor for the given node if it exists
- *
- * @param      PropelPDO \$con Connection to use.
- * @return     mixed 		Propel object if exists else false
- */
-public function retrieveParent(PropelPDO \$con = null)
-{
-	if (null === \$this->hasParentNode) {
-		\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
-		\$this->hasParentNode = $peerClassname::isValid(\$this->parentNode);
+	/**
+	 * Gets ancestor for the given node if it exists
+	 *
+	 * @param      PropelPDO \$con Connection to use.
+	 * @return     mixed 		Propel object if exists else false
+	 */
+	public function retrieveParent(PropelPDO \$con = null)
+	{
+		if (null === \$this->hasParentNode) {
+			\$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
+			\$this->hasParentNode = $peerClassname::isValid(\$this->parentNode);
+		}
+		return \$this->parentNode;
 	}
-	return \$this->parentNode;
-}
 ";
 	}
 

@@ -125,11 +125,11 @@ public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 {
 	\$c = new Criteria($peerClassname::DATABASE_NAME);
 	\$c->add(self::LEFT_COL, 1, Criteria::EQUAL);";
-	if($useScope) {
-		$script .= "
+		if($useScope) {
+			$script .= "
 	\$c->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
-	}
-	$script .= "
+		}
+		$script .= "
 
 	return $peerClassname::doSelectOne(\$c, \$con);
 }
@@ -168,11 +168,11 @@ public static function isValid($objectClassname \$node = null)
  * @param      int \$first		First node to be shifted
  * @param      int \$delta		Value to be shifted by, can be negative
  * @param      PropelPDO \$con		Connection to use.";
-  	if($useScope) {
- 			$script .= "
+		if($useScope) {
+			$script .= "
  * @param      int \$scope		Scope to use for the shift";
- 		}
- 		$script .= "
+		}
+		$script .= "
  */
 public static function shiftRLValues(\$first, \$delta, PropelPDO \$con = null" . ($useScope ? ", \$scope = null" : ""). ")
 {
@@ -242,33 +242,33 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 			// We don't need to alter the object instance pool; we're just modifying these ones
 			// already in the pool.
 			\$criteria = new Criteria(self::DATABASE_NAME);";
-	if (count($this->table->getPrimaryKey()) === 1) {
-		$pkey = $this->table->getPrimaryKey();
-		$col = array_shift($pkey);
-		$script .= "
+		if (count($this->table->getPrimaryKey()) === 1) {
+			$pkey = $this->table->getPrimaryKey();
+			$col = array_shift($pkey);
+			$script .= "
 			\$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);
 ";
-	} else {
-		$fields = array();
-		foreach ($this->table->getPrimaryKey() as $k => $col) {
-			$fields[] = $this->builder->getColumnConstant($col);
-		};
-		$script .= "
+		} else {
+			$fields = array();
+			foreach ($this->table->getPrimaryKey() as $k => $col) {
+				$fields[] = $this->builder->getColumnConstant($col);
+			};
+			$script .= "
 
 			// Loop on each instances in pool
 			foreach (\$keys as \$values) {
 			  // Create initial Criterion
 				\$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
-		unset($fields[0]);
-		foreach ($fields as $k => $col) {
-			$script .= "
+			unset($fields[0]);
+			foreach ($fields as $k => $col) {
+				$script .= "
 
 				// Create next criterion
 				\$nextcton = \$criteria->getNewCriterion(" . $col . ", \$values[$k]);
 				// And merge it with the first
 				\$cton->addAnd(\$nextcton);";
-		}
-		$script .= "
+			}
+			$script .= "
 
 				// Add final Criterion to Criteria
 				\$criteria->addOr(\$cton);
