@@ -139,7 +139,19 @@ protected \$_children = null;
 		$this->addHasParent($script);
 		$this->addGetParent($script);
 		
+		$this->addSetPrevSibling($script);
+		$this->addHasPrevSibling($script);
+		$this->addGetPrevSibling($script);
+		
+		$this->addSetNextSibling($script);
+		$this->addHasNextSibling($script);
+		$this->addGetNextSibling($script);
+		
 		$this->addInsertAsFirstChildOf($script);
+		$this->addInsertAsLastChildOf($script);
+		$this->addInsertAsPrevSiblingOf($script);
+		$this->addInsertAsNextSiblingOf($script);
+		$this->addInsertLeafAtPosition($script);
 		
 		$this->addCompatibilityProxies($script);
 		
@@ -346,6 +358,150 @@ public function getParent(PropelPDO \$con = null)
 ";
 	}
 	
+	protected function addSetPrevSibling(&$script)
+	{
+		$objectClassName = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Sets the previous sibling of the node in the tree
+ *
+ * @param      $objectClassName \$node Propel node object
+ * @return     $objectClassName The current object (for fluent API support)
+ */
+public function setPrevSibling($objectClassname \$node = null)
+{
+	\$this->hasPrevSibling = $peerClassname::isValid(\$node);
+	\$this->prevSibling = \$this->hasPrevSibling ? \$node : null;
+	return \$this;
+}
+";
+	}
+
+	protected function addHasPrevSibling(&$script)
+	{
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Determines if the node has previous sibling
+ *
+ * @param      PropelPDO \$con Connection to use.
+ * @return     bool
+ */
+public function hasPrevSibling(PropelPDO \$con = null)
+{
+	if (null === \$this->hasPrevSibling) {
+		if (!$peerClassname::isValid(\$this)) {
+			return false;
+		}
+		\$this->getPrevSibling(\$con);
+	}
+	return \$this->hasPrevSibling;
+}
+";
+	}
+
+	protected function addGetPrevSibling(&$script)
+	{
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Gets previous sibling for the given node if it exists
+ *
+ * @param      PropelPDO \$con Connection to use.
+ * @return     mixed 		Propel object if exists else false
+ */
+public function getPrevSibling(PropelPDO \$con = null)
+{
+	if (null === \$this->hasPrevSibling) {
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
+		\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
+		if ($this->behavior->useScope()) {
+			$script .= "
+		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		}
+		$script .= "		
+		\$prevSibling = $peerClassname::doSelectOne(\$c, \$con);
+
+		\$this->setPrevSibling(\$prevSibling);
+	}
+	return \$this->prevSibling;
+}
+";
+	}
+
+	protected function addSetNextSibling(&$script)
+	{
+		$objectClassName = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Sets the next sibling of the node in the tree
+ *
+ * @param      $objectClassName \$node Propel node object
+ * @return     $objectClassName The current object (for fluent API support)
+ */
+public function setNextSibling($objectClassname \$node = null)
+{
+	\$this->hasNextSibling = $peerClassname::isValid(\$node);
+	\$this->nextSibling = \$this->hasNextSibling ? \$node : null;
+	return \$this;
+}
+";
+	}
+
+	protected function addHasNextSibling(&$script)
+	{
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Determines if the node has next sibling
+ *
+ * @param      PropelPDO \$con Connection to use.
+ * @return     bool
+ */
+public function hasNextSibling(PropelPDO \$con = null)
+{
+	if (null === \$this->hasNextSibling) {
+		if (!$peerClassname::isValid(\$this)) {
+			return false;
+		}
+		\$this->getNextSibling(\$con);
+	}
+	return \$this->hasNextSibling;
+}
+";
+	}
+
+	protected function addGetNextSibling(&$script)
+	{
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Gets next sibling for the given node if it exists
+ *
+ * @param      PropelPDO \$con Connection to use.
+ * @return     mixed 		Propel object if exists else false
+ */
+public function getNextSibling(PropelPDO \$con = null)
+{
+	if (null === \$this->hasNextSibling) {
+		\$c = new Criteria($peerClassname::DATABASE_NAME);
+		\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
+		if ($this->behavior->useScope()) {
+			$script .= "
+		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		}
+		$script .= "		
+		\$nextSibling = $peerClassname::doSelectOne(\$c, \$con);
+
+		\$this->setNextSibling(\$nextSibling);
+	}
+	return \$this->nextSibling;
+}
+";
+	}
+
 	protected function addInsertAsFirstChildOf(&$script)
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
@@ -356,35 +512,125 @@ public function getParent(PropelPDO \$con = null)
  *
  * @param      $objectClassname \$parent	Propel object for parent node
  * @param      PropelPDO \$con	Connection to use.
- * @return     void
+ *
+ * @return     $objectClassname The current Propel object
  */
 public function insertAsFirstChildOf($objectClassname \$parent, PropelPDO \$con = null)
 {
+	\$this->insertLeafAtPosition(\$parent->getLeftValue() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+	\$this->setParent(\$parent);
+	return \$this;
+}
+";
+	}
+
+	protected function addInsertAsLastChildOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Inserts the current node as last child of given \$parent node
+ *
+ * @param      $objectClassname \$parent	Propel object for parent node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function insertAsLastChildOf($objectClassname \$parent, PropelPDO \$con = null)
+{
+	\$this->insertLeafAtPosition(\$parent->getRightValue()" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+	\$this->setParent(\$parent);
+	return \$this;
+}
+";
+	}
+
+	protected function addInsertAsPrevSiblingOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Inserts the current node as prev sibling given \$sibling node
+ *
+ * @param      $objectClassname \$sibling	Propel object for parent node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function insertAsPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+{
+	\$this->insertLeafAtPosition(\$sibling->getLeftValue()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
+	\$sibling->setPrevSibling(\$this);
+	\$this->setNextSibling(\$sibling);
+	return \$this;
+}
+";
+	}
+
+	protected function addInsertAsNextSiblingOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Inserts the current node as next sibling given \$sibling node
+ *
+ * @param      $objectClassname \$sibling	Propel object for parent node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function insertAsNextSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+{
+	\$this->insertLeafAtPosition(\$sibling->getRightValue() + 1" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
+	\$sibling->setNextSibling(\$this);
+	\$this->setPrevSibling(\$sibling);
+	return \$this;
+}
+";
+	}
+	
+	protected function addInsertLeafAtPosition(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Inserts the current node at the specified position in the tree
+ * and updates the other nodes accordingly
+ *
+ * @param      int \$left	left column value";
+ 		if ($useScope) {
+ 			 		$script .= "
+ * @param      integer \$scope	scope column value";
+ 		}
+ 		$script .= "
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function insertLeafAtPosition(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
+{
 	if (!\$this->isNew())
 	{
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use moveToFirstChildOf() instead.');
+		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use a move method instead of an insert one.');
 	}
 	
 	// Update node properties
-	\$this->setLeftValue(\$parent->getLeftValue() + 1);
-	\$this->setRightValue(\$parent->getLeftValue() + 2);
-	\$this->setParent(\$parent);";
-		if ($this->behavior->useScope())
+	\$this->setLeftValue(\$left);
+	\$this->setRightValue(\$left + 1);";
+		if ($useScope)
 		{
 			$script .= "
-	\$sidv = \$parent->getScopeValue();
-	\$this->setScopeValue(\$sidv);
-	
-	// Update database nodes
-	$peerClassname::shiftRLValues(\$this->getLeftValue(), 2, \$con, \$sidv);";
-		} else {
-			$script .= "
-	
-	// Update database nodes
-	$peerClassname::shiftRLValues(\$this->getLeftValue(), 2, \$con);";
+	\$this->setScopeValue(\$scope);";
 		}
-		
-		$script .="
+		$script .= "
+	
+	// Update database nodes
+	$peerClassname::shiftRLValues(\$left, 2, \$con" . ($useScope ? ", \$scope" : "") . ");
 
 	// Update all loaded nodes
 	$peerClassname::updateLoadedNodes(\$con);
