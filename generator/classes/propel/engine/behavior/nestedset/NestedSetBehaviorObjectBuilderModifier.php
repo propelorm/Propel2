@@ -676,6 +676,28 @@ public function setParentNode($objectClassname \$parent = null)
 {
 	return \$this->setParent(\$parent);
 }
+
+/**
+ * Alias for getPrevSibling(), for BC with Propel 1.4 nested sets
+ *
+ * @deprecated since 1.5
+ * @see        getParent
+ */
+public function retrievePrevSibling(PropelPDO \$con = null)
+{
+	return \$this->getPrevSibling(\$con);
+}
+
+/**
+ * Alias for getNextSibling(), for BC with Propel 1.4 nested sets
+ *
+ * @deprecated since 1.5
+ * @see        getParent
+ */
+public function retrieveNextSibling(PropelPDO \$con = null)
+{
+	return \$this->getNextSibling(\$con);
+}
 ";
 	}
 }
