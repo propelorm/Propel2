@@ -123,10 +123,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t11 = new PublicTable10();
 		$t11->setTitle('t11');
 		$t11->insertAsFirstChildOf($fixtures[2]); // first child of t3
-		$this->assertEquals($t11->getLeftValue(), 5, 'insertAsFirstChildOf() sets the left value correctly');
-		$this->assertEquals($t11->getRightValue(), 6, 'insertAsFirstChildOf() sets the right value correctly');
-		$this->assertEquals($t11->getScopeValue(), 1, 'insertAsFirstChildOf() sets the scope value correctly');
-		$this->assertEquals($t11->parentNode, $fixtures[2], 'insertAsFirstChildOf() sets the parent correctly');
+		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
+		$t11->save();
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -135,14 +133,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't5' => array(9, 14),
 			't6' => array(10, 11),
 			't7' => array(12, 13),
+			't11' => array(5, 6)
 		);
-		$this->assertEquals($this->dumpTreeWithScope(1), $expected, 'insertAsFirstChildOf() shifts the other nodes correctly');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsFirstChildOf() shifts the other nodes correctly');
 		$expected = array(
 			't8' => array(1, 6),
 			't9' => array(2, 3),
 			't10' => array(4, 5),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'insertAsFirstChildOf() does not shift anything out of the scope');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsFirstChildOf() does not shift anything out of the scope');
 	}
 
 	public function testInsertAsLastChildOf()
@@ -166,10 +165,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t11 = new PublicTable10();
 		$t11->setTitle('t11');
 		$t11->insertAsLastChildOf($fixtures[2]); // last child of t3
-		$this->assertEquals($t11->getLeftValue(), 13, 'insertAsLastChildOf() sets the left value correctly');
-		$this->assertEquals($t11->getRightValue(), 14, 'insertAsLastChildOf() sets the right value correctly');
-		$this->assertEquals($t11->getScopeValue(), 1, 'insertAsLastChildOf() sets the scope value correctly');
-		$this->assertEquals($t11->parentNode, $fixtures[2], 'insertAsLastChildOf() sets the parent correctly');
+		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
+		$t11->save();
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -178,14 +175,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't5' => array(7, 12),
 			't6' => array(8, 9),
 			't7' => array(10, 11),
+			't11' => array(13, 14)
 		);
-		$this->assertEquals($this->dumpTreeWithScope(1), $expected, 'insertAsLastChildOf() shifts the other nodes correctly');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsLastChildOf() shifts the other nodes correctly');
 		$expected = array(
 			't8' => array(1, 6),
 			't9' => array(2, 3),
 			't10' => array(4, 5),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'insertAsLastChildOf() does not shift anything out of the scope');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsLastChildOf() does not shift anything out of the scope');
 	}
 
 	public function testInsertAsPrevSiblingOf()
@@ -209,9 +207,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t11 = new PublicTable10();
 		$t11->setTitle('t11');
 		$t11->insertAsPrevSiblingOf($fixtures[2]); // prev sibling of t3
-		$this->assertEquals($t11->getLeftValue(), 4, 'insertAsPrevSiblingOf() sets the left value correctly');
-		$this->assertEquals($t11->getRightValue(), 5, 'insertAsPrevSiblingOf() sets the right value correctly');
-		$this->assertEquals($t11->getScopeValue(), 1, 'insertAsPrevSiblingOf() sets the scope value correctly');
+		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
+		$t11->save();
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -220,14 +217,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't5' => array(9, 14),
 			't6' => array(10, 11),
 			't7' => array(12, 13),
+			't11' => array(4, 5)
 		);
-		$this->assertEquals($this->dumpTreeWithScope(1), $expected, 'insertAsPrevSiblingOf() shifts the other nodes correctly');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsPrevSiblingOf() shifts the other nodes correctly');
 		$expected = array(
 			't8' => array(1, 6),
 			't9' => array(2, 3),
 			't10' => array(4, 5),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'insertAsPrevSiblingOf() does not shift anything out of the scope');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsPrevSiblingOf() does not shift anything out of the scope');
 	}
 
 	public function testInsertAsNextSiblingOf()
@@ -251,9 +249,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t11 = new PublicTable10();
 		$t11->setTitle('t11');
 		$t11->insertAsNextSiblingOf($fixtures[2]); // next sibling of t3
-		$this->assertEquals($t11->getLeftValue(), 14, 'insertAsNextSiblingOf() sets the left value correctly');
-		$this->assertEquals($t11->getRightValue(), 15, 'insertAsNextSiblingOf() sets the right value correctly');
-		$this->assertEquals($t11->getScopeValue(), 1, 'insertAsNextSiblingOf() sets the scope value correctly');
+		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');
+		$t11->save();
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -262,14 +259,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't5' => array(7, 12),
 			't6' => array(8, 9),
 			't7' => array(10, 11),
+			't11' => array(14, 15)
 		);
-		$this->assertEquals($this->dumpTreeWithScope(1), $expected, 'insertAsNextSiblingOf() shifts the other nodes correctly');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsNextSiblingOf() shifts the other nodes correctly');
 		$expected = array(
 			't8' => array(1, 6),
 			't9' => array(2, 3),
 			't10' => array(4, 5),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'insertAsNextSiblingOf() does not shift anything out of the scope');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
 	}
 
 	public function testInsertLeafAtPosition()
@@ -293,9 +291,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t11 = new PublicTable10();
 		$t11->setTitle('t11');
 		$t11->insertLeafAtPosition(5, 1); // first child of t3
-		$this->assertEquals($t11->getLeftValue(), 5, 'insertLeafAtPosition() sets the left value from the first parameter');
-		$this->assertEquals($t11->getRightValue(), 6, 'insertLeafAtPosition() sets the right value from the first parameter + 1');
-		$this->assertEquals($t11->getScopeValue(), 1, 'insertLeafAtPosition() sets the scope value from the second parameter');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -305,12 +300,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't6' => array(10, 11),
 			't7' => array(12, 13),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(1), $expected, 'insertLeafAtPosition() shifts the other nodes correctly');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertLeafAtPosition() shifts the other nodes correctly');
 		$expected = array(
 			't8' => array(1, 6),
 			't9' => array(2, 3),
 			't10' => array(4, 5),
 		);
-		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'insertLeafAtPosition() does not shift anything out of the scope');
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertLeafAtPosition() does not shift anything out of the scope');
 	}
 }

@@ -111,6 +111,23 @@ protected \$parentNode = null;
  * @var        array
  */
 protected \$_children = null;
+
+/**
+ * Queries to be executed in the save transaction
+ * @var        array
+ */
+protected \$nestedSetQueries = array();
+";
+	}
+	
+	public function preSave($builder)
+	{
+		return "
+foreach (\$this->nestedSetQueries as \$query) {
+	\$query['arguments'][]= \$con;
+	call_user_func_array(array(\$this, \$query['method']), \$query['arguments']);
+}
+\$this->nestedSetQueries = array();
 ";
 	}
 	
@@ -369,7 +386,7 @@ public function getParent(PropelPDO \$con = null)
  * @param      $objectClassName \$node Propel node object
  * @return     $objectClassName The current object (for fluent API support)
  */
-public function setPrevSibling($objectClassname \$node = null)
+public function setPrevSibling($objectClassName \$node = null)
 {
 	\$this->hasPrevSibling = $peerClassname::isValid(\$node);
 	\$this->prevSibling = \$this->hasPrevSibling ? \$node : null;
@@ -441,7 +458,7 @@ public function getPrevSibling(PropelPDO \$con = null)
  * @param      $objectClassName \$node Propel node object
  * @return     $objectClassName The current object (for fluent API support)
  */
-public function setNextSibling($objectClassname \$node = null)
+public function setNextSibling($objectClassName \$node = null)
 {
 	\$this->hasNextSibling = $peerClassname::isValid(\$node);
 	\$this->nextSibling = \$this->hasNextSibling ? \$node : null;
@@ -506,19 +523,39 @@ public function getNextSibling(PropelPDO \$con = null)
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Inserts the current node as first child of given \$parent node
+ * The modifications in the current object and the tree
+ * are not persisted until the current object is saved.
  *
  * @param      $objectClassname \$parent	Propel object for parent node
- * @param      PropelPDO \$con	Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsFirstChildOf($objectClassname \$parent, PropelPDO \$con = null)
+public function insertAsFirstChildOf($objectClassname \$parent)
 {
-	\$this->insertLeafAtPosition(\$parent->getLeftValue() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+	if (!\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToFirstChildOf() instead.');
+	}
+	\$left = \$parent->getLeftValue() + 1;
+	// Update node properties
+	\$this->setLeftValue(\$left);
+	\$this->setRightValue(\$left + 1);";
+		if ($useScope)
+		{
+			$script .= "
+	\$scope = \$parent->getScopeValue();
+	\$this->setScopeValue(\$scope);";
+		}
+		$script .= "
 	\$this->setParent(\$parent);
+	// Keep the tree modification query for the save() transaction
+	\$this->nestedSetQueries []= array(
+		'method'    => 'insertLeafAtPosition',
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+	);
 	return \$this;
 }
 ";
@@ -528,19 +565,39 @@ public function insertAsFirstChildOf($objectClassname \$parent, PropelPDO \$con 
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Inserts the current node as last child of given \$parent node
+ * The modifications in the current object and the tree
+ * are not persisted until the current object is saved.
  *
  * @param      $objectClassname \$parent	Propel object for parent node
- * @param      PropelPDO \$con	Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsLastChildOf($objectClassname \$parent, PropelPDO \$con = null)
+public function insertAsLastChildOf($objectClassname \$parent)
 {
-	\$this->insertLeafAtPosition(\$parent->getRightValue()" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+	if (!\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToLastChildOf() instead.');
+	}
+	\$left = \$parent->getRightValue();
+	// Update node properties
+	\$this->setLeftValue(\$left);
+	\$this->setRightValue(\$left + 1);";
+		if ($useScope)
+		{
+			$script .= "
+	\$scope = \$parent->getScopeValue();
+	\$this->setScopeValue(\$scope);";
+		}
+		$script .= "
 	\$this->setParent(\$parent);
+	// Keep the tree modification query for the save() transaction
+	\$this->nestedSetQueries []= array(
+		'method'    => 'insertLeafAtPosition',
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+	);
 	return \$this;
 }
 ";
@@ -550,20 +607,40 @@ public function insertAsLastChildOf($objectClassname \$parent, PropelPDO \$con =
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Inserts the current node as prev sibling given \$sibling node
+ * The modifications in the current object and the tree
+ * are not persisted until the current object is saved.
  *
  * @param      $objectClassname \$sibling	Propel object for parent node
- * @param      PropelPDO \$con	Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+public function insertAsPrevSiblingOf($objectClassname \$sibling)
 {
-	\$this->insertLeafAtPosition(\$sibling->getLeftValue()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
-	\$sibling->setPrevSibling(\$this);
+	if (!\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToPrevSiblingOf() instead.');
+	}
+	\$left = \$sibling->getLeftValue();
+	// Update node properties
+	\$this->setLeftValue(\$left);
+	\$this->setRightValue(\$left + 1);";
+		if ($useScope)
+		{
+			$script .= "
+	\$scope = \$sibling->getScopeValue();
+	\$this->setScopeValue(\$scope);";
+		}
+		$script .= "
 	\$this->setNextSibling(\$sibling);
+	\$sibling->setPrevSibling(\$this);
+	// Keep the tree modification query for the save() transaction
+	\$this->nestedSetQueries []= array(
+		'method'    => 'insertLeafAtPosition',
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+	);
 	return \$this;
 }
 ";
@@ -573,20 +650,40 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling, PropelPDO \$co
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
 		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Inserts the current node as next sibling given \$sibling node
+ * The modifications in the current object and the tree
+ * are not persisted until the current object is saved.
  *
  * @param      $objectClassname \$sibling	Propel object for parent node
- * @param      PropelPDO \$con	Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsNextSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+public function insertAsNextSiblingOf($objectClassname \$sibling)
 {
-	\$this->insertLeafAtPosition(\$sibling->getRightValue() + 1" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
-	\$sibling->setNextSibling(\$this);
+	if (!\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToNextSiblingOf() instead.');
+	}
+	\$left = \$sibling->getRightValue() + 1;
+	// Update node properties
+	\$this->setLeftValue(\$left);
+	\$this->setRightValue(\$left + 1);";
+		if ($useScope)
+		{
+			$script .= "
+	\$scope = \$sibling->getScopeValue();
+	\$this->setScopeValue(\$scope);";
+		}
+		$script .= "
 	\$this->setPrevSibling(\$sibling);
+	\$sibling->setNextSibling(\$this);
+	// Keep the tree modification query for the save() transaction
+	\$this->nestedSetQueries []= array(
+		'method'    => 'insertLeafAtPosition',
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+	);
 	return \$this;
 }
 ";
@@ -599,8 +696,7 @@ public function insertAsNextSiblingOf($objectClassname \$sibling, PropelPDO \$co
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
- * Inserts the current node at the specified position in the tree
- * and updates the other nodes accordingly
+ * Update the tree to allow insertion of a leaf at the specified position
  *
  * @param      int \$left	left column value";
  		if ($useScope) {
@@ -613,22 +709,7 @@ public function insertAsNextSiblingOf($objectClassname \$sibling, PropelPDO \$co
  * @return     $objectClassname The current Propel object
  */
 public function insertLeafAtPosition(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
-{
-	if (!\$this->isNew())
-	{
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use a move method instead of an insert one.');
-	}
-	
-	// Update node properties
-	\$this->setLeftValue(\$left);
-	\$this->setRightValue(\$left + 1);";
-		if ($useScope)
-		{
-			$script .= "
-	\$this->setScopeValue(\$scope);";
-		}
-		$script .= "
-	
+{	
 	// Update database nodes
 	$peerClassname::shiftRLValues(\$left, 2, \$con" . ($useScope ? ", \$scope" : "") . ");
 

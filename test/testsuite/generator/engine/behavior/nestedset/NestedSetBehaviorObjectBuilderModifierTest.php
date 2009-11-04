@@ -232,7 +232,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testInsertAsFirstChildOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
-		$fixtures = $this->initTree();
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
 		 |  \
@@ -244,11 +244,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		*/
 		$t8 = new PublicTable9();
 		$t8->setTitle('t8');
-		$t = $t8->insertAsFirstChildOf($fixtures[2]); // first child of t3
-		$this->assertEquals($t, $t8, 'insertAsFirstChildOf() returns the object it was called on');
-		$this->assertEquals($t8->getLeftValue(), 5, 'insertAsFirstChildOf() sets the left value correctly');
-		$this->assertEquals($t8->getRightValue(), 6, 'insertAsFirstChildOf() sets the right value correctly');
-		$this->assertEquals($t8->parentNode, $fixtures[2], 'insertAsFirstChildOf() sets the parent correctly');
+		$t = $t8->insertAsFirstChildOf($t3);
+		$this->assertEquals($t8, $t, 'insertAsFirstChildOf() returns the object it was called on');
+		$this->assertEquals(5, $t4->getLeftValue(), 'insertAsFirstChildOf() does not modify the tree until the object is saved');
+		$t8->save();
+		$this->assertEquals(5, $t8->getLeftValue(), 'insertAsFirstChildOf() sets the left value correctly');
+		$this->assertEquals(6, $t8->getRightValue(), 'insertAsFirstChildOf() sets the right value correctly');
+		$this->assertEquals($t3, $t8->parentNode, 'insertAsFirstChildOf() sets the parent correctly');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -257,11 +259,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't5' => array(9, 14),
 			't6' => array(10, 11),
 			't7' => array(12, 13),
+			't8' => array(5, 6)
 		);
-		$this->assertEquals($this->dumpTree(), $expected, 'insertAsFirstChildOf() shifts the other nodes correctly');
-		$t8->save();
+		$this->assertEquals($expected, $this->dumpTree(), 'insertAsFirstChildOf() shifts the other nodes correctly');
 		try {
-			$t8->insertAsFirstChildOf($fixtures[4]);
+			$t8->insertAsFirstChildOf($t4);
 			$this->fail('insertAsFirstChildOf() throws an exception when called on a saved object');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsFirstChildOf() throws an exception when called on a saved object');
@@ -271,7 +273,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testInsertAsLastChildOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
-		$fixtures = $this->initTree();
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
 		 |  \
@@ -283,11 +285,13 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		*/
 		$t8 = new PublicTable9();
 		$t8->setTitle('t8');
-		$t = $t8->insertAsLastChildOf($fixtures[2]); // last child of t3
-		$this->assertEquals($t, $t8, 'insertAsLastChildOf() returns the object it was called on');
-		$this->assertEquals($t8->getLeftValue(), 13, 'insertAsLastChildOf() sets the left value correctly');
-		$this->assertEquals($t8->getRightValue(), 14, 'insertAsLastChildOf() sets the right value correctly');
-		$this->assertEquals($t8->parentNode, $fixtures[2], 'insertAsLastChildOf() sets the parent correctly');
+		$t = $t8->insertAsLastChildOf($t3);
+		$this->assertEquals($t8, $t, 'insertAsLastChildOf() returns the object it was called on');
+		$this->assertEquals(13, $t3->getRightValue(), 'insertAsLastChildOf() does not modify the tree until the object is saved');
+		$t8->save();
+		$this->assertEquals(13, $t8->getLeftValue(), 'insertAsLastChildOf() sets the left value correctly');
+		$this->assertEquals(14, $t8->getRightValue(), 'insertAsLastChildOf() sets the right value correctly');
+		$this->assertEquals($t3, $t8->parentNode, 'insertAsLastChildOf() sets the parent correctly');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -296,11 +300,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't5' => array(7, 12),
 			't6' => array(8, 9),
 			't7' => array(10, 11),
+			't8' => array(13, 14)
 		);
-		$this->assertEquals($this->dumpTree(), $expected, 'insertAsLastChildOf() shifts the other nodes correctly');
-		$t8->save();
+		$this->assertEquals($expected, $this->dumpTree(), 'insertAsLastChildOf() shifts the other nodes correctly');
 		try {
-			$t8->insertAsLastChildOf($fixtures[4]);
+			$t8->insertAsLastChildOf($t4);
 			$this->fail('insertAsLastChildOf() throws an exception when called on a saved object');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsLastChildOf() throws an exception when called on a saved object');
@@ -310,7 +314,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testInsertAsPrevSiblingOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
-		$fixtures = $this->initTree();
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
 		 |  \
@@ -322,12 +326,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		*/
 		$t8 = new PublicTable9();
 		$t8->setTitle('t8');
-		$t = $t8->insertAsPrevSiblingOf($fixtures[2]); // prev sibling of t3
-		$this->assertEquals($t, $t8, 'insertAsPrevSiblingOf() returns the object it was called on');
-		$this->assertEquals($t8->getLeftValue(), 4, 'insertAsPrevSiblingOf() sets the left value correctly');
-		$this->assertEquals($t8->getRightValue(), 5, 'insertAsPrevSiblingOf() sets the right value correctly');
-		$this->assertEquals($t8->nextSibling, $fixtures[2], 'insertAsPrevSiblingOf() sets the next sibling correctly');
-		$this->assertEquals($fixtures[2]->prevSibling, $t8, 'insertAsPrevSiblingOf() sets the prev sibling correctly');
+		$t = $t8->insertAsPrevSiblingOf($t3);
+		$this->assertEquals($t8, $t, 'insertAsPrevSiblingOf() returns the object it was called on');
+		$this->assertEquals(4, $t3->getLeftValue(), 'insertAsPrevSiblingOf() does not modify the tree until the object is saved');
+		$t8->save();
+		$this->assertEquals(4, $t8->getLeftValue(), 'insertAsPrevSiblingOf() sets the left value correctly');
+		$this->assertEquals(5, $t8->getRightValue(), 'insertAsPrevSiblingOf() sets the right value correctly');
+		$this->assertEquals($t3, $t8->nextSibling, 'insertAsPrevSiblingOf() sets the next sibling correctly');
+		$this->assertEquals($t8, $t3->prevSibling, 'insertAsPrevSiblingOf() sets the prev sibling correctly');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -336,11 +342,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't5' => array(9, 14),
 			't6' => array(10, 11),
 			't7' => array(12, 13),
+			't8' => array(4, 5)
 		);
-		$this->assertEquals($this->dumpTree(), $expected, 'insertAsPrevSiblingOf() shifts the other nodes correctly');
-		$t8->save();
+		$this->assertEquals($expected, $this->dumpTree(), 'insertAsPrevSiblingOf() shifts the other nodes correctly');
 		try {
-			$t8->insertAsPrevSiblingOf($fixtures[4]);
+			$t8->insertAsPrevSiblingOf($t4);
 			$this->fail('insertAsPrevSiblingOf() throws an exception when called on a saved object');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsPrevSiblingOf() throws an exception when called on a saved object');
@@ -350,7 +356,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testInsertAsNextSiblingOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
-		$fixtures = $this->initTree();
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
 		 |  \
@@ -362,12 +368,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		*/
 		$t8 = new PublicTable9();
 		$t8->setTitle('t8');
-		$t = $t8->insertAsNextSiblingOf($fixtures[2]); // next sibling of t3
-		$this->assertEquals($t, $t8, 'insertAsNextSiblingOf() returns the object it was called on');
-		$this->assertEquals($t8->getLeftValue(), 14, 'insertAsNextSiblingOf() sets the left value correctly');
-		$this->assertEquals($t8->getRightValue(), 15, 'insertAsNextSiblingOf() sets the right value correctly');
-		$this->assertEquals($t8->prevSibling, $fixtures[2], 'insertAsNextSiblingOf() sets the prev sibling correctly');
-		$this->assertEquals($fixtures[2]->nextSibling, $t8, 'insertAsNextSiblingOf() sets the next sibling correctly');
+		$t = $t8->insertAsNextSiblingOf($t3);
+		$this->assertEquals($t8, $t, 'insertAsNextSiblingOf() returns the object it was called on');
+		$this->assertEquals(14, $t1->getRightValue(), 'insertAsNextSiblingOf() does not modify the tree until the object is saved');
+		$t8->save();
+		$this->assertEquals(14, $t8->getLeftValue(), 'insertAsNextSiblingOf() sets the left value correctly');
+		$this->assertEquals(15, $t8->getRightValue(), 'insertAsNextSiblingOf() sets the right value correctly');
+		$this->assertEquals($t3, $t8->prevSibling, 'insertAsNextSiblingOf() sets the prev sibling correctly');
+		$this->assertEquals($t8, $t3->nextSibling, 'insertAsNextSiblingOf() sets the next sibling correctly');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -376,11 +384,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't5' => array(7, 12),
 			't6' => array(8, 9),
 			't7' => array(10, 11),
+			't8' => array(14, 15)
 		);
-		$this->assertEquals($this->dumpTree(), $expected, 'insertAsPrevSiblingOf() shifts the other nodes correctly');
-		$t8->save();
+		$this->assertEquals($expected, $this->dumpTree(), 'insertAsNextSiblingOf() shifts the other nodes correctly');
 		try {
-			$t8->insertAsNextSiblingOf($fixtures[4]);
+			$t8->insertAsNextSiblingOf($t4);
 			$this->fail('insertAsNextSiblingOf() throws an exception when called on a saved object');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsNextSiblingOf() throws an exception when called on a saved object');
@@ -390,7 +398,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testInsertLeafAtPosition()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertLeafAtPosition'), 'nested_set adds a insertLeafAtPosition() method');
-		$fixtures = $this->initTree();
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
 		 |  \
@@ -403,9 +411,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$t8 = new PublicTable9();
 		$t8->setTitle('t8');
 		$t = $t8->insertLeafAtPosition(5); // first child of t3
-		$this->assertEquals($t, $t8, 'insertLeafAtPosition() returns the object it was called on');
-		$this->assertEquals($t8->getLeftValue(), 5, 'insertLeafAtPosition() sets the left value from the first parameter');
-		$this->assertEquals($t8->getRightValue(), 6, 'insertLeafAtPosition() sets the right value from the first parameter + 1');
+		$this->assertEquals($t8, $t, 'insertLeafAtPosition() returns the object it was called on');
 		$expected = array(
 			't1' => array(1, 16),
 			't2' => array(2, 3),
@@ -415,13 +421,10 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't6' => array(10, 11),
 			't7' => array(12, 13),
 		);
-		$this->assertEquals($this->dumpTree(), $expected, 'insertLeafAtPosition() shifts the other nodes correctly');
-		$t8->save();
-		try {
-			$t8->insertLeafAtPosition(6);
-			$this->fail('insertLeafAtPosition() throws an exception when called on a saved object');
-		} catch (PropelException $e) {
-			$this->assertTrue(true, 'insertLeafAtPosition() throws an exception when called on a saved object');
+		$this->assertEquals($expected, $this->dumpTree(), 'insertLeafAtPosition() shifts the other nodes correctly');
+		foreach ($expected as $key => $values)
+		{
+			$this->assertEquals($values, array($$key->getLeftValue(), $$key->getRightValue()), 'insertLeafAtPosition() updates nodes already in memory');
 		}
 	}
 }
