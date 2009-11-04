@@ -122,10 +122,11 @@ protected \$nestedSetQueries = array();
 	
 	public function preSave($builder)
 	{
+		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
 		return "
 foreach (\$this->nestedSetQueries as \$query) {
 	\$query['arguments'][]= \$con;
-	call_user_func_array(array(\$this, \$query['method']), \$query['arguments']);
+	call_user_func_array(array('$peerClassname', \$query['method']), \$query['arguments']);
 }
 \$this->nestedSetQueries = array();
 ";
@@ -168,7 +169,6 @@ foreach (\$this->nestedSetQueries as \$query) {
 		$this->addInsertAsLastChildOf($script);
 		$this->addInsertAsPrevSiblingOf($script);
 		$this->addInsertAsNextSiblingOf($script);
-		$this->addInsertLeafAtPosition($script);
 		
 		$this->addCompatibilityProxies($script);
 		
@@ -553,7 +553,7 @@ public function insertAsFirstChildOf($objectClassname \$parent)
 	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'insertLeafAtPosition',
+		'method'    => 'makeRoomForLeaf',
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -595,7 +595,7 @@ public function insertAsLastChildOf($objectClassname \$parent)
 	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'insertLeafAtPosition',
+		'method'    => 'makeRoomForLeaf',
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -638,7 +638,7 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling)
 	\$sibling->setPrevSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'insertLeafAtPosition',
+		'method'    => 'makeRoomForLeaf',
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -681,41 +681,9 @@ public function insertAsNextSiblingOf($objectClassname \$sibling)
 	\$sibling->setNextSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'insertLeafAtPosition',
+		'method'    => 'makeRoomForLeaf',
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
-	return \$this;
-}
-";
-	}
-	
-	protected function addInsertLeafAtPosition(&$script)
-	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
-		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
-		$useScope = $this->behavior->useScope();
-		$script .= "
-/**
- * Update the tree to allow insertion of a leaf at the specified position
- *
- * @param      int \$left	left column value";
- 		if ($useScope) {
- 			 		$script .= "
- * @param      integer \$scope	scope column value";
- 		}
- 		$script .= "
- * @param      PropelPDO \$con	Connection to use.
- *
- * @return     $objectClassname The current Propel object
- */
-public function insertLeafAtPosition(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
-{	
-	// Update database nodes
-	$peerClassname::shiftRLValues(\$left, 2, \$con" . ($useScope ? ", \$scope" : "") . ");
-
-	// Update all loaded nodes
-	$peerClassname::updateLoadedNodes(\$con);
-	
 	return \$this;
 }
 ";

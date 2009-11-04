@@ -100,6 +100,7 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 		$this->addIsValid($script);
 		$this->addShiftRLValues($script);
 		$this->addUpdateLoadedNodes($script);
+		$this->addMakeRoomForLeaf($script);
 		
 		return $script;
 	}
@@ -297,6 +298,34 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 			\$stmt->closeCursor();
 		}
 	}
+}
+";
+	}
+
+	protected function addMakeRoomForLeaf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Update the tree to allow insertion of a leaf at the specified position
+ *
+ * @param      int \$left	left column value";
+ 		if ($useScope) {
+ 			 		$script .= "
+ * @param      integer \$scope	scope column value";
+ 		}
+ 		$script .= "
+ * @param      PropelPDO \$con	Connection to use.
+ */
+public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
+{	
+	// Update database nodes
+	$peerClassname::shiftRLValues(\$left, 2, \$con" . ($useScope ? ", \$scope" : "") . ");
+
+	// Update all loaded nodes
+	$peerClassname::updateLoadedNodes(\$con);
 }
 ";
 	}

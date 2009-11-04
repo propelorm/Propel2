@@ -159,4 +159,34 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 		}
 		$this->assertEquals($actual, $expected, 'Loaded nodes are in sync after calling updateLoadedNodes()');
 	}
+
+	public function testMakeRoomForLeaf()
+	{
+		$this->assertTrue(method_exists('Table9Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$t = Table9Peer::makeRoomForLeaf(5); // first child of t3
+		$expected = array(
+			't1' => array(1, 16),
+			't2' => array(2, 3),
+			't3' => array(4, 15),
+			't4' => array(7, 8),
+			't5' => array(9, 14),
+			't6' => array(10, 11),
+			't7' => array(12, 13),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'makeRoomForLeaf() shifts the other nodes correctly');
+		foreach ($expected as $key => $values)
+		{
+			$this->assertEquals($values, array($$key->getLeftValue(), $$key->getRightValue()), 'makeRoomForLeaf() updates nodes already in memory');
+		}
+	}
 }

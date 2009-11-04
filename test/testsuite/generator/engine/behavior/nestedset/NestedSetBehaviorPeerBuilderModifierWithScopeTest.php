@@ -132,6 +132,43 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 		);
 		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
 	}
+
+	public function testMakeRoomForLeaf()
+	{
+		$this->assertTrue(method_exists('Table10Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
+		$fixtures = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$t = Table10Peer::makeRoomForLeaf(5, 1); // first child of t3
+		$expected = array(
+			't1' => array(1, 16),
+			't2' => array(2, 3),
+			't3' => array(4, 15),
+			't4' => array(7, 8),
+			't5' => array(9, 14),
+			't6' => array(10, 11),
+			't7' => array(12, 13),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'makeRoomForLeaf() shifts the other nodes correctly');
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'makeRoomForLeaf() does not shift anything out of the scope');
+	}
 }
 
 // we need this class to test protected methods
