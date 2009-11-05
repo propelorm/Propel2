@@ -152,6 +152,10 @@ foreach (\$this->nestedSetQueries as \$query) {
 		
 		$this->addMakeRoot($script);
 		
+		$this->addIsRoot($script);
+		$this->addIsLeaf($script);
+		$this->addIsDescendantOf($script);
+		
 		$this->addSetParent($script);
 		$this->addHasParent($script);
 		$this->addGetParent($script);
@@ -164,9 +168,9 @@ foreach (\$this->nestedSetQueries as \$query) {
 		$this->addHasNextSibling($script);
 		$this->addGetNextSibling($script);
 		
-		$this->addIsRoot($script);
-		$this->addIsLeaf($script);
-		$this->addIsDescendantOf($script);
+		$this->addHasChildren($script);
+		$this->addGetDescendants($script);
+		$this->addGetAncestors($script);
 		
 		$this->addInsertAsFirstChildOf($script);
 		$this->addInsertAsLastChildOf($script);
@@ -307,6 +311,60 @@ public function makeRoot()
 ";
 	}
 
+	protected function addIsRoot(&$script)
+	{
+		$script .= "
+/**
+ * Tests if node is a root
+ *
+ * @return     bool
+ */
+public function isRoot()
+{
+	return \$this->getLeftValue() == 1;
+}
+";
+	}
+	
+	protected function addIsLeaf(&$script)
+	{
+		$script .= "
+/**
+ * Tests if node is a leaf
+ *
+ * @return     bool
+ */
+public function isLeaf()
+{
+	return (\$this->getRightValue() - \$this->getLeftValue()) == 1;
+}
+";
+	}
+	
+	protected function addIsDescendantOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$script .= "
+/**
+ * Tests if node is a descendant of another node
+ *
+ * @param      $objectClassname \$node Propel node object
+ * @return     bool
+ */
+public function isDescendantOf($objectClassname \$parent)
+{";
+		if ($this->behavior->useScope()) {
+			$script .= "
+	if (\$this->getScopeValue() !== \$parent->getScopeValue()) {
+		throw new PropelException('Comparing two nodes of different trees');
+	}";
+		}
+		$script .= "
+	return \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
+}
+";
+	}
+	
 	protected function addSetParent(&$script)
 	{
 		$objectClassName = $this->builder->getStubObjectBuilder()->getClassname();
@@ -314,6 +372,7 @@ public function makeRoot()
 		$script .= "
 /**
  * Sets the parentNode of the node in the tree
+ * Only used to cache the result of a parent search
  *
  * @param      $objectClassName \$parent Propel node object
  * @return     $objectClassName The current object (for fluent API support)
@@ -364,10 +423,8 @@ public function getParent(PropelPDO \$con = null)
 {
 	if (null === \$this->hasParentNode) {
 		\$c = new Criteria($peerClassname::DATABASE_NAME);
-		\$c1 = \$c->getNewCriterion($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
-		\$c2 = \$c->getNewCriterion($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);
-		\$c1->addAnd(\$c2);
-		\$c->add(\$c1);";
+		\$c->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
+		\$c->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);";
 		if ($this->behavior->useScope()) {
 			$script .= "
 		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
@@ -391,6 +448,7 @@ public function getParent(PropelPDO \$con = null)
 		$script .= "
 /**
  * Sets the previous sibling of the node in the tree
+ * Only used to cache the result of a sibling search
  *
  * @param      $objectClassName \$node Propel node object
  * @return     $objectClassName The current object (for fluent API support)
@@ -463,6 +521,7 @@ public function getPrevSibling(PropelPDO \$con = null)
 		$script .= "
 /**
  * Sets the next sibling of the node in the tree
+ * Only used to cache the result of a sibling search
  *
  * @param      $objectClassName \$node Propel node object
  * @return     $objectClassName The current object (for fluent API support)
@@ -528,60 +587,99 @@ public function getNextSibling(PropelPDO \$con = null)
 ";
 	}
 	
-	protected function addIsRoot(&$script)
+	protected function addHasChildren(&$script)
 	{
 		$script .= "
 /**
- * Tests if node is a root
+ * Tests if node has children
  *
  * @return     bool
  */
-public function isRoot()
+public function hasChildren()
 {
-	return (\$this->getLeftValue() == 1);
-}
-";
-	}
-	
-	protected function addIsLeaf(&$script)
-	{
-		$script .= "
-/**
- * Tests if node is a leaf
- *
- * @return     bool
- */
-public function isLeaf()
-{
-	return ((\$this->getRightValue() - \$this->getLeftValue()) == 1);
-}
-";
-	}
-	
-	protected function addIsDescendantOf(&$script)
-	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
-		$script .= "
-/**
- * Tests if node is a descendant of another node
- *
- * @param      $objectClassname \$node Propel node object
- * @return     bool
- */
-public function isDescendantOf($objectClassname \$parent)
-{";
-		if ($this->behavior->useScope()) {
-			$script .= "
-	if (\$this->getScopeValue() !== \$parent->getScopeValue()) {
-		throw new PropelException('Comparing two nodes of different trees');
-	}";
-		}
-		$script .= "
-	return \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
+	return (\$this->getRightValue() - \$this->getLeftValue()) > 1;
 }
 ";
 	}
 
+
+	protected function addGetDescendants(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Gets descendants for the given node
+ *
+ * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      PropelPDO \$con Connection to use.
+ * @return     array 		List of $objectClassname objects
+ */
+public function getDescendants(Criteria \$criteria = null, PropelPDO \$con = null)
+{
+	if(\$this->isLeaf()) {
+		// save one query
+		return array();
+	}
+	if (\$criteria === null) {
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+	}
+	if (\$con === null) {
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
+	}
+	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::GREATER_THAN);
+	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::LESS_THAN);";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+	}
+	$script .= "		
+	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
+
+	return $peerClassname::doSelect(\$criteria, \$con);
+}
+";
+	}
+	
+	protected function addGetAncestors(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Gets ancestors for the given node, starting with the root node
+ * Use it for breadcrumb paths for instance
+ *
+ * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      PropelPDO \$con Connection to use.
+ * @return     array 		List of $objectClassname objects
+ */
+public function getAncestors(Criteria \$criteria = null, PropelPDO \$con = null)
+{
+	if(\$this->isRoot()) {
+		// save one query
+		return array();
+	}
+	if (\$criteria === null) {
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+	}
+	if (\$con === null) {
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
+	}
+	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
+	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+	}
+	$script .= "		
+	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
+
+	return $peerClassname::doSelect(\$criteria, \$con);
+}
+";
+	}
+	
 	protected function addInsertAsFirstChildOf(&$script)
 	{
 		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();

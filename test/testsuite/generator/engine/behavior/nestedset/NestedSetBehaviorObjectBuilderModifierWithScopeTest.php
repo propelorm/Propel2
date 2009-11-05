@@ -38,6 +38,33 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		return Table10Peer::doSelectOne($c);
 	}
 	
+	public function testIsDescendantOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$this->assertFalse($t8->isDescendantOf($t9), 'root is not seen as a child of root');
+		$this->assertTrue($t9->isDescendantOf($t8), 'direct child is seen as a child of root');
+		try {
+			$t2->isDescendantOf($t8);
+			$this->fail('isDescendantOf() throws an exception when comparing two nodes of different trees');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'isDescendantOf() throws an exception when comparing two nodes of different trees');
+		}
+	}
+	
 	public function testGetParent()
 	{
 		$this->initTreeWithScope();
@@ -101,8 +128,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals($t6->getNextSibling($this->con), $t7, 'getNextSibling() correctly retrieves next sibling');
 		$this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
 	}
-
-	public function testIsDescendantOf()
+	
+	public function testGetDescendants()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
 		/* Tree used for tests
@@ -119,14 +146,40 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		 | \
 		 t9 t10
 		*/
-		$this->assertFalse($t8->isDescendantOf($t9), 'root is not seen as a child of root');
-		$this->assertTrue($t9->isDescendantOf($t8), 'direct child is seen as a child of root');
-		try {
-			$t2->isDescendantOf($t8);
-			$this->fail('isDescendantOf() throws an exception when comparing two nodes of different trees');
-		} catch (PropelException $e) {
-			$this->assertTrue(true, 'isDescendantOf() throws an exception when comparing two nodes of different trees');
-		}
+		$descendants = $t3->getDescendants();
+		$expected = array(
+			't4' => array(5, 6), 
+			't5' => array(7, 12), 
+			't6' => array(8, 9), 
+			't7' => array(10, 11),
+		);
+		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns descendants from the current scope only');
+	}
+	
+	public function testGetAncestors()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$this->assertEquals(array(), $t1->getAncestors(), 'getAncestors() returns an empty array for roots');
+		$ancestors = $t5->getAncestors();
+		$expected = array(
+			't1' => array(1, 14),
+			't3' => array(4, 13),
+		);
+		$this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns ancestors from the current scope only');
 	}
 	
 	public function testInsertAsFirstChildOf()

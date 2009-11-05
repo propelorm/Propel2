@@ -78,6 +78,60 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($t->getLeftValue(), 1, 'createRoot() is an alias for makeRoot()');
 		$this->assertEquals($t->getRightValue(), 2, 'createRoot() is an alias for makeRoot()');
 	}
+
+	public function testIsRoot()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertTrue($t1->isRoot(), 'root is seen as root');
+		$this->assertFalse($t2->isRoot(), 'leaf is not seen as root');
+		$this->assertFalse($t3->isRoot(), 'node is not seen as root');
+	}
+	
+	public function testIsLeaf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertFalse($t1->isLeaf(), 'root is not seen as leaf');
+		$this->assertTrue($t2->isLeaf(), 'leaf is seen as leaf');
+		$this->assertFalse($t3->isLeaf(), 'node is not seen as leaf');
+	}
+
+	public function testIsDescendantOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertFalse($t1->isDescendantOf($t1), 'root is not seen as a child of root');
+		$this->assertTrue($t2->isDescendantOf($t1), 'direct child is seen as a child of root');
+		$this->assertFalse($t1->isDescendantOf($t2), 'root is not seen as a child of leaf');
+		$this->assertTrue($t5->isDescendantOf($t1), 'grandchild is seen as a child of root');
+		$this->assertTrue($t5->isDescendantOf($t3), 'direct child is seen as a child of node');
+		$this->assertFalse($t3->isDescendantOf($t5), 'node is not seen as a child of its parent');
+	}
 	
 	public function testSetParent()
 	{
@@ -229,7 +283,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($count, $this->con->getQueryCount(), 'getNextSibling() uses an internal cache to avoid repeating queries');
 	}
 	
-	public function testIsRoot()
+	public function testHasChildren()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
@@ -241,12 +295,12 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertTrue($t1->isRoot(), 'root is seen as root');
-		$this->assertFalse($t2->isRoot(), 'leaf is not seen as root');
-		$this->assertFalse($t3->isRoot(), 'node is not seen as root');
+		$this->assertTrue($t1->hasChildren(), 'root has children');
+		$this->assertFalse($t2->hasChildren(), 'leaf has no children');
+		$this->assertTrue($t3->hasChildren(), 'node has children');
 	}
 	
-	public function testIsLeaf()
+	public function testGetDescendants()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
@@ -258,12 +312,25 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertFalse($t1->isLeaf(), 'root is not seen as leaf');
-		$this->assertTrue($t2->isLeaf(), 'leaf is seen as leaf');
-		$this->assertFalse($t3->isLeaf(), 'node is not seen as leaf');
+		$this->assertEquals(array(), $t2->getDescendants(), 'getDescendants() returns an empty array for leafs');
+		$descendants = $t3->getDescendants();
+		$expected = array(
+			't4' => array(5, 6), 
+			't5' => array(7, 12), 
+			't6' => array(8, 9), 
+			't7' => array(10, 11),
+		);
+		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
+		$c = new Criteria();
+		$c->add(Table9Peer::TITLE, 't5');
+		$descendants = $t3->getDescendants($c);
+		$expected = array(
+			't5' => array(7, 12), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() accepts a criteria as parameter');
 	}
 	
-	public function testIsDescendantOf()
+	public function testGetAncestors()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
@@ -275,12 +342,20 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertFalse($t1->isDescendantOf($t1), 'root is not seen as a child of root');
-		$this->assertTrue($t2->isDescendantOf($t1), 'direct child is seen as a child of root');
-		$this->assertFalse($t1->isDescendantOf($t2), 'root is not seen as a child of leaf');
-		$this->assertTrue($t5->isDescendantOf($t1), 'grandchild is seen as a child of root');
-		$this->assertTrue($t5->isDescendantOf($t3), 'direct child is seen as a child of node');
-		$this->assertFalse($t3->isDescendantOf($t5), 'node is not seen as a child of its parent');
+		$this->assertEquals(array(), $t1->getAncestors(), 'getAncestors() returns an empty array for roots');
+		$ancestors = $t5->getAncestors();
+		$expected = array(
+			't1' => array(1, 14),
+			't3' => array(4, 13),
+		);
+		$this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
+		$c = new Criteria();
+		$c->add(Table9Peer::TITLE, 't3');
+		$ancestors = $t5->getAncestors($c);
+		$expected = array(
+			't3' => array(4, 13),
+		);
+		$this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() accepts a criteria as parameter');
 	}
 
 	public function testInsertAsFirstChildOf()

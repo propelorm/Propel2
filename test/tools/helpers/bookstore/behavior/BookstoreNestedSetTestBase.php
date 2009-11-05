@@ -4,6 +4,15 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
 
 class BookstoreNestedSetTestBase extends BookstoreTestBase
 {
+	public function dumpNodes($nodes)
+	{
+		$tree = array();
+		foreach ($nodes as $node) {
+			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
+		}
+		return $tree;
+	}
+	
 	/**
 	 * Tree used for tests
 	 * t1
@@ -43,12 +52,7 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		Table9Peer::clearInstancePool();
 		$c = new Criteria();
 		$c->addAscendingOrderBycolumn(Table9Peer::TITLE);
-		$nodes = Table9Peer::doSelect($c);
-		$tree = array();
-		foreach ($nodes as $node) {
-			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
-		}
-		return $tree;
+		return $this->dumpNodes(Table9Peer::doSelect($c));
 	}
 	
 	/**
@@ -100,12 +104,7 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		$c = new Criteria();
 		$c->add(Table10Peer::SCOPE_COL, $scope);
 		$c->addAscendingOrderBycolumn(Table10Peer::TITLE);
-		$nodes = Table10Peer::doSelect($c);
-		$tree = array();
-		foreach ($nodes as $node) {
-			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
-		}
-		return $tree;
+		return $this->dumpNodes(Table10Peer::doSelect($c));
 	}
 }
 
