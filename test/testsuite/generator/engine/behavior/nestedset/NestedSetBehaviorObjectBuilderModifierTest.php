@@ -228,6 +228,60 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$t6->getNextSibling($this->con);
 		$this->assertEquals($count, $this->con->getQueryCount(), 'getNextSibling() uses an internal cache to avoid repeating queries');
 	}
+	
+	public function testIsRoot()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertTrue($t1->isRoot(), 'root is seen as root');
+		$this->assertFalse($t2->isRoot(), 'leaf is not seen as root');
+		$this->assertFalse($t3->isRoot(), 'node is not seen as root');
+	}
+	
+	public function testIsLeaf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertFalse($t1->isLeaf(), 'root is not seen as leaf');
+		$this->assertTrue($t2->isLeaf(), 'leaf is seen as leaf');
+		$this->assertFalse($t3->isLeaf(), 'node is not seen as leaf');
+	}
+	
+	public function testIsDescendantOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertFalse($t1->isDescendantOf($t1), 'root is not seen as a child of root');
+		$this->assertTrue($t2->isDescendantOf($t1), 'direct child is seen as a child of root');
+		$this->assertFalse($t1->isDescendantOf($t2), 'root is not seen as a child of leaf');
+		$this->assertTrue($t5->isDescendantOf($t1), 'grandchild is seen as a child of root');
+		$this->assertTrue($t5->isDescendantOf($t3), 'direct child is seen as a child of node');
+		$this->assertFalse($t3->isDescendantOf($t5), 'node is not seen as a child of its parent');
+	}
 
 	public function testInsertAsFirstChildOf()
 	{
@@ -393,5 +447,155 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsNextSiblingOf() throws an exception when called on a saved object');
 		}
+	}
+	
+	public function testMoveToFirstChildOf()
+	{
+		$this->assertTrue(method_exists('Table9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		try {
+			$t3->moveToFirstChildOf($t5);
+			$this->fail('moveToFirstChildOf() throws an exception when the target is a child node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToFirstChildOf() throws an exception when the target is a child node');
+		}
+		$t = $t3->moveToFirstChildOf($t2);
+		$this->assertEquals($t3, $t, 'moveToFirstChildOf() returns the object it was called on');
+		$expected = array(
+			't1' => array(1, 14),
+			't2' => array(2, 13),
+			't3' => array(3, 12),
+			't4' => array(4, 5),
+			't5' => array(6, 11),
+			't6' => array(7, 8),
+			't7' => array(9, 10),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'moveToFirstChildOf() moves the entire subtree correctly');
+		$this->assertEquals($t2, $t3->parentNode, 'moveToFirstChildOf() sets the parent correctly');
+	}
+
+	public function testMoveToLastChildOf()
+	{
+		$this->assertTrue(method_exists('Table9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		try {
+			$t3->moveToLastChildOf($t5);
+			$this->fail('moveToLastChildOf() throws an exception when the target is a child node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToLastChildOf() throws an exception when the target is a child node');
+		}
+		$t = $t5->moveToLastChildOf($t1);
+		$this->assertEquals($t5, $t, 'moveToLastChildOf() returns the object it was called on');
+		$expected = array(
+			't1' => array(1, 14),
+			't2' => array(2, 3),
+			't3' => array(4, 7),
+			't4' => array(5, 6),
+			't5' => array(8, 13),
+			't6' => array(9, 10),
+			't7' => array(11, 12),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'moveToLastChildOf() moves the entire subtree correctly');
+		$this->assertEquals($t1, $t5->parentNode, 'moveToFirstChildOf() sets the parent correctly');
+	}
+
+	public function testMoveToPrevSiblingOf()
+	{
+		$this->assertTrue(method_exists('Table9', 'moveToPrevSiblingOf'), 'nested_set adds a moveToPrevSiblingOf() method');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		try {
+			$t5->moveToPrevSiblingOf($t1);
+			$this->fail('moveToPrevSiblingOf() throws an exception when the target is a root node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToPrevSiblingOf() throws an exception when the target is a root node');
+		}
+		try {
+			$t5->moveToPrevSiblingOf($t6);
+			$this->fail('moveToPrevSiblingOf() throws an exception when the target is a child node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToPrevSiblingOf() throws an exception when the target is a child node');
+		}
+		$t = $t5->moveToPrevSiblingOf($t3);
+		$this->assertEquals($t5, $t, 'moveToPrevSiblingOf() returns the object it was called on');
+		$expected = array(
+			't1' => array(1, 14),
+			't2' => array(2, 3),
+			't3' => array(10, 13),
+			't4' => array(11, 12),
+			't5' => array(4, 9),
+			't6' => array(5, 6),
+			't7' => array(7, 8),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'moveToPrevSiblingOf() moves the entire subtree correctly');
+		$this->assertEquals($t3, $t5->nextSibling, 'moveToPrevSiblingOf() sets the next sibling correctly');
+		$this->assertEquals($t5, $t3->prevSibling, 'moveToPrevSiblingOf() sets the prev sibling correctly');
+	}
+	
+	public function testMoveToNextSiblingOf()
+	{
+		$this->assertTrue(method_exists('Table9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		try {
+			$t5->moveToNextSiblingOf($t1);
+			$this->fail('moveToNextSiblingOf() throws an exception when the target is a root node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToNextSiblingOf() throws an exception when the target is a root node');
+		}
+		try {
+			$t5->moveToNextSiblingOf($t6);
+			$this->fail('moveToNextSiblingOf() throws an exception when the target is a child node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToNextSiblingOf() throws an exception when the target is a child node');
+		}
+		$t = $t5->moveToNextSiblingOf($t3);
+		$this->assertEquals($t5, $t, 'moveToPrevSiblingOf() returns the object it was called on');
+		$expected = array(
+			't1' => array(1, 14),
+			't2' => array(2, 3),
+			't3' => array(4, 7),
+			't4' => array(5, 6),
+			't5' => array(8, 13),
+			't6' => array(9, 10),
+			't7' => array(11, 12),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'moveToNextSiblingOf() moves the entire subtree correctly');
+		$this->assertEquals($t3, $t5->prevSibling, 'moveToNextSiblingOf() sets the prev sibling correctly');
+		$this->assertEquals($t5, $t3->nextSibling, 'moveToNextSiblingOf() sets the next sibling correctly');
 	}
 }

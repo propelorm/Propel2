@@ -164,53 +164,55 @@ public static function isValid($objectClassname \$node = null)
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
- * Adds '\$delta' to all L and R values that are >= '\$first'. '\$delta' can also be negative.
+ * Adds \$delta to all L and R values that are >= \$first and <= \$last.
+ * '\$delta' can also be negative.
  *
- * @param      int \$first		First node to be shifted
  * @param      int \$delta		Value to be shifted by, can be negative
- * @param      PropelPDO \$con		Connection to use.";
+ * @param      int \$first		First node to be shifted
+ * @param      int \$last			Last node to be shifted (optional)";
 		if($useScope) {
 			$script .= "
  * @param      int \$scope		Scope to use for the shift";
 		}
 		$script .= "
+ * @param      PropelPDO \$con		Connection to use.
  */
-public static function shiftRLValues(\$first, \$delta, PropelPDO \$con = null" . ($useScope ? ", \$scope = null" : ""). ")
+public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 	}
 
 	// Shift left column values
-	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);";
+	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+	if (null !== \$last) {
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::LEFT_COL, \$last, Criteria::LESS_EQUAL));
+	}";
 		if ($useScope) {
 			$script .= "
-	\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
-	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));
-	\$whereCriteria->add(\$criterion);";
-		} else {
-			$script .= "
-	\$whereCriteria->add(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);";	
+	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));";
 		}
 		$script .= "
-
+	\$whereCriteria->add(\$criterion);
+	
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add(self::LEFT_COL, array('raw' => self::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 	{$this->builder->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 	// Shift right column values
-	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);";
+	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+	if (null !== \$last) {
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
+	}";
 		if ($useScope) {
 			$script .= "
-	\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
-	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));
-	\$whereCriteria->add(\$criterion);";
-		} else {
-			$script .= "
-	\$whereCriteria->add(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);";	
+	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));";
 		}
 		$script .= "
+  \$whereCriteria->add(\$criterion);
 
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add(self::RIGHT_COL, array('raw' => self::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
@@ -322,7 +324,7 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
 {	
 	// Update database nodes
-	$peerClassname::shiftRLValues(\$left, 2, \$con" . ($useScope ? ", \$scope" : "") . ");
+	$peerClassname::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
 
 	// Update all loaded nodes
 	$peerClassname::updateLoadedNodes(\$con);

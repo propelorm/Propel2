@@ -122,11 +122,10 @@ protected \$nestedSetQueries = array();
 	
 	public function preSave($builder)
 	{
-		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
 		return "
 foreach (\$this->nestedSetQueries as \$query) {
 	\$query['arguments'][]= \$con;
-	call_user_func_array(array('$peerClassname', \$query['method']), \$query['arguments']);
+	call_user_func_array(\$query['callable'], \$query['arguments']);
 }
 \$this->nestedSetQueries = array();
 ";
@@ -165,10 +164,20 @@ foreach (\$this->nestedSetQueries as \$query) {
 		$this->addHasNextSibling($script);
 		$this->addGetNextSibling($script);
 		
+		$this->addIsRoot($script);
+		$this->addIsLeaf($script);
+		$this->addIsDescendantOf($script);
+		
 		$this->addInsertAsFirstChildOf($script);
 		$this->addInsertAsLastChildOf($script);
 		$this->addInsertAsPrevSiblingOf($script);
 		$this->addInsertAsNextSiblingOf($script);
+		
+		$this->addMoveToFirstChildOf($script);
+		$this->addMoveToLastChildOf($script);
+		$this->addMoveToPrevSiblingOf($script);
+		$this->addMoveToNextSiblingOf($script);
+		$this->addMoveSubtreeTo($script);
 		
 		$this->addCompatibilityProxies($script);
 		
@@ -518,6 +527,60 @@ public function getNextSibling(PropelPDO \$con = null)
 }
 ";
 	}
+	
+	protected function addIsRoot(&$script)
+	{
+		$script .= "
+/**
+ * Tests if node is a root
+ *
+ * @return     bool
+ */
+public function isRoot()
+{
+	return (\$this->getLeftValue() == 1);
+}
+";
+	}
+	
+	protected function addIsLeaf(&$script)
+	{
+		$script .= "
+/**
+ * Tests if node is a leaf
+ *
+ * @return     bool
+ */
+public function isLeaf()
+{
+	return ((\$this->getRightValue() - \$this->getLeftValue()) == 1);
+}
+";
+	}
+	
+	protected function addIsDescendantOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$script .= "
+/**
+ * Tests if node is a descendant of another node
+ *
+ * @param      $objectClassname \$node Propel node object
+ * @return     bool
+ */
+public function isDescendantOf($objectClassname \$parent)
+{";
+		if ($this->behavior->useScope()) {
+			$script .= "
+	if (\$this->getScopeValue() !== \$parent->getScopeValue()) {
+		throw new PropelException('Comparing two nodes of different trees');
+	}";
+		}
+		$script .= "
+	return \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
+}
+";
+	}
 
 	protected function addInsertAsFirstChildOf(&$script)
 	{
@@ -553,7 +616,7 @@ public function insertAsFirstChildOf($objectClassname \$parent)
 	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'makeRoomForLeaf',
+		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -595,7 +658,7 @@ public function insertAsLastChildOf($objectClassname \$parent)
 	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'makeRoomForLeaf',
+		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -638,7 +701,7 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling)
 	\$sibling->setPrevSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'makeRoomForLeaf',
+		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
@@ -681,10 +744,226 @@ public function insertAsNextSiblingOf($objectClassname \$sibling)
 	\$sibling->setNextSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
-		'method'    => 'makeRoomForLeaf',
+		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
 		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
 	);
 	return \$this;
+}
+";
+	}
+
+	protected function addMoveToFirstChildOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Moves current node and its subtree to be the first child of \$parent
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      $objectClassname \$parent	Propel object for parent node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = null)
+{
+	if (\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsFirstChildOf() instead.');
+	}";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	if (\$parent->getScopeValue() != \$this->getScopeValue()) {
+		throw new PropelException('Moving nodes across trees is not supported');
+	}";
+	}
+	$script .= "
+	if (\$parent->isDescendantOf(\$this)) {
+		throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
+	}
+	
+	\$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$con);
+	\$this->setParent(\$parent);
+	
+	return \$this;
+}
+";
+	}
+
+	protected function addMoveToLastChildOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Moves current node and its subtree to be the last child of \$parent
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      $objectClassname \$parent	Propel object for parent node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = null)
+{
+	if (\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsLastChildOf() instead.');
+	}";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	if (\$parent->getScopeValue() != \$this->getScopeValue()) {
+		throw new PropelException('Moving nodes across trees is not supported');
+	}";
+	}
+	$script .= "
+	if (\$parent->isDescendantOf(\$this)) {
+		throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
+	}
+	
+	\$this->moveSubtreeTo(\$parent->getRightValue(), \$con);
+	\$this->setParent(\$parent);
+	
+	return \$this;
+}
+";
+	}
+
+	protected function addMoveToPrevSiblingOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Moves current node and its subtree to be the previous sibling of \$sibling
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      $objectClassname \$sibling	Propel object for sibling node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+{
+	if (\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsPrevSiblingOf() instead.');
+	}
+	if (\$sibling->isRoot()) {
+		throw new PropelException('Cannot move to previous sibling of a root node.');
+	}";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
+		throw new PropelException('Moving nodes across trees is not supported');
+	}";
+	}
+	$script .= "
+	if (\$sibling->isDescendantOf(\$this)) {
+		throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
+	}
+	
+	\$this->moveSubtreeTo(\$sibling->getLeftValue(), \$con);
+	\$this->setNextSibling(\$sibling);
+	\$sibling->setPrevSibling(\$this);
+	
+	return \$this;
+}
+";
+	}
+
+	protected function addMoveToNextSiblingOf(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$script .= "
+/**
+ * Moves current node and its subtree to be the next sibling of \$sibling
+ * The modifications in the current object and the tree are immediate
+ *
+ * @param      $objectClassname \$sibling	Propel object for sibling node
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     $objectClassname The current Propel object
+ */
+public function moveToNextSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+{
+	if (\$this->isNew()) {
+		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsNextSiblingOf() instead.');
+	}
+	if (\$sibling->isRoot()) {
+		throw new PropelException('Cannot move to next sibling of a root node.');
+	}";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	if (\$sibling->getScopeValue() != \$this->getScopeValue()) {
+		throw new PropelException('Moving nodes across trees is not supported');
+	}";
+	}
+	$script .= "
+	if (\$sibling->isDescendantOf(\$this)) {
+		throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
+	}
+	
+	\$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$con);
+	\$this->setPrevSibling(\$sibling);
+	\$sibling->setNextSibling(\$this);
+	
+	return \$this;
+}
+";
+	}
+	
+	protected function addMoveSubtreeTo(&$script)
+	{
+		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Move current node and its children to location \$destLeft and updates rest of tree
+ *
+ * @param      int	\$destLeft Destination left value
+ * @param      PropelPDO \$con		Connection to use.
+ */
+protected function moveSubtreeTo(\$destLeft, PropelPDO \$con = null)
+{
+	\$left  = \$this->getLeftValue();
+	\$right = \$this->getRightValue();";
+		if ($useScope) {
+			$script .= "
+	\$scope = \$this->getScopeValue();";
+		}
+		$script .= "
+
+	\$treeSize = \$right - \$left +1;
+	
+	if (\$con === null) {
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+		
+	\$con->beginTransaction();
+	try {
+		// make room next to the target for the subtree
+		$peerClassname::shiftRLValues(\$treeSize, \$destLeft, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+	
+		if (\$left >= \$destLeft) { // src was shifted too?
+			\$left += \$treeSize;
+			\$right += \$treeSize;
+		}
+	
+		// move the subtree to the target
+		$peerClassname::shiftRLValues(\$destLeft - \$left, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+	
+		// remove the empty room at the previous location of the subtree
+		$peerClassname::shiftRLValues(-\$treeSize, \$right + 1, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+		
+		// update all loaded nodes
+		$peerClassname::updateLoadedNodes(\$con);
+		
+		\$con->commit();
+	} catch (PropelException \$e) {
+		\$con->rollback();
+		throw \$e;
+	}
 }
 ";
 	}

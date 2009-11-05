@@ -60,7 +60,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 	{
 		$this->assertTrue(method_exists('Table10Peer', 'shiftRLValues'), 'nested_set adds a shiftRLValues() method');
 		$this->initTreeWithScope();
-		PublicTable10Peer::shiftRLValues(100, 1, null, 1);
+		PublicTable10Peer::shiftRLValues(1, 100, null, 1);
 		$expected = array(
 			't1' => array(1, 14),
 			't2' => array(2, 3),
@@ -96,7 +96,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 		);
 		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
 		$this->initTreeWithScope();
-		PublicTable10Peer::shiftRLValues(1, -1, null, 1);
+		PublicTable10Peer::shiftRLValues(-1, 1, null, 1);
 		$expected = array(
 			't1' => array(0, 13),
 			't2' => array(1, 2),
@@ -114,7 +114,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 		);
 		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'shiftRLValues does not shift anything out of the scope');
 		$this->initTreeWithScope();
-		PublicTable10Peer::shiftRLValues(5, 1, null, 1);
+		PublicTable10Peer::shiftRLValues(1, 5, null, 1);
 		$expected = array(
 			't1' => array(1, 15),
 			't2' => array(2, 3),
@@ -174,8 +174,8 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 // we need this class to test protected methods
 class PublicTable10Peer extends Table10Peer
 {
-	public static function shiftRLValues($first, $delta, PropelPDO $con = null, $scope = null)
+	public static function shiftRLValues($delta, $first, $last = null, $scope = null, PropelPDO $con = null)
 	{
-		return parent::shiftRLValues($first, $delta, $con, $scope);
+		return parent::shiftRLValues($delta, $first, $last, $scope, $con);
 	}
 }

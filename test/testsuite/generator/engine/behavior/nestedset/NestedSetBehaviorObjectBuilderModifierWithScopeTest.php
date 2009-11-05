@@ -102,6 +102,33 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
 	}
 
+	public function testIsDescendantOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$this->assertFalse($t8->isDescendantOf($t9), 'root is not seen as a child of root');
+		$this->assertTrue($t9->isDescendantOf($t8), 'direct child is seen as a child of root');
+		try {
+			$t2->isDescendantOf($t8);
+			$this->fail('isDescendantOf() throws an exception when comparing two nodes of different trees');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'isDescendantOf() throws an exception when comparing two nodes of different trees');
+		}
+	}
+	
 	public function testInsertAsFirstChildOf()
 	{
 		$this->assertTrue(method_exists('Table10', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
@@ -268,5 +295,153 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't10' => array(4, 5),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
+	}
+	
+	public function testMoveToFirstChildOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		try {
+			$t8->moveToFirstChildOf($t3);
+			$this->fail('moveToFirstChildOf() throws an exception when the target is in a different tree');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToFirstChildOf() throws an exception when the target is in a different tree');
+		}
+		try {
+			$t5->moveToLastChildOf($t2);
+			$this->assertTrue(true, 'moveToFirstChildOf() does not throw an exception when the target is in the same tree');
+		} catch (PropelException $e) {
+			$this->fail('moveToFirstChildOf() does not throw an exception when the target is in the same tree');
+		}
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToFirstChildOf() does not shift anything out of the scope');
+	}
+	
+	public function testMoveToLastChildOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		try {
+			$t8->moveToLastChildOf($t3);
+			$this->fail('moveToLastChildOf() throws an exception when the target is in a different tree');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToLastChildOf() throws an exception when the target is in a different tree');
+		}
+		try {
+			$t5->moveToLastChildOf($t2);
+			$this->assertTrue(true, 'moveToLastChildOf() does not throw an exception when the target is in the same tree');
+		} catch (PropelException $e) {
+			$this->fail('moveToLastChildOf() does not throw an exception when the target is in the same tree');
+		}
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToLastChildOf() does not shift anything out of the scope');
+	}
+
+	public function testMoveToPrevSiblingOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		try {
+			$t8->moveToPrevSiblingOf($t3);
+			$this->fail('moveToPrevSiblingOf() throws an exception when the target is in a different tree');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToPrevSiblingOf() throws an exception when the target is in a different tree');
+		}
+		try {
+			$t5->moveToPrevSiblingOf($t2);
+			$this->assertTrue(true, 'moveToPrevSiblingOf() does not throw an exception when the target is in the same tree');
+		} catch (PropelException $e) {
+			$this->fail('moveToPrevSiblingOf() does not throw an exception when the target is in the same tree');
+		}
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToPrevSiblingOf() does not shift anything out of the scope');
+	}
+
+	public function testMoveToNextSiblingOf()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		try {
+			$t8->moveToNextSiblingOf($t3);
+			$this->fail('moveToNextSiblingOf() throws an exception when the target is in a different tree');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'moveToNextSiblingOf() throws an exception when the target is in a different tree');
+		}
+		try {
+			$t5->moveToNextSiblingOf($t2);
+			$this->assertTrue(true, 'moveToNextSiblingOf() does not throw an exception when the target is in the same tree');
+		} catch (PropelException $e) {
+			$this->fail('moveToNextSiblingOf() does not throw an exception when the target is in the same tree');
+		}
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToNextSiblingOf() does not shift anything out of the scope');
 	}
 }
