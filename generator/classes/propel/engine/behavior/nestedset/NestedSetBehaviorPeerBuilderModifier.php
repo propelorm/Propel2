@@ -30,7 +30,7 @@
  */
 class NestedSetBehaviorPeerBuilderModifier
 {
-	protected $behavior, $table;
+	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
 	
 	public function __construct($behavior)
 	{
@@ -63,6 +63,13 @@ class NestedSetBehaviorPeerBuilderModifier
 		return $this->getColumn($name)->getPhpName();
 	}
 	
+	protected function setBuilder($builder)
+	{
+		$this->builder = $builder;
+		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
+		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
+	}
+	
 	public function staticAttributes($builder)
 	{
 		$tableName = $this->table->getName();
@@ -93,11 +100,12 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 	
 	public function staticMethods($builder)
 	{
-		$this->builder = $builder;
+		$this->setBuilder($builder);
 		$script = '';
 		
 		$this->addRetrieveRoot($script);
 		$this->addIsValid($script);
+		$this->addDeleteTree($script);
 		$this->addShiftRLValues($script);
 		$this->addUpdateLoadedNodes($script);
 		$this->addMakeRoomForLeaf($script);
@@ -107,8 +115,7 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 
 	protected function addRetrieveRoot(&$script)
 	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
-		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$peerClassname = $this->peerClassname;
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -120,7 +127,7 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
  		}
  		$script .= "
  * @param      PropelPDO \$con	Connection to use.
- * @return     $objectClassname			Propel object for root node
+ * @return     {$this->objectClassname}			Propel object for root node
  */
 public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
 {
@@ -139,7 +146,7 @@ public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 	
 	protected function addIsValid(&$script)
 	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
+		$objectClassname = $this->objectClassname;
 		$script .= "
 /**
  * Tests if node is valid
@@ -157,10 +164,43 @@ public static function isValid($objectClassname \$node = null)
 }
 ";
 	}
+	
+	protected function addDeleteTree(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Delete an entire tree
+ * ";
+ 		if($useScope) {
+ 			$script .= "
+ * @param      int \$scope		Scope to determine which tree to delete";
+ 		}
+ 		$script .= "
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return     int  The number of deleted nodes
+ */
+public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
+{";
+		if($useScope) {
+			$script .= "
+	\$c = new Criteria($peerClassname::DATABASE_NAME);
+	\$c->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);
+	return $peerClassname::doDelete(\$c, \$con);";
+		} else {
+			$script .= "
+	return $peerClassname::doDeleteAll(\$con);";
+		}
+		$script .= "
+}
+";
+	}
 
 	protected function addShiftRLValues(&$script)
 	{
-		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$peerClassname = $this->peerClassname;
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -224,9 +264,7 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 
 	protected function addUpdateLoadedNodes(&$script)
 	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
-		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
-
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Reload all already loaded nodes to sync them with updated db
@@ -306,8 +344,7 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 
 	protected function addMakeRoomForLeaf(&$script)
 	{
-		$objectClassname = $this->builder->getStubObjectBuilder()->getClassname();
-		$peerClassname = $this->builder->getStubPeerBuilder()->getClassname();
+		$peerClassname = $this->peerClassname;
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**

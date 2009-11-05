@@ -71,6 +71,13 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 		$this->assertTrue(Table9Peer::isValid($t4), 'isValid() returns true when passed a node object with left < right');
 	}
 	
+	public function testDeleteTree()
+	{
+		$this->initTree();
+		Table9Peer::deleteTree();
+		$this->assertEquals(array(), Table9Peer::doSelect(new Criteria()), 'deleteTree() deletes the whole tree');
+	}
+	
 	public function testShiftRLValuesDelta()
 	{
 		$this->initTree();

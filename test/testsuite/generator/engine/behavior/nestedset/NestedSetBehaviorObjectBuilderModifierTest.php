@@ -59,6 +59,60 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		}
 	}
 	
+	public function testPreInsert()
+	{
+		Table9Peer::doDeleteAll();
+		$t1 = new Table9();
+		$t1->save();
+		$this->assertTrue($t1->isRoot(), 'saving an empty node in an empty tree makes the node the root');
+		$t2 = new Table9();
+		$t2->save();
+		$this->assertTrue($t2->isDescendantOf($t1), 'saving an empty node in a tree makes the node a child of the root');
+	}
+	
+	public function testPreUpdate()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		$t3->setLeftValue(null);
+		try {
+			$t3->save();
+			$this->fail('Trying to save a node incorrectly updated throws an exception');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'Trying to save a node incorrectly updated throws an exception');
+		}
+	}
+	
+	public function testDelete()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$t5->delete();
+		$this->assertEquals(13, $t3->getRightValue(), 'delete() does not update existing nodes (because delete() clears the instance cache)');
+		$expected = array(
+			't1' => array(1, 8),
+			't2' => array(2, 3),
+			't3' => array(4, 7),
+			't4' => array(5, 6),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'delete() deletes all descendants and shifts the entire subtree correctly');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		try {
+			$t1->delete();
+			$this->fail('delete() throws an exception when called on a root node');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'delete() throws an exception when called on a root node');
+		}
+		$this->assertNotEquals(array(), Table9Peer::doSelect(new Criteria()), 'delete() called on the root node does not delete the whole tree');
+	}
+	
 	public function testMakeRoot()
 	{
 		$t = new Table9();
@@ -672,5 +726,44 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToNextSiblingOf() moves the entire subtree correctly');
 		$this->assertEquals($t3, $t5->prevSibling, 'moveToNextSiblingOf() sets the prev sibling correctly');
 		$this->assertEquals($t5, $t3->nextSibling, 'moveToNextSiblingOf() sets the next sibling correctly');
+	}
+	
+	public function testDeleteDescendants()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertNull($t2->deleteDescendants(), 'deleteDescendants() returns null leafs');
+		$this->assertEquals(4, $t3->deleteDescendants(), 'deleteDescendants() returns the number of deleted nodes');
+		$this->assertEquals(5, $t3->getRightValue(), 'deleteDescendants() updates the current node');
+		$this->assertEquals(5, $t4->getLeftValue(), 'deleteDescendants() does not update existing nodes (because delete() clears the instance cache)');
+		$expected = array(
+			't1' => array(1, 6),
+			't2' => array(2, 3),
+			't3' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'deleteDescendants() shifts the entire subtree correctly');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$this->assertEquals(6, $t1->deleteDescendants(), 'deleteDescendants() can be called on the root node');
+		$expected = array(
+			't1' => array(1, 2),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'deleteDescendants() can delete all descendants of the root node');
 	}
 }

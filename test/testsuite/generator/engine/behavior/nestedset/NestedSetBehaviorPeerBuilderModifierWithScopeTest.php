@@ -55,6 +55,18 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 		$t2->save();
 		$this->assertEquals(Table10Peer::retrieveRoot(1), $t2, 'retrieveRoot() retrieves the root node in the required scope');
 	}
+	
+	public function testDeleteTree()
+	{
+		$this->initTreeWithScope();
+		Table10Peer::deleteTree(1);
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($this->dumpTreeWithScope(2), $expected, 'deleteTree() does not delete anything out of the scope');
+	}
 
 	public function testShiftRLValues()
 	{

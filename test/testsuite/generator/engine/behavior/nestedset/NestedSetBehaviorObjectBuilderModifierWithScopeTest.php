@@ -37,6 +37,39 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$c->add(Table10Peer::TITLE, $title);
 		return Table10Peer::doSelectOne($c);
 	}
+
+	public function testDelete()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$t5->delete();
+		$expected = array(
+			't1' => array(1, 8),
+			't2' => array(2, 3),
+			't3' => array(4, 7),
+			't4' => array(5, 6),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'delete() deletes all descendants and shifts the entire subtree correctly');
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'delete() does not delete anything out of the scope');
+	}
 	
 	public function testIsDescendantOf()
 	{
@@ -496,5 +529,37 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't10' => array(4, 5),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToNextSiblingOf() does not shift anything out of the scope');
+	}
+
+	public function testDeleteDescendants()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$this->assertEquals(4, $t3->deleteDescendants(), 'deleteDescendants() returns the number of deleted nodes');
+		$expected = array(
+			't1' => array(1, 6),
+			't2' => array(2, 3),
+			't3' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'deleteDescendants() shifts the entire subtree correctly');
+		$expected = array(
+			't8' => array(1, 6),
+			't9' => array(2, 3),
+			't10' => array(4, 5),
+		);
+		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteDescendants() does not delete anything out of the scope');
 	}
 }
