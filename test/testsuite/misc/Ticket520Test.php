@@ -9,9 +9,10 @@ possible. I am really sorry. :-( */
 /**
  * @package misc
  */
-class Ticket520Test extends BookstoreTestBase {
-
-	public function testNewObjectsAvailableWhenSaveNotCalled() {
+class Ticket520Test extends BookstoreTestBase
+{
+	public function testNewObjectsAvailableWhenSaveNotCalled()
+	{
 		$a = new Author();
 		$a->setFirstName("Douglas");
 		$a->setLastName("Adams");
@@ -62,17 +63,20 @@ class Ticket520Test extends BookstoreTestBase {
 		}
 	}
 
-	public function testSavedObjectsWithCriteria() {
+	public function testSavedObjectsWithCriteria()
+	{
 		$a = new Author();
 		$a->setFirstName("Douglas");
 		$a->setLastName("Adams");
 
 		$b1 = new Book();
 		$b1->setTitle("The Hitchhikers Guide To The Galaxy");
+		$b1->setISBN('123');
 		$a->addBook($b1);
 
 		$b2 = new Book();
 		$b2->setTitle("The Restaurant At The End Of The Universe");
+		$b2->setISBN('123');
 		$a->addBook($b2);
 
 		$c = new Criteria();

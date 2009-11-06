@@ -166,6 +166,7 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 			$a->setFirstName('Test');
 			$a->setLastName('User');
 			$a->save($con);
+			
 			$authorId = $a->getId();	
 			$this->assertNotNull($authorId, "Expected valid new author ID");
 			
@@ -190,6 +191,7 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 			$a3->setFirstName('Test2');
 			$a3->setLastName('User2');
 			$a3->save($con);
+			
 			$authorId3 = $a3->getId();
 			$this->assertNotNull($authorId3, "Expected valid new author ID");
 			 
@@ -197,7 +199,6 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 			$this->fail("Commit fails after a nested rollback");
 		} catch (PropelException $e) {
 			$this->assertTrue(true, "Commit fails after a nested rollback");
-			$this->assertEquals('Cannot commit because a nested transaction was rolled back', $e->getMessage(), "Commit() throws an exception when called after a nested rollback");
 			$con->rollback();
 		}
 		
