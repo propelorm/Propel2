@@ -84,6 +84,11 @@ const LEFT_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
  * Right column for the set
  */
 const RIGHT_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('right_column') . "';
+
+/**
+ * Level column for the set
+ */
+const LEVEL_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('level_column') . "';
 ";
 	
 		if ($this->behavior->useScope()) {
@@ -104,9 +109,11 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 		$script = '';
 		
 		$this->addRetrieveRoot($script);
+		$this->addRetrieveTree($script);
 		$this->addIsValid($script);
 		$this->addDeleteTree($script);
 		$this->addShiftRLValues($script);
+		$this->addShiftLevel($script);
 		$this->addUpdateLoadedNodes($script);
 		$this->addMakeRoomForLeaf($script);
 		
@@ -132,14 +139,48 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 public static function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
 {
 	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add(self::LEFT_COL, 1, Criteria::EQUAL);";
+	\$c->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);";
 		if($useScope) {
 			$script .= "
-	\$c->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
+	\$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
 
 	return $peerClassname::doSelectOne(\$c, \$con);
+}
+";
+	}
+
+	protected function addRetrieveTree(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Returns the whole tree node for a given scope
+ *";
+ 		if($useScope) {
+ 			$script .= "
+ * @param      int \$scope		Scope to determine which root node to return";
+ 		}
+ 		$script .= "
+ * @param      Criteria \$criteria	Optional Criteria to filter the query
+ * @param      PropelPDO \$con	Connection to use.
+ * @return     {$this->objectClassname}			Propel object for root node
+ */
+public static function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, PropelPDO \$con = null)
+{
+	if (\$criteria === null) {
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+	}
+	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);";
+		if($useScope) {
+			$script .= "
+	\$criteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
+	
+	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
@@ -228,13 +269,13 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 	\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
 	if (null !== \$last) {
 		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::LEFT_COL, \$last, Criteria::LESS_EQUAL));
-	}";
+	}
+	\$whereCriteria->add(\$criterion);";
 		if ($useScope) {
 			$script .= "
-	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));";
+	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	\$whereCriteria->add(\$criterion);
 	
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add(self::LEFT_COL, array('raw' => self::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
@@ -246,13 +287,13 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 	\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
 	if (null !== \$last) {
 		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
-	}";
+	}
+	\$whereCriteria->add(\$criterion);";
 		if ($useScope) {
 			$script .= "
-	\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::SCOPE_COL, \$scope, Criteria::EQUAL));";
+	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-  \$whereCriteria->add(\$criterion);
 
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add(self::RIGHT_COL, array('raw' => self::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
@@ -262,6 +303,48 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 ";
 	}
 
+	protected function addShiftLevel(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Adds \$delta to level for nodes having left value >= \$first and right value <= \$last.
+ * '\$delta' can also be negative.
+ *
+ * @param      int \$delta		Value to be shifted by, can be negative
+ * @param      int \$first		First node to be shifted
+ * @param      int \$last			Last node to be shifted";
+		if($useScope) {
+			$script .= "
+ * @param      int \$scope		Scope to use for the shift";
+		}
+		$script .= "
+ * @param      PropelPDO \$con		Connection to use.
+ */
+public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", PropelPDO \$con = null)
+{
+	if (\$con === null) {
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+
+	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$whereCriteria->add(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+	\$whereCriteria->add(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
+		if ($useScope) {
+			$script .= "
+	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
+	
+	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$valuesCriteria->add(self::LEVEL_COL, array('raw' => self::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+	{$this->builder->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+}
+";
+	}
+	
 	protected function addUpdateLoadedNodes(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -329,6 +412,9 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 			} else if ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
 				$script .= "
 					\$object->setRightValue(\$row[$n]);";
+			} else if ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
+				$script .= "
+					\$object->setLevel(\$row[$n]);";
 			}
 			$n++;
 		}

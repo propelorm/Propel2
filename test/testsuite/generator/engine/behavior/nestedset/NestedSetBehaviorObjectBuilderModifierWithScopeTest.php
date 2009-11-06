@@ -57,16 +57,16 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		*/
 		$t5->delete();
 		$expected = array(
-			't1' => array(1, 8),
-			't2' => array(2, 3),
-			't3' => array(4, 7),
-			't4' => array(5, 6),
+			't1' => array(1, 8, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(4, 7, 1),
+			't4' => array(5, 6, 2),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'delete() deletes all descendants and shifts the entire subtree correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'delete() does not delete anything out of the scope');
 	}
@@ -181,10 +181,10 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		*/
 		$descendants = $t3->getDescendants();
 		$expected = array(
-			't4' => array(5, 6), 
-			't5' => array(7, 12), 
-			't6' => array(8, 9), 
-			't7' => array(10, 11),
+			't4' => array(5, 6, 2), 
+			't5' => array(7, 12, 2), 
+			't6' => array(8, 9, 3), 
+			't7' => array(10, 11, 3),
 		);
 		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns descendants from the current scope only');
 	}
@@ -209,8 +209,8 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals(array(), $t1->getAncestors(), 'getAncestors() returns an empty array for roots');
 		$ancestors = $t5->getAncestors();
 		$expected = array(
-			't1' => array(1, 14),
-			't3' => array(4, 13),
+			't1' => array(1, 14, 0),
+			't3' => array(4, 13, 1),
 		);
 		$this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns ancestors from the current scope only');
 	}
@@ -239,20 +239,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
 		$t11->save();
 		$expected = array(
-			't1' => array(1, 16),
-			't2' => array(2, 3),
-			't3' => array(4, 15),
-			't4' => array(7, 8),
-			't5' => array(9, 14),
-			't6' => array(10, 11),
-			't7' => array(12, 13),
-			't11' => array(5, 6)
+			't1' => array(1, 16, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(4, 15, 1),
+			't4' => array(7, 8, 2),
+			't5' => array(9, 14, 2),
+			't6' => array(10, 11, 3),
+			't7' => array(12, 13, 3),
+			't11' => array(5, 6, 2)
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsFirstChildOf() shifts the other nodes correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsFirstChildOf() does not shift anything out of the scope');
 	}
@@ -281,20 +281,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
 		$t11->save();
 		$expected = array(
-			't1' => array(1, 16),
-			't2' => array(2, 3),
-			't3' => array(4, 15),
-			't4' => array(5, 6),
-			't5' => array(7, 12),
-			't6' => array(8, 9),
-			't7' => array(10, 11),
-			't11' => array(13, 14)
+			't1' => array(1, 16, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(4, 15, 1),
+			't4' => array(5, 6, 2),
+			't5' => array(7, 12, 2),
+			't6' => array(8, 9, 3),
+			't7' => array(10, 11, 3),
+			't11' => array(13, 14, 2)
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsLastChildOf() shifts the other nodes correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsLastChildOf() does not shift anything out of the scope');
 	}
@@ -323,20 +323,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
 		$t11->save();
 		$expected = array(
-			't1' => array(1, 16),
-			't2' => array(2, 3),
-			't3' => array(6, 15),
-			't4' => array(7, 8),
-			't5' => array(9, 14),
-			't6' => array(10, 11),
-			't7' => array(12, 13),
-			't11' => array(4, 5)
+			't1' => array(1, 16, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(6, 15, 1),
+			't4' => array(7, 8, 2),
+			't5' => array(9, 14, 2),
+			't6' => array(10, 11, 3),
+			't7' => array(12, 13, 3),
+			't11' => array(4, 5, 1)
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsPrevSiblingOf() shifts the other nodes correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsPrevSiblingOf() does not shift anything out of the scope');
 	}
@@ -365,20 +365,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');
 		$t11->save();
 		$expected = array(
-			't1' => array(1, 16),
-			't2' => array(2, 3),
-			't3' => array(4, 13),
-			't4' => array(5, 6),
-			't5' => array(7, 12),
-			't6' => array(8, 9),
-			't7' => array(10, 11),
-			't11' => array(14, 15)
+			't1' => array(1, 16, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(4, 13, 1),
+			't4' => array(5, 6, 2),
+			't5' => array(7, 12, 2),
+			't6' => array(8, 9, 3),
+			't7' => array(10, 11, 3),
+			't11' => array(14, 15, 1)
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsNextSiblingOf() shifts the other nodes correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
 	}
@@ -413,9 +413,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			$this->fail('moveToFirstChildOf() does not throw an exception when the target is in the same tree');
 		}
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToFirstChildOf() does not shift anything out of the scope');
 	}
@@ -450,9 +450,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			$this->fail('moveToLastChildOf() does not throw an exception when the target is in the same tree');
 		}
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToLastChildOf() does not shift anything out of the scope');
 	}
@@ -487,9 +487,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			$this->fail('moveToPrevSiblingOf() does not throw an exception when the target is in the same tree');
 		}
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToPrevSiblingOf() does not shift anything out of the scope');
 	}
@@ -524,9 +524,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			$this->fail('moveToNextSiblingOf() does not throw an exception when the target is in the same tree');
 		}
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToNextSiblingOf() does not shift anything out of the scope');
 	}
@@ -550,15 +550,15 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		*/
 		$this->assertEquals(4, $t3->deleteDescendants(), 'deleteDescendants() returns the number of deleted nodes');
 		$expected = array(
-			't1' => array(1, 6),
-			't2' => array(2, 3),
-			't3' => array(4, 5),
+			't1' => array(1, 6, 0),
+			't2' => array(2, 3, 1),
+			't3' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(1), 'deleteDescendants() shifts the entire subtree correctly');
 		$expected = array(
-			't8' => array(1, 6),
-			't9' => array(2, 3),
-			't10' => array(4, 5),
+			't8' => array(1, 6, 0),
+			't9' => array(2, 3, 1),
+			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteDescendants() does not delete anything out of the scope');
 	}

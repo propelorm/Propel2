@@ -8,7 +8,7 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 	{
 		$tree = array();
 		foreach ($nodes as $node) {
-			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue());
+			$tree[$node->getTitle()] = array($node->getLeftValue(), $node->getRightValue(), $node->getLevel());
 		}
 		return $tree;
 	}
@@ -28,19 +28,20 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		Table9Peer::doDeleteAll();
 		$ret = array();
 		$fixtures = array(
-			't1' => array(1, 14),
-			't2' => array(2, 3), 
-			't3' => array(4, 13), 
-			't4' => array(5, 6), 
-			't5' => array(7, 12), 
-			't6' => array(8, 9), 
-			't7' => array(10, 11),
+			't1' => array(1, 14, 0),
+			't2' => array(2, 3, 1), 
+			't3' => array(4, 13, 1), 
+			't4' => array(5, 6, 2), 
+			't5' => array(7, 12, 2), 
+			't6' => array(8, 9, 3), 
+			't7' => array(10, 11, 3),
 		);
 		foreach ($fixtures as $key => $data) {
 			$t = new PublicTable9();
 			$t->setTitle($key);
 			$t->setLeftValue($data[0]);
 			$t->setRightValue($data[1]);
+			$t->setLevel($data[2]);
 			$t->save();
 			$ret []= $t;
 		}
@@ -49,7 +50,6 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 	
 	protected function dumpTree()
 	{
-		Table9Peer::clearInstancePool();
 		$c = new Criteria();
 		$c->addAscendingOrderBycolumn(Table9Peer::TITLE);
 		return $this->dumpNodes(Table9Peer::doSelect($c));
@@ -75,23 +75,24 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 		Table10Peer::doDeleteAll();
 		$ret = array();
 		$fixtures = array(
-			't1' => array(1, 14, 1),
-			't2' => array(2, 3, 1), 
-			't3' => array(4, 13, 1), 
-			't4' => array(5, 6, 1), 
-			't5' => array(7, 12, 1), 
-			't6' => array(8, 9, 1), 
-			't7' => array(10, 11, 1),
-			't8' => array(1, 6, 2),
-			't9' => array(2, 3, 2), 
-			't10' => array(4, 5, 2), 
+			't1' => array(1, 14, 0, 1),
+			't2' => array(2, 3, 1, 1), 
+			't3' => array(4, 13, 1, 1), 
+			't4' => array(5, 6, 2, 1), 
+			't5' => array(7, 12, 2, 1), 
+			't6' => array(8, 9, 3, 1), 
+			't7' => array(10, 11, 3, 1),
+			't8' => array(1, 6, 0, 2),
+			't9' => array(2, 3, 1, 2), 
+			't10' => array(4, 5, 1, 2), 
 		);
 		foreach ($fixtures as $key => $data) {
 			$t = new PublicTable10();
 			$t->setTitle($key);
 			$t->setLeftValue($data[0]);
 			$t->setRightValue($data[1]);
-			$t->setScopeValue($data[2]);
+			$t->setLevel($data[2]);
+			$t->setScopeValue($data[3]);
 			$t->save();
 			$ret []= $t;
 		}
@@ -100,7 +101,6 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 	
 	protected function dumpTreeWithScope($scope)
 	{
-		Table10Peer::clearInstancePool();
 		$c = new Criteria();
 		$c->add(Table10Peer::SCOPE_COL, $scope);
 		$c->addAscendingOrderBycolumn(Table10Peer::TITLE);

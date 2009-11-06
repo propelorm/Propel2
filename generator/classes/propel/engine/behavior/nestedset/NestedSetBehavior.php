@@ -36,6 +36,7 @@ class NestedSetBehavior extends Behavior
     'add_columns'  => 'true',
     'left_column'  => 'tree_left',
     'right_column' => 'tree_right',
+    'level_column' => 'tree_level',
     'use_scope'    => 'false',
     'scope_column' => 'tree_scope'
   );
@@ -55,6 +56,10 @@ class NestedSetBehavior extends Behavior
       ));
       $this->getTable()->addColumn(array(
         'name' => $this->getParameter('right_column'),
+        'type' => 'INTEGER'
+      ));
+      $this->getTable()->addColumn(array(
+        'name' => $this->getParameter('level_column'),
         'type' => 'INTEGER'
       ));
       if ($this->getParameter('use_scope') == 'true') {
