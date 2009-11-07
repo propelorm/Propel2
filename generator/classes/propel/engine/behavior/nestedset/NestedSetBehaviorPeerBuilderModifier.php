@@ -116,6 +116,7 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 		$this->addShiftLevel($script);
 		$this->addUpdateLoadedNodes($script);
 		$this->addMakeRoomForLeaf($script);
+		$this->addFixLevels($script);
 		
 		return $script;
 	}
@@ -228,7 +229,7 @@ public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "P
 		if($useScope) {
 			$script .= "
 	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);
+	\$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);
 	return $peerClassname::doDelete(\$c, \$con);";
 		} else {
 			$script .= "
@@ -266,37 +267,37 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 
 	// Shift left column values
 	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$criterion = \$whereCriteria->getNewCriterion(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+	\$criterion = \$whereCriteria->getNewCriterion($peerClassname::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
 	if (null !== \$last) {
-		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::LEFT_COL, \$last, Criteria::LESS_EQUAL));
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassname::LEFT_COL, \$last, Criteria::LESS_EQUAL));
 	}
 	\$whereCriteria->add(\$criterion);";
 		if ($useScope) {
 			$script .= "
-	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
+	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
 	
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$valuesCriteria->add(self::LEFT_COL, array('raw' => self::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+	\$valuesCriteria->add($peerClassname::LEFT_COL, array('raw' => $peerClassname::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 	{$this->builder->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 
 	// Shift right column values
 	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$criterion = \$whereCriteria->getNewCriterion(self::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
+	\$criterion = \$whereCriteria->getNewCriterion($peerClassname::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
 	if (null !== \$last) {
-		\$criterion->addAnd(\$whereCriteria->getNewCriterion(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassname::RIGHT_COL, \$last, Criteria::LESS_EQUAL));
 	}
 	\$whereCriteria->add(\$criterion);";
 		if ($useScope) {
 			$script .= "
-	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
+	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
 
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$valuesCriteria->add(self::RIGHT_COL, array('raw' => self::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+	\$valuesCriteria->add($peerClassname::RIGHT_COL, array('raw' => $peerClassname::RIGHT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 	{$this->builder->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 }
@@ -329,16 +330,16 @@ public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 	}
 
 	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$whereCriteria->add(self::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
-	\$whereCriteria->add(self::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
+	\$whereCriteria->add($peerClassname::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
+	\$whereCriteria->add($peerClassname::RIGHT_COL, \$last, Criteria::LESS_EQUAL);";
 		if ($useScope) {
 			$script .= "
-	\$whereCriteria->add(self::SCOPE_COL, \$scope, Criteria::EQUAL);";
+	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
 	
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$valuesCriteria->add(self::LEVEL_COL, array('raw' => self::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+	\$valuesCriteria->add($peerClassname::LEVEL_COL, array('raw' => $peerClassname::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 	{$this->builder->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
 }
@@ -358,14 +359,14 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 {
 	if (Propel::isInstancePoolingEnabled()) {
 		\$keys = array();
-		foreach (self::\$instances as \$obj) {
+		foreach ($peerClassname::\$instances as \$obj) {
 			\$keys[] = \$obj->getPrimaryKey();
 		}
 
 		if (!empty(\$keys)) {
 			// We don't need to alter the object instance pool; we're just modifying these ones
 			// already in the pool.
-			\$criteria = new Criteria(self::DATABASE_NAME);";
+			\$criteria = new Criteria($peerClassname::DATABASE_NAME);";
 		if (count($this->table->getPrimaryKey()) === 1) {
 			$pkey = $this->table->getPrimaryKey();
 			$col = array_shift($pkey);
@@ -451,6 +452,90 @@ public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 
 	// Update all loaded nodes
 	$peerClassname::updateLoadedNodes(\$con);
+}
+";
+	}
+	
+	protected function addFixLevels(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$useScope = $this->behavior->useScope();
+		$script .= "
+/**
+ * Update the tree to allow insertion of a leaf at the specified position
+ *";
+ 		if ($useScope) {
+ 			 		$script .= "
+ * @param      integer \$scope	scope column value";
+ 		}
+ 		$script .= "
+ * @param      PropelPDO \$con	Connection to use.
+ */
+public static function fixLevels(" . ($useScope ? "\$scope, " : ""). "PropelPDO \$con = null)
+{
+	\$c = new Criteria();";
+		if ($useScope) {
+			$script .= "
+	\$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
+	\$c->addAscendingOrderByColumn($peerClassname::LEFT_COL);
+	\$stmt = $peerClassname::doSelectStmt(\$c, \$con);
+	";
+		if (!$this->table->getChildrenColumn()) {
+			$script .= "
+	// set the class once to avoid overhead in the loop
+	\$cls = $peerClassname::getOMClass(false);";
+		}
+
+		$script .= "
+	\$level = null;
+	// iterate over the statement
+	while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+
+		// hydrate object
+		\$key = $peerClassname::getPrimaryKeyHashFromRow(\$row, 0);
+		if (null === (\$obj = $peerClassname::getInstanceFromPool(\$key))) {";
+		if ($this->table->getChildrenColumn()) {
+			$script .= "
+			// class must be set each time from the record row
+			\$cls = $peerClassname::getOMClass(\$row, 0);
+			\$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+			" . $this->builder->buildObjectInstanceCreationCode('$obj', '$cls') . "
+			\$obj->hydrate(\$row);
+			$peerClassname::addInstanceToPool(\$obj, \$key);";
+		} else {
+			$script .= "
+			" . $this->builder->buildObjectInstanceCreationCode('$obj', '$cls') . "
+			\$obj->hydrate(\$row);
+			$peerClassname::addInstanceToPool(\$obj, \$key);";
+		}
+		$script .= "
+		}
+		
+		// compute level
+		// Algorithm shamelessly stolen from sfPropelActAsNestedSetBehaviorPlugin
+		// Probably authored by Tristan Rivoallan
+		if (\$level === null) {
+			\$level = 0;
+			\$i = 0;
+			\$prev = array(\$obj->getRightValue());
+		} else {
+			while (\$obj->getRightValue() > \$prev[\$i]) {
+				\$i--;
+			}
+			\$level = ++\$i;
+			\$prev[\$i] = \$obj->getRightValue();
+		}
+		
+		// update level in node if necessary
+		if (\$obj->getLevel() !== \$level) {
+			\$obj->setLevel(\$level);
+			\$obj->save(\$con);
+		}
+	}
+	\$stmt->closeCursor();
+	return \$results;
 }
 ";
 	}

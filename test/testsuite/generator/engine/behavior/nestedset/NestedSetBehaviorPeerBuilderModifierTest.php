@@ -335,4 +335,27 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 			$this->assertEquals($values, array($$key->getLeftValue(), $$key->getRightValue(), $$key->getLevel()), 'makeRoomForLeaf() updates nodes already in memory');
 		}
 	}
+	
+	public function testFixLevels()
+	{
+		$fixtures = $this->initTree();
+		// reset the levels
+		foreach ($fixtures as $node) {
+			$node->setLevel(null)->save();
+		}
+		// fix the levels
+		Table9Peer::fixLevels();
+		$expected = array(
+			't1' => array(1, 14, 0),
+			't2' => array(2, 3, 1), 
+			't3' => array(4, 13, 1), 
+			't4' => array(5, 6, 2), 
+			't5' => array(7, 12, 2), 
+			't6' => array(8, 9, 3), 
+			't7' => array(10, 11, 3),
+		);
+		$this->assertEquals($expected, $this->dumpTree(), 'fixLevels() fixes the levels correctly');
+		Table9Peer::fixLevels();
+		$this->assertEquals($expected, $this->dumpTree(), 'fixLevels() can be called several times');
+	}
 }

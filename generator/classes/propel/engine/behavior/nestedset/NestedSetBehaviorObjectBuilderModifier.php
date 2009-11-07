@@ -109,30 +109,11 @@ protected \$nestedSetQueries = array();
 ";
 	}
 	
-	public function preInsert($builder)
+	public function preSave($builder)
 	{
-		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
-		return "if (null === \$this->getLeftValue() || null === \$this->getRightValue()) {
-	\$root = $peerClassname::retrieveRoot(" . ($this->behavior->useScope() ? "\$this->getScopeValue(), " : "")  . "\$con);
-	if (\$root) {
-		\$this->insertAsLastChildOf(\$root);
-	} else {		
-		\$this->makeRoot();
+		return "\$this->processNestedSetQueries();";
 	}
-}
-\$this->processNestedSetQueries();
-";
-	}
-	
-	public function preUpdate($builder)
-	{
-		return "if (null === \$this->getLeftValue() || null === \$this->getRightValue()) {
-	throw new PropelException('The current node has incorrect left/right value. Saving it would break the tree.');
-}
-\$this->processNestedSetQueries();
-";
-	}
-	
+		
 	public function preDelete($builder)
 	{
 		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
@@ -176,6 +157,7 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		
 		$this->addMakeRoot($script);
 		
+		$this->addIsInTree($script);
 		$this->addIsRoot($script);
 		$this->addIsLeaf($script);
 		$this->addIsDescendantOf($script);
@@ -387,6 +369,21 @@ public function makeRoot()
 ";
 	}
 
+	protected function addIsInTree(&$script)
+	{
+		$script .= "
+/**
+ * Tests if onbject is a node, i.e. if it is inserted in the tree
+ *
+ * @return     bool
+ */
+public function isInTree()
+{
+	return \$this->getLeftValue() > 0 && \$this->getRightValue() > \$this->getLeftValue();
+}
+";
+	}
+
 	protected function addIsRoot(&$script)
 	{
 		$script .= "
@@ -397,7 +394,7 @@ public function makeRoot()
  */
 public function isRoot()
 {
-	return \$this->getLeftValue() == 1;
+	return \$this->isInTree() && \$this->getLeftValue() == 1;
 }
 ";
 	}
@@ -412,7 +409,7 @@ public function isRoot()
  */
 public function isLeaf()
 {
-	return (\$this->getRightValue() - \$this->getLeftValue()) == 1;
+	return \$this->isInTree() &&  (\$this->getRightValue() - \$this->getLeftValue()) == 1;
 }
 ";
 	}
@@ -436,7 +433,7 @@ public function isDescendantOf($objectClassname \$parent)
 	}";
 		}
 		$script .= "
-	return \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
+	return \$this->isInTree() && \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
 }
 ";
 	}
@@ -499,6 +496,7 @@ public function hasParent(PropelPDO \$con = null)
 		$script .= "
 /**
  * Gets ancestor for the given node if it exists
+ * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
  * @return     mixed 		Propel object if exists else false
@@ -573,6 +571,7 @@ public function hasPrevSibling(PropelPDO \$con = null)
 		$script .= "
 /**
  * Gets previous sibling for the given node if it exists
+ * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
  * @return     mixed 		Propel object if exists else false
@@ -644,6 +643,7 @@ public function hasNextSibling(PropelPDO \$con = null)
 		$script .= "
 /**
  * Gets next sibling for the given node if it exists
+ * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
  * @return     mixed 		Propel object if exists else false
@@ -885,10 +885,19 @@ public function getNumberOfDescendants(Criteria \$criteria = null, PropelPDO \$c
  */
 public function getBranch(Criteria \$criteria = null, PropelPDO \$con = null)
 {
-	\$descendants = \$this->getDescendants(\$criteria, \$con);
-	array_unshift(\$descendants, \$this);
+	if (\$criteria === null) {
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+	}
+	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::GREATER_EQUAL);
+	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::LESS_EQUAL);";
+	if ($this->behavior->useScope()) {
+		$script .= "
+	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+	}
+	$script .= "		
+	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
 		
-	return \$descendants;
+	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
@@ -1006,8 +1015,8 @@ public function addChild($objectClassname \$child)
  */
 public function insertAsFirstChildOf($objectClassname \$parent)
 {
-	if (!\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToFirstChildOf() instead.');
+	if (\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToFirstChildOf() instead.');
 	}
 	\$left = \$parent->getLeftValue() + 1;
 	// Update node properties
@@ -1049,8 +1058,8 @@ public function insertAsFirstChildOf($objectClassname \$parent)
  */
 public function insertAsLastChildOf($objectClassname \$parent)
 {
-	if (!\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToLastChildOf() instead.');
+	if (\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToLastChildOf() instead.');
 	}
 	\$left = \$parent->getRightValue();
 	// Update node properties
@@ -1092,8 +1101,8 @@ public function insertAsLastChildOf($objectClassname \$parent)
  */
 public function insertAsPrevSiblingOf($objectClassname \$sibling)
 {
-	if (!\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToPrevSiblingOf() instead.');
+	if (\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
 	}
 	\$left = \$sibling->getLeftValue();
 	// Update node properties
@@ -1136,8 +1145,8 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling)
  */
 public function insertAsNextSiblingOf($objectClassname \$sibling)
 {
-	if (!\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be new to be inserted in the tree. Use the moveToNextSiblingOf() instead.');
+	if (\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToNextSiblingOf() instead.');
 	}
 	\$left = \$sibling->getRightValue() + 1;
 	// Update node properties
@@ -1179,8 +1188,8 @@ public function insertAsNextSiblingOf($objectClassname \$sibling)
  */
 public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = null)
 {
-	if (\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsFirstChildOf() instead.');
+	if (!\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
 	}";
 	if ($this->behavior->useScope()) {
 		$script .= "
@@ -1217,8 +1226,8 @@ public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = 
  */
 public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = null)
 {
-	if (\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsLastChildOf() instead.');
+	if (!\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
 	}";
 	if ($this->behavior->useScope()) {
 		$script .= "
@@ -1255,8 +1264,8 @@ public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = n
  */
 public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
 {
-	if (\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsPrevSiblingOf() instead.');
+	if (!\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
 	}
 	if (\$sibling->isRoot()) {
 		throw new PropelException('Cannot move to previous sibling of a root node.');
@@ -1297,8 +1306,8 @@ public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con 
  */
 public function moveToNextSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
 {
-	if (\$this->isNew()) {
-		throw new PropelException('A $objectClassname object must be already saved to be moved in the tree. Use the insertAsNextSiblingOf() instead.');
+	if (!\$this->isInTree()) {
+		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
 	}
 	if (\$sibling->isRoot()) {
 		throw new PropelException('Cannot move to next sibling of a root node.');

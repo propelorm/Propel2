@@ -27,15 +27,25 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 	{
 		Table9Peer::doDeleteAll();
 		$ret = array();
+		// shuffling the results so the db order is not the natural one
 		$fixtures = array(
+			't2' => array(2, 3, 1), 
+			't5' => array(7, 12, 2), 
+			't4' => array(5, 6, 2), 
+			't7' => array(10, 11, 3),
+			't1' => array(1, 14, 0),
+			't6' => array(8, 9, 3), 
+			't3' => array(4, 13, 1), 
+		);
+		/* in correct order, this is:
 			't1' => array(1, 14, 0),
 			't2' => array(2, 3, 1), 
 			't3' => array(4, 13, 1), 
 			't4' => array(5, 6, 2), 
 			't5' => array(7, 12, 2), 
 			't6' => array(8, 9, 3), 
-			't7' => array(10, 11, 3),
-		);
+			't7' => array(10, 11, 3),		
+		*/
 		foreach ($fixtures as $key => $data) {
 			$t = new PublicTable9();
 			$t->setTitle($key);
@@ -43,9 +53,11 @@ class BookstoreNestedSetTestBase extends BookstoreTestBase
 			$t->setRightValue($data[1]);
 			$t->setLevel($data[2]);
 			$t->save();
-			$ret []= $t;
+			$ret[$key]= $t;
 		}
-		return $ret;
+		// reordering the results in the fixtures
+		ksort($ret);
+		return array_values($ret);
 	}
 	
 	protected function dumpTree()

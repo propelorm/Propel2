@@ -63,15 +63,39 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		}
 	}
 	
-	public function testPreInsert()
+	public function testSaveOutOfTree()
 	{
 		Table9Peer::doDeleteAll();
 		$t1 = new Table9();
+		$t1->setTitle('t1');
+		try {
+			$t1->save();
+			$this->assertTrue(true, 'A node can be saved without valid tree information');
+		} catch (Exception $e) {
+			$this->fail('A node can be saved without valid tree information');
+		}
+		try {
+			$t1->makeRoot();
+			$this->assertTrue(true, 'A saved node can be turned into root');
+		} catch (Exception $e) {
+			$this->fail('A saved node can be turned into root');
+		}
 		$t1->save();
-		$this->assertTrue($t1->isRoot(), 'saving an empty node in an empty tree makes the node the root');
 		$t2 = new Table9();
+		$t2->setTitle('t1');
 		$t2->save();
-		$this->assertTrue($t2->isDescendantOf($t1), 'saving an empty node in a tree makes the node a child of the root');
+		try {
+			$t2->insertAsFirstChildOf($t1);
+			$this->assertTrue(true, 'A saved node can be inserted into the tree');
+		} catch (Exception $e) {
+			$this->fail('A saved node can be inserted into the tree');
+		}
+		try {
+			$t2->save();
+			$this->assertTrue(true, 'A saved node can be inserted into the tree');
+		} catch (Exception $e) {
+			$this->fail('A saved node can be inserted into the tree');
+		}
 	}
 	
 	public function testPreUpdate()
@@ -137,6 +161,24 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($t->getLeftValue(), 1, 'createRoot() is an alias for makeRoot()');
 		$this->assertEquals($t->getRightValue(), 2, 'createRoot() is an alias for makeRoot()');
 		$this->assertEquals($t->getLevel(), 0, 'createRoot() is an alias for makeRoot()');
+	}
+
+	public function testIsInTree()
+	{
+		$t1 = new Table9();
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with no left and right value');
+		$t1->save();
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for saved nodes with no left and right value');
+		$t1->setLeftValue(1)->setRightValue(O);
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with zero left value');
+		$t1->setLeftValue(0)->setRightValue(1);
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with zero right value');
+		$t1->setLeftValue(1)->setRightValue(1);
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with equal left and right value');
+		$t1->setLeftValue(1)->setRightValue(2);
+		$this->assertTrue($t1->isInTree(), 'inInTree() returns true for nodes with left < right value');
+		$t1->setLeftValue(2)->setRightValue(1);
+		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with left > right value');
 	}
 
 	public function testIsRoot()
@@ -567,6 +609,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't7' => array(10, 11, 3),
 		);
 		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, uncluding the current node');
+		$c = new Criteria();
+		$c->add(Table9Peer::TITLE, 't3', Criteria::NOT_EQUAL);
+		$descendants = $t3->getBranch($c);
+		unset($expected['t3']);
+		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
 	}
 	
 	public function testGetAncestors()
