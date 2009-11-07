@@ -211,7 +211,7 @@ class Column extends XMLElement {
 
       // Add type, size information to associated Domain object
       $this->getDomain()->replaceSqlType($this->getAttribute("sqlType"));
-      $this->getDomain()->replaceSize($this->getAttribute("size"));
+      $this->getDomain()->replaceSize($this->getAttribute("size", $type == 'VARCHAR' ? 255 : null));
       $this->getDomain()->replaceScale($this->getAttribute("scale"));
 
       $defval = $this->getAttribute("defaultValue", $this->getAttribute("default"));
