@@ -134,6 +134,8 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 						$defaultValue = var_export($defDt->format($fmt), true);
 					}
 				} catch (Exception $x) {
+					// prevent endless loop when timezone is undefined
+					date_default_timezone_set('America/Los_Angeles');
 					throw new EngineException("Unable to parse default temporal value for " . $col->getFullyQualifiedName() . ": " .$this->getDefaultValueString($col), $x);
 				}
 			} else {
