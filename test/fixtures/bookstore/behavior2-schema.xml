@@ -15,7 +15,7 @@
 	<table name="table8">
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 		<column name="foo_id" type="INTEGER" required="false"/>
-		<foreign-key foreignTable="table6" onDelete="SETNULL">
+		<foreign-key foreignTable="table6" onDelete="setnull">
 			<reference local="foo_id" foreign="id" />
 		</foreign-key>
 		<behavior name="auto_add_pk">

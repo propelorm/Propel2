@@ -8,10 +8,10 @@
 		<column name="price" required="false" type="FLOAT" description="Price of the book." />
 		<column name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
 		<column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
-		<foreign-key foreignTable="publisher" onDelete="SETNULL">
+		<foreign-key foreignTable="publisher" onDelete="setnull">
 			<reference local="publisher_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="author" onDelete="SETNULL" onUpdate="cascade">
+		<foreign-key foreignTable="author" onDelete="setnull" onUpdate="cascade">
 			<reference local="author_id" foreign="id" />
 		</foreign-key>
 		<validator column="title" translate="none">
@@ -54,7 +54,7 @@
 		<column name="recommended" required="true" type="BOOLEAN" description="Does reviewer recommend book?" />
 		<column name="status" type="VARCHAR" size="8" description="The status of this review." />
 		<column name="book_id" required="true" type="INTEGER" description="Book ID for this review" />
-		<foreign-key foreignTable="book" onDelete="CASCADE">
+		<foreign-key foreignTable="book" onDelete="cascade">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
 		<validator column="reviewed_by" translate="none">
@@ -71,7 +71,7 @@
 		<column name="cover_image" type="BLOB" lazyLoad="true" description="The image of the book cover." />
 		<column name="excerpt" type="CLOB" lazyLoad="true" description="An excerpt from the book." />
 		<column name="book_id" required="true" type="INTEGER" description="Book ID for this media collection." />
-		<foreign-key foreignTable="book" onDelete="CASCADE">
+		<foreign-key foreignTable="book" onDelete="cascade">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
 	</table>
@@ -87,10 +87,10 @@
 		description="Cross-reference table for many-to-many relationship between book rows and book_club_list rows.">
 		<column name="book_id" primaryKey="true" type="INTEGER" description="Fkey to book.id" />
 		<column name="book_club_list_id" primaryKey="true" type="INTEGER" description="Fkey to book_club_list.id" />
-		<foreign-key foreignTable="book" onDelete="CASCADE">
+		<foreign-key foreignTable="book" onDelete="cascade">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="book_club_list" onDelete="CASCADE">
+		<foreign-key foreignTable="book_club_list" onDelete="cascade">
 			<reference local="book_club_list_id" foreign="id" />
 		</foreign-key>
 	</table>
@@ -108,7 +108,7 @@
 		<column name="job_title" type="VARCHAR" size="32" description="Employee job title" />
 		<column name="supervisor_id" type="INTEGER" description="Fkey to supervisor." />
 		<column name="photo" type="BLOB" lazyLoad="true" />
-		<foreign-key foreignTable="bookstore_employee" phpName="Supervisor" refPhpName="Subordinate" onDelete="SETNULL">
+		<foreign-key foreignTable="bookstore_employee" phpName="Supervisor" refPhpName="Subordinate" onDelete="setnull">
 			<reference local="supervisor_id" foreign="id" />
 		</foreign-key>
 	</table>
@@ -138,7 +138,7 @@
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
 		<column name="uid" type="VARCHAR" size="32" required="true" />
 		<column name="message" type="VARCHAR" size="255" />
-		<foreign-key foreignTable="bookstore_employee_account" onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore_employee_account" onDelete="cascade">
 			<reference local="uid" foreign="login" />
 		</foreign-key> 
 	</table>
@@ -209,7 +209,7 @@
 		<foreign-key foreignTable="bookstore" onDelete="cascade">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="publisher" onDelete="SETNULL">
+		<foreign-key foreignTable="publisher" onDelete="setnull">
 			<reference local="publisher_id" foreign="id" />
 		</foreign-key>
 	</table>
@@ -229,13 +229,13 @@
 		<column name="bookstore_id" type="INTEGER" primaryKey="true" />
 		<column name="contest_id" type="INTEGER" primaryKey="true" />
 		<column name="prize_book_id" type="INTEGER" />
-		<foreign-key foreignTable="bookstore" onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore" onDelete="cascade">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="contest" onDelete="CASCADE">
+		<foreign-key foreignTable="contest" onDelete="cascade">
 			<reference local="contest_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="book" onDelete="SETNULL">
+		<foreign-key foreignTable="book" onDelete="setnull">
 			<reference local="prize_book_id" foreign="id" />
 		</foreign-key>
 	</table>
@@ -245,13 +245,13 @@
 		<column name="contest_id" type="INTEGER" primaryKey="true" />
 		<column name="customer_id" type="INTEGER" primaryKey="true" />
 		<column name="entry_date" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
-		<foreign-key foreignTable="bookstore" onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore" onDelete="cascade">
 			<reference local="bookstore_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="customer" onDelete="CASCADE">
+		<foreign-key foreignTable="customer" onDelete="cascade">
 			<reference local="customer_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="bookstore_contest" onDelete="CASCADE">
+		<foreign-key foreignTable="bookstore_contest" onDelete="cascade">
 			<reference local="bookstore_id" foreign="bookstore_id" />
 			<reference local="contest_id" foreign="contest_id" />
 		</foreign-key>
