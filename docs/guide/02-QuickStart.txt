@@ -257,4 +257,4 @@ Propel::init("/path/to/bookstore/build/conf/bookstore-conf.php");
 
 Now you are ready to include and begin using your Propel classes!
 
-Continue reading the [wiki:Users/Documentation/1.3/BasicCRUD Basic CRUD Guide] to see how to perform the basic C.R.U.D. (Create, Retrieve, Update, Delete) operations using your Propel-generated classes.
+Continue reading the [wiki:Users/Documentation/1.5/BasicCRUD Basic CRUD Guide] to see how to perform the basic C.R.U.D. (Create, Retrieve, Update, Delete) operations using your Propel-generated classes.
