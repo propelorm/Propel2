@@ -96,7 +96,7 @@ Once this is done, you'll need to setup your PHP environment to use this library
 
 The following instructions are only required if you installed Propel from a tarball, or from Subversion.
  
-=== Generator Setup ====
+=== Generator Setup ===
 
 The Propel generator component bundles a `propel-gen` sh script (and a `propel-gen.bat` script for Windows). This script simplifies the commandline invocation of the Propel generator by hiding any references to Phing.
 
