@@ -33,12 +33,13 @@ class NestedSetBehavior extends Behavior
 {
   // default parameters value
   protected $parameters = array(
-    'add_columns'  => 'true',
-    'left_column'  => 'tree_left',
-    'right_column' => 'tree_right',
-    'level_column' => 'tree_level',
-    'use_scope'    => 'false',
-    'scope_column' => 'tree_scope'
+    'add_columns'    => 'true',
+    'left_column'    => 'tree_left',
+    'right_column'   => 'tree_right',
+    'level_column'   => 'tree_level',
+    'use_scope'      => 'false',
+    'scope_column'   => 'tree_scope',
+    'method_proxies' => 'false'
   );
 
   protected $objectBuilderModifier, $peerBuilderModifier;

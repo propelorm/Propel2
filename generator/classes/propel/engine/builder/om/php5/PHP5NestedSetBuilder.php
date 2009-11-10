@@ -87,6 +87,7 @@ require '".$this->getObjectBuilder()->getClassFilePath()."';
  *";
 		}
 		$script .= "
+ * @deprecated  Since Propel 1.5. Use the nested_set behavior instead of the NestedSet treeMode
  * @package    ".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->getClassname()." implements NodeObject {

@@ -1,5 +1,7 @@
 = !NestedSet support in Propel =
 
+'''Warning''': Since Propel 1.5, the support for nested sets was moved to the `nested_set` behavior. The method described here is deprecated.'''
+
 == Description ==
 
 With !NestedSet implementation, trees are stored using different approach in databases: [http://www.sitepoint.com/article/hierarchical-data-database]

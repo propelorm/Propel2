@@ -156,11 +156,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'makeRoot() throws an exception when called on an object with a left_column value');
 		}
-		$t = new Table9();
-		$t->createRoot();
-		$this->assertEquals($t->getLeftValue(), 1, 'createRoot() is an alias for makeRoot()');
-		$this->assertEquals($t->getRightValue(), 2, 'createRoot() is an alias for makeRoot()');
-		$this->assertEquals($t->getLevel(), 0, 'createRoot() is an alias for makeRoot()');
 	}
 
 	public function testIsInTree()
@@ -1183,5 +1178,32 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't1' => array(1, 2, 0),
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'deleteDescendants() can delete all descendants of the root node');
+	}
+	
+	public function testGetIterator()
+	{
+		$fixtures = $this->initTree();
+		$this->assertTrue(method_exists('Table9', 'getIterator'), 'nested_set adds a getIterator() method');
+		$root = Table9Peer::retrieveRoot();
+		$iterator = $root->getIterator();
+		$this->assertTrue($iterator instanceof NestedSetRecursiveIterator, 'getIterator() returns a NestedSetRecursiveIterator');
+		foreach ($iterator as $node) {
+			$expected = array_shift($fixtures);
+			$this->assertEquals($expected, $node, 'getIterator returns an iterator parsing the tree order by left column');
+		}
+	}
+	
+	public function testCompatibilityProxies()
+	{
+		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
+		foreach ($proxies as $method) {
+			$this->assertFalse(method_exists('Table9', $method), 'proxies are not enabled by default');
+			$this->assertTrue(method_exists('Table10', $method), 'setting method_proxies to true adds compatibility proxies');
+		}
+		$t = new Table10();
+		$t->createRoot();
+		$this->assertEquals($t->getLeftValue(), 1, 'createRoot() is an alias for makeRoot()');
+		$this->assertEquals($t->getRightValue(), 2, 'createRoot() is an alias for makeRoot()');
+		$this->assertEquals($t->getLevel(), 0, 'createRoot() is an alias for makeRoot()');
 	}
 }

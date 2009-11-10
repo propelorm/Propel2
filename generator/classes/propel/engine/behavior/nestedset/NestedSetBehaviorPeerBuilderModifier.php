@@ -108,6 +108,10 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 		$this->setBuilder($builder);
 		$script = '';
 		
+		if ($this->getParameter('use_scope') == 'true')
+		{
+			$this->addRetrieveRoots($script);
+		}
 		$this->addRetrieveRoot($script);
 		$this->addRetrieveTree($script);
 		$this->addIsValid($script);
@@ -119,6 +123,28 @@ const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 		$this->addFixLevels($script);
 		
 		return $script;
+	}
+
+	protected function addRetrieveRoots(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Returns the root nodes for the tree
+ *
+ * @param      PropelPDO \$con	Connection to use.
+ * @return     {$this->objectClassname}			Propel object for root node
+ */
+public static function retrieveRoots(Criteria \$criteria = null, PropelPDO \$con = null)
+{
+	if (\$criteria === null) {
+		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+	}
+	\$criteria->add($peerClassname::LEFT_COL, 1, Criteria::EQUAL);
+
+	return $peerClassname::doSelect(\$criteria, \$con);
+}
+";
 	}
 
 	protected function addRetrieveRoot(&$script)

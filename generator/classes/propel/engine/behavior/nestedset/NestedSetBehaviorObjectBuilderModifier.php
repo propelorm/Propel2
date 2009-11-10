@@ -201,7 +201,12 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		
 		$this->addDeleteDescendants($script);
 		
-		$this->addCompatibilityProxies($script);
+		$this->addGetIterator($script);
+		
+		if ($this->getParameter('method_proxies') == 'true')
+		{
+			$this->addCompatibilityProxies($script);
+		}
 		
 		return $script;
 	}
@@ -1454,7 +1459,22 @@ public function deleteDescendants(PropelPDO \$con = null)
 }
 ";
 	}
-	
+
+	protected function addGetIterator(&$script)
+	{
+		$script .= "
+/**
+ * Returns a pre-order iterator for this node and its children.
+ *
+ * @return     RecursiveIterator
+ */
+public function getIterator()
+{
+	return new NestedSetRecursiveIterator(\$this);
+}
+";
+	}
+
 	protected function addCompatibilityProxies(&$script)
 	{
 		$objectClassname = $this->objectClassname;

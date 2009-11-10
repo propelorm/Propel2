@@ -1,2 +1,73 @@
 = What's new in Propel 1.5? =
 
+== Nested Set Behavior ==
+
+Using the `treeMode` attribute in a schema, you could turn a Propel model into a hierarchical data store starting with Propel 1.3. This method is now deprecated in favor of a new `nested_set` behavior, that does eactly the same thing, but in a more extensible and effective way.
+
+The main difference between the two implementations is performance. On the first levels of a large tree, the Propel 1.3 implementation of Nested sets used to consume a very large amount of memory and CPU to retrieve the siblings or the children of a given node. This is no longer true with the new behavior.
+
+This performance boost comes at a small price: you must add a new "level" column to your nested set models, and let the behavior update this column for the whole tree.
+
+For instance, if you used nested sets to keep a list of categories, the schema used to look like:
+
+{{{
+#!xml
+<table name="category" treeMode="NestedSet">
+  <column name="id" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+  <column name="left" nestedSetLeftKey="true" type="INTEGER"/>
+  <column name="right" nestedSetLeftKey="true" type="INTEGER"/>
+  <column name="name" required="true" type="VARCHAR" size="10" />
+</table>
+}}}
+
+The upgrade path is then pretty straightforward:
+
+1 - Update the schema, by removing the `treeMode` and `nestedSet` attributes and adding the `nested_set` behavior and the `tree_level` column:
+
+{{{
+#!xml
+<table name="category">
+  <column name="id" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+  <column name="left" type="INTEGER"/>
+  <column name="right" type="INTEGER"/>
+  <column name="tree_level" type="INTEGER"/>
+  <column name="name" required="true" type="VARCHAR" size="10" />
+  <behavior name="nested_set">
+    <parameter name="add_columns" value="false" />
+    <parameter name="left_column" value="left" />
+    <parameter name="right_column" value="rigt" />
+    <parameter name="level_column" value="tree_level" />
+  </behavior>
+</table>
+}}}
+
+2 - Rebuild the model
+
+3 - Add the level column to the database. For instance, in MySQL:
+
+{{{
+#!xml
+ALTER TABLE `category` ADD COLUMN tree_level INTEGER;
+}}}
+
+4 - Update the level value in the existing nodes, using the `fixLevels()` Peer method
+
+{{{
+#!php
+<?php
+// run it once
+CategoryPeer::fixLevels();
+}}}
+
+The nested set behavior implementation has a few added benefits:
+
+ * All the methods that execute several queries use transactions, so a database failure won't break a tree anymore
+ * The methods retrieveing a list of nodes accept a Criteria as first parameter, to filter the results
+ * New methods make it easir to work with trees: `retrieveRoots()`, `isDescendantOf()`, `isAncestorOf()`, `getBranch()`, `addChild()`, etc.
+ * There is no longer any introspection at runtime (for instance to check scope support), resulting in yet another boost in performance
+ * A few bugs were fixed (for instance in the use of `delete()`)
+ * A node can be inserted to the tree after it is saved. This allows for better preparation of data before insertion in the tree
+ * The new implementation is much more robust, thanks to a ''full unit testing coverage''. That's more than 350 unit tests to ensure that your trees won't ever break due to an incorrect piece of code in the nested sets.
+ * The API was rethought to make it more intuitive - but with method proxies to keep BC
+
+As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [nested_set behavior documentation] for more details.

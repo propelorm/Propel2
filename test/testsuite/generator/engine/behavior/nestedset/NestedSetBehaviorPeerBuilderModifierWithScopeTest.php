@@ -39,7 +39,32 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 		$this->assertEquals(Table10Peer::SCOPE_COL, 'table10.MY_SCOPE_COLUMN', 'nested_set adds a SCOPE_COL constant when the use_scope parameter is true');
 	}
 
-	public function testRetrieveRoot()
+	public function testRetrieveRoots()
+	{
+		$this->assertTrue(method_exists('Table10Peer', 'retrieveRoots'), 'nested_set adds a retrieveRoots() method for trees that use scope');
+		$this->assertFalse(method_exists('Table9Peer', 'retrieveRoots'), 'nested_set does not add a retrieveRoots() method for trees that don\'t use scope');
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+		/* Tree used for tests
+		 Scope 1
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		 Scope 2
+		 t8
+		 | \
+		 t9 t10
+		*/
+		$this->assertEquals(array($t1, $t8), Table10Peer::retrieveRoots(), 'retrieveRoots() returns the tree roots');
+		$c = new Criteria();
+		$c->add(Table10Peer::TITLE, 't1');
+		$this->assertEquals(array($t1), Table10Peer::retrieveRoots($c), 'retrieveRoots() accepts a Criteria as first parameter');
+	}
+
+  public function testRetrieveRoot()
 	{
 		$this->assertTrue(method_exists('Table10Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
 		Table10Peer::doDeleteAll();	
