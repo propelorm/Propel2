@@ -82,7 +82,7 @@ $book->setAuthor($author);
 $book->save(); // saves all 3 objects!
 }}}
 
-Refer to the [wiki:Users/Documentation/1.4/Relationships Relationships] page for more on working with related rows.
+Refer to the [wiki:Users/Documentation/1.5/Relationships Relationships] page for more on working with related rows.
 
 == Retrieve ==
 
@@ -205,7 +205,7 @@ $authors = AuthorPeer::doSelect($c);
 }}}
 
 
-Refer to the [wiki:Users/Documentation/1.4/Criteria Criteria] page detailed Criteria usage and examples.
+Refer to the [wiki:Users/Documentation/1.5/Criteria Criteria] page detailed Criteria usage and examples.
 
 ==== Using Custom SQL ====
 

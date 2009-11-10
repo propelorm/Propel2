@@ -111,4 +111,4 @@ This line initializes the pager with the given arguments:
 
 == Going Further ==
 
-Check the api documentation of PropelPager for more details: [http://propel.phpdb.org/docs/api/1.4/runtime/propel-util/PropelPager.html]
+Check the api documentation of PropelPager for more details: [http://propel.phpdb.org/docs/api/1.5/runtime/propel-util/PropelPager.html]

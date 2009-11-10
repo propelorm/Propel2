@@ -66,14 +66,14 @@ Installing from SVN trunk ensures that you have the most up-to-date source code.
 
 {{{
 #!sh
-> svn checkout http://svn.phpdb.org/propel/branches/1.4 /usr/local/propel
+> svn checkout http://svn.phpdb.org/propel/branches/1.5 /usr/local/propel
 }}}
 
 This will export both the generator and runtime components to your local `propel` directory. In addition, you'll also get Propel documentation and unit tests - that's why this method is the preferred installation method for Propel contributors.
 
 Once this is done, you'll need to setup your PHP environment to use this library - see the '''Setting Up PHP for Propel''' section below.
 
-Note: `branches/1.4` is currently more uptodate code than `trunk`; trunk is what will become 2.0, however it has had very little work done to it in a long time.
+Note: `branches/1.5` is currently more uptodate code than `trunk`; trunk is what will become 2.0, however it has had very little work done to it in a long time.
 
 === Installing Propel From a Tarball ===
 
@@ -84,10 +84,10 @@ Download a tarball of each of the Propel components from the Propel website, and
 > cd /usr/local
 > mkdir propel
 > cd propel
-> wget http://pear.phpdb.org/get/propel_generator-1.4.0.tgz
-> tar zxvf propel_generator-1.4.0.tgz
-> wget http://pear.phpdb.org/get/propel_runtime-1.4.0.tgz
-> tar zxvf propel_runtime-1.4.0.tgz
+> wget http://pear.phpdb.org/get/propel_generator-1.5.0.tgz
+> tar zxvf propel_generator-1.5.0.tgz
+> wget http://pear.phpdb.org/get/propel_runtime-1.5.0.tgz
+> tar zxvf propel_runtime-1.5.0.tgz
 }}}
 
 Once this is done, you'll need to setup your PHP environment to use this library.
@@ -170,7 +170,7 @@ require_once 'propel/Propel.php';
 // Propel setup code ... (to be discussed later)
 }}}
 
-At this point, Propel should be setup and ready to use. You can follow the steps in the [wiki:Users/Documentation/1.4/QuickStart Quickstart Guide] to try it out.
+At this point, Propel should be setup and ready to use. You can follow the steps in the [wiki:Users/Documentation/1.5/QuickStart Quickstart Guide] to try it out.
 
 == Troubleshooting ==
 
