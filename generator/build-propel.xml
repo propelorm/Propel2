@@ -42,37 +42,37 @@
 
   <taskdef
     name="propel-data-model"
-    classname="propel.phing.PropelDataModelTemplateTask" classpathRef="propelclasses"/>
+    classname="task.PropelDataModelTemplateTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-om"
-    classname="propel.phing.PropelOMTask" classpathRef="propelclasses"/>
+    classname="task.PropelOMTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-data-dtd"
-    classname="propel.phing.PropelDataDTDTask" classpathRef="propelclasses"/>
+    classname="task.PropelDataDTDTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-data-dump"
-    classname="propel.phing.PropelDataDumpTask" classpathRef="propelclasses"/>
+    classname="task.PropelDataDumpTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-data-sql"
-    classname="propel.phing.PropelDataSQLTask" classpathRef="propelclasses"/>
+    classname="task.PropelDataSQLTask" classpathRef="propelclasses"/>
    <taskdef
     name="propel-creole-transform"
-    classname="propel.phing.PropelCreoleTransformTask" classpathRef="propelclasses"/>
+    classname="task.PropelCreoleTransformTask" classpathRef="propelclasses"/>
    <taskdef
     name="propel-schema-reverse"
-    classname="propel.phing.PropelSchemaReverseTask" classpathRef="propelclasses"/>
+    classname="task.PropelSchemaReverseTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-sql"
-    classname="propel.phing.PropelSQLTask" classpathRef="propelclasses"/>
+    classname="task.PropelSQLTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-sql-exec"
-    classname="propel.phing.PropelSQLExec" classpathRef="propelclasses"/>
+    classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
     name="propel-graphviz"
-    classname="propel.phing.PropelGraphvizTask" classpathRef="propelclasses"/>
+    classname="task.PropelGraphvizTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-convert-conf"
-    classname="propel.phing.PropelConvertConfTask" classpathRef="propelclasses"/>
+    classname="task.PropelConvertConfTask" classpathRef="propelclasses"/>
 
   <!-- ================================================================ -->
   <!-- M A I N  T A R G E T                                             -->

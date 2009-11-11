@@ -5,12 +5,10 @@
 # This script will do the following:
 # - check for PHING_COMMAND env, if found, use it.
 #   - if not found assume php is on the path
-# - check for PROPEL_GEN_HOME evn, if found use it
+# - check for PROPEL_GEN_HOME env, if found use it
 #   - if not look for it
 
 if [ -z "$PROPEL_GEN_HOME" ] ; then
-
-  # echo "WARNING: PROPEL_GEN_HOME environment not set. Attempting to guess."
 
   # try to find Propel
   if [ -d /opt/propel/generator ] ; then 

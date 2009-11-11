@@ -186,7 +186,7 @@ Propel requires the following settings in `php.ini`:
 
 === PEAR Directory In Include Path ===
 
-If you choose to install Propel via PEAR, and if it's your first use of PEAR, the PEAR directory may noit be on your PHP `include_path`. Check the PEAR documentation for deatils on how to do that.
+If you choose to install Propel via PEAR, and if it's your first use of PEAR, the PEAR directory may not be on your PHP `include_path`. Check the PEAR documentation for details on how to do that.
 
 === Getting Help ===
 
