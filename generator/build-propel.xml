@@ -37,7 +37,7 @@
   -->
 
   <path id="propelclasses">
-    <pathelement dir="${propel.home}/classes/"/>
+    <pathelement dir="${propel.home}/lib/"/>
   </path>
 
   <taskdef
