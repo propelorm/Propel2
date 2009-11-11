@@ -24,7 +24,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    builder.util
+ * @package    propel.generator.builder.util
  */
 interface Pluralizer
 {

@@ -26,8 +26,9 @@ require_once 'builder/sql/DataSQLBuilder.php';
  * MySQL class for building data dump SQL.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql.mysql
+ * @package    propel.generator.builder.sql.mysql
  */
-class MysqlDataSQLBuilder extends DataSQLBuilder {
+class MysqlDataSQLBuilder extends DataSQLBuilder
+{
 
 }

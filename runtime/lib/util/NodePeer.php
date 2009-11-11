@@ -24,7 +24,7 @@
  *
  * @author     Heltem <heltem@o2php.com> (Propel)
  * @version    $Revision$
- * @package    util
+ * @package    propel.runtime.util
  */
 interface NodePeer
 {

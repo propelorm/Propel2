@@ -26,7 +26,7 @@ require_once 'reverse/BaseSchemaParser.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    reverse.sqlite
+ * @package    propel.generator.reverse.sqlite
  */
 class SqliteSchemaParser extends BaseSchemaParser
 {

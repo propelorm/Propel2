@@ -25,7 +25,7 @@
  *
  * @author     Dave Lawson <dlawson@masterytech.com>
  * @version    $Revision$
- * @package    om
+ * @package    propel.runtime.om
  */
 class PreOrderNodeIterator implements Iterator
 {

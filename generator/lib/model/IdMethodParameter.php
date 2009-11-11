@@ -29,7 +29,7 @@ require_once 'model/XMLElement.php';
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class IdMethodParameter extends XMLElement
 {

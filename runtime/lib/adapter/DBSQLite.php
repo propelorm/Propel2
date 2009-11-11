@@ -25,7 +25,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    adapter
+ * @package    propel.runtime.adapter
  */
 class DBSQLite extends DBAdapter
 {

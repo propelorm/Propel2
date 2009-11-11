@@ -27,9 +27,10 @@ require_once 'builder/sql/DDLBuilder.php';
  *
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql.pgsql
+ * @package    propel.generator.builder.sql.pgsql
  */
-class OracleDDLBuilder extends DDLBuilder {
+class OracleDDLBuilder extends DDLBuilder
+{
 
 	/**
 	 *

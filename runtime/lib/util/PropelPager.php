@@ -99,7 +99,7 @@
  * @author	   Niklas Närhinen <niklas@narhinen.net>
  * @version    $Revision$
  * @copyright  Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
- * @package    util
+ * @package    propel.runtime.util
  */
 class PropelPager implements Countable, Iterator
 {

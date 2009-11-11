@@ -31,7 +31,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    validator
+ * @package    propel.runtime.validator
  * @see        BasePeer::doValidate()
  */
 class ValidationFailed {

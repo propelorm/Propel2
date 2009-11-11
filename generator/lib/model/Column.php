@@ -37,7 +37,7 @@ require_once 'model/ColumnDefaultValue.php';
  * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
  * @author     Bernd Goldschmidt <bgoldschmidt@rapidsoft.de>
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Column extends XMLElement
 {

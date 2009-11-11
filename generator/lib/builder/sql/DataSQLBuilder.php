@@ -27,9 +27,10 @@ require_once 'model/PropelTypes.php';
  * Baseclass for SQL data dump SQL building classes.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql
+ * @package    propel.generator.builder.sql
  */
-abstract class DataSQLBuilder extends DataModelBuilder {
+abstract class DataSQLBuilder extends DataModelBuilder
+{
 
 	/**
 	 * Perform any reset between runs of this builder.

@@ -25,7 +25,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @version    $Revision$
- * @package    adapter
+ * @package    propel.runtime.adapter
  */
 class DBMSSQL extends DBAdapter
 {

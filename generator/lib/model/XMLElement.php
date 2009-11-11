@@ -26,7 +26,7 @@ require_once 'model/VendorInfo.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 abstract class XMLElement
 {

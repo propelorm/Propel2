@@ -28,7 +28,7 @@ require_once 'model/AppData.php';
  * This class uses the new DDLBuilder classes instead of the Capsule PHP templates.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelSQLTask extends AbstractPropelDataModelTask
 {

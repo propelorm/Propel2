@@ -27,7 +27,7 @@ require_once 'reverse/BaseSchemaParser.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Guillermo Gutierrez <ggutierrez@dailycosas.net> (Adaptation)
  * @version    $Revision: 1010 $
- * @package    reverse.oracle
+ * @package    propel.generator.reverse.oracle
  */
 class OracleSchemaParser extends BaseSchemaParser
 {

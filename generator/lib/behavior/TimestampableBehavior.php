@@ -26,7 +26,7 @@
  *
  * @author     François Zaninotto
  * @version    $Revision: 1066 $
- * @package    behavior
+ * @package    propel.generator.behavior
  */
 class TimestampableBehavior extends Behavior
 {

@@ -28,9 +28,10 @@ require_once 'builder/DataModelBuilder.php';
  * DDL-building classes are those that build all the SQL DDL for a single table.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql
+ * @package    propel.generator.builder.sql
  */
-abstract class DDLBuilder extends DataModelBuilder {
+abstract class DDLBuilder extends DataModelBuilder
+{
 
 	/**
 	 * Builds the SQL for current table and returns it as a string.

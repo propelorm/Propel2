@@ -27,7 +27,7 @@ require_once 'phing/parser/AbstractHandler.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @version    $Revision$
- * @package    builder.util
+ * @package    propel.generator.builder.util
  */
 class XmlToDataSQL extends AbstractHandler
 {
@@ -226,7 +226,7 @@ class XmlToDataSQL extends AbstractHandler
 
 /**
  * "inner class"
- * @package    propel.engine.database.transform
+ * @package    propel.generator.propel.engine.database.transform
  */
 class DataRow
 {
@@ -252,7 +252,7 @@ class DataRow
 
 /**
  * "inner" class
- * @package    propel.engine.database.transform
+ * @package    propel.generator.propel.engine.database.transform
  */
 class ColumnValue {
 

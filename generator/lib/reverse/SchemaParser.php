@@ -24,7 +24,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    reverse
+ * @package    propel.generator.reverse
  */
 interface SchemaParser
 {

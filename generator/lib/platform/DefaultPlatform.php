@@ -28,7 +28,7 @@ require_once 'model/PropelTypes.php';
  *
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @version    $Revision$
- * @package    platform
+ * @package    propel.generator.platform
  */
 class DefaultPlatform implements Platform
 {

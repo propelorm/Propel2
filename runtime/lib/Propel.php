@@ -34,7 +34,7 @@
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Kurt Schrader <kschrader@karmalab.org> (Torque)
  * @version    $Revision$
- * @package    propel
+ * @package    propel.runtime
  */
 class Propel
 {

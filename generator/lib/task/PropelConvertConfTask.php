@@ -29,7 +29,7 @@ require_once 'builder/om/ClassTools.php';
  * This Task converts the XML runtime configuration file into a PHP array for faster performance.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelConvertConfTask extends AbstractPropelDataModelTask
 {

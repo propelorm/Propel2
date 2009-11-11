@@ -33,7 +33,7 @@
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
  * @version    $Revision$
- * @package    map
+ * @package    propel.runtime.map
  */
 class ColumnMap
 {

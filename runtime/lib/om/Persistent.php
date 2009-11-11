@@ -26,7 +26,7 @@
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
  * @author     Fedor K. <fedor@apache.org> (Torque)
  * @version    $Revision$
- * @package    om
+ * @package    propel.runtime.om
  */
 interface Persistent
 {

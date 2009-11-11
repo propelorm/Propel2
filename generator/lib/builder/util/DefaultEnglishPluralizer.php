@@ -26,7 +26,7 @@ require_once 'builder/util/Pluralizer.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    builder.util
+ * @package    propel.generator.builder.util
  */
 class DefaultEnglishPluralizer implements Pluralizer
 {

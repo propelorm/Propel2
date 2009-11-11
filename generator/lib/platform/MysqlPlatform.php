@@ -27,7 +27,7 @@ require_once 'platform/DefaultPlatform.php';
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @version    $Revision$
- * @package    platform
+ * @package    propel.generator.platform
  */
 class MysqlPlatform extends DefaultPlatform
 {

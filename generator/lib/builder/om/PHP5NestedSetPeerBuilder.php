@@ -32,7 +32,7 @@ require_once 'builder/om/PeerBuilder.php';
  * to customize (through extending & overriding).
  *
  * @author     heltem <heltem@o2php.com>
- * @package    builder.om
+ * @package    propel.generator.builder.om
  */
 class PHP5NestedSetPeerBuilder extends PeerBuilder {
 
@@ -92,7 +92,7 @@ require '".$this->getPeerBuilder()->getClassFilePath()."';
 		}
 		$script .= "
  * @deprecated  Since Propel 1.5. Use the nested_set behavior instead of the NestedSet treeMode
- * @package    ".$this->getPackage()."
+ * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getClassName()." implements NodePeer {
 ";

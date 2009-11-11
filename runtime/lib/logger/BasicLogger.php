@@ -32,7 +32,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    logger
+ * @package    propel.runtime.logger
  */
 interface BasicLogger
 {

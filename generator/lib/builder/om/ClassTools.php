@@ -25,7 +25,7 @@
   *
   * @author     Hans Lellelid <hans@xmpl.org>
   * @version    $Revision$
-  * @package    builder.om
+  * @package    propel.generator.builder.om
   */
 class ClassTools {
 

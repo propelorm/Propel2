@@ -26,9 +26,10 @@ require_once 'builder/sql/DataSQLBuilder.php';
  * SQLite class for building data dump SQL.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql.sqlite
+ * @package    propel.generator.builder.sql.sqlite
  */
-class SqliteDataSQLBuilder extends DataSQLBuilder {
+class SqliteDataSQLBuilder extends DataSQLBuilder
+{
 
 	/**
 	 * Returns string processed by sqlite_udf_encode_binary() to ensure that binary contents will be handled correctly by sqlite.

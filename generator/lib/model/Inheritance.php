@@ -28,7 +28,7 @@ require_once 'model/XMLElement.php';
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Inheritance extends XMLElement
 {

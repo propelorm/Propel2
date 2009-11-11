@@ -24,7 +24,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class PropelTypes
 {

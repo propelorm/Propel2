@@ -36,7 +36,7 @@ include_once 'phing/system/io/FileReader.php';
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
  * @version    $Revision$
- * @package    builder.util
+ * @package    propel.generator.builder.util
  */
 class XmlToAppData extends AbstractHandler
 {

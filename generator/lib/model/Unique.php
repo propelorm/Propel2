@@ -32,7 +32,7 @@ require_once 'model/Index.php';
  * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Unique extends Index
 {

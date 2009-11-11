@@ -27,7 +27,7 @@ require_once dirname(__FILE__) . '/NestedSetBehaviorPeerBuilderModifier.php';
  * Behavior to adds nested set tree structure columns and abilities
  *
  * @author     François Zaninotto
- * @package    propel.engine.behavior.nestedset
+ * @package    propel.generator.behavior.nestedset
  */
 class NestedSetBehavior extends Behavior
 {

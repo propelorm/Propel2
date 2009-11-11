@@ -28,7 +28,7 @@ require_once 'model/AppData.php';
  *
  * @author     Mark Kimsal
  * @version    $Revision$
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelGraphvizTask extends AbstractPropelDataModelTask
 {

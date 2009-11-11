@@ -23,7 +23,7 @@
  * The base class of all exceptions thrown by Propel.
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    exception
+ * @package    propel.runtime.exception
  */
 class PropelException extends Exception {
 

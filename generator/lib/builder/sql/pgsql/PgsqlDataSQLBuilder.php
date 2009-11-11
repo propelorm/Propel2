@@ -26,9 +26,10 @@ require_once 'builder/sql/DataSQLBuilder.php';
  * PostgreSQL class for building data dump SQL.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql.pgsql
+ * @package    propel.generator.builder.sql.pgsql
  */
-class PgsqlDataSQLBuilder extends DataSQLBuilder {
+class PgsqlDataSQLBuilder extends DataSQLBuilder
+{
 
 	/**
 	 * The largets serial value encountered this far.

@@ -29,7 +29,7 @@ require_once 'builder/om/PeerBuilder.php';
  * the custom-built query and manipulator methods.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.om
+ * @package    propel.generator.builder.om
  */
 class PHP5PeerBuilder extends PeerBuilder {
 
@@ -118,7 +118,7 @@ class PHP5PeerBuilder extends PeerBuilder {
 		}
 
 		$script .= "
- * @package    ".$this->getPackage()."
+ * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";

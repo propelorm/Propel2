@@ -33,7 +33,7 @@
  * anyway.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder
+ * @package    propel.generator.builder
  */
 abstract class DataModelBuilder
 {

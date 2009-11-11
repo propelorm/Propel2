@@ -33,7 +33,7 @@ include_once 'builder/util/XmlToAppData.php';
  * datamodel-based transformations (by allowing you to put the logic in the templates).
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    task
+ * @package    propel.generator.task
  * @version    $Revision$
  */
 class PropelDataModelTemplateTask extends AbstractPropelDataModelTask

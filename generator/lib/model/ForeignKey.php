@@ -28,7 +28,7 @@ require_once 'model/XMLElement.php';
  * @author     Fedor <fedor.karpelevitch@home.com>
  * @author     Daniel Rall <dlr@finemaltcoding.com>
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class ForeignKey extends XMLElement
 {

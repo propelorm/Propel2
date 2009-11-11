@@ -26,7 +26,7 @@
  *
  * @author     François Zaninotto
  * @author     heltem <heltem@o2php.com>
- * @package    propel.engine.behavior.nestedset
+ * @package    propel.generator.behavior.nestedset
  */
 class NestedSetBehaviorObjectBuilderModifier
 {

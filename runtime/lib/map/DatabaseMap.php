@@ -34,7 +34,7 @@
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@collab.net> (Torque)
  * @version    $Revision$
- * @package    map
+ * @package    propel.runtime.map
  */
 class DatabaseMap
 {

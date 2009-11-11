@@ -31,7 +31,7 @@ require_once 'model/ConstraintNameGenerator.php';
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class NameFactory 
 {

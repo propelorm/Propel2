@@ -26,7 +26,7 @@ require_once 'reverse/BaseSchemaParser.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    reverse.mysql
+ * @package    propel.generator.reverse.mysql
  */
 class MysqlSchemaParser extends BaseSchemaParser
 {

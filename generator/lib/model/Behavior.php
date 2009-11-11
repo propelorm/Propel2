@@ -26,7 +26,7 @@ require_once 'model/Index.php';
  *
  * @author     François Zaninotto
  * @version    $Revision: 989 $
- * @package    model
+ * @package    propel.generator.model
  */
 class Behavior extends XMLElement
 {

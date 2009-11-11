@@ -30,7 +30,7 @@ require_once 'model/Database.php';
  * @author     John McNally <jmcnally@collab.net> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class AppData
 {

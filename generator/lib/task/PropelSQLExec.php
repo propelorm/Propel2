@@ -36,7 +36,7 @@ require_once 'phing/Task.php';
  * @author     Jason van Zyl <jvanzyl@apache.org> (Torque)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @version    $Revision$
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelSQLExec extends Task
 {
@@ -668,7 +668,7 @@ class PropelSQLExec extends Task
  * Transactions allow several files or blocks of statements
  * to be executed using the same Creole connection and commit
  * operation in between.
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelSQLExecTransaction
 {

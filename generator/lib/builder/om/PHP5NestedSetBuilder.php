@@ -28,7 +28,7 @@ require_once 'builder/om/ObjectBuilder.php';
  * the custom-built accessor and setter methods.
  *
  * @author     Heltem <heltem@o2php.com>
- * @package    builder.om
+ * @package    propel.generator.builder.om
  */
 class PHP5NestedSetBuilder extends ObjectBuilder {
 
@@ -88,7 +88,7 @@ require '".$this->getObjectBuilder()->getClassFilePath()."';
 		}
 		$script .= "
  * @deprecated  Since Propel 1.5. Use the nested_set behavior instead of the NestedSet treeMode
- * @package    ".$this->getPackage()."
+ * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->getClassname()." implements NodeObject {
 ";

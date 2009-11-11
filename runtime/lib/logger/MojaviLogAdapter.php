@@ -24,7 +24,7 @@
  *
  * @author     Brandon Keepers <brandon@opensoul.org>
  * @version    $Revision$
- * @package    logger
+ * @package    propel.runtime.logger
  */
 class MojaviLogAdapter implements BasicLogger
 {

@@ -27,9 +27,10 @@ require_once 'builder/sql/DDLBuilder.php';
  *
  * @author     David Z�lke
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.sql.mysql
+ * @package    propel.generator.builder.sql.mysql
  */
-class MysqlDDLBuilder extends DDLBuilder {
+class MysqlDDLBuilder extends DDLBuilder
+{
 
 	/**
 	 * Returns some header SQL that disables foreign key checking.

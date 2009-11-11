@@ -32,7 +32,7 @@ require_once 'builder/om/ObjectBuilder.php';
  * to customize (through extending & overriding).
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    builder.om
+ * @package    propel.generator.builder.om
  */
 class PHP5ExtensionNodeBuilder extends ObjectBuilder {
 
@@ -89,7 +89,7 @@ require '".$this->getNodeBuilder()->getClassFilePath()."';
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    ".$this->getPackage()."
+ * @package    propel.generator.".$this->getPackage()."
  */
 class ".$this->getClassname()." extends $baseClassname {
 ";

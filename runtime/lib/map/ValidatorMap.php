@@ -31,7 +31,7 @@
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
  * @version    $Revision$
- * @package    map
+ * @package    propel.runtime.map
  */
 class ValidatorMap
 {

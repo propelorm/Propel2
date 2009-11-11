@@ -27,7 +27,7 @@ require_once 'builder/om/ClassTools.php';
  * This Task creates the OM classes based on the XML schema file.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelDataDTDTask extends PropelDataModelTemplateTask
 {

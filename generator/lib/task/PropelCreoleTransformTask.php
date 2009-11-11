@@ -31,7 +31,7 @@ require_once 'model/PropelTypes.php';
  * @author     Jason van Zyl <jvanzyl@periapt.com> (Torque)
  * @author     Fedor Karpelevitch <fedor.karpelevitch@barra.com> (Torque)
  * @version    $Revision$
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelCreoleTransformTask extends Task
 {

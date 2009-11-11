@@ -29,7 +29,7 @@ require_once 'model/Rule.php';
  *
  * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Validator extends XMLElement
 {

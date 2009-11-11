@@ -33,7 +33,7 @@
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Sam Joseph <sam@neurogrid.com> (Torque)
  * @version    $Revision$
- * @package    query
+ * @package    propel.runtime.query
  */
 class Criteria implements IteratorAggregate {
 
@@ -1218,9 +1218,10 @@ class Criteria implements IteratorAggregate {
  * to doing it this way, but it makes sense -- and simpler code.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @package    propel.util
+ * @package    propel.runtime.query
  */
-class CriterionIterator implements Iterator {
+class CriterionIterator implements Iterator
+{
 
 	private $idx = 0;
 	private $criteria;
@@ -1265,9 +1266,10 @@ class CriterionIterator implements Iterator {
  * In Torque this is an inner class of the Criteria class.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
- * @package    propel.util
+ * @package    propel.runtime.query
  */
-class Criterion  {
+class Criterion
+{
 
 	const UND = " AND ";
 	const ODER = " OR ";

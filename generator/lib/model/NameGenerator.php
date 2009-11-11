@@ -27,7 +27,7 @@
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 interface NameGenerator
 {

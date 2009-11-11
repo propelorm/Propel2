@@ -36,7 +36,7 @@
  * @author     Jason van Zyl <jvanzyl@zenplex.com> (Torque)
  * @author     Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @version    $Revision$
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelDataDumpTask extends AbstractPropelDataModelTask
 {

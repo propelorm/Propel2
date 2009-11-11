@@ -3,7 +3,7 @@
 /**
  * dblib doesn't support transactions so we need to add a workaround for transactions, last insert ID, and quoting
  *
- * @package    adapter.MSSQL
+ * @package    propel.runtime.adapter.MSSQL
  */
 class MssqlDebugPDO extends DebugPDO
 {

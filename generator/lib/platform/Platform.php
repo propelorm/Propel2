@@ -25,7 +25,7 @@
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
  * @version    $Revision$
- * @package    platform
+ * @package    propel.generator.platform
  */
 interface Platform 
 {

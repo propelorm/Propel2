@@ -26,7 +26,7 @@
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @version    $Revision$
- * @package    util
+ * @package    propel.runtime.util
  */
 class PropelColumnTypes
 {

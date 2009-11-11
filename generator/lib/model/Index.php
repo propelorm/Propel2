@@ -29,7 +29,7 @@ require_once 'exception/EngineException.php';
  * @author     Jason van Zyl <vanzyl@apache.org>
  * @author     Daniel Rall <dlr@finemaltcoding.com>
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Index extends XMLElement
 {

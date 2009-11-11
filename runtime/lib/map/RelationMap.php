@@ -32,7 +32,7 @@
  *
  * @author     Francois Zaninotto
  * @version    $Revision: 1153 $
- * @package    map
+ * @package    propel.runtime.map
  */
 class RelationMap
 {

@@ -26,7 +26,7 @@ require_once 'reverse/BaseSchemaParser.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    reverse.mssql
+ * @package    propel.generator.reverse.mssql
  */
 class MssqlSchemaParser extends BaseSchemaParser
 {

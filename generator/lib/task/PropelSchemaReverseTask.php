@@ -30,7 +30,7 @@ require_once 'model/PropelTypes.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision: 945 $
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelSchemaReverseTask extends PDOTask
 {
@@ -520,7 +520,7 @@ class PropelSchemaReverseTask extends PDOTask
 
 /**
  * A helper class to store validator sets indexed by column.
- * @package    task
+ * @package    propel.generator.task
  */
 class PropelSchemaReverse_ValidatorSet
 {

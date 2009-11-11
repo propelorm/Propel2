@@ -26,7 +26,7 @@ require_once 'platform/DefaultPlatform.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    platform
+ * @package    propel.generator.platform
  */
 class SqlitePlatform extends DefaultPlatform
 {

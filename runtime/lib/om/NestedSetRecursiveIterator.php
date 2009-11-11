@@ -25,7 +25,7 @@
  *
  * @author     Heltem <heltem@o2php.com>
  * @version    $Revision$
- * @package    om
+ * @package    propel.runtime.om
  */
 class NestedSetRecursiveIterator implements RecursiveIterator
 {

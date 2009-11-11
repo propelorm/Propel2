@@ -29,7 +29,7 @@
  * @author     Alan Pinstein
  * @author     Soenke Ruempler
  * @author     Hans Lellelid
- * @package    util
+ * @package    propel.runtime.util
  */
 class PropelDateTime extends DateTime
 {

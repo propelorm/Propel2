@@ -27,7 +27,7 @@ require_once 'exception/EngineException.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class VendorInfo extends XMLElement
 {

@@ -25,7 +25,7 @@
  *
  * @author     Heltem <heltem@o2php.com> (Propel)
  * @version    $Revision$
- * @package    om
+ * @package    propel.runtime.om
  */
 interface NodeObject extends IteratorAggregate
 {

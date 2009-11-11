@@ -36,7 +36,7 @@
  * @author     Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author     Stephen Haberman <stephenh@chase3000.com> (Torque)
  * @version    $Revision$
- * @package    util
+ * @package    propel.runtime.util
  */
 class BasePeer
 {

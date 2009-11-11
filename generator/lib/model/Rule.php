@@ -27,7 +27,7 @@ require_once 'model/XMLElement.php';
  * @author     Michael Aichler <aichler@mediacluster.de> (Propel)
  * @author     John McNally <jmcnally@collab.net> (Intake)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Rule extends XMLElement
 {

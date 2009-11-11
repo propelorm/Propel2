@@ -37,7 +37,7 @@ require_once 'model/Behavior.php';
  * @author     Daniel Rall<dlr@collab.net> (Torque)
  * @author     Byron Foster <byron_foster@yahoo.com> (Torque)
  * @version    $Revision$
- * @package    model
+ * @package    propel.generator.model
  */
 class Database extends XMLElement
 {

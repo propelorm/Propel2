@@ -25,7 +25,7 @@
  *
  * @author     Veikko Mäkinen <veikko@veikko.fi>
  * @version    $Revision$
- * @package    config
+ * @package    propel.runtime.config
  */
 class PropelConfigurationIterator extends RecursiveIteratorIterator
 {
