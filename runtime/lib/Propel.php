@@ -208,6 +208,8 @@ class Propel
 		'NestedSetRecursiveIterator' => 'om/NestedSetRecursiveIterator.php',
 
 		'Criteria'            => 'query/Criteria.php',
+		'Criterion'           => 'query/Criterion.php',
+		'CriterionIterator'   => 'query/CriterionIterator.php',
 		'Join'                => 'query/Join.php',
 
 		'BasePeer'            => 'util/BasePeer.php',
