@@ -20,7 +20,7 @@
  */
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'propel/util/PropelDateTime.php';
+require_once 'util/PropelDateTime.php';
 
 /**
  * Test for DateTime subclass to support serialization.

@@ -1,9 +1,9 @@
 <?php
 
 require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'propel/map/ColumnMap.php';
-include_once 'propel/map/TableMap.php';
-include_once 'propel/map/DatabaseMap.php';
+require_once 'map/ColumnMap.php';
+require_once 'map/TableMap.php';
+require_once 'map/DatabaseMap.php';
 
 class TestDatabaseBuilder
 {

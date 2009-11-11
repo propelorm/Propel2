@@ -106,7 +106,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
   public function testModifyDatabase()
   {
   	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-		require_once 'propel/Propel.php';
+		require_once 'Propel.php';
 		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
     $tmap = Propel::getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
     $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');

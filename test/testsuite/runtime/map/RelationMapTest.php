@@ -1,8 +1,8 @@
 <?php
 
 require_once 'PHPUnit/Framework/TestCase.php';
-include_once 'propel/map/RelationMap.php';
-include_once 'propel/map/TableMap.php';
+require_once 'map/RelationMap.php';
+require_once 'map/TableMap.php';
 
 /**
  * Test class for RelationMap.

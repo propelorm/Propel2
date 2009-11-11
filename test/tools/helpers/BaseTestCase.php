@@ -1,6 +1,6 @@
 <?php
 
-require_once 'propel/Propel.php';
+require_once 'Propel.php';
 require_once 'PHPUnit/Framework/TestCase.php';
 
 /**

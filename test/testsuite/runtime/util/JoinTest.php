@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'propel/util/Criteria.php';
+require_once 'util/Criteria.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
 Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');

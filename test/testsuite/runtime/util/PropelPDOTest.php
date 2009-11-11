@@ -20,7 +20,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'propel/util/PropelPDO.php';
+require_once 'util/PropelPDO.php';
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
 Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
 

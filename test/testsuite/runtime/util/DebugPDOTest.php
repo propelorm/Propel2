@@ -1,7 +1,7 @@
 <?php 
 
 require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
-require_once 'propel/util/PropelPDO.php';
+require_once 'util/PropelPDO.php';
 
 /**
  * Test for DebugPDO subclass.

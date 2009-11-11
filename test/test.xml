@@ -33,8 +33,8 @@
 
 	<resolvepath propertyName="tests.dir.resolved" file="${tests.phpunit.dir}" />
 	<resolvepath propertyName="tests.classes.dir.resolved" file="${tests.phpunit.dir}/testsuite" />
-	<resolvepath propertyName="propel-generator.classes.dir.resolved" file="../generator/classes" />
-	<resolvepath propertyName="propel-runtime.classes.dir.resolved" file="../runtime/classes" />
+	<resolvepath propertyName="propel-generator.classes.dir.resolved" file="../generator/lib" />
+	<resolvepath propertyName="propel-runtime.classes.dir.resolved" file="../runtime/lib" />
 
 	<path id="incthis">
 		<pathelement dir="${tests.dir.resolved}" />
@@ -50,7 +50,7 @@
 		<define name="TESTS_BASE_DIR" value="${tests.dir.resolved}" />
 		<adhoc>
 			<![CDATA[
-			require_once 'propel/Propel.php';
+			require_once 'Propel.php';
 		]]>
 		</adhoc>
 
