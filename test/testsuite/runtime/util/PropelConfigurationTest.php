@@ -20,7 +20,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'util/PropelConfiguration.php';
+require_once 'config/PropelConfiguration.php';
 
 /**
  * Test for PropelConfiguration class

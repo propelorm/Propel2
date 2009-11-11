@@ -114,7 +114,7 @@
  * @author     Christian Abegg <abegg.ch@gmail.com>
  * @author     Jarno Rantanen <jarno.rantanen@tkk.fi>
  * @since      2006-09-22
- * @package    util
+ * @package    connection
  */
 class DebugPDO extends PropelPDO
 {

@@ -20,14 +20,14 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'util/PropelPDO.php';
+require_once 'connection/PropelPDO.php';
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
 Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
 
 /**
  * Test for PropelPDO subclass.
  *
- * @package    runtime.util
+ * @package    runtime.connection
  */
 class PropelPDOTest extends PHPUnit_Framework_TestCase
 {

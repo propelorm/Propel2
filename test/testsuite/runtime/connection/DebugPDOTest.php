@@ -1,14 +1,14 @@
 <?php 
 
 require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
-require_once 'util/PropelPDO.php';
+require_once 'connection/PropelPDO.php';
 
 /**
  * Test for DebugPDO subclass.
  *
  * @author     François Zaninotto
  * @version    $Id: DebugPDOTest.php 1121 2009-09-14 17:20:11Z francois $
- * @package    runtime.util
+ * @package    runtime.connection
  */
 class DebugPDOTest extends BookstoreTestBase
 {

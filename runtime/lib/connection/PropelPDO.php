@@ -37,9 +37,10 @@
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Christian Abegg <abegg.ch@gmail.com>
  * @since      2006-09-22
- * @package    propel.util
+ * @package    connexion
  */
-class PropelPDO extends PDO {
+class PropelPDO extends PDO
+{
 
 	/**
 	 * Attribute to use to set whether to cache prepared statements.

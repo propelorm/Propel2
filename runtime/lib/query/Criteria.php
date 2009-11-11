@@ -33,7 +33,7 @@
  * @author     Henning P. Schmiedehausen <hps@intermeta.de> (Torque)
  * @author     Sam Joseph <sam@neurogrid.com> (Torque)
  * @version    $Revision$
- * @package    util
+ * @package    query
  */
 class Criteria implements IteratorAggregate {
 

@@ -19,10 +19,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require 'PropelException.php';
-require 'adapter/DBAdapter.php';
-require 'util/PropelPDO.php';
-
 /**
  * Propel's main resource pool and initialization & configuration class.
  *
@@ -171,51 +167,55 @@ class Propel
 	 * @var        array A map of class names and their file paths for autoloading
 	 */
 	private static $autoloadMap = array(
-		'PropelException' => 'PropelException.php',
+		'PropelException'     => 'PropelException.php',
 
-		'DBAdapter'       => 'adapter/DBAdapter.php',
-		'DBMSSQL'         => 'adapter/DBMSSQL.php',
-		'MssqlPropelPDO'  => 'adapter/MSSQL/MssqlPropelPDO.php',
-		'MssqlDebugPDO'   => 'adapter/MSSQL/MssqlDebugPDO.php',	
-		'MssqlDateTime'   => 'adapter/MSSQL/MssqlDateTime.class.php',
-		'DBMySQL'         => 'adapter/DBMySQL.php',
-		'DBMySQLi'        => 'adapter/DBMySQLi.php',
-		'DBNone'          => 'adapter/DBNone.php',
-		'DBOracle'        => 'adapter/DBOracle.php',
-		'DBPostgres'      => 'adapter/DBPostgres.php',
-		'DBSQLite'        => 'adapter/DBSQLite.php',
-		'DBSybase'        => 'adapter/DBSybase.php',
+		'DBAdapter'           => 'adapter/DBAdapter.php',
+		'DBMSSQL'             => 'adapter/DBMSSQL.php',
+		'MssqlPropelPDO'      => 'adapter/MSSQL/MssqlPropelPDO.php',
+		'MssqlDebugPDO'       => 'adapter/MSSQL/MssqlDebugPDO.php',	
+		'MssqlDateTime'       => 'adapter/MSSQL/MssqlDateTime.class.php',
+		'DBMySQL'             => 'adapter/DBMySQL.php',
+		'DBMySQLi'            => 'adapter/DBMySQLi.php',
+		'DBNone'              => 'adapter/DBNone.php',
+		'DBOracle'            => 'adapter/DBOracle.php',
+		'DBPostgres'          => 'adapter/DBPostgres.php',
+		'DBSQLite'            => 'adapter/DBSQLite.php',
+		'DBSybase'            => 'adapter/DBSybase.php',
 
-		'BasicLogger'       => 'logger/BasicLogger.php',
-		'MojaviLogAdapter'  => 'logger/MojaviLogAdapter.php',
+		'PropelConfiguration' => 'config/PropelConfiguration.php',
+		'PropelConfigurationIterator' => 'config/PropelConfigurationIterator.php',
 
-		'ColumnMap'    => 'map/ColumnMap.php',
-		'DatabaseMap'  => 'map/DatabaseMap.php',
-		'TableMap'     => 'map/TableMap.php',
-		'RelationMap'  => 'map/RelationMap.php',
-		'ValidatorMap' => 'map/ValidatorMap.php',
+		'PropelPDO'           => 'connection/PropelPDO.php',
+		'DebugPDO'            => 'connection/DebugPDO.php',
+		'DebugPDOStatement'   => 'connection/DebugPDOStatement.php',
 
-		'BaseObject'                    => 'om/BaseObject.php',
-		'NodeObject'                    => 'om/NodeObject.php',
-		'Persistent'                    => 'om/Persistent.php',
-		'PreOrderNodeIterator'          => 'om/PreOrderNodeIterator.php',
+		'PropelException'     => 'exception/PropelException.php',
+
+		'BasicLogger'         => 'logger/BasicLogger.php',
+		'MojaviLogAdapter'    => 'logger/MojaviLogAdapter.php',
+
+		'ColumnMap'           => 'map/ColumnMap.php',
+		'DatabaseMap'         => 'map/DatabaseMap.php',
+		'TableMap'            => 'map/TableMap.php',
+		'RelationMap'         => 'map/RelationMap.php',
+		'ValidatorMap'        => 'map/ValidatorMap.php',
+
+		'BaseObject'          => 'om/BaseObject.php',
+		'NodeObject'          => 'om/NodeObject.php',
+		'Persistent'          => 'om/Persistent.php',
+		'PreOrderNodeIterator' => 'om/PreOrderNodeIterator.php',
 		'NestedSetPreOrderNodeIterator' => 'om/NestedSetPreOrderNodeIterator.php',
-		'NestedSetRecursiveIterator'    => 'om/NestedSetRecursiveIterator.php',
+		'NestedSetRecursiveIterator' => 'om/NestedSetRecursiveIterator.php',
+
+		'Criteria'            => 'query/Criteria.php',
+		'Join'                => 'query/Join.php',
 
 		'BasePeer'            => 'util/BasePeer.php',
 		'NodePeer'            => 'util/NodePeer.php',
-		'Criteria'            => 'util/Criteria.php',
-		'Join'                => 'util/Join.php',
 		'PeerInfo'            => 'util/PeerInfo.php',
 		'PropelColumnTypes'   => 'util/PropelColumnTypes.php',
-		'PropelConfiguration' => 'util/PropelConfiguration.php',
-		'PropelConfigurationIterator' => 'util/PropelConfigurationIterator.php',
-		'PropelPDO'           => 'util/PropelPDO.php',
 		'PropelPager'         => 'util/PropelPager.php',
 		'PropelDateTime'      => 'util/PropelDateTime.php',
-		'DebugPDO'            => 'util/DebugPDO.php',
-		'DebugPDOStatement'   => 'util/DebugPDOStatement.php',
-
 
 		'BasicValidator'      => 'validator/BasicValidator.php',
 		'MatchValidator'      => 'validator/MatchValidator.php',

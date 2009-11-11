@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'util/Criteria.php';
+require_once 'query/Criteria.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
 Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
@@ -11,7 +11,7 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  *
  * @author     François Zaninotto
  * @version    $Id: JoinTest.php 1121 2009-09-14 17:20:11Z francois $
- * @package    runtime.util
+ * @package    runtime.query
  */
 class JoinTest extends BaseTestCase 
 {

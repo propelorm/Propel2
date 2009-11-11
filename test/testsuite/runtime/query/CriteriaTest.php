@@ -1,7 +1,7 @@
 <?php
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'util/Criteria.php';
+require_once 'query/Criteria.php';
 require_once 'util/BasePeer.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
@@ -13,7 +13,7 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  * @author     <a href="mailto:celkins@scardini.com">Christopher Elkins</a>
  * @author     <a href="mailto:sam@neurogrid.com">Sam Joseph</a>
  * @version    $Id$
- * @package    runtime.util
+ * @package    runtime.query
  */
 class CriteriaTest extends BaseTestCase
 {
