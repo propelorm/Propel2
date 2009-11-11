@@ -35,7 +35,8 @@
  * @version    $Revision$
  * @package    propel.runtime.query
  */
-class Criteria implements IteratorAggregate {
+class Criteria implements IteratorAggregate
+{
 
 	/** Comparison type. */
 	const EQUAL = "=";
@@ -553,31 +554,18 @@ class Criteria implements IteratorAggregate {
 	 */
 	public function putAll($t)
 	{
-
 		if (is_array($t)) {
-
 			foreach ($t as $key=>$value) {
-
 				if ($value instanceof Criterion) {
-
 					$this->map[$key] = $value;
-
 				} else {
-
 					$this->put($key, $value);
-
 				}
-
 			}
-
 		} elseif ($t instanceof Criteria) {
-
 			$this->joins = $t->joins;
-
 		}
-
 	}
-
 
 	/**
 	 * This method adds a new criterion to the list of criterias.
