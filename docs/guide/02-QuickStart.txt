@@ -146,7 +146,7 @@ Create a new file called {{{runtime-conf.xml}}} inside your {{{bookstore}}} dire
  <!-- Uncomment this if you have PEAR Log installed
  <log>
   <type>file</type>
-  <name>/path/to/prople.log</name>
+  <name>/path/to/propel.log</name>
   <ident>propel-bookstore</ident>
   <level>7</level>
  </log>

@@ -35,7 +35,7 @@ class DebugPDOStatement extends PDOStatement
 	/**
 	 * The PDO connection from which this instance was created.
 	 * 
-	 * @var        DebugPDO
+	 * @var        PropelPDO
 	 */
 	protected $pdo;
 	

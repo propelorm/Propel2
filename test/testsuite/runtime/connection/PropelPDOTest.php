@@ -247,4 +247,180 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$this->assertNull($at2, "Forced Rolled back nested transaction is not persisted in database");
 	}
 	
+	public function testLatestQuery()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$con->setLastExecutedQuery(123);
+		$this->assertEquals(123, $con->getLastExecutedQuery(), 'PropelPDO has getter and setter for last executed query');
+	}
+	
+	public function testQueryCount()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$count = $con->getQueryCount();
+		$con->incrementQueryCount();
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'PropelPDO has getter and incrementer for query count');
+	}
+
+	public function testUseDebug()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$con->useDebug(false);
+		$this->assertEquals(array('PDOStatement'), $con->getAttribute(PDO::ATTR_STATEMENT_CLASS), 'Statement is PDOStatement when debug is false');
+		$con->useDebug(true);
+		$this->assertEquals(array('DebugPDOStatement', array($con)), $con->getAttribute(PDO::ATTR_STATEMENT_CLASS), 'statement is DebugPDOStament when debug is true');
+	}
+	
+	public function testDebugLatestQuery()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+
+		$con->useDebug(false);
+		$this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
+
+		$books = BookPeer::doSelect($c, $con);
+		$this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO does not update the last executed query when useLogging is false');
+
+		$con->useDebug(true);
+		$books = BookPeer::doSelect($c, $con);
+		$latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+		if (!Propel::getDB(BookPeer::DATABASE_NAME)->useQuoteIdentifier()) {
+			$latestExecutedQuery = str_replace('`', '', $latestExecutedQuery);
+		}
+		$this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
+		
+		BookPeer::doDeleteAll($con);
+		$latestExecutedQuery = "DELETE FROM book";
+		$this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on delete operations');
+		
+		$sql = 'DELETE FROM book WHERE 1=1';
+		$con->exec($sql);
+		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on exec operations');
+
+		$sql = 'DELETE FROM book WHERE 2=2';
+		$con->query($sql);
+		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on query operations');
+
+		$stmt = $con->prepare('DELETE FROM book WHERE 1=:p1');
+		$stmt->bindValue(':p1', '2');
+		$stmt->execute();
+		$this->assertEquals("DELETE FROM book WHERE 1='2'", $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on prapared statements');
+
+		$con->useDebug(false);
+		$this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
+
+		$con->useDebug(true);
+	}
+
+	public function testDebugQueryCount()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+
+		$con->useDebug(false);
+		$this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
+
+		$books = BookPeer::doSelect($c, $con);
+		$this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
+
+		$con->useDebug(true);
+		$books = BookPeer::doSelect($c, $con);
+		$this->assertEquals(1, $con->getQueryCount(), 'PropelPDO updates the query count when useLogging is true');
+		
+		BookPeer::doDeleteAll($con);
+		$this->assertEquals(2, $con->getQueryCount(), 'PropelPDO updates the query count on delete operations');
+		
+		$sql = 'DELETE FROM book WHERE 1=1';
+		$con->exec($sql);
+		$this->assertEquals(3, $con->getQueryCount(), 'PropelPDO updates the query count on exec operations');
+
+		$sql = 'DELETE FROM book WHERE 2=2';
+		$con->query($sql);
+		$this->assertEquals(4, $con->getQueryCount(), 'PropelPDO updates the query count on query operations');
+
+		$stmt = $con->prepare('DELETE FROM book WHERE 1=:p1');
+		$stmt->bindValue(':p1', '2');
+		$stmt->execute();
+		$this->assertEquals(5, $con->getQueryCount(), 'PropelPDO updates the query count on prapared statements');
+
+		$con->useDebug(false);
+		$this->assertEquals(0, $con->getQueryCount(), 'PropelPDO reinitializes the query count when debug is set to false');
+
+		$con->useDebug(true);
+	}
+
+	public function testDebugLog()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
+		
+		// save data to return to normal state after test
+		$logger = $con->getLogger();
+				
+		$testLog = new myLogger();
+		$con->setLogger($testLog);
+		
+		$logEverything = array('PropelPDO::exec', 'PropelPDO::query', 'PropelPDO::beginTransaction', 'PropelPDO::commit', 'PropelPDO::rollBack', 'DebugPDOStatement::execute');
+		Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything);
+		$con->useDebug(true);
+		
+		// test transaction log
+		$con->beginTransaction();
+		$this->assertEquals('log: Begin transaction', $testLog->latestMessage, 'PropelPDO logs begin transation in debug mode');
+		
+		$con->commit();
+		$this->assertEquals('log: Commit transaction', $testLog->latestMessage, 'PropelPDO logs commit transation in debug mode');
+		
+		$con->beginTransaction();
+		$con->rollBack();
+		$this->assertEquals('log: Rollback transaction', $testLog->latestMessage, 'PropelPDO logs rollback transation in debug mode');
+
+		$con->beginTransaction();
+		$testLog->latestMessage = '';
+		$con->beginTransaction();
+		$this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested begin transation in debug mode');
+		$con->commit();
+		$this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested commit transation in debug mode');
+		$con->beginTransaction();
+		$con->rollBack();
+		$this->assertEquals('', $testLog->latestMessage, 'PropelPDO does not log nested rollback transation in debug mode');
+		$con->rollback();
+		
+		// test query log
+		$con->beginTransaction();
+		
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Harry%s', Criteria::LIKE);
+
+		$books = BookPeer::doSelect($c, $con);
+		$latestExecutedQuery = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE LIKE 'Harry%s'";
+		$this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
+
+		BookPeer::doDeleteAll($con);
+		$latestExecutedQuery = "DELETE FROM book";
+		$this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs deletion queries in debug mode');
+		
+		$latestExecutedQuery = 'DELETE FROM book WHERE 1=1';
+		$con->exec($latestExecutedQuery);
+		$this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs exec queries in debug mode');
+		
+		$con->commit();
+		
+		// return to normal state after test		
+		$con->setLogger($logger);
+		$config->setParameter("debugpdo.logging.methods", array('PropelPDO::exec', 'PropelPDO::query', 'DebugPDOStatement::execute'));
+	}
+}
+
+class myLogger
+{
+	public $latestMessage = '';
+	
+	public function __call($method, $arguments)
+	{
+		$this->latestMessage = $method . ': ' . array_shift($arguments); 
+	}
 }
