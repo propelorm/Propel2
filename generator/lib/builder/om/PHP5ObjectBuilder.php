@@ -1501,7 +1501,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				\$this->ensureConsistency();
 			}
 
-			// FIXME - using NUM_COLUMNS may be clearer.
 			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception \$e) {
