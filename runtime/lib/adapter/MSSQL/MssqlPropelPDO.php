@@ -19,6 +19,9 @@ class MssqlPropelPDO extends PropelPDO
 		$opcount = $this->getNestedTransactionCount();
 		if ( $opcount === 0 ) {
 			$return = self::exec('BEGIN TRANSACTION');
+			if ($this->useDebug) {
+				$this->log('Begin transaction', null, __METHOD__);
+			}
 			$this->isUncommitable = false;
 		}
 		$this->incrementNestedTransactionCount();
@@ -31,7 +34,7 @@ class MssqlPropelPDO extends PropelPDO
 	 * It is necessary to override the abstract PDO transaction functions here, as
 	 * the PDO driver for MSSQL does not support transactions.
 	 */
-  public function commit()
+	public function commit()
 	{
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
@@ -41,6 +44,10 @@ class MssqlPropelPDO extends PropelPDO
 					throw new PropelException('Cannot commit because a nested transaction was rolled back');
 				} else {
 					$return = self::exec('COMMIT TRANSACTION');
+					if ($this->useDebug) {		
+				  	$this->log('Commit transaction', null, __METHOD__);
+					}
+
 				}
 			}
 			$this->decrementNestedTransactionCount();
@@ -59,8 +66,11 @@ class MssqlPropelPDO extends PropelPDO
 		$return = true;
 		$opcount = $this->getNestedTransactionCount();
 		if ($opcount > 0) {
-			if ($opcount === 1) { 
+			if ($opcount === 1) {
 				$return = self::exec('ROLLBACK TRANSACTION'); 
+				if ($this->useDebug) {		
+					$this->log('Rollback transaction', null, __METHOD__);
+				}
 			} else {
 				$this->isUncommitable = true;
 			}
@@ -84,10 +94,14 @@ class MssqlPropelPDO extends PropelPDO
 			// If we're in a transaction, always roll it back
 			// regardless of nesting level.
 			$return = self::exec('ROLLBACK TRANSACTION');
-			
+
 			// reset nested transaction count to 0 so that we don't
 			// try to commit (or rollback) the transaction outside this scope.
 			$this->nestedTransactionCount = 0;
+
+			if ($this->useDebug) {
+				$this->log('Rollback transaction', null, __METHOD__);
+			}
 		}
 		return $return;
 	}
@@ -95,7 +109,7 @@ class MssqlPropelPDO extends PropelPDO
 	public function lastInsertId($seqname = null)
 	{
 		$result = self::query('SELECT SCOPE_IDENTITY()');
-		return (int)$result->fetchColumn();
+		return (int) $result->fetchColumn();
 	}
 	
 	public function quoteIdentifier($text)

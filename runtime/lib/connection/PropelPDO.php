@@ -249,7 +249,7 @@ class PropelPDO extends PDO
 		if ($opcount > 0) {
 			if ($opcount === 1) {
 				$return = parent::rollBack();
-				if ($this->useDebug) {		
+				if ($this->useDebug) {
 					$this->log('Rollback transaction', null, __METHOD__);
 				}
 			} else {
@@ -273,10 +273,14 @@ class PropelPDO extends PDO
 			// If we're in a transaction, always roll it back
 			// regardless of nesting level.
 			$return = parent::rollBack();
-			
+
 			// reset nested transaction count to 0 so that we don't
 			// try to commit (or rollback) the transaction outside this scope.
 			$this->nestedTransactionCount = 0;
+
+			if ($this->useDebug) {
+				$this->log('Rollback transaction', null, __METHOD__);
+			}
 		}
 		return $return;
 	}
@@ -550,7 +554,7 @@ class PropelPDO extends PDO
 	public function log($msg, $level = null, $methodName = null, array $debugSnapshot = null)
 	{
 		// If logging has been specifically disabled, this method won't do anything
-		if (!$this->useDebug) {
+		if (!$this->getLoggingConfig('enabled', true)) {
 			return;
 		}
 		
