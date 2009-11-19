@@ -186,7 +186,7 @@ class BasePeer
 	 * @param      PropelPDO $con A PropelPDO connection object.
 	 * @return     int	The number of rows affected by the statement.  Note
 	 * 				that the return value does require that this information
-	 * 				is returned (supported) by the Creole db driver.
+	 * 				is returned (supported) by the Propel db driver.
 	 * @throws     PropelException - wrapping SQLException caught from statement execution.
 	 */
 	public static function doDeleteAll($tableName, PropelPDO $con)
@@ -329,7 +329,7 @@ class BasePeer
 	 * 				uses there is only one update statement executed, so this number
 	 * 				will correspond to the number of rows affected by the call to this
 	 * 				method.  Note that the return value does require that this information
-	 * 				is returned (supported) by the Creole db driver.
+	 * 				is returned (supported) by the Propel db driver.
 	 * @throws     PropelException
 	 */
 	public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, PropelPDO $con) {

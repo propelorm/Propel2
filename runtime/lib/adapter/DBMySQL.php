@@ -95,7 +95,7 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Locks the specified table.
 	 *
-	 * @param      Connection $con The Creole connection to use.
+	 * @param      Connection $con The Propel connection to use.
 	 * @param      string $table The name of the table to lock.
 	 * @throws     PDOException No Statement could be created or
 	 * executed.

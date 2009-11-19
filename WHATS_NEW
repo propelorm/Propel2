@@ -72,7 +72,9 @@ The nested set behavior implementation has a few added benefits:
 
 As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [nested_set behavior documentation] for more details.
 
-== Directory Structure Changes ==
+== Code Cleanup ==
+
+=== Directory Structure Changes ===
 
 The organization of the Propel runtime and generator code has been reworked, in order to make navigation across Propel classes easier for developers. End users should see no difference, apart if your `build.properties` references alternate builder classes in the Propel code. In that case, you will need to update your `build.properties` with the new paths. For instance, a reference to:
 
@@ -90,11 +92,15 @@ propel.builder.peer.class = builder.om.PHP5PeerBuilder
 
 Browse the Propel generator directory structure to find the classes you need.
 
-== DebugPDO Refactoring ==
+=== DebugPDO Refactoring ===
 
 To allow custom connection handlers, the debug code that was written in the `DebugPDO` class has been moved to `PropelPDO`. The change is completely backwards compatible, but makes it easier to connect to a database without using PDO.
 
 During the change, the documentation about Propel logging and debugging features was rewritten and should now be clearer.
+
+=== Other Minor Code Cleanups ===
+
+ * Removed references to Creole in the code (Propel uses PDO instead of Creole since version 1.3)
 
 == Criteria Enhancements ==
 

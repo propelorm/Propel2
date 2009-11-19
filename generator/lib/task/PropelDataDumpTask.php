@@ -49,25 +49,25 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
 	private $databaseName;
 
 	/**
-	 * Database URL used for Creole connection.
+	 * Database URL used for Propel connection.
 	 * This is a PEAR-compatible (loosely) DSN URL.
 	 */
 	private $databaseUrl;
 
 	/**
-	 * Database driver used for Creole connection.
-	 * This should normally be left blank so that default (Creole built-in) driver for database type is used.
+	 * Database driver used for Propel connection.
+	 * This should normally be left blank so that default (Propel built-in) driver for database type is used.
 	 */
 	private $databaseDriver;
 
 	/**
-	 * Database user used for Creole connection.
+	 * Database user used for Propel connection.
 	 * @deprecated Put username in databaseUrl.
 	 */
 	private $databaseUser;
 
 	/**
-	 * Database password used for Creole connection.
+	 * Database password used for Propel connection.
 	 * @deprecated Put password in databaseUrl.
 	 */
 	private $databasePassword;

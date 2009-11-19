@@ -772,7 +772,7 @@ class Column extends XMLElement
 
   /**
    * Returns the Propel column type as a string.
-   * @return     string The constant representing Creole type: e.g. "VARCHAR".
+   * @return     string The constant representing Propel type: e.g. "VARCHAR".
    * @see        Domain::getType()
    */
   public function getType()

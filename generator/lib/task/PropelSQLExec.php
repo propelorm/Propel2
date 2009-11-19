@@ -666,7 +666,7 @@ class PropelSQLExec extends Task
 /**
  * "Inner" class that contains the definition of a new transaction element.
  * Transactions allow several files or blocks of statements
- * to be executed using the same Creole connection and commit
+ * to be executed using the same Propel connection and commit
  * operation in between.
  * @package    propel.generator.task
  */

@@ -36,7 +36,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 	 * @var        array
 	 */
 	private static $mssqlTypeMap = array(
-		"binary" => CreoleTypes::BINARY,
+		"binary" => PropelTypes::BINARY,
 		"bit" => PropelTypes::BOOLEAN,
 		"char" => PropelTypes::CHAR,
 		"datetime" => PropelTypes::TIMESTAMP,

@@ -93,12 +93,12 @@ interface Platform
 	public function getMaxColumnNameLength();
 
 	/**
-	 * Returns the db specific domain for a jdbcType.
+	 * Returns the db specific domain for a propelType.
 	 *
-	 * @param      string $creoleType the creole type name.
+	 * @param      string $propelType the Propel type name.
 	 * @return     Domain The db specific domain.
 	 */
-	public function getDomainForType($creoleType);
+	public function getDomainForType($propelType);
 
 	/**
 	 * @return     string The RDBMS-specific SQL fragment for <code>NULL</code>
@@ -157,7 +157,7 @@ interface Platform
 	 * Returns the boolean value for the RDBMS.
 	 *
 	 * This value should match the boolean value that is set
-	 * when using Creole's PreparedStatement::setBoolean().
+	 * when using Propel's PreparedStatement::setBoolean().
 	 *
 	 * This function is used to set default column values when building
 	 * SQL.

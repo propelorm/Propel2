@@ -24,7 +24,7 @@
  *
  * <p>Support for new databases is added by subclassing
  * <code>DBAdapter</code> and implementing its abstract interface, and by
- * registering the new database adapter and corresponding Creole
+ * registering the new database adapter and corresponding Propel
  * driver in the private adapters map (array) in this class.</p>
  *
  * <p>The Propel database adapters exist to present a uniform
@@ -49,7 +49,7 @@ abstract class DBAdapter
 	const ID_METHOD_SEQUENCE = 2;
 
 	/**
-	 * Creole driver to Propel adapter map.
+	 * Propel driver to Propel adapter map.
 	 * @var        array
 	 */
 	private static $adapters = array(
@@ -66,9 +66,9 @@ abstract class DBAdapter
 
 	/**
 	 * Creates a new instance of the database adapter associated
-	 * with the specified Creole driver.
+	 * with the specified Propel driver.
 	 *
-	 * @param      string $driver The name of the Propel/Creole driver to
+	 * @param      string $driver The name of the Propel driver to
 	 * create a new adapter instance for or a shorter form adapter key.
 	 * @return     DBAdapter An instance of a Propel database adapter.
 	 * @throws     PropelException if the adapter could not be instantiated.
