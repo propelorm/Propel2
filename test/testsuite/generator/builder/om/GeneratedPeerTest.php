@@ -679,7 +679,7 @@ class GeneratedPeerTest extends BookstoreEmptyTestBase
 			}
 		}
 
-		$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
+		//$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
 
 		// Now delete 2 of those rows
 		ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));

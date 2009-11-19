@@ -372,6 +372,20 @@ class Criteria implements IteratorAggregate
 		}
 		return null;
 	}
+	
+	/**
+	 * Method to return the latest Criterion in a table.
+	 *
+	 * @return     Criterion A Criterion or null no Criterion is added.
+	 */
+	public function getLastCriterion()
+	{
+		if($cnt = count($this->map)) {
+			$map = array_values($this->map);
+			return $map[$cnt - 1];
+		}
+		return null;
+	}
 
 	/**
 	 * Method to return criterion that is not added automatically
@@ -383,7 +397,7 @@ class Criteria implements IteratorAggregate
 	 * @param      string $comparison
 	 * @return     Criterion
 	 */
-	public function getNewCriterion($column, $value, $comparison = null)
+	public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
 	{
 		return new Criterion($this, $column, $value, $comparison);
 	}
@@ -572,19 +586,15 @@ class Criteria implements IteratorAggregate
 	 * If a criterion for the requested column already exists, it is
 	 * replaced. If is used as follow:
 	 *
-	 * <p>
 	 * <code>
 	 * $crit = new Criteria();
-	 * $crit->add(&quot;column&quot;,
-	 *                                      &quot;value&quot;
-	 *                                      &quot;Criteria::GREATER_THAN&quot;);
+	 * $crit->add($column, $value, Criteria::GREATER_THAN);
 	 * </code>
 	 *
 	 * Any comparison can be used.
 	 *
 	 * The name of the table must be used implicitly in the column name,
-	 * so the Column name must be something like 'TABLE.id'. If you
-	 * don't like this, you can use the add(table, column, value) method.
+	 * so the Column name must be something like 'TABLE.id'.
 	 *
 	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
 	 * @param      mixed $value
@@ -1079,117 +1089,70 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
-	 * This method adds a new criterion to the list of criterias.
-	 * If a criterion for the requested column already exists, it is
-	 * "AND"ed to the existing criterion.
-	  *
-	 * addAnd(column, value, comparison)
-	 * <code>
-	 * $crit = $orig_crit->addAnd(&quot;column&quot;,
-	 *                                      &quot;value&quot;
-	 *                                      &quot;Criterion::GREATER_THAN&quot;);
-	 * </code>
-	 *
-	 * addAnd(column, value)
-	 * <code>
-	 * $crit = $orig_crit->addAnd(&quot;column&quot;, &quot;value&quot;);
-	 * </code>
-	 *
-	 * addAnd(Criterion)
-	 * <code>
-	 * $crit = new Criteria();
-	 * $c = $crit->getNewCriterion(BasePeer::ID, 5, Criteria::LESS_THAN);
-	 * $crit->addAnd($c);
-	 * </code>
-	 *
-	 * Any comparison can be used, of course.
-	 *
-	 *
-	 * @return     Criteria A modified Criteria object.
-	 */
-	public function addAnd($p1, $p2 = null, $p3 = null)
-	{
-		if ($p3 !== null) {
-			// addAnd(column, value, comparison)
-			$oc = $this->getCriterion($p1);
-			$nc = new Criterion($this, $p1, $p2, $p3);
-			if ( $oc === null) {
-				$this->map[$p1] = $nc;
-			} else {
-				$oc->addAnd($nc);
-			}
-		} elseif ($p2 !== null) {
-			// addAnd(column, value)
-			$this->addAnd($p1, $p2, self::EQUAL);
-		} elseif ($p1 instanceof Criterion) {
-			// addAnd(Criterion)
-			$oc = $this->getCriterion($p1->getTable() . '.' . $p1->getColumn());
-			if ($oc === null) {
-				$this->add($p1);
-			} else {
-				$oc->addAnd($p1);
-			}
-		} elseif ($p2 === null && $p3 === null) {
-			// client has not specified $p3 (comparison)
-			// which means Criteria::EQUAL but has also specified $p2 == null
-			// which is a valid combination we should handle by creating "IS NULL"
-			$this->addAnd($p1, $p2, self::EQUAL);
-		}
-		return $this;
-	}
-
-	/**
-	 * This method adds a new criterion to the list of criterias.
-	 * If a criterion for the requested column already exists, it is
-	 * "OR"ed to the existing criterion.
+	 * If a criterion for the requested column already exists, the condition is "AND"ed to the existing criterion (necessary for Propel 1.4 compatibility).
+	 * If no criterion for the requested column already exists, the condition is "AND"ed to the latest criterion.
+	 * If no criterion exist, the condition is added a new criterion
 	 *
 	 * Any comparison can be used.
 	 *
 	 * Supports a number of different signatures:
-	 *
-	 * addOr(column, value, comparison)
-	 * <code>
-	 * $crit = $orig_crit->addOr(&quot;column&quot;,
-	 *                                      &quot;value&quot;
-	 *                                      &quot;Criterion::GREATER_THAN&quot;);
-	 * </code>
-	 *
-	 * addOr(column, value)
-	 * <code>
-	 * $crit = $orig_crit->addOr(&quot;column&quot;, &quot;value&quot;);
-	 * </code>
-	 *
-	 * addOr(Criterion)
+	 *  - addAnd(column, value, comparison)
+	 *  - addAnd(column, value)
+	 *  - addAnd(Criterion)
 	 *
 	 * @return     Criteria A modified Criteria object.
 	 */
-	public function addOr($p1, $p2 = null, $p3 = null)
+	public function addAnd($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
 	{
-		if ($p3 !== null) {
-			// addOr(column, value, comparison)
-			$nc = new Criterion($this, $p1, $p2, $p3);
-			$oc = $this->getCriterion($p1);
-			if ($oc === null) {
-				$this->map[$p1] = $nc;
-			} else {
-				$oc->addOr($nc);
-			}
-		} elseif ($p2 !== null) {
-			// addOr(column, value)
-			$this->addOr($p1, $p2, self::EQUAL);
-		} elseif ($p1 instanceof Criterion) {
-			// addOr(Criterion)
-			$oc = $this->getCriterion($p1->getTable() . '.' . $p1->getColumn());
-			if ($oc === null) {
-				$this->add($p1);
-			} else {
-				$oc->addOr($p1);
-			}
-		} elseif ($p2 === null && $p3 === null) {
-			// client has not specified $p3 (comparison)
-			// which means Criteria::EQUAL but has also specified $p2 == null
-			// which is a valid combination we should handle by creating "IS NULL"
-			$this->addOr($p1, $p2, self::EQUAL);
+		$criterion = ($p1 instanceof Criterion) ? $p1 : new Criterion($this, $p1, $p2, $p3);
+
+		$key = $criterion->getTable() . '.' . $criterion->getColumn();
+		if ($preferColumnCondition && $this->containsKey($key)) {
+			// FIXME: addAnd() operates preferably on existing conditions on the same column
+			// this may cause unexpected results, but it's there for BC with Propel 14
+			$this->getCriterion($key)->addAnd($criterion);
+		} else {
+			// simply add the condition to the list - this is the expected behavior
+			$this->add($criterion);
+		}
+
+		return $this;
+	}
+	
+	/**
+	 * If a criterion for the requested column already exists, the condition is "OR"ed to the existing criterion (necessary for Propel 1.4 compatibility).
+	 * If no criterion for the requested column already exists, the condition is "OR"ed to the latest criterion.
+	 * If no criterion exist, the condition is added a new criterion
+	 *
+	 * Any comparison can be used.
+	 *
+	 * Supports a number of different signatures:
+	 *  - addOr(column, value, comparison)
+	 *  - addOr(column, value)
+	 *  - addOr(Criterion)
+	 *
+	 * @return     Criteria A modified Criteria object.
+	 */
+	public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
+	{
+		$rightCriterion = ($p1 instanceof Criterion) ? $p1 : new Criterion($this, $p1, $p2, $p3);
+		
+		$key = $rightCriterion->getTable() . '.' . $rightCriterion->getColumn();
+		if ($preferColumnCondition && $this->containsKey($key)) {
+			// FIXME: addOr() operates preferably on existing conditions on the same column
+			// this may cause unexpected results, but it's there for BC with Propel 14
+			$leftCriterion = $this->getCriterion($key);
+		} else {
+			// fallback to the latest condition - this is the expected behavior
+			$leftCriterion = $this->getLastCriterion();
+		}
+
+		if ($leftCriterion !== null) {
+			// combine the given criterion with the existing one with an 'OR'
+			$leftCriterion->addOr($rightCriterion);
+		} else {
+			// nothing to do OR / AND with, so make it first condition
+			$this->add($rightCriterion);
 		}
 
 		return $this;

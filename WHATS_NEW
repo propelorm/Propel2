@@ -95,3 +95,46 @@ Browse the Propel generator directory structure to find the classes you need.
 To allow custom connection handlers, the debug code that was written in the `DebugPDO` class has been moved to `PropelPDO`. The change is completely backwards compatible, but makes it easier to connect to a database without using PDO.
 
 During the change, the documentation about Propel logging and debugging features was rewritten and should now be clearer.
+
+== Criteria Enhancements ==
+
+`Criteria::addOr()` eventually operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
+
+{{{
+#!php
+<?php
+// addOr() used to work on a column with an existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::TITLE, '%Tolstoi%', Criteria::LIKE);
+// translates in SQL as
+// WHERE (book.TITLE LIKE '%Leo%' OR book.TITLE LIKE '%Tolstoi%')
+
+// addOr() used to fail on a column with no existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
+// translates in SQL as
+// WHERE book.TITLE LIKE '%Leo%' AND book.ISBN = '1234'
+}}}
+
+This is fixed in Propel 1.5. This means that you don't need to call upon the `Criterion` object for a simple OR clause:
+
+{{{
+#!php
+<?php
+// addOr() now works on a column with no existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
+// translates in SQL as
+// WHERE (book.TITLE LIKE '%Leo%' OR book.ISBN = '1234')
+
+// and it's much faster to write than
+$c = new Criteria();
+$c1 = $c->getNewCriterion(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c2 = $c->getNewCriterion(BookPeer::ISBN, '1234', Criteria::EQUAL);
+$c1->addOr($c2);
+$c->add($c1);
+}}}
+

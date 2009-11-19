@@ -175,23 +175,16 @@ Use `Criteria::addGroupByColumn()` to add a GROUIP BY statement to your SQL quer
 
 == Logically Complex Criteria ==
 
-When you need to express logical relationships (AND, OR, etc.) between different criteria clauses, you need to manually combine individual ''Criterion'' objects together.  The ''Criterion'' objects are the components that are transparently assembled into the ''Criteria'' object when you use the ''Criteria->add()'' method.
+When you need to express logical relationships (AND, OR, etc.) between different criteria clauses, you can use `addOr()` insteasd of `add()`.
 
 '''Example 1:''' Find all authors with first name "Leo" OR last name of "Tolstoy", "Dostoevsky", or "Bakhtin"
 
 {{{
 #!php
 <?php
-
 $c = new Criteria();
-$cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
-$cton2 = $c->getNewCriterion(AuthorPeer::LAST_NAME,  array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
- 
-// combine them
-$cton1->addOr($cton2);
- 
-// add to Criteria
-$c->add($cton1);
+$c->add(AuthorPeer::FIRST_NAME, "Leo");
+$c->addOr(AuthorPeer::LAST_NAME,  array("Tolstoy", "Dostoevsky", "Bakhtin"), Criteria::IN);
 }}}
 
 ... results in SQL query like:
@@ -200,37 +193,29 @@ $c->add($cton1);
 SELECT ... FROM author WHERE (author.FIRST_NAME = 'Leo' OR author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin'));
 }}}
 
-There are also some ''Criteria'' shortcuts if you want to perform a query with logical relationships between clauses ''that reference the same column''.
+For more complex logics, you need to manually combine individual ''Criterion'' objects together.  The ''Criterion'' objects are the components that are transparently assembled into the ''Criteria'' object when you use the ''Criteria->add()'' method.
 
-'''Example 2:''' Find all authors with first name 'Leo' or 'Karl'
+'''Example 2:''' Find all authors with first name 'Leo' or 'Karl' and last name like 'T%'
 
-Using verbose ''Criterion'' approach, this looks like:
 {{{
 #!php
 <?php
-
 $c = new Criteria();
+
 $cton1 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Leo");
 $cton2 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, "Karl");
- 
 // combine them
 $cton1->addOr($cton2);
- 
+
+cton3 = $c->getNewCriterion(AuthorPeer::LAST_NAME, '%T', Criteria::LIKE);
+// combine them
+$cton1->addAnd($cton1);
+
 // add to Criteria
 $c->add($cton1);
 }}}
 
-Using shorthand ''Criteria'' methods:
-{{{
-#!php
-<?php
-
-$c = new Criteria();
-$c->add(AuthorPeer::FIRST_NAME, "Leo");
-$c->addOr(AuthorPeer::FIRST_NAME, "Karl");
-}}}
-
-It is important to note that these shorthand ''Criteria'' methods have a number of limitations -- primarily that they only work for single column relationships.  From the author's perspective, it is not adviseable to use these methods when you need to express logical relationships between clause since they obscure the actual relationsihps between the ''Criterion'' objects and can easily lead to difficult-to-debug query generation issues.  (These methods will probably change or go away in Propel 2.)
+Warning: If you call `addOr($column1, $value1)` on a Criteria already having a condition on `$column1`, Propel will combine your new condition with the ''first condition added to `$column1`'', rather than with the ''latest added condition''. This strange behavior exists to keep backwards compatibility with Propel < 1.5, where `addOr()` had a slightly different meaning. To bypass this limitation, use the `Criterion` approach in this case.
 
 == Case Sensitivity ==
 

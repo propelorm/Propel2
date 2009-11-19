@@ -48,8 +48,8 @@ class CriteriaTest extends BaseTestCase
   /**
    * Test basic adding of strings.
    */
-  public function testAddString() {
-
+  public function testAddString()
+  {
     $table = "myTable";
     $column = "myColumn";
     $value = "myValue";
@@ -64,171 +64,216 @@ class CriteriaTest extends BaseTestCase
     $this->assertTrue($this->c->getValue($table . '.' . $column) === $value);
   }
 
-  /**
-   * test various properties of Criterion and nested criterion
-   */
-  public function testNestedCriterion()
+  public function testAddAndSameColumns()
   {
-    $table2 = "myTable2";
-    $column2 = "myColumn2";
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable1";
+    $column2 = "myColumn1";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
+    $expect = "SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2)";
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $expect_params = array(
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
+    );
+
+    $this->assertEquals($expect, $result, 'addAnd() called on an existing column creates a combined criterion');
+    $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
+  }
+  
+  public function testAddAndSameColumnsPropel14Compatibility()
+  {
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable1";
+    $column2 = "myColumn1";
+    $value2 = "myValue2";
+    $key2 = "$table2.$column2";
+    
     $table3 = "myTable3";
     $column3 = "myColumn3";
     $value3 = "myValue3";
     $key3 = "$table3.$column3";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->add($key3, $value3, Criteria::EQUAL);
+    $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
-    $table4 = "myTable4";
-    $column4 = "myColumn4";
-    $value4 = "myValue4";
-    $key4 = "$table4.$column4";
+    $expect = "SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3";
 
-    $table5 = "myTable5";
-    $column5 = "myColumn5";
-    $value5 = "myValue5";
-    $key5 = "$table5.$column5";
-
-    $crit2 = $this->c->getNewCriterion($key2, $value2, Criteria::EQUAL);
-    $crit3 = $this->c->getNewCriterion($key3, $value3, Criteria::EQUAL);
-    $crit4 = $this->c->getNewCriterion($key4, $value4, Criteria::EQUAL);
-    $crit5 = $this->c->getNewCriterion($key5, $value5, Criteria::EQUAL);
-
-    $crit2->addAnd($crit3)->addOr($crit4->addAnd($crit5));
-    $expect =
-      "((myTable2.myColumn2=:p1 "
-        . "AND myTable3.myColumn3=:p2) "
-      . "OR (myTable4.myColumn4=:p3 "
-        . "AND myTable5.myColumn5=:p4))";
-
-    $sb = "";
     $params = array();
-    $crit2->appendPsTo($sb, $params);
+    $result = BasePeer::createSelectSql($this->c, $params);
 
     $expect_params = array(
-                    array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
-                    array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
-                    array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
-                    array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
-                );
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
+      array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
+    );
 
-    $this->assertEquals($expect, $sb);
-    $this->assertEquals($expect_params, $params);
+    $this->assertEquals($expect, $result, 'addAnd() called on an existing column creates a combined criterion');
+    $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
+  }
+    
+  public function testAddAndDistinctColumns()
+  {
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable2";
+    $column2 = "myColumn2";
+    $value2 = "myValue2";
+    $key2 = "$table2.$column2";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
-    $crit6 = $this->c->getNewCriterion($key2, $value2, Criteria::EQUAL);
-    $crit7 = $this->c->getNewCriterion($key3, $value3, Criteria::EQUAL);
-    $crit8 = $this->c->getNewCriterion($key4, $value4, Criteria::EQUAL);
-    $crit9 = $this->c->getNewCriterion($key5, $value5, Criteria::EQUAL);
+    $expect = "SELECT  FROM myTable1, myTable2 WHERE myTable1.myColumn1=:p1 AND myTable2.myColumn2=:p2";
 
-    $crit6->addAnd($crit7)->addOr($crit8)->addAnd($crit9);
-    $expect =
-      "(((myTable2.myColumn2=:p1 "
-          . "AND myTable3.myColumn3=:p2) "
-        . "OR myTable4.myColumn4=:p3) "
-          . "AND myTable5.myColumn5=:p4)";
-
-    $sb = "";
     $params = array();
-    $crit6->appendPsTo($sb, $params);
+    $result = BasePeer::createSelectSql($this->c, $params);
 
     $expect_params = array(
-                    array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
-                    array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
-                    array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
-                    array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
-                );
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
+    );
 
-    $this->assertEquals($expect, $sb);
-    $this->assertEquals($expect_params, $params);
-
-    // should make sure we have tests for all possibilities
-
-    $crita = $crit2->getAttachedCriterion();
-
-    $this->assertEquals($crit2, $crita[0]);
-    $this->assertEquals($crit3, $crita[1]);
-    $this->assertEquals($crit4, $crita[2]);
-    $this->assertEquals($crit5, $crita[3]);
-
-    $tables = $crit2->getAllTables();
-
-    $this->assertEquals($crit2->getTable(), $tables[0]);
-    $this->assertEquals($crit3->getTable(), $tables[1]);
-    $this->assertEquals($crit4->getTable(), $tables[2]);
-    $this->assertEquals($crit5->getTable(), $tables[3]);
-
-    // simple confirmations that equality operations work
-    $this->assertTrue($crit2->hashCode() === $crit2->hashCode());
+    $this->assertEquals($expect, $result, 'addAnd() called on a distinct column adds a criterion to the criteria');
+    $this->assertEquals($expect_params, $params, 'addAnd() called on a distinct column adds a criterion to the criteria');
   }
 
-  /**
-   * Tests &lt;= and =&gt;.
-   */
-  public function testBetweenCriterion()
+  public function testAddOrSameColumns()
   {
-    $cn1 = $this->c->getNewCriterion(
-        "INVOICE.COST",
-        1000,
-        Criteria::GREATER_EQUAL);
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable1";
+    $column2 = "myColumn1";
+    $value2 = "myValue2";
+    $key2 = "$table2.$column2";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
-    $cn2 = $this->c->getNewCriterion(
-        "INVOICE.COST",
-        5000,
-        Criteria::LESS_EQUAL);
-    $this->c->add($cn1->addAnd($cn2));
-    $expect =
-      "SELECT  FROM INVOICE WHERE "
-      . "(INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)";
+    $expect = "SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2)";
 
-    $expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => 1000),
-                array('table' => 'INVOICE', 'column' => 'COST', 'value' => 5000),
-                 );
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
 
-    try {
-      $params = array();
-      $result = BasePeer::createSelectSql($this->c, $params);
-    } catch (PropelException $e) {
-      $this->fail("PropelException thrown in BasePeer.createSelectSql(): ".$e->getMessage());
-    }
+    $expect_params = array(
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
+    );
 
-    $this->assertEquals($expect, $result);
-    $this->assertEquals($expect_params, $params);
+    $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
+    $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
   }
-
-  /**
-   * Verify that AND and OR criterion are nested correctly.
-   */
-  public function testPrecedence()
+  
+  public function testAddAndOrColumnsPropel14Compatibility()
   {
-    $cn1 = $this->c->getNewCriterion("INVOICE.COST", "1000", Criteria::GREATER_EQUAL);
-    $cn2 = $this->c->getNewCriterion("INVOICE.COST", "2000", Criteria::LESS_EQUAL);
-    $cn3 = $this->c->getNewCriterion("INVOICE.COST", "8000", Criteria::GREATER_EQUAL);
-    $cn4 = $this->c->getNewCriterion("INVOICE.COST", "9000", Criteria::LESS_EQUAL);
-    $this->c->add($cn1->addAnd($cn2));
-    $this->c->addOr($cn3->addAnd($cn4));
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable1";
+    $column2 = "myColumn1";
+    $value2 = "myValue2";
+    $key2 = "$table2.$column2";
+    
+    $table3 = "myTable3";
+    $column3 = "myColumn3";
+    $value3 = "myValue3";
+    $key3 = "$table3.$column3";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->add($key3, $value3, Criteria::EQUAL);
+    $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
-    $expect =
-      "SELECT  FROM INVOICE WHERE "
-      . "((INVOICE.COST>=:p1 AND INVOICE.COST<=:p2) "
-      . "OR (INVOICE.COST>=:p3 AND INVOICE.COST<=:p4))";
+    $expect = "SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3";
 
-    $expect_params = array( array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
-                array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
-                array('table' => 'INVOICE', 'column' => 'COST', 'value' => '8000'),
-                array('table' => 'INVOICE', 'column' => 'COST', 'value' => '9000'),
-                 );
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
 
-    try {
-      $params=array();
-      $result = BasePeer::createSelectSql($this->c, $params);
-    } catch (PropelException $e) {
-      $this->fail("PropelException thrown in BasePeer::createSelectSql()");
-    }
+    $expect_params = array(
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue2'),
+      array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
+    );
 
-    $this->assertEquals($expect, $result);
-    $this->assertEquals($expect_params, $params);
+    $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
+    $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
   }
+    
+  public function testAddOrDistinctColumns()
+  {
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+  	$table2 = "myTable2";
+    $column2 = "myColumn2";
+    $value2 = "myValue2";
+    $key2 = "$table2.$column2";
+    
+    $this->c->add($key1, $value1, Criteria::EQUAL);
+    $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
+    $expect = "SELECT  FROM myTable1, myTable2 WHERE (myTable1.myColumn1=:p1 OR myTable2.myColumn2=:p2)";
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $expect_params = array(
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+      array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
+    );
+
+    $this->assertEquals($expect, $result, 'addOr() called on a distinct column adds a criterion to the latest criterion');
+    $this->assertEquals($expect_params, $params, 'addOr() called on a distinct column adds a criterion to the latest criterion');
+  }
+  
+  public function testAddOrEmptyCriteria()
+  {
+    $table1 = "myTable1";
+    $column1 = "myColumn1";
+    $value1 = "myValue1";
+    $key1 = "$table1.$column1";
+    
+    $this->c->addOr($key1, $value1, Criteria::EQUAL);
+
+    $expect = "SELECT  FROM myTable1 WHERE myTable1.myColumn1=:p1";
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $expect_params = array(
+      array('table' => 'myTable1', 'column' => 'myColumn1', 'value' => 'myValue1'),
+    );
+
+    $this->assertEquals($expect, $result, 'addOr() called on an empty Criteria adds a criterion to the criteria');
+    $this->assertEquals($expect_params, $params, 'addOr() called on an empty Criteria adds a criterion to the criteria');
+  }
+  
   /**
    * Test Criterion.setIgnoreCase().
    * As the output is db specific the test just prints the result to
