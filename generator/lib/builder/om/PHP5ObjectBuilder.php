@@ -2031,8 +2031,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			// apply behaviors
 			$this->applyBehaviorModifier('postDelete', $script, "				");
 			$script .= "
-				\$this->setDeleted(true);
 				\$con->commit();
+				\$this->setDeleted(true);
 			}";
 		} else {
 			// apply behaviors
@@ -2042,8 +2042,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			// apply behaviors
 			$this->applyBehaviorModifier('postDelete', $script, "			");
 			$script .= "
-			\$this->setDeleted(true);
-			\$con->commit();";
+			\$con->commit();
+			\$this->setDeleted(true);";
 		}
 
 		$script .= "
