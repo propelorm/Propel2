@@ -194,4 +194,184 @@ class CriteriaCombineTest extends BaseTestCase
     $this->assertEquals($expect_params, $params);
   }
 
+	public function testCombineCriterionAndSimple()
+	{
+    $this->c->add("INVOICE.COST", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
+
+    $expect = "SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineCriterionAndLessSimple()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
+    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
+
+    $expect = "SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND (INVOICE.COST1>=:p2 AND INVOICE.COST2<=:p3) AND INVOICE.COST4<=:p4";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineCriterionAndMultiple()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
+    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_AND);
+
+    $expect = "SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) AND INVOICE.COST3>=:p3) AND INVOICE.COST4<=:p4)";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineCriterionOrSimple()
+	{
+    $this->c->add("INVOICE.COST", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+
+    $expect = "SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 OR INVOICE.COST<=:p2)";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineCriterionOrLessSimple()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+    $this->c->addOr("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
+
+    $expect = "SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND ((INVOICE.COST1>=:p2 OR INVOICE.COST2<=:p3) OR INVOICE.COST4<=:p4)";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineCriterionOrMultiple()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
+    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_OR);
+
+    $expect = "SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 OR INVOICE.COST2<=:p2) OR INVOICE.COST3>=:p3) OR INVOICE.COST4<=:p4)";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineNamedCriterions()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND, 'cond12');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
+    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_AND, 'cond34');
+    $this->c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_OR);
+
+    $expect = "SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
+	public function testCombineDirtyOperators()
+	{
+    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
+    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->combine(array('cond1', 'cond2'), 'AnD', 'cond12');
+    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
+    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->combine(array('cond3', 'cond4'), 'aNd', 'cond34');
+    $this->c->combine(array('cond12', 'cond34'), 'oR');
+
+    $expect = "SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))";
+    $expect_params = array(
+			array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
+			array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
+			array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
+			array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+    );
+
+    $params = array();
+    $result = BasePeer::createSelectSql($this->c, $params);
+
+    $this->assertEquals($expect, $result);
+    $this->assertEquals($expect_params, $params);
+	}
+
 }

@@ -128,6 +128,12 @@ class Criteria implements IteratorAggregate
 	/** "INNER JOIN" SQL statement */
 	const INNER_JOIN = "INNER JOIN";
 
+	/** logical OR operator */
+	const LOGICAL_OR = "OR";
+	
+	/** logical AND operator */
+	const LOGICAL_AND = "AND";
+	
 	private $ignoreCase = false;
 	private $singleRecord = false;
 	private $selectModifiers = array();
@@ -173,7 +179,13 @@ class Criteria implements IteratorAggregate
 	 * @var        array
 	 */
 	private $map = array();
-
+	
+	/**
+	 * Storage for Criterions expected to be combined
+	 * @var        array
+	 */
+	protected $namedCriterions = array();
+	
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
 	 * the specified database.
@@ -213,6 +225,7 @@ class Criteria implements IteratorAggregate
 	public function clear()
 	{
 		$this->map = array();
+		$this->namedCriterions = array();
 		$this->ignoreCase = false;
 		$this->singleRecord = false;
 		$this->selectModifiers = array();
@@ -599,16 +612,53 @@ class Criteria implements IteratorAggregate
 	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
 	 * @param      mixed $value
 	 * @param      string $comparison A String.
+	 * @param      string $name optional name to combine the criterion later
 	 *
 	 * @return     A modified Criteria object.
 	 */
-	public function add($p1, $value = null, $comparison = null)
+	public function add($p1, $value = null, $comparison = null, $name = null)
 	{
 		if ($p1 instanceof Criterion) {
-			$this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
+			if($name === null) {
+				$this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
+			} else {
+				$this->namedCriterions[$name] = $p1;
+			}
 		} else {
-			$this->map[$p1] = new Criterion($this, $p1, $value, $comparison);
+			$criterion = new Criterion($this, $p1, $value, $comparison);
+			if($name === null) {
+				$this->map[$p1] = $criterion;
+			} else {
+				$this->namedCriterions[$name] = $criterion;
+			}
 		}
+		return $this;
+	}
+	
+	/**
+	 * Combine several named criterions with a logical operator
+	 * 
+	 * @param      array $criterions array of the name of the criterions to combine
+	 * @param      string $operator logical operator, either Criteria::LOGICAL_AND, or Criteria::LOGICAL_OR
+	 * @param      string $name optional name to combine the criterion later
+	 */
+	public function combine($criterions = array(), $operator = self::LOGICAL_AND, $name = null)
+	{
+		$operatorMethod = (strtoupper($operator) == self::LOGICAL_AND) ? 'addAnd' : 'addOr';
+		$namedCriterions = array();
+		foreach ($criterions as $key) {
+			if (array_key_exists($key, $this->namedCriterions)) {
+				$namedCriterions[]= $this->namedCriterions[$key];
+				unset($this->namedCriterions[$key]);
+			}
+		}
+		$firstCriterion = array_shift($namedCriterions);
+		foreach ($namedCriterions as $criterion)
+		{
+			$firstCriterion->$operatorMethod($criterion);
+		}
+		$this->add($firstCriterion, null, null, $name);
+		
 		return $this;
 	}
 

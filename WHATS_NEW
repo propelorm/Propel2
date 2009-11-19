@@ -98,7 +98,7 @@ During the change, the documentation about Propel logging and debugging features
 
 == Criteria Enhancements ==
 
-`Criteria::addOr()` eventually operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
+`Criteria::addOr()` operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
 
 {{{
 #!php
@@ -138,3 +138,51 @@ $c1->addOr($c2);
 $c->add($c1);
 }}}
 
+`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic,  Propel 1.4 forced you to use Criterions again. This is no longer the case in Propel 1.5, which provides a new `Criteria::combine()` method. It expects an array of ''named conditions'' to be combined, and an operator. Use the fourth argument of `add()` to name a condition:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');     // creates a condition named 'cond1'
+$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');     // creates a condition named 'cond2'
+$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
+// translates in SQL as
+// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
+}}}
+ 
+`combine()` accepts more than two conditions at a time:
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
+$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
+$c->add(BookPeer::TITLE, 'FooBar', Criteria::EQUAL, 'cond3');
+$c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
+// translates in SQL as
+// WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
+}}}
+
+`combine()` itself can return a named condition to be combined later. So it allows for any level of logical complexity:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+
+$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
+$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
+$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12');
+
+$c->add(BookPeer::ISBN, '1234', Criteria::EQUAL, 'cond3');
+$c->add(BookPeer::ISBN, '4567', Criteria::EQUAL, 'cond4');
+$c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
+
+$c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
+
+// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
+//   AND (book.ISBN = '1234' OR book.ISBN = '4567');
+}}}
+
+The new `combine()` method makes it much easier to handle logically complex criterions. The good news is that if your application code already uses the old Criterion way, it will continue to work with Propel 1.5 as all these changes are backwards compatible.
