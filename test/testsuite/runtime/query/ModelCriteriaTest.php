@@ -19,10 +19,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 			array('Book.Id<= ?', 'Id', 'book.ID<= ?'), // with non-equal comparator
 			array('Book.AuthorId LIKE ?', 'AuthorId', 'book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
 			array('(Book.AuthorId) LIKE ?', 'AuthorId', '(book.AUTHOR_ID) LIKE ?'), // with parenthesis
-			array('(Book.Id*1.5)=1', null, '(book.ID*1.5)=1'), // ignore numbers
-			array('(Book.Id+Book.Id)=1', null, '(book.ID+book.ID)=1'), // match multiple names
-			array('CONCAT(Book.Title,"Book.Id")= ?', null, 'CONCAT(book.TITLE,"Book.Id")= ?'), // ignore names in strings
-			array('CONCAT(Book.Title," Book.Id ")= ?', null, 'CONCAT(book.TITLE," Book.Id ")= ?'), // ignore names in strings
+			array('(Book.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
 			array('1=1', null, '1=1'), // with no name
 			array('', null, '') // with empty string
 		);
@@ -36,11 +33,53 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new TestableModelCriteria('bookstore', 'Book');
 		$columns = $c->replaceNames($origClause);
 		if ($columnPhpName) {
-			//$this->assertEquals(array(BookPeer::getTableMap()->getColumnByPhpName($columnPhpName)), $columns);
+			$this->assertEquals(array(BookPeer::getTableMap()->getColumnByPhpName($columnPhpName)), $columns);
 		}
 		$this->assertEquals($modifiedClause, $origClause);		
 	}
 	
+	public static function conditionsForTestReplaceMultipleNames()
+	{
+		return array(
+			array('(Book.Id+Book.Id)=1', array('Id', 'Id'), '(book.ID+book.ID)=1'), // match multiple names
+			array('CONCAT(Book.Title,"Book.Id")= ?', array('Title', 'Id'), 'CONCAT(book.TITLE,"Book.Id")= ?'), // ignore names in strings
+			array('CONCAT(Book.Title," Book.Id ")= ?', array('Title', 'Id'), 'CONCAT(book.TITLE," Book.Id ")= ?'), // ignore names in strings
+			array('MATCH (Book.Title,Book.ISBN) AGAINST (?)', array('Title', 'ISBN'), 'MATCH (book.TITLE,book.ISBN) AGAINST (?)'),
+		);
+	}
+	
+	/**
+	 * @dataProvider conditionsForTestReplaceMultipleNames
+	 */	
+	public function testReplaceMultipleNames($origClause, $expectedColumns, $modifiedClause)
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$foundColumns = $c->replaceNames($origClause);
+		foreach ($foundColumns as $column) {
+			$expectedColumn = BookPeer::getTableMap()->getColumnByPhpName(array_shift($expectedColumns));
+			$this->assertEquals($expectedColumn, $column);
+		}
+		$this->assertEquals($modifiedClause, $origClause);		
+	}
+
+	public function testTableAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		
+		$expect = "SELECT  FROM `book` WHERE book.TITLE = :p1";
+
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
+
+    $expect_params = array(
+      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+    );
+
+    $this->assertEquals($expect, $result, 'A ModelCriteria accepts an alias for its model');
+    $this->assertEquals($expect_params, $params, 'A ModelCriteria accepts an alias for its model'); 
+	}
+
 	public static function conditionsForTestWhere()
 	{
 		return array(
@@ -119,25 +158,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expect, $result, 'where() accepts a complex calculation');
 		$this->assertEquals($expect_params, $params, 'where() accepts a complex calculation'); 
 	}
-	
-	public function testTableAlias()
-	{
-		$c = new ModelCriteria('bookstore', 'Book b');
-		$c->where('b.Title = ?', 'foo');
 		
-		$expect = "SELECT  FROM `book` WHERE book.TITLE = :p1";
-
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
-
-    $expect_params = array(
-      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-    );
-
-    $this->assertEquals($expect, $result, 'A ModelCriteria accepts an alias for its model');
-    $this->assertEquals($expect_params, $params, 'A ModelCriteria accepts an alias for its model'); 
-	}
-	
 	public function testWhereNamedCondition()
 	{	
 		$c = new ModelCriteria('bookstore', 'Book');
@@ -157,6 +178,26 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     $this->assertEquals($expect, $result, 'where() can combine conditions');
     $this->assertEquals($expect_params, $params, 'where() can combine conditions');    
+	}
+	
+	public function testOrWhere()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->where('Book.Title <> ?', 'foo');
+		$c->orWhere('Book.Title like ?', '%bar%');
+		
+		$expect = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
+
+    $expect_params = array(
+      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+      array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+    );
+
+    $this->assertEquals($expect, $result, 'orWhere() combines the clause with the previous one using  OR');
+    $this->assertEquals($expect_params, $params, 'orWhere() combines the clause with the previous one using  OR');
 	}
 	
 	public function testMixedCriteria()

@@ -83,6 +83,38 @@ class ModelCriteria extends Criteria
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
 	public function where($clause, $value = null, $namedCondition = null)
+	{	
+		$this->add($this->getCriterionForClause($clause, $value), null, null, $namedCondition);		
+		return $this;
+	}
+	
+	/**
+	 * Add a condition on a column based on a pseudo SQL clause
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 *
+	 * @see Criteria::addOr()
+	 * 
+	 * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
+	 * @param      mixed  $value A value for the condition
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function orWhere($clause, $value = null)
+	{
+		$this->addOr($this->getCriterionForClause($clause, $value), null, null);
+		return $this;
+	}
+	
+	/**
+	 * Creates a Criterion object based on a SQL clause and a value
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 *
+	 * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
+	 * @param      mixed  $value A value for the condition
+	 *
+	 * @return     Criterion a Criterion or ModelCriterion object
+	 */
+	protected function getCriterionForClause($clause, $value)
 	{
 		$clause = trim($clause);
 		if($columns = $this->replaceNames($clause)) {
@@ -105,10 +137,7 @@ class ModelCriteria extends Criteria
 			}
 		  $criterion = new Criterion($this, null, $clause, Criteria::CUSTOM);
 		}
-		
-		$this->add($criterion, null, null, $namedCondition);
-		
-		return $this;
+		return $criterion;		
 	}
 	
 	/**
