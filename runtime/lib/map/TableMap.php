@@ -38,9 +38,18 @@
 class TableMap
 {
 
-  // The columns in the table
+  /**
+   * Columns in the table 
+   * @var array TableMap[] 
+   */
   protected $columns = array();
 
+  /**
+   * Columns in the table, using table phpName as key 
+   * @var array TableMap[] 
+   */
+  protected $columnsByPhpName = array();
+  
   // The database this table belongs to
   protected $dbMap;
 
@@ -265,6 +274,7 @@ class TableMap
       $this->primaryKeys[$name] = $col;
     }
     $this->columns[$name] = $col;
+    $this->columnsByPhpName[$phpName] = $col;
 
     return $this->columns[$name];
   }
@@ -300,7 +310,7 @@ class TableMap
   }
   
   /**
-   * Get a ColumnMap for the named table.
+   * Get a ColumnMap for the table.
    *
    * @param      string    $name A String with the name of the table.
    * @param      boolean   $normalize Normalize the column name (if column name not like FIRST_NAME)
@@ -312,10 +322,36 @@ class TableMap
     if ($normalize) {
       $name = ColumnMap::normalizeName($name);
     }
-    if (!$this->containsColumn($name, false)) {
+    if (!$this->hasColumn($name, false)) {
       throw new PropelException("Cannot fetch ColumnMap for undefined column: " . $name);
     }
     return $this->columns[$name];
+  }
+
+  /**
+   * Does this table contain the specified column?
+   *
+   * @param      mixed   $phpName name of the column
+   * @return     boolean True if the table contains the column.
+   */
+  public function hasColumnByPhpName($phpName)
+  {
+    return isset($this->columnsByPhpName[$phpName]);
+  }
+  
+  /**
+   * Get a ColumnMap for the table.
+   *
+   * @param      string    $phpName A String with the name of the table.
+   * @return     ColumnMap A ColumnMap.
+   * @throws     PropelException if the column is undefined
+   */
+  public function getColumnByPhpName($phpName)
+  {
+    if (!isset($this->columnsByPhpName[$phpName])) {
+      throw new PropelException("Cannot fetch ColumnMap for undefined column phpName: " . $phpName);
+    }
+    return $this->columnsByPhpName[$phpName];
   }
   
   /**

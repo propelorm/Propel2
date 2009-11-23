@@ -108,7 +108,7 @@ class TableMapTest extends PHPUnit_Framework_TestCase
   public function testGetColumn()
   {
     $column = $this->tmap->addColumn('BAR', 'Bar', 'INTEGER');
-    $this->assertEquals($column, $this->tmap->getColumn('BAR'), 'getColumn returns a ColumnMap according to a column mame');
+    $this->assertEquals($column, $this->tmap->getColumn('BAR'), 'getColumn returns a ColumnMap according to a column name');
     try
     {
       $this->tmap->getColumn('FOO');
@@ -119,6 +119,17 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     {
       $this->tmap->getColumn('foo.bar', false);
       $this->fail('getColumn accepts a $normalize parameter to skip name normalization');
+    } catch(PropelException $e) {}
+  }
+
+  public function testGetColumnByPhpName()
+  {
+    $column = $this->tmap->addColumn('BAR_BAZ', 'BarBaz', 'INTEGER');
+    $this->assertEquals($column, $this->tmap->getColumnByPhpName('BarBaz'), 'getColumnByPhpName() returns a ColumnMap according to a column phpName');
+    try
+    {
+      $this->tmap->getColumn('Foo');
+      $this->fail('getColumnByPhpName() throws an exception when called on an inexistent column');
     } catch(PropelException $e) {}
   }
   

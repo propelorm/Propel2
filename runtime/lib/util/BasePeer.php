@@ -750,7 +750,7 @@ class BasePeer
 
 		// add the criteria to WHERE clause
 		// this will also add the table names to the FROM clause if they are not already
-		// invluded via a LEFT JOIN
+		// included via a LEFT JOIN
 		foreach ($criteria->keys() as $key) {
 
 			$criterion = $criteria->getCriterion($key);

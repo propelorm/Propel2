@@ -36,39 +36,39 @@ class Criterion
 	const ODER = " OR ";
 
 	/** Value of the CO. */
-	private $value;
+	protected $value;
 
 	/** Comparison value.
 	 * @var        SqlEnum
 	 */
-	private $comparison;
+	protected $comparison;
 
 	/** Table name. */
-	private $table;
+	protected $table;
 
 	/** Real table name */
-	private $realtable;
+	protected $realtable;
 
 	/** Column name. */
-	private $column;
+	protected $column;
 
-	/** flag to ignore case in comparision */
-	private $ignoreStringCase = false;
+	/** flag to ignore case in comparison */
+	protected $ignoreStringCase = false;
 
 	/**
 	 * The DBAdaptor which might be used to get db specific
 	 * variations of sql.
 	 */
-	private $db;
+	protected $db;
 
 	/**
 	 * other connected criteria and their conjunctions.
 	 */
-	private $clauses = array();
-	private $conjunctions = array();
+	protected $clauses = array();
+	protected $conjunctions = array();
 
 	/** "Parent" Criteria class */
-	private $parent;
+	protected $parent;
 
 	/**
 	 * Create a new instance.
@@ -90,7 +90,7 @@ class Criterion
 			$this->table = substr($column, 0, $dotPos); 
 			$this->column = substr($column, $dotPos+1, strlen($column));
 		}
-		$this->comparison = ($comparison === null ? Criteria::EQUAL : $comparison);
+		$this->comparison = $comparison === null ? Criteria::EQUAL : $comparison;
 		$this->init($outer);
 	}
 
@@ -261,137 +261,182 @@ class Criterion
 	 * onto the buffer.
 	 *
 	 * @param      string &$sb The string that will receive the Prepared Statement
-	 * @param      array $params A list to which Prepared Statement parameters
-	 * will be appended
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
 	 * @return     void
 	 * @throws     PropelException - if the expression builder cannot figure out how to turn a specified
 	 *                           expression into proper SQL.
 	 */
 	public function appendPsTo(&$sb, array &$params)
 	{
-		if ($this->column === null) {
-			return;
-		}
-
-		$db = $this->getDb();
 		$sb .= str_repeat ( '(', count($this->clauses) );
+		
+		$this->dispatchPsHandling($sb, $params);
 
-		if (Criteria::CUSTOM === $this->comparison) {
-			if ($this->value !== "") {
-				$sb .= (string) $this->value;
-			}
-		} else {
-
-			if  ($this->table === null) {
-				$field = $this->column;
-			} else {
-				$field = $this->table . '.' . $this->column;
-			}
-
-			// Check to see if table is an alias & store real name, if so
-			// (real table name is needed for the returned $params array)
-			$realtable = $this->realtable;
-
-			// There are several different types of expressions that need individual handling:
-			// IN/NOT IN, LIKE/NOT LIKE, and traditional expressions.
-
-			// OPTION 1:  table.column IN (?, ?) or table.column NOT IN (?, ?)
-			if ($this->comparison === Criteria::IN || $this->comparison === Criteria::NOT_IN) {
-				
-				$_bindParams = array(); // the param names used in query building
-				$_idxstart = count($params);
-				$valuesLength = 0;
-				foreach ( (array) $this->value as $value ) {
-					$valuesLength++; // increment this first to correct for wanting bind params to start with :p1
-					$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $value);
-					$_bindParams[] = ':p'.($_idxstart + $valuesLength);
-				}
-				if ( $valuesLength !== 0 ) {
-					$sb .= $field . $this->comparison . '(' . implode(',', $_bindParams) . ')';
-				} else {
-					$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
-				}
-				unset ( $value, $valuesLength );
-
-			// OPTION 2:  table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-			} elseif ($this->comparison === Criteria::LIKE || $this->comparison === Criteria::NOT_LIKE
-				|| $this->comparison === Criteria::ILIKE || $this->comparison === Criteria::NOT_ILIKE) {
-				// Handle LIKE, NOT LIKE (and related ILIKE, NOT ILIKE for Postgres)
-
-				// If selection is case insensitive use ILIKE for PostgreSQL or SQL
-				// UPPER() function on column name for other databases.
-				if ($this->ignoreStringCase) {
-					if ($db instanceof DBPostgres) {
-						if ($this->comparison === Criteria::LIKE) {
-							$this->comparison = Criteria::ILIKE;
-						} elseif ($this->comparison === Criteria::NOT_LIKE) {
-							$this->comparison = Criteria::NOT_ILIKE;
-						}
-					} else {
-						$field = $db->ignoreCase($field);
-					}
-				}
-				
-				$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
-				
-				$sb .= $field . $this->comparison;
-
-				// If selection is case insensitive use SQL UPPER() function
-				// on criteria or, if Postgres we are using ILIKE, so not necessary.
-				if ($this->ignoreStringCase && !($db instanceof DBPostgres)) {
-					$sb .= $db->ignoreCase(':p'.count($params));
-				} else {
-					$sb .= ':p'.count($params);
-				}
-				
-			// OPTION 3:  table.column = ? or table.column >= ? etc. (traditional expressions, the default)
-			} else {
-
-				// NULL VALUES need special treatment because the SQL syntax is different
-				// i.e. table.column IS NULL rather than table.column = null
-				if ($this->value !== null) {
-
-					// ANSI SQL functions get inserted right into SQL (not escaped, etc.)
-					if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME || $this->value === Criteria::CURRENT_TIMESTAMP) {
-						$sb .= $field . $this->comparison . $this->value;
-					} else {
-						
-						$params[] = array('table' => $realtable, 'column' => $this->column, 'value' => $this->value);
-						
-						// default case, it is a normal col = value expression; value
-						// will be replaced w/ '?' and will be inserted later using PDO bindValue()
-						if ($this->ignoreStringCase) {
-							$sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase(':p'.count($params));
-						} else {
-							$sb .= $field . $this->comparison . ':p'.count($params);
-						}
-						
-					}
-				} else {
-
-					// value is null, which means it was either not specified or specifically
-					// set to null.
-					if ($this->comparison === Criteria::EQUAL || $this->comparison === Criteria::ISNULL) {
-						$sb .= $field . Criteria::ISNULL;
-					} elseif ($this->comparison === Criteria::NOT_EQUAL || $this->comparison === Criteria::ISNOTNULL) {
-						$sb .= $field . Criteria::ISNOTNULL;
-					} else {
-						// for now throw an exception, because not sure how to interpret this
-						throw new PropelException("Could not build SQL for expression: $field " . $this->comparison . " NULL");
-					}
-
-				}
-
-			}
-		}
-
-		foreach ( $this->clauses as $key=>$clause ) {
+		foreach ($this->clauses as $key => $clause) {
 			$sb .= $this->conjunctions[$key];
 			$clause->appendPsTo($sb, $params);
 			$sb .= ')';
 		}
 	}
+	
+	/**
+	 * Figure out which Criterion method to use 
+	 * to build the prepared statement and parameters using to the Criterion comparison
+	 * and call it to append the prepared statement and the parameters of the current clause
+	 *
+	 * @param      string &$sb The string that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
+	 */
+	protected function dispatchPsHandling(&$sb, array &$params)
+	{
+		switch ($this->comparison) {
+			case Criteria::CUSTOM:
+				// custom expression with no parameter binding
+				$this->appendCustomToPs($sb, $params);
+				break;
+			case Criteria::IN:
+			case Criteria::NOT_IN:
+				// table.column IN (?, ?) or table.column NOT IN (?, ?)
+				$this->appendInToPs($sb, $params);
+				break;
+			case Criteria::LIKE:
+			case Criteria::NOT_LIKE:
+			case Criteria::ILIKE:
+			case Criteria::NOT_ILIKE:
+				// table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+				$this->appendLikeToPs($sb, $params);
+				break;							
+			default:
+				// table.column = ? or table.column >= ? etc. (traditional expressions, the default)
+				$this->appendBasicToPs($sb, $params);
+		}
+	}
+	
+	/**
+	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+	 * For custom expressions with no binding, e.g. 'NOW() = 1'
+	 *
+	 * @param      string &$sb The string that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
+	 */
+	protected function appendCustomToPs(&$sb, array &$params)
+	{
+		if ($this->value !== "") {
+			$sb .= (string) $this->value;
+		}
+	}
 
+	/**
+	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+	 * For IN expressions, e.g. table.column IN (?, ?) or table.column NOT IN (?, ?)
+	 *
+	 * @param      string &$sb The string that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
+	 */
+	protected function appendInToPs(&$sb, array &$params)
+	{
+		if ($this->value !== "") {
+			$bindParams = array();
+			$index = count($params); // to avoid counting the number of parameters for each element in the array
+			foreach ((array) $this->value as $value) {
+				$params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $value);
+				$index++; // increment this first to correct for wanting bind params to start with :p1
+				$bindParams[] = ':p' . $index;
+			}
+			if ($index !== 0) {
+				$field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+				$sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
+			} else {
+				$sb .= ($this->comparison === Criteria::IN) ? "1<>1" : "1=1";
+			}
+		}
+	}
+
+	/**
+	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+	 * For LIKE expressions, e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+	 *
+	 * @param      string &$sb The string that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
+	 */
+	protected function appendLikeToPs(&$sb, array &$params)
+	{
+		$field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+		$db = $this->getDb();
+		// If selection is case insensitive use ILIKE for PostgreSQL or SQL
+		// UPPER() function on column name for other databases.
+		if ($this->ignoreStringCase) {
+			if ($db instanceof DBPostgres) {
+				if ($this->comparison === Criteria::LIKE) {
+					$this->comparison = Criteria::ILIKE;
+				} elseif ($this->comparison === Criteria::NOT_LIKE) {
+					$this->comparison = Criteria::NOT_ILIKE;
+				}
+			} else {
+				$field = $db->ignoreCase($field);
+			}
+		}
+		
+		$params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+		
+		$sb .= $field . $this->comparison;
+
+		// If selection is case insensitive use SQL UPPER() function
+		// on criteria or, if Postgres we are using ILIKE, so not necessary.
+		if ($this->ignoreStringCase && !($db instanceof DBPostgres)) {
+			$sb .= $db->ignoreCase(':p'.count($params));
+		} else {
+			$sb .= ':p'.count($params);
+		}
+	}
+
+	/**
+	 * Appends a Prepared Statement representation of the Criterion onto the buffer
+	 * For traditional expressions, e.g. table.column = ? or table.column >= ? etc. 
+	 *
+	 * @param      string &$sb The string that will receive the Prepared Statement
+	 * @param      array $params A list to which Prepared Statement parameters will be appended
+	 */
+	protected function appendBasicToPs(&$sb, array &$params)
+	{
+		$field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
+		$db = $this->getDb();
+		// NULL VALUES need special treatment because the SQL syntax is different
+		// i.e. table.column IS NULL rather than table.column = null
+		if ($this->value !== null) {
+
+			// ANSI SQL functions get inserted right into SQL (not escaped, etc.)
+			if ($this->value === Criteria::CURRENT_DATE || $this->value === Criteria::CURRENT_TIME || $this->value === Criteria::CURRENT_TIMESTAMP) {
+				$sb .= $field . $this->comparison . $this->value;
+			} else {
+				
+				$params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+				
+				// default case, it is a normal col = value expression; value
+				// will be replaced w/ '?' and will be inserted later using PDO bindValue()
+				if ($this->ignoreStringCase) {
+					$sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase(':p'.count($params));
+				} else {
+					$sb .= $field . $this->comparison . ':p'.count($params);
+				}
+				
+			}
+		} else {
+
+			// value is null, which means it was either not specified or specifically
+			// set to null.
+			if ($this->comparison === Criteria::EQUAL || $this->comparison === Criteria::ISNULL) {
+				$sb .= $field . Criteria::ISNULL;
+			} elseif ($this->comparison === Criteria::NOT_EQUAL || $this->comparison === Criteria::ISNOTNULL) {
+				$sb .= $field . Criteria::ISNOTNULL;
+			} else {
+				// for now throw an exception, because not sure how to interpret this
+				throw new PropelException("Could not build SQL for expression: $field " . $this->comparison . " NULL");
+			}
+
+		}
+	}
+				
 	/**
 	 * This method checks another Criteria to see if they contain
 	 * the same attributes and hashtable entries.
@@ -487,7 +532,7 @@ class Criterion
 			$this->addCriterionTable($clause, $s);
 		}
 	}
-
+	
 	/**
 	 * get an array of all criterion attached to this
 	 * recursing through all sub criterion
@@ -495,23 +540,10 @@ class Criterion
 	 */
 	public function getAttachedCriterion()
 	{
-		$crits = array();
-		$this->traverseCriterion($this, $crits);
-		return $crits;
-	}
-
-	/**
-	 * method supporting recursion through all criterions to give
-	 * us an array of them
-	 * @param      Criterion $c
-	 * @param      array &$a
-	 * @return     void
-	 */
-	private function traverseCriterion(Criterion $c, array &$a)
-	{
-		$a[] = $c;
-		foreach ( $c->getClauses() as $clause ) {
-			$this->traverseCriterion($clause, $a);
+		$criterions = array($this);
+		foreach ($this->getClauses() as $criterion) {
+			$criterions = array_merge($criterions, $criterion->getAttachedCriterion());
 		}
+		return $criterions;
 	}
 }

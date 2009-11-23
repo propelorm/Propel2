@@ -211,6 +211,8 @@ class Propel
 		'Criterion'           => 'query/Criterion.php',
 		'CriterionIterator'   => 'query/CriterionIterator.php',
 		'Join'                => 'query/Join.php',
+		'ModelCriteria'       => 'query/ModelCriteria.php',
+		'ModelCriterion'      => 'query/ModelCriterion.php',
 
 		'BasePeer'            => 'util/BasePeer.php',
 		'NodePeer'            => 'util/NodePeer.php',
