@@ -11,6 +11,15 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {
+	protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
+	{
+		$params = array();
+		$result = BasePeer::createSelectSql($criteria, $params);
+		
+		$this->assertEquals($expectedSql, $result, $message);
+		$this->assertEquals($expectedParams, $params, $message); 
+	}
+	
 	public static function conditionsForTestReplaceNames()
 	{
 		return array(
@@ -67,19 +76,28 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book b');
 		$c->where('b.Title = ?', 'foo');
 		
-		$expect = "SELECT  FROM `book` WHERE book.TITLE = :p1";
-
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
-
-    $expect_params = array(
-      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-    );
-
-    $this->assertEquals($expect, $result, 'A ModelCriteria accepts an alias for its model');
-    $this->assertEquals($expect_params, $params, 'A ModelCriteria accepts an alias for its model'); 
+		$sql = "SELECT  FROM `book` WHERE book.TITLE = :p1";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'A ModelCriteria accepts an alias for its model');
 	}
-
+		
+	public function testCondition()
+	{	
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->combine(array('cond1', 'cond2'), 'or');
+		
+		$sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'condition() can store condition for later combination');
+	}
+	
 	public static function conditionsForTestWhere()
 	{
 		return array(
@@ -100,18 +118,35 @@ class ModelCriteriaTest extends BookstoreTestBase
 	/**
 	 * @dataProvider conditionsForTestWhere
 	 */
-	public function testWhere($clause, $value, $expectedSQL, $expectedParams)
+	public function testWhere($clause, $value, $sql, $params)
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->where($clause, $value);
+		$sql = 'SELECT  FROM `book` WHERE ' . $sql;
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a string clause');
+	}
+	
+	public function testWhereConditions()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->where(array('cond1', 'cond2'));
 		
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
+		$sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 AND book.TITLE like :p2)";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts an array of named conditions');
 
-		$expectedSQL = 'SELECT  FROM `book` WHERE ' . $expectedSQL;
-
-    $this->assertEquals($expectedSQL, $result);
-		$this->assertEquals($expectedParams, $params);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->where(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+		
+		$sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts an array of named conditions with operator');
 	}
 	
 	public function testWhereNoReplacement()
@@ -120,17 +155,11 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->where('b.Title = ?', 'foo');
 		$c->where('1=1');
 		
-		$expect = "SELECT  FROM `book` WHERE book.TITLE = :p1 AND 1=1";
-
-		$params = array();
-		$result = BasePeer::createSelectSql($c, $params);
-		
-		$expect_params = array(
+		$sql = "SELECT  FROM `book` WHERE book.TITLE = :p1 AND 1=1";
+		$params = array(
 		  array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		
-		$this->assertEquals($expect, $result, 'where() results in a Criteria::CUSTOM if no column name is matched');
-		$this->assertEquals($expect_params, $params, 'where() results in a Criteria::CUSTOM if no column name is matched'); 
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() results in a Criteria::CUSTOM if no column name is matched');
 		
 		$c = new ModelCriteria('bookstore', 'Book');
 		try {
@@ -146,38 +175,11 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book b');
 		$c->where('UPPER(b.Title) = ?', 'foo');
 		
-		$expect = "SELECT  FROM `book` WHERE UPPER(book.TITLE) = :p1";
-
-		$params = array();
-		$result = BasePeer::createSelectSql($c, $params);
-		
-		$expect_params = array(
+		$sql = "SELECT  FROM `book` WHERE UPPER(book.TITLE) = :p1";
+		$params = array(
 		  array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		
-		$this->assertEquals($expect, $result, 'where() accepts a complex calculation');
-		$this->assertEquals($expect_params, $params, 'where() accepts a complex calculation'); 
-	}
-		
-	public function testWhereNamedCondition()
-	{	
-		$c = new ModelCriteria('bookstore', 'Book');
-		$c->where('Book.Title <> ?', 'foo', 'cond1');
-		$c->where('Book.Title like ?', '%bar%', 'cond2');
-		$c->combine(array('cond1', 'cond2'), 'or');
-		
-		$expect = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
-
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
-
-    $expect_params = array(
-      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-      array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
-    );
-
-    $this->assertEquals($expect, $result, 'where() can combine conditions');
-    $this->assertEquals($expect_params, $params, 'where() can combine conditions');    
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a complex calculation');
 	}
 	
 	public function testOrWhere()
@@ -186,18 +188,38 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->where('Book.Title <> ?', 'foo');
 		$c->orWhere('Book.Title like ?', '%bar%');
 		
-		$expect = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+		$sql = "SELECT  FROM `book` WHERE (book.TITLE <> :p1 OR book.TITLE like :p2)";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() combines the clause with the previous one using  OR');
+	}
+	
+	public function testOrWhereConditions()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->where('Book.Id = ?', 12);
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->orWhere(array('cond1', 'cond2'));
+		
+		$sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 AND book.TITLE like :p3))";
+		$params = array(
+			array('table' => 'book', 'column' => 'ID', 'value' => 12),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() accepts an array of named conditions');
 
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
-
-    $expect_params = array(
-      array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
-      array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
-    );
-
-    $this->assertEquals($expect, $result, 'orWhere() combines the clause with the previous one using  OR');
-    $this->assertEquals($expect_params, $params, 'orWhere() combines the clause with the previous one using  OR');
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->where('Book.Id = ?', 12);
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+		
+		$sql = "SELECT  FROM `book` WHERE (book.ID = :p1 OR (book.TITLE <> :p2 OR book.TITLE like :p3))";
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() accepts an array of named conditions with operator');
 	}
 	
 	public function testMixedCriteria()
@@ -205,21 +227,127 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->where('Book.Title = ?', 'foo');
 		$c->add(BookPeer::ID, array(1, 2), Criteria::IN);
-		
-    $params = array();
-    $result = BasePeer::createSelectSql($c, $params);
 
-		$expectedSQL = 'SELECT  FROM `book` WHERE book.TITLE = :p1 AND book.ID IN (:p2,:p3)';
-		$expectedParams =  array(
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE = :p1 AND book.ID IN (:p2,:p3)';
+		$params =  array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 			array('table' => 'book', 'column' => 'ID', 'value' => 1),
 			array('table' => 'book', 'column' => 'ID', 'value' => 2)
 		);
-
-    $this->assertEquals($expectedSQL, $result, 'ModelCriteria accepts Criteria operators');
-		$this->assertEquals($expectedParams, $params, 'ModelCriteria accepts Criteria operators');
+		$this->assertCriteriaTranslation($c, $sql, $params, 'ModelCriteria accepts Criteria operators');
+	}
+	
+	public function testHaving()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->having('Book.Title <> ?', 'foo');
+		
+		$sql = "SELECT  FROM  HAVING book.TITLE <> :p1";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts a string clause');
 	}
 
+	public function testHavingConditions()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->having(array('cond1', 'cond2'));
+		
+		$sql = "SELECT  FROM  HAVING (book.TITLE <> :p1 AND book.TITLE like :p2)";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => '%bar%'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts an array of named conditions');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->condition('cond1', 'Book.Title <> ?', 'foo');
+		$c->condition('cond2', 'Book.Title like ?', '%bar%');
+		$c->having(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+		
+		$sql = "SELECT  FROM  HAVING (book.TITLE <> :p1 OR book.TITLE like :p2)";
+		$this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts an array of named conditions with an operator');
+	}
+		
+	public function testOrderBy()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Book.Title');
+		
+		$sql = 'SELECT  FROM  ORDER BY book.TITLE ASC';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a column name and adds an ORDER BY clause');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Book.Title', 'desc');
+		
+		$sql = 'SELECT  FROM  ORDER BY book.TITLE DESC';
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts an order parameter');
+				
+		$c = new ModelCriteria('bookstore', 'Book');
+		try {
+			$c->orderBy('Book.Foo');
+			$this->fail('orderBy() throws an exception when called with an unkown column name');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'orderBy() throws an exception when called with an unkown column name');
+		}
+		$c = new ModelCriteria('bookstore', 'Book');
+		try {
+			$c->orderBy('Book.Title', 'foo');
+			$this->fail('orderBy() throws an exception when called with an unkown order');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'orderBy() throws an exception when called with an unkown order');
+		}
+	}
+	
+	public function testGroupBy()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->groupBy('Book.AuthorId');
+		
+		$sql = 'SELECT  FROM  GROUP BY book.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a column name and adds a GROUP BY clause');
+				
+		$c = new ModelCriteria('bookstore', 'Book');
+		try {
+			$c->groupBy('Book.Foo');
+			$this->fail('groupBy() throws an exception when called with an unkown column name');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'groupBy() throws an exception when called with an unkown column name');
+		}
+	}
+	
+	public function testDistinct()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->distinct();
+		$sql = 'SELECT DISTINCT   FROM ';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'distinct() adds a DISTINCT clause');
+	}
+	
+	public function testLimit()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->limit(10);
+		$sql = 'SELECT  FROM  LIMIT 10';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
+	}
+
+	public function testOffset()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->limit(50);
+		$c->offset(10);
+		$sql = 'SELECT  FROM  LIMIT 10, 50';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria

@@ -72,19 +72,49 @@ class ModelCriteria extends Criteria
   
 	/**
 	 * Add a condition on a column based on a pseudo SQL clause
+	 * but keeps it for later use with combine()
+	 * Until combine() is called, the condition is not added to the query
 	 * Uses introspection to translate the column phpName into a fully qualified name
 	 *
 	 * @see Criteria::add()
 	 * 
+	 * @param      string $conditionName A name to store the condition for a later combination with combine()
 	 * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
 	 * @param      mixed  $value A value for the condition
-	 * @param      string $namedCondition A name to store the condition for a later combination with combine()
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function where($clause, $value = null, $namedCondition = null)
-	{	
-		$this->add($this->getCriterionForClause($clause, $value), null, null, $namedCondition);		
+	public function condition($conditionName, $clause, $value = null)
+	{
+		$this->addCond($conditionName, $this->getCriterionForClause($clause, $value), null, null);
+		
+		return $this;
+	}
+  
+  
+	/**
+	 * Add a condition on a column based on a pseudo SQL clause
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 *
+	 * @see Criteria::add()
+	 * 
+	 * @param      mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+	 *                           Or an array of condition names
+	 * @param      mixed  $value A value for the condition
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function where($clause, $value = null)
+	{
+		if (is_array($clause)) {
+			// where(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
+			$criterion = $this->getCriterionForConditions($clause, $value);	
+		} else {
+			// where('Book.AuthorId = ?', 12)
+			$criterion = $this->getCriterionForClause($clause, $value);
+		}
+		$this->add($criterion, null, null);
+		
 		return $this;
 	}
 	
@@ -101,10 +131,166 @@ class ModelCriteria extends Criteria
 	 */
 	public function orWhere($clause, $value = null)
 	{
-		$this->addOr($this->getCriterionForClause($clause, $value), null, null);
+		if (is_array($clause)) {
+			// orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
+			$criterion = $this->getCriterionForConditions($clause, $value);
+		} else {
+			// orWhere('Book.AuthorId = ?', 12)
+			$criterion = $this->getCriterionForClause($clause, $value);
+		}
+		$this->addOr($criterion, null, null);
+		
+		return $this;
+	}
+
+	/**
+	 * Add a having condition on a column based on a pseudo SQL clause
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 *
+	 * @see Criteria::addHaving()
+	 * 
+	 * @param      mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+	 *                           Or an array of condition names
+	 * @param      mixed  $value A value for the condition
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function having($clause, $value = null)
+	{
+		if (is_array($clause)) {
+			// having(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
+			$criterion = $this->getCriterionForConditions($clause, $value);
+		} else {
+			// having('Book.AuthorId = ?', 12)
+			$criterion = $this->getCriterionForClause($clause, $value);
+		}
+		$this->addHaving($criterion);
+		
+		return $this;
+	}
+		
+	/**
+	 * Add an ORDER BY clause to the query
+	 * Usability layer on top of Criteria::addAscendingOrderByColumn() and Criteria::addDescendingOrderByColumn()
+	 * Infers $column and $order from $columnName and some optional arguments
+	 * Examples:
+	 *   $c->orderBy('Book.CreatedAt')
+	 *    => $c->addAscendingOrderByColumn(BookPeer::CREATED_AT)
+	 *   $c->orderBy('Book.CategoryId', 'desc')
+	 *    => $c->addDescendingOrderByColumn(BookPeer::CATEGORY_ID)
+	 *
+	 * @param string $columnName The column to order by
+	 * @param string $order      The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function orderBy($columnName, $order = Criteria::ASC)
+	{
+		$column = $this->getColumnFromName($columnName);
+		if (!$column instanceof ColumnMap) {
+			throw new PropelException('ModelCriteria::orderBy() expects a valid column name (e.g. Book.Title) as first argument');
+		}
+		$columnRealName = $column->getFullyQualifiedName();
+		$order = strtoupper($order);
+		
+		switch ($order) {
+			case Criteria::ASC:
+				$this->addAscendingOrderByColumn($columnRealName);
+				break;
+			case Criteria::DESC:
+				$this->addDescendingOrderByColumn($columnRealName);
+				break;
+			default:
+				throw new PropelException('ModelCriteria::orderBy() only accepts "asc" or "desc" as argument');
+		}
+		
 		return $this;
 	}
 	
+	/**
+	 * Add a GROUB BY clause to the query
+	 * Usability layer on top of Criteria::addGroupByColumn()
+	 * Infers $column $columnName
+	 * Examples:
+	 *   $c->groupBy('Book.AuthorId')
+	 *    => $c->addGroupByColumn(BookPeer::AUTHOR_ID)
+	 *
+	 * @param      string $columnName The column to group by
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function groupBy($columnName)
+	{
+		$column = $this->getColumnFromName($columnName);
+		if (!$column instanceof ColumnMap) {
+			throw new PropelException('ModelCriteria::groupBy() expects a valid column name (e.g. Book.AuthorId) as first argument');
+		}
+		$this->addGroupByColumn($column->getFullyQualifiedName());
+		
+		return $this;
+	}
+  
+	/**
+	 * Add a DISTINCT clause to the query
+	 * Alias for Criteria::setDistinct()
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function distinct()
+	{
+		$this->setDistinct();
+		
+		return $this;
+	}
+	
+	/**
+	 * Add a LIMIT clause (or its subselect equivalent) to the query
+	 * Alias for Criteria:::setLimit()
+	 *
+	 * @param      int $limit Maximum number of results to return by the query
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function limit($limit)
+	{
+		$this->setLimit($limit);
+		
+		return $this;
+	}
+	
+	/**
+	 * Add an OFFSET clause (or its subselect equivalent) to the query
+	 * Alias for of Criteria::setOffset()
+	 *
+	 * @param      int $offset Offset of the first result to return
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function offset($offset)
+	{
+		$this->setOffset($offset);
+		
+		return $this;
+	}
+
+	/**
+	 * Creates a Criterion object based on a list of existing condition names and a comparator
+	 *
+	 * @param      array $conditions The list of condition names, e.g. array('cond1', 'cond2')
+	 * @param      string  $comparator A comparator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
+	 *
+	 * @return     Criterion a Criterion or ModelCriterion object
+	 */
+	protected function getCriterionForConditions($conditions, $comparator = null)
+	{
+		$comparator = (null === $comparator) ? Criteria::LOGICAL_AND : $comparator;
+		$this->combine($conditions, $comparator, 'propel_temp_name');
+		$criterion = $this->namedCriterions['propel_temp_name'];
+		unset($this->namedCriterions['propel_temp_name']);
+		
+		return $criterion;
+	}
+	  
 	/**
 	 * Creates a Criterion object based on a SQL clause and a value
 	 * Uses introspection to translate the column phpName into a fully qualified name
