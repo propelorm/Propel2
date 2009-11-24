@@ -144,14 +144,14 @@ $c1->addOr($c2);
 $c->add($c1);
 }}}
 
-`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic,  Propel 1.4 forced you to use Criterions again. This is no longer the case in Propel 1.5, which provides a new `Criteria::combine()` method. It expects an array of ''named conditions'' to be combined, and an operator. Use the fourth argument of `add()` to name a condition:
+`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic,  Propel 1.4 forced you to use Criterions again. This is no longer the case in Propel 1.5, which provides a new `Criteria::combine()` method. It expects an array of named conditions to be combined, and an operator. Use `Criteria::addCond()` to create a condition, instead of the usual `add()`:
 
 {{{
 #!php
 <?php
 $c = new Criteria();
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');     // creates a condition named 'cond1'
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');     // creates a condition named 'cond2'
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL); // creates a condition named 'cond1'
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL); // creates a condition named 'cond2'
 $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
 // translates in SQL as
 // WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
@@ -162,9 +162,9 @@ $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1
 #!php
 <?php
 $c = new Criteria();
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
-$c->add(BookPeer::TITLE, 'FooBar', Criteria::EQUAL, 'cond3');
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
+$c->addCond('cond3', BookPeer::TITLE, 'FooBar', Criteria::EQUAL);
 $c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
 // translates in SQL as
 // WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
@@ -177,12 +177,12 @@ $c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
 <?php
 $c = new Criteria();
 
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
 $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12');
 
-$c->add(BookPeer::ISBN, '1234', Criteria::EQUAL, 'cond3');
-$c->add(BookPeer::ISBN, '4567', Criteria::EQUAL, 'cond4');
+$c->addCond('cond3', BookPeer::ISBN, '1234', Criteria::EQUAL);
+$c->addCond('cond4'BookPeer::ISBN, '4567', Criteria::EQUAL);
 $c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
 
 $c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);

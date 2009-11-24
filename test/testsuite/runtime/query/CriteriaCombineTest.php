@@ -196,8 +196,8 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionAndSimple()
 	{
-    $this->c->add("INVOICE.COST", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST", "2000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
 
     $expect = "SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)";
@@ -215,8 +215,8 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionAndLessSimple()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
     $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
     $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
@@ -238,10 +238,10 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionAndMultiple()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
-    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
-    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->addCond('cond1',"INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
+    $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_AND);
 
     $expect = "SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) AND INVOICE.COST3>=:p3) AND INVOICE.COST4<=:p4)";
@@ -261,8 +261,8 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionOrSimple()
 	{
-    $this->c->add("INVOICE.COST", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST", "2000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 
     $expect = "SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 OR INVOICE.COST<=:p2)";
@@ -280,8 +280,8 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionOrLessSimple()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
     $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
     $this->c->addOr("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
@@ -303,10 +303,10 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineCriterionOrMultiple()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
-    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
-    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->addCond('cond1',"INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
+    $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_OR);
 
     $expect = "SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 OR INVOICE.COST2<=:p2) OR INVOICE.COST3>=:p3) OR INVOICE.COST4<=:p4)";
@@ -326,11 +326,11 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineNamedCriterions()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND, 'cond12');
-    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
-    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_AND, 'cond34');
     $this->c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_OR);
 
@@ -351,11 +351,11 @@ class CriteriaCombineTest extends BaseTestCase
 
 	public function testCombineDirtyOperators()
 	{
-    $this->c->add("INVOICE.COST1", "1000", Criteria::GREATER_EQUAL, 'cond1');
-    $this->c->add("INVOICE.COST2", "2000", Criteria::LESS_EQUAL, 'cond2');
+    $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond1', 'cond2'), 'AnD', 'cond12');
-    $this->c->add("INVOICE.COST3", "8000", Criteria::GREATER_EQUAL, 'cond3');
-    $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL, 'cond4');
+    $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+    $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
     $this->c->combine(array('cond3', 'cond4'), 'aNd', 'cond34');
     $this->c->combine(array('cond12', 'cond34'), 'oR');
 

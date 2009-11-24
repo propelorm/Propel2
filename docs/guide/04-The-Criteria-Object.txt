@@ -188,14 +188,14 @@ $c->addOr(AuthorPeer::LAST_NAME,  array("Tolstoy", "Dostoevsky", "Bakhtin"), Cri
 // SELECT ... FROM author WHERE (author.FIRST_NAME = 'Leo' OR author.LAST_NAME IN ('Tolstoy', 'Dostoevsky', 'Bakhtin'));
 }}}
 
-`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic, you have to use `Criteria::combine()`. It expects an array of named conditions to be combined, and an operator. Use the fourth argument of `add()` to name a condition:
+`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic, you have to use `Criteria::combine()`. It expects an array of named conditions to be combined, and an operator. Use `Criteria::addCond()` to create a condition, instead of the usual `add()`:
 
 {{{
 #!php
 <?php
 $c = new Criteria();
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');     // creates a condition named 'cond1'
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');     // creates a condition named 'cond2'
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL); // creates a condition named 'cond1'
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL); // creates a condition named 'cond2'
 $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
 // SELECT ... FROM book WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
 }}}
@@ -205,9 +205,9 @@ $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1
 #!php
 <?php
 $c = new Criteria();
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
-$c->add(BookPeer::TITLE, 'FooBar', Criteria::EQUAL, 'cond3');
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
+$c->addCond('cond3', BookPeer::TITLE, 'FooBar', Criteria::EQUAL);
 $c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
 // SELECT ... FROM book WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
 }}}
@@ -218,18 +218,18 @@ $c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
 #!php
 <?php
 $c = new Criteria();
-$c->add(BookPeer::TITLE, 'Foo', Criteria::EQUAL, 'cond1');
-$c->add(BookPeer::TITLE, 'Bar', Criteria::EQUAL, 'cond2');
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
 $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12');
-$c->add(BookPeer::ISBN, '1234', Criteria::EQUAL, 'cond3');
-$c->add(BookPeer::ISBN, '4567', Criteria::EQUAL, 'cond4');
+$c->addCond('cond3', BookPeer::ISBN, '1234', Criteria::EQUAL);
+$c->addCond('cond4'BookPeer::ISBN, '4567', Criteria::EQUAL);
 $c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
 $c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
 // SELECT ... FROM book WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
 //                        AND (book.ISBN = '1234' OR book.ISBN = '4567');
 }}}
  
-Warning: If you call `addOr($column1, $value1)` on a Criteria already having a condition on `$column1`, Propel will combine your new condition with the ''first condition added to `$column1`'', rather than with the ''latest added condition''. This strange behavior exists to keep backwards compatibility with Propel < 1.5, where `addOr()` had a slightly different meaning. To bypass this limitation, use the `Criterion` approach in this case.
+Warning: If you call `addOr($column1, $value1)` on a Criteria already having a condition on `$column1`, Propel will combine your new condition with the ''first condition added to `$column1`'', rather than with the ''latest added condition''. This strange behavior exists to keep backwards compatibility with Propel < 1.5, where `addOr()` had a slightly different meaning. To bypass this limitation, use the `addCond()` approach in this case.
 
 == Case Sensitivity ==
 

@@ -612,11 +612,10 @@ class Criteria implements IteratorAggregate
 	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
 	 * @param      mixed $value
 	 * @param      string $comparison A String.
-	 * @param      string $name optional name to combine the criterion later
 	 *
 	 * @return     A modified Criteria object.
 	 */
-	public function add($p1, $value = null, $comparison = null, $name = null)
+	public function add($p1, $value = null, $comparison = null)
 	{
 		if ($p1 instanceof Criterion) {
 			if($name === null) {
@@ -636,6 +635,40 @@ class Criteria implements IteratorAggregate
 	}
 	
 	/**
+	 * This method creates a new criterion but keeps it for later use with combine()
+	 * Until combine() is called, the condition is not added to the query
+	 *
+	 * <code>
+	 * $crit = new Criteria();
+	 * $crit->addCond($column1, $value1, Criteria::GREATER_THAN, 'cond1');
+	 * $crit->addCond($column2, $value2, Criteria::EQUAL, 'cond2');
+	 * $crit->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+	 * </code>
+	 *
+	 * Any comparison can be used.
+	 *
+	 * The name of the table must be used implicitly in the column name,
+	 * so the Column name must be something like 'TABLE.id'.
+	 *
+	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
+	 * @param      mixed $value
+	 * @param      string $comparison A String.
+	 * @param      string $name name to combine the criterion later
+	 *
+	 * @return     A modified Criteria object.
+	 */
+	public function addCond($name, $p1, $value = null, $comparison = null)
+	{
+		if ($p1 instanceof Criterion) {
+			$this->namedCriterions[$name] = $p1;
+		} else {
+			$criterion = new Criterion($this, $p1, $value, $comparison);
+			$this->namedCriterions[$name] = $criterion;
+		}
+		return $this;
+	}
+	
+	/**
 	 * Combine several named criterions with a logical operator
 	 * 
 	 * @param      array $criterions array of the name of the criterions to combine
@@ -650,14 +683,19 @@ class Criteria implements IteratorAggregate
 			if (array_key_exists($key, $this->namedCriterions)) {
 				$namedCriterions[]= $this->namedCriterions[$key];
 				unset($this->namedCriterions[$key]);
+			} else {
+				throw new PropelException('Cannot combine unknown condition ' . $key);
 			}
 		}
 		$firstCriterion = array_shift($namedCriterions);
-		foreach ($namedCriterions as $criterion)
-		{
+		foreach ($namedCriterions as $criterion) {
 			$firstCriterion->$operatorMethod($criterion);
 		}
-		$this->add($firstCriterion, null, null, $name);
+		if ($name === null) {
+			$this->add($firstCriterion, null, null);
+		} else {
+			$this->addCond($name, $firstCriterion, null, null);
+		}
 		
 		return $this;
 	}
