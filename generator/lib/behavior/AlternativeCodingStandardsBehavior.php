@@ -52,10 +52,10 @@ class AlternativeCodingStandardsBehavior extends Behavior
 {
 	// default parameters value
   protected $parameters = array(
-  	'brackets_newline' 				=> 'true',
+  	'brackets_newline'        => 'true',
   	'remove_closing_comments' => 'true',
-  	'use_whitespace' 					=> 'true',
-  	'tab_size' 								=> 2,
+  	'use_whitespace'          => 'true',
+  	'tab_size'                => 2,
   	'strip_comments'          => 'false'
   );
   
@@ -93,7 +93,9 @@ class AlternativeCodingStandardsBehavior extends Behavior
 	{
 		$filter = array();
 		if($this->getParameter('brackets_newline') == 'true') {
-			$filter['#^(\t*)\}\h(else|elseif|catch)(.*)\h\{$#m'] = "$1}\n$1$2$3\n$1{";
+			$filter['#^(\t*)\}\h(else|elseif|catch)(.*)\h\{$#m'] = "$1}
+$1$2$3
+$1{";
 			$filter['#^(\t*)(\w.*)\h\{$#m'] = "$1$2\n$1{";
 		}
 		if ($this->getParameter('remove_closing_comments') == 'true') {
