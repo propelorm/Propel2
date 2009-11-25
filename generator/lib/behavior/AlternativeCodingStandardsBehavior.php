@@ -96,7 +96,8 @@ class AlternativeCodingStandardsBehavior extends Behavior
 			$filter['#^(\t*)\}\h(else|elseif|catch)(.*)\h\{$#m'] = "$1}
 $1$2$3
 $1{";
-			$filter['#^(\t*)(\w.*)\h\{$#m'] = "$1$2\n$1{";
+			$filter['#^(\t*)(\w.*)\h\{$#m'] = "$1$2
+$1{";
 		}
 		if ($this->getParameter('remove_closing_comments') == 'true') {
 			$filter['#^(\t*)} //.*$#m'] = "$1}";
