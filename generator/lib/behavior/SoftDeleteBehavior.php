@@ -59,7 +59,7 @@ class SoftDeleteBehavior extends Behavior
   public function preDelete()
   {
   	return <<<EOT
-if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
+if (!empty(\$ret) && {$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
 	\$this->{$this->getColumnSetter()}(time());
 	\$this->save();
 	\$con->commit();

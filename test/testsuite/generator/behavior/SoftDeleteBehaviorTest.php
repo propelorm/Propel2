@@ -184,6 +184,15 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(1, Table4Peer::doCount(new Criteria), 'soft deleted rows are still present in the database');
 	}
 
+	public function testDeleteUndeletable()
+	{
+		$t = new UndeletableTable4();
+		$t->save();
+		$t->delete();
+		$this->assertNull($t->getDeletedAt(), 'soft_delete is not triggered for objects wit ha preDelete hook returning false');
+		$this->assertEquals(1, Table4Peer::doCount(new Criteria), 'soft_delete is not triggered for objects wit ha preDelete hook returning false');
+	}
+
 	public function testUnDelete()
 	{
 		$t = new Table4();
@@ -217,5 +226,15 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(0, Table5Peer::doCount(new Criteria), 'soft deleted rows are hidden for select queries');
 		Table5Peer::disableSoftDelete();
 		$this->assertEquals(1, Table5Peer::doCount(new Criteria), 'soft deleted rows are still present in the database');		
+	}
+}
+
+class UndeletableTable4 extends Table4 
+{
+	public function preDelete(PropelPDO $con)
+	{
+		parent::preDelete($con);
+		$this->setTitle('foo');
+		return false;
 	}
 }
