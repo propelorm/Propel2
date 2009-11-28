@@ -399,6 +399,15 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses relation names as defined in schema.xml');
 	}
+	
+	public function testJoinComposite()
+	{
+		$c = new ModelCriteria('bookstore', 'ReaderFavorite');
+		$c->join('BookOpinion');
+		$sql = 'SELECT  FROM `reader_favorite` INNER JOIN book_opinion ON (reader_favorite.BOOK_ID=book_opinion.BOOK_ID AND reader_favorite.READER_ID=book_opinion.READER_ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() knows how to create a JOIN clause for relationships with composite fkeys');
+	}
 		
 	public function testJoinType()
 	{

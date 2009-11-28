@@ -306,7 +306,11 @@ class ModelCriteria extends Criteria
 		
 		$cols = $relationMap->getColumnMappings(RelationMap::LEFT_TO_RIGHT);
 		if (count($cols)>1) {
-			$this->addMultipleJoin($cols, $joinType);
+			$joinCols = array();
+			foreach ($cols as $key => $value) {
+				$joinCols[] = array($key, $value);
+			}
+			$this->addMultipleJoin($joinCols, $joinType);
 		} else {
 			$col = each($cols);
 			$this->addJoin($col['key'], $col['value'], $joinType);
