@@ -401,7 +401,7 @@ class PropelPDO extends PDO
 		}
 		
 		$args	= func_get_args();
-		$return	= call_user_func_array(array($this, 'parent::query'), $args);
+		$return	= call_user_func_array(array('parent', 'query'), $args);
 		
 		if ($this->useDebug) {
 			$sql = $args[0];
