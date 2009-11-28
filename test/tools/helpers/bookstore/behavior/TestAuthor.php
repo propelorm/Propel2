@@ -53,3 +53,23 @@ class TestAuthor extends Author {
 		$this->setLastName("Post-Deleted");
 	}
 }
+
+class TestAuthorDeleteFalse extends TestAuthor
+{
+	public function preDelete(PropelPDO $con)
+	{
+		parent::preDelete($con);
+		$this->setFirstName("Pre-Deleted");
+		return false;
+	}
+}
+class TestAuthorSaveFalse extends TestAuthor
+{
+	public function preSave(PropelPDO $con)
+	{
+		parent::preSave($con);
+		$this->setEmail("pre@save.com");
+		return false;
+	}
+	
+}

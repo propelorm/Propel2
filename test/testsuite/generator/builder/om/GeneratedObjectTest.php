@@ -1173,6 +1173,20 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->assertEquals('pre@save.com', $author->getEmail());
 	}
 
+	public function testPreSaveFalse()
+	{
+		$con = Propel::getConnection(AuthorPeer::DATABASE_NAME);
+		$author = new TestAuthorSaveFalse();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$res = $author->save($con);
+		$this->assertEquals(0, $res);
+		$this->assertEquals('pre@save.com', $author->getEmail());
+		$this->assertNotEquals(115, $author->getAge());
+		$this->assertTrue($author->isNew());
+		$this->assertEquals(1, $con->getNestedTransactionCount());
+	}
+
 	public function testPostSave()
 	{
 		$author = new TestAuthor();
@@ -1190,6 +1204,20 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$author->save();
 		$author->delete();
 		$this->assertEquals("Pre-Deleted", $author->getFirstName());
+	}
+
+	public function testPreDeleteFalse()
+	{
+		$con = Propel::getConnection(AuthorPeer::DATABASE_NAME);
+		$author = new TestAuthorDeleteFalse();
+		$author->setFirstName("bogus");
+		$author->setLastName("Lastname");
+		$author->save($con);
+		$author->delete($con);
+		$this->assertEquals("Pre-Deleted", $author->getFirstName());
+		$this->assertNotEquals("Post-Deleted", $author->getLastName());
+		$this->assertFalse($author->isDeleted());
+		$this->assertEquals(1, $con->getNestedTransactionCount());
 	}
 
 	public function testPostDelete()

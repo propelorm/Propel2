@@ -2033,6 +2033,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= "
 				\$con->commit();
 				\$this->setDeleted(true);
+			} else {
+				\$con->commit();
 			}";
 		} else {
 			// apply behaviors
@@ -3586,10 +3588,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				\$this->postSave(\$con);";
 				$this->applyBehaviorModifier('postSave', $script, "				");
 				$script .= "
-				\$con->commit();
 				".$this->getPeerClassname()."::addInstanceToPool(\$this);
-				return \$affectedRows;
-			}";
+			} else {
+				\$affectedRows = 0;
+			}
+			\$con->commit();
+			return \$affectedRows;";
 		} else {
 			// save without runtime hooks
 	    $this->applyBehaviorModifier('preSave', $script, "			");
