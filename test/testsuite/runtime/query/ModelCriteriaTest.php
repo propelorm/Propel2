@@ -348,6 +348,130 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
 	}
+
+	public function testJoin()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses a relation to guess the columns');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		try {
+			$c->join('Foo');
+			$this->fail('join() throws an exception when called with a non-existing relation');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'join() throws an exception when called with a non-existing relation');
+		}
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$c->where('Author.FirstName = ?', 'Leo');
+		$sql = 'SELECT  FROM  INNER JOIN author ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = :p1';
+		$params = array(
+			array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'Leo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses a relation to guess the columns');
+	}
+	
+	public function testJoinQuery()
+	{	
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$c->where('Author.FirstName = ?', 'Neal');
+		$books = BookPeer::doSelect($c);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = 'Neal'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() issues a real JOIN query');
+		$this->assertEquals(1, count($books), 'join() issues a real JOIN query');
+	}
+
+	public function testJoinRelationName()
+	{
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployee');
+		$c->join('Supervisor');
+		$sql = 'SELECT  FROM  INNER JOIN bookstore_employee ON (bookstore_employee.SUPERVISOR_ID=bookstore_employee.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses relation names as defined in schema.xml');
+	}
+		
+	public function testJoinType()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds an INNER JOIN by default');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author', Criteria::INNER_JOIN);
+		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds an INNER JOIN by default');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author', Criteria::LEFT_JOIN);
+		$sql = 'SELECT  FROM `book` LEFT JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() can add a LEFT JOIN');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author', Criteria::RIGHT_JOIN);
+		$sql = 'SELECT  FROM `book` RIGHT JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() can add a RIGHT JOIN');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author', 'incorrect join');
+		$sql = 'SELECT  FROM `book` incorrect join author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() accepts any join string');
+	}
+
+	public function testJoinDirection()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds a JOIN clause correctly for many to one relationship');
+
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->join('Book');
+		$sql = 'SELECT  FROM `author` INNER JOIN book ON (author.ID=book.AUTHOR_ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds a JOIN clause correctly for one to many relationship');
+		
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployee');
+		$c->join('BookstoreEmployeeAccount');
+		$sql = 'SELECT  FROM `bookstore_employee` INNER JOIN bookstore_employee_account ON (bookstore_employee.ID=bookstore_employee_account.EMPLOYEE_ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds a JOIN clause correctly for one to one relationship');
+
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployeeAccount');
+		$c->join('BookstoreEmployee');
+		$sql = 'SELECT  FROM `bookstore_employee_account` INNER JOIN bookstore_employee ON (bookstore_employee_account.EMPLOYEE_ID=bookstore_employee.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() adds a JOIN clause correctly for one to one relationship');
+	}
+	
+	public function testJoinSeveral()
+	{
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->join('Book');
+		$c->join('Publisher');
+		$c->where('Publisher.Name = ?', 'foo');
+		$sql = 'SELECT  FROM  INNER JOIN book ON (author.ID=book.AUTHOR_ID) INNER JOIN publisher ON (book.PUBLISHER_ID=publisher.ID) WHERE publisher.NAME = :p1';
+		$params = array(
+			array('table' => 'publisher', 'column' => 'NAME', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() can guess relationships from related tables');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria

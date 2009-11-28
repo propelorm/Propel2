@@ -1,0 +1,48 @@
+<?php
+
+require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+
+/**
+ * Test class for PHP5TableMapBuilder.
+ *
+ * @author     François Zaninotto
+ * @version    $Id: PHP5TableMapBuilderTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @package    runtime.map
+ */
+class GeneratedRelationMapTest extends BookstoreTestBase 
+{ 
+  protected $databaseMap;
+
+  protected function setUp()
+  {
+  	parent::setUp();
+    $this->databaseMap = Propel::getDatabaseMap('bookstore');
+  }
+
+	public function testGetRightTable()
+	{
+		$bookTable = $this->databaseMap->getTableByPhpName('Book');
+		$authorTable = $this->databaseMap->getTableByPhpName('Author');
+		$this->assertEquals($authorTable, $bookTable->getRelation('Author')->getRightTable(), 'getRightTable() returns correct table when called on a many to one relationship');
+		$this->assertEquals($bookTable, $authorTable->getRelation('Book')->getRightTable(), 'getRightTable() returns correct table when called on a one to many relationship');
+		$bookEmpTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
+		$bookEmpAccTable = $this->databaseMap->getTableByPhpName('BookstoreEmployeeAccount');
+		$this->assertEquals($bookEmpAccTable, $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getRightTable(), 'getRightTable() returns correct table when called on a one to one relationship');
+		$this->assertEquals($bookEmpTable, $bookEmpAccTable->getRelation('BookstoreEmployee')->getRightTable(), 'getRightTable() returns correct table when called on a one to one relationship');
+	}
+	
+	public function testColumnMappings()
+	{
+		$bookTable = $this->databaseMap->getTableByPhpName('Book');
+		$this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $bookTable->getRelation('Author')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+		$this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $bookTable->getRelation('Author')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns local to foreign when asked left to right for a many to one relationship');
+		
+		$authorTable = $this->databaseMap->getTableByPhpName('Author');
+		$this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $authorTable->getRelation('Book')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+		$this->assertEquals(array('author.ID' => 'book.AUTHOR_ID'), $authorTable->getRelation('Book')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to many relationship');
+		
+		$bookEmpTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
+    $this->assertEquals(array('bookstore_employee_account.EMPLOYEE_ID' => 'bookstore_employee.ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+    $this->assertEquals(array('bookstore_employee.ID' => 'bookstore_employee_account.EMPLOYEE_ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to one relationship');
+	}
+}

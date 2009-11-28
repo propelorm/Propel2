@@ -274,6 +274,48 @@ class ModelCriteria extends Criteria
 	}
 
 	/**
+	 * Add a JOIN clause to the query
+	 * Infers the ON clause from a relation name
+	 * Uses the Propel table maps, based on the schema, to guess the related columns
+	 * Beware that the default JOIN operator is INNER JOIN, while Criteria defaults to WHERE
+	 * Examples:
+	 *   $c->join('Author')
+	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::INNER_JOIN)
+	 *   $c->join('Author', Criteria::RIGHT_JOIN)
+	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::RIGHT_JOIN)
+	 * 
+	 * @param      string $relation Relation to use for the join
+	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function join($relation, $joinType = Criteria::INNER_JOIN)
+	{
+		$relationMap = null;
+		foreach ($this->tableMaps as $name => $tableMap) {
+			if($tableMap->hasRelation($relation)) {
+				$relationMap = $tableMap->getRelation($relation);
+				continue;
+			}
+		}
+		if (null === $relationMap) {
+			throw new PropelException('Unable to find the ' . $relation . 'relation');
+		}
+		
+		$this->tableMaps[$relation] = $relationMap->getrightTable();
+		
+		$cols = $relationMap->getColumnMappings(RelationMap::LEFT_TO_RIGHT);
+		if (count($cols)>1) {
+			$this->addMultipleJoin($cols, $joinType);
+		} else {
+			$col = each($cols);
+			$this->addJoin($col['key'], $col['value'], $joinType);
+		}
+		
+		return $this;
+	}
+	
+	/**
 	 * Creates a Criterion object based on a list of existing condition names and a comparator
 	 *
 	 * @param      array $conditions The list of condition names, e.g. array('cond1', 'cond2')

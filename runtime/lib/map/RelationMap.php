@@ -38,9 +38,13 @@ class RelationMap
 {
 
   const
+    // types
     MANY_TO_ONE = 1,
     ONE_TO_MANY = 2,
-    ONE_TO_ONE = 3;
+    ONE_TO_ONE = 3,
+    // representations
+    LOCAL_TO_FOREIGN = 0,
+    LEFT_TO_RIGHT = 1;
     
   protected 
     $name,
@@ -74,7 +78,7 @@ class RelationMap
   /**
    * Set the type
    *
-   * @param      integer $type The relation type (either self::HAS_ONE, or self::HAS_MANY)
+   * @param      integer $type The relation type (either self::MANY_TO_ONE, self::ONE_TO_MANY, or self::ONE_TO_ONE)
    */
   public function setType($type)
   {
@@ -124,11 +128,21 @@ class RelationMap
   /**
    * Get the foreign table
    *
-   * @return      TableMap The foreign table for this relationship
+   * @return    TableMap The foreign table for this relationship
    */
   public function getForeignTable()
   {
     return $this->foreignTable;
+  }
+  
+  /**
+   * Get the right table of the relation
+   *
+   * @return    TableMap The right table for this relationship
+   */
+  public function getRightTable()
+  {
+  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getforeignTable() : $this->getLocalTable();
   }
   
   /**
@@ -143,19 +157,30 @@ class RelationMap
     $this->foreignColumns[] = $foreign;
   }
   
-  /**
-   * Get an associative array mapping local column names to foreign column names
-   *
-   * @return Array Associative array (local => foreign) of fully qualified column names
-   */
-  public function getColumnMappings()
-  {
-    $h = array();
-    for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
-      $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
-    }
-    return $h;
-  }
+	/**
+	 * Get an associative array mapping local column names to foreign column names
+	 * The arrangement of the returned array depends on the $direction parameter:
+	 *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
+	 *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
+	 *
+	 * @param     int $direction How the associative array must return columns
+	 * @return    Array Associative array (local => foreign) of fully qualified column names
+	 */
+	public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
+	{
+		$h = array();
+		if ($direction == RelationMap::LEFT_TO_RIGHT && $this->getType() == RelationMap::MANY_TO_ONE) {
+				$direction = RelationMap::LOCAL_TO_FOREIGN;
+		}
+		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+			if ($direction == RelationMap::LOCAL_TO_FOREIGN) {
+				$h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
+			} else {
+				$h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
+			}
+		}
+		return $h;
+	}
   
   /**
    * Get the local columns
