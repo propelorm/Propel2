@@ -45,4 +45,23 @@ class GeneratedRelationMapTest extends BookstoreTestBase
     $this->assertEquals(array('bookstore_employee_account.EMPLOYEE_ID' => 'bookstore_employee.ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
     $this->assertEquals(array('bookstore_employee.ID' => 'bookstore_employee_account.EMPLOYEE_ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to one relationship');
 	}
+	
+	public function testCountColumnMappings()
+	{
+	  $bookTable = $this->databaseMap->getTableByPhpName('Book');
+	  $this->assertEquals(1, $bookTable->getRelation('Author')->countColumnMappings());
+	  
+	  $rfTable = $this->databaseMap->getTableByPhpName('ReaderFavorite');
+	  $this->assertEquals(2, $rfTable->getRelation('BookOpinion')->countColumnMappings());
+	}
+
+	public function testIsComposite()
+	{
+	  $bookTable = $this->databaseMap->getTableByPhpName('Book');
+	  $this->assertFalse($bookTable->getRelation('Author')->isComposite());
+	  
+	  $rfTable = $this->databaseMap->getTableByPhpName('ReaderFavorite');
+	  $this->assertTrue($rfTable->getRelation('BookOpinion')->isComposite());
+	}
+
 }

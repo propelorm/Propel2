@@ -142,7 +142,7 @@ class RelationMap
    */
   public function getRightTable()
   {
-  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getforeignTable() : $this->getLocalTable();
+  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getForeignTable() : $this->getLocalTable();
   }
   
   /**
@@ -181,6 +181,26 @@ class RelationMap
 		}
 		return $h;
 	}
+	
+	/**
+	 * Returns true if the relation has more than one column mapping
+	 *
+	 * @return boolean
+	 */
+	public function isComposite()
+	{
+		return $this->countColumnMappings() > 1;
+	}
+	
+	/**
+	 * Return the number of column mappings
+	 *
+	 * @return int
+	 */
+	public function countColumnMappings()
+	{
+		return count($this->localColumns);
+	}
   
   /**
    * Get the local columns
@@ -202,6 +222,27 @@ class RelationMap
     return $this->foreignColumns;
   }
   
+	/**
+   * Get the left columns of the relation
+   *
+   * @return    array of ColumnMap objects
+   */
+  public function getLeftColumns()
+  {
+  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getLocalColumns() : $this->getForeignColumns();
+  }
+
+  /**
+   * Get the right columns of the relation
+   *
+   * @return    array of ColumnMap objects
+   */
+  public function getRightColumns()
+  {
+  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getForeignColumns() : $this->getLocalColumns();
+  }
+
+
   /**
    * Set the onUpdate behavior
    *

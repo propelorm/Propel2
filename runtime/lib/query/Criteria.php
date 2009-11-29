@@ -170,7 +170,7 @@ class Criteria implements IteratorAggregate
 	// flag to note that the criteria involves a blob.
 	private $blobFlag = null;
 
-	private $aliases = array();
+	protected $aliases = array();
 
 	private $useTransaction = false;
 

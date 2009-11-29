@@ -186,19 +186,18 @@ class ModelCriteria extends Criteria
 	 */
 	public function orderBy($columnName, $order = Criteria::ASC)
 	{
-		$column = $this->getColumnFromName($columnName);
+		list($column, $realColumnName) = $this->getColumnFromName($columnName);
 		if (!$column instanceof ColumnMap) {
 			throw new PropelException('ModelCriteria::orderBy() expects a valid column name (e.g. Book.Title) as first argument');
 		}
-		$columnRealName = $column->getFullyQualifiedName();
 		$order = strtoupper($order);
 		
 		switch ($order) {
 			case Criteria::ASC:
-				$this->addAscendingOrderByColumn($columnRealName);
+				$this->addAscendingOrderByColumn($realColumnName);
 				break;
 			case Criteria::DESC:
-				$this->addDescendingOrderByColumn($columnRealName);
+				$this->addDescendingOrderByColumn($realColumnName);
 				break;
 			default:
 				throw new PropelException('ModelCriteria::orderBy() only accepts "asc" or "desc" as argument');
@@ -221,11 +220,11 @@ class ModelCriteria extends Criteria
 	 */
 	public function groupBy($columnName)
 	{
-		$column = $this->getColumnFromName($columnName);
+		list($column, $realColumnName) = $this->getColumnFromName($columnName);
 		if (!$column instanceof ColumnMap) {
 			throw new PropelException('ModelCriteria::groupBy() expects a valid column name (e.g. Book.AuthorId) as first argument');
 		}
-		$this->addGroupByColumn($column->getFullyQualifiedName());
+		$this->addGroupByColumn($realColumnName);
 		
 		return $this;
 	}
@@ -291,30 +290,34 @@ class ModelCriteria extends Criteria
 	 */
 	public function join($relation, $joinType = Criteria::INNER_JOIN)
 	{
-		$relationMap = null;
-		foreach ($this->tableMaps as $name => $tableMap) {
-			if($tableMap->hasRelation($relation)) {
-				$relationMap = $tableMap->getRelation($relation);
-				continue;
-			}
+		list($relationName, $alias) = self::getClassAndAlias($relation);
+		list($leftName, $relationName) = explode('.', $relationName);
+		if(!isset($this->tableMaps[$leftName])) {
+			throw new PropelException('Unknown table or alias ' . $leftName);
 		}
-		if (null === $relationMap) {
-			throw new PropelException('Unable to find the ' . $relation . 'relation');
+		if(!$this->tableMaps[$leftName]->hasRelation($relationName)) {
+			throw new PropelException('Unknown relation ' . $relationName . ' on the ' . $leftName .' table');
 		}
+		$relationMap = $this->tableMaps[$leftName]->getRelation($relationName);
 		
-		$this->tableMaps[$relation] = $relationMap->getrightTable();
-		
-		$cols = $relationMap->getColumnMappings(RelationMap::LEFT_TO_RIGHT);
-		if (count($cols)>1) {
-			$joinCols = array();
-			foreach ($cols as $key => $value) {
-				$joinCols[] = array($key, $value);
-			}
-			$this->addMultipleJoin($joinCols, $joinType);
+		$rightTable = $relationMap->getRightTable();
+		if($alias !== null) {
+			$this->addAlias($alias, $rightTable->getName());
+			$this->tableMaps[$alias] = $rightTable;
 		} else {
-			$col = each($cols);
-			$this->addJoin($col['key'], $col['value'], $joinType);
+			$this->tableMaps[$relationName] = $rightTable;
 		}
+		
+		$leftCols = $relationMap->getLeftColumns();
+		$rightCols = $relationMap->getRightColumns();
+		$joinCols = array();
+		$nbColumns = $relationMap->countColumnMappings();
+		for ($i=0; $i < $nbColumns; $i++) {
+			$leftColName = (array_key_exists($leftName, $this->aliases) ? $leftName : $leftCols[$i]->getTableName()) . '.' . $leftCols[$i]->getName();
+			$rightColName = ($alias ? $alias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
+			$joinCols []= array($leftColName, $rightColName);
+		}
+		$this->addMultipleJoin($joinCols, $joinType);
 		
 		return $this;
 	}
@@ -424,9 +427,10 @@ EOT;
 	protected function doReplaceNameInExpression($matches)
 	{
 		$key = $matches[0];
-		if ($column = $this->getColumnFromName($key)) {
+		list($column, $realColumnName) = $this->getColumnFromName($key);
+		if ($column instanceof ColumnMap) {
 			$this->replacedColumns[]= $column;
-			return $column->getFullyQualifiedName();
+			return $realColumnName;
 		} else {
 			return $key;
 		}
@@ -438,7 +442,13 @@ EOT;
 			// Table.Column
 			list($class, $phpName) = explode('.', $phpName);
 			if (array_key_exists($class, $this->tableMaps) && $this->tableMaps[$class]->hasColumnByPhpName($phpName)) {
-				return $this->tableMaps[$class]->getColumnByPhpName($phpName);
+				$column = $this->tableMaps[$class]->getColumnByPhpName($phpName);
+			  if (array_key_exists($class, $this->aliases)) {
+			    $realColumnName = $class . '.' . $column->getName();
+			  } else {
+			    $realColumnName = $column->getFullyQualifiedName();
+			  }
+			  return array($column, $realColumnName);
 			}
 			return null;
 		}
