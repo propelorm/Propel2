@@ -40,7 +40,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testReplaceNames($origClause, $columnPhpName = false, $modifiedClause)
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
-		$columns = $c->replaceNames($origClause);
+		$c->replaceNames($origClause);
+		$columns = $c->replacedColumns;
 		if ($columnPhpName) {
 			$this->assertEquals(array(BookPeer::getTableMap()->getColumnByPhpName($columnPhpName)), $columns);
 		}
@@ -63,7 +64,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testReplaceMultipleNames($origClause, $expectedColumns, $modifiedClause)
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
-		$foundColumns = $c->replaceNames($origClause);
+		$c->replaceNames($origClause);
+		$foundColumns = $c->replacedColumns;
 		foreach ($foundColumns as $column) {
 			$expectedColumn = BookPeer::getTableMap()->getColumnByPhpName(array_shift($expectedColumns));
 			$this->assertEquals($expectedColumn, $column);
@@ -501,11 +503,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$sql = 'SELECT  FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID)';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation alias on main alias');
-
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$c = new ModelCriteria('bookstore', 'Book b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
-		$sql = 'SELECT  FROM `author` INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = :p1';
+		$sql = 'SELECT  FROM  INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = :p1';
 		$params = array(
 			array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'Leo'),
 		);
@@ -515,7 +518,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->join('a.Book b');
 		$c->join('b.Publisher p');
 		$c->where('p.Name = ?', 'foo');
-		$sql = 'SELECT  FROM `publisher` INNER JOIN book b ON (author.ID=b.AUTHOR_ID) INNER JOIN publisher p ON (b.PUBLISHER_ID=p.ID) WHERE p.NAME = :p1';
+		$sql = 'SELECT  FROM  INNER JOIN book b ON (author.ID=b.AUTHOR_ID) INNER JOIN publisher p ON (b.PUBLISHER_ID=p.ID) WHERE p.NAME = :p1';
 		$params = array(
 			array('table' => 'publisher', 'column' => 'NAME', 'value' => 'foo'),
 		);
@@ -528,11 +531,30 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->join('be.Supervisor sup');
 		$c->join('sup.Subordinate sub');
 		$c->where('sub.Name = ?', 'Foo');
-		$sql = 'SELECT  FROM `bookstore_employee` INNER JOIN bookstore_employee sup ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN bookstore_employee sub ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = :p1';
+		$sql = 'SELECT  FROM  INNER JOIN bookstore_employee sup ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN bookstore_employee sub ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = :p1';
 		$params = array(
 			array('table' => 'bookstore_employee', 'column' => 'NAME', 'value' => 'Foo'),
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() allows two joins on the same table thanks to aliases');
+	}
+	
+	public function testJoinAliasQuery()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->join('b.Author a');
+		$c->where('a.FirstName = ?', 'Leo');
+		$books = BookPeer::doSelect($c, $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in where()');
+
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployee be');
+		$c->join('be.Supervisor sup');
+		$c->join('sup.Subordinate sub');
+		$c->where('sub.Name = ?', 'Foo');
+		$employees = BookstoreEmployeePeer::doSelect($c, $con);
+		$expectedSQL = "SELECT bookstore_employee.ID, bookstore_employee.CLASS_KEY, bookstore_employee.NAME, bookstore_employee.JOB_TITLE, bookstore_employee.SUPERVISOR_ID FROM `bookstore_employee` INNER JOIN bookstore_employee sup ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN bookstore_employee sub ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = 'Foo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
 	}
 }
 

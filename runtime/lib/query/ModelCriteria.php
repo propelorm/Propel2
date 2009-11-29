@@ -57,21 +57,27 @@ class ModelCriteria extends Criteria
 		$this->tableMaps[$modelName] = Propel::getDatabaseMap($dbName)->getTablebyPhpName($this->modelName);
 	}
 	
+	/**
+	 * Returns the class and alias of a string representing a model or a relation
+	 * e.g. 'Book b' => array('Book', 'b')
+	 * e.g. 'Book'   => array('Book', null)
+	 *
+	 * @param      string $class The classname to explode
+	 *
+	 * @return     array  list($className, $aliasName)
+	 */
 	protected static function getClassAndAlias($class)
   {
-    if(strpos($class, ' ') !== false)
-    {
+    if(strpos($class, ' ') !== false) {
       list($class, $alias) = explode(' ', $class);
-    }
-    else
-    {
+    } else {
       $alias = null;
     }
     return array($class, $alias);
   }
   
 	/**
-	 * Add a condition on a column based on a pseudo SQL clause
+	 * Adds a condition on a column based on a pseudo SQL clause
 	 * but keeps it for later use with combine()
 	 * Until combine() is called, the condition is not added to the query
 	 * Uses introspection to translate the column phpName into a fully qualified name
@@ -93,7 +99,7 @@ class ModelCriteria extends Criteria
   
   
 	/**
-	 * Add a condition on a column based on a pseudo SQL clause
+	 * Adds a condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
 	 *
 	 * @see Criteria::add()
@@ -119,7 +125,7 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Add a condition on a column based on a pseudo SQL clause
+	 * Adds a condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
 	 *
 	 * @see Criteria::addOr()
@@ -144,7 +150,7 @@ class ModelCriteria extends Criteria
 	}
 
 	/**
-	 * Add a having condition on a column based on a pseudo SQL clause
+	 * Adds a having condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
 	 *
 	 * @see Criteria::addHaving()
@@ -170,7 +176,7 @@ class ModelCriteria extends Criteria
 	}
 		
 	/**
-	 * Add an ORDER BY clause to the query
+	 * Adds an ORDER BY clause to the query
 	 * Usability layer on top of Criteria::addAscendingOrderByColumn() and Criteria::addDescendingOrderByColumn()
 	 * Infers $column and $order from $columnName and some optional arguments
 	 * Examples:
@@ -207,7 +213,7 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Add a GROUB BY clause to the query
+	 * Adds a GROUB BY clause to the query
 	 * Usability layer on top of Criteria::addGroupByColumn()
 	 * Infers $column $columnName
 	 * Examples:
@@ -230,7 +236,7 @@ class ModelCriteria extends Criteria
 	}
   
 	/**
-	 * Add a DISTINCT clause to the query
+	 * Adds a DISTINCT clause to the query
 	 * Alias for Criteria::setDistinct()
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
@@ -243,7 +249,7 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Add a LIMIT clause (or its subselect equivalent) to the query
+	 * Adds a LIMIT clause (or its subselect equivalent) to the query
 	 * Alias for Criteria:::setLimit()
 	 *
 	 * @param      int $limit Maximum number of results to return by the query
@@ -258,7 +264,7 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Add an OFFSET clause (or its subselect equivalent) to the query
+	 * Adds an OFFSET clause (or its subselect equivalent) to the query
 	 * Alias for of Criteria::setOffset()
 	 *
 	 * @param      int $offset Offset of the first result to return
@@ -273,7 +279,7 @@ class ModelCriteria extends Criteria
 	}
 
 	/**
-	 * Add a JOIN clause to the query
+	 * Adds a JOIN clause to the query
 	 * Infers the ON clause from a relation name
 	 * Uses the Propel table maps, based on the schema, to guess the related columns
 	 * Beware that the default JOIN operator is INNER JOIN, while Criteria defaults to WHERE
@@ -352,7 +358,7 @@ class ModelCriteria extends Criteria
 	protected function getCriterionForClause($clause, $value)
 	{
 		$clause = trim($clause);
-		if($columns = $this->replaceNames($clause)) {
+		if($this->replaceNames($clause)) {
 			// at least one column name was found and replaced in the clause
 			// this is enough to determine the type to bind the parameter to
 			if (preg_match('/IN \?$/i', $clause) !== 0) {
@@ -364,7 +370,10 @@ class ModelCriteria extends Criteria
 			} else {
 				$operator = ModelCriteria::MODEL_CLAUSE;
 			}
-		  $criterion = new ModelCriterion($this, $columns[0], $value, $operator, $clause);
+		  $criterion = new ModelCriterion($this, $this->replacedColumns[0], $value, $operator, $clause);
+		  if ($this->currentAlias != '') {
+		  	$criterion->setTable($this->currentAlias);
+		  }
 		} else {
 			// no column match in clause, must be an expression like '1=1'
 			if (strpos($clause, '?') !== false) {
@@ -376,7 +385,7 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Replace complete column names (like Article.AuthorId) in an SQL clause
+	 * Replaces complete column names (like Article.AuthorId) in an SQL clause
 	 * by their exact Propel column fully qualified name (e.g. article.AUTHOR_ID)
 	 * but ignores the column names inside quotes
 	 *
@@ -384,11 +393,13 @@ class ModelCriteria extends Criteria
 	 *
 	 * @param string $clause SQL clause to inspect (modified by the method)
 	 *
-	 * @return array List of Propel Column names used for replacement
+	 * @return boolean Whether the method managed to find and replace at least one column name
 	 */
 	protected function replaceNames(&$clause)
 	{
 		$this->replacedColumns = array();
+		$this->currentAlias = '';
+		$this->foundMatch = false;
 		$regexp = <<<EOT
 |
 	(["'][^"']*?["'])?  # string
@@ -396,7 +407,7 @@ class ModelCriteria extends Criteria
 |x
 EOT;
 		$clause = preg_replace_callback($regexp, array($this, 'doReplaceName'), $clause);
-		return $this->replacedColumns;
+		return $this->foundMatch;
 	}
 	
 	/**
@@ -430,12 +441,29 @@ EOT;
 		list($column, $realColumnName) = $this->getColumnFromName($key);
 		if ($column instanceof ColumnMap) {
 			$this->replacedColumns[]= $column;
+			$this->foundMatch = true;
 			return $realColumnName;
 		} else {
 			return $key;
 		}
 	}
 
+	/**
+	 * Finds a column and a SQL translation for a pseudo SQL column name
+	 * Respects table aliases previously registered in a join() or addAlias()
+	 * Examples:
+	 * <code>
+	 * $c->getColumnFromName('Book.Title');
+	 *   => array($bookTitleColumnMap, 'book.TITLE')
+	 * $c->join('Book.Author a')
+	 *   ->getColumnFromName('a.FirstName');
+	 *   => array($authorFirstNameColumnMap, 'a.FIRST_NAME')
+	 * </code>
+	 *
+	 * @param      string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
+	 *
+	 * @return     array List($columnMap, $realColumnName)
+	 */
 	protected function getColumnFromName($phpName)
 	{
 	  if(strpos($phpName, '.') !== false) {
@@ -444,6 +472,7 @@ EOT;
 			if (array_key_exists($class, $this->tableMaps) && $this->tableMaps[$class]->hasColumnByPhpName($phpName)) {
 				$column = $this->tableMaps[$class]->getColumnByPhpName($phpName);
 			  if (array_key_exists($class, $this->aliases)) {
+			  	$this->currentAlias = $class;
 			    $realColumnName = $class . '.' . $column->getName();
 			  } else {
 			    $realColumnName = $column->getFullyQualifiedName();
