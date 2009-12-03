@@ -20,6 +20,48 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedParams, $params, $message); 
 	}
 	
+	public function testGetModelName()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$this->assertEquals('Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
+	}
+	
+	public function testGetModelPeerName()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$this->assertEquals('BookPeer', $c->getModelPeerName(), 'getModelPeerName() returns the name of the Peer class associated to the model class');
+	}
+	
+	public function testFormatter()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$this->assertTrue($c->getFormatter() instanceof PropelFormatter, 'getFormatter() returns a PropelFormatter instance');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_STATEMENT);
+		$this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts the name of a PropelFormatter class');
+		
+		try {
+			$c->setFormatter('Book');
+			$this->fail('setFormatter() throws an exception when passed the name of a class not extending PropelFormatter');
+		} catch(PropelException $e) {
+			$this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending PropelFormatter');
+		}
+		$c = new ModelCriteria('bookstore', 'Book');
+		$formatter = new PropelStatementFormatter();
+		$c->setFormatter($formatter);
+		$this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts a PropelFormatter instance');
+		
+		try {
+			$formatter = new Book();
+			$c->setFormatter($formatter);
+			$this->fail('setFormatter() throws an exception when passed an object not extending PropelFormatter');
+		} catch(PropelException $e) {
+			$this->assertTrue(true, 'setFormatter() throws an exception when passedan object not extending PropelFormatter');
+		}
+		
+	}
+	
 	public static function conditionsForTestReplaceNames()
 	{
 		return array(
@@ -556,12 +598,98 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT bookstore_employee.ID, bookstore_employee.CLASS_KEY, bookstore_employee.NAME, bookstore_employee.JOB_TITLE, bookstore_employee.SUPERVISOR_ID FROM `bookstore_employee` INNER JOIN bookstore_employee sup ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN bookstore_employee sub ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = 'Foo'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
 	}
+	
+	public function testFind()
+	{
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$books = $c->find();
+		$this->assertTrue(is_array($books), 'find() returns an array by default');
+		$this->assertEquals(0, count($books), 'find() returns an empty array when the qeury returns no result');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->join('b.Author a');
+		$c->where('a.FirstName = ?', 'Neal');
+		$books = $c->find();
+		$this->assertTrue(is_array($books), 'find() returns an array by default');
+		$this->assertEquals(1, count($books), 'find() returns as many rows as the results in the query');
+		$book = array_shift($books);
+		$this->assertTrue($book instanceof Book, 'find() returns an array of Model objects by default');
+		$this->assertEquals('Quicksilver', $book->getTitle(), 'find() returns the model objects matching the query');
+	}
+	
+	public function testPreFind()
+	{
+		$c = new ModelCriteriaWithPreFindHook1('bookstore', 'Book b');
+		$books = $c->find();
+		$this->assertTrue($c->foo, 'preFind() can modify the Criteria before find() fires the query');
+		$this->assertTrue(is_array($books), 'find() returns normal result if preFind() returns nothing');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$count = $con->getQueryCount();
+		$c = new ModelCriteriaWithPreFindHook2('bookstore', 'Book b');
+		$books = $c->find($con);
+		$this->assertEquals('foo', $books, 'find() returns the return value of preFind() if not null');
+		$this->assertEquals($count, $con->getQueryCount(), 'find() bypasses the query if the return value of preFind() if not null');
+	}
+
+	public function testPostFind()
+	{
+		$c = new ModelCriteriaWithPostFindHook1('bookstore', 'Book b');
+		$books = $c->find();
+		$this->assertTrue($c->foo, 'postFind() can modify the Criteria before find() fires the query');
+		$this->assertTrue(is_array($books), 'find() returns normal result if postFind() returns nothing');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$count = $con->getQueryCount();
+		$c = new ModelCriteriaWithPostFindHook2('bookstore', 'Book b');
+		$books = $c->find($con);
+		$this->assertEquals('foo', $books, 'find() returns the return value of postFind() if not null');
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'find() does not bypass the query if the return value of postFind() if not null');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria
-{
+{	
 	public function replaceNames(&$clause)
 	{
 		return parent::replaceNames($clause);
 	}
 }
+
+class ModelCriteriaWithPreFindHook1 extends ModelCriteria
+{
+	public $foo = false;
+	
+	public function preFind(PropelPDO $con)
+	{
+		$this->foo = true;
+	}
+}
+
+class ModelCriteriaWithPreFindHook2 extends ModelCriteria
+{
+	public function preFind(PropelPDO $con)
+	{
+		return 'foo';
+	}
+}
+
+class ModelCriteriaWithPostFindHook1 extends ModelCriteria
+{
+	public $foo = false;
+	
+	public function postFind(PDOStatement $stmt, PropelPDO $con)
+	{
+		$this->foo = true;
+	}
+}
+
+class ModelCriteriaWithPostFindHook2 extends ModelCriteria
+{
+	public function postFind(PDOStatement $stmt, PropelPDO $con)
+	{
+		return 'foo';
+	}
+}
+

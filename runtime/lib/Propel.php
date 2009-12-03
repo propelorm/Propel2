@@ -190,7 +190,12 @@ class Propel
 		'DebugPDOStatement'   => 'connection/DebugPDOStatement.php',
 
 		'PropelException'     => 'exception/PropelException.php',
-
+		
+		'PropelArrayFormatter' => 'formatter/PropelArrayFormatter.php',
+		'PropelFormatter'     => 'formatter/PropelFormatter.php',
+		'PropelObjectsFormatter' => 'formatter/PropelObjectsFormatter.php',
+		'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
+		
 		'BasicLogger'         => 'logger/BasicLogger.php',
 		'MojaviLogAdapter'    => 'logger/MojaviLogAdapter.php',
 

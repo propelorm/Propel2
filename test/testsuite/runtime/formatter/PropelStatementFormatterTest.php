@@ -1,0 +1,77 @@
+<?php
+
+require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+
+/**
+ * Test class for PropelStatementFormatter.
+ *
+ * @author     Francois Zaninotto
+ * @version    $Id: PropelStatementFormatterTest.php 1318 2009-11-19 20:03:01Z francois $
+ * @package    runtime.formatter
+ */
+class PropelStatementFormatterTest extends BookstoreEmptyTestBase
+{
+	protected function setUp()
+	{
+		parent::setUp();
+		BookstoreDataPopulator::populate();
+	}
+
+	public function testFormatNoCriteria()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelStatementFormatter();
+		try {
+			$books = $formatter->format($stmt);
+			$this->assertTrue(true, 'PropelStatementFormatter::format() does not trow an exception when called with no valid criteria');
+		} catch (PropelException $e) {
+			$this->fail('PropelStatementFormatter::format() does not trow an exception when called with no valid criteria');
+		}
+	}
+	
+	public function testFormatManyResults()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelStatementFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$books = $formatter->format($stmt);
+		
+		$this->assertTrue($books instanceof PDOStatement, 'PropelStatementFormatter::format() returns a PDOStatement');
+		$this->assertEquals(4, $books->rowCount(), 'PropelStatementFormatter::format() returns as many rows as the results in the query');
+		while ($book = $books->fetch()) {
+			$this->assertTrue(is_array($book), 'PropelStatementFormatter::format() returns a statement that can be fetched');
+		}
+	}
+
+	public function testFormatOneResult()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
+		$formatter = new PropelStatementFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$books = $formatter->format($stmt);
+		
+		$this->assertTrue($books instanceof PDOStatement, 'PropelStatementFormatter::format() returns a PDOStatement');
+		$this->assertEquals(1, $books->rowCount(), 'PropelStatementFormatter::format() returns as many rows as the results in the query');
+		$book = $books->fetch(PDO::FETCH_ASSOC);
+		$this->assertEquals('Quicksilver', $book['title'], 'PropelStatementFormatter::format() returns the rows matching the query');
+	}
+
+	public function testFormatNoResult()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+				
+		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+		$formatter = new PropelStatementFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$books = $formatter->format($stmt);
+		
+		$this->assertTrue($books instanceof PDOStatement, 'PropelStatementFormatter::format() returns a PDOStatement');
+		$this->assertEquals(0, $books->rowCount(), 'PropelStatementFormatter::format() returns as many rows as the results in the query');
+	}
+}

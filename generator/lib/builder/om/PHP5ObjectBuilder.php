@@ -196,8 +196,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$script .= " implements " . ClassTools::classname($interface);
 		}
 
-		$script .= " {
-
+		$script .= "
+{
 ";
 	}
 
@@ -285,8 +285,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	protected function addConstants(&$script)
 	{
-		// nothing to do here any more
-		// fieldnameTypeConstants have been moved to class BasePeer [sv]
+		$script .= "
+	/**
+	 * Peer class name
+	 */
+  const PEER = '" . $this->getPeerClassname() . "';
+";
 	}
 
 	/**

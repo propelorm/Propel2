@@ -173,12 +173,21 @@ class TableMap
   }
 
   /**
-   * Get the Classname of the Propel-Classes belonging to this table.
+   * Get the Classname of the Propel Class belonging to this table.
    * @return     string
    */
   public function getClassname()
   {
     return $this->classname;
+  }
+  
+  /**
+   * Get the Peer Classname of the Propel Class belonging to this table.
+   * @return     string
+   */
+  public function getPeerClassname()
+  {
+    return constant($this->classname . '::PEER');
   }
   
   /**

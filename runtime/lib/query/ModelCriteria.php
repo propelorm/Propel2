@@ -37,9 +37,17 @@ class ModelCriteria extends Criteria
 	const MODEL_CLAUSE_LIKE = "MODEL CLAUSE LIKE";
 	const MODEL_CLAUSE_SEVERAL = "MODEL CLAUSE SEVERAL";
 
+	const FORMAT_STATEMENT = 'PropelStatementFormatter';
+	const FORMAT_ARRAY = 'PropelArrayFormatter';
+	const FORMAT_OBJECTS = 'PropelObjectsFormatter';
+	const FORMAT_ITERATOR = 'PropelIteratorFormatter';
+	
 	protected $modelName;
+	protected $modelPeerName;
 	protected $modelAlias;
 	protected $tableMaps = array();
+	protected $formatter;
+	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECTS;
 		
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -53,6 +61,7 @@ class ModelCriteria extends Criteria
 		$this->setDbName($dbName);
 		$this->originalDbName = $dbName;
 		list($this->modelName, $this->modelAlias) = $this->getClassAndAlias($modelName);
+		$this->modelPeerName = constant($this->modelName . '::PEER');
 		$modelName = $this->modelAlias ? $this->modelAlias : $this->modelName;
 		$this->tableMaps[$modelName] = Propel::getDatabaseMap($dbName)->getTablebyPhpName($this->modelName);
 	}
@@ -67,15 +76,74 @@ class ModelCriteria extends Criteria
 	 * @return     array  list($className, $aliasName)
 	 */
 	protected static function getClassAndAlias($class)
-  {
-    if(strpos($class, ' ') !== false) {
-      list($class, $alias) = explode(' ', $class);
-    } else {
-      $alias = null;
-    }
-    return array($class, $alias);
-  }
+	{
+	  if(strpos($class, ' ') !== false) {
+	    list($class, $alias) = explode(' ', $class);
+	  } else {
+	    $alias = null;
+	  }
+	  return array($class, $alias);
+	}
+	
+	/**
+	 * Returns the name of the class for this model criteria
+	 *
+	 * @return string
+	 */
+	public function getModelName()
+	{
+		return $this->modelName;
+	}
+	
+	/**
+	 * Returns the name of the Peer class for this model criteria
+	 *
+	 * @return string
+	 */
+	public function getModelPeerName()
+	{
+		return $this->modelPeerName;
+	}
+	
+	/**
+	 * Sets the formatter to use for the find() output
+	 * Formatters must extend PropelFormatter
+	 * Use the ModelCriteria constants for class names:
+	 * <code>
+	 * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+	 * </code>
+	 *
+	 * @param mixed $formatter a formatter class name, or a formatter instance
+	 * @return ModelCriteria The current object, for fluid interface
+	 */
+	public function setFormatter($formatter)
+	{
+		if(is_string($formatter)) {
+			$formatter = new $formatter();
+		}
+		if (!$formatter instanceof PropelFormatter) {
+			throw new PropelException('setFormatter() only accepts classes extending PropelFormatter');
+		}
+		$formatter->setCriteria($this);
+		$this->formatter = $formatter;
+		
+		return $this;
+	}
   
+	/**
+	 * Gets the formatter to use for the find() output
+	 * Defaults to an instance of ModelCriteria::$defaultFormatterClass, i.e. PropelObjectsFormatter 
+	 *
+	 * @return PropelFormatter
+	 */
+	public function getFormatter()
+	{
+		if (null === $this->formatter) {
+			$this->setFormatter($this->defaultFormatterClass);
+		}
+		return $this->formatter;
+	}
+	
 	/**
 	 * Adds a condition on a column based on a pseudo SQL clause
 	 * but keeps it for later use with combine()
@@ -326,6 +394,46 @@ class ModelCriteria extends Criteria
 		$this->addMultipleJoin($joinCols, $joinType);
 		
 		return $this;
+	}
+	
+	public function preFind(PropelPDO $con)
+	{
+	}
+	
+	public function find($con = null)
+	{
+	  if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+
+		if (!$this->hasSelectClause()) {
+			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $this);
+		}
+		
+		$con->beginTransaction();
+		try {
+			if($ret = $this->preFind($con)) {
+				$con->commit();
+				return $ret;
+			}
+			
+			$stmt = BasePeer::doSelect($this, $con);
+			
+			if($ret = $this->postFind($stmt, $con)) {
+				$con->commit();
+				return $ret;
+			}
+		
+		} catch (Exception $e) {
+			$con->rollback();
+			throw new PropelException($e);
+		}
+		
+		return $this->getFormatter()->format($stmt);
+	}
+
+	public function postFind(PDOStatement $stmt, PropelPDO $con)
+	{
 	}
 	
 	/**
