@@ -34,7 +34,27 @@
  */
 class DBOracle extends DBAdapter
 {
-
+	/**
+	 * This method is called after a connection was created to run necessary
+	 * post-initialization queries or code.
+	 * Removes the charset query and adds the date queries
+	 *
+	 * @param      PDO   A PDO connection instance.
+	 * @see        parent::initConnection()
+	 */
+	public function initConnection(PDO $con, array $settings)
+	{
+		if (isset($settings['queries']) && is_array($settings['queries'])) {
+			foreach ($settings['queries'] as $queries) {
+				foreach ((array)$queries as $query) {
+					$con->exec($query);
+				}
+			}
+		}
+		$con->exec("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD'");
+		$con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
+	}
+	
 	/**
 	 * This method is used to ignore case.
 	 *
@@ -100,21 +120,21 @@ class DBOracle extends DBAdapter
 	{
 		 $sql =
 			'SELECT B.* FROM (  '
-			.  'SELECT A.*, rownum AS PROPEL$ROWNUM FROM (  '
+			.  'SELECT A.*, rownum AS PROPEL_ROWNUM FROM (  '
 			. $sql
 			. '  ) A '
 			.  ' ) B WHERE ';
 
 		if ( $offset > 0 ) {
-			$sql				.= ' B.PROPEL$ROWNUM > ' . $offset;
+			$sql				.= ' B.PROPEL_ROWNUM > ' . $offset;
 
 			if ( $limit > 0 )
 			{
-				$sql			.= ' AND B.PROPEL$ROWNUM <= '
+				$sql			.= ' AND B.PROPEL_ROWNUM <= '
 									. ( $offset + $limit );
 			}
 		} else {
-			$sql				.= ' B.PROPEL$ROWNUM <= ' . $limit;
+			$sql				.= ' B.PROPEL_ROWNUM <= ' . $limit;
 		}
 	}
 

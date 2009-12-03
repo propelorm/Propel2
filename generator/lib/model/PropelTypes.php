@@ -49,27 +49,26 @@ class PropelTypes
 	const DATE = "DATE";
 	const TIME = "TIME";
 	const TIMESTAMP = "TIMESTAMP";
-
 	const BU_DATE = "BU_DATE";
 	const BU_TIMESTAMP = "BU_TIMESTAMP";
-
 	const BOOLEAN = "BOOLEAN";
+	const BOOLEAN_EMU = "BOOLEAN_EMU";
 
-	private static $TEXT_TYPES = array (
-						self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
-					);
+	private static $TEXT_TYPES = array(
+		self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+	);
 
-	private static $LOB_TYPES = array (
-						self::VARBINARY, self::LONGVARBINARY, self::BLOB
-					);
+	private static $LOB_TYPES = array(
+		self::VARBINARY, self::LONGVARBINARY, self::BLOB
+	);
 
-	private static $TEMPORAL_TYPES = array (
-						self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
-					);
+	private static $TEMPORAL_TYPES = array(
+		self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
+	);
 
-	private static $NUMERIC_TYPES = array (
-						self::SMALLINT, self::TINYINT, self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE, self::NUMERIC, self::DECIMAL, self::REAL
-					);
+	private static $NUMERIC_TYPES = array(
+		self::SMALLINT, self::TINYINT, self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE, self::NUMERIC, self::DECIMAL, self::REAL
+	);
 
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
@@ -77,7 +76,6 @@ class PropelTypes
 	const CLOB_NATIVE_TYPE = "string"; // Clob
 	const NUMERIC_NATIVE_TYPE = "string";
 	const DECIMAL_NATIVE_TYPE = "string";
-	const BOOLEAN_NATIVE_TYPE = "boolean";
 	const TINYINT_NATIVE_TYPE = "int";
 	const SMALLINT_NATIVE_TYPE = "int";
 	const INTEGER_NATIVE_TYPE = "int";
@@ -94,6 +92,8 @@ class PropelTypes
 	const TIME_NATIVE_TYPE = "string";
 	const TIMESTAMP_NATIVE_TYPE = "string";
 	const BU_TIMESTAMP_NATIVE_TYPE = "string";
+	const BOOLEAN_NATIVE_TYPE = "boolean";
+	const BOOLEAN_EMU_NATIVE_TYPE = "boolean";
 
 	/**
 	 * Mapping between Propel types and PHP native types.
@@ -124,6 +124,7 @@ class PropelTypes
 			self::TIMESTAMP => self::TIMESTAMP_NATIVE_TYPE,
 			self::BU_TIMESTAMP => self::BU_TIMESTAMP_NATIVE_TYPE,
 			self::BOOLEAN => self::BOOLEAN_NATIVE_TYPE,
+			self::BOOLEAN_EMU => self::BOOLEAN_EMU_NATIVE_TYPE,
 	);
 
 	/**
@@ -154,6 +155,7 @@ class PropelTypes
 			self::TIME => self::TIME,
 			self::TIMESTAMP => self::TIMESTAMP,
 			self::BOOLEAN => self::BOOLEAN,
+			self::BOOLEAN_EMU => self::BOOLEAN_EMU,
 
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric
@@ -190,6 +192,7 @@ class PropelTypes
 			self::TIME => PDO::PARAM_STR,
 			self::TIMESTAMP => PDO::PARAM_STR,
 			self::BOOLEAN => PDO::PARAM_BOOL,
+			self::BOOLEAN_EMU => PDO::PARAM_INT,
 
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric

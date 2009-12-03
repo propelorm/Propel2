@@ -285,7 +285,7 @@ class Domain extends XMLElement
 			if ($this->defaultValue->isExpression()) {
 				throw new EngineException("Cannot get PHP version of default value for default value EXPRESSION.");
 			}
-			if ($this->propelType === PropelTypes::BOOLEAN) {
+			if ($this->propelType === PropelTypes::BOOLEAN || $this->propelType === PropelTypes::BOOLEAN_EMU) {
 				return $this->booleanValue($this->defaultValue->getValue());
 			} else {
 				return $this->defaultValue->getValue();

@@ -491,10 +491,15 @@ class BasePeer
 
 		$stmt = null;
 
-		if ($criteria->isUseTransaction()) $con->beginTransaction();
+		if ($criteria->isUseTransaction()) {
+			$con->beginTransaction();
+		}
 
-		$needsComplexCount = ($criteria->getGroupByColumns() || $criteria->getOffset()
-								|| $criteria->getLimit() || $criteria->getHaving() || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()));
+		$needsComplexCount = $criteria->getGroupByColumns() 
+			|| $criteria->getOffset()
+			|| $criteria->getLimit() 
+			|| $criteria->getHaving() 
+			|| in_array(Criteria::DISTINCT, $criteria->getSelectModifiers());
 
 		try {
 
@@ -502,7 +507,7 @@ class BasePeer
 
 			if ($needsComplexCount) {
 				$selectSql = self::createSelectSql($criteria, $params);
-				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') AS propelmatch4cnt';
+				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
 			} else {
 				// Replace SELECT columns with COUNT(*)
 				$criteria->clearSelectColumns()->addSelectColumn('COUNT(*)');
@@ -513,11 +518,17 @@ class BasePeer
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
 
-			if ($criteria->isUseTransaction()) $con->commit();
+			if ($criteria->isUseTransaction()) {
+				$con->commit();
+			}
 
 		} catch (Exception $e) {
-			if ($stmt) $stmt = null; // close
-			if ($criteria->isUseTransaction()) $con->rollBack();
+			if ($stmt !== null) {
+				$stmt = null;
+			}
+			if ($criteria->isUseTransaction()) {
+				$con->rollBack();
+			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException($e);
 		}

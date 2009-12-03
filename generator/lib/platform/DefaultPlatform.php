@@ -38,7 +38,7 @@ class DefaultPlatform implements Platform
 	 *
 	 * @var        array
 	 */
-	private $schemaDomainMap;
+	protected $schemaDomainMap;
 
 	/**
 	 * GeneratorConfig object holding build properties.

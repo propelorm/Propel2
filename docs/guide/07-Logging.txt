@@ -355,7 +355,8 @@ $allMethods = array(
   'PropelPDO::beginTransaction',  // logs a transaction begin
   'PropelPDO::commit',            // logs a transaction commit
   'PropelPDO::rollBack',          // logs a transaction rollBack (watch out for the capital 'B')
-  'DebugPDOStatement::execute'    // logs a query drom a prepared statement
+  'DebugPDOStatement::execute',   // logs a query from a prepared statement
+  'DebugPDOStatement::bindValue'  // logs the value and type for each bind
 );
 $config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
 $config->setParameter('debugpdo.logging.methods', $allMethods);

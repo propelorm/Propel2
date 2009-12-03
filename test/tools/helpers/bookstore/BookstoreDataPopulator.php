@@ -144,7 +144,10 @@ class BookstoreDataPopulator
 		$m1 = new Media();
 		$m1->setBook($td);
 		$m1->setCoverImage(file_get_contents($blob_path));
-		$m1->setExcerpt(file_get_contents($clob_path));
+		// CLOB is broken in PDO OCI, see http://pecl.php.net/bugs/bug.php?id=7943
+		if (get_class(Propel::getDB()) != "DBOracle") {
+			$m1->setExcerpt(file_get_contents($clob_path));
+		}
 		$m1->save($con);
 
 		// Add book list records
