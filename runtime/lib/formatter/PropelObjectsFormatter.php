@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: PropelObjectsFormatter.php 1341 2009-11-29 13:57:27Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@
  * format() returns an array of Propel model objects
  *
  * @author     Francois Zaninotto
- * @version    $Revision: 1341 $
+ * @version    $Revision$
  * @package    propel.runtime.formatter
  */
 class PropelObjectsFormatter extends PropelFormatter

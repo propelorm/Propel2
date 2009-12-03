@@ -6,7 +6,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * Test class for ModelCriteria.
  *
  * @author     Francois Zaninotto
- * @version    $Id: ModelCriteriaTest.php 1318 2009-11-19 20:03:01Z francois $
+ * @version    $Id$
  * @package    runtime.query
  */
 class ModelCriteriaTest extends BookstoreTestBase

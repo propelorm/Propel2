@@ -10,7 +10,7 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  * Test class for Join.
  *
  * @author     François Zaninotto
- * @version    $Id: JoinTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id$
  * @package    runtime.query
  */
 class JoinTest extends BaseTestCase 

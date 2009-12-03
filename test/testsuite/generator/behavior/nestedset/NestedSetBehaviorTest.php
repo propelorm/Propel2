@@ -26,7 +26,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * Tests for NestedSetBehavior class
  *
  * @author		François Zaninotto
- * @version		$Revision: 1133 $
+ * @version		$Revision$
  * @package		generator.behavior.nestedset
  */
 class NestedSetBehaviorTest extends BookstoreTestBase 

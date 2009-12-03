@@ -6,7 +6,7 @@ require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
  * Test class for PropelArrayFormatter.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelArrayFormatterTest.php 1318 2009-11-19 20:03:01Z francois $
+ * @version    $Id$
  * @package    runtime.formatter
  */
 class PropelArrayFormatterTest extends BookstoreEmptyTestBase

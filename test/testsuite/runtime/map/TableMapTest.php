@@ -46,7 +46,7 @@ class BarTableMap extends TableMap
  * Test class for TableMap.
  *
  * @author     François Zaninotto
- * @version    $Id: TableMapTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id$
  * @package    runtime.map
  */
 class TableMapTest extends PHPUnit_Framework_TestCase 

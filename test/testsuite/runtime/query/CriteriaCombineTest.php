@@ -11,7 +11,7 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  * Test class for Criteria combinations.
  *
  * @author     Francois Zaninotto
- * @version    $Id: CriteriaTest.php 1311 2009-11-11 20:47:33Z francois $
+ * @version    $Id$
  * @package    runtime.query
  */
 class CriteriaCombineTest extends BaseTestCase

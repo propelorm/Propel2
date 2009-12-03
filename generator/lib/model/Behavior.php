@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Behavior.php 989 2008-03-11 14:29:30Z heltem $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ require_once 'model/Index.php';
  * Information about behaviors of a table.
  *
  * @author     François Zaninotto
- * @version    $Revision: 989 $
+ * @version    $Revision$
  * @package    propel.generator.model
  */
 class Behavior extends XMLElement

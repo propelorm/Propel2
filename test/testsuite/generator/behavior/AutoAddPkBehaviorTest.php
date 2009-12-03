@@ -25,7 +25,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * Tests for AutoAddPkBehavior class
  *
  * @author		 François Zaninotto
- * @version		$Revision: 1133 $
+ * @version		$Revision$
  * @package		generator.behavior
  */
 class AutoAddPkBehaviorTest extends BookstoreTestBase 

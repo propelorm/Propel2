@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: RelationMap.php 1153 2009-09-20 18:08:53Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@
  * These classes in themselves do not do any database metadata lookups.
  *
  * @author     Francois Zaninotto
- * @version    $Revision: 1153 $
+ * @version    $Revision$
  * @package    propel.runtime.map
  */
 class RelationMap

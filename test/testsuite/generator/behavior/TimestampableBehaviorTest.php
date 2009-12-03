@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: TimestampableBehaviorTest.php 1133 2009-09-16 13:35:12Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * Tests for TimestampableBehavior class
  *
  * @author     François Zaninotto
- * @version    $Revision: 1133 $
+ * @version    $Revision$
  * @package    generator.behavior
  */
 class TimestampableBehaviorTest extends BookstoreTestBase 

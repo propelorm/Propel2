@@ -6,7 +6,7 @@ require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
  * Test class for PropelObjectsFormatter.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectsFormatterTest.php 1318 2009-11-19 20:03:01Z francois $
+ * @version    $Id$
  * @package    runtime.formatter
  */
 class PropelObjectsFormatterTest extends BookstoreEmptyTestBase

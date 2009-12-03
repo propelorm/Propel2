@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Criteria.php 1320 2009-11-19 22:17:12Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@
  * Using a model name and tablemaps, a ModelCriteria can do more powerful things than a simple Criteria
  *
  * @author     François Zaninotto
- * @version    $Revision: 1320 $
+ * @version    $Revision$
  * @package    propel.runtime.query
  */
 class ModelCriteria extends Criteria

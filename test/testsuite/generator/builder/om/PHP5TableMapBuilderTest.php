@@ -6,7 +6,7 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * Test class for PHP5TableMapBuilder.
  *
  * @author     François Zaninotto
- * @version    $Id: PHP5TableMapBuilderTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id$
  * @package    generator.builder.om
  */
 class PHP5TableMapBuilderTest extends BookstoreTestBase 

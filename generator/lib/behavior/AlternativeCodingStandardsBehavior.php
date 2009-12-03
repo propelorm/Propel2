@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: AlternativeCodingStandardsBehavior.php $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -45,7 +45,7 @@
  *   - comments are stripped (optional)
  *
  * @author     François Zaninotto
- * @version    $Revision: 1066 $
+ * @version    $Revision$
  * @package    propel.generator.behavior
  */
 class AlternativeCodingStandardsBehavior extends Behavior

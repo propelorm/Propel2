@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: ModelCriterion.php 1313 2009-11-11 21:06:16Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@
  * This is an "inner" class that describes an object in the criteria.
  *
  * @author     Francois
- * @version    $Revision: 1312 $
+ * @version    $Revision$
  * @package    propel.runtime.query
  */
 class ModelCriterion extends Criterion

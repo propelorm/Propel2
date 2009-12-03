@@ -39,7 +39,7 @@ class BazTableMap extends TableMap
  * Test class for DatabaseMap.
  *
  * @author     François Zaninotto
- * @version    $Id: ColumnMapTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id$
  * @package    runtime.map
  */
 class DatabaseMapTest extends PHPUnit_Framework_TestCase 

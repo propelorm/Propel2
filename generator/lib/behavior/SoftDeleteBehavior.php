@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: SoftDeleteBehavior.php $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@
  * And an additional condition for every read query to only consider rows with no deletion date
  *
  * @author     François Zaninotto
- * @version    $Revision: 1066 $
+ * @version    $Revision$
  * @package    propel.generator.behavior
  */
 class SoftDeleteBehavior extends Behavior

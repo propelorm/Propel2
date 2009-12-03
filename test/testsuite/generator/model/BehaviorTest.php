@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: BehaviorTest.php 1133 2009-09-16 13:35:12Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@ require_once 'platform/MysqlPlatform.php';
  * Tests for Behavior class
  *
  * @author     <a href="mailto:mpoeschl@marmot.at>Martin Poeschl</a>
- * @version    $Revision: 1133 $
+ * @version    $Revision$
  * @package    generator.model
  */
 class BehaviorTest extends PHPUnit_Framework_TestCase {

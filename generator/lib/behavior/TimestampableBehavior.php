@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: TimestampableBehavior.php 1262 2009-10-26 20:54:39Z francois $
+ *  $Id$
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@
  * Uses two additional columns storing the creation and update date
  *
  * @author     François Zaninotto
- * @version    $Revision: 1066 $
+ * @version    $Revision$
  * @package    propel.generator.behavior
  */
 class TimestampableBehavior extends Behavior

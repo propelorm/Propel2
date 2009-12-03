@@ -8,7 +8,7 @@ require_once 'map/TableMap.php';
  * Test class for TableMap.
  *
  * @author     François Zaninotto
- * @version    $Id: ColumnMapTest.php 1121 2009-09-14 17:20:11Z francois $
+ * @version    $Id$
  * @package    runtime.map
  */
 class ColumnMapTest extends PHPUnit_Framework_TestCase 
