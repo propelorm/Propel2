@@ -605,7 +605,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->where('b.Title = ?', 'foo');
 		$books = $c->find();
 		$this->assertTrue(is_array($books), 'find() returns an array by default');
-		$this->assertEquals(0, count($books), 'find() returns an empty array when the qeury returns no result');
+		$this->assertEquals(0, count($books), 'find() returns an empty array when the query returns no result');
 		
 		$c = new ModelCriteria('bookstore', 'Book b');
 		$c->join('b.Author a');
@@ -616,6 +616,20 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$book = array_shift($books);
 		$this->assertTrue($book instanceof Book, 'find() returns an array of Model objects by default');
 		$this->assertEquals('Quicksilver', $book->getTitle(), 'find() returns the model objects matching the query');
+	}
+
+	public function testFindOne()
+	{
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$book = $c->findOne();
+		$this->assertNull($books, 'findOne() returns null when the query returns no result');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->orderBy('b.Title');
+		$book = $c->findOne();
+		$this->assertTrue($book instanceof Book, 'findOne() returns a Model object by default');
+		$this->assertEquals('Don Juan', $book->getTitle(), 'find() returns the model objects matching the query');
 	}
 	
 	public function testPreFind()
@@ -629,8 +643,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$count = $con->getQueryCount();
 		$c = new ModelCriteriaWithPreFindHook2('bookstore', 'Book b');
 		$books = $c->find($con);
-		$this->assertEquals('foo', $books, 'find() returns the return value of preFind() if not null');
-		$this->assertEquals($count, $con->getQueryCount(), 'find() bypasses the query if the return value of preFind() if not null');
+		$this->assertEquals(2, count($books), 'find() returns the formatted statement returned by preFind() if not null');
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'find() bypasses the query if the return value of preFind() if not null');
 	}
 
 	public function testPostFind()
@@ -644,8 +658,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$count = $con->getQueryCount();
 		$c = new ModelCriteriaWithPostFindHook2('bookstore', 'Book b');
 		$books = $c->find($con);
-		$this->assertEquals('foo', $books, 'find() returns the return value of postFind() if not null');
-		$this->assertEquals($count + 1, $con->getQueryCount(), 'find() does not bypass the query if the return value of postFind() if not null');
+		$this->assertEquals(2, count($books), 'find() returns the vormatted statement returned by postFind() if not null');
+		$this->assertEquals($count + 2, $con->getQueryCount(), 'find() does not bypass the query if the return value of postFind() if not null');
 	}
 }
 
@@ -671,7 +685,7 @@ class ModelCriteriaWithPreFindHook2 extends ModelCriteria
 {
 	public function preFind(PropelPDO $con)
 	{
-		return 'foo';
+		return $con->query('SELECT * FROM book limit 2');;
 	}
 }
 
@@ -689,7 +703,7 @@ class ModelCriteriaWithPostFindHook2 extends ModelCriteria
 {
 	public function postFind(PDOStatement $stmt, PropelPDO $con)
 	{
-		return 'foo';
+		return $con->query('SELECT * FROM book limit 2');;
 	}
 }
 

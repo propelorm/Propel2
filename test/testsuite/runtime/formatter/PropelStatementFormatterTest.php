@@ -74,4 +74,43 @@ class PropelStatementFormatterTest extends BookstoreEmptyTestBase
 		$this->assertTrue($books instanceof PDOStatement, 'PropelStatementFormatter::format() returns a PDOStatement');
 		$this->assertEquals(0, $books->rowCount(), 'PropelStatementFormatter::format() returns as many rows as the results in the query');
 	}
+	
+	public function testFormatoneNoCriteria()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelStatementFormatter();
+		try {
+			$books = $formatter->formatOne($stmt);
+			$this->assertTrue(true, 'PropelStatementFormatter::formatOne() does not trow an exception when called with no valid criteria');
+		} catch (PropelException $e) {
+			$this->fail('PropelStatementFormatter::formatOne() does not trow an exception when called with no valid criteria');
+		}
+	}
+	
+	public function testFormatOneManyResults()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelStatementFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$book = $formatter->formatOne($stmt);
+		
+		$this->assertTrue($book instanceof PDOStatement, 'PropelStatementFormatter::formatOne() returns a PDO Statement');
+	}
+
+	public function testFormatOneNoResult()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+				
+		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+		$formatter = new PropelStatementFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$book = $formatter->formatOne($stmt);
+		
+		$this->assertNull($book, 'PropelStatementFormatter::formatOne() returns null when no result');
+	}
+	
 }

@@ -17,7 +17,6 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		BookstoreDataPopulator::populate();
 	}
 
-
 	public function testFormatNoCriteria()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
@@ -26,9 +25,9 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$formatter = new PropelArrayFormatter();
 		try {
 			$books = $formatter->format($stmt);
-			$this->fail('PropelArrayFormatter::format() trows an exception when called with no valid criteria');
+			$this->fail('PropelArrayFormatter::format() throws an exception when called with no valid criteria');
 		} catch (PropelException $e) {
-			$this->assertTrue(true,'PropelArrayFormatter::format() trows an exception when called with no valid criteria');
+			$this->assertTrue(true,'PropelArrayFormatter::format() throws an exception when called with no valid criteria');
 		}
 	}
 	
@@ -78,4 +77,44 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$this->assertTrue(is_array($books), 'PropelArrayFormatter::format() returns an array');
 		$this->assertEquals(0, count($books), 'PropelArrayFormatter::format() returns as many rows as the results in the query');
 	}
+
+	public function testFormatOneNoCriteria()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelArrayFormatter();
+		try {
+			$book = $formatter->formatOne($stmt);
+			$this->fail('PropelArrayFormatter::formatOne() throws an exception when called with no valid criteria');
+		} catch (PropelException $e) {
+			$this->assertTrue(true,'PropelArrayFormatter::formatOne() throws an exception when called with no valid criteria');
+		}
+	}
+	
+	public function testFormatOneManyResults()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelArrayFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$book = $formatter->formatOne($stmt);
+		
+		$this->assertTrue(is_array($book), 'PropelArrayFormatter::formatOne() returns an array');
+		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId'), array_keys($book), 'PropelArrayFormatter::formatOne() returns a single row even if the query has many results');
+	}
+
+	public function testFormatOneNoResult()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+				
+		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
+		$formatter = new PropelArrayFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$book = $formatter->formatOne($stmt);
+		
+		$this->assertNull($book, 'PropelArrayFormatter::formatOne() returns null when no result');
+	}
+
 }

@@ -34,4 +34,13 @@ class PropelStatementFormatter extends PropelFormatter
 	{
 		return $stmt;
 	}
+	
+	public function formatOne(PDOStatement $stmt)
+	{
+		if ($stmt->rowCount() == 0) {
+			return null;
+		} else {
+			return $stmt;
+		}
+	}
 }

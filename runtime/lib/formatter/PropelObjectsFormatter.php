@@ -41,6 +41,18 @@ class PropelObjectsFormatter extends PropelFormatter
 		return $results;
 	}
 	
+	public function formatOne(PDOStatement $stmt)
+	{
+		$this->checkCriteria();
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$result = $this->getObjectFromRow($row);
+		} else {
+			$result = null;
+		}
+		$stmt->closeCursor();
+		return $result;
+	}
+	
 	/**
 	 * Gets the Propel object hydrated from a statement row
 	 * @param array associative array indexed by column number,

@@ -45,6 +45,8 @@ abstract class PropelFormatter
 	}
 	
 	abstract public function format(PDOStatement $stmt);
+
+	abstract public function formatOne(PDOStatement $stmt);
 	
 	/**
 	 * Check that a ModelCriteria was properly set

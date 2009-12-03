@@ -400,7 +400,24 @@ class ModelCriteria extends Criteria
 	{
 	}
 	
+	public function postFind(PDOStatement $stmt, PropelPDO $con)
+	{
+	}
+	
 	public function find($con = null)
+	{
+		$stmt = $this->getSelectStatement($stmt);
+		return $this->getFormatter()->format($stmt);
+	}
+
+	public function findOne($con = null)
+	{
+		$this->limit(1);
+		$stmt = $this->getSelectStatement($stmt);
+		return $this->getFormatter()->formatOne($stmt);
+	}
+
+	protected function getSelectStatement($con = null)
 	{
 	  if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
@@ -412,16 +429,13 @@ class ModelCriteria extends Criteria
 		
 		$con->beginTransaction();
 		try {
-			if($ret = $this->preFind($con)) {
-				$con->commit();
-				return $ret;
-			}
-			
-			$stmt = BasePeer::doSelect($this, $con);
-			
-			if($ret = $this->postFind($stmt, $con)) {
-				$con->commit();
-				return $ret;
+			if(!$stmt = $this->preFind($con)) {			
+				
+				$stmt = BasePeer::doSelect($this, $con);
+				
+				if($ret = $this->postFind($stmt, $con)) {
+					$stmt = $ret;
+				}
 			}
 		
 		} catch (Exception $e) {
@@ -429,11 +443,7 @@ class ModelCriteria extends Criteria
 			throw new PropelException($e);
 		}
 		
-		return $this->getFormatter()->format($stmt);
-	}
-
-	public function postFind(PDOStatement $stmt, PropelPDO $con)
-	{
+		return $stmt;
 	}
 	
 	/**

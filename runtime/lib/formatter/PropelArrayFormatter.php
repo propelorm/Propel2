@@ -44,6 +44,20 @@ class PropelArrayFormatter extends PropelFormatter
 		$stmt->closeCursor();
 		return $results;
 	}
+
+	public function formatOne(PDOStatement $stmt)
+	{
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			// instance pooling is not used here
+			$this->getCurrentObject()->hydrate($row);
+			$result = $this->getCurrentObject()->toArray();
+		} else {
+			$result = null;
+		}
+		$this->currentObject = null;
+		$stmt->closeCursor();
+		return $result;
+	}
 	
 	protected function getCurrentObject()
 	{
