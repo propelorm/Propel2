@@ -632,34 +632,306 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('Don Juan', $book->getTitle(), 'find() returns the model objects matching the query');
 	}
 	
-	public function testPreFind()
+	public function testFindBy()
 	{
-		$c = new ModelCriteriaWithPreFindHook1('bookstore', 'Book b');
-		$books = $c->find();
-		$this->assertTrue($c->foo, 'preFind() can modify the Criteria before find() fires the query');
-		$this->assertTrue(is_array($books), 'find() returns normal result if preFind() returns nothing');
-		
-		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$count = $con->getQueryCount();
-		$c = new ModelCriteriaWithPreFindHook2('bookstore', 'Book b');
-		$books = $c->find($con);
-		$this->assertEquals(2, count($books), 'find() returns the formatted statement returned by preFind() if not null');
-		$this->assertEquals($count + 1, $con->getQueryCount(), 'find() bypasses the query if the return value of preFind() if not null');
-	}
+		try {
+			$c = new ModelCriteria('bookstore', 'Book b');
+			$books = $c->findBy('Foo', 'Bar', $con);
+			$this->fail('findBy() throws an exception when called on an unknown column name');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'findBy() throws an exception when called on an unknown column name');
+		}
 
-	public function testPostFind()
-	{
-		$c = new ModelCriteriaWithPostFindHook1('bookstore', 'Book b');
-		$books = $c->find();
-		$this->assertTrue($c->foo, 'postFind() can modify the Criteria before find() fires the query');
-		$this->assertTrue(is_array($books), 'find() returns normal result if postFind() returns nothing');
-		
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->findBy('Title', 'Don Juan', $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds simple column conditions');
+		$this->assertTrue(is_array($books), 'findBy() issues a find()');
+		$this->assertEquals(1, count($books), 'findBy() adds simple column conditions');
+		$book = array_shift($books);
+		$this->assertTrue($book instanceof Book, 'findBy() returns an array of Model objects by default');
+		$this->assertEquals('Don Juan', $book->getTitle(), 'findBy() returns the model objects matching the query');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->findBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds multiple column conditions');
+	}
+	
+	public function testFindOneBy()
+	{
+		try {
+			$c = new ModelCriteria('bookstore', 'Book b');
+			$book = $c->findOneBy('Foo', 'Bar', $con);
+			$this->fail('findOneBy() throws an exception when called on an unknown column name');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'findOneBy() throws an exception when called on an unknown column name');
+		}
+
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$book = $c->findOneBy('Title', 'Don Juan', $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds simple column conditions');
+		$this->assertTrue($book instanceof Book, 'findOneBy() returns a Model object by default');
+		$this->assertEquals('Don Juan', $book->getTitle(), 'findOneBy() returns the model object matching the query');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->findOneBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345 LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds multiple column conditions');
+	}
+	
+	public function testCount()
+	{
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$nbBooks = $c->count();
+		$this->assertTrue(is_int($nbBooks), 'count() returns an integer');
+		$this->assertEquals(0, $nbBooks, 'count() returns 0 when the query returns no result');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->join('b.Author a');
+		$c->where('a.FirstName = ?', 'Neal');
+		$nbBooks = $c->count();
+		$this->assertTrue(is_int($nbBooks), 'count() returns an integer');
+		$this->assertEquals(1, $nbBooks, 'count() returns the number of results in the query');
+	}
+	
+	public function testPreSelect()
+	{
+		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book b');
+		$books = $c->find();
+		$this->assertEquals(1, count($books), 'preSelect() can modify the Criteria before find() fires the query');
+		
+		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book b');
+		$nbBooks = $c->count();
+		$this->assertEquals(1, $nbBooks, 'preSelect() can modify the Criteria before count() fires the query');
+	}
+	
+	public function testDelete()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		try {
+			$nbBooks = $c->delete();
+			$this->fail('delete() throws an exception when called on an empty Criteria');
+		} catch (PropelException $e) {
+			$this->assertTrue(true, 'delete() throws an exception when called on an empty Criteria');
+		}
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$nbBooks = $c->delete();
+		$this->assertTrue(is_int($nbBooks), 'delete() returns an integer');
+		$this->assertEquals(0, $nbBooks, 'delete() returns 0 when the query deleted no rows');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$nbBooks = $c->delete();
+		$this->assertTrue(is_int($nbBooks), 'delete() returns an integer');
+		$this->assertEquals(1, $nbBooks, 'delete() returns the number of the deleted rows');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->count();
+		$this->assertEquals(3, $nbBooks, 'delete() deletes rows in the database');
+	}
+	
+	public function testDeleteAll()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->deleteAll();
+		$this->assertTrue(is_int($nbBooks), 'deleteAll() returns an integer');
+		$this->assertEquals(4, $nbBooks, 'deleteAll() returns the number of deleted rows');
+		
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$nbBooks = $c->deleteAll();
+		$this->assertEquals(4, $nbBooks, 'deleteAll() ignores conditions on the criteria');
+	}
+	
+	public function testPreDelete()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->find();
+		$count = count($books);
+		$book = array_shift($books);
+		
+		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book b');
+		$c->where('b.Id = ?', $book->getId());
+		$nbBooks = $c->delete();
+		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of delete()');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->count();
+		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
+		
+		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book b');
+		$nbBooks = $c->deleteAll();
+		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of deleteAll()');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->count();
+		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
+	}
+	
+	public function testUpdate()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+		
 		$count = $con->getQueryCount();
-		$c = new ModelCriteriaWithPostFindHook2('bookstore', 'Book b');
-		$books = $c->find($con);
-		$this->assertEquals(2, count($books), 'find() returns the vormatted statement returned by postFind() if not null');
-		$this->assertEquals($count + 2, $con->getQueryCount(), 'find() does not bypass the query if the return value of postFind() if not null');
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->update(array('Title' => 'foo'), $con);
+		$this->assertEquals(4, $nbBooks, 'update() returns the number of updated rows');
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'update() updates all the objects in one query by default');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$nbBooks = $c->count();
+		$this->assertEquals(4, $nbBooks, 'update() updates all records by default');
+		
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+
+		$count = $con->getQueryCount();
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$nbBooks = $c->update(array('ISBN' => '3456'), $con);
+		$this->assertEquals(1, $nbBooks, 'update() updates only the records matching the criteria');
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'update() updates all the objects in one query by default');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$book = $c->findOne();
+		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
+	}
+	
+	public function testUpdateOneByOne()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+		
+		$count = $con->getQueryCount();
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$nbBooks = $c->update(array('Title' => 'foo'), $con, true);
+		$this->assertEquals(4, $nbBooks, 'update() returns the number of updated rows');
+		$this->assertEquals($count + 1 + 4, $con->getQueryCount(), 'update() updates the objects one by one when called with true as last parameter');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$nbBooks = $c->count();
+		$this->assertEquals(4, $nbBooks, 'update() updates all records by default');
+		
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+
+		$count = $con->getQueryCount();
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$nbBooks = $c->update(array('ISBN' => '3456'), $con, true);
+		$this->assertEquals(1, $nbBooks, 'update() updates only the records matching the criteria');
+		$this->assertEquals($count + 1 + 1, $con->getQueryCount(), 'update() updates the objects one by one when called with true as last parameter');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$book = $c->findOne();
+		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
+	}
+	
+	public function testPreUpdate()
+	{
+		BookstoreDataPopulator::depopulate($con);
+		BookstoreDataPopulator::populate($con);
+		
+		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'Don Juan');
+		$nbBooks = $c->update(array('Title' => 'foo'));
+		
+		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book b');
+		$c->where('b.Title = ?', 'foo');
+		$book = $c->findOne();
+		
+		$this->assertEquals('1234', $book->getISBN(), 'preUpdate() can modify the values');
+	}
+	
+	public function testMagicJoin()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->leftJoin('b.Author a');
+		$c->where('a.FirstName = ?', 'Leo');
+		$books = $c->findOne($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoin($x) is turned into join($x, Criteria::LEFT_JOIN)');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->innerJoin('b.Author a');
+		$c->where('a.FirstName = ?', 'Leo');
+		$books = $c->findOne($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'innerJoin($x) is turned into join($x, Criteria::INNER_JOIN)');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$c->rightJoin('b.Author a');
+		$c->where('a.FirstName = ?', 'Leo');
+		$books = $c->findOne($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoin($x) is turned into join($x, Criteria::RIGHT_JOIN)');
+	}
+	
+	public function testMagicFind()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->findByTitle('Don Juan');
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXX($value) is turned into findBy(XXX, $value)');
+
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$books = $c->findByTitleAndISBN('Don Juan', 1234);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX,YYY), $value)');
+		
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$book = $c->findOneByTitle('Don Juan');
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
+
+		$c = new ModelCriteria('bookstore', 'Book b');
+		$book = $c->findOneByTitleAndISBN('Don Juan', 1234);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234 LIMIT 1";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
 	}
 }
 
@@ -671,39 +943,27 @@ class TestableModelCriteria extends ModelCriteria
 	}
 }
 
-class ModelCriteriaWithPreFindHook1 extends ModelCriteria
-{
-	public $foo = false;
-	
-	public function preFind(PropelPDO $con)
+class ModelCriteriaWithPreSelectHook extends ModelCriteria
+{	
+	public function preSelect(PropelPDO $con)
 	{
-		$this->foo = true;
+		$this->where($this->getModelAlias() . '.Title = ?', 'Don Juan');
 	}
 }
 
-class ModelCriteriaWithPreFindHook2 extends ModelCriteria
-{
-	public function preFind(PropelPDO $con)
+class ModelCriteriaWithPreDeleteHook extends ModelCriteria
+{	
+	public function preDelete(PropelPDO $con)
 	{
-		return $con->query('SELECT * FROM book limit 2');;
+		return 12;
 	}
 }
 
-class ModelCriteriaWithPostFindHook1 extends ModelCriteria
-{
-	public $foo = false;
-	
-	public function postFind(PDOStatement $stmt, PropelPDO $con)
+class ModelCriteriaWithPreUpdateHook extends ModelCriteria
+{	
+	public function preUpdate(&$values, PropelPDO $con)
 	{
-		$this->foo = true;
-	}
-}
-
-class ModelCriteriaWithPostFindHook2 extends ModelCriteria
-{
-	public function postFind(PDOStatement $stmt, PropelPDO $con)
-	{
-		return $con->query('SELECT * FROM book limit 2');;
+		$values['ISBN'] = '1234';
 	}
 }
 

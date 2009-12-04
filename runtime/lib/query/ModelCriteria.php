@@ -96,6 +96,27 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
+	 * Returns the alias of the main class for this model criteria
+	 *
+	 * @return string
+	 */
+	public function getModelAlias()
+	{
+		return $this->modelAlias;
+	}
+	
+	/**
+	 * Returns the TableMap for this model Criteria
+	 *
+	 * @return TableMap
+	 */
+	public function getModelTableMap()
+	{
+		$modelName = $this->modelAlias ? $this->modelAlias : $this->modelName;
+		return $this->tableMaps[$modelName];
+	}
+	
+	/**
 	 * Returns the name of the Peer class for this model criteria
 	 *
 	 * @return string
@@ -149,8 +170,11 @@ class ModelCriteria extends Criteria
 	 * but keeps it for later use with combine()
 	 * Until combine() is called, the condition is not added to the query
 	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * <code>
+	 * $c->condition('cond1', 'b.Title = ?', 'foo');
+	 * </code>
 	 *
-	 * @see Criteria::add()
+	 * @see        Criteria::add()
 	 * 
 	 * @param      string $conditionName A name to store the condition for a later combination with combine()
 	 * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
@@ -165,10 +189,49 @@ class ModelCriteria extends Criteria
 		return $this;
 	}
   
-  
+	/**
+	 * Adds a condition on a column based on a column phpName and a value
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * Warning: recognizes only the phpNames of the main Model (not joined tables)
+	 * <code>
+	 * $c->whereColumn('Title', 'foo');
+	 * </code>
+	 *
+	 * @see        Criteria::add()
+	 * 
+	 * @param      mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
+	 *                           Or an array of column phpNames
+	 * @param      mixed  $value A value for the condition
+	 *                           Or an array of values
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function whereColumn($column, $value)
+	{
+		if (is_array($column)) {
+			for ($i = 0, $count = count($column); $i < $count; $i++) {
+				$columnItem = array_shift($column);
+				$valueItem = array_shift($value);
+				$this->add($this->getRealColumnName($columnItem), $valueItem);
+			}
+		} else {
+			$this->add($this->getRealColumnName($column), $value);
+		}
+		
+		return $this;
+	}
+	
 	/**
 	 * Adds a condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * <code>
+	 * // simple clause
+	 * $c->where('b.Title = ?', 'foo');
+	 * // named conditions
+	 * $c->condition('cond1', 'b.Title = ?', 'foo');
+	 * $c->condition('cond2', 'b.ISBN = ?', 12345);
+	 * $c->where(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+	 * </code>
 	 *
 	 * @see Criteria::add()
 	 * 
@@ -195,6 +258,14 @@ class ModelCriteria extends Criteria
 	/**
 	 * Adds a condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * <code>
+	 * // simple clause
+	 * $c->orWhere('b.Title = ?', 'foo');
+	 * // named conditions
+	 * $c->condition('cond1', 'b.Title = ?', 'foo');
+	 * $c->condition('cond2', 'b.ISBN = ?', 12345);
+	 * $c->orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+	 * </code>
 	 *
 	 * @see Criteria::addOr()
 	 * 
@@ -220,6 +291,14 @@ class ModelCriteria extends Criteria
 	/**
 	 * Adds a having condition on a column based on a pseudo SQL clause
 	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * <code>
+	 * // simple clause
+	 * $c->having('b.Title = ?', 'foo');
+	 * // named conditions
+	 * $c->condition('cond1', 'b.Title = ?', 'foo');
+	 * $c->condition('cond2', 'b.ISBN = ?', 12345);
+	 * $c->having(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
+	 * </code>
 	 *
 	 * @see Criteria::addHaving()
 	 * 
@@ -396,54 +475,294 @@ class ModelCriteria extends Criteria
 		return $this;
 	}
 	
-	public function preFind(PropelPDO $con)
+	public function preSelect(PropelPDO $con)
 	{
 	}
-	
-	public function postFind(PDOStatement $stmt, PropelPDO $con)
-	{
-	}
-	
+
+	/**
+	 * Issue a SELECT query based on the current ModelCriteria
+	 * and format the list of results with the current formatter
+	 * By default, returns an array of model objects
+	 * 
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return     mixed the list of results, formatted by the current formatter
+	 */
 	public function find($con = null)
 	{
 		$stmt = $this->getSelectStatement($stmt);
+		
 		return $this->getFormatter()->format($stmt);
 	}
 
+	/**
+	 * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
+	 * and format the result with the current formatter
+	 * By default, returns a model object
+	 * 
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the result, formatted by the current formatter
+	 */
 	public function findOne($con = null)
 	{
 		$this->limit(1);
 		$stmt = $this->getSelectStatement($stmt);
+		
 		return $this->getFormatter()->formatOne($stmt);
 	}
-
+	
 	protected function getSelectStatement($con = null)
 	{
 	  if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
+		
+		// we may modify criteria, so copy it first
+		$criteria = clone $this;
 
-		if (!$this->hasSelectClause()) {
-			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $this);
+		if (!$criteria->hasSelectClause()) {
+			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $criteria);
 		}
 		
 		$con->beginTransaction();
 		try {
-			if(!$stmt = $this->preFind($con)) {			
-				
-				$stmt = BasePeer::doSelect($this, $con);
-				
-				if($ret = $this->postFind($stmt, $con)) {
-					$stmt = $ret;
-				}
-			}
-		
-		} catch (Exception $e) {
+			$criteria->preSelect($con);
+			$stmt = BasePeer::doSelect($criteria, $con);
+			$con->commit();
+		} catch (PropelException $e) {
 			$con->rollback();
-			throw new PropelException($e);
+			throw $e;
 		}
 		
 		return $stmt;
+	}
+
+	/**
+	 * Apply a condition on a column and issues the SELECT query
+	 *
+	 * @see       whereColumn()
+	 * @see       find()
+	 *
+	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
+	 *                          Or an array of column phpNames
+	 * @param     mixed  $value A value for the condition
+	 *                          Or an array of values
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the list of results, formatted by the current formatter
+	 */
+	public function findBy($column, $value, $con = null)
+	{
+		$this->whereColumn($column, $value);
+
+		return $this->find($con);
+	}
+	
+	/**
+	 * Apply a condition on a column and issues the SELECT ... LIMIT 1 query
+	 *
+	 * @see       whereColumn()
+	 * @see       findOne()
+	 *
+	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
+	 *                          Or an array of column phpNames
+	 * @param     mixed  $value A value for the condition
+	 *                          Or an array of values
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the result, formatted by the current formatter
+	 */
+	public function findOneBy($column, $value, $con = null)
+	{
+		$this->whereColumn($column, $value);
+
+		return $this->findOne($con);
+	}
+	
+	/**
+	 * Issue a SELECT COUNT(*) query based on the current ModelCriteria
+	 * 
+	 * @param PropelPDO $con an optional connection object
+	 *
+	 * @return integer the number of results
+	 */
+	public function count($con = null)
+	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		
+		$criteria = clone $this;
+		$criteria->setDbName($this->getDbName()); // Set the correct dbName
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
+
+		if (!$criteria->hasSelectClause()) {
+			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $criteria);
+		}
+
+		$con->beginTransaction();
+		try {
+			$criteria->preSelect($con);
+			$stmt = BasePeer::doCount($criteria, $con);
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollback();
+			throw $e;
+		}		
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		
+		return $count;
+	}
+	
+	public function preDelete(PropelPDO $con)
+	{
+	}
+	
+	/**
+	 * Issue a DELETE query based on the current ModelCriteria
+	 * 
+	 * @param PropelPDO $con an optional connection object
+	 *
+	 * @return integer the number of deleted rows
+	 */
+	public function delete($con = null)
+	{
+		if (count($this->getMap()) == 0) {
+			throw new PropelException('delete() expects a Criteria with at least one condition. Use deleteAll() to delete all the rows of a table');
+		}
+		
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		
+		$criteria = clone $this;
+		$criteria->setDbName($this->getDbName());
+
+		$con->beginTransaction();
+		try {
+			if(!$affectedRows = $criteria->preDelete($con)) {
+				$affectedRows = BasePeer::doDelete($criteria, $con);
+			}
+			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+			call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollback();
+			throw $e;
+		}
+		
+		return $affectedRows;
+	}
+	
+	/**
+	 * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
+	 * 
+	 * @param PropelPDO $con an optional connection object
+	 *
+	 * @return integer the number of deleted rows
+	 */
+	public function deleteAll($con = null)
+	{
+		if ($con === null) {
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		}
+		$con->beginTransaction();
+		try {
+			if(!$affectedRows = $this->preDelete($con)) {
+				$affectedRows = BasePeer::doDeleteAll(constant($this->modelPeerName.'::TABLE_NAME'), $con);
+			}
+			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+			call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+			$con->commit();
+			return $affectedRows;
+		} catch (PropelException $e) {
+			$con->rollBack();
+			throw $e;
+		}
+		
+		return $affectedRows;
+	}
+	
+	public function preUpdate(&$values, PropelPDO $con)
+	{
+	}
+	
+	/**
+	* Issue an UPDATE query based the current ModelCriteria and a list of changes
+	* Beware that behaviors based on hooks in the object's save() method
+	* Will only be triggered if you force individual saves, i.e. if you pass true as second argument
+	*
+	* @param array $values Associative array of keys and values to replace
+	* @param PropelPDO $con an optional connection object
+	* @param boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+	*
+	* @return Integer Number of updated rows
+	*/
+	public function update($values, $con = null, $forceIndividualSaves = false)
+	{
+		if (!is_array($values)) {
+			throw new PropelException('set() expects an array as first argument');
+		}
+		if (count($this->getJoins())) {
+			throw new PropelException('set() does not support multitable updates, please do not use join()');
+		}
+		
+		if ($con === null) {
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		}
+		
+		$criteria = clone $this;
+		$criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
+		
+		$con->beginTransaction();
+		try {
+			
+			if(!$ret = $criteria->preUpdate($values, $con, $forceIndividualSaves)) {
+				if($forceIndividualSaves) {
+				
+					// Update rows one by one
+					$objects = $criteria->setFormatter(ModelCriteria::FORMAT_OBJECTS)->find($con);
+					foreach ($objects as $object) {
+						foreach ($values as $key => $value) {
+							$object->setByName($key, $value);
+						}
+						$object->save($con);
+					}
+					$ret = count($objects);
+					
+				} else {
+					
+					// update rows in a single query
+					$set = new Criteria();
+					foreach ($values as $columnName => $value) {
+						$realColumnName = $criteria->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+						$set->add($realColumnName, $value);
+					}
+					$ret = BasePeer::doUpdate($criteria, $set, $con);
+					call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+					call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+				}
+			}
+			
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollBack();
+			throw $e;
+		}
+		
+		return $ret;
 	}
 	
 	/**
@@ -601,4 +920,63 @@ EOT;
 		}
 	}
 	
+	/**
+	 * Return a fully qualified column name corresponding to a simple column phpName
+	 * Warning: restricted to the columns of the main model
+	 * e.g. => 'Title' => 'book.TITLE'
+	 *
+	 * @param string $columnName the Column phpName, without the table name
+	 *
+	 * @return string the fully qualified column name
+	 */
+	protected function getRealColumnName($columnName)
+	{
+		if (!$this->getModelTableMap()->hasColumnByPhpName($columnName)) {
+			throw new PropelException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
+		}
+		return $this->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+	}
+
+	/**
+	 * Handle the magic
+	 * Supports findByXXX() and findOneByXXX() methods, where XXX is a column phpName
+	 * Supports XXXJoin(), where XXX is a join rirection (in 'left', 'right', 'inner')
+	 */
+	public function __call($name, $arguments)
+	{
+		// Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
+		static $methods = array('findBy', 'findOneBy');
+		foreach ($methods as $method)
+		{
+			if(strpos($name, $method) === 0)
+			{
+				$columns = substr($name, strlen($method));
+				if(strpos($columns, 'And') !== false) {
+					$columns = explode('And', $columns);
+					$values = array();
+					for($i=0, $count = count($columns); $i < $count; $i++) {
+						$values[]= array_shift($arguments);
+					}
+					array_unshift($arguments, $values);
+				}
+				
+				array_unshift($arguments, $columns);
+				return call_user_func_array(array($this, $method), $arguments);
+			}
+		}
+		
+		// Maybe it's a magic call to a qualified join method, e.g. 'leftJoin'
+		if(($pos = strpos($name, 'Join')) > 0)
+		{
+			$type = substr($name, 0, $pos);
+			if(in_array($type, array('left', 'right', 'inner')))
+			{
+				$joinType = strtoupper($type) . ' JOIN';
+				array_push($arguments, $joinType);
+				return call_user_func_array(array($this, 'join'), $arguments);
+			}
+		}
+   
+		throw new PropelException(sprintf('Undefined method %s::%s()', __CLASS__, $name));
+	}
 }
