@@ -339,6 +339,9 @@ class BasePeer
 
 		// Get list of required tables, containing all columns
 		$tablesColumns = $selectCriteria->getTablesColumns();
+		if (empty($tablesColumns)) {
+			$tablesColumns = array($selectCriteria->getPrimaryTableName() => array());
+		}
 
 		// we also need the columns for the update SQL
 		$updateTablesColumns = $updateValues->getTablesColumns();
@@ -394,14 +397,16 @@ class BasePeer
 				}
 				
 				$params = self::buildParams($updateTablesColumns[$tableName], $updateValues);
-				
-				foreach ($columns as $colName) {
-					$sb = "";
-					$selectCriteria->getCriterion($colName)->appendPsTo($sb, $params);
-					$whereClause[] = $sb;
+
+				$sql = substr($sql, 0, -2);
+				if (!empty($columns)) {
+					foreach ($columns as $colName) {
+						$sb = "";
+						$selectCriteria->getCriterion($colName)->appendPsTo($sb, $params);
+						$whereClause[] = $sb;
+					}
+					$sql .= " WHERE " .  implode(" AND ", $whereClause);
 				}
-			
-				$sql = substr($sql, 0, -2) . " WHERE " .  implode(" AND ", $whereClause);
 
 				$stmt = $con->prepare($sql);
 
