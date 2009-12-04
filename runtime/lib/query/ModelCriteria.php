@@ -512,6 +512,47 @@ class ModelCriteria extends Criteria
 		return $this->getFormatter()->formatOne($stmt);
 	}
 	
+	/**
+	 * Find object(s) by primary key
+	 * Accepts a variuable number of arguments
+	 * Behaves differently if the model has simple or composite primary key
+	 * <code>
+	 * // simple primary key
+	 * $book  = $c->findPk(12);
+	 * $books = $c->findPk(array(12, 56, 832));
+	 * // composite primary key
+	 * $bookOpinion = $c->findPk(array(34, 634));
+	 * </code>
+	 * @param     mixed $keys Primary key to use for the query
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the result, or the list of results, formatted by the current formatter
+	 */
+	public function findPk($keys, $con = null)
+	{
+		$pkCols = $this->getModelTableMap()->getPrimaryKeyColumns();
+		if (count($pkCols) == 1) {
+			// simple primary key
+			$pkCol = array_shift($pkCols);
+			if (is_array($keys)) {
+				// find several objects with simple primary key
+				$this->add($pkCol->getFullyQualifiedName(), $keys, Criteria::IN);
+				return $this->find($con);
+			} else {
+				// find one object with simple primary key
+				$this->add($pkCol->getFullyQualifiedName(), $keys);
+				return $this->findOne($con);
+			}
+		} else {
+			// composite primary key
+			foreach ($pkCols  as $pkCol) {
+				$key = array_pop($key);
+				$this->add($pkCol->getFullyQualifiedName(), $arg);
+			}
+			return $this->findOne($con);
+		}
+	}
+	
 	protected function getSelectStatement($con = null)
 	{
 	  if ($con === null) {
