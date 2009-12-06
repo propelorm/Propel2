@@ -165,23 +165,23 @@ abstract class ObjectBuilder extends OMBuilder {
 		return false;
 	}
 
-  /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-   * @return boolean
-   */
-  public function hasBehaviorModifier($hookName)
-  {
-    return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
-  }
+	/**
+	 * Checks whether any registered behavior on that table has a modifier for a hook
+	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	 * @return boolean
+	 */
+	public function hasBehaviorModifier($hookName)
+	{
+	 	return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
+	}
 
-  /**
-   * Checks whether any registered behavior on that table has a modifier for a hook
-   * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+	/**
+	 * Checks whether any registered behavior on that table has a modifier for a hook
+	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @param string &$script The script will be modified in this method.
-   */
-  public function applyBehaviorModifier($hookName, &$script, $tab = "		")
-  {
-    return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script, $tab);
-  }
+	 */
+	public function applyBehaviorModifier($hookName, &$script, $tab = "		")
+	{
+		return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script, $tab);
+	}
 }

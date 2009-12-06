@@ -53,42 +53,25 @@ class ModelCriteria extends Criteria
 	 * Creates a new instance with the default capacity which corresponds to
 	 * the specified database.
 	 *
-	 * @param      string $dbName The dabase name.
-	 * @param      string $modelName The phpName of a model, e.g. 'Book'
+	 * @param     string $dbName The dabase name
+	 * @param     string $modelName The phpName of a model, e.g. 'Book'
+	 * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
 	 */
-	public function __construct($dbName = null, $modelName)
+	public function __construct($dbName = null, $modelName, $modelAlias = null)
 	{
 		$this->setDbName($dbName);
 		$this->originalDbName = $dbName;
-		list($this->modelName, $this->modelAlias) = $this->getClassAndAlias($modelName);
+		$this->modelName = $modelName;
 		$this->modelPeerName = constant($this->modelName . '::PEER');
-		$modelName = $this->modelAlias ? $this->modelAlias : $this->modelName;
-		$this->tableMaps[$modelName] = Propel::getDatabaseMap($dbName)->getTablebyPhpName($this->modelName);
-	}
-	
-	/**
-	 * Returns the class and alias of a string representing a model or a relation
-	 * e.g. 'Book b' => array('Book', 'b')
-	 * e.g. 'Book'   => array('Book', null)
-	 *
-	 * @param      string $class The classname to explode
-	 *
-	 * @return     array  list($className, $aliasName)
-	 */
-	protected static function getClassAndAlias($class)
-	{
-	  if(strpos($class, ' ') !== false) {
-	    list($class, $alias) = explode(' ', $class);
-	  } else {
-	    $alias = null;
-	  }
-	  return array($class, $alias);
+		$this->modelAlias = $modelAlias;
+		$tableMapIndex = $modelAlias ? $modelAlias : $modelName;
+		$this->tableMaps[$tableMapIndex] = Propel::getDatabaseMap($this->getDbName())->getTablebyPhpName($this->modelName);
 	}
 	
 	/**
 	 * Returns the name of the class for this model criteria
 	 *
-	 * @return string
+	 * @return    string
 	 */
 	public function getModelName()
 	{
@@ -96,13 +79,48 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
+	 * Sets the alias for the model in this query
+	 *
+	 * @param    string $modelAlias The model alias
+	 *
+	 * @return ModelCriteria The current object, for fluid interface
+	 */
+	public function setModelAlias($modelAlias)
+	{
+		$oldTableMapIndex = null;
+		if (isset($this->tableMaps[$this->modelAlias])) {
+			$oldTableMapIndex = $this->modelAlias;
+		}
+		if (isset($this->tableMaps[$this->modelName])) {
+			$oldTableMapIndex = $this->modelName;
+		}
+		if (null !== $oldTableMapIndex) {
+			$this->tableMaps[$modelAlias] = $this->tableMaps[$oldTableMapIndex];
+			unset($this->tableMaps[$oldTableMapIndex]);
+		}
+		$this->modelAlias = $modelAlias;
+		
+		return $this;
+	}
+	
+	/**
 	 * Returns the alias of the main class for this model criteria
 	 *
-	 * @return string
+	 * @return    string The model alias
 	 */
 	public function getModelAlias()
 	{
 		return $this->modelAlias;
+	}
+	
+	/**
+	 * Return the string to use in a clause as a model prefix for the main model
+	 *
+	 * @return    string The model alias if it exists, the model name if not
+	 */
+	public function getModelAliasOrName()
+	{
+		return $this->modelAlias ? $this->modelAlias : $this->modelName;
 	}
 	
 	/**
@@ -112,8 +130,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function getModelTableMap()
 	{
-		$modelName = $this->modelAlias ? $this->modelAlias : $this->modelName;
-		return $this->tableMaps[$modelName];
+		return $this->tableMaps[$this->getModelAliasOrName()];
 	}
 	
 	/**
@@ -134,8 +151,8 @@ class ModelCriteria extends Criteria
 	 * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 	 * </code>
 	 *
-	 * @param mixed $formatter a formatter class name, or a formatter instance
-	 * @return ModelCriteria The current object, for fluid interface
+	 * @param     mixed $formatter a formatter class name, or a formatter instance
+	 * @return    ModelCriteria The current object, for fluid interface
 	 */
 	public function setFormatter($formatter)
 	{
@@ -475,7 +492,36 @@ class ModelCriteria extends Criteria
 		return $this;
 	}
 	
-	public function preSelect(PropelPDO $con)
+	/**
+	 * Returns the class and alias of a string representing a model or a relation
+	 * e.g. 'Book b' => array('Book', 'b')
+	 * e.g. 'Book'   => array('Book', null)
+	 *
+	 * @param      string $class The classname to explode
+	 *
+	 * @return     array  list($className, $aliasName)
+	 */
+	public static function getClassAndAlias($class)
+	{
+	  if(strpos($class, ' ') !== false) {
+	    list($class, $alias) = explode(' ', $class);
+	  } else {
+	    $alias = null;
+	  }
+	  return array($class, $alias);
+	}
+	
+	/**
+	 * Code to execute before every SELECT statement
+	 * 
+	 * @param     PropelPDO $con The connection object used by the query
+	 */
+	protected function basePreSelect(PropelPDO $con)
+	{
+		return $this->preSelect($con);
+	}
+	
+	protected function preSelect(PropelPDO $con)
 	{
 	}
 
@@ -568,7 +614,7 @@ class ModelCriteria extends Criteria
 		
 		$con->beginTransaction();
 		try {
-			$criteria->preSelect($con);
+			$criteria->basePreSelect($con);
 			$stmt = BasePeer::doSelect($criteria, $con);
 			$con->commit();
 		} catch (PropelException $e) {
@@ -649,7 +695,7 @@ class ModelCriteria extends Criteria
 
 		$con->beginTransaction();
 		try {
-			$criteria->preSelect($con);
+			$criteria->basePreSelect($con);
 			$stmt = BasePeer::doCount($criteria, $con);
 			$con->commit();
 		} catch (PropelException $e) {
@@ -666,8 +712,18 @@ class ModelCriteria extends Criteria
 		
 		return $count;
 	}
+
+	/**
+	 * Code to execute before every DELETE statement
+	 * 
+	 * @param     PropelPDO $con The connection object used by the query
+	 */
+	protected function basePreDelete(PropelPDO $con)
+	{
+		return $this->preDelete($con);
+	}
 	
-	public function preDelete(PropelPDO $con)
+	protected function preDelete(PropelPDO $con)
 	{
 	}
 	
@@ -693,7 +749,7 @@ class ModelCriteria extends Criteria
 
 		$con->beginTransaction();
 		try {
-			if(!$affectedRows = $criteria->preDelete($con)) {
+			if(!$affectedRows = $criteria->basePreDelete($con)) {
 				$affectedRows = BasePeer::doDelete($criteria, $con);
 			}
 			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
@@ -721,7 +777,7 @@ class ModelCriteria extends Criteria
 		}
 		$con->beginTransaction();
 		try {
-			if(!$affectedRows = $this->preDelete($con)) {
+			if(!$affectedRows = $this->basePreDelete($con)) {
 				$affectedRows = BasePeer::doDeleteAll(constant($this->modelPeerName.'::TABLE_NAME'), $con);
 			}
 			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
@@ -736,7 +792,18 @@ class ModelCriteria extends Criteria
 		return $affectedRows;
 	}
 	
-	public function preUpdate(&$values, PropelPDO $con)
+	/**
+	 * Code to execute before every UPDATE statement
+	 * 
+	 * @param     array $values The associatiove array of columns and values for the update
+	 * @param     PropelPDO $con The connection object used by the query
+	 */
+	protected function basePreUpdate(&$values, PropelPDO $con)
+	{
+		return $this->preUpdate($values, $con);
+	}
+
+	protected function preUpdate(&$values, PropelPDO $con)
 	{
 	}
 	
@@ -770,7 +837,7 @@ class ModelCriteria extends Criteria
 		$con->beginTransaction();
 		try {
 			
-			if(!$ret = $criteria->preUpdate($values, $con, $forceIndividualSaves)) {
+			if(!$ret = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
 				if($forceIndividualSaves) {
 				
 					// Update rows one by one

@@ -104,7 +104,61 @@ public function unDelete(PropelPDO \$con = null)
 }
 EOT;
   }
-  
+
+	public function preSelectQuery()
+	{
+		return <<<EOT
+if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
+	\$this->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
+} else {
+	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
+}
+EOT;
+	}
+
+	public function preDeleteQuery()
+	{
+		return <<<EOT
+if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
+	return \$this->softDelete(\$con);
+} else {
+	return \$this->forceDelete(\$con);
+}
+EOT;
+	}
+
+	public function queryMethods()
+	{
+		return <<<EOT
+/**
+ * Soft delete the selected rows
+ */
+public function softDelete(PropelPDO \$con = null)
+{
+	return \$this->update(array('{$this->getColumnForParameter('deleted_column')->getPhpName()}' => time()), \$con);
+}
+
+/**
+ * Bypass the soft_delete behavior and force a hard delete of the selected rows
+ */
+public function forceDelete(PropelPDO \$con = null)
+{
+	return parent::delete(\$con);
+}
+
+/**
+ * Undelete selected rows
+ *
+ * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+ */
+public function unDelete(PropelPDO \$con = null)
+{
+	return \$this->update(array('{$this->getColumnForParameter('deleted_column')->getPhpName()}' => null), \$con);
+}
+
+EOT;
+	}
+
   public function staticAttributes()
   {
   	return "protected static \$softDelete = true;

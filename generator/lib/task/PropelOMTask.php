@@ -125,7 +125,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// -----------------------------------------------------------------------------------------
 
 						// these files are always created / overwrite any existing files
-						foreach (array('peer', 'object', 'tablemap') as $target) {
+						foreach (array('peer', 'object', 'tablemap', 'query') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->build($builder);
 						}
@@ -135,7 +135,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// -----------------------------------------------------------------------------------------
 
 						// these classes are only generated if they don't already exist
-						foreach (array('peerstub', 'objectstub') as $target) {
+						foreach (array('peerstub', 'objectstub', 'querystub') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->build($builder, $overwrite=false);
 						}

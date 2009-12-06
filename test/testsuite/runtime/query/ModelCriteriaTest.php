@@ -1,6 +1,7 @@
 <?php
 
 require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
 
 /**
  * Test class for ModelCriteria.
@@ -117,14 +118,24 @@ class ModelCriteriaTest extends BookstoreTestBase
 
 	public function testTableAlias()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b');
 		$c->where('b.Title = ?', 'foo');
 		
 		$sql = "SELECT  FROM `book` WHERE book.TITLE = :p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'A ModelCriteria accepts an alias for its model');
+		$this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of the alias after constrution');
+		
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->where('b.Title = ?', 'foo');
+		
+		$sql = "SELECT  FROM `book` WHERE book.TITLE = :p1";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'A ModelCriteria accepts a model name with an alias');
 	}
 		
 	public function testCondition()
@@ -195,7 +206,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testWhereNoReplacement()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$c->where('1=1');
 		
@@ -216,7 +227,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testWhereFunction()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('UPPER(b.Title) = ?', 'foo');
 		
 		$sql = "SELECT  FROM `book` WHERE UPPER(book.TITLE) = :p1";
@@ -422,7 +433,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testJoinQuery()
 	{	
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
 		BookstoreDataPopulator::depopulate($con);
 		BookstoreDataPopulator::populate($con);
 
@@ -528,7 +538,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testJoinAlias()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author');
 		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
 		$params = array();
@@ -540,14 +550,14 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation alias');
 	  
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$sql = 'SELECT  FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID)';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation alias on main alias');
 		
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
 		$sql = 'SELECT  FROM  INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = :p1';
@@ -556,7 +566,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() allows the use of relation alias in where()');
 
-		$c = new ModelCriteria('bookstore', 'Author a');
+		$c = new ModelCriteria('bookstore', 'Author', 'a');
 		$c->join('a.Book b');
 		$c->join('b.Publisher p');
 		$c->where('p.Name = ?', 'foo');
@@ -569,7 +579,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testJoinOnSameTable()
 	{
-		$c = new ModelCriteria('bookstore', 'BookstoreEmployee be');
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployee', 'be');
 		$c->join('be.Supervisor sup');
 		$c->join('sup.Subordinate sub');
 		$c->where('sub.Name = ?', 'Foo');
@@ -583,14 +593,14 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testJoinAliasQuery()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in where()');
 
-		$c = new ModelCriteria('bookstore', 'BookstoreEmployee be');
+		$c = new ModelCriteria('bookstore', 'BookstoreEmployee', 'be');
 		$c->join('be.Supervisor sup');
 		$c->join('sup.Subordinate sub');
 		$c->where('sub.Name = ?', 'Foo');
@@ -601,13 +611,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testFind()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$books = $c->find();
 		$this->assertTrue(is_array($books), 'find() returns an array by default');
 		$this->assertEquals(0, count($books), 'find() returns an empty array when the query returns no result');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Neal');
 		$books = $c->find();
@@ -620,12 +630,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 
 	public function testFindOne()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$book = $c->findOne();
 		$this->assertNull($books, 'findOne() returns null when the query returns no result');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->orderBy('b.Title');
 		$book = $c->findOne();
 		$this->assertTrue($book instanceof Book, 'findOne() returns a Model object by default');
@@ -637,35 +647,35 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findPk(765432);
 		$this->assertNull($book, 'findPk() returns null when the primary key is not found');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$testBooks = $c->find();
 		$testBook1 = array_pop($testBooks);
 		$testBook2 = array_pop($testBooks);
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findPk($testBook1->getId());
 		$this->assertEquals($testBook1, $book, 'findPk() returns a model object corresponding to the pk');
 
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findPk(array($testBook1->getId(), $testBook2->getId()));
 		$this->assertEquals(array($testBook2, $testBook1), $books, 'findPk() returns an array of model objects corresponding to the pks');
 		
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		foreach ($books as $book) {
 			$book->save();
 		}
 		
-		$c = new ModelCriteria('bookstore', 'BookListRel b');
+		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->findOne();
 		$pk = $bookListRelTest->getPrimaryKey();
 		
-		$c = new ModelCriteria('bookstore', 'BookListRel b');
+		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRel = $c->findOne($pk);
 		$this->assertEquals($bookListRelTest, $bookListRel, 'findPk() can find objects with composite primary keys');
 	}
@@ -673,7 +683,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testFindBy()
 	{
 		try {
-			$c = new ModelCriteria('bookstore', 'Book b');
+			$c = new ModelCriteria('bookstore', 'Book');
 			$books = $c->findBy('Foo', 'Bar', $con);
 			$this->fail('findBy() throws an exception when called on an unknown column name');
 		} catch (PropelException $e) {
@@ -681,7 +691,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		}
 
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findBy('Title', 'Don Juan', $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds simple column conditions');
@@ -691,7 +701,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertTrue($book instanceof Book, 'findBy() returns an array of Model objects by default');
 		$this->assertEquals('Don Juan', $book->getTitle(), 'findBy() returns the model objects matching the query');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds multiple column conditions');
@@ -700,7 +710,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	public function testFindOneBy()
 	{
 		try {
-			$c = new ModelCriteria('bookstore', 'Book b');
+			$c = new ModelCriteria('bookstore', 'Book');
 			$book = $c->findOneBy('Foo', 'Bar', $con);
 			$this->fail('findOneBy() throws an exception when called on an unknown column name');
 		} catch (PropelException $e) {
@@ -708,14 +718,14 @@ class ModelCriteriaTest extends BookstoreTestBase
 		}
 
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findOneBy('Title', 'Don Juan', $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds simple column conditions');
 		$this->assertTrue($book instanceof Book, 'findOneBy() returns a Model object by default');
 		$this->assertEquals('Don Juan', $book->getTitle(), 'findOneBy() returns the model object matching the query');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findOneBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345 LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds multiple column conditions');
@@ -723,13 +733,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testCount()
 	{
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$nbBooks = $c->count();
 		$this->assertTrue(is_int($nbBooks), 'count() returns an integer');
 		$this->assertEquals(0, $nbBooks, 'count() returns 0 when the query returns no result');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Neal');
 		$nbBooks = $c->count();
@@ -739,11 +749,11 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testPreSelect()
 	{
-		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
 		$books = $c->find();
 		$this->assertEquals(1, count($books), 'preSelect() can modify the Criteria before find() fires the query');
 		
-		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals(1, $nbBooks, 'preSelect() can modify the Criteria before count() fires the query');
 	}
@@ -753,7 +763,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		try {
 			$nbBooks = $c->delete();
 			$this->fail('delete() throws an exception when called on an empty Criteria');
@@ -761,19 +771,19 @@ class ModelCriteriaTest extends BookstoreTestBase
 			$this->assertTrue(true, 'delete() throws an exception when called on an empty Criteria');
 		}
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$nbBooks = $c->delete();
 		$this->assertTrue(is_int($nbBooks), 'delete() returns an integer');
 		$this->assertEquals(0, $nbBooks, 'delete() returns 0 when the query deleted no rows');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->delete();
 		$this->assertTrue(is_int($nbBooks), 'delete() returns an integer');
 		$this->assertEquals(1, $nbBooks, 'delete() returns the number of the deleted rows');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals(3, $nbBooks, 'delete() deletes rows in the database');
 	}
@@ -783,7 +793,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->deleteAll();
 		$this->assertTrue(is_int($nbBooks), 'deleteAll() returns an integer');
 		$this->assertEquals(4, $nbBooks, 'deleteAll() returns the number of deleted rows');
@@ -791,7 +801,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->deleteAll();
 		$this->assertEquals(4, $nbBooks, 'deleteAll() ignores conditions on the criteria');
@@ -802,25 +812,25 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		$count = count($books);
 		$book = array_shift($books);
 		
-		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book', 'b');
 		$c->where('b.Id = ?', $book->getId());
 		$nbBooks = $c->delete();
 		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of delete()');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
 		
-		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book');
 		$nbBooks = $c->deleteAll();
 		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of deleteAll()');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
 	}
@@ -832,12 +842,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($con);
 		
 		$count = $con->getQueryCount();
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->update(array('Title' => 'foo'), $con);
 		$this->assertEquals(4, $nbBooks, 'update() returns the number of updated rows');
 		$this->assertEquals($count + 1, $con->getQueryCount(), 'update() updates all the objects in one query by default');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$nbBooks = $c->count();
 		$this->assertEquals(4, $nbBooks, 'update() updates all records by default');
@@ -846,13 +856,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($con);
 
 		$count = $con->getQueryCount();
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('ISBN' => '3456'), $con);
 		$this->assertEquals(1, $nbBooks, 'update() updates only the records matching the criteria');
 		$this->assertEquals($count + 1, $con->getQueryCount(), 'update() updates all the objects in one query by default');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$book = $c->findOne();
 		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
@@ -865,19 +875,19 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($con);
 		
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		foreach ($books as $book) {
 			$book->save();
 		}
 		
 		$count = $con->getQueryCount();
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->update(array('Title' => 'foo'), $con, true);
 		$this->assertEquals(4, $nbBooks, 'update() returns the number of updated rows');
 		$this->assertEquals($count + 1 + 4, $con->getQueryCount(), 'update() updates the objects one by one when called with true as last parameter');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$nbBooks = $c->count();
 		$this->assertEquals(4, $nbBooks, 'update() updates all records by default');
@@ -886,20 +896,20 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($con);
 		
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		foreach ($books as $book) {
 			$book->save();
 		}
 
 		$count = $con->getQueryCount();
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('ISBN' => '3456'), $con, true);
 		$this->assertEquals(1, $nbBooks, 'update() updates only the records matching the criteria');
 		$this->assertEquals($count + 1 + 1, $con->getQueryCount(), 'update() updates the objects one by one when called with true as last parameter');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$book = $c->findOne();
 		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
@@ -910,11 +920,11 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate($con);
 		BookstoreDataPopulator::populate($con);
 		
-		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('Title' => 'foo'));
 		
-		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book b');
+		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$book = $c->findOne();
 		
@@ -925,21 +935,21 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->leftJoin('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
 		$books = $c->findOne($con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoin($x) is turned into join($x, Criteria::LEFT_JOIN)');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->innerJoin('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
 		$books = $c->findOne($con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'innerJoin($x) is turned into join($x, Criteria::INNER_JOIN)');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->rightJoin('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
 		$books = $c->findOne($con);
@@ -951,22 +961,22 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findByTitle('Don Juan');
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXX($value) is turned into findBy(XXX, $value)');
 
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findByTitleAndISBN('Don Juan', 1234);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX,YYY), $value)');
 		
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findOneByTitle('Don Juan');
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
 
-		$c = new ModelCriteria('bookstore', 'Book b');
+		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findOneByTitleAndISBN('Don Juan', 1234);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234 LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
@@ -985,7 +995,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
 {	
 	public function preSelect(PropelPDO $con)
 	{
-		$this->where($this->getModelAlias() . '.Title = ?', 'Don Juan');
+		$this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
 	}
 }
 
@@ -1004,4 +1014,3 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 		$values['ISBN'] = '1234';
 	}
 }
-

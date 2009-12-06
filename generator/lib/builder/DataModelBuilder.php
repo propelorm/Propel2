@@ -82,6 +82,18 @@ abstract class DataModelBuilder
 	private $stubObjectBuilder;
 
 	/**
+	 * Query builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $queryBuilder;
+
+	/**
+	 * Stub Query builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	private $stubQueryBuilder;
+
+	/**
 	 * Stub Interface builder class for current table.
 	 * @var        DataModelBuilder
 	 */
@@ -215,6 +227,30 @@ abstract class DataModelBuilder
 			$this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
 		}
 		return $this->stubObjectBuilder;
+	}
+
+	/**
+	 * Returns new or existing Query builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getQueryBuilder()
+	{
+		if (!isset($this->queryBuilder)) {
+			$this->queryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
+		}
+		return $this->queryBuilder;
+	}
+
+	/**
+	 * Returns new or existing stub Query builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getStubQueryBuilder()
+	{
+		if (!isset($this->stubQueryBuilder)) {
+			$this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
+		}
+		return $this->stubQueryBuilder;
 	}
 
 	/**

@@ -262,7 +262,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addClearAllReferences($script);
 		
 		// apply behaviors
-    $this->applyBehaviorModifier('objectMethods', $script, "	");
+		$this->applyBehaviorModifier('objectMethods', $script, "	");
 		
 		$this->addPrimaryString($script);
 	}
@@ -276,7 +276,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$script .= "
 } // " . $this->getClassname() . "
 ";
-    $this->applyBehaviorModifier('objectFilter', $script, "");
+		$this->applyBehaviorModifier('objectFilter', $script, "");
 	}
 
 	/**

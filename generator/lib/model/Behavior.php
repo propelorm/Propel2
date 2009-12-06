@@ -173,6 +173,11 @@ class Behavior extends XMLElement
     return $this;
   }
 
+  public function getQueryBuilderModifier()
+  {
+    return $this;
+  }
+
   public function getPeerBuilderModifier()
   {
     return $this;
