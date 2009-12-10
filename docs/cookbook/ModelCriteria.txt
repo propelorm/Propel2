@@ -178,7 +178,7 @@ $books = PropelQuery::from('Book')
   ->find();
 // Finding all Books ordered by published_at desc
 $books = PropelQuery::from('Book')
-  ->orderBy('PublishedAt', 'desc')
+  ->orderBy('Book.PublishedAt', 'desc')
   ->find();
 }}}
 
@@ -267,7 +267,7 @@ $nbBooks = PropelQuery::from('Book')
   ->findOne($con);
 }}}
 
-'''Tip''': In debug mode, the connection object provides a way to check the latest executed query, by calling `$con->getLastExecutedQuery()`. See the [Logging documentation] for more details.
+'''Tip''': In debug mode, the connection object provides a way to check the latest executed query, by calling `$con->getLastExecutedQuery()`. See the [wiki:Users/Documentation/1.5/07-Logging Logging documentation] for more details.
 
 === Counting Objects ===
 
@@ -310,7 +310,7 @@ $author2->save();
 
 // update() issues an UPDATE ... SET query based on an associative array column => value
 $nbUpdatedRows = PropelQuery::from('Author')
-  ->where(Aauthor.Name = ?', 'Leo Tolstoy')
+  ->where('Author.Name = ?', 'Leo Tolstoy')
   ->update(array('Name' => 'Leo Tolstoi'), $con);
 
 // update() returns the number of modified columns
@@ -320,7 +320,7 @@ echo $nbUpdatedRows; // 1
 // And bypasses any behavior registered on the save() hooks
 // You can force a one-by-one update by setting the third parameter of update() to true
 $nbUpdatedRows = PropelQuery::from('Author')
-  ->where(Aauthor.Name = ?', 'Leo Tolstoy')
+  ->where('Author.Name = ?', 'Leo Tolstoy')
   ->update(array('Name' => 'Leo Tolstoi'), $con, true);
 // Beware that it may take a long time
 }}}

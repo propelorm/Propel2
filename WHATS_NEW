@@ -173,7 +173,7 @@ For instance, `ModelCriteria::join()` just needs the name of a related model to 
 #!php
 <?php
 $c = new ModelCriteria('bookstore', 'Book'); // 'bookstore' is the database name, 'Book' is the model name
-$c->join('Author', Criteria::LEFT_JOIN);
+$c->join('Book.Author', Criteria::LEFT_JOIN);
 // same as
 $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
 }}}
@@ -184,7 +184,7 @@ $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
 #!php
 <?php
 $c = new ModelCriteria('bookstore', 'Book');
-$c->where("(Book.Price * 100) <= ?, 1500);	
+$c->where("(Book.Price * 100) <= ?', 1500);	
 }}}
 
 Users of PDO will recognize the syntax, where the interrogation point locates the value in the condition. `where()` only accepts simple conditions, with a single replacement token. This allows the `ModelCriteria` to remain lightweight and fast, and saves Propel from a heavy duty parser/lexer tools.
@@ -234,12 +234,12 @@ $books = PropelQuery::from('Book b')
 
 If this syntax looks familiar, it's probably because it is the standard way to describe a database query in an object-oriented way in PHP. It is used in Doctrine, Zend_Db_Select, and DbFinder. It also looks familiar because it is very close to SQL, so you probably won't need long to figure out how to write a complex query with it.
 
-The `ModelCriteria` can understand `findByXXX()` method calls, where `'XXX'` is the phpName of a column of the model. That answers -one of the most common customization need:
+The `ModelCriteria` can understand `findByXXX()` method calls, where `'XXX'` is the phpName of a column of the model. That answers one of the most common customization need:
 
 {{{
 #!php
 <?php
-$book = PropelQuery::from('Book b')->findOneByTitle('War And Peace');
+$book = PropelQuery::from('Book')->findOneByTitle('War And Peace');
 }}}
 
 '''Tip''': A `ModelCriteria` instance is also a `Criteria` instance, so all the methods you are used to calling on `Criteria` also work on a `ModelCriteria` object.
