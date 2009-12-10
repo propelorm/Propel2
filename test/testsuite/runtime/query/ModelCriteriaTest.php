@@ -292,6 +292,36 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'ModelCriteria accepts Criteria operators');
 	}
 	
+	public function testWhereColumn()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->whereColumn('Title', 'foo');
+
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+		$params =  array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a simple column name');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->whereColumn('Title', 'foo', Criteria::NOT_EQUAL);
+
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE<>:p1';
+		$params =  array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a sicustom comparator');
+
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->whereColumn('Title', 'foo');
+
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+		$params =  array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a simple column name, even if initialized with an alias');
+	}
+	
 	public function testHaving()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');

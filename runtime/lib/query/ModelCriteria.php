@@ -220,19 +220,20 @@ class ModelCriteria extends Criteria
 	 *                           Or an array of column phpNames
 	 * @param      mixed  $value A value for the condition
 	 *                           Or an array of values
+	 * @param      string $comparison What to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function whereColumn($column, $value)
+	public function whereColumn($column, $value, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($column)) {
 			for ($i = 0, $count = count($column); $i < $count; $i++) {
 				$columnItem = array_shift($column);
 				$valueItem = array_shift($value);
-				$this->add($this->getRealColumnName($columnItem), $valueItem);
+				$this->add($this->getRealColumnName($columnItem), $valueItem, $comparison);
 			}
 		} else {
-			$this->add($this->getRealColumnName($column), $value);
+			$this->add($this->getRealColumnName($column), $value, $comparison);
 		}
 		
 		return $this;

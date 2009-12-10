@@ -72,36 +72,6 @@ The nested set behavior implementation has a few added benefits:
 
 As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [nested_set behavior documentation] for more details.
 
-== Code Cleanup ==
-
-=== Directory Structure Changes ===
-
-The organization of the Propel runtime and generator code has been reworked, in order to make navigation across Propel classes easier for developers. End users should see no difference, apart if your `build.properties` references alternate builder classes in the Propel code. In that case, you will need to update your `build.properties` with the new paths. For instance, a reference to:
-
-{{{
-#!ini
-propel.builder.peer.class = propel.engine.builder.om.php5.PHP5PeerBuilder
-}}}
-
-Must be changed to:
-
-{{{
-#!ini
-propel.builder.peer.class = builder.om.PHP5PeerBuilder  
-}}}
-
-Browse the Propel generator directory structure to find the classes you need.
-
-=== DebugPDO Refactoring ===
-
-To allow custom connection handlers, the debug code that was written in the `DebugPDO` class has been moved to `PropelPDO`. The change is completely backwards compatible, but makes it easier to connect to a database without using PDO.
-
-During the change, the documentation about Propel logging and debugging features was rewritten and should now be clearer.
-
-=== Other Minor Code Cleanups ===
-
- * Removed references to Creole in the code (Propel uses PDO instead of Creole since version 1.3)
-
 == Criteria Enhancements ==
 
 `Criteria::addOr()` operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
@@ -192,3 +162,116 @@ $c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
 }}}
 
 The new `combine()` method makes it much easier to handle logically complex criterions. The good news is that if your application code already uses the old Criterion way, it will continue to work with Propel 1.5 as all these changes are backwards compatible.
+
+== Model Criteria ==
+
+Propel 1.5 introduces a new subclass of `Criteria`, that you initialize with the name of one of your model. Using this name, and the runtime introspection data provided by the generated TableMap objects, this new `ModelCriteria` class can do things that were out of the bounds of the simple `Criteria`.
+
+For instance, `ModelCriteria::join()` just needs the name of a related model to build a JOIN clause:
+
+{{{
+#!php
+<?php
+$c = new ModelCriteria('bookstore', 'Book'); // 'bookstore' is the database name, 'Book' is the model name
+$c->join('Author', Criteria::LEFT_JOIN);
+// same as
+$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
+}}}
+
+`ModelCriteria` offers an easy way to add custom SQL conditions on a column, by detecting model column names, deducing the type of the column from the schema, and use this type for the binding of the value:
+
+{{{
+#!php
+<?php
+$c = new ModelCriteria('bookstore', 'Book');
+$c->where("(Book.Price * 100) <= ?, 1500);	
+}}}
+
+Users of PDO will recognize the syntax, where the interrogation point locates the value in the condition. `where()` only accepts simple conditions, with a single replacement token. This allows the `ModelCriteria` to remain lightweight and fast, and saves Propel from a heavy duty parser/lexer tools.
+
+The `where()` method can also accept more simple clauses. You just need to explicit every column name as `'ModelClassName.ColumnPhpName'`, as follows:
+
+{{{
+#!php
+<?php
+$c = new ModelCriteria('bookstore', 'Book');
+$c->where('Book.Title = ?', 'War And Peace');
+// same as
+$c->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
+}}}
+
+`ModelCriteria` has a built-in support for table aliases, which allows to setup a query using two joins on the same table, which was not possible with the `Criteria` object:
+
+{{{
+#!php
+<?php
+$c = new ModelCriteria('bookstore', 'Book', 'b');
+$c->join('b.Author a')
+$c->where('a.FirstName = ?', 'Leo')
+}}}
+
+Since `ModelCriteria` knows about the expected model object, it is also capable of hydrating it, without calling the `doSelect()` method in the generated Peer class:
+
+{{{
+#!php
+<?php
+$c = new ModelCriteria('bookstore', 'Book', 'b');
+$c->join('b.Author a')
+$c->where('a.FirstName = ?', 'Leo')
+$books = $c->find();
+}}}
+
+Just like `Criteria`, `ModelCriteria` methods return the current object, allowing for a fluid interface. In addition, Propel provides a factory for `ModelCriteria` objects, called `PropelFactory`. So the following listing show an alternative way to write the previous query:
+
+{{{
+#!php
+<?php
+$books = PropelQuery::from('Book b')
+	->join('b.Author a')
+	->where('a.FirstName = ?', 'Leo')
+	->find();
+}}}
+
+If this syntax looks familiar, it's probably because it is the standard way to describe a database query in an object-oriented way in PHP. It is used in Doctrine, Zend_Db_Select, and DbFinder. It also looks familiar because it is very close to SQL, so you probably won't need long to figure out how to write a complex query with it.
+
+The `ModelCriteria` can understand `findByXXX()` method calls, where `'XXX'` is the phpName of a column of the model. That answers -one of the most common customization need:
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book b')->findOneByTitle('War And Peace');
+}}}
+
+'''Tip''': A `ModelCriteria` instance is also a `Criteria` instance, so all the methods you are used to calling on `Criteria` also work on a `ModelCriteria` object.
+
+The documentation offers [wiki:Users/Documentation/1.5/ModelCriteria an entire chapter] dedicated to the new `ModelCriteria` class. Make sure you read it to see the power of this new query API.
+
+== Code Cleanup ==
+
+=== Directory Structure Changes ===
+
+The organization of the Propel runtime and generator code has been reworked, in order to make navigation across Propel classes easier for developers. End users should see no difference, apart if your `build.properties` references alternate builder classes in the Propel code. In that case, you will need to update your `build.properties` with the new paths. For instance, a reference to:
+
+{{{
+#!ini
+propel.builder.peer.class = propel.engine.builder.om.php5.PHP5PeerBuilder
+}}}
+
+Must be changed to:
+
+{{{
+#!ini
+propel.builder.peer.class = builder.om.PHP5PeerBuilder  
+}}}
+
+Browse the Propel generator directory structure to find the classes you need.
+
+=== DebugPDO Refactoring ===
+
+To allow custom connection handlers, the debug code that was written in the `DebugPDO` class has been moved to `PropelPDO`. The change is completely backwards compatible, but makes it easier to connect to a database without using PDO.
+
+During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation about Propel logging and debugging features] was rewritten and should now be clearer.
+
+=== Other Minor Code Cleanups ===
+
+ * Removed references to Creole in the code (Propel uses PDO instead of Creole since version 1.3)

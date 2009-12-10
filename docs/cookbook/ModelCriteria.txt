@@ -1,0 +1,485 @@
+= PropelQuery =
+
+== Overview ==
+
+Propel proposes an object-oriented API for writing database queries. That means that you don't need to write any SQL code to interact with the database. Object orientation also facilitates code reuse and readability. Here is how to query the database for records in the `book` table written by 'Leo Tolstoi':
+
+{{{
+#!php
+<?php
+$books = PropelQuery::from('Book')
+  ->join('Book.Author')
+  ->where('Author.Name = ?', 'Leo Tolstoi')
+  ->orderBy('Book.Title', 'asc')
+  ->find();
+}}} 
+
+The first thing to notice here is the fluid interface. Propel queries are made of method calls that return the current query object. In the previous example, `join()`, `where()`, and `orderBy()` all return the current query augmented with conditions. `find()`, on the other hand, is a termination method that doesn't return the query, but its result - in this case, an array of `Book` objects.
+
+Propel knows how to join the `Book` model to the `Author` model, since you already defined a foreign key between the two tables in the `schema.xml`. Propel takes advantage of this knowledge of your model relationships to help you write faster queries and omit the most obvious data.
+
+Also notice the fact that the names used in the query, like 'Book', 'Book.Author', or 'Author.Name', are object model names, not table or column names. Propel knows how to map the two - that's what an ORM is for - in order to translate the Propel query into an actual database query:
+
+{{{
+#!php
+<?php
+$query = 'SELECT book.* from book
+INNER JOIN author ON book.AUTHOR_ID = author.ID
+WHERE author.NAME = :p1
+ORDER BY book.TITLE ASC';
+}}}
+
+The object model name of a column is composed of the phpName of the model, and the phpName of the column, separated by a dot (e.g. 'Author.Name'). Manipulating object model names allows you to be detached from the actual data storage, and alter the database names without necessarily updating the PHP code. It also makes the use of table aliases much easier - more on that matter later.
+
+In a Propel query, conditions are made of strings. `'Author.Name = ?'` is such a condition. Propel uses the column name in conjunction with the schema to determine the column type. In this case, `Author.Name` is defined in the schema as a `VARCHAR`. Then, Propel **binds** the value to the condition using the column type. This prevents SQL injection attacks that often plague web applications. Behind the curtain, Propel uses PDO to achieve this binding:
+
+{{{
+#!php
+<?php
+// $con is a PDO instance
+$stmt = $con->prepare($query);
+$stmt->bind(':p1', 'Leo Tolstoi', PDO::PARAM_STR);
+$res = $stmt->execute();
+}}}
+
+The final `find()` doesn't just execute the SQL query above, it also instanciates `Book` objects and populates them with the results of the query. This process finalizes the abstraction of the storage engine and allows you to deal with `Book` objects naturally:
+
+{{{
+#!php
+<?php
+foreach ($books as $book) {
+  echo $book->getTitle();
+}
+}}}
+
+So Propel queries are a very powerful tool to write your queries in an object-oriented fashion. It is also very natural - if you know how to write an SQL query, chances are that you will write Propel queries in minutes.
+
+== Usage ==
+
+=== Finding An Object From Its Primary Key ===
+
+{{{
+#!php
+<?php
+// Finding the book having primary key 123
+$book = PropelQuery::from('Author')->findPk(123);
+// Finding the books having primary keys 123 and 456
+$books = PropelQuery::from('Author')->findPk(array(123, 456));
+// Also works for objects with composite primary keys
+$bookOpinion = PropelQuery::from('BookOpinion')->findPk(array($bookId, $userId));
+}}}
+
+=== Finding Objects ===
+
+{{{
+#!php
+<?php
+// Finding all Books
+$articles = PropelQuery::from('Book')
+  ->find();
+// Finding 3 Books
+$articles = PropelQuery::from('Book')
+  ->limit(3)
+  ->find();
+// Finding a single Book
+$article = PropelQuery::from('Book')
+  ->findOne();
+}}}
+
+=== Adding A Simple Condition ===
+
+{{{
+#!php
+<?php
+// Finding all Books where title = 'War And Peace'
+$books = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->find();
+// Finding all Books where title is like 'War%'
+$books = PropelQuery::from('Book')
+  ->where('Book.Title LIKE ?', 'War%')
+  ->find();
+// Finding all Books published after $date
+$books = PropelQuery::from('Book')
+  ->where('Book.PublishedAt > ?', $date)
+  ->find();
+// Finding all Books with no author
+$books = PropelQuery::from('Book')
+  ->where('Book.AuthorId IS NULL')
+  ->find();
+// Finding all books from a list of authors
+$books = PropelQuery::from('Book')
+  ->where('Book.AuthorId IN ?', array(123, 542, 563))
+  ->find();
+// You can even use SQL functions inside conditions
+$books = PropelQuery::from('Book')
+  ->where('UPPER(Book.Title) = ?', 'WAR AND PEACE')
+  ->find();
+}}}
+
+=== Combining Several Conditions ===
+
+For speed reasons, `where()` only accepts simple conditions, with a single interrogation point for the value replacement. When you need to apply more than one condition, and combine them with a logical operator, you have to call `where()` multiple times.
+
+{{{
+#!php
+<?php
+// Finding all books where title = 'War And Peace' and published after $date
+$books = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->where('Book.PublishedAt > ?', $date)
+  ->find();
+// For conditions chained with OR, use orWhere() instead of where()
+$books = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->orWhere('Book.Title LIKE ?', 'War%')
+  ->find();
+}}}
+
+The use of `where()` and `orWhere()` doesn't allow logically complex conditions, that you would write in SQL with parenthesis. For such cases, create named conditions with `condition()`, and then combine them in an array that you can pass to `where()` instead of a single condition, as follows:
+
+{{{
+#!php
+<?php
+// Finding all books where title = 'War And Peace' or like 'War%'
+$books = PropelQuery::from('Book')
+  ->condition('cond1', 'Book.Title = ?', 'War And Peace') // create a condition named 'cond1'
+  ->condition('cond2', 'Book.Title LIKE ?', 'War%')       // create a condition named 'cond2'
+  ->where(array('cond1', 'cond2'), 'or')->                // combine 'cond1' and 'cond2' with a logical OR
+  ->find();
+  // SELECT book.* from book WHERE (book.TITLE = 'War And Peace' OR book.TITLE LIKE 'War%');
+
+// You can create a named condition from the combination of other named conditions by using `combine()`
+// That allows for any level of complexity
+$books = PropelQuery::from('Book')
+  ->condition('cond1', 'Book.Title = ?', 'War And Peace') // create a condition named 'cond1'
+  ->condition('cond2', 'Book.Title LIKE ?', 'War%')       // create a condition named 'cond2'
+  ->combine(array('cond1', 'cond2'), 'or', 'cond12')      // create a condition named 'cond12' from 'cond1' and 'cond2'
+  ->condition('cond3', 'Book.PublishedAt <= ?', $end)     // create a condition named 'cond3'
+  ->condition('cond4', 'Book.PublishedAt >= ?', $begin)   // create a condition named 'cond4'
+  ->combine(array('cond3', 'cond4'), 'and', 'cond34')     // create a condition named 'cond34' from 'cond3' and 'cond4'
+  ->where(array('cond12', 'cond34'), 'and')               // combine the two conditions in a where
+  ->find();
+  // SELECT book.* FROM book WHERE (
+  //  (book.TITLE = 'War And Peace' OR book.TITLE LIKE 'War%')
+  //  AND
+  //  (book.PUBLISHED_AT <= $end AND book.PUBLISHED_AT >= $begin)
+  // );
+}}}
+
+=== Ordering Results ===
+
+{{{
+#!php
+<?php
+// Finding all Books ordered by published_at (ascending order by default)
+$books = PropelQuery::from('Book')
+  ->orderBy('Book.PublishedAt')
+  ->find();
+// Finding all Books ordered by published_at desc
+$books = PropelQuery::from('Book')
+  ->orderBy('PublishedAt', 'desc')
+  ->find();
+}}}
+
+=== Joining Tables ===
+
+{{{
+#!php
+<?php
+// Test data
+$author1 = new Book();
+$author1->setName('Jane Austen');
+$author1->save();
+$book1 = new Book();
+$book1->setTitle('Pride And Prejudice');
+$book1->setAuthor($author1);
+$book1->save();
+
+// Add a join statement
+$book = PropelQuery::from('Book')
+  ->join('Book.Author')
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+// No need to tell the query which columns to use for the join, just the related Class
+// After all, the columns of the FK are already defined in the schema.
+
+// The default join() call results in a SQL INNER JOIN clause
+// For LEFT JOIN or RIGHT JOIN clauses, use leftJoin() or rightJoin() instead of join()
+$book = PropelQuery::from('Book')
+  ->leftJoin('Book.Author')
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+
+// You can chain joins if you want to make more complex queries
+$review = new Review();
+$review->setBook($book1);
+$review->setRecommended(true);
+$review->save();
+
+$author = PropelQuery::from('Author')
+  ->join('Author.Book')
+  ->join('Book.Review')
+  ->where('Review.Recommended = ?', true)
+  ->findOne();
+}}}
+
+=== Table Aliases ===
+
+{{{
+#!php
+<?php
+// PropelQuery::from() allows you to define table aliases
+$books = PropelQuery::from('Book b')
+  ->where('b.Title = ?', 'Pride And Prejudice')
+  ->find();
+
+// join(), leftJoin() and rightJoin() also allow table aliases
+$author = PropelQuery::from('Author a')
+  ->join('a.Book b')
+  ->join('b.Review r')
+  ->where('r.Recommended = ?', true)
+  ->findOne();
+
+// Table aliases can be used in all query methods (where, groupBy, orderBy, etc.)
+$books = PropelQuery::from('Book b')
+  ->where('b.Title = ?', 'Pride And Prejudice')
+  ->orderBy('b.Title')
+  ->find();
+
+// Table aliases are mostly useful to join the current table, 
+// or to handle multiple foreign keys on the same column
+$employee = PropelQuery::from('Employee e')
+  ->innerJoin('e.Supervisor s')
+  ->where('s.Name = ?', 'John')
+  ->find();
+}}}
+
+=== Specifying A Connection ===
+
+{{{
+#!php
+<?php
+// All the termination methods accept a PropelPDO connection instance
+// So you can specify which connection to use
+$con = Propel::getConnection('bookstore', Propel::CONNECTION_READ);
+$nbBooks = PropelQuery::from('Book')
+  ->findOne($con);
+}}}
+
+'''Tip''': In debug mode, the connection object provides a way to check the latest executed query, by calling `$con->getLastExecutedQuery()`. See the [Logging documentation] for more details.
+
+=== Counting Objects ===
+
+{{{
+#!php
+<?php
+// Counting all Books
+$nbBooks = PropelQuery::from('Book')
+  ->count($con);
+// This is much faster than counting the results of a find()
+// since count() doesn't populate Model objects
+}}}
+
+=== Deleting Objects ===
+
+{{{
+#!php
+<?php
+// Deleting all Books
+$nbDeletedBooks = PropelQuery::from('Book')
+  ->deleteAll($con);
+// Deleting a selection of Books
+$nbDeletedBooks = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'Pride And Prejudice')
+  ->delete($con); 
+}}}
+
+=== Updating Objects ===
+
+{{{
+#!php
+<?php
+// Test data
+$author1 = new Book();
+$author1->setName('Jane Austen');
+$author1->save();
+$author2 = new Book();
+$author2->setName('Leo Tolstoy');
+$author2->save();
+
+// update() issues an UPDATE ... SET query based on an associative array column => value
+$nbUpdatedRows = PropelQuery::from('Author')
+  ->where(Aauthor.Name = ?', 'Leo Tolstoy')
+  ->update(array('Name' => 'Leo Tolstoi'), $con);
+
+// update() returns the number of modified columns
+echo $nbUpdatedRows; // 1
+
+// Beware that update() updates all records found in a single row
+// And bypasses any behavior registered on the save() hooks
+// You can force a one-by-one update by setting the third parameter of update() to true
+$nbUpdatedRows = PropelQuery::from('Author')
+  ->where(Aauthor.Name = ?', 'Leo Tolstoy')
+  ->update(array('Name' => 'Leo Tolstoi'), $con, true);
+// Beware that it may take a long time
+}}}
+
+=== Using Magic Query Methods ===
+
+{{{
+#!php
+<?php
+// The query recognizes method calls composed of `findOneBy` or `findBy`, and a column name. 
+$book = PropelQuery::from('Book')->findOneByTitle('foo');
+// same as
+$book = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->findOne();
+
+$books = PropelQuery::from('Book')->findByTitle('War And Peace');
+// same as
+$books = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->find();
+
+// You can even combine several column conditions in a method name, if you separate them with 'And'
+$book = PropelQuery::from('Book')->findOneByTitleAndAuthorId('foo', 123);
+// same as
+$book = PropelQuery::from('Book')
+  ->where('Book.Title = ?', 'War And Peace')
+  ->where('Book.AuthorId = ?', 123)
+  ->findOne();
+}}}
+
+=== Using An Alternative Formatter ===
+
+By default, `find()` calls return an array of model objects. For performance reasons, you may want to get an array of arrays. Use the `setFormatter()` to specify a custom result formatter.
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->setFormatter('PropelArrayFormatter')
+  ->findOne();
+print_r($book);
+  => array('Id' => 123, 'Title' => 'War And Peace')
+}}}
+
+Propel provides three formatters:
+ * `PropelObjectsFormatter`: The default formatter, returning a model object for `findOne()`, and an array of model objects for `find()`
+ * `PropelArrayFormatter`: The array formatter, returning an associative array for `findOne()`, and an array of arrays for `find()`
+ * `PropelStatementFormatter`: The 'raw' formatter, returning a `PDOStatement` in any case.
+
+You can easily write your own formatter to format the resultas the way you want. A formatter is basically a subclass of `PropelFormatter` providing a `format()` and a `formatOne()` method expecting a PDO statement.
+
+=== More Complex Queries ===
+
+The Propel Query objects have even more methods that allow you to write queries of any level of complexity. Check the API documentation for the `ModelCriteria` class to see all methods.
+
+{{{
+#!php
+<?php
+// Query Filters (return a query object)
+distinct()
+limit($limit)
+offset($offset)
+where($clause, $value)
+where($conditions, $operator)
+whereColumn($column, $value, $comparison)
+orWhere($conditions, $operator)
+condition($name, $clause, $value)
+combine($conditions, $operator = 'and', $name)
+having($clause, $value)
+having($conditions, $operator)
+orderBy($columnName, $order = 'asc')
+groupBy($columnName)
+join($class, $$joinType = 'inner join')
+
+// termination methods (return model objects)
+count($con = null)
+find($con = null)
+findOne($con = null)
+findBy($columnName, $value, $con = null)
+findOneBy($columnName, $value, $con = null)
+findPk($pk, $con = null)
+delete($con = null)
+update($values, $con = null, $forceIndividualSaves = false)
+}}}
+
+== Writing Your Own business Logic Into A Query ==
+
+`PropelQuery` is actually a factory that creates query objects based on a model. Propel generates one query class for each of your model, in the same directory as the object model class.
+
+{{{
+#!php
+<?php
+// PropelQuery is a Factory
+$q = PropelQuery::from('Book');
+// is equivalent to 
+$s = new BookQuery();
+}}}
+
+You can add custom methods to the query objects to make your queries smarter, more reusable, and more readable. Don't forget to return the current object (`$this`) in the new methods.
+
+{{{
+#!php
+<?php
+class BookQuery extends BaseBookQuery
+{
+	public function recent($nbDays = 5)
+	{
+		return $this->whereColumn('PublishedAt', time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_THAN);
+	}
+	
+	public function mostRecentFirst()
+	{
+		return $this->orderBy($this->getModelAliasOrName() . '.PublishedAt', 'desc');
+	}
+}
+
+// You can now use your custom query and its methods together with the usual ones
+$books = PropelQuery::from('Book b')
+  ->recent()
+  ->mostRecentFirst()
+  ->find();
+}}}
+
+`getModelAliasOrName()` returns the alias used by the main model ('b' in the previous example), so your custom methods can also work when the user defines a table alias. `whereColumn($column, $value, $comparison)` is a shortcut to apply a condition on the model table, based on a simple column name (with no table prefix) so you don't have to worry about the alias. 
+
+The query objects also allow you to add code to be executed before each query, by implementing one of the following methods: `preSelect()`, `preUpdate()`, and `preDelete()`. It makes the implementation of a 'soft delete' behavior very straightforward:
+
+{{{
+#!php
+<?php
+class BookQuery extends BaseBookQuery
+{
+	public function preSelect(PropelPDO $con)
+	{
+	  // filter out the rows with a deletion date
+		$this->whereColumn('DeletedAt', null);
+	}
+	
+	public function preDelete($con)
+	{
+	  // mark the records as deleted instead of deleting them 
+		return $this->update(array('PublishedAt' => time()));
+	}
+}
+}}}
+
+'''Tip''': You can create several custom queries for a given model, in order to separate the methods into logical classes.
+
+{{{
+#!php
+<?php
+class frontendBookQuery extends BookQuery
+{
+	public function preSelect()
+	{
+		return $this->where($this->getModelAliasOrName() . '.PublishedAt IS NOT NULL');
+	}
+}
+// Use 'frontendBook' instead of 'Book' in the frontend to retrieve only published articles
+$books = DbFinder::from('frontendBook')->find();
+}}}
