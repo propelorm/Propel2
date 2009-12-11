@@ -56,9 +56,8 @@ class SortableBehavior extends Behavior
 			));
 		}
 		if ($this->getParameter('add_index') == 'true') {
-			$index = new Index($this->getColumnForParameter('rank_column'));
-			$index->setName($this->getParameter('rank_index'));
-			$index->addColumn($this->getTable()->getColumn($this->getParameter('rank_column')));
+			$index = new Index($this->getParameter('rank_index'));
+			$index->addColumn($this->getColumnForParameter('rank_column'));
 			$this->getTable()->addIndex($index);
 		}
 	}

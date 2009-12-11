@@ -47,6 +47,11 @@ class SortableBehaviorPeerBuilderModifier
 	{
 		return strtolower($this->behavior->getColumnForParameter($name)->getName());
 	}
+	
+		protected function getColumnConstant($name)
+	{
+		return strtoupper($this->behavior->getColumnForParameter($name)->getName());
+	}
 
 	protected function getColumnPhpName($name)
 	{
@@ -60,6 +65,18 @@ class SortableBehaviorPeerBuilderModifier
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 		$this->rankColumn = $builder->getColumnConstant($this->behavior->getColumnForParameter('rank_column'), $this->table->getPhpName() . 'Peer');
 
+	}
+
+	public function staticAttributes($builder)
+	{
+		$tableName = $this->table->getName();
+
+		return "
+/**
+ * rank column
+ */
+const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('rank_column') . "';
+";
 	}
 
 	/**

@@ -58,8 +58,6 @@ class SortableBehaviorObjectBuilderModifier
 		$this->builder = $builder;
 		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
-		$this->rankColumn = $builder->getColumnConstant($this->behavior->getColumnForParameter('rank_column'), $this->table->getPhpName() . 'Peer');
-
 	}
 	
 	/**
@@ -91,8 +89,8 @@ class SortableBehaviorObjectBuilderModifier
 	{
 		$this->setBuilder($builder);
 		return "
-if (!\$this->isColumnModified({$this->rankColumn})) {
-	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition() + 1);
+if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
+	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition(\$con) + 1);
 }
 ";
 	}
@@ -107,16 +105,14 @@ if (!\$this->isColumnModified({$this->rankColumn})) {
 	{
 		$this->setBuilder($builder);
 		return "
-\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
-\$query = sprintf('UPDATE %s SET %s = %s - 1 WHERE %s > ?',
-	'{$this->table->getName()}',
-	'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-	'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-	'{$this->behavior->getColumnForParameter('rank_column')->getName()}');
-\$position = \$this->{$this->getColumnGetter()}();
-\$stmt = \$con->prepare(\$query);
-\$stmt->bindParam(1, \$position);
-\$stmt->execute();
+\$whereCriteria = new Criteria({$this->peerClassname}::DATABASE_NAME);
+\$whereCriteria->add({$this->peerClassname}::RANK_COL, \$this->{$this->getColumnGetter()}(), Criteria::GREATER_THAN);
+
+\$valuesCriteria = new Criteria({$this->peerClassname}::DATABASE_NAME);
+\$valuesCriteria->add({$this->peerClassname}::RANK_COL, array('raw' => {$this->peerClassname}::RANK_COL . ' - ?', 'value' => 1), Criteria::CUSTOM_EQUAL);
+
+{$builder->getPeerBuilder()->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+{$this->peerClassname}::clearInstancePool();
 ";
 	}
 
@@ -164,7 +160,7 @@ if (!\$this->isColumnModified({$this->rankColumn})) {
  */
 public function getRank()
 {
-	return \$this->{$this->getColumnGetter()}();
+	return \$this->{$this->getColumnAttribute('rank_column')};
 }
 
 /**
