@@ -1,7 +1,7 @@
 <?php
 
 /*
- *	$Id$
+ *  $Id: NestedSetBehaviorObjectBuilderModifier.php 1347 2009-12-03 21:06:36Z francois $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,44 +19,49 @@
  * and is licensed under the LGPL. For more information please see
  * <http://propel.phpdb.org>.
  */
-
+ 
+ 
 /**
- * Gives a model class the ability to be ordered
- * Uses one additional column storing the rank
+ * Behavior to adds nested set tree structure columns and abilities
  *
- * @author      Massimiliano Arione
- * @version     $Revision$
- * @package     propel.engine.behavior
+ * @author     François Zaninotto
+ * @author     heltem <heltem@o2php.com>
+ * @package    propel.generator.behavior.nestedset
  */
-class SortableBehavior extends Behavior
+class SortableBehaviorObjectBuilderModifier
 {
-	// default parameters value
-	protected $parameters = array(
-		'add_columns' => 'true',
-		'rank_column' => 'rank',
-		'add_index'   => 'false',
-		'rank_index'  => 'rank_index',
-	);
-
-	/**
-	 * Add the rank_column to the current table
-	 */
-	public function modifyTable()
+	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
+	
+	public function __construct($behavior)
 	{
-		if ($this->getParameter('add_columns') == 'true') {
-			$this->getTable()->addColumn(array(
-				'name' => $this->getParameter('rank_column'),
-				'type' => 'INTEGER'
-			));
-		}
-		if ($this->getParameter('add_index') == 'true') {
-			$index = new Index($this->getColumnForParameter('rank_column'));
-			$index->setName($this->getParameter('rank_index'));
-			$index->addColumn($this->getTable()->getColumn($this->getParameter('rank_column')));
-			$this->getTable()->addIndex($index);
-		}
+		$this->behavior = $behavior;
+		$this->table = $behavior->getTable();
+	}
+	
+	protected function getParameter($key)
+	{
+		return $this->behavior->getParameter($key);
+	}
+	
+	protected function getColumnAttribute($name)
+	{
+		return strtolower($this->behavior->getColumnForParameter($name)->getName());
 	}
 
+	protected function getColumnPhpName($name)
+	{
+		return $this->behavior->getColumnForParameter($name)->getPhpName();
+	}
+	
+	protected function setBuilder($builder)
+	{
+		$this->builder = $builder;
+		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
+		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
+		$this->rankColumn = $builder->getColumnConstant($this->behavior->getColumnForParameter('rank_column'), $this->table->getPhpName() . 'Peer');
+
+	}
+	
 	/**
 	 * Get the getter of the column of the behavior
 	 *
@@ -64,7 +69,7 @@ class SortableBehavior extends Behavior
 	 */
 	protected function getColumnGetter()
 	{
-		return 'get' . $this->getColumnForParameter('rank_column')->getPhpName();
+		return 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
 	}
 
 	/**
@@ -74,7 +79,7 @@ class SortableBehavior extends Behavior
 	 */
 	protected function getColumnSetter()
 	{
-		return 'set' . $this->getColumnForParameter('rank_column')->getPhpName();
+		return 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
 	}
 
 	/**
@@ -84,12 +89,12 @@ class SortableBehavior extends Behavior
 	 */
 	public function preInsert($builder)
 	{
-		$this->builder = $builder;
-		return <<<EOT
-if (!\$this->isColumnModified({$this->getRankColumnConstant()})) {
-	\$this->{$this->getColumnSetter()}({$this->getTable()->getPhpName()}Peer::getMaxPosition() + 1);
+		$this->setBuilder($builder);
+		return "
+if (!\$this->isColumnModified({$this->rankColumn})) {
+	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition() + 1);
 }
-EOT;
+";
 	}
 	
 
@@ -98,179 +103,31 @@ EOT;
 	 *
 	 * @return string The code to put at the hook
 	 */
-	public function preDelete()
+	public function preDelete($builder)
 	{
-		return <<<EOT
-\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
+		$this->setBuilder($builder);
+		return "
+\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 \$query = sprintf('UPDATE %s SET %s = %s - 1 WHERE %s > ?',
-	'{$this->getTable()->getName()}',
-	'{$this->getColumnForParameter('rank_column')->getName()}',
-	'{$this->getColumnForParameter('rank_column')->getName()}',
-	'{$this->getColumnForParameter('rank_column')->getName()}');
+	'{$this->table->getName()}',
+	'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
+	'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
+	'{$this->behavior->getColumnForParameter('rank_column')->getName()}');
 \$position = \$this->{$this->getColumnGetter()}();
 \$stmt = \$con->prepare(\$query);
 \$stmt->bindParam(1, \$position);
 \$stmt->execute();
-EOT;
-	}
-	
-	protected function getRankColumnConstant()
-	{
-		return $this->builder->getColumnConstant($this->getColumnForParameter('rank_column'), $this->getTable()->getPhpName() . 'Peer');
-	}
-	/**
-	 * Static methods
-	 *
-	 * @return string
-	 */
-	public function staticMethods($builder)
-	{
-		$this->builder = $builder;
-		$script = '';
-		$this->addGetMaxPosition($script);
-		$this->addRetrieveByPosition($script);
-		$this->addDoSort($script);
-		$this->addDoSelectOrderByPosition($script);
-		
-		return $script;
-	}
-	
-	protected function addGetMaxPosition(&$script)
-	{
-		$script .= "
-/**
- * Get the highest position
- * @param	PropelPDO optional connection
- * @return integer	 highest position
- */
-public static function getMaxPosition(PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
-	}
-	// shift the objects with a position lower than the one of object
-	\$sql = sprintf('SELECT MAX(%s) FROM %s',
-		'{$this->getColumnForParameter('rank_column')->getPhpName()}',
-		'{$this->getTable()->getName()}');
-	\$stmt = \$con->prepare(\$sql);
-	\$stmt->execute();
-
-	return \$stmt->fetchColumn();
-}
-";
-	}
-	
-	protected function addRetrieveByPosition(&$script)
-	{
-		$script .= "
-/**
- * Get an item from the list based on its position
- *
- * @param	integer	 \$position position
- * @param	PropelPDO \$con			optional connection
- * @return {$this->getTable()->getPhpName()}
- */
-public static function retrieveByPosition(\$position, PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
-	}
-
-	\$c = new Criteria;
-	\$c->add({$this->getRankColumnConstant()}, \$position);
-
-	return self::doSelectOne(\$c, \$con);
-}
 ";
 	}
 
-	protected function addDoSort(&$script)
-	{
-		$script .= "
-/**
- * Reorder a set of sortable objects based on a list of id/position
- * Beware that there is no check made on the positions passed
- * So incoherent positions will result in an incoherent list
- *
- * @param	array			\$order	id/position pairs
- * @param	PropelPDO	\$con		optional connection
- * @return boolean					true if the reordering took place, false if a database problem prevented it
- */
-public static function doSort(array \$order, PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
-	}
-
-	try {
-		\$con->beginTransaction();
-
-		foreach (\$order as \$id => \$rank) {
-			\$c = new Criteria;
-			\$c->add({$this->getRankColumnConstant()}, \$id);
-			\${$this->getTable()->getPhpName()} = self::doSelectOne(\$c);
-
-			if (\${$this->getTable()->getPhpName()} && \${$this->getTable()->getPhpName()}->getPosition() != \$rank) {
-				\${$this->getTable()->getPhpName()}->setPosition(\$rank);
-				\${$this->getTable()->getPhpName()}->save();
-			}
-		}
-
-		\$con->commit();
-
-		return true;
-	} catch (Exception \$e) {
-		\$con->rollback();
-
-		return false;
-	}
-}
-";
-	}
-	
-		protected function addDoSelectOrderByPosition(&$script)
-	{
-		$script .= "
-/**
- * Return an array of sortable objects ordered by position
- *
- * @param	string		\$order			sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
- * @param	Criteria	\$criteria	optional criteria object
- * @param	PropelPDO \$con				optional connection
- * @return array								list of sortable objects
- */
-public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria \$criteria = null, PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
-	}
-
-	if (\$criteria === null) {
-		\$criteria = new Criteria();
-	} elseif (\$criteria instanceof Criteria) {
-		\$criteria = clone \$criteria;
-	}
-
-	\$criteria->clearOrderByColumns();
-
-	if (\$order == Criteria::ASC) {
-		\$criteria->addAscendingOrderByColumn({$this->getRankColumnConstant()});
-	} else {
-		\$criteria->addDescendingOrderByColumn({$this->getRankColumnConstant()});
-	}
-
-	return self::doSelect(\$criteria, \$con);
-}
-";
-	}
-		
 	/**
 	 * Class methods
 	 *
 	 * @return string
 	 */
-	public function objectMethods()
+	public function objectMethods($builder)
 	{
+		$this->setBuilder($builder);
 		$script = '';
 		if ($this->getParameter('rank_column') != 'rank') {
 			$this->addRankAccessors($script);
@@ -314,7 +171,7 @@ public function getRank()
  * Wrap the setter for position value
  *
  * @param   int
- * @return  {$this->getTable()->getPhpName()}
+ * @return  {$this->objectClassname}
  */
 public function setRank(\$v)
 {
@@ -347,7 +204,7 @@ public function isFirst()
  */
 public function isLast()
 {
-	return \$this->{$this->getColumnGetter()}() == {$this->getTable()->getPhpName()}Peer::getMaxPosition();
+	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxPosition();
 }
 ";
 	}
@@ -358,11 +215,11 @@ public function isLast()
 /**
  * Get the next item in the list, i.e. the one for which position is immediately higher
  *
- * @return {$this->getTable()->getPhpName()}
+ * @return {$this->objectClassname}
  */
 public function getNext()
 {
-	return {$this->getTable()->getPhpName()}Peer::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1);
+	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1);
 }
 ";
 	}
@@ -373,11 +230,11 @@ public function getNext()
 /**
  * Get the previous item in the list, i.e. the one for which position is immediately lower
  *
- * @return {$this->getTable()->getPhpName()}
+ * @return {$this->objectClassname}
  */
 public function getPrevious()
 {
-	return {$this->getTable()->getPhpName()}Peer::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1);
+	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1);
 }
 ";
 	}
@@ -396,16 +253,16 @@ public function getPrevious()
 public function insertAtPosition(\$position, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 	\$con->beginTransaction();
 	try {
 		// shift the objects with a position higher than the given position
 		\$query = sprintf('UPDATE %s SET %s = %s + 1 WHERE %s >= ?',
-			'{$this->getTable()->getName()}',
-			'{$this->getColumnForParameter('rank_column')->getName()}',
-			'{$this->getColumnForParameter('rank_column')->getName()}',
-			'{$this->getColumnForParameter('rank_column')->getName()}');
+			'{$this->table->getName()}',
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}');
 		\$stmt = \$con->prepare(\$query);
 		\$stmt->bindParam(1, \$position);
 		\$stmt->execute();
@@ -434,7 +291,7 @@ public function insertAtPosition(\$position, PropelPDO \$con = null)
  */
 public function insertAtBottom(PropelPDO \$con = null)
 {
-	\$this->insertAtPosition({$this->getTable()->getPhpName()}Peer::getMaxPosition(), \$con);
+	\$this->insertAtPosition({$this->peerClassname}::getMaxPosition(), \$con);
 }
 ";
 	}
@@ -469,7 +326,7 @@ public function insertAtTop(PropelPDO \$con = null)
 public function moveToPosition(\$newPosition, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 
 	\$oldPosition = \$this->{$this->getColumnGetter()}();
@@ -481,16 +338,16 @@ public function moveToPosition(\$newPosition, PropelPDO \$con = null)
 		\$con->beginTransaction();
 
 		// move the object away
-		\$this->{$this->getColumnSetter()}({$this->getTable()->getPhpName()}Peer::getMaxPosition() + 1);
+		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition() + 1);
 		\$this->save();
 
 		// shift the objects between the old and the new position
 		\$query = sprintf('UPDATE %s SET %s = %s %s 1 WHERE %s BETWEEN ? AND ?',
-			'{$this->getTable()->getName()}',
-			'{$this->getColumnForParameter('rank_column')->getName()}',
-			'{$this->getColumnForParameter('rank_column')->getName()}',
+			'{$this->table->getName()}',
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
 			(\$oldPosition < \$newPosition) ? '-' : '+',
-			'{$this->getColumnForParameter('rank_column')->getName()}'
+			'{$this->behavior->getColumnForParameter('rank_column')->getName()}'
 		);
 		\$stmt = \$con->prepare(\$query);
 		\$stmt->bindParam(1, min(\$oldPosition, \$newPosition));
@@ -517,25 +374,25 @@ public function moveToPosition(\$newPosition, PropelPDO \$con = null)
 /**
  * Exchange the position of the object with the one passed as argument
  *
- * @param	{$this->getTable()->getPhpName()} \${$this->getTable()->getPhpName()}
+ * @param	{$this->objectClassname} \$object
  * @param	PropelPDO \$con optional connection
  * @return array					the swapped ranks
  * @throws Exception if the database cannot execute the two updates
  */
-public function swapWith({$this->getTable()->getPhpName()} \${$this->getTable()->getPhpName()}, PropelPDO \$con = null)
+public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 
 	try {
 		\$con->beginTransaction();
 		\$oldRank = \$this->{$this->getColumnGetter()}();
-		\$newRank = \${$this->getTable()->getPhpName()}->{$this->getColumnGetter()}();
+		\$newRank = \$object->{$this->getColumnGetter()}();
 		\$this->{$this->getColumnSetter()}(\$newRank);
 		\$this->save();
-		\${$this->getTable()->getPhpName()}{$this->getColumnSetter()}($oldRank);
-		\${$this->getTable()->getPhpName()}->save();
+		\$object{$this->getColumnSetter()}($oldRank);
+		\$object->save();
 		\$con->commit();
 
 		return array(\$oldRank, \$newRank);
@@ -602,7 +459,7 @@ public function moveToTop()
  */
 public function moveToBottom()
 {
-	return \$this->moveToPosition({$this->getTable()->getPhpName()}Peer::getMaxPosition());
+	return \$this->moveToPosition({$this->peerClassname}::getMaxPosition());
 }
 ";
 	}
