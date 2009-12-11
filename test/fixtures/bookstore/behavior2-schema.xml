@@ -48,5 +48,21 @@
 			<parameter name="method_proxies" value="true" />
 		</behavior>
 	</table>
-	
+
+	<table name="table11">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="sortable" />
+	</table>
+
+	<table name="table12">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<column name="position" type="INTEGER" />
+		<behavior name="sortable">
+		<parameter name="add_columns" value="false" />
+		<parameter name="rank_column" value="position" />
+		</behavior>
+	</table>
+
 </database>
