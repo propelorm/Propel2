@@ -21,11 +21,12 @@
  */
 
 /**
- * Adds a rank column to sort rows
+ * Gives a model class the ability to be ordered
+ * Uses one additional column storing the rank
  *
- * @author		 Massimiliano Arione
- * @version		$Revision$
- * @package		propel.engine.behavior
+ * @author      Massimiliano Arione
+ * @version     $Revision$
+ * @package     propel.engine.behavior
  */
 class SortableBehavior extends Behavior
 {
@@ -33,6 +34,8 @@ class SortableBehavior extends Behavior
 	protected $parameters = array(
 		'add_columns' => 'true',
 		'rank_column' => 'rank',
+		'add_index'   => 'false',
+		'rank_index'  => 'rank_index',
 	);
 
 	/**
@@ -45,9 +48,10 @@ class SortableBehavior extends Behavior
 				'name' => $this->getParameter('rank_column'),
 				'type' => 'INTEGER'
 			));
-			// add an index to column
+		}
+		if ($this->getParameter('add_index') == 'true') {
 			$index = new Index($this->getColumnForParameter('rank_column'));
-			$index->setName($this->getTable()->getName() . '_rank');
+			$index->setName($this->getParameter('rank_index'));
 			$index->addColumn($this->getTable()->getColumn($this->getParameter('rank_column')));
 			$this->getTable()->addIndex($index);
 		}
@@ -74,58 +78,20 @@ class SortableBehavior extends Behavior
 	}
 
 	/**
-	 * Get the wraps for getter/setter, if the column has not the default name
-	 *
-	 * @return string
-	 */
-	protected function getGetterSetterWrap()
-	{
-    if ($this->getParameter('rank_column') == 'rank') {
-    	$script = '';
-    } else {
-      $script = <<<EOT
-
-/**
- * Wrap the getter for position value
- *
- * @return  int
- */
-public function getRank()
-{
-	return \$this->{$this->getColumnGetter()}();
-}
-
-/**
- * Wrap the setter for position value
- *
- * @param   int
- * @return  {$this->getTable()->getPhpName()}
- */
-public function setRank(\$v)
-{
-	return \$this->{$this->getColumnSetter()}(\$v);
-}
-
-EOT;
-    }
-
-    return $script;
-	}
-
-	/**
 	 * Add code in ObjectBuilder::preSave
 	 *
 	 * @return string The code to put at the hook
 	 */
 	public function preInsert($builder)
 	{
-    $const = $builder->getColumnConstant($this->getColumnForParameter('rank_column'), $this->getTable()->getPhpName() . 'Peer');
+		$this->builder = $builder;
 		return <<<EOT
-if (!\$this->isColumnModified($const)) {
+if (!\$this->isColumnModified({$this->getRankColumnConstant()})) {
 	\$this->{$this->getColumnSetter()}({$this->getTable()->getPhpName()}Peer::getMaxPosition() + 1);
 }
 EOT;
 	}
+	
 
 	/**
 	 * Add code in ObjectBuilder::preDelete
@@ -147,7 +113,11 @@ EOT;
 \$stmt->execute();
 EOT;
 	}
-
+	
+	protected function getRankColumnConstant()
+	{
+		return $this->builder->getColumnConstant($this->getColumnForParameter('rank_column'), $this->getTable()->getPhpName() . 'Peer');
+	}
 	/**
 	 * Static methods
 	 *
@@ -155,9 +125,19 @@ EOT;
 	 */
 	public function staticMethods($builder)
 	{
-    $const = $builder->getColumnConstant($this->getColumnForParameter('rank_column'), $this->getTable()->getPhpName() . 'Peer');
-		return <<<EOT
-
+		$this->builder = $builder;
+		$script = '';
+		$this->addGetMaxPosition($script);
+		$this->addRetrieveByPosition($script);
+		$this->addDoSort($script);
+		$this->addDoSelectOrderByPosition($script);
+		
+		return $script;
+	}
+	
+	protected function addGetMaxPosition(&$script)
+	{
+		$script .= "
 /**
  * Get the highest position
  * @param	PropelPDO optional connection
@@ -177,7 +157,12 @@ public static function getMaxPosition(PropelPDO \$con = null)
 
 	return \$stmt->fetchColumn();
 }
-
+";
+	}
+	
+	protected function addRetrieveByPosition(&$script)
+	{
+		$script .= "
 /**
  * Get an item from the list based on its position
  *
@@ -192,13 +177,18 @@ public static function retrieveByPosition(\$position, PropelPDO \$con = null)
 	}
 
 	\$c = new Criteria;
-	\$c->add($const, \$position);
+	\$c->add({$this->getRankColumnConstant()}, \$position);
 
 	return self::doSelectOne(\$c, \$con);
 }
+";
+	}
 
+	protected function addDoSort(&$script)
+	{
+		$script .= "
 /**
- * reorder a set of sortable objects based on a list of id/position
+ * Reorder a set of sortable objects based on a list of id/position
  * Beware that there is no check made on the positions passed
  * So incoherent positions will result in an incoherent list
  *
@@ -217,7 +207,7 @@ public static function doSort(array \$order, PropelPDO \$con = null)
 
 		foreach (\$order as \$id => \$rank) {
 			\$c = new Criteria;
-			\$c->add($const, \$id);
+			\$c->add({$this->getRankColumnConstant()}, \$id);
 			\${$this->getTable()->getPhpName()} = self::doSelectOne(\$c);
 
 			if (\${$this->getTable()->getPhpName()} && \${$this->getTable()->getPhpName()}->getPosition() != \$rank) {
@@ -235,7 +225,12 @@ public static function doSort(array \$order, PropelPDO \$con = null)
 		return false;
 	}
 }
-
+";
+	}
+	
+		protected function addDoSelectOrderByPosition(&$script)
+	{
+		$script .= "
 /**
  * Return an array of sortable objects ordered by position
  *
@@ -259,17 +254,16 @@ public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria
 	\$criteria->clearOrderByColumns();
 
 	if (\$order == Criteria::ASC) {
-		\$criteria->addAscendingOrderByColumn($const);
+		\$criteria->addAscendingOrderByColumn({$this->getRankColumnConstant()});
 	} else {
-		\$criteria->addDescendingOrderByColumn($const);
+		\$criteria->addDescendingOrderByColumn({$this->getRankColumnConstant()});
 	}
 
 	return self::doSelect(\$criteria, \$con);
 }
-
-EOT;
+";
 	}
-
+		
 	/**
 	 * Class methods
 	 *
@@ -277,8 +271,61 @@ EOT;
 	 */
 	public function objectMethods()
 	{
-		return $this->getGetterSetterWrap() . <<<EOT
+		$script = '';
+		if ($this->getParameter('rank_column') != 'rank') {
+			$this->addRankAccessors($script);
+		}
+		$this->addIsFirst($script);
+		$this->addIsLast($script);
+		$this->addGetNext($script);
+		$this->addGetPrevious($script);
+		$this->addInsertAtPosition($script);
+		$this->addInsertAtBottom($script);
+		$this->addInsertAtTop($script);
+		$this->addMoveToPosition($script);
+		$this->addSwapWith($script);
+		$this->addMoveUp($script);
+		$this->addMoveDown($script);
+		$this->addMoveToTop($script);
+		$this->addMoveToBottom($script);
+		
+		return $script;
+	}
 
+	/**
+	 * Get the wraps for getter/setter, if the column has not the default name
+	 *
+	 * @return string
+	 */
+	protected function addRankAccessors(&$script)
+	{
+    $script .= "
+/**
+ * Wrap the getter for position value
+ *
+ * @return  int
+ */
+public function getRank()
+{
+	return \$this->{$this->getColumnGetter()}();
+}
+
+/**
+ * Wrap the setter for position value
+ *
+ * @param   int
+ * @return  {$this->getTable()->getPhpName()}
+ */
+public function setRank(\$v)
+{
+	return \$this->{$this->getColumnSetter()}(\$v);
+}
+";
+	}
+
+	protected function addIsFirst(&$script)
+	{
+		$script .= "
 /**
  * Check if the object is first in the list, i.e. if it has 1 for position
  *
@@ -288,7 +335,12 @@ public function isFirst()
 {
 	return \$this->{$this->getColumnGetter()}() == 1;
 }
+";
+	}
 
+	protected function addIsLast(&$script)
+	{
+		$script .= "
 /**
  * Check if the object is last in the list, i.e. if its position is the highest position
  * @return boolean
@@ -297,9 +349,14 @@ public function isLast()
 {
 	return \$this->{$this->getColumnGetter()}() == {$this->getTable()->getPhpName()}Peer::getMaxPosition();
 }
+";
+	}
 
+	protected function addGetNext(&$script)
+	{
+		$script .= "
 /**
- * get the next item in the list, i.e. the one for which position is immediately higher
+ * Get the next item in the list, i.e. the one for which position is immediately higher
  *
  * @return {$this->getTable()->getPhpName()}
  */
@@ -307,9 +364,14 @@ public function getNext()
 {
 	return {$this->getTable()->getPhpName()}Peer::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1);
 }
+";
+	}
 
+	protected function addGetPrevious(&$script)
+	{
+		$script .= "
 /**
- * get the previous item in the list, i.e. the one for which position is immediately lower
+ * Get the previous item in the list, i.e. the one for which position is immediately lower
  *
  * @return {$this->getTable()->getPhpName()}
  */
@@ -317,7 +379,12 @@ public function getPrevious()
 {
 	return {$this->getTable()->getPhpName()}Peer::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1);
 }
+";
+	}
 
+	protected function addInsertAtPosition(&$script)
+	{
+		$script .= "
 /**
  * insert at specified position
  *
@@ -331,8 +398,8 @@ public function insertAtPosition(\$position, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
 	}
+	\$con->beginTransaction();
 	try {
-		\$con->beginTransaction();
 		// shift the objects with a position higher than the given position
 		\$query = sprintf('UPDATE %s SET %s = %s + 1 WHERE %s >= ?',
 			'{$this->getTable()->getName()}',
@@ -354,7 +421,12 @@ public function insertAtPosition(\$position, PropelPDO \$con = null)
 		\throw $e;
 	}
 }
+";
+	}
 
+	protected function addInsertAtBottom(&$script)
+	{
+		$script .= "
 /**
  * insert in the last position
  *
@@ -364,7 +436,12 @@ public function insertAtBottom(PropelPDO \$con = null)
 {
 	\$this->insertAtPosition({$this->getTable()->getPhpName()}Peer::getMaxPosition(), \$con);
 }
+";
+	}
 
+	protected function addInsertAtTop(&$script)
+	{
+		$script .= "
 /**
  * insert in the first position
  *
@@ -374,7 +451,12 @@ public function insertAtTop(PropelPDO \$con = null)
 {
 	\$this->insertAtPosition(1, \$con);
 }
+";
+	}
 
+	protected function addMoveToPosition(&$script)
+	{
+		$script .= "
 /**
  * Move the object to a new position, and shifts the position
  * Of the objects inbetween the old and new position accordingly
@@ -426,7 +508,12 @@ public function moveToPosition(\$newPosition, PropelPDO \$con = null)
 		throw \$e;
 	}
 }
+";
+	}
 
+	protected function addSwapWith(&$script)
+	{
+		$script .= "
 /**
  * Exchange the position of the object with the one passed as argument
  *
@@ -457,7 +544,12 @@ public function swapWith({$this->getTable()->getPhpName()} \${$this->getTable()-
 		throw \$e;
 	}
 }
+";
+	}
 
+	protected function addMoveUp(&$script)
+	{
+		$script .= "
 /**
  * Move the object higher in the list, i.e. exchanges its position with the one of the previous object
  *
@@ -467,7 +559,12 @@ public function moveUp()
 {
 	return \$this->isFirst() ? false : \$this->swapWith(\$this->getPrevious());
 }
+";
+	}
 
+	protected function addMoveDown(&$script)
+	{
+		$script .= "
 /**
  * Move the object higher in the list, i.e. exchanges its position with the one of the next object
  *
@@ -477,7 +574,12 @@ public function moveDown()
 {
 	return \$this->isLast() ? false : \$this->swapWith(\$this->getNext());
 }
+";
+	}
 
+	protected function addMoveToTop(&$script)
+	{
+		$script .= "
 /**
  * Move the object to the top of the list
  *
@@ -487,7 +589,12 @@ public function moveToTop()
 {
 	return \$this->moveToPosition(1);
 }
+";
+	}
 
+	protected function addMoveToBottom(&$script)
+	{
+		$script .= "
 /**
  * Move the object to the bottom of the list
  *
@@ -497,9 +604,6 @@ public function moveToBottom()
 {
 	return \$this->moveToPosition({$this->getTable()->getPhpName()}Peer::getMaxPosition());
 }
-
-
-EOT;
+";
 	}
-
 }
