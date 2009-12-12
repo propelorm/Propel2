@@ -234,18 +234,23 @@ public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria
  * Adds \$delta to all Rank values that are >= \$rank.
  * '\$delta' can also be negative.
  *
- * @param      int \$delta		Value to be shifted by, can be negative
- * @param      int \$rank		First node to be shifted
- * @param      PropelPDO \$con		Connection to use.
+ * @param      int \$delta Value to be shifted by, can be negative
+ * @param      int \$first First node to be shifted
+ * @param      int \$last  Last node to be shifted
+ * @param      PropelPDO \$con Connection to use.
  */
-public static function shiftRank(\$delta, \$rank, PropelPDO \$con = null)
+public static function shiftRank(\$delta, \$first, \$last = null, PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
 	}
 
 	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$whereCriteria->add($peerClassname::RANK_COL, \$rank, Criteria::GREATER_EQUAL);
+	\$criterion = \$whereCriteria->getNewCriterion($peerClassname::RANK_COL, \$first, Criteria::GREATER_EQUAL);
+	if (null !== \$last) {
+		\$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassname::RANK_COL, \$last, Criteria::LESS_EQUAL));
+	}
+	\$whereCriteria->add(\$criterion);
 
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add($peerClassname::RANK_COL, array('raw' => $peerClassname::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);

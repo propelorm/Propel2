@@ -105,7 +105,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 	{
 		$this->setBuilder($builder);
 		return "
-{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, \$con);
+{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, \$con);
 {$this->peerClassname}::clearInstancePool();
 ";
 	}
@@ -129,7 +129,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 		$this->addInsertAtRank($script);
 		$this->addInsertAtBottom($script);
 		$this->addInsertAtTop($script);
-		$this->addMoveToPosition($script);
+		$this->addMoveToRank($script);
 		$this->addSwapWith($script);
 		$this->addMoveUp($script);
 		$this->addMoveDown($script);
@@ -148,7 +148,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 	{
     $script .= "
 /**
- * Wrap the getter for position value
+ * Wrap the getter for rank value
  *
  * @return    int
  */
@@ -158,7 +158,7 @@ public function getRank()
 }
 
 /**
- * Wrap the setter for position value
+ * Wrap the setter for rank value
  *
  * @param     int
  * @return    {$this->objectClassname}
@@ -174,7 +174,7 @@ public function setRank(\$v)
 	{
 		$script .= "
 /**
- * Check if the object is first in the list, i.e. if it has 1 for position
+ * Check if the object is first in the list, i.e. if it has 1 for rank
  *
  * @return    boolean
  */
@@ -189,12 +189,15 @@ public function isFirst()
 	{
 		$script .= "
 /**
- * Check if the object is last in the list, i.e. if its position is the highest position
+ * Check if the object is last in the list, i.e. if its rank is the highest rank
+ *
+ * @param     PropelPDO  \$con      optional connection
+ *
  * @return    boolean
  */
-public function isLast()
+public function isLast(PropelPDO \$con = null)
 {
-	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxPosition();
+	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxPosition(\$con);
 }
 ";
 	}
@@ -203,13 +206,15 @@ public function isLast()
 	{
 		$script .= "
 /**
- * Get the next item in the list, i.e. the one for which position is immediately higher
+ * Get the next item in the list, i.e. the one for which rank is immediately higher
+ *
+ * @param     PropelPDO  \$con      optional connection
  *
  * @return    {$this->objectClassname}
  */
-public function getNext()
+public function getNext(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1);
+	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1, \$con);
 }
 ";
 	}
@@ -218,13 +223,15 @@ public function getNext()
 	{
 		$script .= "
 /**
- * Get the previous item in the list, i.e. the one for which position is immediately lower
+ * Get the previous item in the list, i.e. the one for which rank is immediately lower
+ *
+ * @param     PropelPDO  \$con      optional connection
  *
  * @return    {$this->objectClassname}
  */
-public function getPrevious()
+public function getPrevious(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1);
+	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1, \$con);
 }
 ";
 	}
@@ -238,21 +245,23 @@ public function getPrevious()
  *
  * @param     integer    \$rank position value
  * @param     PropelPDO  \$con      optional connection
+ *
  * @return    integer    the new position
+ *
  * @throws    PropelException
  */
 public function insertAtRank(\$rank, PropelPDO \$con = null)
 {
-	if (\$rank < 1 || \$rank > $peerClassname::getMaxPosition()) {
-		throw new PropelException('Invalid rank ' . \$rank);
-	}
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+	}
+	if (\$rank < 1 || \$rank > $peerClassname::getMaxPosition(\$con)) {
+		throw new PropelException('Invalid rank ' . \$rank);
 	}
 	\$con->beginTransaction();
 	try {
 		// shift the objects with a position higher than the given position
-		{$this->peerClassname}::shiftRank(1, \$rank, \$con);
+		{$this->peerClassname}::shiftRank(1, \$rank, null, \$con);
 
 		// move the object in the list, at the given position
 		\$this->{$this->getColumnSetter()}(\$rank);
@@ -272,7 +281,7 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
 	{
 		$script .= "
 /**
- * insert in the last position
+ * Insert in the last position
  *
  * @param PropelPDO \$con optional connection
  */
@@ -298,7 +307,7 @@ public function insertAtBottom(PropelPDO \$con = null)
 	{
 		$script .= "
 /**
- * insert in the first position
+ * Insert in the first position
  *
  * @param PropelPDO \$con optional connection
  */
@@ -309,55 +318,50 @@ public function insertAtTop(PropelPDO \$con = null)
 ";
 	}
 
-	protected function addMoveToPosition(&$script)
+	protected function addMoveToRank(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
- * Move the object to a new position, and shifts the position
- * Of the objects inbetween the old and new position accordingly
+ * Move the object to a new rank, and shifts the rank
+ * Of the objects inbetween the old and new rank accordingly
  *
- * @param	integer	 \$newPosition position value
- * @param	PropelPDO \$con				 optional connection
- * @return integer								the old object's position
- * @throws PropelException
+ * @param     integer   \$newPosition position value
+ * @param     PropelPDO \$con optional connection
+ *
+ * @return    integer the old object's position
+ *
+ * @throws    PropelException
  */
-public function moveToPosition(\$newPosition, PropelPDO \$con = null)
+public function moveToRank(\$newRank, PropelPDO \$con = null)
 {
+	if (\$this->isNew()) {
+		throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
+	}
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
+	}
+	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxPosition(\$con)) {
+		throw new PropelException('Invalid rank ' . \$newRank);
 	}
 
-	\$oldPosition = \$this->{$this->getColumnGetter()}();
-	if (\$oldPosition == \$newPosition) {
-		return \$oldPosition;
+	\$oldRank = \$this->{$this->getColumnGetter()}();
+	if (\$oldRank == \$newRank) {
+		return \$oldRank;
 	}
-
+	
+	\$con->beginTransaction();
 	try {
-		\$con->beginTransaction();
-
-		// move the object away
-		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition() + 1);
-		\$this->save();
-
 		// shift the objects between the old and the new position
-		\$query = sprintf('UPDATE %s SET %s = %s %s 1 WHERE %s BETWEEN ? AND ?',
-			'{$this->table->getName()}',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-			(\$oldPosition < \$newPosition) ? '-' : '+',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}'
-		);
-		\$stmt = \$con->prepare(\$query);
-		\$stmt->bindParam(1, min(\$oldPosition, \$newPosition));
-		\$stmt->bindParam(2, max(\$oldPosition, \$newPosition));
-		\$stmt->execute();
+		\$delta = (\$oldRank < \$newRank) ? -1 : 1;
+		$peerClassname::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), \$con);
 
-		// move the object back in
-		\$this->{$this->getColumnSetter()}(\$newPosition);
-		\$this->save();
+		// move the object to its new position
+		\$this->{$this->getColumnSetter()}(\$newRank);
+		\$this->save(\$con);
 
 		\$con->commit();
-		return \$oldPosition;
+		return \$oldRank;
 	} catch (Exception \$e) {
 		\$con->rollback();
 		throw \$e;
@@ -370,11 +374,13 @@ public function moveToPosition(\$newPosition, PropelPDO \$con = null)
 	{
 		$script .= "
 /**
- * Exchange the position of the object with the one passed as argument
+ * Exchange the rank of the object with the one passed as argument, and saves both objects
  *
- * @param	{$this->objectClassname} \$object
- * @param	PropelPDO \$con optional connection
- * @return array					the swapped ranks
+ * @param     {$this->objectClassname} \$object
+ * @param     PropelPDO \$con optional connection
+ *
+ * @return    array the swapped ranks
+ *
  * @throws Exception if the database cannot execute the two updates
  */
 public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = null)
@@ -382,17 +388,16 @@ public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = nu
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
-
+	\$con->beginTransaction();
 	try {
-		\$con->beginTransaction();
 		\$oldRank = \$this->{$this->getColumnGetter()}();
 		\$newRank = \$object->{$this->getColumnGetter()}();
 		\$this->{$this->getColumnSetter()}(\$newRank);
-		\$this->save();
-		\$object{$this->getColumnSetter()}($oldRank);
-		\$object->save();
+		\$this->save(\$con);
+		\$object->{$this->getColumnSetter()}(\$oldRank);
+		\$object->save(\$con);
 		\$con->commit();
-
+		
 		return array(\$oldRank, \$newRank);
 	} catch (Exception \$e) {
 		\$con->rollback();
@@ -406,13 +411,31 @@ public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = nu
 	{
 		$script .= "
 /**
- * Move the object higher in the list, i.e. exchanges its position with the one of the previous object
+ * Move the object higher in the list, i.e. exchanges its rank with the one of the previous object
+ *
+ * @param     PropelPDO \$con optional connection
  *
  * @return array the swapped ranks, or false if not swapped
  */
-public function moveUp()
+public function moveUp(PropelPDO \$con = null)
 {
-	return \$this->isFirst() ? false : \$this->swapWith(\$this->getPrevious());
+	if (\$this->isFirst()) {
+		return false;
+	}
+	if (\$con === null) {
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+	}
+	\$con->beginTransaction();
+	try {
+		\$prev = \$this->getPrevious(\$con);
+		\$res = \$this->swapWith(\$prev, \$con);
+		\$con->commit();
+		
+		return \$res;
+	} catch (Exception \$e) {
+		\$con->rollback();
+		throw \$e;
+	}
 }
 ";
 	}
@@ -421,13 +444,31 @@ public function moveUp()
 	{
 		$script .= "
 /**
- * Move the object higher in the list, i.e. exchanges its position with the one of the next object
+ * Move the object higher in the list, i.e. exchanges its rank with the one of the next object
+ *
+ * @param     PropelPDO \$con optional connection
  *
  * @return array the swapped ranks, or false if not swapped
  */
-public function moveDown()
+public function moveDown(PropelPDO \$con = null)
 {
-	return \$this->isLast() ? false : \$this->swapWith(\$this->getNext());
+	if (\$this->isLast(\$con)) {
+		return false;
+	}
+	if (\$con === null) {
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+	}
+	\$con->beginTransaction();
+	try {
+		\$next = \$this->getNext(\$con);
+		\$res = \$this->swapWith(\$next, \$con);
+		\$con->commit();
+		
+		return \$res;
+	} catch (Exception \$e) {
+		\$con->rollback();
+		throw \$e;
+	}
 }
 ";
 	}
@@ -438,11 +479,16 @@ public function moveDown()
 /**
  * Move the object to the top of the list
  *
- * @return integer the old object's position
+ * @param     PropelPDO \$con optional connection
+ *
+ * @return integer the old object's rank
  */
-public function moveToTop()
+public function moveToTop(PropelPDO \$con = null)
 {
-	return \$this->moveToPosition(1);
+	if (\$this->isFirst()) {
+		return false;
+	}
+	return \$this->moveToRank(1, \$con);
 }
 ";
 	}
@@ -453,11 +499,29 @@ public function moveToTop()
 /**
  * Move the object to the bottom of the list
  *
- * @return integer the old object's position
+ * @param     PropelPDO \$con optional connection
+ *
+ * @return integer the old object's rank
  */
-public function moveToBottom()
+public function moveToBottom(PropelPDO \$con = null)
 {
-	return \$this->moveToPosition({$this->peerClassname}::getMaxPosition());
+	if (\$this->isLast(\$con)) {
+		return false;
+	}
+	if (\$con === null) {
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+	}
+	\$con->beginTransaction();
+	try {
+		\$bottom = {$this->peerClassname}::getMaxPosition(\$con);
+		\$res = \$this->moveToRank(\$bottom, \$con);
+		\$con->commit();
+		
+		return \$res;
+	} catch (Exception \$e) {
+		\$con->rollback();
+		throw \$e;
+	}
 }
 ";
 	}
