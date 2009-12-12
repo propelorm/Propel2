@@ -31,8 +31,9 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  */
 class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 {
-	protected function populateTable11()
+	protected function setUp()
 	{
+		parent::setUp();
 		Table11Peer::doDeleteAll();
 		$t1 = new Table11();
 		$t1->setRank(1);
@@ -52,6 +53,18 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 		$t4->save();
 	}
 	
+	protected function getFixturesArray()
+	{
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn(Table11Peer::RANK_COL);
+		$ts = Table11Peer::doSelect($c);
+		$ret = array();
+		foreach ($ts as $t) {
+			$ret[$t->getRank()] = $t->getTitle();
+		}
+		return $ret;
+	}
+	
 	public function testPreInsert()
 	{
 		Table11Peer::doDeleteAll();
@@ -66,7 +79,6 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 	
 	public function testPreDelete()
 	{
-		$this->populateTable11();
 		$max = Table11Peer::getMaxPosition();
 		$t3 = Table11Peer::retrieveByPosition(3);
 		$t3->delete();
@@ -79,7 +91,6 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 	
 	public function testIsFirst()
 	{
-		$this->populateTable11();
 		$first = Table11Peer::retrieveByPosition(1);
 		$middle = Table11Peer::retrieveByPosition(2);
 		$last = Table11Peer::retrieveByPosition(4);
@@ -90,7 +101,6 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 
 	public function testIsLast()
 	{
-		$this->populateTable11();
 		$first = Table11Peer::retrieveByPosition(1);
 		$middle = Table11Peer::retrieveByPosition(2);
 		$last = Table11Peer::retrieveByPosition(4);
@@ -101,21 +111,74 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreTestBase
 
 	public function testGetNext()
 	{
-		$this->populateTable11();
 		$t = Table11Peer::retrieveByPosition(3);
 		$this->assertEquals(4, $t->getNext()->getRank(), 'getNext() returns the next object in rank');
+		
+		$t = Table11Peer::retrieveByPosition(4);
+		$this->assertNull($t->getNext(), 'getNext() returns null for the last object');
 	}
 
 	public function testGetPrevious()
 	{
-		$this->populateTable11();
 		$t = Table11Peer::retrieveByPosition(3);
 		$this->assertEquals(2, $t->getPrevious()->getRank(), 'getPrevious() returns the previous object in rank');
+
+		$t = Table11Peer::retrieveByPosition(1);
+		$this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
+	}
+	
+	public function testInsertAtRank()
+	{
+		$t = new Table11();
+		$t->setTitle('new');
+		$t->insertAtRank(2);
+		$this->assertEquals(2, $t->getRank(), 'insertAtRank() sets the position');
+		$expected = array(1 => 'row1', 2 => 'new', 3 => 'row2', 4 => 'row3', 5 => 'row4');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtRank() shifts the entire suite');
 	}
 
+	public function testInsertAtBottom()
+	{
+		$t = new Table11();
+		$t->setTitle('new');
+		$t->insertAtBottom();
+		$this->assertEquals(5, $t->getRank(), 'insertAtBottom() sets the position to the last');
+		$expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4', 5 => 'new');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtBottom() does not shift the entire suite');
+	}
+
+	public function testInsertAtTop()
+	{
+		$t = new Table11();
+		$t->setTitle('new');
+		$t->insertAtTop();
+		$this->assertEquals(1, $t->getRank(), 'insertAtTop() sets the position to 1');
+		$expected = array(1 => 'new', 2 => 'row1', 3 => 'row2', 4 => 'row3', 5 => 'row4');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtTop() shifts the entire suite');
+	}
+	
+	
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testInsertAtNegativeRank()
+	{
+		$t = new Table11();
+		$t->insertAtRank(0);
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testInsertAtOverMaxRank()
+	{
+		$t = new Table11();
+		$t->insertAtRank(5);
+	}
+	
 	public function testMoveToPosition()
 	{
-		$this->populateTable11();
 		$t1 = Table11Peer::retrieveByPosition(1);
 		$t2 = Table11Peer::retrieveByPosition(2);
 		$t3 = Table11Peer::retrieveByPosition(3);

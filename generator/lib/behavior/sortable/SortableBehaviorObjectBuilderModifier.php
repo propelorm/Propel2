@@ -105,13 +105,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 	{
 		$this->setBuilder($builder);
 		return "
-\$whereCriteria = new Criteria({$this->peerClassname}::DATABASE_NAME);
-\$whereCriteria->add({$this->peerClassname}::RANK_COL, \$this->{$this->getColumnGetter()}(), Criteria::GREATER_THAN);
-
-\$valuesCriteria = new Criteria({$this->peerClassname}::DATABASE_NAME);
-\$valuesCriteria->add({$this->peerClassname}::RANK_COL, array('raw' => {$this->peerClassname}::RANK_COL . ' - ?', 'value' => 1), Criteria::CUSTOM_EQUAL);
-
-{$builder->getPeerBuilder()->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, \$con);
 {$this->peerClassname}::clearInstancePool();
 ";
 	}
@@ -132,7 +126,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 		$this->addIsLast($script);
 		$this->addGetNext($script);
 		$this->addGetPrevious($script);
-		$this->addInsertAtPosition($script);
+		$this->addInsertAtRank($script);
 		$this->addInsertAtBottom($script);
 		$this->addInsertAtTop($script);
 		$this->addMoveToPosition($script);
@@ -156,7 +150,7 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 /**
  * Wrap the getter for position value
  *
- * @return  int
+ * @return    int
  */
 public function getRank()
 {
@@ -166,8 +160,8 @@ public function getRank()
 /**
  * Wrap the setter for position value
  *
- * @param   int
- * @return  {$this->objectClassname}
+ * @param     int
+ * @return    {$this->objectClassname}
  */
 public function setRank(\$v)
 {
@@ -182,7 +176,7 @@ public function setRank(\$v)
 /**
  * Check if the object is first in the list, i.e. if it has 1 for position
  *
- * @return boolean
+ * @return    boolean
  */
 public function isFirst()
 {
@@ -196,7 +190,7 @@ public function isFirst()
 		$script .= "
 /**
  * Check if the object is last in the list, i.e. if its position is the highest position
- * @return boolean
+ * @return    boolean
  */
 public function isLast()
 {
@@ -211,7 +205,7 @@ public function isLast()
 /**
  * Get the next item in the list, i.e. the one for which position is immediately higher
  *
- * @return {$this->objectClassname}
+ * @return    {$this->objectClassname}
  */
 public function getNext()
 {
@@ -226,7 +220,7 @@ public function getNext()
 /**
  * Get the previous item in the list, i.e. the one for which position is immediately lower
  *
- * @return {$this->objectClassname}
+ * @return    {$this->objectClassname}
  */
 public function getPrevious()
 {
@@ -235,41 +229,38 @@ public function getPrevious()
 ";
 	}
 
-	protected function addInsertAtPosition(&$script)
+	protected function addInsertAtRank(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
- * insert at specified position
+ * Insert at specified position
  *
- * @param	integer		\$position	position value
- * @param	PropelPDO	\$con				optional connection
- * @return integer							the new position
- * @throws PropelException
+ * @param     integer    \$rank position value
+ * @param     PropelPDO  \$con      optional connection
+ * @return    integer    the new position
+ * @throws    PropelException
  */
-public function insertAtPosition(\$position, PropelPDO \$con = null)
+public function insertAtRank(\$rank, PropelPDO \$con = null)
 {
+	if (\$rank < 1 || \$rank > $peerClassname::getMaxPosition()) {
+		throw new PropelException('Invalid rank ' . \$rank);
+	}
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 	\$con->beginTransaction();
 	try {
 		// shift the objects with a position higher than the given position
-		\$query = sprintf('UPDATE %s SET %s = %s + 1 WHERE %s >= ?',
-			'{$this->table->getName()}',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}',
-			'{$this->behavior->getColumnForParameter('rank_column')->getName()}');
-		\$stmt = \$con->prepare(\$query);
-		\$stmt->bindParam(1, \$position);
-		\$stmt->execute();
+		{$this->peerClassname}::shiftRank(1, \$rank, \$con);
 
 		// move the object in the list, at the given position
-		\$this->{$this->getColumnSetter()}(\$position);
-		\$this->save();
+		\$this->{$this->getColumnSetter()}(\$rank);
+		\$this->save(\$con);
 
 		\$con->commit();
 		return \$position;
-	} catch (Exception \$e) {
+	} catch (PropelException \$e) {
 		\$con->rollback();
 		\throw $e;
 	}
@@ -287,7 +278,18 @@ public function insertAtPosition(\$position, PropelPDO \$con = null)
  */
 public function insertAtBottom(PropelPDO \$con = null)
 {
-	\$this->insertAtPosition({$this->peerClassname}::getMaxPosition(), \$con);
+	if (\$con === null) {
+		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+	}
+	\$con->beginTransaction();
+	try {
+		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition(\$con) + 1);
+		\$this->save(\$con);
+		\$con->commit();
+	} catch (PropelException \$e) {
+		\$con->rollback();
+		\throw $e;
+	}
 }
 ";
 	}
@@ -302,7 +304,7 @@ public function insertAtBottom(PropelPDO \$con = null)
  */
 public function insertAtTop(PropelPDO \$con = null)
 {
-	\$this->insertAtPosition(1, \$con);
+	\$this->insertAtRank(1, \$con);
 }
 ";
 	}

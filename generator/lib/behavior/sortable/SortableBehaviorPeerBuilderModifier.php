@@ -92,6 +92,7 @@ const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
 		$this->addRetrieveByPosition($script);
 		$this->addDoSort($script);
 		$this->addDoSelectOrderByPosition($script);
+		$this->addShiftRank($script);
 		
 		return $script;
 	}
@@ -225,4 +226,33 @@ public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria
 ";
 	}
 	
+	protected function addShiftRank(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Adds \$delta to all Rank values that are >= \$rank.
+ * '\$delta' can also be negative.
+ *
+ * @param      int \$delta		Value to be shifted by, can be negative
+ * @param      int \$rank		First node to be shifted
+ * @param      PropelPDO \$con		Connection to use.
+ */
+public static function shiftRank(\$delta, \$rank, PropelPDO \$con = null)
+{
+	if (\$con === null) {
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+
+	\$whereCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$whereCriteria->add($peerClassname::RANK_COL, \$rank, Criteria::GREATER_EQUAL);
+
+	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
+	\$valuesCriteria->add($peerClassname::RANK_COL, array('raw' => $peerClassname::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+
+	{$this->builder->getPeerBuilder()->getBasePeerClassname()}::doUpdate(\$whereCriteria, \$valuesCriteria, \$con);
+	$peerClassname::clearInstancePool();
+}
+";
+	}
 }
