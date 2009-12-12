@@ -20,7 +20,7 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once 'tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
 
 /**
  * Tests for SortableBehavior class
@@ -29,22 +29,55 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @version		$Revision$
  * @package		generator.engine.behavior
  */
-class SortableBehaviorPeerBuilderModifierTest extends BookstoreTestBase
+class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 {
-	public function testRetrieveByPosition()
+	public function testGetMaxRank()
 	{
-		$t3 = new Table11();
-		$t3->setTitle('row3');
-		$t3->save();
-		$t4 = new Table11();
-		$t4->setTitle('row4');
-		$t4->save();
-		$t5 = new Table11();
-		$t5->setTitle('row5');
-		$t5->save();
-		$t4 = Table11Peer::retrieveByPosition(4);
-		$this->assertEquals($t4->getRank(), 4, 'Sortable get an object by its position');
+		$this->assertEquals(4, Table11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
+		$t4 = Table11Peer::retrieveByRank(4);
+		$t4->delete();
+		$this->assertEquals(3, Table11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
+		Table11Peer::doDeleteAll();
+		$this->assertNull(Table11Peer::getMaxRank(), 'getMaxRank() returns null for empty tables');
 	}
-
+	public function testRetrieveByRank()
+	{
+		$t = Table11Peer::retrieveByRank(5);
+		$this->assertNull($t, 'retrieveByRank() returns null for an unknown rank');
+		$t3 = Table11Peer::retrieveByRank(3);
+		$this->assertEquals(3, $t3->getRank(), 'retrieveByRank() returns the object with the required rank');
+		$this->assertEquals('row3', $t3->getTitle(), 'retrieveByRank() returns the object with the required rank');
+	}
+	
+	public function testReorder()
+	{
+		$objects = Table11Peer::doSelect(new Criteria());
+		$ids = array();
+		foreach ($objects as $object) {
+			$ids[]= $object->getPrimaryKey();
+		}
+		$ranks = array(4, 3, 2, 1);
+		$order = array_combine($ids, $ranks);
+		Table11Peer::reorder($order);
+		$expected = array(1 => 'row3', 2 => 'row2', 3 => 'row4', 4 => 'row1');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'reorder() reorders the suite');
+	}
+	
+	public function testDoSelectOrderByRank()
+	{
+		$objects = Table11Peer::doSelectOrderByRank();
+		$oldRank = 0;
+		while ($object = array_shift($objects)) {
+			$this->assertTrue($object->getRank() > $oldRank);
+			$oldRank = $object->getRank();
+		}
+		$objects = Table11Peer::doSelectOrderByRank(Criteria::DESC);
+		$oldRank = 10;
+		while ($object = array_shift($objects)) {
+			$this->assertTrue($object->getRank() < $oldRank);
+			$oldRank = $object->getRank();
+		}
+	}
+	
 
 }

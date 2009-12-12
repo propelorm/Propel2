@@ -63,8 +63,6 @@ class SortableBehaviorPeerBuilderModifier
 		$this->builder = $builder;
 		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
-		$this->rankColumn = $builder->getColumnConstant($this->behavior->getColumnForParameter('rank_column'), $this->table->getPhpName() . 'Peer');
-
 	}
 
 	public function staticAttributes($builder)
@@ -88,32 +86,34 @@ const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
 	{
 		$this->setBuilder($builder);
 		$script = '';
-		$this->addGetMaxPosition($script);
-		$this->addRetrieveByPosition($script);
-		$this->addDoSort($script);
-		$this->addDoSelectOrderByPosition($script);
+		$this->addGetMaxRank($script);
+		$this->addRetrieveByRank($script);
+		$this->addReorder($script);
+		$this->addDoSelectOrderByRank($script);
 		$this->addShiftRank($script);
 		
 		return $script;
 	}
 	
-	protected function addGetMaxPosition(&$script)
+	protected function addGetMaxRank(&$script)
 	{
 		$script .= "
 /**
- * Get the highest position
- * @param	PropelPDO optional connection
- * @return integer	 highest position
+ * Get the highest rank
+ *
+ * @param     PropelPDO optional connection
+ *
+ * @return    integer highest position
  */
-public static function getMaxPosition(PropelPDO \$con = null)
+public static function getMaxRank(PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 	// shift the objects with a position lower than the one of object
 	\$sql = sprintf('SELECT MAX(%s) FROM %s',
-		'{$this->behavior->getColumnForParameter('rank_column')->getPhpName()}',
-		'{$this->table->getName()}');
+		{$this->peerClassname}::RANK_COL,
+		{$this->peerClassname}::TABLE_NAME);
 	\$stmt = \$con->prepare(\$sql);
 	\$stmt->execute();
 
@@ -122,89 +122,93 @@ public static function getMaxPosition(PropelPDO \$con = null)
 ";
 	}
 	
-	protected function addRetrieveByPosition(&$script)
+	protected function addRetrieveByRank(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
- * Get an item from the list based on its position
+ * Get an item from the list based on its rank
  *
- * @param	integer	 \$position position
- * @param	PropelPDO \$con			optional connection
+ * @param     integer   \$rank rank
+ * @param     PropelPDO \$con optional connection
+ *
  * @return {$this->objectClassname}
  */
-public static function retrieveByPosition(\$position, PropelPDO \$con = null)
+public static function retrieveByRank(\$rank, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
 
 	\$c = new Criteria;
-	\$c->add({$this->rankColumn}, \$position);
+	\$c->add($peerClassname::RANK_COL, \$rank);
 
-	return self::doSelectOne(\$c, \$con);
+	return $peerClassname::doSelectOne(\$c, \$con);
 }
 ";
 	}
 
-	protected function addDoSort(&$script)
+	protected function addReorder(&$script)
 	{
+		$peerClassname = $this->peerClassname;
+		$columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
+		$columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
 		$script .= "
 /**
  * Reorder a set of sortable objects based on a list of id/position
  * Beware that there is no check made on the positions passed
  * So incoherent positions will result in an incoherent list
  *
- * @param	array			\$order	id/position pairs
- * @param	PropelPDO	\$con		optional connection
- * @return boolean					true if the reordering took place, false if a database problem prevented it
+ * @param     array     \$order id => rank pairs
+ * @param     PropelPDO \$con   optional connection
+ *
+ * @return    boolean true if the reordering took place, false if a database problem prevented it
  */
-public static function doSort(array \$order, PropelPDO \$con = null)
+public static function reorder(array \$order, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-
+	
+	\$con->beginTransaction();
 	try {
-		\$con->beginTransaction();
-
-		foreach (\$order as \$id => \$rank) {
-			\$c = new Criteria;
-			\$c->add({$this->rankColumn}, \$id);
-			\$object = self::doSelectOne(\$c);
-
-			if (\$object && \$object->getPosition() != \$rank) {
-				\$object->setPosition(\$rank);
-				\$object->save();
+		\$ids = array_keys(\$order);
+		\$objects = $peerClassname::retrieveByPKs(\$ids);
+		foreach (\$objects as \$object) {
+			\$pk = \$object->getPrimaryKey();
+			if (\$object->$columnGetter() != \$order[\$pk]) {
+				\$object->$columnSetter(\$order[\$pk]);
+				\$object->save(\$con);
 			}
 		}
-
 		\$con->commit();
 
 		return true;
-	} catch (Exception \$e) {
+	} catch (PropelException \$e) {
 		\$con->rollback();
-
-		return false;
+		throw \$e;
 	}
 }
 ";
 	}
 	
-	protected function addDoSelectOrderByPosition(&$script)
+	protected function addDoSelectOrderByRank(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Return an array of sortable objects ordered by position
  *
- * @param	string		\$order			sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
- * @param	Criteria	\$criteria	optional criteria object
- * @param	PropelPDO \$con				optional connection
- * @return array								list of sortable objects
+ * @param     string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param     Criteria  \$criteria  optional criteria object
+ * @param     PropelPDO \$con       optional connection
+ *
+ * @return    array list of sortable objects
  */
-public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria \$criteria = null, PropelPDO \$con = null)
+public static function doSelectOrderByRank(\$order = Criteria::ASC, Criteria \$criteria = null, PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
+		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
 
 	if (\$criteria === null) {
@@ -216,12 +220,12 @@ public static function doSelectOrderByPosition(\$order = Criteria::ASC, Criteria
 	\$criteria->clearOrderByColumns();
 
 	if (\$order == Criteria::ASC) {
-		\$criteria->addAscendingOrderByColumn({$this->rankColumn});
+		\$criteria->addAscendingOrderByColumn($peerClassname::RANK_COL);
 	} else {
-		\$criteria->addDescendingOrderByColumn({$this->rankColumn});
+		\$criteria->addDescendingOrderByColumn($peerClassname::RANK_COL);
 	}
 
-	return self::doSelect(\$criteria, \$con);
+	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}

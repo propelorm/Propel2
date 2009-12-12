@@ -90,7 +90,7 @@ class SortableBehaviorObjectBuilderModifier
 		$this->setBuilder($builder);
 		return "
 if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
-	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition(\$con) + 1);
+	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(\$con) + 1);
 }
 ";
 	}
@@ -197,7 +197,7 @@ public function isFirst()
  */
 public function isLast(PropelPDO \$con = null)
 {
-	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxPosition(\$con);
+	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxRank(\$con);
 }
 ";
 	}
@@ -214,7 +214,7 @@ public function isLast(PropelPDO \$con = null)
  */
 public function getNext(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() + 1, \$con);
+	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() + 1, \$con);
 }
 ";
 	}
@@ -231,7 +231,7 @@ public function getNext(PropelPDO \$con = null)
  */
 public function getPrevious(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByPosition(\$this->{$this->getColumnGetter()}() - 1, \$con);
+	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() - 1, \$con);
 }
 ";
 	}
@@ -255,7 +255,7 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
-	if (\$rank < 1 || \$rank > $peerClassname::getMaxPosition(\$con)) {
+	if (\$rank < 1 || \$rank > $peerClassname::getMaxRank(\$con)) {
 		throw new PropelException('Invalid rank ' . \$rank);
 	}
 	\$con->beginTransaction();
@@ -292,7 +292,7 @@ public function insertAtBottom(PropelPDO \$con = null)
 	}
 	\$con->beginTransaction();
 	try {
-		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxPosition(\$con) + 1);
+		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(\$con) + 1);
 		\$this->save(\$con);
 		\$con->commit();
 	} catch (PropelException \$e) {
@@ -341,7 +341,7 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxPosition(\$con)) {
+	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxRank(\$con)) {
 		throw new PropelException('Invalid rank ' . \$newRank);
 	}
 
@@ -513,7 +513,7 @@ public function moveToBottom(PropelPDO \$con = null)
 	}
 	\$con->beginTransaction();
 	try {
-		\$bottom = {$this->peerClassname}::getMaxPosition(\$con);
+		\$bottom = {$this->peerClassname}::getMaxRank(\$con);
 		\$res = \$this->moveToRank(\$bottom, \$con);
 		\$con->commit();
 		
