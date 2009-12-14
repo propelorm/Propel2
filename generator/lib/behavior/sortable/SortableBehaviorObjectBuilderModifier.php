@@ -65,9 +65,9 @@ class SortableBehaviorObjectBuilderModifier
 	 *
 	 * @return string The related getter, e.g. 'getRank'
 	 */
-	protected function getColumnGetter()
+	protected function getColumnGetter($columnName = 'rank_column')
 	{
-		return 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
+		return 'get' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
 	}
 
 	/**
@@ -75,52 +75,57 @@ class SortableBehaviorObjectBuilderModifier
 	 *
 	 * @return string The related setter, e.g. 'setRank'
 	 */
-	protected function getColumnSetter()
+	protected function getColumnSetter($columnName = 'rank_column')
 	{
-		return 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
+		return 'set' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
 	}
 
-	/**
-	 * Add code in ObjectBuilder::preSave
-	 *
-	 * @return string The code to put at the hook
-	 */
+	public function preSave($builder)
+	{
+		return "\$this->processSortableQueries(\$con);";
+	}
+
 	public function preInsert($builder)
 	{
+		$useScope = $this->behavior->useScope();
 		$this->setBuilder($builder);
-		return "
-if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
-	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(\$con) + 1);
+		return "if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
+	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 }
 ";
 	}
 	
-
-	/**
-	 * Add code in ObjectBuilder::preDelete
-	 *
-	 * @return string The code to put at the hook
-	 */
 	public function preDelete($builder)
 	{
+		$useScope = $this->behavior->useScope();
 		$this->setBuilder($builder);
 		return "
-{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, \$con);
+{$this->peerClassname}::shiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 {$this->peerClassname}::clearInstancePool();
 ";
 	}
 
-	/**
-	 * Class methods
-	 *
-	 * @return string
-	 */
+	public function objectAttributes($builder)
+	{
+		return "
+/**
+ * Queries to be executed in the save transaction
+ * @var        array
+ */
+protected \$sortableQueries = array();
+";
+	}
+	
 	public function objectMethods($builder)
 	{
 		$this->setBuilder($builder);
 		$script = '';
 		if ($this->getParameter('rank_column') != 'rank') {
 			$this->addRankAccessors($script);
+		}
+		if ($this->behavior->useScope() && 
+				$this->getParameter('scope_column') != 'scope_value') {
+			$this->addScopeAccessors($script);
 		}
 		$this->addIsFirst($script);
 		$this->addIsLast($script);
@@ -135,12 +140,14 @@ if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
 		$this->addMoveDown($script);
 		$this->addMoveToTop($script);
 		$this->addMoveToBottom($script);
+		$this->addRemoveFromList($script);
+		$this->addProcessSortableQueries($script);
 		
 		return $script;
 	}
 
 	/**
-	 * Get the wraps for getter/setter, if the column has not the default name
+	 * Get the wraps for getter/setter, if the rank column has not the default name
 	 *
 	 * @return string
 	 */
@@ -169,6 +176,37 @@ public function setRank(\$v)
 }
 ";
 	}
+	
+	/**
+	 * Get the wraps for getter/setter, if the scope column has not the default name
+	 *
+	 * @return string
+	 */
+	protected function addScopeAccessors(&$script)
+	{
+    $script .= "
+/**
+ * Wrap the getter for scope value
+ *
+ * @return    int
+ */
+public function getScopeValue()
+{
+	return \$this->{$this->getColumnAttribute('scope_column')};
+}
+
+/**
+ * Wrap the setter for scope value
+ *
+ * @param     int
+ * @return    {$this->objectClassname}
+ */
+public function setScopeValue(\$v)
+{
+	return \$this->{$this->getColumnSetter('scope_column')}(\$v);
+}
+";
+	}
 
 	protected function addIsFirst(&$script)
 	{
@@ -187,6 +225,7 @@ public function isFirst()
 
 	protected function addIsLast(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Check if the object is last in the list, i.e. if its rank is the highest rank
@@ -197,13 +236,14 @@ public function isFirst()
  */
 public function isLast(PropelPDO \$con = null)
 {
-	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxRank(\$con);
+	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
 
 	protected function addGetNext(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Get the next item in the list, i.e. the one for which rank is immediately higher
@@ -214,13 +254,14 @@ public function isLast(PropelPDO \$con = null)
  */
 public function getNext(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() + 1, \$con);
+	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
 
 	protected function addGetPrevious(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Get the previous item in the list, i.e. the one for which rank is immediately lower
@@ -231,74 +272,77 @@ public function getNext(PropelPDO \$con = null)
  */
 public function getPrevious(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() - 1, \$con);
+	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
 
 	protected function addInsertAtRank(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
- * Insert at specified position
+ * Insert at specified rank
+ * The modifications are not persisted until the object is saved.
  *
- * @param     integer    \$rank position value
- * @param     PropelPDO  \$con      optional connection
+ * @param     integer    \$rank rank value
  *
- * @return    integer    the new position
+ * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
-public function insertAtRank(\$rank, PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
-	}
-	if (\$rank < 1 || \$rank > $peerClassname::getMaxRank(\$con)) {
+public function insertAtRank(\$rank)
+{";
+		if ($useScope) {
+			$script .= "
+	if (null === \$this->{$this->getColumnGetter('scope_column')}()) {
+		throw new PropelException('The scope must be defined before inserting an object in a suite');
+	}";
+		}
+		$script .= "
+	if (\$rank < 1 || \$rank > $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
 		throw new PropelException('Invalid rank ' . \$rank);
 	}
-	\$con->beginTransaction();
-	try {
-		// shift the objects with a position higher than the given position
-		{$this->peerClassname}::shiftRank(1, \$rank, null, \$con);
-
-		// move the object in the list, at the given position
-		\$this->{$this->getColumnSetter()}(\$rank);
-		\$this->save(\$con);
-
-		\$con->commit();
-		return \$position;
-	} catch (PropelException \$e) {
-		\$con->rollback();
-		\throw $e;
-	}
+	// move the object in the list, at the given rank
+	\$this->{$this->getColumnSetter()}(\$rank);
+	// Keep the list modification query for the save() transaction
+	\$this->sortableQueries []= array(
+		'callable'  => array('$peerClassname', 'shiftRank'),
+		'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
+	);
+	
+	return \$this;
 }
 ";
 	}
 
 	protected function addInsertAtBottom(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
- * Insert in the last position
+ * Insert in the last rank
+ * The modifications are not persisted until the object is saved.
  *
  * @param PropelPDO \$con optional connection
+ *
+ * @return    {$this->objectClassname} the current object
+ *
+ * @throws    PropelException
  */
 public function insertAtBottom(PropelPDO \$con = null)
-{
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
-	}
-	\$con->beginTransaction();
-	try {
-		\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(\$con) + 1);
-		\$this->save(\$con);
-		\$con->commit();
-	} catch (PropelException \$e) {
-		\$con->rollback();
-		\throw $e;
-	}
+{";
+		if ($useScope) {
+			$script .= "
+	if (null === \$this->{$this->getColumnGetter('scope_column')}()) {
+		throw new PropelException('The scope must be defined before inserting an object in a suite');
+	}";
+		}
+		$script .= "
+	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
+	
+	return \$this;
 }
 ";
 	}
@@ -307,29 +351,31 @@ public function insertAtBottom(PropelPDO \$con = null)
 	{
 		$script .= "
 /**
- * Insert in the first position
+ * Insert in the first rank
+ * The modifications are not persisted until the object is saved.
  *
- * @param PropelPDO \$con optional connection
+ * @return    {$this->objectClassname} the current object
  */
-public function insertAtTop(PropelPDO \$con = null)
+public function insertAtTop()
 {
-	\$this->insertAtRank(1, \$con);
+	return \$this->insertAtRank(1);
 }
 ";
 	}
 
 	protected function addMoveToRank(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Move the object to a new rank, and shifts the rank
  * Of the objects inbetween the old and new rank accordingly
  *
- * @param     integer   \$newPosition position value
+ * @param     integer   \$newRank rank value
  * @param     PropelPDO \$con optional connection
  *
- * @return    integer the old object's position
+ * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
@@ -341,27 +387,27 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxRank(\$con)) {
+	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
 		throw new PropelException('Invalid rank ' . \$newRank);
 	}
 
 	\$oldRank = \$this->{$this->getColumnGetter()}();
 	if (\$oldRank == \$newRank) {
-		return \$oldRank;
+		return \$this;
 	}
 	
 	\$con->beginTransaction();
 	try {
-		// shift the objects between the old and the new position
+		// shift the objects between the old and the new rank
 		\$delta = (\$oldRank < \$newRank) ? -1 : 1;
-		$peerClassname::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), \$con);
-
-		// move the object to its new position
+		$peerClassname::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+			
+		// move the object to its new rank
 		\$this->{$this->getColumnSetter()}(\$newRank);
 		\$this->save(\$con);
-
+		
 		\$con->commit();
-		return \$oldRank;
+		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
 		throw \$e;
@@ -379,7 +425,7 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
  * @param     {$this->objectClassname} \$object
  * @param     PropelPDO \$con optional connection
  *
- * @return    array the swapped ranks
+ * @return    {$this->objectClassname} the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
@@ -398,7 +444,7 @@ public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = nu
 		\$object->save(\$con);
 		\$con->commit();
 		
-		return array(\$oldRank, \$newRank);
+		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
 		throw \$e;
@@ -415,12 +461,12 @@ public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = nu
  *
  * @param     PropelPDO \$con optional connection
  *
- * @return array the swapped ranks, or false if not swapped
+ * @return    {$this->objectClassname} the current object
  */
 public function moveUp(PropelPDO \$con = null)
 {
 	if (\$this->isFirst()) {
-		return false;
+		return \$this;
 	}
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
@@ -428,10 +474,10 @@ public function moveUp(PropelPDO \$con = null)
 	\$con->beginTransaction();
 	try {
 		\$prev = \$this->getPrevious(\$con);
-		\$res = \$this->swapWith(\$prev, \$con);
+		\$this->swapWith(\$prev, \$con);
 		\$con->commit();
 		
-		return \$res;
+		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
 		throw \$e;
@@ -448,12 +494,12 @@ public function moveUp(PropelPDO \$con = null)
  *
  * @param     PropelPDO \$con optional connection
  *
- * @return array the swapped ranks, or false if not swapped
+ * @return    {$this->objectClassname} the current object
  */
 public function moveDown(PropelPDO \$con = null)
 {
 	if (\$this->isLast(\$con)) {
-		return false;
+		return \$this;
 	}
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
@@ -461,10 +507,10 @@ public function moveDown(PropelPDO \$con = null)
 	\$con->beginTransaction();
 	try {
 		\$next = \$this->getNext(\$con);
-		\$res = \$this->swapWith(\$next, \$con);
+		\$this->swapWith(\$next, \$con);
 		\$con->commit();
 		
-		return \$res;
+		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
 		throw \$e;
@@ -481,12 +527,12 @@ public function moveDown(PropelPDO \$con = null)
  *
  * @param     PropelPDO \$con optional connection
  *
- * @return integer the old object's rank
+ * @return    {$this->objectClassname} the current object
  */
 public function moveToTop(PropelPDO \$con = null)
 {
 	if (\$this->isFirst()) {
-		return false;
+		return \$this;
 	}
 	return \$this->moveToRank(1, \$con);
 }
@@ -495,6 +541,7 @@ public function moveToTop(PropelPDO \$con = null)
 
 	protected function addMoveToBottom(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Move the object to the bottom of the list
@@ -513,7 +560,7 @@ public function moveToBottom(PropelPDO \$con = null)
 	}
 	\$con->beginTransaction();
 	try {
-		\$bottom = {$this->peerClassname}::getMaxRank(\$con);
+		\$bottom = {$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 		\$res = \$this->moveToRank(\$bottom, \$con);
 		\$con->commit();
 		
@@ -522,6 +569,54 @@ public function moveToBottom(PropelPDO \$con = null)
 		\$con->rollback();
 		throw \$e;
 	}
+}
+";
+	}
+
+	protected function addRemoveFromList(&$script)
+	{
+		$useScope = $this->behavior->useScope();
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Removes the current object from the list.
+ * The modifications are not persisted until the object is saved.
+ *
+ * @return    {$this->objectClassname} the current object
+ */
+public function removeFromList()
+{
+	// Keep the list modification query for the save() transaction
+	\$this->sortableQueries []= array(
+		'callable'  => array('$peerClassname', 'shiftRank'),
+		'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
+	);
+	// remove the object from the list
+	\$this->{$this->getColumnSetter('rank_column')}(null);";
+		if ($useScope) {
+		$script .= "
+	\$this->{$this->getColumnSetter('scope_column')}(null);";
+		}
+		$script .= "
+	
+	return \$this;
+}
+";
+	}
+	
+	protected function addProcessSortableQueries(&$script)
+	{
+		$script .= "
+/**
+ * Execute queries that were saved to be run inside the save transaction
+ */
+protected function processSortableQueries(\$con)
+{
+	foreach (\$this->sortableQueries as \$query) {
+		\$query['arguments'][]= \$con;
+		call_user_func_array(\$query['callable'], \$query['arguments']);
+	}
+	\$this->sortableQueries = array();
 }
 ";
 	}

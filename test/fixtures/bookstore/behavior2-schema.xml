@@ -60,8 +60,9 @@
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 		<column name="position" type="INTEGER" />
 		<behavior name="sortable">
-		<parameter name="add_columns" value="false" />
-		<parameter name="rank_column" value="position" />
+			<parameter name="rank_column" value="position" />
+			<parameter name="use_scope" value="true" />
+			<parameter name="scope_column" value="my_scope_column" />
 		</behavior>
 	</table>
 

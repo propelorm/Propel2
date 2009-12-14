@@ -68,13 +68,23 @@ class SortableBehaviorPeerBuilderModifier
 	public function staticAttributes($builder)
 	{
 		$tableName = $this->table->getName();
-
-		return "
+		$script = "
 /**
  * rank column
  */
 const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('rank_column') . "';
 ";
+
+		if ($this->behavior->useScope()) {
+			$script .= 	"
+/**
+ * Scope column for the set
+ */
+const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('scope_column') . "';
+";
+		}
+		
+		return $script;
 	}
 
 	/**
@@ -86,10 +96,16 @@ const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
 	{
 		$this->setBuilder($builder);
 		$script = '';
+		
 		$this->addGetMaxRank($script);
 		$this->addRetrieveByRank($script);
 		$this->addReorder($script);
 		$this->addDoSelectOrderByRank($script);
+		if ($this->behavior->useScope()) {
+			$this->addRetrieveList($script);
+			$this->addCountList($script);
+			$this->addDeleteList($script);
+		}
 		$this->addShiftRank($script);
 		
 		return $script;
@@ -97,26 +113,35 @@ const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
 	
 	protected function addGetMaxRank(&$script)
 	{
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Get the highest rank
- *
+ * ";
+		if($useScope) {
+			$script .= "
+ * @param      int \$scope		Scope to determine which suite to consider";
+		}
+		$script .= "
  * @param     PropelPDO optional connection
  *
  * @return    integer highest position
  */
-public static function getMaxRank(PropelPDO \$con = null)
+public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
 	}
 	// shift the objects with a position lower than the one of object
-	\$sql = sprintf('SELECT MAX(%s) FROM %s',
-		{$this->peerClassname}::RANK_COL,
-		{$this->peerClassname}::TABLE_NAME);
-	\$stmt = \$con->prepare(\$sql);
-	\$stmt->execute();
-
+	\$c = new Criteria();
+	\$c->addSelectColumn('MAX(' . {$this->peerClassname}::RANK_COL . ')');";
+		if ($useScope) {
+		$script .= "
+	\$c->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
+	\$stmt = {$this->peerClassname}::doSelectStmt(\$c, \$con);
+	
 	return \$stmt->fetchColumn();
 }
 ";
@@ -125,24 +150,35 @@ public static function getMaxRank(PropelPDO \$con = null)
 	protected function addRetrieveByRank(&$script)
 	{
 		$peerClassname = $this->peerClassname;
+		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
  * Get an item from the list based on its rank
  *
- * @param     integer   \$rank rank
+ * @param     integer   \$rank rank";
+		if($useScope) {
+			$script .= "
+ * @param      int \$scope		Scope to determine which suite to consider";
+		}
+		$script .= "
  * @param     PropelPDO \$con optional connection
  *
  * @return {$this->objectClassname}
  */
-public static function retrieveByRank(\$rank, PropelPDO \$con = null)
+public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
 
 	\$c = new Criteria;
-	\$c->add($peerClassname::RANK_COL, \$rank);
-
+	\$c->add($peerClassname::RANK_COL, \$rank);";
+		if($useScope) {
+			$script .= "
+	\$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
+	
 	return $peerClassname::doSelectOne(\$c, \$con);
 }
 ";
@@ -199,13 +235,13 @@ public static function reorder(array \$order, PropelPDO \$con = null)
 /**
  * Return an array of sortable objects ordered by position
  *
- * @param     string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
  * @param     Criteria  \$criteria  optional criteria object
+ * @param     string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
  * @param     PropelPDO \$con       optional connection
  *
  * @return    array list of sortable objects
  */
-public static function doSelectOrderByRank(\$order = Criteria::ASC, Criteria \$criteria = null, PropelPDO \$con = null)
+public static function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
@@ -230,20 +266,92 @@ public static function doSelectOrderByRank(\$order = Criteria::ASC, Criteria \$c
 ";
 	}
 	
-	protected function addShiftRank(&$script)
+	protected function addRetrieveList(&$script)
 	{
 		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
- * Adds \$delta to all Rank values that are >= \$rank.
+ * Return an array of sortable objects in the given scope ordered by position
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     string    \$order  sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param     PropelPDO \$con    optional connection
+ *
+ * @return    array list of sortable objects
+ */
+public static function retrieveList(\$scope, \$order = Criteria::ASC, PropelPDO \$con = null)
+{
+	\$c = new Criteria();
+	\$c->add($peerClassname::SCOPE_COL, \$scope);
+	
+	return $peerClassname::doSelectOrderByRank(\$c, \$order, \$con);
+}
+";
+	}
+
+	protected function addCountList(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Return the number of sortable objects in the given scope
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     PropelPDO \$con    optional connection
+ *
+ * @return    array list of sortable objects
+ */
+public static function countList(\$scope, PropelPDO \$con = null)
+{
+	\$c = new Criteria();
+	\$c->add($peerClassname::SCOPE_COL, \$scope);
+	
+	return $peerClassname::doCount(\$c, \$con);
+}
+";
+	}
+
+	protected function addDeleteList(&$script)
+	{
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Deletes the sortable objects in the given scope
+ *
+ * @param     int       \$scope  the scope of the list
+ * @param     PropelPDO \$con    optional connection
+ *
+ * @return    int number of deleted objects
+ */
+public static function deleteList(\$scope, PropelPDO \$con = null)
+{
+	\$c = new Criteria();
+	\$c->add($peerClassname::SCOPE_COL, \$scope);
+	
+	return $peerClassname::doDelete(\$c, \$con);
+}
+";
+	}	
+	protected function addShiftRank(&$script)
+	{
+		$useScope = $this->behavior->useScope();
+		$peerClassname = $this->peerClassname;
+		$script .= "
+/**
+ * Adds \$delta to all Rank values that are >= \$first and <= \$last.
  * '\$delta' can also be negative.
  *
  * @param      int \$delta Value to be shifted by, can be negative
  * @param      int \$first First node to be shifted
- * @param      int \$last  Last node to be shifted
+ * @param      int \$last  Last node to be shifted";
+		if($useScope) {
+			$script .= "
+ * @param      int \$scope Scope to use for the shift";
+		}
+		$script .= "
  * @param      PropelPDO \$con Connection to use.
  */
-public static function shiftRank(\$delta, \$first, \$last = null, PropelPDO \$con = null)
+public static function shiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -254,7 +362,12 @@ public static function shiftRank(\$delta, \$first, \$last = null, PropelPDO \$co
 	if (null !== \$last) {
 		\$criterion->addAnd(\$whereCriteria->getNewCriterion($peerClassname::RANK_COL, \$last, Criteria::LESS_EQUAL));
 	}
-	\$whereCriteria->add(\$criterion);
+	\$whereCriteria->add(\$criterion);";
+		if ($useScope) {
+			$script .= "
+	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
+		}
+		$script .= "
 
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add($peerClassname::RANK_COL, array('raw' => $peerClassname::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);

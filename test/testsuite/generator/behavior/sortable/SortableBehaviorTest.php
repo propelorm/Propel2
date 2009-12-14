@@ -37,7 +37,7 @@ class SortableBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(count($table11->getColumns()), 3, 'Sortable adds one columns by default');
 		$this->assertTrue(method_exists('Table11', 'getRank'), 'Sortable adds a rank column by default');
 		$table12 = Table12Peer::getTableMap();
-		$this->assertEquals(count($table12->getColumns()), 3, 'Sortable does not add a column when add_column is false');
+		$this->assertEquals(count($table12->getColumns()), 4, 'Sortable does not add a column when add_column is false');
 		$this->assertTrue(method_exists('Table12', 'getPosition'), 'Sortable allows customization of rank_column name');
 	}
 

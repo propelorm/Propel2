@@ -36,10 +36,9 @@ class SortableBehavior extends Behavior
 {
 	// default parameters value
 	protected $parameters = array(
-		'add_columns' => 'true',
-		'rank_column' => 'rank',
-		'add_index'   => 'false',
-		'rank_index'  => 'rank_index',
+		'rank_column'  => 'sortable_rank',
+		'use_scope'    => 'false',
+		'scope_column' => 'sortable_scope',
 	);
 
   protected $objectBuilderModifier, $peerBuilderModifier;
@@ -49,16 +48,18 @@ class SortableBehavior extends Behavior
 	 */
 	public function modifyTable()
 	{
-		if ($this->getParameter('add_columns') == 'true') {
+		if (!$this->getTable()->containsColumn($this->getParameter('rank_column'))) {
 			$this->getTable()->addColumn(array(
 				'name' => $this->getParameter('rank_column'),
 				'type' => 'INTEGER'
 			));
 		}
-		if ($this->getParameter('add_index') == 'true') {
-			$index = new Index($this->getParameter('rank_index'));
-			$index->addColumn($this->getColumnForParameter('rank_column'));
-			$this->getTable()->addIndex($index);
+		if ($this->getParameter('use_scope') == 'true' && 
+			 !$this->getTable()->containsColumn($this->getParameter('scope_column'))) {
+			$this->getTable()->addColumn(array(
+				'name' => $this->getParameter('scope_column'),
+				'type' => 'INTEGER'
+			));
 		}
 	}
 
@@ -76,6 +77,11 @@ class SortableBehavior extends Behavior
 			$this->peerBuilderModifier = new SortableBehaviorPeerBuilderModifier($this);
 		}
 		return $this->peerBuilderModifier;
+	}
+	
+	public function useScope()
+	{
+		return $this->getParameter('use_scope') == 'true';
 	}
 
 }

@@ -31,6 +31,12 @@ require_once 'tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
  */
 class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->populateTable11();
+	}
+	
 	public function testPreInsert()
 	{
 		Table11Peer::doDeleteAll();
@@ -99,6 +105,8 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t->setTitle('new');
 		$t->insertAtRank(2);
 		$this->assertEquals(2, $t->getRank(), 'insertAtRank() sets the position');
+		$this->assertTrue($t->isNew(), 'insertAtRank() doesn\'t save the object');
+		$t->save();
 		$expected = array(1 => 'row1', 2 => 'new', 3 => 'row2', 4 => 'row3', 5 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtRank() shifts the entire suite');
 	}
@@ -127,6 +135,8 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t->setTitle('new');
 		$t->insertAtBottom();
 		$this->assertEquals(5, $t->getRank(), 'insertAtBottom() sets the position to the last');
+		$this->assertTrue($t->isNew(), 'insertAtBottom() doesn\'t save the object');
+		$t->save();
 		$expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4', 5 => 'new');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtBottom() does not shift the entire suite');
 	}
@@ -137,6 +147,8 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t->setTitle('new');
 		$t->insertAtTop();
 		$this->assertEquals(1, $t->getRank(), 'insertAtTop() sets the position to 1');
+		$this->assertTrue($t->isNew(), 'insertAtTop() doesn\'t save the object');
+		$t->save();
 		$expected = array(1 => 'new', 2 => 'row1', 3 => 'row2', 4 => 'row3', 5 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtTop() shifts the entire suite');
 	}
@@ -198,14 +210,13 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	{
 		$t3 = Table11Peer::retrieveByRank(3);
 		$res = $t3->moveUp();
-		$this->assertTrue(is_array($res), 'moveUp() returns an array');
+		$this->assertEquals($t3, $res, 'moveUp() returns the current object');
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveUp() swaps ranks with the object of higher rank');
 		$t3->moveUp();
 		$expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveUp() swaps ranks with the object of higher rank');
 		$res = $t3->moveUp();
-		$this->assertFalse($res, 'moveUp() returns false when called on the object at the top');
 		$expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveUp() changes nothing when called on the object at the top');
 	}
@@ -214,14 +225,13 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	{
 		$t2 = Table11Peer::retrieveByRank(2);
 		$res = $t2->moveDown();
-		$this->assertTrue(is_array($res), 'moveDown() returns an array');
+		$this->assertEquals($t2, $res, 'moveDown() returns the current object');
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveDown() swaps ranks with the object of lower rank');
 		$t2->moveDown();
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveDown() swaps ranks with the object of lower rank');
 		$res = $t2->moveDown();
-		$this->assertFalse($res, 'moveDown() returns false when called on the object at the bottom');
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveDown() changes nothing when called on the object at the bottom');
 	}
@@ -230,11 +240,10 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	{
 		$t3 = Table11Peer::retrieveByRank(3);
 		$res = $t3->moveToTop();
-		$this->assertEquals(3, $res, 'moveToTop() returns the old position when successful');
+		$this->assertEquals($t3, $res, 'moveToTop() returns the current oobject');
 		$expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveToTop() moves to the top');
 		$res = $t3->moveToTop();
-		$this->assertFalse($res, 'moveToTop() returns false when called on the top node');
 		$expected = array(1 => 'row3', 2 => 'row1', 3 => 'row2', 4 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveToTop() changes nothing when called on the top node');
 	}
@@ -243,13 +252,28 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	{
 		$t2 = Table11Peer::retrieveByRank(2);
 		$res = $t2->moveToBottom();
-		$this->assertEquals(2, $res, 'moveToBottom() returns the old position when successful');
+		$this->assertEquals($t2, $res, 'moveToBottom() returns the current object');
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveToBottom() moves to the bottom');
 		$res = $t2->moveToBottom();
 		$this->assertFalse($res, 'moveToBottom() returns false when called on the bottom node');
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveToBottom() changes nothing when called on the bottom node');
+	}
+	
+	public function testRemoveFromList()
+	{
+		$t2 = Table11Peer::retrieveByRank(2);
+		$res = $t2->removeFromList();
+		$this->assertTrue($res instanceof Table11, 'removeFromList() returns the current object');
+		$this->assertNull($res->getRank(), 'removeFromList() resets the object\'s rank');
+		Table11Peer::clearInstancePool();
+		$expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() does not change the list until the object is saved');
+		$t2->save();
+		Table11Peer::clearInstancePool();
+		$expected = array(null => 'row2', 1 => 'row1', 2 => 'row3', 3 => 'row4');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'removeFromList() changes the list once the object is saved');
 	}
 
 }

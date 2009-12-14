@@ -31,6 +31,17 @@ require_once 'tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
  */
 class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->populateTable11();
+	}
+	
+	public function testStaticAttributes()
+	{
+		$this->assertEquals(Table11Peer::RANK_COL, 'table11.SORTABLE_RANK');
+	}
+	
 	public function testGetMaxRank()
 	{
 		$this->assertEquals(4, Table11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
@@ -71,7 +82,7 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 			$this->assertTrue($object->getRank() > $oldRank);
 			$oldRank = $object->getRank();
 		}
-		$objects = Table11Peer::doSelectOrderByRank(Criteria::DESC);
+		$objects = Table11Peer::doSelectOrderByRank(null, Criteria::DESC);
 		$oldRank = 10;
 		while ($object = array_shift($objects)) {
 			$this->assertTrue($object->getRank() < $oldRank);
