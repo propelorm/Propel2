@@ -177,7 +177,6 @@ TaskPeer::deleteList($scope = $paul->getId());
 By default, the behavior adds one columns to the model - two if you use the scope feature. If these columns are already described in the schema, the behavior detects it and doesn't add them a second time. The behavior parameters allow you to use custom names for the sortable columns. The following schema illustrates a complete customization of the behavior:
 
 {{{
-{{{
 #!xml
 <table name="task">
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />

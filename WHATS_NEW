@@ -72,7 +72,7 @@ The nested set behavior implementation has a few added benefits:
  * The new implementation is much more robust, thanks to a ''full unit testing coverage''. That's more than 350 unit tests to ensure that your trees won't ever break due to an incorrect piece of code in the nested sets.
  * The API was rethought to make it more intuitive - but with method proxies to keep BC
 
-As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [nested_set behavior documentation] for more details.
+As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [wiki:Users/Documentation/1.5/Behaviors/nested_set nested_set behavior documentation] for more details.
 
 === Sortable Behavior ===
 
