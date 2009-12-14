@@ -111,7 +111,7 @@ protected \$nestedSetQueries = array();
 	
 	public function preSave($builder)
 	{
-		return "\$this->processNestedSetQueries();";
+		return "\$this->processNestedSetQueries(\$con);";
 	}
 		
 	public function preDelete($builder)
@@ -217,7 +217,7 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 /**
  * Execute queries that were saved to be run inside the save transaction
  */
-protected function processNestedSetQueries()
+protected function processNestedSetQueries(\$con)
 {
 	foreach (\$this->nestedSetQueries as \$query) {
 		\$query['arguments'][]= \$con;
