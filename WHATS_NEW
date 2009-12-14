@@ -1,6 +1,8 @@
 = What's new in Propel 1.5? =
 
-== Nested Set Behavior ==
+== New Behaviors ==
+
+=== Nested Set Behavior ===
 
 Using the `treeMode` attribute in a schema, you could turn a Propel model into a hierarchical data store starting with Propel 1.3. This method is now deprecated in favor of a new `nested_set` behavior, that does eactly the same thing, but in a more extensible and effective way.
 
@@ -71,6 +73,66 @@ The nested set behavior implementation has a few added benefits:
  * The API was rethought to make it more intuitive - but with method proxies to keep BC
 
 As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [nested_set behavior documentation] for more details.
+
+=== Sortable Behavior ===
+
+Have you ever enhanced a Propel Model to give it the ability to move up or down in an ordered list? The new `sortable` behavior, new in Propel 1.5, offers exactly that... and even more.
+
+As usual for behavior, activate `sortable` in your schema.yml.
+
+{{{
+#!xml
+<table name="task">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="user_id" required="true" type="INTEGER" />
+  <foreign-key foreignTable="user" onDelete="cascade">
+    <reference local="user_id" foreign="id" />
+  </foreign-key>
+  <behavior name="sortable">
+    <parameter name="use_scope" value="true" />
+    <parameter name="scope_column" value="user_id" />
+  </behavior>
+</table>
+}}}
+
+Then rebuild your model, and you're done. You have just created an ordered task list for users:
+
+{{{
+#!php
+<?php
+// test users
+$paul = new User();
+$john = new User();
+
+// create the tasks
+$t1 = new Task();
+$t1->setTitle('Wash the dishes');
+$t1->setUser($paul);
+$t1->save();
+echo $t1->getRank(); // 1
+$t2 = new Task();
+$t2->setTitle('Do the laundry');
+$t2->setUser($paul);
+$t2->save();
+echo $t2->getRank(); // 2
+$t3 = new Task();
+$t3->setTitle('Rest a little');
+$t3->setUser($john);
+$t3->save()
+echo $t3->getRank(); // 1, because John has his own task list
+
+// retrieve the tasks
+$allPaulsTasks = TaskPeer::retrieveList($scope = $paul->getId());
+$allJohnsTasks = TaskPeer::retrieveList($scope = $john->getId());
+$t1 = TaskPeer::retrieveByRank($rank = 1, $scope = $paul->getId());
+$t2 = $t1->getNext();
+$t2->moveUp();
+echo $t2->getRank(); // 1
+echo $t1->getRank(); // 2
+}}}
+
+This new behavior is fully unit tested and very customizable. Check out all you can do with `sortable` in the [wiki:Users/Documentation/1.5/Behaviors/sortable sortable behavior documentation].
 
 == Criteria Enhancements ==
 

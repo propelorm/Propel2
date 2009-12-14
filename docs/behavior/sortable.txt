@@ -167,7 +167,7 @@ Models using the sortable behavior with scope benefit from three additional Peer
 {{{
 #!php
 <?php
-$allPaulsTasks = TaskPeer::retrieveList( $scope = $paul->getId());
+$allPaulsTasks = TaskPeer::retrieveList($scope = $paul->getId());
 $nbPaulsTasks = TaskPeer::countList($scope = $paul->getId());
 TaskPeer::deleteList($scope = $paul->getId());
 }}}
