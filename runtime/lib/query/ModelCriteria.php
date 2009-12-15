@@ -560,44 +560,63 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Find object(s) by primary key
-	 * Accepts a variuable number of arguments
+	 * Find object by primary key
 	 * Behaves differently if the model has simple or composite primary key
 	 * <code>
 	 * // simple primary key
-	 * $book  = $c->findPk(12);
-	 * $books = $c->findPk(array(12, 56, 832));
+	 * $book  = $c->findPk(12, $con);
 	 * // composite primary key
-	 * $bookOpinion = $c->findPk(array(34, 634));
+	 * $bookOpinion = $c->findPk(array(34, 634), $con);
 	 * </code>
-	 * @param     mixed $keys Primary key to use for the query
+	 * @param     mixed $key Primary key to use for the query
 	 * @param     PropelPDO $con an optional connection object
 	 *
-	 * @return    mixed the result, or the list of results, formatted by the current formatter
+	 * @return    mixed the result, formatted by the current formatter
 	 */
-	public function findPk($keys, $con = null)
+	public function findPk($key, $con = null)
+	{
+		$pkCols = $this->getModelTableMap()->getPrimaryKeyColumns();
+		if (count($pkCols) == 1) {
+			// simple primary key
+			$pkCol = $pkCols[0];
+			$this->add($pkCol->getFullyQualifiedName(), $key);
+			return $this->findOne($con);
+		} else {
+			// composite primary key
+			foreach ($pkCols as $pkCol) {
+				$keyPart = array_shift($key);
+				$this->add($pkCol->getFullyQualifiedName(), $keyPart);
+			}
+			return $this->findOne($con);
+		}
+	}
+
+	/**
+	 * Find objects by primary key
+	 * Behaves differently if the model has simple or composite primary key
+	 * <code>
+	 * // simple primary key
+	 * $books = $c->findPks(array(12, 56, 832), $con);
+	 * // composite primary key
+	 * $bookOpinion = $c->findPks(array(array(34, 634), array(45, 518), array(34, 765)), $con);
+	 * </code>
+	 * @param     array $keys Primary keys to use for the query
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the list of results, formatted by the current formatter
+	 */
+	public function findPks($keys, $con = null)
 	{
 		$pkCols = $this->getModelTableMap()->getPrimaryKeyColumns();
 		if (count($pkCols) == 1) {
 			// simple primary key
 			$pkCol = array_shift($pkCols);
-			if (is_array($keys)) {
-				// find several objects with simple primary key
-				$this->add($pkCol->getFullyQualifiedName(), $keys, Criteria::IN);
-				return $this->find($con);
-			} else {
-				// find one object with simple primary key
-				$this->add($pkCol->getFullyQualifiedName(), $keys);
-				return $this->findOne($con);
-			}
+			$this->add($pkCol->getFullyQualifiedName(), $keys, Criteria::IN);
 		} else {
 			// composite primary key
-			foreach ($pkCols  as $pkCol) {
-				$key = array_pop($key);
-				$this->add($pkCol->getFullyQualifiedName(), $arg);
-			}
-			return $this->findOne($con);
+			throw new PropelException('Multiple object retrieval is not implemented for composite primary keys');
 		}
+		return $this->find($con);
 	}
 	
 	protected function getSelectStatement($con = null)

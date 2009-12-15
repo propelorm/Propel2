@@ -672,27 +672,55 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('Don Juan', $book->getTitle(), 'find() returns the model objects matching the query');
 	}
 	
-	public function testFindPk()
+	public function testFindPkSimpleKey()
 	{
 		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
 
 		$c = new ModelCriteria('bookstore', 'Book');
 		$book = $c->findPk(765432);
 		$this->assertNull($book, 'findPk() returns null when the primary key is not found');
+
+		BookstoreDataPopulator::populate();
 		
+		// retrieve the test data
+		$c = new ModelCriteria('bookstore', 'Book');
+		$testBook = $c->findOne();
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$book = $c->findPk($testBook->getId());
+		$this->assertEquals($testBook, $book, 'findPk() returns a model object corresponding to the pk');
+	}
+
+	public function testFindPksSimpleKey()
+	{
+		BookstoreDataPopulator::depopulate();
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$book = $c->findPks(array(765432, 434535));
+		$this->assertEquals(array(), $book, 'findPks() returns an empty array when the primary keys are not found');
+
+		BookstoreDataPopulator::populate();
+		
+		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'Book');
 		$testBooks = $c->find();
 		$testBook1 = array_pop($testBooks);
 		$testBook2 = array_pop($testBooks);
 		
 		$c = new ModelCriteria('bookstore', 'Book');
-		$book = $c->findPk($testBook1->getId());
-		$this->assertEquals($testBook1, $book, 'findPk() returns a model object corresponding to the pk');
+		$books = $c->findPks(array($testBook1->getId(), $testBook2->getId()));
+		$this->assertEquals(array($testBook2, $testBook1), $books, 'findPks() returns an array of model objects corresponding to the pks');
+	}
 
-		$c = new ModelCriteria('bookstore', 'Book');
-		$books = $c->findPk(array($testBook1->getId(), $testBook2->getId()));
-		$this->assertEquals(array($testBook2, $testBook1), $books, 'findPk() returns an array of model objects corresponding to the pks');
+	public function testFindPkCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRel = $c->findPk(array(1, 2));
+		$this->assertNull($bookListRel, 'findPk() returns null when the composite primary key is not found');
+
+		BookstoreDataPopulator::populate();
 		
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
@@ -701,14 +729,26 @@ class ModelCriteriaTest extends BookstoreTestBase
 			$book->save();
 		}
 		
+		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->findOne();
 		$pk = $bookListRelTest->getPrimaryKey();
 		
 		$c = new ModelCriteria('bookstore', 'BookListRel');
-		$bookListRel = $c->findOne($pk);
+		$bookListRel = $c->findPk($pk);
 		$this->assertEquals($bookListRelTest, $bookListRel, 'findPk() can find objects with composite primary keys');
 	}
+	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testFindPksCompositeKey()
+	{
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRel = $c->findPks(array(array(1, 2)));
+
+	}
+	
 	
 	public function testFindBy()
 	{

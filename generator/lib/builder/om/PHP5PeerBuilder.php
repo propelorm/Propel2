@@ -643,7 +643,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 *
 	 * @param      array $pkphp An array of PHP var names / method calls representing complete pk.
 	 */
-	protected function getInstancePoolKeySnippet($pkphp)
+	public function getInstancePoolKeySnippet($pkphp)
 	{
 		$pkphp = (array) $pkphp; // make it an array if it is not.
 		$script = "";

@@ -43,4 +43,10 @@ class PropelStatementFormatter extends PropelFormatter
 			return $stmt;
 		}
 	}
+
+	public function isObjectFormatter()
+	{
+		return false;
+	}
+
 }

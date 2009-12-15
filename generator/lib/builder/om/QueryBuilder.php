@@ -75,6 +75,8 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	protected function addClassBody(&$script)
 	{
 		$this->addConstructor($script);
+		$this->addFindPk($script);
+		$this->addFindPks($script);
 		$this->addBasePreSelect($script);
 		$this->addBasePreDelete($script);
 		$this->addBasePreUpdate($script);
@@ -117,9 +119,9 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	/**
 	 * Initializes internal state of ".$this->getClassname()." object.
 	 *
-	 * @param     string $dbName The dabase name
-	 * @param     string $modelName The phpName of a model, e.g. 'Book'
-	 * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+	 * @param     string \$dbName The dabase name
+	 * @param     string \$modelName The phpName of a model, e.g. 'Book'
+	 * @param     string \$modelAlias The alias for the model in this query, e.g. 'b'
 	 */";
 	}
 
@@ -154,7 +156,134 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	}
 ";
 	}
-
+	
+	/**
+	 * Adds the findPk method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFindPk(&$script)
+	{
+		$script .= "
+	/**
+	 * Find object by primary key";
+		if (count($this->getTable()->getPrimaryKey()) === 1) {
+			$script .= "
+	 * Use instance pooling to avoid a database query if the object exists
+	 * <code>
+	 * \$obj  = \$c->findPk(12, \$con);";
+		} else {	
+			$script .= "
+	 * <code>
+	 * \$obj = \$c->findPk(array(34, 634), \$con);";
+		}
+	 	$script .= "
+	 * </code>
+	 * @param     mixed \$key Primary key to use for the query
+	 * @param     PropelPDO \$con an optional connection object
+	 *
+	 * @return    mixed the result, formatted by the current formatter
+	 */
+	public function findPk(\$key, PropelPDO \$con = null)
+	{";
+		$table = $this->getTable();
+		$pks = $table->getPrimaryKey();
+		if (count($pks) === 1) {
+			// simple primary key
+			$col = $pks[0];
+			$const = $this->getColumnConstant($col);
+			$script .= "
+		if (\$this->getFormatter()->isObjectFormatter() && (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet('$key').")))) {
+			// the object is alredy in the instance pool
+			return \$obj;
+		} else {
+			// the object has not been requested yet, or the formatter is not an object formatter
+			\$this->add($const, \$key, Criteria::EQUAL);
+			return \$this->findOne(\$con);
+		}";
+		} else {
+			// composite primary key
+			$i = 0;
+			foreach ($pks as $col) {
+				$const = $this->getColumnConstant($col);
+				$script .= "
+		\$this->add($const, \$key[$i], Criteria::EQUAL);";
+				$i++;
+			}
+			$script .= "
+		
+		return \$this->findOne(\$con);";
+		}
+		$script .= "
+	}
+";
+	}
+	
+	/**
+	 * Adds the findPks method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFindPks(&$script)
+	{
+		$table = $this->getTable();
+		$pks = $table->getPrimaryKey();
+		$count = count($pks);
+		$script .= "
+	/**
+	 * Find objects by primary key
+	 * <code>";
+		if ($count === 1) {
+			$script .= "
+	 * \$objs = \$c->findPks(array(12, 56, 832), \$con);";
+		} else {
+			$script .= "
+	 * \$objs = \$c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), \$con);";
+		}
+		$script .= "
+	 * </code>
+	 * @param     array \$keys Primary keys to use for the query
+	 * @param     PropelPDO \$con an optional connection object
+	 *
+	 * @return    the list of results, formatted by the current formatter
+	 */
+	public function findPks(\$keys, PropelPDO \$con = null)
+	{";
+		if ($count === 1) {
+			// simple primary key
+			$col = $pks[0];
+			$const = $this->getColumnConstant($col);
+			$script .= "
+		\$this->add($const, \$keys, Criteria::IN);
+		
+		return \$this->find(\$con);";
+		} else {
+			// composite primary key
+			foreach ($pks as $pk){
+				# code...
+			}
+			$script .= "
+		foreach (\$keys as \$key) {";
+			$i = 0;
+			foreach ($pks as $col) {
+				$const = $this->getColumnConstant($col);
+				$script .= "
+			\$cton$i = \$this->getNewCriterion($const, \$key[$i], Criteria::EQUAL);";
+				if ($i>0) {
+					$script .= "
+			\$cton0->addAnd(\$cton$i);";
+				}
+				$i++;
+			}
+			$script .= "
+			\$this->addOr(\$cton0);
+		}
+		
+		return \$this->find(\$con);";
+		}
+		$script .= "
+	}
+";
+	}
+	
 	/**
 	 * Adds the basePreSelect hook for this object.
 	 * @param      string &$script The script will be modified in this method.

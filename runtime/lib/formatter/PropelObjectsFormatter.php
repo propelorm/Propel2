@@ -29,7 +29,7 @@
  * @package    propel.runtime.formatter
  */
 class PropelObjectsFormatter extends PropelFormatter
-{	
+{
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
@@ -51,6 +51,11 @@ class PropelObjectsFormatter extends PropelFormatter
 		}
 		$stmt->closeCursor();
 		return $result;
+	}
+	
+	public function isObjectFormatter()
+	{
+		return true;
 	}
 	
 	/**

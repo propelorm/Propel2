@@ -58,6 +58,11 @@ class PropelArrayFormatter extends PropelFormatter
 		$stmt->closeCursor();
 		return $result;
 	}
+
+	public function isObjectFormatter()
+	{
+		return false;
+	}
 	
 	protected function getCurrentObject()
 	{

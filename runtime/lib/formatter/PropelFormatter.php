@@ -48,6 +48,8 @@ abstract class PropelFormatter
 
 	abstract public function formatOne(PDOStatement $stmt);
 	
+	abstract public function isObjectFormatter();
+	
 	/**
 	 * Check that a ModelCriteria was properly set
 	 *

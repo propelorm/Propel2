@@ -64,7 +64,7 @@ So Propel queries are a very powerful tool to write your queries in an object-or
 // Finding the book having primary key 123
 $book = PropelQuery::from('Author')->findPk(123);
 // Finding the books having primary keys 123 and 456
-$books = PropelQuery::from('Author')->findPk(array(123, 456));
+$books = PropelQuery::from('Author')->findPks(array(123, 456));
 // Also works for objects with composite primary keys
 $bookOpinion = PropelQuery::from('BookOpinion')->findPk(array($bookId, $userId));
 }}}
@@ -403,6 +403,7 @@ findOne($con = null)
 findBy($columnName, $value, $con = null)
 findOneBy($columnName, $value, $con = null)
 findPk($pk, $con = null)
+findPks($pks, $con = null)
 delete($con = null)
 update($values, $con = null, $forceIndividualSaves = false)
 }}}

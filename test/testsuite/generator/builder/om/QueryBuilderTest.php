@@ -58,5 +58,114 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue($book instanceof Book);
 		$this->assertEquals('Don Juan', $book->getTitle());
 	}
+	
+	public function testFindPk()
+	{
+		$method = new ReflectionMethod('Table4Query', 'findPk');
+		$this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
+	}
+	
+	public function testFindPkSimpleKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		BookPeer::clearInstancePool();
+		$con = Propel::getConnection('bookstore');
+		
+		// prepare the test data
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Book.Id', 'desc');
+		$testBook = $c->findOne();
+		$count = $con->getQueryCount();
+
+		BookPeer::clearInstancePool();
+		
+		$q = new BookQuery();
+		$book = $q->findPk($testBook->getId());
+		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
+		$this->assertEquals($count+1, $con->getQueryCount(), 'findPk() issues a database query when instance pool is empty');
+
+		$q = new BookQuery();
+		$book = $q->findPk($testBook->getId());
+		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
+		$this->assertEquals($count+1, $con->getQueryCount(), 'findPk() does not issue a database query when instance is in pool');
+	}
+	
+	public function testFindPkCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+
+		BookPeer::clearInstancePool();
+		
+		// retrieve the test data
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRelTest = $c->findOne();
+		$pk = $bookListRelTest->getPrimaryKey();
+		
+		$q = new BookListRelQuery();
+		$bookListRel = $q->findPk($pk);
+		$this->assertEquals($bookListRelTest, $bookListRel, 'BaseQuery overrides findPk() for composite primary keysto make it faster');
+	}
+
+	public function testFindPks()
+	{
+		$method = new ReflectionMethod('Table4Query', 'findPks');
+		$this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPks()');
+	}
+
+	public function testFindPksSimpleKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		BookPeer::clearInstancePool();
+		
+		// prepare the test data
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Book.Id', 'desc');
+		$testBooks = $c->find();
+		$testBook1 = array_pop($testBooks);
+		$testBook2 = array_pop($testBooks);
+
+		$q = new BookQuery();
+		$books = $q->findPks(array($testBook1->getId(), $testBook2->getId()));
+		$this->assertEquals(array($testBook1, $testBook2), $books, 'BaseQuery overrides findPks() to make it faster');
+	}
+	
+	public function testFindPksCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+
+		BookPeer::clearInstancePool();
+		
+		// retrieve the test data
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRelTest = $c->find();
+		$search = array();
+		foreach ($bookListRelTest as $obj) {
+			$search[]= $obj->getPrimaryKey();
+		}
+		
+		$q = new BookListRelQuery();
+		$objs = $q->findPks($search);
+		$this->assertEquals($bookListRelTest, $objs, 'BaseQuery overrides findPks() for composite primary keys to make it work');
+	}
 
 }
