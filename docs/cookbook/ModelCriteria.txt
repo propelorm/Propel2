@@ -457,14 +457,14 @@ class BookQuery extends BaseBookQuery
 {
 	public function preSelect(PropelPDO $con)
 	{
-	  // filter out the rows with a deletion date
+		// filter out the rows with a deletion date
 		$this->whereColumn('DeletedAt', null);
 	}
 	
 	public function preDelete($con)
 	{
-	  // mark the records as deleted instead of deleting them 
-		return $this->update(array('PublishedAt' => time()));
+		// mark the records as deleted instead of deleting them 
+		return $this->update(array('DeletedAt' => time()));
 	}
 }
 }}}
@@ -482,5 +482,5 @@ class frontendBookQuery extends BookQuery
 	}
 }
 // Use 'frontendBook' instead of 'Book' in the frontend to retrieve only published articles
-$books = DbFinder::from('frontendBook')->find();
+$books = PropelQuery::from('frontendBook')->find();
 }}}
