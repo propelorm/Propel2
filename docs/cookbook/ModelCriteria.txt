@@ -484,3 +484,52 @@ class frontendBookQuery extends BookQuery
 // Use 'frontendBook' instead of 'Book' in the frontend to retrieve only published articles
 $books = PropelQuery::from('frontendBook')->find();
 }}}
+
+== Using Methods From Another Query Class ==
+
+After writing custom methods to query objects, developers often meet the need to use the method from another query. For instance, in order to select the authors of the most recent books, you may want to write:
+
+{{{
+#!php
+<?php
+// This doesn't work
+$books = PropelQuery::from('Author')
+  ->join('Author.Book')
+  ->recent()
+  ->find();
+}}}
+
+The problem is that `recent()` is a method of `BookQuery`, not of the `AuthorQuery` class that the `PropelQuery` factory returns.
+
+Does that mean that you must repeat the `BookQuery::recent()` code into a new `AuthorQuery::recentBooks()` method? That would imply repeating the same code in two classes, which is not a good practice. Instead, use the `useQuery()` and `endUse()` combination to use the methods of `BookQuery` inside `AuthorQuery`:
+
+{{{
+#!php
+<?php
+// This works
+$books = PropelQuery::from('Author')
+  ->join('Author.Book')
+  ->useQuery('Book')
+    ->recent()
+  ->endUse()
+  ->recent()
+  ->find();
+}}}
+
+Behind the scene, `useQuery('Book')` creates a `BookQuery` instance and returns it. So the `recent()` call is actually called on `BookQuery`, not on `ArticleQuery`. Upon calling `endUse()`, the `BookQuery` merges into the original `ArticleQuery` and returns it. So the final `find()` is indeed called on the `AuthorQuery` instance.
+
+You can nest queries in as many levels as you like, in order to avoid the repetition of code in your model.
+
+'''Tip''': If you define an alias for the relation in `join()`, you must pass this alias instead of the model name in `useQuery()`.
+
+{{{
+#!php
+<?php
+$books = PropelQuery::from('Author a')
+  ->join('a.Book b')
+  ->useQuery('b')
+    ->recent()
+  ->endUse()
+  ->recent()
+  ->find();
+}}}

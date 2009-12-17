@@ -300,6 +300,16 @@ class Criteria implements IteratorAggregate
 	{
 		$this->aliases[$alias] = $table;
 	}
+	
+	/**
+	 * Returns the aliases for this Criteria
+	 *
+	 * @return     array
+	 */
+	public function getAliases()
+	{
+		return $this->aliases;
+	}
 
 	/**
 	 * Returns the table name associated with an alias.
@@ -1124,16 +1134,17 @@ class Criteria implements IteratorAggregate
 			// Important: nested criterion objects are checked
 
 			$criteria = $crit; // alias
-			if ($this->offset === $criteria->getOffset()
-				&& $this->limit === $criteria->getLimit()
-				&& $this->ignoreCase === $criteria->isIgnoreCase()
-				&& $this->singleRecord === $criteria->isSingleRecord()
-				&& $this->dbName === $criteria->getDbName()
+			if  ($this->offset          === $criteria->getOffset()
+				&& $this->limit           === $criteria->getLimit()
+				&& $this->ignoreCase      === $criteria->isIgnoreCase()
+				&& $this->singleRecord    === $criteria->isSingleRecord()
+				&& $this->dbName          === $criteria->getDbName()
 				&& $this->selectModifiers === $criteria->getSelectModifiers()
-				&& $this->selectColumns === $criteria->getSelectColumns()
-				&& $this->orderByColumns === $criteria->getOrderByColumns()
-				&& $this->groupByColumns === $criteria->getGroupByColumns()
-			   )
+				&& $this->selectColumns   === $criteria->getSelectColumns()
+				&& $this->asColumns       === $criteria->getAsColumns()
+				&& $this->orderByColumns  === $criteria->getOrderByColumns()
+				&& $this->groupByColumns  === $criteria->getGroupByColumns()
+			   ) // what about alias, having and join ??
 			{
 				$isEquiv = true;
 				foreach ($criteria->keys() as $key) {
@@ -1152,6 +1163,78 @@ class Criteria implements IteratorAggregate
 			}
 		}
 		return $isEquiv;
+	}
+	
+	/**
+	 * Add the content of a Criteria to the current Criteria
+	 * In case of conflict, the current Criteria keeps its properties
+	 * 
+	 * @param     Criteria $criteria The criteria to read properties from
+	 */
+	public function mergeWith(Criteria $criteria)
+	{
+		// merge limit
+		$limit = $criteria->getLimit();
+		if($limit != 0 && $this->getLimit() == 0) {
+			$this->limit = $limit;
+		}
+		
+		// merge offset
+		$offset = $criteria->getOffset();
+		if($offset != 0 && $this->getOffset() == 0) {
+			$this->offset = $offset;
+		}
+		
+		// merge select modifiers
+		$selectModifiers = $criteria->getSelectModifiers();
+		if ($selectModifiers && ! $this->selectModifiers){
+			$this->selectModifiers = $selectModifiers;
+		}
+		
+		// merge select columns
+		$this->selectColumns = array_merge($this->getSelectColumns(), $criteria->getSelectColumns());
+		
+		// merge as columns
+		$commonAsColumns = array_intersect_key($this->getAsColumns(), $criteria->getAsColumns());
+		if (!empty($commonAsColumns)) {
+			throw new PropelException('The given criteria contains an AsColumn with an alias already existing in the current object');
+		}
+		$this->asColumns = array_merge($this->getAsColumns(), $criteria->getAsColumns());
+		
+		// merge orderByColumns
+		$orderByColumns = array_merge($this->getOrderByColumns(), $criteria->getOrderByColumns());
+		$this->orderByColumns = array_unique($orderByColumns);
+
+		// merge groupByColumns
+		$groupByColumns = array_merge($this->getGroupByColumns(), $criteria->getGroupByColumns());
+		$this->groupByColumns = array_unique($groupByColumns);
+		
+		// merge where conditions
+		foreach ($criteria->getMap() as $key => $criterion) {
+			if ($this->containsKey($key)) {
+				$this->addAnd($criterion);
+			} else {
+				$this->add($criterion);
+			}
+		}
+		
+		// merge having
+		if ($having = $criteria->getHaving()) {
+			if ($this->getHaving()) {
+				$this->addHaving($this->getHaving()->addAnd($having));
+			} else {
+				$this->addHaving($having);
+			}
+		}
+		
+		// merge alias
+		$commonAliases = array_intersect_key($this->getAliases(), $criteria->getAliases());
+		if (!empty($commonAliases)) {
+			throw new PropelException('The given criteria contains an alias already existing in the current object');
+		}
+		$this->aliases = array_merge($this->getAliases(), $criteria->getAliases());
+		
+		return $this;
 	}
 
 	/**

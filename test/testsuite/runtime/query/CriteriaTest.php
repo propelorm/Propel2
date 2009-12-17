@@ -851,5 +851,4 @@ class CriteriaTest extends BaseTestCase
     $c4->addGroupByColumn('GBY1');
     $this->assertTrue($c4->equals($c3), "Expected Criteria objects to match.");
   }
-  
 }

@@ -137,6 +137,23 @@ class ModelCriteriaTest extends BookstoreTestBase
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'A ModelCriteria accepts a model name with an alias');
 	}
+
+	public function testTrueTableAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->where('b.Title = ?', 'foo');
+		$c->join('b.Author a');
+		$c->where('a.FirstName = ?', 'john');
+		
+		
+		$sql = "SELECT  FROM `book` `b` INNER JOIN author a ON (b.AUTHOR_ID=a.ID) WHERE b.TITLE = :p1 AND a.FIRST_NAME = :p2";
+		$params = array(
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+			array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'john'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after constrution');
+	}
 		
 	public function testCondition()
 	{	
@@ -1051,6 +1068,74 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234 LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
 	}
+
+	public function testUseQuery()
+	{
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->thisIsMe = true;
+		$c->where('b.Title = ?', 'foo');
+		$c->setOffset(10);
+		$c->leftJoin('b.Author');
+		
+		$c2 = $c->useQuery('Author');
+		$this->assertTrue($c2 instanceof AuthorQuery, 'useQuery() returns a secondary Criteria');
+		$this->assertEquals($c, $c2->getPrimaryCriteria(), 'useQuery() sets the primary Criteria os the secondary Criteria');
+		$c2->where('Author.FirstName = ?', 'john');
+		$c2->limit(5);
+		
+		$c = $c2->endUse();
+		$this->assertTrue($c->thisIsMe, 'endUse() returns the Primary Criteria');
+		$this->assertEquals('Book', $c->getModelName(), 'endUse() returns the Primary Criteria');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE = 'foo' AND author.FIRST_NAME = 'john' LIMIT 10, 5";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
+	}
+	
+	public function testUseQueryAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->thisIsMe = true;
+		$c->where('b.Title = ?', 'foo');
+		$c->setOffset(10);
+		$c->leftJoin('b.Author a');
+		
+		$c2 = $c->useQuery('a');
+		$this->assertTrue($c2 instanceof AuthorQuery, 'useQuery() returns a secondary Criteria');
+		$this->assertEquals($c, $c2->getPrimaryCriteria(), 'useQuery() sets the primary Criteria os the secondary Criteria');
+		$this->assertEquals(array('a' => 'author'), $c2->getAliases(), 'useQuery() sets the secondary Criteria alias correctly');
+		$c2->where('a.FirstName = ?', 'john');
+		$c2->limit(5);
+		
+		$c = $c2->endUse();
+		$this->assertTrue($c->thisIsMe, 'endUse() returns the Primary Criteria');
+		$this->assertEquals('Book', $c->getModelName(), 'endUse() returns the Primary Criteria');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME = 'john' LIMIT 10, 5";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
+	}
+
+	public function testUseQueryCustomClass()
+	{
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->thisIsMe = true;
+		$c->where('b.Title = ?', 'foo');
+		$c->setLimit(10);
+		$c->leftJoin('b.Author a');
+		
+		$c2 = $c->useQuery('a', 'ModelCriteriaForUseQuery');
+		$this->assertTrue($c2 instanceof ModelCriteriaForUseQuery, 'useQuery() returns a secondary Criteria with the custom class');
+		$c2->withNoName();
+		$c = $c2->endUse();
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME IS NOT NULL  AND a.LAST_NAME IS NOT NULL LIMIT 10";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a custom secondary criteria');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria
@@ -1082,5 +1167,20 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 	public function preUpdate(&$values, PropelPDO $con)
 	{
 		$values['ISBN'] = '1234';
+	}
+}
+
+class ModelCriteriaForUseQuery extends ModelCriteria
+{
+	public function __construct($dbName = 'bookstore', $modelName = 'Author', $modelAlias = null)
+	{
+		parent::__construct($dbName, $modelName, $modelAlias);
+	}
+
+	public function withNoName()
+	{
+		return $this
+			->whereColumn('FirstName', null, Criteria::ISNOTNULL)
+			->where($this->getModelAliasOrName() . '.LastName IS NOT NULL');
 	}
 }

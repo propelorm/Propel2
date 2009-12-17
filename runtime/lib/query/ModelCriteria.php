@@ -45,7 +45,9 @@ class ModelCriteria extends Criteria
 	protected $modelName;
 	protected $modelPeerName;
 	protected $modelAlias;
+	protected $useAliasInSQL = false;
 	protected $tableMaps = array();
+	protected $primaryCriteria;
 	protected $formatter;
 	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECTS;
 		
@@ -82,10 +84,11 @@ class ModelCriteria extends Criteria
 	 * Sets the alias for the model in this query
 	 *
 	 * @param    string $modelAlias The model alias
+	 * @param    boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
 	 *
 	 * @return ModelCriteria The current object, for fluid interface
 	 */
-	public function setModelAlias($modelAlias)
+	public function setModelAlias($modelAlias, $useAliasInSQL = false)
 	{
 		$oldTableMapIndex = null;
 		if (isset($this->tableMaps[$this->modelAlias])) {
@@ -97,6 +100,10 @@ class ModelCriteria extends Criteria
 		if (null !== $oldTableMapIndex) {
 			$this->tableMaps[$modelAlias] = $this->tableMaps[$oldTableMapIndex];
 			unset($this->tableMaps[$oldTableMapIndex]);
+		}
+		if ($useAliasInSQL) {
+			$this->addAlias($modelAlias, $this->tableMaps[$modelAlias]->getName());
+			$this->useAliasInSQL = true;
 		}
 		$this->modelAlias = $modelAlias;
 		
@@ -491,6 +498,72 @@ class ModelCriteria extends Criteria
 		$this->addMultipleJoin($joinCols, $joinType);
 		
 		return $this;
+	}
+	
+	/**
+	 * Initializes a secondary ModelCriteria object, to be later merged with the current object
+	 *
+	 * @see       ModelCriteria::endUse()
+	 * @param     string $relationName Relation name or alias
+	 * @param     string $secondCriteriaClass Classname for the ModelCriteria to be used
+	 *
+	 * @return    ModelCriteria The secondary criteria object
+	 */
+	public function useQuery($relationName, $secondaryCriteriaClass = null)
+	{
+		if (!array_key_exists($relationName, $this->tableMaps)) {
+			throw new PropelException('Unknown class or alias ' . $name);
+		}
+		$className = $this->tableMaps[$relationName]->getPhpName();
+		if (null === $secondaryCriteriaClass) {
+			$secondaryCriteria = PropelQuery::from($className);
+		} else {
+			$secondaryCriteria = new $secondaryCriteriaClass();
+		}
+		if ($className != $relationName) {
+			$secondaryCriteria->setModelAlias($relationName, true);
+		}
+		$secondaryCriteria->setPrimaryCriteria($this);
+		
+		return $secondaryCriteria;
+	}
+	
+	/**
+	 * Finalizes a secondary criteria and merges it with its primary Criteria
+	 *
+	 * @see       Criteria::mergeWith()
+	 *
+	 * @return    ModelCriteria The primary criteria object
+	 */
+	public function endUse()
+	{
+		if (array_key_exists($this->modelAlias, $this->aliases)) {
+			unset($this->aliases[$this->modelAlias]);
+		}
+		$primaryCriteria = $this->getPrimaryCriteria();
+		$primaryCriteria->mergeWith($this);
+		
+		return $primaryCriteria;
+	}
+	
+	/**
+	 * Sets the primary Criteria for this secondary Criteria
+	 *
+	 * @param     ModelCriteria $criteria The primary criteria
+	 */
+	public function setPrimaryCriteria(ModelCriteria $criteria)
+	{
+		$this->primaryCriteria = $criteria;
+	}
+
+	/**
+	 * Gets the primary criteria for this secondary Criteria
+	 *
+	 * @return     ModelCriteria The primary criteria
+	 */
+	public function getPrimaryCriteria()
+	{
+		return $this->primaryCriteria;
 	}
 	
 	/**
@@ -1062,7 +1135,11 @@ EOT;
 		if (!$this->getModelTableMap()->hasColumnByPhpName($columnName)) {
 			throw new PropelException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
 		}
-		return $this->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+		if ($this->useAliasInSQL) {
+			return $this->modelAlias . '.' . $this->getModelTableMap()->getColumnByPhpName($columnName)->getName();
+		} else {
+			return $this->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+		}
 	}
 
 	/**
