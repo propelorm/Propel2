@@ -628,18 +628,10 @@ class Criteria implements IteratorAggregate
 	public function add($p1, $value = null, $comparison = null)
 	{
 		if ($p1 instanceof Criterion) {
-			if($name === null) {
-				$this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
-			} else {
-				$this->namedCriterions[$name] = $p1;
-			}
+			$this->map[$p1->getTable() . '.' . $p1->getColumn()] = $p1;
 		} else {
 			$criterion = new Criterion($this, $p1, $value, $comparison);
-			if($name === null) {
-				$this->map[$p1] = $criterion;
-			} else {
-				$this->namedCriterions[$name] = $criterion;
-			}
+			$this->map[$p1] = $criterion;
 		}
 		return $this;
 	}
