@@ -154,7 +154,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after constrution');
 	}
-		
+	
 	public function testCondition()
 	{	
 		$c = new ModelCriteria('bookstore', 'Book');
@@ -656,6 +656,190 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
 	}
 	
+	public function testWith()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author');
+		$c->with('Author');
+		$this->assertEquals(array($c->joins['Author']), $c->getWith(), 'with() adds a Join object to the $with array');
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testWithThrowsExceptionWhenJoinLacks()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->with('Author');
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testWithThrowsExceptionWhenOneToMany()
+	{
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->join('Author.Book');
+		$c->with('Book');
+	}
+
+	public function testWithAlias()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author a');
+		$c->with('a');
+		$this->assertEquals(array($c->joins['a']), $c->getWith(), 'with() adds a Join object to the $with array based on an alias');
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testWithThrowsExceptionWhenNotUsingAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author a');
+		$c->with('Author');
+	}
+
+	public function testWithAddsSelectColumns()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		BookPeer::addSelectColumns($c);
+		$c->join('Book.Author');
+		$c->with('Author');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table');
+	}
+
+	public function testWithAliasAddsSelectColumns()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		BookPeer::addSelectColumns($c);
+		$c->join('Book.Author a');
+		$c->with('a');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			'a.ID',
+			'a.FIRST_NAME',
+			'a.LAST_NAME',
+			'a.EMAIL',
+			'a.AGE'
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table');
+	}
+
+	public function testWithAddsSelectColumnsOfMainTable()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author');
+		$c->with('Author');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table if required');
+	}
+
+	public function testWithAliasAddsSelectColumnsOfMainTable()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->join('b.Author a');
+		$c->with('a');
+		$expectedColumns = array(
+			'b.ID',
+			'b.TITLE',
+			'b.ISBN',
+			'b.PRICE',
+			'b.PUBLISHER_ID',
+			'b.AUTHOR_ID',
+			'a.ID',
+			'a.FIRST_NAME',
+			'a.LAST_NAME',
+			'a.EMAIL',
+			'a.AGE'
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table with an alias if required');
+	}
+	
+	public function testWithNoJoin()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->with('Book.Author');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the join with the alias if the relation is a complete relation name');
+		$joins = $c->getJoins();
+		$join = $joins['Author'];
+		$this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'with() adds an INNER JOIN by default');
+	}
+
+	public function testWithNoJoinAndType()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->with('Book.Author', Criteria::LEFT_JOIN);
+		$joins = $c->getJoins();
+		$join = $joins['Author'];
+		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'with() accepts a join type as second parameter');
+	}
+
+	public function testWithNoJoinAndAlias()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->with('Book.Author a');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			'a.ID',
+			'a.FIRST_NAME',
+			'a.LAST_NAME',
+			'a.EMAIL',
+			'a.AGE'
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the join if the relation is a complete relation name');
+	}
+	
 	public function testFind()
 	{
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
@@ -673,6 +857,25 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$book = array_shift($books);
 		$this->assertTrue($book instanceof Book, 'find() returns an array of Model objects by default');
 		$this->assertEquals('Quicksilver', $book->getTitle(), 'find() returns the model objects matching the query');
+	}
+	
+	public function testFindAddsSelectColumns()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find($con);
+		$sql = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`";
+		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'find() adds the select columns of the current model');
+	}
+
+	public function testFindTrueAliasAddsSelectColumns()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$books = $c->find($con);
+		$sql = "SELECT b.ID, b.TITLE, b.ISBN, b.PRICE, b.PUBLISHER_ID, b.AUTHOR_ID FROM `book` `b`";
+		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'find() uses the true model alias if available');
 	}
 
 	public function testFindOne()
@@ -1139,7 +1342,9 @@ class ModelCriteriaTest extends BookstoreTestBase
 }
 
 class TestableModelCriteria extends ModelCriteria
-{	
+{
+	public $joins = array();
+	
 	public function replaceNames(&$clause)
 	{
 		return parent::replaceNames($clause);

@@ -250,6 +250,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$this->addBuildPkeyCriteria($script);
 		$this->addGetPrimaryKey($script);
 		$this->addSetPrimaryKey($script);
+		$this->addIsPrimaryKeyNull($script);
 
 		$this->addCopy($script);
 
@@ -1569,8 +1570,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addBuildPkeyCriteriaBody(&$script) {
 		$script .= "
-		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);
-";
+		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
 		foreach ($this->getTable()->getColumns() as $col) {
 			$clo = strtolower($col->getName());
 			if ($col->isPrimaryKey()) {
@@ -1665,18 +1665,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 **/
 	protected function addToArray(&$script)
 	{
-		$this->addToArrayComment($script);
-		$this->addToArrayOpen($script);
-		$this->addToArrayBody($script);
-		$this->addToArrayClose($script);
-	}
-
-	/**
-	 * Adds the comment of the toArray method
-	 * @param      string &$script The script will be modified in this method.
-	 * @see        addToArray()
-	 **/
-	protected function addToArrayComment(&$script) {
+		$fks = $this->getTable()->getForeignKeys();
+		$hasFks = count($fks) > 0;
 		$script .= "
 	/**
 	 * Exports the object as an array.
@@ -1684,31 +1674,20 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string \$keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param      boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
-	 * @return     an associative array containing the field names (as keys) and field values
-	 */";
-	}
-
-	/**
-	 * Adds the function declaration of the toArray method
-	 * @param      string &$script The script will be modified in this method.
-	 * @see        addToArray()
-	 **/
-	protected function addToArrayOpen(&$script) {
+	 * @param     string  \$keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. 
+	 *                    Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.";
+		if ($hasFks) {
+			$script .= "
+	 * @param     boolean \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
+		}
 		$script .= "
-	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true)
-	{";
-	}
-
-	/**
-	 * Adds the function body of the toArray method
-	 * @param      string &$script The script will be modified in this method.
-	 * @see        addToArray()
-	 **/
-	protected function addToArrayBody(&$script) {
-		$script .= "
+	 *
+	 * @return    array an associative array containing the field names (as keys) and field values
+	 */
+	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+	{
 		\$keys = ".$this->getPeerClassname()."::getFieldNames(\$keyType);
 		\$result = array(";
 		foreach ($this->getTable()->getColumns() as $num => $col) {
@@ -1722,14 +1701,18 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		$script .= "
 		);";
-	}
-
-	/**
-	 * Adds the function close of the toArray method
-	 * @param      string &$script The script will be modified in this method.
-	 * @see        addToArray()
-	 **/
-	protected function addToArrayClose(&$script) {
+		if ($hasFks) {
+			$script .= "
+		if (\$includeForeignObjects) {";
+			foreach ($fks as $fk) {
+				$script .= "
+			if (null !== \$this->" . $this->getFKVarName($fk) . ") {
+				\$result['" . $this->getFKPhpNameAffix($fk, $plural = false) . "'] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, true);
+			}";
+			}
+			$script .= "
+		}";
+		}
 		$script .= "
 		return \$result;
 	}
@@ -2269,16 +2252,15 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 */
 	public function getPrimaryKey()
 	{
-		\$pks = array();
-";
+		\$pks = array();";
 		$i = 0;
 		foreach ($this->getTable()->getPrimaryKey() as $pk) {
 			$script .= "
-		\$pks[$i] = \$this->get".$pk->getPhpName()."();
-";
+		\$pks[$i] = \$this->get".$pk->getPhpName()."();";
 			$i++;
 		} /* foreach */
 		$script .= "
+		
 		return \$pks;
 	}
 ";
@@ -2364,14 +2346,12 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @return     void
 	 */
 	public function setPrimaryKey(\$keys)
-	{
-";
+	{";
 		$i = 0;
 		foreach ($this->getTable()->getPrimaryKey() as $pk) {
 			$pktype = $pk->getPhpType();
 			$script .= "
-		\$this->set".$pk->getPhpName()."(\$keys[$i]);
-";
+		\$this->set".$pk->getPhpName()."(\$keys[$i]);";
 			$i++;
 		} /* foreach ($table->getPrimaryKey() */
 		$script .= "
@@ -2405,6 +2385,38 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 }
 ";
 	}
+
+	/**
+	 * Adds the isPrimaryKeyNull() method
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addIsPrimaryKeyNull(&$script)
+	{
+		$table = $this->getTable();
+		$pkeys = $table->getPrimaryKey();
+
+		$script .= "
+	/**
+	 * Returns true if the primary key for this object is null.
+	 * @return     boolean
+	 */
+	public function isPrimaryKeyNull()
+	{";
+		if (count($pkeys) == 1) {
+			$script .= "
+		return null === \$this->get" . $pkeys[0]->getPhpName() . "();";
+		} else {
+			$tests = array();
+			foreach ($pkeys as $pkey) {
+				$tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
+			}
+			$script .= "
+		return " . join(' && ', $tests) . ";";
+		}
+		$script .= "
+	}
+";
+	} // addetPrimaryKey_SingleFK
 
 	// --------------------------------------------------------------------
 	// Complex OM Methods
@@ -3902,8 +3914,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @throws     PropelException
 	 */
 	public function copyInto(\$copyObj, \$deepCopy = false)
-	{
-";
+	{";
 
 		$autoIncCols = array();
 		foreach ($table->getColumns() as $col) {
@@ -3916,8 +3927,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($table->getColumns() as $col) {
 			if (!in_array($col, $autoIncCols, true)) {
 				$script .= "
-		\$copyObj->set".$col->getPhpName()."(\$this->".strtolower($col->getName()).");
-";
+		\$copyObj->set".$col->getPhpName()."(\$this->".strtolower($col->getName()).");";
 			}
 		} // foreach
 
@@ -3965,8 +3975,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$script .= "
 
-		\$copyObj->setNew(true);
-";
+		\$copyObj->setNew(true);";
 
 		// Note: we're no longer resetting non-autoincrement primary keys to default values
 		// due to: http://propel.phpdb.org/trac/ticket/618
@@ -3974,8 +3983,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 				$coldefval = $col->getPhpDefaultValue();
 				$coldefval = var_export($coldefval, true);
 				$script .= "
-		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value
-";
+		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value";
 		} // foreach
 		$script .= "
 	}

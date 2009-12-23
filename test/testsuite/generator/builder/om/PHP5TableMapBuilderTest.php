@@ -36,14 +36,25 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertEquals(8, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
   }
   
-  public function testRelationName()
+  public function testSimpleRelationName()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertTrue($bookTable->hasRelation('Publisher'), 'The map builder creates relations based on the foreign table name, calemized');
     $this->assertTrue($bookTable->hasRelation('BookListRel'), 'The map builder creates relations based on the foreign table phpName, if provided');
+  }
+
+  public function testAliasRelationName()
+  {
     $bookEmpTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
     $this->assertTrue($bookEmpTable->hasRelation('Supervisor'), 'The map builder creates relations based on the foreign key phpName');
     $this->assertTrue($bookEmpTable->hasRelation('Subordinate'), 'The map builder creates relations based on the foreign key refPhpName');
+  }
+
+  public function testDuplicateRelationName()
+  {
+    $essayTable = $this->databaseMap->getTableByPhpName('Essay');
+    $this->assertTrue($essayTable->hasRelation('AuthorRelatedByFirstAuthor'), 'The map builder creates relations based on the foreign table name and the foreign key');
+    $this->assertTrue($essayTable->hasRelation('AuthorRelatedBySecondAuthor'), 'The map builder creates relations based on the foreign table name and the foreign key');
   }
   
   public function testRelationDirection()
@@ -73,7 +84,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertEquals($expectedMapping, $publisherTable->getRelation('Book')->getColumnMappings(), 'The map builder adds local columns where the foreign key lies');
     $rfTable = $this->databaseMap->getTableByPhpName('ReaderFavorite');
     $expectedMapping = array(
-      'reader_favorite.BOOK_ID'    => 'book_opinion.BOOK_ID',
+      'reader_favorite.BOOK_ID'   => 'book_opinion.BOOK_ID',
       'reader_favorite.READER_ID' => 'book_opinion.READER_ID'
     );
     $this->assertEquals($expectedMapping, $rfTable->getRelation('BookOpinion')->getColumnMappings(), 'The map builder adds all columns for composite foreign keys');

@@ -66,6 +66,12 @@ class BasePeer
 	const TYPE_COLNAME = 'colName';
 
 	/**
+	 * column part of the column peer name
+	 * e.g. 'AUTHOR_ID'
+	 */
+	const TYPE_RAW_COLNAME = 'rawColName';
+
+	/**
 	 * column fieldname type
 	 * e.g. 'author_id'
 	 */

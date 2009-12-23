@@ -35,9 +35,10 @@ class PropelObjectsFormatter extends PropelFormatter
 		$this->checkCriteria();
 		$results = array();
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$results[] = $this->getObjectFromRow($row);
+			$results[] = $this->getAllObjectsFromRow($row);
 		}
 		$stmt->closeCursor();
+		
 		return $results;
 	}
 	
@@ -45,11 +46,12 @@ class PropelObjectsFormatter extends PropelFormatter
 	{
 		$this->checkCriteria();
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$result = $this->getObjectFromRow($row);
+			$result = $this->getAllObjectsFromRow($row);
 		} else {
 			$result = null;
 		}
 		$stmt->closeCursor();
+		
 		return $result;
 	}
 	
@@ -59,18 +61,56 @@ class PropelObjectsFormatter extends PropelFormatter
 	}
 	
 	/**
-	 * Gets the Propel object hydrated from a statement row
-	 * @param array associative array indexed by column number,
-	 *              as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+	 * Hydrates a series of objects from a result row
+	 * The first object to hydrate is the model of the Criteria
+	 * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
+	 *
+	 *  @param    array  $row associative array indexed by column number,
+	 *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+	 *
+	 * @return    BaseObject
 	 */
-	public function getObjectFromRow($row)
+	public function getAllObjectsFromRow($row)
 	{
-		$key = call_user_func(array($this->peer, 'getPrimaryKeyHashFromRow'), $row, 0);
-		if (null === ($obj = call_user_func(array($this->peer, 'getInstanceFromPool'), $key))) {
-			$obj = new $this->class();
-			$obj->hydrate($row);
-			call_user_func(array($this->peer, 'addInstanceToPool'), $obj, $key);
+		$col = 0;
+		$obj = $this->getSingleObjectFromRow($row, $this->class, $this->peer, $col);
+		foreach ($this->getCriteria()->getWith() as $join) {
+			$startObject = $join->getObjectToRelate($obj);
+			$endObject = $this->getSingleObjectFromRow($row, $join->getTableMap()->getClassname(), $join->getTableMap()->getPeerClassname(), $col);
+			// as we may be in a left join, the endObject may be empty
+			// in which case it should not be related to the previous object
+			if ($endObject->isPrimaryKeyNull()) {
+				continue;
+			}
+			$method = 'set' . $join->getRelationMap()->getName();
+			$startObject->$method($endObject);
 		}
 		return $obj;
 	}
+	
+	/**
+	 * Gets a Propel object hydrated from a selection of columns in statement row
+	 *
+	 * @param     array  $row associative array indexed by column number,
+	 *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+	 * @param     string $class The classname of the object to create
+	 * @param     string $peer The peer classname of the object to create
+	 * @param     int    $col The start column for the hydration - modified by the method
+	 *
+	 * @return    BaseObject
+	 */
+	public function getSingleObjectFromRow($row, $class, $peer, &$col = 0)
+	{
+		$key = call_user_func(array($peer, 'getPrimaryKeyHashFromRow'), $row, $col);
+		$obj = call_user_func(array($peer, 'getInstanceFromPool'), $key);
+		if (null === $obj) {
+			$obj = new $class();
+			$col = $obj->hydrate($row, $col);
+			call_user_func(array($peer, 'addInstanceToPool'), $obj, $key);
+		} else {
+			$col = $col + constant($peer . '::NUM_COLUMNS');
+		}
+		return $obj;
+	}
+
 }

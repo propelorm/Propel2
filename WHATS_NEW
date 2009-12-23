@@ -308,6 +308,35 @@ $book = PropelQuery::from('Book')->findOneByTitle('War And Peace');
 
 The documentation offers [wiki:Users/Documentation/1.5/ModelCriteria an entire chapter] dedicated to the new `ModelCriteria` class. Make sure you read it to see the power of this new query API.
 
+== Better `toArray()` ==
+
+When you call `toArray()` on an object, you can now ask for the related objects:
+
+{{{
+#!php
+<?php
+$bookArray = $book->toArray($keyType = BasePeer::TYPE_COLNAME, $includeLazyLoadColumns = true, $includeForeignObjects = true);
+print_r($bookArray);
+  => array(
+       'Id'          => 123,
+       'Title'       => 'War And Peace',
+       'ISBN'        => '3245234535',
+       'AuthorId'    => 456,
+       'PublisherId' => 567
+       'Author'      => array(
+         'Id'          => 456,
+         'FirstName'   => 'Leo',
+         'LastName'    => 'Tolstoi'
+       ), 
+       'Publisher'   => array(
+         'Id'          => 567,
+         'Name'        => 'Penguin'
+       )
+     )
+}}}
+
+Only the related objects that were already hydrated appear in the result, so `toArray()` never issues additional queries. Together with the ability to return arrays instead of objects when using `PropelQuery`, this addition will help to debug and optimize model code.
+
 == Code Cleanup ==
 
 === Directory Structure Changes ===
@@ -334,6 +363,9 @@ To allow custom connection handlers, the debug code that was written in the `Deb
 
 During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation about Propel logging and debugging features] was rewritten and should now be clearer.
 
-=== Other Minor Code Cleanups ===
+== Miscellaneous ==
 
+ * `ModelObject::addSelectColumns()` now accepts an additional parameter to allow the use of table aliases
+ * Added `ModelObject::isPrimaryKeyNull()` method to check of an object was hydrated with no values (in case of a left join)
+ * Added a new set of constants in the generated Peer class to list column names without the table name (this is `BasePeer::TYPE_RAW_COLNAME`)
  * Removed references to Creole in the code (Propel uses PDO instead of Creole since version 1.3)

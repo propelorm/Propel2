@@ -58,7 +58,7 @@ class RelationMap
   /**
    * Constructor.
    *
-   * @param      string $name Name of the database.
+   * @param      string $name Name of the relation.
    */
   public function __construct($name)
   {
@@ -66,9 +66,9 @@ class RelationMap
   }
   
   /**
-   * Get the name of this database.
+   * Get the name of this relation.
    *
-   * @return     string The name of the database.
+   * @return     string The name of the relation.
    */
   public function getName()
   {

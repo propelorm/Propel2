@@ -46,10 +46,11 @@ class ModelCriteria extends Criteria
 	protected $modelPeerName;
 	protected $modelAlias;
 	protected $useAliasInSQL = false;
-	protected $tableMaps = array();
+	protected $tableMap;
 	protected $primaryCriteria;
 	protected $formatter;
 	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECTS;
+	protected $with = array();
 		
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -66,8 +67,7 @@ class ModelCriteria extends Criteria
 		$this->modelName = $modelName;
 		$this->modelPeerName = constant($this->modelName . '::PEER');
 		$this->modelAlias = $modelAlias;
-		$tableMapIndex = $modelAlias ? $modelAlias : $modelName;
-		$this->tableMaps[$tableMapIndex] = Propel::getDatabaseMap($this->getDbName())->getTablebyPhpName($this->modelName);
+		$this->tableMap = Propel::getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
 	}
 	
 	/**
@@ -90,19 +90,8 @@ class ModelCriteria extends Criteria
 	 */
 	public function setModelAlias($modelAlias, $useAliasInSQL = false)
 	{
-		$oldTableMapIndex = null;
-		if (isset($this->tableMaps[$this->modelAlias])) {
-			$oldTableMapIndex = $this->modelAlias;
-		}
-		if (isset($this->tableMaps[$this->modelName])) {
-			$oldTableMapIndex = $this->modelName;
-		}
-		if (null !== $oldTableMapIndex) {
-			$this->tableMaps[$modelAlias] = $this->tableMaps[$oldTableMapIndex];
-			unset($this->tableMaps[$oldTableMapIndex]);
-		}
 		if ($useAliasInSQL) {
-			$this->addAlias($modelAlias, $this->tableMaps[$modelAlias]->getName());
+			$this->addAlias($modelAlias, $this->tableMap->getName());
 			$this->useAliasInSQL = true;
 		}
 		$this->modelAlias = $modelAlias;
@@ -131,16 +120,6 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	 * Returns the TableMap for this model Criteria
-	 *
-	 * @return TableMap
-	 */
-	public function getModelTableMap()
-	{
-		return $this->tableMaps[$this->getModelAliasOrName()];
-	}
-	
-	/**
 	 * Returns the name of the Peer class for this model criteria
 	 *
 	 * @return string
@@ -148,6 +127,16 @@ class ModelCriteria extends Criteria
 	public function getModelPeerName()
 	{
 		return $this->modelPeerName;
+	}
+	
+	/**
+	 * Returns the TabkleMap object for this Criteria
+	 *
+	 * @return TableMap
+	 */
+	public function getTableMap()
+	{
+		return $this->tableMap;
 	}
 	
 	/**
@@ -456,10 +445,15 @@ class ModelCriteria extends Criteria
 	 * Uses the Propel table maps, based on the schema, to guess the related columns
 	 * Beware that the default JOIN operator is INNER JOIN, while Criteria defaults to WHERE
 	 * Examples:
-	 *   $c->join('Author')
-	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::INNER_JOIN)
-	 *   $c->join('Author', Criteria::RIGHT_JOIN)
-	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::RIGHT_JOIN)
+	 * <code>
+	 *   $c->join('Book.Author');
+	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::INNER_JOIN);
+	 *   $c->join('Book.Author', Criteria::RIGHT_JOIN);
+	 *    => $c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::RIGHT_JOIN);
+	 *   $c->join('Book.Author a', Criteria::RIGHT_JOIN);
+	 *    => $c->addAlias('a', AuthorPeer::TABLE_NAME);
+	 *    => $c->addJoin(BookPeer::AUTHOR_ID, 'a.ID', Criteria::RIGHT_JOIN);
+	 * </code>
 	 * 
 	 * @param      string $relation Relation to use for the join
 	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
@@ -468,38 +462,110 @@ class ModelCriteria extends Criteria
 	 */
 	public function join($relation, $joinType = Criteria::INNER_JOIN)
 	{
-		list($relationName, $alias) = self::getClassAndAlias($relation);
-		list($leftName, $relationName) = explode('.', $relationName);
-		if(!isset($this->tableMaps[$leftName])) {
+		// relation looks like '$leftName.$relationName $relationAlias'
+		list($fullName, $relationAlias) = self::getClassAndAlias($relation);
+		list($leftName, $relationName) = explode('.', $fullName);
+		
+		// find the TableMap for the left table using the $leftName
+		if ($leftName == $this->getModelAliasOrName()) {
+			$previousJoin = null;
+			$tableMap = $this->getTableMap();
+		} elseif (array_key_exists($leftName, $this->joins)) {
+			$previousJoin = $this->joins[$leftName];
+			$tableMap = $previousJoin->getTableMap();
+		} else {
 			throw new PropelException('Unknown table or alias ' . $leftName);
 		}
-		if(!$this->tableMaps[$leftName]->hasRelation($relationName)) {
+		
+		// find the RelationMap in the TableMap using the $relationName
+		if(!$tableMap->hasRelation($relationName)) {
 			throw new PropelException('Unknown relation ' . $relationName . ' on the ' . $leftName .' table');
 		}
-		$relationMap = $this->tableMaps[$leftName]->getRelation($relationName);
+		$relationMap = $tableMap->getRelation($relationName);
 		
+		// create a ModelJoin object for this join
 		$rightTable = $relationMap->getRightTable();
-		if($alias !== null) {
-			$this->addAlias($alias, $rightTable->getName());
-			$this->tableMaps[$alias] = $rightTable;
-		} else {
-			$this->tableMaps[$relationName] = $rightTable;
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setTableMap($rightTable);
+		if(null !== $previousJoin) {
+			$join->setPreviousJoin($previousJoin);
 		}
+		$leftTableAlias = array_key_exists($leftName, $this->aliases) ? $leftName : null;
+		$join->setRelationMap($relationMap, $leftTableAlias, $relationAlias);
 		
-		$leftCols = $relationMap->getLeftColumns();
-		$rightCols = $relationMap->getRightColumns();
-		$joinCols = array();
-		$nbColumns = $relationMap->countColumnMappings();
-		for ($i=0; $i < $nbColumns; $i++) {
-			$leftColName = (array_key_exists($leftName, $this->aliases) ? $leftName : $leftCols[$i]->getTableName()) . '.' . $leftCols[$i]->getName();
-			$rightColName = ($alias ? $alias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
-			$joinCols []= array($leftColName, $rightColName);
+		// add the ModelJoin to the current object
+		if($relationAlias !== null) {
+			$this->addAlias($relationAlias, $rightTable->getName());
+			$this->joins[$relationAlias] = $join;
+		} else {
+			$this->joins[$relationName] = $join;
 		}
-		$this->addMultipleJoin($joinCols, $joinType);
 		
 		return $this;
 	}
 	
+	/**
+	 * Adds a relation to hydrate together with the main object
+	 * The relation must be initialized via a join() prior to calling with()
+	 * Examples:
+	 * <code>
+	 *   $c->join('Book.Author');
+	 *   $c->with('Author');
+	 *
+	 *   $c->join('Book.Author a', Criteria::RIGHT_JOIN);
+	 *   $c->with('a');
+	 * </code>
+	 * 
+	 * @param      string $relation Relation to use for the join
+	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function with($relation, $joinType = Criteria::INNER_JOIN)
+	{
+		if ($pos1 = strpos($relation, '.')) {
+			// $relation is like 'Book.Author a', that means the join is not done yet
+			$this->join($relation, $joinType);
+			if ($pos2 = strpos($relation, ' ') ) {
+				// use the alias
+				$relation = substr($relation, $pos2 + 1);
+			} else {
+				// use the relation name
+				$relation = substr($relation, $pos1 + 1);
+			}
+		}
+		if (!array_key_exists($relation, $this->joins)) {
+			throw new PropelException('Unknown relation name or alias ' . $relation);
+		}
+		$join = $this->joins[$relation];
+		if ($join->getRelationMap()->getType() == RelationMap::ONE_TO_MANY) {
+			throw new PropelException('with() only allows hydration for many-to-one or one-to-one relationships');
+		}
+		// check that the columns of the main class are already added
+		if (!$this->hasSelectClause()) {
+			$this->addSelfSelectColumns();
+		}
+		// add the columns of the related class
+		$this->addRelationSelectColumns($relation);
+		
+		// list the join for later hydration in the formatter
+		$this->with[]= $join;
+		
+		return $this;
+	}
+
+	/**
+	 * Gets the array of joins to hydrate together with the main object
+	 * 
+	 * @see       with()
+	 * @return    array
+	 */
+	public function getWith()
+	{
+		return $this->with;
+	}
+
 	/**
 	 * Initializes a secondary ModelCriteria object, to be later merged with the current object
 	 *
@@ -511,10 +577,10 @@ class ModelCriteria extends Criteria
 	 */
 	public function useQuery($relationName, $secondaryCriteriaClass = null)
 	{
-		if (!array_key_exists($relationName, $this->tableMaps)) {
+		if (!array_key_exists($relationName, $this->joins)) {
 			throw new PropelException('Unknown class or alias ' . $name);
 		}
-		$className = $this->tableMaps[$relationName]->getPhpName();
+		$className = $this->joins[$relationName]->getTableMap()->getPhpName();
 		if (null === $secondaryCriteriaClass) {
 			$secondaryCriteria = PropelQuery::from($className);
 		} else {
@@ -564,6 +630,33 @@ class ModelCriteria extends Criteria
 	public function getPrimaryCriteria()
 	{
 		return $this->primaryCriteria;
+	}
+
+	/**
+	 * Adds the select columns for a the current table
+	 *
+	 * @return    ModelCriteria The current object, for fluid interface
+	 */	
+	public function addSelfSelectColumns()
+	{
+		call_user_func(array($this->modelPeerName, 'addSelectColumns'), $this, $this->useAliasInSQL ? $this->modelAlias : null);
+		
+		return $this;
+	}
+	
+	/**
+	 * Adds the select columns for a relation
+	 *
+	 * @param     string $relation The relation name or alias, as defined in join()
+	 *
+	 * @return    ModelCriteria The current object, for fluid interface
+	 */
+	public function addRelationSelectColumns($relation)
+	{
+		$join = $this->joins[$relation];
+		call_user_func(array($join->getTableMap()->getPeerClassname(), 'addSelectColumns'), $this, $join->getRelationAlias());
+		
+		return $this;
 	}
 	
 	/**
@@ -648,7 +741,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function findPk($key, $con = null)
 	{
-		$pkCols = $this->getModelTableMap()->getPrimaryKeyColumns();
+		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
 		if (count($pkCols) == 1) {
 			// simple primary key
 			$pkCol = $pkCols[0];
@@ -680,7 +773,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function findPks($keys, $con = null)
 	{
-		$pkCols = $this->getModelTableMap()->getPrimaryKeyColumns();
+		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
 		if (count($pkCols) == 1) {
 			// simple primary key
 			$pkCol = array_shift($pkCols);
@@ -702,7 +795,7 @@ class ModelCriteria extends Criteria
 		$criteria = clone $this;
 
 		if (!$criteria->hasSelectClause()) {
-			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $criteria);
+			$criteria->addSelfSelectColumns();
 		}
 		
 		$con->beginTransaction();
@@ -948,7 +1041,7 @@ class ModelCriteria extends Criteria
 					// update rows in a single query
 					$set = new Criteria();
 					foreach ($values as $columnName => $value) {
-						$realColumnName = $criteria->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+						$realColumnName = $criteria->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
 						$set->add($realColumnName, $value);
 					}
 					$ret = BasePeer::doUpdate($criteria, $set, $con);
@@ -1102,22 +1195,39 @@ EOT;
 	 *
 	 * @return     array List($columnMap, $realColumnName)
 	 */
-	protected function getColumnFromName($phpName)
+	protected function getColumnFromName($phpName, $failSilently = true)
 	{
-	  if(strpos($phpName, '.') !== false) {
-			// Table.Column
-			list($class, $phpName) = explode('.', $phpName);
-			if (array_key_exists($class, $this->tableMaps) && $this->tableMaps[$class]->hasColumnByPhpName($phpName)) {
-				$column = $this->tableMaps[$class]->getColumnByPhpName($phpName);
-			  if (array_key_exists($class, $this->aliases)) {
-			  	$this->currentAlias = $class;
-			    $realColumnName = $class . '.' . $column->getName();
-			  } else {
-			    $realColumnName = $column->getFullyQualifiedName();
-			  }
-			  return array($column, $realColumnName);
+		list($class, $phpName) = explode('.', $phpName);
+		
+		if ($class == $this->getModelAliasOrName()) {
+			// column of the Criteria's model
+			$tableMap = $this->getTableMap();
+		} elseif (array_key_exists($class, $this->joins)) {
+			// column of a relations's model
+			$tableMap = $this->joins[$class]->getTableMap();
+		} else {
+			if ($failSilently) {
+				return array(null, null);
+			} else {
+				throw new PropelException('Unknown model or alias ' . $class);
 			}
-			return null;
+		}
+		
+		if ($tableMap->hasColumnByPhpName($phpName)) {
+			$column = $tableMap->getColumnByPhpName($phpName);
+			if (array_key_exists($class, $this->aliases)) {
+				$this->currentAlias = $class;
+				$realColumnName = $class . '.' . $column->getName();
+			} else {
+				$realColumnName = $column->getFullyQualifiedName();
+			}
+			return array($column, $realColumnName);
+		} else {
+			if ($failSilently) {
+				return array(null, null);
+			} else {
+				throw new PropelException('Unknown column ' . $phpName . ' on model or alias ' . $class);
+			}
 		}
 	}
 	
@@ -1132,13 +1242,13 @@ EOT;
 	 */
 	protected function getRealColumnName($columnName)
 	{
-		if (!$this->getModelTableMap()->hasColumnByPhpName($columnName)) {
+		if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
 			throw new PropelException('Unkown column ' . $columnName . ' in model ' . $this->modelName);
 		}
 		if ($this->useAliasInSQL) {
-			return $this->modelAlias . '.' . $this->getModelTableMap()->getColumnByPhpName($columnName)->getName();
+			return $this->modelAlias . '.' . $this->getTableMap()->getColumnByPhpName($columnName)->getName();
 		} else {
-			return $this->getModelTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+			return $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
 		}
 	}
 

@@ -259,6 +259,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			$script .= $this->getColumnConstant($col, 'self').", ";
 		}
 		$script .= "),
+		BasePeer::TYPE_RAW_COLNAME => array (";
+		foreach ($tableColumns as $col) {
+			$script .= "'" . $col->getConstantColumnName() . "', ";
+		}
+		$script .= "),
 		BasePeer::TYPE_FIELDNAME => array (";
 		foreach ($tableColumns as $col) {
 			$script .= "'".$col->getName()."', ";
@@ -300,6 +305,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		BasePeer::TYPE_COLNAME => array (";
 		foreach ($tableColumns as $num => $col) {
 			$script .= $this->getColumnConstant($col, 'self')." => $num, ";
+		}
+		$script .= "),
+		BasePeer::TYPE_RAW_COLNAME => array (";
+		foreach ($tableColumns as $num => $col) {
+			$script .= "'" . $col->getConstantColumnName() . "' => $num, ";
 		}
 		$script .= "),
 		BasePeer::TYPE_FIELDNAME => array (";
@@ -468,18 +478,30 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      criteria object containing the columns to add.
+	 * @param      Criteria \$criteria object containing the columns to add.
+	 * @param      string   \$alias    optional table alias
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria \$criteria)
-	{";
+	public static function addSelectColumns(Criteria \$criteria, \$alias = null)
+	{
+		if (null === \$alias) {";
 		foreach ($this->getTable()->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				$script .= "
-		\$criteria->addSelectColumn(".$this->getPeerClassname()."::".$this->getColumnName($col).");";
+			\$criteria->addSelectColumn(".$this->getPeerClassname()."::".$this->getColumnName($col).");";
 			} // if !col->isLazyLoad
 		} // foreach
+		$script .= "
+		} else {";
+		foreach ($this->getTable()->getColumns() as $col) {
+			if (!$col->isLazyLoad()) {
+				$script .= "
+			\$criteria->addSelectColumn(\$alias . '." . $col->getConstantColumnName()."');";
+			} // if !col->isLazyLoad
+		} // foreach
+		$script .= "
+		}";
 		$script .="
 	}
 ";

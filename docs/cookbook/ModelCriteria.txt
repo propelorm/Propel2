@@ -197,12 +197,16 @@ $book1->setAuthor($author1);
 $book1->save();
 
 // Add a join statement
+// No need to tell the query which columns to use for the join, just the related Class
+// After all, the columns of the FK are already defined in the schema.
 $book = PropelQuery::from('Book')
   ->join('Book.Author')
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
-// No need to tell the query which columns to use for the join, just the related Class
-// After all, the columns of the FK are already defined in the schema.
+  // SELECT book.* FROM book 
+  // INNER JOIN author ON book.AUTHOR_ID = author.ID
+  // WHERE author.NAME = 'Jane Austin'
+  // LIMIT 1;
 
 // The default join() call results in a SQL INNER JOIN clause
 // For LEFT JOIN or RIGHT JOIN clauses, use leftJoin() or rightJoin() instead of join()
@@ -352,6 +356,75 @@ $book = PropelQuery::from('Book')
   ->findOne();
 }}}
 
+=== Minimizing Queries ===
+
+Even if you do a Join, Propel will issue new queries when you fetch related objects:
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->join('Book.Author')
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+$author = $book->getAuthor();  // Needs another database query
+}}}
+
+Propel allows you to retrieve the main object together with related objects in a single query. You just have to call the `with()` method to specify which objects the main object should be hydrated with.
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->join('Book.Author')
+  ->with('Author')
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+$author = $book->getAuthor();  // Same result, with no supplementary query
+}}}
+
+`with()` expects a relation name, as declared previously by `join()`. In practice, that means that `with()` and `join()` should always come one after the other. To avoid repetition, `with()` can do the `join()` by itself, provided that you supply a complete relation name, including the left part - which is exactly the information you would pass to `join()`. So the shorter way to write the previous query is:
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->with('Book.Author')
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+$author = $book->getAuthor();  // Same result, with no supplementary query
+}}}
+
+But watch out: `join()` and `with()` are not synonyms. `with()` does the same thing as `join()`, plus it adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object. That means that `with()` is slower and consumes more memory that `join()`, so use it only when you actually need the related objects afterwards.
+
+`with()` is not limited to immediate relationships. As a matter of fact, just like you can chain `join()` calls, you can chain `with()` calls to populate a chain of objects:
+
+{{{
+#!php
+<?php
+$review = PropelQuery::from('Review')
+  ->with('Review.Book')
+  ->with('Book.Author')
+  ->with('Book.Publisher')
+  ->findOne();
+$book = $review->getBook()          // No additional query needed
+$author = $book->getAuthor();       // No additional query needed
+$publisher = $book->getPublisher(); // No additional query needed
+}}}
+
+So `with()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, `with()` is the trick to get down to a more reasonnable query count.
+
+'''Tip''': `with()` only works for one-to-one and many-to-one relationships. That means that you can't use `with()` with one-to-many relationhips, in order to populate an array of related objects.
+
+{{{
+#!php
+<?php
+$author = PropelQuery::from('Author')
+  ->join('Author.Book')
+  ->with('Book')  // does not work
+  ->findOne();
+}}}
+
 === Using An Alternative Formatter ===
 
 By default, `find()` calls return an array of model objects. For performance reasons, you may want to get an array of arrays. Use the `setFormatter()` to specify a custom result formatter.
@@ -363,8 +436,38 @@ $book = PropelQuery::from('Book')
   ->setFormatter('PropelArrayFormatter')
   ->findOne();
 print_r($book);
-  => array('Id' => 123, 'Title' => 'War And Peace')
+  => array('Id' => 123, 'Title' => 'War And Peace', 'ISBN' => '3245234535', 'AuthorId' => 456, 'PublisherId' => 567)
 }}}
+
+Of course, the formatters take the calls to `with()` into account, so you can end up with a precise array representation of a model object:
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->setFormatter('PropelArrayFormatter')
+  ->with('Book.Author')
+  ->with('Book.Publisher')
+  ->findOne();
+print_r($book);
+  => array(
+       'Id'          => 123,
+       'Title'       => 'War And Peace',
+       'ISBN'        => '3245234535',
+       'AuthorId'    => 456,
+       'PublisherId' => 567
+       'Author'      => array(
+         'Id'          => 456,
+         'FirstName'   => 'Leo',
+         'LastName'    => 'Tolstoi'
+       ), 
+       'Publisher'   => array(
+         'Id'          => 567,
+         'Name'        => 'Penguin'
+       )
+     )
+}}}
+
 
 Propel provides three formatters:
  * `PropelObjectsFormatter`: The default formatter, returning a model object for `findOne()`, and an array of model objects for `find()`
@@ -394,7 +497,8 @@ having($clause, $value)
 having($conditions, $operator)
 orderBy($columnName, $order = 'asc')
 groupBy($columnName)
-join($class, $$joinType = 'inner join')
+join($class, $joinType = 'inner join')
+with($relation, $joinType = 'inner join')
 
 // termination methods (return model objects)
 count($con = null)

@@ -974,6 +974,42 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->assertEquals($op->getBookId(), $opinions[0]->getBookId());
 	}
 
+	public function testToArray()
+	{
+		$b = new Book();
+		$b->setTitle('Don Juan');
+
+		$arr1 = $b->toArray();
+		$expectedKeys = array(
+			'Id',
+			'Title',
+			'ISBN',
+			'Price',
+			'PublisherId',
+			'AuthorId'
+		);
+		$this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with BasePeer::TYPE_PHPNAME keys by default');
+		$this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
+	}
+
+	public function testToArrayKeyType()
+	{
+		$b = new Book();
+		$b->setTitle('Don Juan');
+	
+		$arr1 = $b->toArray(BasePeer::TYPE_COLNAME);
+		$expectedKeys = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID
+		);
+		$this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() accepts a $keyType parameter to change the result keys');
+		$this->assertEquals('Don Juan', $arr1[BookPeer::TITLE], 'toArray() returns an associative array representation of the object');
+	}	
+
 	/**
 	 * Test the toArray() method with new lazyLoad param.
 	 * @link       http://propel.phpdb.org/trac/ticket/527
@@ -1004,6 +1040,50 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$expectedDiff = array(MediaPeer::COVER_IMAGE, MediaPeer::EXCERPT);
 
 		$this->assertEquals($expectedDiff, $diffKeys);
+	}
+	
+	public function testToArrayIncludeForeignObjects()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		PublisherPeer::clearInstancePool();
+		
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Don Juan');
+		$books = BookPeer::doSelectJoinAuthor($c);
+		$book = $books[0];
+		
+		$arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, true);
+		$expectedKeys = array(
+			'Id',
+			'Title',
+			'ISBN',
+			'Price',
+			'PublisherId',
+			'AuthorId',
+			'Author'
+		);
+		$this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() can return sub arrays for hydrated related objects');
+		$this->assertEquals('George', $arr1['Author']['FirstName'], 'toArray() can return sub arrays for hydrated related objects');
+
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Don Juan');
+		$books = BookPeer::doSelectJoinAll($c);
+		$book = $books[0];
+
+		$arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, true);
+		$expectedKeys = array(
+			'Id',
+			'Title',
+			'ISBN',
+			'Price',
+			'PublisherId',
+			'AuthorId',
+			'Publisher',
+			'Author'
+		);
+		$this->assertEquals($expectedKeys, array_keys($arr2), 'toArray() can return sub arrays for hydrated related objects');
 	}
 
 	/**
@@ -1113,6 +1193,30 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		
 		$this->assertTrue(count($logs) == 1, "Expected 1 audit log result.");
 		$this->assertEquals($logs[0]->getId(), $al->getId(), "Expected returned audit log to match created audit log.");
+	}
+	
+	public function testIsPrimaryKeyNull()
+	{
+		$b = new Book();
+		$this->assertTrue($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(123);
+		$this->assertFalse($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(null);
+		$this->assertTrue($b->isPrimaryKeyNull());
+	}
+	
+	public function testIsPrimaryKeyNullCompmosite()
+	{
+		$b = new BookOpinion();
+		$this->assertTrue($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(array(123, 456));
+		$this->assertFalse($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(array(123, null));
+		$this->assertFalse($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(array(null, 456));
+		$this->assertFalse($b->isPrimaryKeyNull());
+		$b->setPrimaryKey(array(null, null));
+		$this->assertTrue($b->isPrimaryKeyNull());
 	}
 	
 	public function testAddPrimaryString()
