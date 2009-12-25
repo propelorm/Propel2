@@ -506,6 +506,33 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
+	 * Adds a JOIN clause to the query and hydrates the related objects
+	 * Shortcut for $c->join()->with()
+	 * <code>
+	 *   $c->joinWith('Book.Author');
+	 *    => $c->join('Book.Author');
+	 *    => $c->with('Author');
+	 *   $c->joinWith('Book.Author a', Criteria::RIGHT_JOIN);
+	 *    => $c->join('Book.Author a', Criteria::RIGHT_JOIN);
+	 *    => $c->with('a');
+	 * </code>
+	 * 
+	 * @param      string $relation Relation to use for the join
+	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function joinWith($relation, $joinType = Criteria::INNER_JOIN)
+	{
+		$this->join($relation, $joinType);
+		end($this->joins);
+		$relationName = key($this->joins);
+		$this->with($relationName);
+		
+		return $this;
+	}
+	
+	/**
 	 * Adds a relation to hydrate together with the main object
 	 * The relation must be initialized via a join() prior to calling with()
 	 * Examples:
@@ -524,17 +551,6 @@ class ModelCriteria extends Criteria
 	 */
 	public function with($relation, $joinType = Criteria::INNER_JOIN)
 	{
-		if ($pos1 = strpos($relation, '.')) {
-			// $relation is like 'Book.Author a', that means the join is not done yet
-			$this->join($relation, $joinType);
-			if ($pos2 = strpos($relation, ' ') ) {
-				// use the alias
-				$relation = substr($relation, $pos2 + 1);
-			} else {
-				// use the relation name
-				$relation = substr($relation, $pos1 + 1);
-			}
-		}
 		if (!array_key_exists($relation, $this->joins)) {
 			throw new PropelException('Unknown relation name or alias ' . $relation);
 		}
@@ -610,6 +626,23 @@ class ModelCriteria extends Criteria
 		$primaryCriteria->mergeWith($this);
 		
 		return $primaryCriteria;
+	}
+	
+	/**
+	 * Add the content of a Criteria to the current Criteria
+	 * In case of conflict, the current Criteria keeps its properties
+	 * @see Criteria::mergeWith()
+	 * 
+	 * @param     Criteria $criteria The criteria to read properties from
+	 */
+	public function mergeWith(Criteria $criteria)
+	{
+		parent::mergeWith($criteria);
+		
+		// merge with
+		$this->with = array_merge($this->getWith(), $criteria->getWith());
+		
+		return $this;
 	}
 	
 	/**
@@ -1288,7 +1321,10 @@ EOT;
 			{
 				$joinType = strtoupper($type) . ' JOIN';
 				array_push($arguments, $joinType);
-				return call_user_func_array(array($this, 'join'), $arguments);
+				$method = substr($name, $pos);
+				// no lcfirst in php<5.3...
+				$method = ($method == 'Join') ? 'join' : 'joinWith';
+				return call_user_func_array(array($this, $method), $arguments);
 			}
 		}
    

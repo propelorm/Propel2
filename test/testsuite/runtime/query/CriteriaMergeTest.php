@@ -286,7 +286,7 @@ class CriteriaMergeTest extends BaseTestCase
 		$c1->addAlias('b', BookPeer::TABLE_NAME);
 		$c2 = new Criteria();
 		$c1->mergeWith($c2);
-		$this->assertEquals(array('b' => BookPeer::TABLE_NAME), $c1->getAliases(), 'mergeWith() does not remove an existing aliases');
+		$this->assertEquals(array('b' => BookPeer::TABLE_NAME), $c1->getAliases(), 'mergeWith() does not remove an existing alias');
 		$c1 = new Criteria();
 		$c2 = new Criteria();
 		$c2->addAlias('a', AuthorPeer::TABLE_NAME);
@@ -310,6 +310,33 @@ class CriteriaMergeTest extends BaseTestCase
 		$c2 = new Criteria();
 		$c2->addAlias('b', AuthorPeer::TABLE_NAME);
 		$c1->mergeWith($c2);
+	}
+	
+	public function testMergeWithJoins()
+	{
+		$c1 = new Criteria();
+		$c1->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
+		$c2 = new Criteria();
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(1, count($joins), 'mergeWith() does not remove an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=author.ID(ignoreCase not considered)', $joins[0]->toString(), 'mergeWith() does not remove an existing join');
+		$c1 = new Criteria();
+		$c2 = new Criteria();
+		$c2->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(1, count($joins), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=author.ID(ignoreCase not considered)', $joins[0]->toString(), 'mergeWith() merge joins to an empty join');
+		$c1 = new Criteria();
+		$c1->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
+		$c2 = new Criteria();
+		$c2->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID, Criteria::INNER_JOIN);
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(2, count($joins), 'mergeWith() merge joins to an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=author.ID(ignoreCase not considered)', $joins[0]->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=publisher.ID(ignoreCase not considered)', $joins[1]->toString(), 'mergeWith() merge joins to an empty join');
 	}
 
 }

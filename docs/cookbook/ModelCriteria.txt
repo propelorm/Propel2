@@ -383,36 +383,36 @@ $book = PropelQuery::from('Book')
 $author = $book->getAuthor();  // Same result, with no supplementary query
 }}}
 
-`with()` expects a relation name, as declared previously by `join()`. In practice, that means that `with()` and `join()` should always come one after the other. To avoid repetition, `with()` can do the `join()` by itself, provided that you supply a complete relation name, including the left part - which is exactly the information you would pass to `join()`. So the shorter way to write the previous query is:
+`with()` expects a relation name, as declared previously by `join()`. In practice, that means that `with()` and `join()` should always come one after the other. To avoid repetition, use `joinWith()` to both add a `join()` and a `with()` on a relation. So the shorter way to write the previous query is:
 
 {{{
 #!php
 <?php
 $book = PropelQuery::from('Book')
-  ->with('Book.Author')
+  ->joinWith('Book.Author')
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
 $author = $book->getAuthor();  // Same result, with no supplementary query
 }}}
 
-But watch out: `join()` and `with()` are not synonyms. `with()` does the same thing as `join()`, plus it adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object. That means that `with()` is slower and consumes more memory that `join()`, so use it only when you actually need the related objects afterwards.
+Since the call to `with()` adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object, that means that `joinWith()` is slower and consumes more memory that `join()`. So use it only when you actually need the related objects afterwards.
 
-`with()` is not limited to immediate relationships. As a matter of fact, just like you can chain `join()` calls, you can chain `with()` calls to populate a chain of objects:
+`with()` and `joinWith()` are not limited to immediate relationships. As a matter of fact, just like you can chain `join()` calls, you can chain `joinWith()` calls to populate a chain of objects:
 
 {{{
 #!php
 <?php
 $review = PropelQuery::from('Review')
-  ->with('Review.Book')
-  ->with('Book.Author')
-  ->with('Book.Publisher')
+  ->joinWith('Review.Book')
+  ->joinWith('Book.Author')
+  ->joinWith('Book.Publisher')
   ->findOne();
 $book = $review->getBook()          // No additional query needed
 $author = $book->getAuthor();       // No additional query needed
 $publisher = $book->getPublisher(); // No additional query needed
 }}}
 
-So `with()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, `with()` is the trick to get down to a more reasonnable query count.
+So `joinWith()` is very useful to minimize the number of database queries. As soon as you see that the number of queries necessary to perform an action is proportional to the number of results, adding `With` after `join()` calls is the trick to get down to a more reasonnable query count.
 
 '''Tip''': `with()` only works for one-to-one and many-to-one relationships. That means that you can't use `with()` with one-to-many relationhips, in order to populate an array of related objects.
 

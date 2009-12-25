@@ -1226,6 +1226,9 @@ class Criteria implements IteratorAggregate
 		}
 		$this->aliases = array_merge($this->getAliases(), $criteria->getAliases());
 		
+		// merge join
+		$this->joins = array_merge($this->getJoins(), $criteria->getJoins());
+		
 		return $this;
 	}
 

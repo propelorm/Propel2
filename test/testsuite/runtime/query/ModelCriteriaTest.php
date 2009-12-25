@@ -788,10 +788,10 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table with an alias if required');
 	}
 	
-	public function testWithNoJoin()
+	public function testJoinWith()
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
-		$c->with('Book.Author');
+		$c->joinWith('Book.Author');
 		$expectedColumns = array(
 			BookPeer::ID,
 			BookPeer::TITLE,
@@ -805,25 +805,25 @@ class ModelCriteriaTest extends BookstoreTestBase
 			AuthorPeer::EMAIL,
 			AuthorPeer::AGE
 		);
-		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the join with the alias if the relation is a complete relation name');
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the join');
 		$joins = $c->getJoins();
 		$join = $joins['Author'];
-		$this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'with() adds an INNER JOIN by default');
+		$this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'joinWith() adds an INNER JOIN by default');
 	}
 
-	public function testWithNoJoinAndType()
+	public function testJoinWithType()
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
-		$c->with('Book.Author', Criteria::LEFT_JOIN);
+		$c->joinWith('Book.Author', Criteria::LEFT_JOIN);
 		$joins = $c->getJoins();
 		$join = $joins['Author'];
-		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'with() accepts a join type as second parameter');
+		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'joinWith() accepts a join type as second parameter');
 	}
 
-	public function testWithNoJoinAndAlias()
+	public function testJoinWithAlias()
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
-		$c->with('Book.Author a');
+		$c->joinWith('Book.Author a');
 		$expectedColumns = array(
 			BookPeer::ID,
 			BookPeer::TITLE,
@@ -837,7 +837,40 @@ class ModelCriteriaTest extends BookstoreTestBase
 			'a.EMAIL',
 			'a.AGE'
 		);
-		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the join if the relation is a complete relation name');
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the join with the alias');
+	}
+
+	public function testJoinWithSeveral()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Review');
+		$c->joinWith('Review.Book');
+		$c->joinWith('Book.Author');
+		$c->joinWith('Book.Publisher');
+		$expectedColumns = array(
+			ReviewPeer::ID,
+			ReviewPeer::REVIEWED_BY,
+			ReviewPeer::REVIEW_DATE,
+			ReviewPeer::RECOMMENDED,
+			ReviewPeer::STATUS,
+			ReviewPeer::BOOK_ID,
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE,
+			PublisherPeer::ID,
+			PublisherPeer::NAME
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the with');
+		$joins = $c->getJoins();
+		$expectedJoinKeys = array('Book', 'Author', 'Publisher');
+		$this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
 	}
 	
 	public function testFind()
@@ -1246,6 +1279,30 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoin($x) is turned into join($x, Criteria::RIGHT_JOIN)');
 	}
+
+	public function testMagicJoinWith()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->leftJoinWith('Book.Author a');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			'a.ID',
+			'a.FIRST_NAME',
+			'a.LAST_NAME',
+			'a.EMAIL',
+			'a.AGE'
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'leftJoinWith() adds the join with the alias');
+		$joins = $c->getJoins();
+		$join = $joins['a'];
+		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'leftJoinWith() adds a LEFT JOIN');
+	}
+
 	
 	public function testMagicFind()
 	{
@@ -1339,6 +1396,65 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE book.TITLE = 'foo' AND a.FIRST_NAME IS NOT NULL  AND a.LAST_NAME IS NOT NULL LIMIT 10";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a custom secondary criteria');
 	}
+	
+	public function testMergeWithJoins()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c1->leftJoin('b.Author a');
+		$c2 = new ModelCriteria('bookstore', 'Author');
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(1, count($joins), 'mergeWith() does not remove an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $joins['a']->toString(), 'mergeWith() does not remove an existing join');
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2->leftJoin('b.Author a');
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(1, count($joins), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $joins['a']->toString(), 'mergeWith() merge joins to an empty join');
+
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c1->leftJoin('b.Author a');
+		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2->innerJoin('b.Publisher p');
+		$c1->mergeWith($c2);
+		$joins = $c1->getJoins();
+		$this->assertEquals(2, count($joins), 'mergeWith() merge joins to an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $joins['a']->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=p.ID(ignoreCase not considered)', $joins['p']->toString(), 'mergeWith() merge joins to an empty join');
+	}
+	
+	public function testMergeWithWiths()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c1->leftJoinWith('b.Author a');
+		$c2 = new ModelCriteria('bookstore', 'Author');
+		$c1->mergeWith($c2);
+		$with = $c1->getWith();
+		$this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() does not remove an existing join');
+
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2->leftJoinWith('b.Author a');
+		$c1->mergeWith($c2);
+		$with = $c1->getWith();
+		$this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() merge joins to an empty join');
+
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c1->leftJoinWith('b.Author a');
+		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2->innerJoinWith('b.Publisher p');
+		$c1->mergeWith($c2);
+		$with = $c1->getWith();
+		$this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=p.ID(ignoreCase not considered)', $with[1]->toString(), 'mergeWith() merge joins to an empty join');
+
+	}
+	
 }
 
 class TestableModelCriteria extends ModelCriteria
