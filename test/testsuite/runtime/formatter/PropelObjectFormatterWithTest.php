@@ -3,13 +3,13 @@
 require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
- * Test class for PropelObjectsFormatter when Criteria uses with().
+ * Test class for PropelObjectFormatter when Criteria uses with().
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectsFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: PropelObjectFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.formatter
  */
-class PropelObjectsFormatterWithTest extends BookstoreEmptyTestBase
+class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 {
 	protected function assertCorrectHydration1($c, $msg)
 	{

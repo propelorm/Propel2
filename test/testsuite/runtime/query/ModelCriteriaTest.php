@@ -878,16 +878,16 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$books = $c->find();
-		$this->assertTrue(is_array($books), 'find() returns an array by default');
+		$this->assertTrue($books instanceof PropelCollection, 'find() returns a collection by default');
 		$this->assertEquals(0, count($books), 'find() returns an empty array when the query returns no result');
 		
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->join('b.Author a');
 		$c->where('a.FirstName = ?', 'Neal');
 		$books = $c->find();
-		$this->assertTrue(is_array($books), 'find() returns an array by default');
+		$this->assertTrue($books instanceof PropelCollection, 'find() returns a collection by default');
 		$this->assertEquals(1, count($books), 'find() returns as many rows as the results in the query');
-		$book = array_shift($books);
+		$book = $books->shift();
 		$this->assertTrue($book instanceof Book, 'find() returns an array of Model objects by default');
 		$this->assertEquals('Quicksilver', $book->getTitle(), 'find() returns the model objects matching the query');
 	}
@@ -949,20 +949,21 @@ class ModelCriteriaTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 
 		$c = new ModelCriteria('bookstore', 'Book');
-		$book = $c->findPks(array(765432, 434535));
-		$this->assertEquals(array(), $book, 'findPks() returns an empty array when the primary keys are not found');
+		$books = $c->findPks(array(765432, 434535));
+		$this->assertEquals($books instanceof PropelCollection, 'findPks() returns a PropelCollection');
+		$this->assertEquals(0, count($books), 'findPks() returns an empty collection when the primary keys are not found');
 
 		BookstoreDataPopulator::populate();
 		
 		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'Book');
 		$testBooks = $c->find();
-		$testBook1 = array_pop($testBooks);
-		$testBook2 = array_pop($testBooks);
+		$testBook1 = $testBooks->pop();
+		$testBook2 = $testBooks->pop();
 		
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->findPks(array($testBook1->getId(), $testBook2->getId()));
-		$this->assertEquals(array($testBook2, $testBook1), $books, 'findPks() returns an array of model objects corresponding to the pks');
+		$this->assertEquals(array($testBook2, $testBook1), $books->getData(), 'findPks() returns an array of model objects corresponding to the pks');
 	}
 
 	public function testFindPkCompositeKey()
@@ -1018,9 +1019,9 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$books = $c->findBy('Title', 'Don Juan', $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds simple column conditions');
-		$this->assertTrue(is_array($books), 'findBy() issues a find()');
+		$this->assertTrue($books instanceof PropelCollection, 'findBy() issues a find()');
 		$this->assertEquals(1, count($books), 'findBy() adds simple column conditions');
-		$book = array_shift($books);
+		$book = $books->shift();
 		$this->assertTrue($book instanceof Book, 'findBy() returns an array of Model objects by default');
 		$this->assertEquals('Don Juan', $book->getTitle(), 'findBy() returns the model objects matching the query');
 		
@@ -1138,7 +1139,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		$count = count($books);
-		$book = array_shift($books);
+		$book = $books->shift();
 		
 		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book', 'b');
 		$c->where('b.Id = ?', $book->getId());

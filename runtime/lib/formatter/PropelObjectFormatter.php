@@ -21,25 +21,26 @@
  */
 
 /**
- * Objects formatter for Propel query
- * format() returns an array of Propel model objects
+ * Object formatter for Propel query
+ * format() returns a PropelObjectCollection of Propel model objects
  *
  * @author     Francois Zaninotto
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelObjectsFormatter extends PropelFormatter
+class PropelObjectFormatter extends PropelFormatter
 {
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		$results = array();
+		$collection = new PropelObjectCollection();
+		$collection->setModel($this->getCriteria()->getModelName());
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$results[] = $this->getAllObjectsFromRow($row);
+			$collection[] = $this->getAllObjectsFromRow($row);
 		}
 		$stmt->closeCursor();
 		
-		return $results;
+		return $collection;
 	}
 	
 	public function formatOne(PDOStatement $stmt)

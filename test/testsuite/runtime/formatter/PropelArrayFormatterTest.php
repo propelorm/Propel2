@@ -40,7 +40,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
-		$this->assertTrue(is_array($books), 'PropelArrayFormatter::format() returns an array');
+		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
 		$this->assertEquals(4, count($books), 'PropelArrayFormatter::format() returns as many rows as the results in the query');
 		foreach ($books as $book) {
 			$this->assertTrue(is_array($book), 'PropelArrayFormatter::format() returns an array of arrays');
@@ -56,9 +56,9 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
-		$this->assertTrue(is_array($books), 'PropelArrayFormatter::format() returns an array');
+		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
 		$this->assertEquals(1, count($books), 'PropelArrayFormatter::format() returns as many rows as the results in the query');
-		$book = array_shift($books);
+		$book = $books->shift();
 		$this->assertTrue(is_array($book), 'PropelArrayFormatter::format() returns an array of arrays');
 		$this->assertEquals('Quicksilver', $book['Title'], 'PropelArrayFormatter::format() returns the arrays matching the query');
 		$expected = array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId');
@@ -74,7 +74,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
-		$this->assertTrue(is_array($books), 'PropelArrayFormatter::format() returns an array');
+		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
 		$this->assertEquals(0, count($books), 'PropelArrayFormatter::format() returns as many rows as the results in the query');
 	}
 

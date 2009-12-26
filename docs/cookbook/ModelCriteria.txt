@@ -42,7 +42,7 @@ $stmt->bind(':p1', 'Leo Tolstoi', PDO::PARAM_STR);
 $res = $stmt->execute();
 }}}
 
-The final `find()` doesn't just execute the SQL query above, it also instanciates `Book` objects and populates them with the results of the query. This process finalizes the abstraction of the storage engine and allows you to deal with `Book` objects naturally:
+The final `find()` doesn't just execute the SQL query above, it also instanciates `Book` objects and populates them with the results of the query. Eventually, it returns a `PropelCollection` object with these `Book` objects inside. For the sake of clarity, you can consider this collection object as an array. In fact, you can use it as if it were a true PHP array and iterate over the result list naturally:
 
 {{{
 #!php
@@ -425,9 +425,90 @@ $author = PropelQuery::from('Author')
   ->findOne();
 }}}
 
+=== PropelCollection Methods ===
+
+{{{
+#!php
+<?php
+// find() returns a PropelCollection, which you can use just like an array
+$books = PropelQuery::from('Book')->find(); // $books behaves like an array
+?>
+There are <?php echo count($books) ?> books:
+<ul>
+  <?php foreach ($books as $book): ?>
+  <li>
+    <?php echo $book->getTitle() ?>
+  </li>
+  <?php endforeach; ?>
+</ul>
+
+<?php
+// But a PropelCollection is more than just an array.
+// That means you can call some special methods on it.
+$books = PropelQuery::from('Book')->find(); // $books is an object
+?>
+
+<?php if($books->isEmpty()): ?>
+There are no books.
+<?php else: ?>
+There are <?php echo $books->count() ?> books:
+<ul>
+  <?php foreach ($books as $book): ?>
+  <li class="<?php echo $books->isOdd() ? 'odd' : 'even' ?>">
+    <?php echo $book->getTitle() ?>
+  </li>
+  <?php if($books->isLast()): ?>
+  <li>Do you want more books?</li>
+  <?php endif; ?>
+  <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+}}}
+
+Here is the list of methods you can call on a PropelCollection:
+
+{{{
+#!php
+<?php
+// introspection methods
+array getData()  // return a copy of the result array
+array getKeys()  // return the keys of the result array
+// information methods on the current element in the method
+bool  isFirst()
+bool  isLast()
+bool  isEmpty()
+bool  isOdd()
+bool  isEven()
+bool  contains($key)
+// access methods
+mixed getFirst()
+mixed getPrevious()
+mixed getCurrent()
+mixed getKey()
+mixed getNext()
+mixed getLast()
+mixed get($key)
+mixed search($value)
+// manipulation methods
+mixed pop()
+mixed shift()
+mixed set($key, $value)
+mixed remove($key)
+mixed clear()
+// Model methods
+void  save() // save all the objects in the collection
+void  delete() // delete all the objects in the collection
+array getPrimaryKeys() // get an array of the primary keys of all the objects in the collection
+// Import/Export methods
+array toArray() // exports all the objects as array
+void  fromArray($array) // imports a collection from an array
+}}}
+
+'''Tip''': `PropelCollection` extends `ArrayObject`, so you can also call all the methods of this SPL class on a collection (including `count()`, `append()`, `ksort()`, etc.).
+
 === Using An Alternative Formatter ===
 
-By default, `find()` calls return an array of model objects. For performance reasons, you may want to get an array of arrays. Use the `setFormatter()` to specify a custom result formatter.
+By default, `find()` calls return a `PropelObjectCollection` of model objects. For performance reasons, you may want to get a collection of arrays instead. Use the `setFormatter()` to specify a custom result formatter.
 
 {{{
 #!php
@@ -470,8 +551,8 @@ print_r($book);
 
 
 Propel provides three formatters:
- * `PropelObjectsFormatter`: The default formatter, returning a model object for `findOne()`, and an array of model objects for `find()`
- * `PropelArrayFormatter`: The array formatter, returning an associative array for `findOne()`, and an array of arrays for `find()`
+ * `PropelObjectFormatter`: The default formatter, returning a model object for `findOne()`, and a `PropelObjectCollection` of model objects for `find()`
+ * `PropelArrayFormatter`: The array formatter, returning an associative array for `findOne()`, and a `PropelArrayCollection` of arrays for `find()`
  * `PropelStatementFormatter`: The 'raw' formatter, returning a `PDOStatement` in any case.
 
 You can easily write your own formatter to format the resultas the way you want. A formatter is basically a subclass of `PropelFormatter` providing a `format()` and a `formatOne()` method expecting a PDO statement.

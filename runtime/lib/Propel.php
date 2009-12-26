@@ -182,6 +182,10 @@ class Propel
 		'DBSQLite'            => 'adapter/DBSQLite.php',
 		'DBSybase'            => 'adapter/DBSybase.php',
 
+		'PropelArrayCollection' => 'collection/PropelArrayCollection.php',
+		'PropelCollection'    => 'collection/PropelCollection.php',
+		'PropelObjectCollection' => 'collection/PropelObjectCollection.php',
+
 		'PropelConfiguration' => 'config/PropelConfiguration.php',
 		'PropelConfigurationIterator' => 'config/PropelConfigurationIterator.php',
 
@@ -193,7 +197,7 @@ class Propel
 		
 		'PropelArrayFormatter' => 'formatter/PropelArrayFormatter.php',
 		'PropelFormatter'     => 'formatter/PropelFormatter.php',
-		'PropelObjectsFormatter' => 'formatter/PropelObjectsFormatter.php',
+		'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
 		'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
 		
 		'BasicLogger'         => 'logger/BasicLogger.php',

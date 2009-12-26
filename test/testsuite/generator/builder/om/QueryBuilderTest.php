@@ -133,12 +133,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->orderBy('Book.Id', 'desc');
 		$testBooks = $c->find();
-		$testBook1 = array_pop($testBooks);
-		$testBook2 = array_pop($testBooks);
+		$testBook1 = $testBooks->pop();
+		$testBook2 = $testBooks->pop();
 
 		$q = new BookQuery();
 		$books = $q->findPks(array($testBook1->getId(), $testBook2->getId()));
-		$this->assertEquals(array($testBook1, $testBook2), $books, 'BaseQuery overrides findPks() to make it faster');
+		$this->assertEquals(array($testBook1, $testBook2), $books->getData(), 'BaseQuery overrides findPks() to make it faster');
 	}
 	
 	public function testFindPksCompositeKey()

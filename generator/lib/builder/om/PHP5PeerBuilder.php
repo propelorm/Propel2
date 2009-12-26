@@ -924,6 +924,53 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 	} // addGetPrimaryKeyHash
 
+		/**
+		 * Adds method to get the primary key from a row
+		 * @param      string &$script The script will be modified in this method.
+		 */
+		protected function addGetPrimaryKeyFromRow(&$script)
+		{
+			$script .= "
+	/**
+	 * Retrieves the primary key from the DB resultset row 
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, an array of the primary key columns will be returned.
+	 *
+	 * @param      array \$row PropelPDO resultset row.
+	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
+	 * @return     mixed The primary key of the row
+	 */
+	public static function getPrimaryKeyFromRow(\$row, \$startcol = 0)
+	{";
+
+			// We have to iterate through all the columns so that we know the offset of the primary
+			// key columns.
+			$table = $this->getTable();
+			$n = 0;
+			$pks = array();
+			foreach ($table->getColumns() as $col) {
+				if (!$col->isLazyLoad()) {
+					if ($col->isPrimaryKey()) {
+						$pk = '(' . $col->getPhpType() . ') ' . ($n ? "\$row[\$startcol + $n]" : "\$row[\$startcol]");
+						if ($table->hasCompositePrimaryKey()) {
+							$pks[] = $pk;
+						}
+					}
+					$n++;
+				}
+			}
+			if ($table->hasCompositePrimaryKey()) {
+				$script .= "
+		return array(" . implode($pks, ', '). ");";
+			} else {
+				$script .= "
+		return " . $pk . ";";
+			}
+			$script .= "
+	}
+	";
+		} // addGetPrimaryKeyFromRow
+
 	/**
 	 * Adds the populateObjects() method.
 	 * @param      string &$script The script will be modified in this method.

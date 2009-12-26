@@ -171,6 +171,7 @@
 		<column name="name" type="VARCHAR" size="50" />
 	</table>
 
+	<!-- Test composite primary keys -->
 	<table name="book_opinion">
 		<column name="book_id" type="INTEGER" primaryKey="true" />
 		<column name="reader_id" type="INTEGER" primaryKey="true" />

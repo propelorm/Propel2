@@ -260,6 +260,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
+		$this->addClear($script);
 		$this->addClearAllReferences($script);
 		
 		// apply behaviors
@@ -3990,6 +3991,38 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 ";
 	} // addCopyInto()
 
+	/**
+	 * Adds clear method
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addClear(&$script)
+	{
+		$table = $this->getTable();
+
+		$script .= "
+	/**
+	 * Clears the current object and sets all attributes to their default values
+	 */
+	public function clear()
+	{";
+		foreach ($table->getColumns() as $col) {
+			$script .= "
+		\$this->" . strtolower($col->getName()) . " = null;";
+		}
+		
+		$script .= "
+		\$this->clearAllReferences();";
+		
+		if ($this->hasDefaultValues()) {
+			$script .= "
+		\$this->applyDefaultValues();";
+		}
+		
+		$script .= "
+	}
+";
+	}
+
 
 	/**
 	 * Adds clearAllReferencers() method which resets all the collections of referencing
@@ -4046,7 +4079,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			$className = $this->getForeignTable($fk)->getPhpName();
 			$varName = $this->getFKVarName($fk);
 			$script .= "
-			\$this->$varName = null;";
+		\$this->$varName = null;";
 		}
 
 		$script .= "

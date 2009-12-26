@@ -39,8 +39,7 @@ class ModelCriteria extends Criteria
 
 	const FORMAT_STATEMENT = 'PropelStatementFormatter';
 	const FORMAT_ARRAY = 'PropelArrayFormatter';
-	const FORMAT_OBJECTS = 'PropelObjectsFormatter';
-	const FORMAT_ITERATOR = 'PropelIteratorFormatter';
+	const FORMAT_OBJECT = 'PropelObjectFormatter';
 	
 	protected $modelName;
 	protected $modelPeerName;
@@ -49,7 +48,7 @@ class ModelCriteria extends Criteria
 	protected $tableMap;
 	protected $primaryCriteria;
 	protected $formatter;
-	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECTS;
+	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 	protected $with = array();
 		
 	/**
@@ -1060,7 +1059,7 @@ class ModelCriteria extends Criteria
 				if($forceIndividualSaves) {
 				
 					// Update rows one by one
-					$objects = $criteria->setFormatter(ModelCriteria::FORMAT_OBJECTS)->find($con);
+					$objects = $criteria->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
 					foreach ($objects as $object) {
 						foreach ($values as $key => $value) {
 							$object->setByName($key, $value);

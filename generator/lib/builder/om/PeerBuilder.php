@@ -73,6 +73,7 @@ abstract class PeerBuilder extends OMBuilder {
 		$this->addClearRelatedInstancePool($script);
 
 		$this->addGetPrimaryKeyHash($script);
+		$this->addGetPrimaryKeyFromRow($script);
 		$this->addPopulateObjects($script); // <-- there's PDO code in here
 
 	}

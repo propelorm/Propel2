@@ -22,7 +22,7 @@
 
 /**
  * Array formatter for Propel query
- * format() returns an array of associative arrays
+ * format() returns a PropelArrayCollection of associative arrays
  *
  * @author     Francois Zaninotto
  * @version    $Revision$
@@ -34,14 +34,16 @@ class PropelArrayFormatter extends PropelFormatter
 	
 	public function format(PDOStatement $stmt)
 	{
-		$results = array();
 		$this->checkCriteria();
+		$collection = new PropelArrayCollection();
+		$collection->setModel($this->getCriteria()->getModelName());
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$results[] = $this->getStructuredArrayFromRow($row);
+			$collection[] = $this->getStructuredArrayFromRow($row);
 		}
 		$this->currentObjects = array();
 		$stmt->closeCursor();
-		return $results;
+		
+		return $collection;
 	}
 
 	public function formatOne(PDOStatement $stmt)

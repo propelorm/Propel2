@@ -1364,6 +1364,16 @@ class Table extends XMLElement implements IDMethod
   }
 
   /**
+   * Determine whether this table has a composite primary key.
+   *
+   * @return     boolean Whether this table has more than one primary key parts.
+   */
+  public function hasCompositePrimaryKey()
+  {
+    return (count($this->getPrimaryKey()) > 1);
+  }
+
+  /**
    * Determine whether this table has any auto-increment primary key(s).
    *
    * @return     boolean Whether this table has a non-"none" id method and has a primary key column that is auto-increment.
