@@ -30,10 +30,13 @@
  */
 class PropelObjectFormatter extends PropelFormatter
 {
+	protected $collectionName = 'PropelObjectCollection';
+	
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		$collection = new PropelObjectCollection();
+		$class = $this->collectionName;
+		$collection = new $class();
 		$collection->setModel($this->getCriteria()->getModelName());
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$collection[] = $this->getAllObjectsFromRow($row);

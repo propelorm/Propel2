@@ -30,12 +30,14 @@
  */
 class PropelArrayFormatter extends PropelFormatter
 {
+	protected $collectionName = 'PropelArrayCollection';
 	protected $currentObjects = array();
 	
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		$collection = new PropelArrayCollection();
+		$class = $this->collectionName;
+		$collection = new $class();
 		$collection->setModel($this->getCriteria()->getModelName());
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$collection[] = $this->getStructuredArrayFromRow($row);
