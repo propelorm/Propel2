@@ -254,6 +254,16 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(123, $con->getLastExecutedQuery(), 'PropelPDO has getter and setter for last executed query');
 	}
 	
+	public function testLatestQueryMoreThanTenArgs()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new Criteria();
+		$c->add(BookPeer::ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
+		$books = BookPeer::doSelect($c, $con);
+		$expected = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID IN (1,1,1,1,1,1,1,1,1,1,1,1)";
+		$this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
+	}
+	
 	public function testQueryCount()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);

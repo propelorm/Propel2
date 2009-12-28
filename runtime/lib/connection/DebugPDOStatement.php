@@ -74,10 +74,10 @@ class DebugPDOStatement extends PDOStatement
 	public function getExecutedQueryString()
 	{
 		$sql = $this->queryString;
-		
 		$matches = array();
 		if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
-			for ($i = 0; $i < count($matches[1]); $i++) {
+			$size = count($matches[1]);
+			for ($i = $size-1; $i >= 0; $i--) { 
 				$pos = $matches[1][$i];
 				$sql = str_replace($pos, $this->boundValues[$pos], $sql);
 			}
