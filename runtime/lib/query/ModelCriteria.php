@@ -544,11 +544,10 @@ class ModelCriteria extends Criteria
 	 * </code>
 	 * 
 	 * @param      string $relation Relation to use for the join
-	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function with($relation, $joinType = Criteria::INNER_JOIN)
+	public function with($relation)
 	{
 		if (!array_key_exists($relation, $this->joins)) {
 			throw new PropelException('Unknown relation name or alias ' . $relation);
