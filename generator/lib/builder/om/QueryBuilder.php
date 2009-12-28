@@ -183,7 +183,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 *
 	 * @return    mixed the result, formatted by the current formatter
 	 */
-	public function findPk(\$key, PropelPDO \$con = null)
+	public function findPk(\$key, \$con = null)
 	{";
 		$table = $this->getTable();
 		$pks = $table->getPrimaryKey();
@@ -245,7 +245,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 *
 	 * @return    the list of results, formatted by the current formatter
 	 */
-	public function findPks(\$keys, PropelPDO \$con = null)
+	public function findPks(\$keys, \$con = null)
 	{";
 		if ($count === 1) {
 			// simple primary key
