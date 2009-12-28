@@ -80,14 +80,20 @@ class OracleSchemaParser extends BaseSchemaParser
 	 * Searches for tables in the database. Maybe we want to search also the views.
 	 * @param	Database $database The Database model class to add tables to.
 	 */
-	public function parse(Database $database)
+	public function parse(Database $database, PDOTask $task = null)
 	{
 		$tables = array();
 		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
-		/* @var stmt PDOStatement */
+		
+		$task->log("Reverse Engineering Table Structures");
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if (strpos($row['OBJECT_NAME'], '$') !== false) {
+				// this is an Oracle internal table or materialized view - prune
+				continue;
+			}
 			$table = new Table($row['OBJECT_NAME']);
+			$task->log("Adding table '" . $table->getName() . "'");
 			$database->addTable($table);
 			// Add columns, primary keys and indexes.
 			$this->addColumns($table);
@@ -95,9 +101,15 @@ class OracleSchemaParser extends BaseSchemaParser
 			$this->addIndexes($table);
 			$tables[] = $table;
 		}
+
+		$task->log("Reverse Engineering Foreign Keys");
+		
 		foreach ($tables as $table) {
+			$task->log("Adding foreign keys for table '" . $table->getName() . "'");
 			$this->addForeignKeys($table);
 		}
+		
+		return count($tables);
 	}
 
 	/**
@@ -110,6 +122,10 @@ class OracleSchemaParser extends BaseSchemaParser
 		$stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
 		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if (strpos($row['COLUMN_NAME'], '$') !== false) {
+				// this is an Oracle internal column - prune
+				continue;
+			}
 			$size = $row["DATA_LENGTH"];
 			$scale = $row["DATA_SCALE"];
 			$default = $row['DATA_DEFAULT'];
@@ -162,15 +178,28 @@ class OracleSchemaParser extends BaseSchemaParser
 	 */
 	protected function addIndexes(Table $table)
 	{
-		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY INDEX_NAME");
 		/* @var stmt PDOStatement */
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		if (count($rows) > 0) {
-			$index = new Index($rows[0]['INDEX_NAME']);
-			foreach($rows AS $row) {
-				$index->addColumn($row['COLUMN_NAME']);
+		$indices = array();
+		foreach ($rows as $row) {
+			$indices[$row['INDEX_NAME']][]= $row['COLUMN_NAME'];
+		}
+		if (count($indices) > 0) {
+			foreach ($indices as $indexName => $columns) {
+				$index = new Index($indexName);
+				foreach($columns AS $column) {
+					if ($columnName = $table->getColumn($column)) {
+						// Oracle deals with complex indices using an internal reference, so... 
+						// let's ignore this kind of index
+						$index->addColumn($columnName);
+					}
+				}
+				if ($index->hasColumns()) {
+					$table->addIndex($index);
+				}
+				
 			}
-			$table->addIndex($index);
 		}
 	}
 	
@@ -199,8 +228,9 @@ class OracleSchemaParser extends BaseSchemaParser
 			if (!isset($foreignKeys[$row["CONSTRAINT_NAME"]])) {
 				$fk = new ForeignKey($row["CONSTRAINT_NAME"]);
 				$fk->setForeignTableName($foreignReferenceInfo['TABLE_NAME']);
-				$fk->setOnDelete($row["DELETE_RULE"]);
-				$fk->setOnUpdate($row["DELETE_RULE"]);
+				$onDelete = ($row["DELETE_RULE"] == 'NO ACTION') ? 'NONE' : $row["DELETE_RULE"];
+				$fk->setOnDelete($onDelete);
+				$fk->setOnUpdate($onDelete);
 				$fk->addReference(array("local" => $localReferenceInfo['COLUMN_NAME'], "foreign" => $foreignReferenceInfo['COLUMN_NAME']));
 				$table->addForeignKey($fk);
 				$foreignKeys[$row["CONSTRAINT_NAME"]] = $fk;

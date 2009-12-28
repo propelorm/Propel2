@@ -256,6 +256,16 @@ class Index extends XMLElement
 		return $this->getColumns();
 	}
 
+	
+	/**
+	 * Check whether the index has columns.
+	 * @return     boolean
+	 */
+	public function hasColumns()
+	{
+		return count($this->indexColumns) > 0;
+	}
+	
 	/**
 	 * Return the list of local columns. You should not edit this list.
 	 * @return     array string[]
