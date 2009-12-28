@@ -366,6 +366,8 @@ During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation ab
 == Miscellaneous ==
 
  * `ModelObject::addSelectColumns()` now accepts an additional parameter to allow the use of table aliases
+ * Added `ModelObject::clear()` to reinitialize a model object
  * Added `ModelObject::isPrimaryKeyNull()` method to check of an object was hydrated with no values (in case of a left join)
+ * Added `PeerClass::addGetPrimaryKeyFromRow()` to retrieve the Primary key from a result row
  * Added a new set of constants in the generated Peer class to list column names without the table name (this is `BasePeer::TYPE_RAW_COLNAME`)
  * Removed references to Creole in the code (Propel uses PDO instead of Creole since version 1.3)
