@@ -67,6 +67,8 @@ interface SchemaParser
 	 * Parse the schema and populate passed-in Database model object.
 	 *
 	 * @param      Database $database
+	 *
+	 * @return     int number of generated tables
 	 */
-	public function parse(Database $database);
+	public function parse(Database $database, PDOTask $task = null);
 }

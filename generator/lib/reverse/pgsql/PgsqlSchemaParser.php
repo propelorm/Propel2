@@ -79,7 +79,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 	/**
 	 *
 	 */
-	public function parse(Database $database)
+	public function parse(Database $database, PDOTask $task = null)
 	{
 		$stmt = $this->dbh->query("SELECT version() as ver");
 		$nativeVersion = $stmt->fetchColumn();
@@ -106,8 +106,10 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		$tableWraps = array();
 
 		// First load the tables (important that this happen before filling out details of tables)
+		$task->log("Reverse Engineering Tables");
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$name = $row['relname'];
+			$task->log("  Adding table '" . $name . "'");
 			$oid = $row['oid'];
 			$table = new Table($name);
 			$database->addTable($table);
@@ -120,18 +122,24 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		}
 
 		// Now populate only columns.
+		$task->log("Reverse Engineering Columns");
 		foreach ($tableWraps as $wrap) {
+			$task->log("  Adding columns for table '" . $$wrap->table->getName() . "'");
 			$this->addColumns($wrap->table, $wrap->oid, $version);
 		}
 
 		// Now add indexes and constraints.
+		$task->log("Reverse Engineering Indices And Constraints");
 		foreach ($tableWraps as $wrap) {
+			$task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'");
 			$this->addForeignKeys($wrap->table, $wrap->oid, $version);
 			$this->addIndexes($wrap->table, $wrap->oid, $version);
 			$this->addPrimaryKey($wrap->table, $wrap->oid, $version);
 		}
 
 		// TODO - Handle Sequences ...
+		
+		return count($tableWraps);
 
 	}
 

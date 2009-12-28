@@ -86,7 +86,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 	/**
 	 *
 	 */
-	public function parse(Database $database)
+	public function parse(Database $database, PDOTask $task = null)
 	{
 		$stmt = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
 
@@ -110,6 +110,8 @@ class MssqlSchemaParser extends BaseSchemaParser
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
 		}
+		
+		return count($tables);
 
 	}
 

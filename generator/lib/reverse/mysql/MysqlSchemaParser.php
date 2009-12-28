@@ -85,7 +85,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	/**
 	 *
 	 */
-	public function parse(Database $database)
+	public function parse(Database $database, PDOTask $task = null)
 	{
 		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
@@ -93,20 +93,26 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
+		$task->log("Reverse Engineering Tables");
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+			$task->log("  Adding table '" . $name . "'");
 			$table = new Table($name);
 			$database->addTable($table);
 			$tables[] = $table;
 		}
-
+		
 		// Now populate only columns.
+		$task->log("Reverse Engineering Columns");
 		foreach ($tables as $table) {
+			$task->log("  Adding columns for table '" . $table->getName() . "'");
 			$this->addColumns($table);
 		}
 
-		// Now add indexes and constraints.
+		// Now add indices and constraints.
+		$task->log("Reverse Engineering Indices And Constraints");
 		foreach ($tables as $table) {
+			$task->log("  Adding indices and constraints for table '" . $table->getName() . "'");
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
@@ -114,6 +120,8 @@ class MysqlSchemaParser extends BaseSchemaParser
 				$this->addTableVendorInfo($table);
 			}
 		}
+		
+		return count($tables);
 	}
 
 

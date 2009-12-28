@@ -405,7 +405,9 @@ class PropelSchemaReverseTask extends PDOTask
 
 		$parser = $config->getConfiguredSchemaParser($con);
 
-		$parser->parse($database);
+		$nbTables = $parser->parse($database, $this);
+		
+		$this->log("Successfully Reverse Engineered " . $nbTables . " tables");
 
 		return $database;
 	}

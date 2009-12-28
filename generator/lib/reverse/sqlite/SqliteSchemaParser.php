@@ -84,7 +84,7 @@ class SqliteSchemaParser extends BaseSchemaParser
 	/**
 	 *
 	 */
-	public function parse(Database $database)
+	public function parse(Database $database, PDOTask $task = null)
 	{
 		$stmt = $this->dbh->query("SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name;");
 
@@ -106,6 +106,8 @@ class SqliteSchemaParser extends BaseSchemaParser
 		foreach ($tables as $table) {
 			$this->addIndexes($table);
 		}
+		
+		return count($tables);
 
 	}
 
