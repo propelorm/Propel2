@@ -25,7 +25,6 @@ Now let's see how to use the pager object to display a nice pagination navigatio
 
 {{{
 #!php
-<?php
 <?php if (!$pager->atFirstPage()): ?> 
   <!-- Links for first and previous pages -->
   <a href="authors/<?php echo $authorId ?>/books/<?php echo $pager->getFirstPage() ?>">First</a>
@@ -36,7 +35,6 @@ Now let's see how to use the pager object to display a nice pagination navigatio
 <?php foreach ($pager->getPrevLinks(3) as $link): ?>
   <a href="authors/<?php echo $authorId ?>/books/<?php echo $link ?>"><?php echo $link ?></a>
 <?php endforeach; ?>
-}
 
 <!-- Current page -->
 <?php echo $pager->getPage() ?>
@@ -61,7 +59,6 @@ A call to `PropelPager::getResults()` makes a call to `BookPeer::doSelect($crite
 
 {{{
 #!php
-<?php
 <-- Get results -->
 <table>
 <?php foreach ($pager->getResults() as $book): ?>
