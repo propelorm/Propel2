@@ -734,7 +734,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function find($con = null)
 	{
-		$stmt = $this->getSelectStatement($stmt);
+		$stmt = $this->getSelectStatement($con);
 		
 		return $this->getFormatter()->format($stmt);
 	}
