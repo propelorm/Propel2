@@ -178,27 +178,26 @@ class OracleSchemaParser extends BaseSchemaParser
 	 */
 	protected function addIndexes(Table $table)
 	{
-		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY INDEX_NAME");
-		/* @var stmt PDOStatement */
+		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
 		$indices = array();
 		foreach ($rows as $row) {
 			$indices[$row['INDEX_NAME']][]= $row['COLUMN_NAME'];
 		}
-		if (count($indices) > 0) {
-			foreach ($indices as $indexName => $columns) {
-				$index = new Index($indexName);
-				foreach($columns AS $column) {
-					if ($columnName = $table->getColumn($column)) {
-						// Oracle deals with complex indices using an internal reference, so... 
-						// let's ignore this kind of index
-						$index->addColumn($columnName);
-					}
+		
+		foreach ($indices as $indexName => $columnNames) {
+			$index = new Index($indexName);
+			foreach($columnNames AS $columnName) {
+				// Oracle deals with complex indices using an internal reference, so... 
+				// let's ignore this kind of index
+				if ($table->hasColumn($columnName)) {
+					$index->addColumn($table->getColumn($columnName));
 				}
-				if ($index->hasColumns()) {
-					$table->addIndex($index);
-				}
-				
+			}
+			// since some of the columns are pruned above, we must only add an index if it has columns
+			if ($index->hasColumns()) {
+				$table->addIndex($index);
 			}
 		}
 	}

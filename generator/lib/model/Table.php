@@ -1120,6 +1120,15 @@ class Table extends XMLElement implements IDMethod
     return $this->unices;
   }
 
+	/**
+	 * Check whether the table has a column.
+	 * @return     boolean
+	 */
+	public function hasColumn($name)
+	{
+		return array_key_exists($name, $this->columnsByName);
+	}
+	
   /**
    * Returns a specified column.
    * @return     Column Return a Column object or null if it does not exist.
