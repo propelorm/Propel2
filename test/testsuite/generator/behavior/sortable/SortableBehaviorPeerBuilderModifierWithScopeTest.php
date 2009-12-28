@@ -27,7 +27,7 @@ require_once 'tools/helpers/bookstore/behavior/BookstoreSortableTestBase.php';
  *
  * @author		Massimiliano Arione
  * @version		$Revision$
- * @package		generator.engine.behavior
+ * @package		generator.behavior.sortable
  */
 class SortableBehaviorPeerBuilderModifierWithScopeTest extends BookstoreSortableTestBase
 {
