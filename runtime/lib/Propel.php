@@ -270,7 +270,7 @@ class Propel
 	}
 
 	/**
-	 * Configure Propel using an INI or PHP (array) config file.
+	 * Configure Propel a PHP (array) config file.
 	 *
 	 * @param      string Path (absolute or relative to include_path) to config file.
 	 *
@@ -306,7 +306,7 @@ class Propel
 	}
 
 	/**
-	 * Initialization of Propel with an INI or PHP (array) configuration file.
+	 * Initialization of Propel a PHP (array) configuration file.
 	 *
 	 * @param      string $c The Propel configuration file path.
 	 *
