@@ -751,7 +751,7 @@ class ModelCriteria extends Criteria
 	public function findOne($con = null)
 	{
 		$this->limit(1);
-		$stmt = $this->getSelectStatement($stmt);
+		$stmt = $this->getSelectStatement($con);
 		
 		return $this->getFormatter()->formatOne($stmt);
 	}
@@ -1184,6 +1184,9 @@ EOT;
 	 */
 	protected function doReplaceName($matches)
 	{
+		if(!$matches[0]) {
+			return '';
+		}
 		// replace names only in expressions, not in strings delimited by quotes
 		return $matches[1] . preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $matches[2]);
 	}
