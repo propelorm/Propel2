@@ -228,6 +228,25 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
 	}
+	
+	public function testDoDelete_ByPks() {
+		// 1) get all of the books
+	  $books = BookPeer::doSelect(new Criteria());
+	  $bookCount = count($books);
+	  
+	  // 2) we have enough books to do this test
+	  $this->assertGreaterThan(1, $bookCount, 'There are at least two books');
+	  
+	  // 3) select two random books
+	  $book1 = $books[0];
+	  $book2 = $books[1];
+	  
+	  // 4) delete the books
+	  BookPeer::doDelete(array($book1->getId(), $book2->getId()));
+	  
+	  // 5) we should have two less books than before
+	  $this->assertEquals($bookCount-2, BookPeer::doCount(new Criteria()), 'Two books deleted successfully.');
+	}
 
 	/**
 	 * Test deleting a row by passing the generated object to doDelete().
@@ -305,15 +324,16 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
 		ReaderFavoritePeer::doDeleteAll();
-		// Create book and reader with ID 1
-		// Create book and reader with ID 2
+		// Create books with IDs 1 to 3
+		// Create readers with IDs 1 and 2
 
 		$this->createBookWithId(1);
 		$this->createBookWithId(2);
+		$this->createBookWithId(3);
 		$this->createReaderWithId(1);
 		$this->createReaderWithId(2);
 
-		for ($i=1; $i <= 2; $i++) {
+		for ($i=1; $i <= 3; $i++) {
 			for ($j=1; $j <= 2; $j++) {
 				$bo = new BookOpinion();
 				$bo->setBookId($i);
@@ -327,17 +347,34 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 			}
 		}
 
-		$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
+		$this->assertEquals(6, ReaderFavoritePeer::doCount(new Criteria()));
 
-		// Now delete 2 of those rows
+		// Now delete 2 of those rows (2 is special in that it is the number of rows
+		// being deleted, as well as the number of things in the primary key)
 		ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));
-
-		$this->assertEquals(2, ReaderFavoritePeer::doCount(new Criteria()));
-
+		$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
+		
+		//Note: these composite PK's are pairs of (BookId, ReaderId)
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,1));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,2));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
+
+		//test deletion of a single composite PK		
+		ReaderFavoritePeer::doDelete(array(3,1));
+		$this->assertEquals(3, ReaderFavoritePeer::doCount(new Criteria()));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
+		$this->assertNotNull(ReaderFavoritePeer::retrieveByPk(3,2));
+		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
+		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
+		$this->assertNull(ReaderFavoritePeer::retrieveByPk(3,1));
+		
+		//test deleting the last three
+		ReaderFavoritePeer::doDelete(array(array(2,1), array(1,2), array(3,2)));
+		$this->assertEquals(0, ReaderFavoritePeer::doCount(new Criteria()));
 	}
 	
 	/**
