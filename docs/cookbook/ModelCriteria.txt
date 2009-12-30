@@ -472,14 +472,13 @@ Here is the list of methods you can call on a PropelCollection:
 <?php
 // introspection methods
 array getData()  // return a copy of the result array
-array getKeys()  // return the keys of the result array
 // information methods on the current element in the method
 bool  isFirst()
 bool  isLast()
 bool  isEmpty()
 bool  isOdd()
 bool  isEven()
-bool  contains($key)
+bool  contains($position)
 // access methods
 mixed getFirst()
 mixed getPrevious()
@@ -487,13 +486,13 @@ mixed getCurrent()
 mixed getKey()
 mixed getNext()
 mixed getLast()
-mixed get($key)
+mixed get($position)
 mixed search($value)
 // manipulation methods
 mixed pop()
 mixed shift()
-mixed set($key, $value)
-mixed remove($key)
+mixed set($position, $value)
+mixed remove($position)
 mixed clear()
 // Model methods
 void  save() // save all the objects in the collection

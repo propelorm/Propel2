@@ -22,6 +22,7 @@
 
 /**
  * Class for iterating over a list of Propel elements
+ * The collection keys must be integers - no associative array accepted
  *
  * @author     Francois Zaninotto
  * @package    propel.formatter
@@ -51,16 +52,6 @@ class PropelCollection extends ArrayObject
 	public function setData($data)
 	{
 		$this->exchangeArray($data);
-	}	
-	
-	/**
-	 * Get all keys of the data in the collection
-	 *
-	 * @return    array
-	 */
-	public function getKeys()
-	{
-		return array_keys($this->getArrayCopy());
 	}
 
 	/**
@@ -71,18 +62,7 @@ class PropelCollection extends ArrayObject
 	 */
 	public function getPosition()
 	{
-		$key = $this->getIterator()->key();
-		if ($key === null) {
-			return 0;
-		}
-		$this->getIterator()->rewind();
-		$lastPosition = 0;
-		while ($this->getIterator()->key() != $key) {
-			$lastPosition++;
-			$this->getIterator()->next();
-		}
-		
-		return $lastPosition;
+		return (int) $this->getIterator()->key();
 	}
 
 	/**
@@ -115,17 +95,11 @@ class PropelCollection extends ArrayObject
 	 */
 	public function getPrevious()
 	{
-		$key = $this->getIterator()->key();
-		$this->getIterator()->rewind();
-		$lastPosition = -1;
-		while ($this->getIterator()->key() != $key) {
-			$lastPosition++;
-			$this->getIterator()->next();
-		}
-		if ($lastPosition == -1) {
+		$pos = $this->getPosition();
+		if ($pos == 0) {
 			return null;
 		} else {
-			$this->getIterator()->seek($lastPosition);
+			$this->getIterator()->seek($pos - 1);
 			return $this->getCurrent();
 		}
 	}
@@ -138,16 +112,6 @@ class PropelCollection extends ArrayObject
 	public function getCurrent()
 	{
 		return $this->getIterator()->current();
-	}
-
-	/**
-	 * Get the key of the current element in the collection
-	 *
-	 * @return    mixed
-	 */
-	public function getKey()
-	{
-		return $this->getIterator()->key();
 	}
 
 	/**
@@ -170,16 +134,11 @@ class PropelCollection extends ArrayObject
 	 */
 	public function getLast()
 	{
-		$this->getIterator()->rewind();
-		$lastPosition = -1;
-		while ($this->getIterator()->valid()) {
-			$lastPosition++;
-			$this->getIterator()->next();
-		}
-		if ($lastPosition == -1) {
+		$count = $this->count();
+		if ($count == 0) {
 			return null;
 		} else {
-			$this->getIterator()->seek($lastPosition);
+			$this->getIterator()->seek($count - 1);
 			return $this->getCurrent();
 		}
 	}

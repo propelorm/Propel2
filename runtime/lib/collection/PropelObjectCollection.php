@@ -95,7 +95,7 @@ class PropelObjectCollection extends PropelCollection
 	public function fromArray($arr)
 	{
 		$class = $this->getModel();
-		foreach ($arr as $key => $element) {
+		foreach ($arr as $element) {
 			$obj = new $class();
 			$obj->fromArray($element);
 			$this->append($obj);
