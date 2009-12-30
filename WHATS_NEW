@@ -45,14 +45,29 @@ The upgrade path is then pretty straightforward:
 
 2 - Rebuild the model
 
-3 - Add the level column to the database. For instance, in MySQL:
+3 - Change the parent class of your model classes (object and peer) that used the nested set `treeMode`:
+
+{{{
+#!php
+<?php
+class Category extends BaseCategory
+// instead of
+class Category extends BaseCategoryNestedSet
+
+
+class CategoryPeer extends BaseCategoryPeer
+// instead of
+class CategoryPeer extends BaseCategoryNestedSetPeer
+}}}
+
+4 - Add the level column to the database. For instance, in MySQL:
 
 {{{
 #!xml
 ALTER TABLE `category` ADD COLUMN tree_level INTEGER;
 }}}
 
-4 - Update the level value in the existing nodes, using the `fixLevels()` Peer method
+5 - Update the level value in the existing nodes, using the `fixLevels()` Peer method
 
 {{{
 #!php
