@@ -980,7 +980,11 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			\$row = \$stmt->fetch(PDO::FETCH_NUM);
 			\$stmt->closeCursor();";
 
-		if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
+		if ($col->getType() === PropelTypes::CLOB && $this->getPlatform() instanceof OraclePlatform) {
+			// PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
+			$script .= "
+			\$this->$clo = stream_get_contents(\$row[0]);";
+		}	elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 			$script .= "
 			if (\$row[0] !== null) {
 				\$this->$clo = fopen('php://memory', 'r+');
@@ -1839,7 +1843,6 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		$i = 0;
 		foreach ($table->getColumns() as $col) {
 			$cfc = $col->getPhpName();
-			$cptype = $col->getPhpType();// not safe to use it because some methods may return objects (Blob)
 			$script .= "
 			case $i:
 				return \$this->get$cfc();
