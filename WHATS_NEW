@@ -50,11 +50,12 @@ The upgrade path is then pretty straightforward:
 {{{
 #!php
 <?php
+// use
 class Category extends BaseCategory
 // instead of
 class Category extends BaseCategoryNestedSet
 
-
+// use
 class CategoryPeer extends BaseCategoryPeer
 // instead of
 class CategoryPeer extends BaseCategoryNestedSetPeer
