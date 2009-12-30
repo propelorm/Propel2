@@ -1475,8 +1475,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 					// PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
 					$script .= "
 			\$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
-				}
-				if ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
+				}	elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
 					$script .= "
 			if (\$row[\$startcol + $n] !== null) {
 				\$this->$clo = fopen('php://memory', 'r+');
