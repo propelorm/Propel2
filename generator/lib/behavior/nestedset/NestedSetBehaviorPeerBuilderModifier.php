@@ -561,7 +561,6 @@ public static function fixLevels(" . ($useScope ? "\$scope, " : ""). "PropelPDO 
 		}
 	}
 	\$stmt->closeCursor();
-	return \$results;
 }
 ";
 	}
