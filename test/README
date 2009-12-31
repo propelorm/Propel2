@@ -80,13 +80,15 @@ propel.database.password = p@ssw0rd
 Run all the unit tests at once using Phing:
 {{{
 > cd /path/to/propel/test
-> phing -f test.xml
+> phing -f test.xml -verbose
 }}}
+
+'''Tip''': The `-verbose` option will force the display of PHP notices, which are hidden by default.
 
 To run a single test, specify the classname (minus 'Test' ending) on the commandline, using the `test` property. For example to run only GeneratedObjectTest:
 
 {{{
-> phing -f test.xml -Dtest=GeneratedObject
+> phing -f test.xml -verbose -Dtest=GeneratedObject
 }}}
 
 Tip: If you want to set up custom Phing properties for your unit tests, create a `test.properties` file inside the main `test/` directory. Phing will automatically try to load it if it exists.
