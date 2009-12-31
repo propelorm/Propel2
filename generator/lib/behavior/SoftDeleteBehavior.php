@@ -272,9 +272,9 @@ public static function doSoftDeleteAll(PropelPDO \$con = null)
 public static function doDeleteAll2(PropelPDO \$con = null)
 {
 	if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-		return {$this->getTable()->getPhpName()}Peer::doSoftDeleteAll(\$values, \$con);
+		return {$this->getTable()->getPhpName()}Peer::doSoftDeleteAll(\$con);
 	} else {
-		return {$this->getTable()->getPhpName()}Peer::doForceDeleteAll(\$values, \$con);
+		return {$this->getTable()->getPhpName()}Peer::doForceDeleteAll(\$con);
 	}	
 }
 EOT;
