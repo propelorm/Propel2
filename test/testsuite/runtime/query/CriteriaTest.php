@@ -343,7 +343,8 @@ class CriteriaTest extends BaseTestCase
 
     $result = null;
     try {
-      $result = BasePeer::createSelectSql($this->c, $params=array());
+      $params = array();
+    	$result = BasePeer::createSelectSql($this->c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -364,7 +365,8 @@ class CriteriaTest extends BaseTestCase
 
     $result = null;
     try {
-      $result = BasePeer::createSelectSql($this->c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($this->c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -383,7 +385,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (:p1,:p2,:p3)";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -402,7 +405,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (:p1,:p2))";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -452,7 +456,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT * FROM TABLE_A, TABLE_B WHERE TABLE_A.COL_1=TABLE_B.COL_1";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -470,7 +475,8 @@ class CriteriaTest extends BaseTestCase
     $expect = 'SELECT * FROM TABLE_A, TABLE_B, TABLE_D '
          .'WHERE TABLE_A.COL_1=TABLE_B.COL_1 AND TABLE_B.COL_X=TABLE_D.COL_X';
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -487,7 +493,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT TABLE_A.*, TABLE_B.* FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -507,7 +514,8 @@ class CriteriaTest extends BaseTestCase
          .'LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
              .'LEFT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -523,7 +531,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT * FROM TABLE_A RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -543,7 +552,8 @@ class CriteriaTest extends BaseTestCase
          .'RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
              .'RIGHT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)';
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -559,7 +569,8 @@ class CriteriaTest extends BaseTestCase
 
     $expect = "SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)";
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -578,7 +589,8 @@ class CriteriaTest extends BaseTestCase
          .'INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
              .'INNER JOIN TABLE_C ON (TABLE_B.COL_1=TABLE_C.COL_1)';
     try {
-      $result = BasePeer::createSelectSql($c, $params=array());
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
     } catch (PropelException $e) {
       print $e->getTraceAsString();
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
@@ -607,8 +619,8 @@ class CriteriaTest extends BaseTestCase
       $expect = 'SELECT TABLE_A.ID FROM TABLE_A CROSS JOIN TABLE_C'
           .' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
     #}
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
   
@@ -624,8 +636,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A'
               .' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID)';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
 
@@ -644,8 +656,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A'
               .' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
   
@@ -666,8 +678,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_B '
             . 'WHERE TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
   
@@ -688,8 +700,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_B '
             . 'WHERE TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=3';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
   
@@ -711,8 +723,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
 
@@ -733,8 +745,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A, TABLE_B '
             . 'WHERE TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
     
@@ -756,8 +768,8 @@ class CriteriaTest extends BaseTestCase
         
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ)';
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
   
@@ -771,8 +783,8 @@ class CriteriaTest extends BaseTestCase
     $c->add('A.COL', 'date_part(\'YYYY\', A.COL) = \'2007\'', Criteria::CUSTOM);
 
     $expected = "SELECT A.COL FROM A WHERE date_part('YYYY', A.COL) = '2007'";
-
-    $result = BasePeer::createSelectSql($c, $params=array());
+    $params = array();
+    $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expected, $result);
   }
   
