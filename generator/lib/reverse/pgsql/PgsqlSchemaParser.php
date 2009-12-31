@@ -343,13 +343,15 @@ class PgsqlSchemaParser extends BaseSchemaParser
 								          conname,
 								          confupdtype,
 								          confdeltype,
-								          cl.relname as fktab,
+								          CASE nl.nspname WHEN 'public' THEN cl.relname ELSE nl.nspname||'.'||cl.relname END as fktab,
 								          a2.attname as fkcol,
-								          cr.relname as reftab,
+								          CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
 								          a1.attname as refcol
 								    FROM pg_constraint ct
 								         JOIN pg_class cl ON cl.oid=conrelid
 								         JOIN pg_class cr ON cr.oid=confrelid
+								         JOIN pg_namespace nl ON nl.oid = cl.relnamespace
+								         JOIN pg_namespace nr ON nr.oid = cr.relnamespace
 								         LEFT JOIN pg_catalog.pg_attribute a1 ON a1.attrelid = ct.confrelid
 								         LEFT JOIN pg_catalog.pg_attribute a2 ON a2.attrelid = ct.conrelid
 								    WHERE
