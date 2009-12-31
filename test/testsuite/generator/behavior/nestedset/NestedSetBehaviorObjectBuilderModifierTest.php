@@ -164,7 +164,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with no left and right value');
 		$t1->save();
 		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for saved nodes with no left and right value');
-		$t1->setLeftValue(1)->setRightValue(O);
+		$t1->setLeftValue(1)->setRightValue(0);
 		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with zero left value');
 		$t1->setLeftValue(0)->setRightValue(1);
 		$this->assertFalse($t1->isInTree(), 'inInTree() returns false for nodes with zero right value');
