@@ -1333,6 +1333,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addDoDelete(&$script)
 	{
 		$table = $this->getTable();
+		$emulateCascade = $this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded();
 		$script .= "
 	/**
 	 * Method perform a DELETE on the database, given a ".$this->getObjectClassname()." or Criteria object OR a primary key value.
@@ -1351,18 +1352,23 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
-		if (\$values instanceof Criteria) {
+		if (\$values instanceof Criteria) {";
+		if (!$emulateCascade) {
+			$script .= "
 			// invalidate the cache for all objects of this type, since we have no
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
-			".$this->getPeerClassname()."::clearInstancePool();
-
+			".$this->getPeerClassname()."::clearInstancePool();";
+		}
+		$script .= "
 			// rename for clarity
 			\$criteria = clone \$values;
-		} elseif (\$values instanceof ".$this->getObjectClassname().") {
+		} elseif (\$values instanceof ".$this->getObjectClassname().") { // it's a model object";
+		if (!$emulateCascade) {
+			$script .= "
 			// invalidate the cache for this single object
 			".$this->getPeerClassname()."::removeInstanceFromPool(\$values);";
-
+		}
 		if (count($table->getPrimaryKey()) > 0) {
 			$script .= "
 			// create criteria based on pk values
@@ -1374,36 +1380,31 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		$script .= "
-		} else {
-			// it must be the primary key
-
-
-
+		} else { // it's a primary key, or an array of pks";
+		$script .= "
 			\$criteria = new Criteria(self::DATABASE_NAME);";
 
 		if (count($table->getPrimaryKey()) === 1) {
 			$pkey = $table->getPrimaryKey();
 			$col = array_shift($pkey);
 			$script .= "
-			\$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);
-
+			\$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
+			if (!$emulateCascade) {
+				$script .= "
+			// invalidate the cache for this object(s)
 			foreach ((array) \$values as \$singleval) {
-				// we can invalidate the cache for this single object
 				".$this->getPeerClassname()."::removeInstanceFromPool(\$singleval);
 			}";
-
+			}
 		} else {
 			$script .= "
 			// primary key is composite; we therefore, expect
-			// the primary key passed to be an array of pkey
-			// values
+			// the primary key passed to be an array of pkey values
 			if (count(\$values) == count(\$values, COUNT_RECURSIVE)) {
 				// array is not multi-dimensional
 				\$values = array(\$values);
 			}
-
-			foreach (\$values as \$value) {
-";
+			foreach (\$values as \$value) {";
 			$i=0;
 			foreach ($table->getPrimaryKey() as $col) {
 				if ($i == 0) {
@@ -1416,10 +1417,13 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				$i++;
 			}
 			$script .= "
-				\$criteria->addOr(\$criterion);
-
+				\$criteria->addOr(\$criterion);";
+			if (!$emulateCascade) {
+				$script .= "
 				// we can invalidate the cache for this single PK
-				".$this->getPeerClassname()."::removeInstanceFromPool(\$value);
+				".$this->getPeerClassname()."::removeInstanceFromPool(\$value);";
+			}
+			$script .= "
 			}";
 		} /* if count(table->getPrimaryKeys()) */
 
@@ -1446,16 +1450,20 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			";
 		}
 
-		if ($this->isDeleteCascadeEmulationNeeded() || $this->isDeleteSetNullEmulationNeeded()) {
+		if ($emulateCascade) {
 			$script .= "
-				// Because this db requires some delete cascade/set null emulation, we have to
-				// clear the cached instance *after* the emulation has happened (since
-				// instances get re-added by the select statement contained therein).
-				if (\$values instanceof Criteria) {
-					".$this->getPeerClassname()."::clearInstancePool();
-				} else { // it's a PK or object
-					".$this->getPeerClassname()."::removeInstanceFromPool(\$values);
+			// Because this db requires some delete cascade/set null emulation, we have to
+			// clear the cached instance *after* the emulation has happened (since
+			// instances get re-added by the select statement contained therein).
+			if (\$values instanceof Criteria) {
+				".$this->getPeerClassname()."::clearInstancePool();
+			} elseif (\$values instanceof ".$this->getObjectClassname().") { // it's a model object
+				".$this->getPeerClassname()."::removeInstanceFromPool(\$values);
+			} else { // it's a primary key, or an array of pks
+				foreach ((array) \$values as \$singleval) {
+					".$this->getPeerClassname()."::removeInstanceFromPool(\$singleval);
 				}
+			}
 			";
 		}
 
