@@ -287,12 +287,13 @@ public function getPrevious(PropelPDO \$con = null)
  * The modifications are not persisted until the object is saved.
  *
  * @param     integer    \$rank rank value
+ * @param     PropelPDO  \$con      optional connection
  *
  * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
-public function insertAtRank(\$rank)
+public function insertAtRank(\$rank, PropelPDO \$con = null)
 {";
 		if ($useScope) {
 			$script .= "
