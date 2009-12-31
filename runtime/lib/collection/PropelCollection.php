@@ -198,7 +198,7 @@ class PropelCollection extends ArrayObject
 	public function get($key)
 	{
 		if (!$this->offsetExists($key)) {
-			throw new PropelException('Unknown offset ' . $offset);
+			throw new PropelException('Unknown key ' . $key);
 		}
 		return $this->offsetGet($key);
 	}
@@ -210,6 +210,9 @@ class PropelCollection extends ArrayObject
 	 */
 	public function pop()
 	{
+	  if ($this->count() == 0) {
+	    return null;
+	  }
 		$ret = $this->getLast();
 		$lastKey = $this->getIterator()->key();
 		$this->offsetUnset((string) $lastKey);
@@ -255,7 +258,7 @@ class PropelCollection extends ArrayObject
 	public function remove($key)
 	{
 		if (!$this->offsetExists($key)) {
-			throw new PropelException('Unknown offset ' . $offset);
+			throw new PropelException('Unknown key ' . $key);
 		}
 		return $this->offsetUnset($key);
 	}
@@ -322,7 +325,7 @@ class PropelCollection extends ArrayObject
 	public function getIterator()
 	{
 		if (null === $this->iterator) {
-			$this->iterator = parent::getIterator();
+			$this->iterator = new ArrayIterator($this);
 		}
 		return $this->iterator;
 	}
