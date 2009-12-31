@@ -916,7 +916,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$book = $c->findOne();
-		$this->assertNull($books, 'findOne() returns null when the query returns no result');
+		$this->assertNull($book, 'findOne() returns null when the query returns no result');
 		
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->orderBy('b.Title');
@@ -1008,7 +1008,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		try {
 			$c = new ModelCriteria('bookstore', 'Book');
-			$books = $c->findBy('Foo', 'Bar', $con);
+			$books = $c->findBy('Foo', 'Bar');
 			$this->fail('findBy() throws an exception when called on an unknown column name');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'findBy() throws an exception when called on an unknown column name');
@@ -1035,7 +1035,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		try {
 			$c = new ModelCriteria('bookstore', 'Book');
-			$book = $c->findOneBy('Foo', 'Bar', $con);
+			$book = $c->findOneBy('Foo', 'Bar');
 			$this->fail('findOneBy() throws an exception when called on an unknown column name');
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'findOneBy() throws an exception when called on an unknown column name');
@@ -1241,8 +1241,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 	
 	public function testPreUpdate()
 	{
-		BookstoreDataPopulator::depopulate($con);
-		BookstoreDataPopulator::populate($con);
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
 		
 		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
