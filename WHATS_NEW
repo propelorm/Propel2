@@ -353,6 +353,10 @@ print_r($bookArray);
 
 Only the related objects that were already hydrated appear in the result, so `toArray()` never issues additional queries. Together with the ability to return arrays instead of objects when using `PropelQuery`, this addition will help to debug and optimize model code.
 
+== Better Oracle Support ==
+
+The Oracle adapter for the generator, the reverse engineering, and the runtime components have been greatly improved. This should provide an easier integration of Propel with an Oracle database.
+
 == Code Cleanup ==
 
 === Directory Structure Changes ===

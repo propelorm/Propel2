@@ -33,6 +33,7 @@ class PropelTypes
 	const VARCHAR = "VARCHAR";
 	const LONGVARCHAR = "LONGVARCHAR";
 	const CLOB = "CLOB";
+	const CLOB_EMU = "CLOB_EMU";
 	const NUMERIC = "NUMERIC";
 	const DECIMAL = "DECIMAL";
 	const TINYINT = "TINYINT";
@@ -73,7 +74,8 @@ class PropelTypes
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
 	const LONGVARCHAR_NATIVE_TYPE = "string";
-	const CLOB_NATIVE_TYPE = "string"; // Clob
+	const CLOB_NATIVE_TYPE = "string";
+	const CLOB_EMU_NATIVE_TYPE = "resource";
 	const NUMERIC_NATIVE_TYPE = "string";
 	const DECIMAL_NATIVE_TYPE = "string";
 	const TINYINT_NATIVE_TYPE = "int";
@@ -105,6 +107,7 @@ class PropelTypes
 			self::VARCHAR => self::VARCHAR_NATIVE_TYPE,
 			self::LONGVARCHAR => self::LONGVARCHAR_NATIVE_TYPE,
 			self::CLOB => self::CLOB_NATIVE_TYPE,
+			self::CLOB_EMU => self::CLOB_EMU_NATIVE_TYPE,
 			self::NUMERIC => self::NUMERIC_NATIVE_TYPE,
 			self::DECIMAL => self::DECIMAL_NATIVE_TYPE,
 			self::TINYINT => self::TINYINT_NATIVE_TYPE,
@@ -175,6 +178,7 @@ class PropelTypes
 			self::VARCHAR => PDO::PARAM_STR,
 			self::LONGVARCHAR => PDO::PARAM_STR,
 			self::CLOB => PDO::PARAM_STR,
+			self::CLOB_EMU => PDO::PARAM_STR,
 			self::NUMERIC => PDO::PARAM_INT,
 			self::DECIMAL => PDO::PARAM_STR,
 			self::TINYINT => PDO::PARAM_INT,

@@ -1475,7 +1475,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		foreach ($table->getColumns() as $col) {
 			if (!$col->isLazyLoad()) {
 				$clo = strtolower($col->getName());
-				if ($col->getType() === PropelTypes::CLOB && $this->getPlatform() instanceof OraclePlatform) {
+				if ($col->getType() === PropelTypes::CLOB_EMU && $this->getPlatform() instanceof OraclePlatform) {
 					// PDO_OCI returns a stream for CLOB objects, while other PDO adapters return a string...
 					$script .= "
 			\$this->$clo = stream_get_contents(\$row[\$startcol + $n]);";
