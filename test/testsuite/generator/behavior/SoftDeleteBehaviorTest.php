@@ -231,7 +231,7 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 
 class UndeletableTable4 extends Table4 
 {
-	public function preDelete(PropelPDO $con)
+	public function preDelete(PropelPDO $con = null)
 	{
 		parent::preDelete($con);
 		$this->setTitle('foo');
