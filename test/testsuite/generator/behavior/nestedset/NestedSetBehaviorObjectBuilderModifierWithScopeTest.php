@@ -109,9 +109,6 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals($t3->getParent($this->con), $t1, 'getParent() correctly retrieves parent for nodes');
 		$t4 = $this->getByTitle('t4');
 		$this->assertEquals($t4->getParent($this->con), $t3, 'getParent() retrieves the same parent for nodes');
-		$count = $this->con->getQueryCount();
-		$t4->getParent($this->con);
-		$this->assertEquals($count, $this->con->getQueryCount(), 'getParent() uses an internal cache to avoid repeating queries');
 	}
 	
 	public function testGetPrevSibling()

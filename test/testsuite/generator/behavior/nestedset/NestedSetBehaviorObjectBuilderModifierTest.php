@@ -57,7 +57,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	
 	public function testObjectAttributes()
 	{
-		$expectedAttributes = array('hasPrevSibling', 'prevSibling', 'hasNextSibling', 'nextSibling', 'parentNode');
+		$expectedAttributes = array('nestedSetQueries');
 		foreach ($expectedAttributes as $attribute) {
 			$this->assertClassHasAttribute($attribute, 'Table9');
 		}
@@ -250,18 +250,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertFalse($t5->isAncestorOf($t3), 'child is not seen as an ancestor of its parent');
 	}
 	
-	public function testSetParent()
-	{
-		Table9Peer::doDeleteAll();
-		$t2 = new PublicTable9();
-		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->setLevel(1)->save();
-		$this->assertNull($t2->parentNode, 'parentNode is null before calling setParent()');
-		$t1 = new PublicTable9();
-		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->setLevel(0)->save();
-		$t2->setParent($t1);
-		$this->assertEquals($t2->parentNode, $t1, 'setParent() writes parent node in cache');
-	}
-	
 	public function testHasParent()
 	{
 		Table9Peer::doDeleteAll();
@@ -295,23 +283,8 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($t2->getParent($this->con), $t1, 'getParent() correctly retrieves parent for nodes');
 		$this->assertEquals($t3->getParent($this->con), $t2, 'getParent() correctly retrieves parent for leafs');
 		$this->assertEquals($t4->getParent($this->con), $t2, 'getParent() retrieves the same parent for two siblings');
-		$count = $this->con->getQueryCount();
-		$t4->getParent($this->con);
-		$this->assertEquals($count, $this->con->getQueryCount(), 'getParent() uses an internal cache to avoid repeating queries');
 	}
 
-	public function testSetPrevSibling()
-	{
-		Table9Peer::doDeleteAll();
-		$t2 = new PublicTable9();
-		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->save();
-		$this->assertNull($t2->prevSibling, 'prevSibling is null before calling setPrevSibling()');
-		$t1 = new PublicTable9();
-		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
-		$t2->setPrevSibling($t1);
-		$this->assertEquals($t2->prevSibling, $t1, 'setPrevSibling() writes previous sibling in cache');
-	}
-	
 	public function testHasPrevSibling()
 	{
 		Table9Peer::doDeleteAll();
@@ -345,23 +318,8 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($t3->getPrevSibling($this->con), $t2, 'getPrevSibling() correctly retrieves prev sibling');
 		$this->assertNull($t6->getPrevSibling($this->con), 'getPrevSibling() returns null for first siblings');
 		$this->assertEquals($t7->getPrevSibling($this->con), $t6, 'getPrevSibling() correctly retrieves prev sibling');
-		$count = $this->con->getQueryCount();
-		$t7->getPrevSibling($this->con);
-		$this->assertEquals($count, $this->con->getQueryCount(), 'getPrevSibling() uses an internal cache to avoid repeating queries');
 	}
 
-	public function testSetNextSibling()
-	{
-		Table9Peer::doDeleteAll();
-		$t2 = new PublicTable9();
-		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->save();
-		$this->assertNull($t2->nextSibling, 'nextSibling is null before calling setNextSibling()');
-		$t1 = new PublicTable9();
-		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
-		$t2->setNextSibling($t1);
-		$this->assertEquals($t2->nextSibling, $t1, 'setNextSibling() writes next sibling in cache');
-	}
-	
 	public function testHasNextSibling()
 	{
 		Table9Peer::doDeleteAll();
@@ -395,9 +353,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertNull($t3->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
 		$this->assertEquals($t6->getNextSibling($this->con), $t7, 'getNextSibling() correctly retrieves next sibling');
 		$this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
-		$count = $this->con->getQueryCount();
-		$t6->getNextSibling($this->con);
-		$this->assertEquals($count, $this->con->getQueryCount(), 'getNextSibling() uses an internal cache to avoid repeating queries');
 	}
 	
 	public function testHasChildren()
@@ -689,7 +644,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals(5, $t8->getLeftValue(), 'insertAsFirstChildOf() sets the left value correctly');
 		$this->assertEquals(6, $t8->getRightValue(), 'insertAsFirstChildOf() sets the right value correctly');
 		$this->assertEquals(2, $t8->getLevel(), 'insertAsFirstChildOf() sets the level correctly');
-		$this->assertEquals($t3, $t8->parentNode, 'insertAsFirstChildOf() sets the parent correctly');
 		$expected = array(
 			't1' => array(1, 16, 0),
 			't2' => array(2, 3, 1),
@@ -731,7 +685,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals(13, $t8->getLeftValue(), 'insertAsLastChildOf() sets the left value correctly');
 		$this->assertEquals(14, $t8->getRightValue(), 'insertAsLastChildOf() sets the right value correctly');
 		$this->assertEquals(2, $t8->getLevel(), 'insertAsLastChildOf() sets the level correctly');
-		$this->assertEquals($t3, $t8->parentNode, 'insertAsLastChildOf() sets the parent correctly');
 		$expected = array(
 			't1' => array(1, 16, 0),
 			't2' => array(2, 3, 1),
@@ -773,8 +726,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals(4, $t8->getLeftValue(), 'insertAsPrevSiblingOf() sets the left value correctly');
 		$this->assertEquals(5, $t8->getRightValue(), 'insertAsPrevSiblingOf() sets the right value correctly');
 		$this->assertEquals(1, $t8->getLevel(), 'insertAsPrevSiblingOf() sets the level correctly');
-		$this->assertEquals($t3, $t8->nextSibling, 'insertAsPrevSiblingOf() sets the next sibling correctly');
-		$this->assertEquals($t8, $t3->prevSibling, 'insertAsPrevSiblingOf() sets the prev sibling correctly');
 		$expected = array(
 			't1' => array(1, 16, 0),
 			't2' => array(2, 3, 1),
@@ -816,8 +767,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals(14, $t8->getLeftValue(), 'insertAsNextSiblingOf() sets the left value correctly');
 		$this->assertEquals(15, $t8->getRightValue(), 'insertAsNextSiblingOf() sets the right value correctly');
 		$this->assertEquals(1, $t8->getLevel(), 'insertAsNextSiblingOf() sets the level correctly');
-		$this->assertEquals($t3, $t8->prevSibling, 'insertAsNextSiblingOf() sets the prev sibling correctly');
-		$this->assertEquals($t8, $t3->nextSibling, 'insertAsNextSiblingOf() sets the next sibling correctly');
 		$expected = array(
 			't1' => array(1, 16, 0),
 			't2' => array(2, 3, 1),
@@ -869,7 +818,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't7' => array(9, 10, 4),
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToFirstChildOf() moves the entire subtree down correctly');
-		$this->assertEquals($t2, $t3->parentNode, 'moveToFirstChildOf() sets the parent correctly');
 		// moving up
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		$t5->moveToFirstChildOf($t1);
@@ -930,7 +878,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't7' => array(11, 12, 2),
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToLastChildOf() moves the entire subtree up correctly');
-		$this->assertEquals($t1, $t5->parentNode, 'moveToFirstChildOf() sets the parent correctly');
 		// moving down
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		$t3->moveToLastChildOf($t2);
@@ -1003,8 +950,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't6' => array(5, 6, 2),
 			't7' => array(7, 8, 2),
 		);
-		$this->assertEquals($t3, $t5->nextSibling, 'moveToPrevSiblingOf() sets the next sibling correctly');
-		$this->assertEquals($t5, $t3->prevSibling, 'moveToPrevSiblingOf() sets the prev sibling correctly');
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToPrevSiblingOf() moves the entire subtree up correctly');
 		// moving down
 		$t5->moveToPrevSiblingOf($t4);
@@ -1095,8 +1040,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't7' => array(11, 12, 2),
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToNextSiblingOf() moves the entire subtree up correctly');
-		$this->assertEquals($t3, $t5->prevSibling, 'moveToNextSiblingOf() sets the prev sibling correctly');
-		$this->assertEquals($t5, $t3->nextSibling, 'moveToNextSiblingOf() sets the next sibling correctly');
 		// moving down
 		$t = $t5->moveToNextSiblingOf($t4);
 		/* Results in

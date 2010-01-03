@@ -72,36 +72,6 @@ class NestedSetBehaviorObjectBuilderModifier
 		$objectClassname = $builder->getStubObjectBuilder()->getClassname();
 		return "
 /**
- * Store if node has prev sibling
- * @var        bool
- */
-protected \$hasPrevSibling = null;
-
-/**
- * Store node if has prev sibling
- * @var        $objectClassname
- */
-protected \$prevSibling = null;
-
-/**
- * Store if node has next sibling
- * @var        bool
- */
-protected \$hasNextSibling = null;
-
-/**
- * Store node if has next sibling
- * @var        $objectClassname
- */
-protected \$nextSibling = null;
-
-/**
- * The parent node for this node.
- * @var        $objectClassname
- */
-protected \$parentNode = null;
-
-/**
  * Queries to be executed in the save transaction
  * @var        array
  */
@@ -163,15 +133,12 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addIsDescendantOf($script);
 		$this->addIsAncestorOf($script);
 		
-		$this->addSetParent($script);
 		$this->addHasParent($script);
 		$this->addGetParent($script);
 		
-		$this->addSetPrevSibling($script);
 		$this->addHasPrevSibling($script);
 		$this->addGetPrevSibling($script);
 		
-		$this->addSetNextSibling($script);
 		$this->addHasNextSibling($script);
 		$this->addGetNextSibling($script);
 		
@@ -460,25 +427,6 @@ public function isAncestorOf($objectClassname \$child)
 ";
 	}
 	
-	protected function addSetParent(&$script)
-	{
-		$objectClassname = $this->objectClassname;
-		$script .= "
-/**
- * Sets the parentNode of the node in the tree
- * Only used to cache the result of a parent search
- *
- * @param      $objectClassname \$parent Propel node object
- * @return     $objectClassname The current object (for fluent API support)
- */
-public function setParent($objectClassname \$parent = null)
-{
-	\$this->parentNode = {$this->peerClassname}::isValid(\$parent) ? \$parent : null;
-	return \$this;
-}
-";
-	}
-
 	protected function addHasParent(&$script)
 	{
 		$script .= "
@@ -510,7 +458,7 @@ public function getParent(PropelPDO \$con = null)
 {
 	if(!\$this->hasParent()) {
 		return null;
-	} elseif (null === \$this->parentNode) {
+	} else {
 		\$c = new Criteria($peerClassname::DATABASE_NAME);
 		\$c->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
 		\$c->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);";
@@ -520,36 +468,15 @@ public function getParent(PropelPDO \$con = null)
 		}
 		$script .= "		
 		\$c->addAscendingOrderByColumn($peerClassname::RIGHT_COL);
-		\$parent = $peerClassname::doSelectOne(\$c, \$con);
-		\$this->setParent(\$parent);
+		return $peerClassname::doSelectOne(\$c, \$con);
 	}
-	return \$this->parentNode;
 }
 ";
 	}
 	
-	protected function addSetPrevSibling(&$script)
-	{
-		$objectClassname = $this->objectClassname;
-		$script .= "
-/**
- * Sets the previous sibling of the node in the tree
- * Only used to cache the result of a sibling search
- *
- * @param      $objectClassname \$node Propel node object
- * @return     $objectClassname The current object (for fluent API support)
- */
-public function setPrevSibling($objectClassname \$node = null)
-{
-	\$this->hasPrevSibling = {$this->peerClassname}::isValid(\$node);
-	\$this->prevSibling = \$this->hasPrevSibling ? \$node : null;
-	return \$this;
-}
-";
-	}
-
 	protected function addHasPrevSibling(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Determines if the node has previous sibling
@@ -559,13 +486,17 @@ public function setPrevSibling($objectClassname \$node = null)
  */
 public function hasPrevSibling(PropelPDO \$con = null)
 {
-	if (null === \$this->hasPrevSibling) {
-		if (!{$this->peerClassname}::isValid(\$this)) {
-			return false;
-		}
-		\$this->getPrevSibling(\$con);
+	if (!{$this->peerClassname}::isValid(\$this)) {
+		return false;
 	}
-	return \$this->hasPrevSibling;
+	\$c = new Criteria($peerClassname::DATABASE_NAME);
+	\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
+		if ($this->behavior->useScope()) {
+			$script .= "
+	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		}
+		$script .= "
+	return $peerClassname::doCount(\$c, \$con) > 0;
 }
 ";
 	}
@@ -576,52 +507,27 @@ public function hasPrevSibling(PropelPDO \$con = null)
 		$script .= "
 /**
  * Gets previous sibling for the given node if it exists
- * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
  * @return     mixed 		Propel object if exists else false
  */
 public function getPrevSibling(PropelPDO \$con = null)
 {
-	if (null === \$this->hasPrevSibling) {
-		\$c = new Criteria($peerClassname::DATABASE_NAME);
-		\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
+	\$c = new Criteria($peerClassname::DATABASE_NAME);
+	\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
 		if ($this->behavior->useScope()) {
 			$script .= "
-		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
 		}
-		$script .= "		
-		\$prevSibling = $peerClassname::doSelectOne(\$c, \$con);
-
-		\$this->setPrevSibling(\$prevSibling);
-	}
-	return \$this->prevSibling;
-}
-";
-	}
-
-	protected function addSetNextSibling(&$script)
-	{
-		$objectClassname = $this->objectClassname;
 		$script .= "
-/**
- * Sets the next sibling of the node in the tree
- * Only used to cache the result of a sibling search
- *
- * @param      $objectClassname \$node Propel node object
- * @return     $objectClassname The current object (for fluent API support)
- */
-public function setNextSibling($objectClassname \$node = null)
-{
-	\$this->hasNextSibling = {$this->peerClassname}::isValid(\$node);
-	\$this->nextSibling = \$this->hasNextSibling ? \$node : null;
-	return \$this;
+	return $peerClassname::doSelectOne(\$c, \$con);
 }
 ";
 	}
 
 	protected function addHasNextSibling(&$script)
 	{
+		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Determines if the node has next sibling
@@ -631,13 +537,17 @@ public function setNextSibling($objectClassname \$node = null)
  */
 public function hasNextSibling(PropelPDO \$con = null)
 {
-	if (null === \$this->hasNextSibling) {
-		if (!{$this->peerClassname}::isValid(\$this)) {
-			return false;
-		}
-		\$this->getNextSibling(\$con);
+	if (!{$this->peerClassname}::isValid(\$this)) {
+		return false;
 	}
-	return \$this->hasNextSibling;
+	\$c = new Criteria($peerClassname::DATABASE_NAME);
+	\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
+		if ($this->behavior->useScope()) {
+			$script .= "
+	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		}
+		$script .= "		
+	return $peerClassname::doCount(\$c, \$con) > 0;
 }
 ";
 	}
@@ -648,26 +558,20 @@ public function hasNextSibling(PropelPDO \$con = null)
 		$script .= "
 /**
  * Gets next sibling for the given node if it exists
- * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
  * @return     mixed 		Propel object if exists else false
  */
 public function getNextSibling(PropelPDO \$con = null)
 {
-	if (null === \$this->hasNextSibling) {
-		\$c = new Criteria($peerClassname::DATABASE_NAME);
-		\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
+	\$c = new Criteria($peerClassname::DATABASE_NAME);
+	\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
 		if ($this->behavior->useScope()) {
 			$script .= "
-		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
 		}
 		$script .= "		
-		\$nextSibling = $peerClassname::doSelectOne(\$c, \$con);
-
-		\$this->setNextSibling(\$nextSibling);
-	}
-	return \$this->nextSibling;
+	return $peerClassname::doSelectOne(\$c, \$con);
 }
 ";
 	}
@@ -1035,7 +939,6 @@ public function insertAsFirstChildOf($objectClassname \$parent)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
-	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -1078,7 +981,6 @@ public function insertAsLastChildOf($objectClassname \$parent)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
-	\$this->setParent(\$parent);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -1121,8 +1023,6 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
-	\$this->setNextSibling(\$sibling);
-	\$sibling->setPrevSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -1165,8 +1065,6 @@ public function insertAsNextSiblingOf($objectClassname \$sibling)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
-	\$this->setPrevSibling(\$sibling);
-	\$sibling->setNextSibling(\$this);
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -1208,7 +1106,6 @@ public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = 
 	}
 	
 	\$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$parent->getLevel() - \$this->getLevel() + 1, \$con);
-	\$this->setParent(\$parent);
 	
 	return \$this;
 }
@@ -1246,7 +1143,6 @@ public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = n
 	}
 	
 	\$this->moveSubtreeTo(\$parent->getRightValue(), \$parent->getLevel() - \$this->getLevel() + 1, \$con);
-	\$this->setParent(\$parent);
 	
 	return \$this;
 }
@@ -1287,8 +1183,6 @@ public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con 
 	}
 	
 	\$this->moveSubtreeTo(\$sibling->getLeftValue(), \$sibling->getLevel() - \$this->getLevel(), \$con);
-	\$this->setNextSibling(\$sibling);
-	\$sibling->setPrevSibling(\$this);
 	
 	return \$this;
 }
@@ -1329,8 +1223,6 @@ public function moveToNextSiblingOf($objectClassname \$sibling, PropelPDO \$con 
 	}
 	
 	\$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$sibling->getLevel() - \$this->getLevel(), \$con);
-	\$this->setPrevSibling(\$sibling);
-	\$sibling->setNextSibling(\$this);
 	
 	return \$this;
 }
@@ -1509,7 +1401,7 @@ public function retrieveParent(PropelPDO \$con = null)
  */
 public function setParentNode($objectClassname \$parent = null)
 {
-	return \$this->setParent(\$parent);
+	return;
 }
 
 /**
