@@ -43,6 +43,27 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 		}
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testFormatManyResultsIteratedTwice()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BookstoreDataPopulator::populate($con);
+
+		$stmt = $con->query('SELECT * FROM book');
+		$formatter = new PropelOnDemandFormatter();
+		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$books = $formatter->format($stmt);
+		
+		foreach ($books as $book) {
+			// do nothing
+		}
+		foreach ($books as $book) {
+			// this should throw a PropelException since we're iterating a second time over a stream
+		}
+	}
+
 	public function testFormatALotOfResults()
 	{
 		$nbBooks = 50;

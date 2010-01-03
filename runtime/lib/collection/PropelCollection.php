@@ -146,7 +146,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Check whether the internal pointer is at the end of the list
 	 *
-	 * @return boolean
+	 * @return    boolean
 	 */
 	public function isLast()
 	{
@@ -161,6 +161,8 @@ class PropelCollection extends ArrayObject implements Serializable
 
 	/**
 	 * Check if the collection is empty
+	 * 
+	 * @return    boolean
 	 */
 	public function isEmpty()
 	{

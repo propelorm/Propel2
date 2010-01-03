@@ -33,7 +33,7 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 		$formatter, 
 		$currentRow, 
 		$currentKey = -1,
-		$isValid = true;
+		$isValid = null;
 	
 	public function setStatement(PDOStatement $stmt)
 	{
@@ -54,16 +54,33 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 
 	// Iterator Interface
 	
+	/**
+	 * Gets the current Model object in the collection
+	 * This is where the hydration takes place.
+	 *
+	 * @see PropelObjectFormatter::getAllObjectsFromRow()
+	 *
+	 * @return    BaseObject
+	 */
 	public function current()
 	{
 		return $this->formatter->getAllObjectsFromRow($this->currentRow);
 	}
 	
+	/**
+	 * Gets the current key in the iterator
+	 *
+	 * @return    string
+	 */
 	public function key()
 	{
 		return $this->currentKey;
 	}
 	
+	/**
+	 * Advances the curesor in the statement
+	 * Closes the cursor if the end of the statement is reached
+	 */
 	public function next()
 	{
 		$this->currentRow = $this->stmt->fetch(PDO::FETCH_NUM);
@@ -74,8 +91,23 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 		}
 	}
 	
+	/**
+	 * Initializes the iterator by advancing to the first position
+	 * This method can only be called once (this is a NoRewindIterator)
+	 */
 	public function rewind()
 	{
+		// check that the hydration can begin
+		if (null === $this->formatter) {
+			throw new PropelException('The On Demand collection requires a formatter. Add it by calling setFormatter()');
+		}
+		if (null === $this->stmt) {
+			throw new PropelException('The On Demand collection requires a statement. Add it by calling setStatement()');
+		}
+		if (null !== $this->isValid) {
+			throw new PropelException('The On Demand collection can only be iterated once');
+		}
+		
 		// initialize the current row and key
 		$this->next();
 	}
@@ -127,6 +159,12 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 	
 	// Countable Interface
 	
+	/**
+	 * Returns the number of rows in the resultset
+	 * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
+	 * 
+	 * @return    int number of results
+	 */
 	public function count()
 	{
 		return $this->stmt->rowCount();
