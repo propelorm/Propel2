@@ -185,6 +185,7 @@ class Propel
 		'PropelArrayCollection' => 'collection/PropelArrayCollection.php',
 		'PropelCollection'    => 'collection/PropelCollection.php',
 		'PropelObjectCollection' => 'collection/PropelObjectCollection.php',
+		'PropelOnDemandCollection' => 'collection/PropelOnDemandCollection.php',
 
 		'PropelConfiguration' => 'config/PropelConfiguration.php',
 		'PropelConfigurationIterator' => 'config/PropelConfigurationIterator.php',
@@ -198,6 +199,7 @@ class Propel
 		'PropelArrayFormatter' => 'formatter/PropelArrayFormatter.php',
 		'PropelFormatter'     => 'formatter/PropelFormatter.php',
 		'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
+		'PropelOnDemandFormatter' => 'formatter/PropelOnDemandFormatter.php',
 		'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
 		
 		'BasicLogger'         => 'logger/BasicLogger.php',

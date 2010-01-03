@@ -40,6 +40,7 @@ class ModelCriteria extends Criteria
 	const FORMAT_STATEMENT = 'PropelStatementFormatter';
 	const FORMAT_ARRAY = 'PropelArrayFormatter';
 	const FORMAT_OBJECT = 'PropelObjectFormatter';
+	const FORMAT_ON_DEMAND = 'PropelOnDemandFormatter';
 	
 	protected $modelName;
 	protected $modelPeerName;

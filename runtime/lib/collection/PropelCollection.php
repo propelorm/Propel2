@@ -27,7 +27,7 @@
  * @author     Francois Zaninotto
  * @package    propel.formatter
  */
-class PropelCollection extends ArrayObject
+class PropelCollection extends ArrayObject implements Serializable
 {
 	protected $model = '';
 	protected $iterator;

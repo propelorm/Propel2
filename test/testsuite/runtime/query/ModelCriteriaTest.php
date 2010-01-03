@@ -973,7 +973,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRel = $c->findPk(array(1, 2));
 		$this->assertNull($bookListRel, 'findPk() returns null when the composite primary key is not found');
-
+		
+		Propel::enableInstancePooling();
 		BookstoreDataPopulator::populate();
 		
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved

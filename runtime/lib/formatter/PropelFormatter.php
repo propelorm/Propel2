@@ -32,7 +32,8 @@ abstract class PropelFormatter
 	protected
 	  $criteria,
 	  $class,
-	  $peer;
+	  $peer,
+		$currentObjects = array();
 	
 	public function setCriteria(ModelCriteria $criteria)
 	{
@@ -63,4 +64,25 @@ abstract class PropelFormatter
 		$this->class = $this->getCriteria()->getModelName();
 		$this->peer = $this->getCriteria()->getModelPeerName();		
 	}
+	
+	/**
+	 * Gets the worker object for the class.
+	 * To save memory, we don't create a new object for each row,
+	 * But we keep hydrating a single object per class.
+	 * The column offset in the row is used to index the array of classes
+	 * As there may be more than one object of the same class in the chain
+	 * 
+	 * @param     int    $col    Offset of the object in the list of objects to hydrate
+	 * @param     string $class  Propel model object class
+	 * 
+	 * @return    BaseObject
+	 */
+	protected function getWorkerObject($col, $class)
+	{
+		if(!isset($this->currentObjects[$col])) {
+			$this->currentObjects[$col] = new $class();
+		}
+		return $this->currentObjects[$col];
+	}
+	
 }

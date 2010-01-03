@@ -4026,6 +4026,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 		}
 		
 		$script .= "
+		\$this->setNew(true);
 	}
 ";
 	}

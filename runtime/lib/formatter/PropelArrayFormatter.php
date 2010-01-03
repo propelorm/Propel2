@@ -31,7 +31,6 @@
 class PropelArrayFormatter extends PropelFormatter
 {
 	protected $collectionName = 'PropelArrayCollection';
-	protected $currentObjects = array();
 	
 	public function format(PDOStatement $stmt)
 	{
@@ -66,22 +65,6 @@ class PropelArrayFormatter extends PropelFormatter
 		return false;
 	}
 	
-	/**
-	 * Gets the current object for the class
-	 * To save memory, we don't create a new object for each row
-	 * but we keep hydrating a single object per class
-	 * 
-	 * @param     string $class Propel model object class
-	 * 
-	 * @return    BaseObject
-	 */
-	protected function getCurrentObject($class)
-	{
-		if(!array_key_exists($class, $this->currentObjects)) {
-			$this->currentObjects[$class] = new $class();
-		}
-		return $this->currentObjects[$class];
-	}
 
 	/**
 	 * Hydrates a series of objects from a result row
@@ -117,7 +100,7 @@ class PropelArrayFormatter extends PropelFormatter
 		return $mainObjectArray;
 	}
 	
-		/**
+	/**
 	 * Gets a Propel object hydrated from a selection of columns in statement row
 	 *
 	 * @param     array  $row associative array indexed by column number,
@@ -129,7 +112,7 @@ class PropelArrayFormatter extends PropelFormatter
 	 */
 	public function getSingleObjectFromRow($row, $class, &$col = 0)
 	{
-		$obj = $this->getCurrentObject($class);
+		$obj = $this->getWorkerObject($col, $class);
 		$col = $obj->hydrate($row, $col);
 		
 		return $obj;
