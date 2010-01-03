@@ -299,15 +299,15 @@ $c->where('a.FirstName = ?', 'Leo')
 $books = $c->find();
 }}}
 
-Just like `Criteria`, `ModelCriteria` methods return the current object, allowing for a fluid interface. In addition, Propel provides a factory for `ModelCriteria` objects, called `PropelFactory`. So the following listing show an alternative way to write the previous query:
+Just like `Criteria`, `ModelCriteria` methods return the current object, allowing for a fluid interface. In addition, Propel provides a factory for `ModelCriteria` objects, called `PropelQuery`. So the following listing show an alternative way to write the previous query:
 
 {{{
 #!php
 <?php
 $books = PropelQuery::from('Book b')
-	->join('b.Author a')
-	->where('a.FirstName = ?', 'Leo')
-	->find();
+  ->join('b.Author a')
+  ->where('a.FirstName = ?', 'Leo')
+  ->find();
 }}}
 
 If this syntax looks familiar, it's probably because it is the standard way to describe a database query in an object-oriented way in PHP. It is used in Doctrine, Zend_Db_Select, and DbFinder. It also looks familiar because it is very close to SQL, so you probably won't need long to figure out how to write a complex query with it.
@@ -323,6 +323,29 @@ $book = PropelQuery::from('Book')->findOneByTitle('War And Peace');
 '''Tip''': A `ModelCriteria` instance is also a `Criteria` instance, so all the methods you are used to calling on `Criteria` also work on a `ModelCriteria` object.
 
 The documentation offers [wiki:Users/Documentation/1.5/ModelCriteria an entire chapter] dedicated to the new `ModelCriteria` class. Make sure you read it to see the power of this new query API.
+
+== On-Demand Hydration ==
+
+You'll never fall short of memory again. Propel 1.5 provides a new hydration mode called ''On-Demand Hydration''. Available through the new `ModelCriteria` queries, it is very easy to trigger:
+
+{{{
+#!php
+<?php
+$books = PropelQuery::from('Book b')
+  ->join('b.Author a')
+  ->where('a.FirstName = ?', 'Leo')
+  ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND) // just add this line
+  ->find();
+foreach ($books as $book) {
+  echo $book->getTitle();
+}
+}}}
+
+In this example, Propel will hydrate the `Book` objects row by row, after the `foreach` call, and reuse the memory between each iteration. The consequence is that the above code won't use more memory when the query returns 50,000 results than when it returns 5.
+
+`ModelCriteria::FORMAT_ON_DEMAND` is one of the many formatters provided by the new `ModelCriteria` object. The default formatter, `ModelCriteria::FORMAT_OBJECT`, returns a collection of objects over which you can iterate. You can also get a collection of associative arrays instead of objects, if you don't need any of the logic stored in your model object, by using `ModelCriteria::FORMAT_ARRAY`.
+
+The [wiki:Users/Documentation/1.5/ModelCriteria documentation] describes each formatter, and how to use it.
 
 == Better `toArray()` ==
 
