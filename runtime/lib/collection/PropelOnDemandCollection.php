@@ -45,6 +45,11 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 		$this->formatter = $formatter;
 	}
 	
+	public function closeCursor()
+	{
+		$this->stmt->closeCursor();
+	}
+	
 	// IteratorAggregate Interface
 	
 	public function getIterator()
@@ -87,7 +92,7 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 		$this->currentKey++;
 		$this->isValid = (boolean) $this->currentRow;
 		if (!$this->isValid) {
-			$this->stmt->closeCursor();
+			$this->closeCursor();
 		}
 	}
 	
