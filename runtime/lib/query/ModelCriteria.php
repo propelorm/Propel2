@@ -207,7 +207,7 @@ class ModelCriteria extends Criteria
 	 * Uses introspection to translate the column phpName into a fully qualified name
 	 * Warning: recognizes only the phpNames of the main Model (not joined tables)
 	 * <code>
-	 * $c->whereColumn('Title', 'foo');
+	 * $c->filterBy('Title', 'foo');
 	 * </code>
 	 *
 	 * @see        Criteria::add()
@@ -220,7 +220,7 @@ class ModelCriteria extends Criteria
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function whereColumn($column, $value, $comparison = Criteria::EQUAL)
+	public function filterBy($column, $value, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($column)) {
 			for ($i = 0, $count = count($column); $i < $count; $i++) {
@@ -846,7 +846,7 @@ class ModelCriteria extends Criteria
 	/**
 	 * Apply a condition on a column and issues the SELECT query
 	 *
-	 * @see       whereColumn()
+	 * @see       filterBy()
 	 * @see       find()
 	 *
 	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
@@ -859,7 +859,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function findBy($column, $value, $con = null)
 	{
-		$this->whereColumn($column, $value);
+		$this->filterBy($column, $value);
 
 		return $this->find($con);
 	}
@@ -867,7 +867,7 @@ class ModelCriteria extends Criteria
 	/**
 	 * Apply a condition on a column and issues the SELECT ... LIMIT 1 query
 	 *
-	 * @see       whereColumn()
+	 * @see       filterBy()
 	 * @see       findOne()
 	 *
 	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
@@ -880,7 +880,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function findOneBy($column, $value, $con = null)
 	{
-		$this->whereColumn($column, $value);
+		$this->filterBy($column, $value);
 
 		return $this->findOne($con);
 	}
@@ -1232,7 +1232,12 @@ EOT;
 	 */
 	protected function getColumnFromName($phpName, $failSilently = true)
 	{
-		list($class, $phpName) = explode('.', $phpName);
+		if (strpos($phpName, '.') === false) {
+			$class = $this->getModelAliasOrName();
+		} else {
+			list($class, $phpName) = explode('.', $phpName);
+		}
+		
 		
 		if ($class == $this->getModelAliasOrName()) {
 			// column of the Criteria's model
@@ -1295,21 +1300,20 @@ EOT;
 	public function __call($name, $arguments)
 	{
 		// Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
-		static $methods = array('findBy', 'findOneBy');
+		static $methods = array('findBy', 'findOneBy', 'filterBy', 'orderBy', 'groupBy');
 		foreach ($methods as $method)
 		{
 			if(strpos($name, $method) === 0)
 			{
 				$columns = substr($name, strlen($method));
-				if(strpos($columns, 'And') !== false) {
+				if(in_array($method, array('findBy', 'findOneBy')) && strpos($columns, 'And') !== false) {
 					$columns = explode('And', $columns);
 					$values = array();
 					for($i=0, $count = count($columns); $i < $count; $i++) {
 						$values[]= array_shift($arguments);
 					}
 					array_unshift($arguments, $values);
-				}
-				
+				}				
 				array_unshift($arguments, $columns);
 				return call_user_func_array(array($this, $method), $arguments);
 			}

@@ -26,6 +26,19 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($query->getModelName(), 'Book', 'Constructor sets model name');
 	}
 	
+	public function testCreate()
+	{
+		$query = BookQuery::create();
+		$this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
+		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
+		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+		$query = BookQuery::create('foo');
+		$this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
+		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
+		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
+	}
+	
 	public function testBasePreSelect()
 	{
 		$method = new ReflectionMethod('Table4Query', 'basePreSelect');
@@ -166,6 +179,94 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = new BookListRelQuery();
 		$objs = $q->findPks($search);
 		$this->assertEquals($bookListRelTest, $objs, 'BaseQuery overrides findPks() for composite primary keys to make it work');
+	}
+	
+	public function testFilterByFk()
+	{
+		$this->assertTrue(method_exists('BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
+		$this->assertTrue(method_exists('BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
+		
+		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
+		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');		
+	}
+	
+	public function testFilterByFkSimpleKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// prepare the test data
+		$testBook = BookQuery::create()
+			->innerJoin('Book.Author') // just in case there are books with no author
+			->findOne();
+		$testAuthor = $testBook->getAuthor();
+
+		$book = BookQuery::create()
+			->filterByAuthor($testAuthor)
+			->findOne();
+		$this->assertEquals($testBook, $book, 'Generated query handles filterByFk() methods correctly for simple fkeys');
+	}
+
+	public function testFilterByFkCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		BookstoreDataPopulator::populateOpinionFavorite();
+		
+		// prepare the test data
+		$testOpinion = BookOpinionQuery::create()
+			->innerJoin('BookOpinion.ReaderFavorite') // just in case there are books with no author
+			->findOne();
+		$testFavorite = $testOpinion->getReaderFavorite();
+
+		$favorite = ReaderFavoriteQuery::create()
+			->filterByBookOpinion($testOpinion)
+			->findOne();
+		$this->assertEquals($testFavorite, $favorite, 'Generated query handles filterByFk() methods correctly for composite fkeys');
+	}
+	
+		public function testFilterByRefFk()
+	{
+		$this->assertTrue(method_exists('BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
+		$this->assertTrue(method_exists('BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
+		
+		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
+		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');				
+	}
+
+	public function testFilterByRefFkSimpleKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// prepare the test data
+		$testBook = BookQuery::create()
+			->innerJoin('Book.Author') // just in case there are books with no author
+			->findOne();
+		$testAuthor = $testBook->getAuthor();
+
+		$author = AuthorQuery::create()
+			->filterByBook($testBook)
+			->findOne();
+		$this->assertEquals($testAuthor, $author, 'Generated query handles filterByRefFk() methods correctly for simple fkeys');
+	}
+
+	public function testFilterByRefFkCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		BookstoreDataPopulator::populateOpinionFavorite();
+		
+		// prepare the test data
+		$testOpinion = BookOpinionQuery::create()
+			->innerJoin('BookOpinion.ReaderFavorite') // just in case there are books with no author
+			->findOne();
+		$testFavorite = $testOpinion->getReaderFavorite();
+
+		$opinion = BookOpinionQuery::create()
+			->filterByReaderFavorite($testFavorite)
+			->findOne();
+		$this->assertEquals($testOpinion, $opinion, 'Generated query handles filterByRefFk() methods correctly for composite fkeys');
 	}
 
 }

@@ -829,6 +829,15 @@ class Column extends XMLElement
   }
 
   /**
+   * Utility method to see if the column is boolean type.
+   * @return     boolean
+   */
+  public function isBooleanType()
+  {
+    return PropelTypes::isBooleanType($this->getType());
+  }
+  
+  /**
    * Utility method to know whether column is a temporal column.
    * @return     boolean
    */

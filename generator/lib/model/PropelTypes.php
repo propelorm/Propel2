@@ -71,6 +71,10 @@ class PropelTypes
 		self::SMALLINT, self::TINYINT, self::INTEGER, self::BIGINT, self::FLOAT, self::DOUBLE, self::NUMERIC, self::DECIMAL, self::REAL
 	);
 
+	private static $BOOLEAN_TYPES = array(
+		self::BOOLEAN, self::BOOLEAN_EMU
+	);
+
 	const CHAR_NATIVE_TYPE = "string";
 	const VARCHAR_NATIVE_TYPE = "string";
 	const LONGVARCHAR_NATIVE_TYPE = "string";
@@ -292,6 +296,17 @@ class PropelTypes
 	public static function isNumericType($type)
 	{
 		return in_array($type, self::$NUMERIC_TYPES);
+	}
+	
+	/**
+	 * Returns true if values for the type are boolean.
+	 *
+	 * @param      string $type The Propel type to check.
+	 * @return     boolean True if values for the type need to be quoted.
+	 */
+	public static function isBooleanType($type)
+	{
+		return in_array($type, self::$BOOLEAN_TYPES);
 	}
 
 	/**

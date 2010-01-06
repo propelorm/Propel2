@@ -40,7 +40,8 @@ class QueryBuilder extends OMBuilder
 		$table = $this->getTable();
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
-
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$modelClass = $this->getStubObjectBuilder()->getClassname();
 		$script .= "
 
 /**
@@ -56,7 +57,41 @@ class QueryBuilder extends OMBuilder
  * $now
  *";
 		}
+		
+		// magic orderBy() methods, for IDE completion
+		foreach ($this->getTable()->getColumns() as $column) {
+			$script .= "
+ * @method     $queryClass orderBy" . $column->getPhpName() . "(\$order = Criteria::ASC) Order by the " . $column->getName() . " column";
+		}
 		$script .= "
+ *";
+		
+ 		// magic groupBy() methods, for IDE completion
+		foreach ($this->getTable()->getColumns() as $column) {
+			$script .= "
+ * @method     $queryClass groupBy" . $column->getPhpName() . "() Group by the " . $column->getName() . " column";
+		}
+		$script .= "
+ *";
+
+		// override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
+		$script .= "
+ * @method     $modelClass findOne(PropelPDO \$con = null) Return the first $modelClass matching the query";
+
+		// magic findBy() methods, for IDE completion
+		foreach ($this->getTable()->getColumns() as $column) {
+			$script .= "
+ * @method     $modelClass findOneBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column";
+		}
+		$script .= "
+ *";
+		foreach ($this->getTable()->getColumns() as $column) {
+			$script .= "
+ * @method     array findBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . " column";
+		}
+		
+		$script .= "
+ *
  * @package    propel.generator.".$this->getPackage()."
  */
 abstract class ".$this->getClassname()." extends ModelCriteria
@@ -77,6 +112,17 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		$this->addConstructor($script);
 		$this->addFindPk($script);
 		$this->addFindPks($script);
+		foreach ($this->getTable()->getColumns() as $col) {
+			$this->addFilterByCol($script, $col);
+		}
+		foreach ($this->getTable()->getForeignKeys() as $fk) {
+			$this->addFilterByFK($script, $fk);
+			$this->addUseFKQuery($script, $fk);
+		}
+		foreach ($this->getTable()->getReferrers() as $refFK) {
+			$this->addFilterByRefFK($script, $refFK);
+			$this->addUseRefFKQuery($script, $refFK);
+		}
 		$this->addBasePreSelect($script);
 		$this->addBasePreDelete($script);
 		$this->addBasePreUpdate($script);
@@ -156,7 +202,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	}
 ";
 	}
-	
+		
 	/**
 	 * Adds the findPk method for this object.
 	 * @param      string &$script The script will be modified in this method.
@@ -280,6 +326,192 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		return \$this->find(\$con);";
 		}
 		$script .= "
+	}
+";
+	}
+	
+	/**
+	 * Adds the filterByCol method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByCol(&$script, $col)
+	{
+		$colPhpName = $col->getPhpName();
+		$colName = $col->getName();
+		$script .= "
+	/**
+	 * Filter the query on the $colName column
+	 * ";
+		if ($col->isNumericType() || $col->isTemporalType()) {
+			$script .= "
+	 * @param     " . $col->getPhpType() . "|array \$$colName The value to use as filter.
+	 *            Accepts an associative array('min' => \$minValue, 'max' => \$maxValue)";
+		} elseif ($col->isTextType()) {
+			$script .= "
+	 * @param     string \$$colName The value to use as filter.
+	 *            Accepts wildcards (* and % trigger a LIKE)";
+		} elseif ($col->isBooleanType()) {
+			$script .= "
+	 * @param     boolean|string \$$colName The value to use as filter.
+	 *            Accepts strings ('false', 'off', '-', 'no', 'n', and '0' are false, the rest is true)";
+		} else {
+			$script .= "
+	 * @param     mixed \$$colName The value to use as filter";
+		}
+		$script .= "
+	 *
+	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+	 */
+	public function filterBy$colPhpName(\$$colName = null)
+	{";
+		if ($col->isNumericType() || $col->isTemporalType()) {
+			$script .= "
+		if (is_array(\$$colName)) {
+			if (isset(\${$colName}['min'])) {
+				\$this->filterBy('$colPhpName', \${$colName}['min'], Criteria::GREATER_EQUAL);
+			}
+			if (isset(\${$colName}['max'])) {
+				\$this->filterBy('$colPhpName', \${$colName}['max'], Criteria::LESS_EQUAL);
+			}
+		} else {
+			return \$this->filterBy('$colPhpName', \$$colName, Criteria::EQUAL);
+		}";
+		} elseif ($col->isTextType()) {
+			$script .= "
+		if(preg_match('/[\%\*]/', \$$colName)) {
+			return \$this->filterBy('$colPhpName', str_replace('*', '%', \$$colName), Criteria::LIKE);
+		} else {
+			return \$this->filterBy('$colPhpName', \$$colName, Criteria::EQUAL);
+		}";
+		} elseif ($col->isBooleanType()) {
+			$script .= "
+		if(is_string(\$$colName)) {
+			\$value = in_array(strtolower(\$$colName), array('false', 'off', '-', 'no', 'n', '0')) ? false : true;
+		}
+		return \$this->filterBy('$colPhpName', \$$colName, Criteria::EQUAL);";
+		} else {
+			$script .= "
+		return \$this->filterBy('$colPhpName', \$$colName, Criteria::EQUAL);";
+		}
+		$script .= "
+	}
+";
+	}
+	
+	/**
+	 * Adds the filterByFk method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByFk(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$fkTable = $this->getForeignTable($fk);
+		$relationName = $this->getFKPhpNameAffix($fk);
+		$objectName = '$' . $fkTable->getName();
+		$script .= "
+	/**
+	 * Filter the query by a related " . $fkTable->getPhpName() . " object
+	 *
+	 * @param     " . $fkTable->getPhpName() . " " . $objectName . " the related object to use as filter
+	 *
+	 * @return    $queryClass The current query, for fluid interface
+	 */
+	public function filterBy$relationName(" . $fkTable->getPhpName() . " $objectName)
+	{
+		return \$this";
+		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
+			$localColumnObject = $table->getColumn($localColumn);
+			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
+			$script .= "
+			->filterBy('" . $localColumnObject->getPhpName(). "', " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "())";
+		}
+		$script .= ";
+	}
+";
+	}
+
+	/**
+	 * Adds the useFkQuery method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addUseFkQuery(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$fkTable = $this->getForeignTable($fk);
+		$queryClass = $fkTable->getPhpName() . 'Query';
+		$relationName = $this->getFKPhpNameAffix($fk);
+		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
+	}
+
+	/**
+	 * Adds the useFkQuery method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addUseRefFkQuery(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
+		$queryClass = $fkTable->getPhpName() . 'Query';
+		$relationName = $this->getRefFKPhpNameAffix($fk);
+		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
+	}
+
+	/**
+	 * Adds the useFkQuery method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addUseRelatedQuery(&$script, $fkTable, $queryClass, $relationName)
+	{
+		$script .= "
+	/**
+	 * Use the $relationName relation " . $fkTable->getPhpName() . " object
+	 *
+	 * @see       useQuery()
+	 * 
+	 * @param     string \$relationAlias optional alias for the relation,
+	 *                                  to be used as main alias in the secondary query
+	 *
+	 * @return    $queryClass A secondary query class using the current class as primary query
+	 */
+	public function use" . $relationName . "Query(\$relationAlias = '')
+	{
+		return \$this
+			->join(\$this->getModelAliasOrName() . '.$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''))
+			->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
+	}
+";
+	}
+	
+		/**
+	 * Adds the filterByRefFk method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByRefFk(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
+		$relationName = $this->getRefFKPhpNameAffix($fk);
+		$objectName = '$' . $fkTable->getName();
+		$script .= "
+	/**
+	 * Filter the query by a related " . $fkTable->getPhpName() . " object
+	 *
+	 * @param     " . $fkTable->getPhpName() . " " . $objectName . " the related object to use as filter
+	 *
+	 * @return    $queryClass The current query, for fluid interface
+	 */
+	public function filterBy$relationName(" . $fkTable->getPhpName() . " $objectName)
+	{
+		return \$this";
+		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
+			$localColumnObject = $table->getColumn($localColumn);
+			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
+			$script .= "
+			->filterBy('" . $localColumnObject->getPhpName(). "', " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "())";
+		}
+		$script .= ";
 	}
 ";
 	}

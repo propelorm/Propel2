@@ -570,7 +570,7 @@ limit($limit)
 offset($offset)
 where($clause, $value)
 where($conditions, $operator)
-whereColumn($column, $value, $comparison)
+filterBy($column, $value, $comparison)
 orWhere($conditions, $operator)
 condition($name, $clause, $value)
 combine($conditions, $operator = 'and', $name)
@@ -615,7 +615,7 @@ class BookQuery extends BaseBookQuery
 {
 	public function recent($nbDays = 5)
 	{
-		return $this->whereColumn('PublishedAt', time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_THAN);
+		return $this->filterBy('PublishedAt', time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_THAN);
 	}
 	
 	public function mostRecentFirst()
@@ -631,7 +631,7 @@ $books = PropelQuery::from('Book b')
   ->find();
 }}}
 
-`getModelAliasOrName()` returns the alias used by the main model ('b' in the previous example), so your custom methods can also work when the user defines a table alias. `whereColumn($column, $value, $comparison)` is a shortcut to apply a condition on the model table, based on a simple column name (with no table prefix) so you don't have to worry about the alias. 
+`getModelAliasOrName()` returns the alias used by the main model ('b' in the previous example), so your custom methods can also work when the user defines a table alias. `filterBy($column, $value, $comparison)` is a shortcut to apply a condition on the model table, based on a simple column name (with no table prefix) so you don't have to worry about the alias. 
 
 The query objects also allow you to add code to be executed before each query, by implementing one of the following methods: `preSelect()`, `preUpdate()`, and `preDelete()`. It makes the implementation of a 'soft delete' behavior very straightforward:
 
@@ -643,7 +643,7 @@ class BookQuery extends BaseBookQuery
 	public function preSelect(PropelPDO $con)
 	{
 		// filter out the rows with a deletion date
-		$this->whereColumn('DeletedAt', null);
+		$this->filterBy('DeletedAt', null);
 	}
 	
 	public function preDelete($con)

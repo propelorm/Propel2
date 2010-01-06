@@ -184,8 +184,9 @@
 			<reference local="reader_id" foreign="id" />
 		</foreign-key>
 	</table>
-
-	<table name="reader_favorite"><!--  this is just for the sake of testing multiple foreign keys for a single column -->
+	
+	<!--  Test multiple foreign keys for a single column -->
+	<table name="reader_favorite">
 		<column name="book_id" type="INTEGER" primaryKey="true" />
 		<column name="reader_id" type="INTEGER" primaryKey="true" />
 		<foreign-key foreignTable="book" onDelete="cascade">

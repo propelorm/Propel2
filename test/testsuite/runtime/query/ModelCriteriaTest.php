@@ -309,34 +309,34 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'ModelCriteria accepts Criteria operators');
 	}
 	
-	public function testWhereColumn()
+	public function testFilterBy()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
-		$c->whereColumn('Title', 'foo');
+		$c->filterBy('Title', 'foo');
 
 		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
 		$params =  array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a simple column name');
+		$this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a simple column name');
 
 		$c = new ModelCriteria('bookstore', 'Book');
-		$c->whereColumn('Title', 'foo', Criteria::NOT_EQUAL);
+		$c->filterBy('Title', 'foo', Criteria::NOT_EQUAL);
 
 		$sql = 'SELECT  FROM `book` WHERE book.TITLE<>:p1';
 		$params =  array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a sicustom comparator');
+		$this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a sicustom comparator');
 
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
-		$c->whereColumn('Title', 'foo');
+		$c->filterBy('Title', 'foo');
 
 		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
 		$params =  array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'whereColumn() accepts a simple column name, even if initialized with an alias');
+		$this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a simple column name, even if initialized with an alias');
 	}
 	
 	public function testHaving()
@@ -405,6 +405,16 @@ class ModelCriteriaTest extends BookstoreTestBase
 		}
 	}
 	
+	public function testOrderBySimpleColumn()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Title');
+		
+		$sql = 'SELECT  FROM  ORDER BY book.TITLE ASC';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a simple column name and adds an ORDER BY clause');
+	}
+	
 	public function testGroupBy()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
@@ -421,6 +431,16 @@ class ModelCriteriaTest extends BookstoreTestBase
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'groupBy() throws an exception when called with an unkown column name');
 		}
+	}
+
+	public function testGroupBySimpleColumn()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->groupBy('AuthorId');
+		
+		$sql = 'SELECT  FROM  GROUP BY book.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a simple column name and adds a GROUP BY clause');
 	}
 	
 	public function testDistinct()
@@ -1330,7 +1350,42 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=1234 LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
 	}
+	
+	public function testMagicFilterBy()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->filterByTitle('Don Juan')->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'filterByXXX($value) is turned into filterBy(XXX, $value)');		
+	}
 
+	public function testMagicOrderBy()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->orderByTitle()->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` ORDER BY book.TITLE ASC";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'orderByXXX() is turned into orderBy(XXX)');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->orderByTitle(Criteria::DESC)->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` ORDER BY book.TITLE DESC";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'orderByXXX($direction) is turned into orderBy(XXX, $direction)');
+	}
+
+	public function testMagicGroupBy()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->groupByTitle()->find($con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` GROUP BY book.TITLE";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'groupByXXX() is turned into groupBy(XXX)');
+	}
+	
 	public function testUseQuery()
 	{
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
@@ -1503,7 +1558,7 @@ class ModelCriteriaForUseQuery extends ModelCriteria
 	public function withNoName()
 	{
 		return $this
-			->whereColumn('FirstName', null, Criteria::ISNOTNULL)
+			->filterBy('FirstName', null, Criteria::ISNOTNULL)
 			->where($this->getModelAliasOrName() . '.LastName IS NOT NULL');
 	}
 }

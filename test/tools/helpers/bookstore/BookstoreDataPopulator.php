@@ -35,8 +35,7 @@ class BookstoreDataPopulator
 
 	public static function populate($con = null)
 	{
-		if($con === null)
-		{
+		if($con === null) {
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		}
 		$con->beginTransaction();
@@ -203,11 +202,33 @@ class BookstoreDataPopulator
 		
 		$con->commit();
 	}
+	
+	public static function populateOpinionFavorite($con = null)
+	{
+		if($con === null) {
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		}
+		$con->beginTransaction();
+		
+		$book1 = BookPeer::doSelectOne(new Criteria(), $con);
+		$reader1 = new BookReader();
+		$reader1->save($con);
+		
+		$bo = new BookOpinion();
+		$bo->setBook($book1);
+		$bo->setBookReader($reader1);
+		$bo->save($con);
+		
+		$rf = new ReaderFavorite();
+		$rf->setBookOpinion($bo);
+		$rf->save($con);		
+		
+		$con->commit();
+	}
 
 	public static function depopulate($con = null)
 	{
-		if($con === null)
-		{
+		if($con === null) {
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		}
 		$con->beginTransaction();

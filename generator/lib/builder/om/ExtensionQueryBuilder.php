@@ -104,7 +104,7 @@ class ".$this->getClassname()." extends $baseClassname {
 
 	protected function addClassBody(&$script)
 	{
-		// there is no class body
+		$this->addFactory($script);
 	}
 
 	/**
@@ -119,6 +119,66 @@ class ".$this->getClassname()." extends $baseClassname {
 		$this->applyBehaviorModifier('extensionQueryFilter', $script, "");
 	}
 
+	/**
+	 * Adds the factory for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFactory(&$script)
+	{
+		$this->addFactoryComment($script);
+		$this->addFactoryOpen($script);
+		$this->addFactoryBody($script);
+		$this->addFactoryClose($script);
+	}
+	
+		/**
+	 * Adds the comment for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryComment(&$script)
+	{
+		$script .= "
+	/**
+	 * Returns a new " . $this->getClassname() . " object.
+	 *
+	 * @param     string \$modelAlias The alias of a model in the query
+	 *
+	 * @return    " . $this->getClassname() . "
+	 */";
+	}
+
+	/**
+	 * Adds the function declaration for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryOpen(&$script)
+	{
+		$script .= "
+	public static function create(\$modelAlias = null)
+	{";
+	}
+
+	/**
+	 * Adds the function body for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryBody(&$script)
+	{
+		$script .= "
+		return new self('" . $this->getTable()->getDatabase()->getName() . "', '" . $this->getTable()->getPhpName() . "', \$modelAlias);";
+	}
+
+	/**
+	 * Adds the function close for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryClose(&$script)
+	{
+		$script .= "
+	}
+";
+	}
+	
 	/**
 	 * Checks whether any registered behavior on that table has a modifier for a hook
 	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
