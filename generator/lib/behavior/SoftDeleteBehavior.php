@@ -127,6 +127,12 @@ if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
 EOT;
 	}
 
+	public function queryAttributes()
+	{
+		return "protected static \$softDelete = true;
+";
+	}
+
 	public function queryMethods($builder)
 	{
 		return <<<EOT
@@ -183,6 +189,31 @@ public function forceDeleteAll(PropelPDO \$con = null)
 public function unDelete(PropelPDO \$con = null)
 {
 	return \$this->update(array('{$this->getColumnForParameter('deleted_column')->getPhpName()}' => null), \$con);
+}
+
+/**
+ * Enable the soft_delete behavior for this model
+ */
+public static function enableSoftDelete()
+{
+	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
+}
+
+/**
+ * Disable the soft_delete behavior for this model
+ */
+public static function disableSoftDelete()
+{
+	{$this->getTable()->getPhpName()}Peer::disableSoftDelete();
+}
+
+/**
+ * Check the soft_delete behavior for this model
+ * @return boolean true if the soft_delete behavior is enabled
+ */
+public static function isSoftDeleteEnabled()
+{
+	return {$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled();
 }
 
 EOT;

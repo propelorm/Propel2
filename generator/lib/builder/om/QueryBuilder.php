@@ -109,6 +109,8 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 */
 	protected function addClassBody(&$script)
 	{
+		// apply behaviors
+		$this->applyBehaviorModifier('queryAttributes', $script, "	");
 		$this->addConstructor($script);
 		$this->addFindPk($script);
 		$this->addFindPks($script);
