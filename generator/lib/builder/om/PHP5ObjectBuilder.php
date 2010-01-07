@@ -338,7 +338,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 * @see        addColumnNameConstants()
 	 */
-	protected function addColumnAttributes(&$script) {
+	protected function addColumnAttributes(&$script)
+	{
 
 		$table = $this->getTable();
 
@@ -357,7 +358,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col
 	 **/
-	protected function addColumnAttributeComment(&$script, Column $col) {
+	protected function addColumnAttributeComment(&$script, Column $col)
+	{
 		$cptype = $col->getPhpType();
 		$clo = strtolower($col->getName());
 
@@ -383,7 +385,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col
 	 **/
-	protected function addColumnAttributeDeclaration(&$script, Column $col) {
+	protected function addColumnAttributeDeclaration(&$script, Column $col)
+	{
 		$clo = strtolower($col->getName());
 		$script .= "
 	protected \$" . $clo . ";
@@ -395,11 +398,13 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col
 	 **/
-	protected function addColumnAttributeLoaderComment(&$script, Column $col) {
+	protected function addColumnAttributeLoaderComment(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
 		$script .= "
 	/**
-	 * Whether the lazy-loaded $clo value has been loaded from database.
-	 * This is necessary to avoid repeated lookups if $clo column is NULL in the db.
+	 * Whether the lazy-loaded \$$clo value has been loaded from database.
+	 * This is necessary to avoid repeated lookups if \$$clo column is NULL in the db.
 	 * @var        boolean
 	 */";
 	}
@@ -409,7 +414,8 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col
 	 **/
-	protected function addColumnAttributeLoaderDeclaration(&$script, Column $col) {
+	protected function addColumnAttributeLoaderDeclaration(&$script, Column $col)
+	{
 		$clo = strtolower($col->getName());
 		$script .= "
 	protected \$".$clo."_isLoaded = false;
