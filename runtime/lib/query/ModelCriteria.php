@@ -947,6 +947,7 @@ class ModelCriteria extends Criteria
 	
 	/**
 	 * Issue a DELETE query based on the current ModelCriteria
+	 * An optional hook on basePreDelete() can prevent the actual deletion
 	 * 
 	 * @param PropelPDO $con an optional connection object
 	 *
@@ -968,10 +969,8 @@ class ModelCriteria extends Criteria
 		$con->beginTransaction();
 		try {
 			if(!$affectedRows = $criteria->basePreDelete($con)) {
-				$affectedRows = BasePeer::doDelete($criteria, $con);
+				$affectedRows = $criteria->doDelete($con);
 			}
-			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
-			call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
 			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollback();
@@ -980,9 +979,27 @@ class ModelCriteria extends Criteria
 		
 		return $affectedRows;
 	}
+
+	/**
+	 * Issue a DELETE query based on the current ModelCriteria
+	 * This method is called by ModelCriteria::delete() inside a transaction
+	 * 
+	 * @param PropelPDO $con a connection object
+	 *
+	 * @return integer the number of deleted rows
+	 */
+	public function doDelete($con)
+	{
+		$affectedRows = BasePeer::doDelete($this, $con);
+		call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+		call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+		
+		return $affectedRows;
+	}
 	
 	/**
 	 * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
+	 * An optional hook on basePreDelete() can prevent the actual deletion
 	 * 
 	 * @param PropelPDO $con an optional connection object
 	 *
@@ -991,21 +1008,36 @@ class ModelCriteria extends Criteria
 	public function deleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
 		}
 		$con->beginTransaction();
 		try {
 			if(!$affectedRows = $this->basePreDelete($con)) {
-				$affectedRows = BasePeer::doDeleteAll(constant($this->modelPeerName.'::TABLE_NAME'), $con);
+				$affectedRows = $this->doDeleteAll($con);
 			}
-			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
-			call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
 		}
+		
+		return $affectedRows;
+	}
+	
+	/**
+	 * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
+	 * This method is called by ModelCriteria::deleteAll() inside a transaction
+	 * 
+	 * @param PropelPDO $con a connection object
+	 *
+	 * @return integer the number of deleted rows
+	 */
+	public function doDeleteAll($con)
+	{
+		$affectedRows = BasePeer::doDeleteAll(constant($this->modelPeerName.'::TABLE_NAME'), $con);
+		call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+		call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
 		
 		return $affectedRows;
 	}
@@ -1026,15 +1058,16 @@ class ModelCriteria extends Criteria
 	}
 	
 	/**
-	* Issue an UPDATE query based the current ModelCriteria and a list of changes
+	* Issue an UPDATE query based the current ModelCriteria and a list of changes.
+	* An optional hook on basePreUpdate() can prevent the actual update.
 	* Beware that behaviors based on hooks in the object's save() method
-	* Will only be triggered if you force individual saves, i.e. if you pass true as second argument
+	* will only be triggered if you force individual saves, i.e. if you pass true as second argument.
 	*
-	* @param array $values Associative array of keys and values to replace
-	* @param PropelPDO $con an optional connection object
-	* @param boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+	* @param      array $values Associative array of keys and values to replace
+	* @param      PropelPDO $con an optional connection object
+	* @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
 	*
-	* @return Integer Number of updated rows
+	* @return     Integer Number of updated rows
 	*/
 	public function update($values, $con = null, $forceIndividualSaves = false)
 	{
@@ -1046,7 +1079,7 @@ class ModelCriteria extends Criteria
 		}
 		
 		if ($con === null) {
-			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
 		}
 		
 		$criteria = clone $this;
@@ -1055,31 +1088,8 @@ class ModelCriteria extends Criteria
 		$con->beginTransaction();
 		try {
 			
-			if(!$ret = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
-				if($forceIndividualSaves) {
-				
-					// Update rows one by one
-					$objects = $criteria->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
-					foreach ($objects as $object) {
-						foreach ($values as $key => $value) {
-							$object->setByName($key, $value);
-						}
-						$object->save($con);
-					}
-					$ret = count($objects);
-					
-				} else {
-					
-					// update rows in a single query
-					$set = new Criteria();
-					foreach ($values as $columnName => $value) {
-						$realColumnName = $criteria->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
-						$set->add($realColumnName, $value);
-					}
-					$ret = BasePeer::doUpdate($criteria, $set, $con);
-					call_user_func(array($this->modelPeerName, 'clearInstancePool'));
-					call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
-				}
+			if(!$affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
+				$affectedRows = $criteria->doUpdate($values, $con, $forceIndividualSaves);
 			}
 			
 			$con->commit();
@@ -1088,7 +1098,47 @@ class ModelCriteria extends Criteria
 			throw $e;
 		}
 		
-		return $ret;
+		return $affectedRows;
+	}
+	
+	/**
+	* Issue an UPDATE query based the current ModelCriteria and a list of changes.
+	* This method is called by ModelCriteria::update() inside a transaction.
+	*
+	* @param      array $values Associative array of keys and values to replace
+	* @param      PropelPDO $con a connection object
+	* @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+	*
+	* @return     Integer Number of updated rows
+	*/
+	public function doUpdate($values, $con, $forceIndividualSaves = false)
+	{
+		if($forceIndividualSaves) {
+		
+			// Update rows one by one
+			$objects = $this->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
+			foreach ($objects as $object) {
+				foreach ($values as $key => $value) {
+					$object->setByName($key, $value);
+				}
+			}
+			$objects->save($con);
+			$affectedRows = count($objects);
+			
+		} else {
+			
+			// update rows in a single query
+			$set = new Criteria();
+			foreach ($values as $columnName => $value) {
+				$realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+				$set->add($realColumnName, $value);
+			}
+			$affectedRows = BasePeer::doUpdate($this, $set, $con);
+			call_user_func(array($this->modelPeerName, 'clearInstancePool'));
+			call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+		}
+		
+		return $affectedRows;
 	}
 	
 	/**
@@ -1273,6 +1323,7 @@ EOT;
 	
 	/**
 	 * Return a fully qualified column name corresponding to a simple column phpName
+	 * Uses model alias if it exists
 	 * Warning: restricted to the columns of the main model
 	 * e.g. => 'Title' => 'book.TITLE'
 	 *
@@ -1293,9 +1344,43 @@ EOT;
 	}
 
 	/**
+	 * Changes the table part of a a fully qualified column name if a true model alias exists
+	 * e.g. => 'book.TITLE' => 'b.TITLE' 
+	 * This is for use as first argument of Criteria::add()
+	 *
+	 * @param     string $colName the fully qualified column name, e.g 'book.TITLE' or BookPeer::TITLE
+	 *
+	 * @return    string the fully qualified column name, using table alias if applicatble
+	 */
+	protected function getAliasedColName($colName)
+	{
+		if ($this->useAliasInSQL) {
+			return $this->modelAlias . substr($colName, strpos($colName, '.'));
+		} else {
+			return $colName;
+		}
+	}
+
+	/**
+	 * Overrides Criteria::add() to force the use of a true table alias if it exists
+	 *
+	 * @see        Criteria::add()
+	 * @param      string $column The colName of column to run the comparison on (e.g. BookPeer::ID)
+	 * @param      mixed $value
+	 * @param      string $comparison A String.
+	 *
+	 * @return     ModelCriteria A modified Criteria object.
+	 */	
+	protected function addUsingAlias($p1, $value = null, $comparison = null)
+	{
+		return $this->add($this->getAliasedColName($p1), $value, $comparison);
+	}
+
+	/**
 	 * Handle the magic
-	 * Supports findByXXX() and findOneByXXX() methods, where XXX is a column phpName
-	 * Supports XXXJoin(), where XXX is a join rirection (in 'left', 'right', 'inner')
+	 * Supports findByXXX(), findOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
+	 * where XXX is a column phpName.
+	 * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
 	 */
 	public function __call($name, $arguments)
 	{

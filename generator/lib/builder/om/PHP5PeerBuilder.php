@@ -1259,7 +1259,12 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			if ($col->isPrimaryKey()) {
 				$script .= "
 			\$comparison = \$criteria->getComparison(".$this->getColumnConstant($col).");
-			\$selectCriteria->add(".$this->getColumnConstant($col).", \$criteria->remove(".$this->getColumnConstant($col)."), \$comparison);
+			\$value = \$criteria->remove(".$this->getColumnConstant($col).");
+			if (\$value) {
+				\$selectCriteria->add(".$this->getColumnConstant($col).", \$value, \$comparison);
+			} else {
+				\$selectCriteria->setPrimaryTableName(".$this->getPeerClassname()."::TABLE_NAME);
+			}
 ";
 			}  /* if col is prim key */
 		} /* foreach */

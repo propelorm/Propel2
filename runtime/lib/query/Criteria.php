@@ -358,6 +358,19 @@ class Criteria implements IteratorAggregate
 		// exist but have a NULL value (that'd be valid).
 		return (array_key_exists($column, $this->map) && ($this->map[$column]->getValue() !== null) );
 	}
+	
+	/**
+	 * Whether this Criteria has any where columns.
+	 * 
+	 * This counts conditions added with the add() method.
+	 *
+	 * @return     boolean
+	 * @see        add()
+	 */
+	public function hasWhereClause()
+	{
+		return !empty($this->map);
+	}
 
 	/**
 	 * Will force the sql represented by this criteria to be executed within

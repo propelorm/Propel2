@@ -869,6 +869,23 @@ class Table extends XMLElement implements IDMethod
   }
 
   /**
+   * Get studly version of PHP name.
+   *
+   * The studly name is the PHP name with the first character lowercase.
+   *
+   * @return     string
+   */
+  public function getStudlyPhpName()
+  {
+    $phpname = $this->getPhpName();
+    if (strlen($phpname) > 1) {
+      return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
+    } else { // 0 or 1 chars (I suppose that's rare)
+      return strtolower($phpname);
+    }
+  }
+  
+  /**
    * Get the method for generating pk's
    * [HL] changing behavior so that Database default
    *        method is returned if no method has been specified

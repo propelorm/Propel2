@@ -181,6 +181,128 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($bookListRelTest, $objs, 'BaseQuery overrides findPks() for composite primary keys to make it work');
 	}
 	
+	public function testFilterBy()
+	{
+		foreach (BookPeer::getFieldNames(BasePeer::TYPE_PHPNAME) as $colName) {
+			$filterMethod = 'filterBy' . $colName;
+			$this->assertTrue(method_exists('BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
+			$q = BookQuery::create()->$filterMethod(1);
+			$this->assertTrue($q instanceof BookQuery, 'filterByColumn() returns the current query instance');
+		}
+	}
+		
+	public function testFilterByNumber()
+	{
+		$q = BookQuery::create()->filterByPrice(12);
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::EQUAL by default');
+
+		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
+		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.PRICE', 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
+		
+		$q = BookQuery::create()->filterByPrice(array('min' => 10));
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
+
+		$q = BookQuery::create()->filterByPrice(array('max' => 12));
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::LESS_EQUAL when passed a \'max\' key');
+
+		$q = BookQuery::create()->filterByPrice(array('min' => 10, 'max' => 12));
+		$q1 = BookQuery::create()
+			->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL)
+			->add(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a between when passed both a \'min\' and a \'max\' key');
+	}
+
+	public function testFilterByTimestamp()
+	{
+		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(12);
+		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::EQUAL by default');
+
+		$q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
+		$q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.CREATED', 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
+		
+		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10));
+		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
+
+		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('max' => 12));
+		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::LESS_EQUAL when passed a \'max\' key');
+
+		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10, 'max' => 12));
+		$q1 = BookstoreEmployeeAccountQuery::create()
+			->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL)
+			->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a between when passed both a \'min\' and a \'max\' key');
+	}
+
+	public function testFilterByString()
+	{
+		$q = BookQuery::create()->filterByTitle('foo');
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::EQUAL by default');
+
+		$q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
+		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.TITLE', 'foo', Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
+		
+		$q = BookQuery::create()->filterByTitle('foo%');
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a % wildcard');
+
+		$q = BookQuery::create()->filterByTitle('*foo');
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, '%foo', Criteria::LIKE);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a * wildcard, and turns * into %');
+
+		$q = BookQuery::create()->filterByTitle('*f%o*o%');
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, '%f%o%o%', Criteria::LIKE);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with mixed wildcards, and turns *s into %s');
+	}
+
+	public function testFilterByBoolean()
+	{
+		$q = ReviewQuery::create()->filterByRecommended(true);
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
+
+		$q = ReviewQuery::create()->filterByRecommended(false);
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
+		
+		$q = ReviewQuery::create()->setModelAlias('b', true)->filterByRecommended(true);
+		$q1 = ReviewQuery::create()->setModelAlias('b', true)->add('b.RECOMMENDED', true, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() uses true table alias if set');
+		
+		$q = ReviewQuery::create()->filterByRecommended('true');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
+
+		$q = ReviewQuery::create()->filterByRecommended('yes');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
+
+		$q = ReviewQuery::create()->filterByRecommended('1');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
+		
+		$q = ReviewQuery::create()->filterByRecommended('false');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
+
+		$q = ReviewQuery::create()->filterByRecommended('no');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
+
+		$q = ReviewQuery::create()->filterByRecommended('0');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
+	}
+		
 	public function testFilterByFk()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
