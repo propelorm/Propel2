@@ -283,7 +283,7 @@ abstract class PeerBuilder extends OMBuilder {
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
    * @return boolean
    */
-  public function hasBehaviorModifier($hookName)
+  public function hasBehaviorModifier($hookName, $modifier = null)
   {
     return parent::hasBehaviorModifier($hookName, 'PeerBuilderModifier');
   }
@@ -295,7 +295,7 @@ abstract class PeerBuilder extends OMBuilder {
    */
   public function applyBehaviorModifier($hookName, &$script, $tab = "		")
   {
-    return parent::applyBehaviorModifier($hookName, 'PeerBuilderModifier', $script, $tab);
+    return $this->applyBehaviorModifierBase($hookName, 'PeerBuilderModifier', $script, $tab);
   }
   
   /**

@@ -323,7 +323,7 @@ class ".$this->getClassname()." extends TableMap {
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
    * @return boolean
    */
-  public function hasBehaviorModifier($hookName)
+  public function hasBehaviorModifier($hookName, $modifier = null)
   {
     return parent::hasBehaviorModifier($hookName, 'TableMapBuilderModifier');
   }
@@ -335,6 +335,6 @@ class ".$this->getClassname()." extends TableMap {
    */
   public function applyBehaviorModifier($hookName, &$script, $tab = "		")
   {
-    return parent::applyBehaviorModifier($hookName, 'TableMapBuilderModifier', $script, $tab);
+    return $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
   }
 } // PHP5TableMapBuilder

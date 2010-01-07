@@ -184,7 +184,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @return boolean
 	 */
-	public function hasBehaviorModifier($hookName)
+	public function hasBehaviorModifier($hookName, $modifier = null)
 	{
 	 	return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
 	}
@@ -196,7 +196,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	 */
 	public function applyBehaviorModifier($hookName, &$script, $tab = "		")
 	{
-		return parent::applyBehaviorModifier($hookName, 'QueryBuilderModifier', $script, $tab);
+		return $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
 	}
 
 }

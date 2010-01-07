@@ -170,7 +170,7 @@ abstract class ObjectBuilder extends OMBuilder {
 	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
 	 * @return boolean
 	 */
-	public function hasBehaviorModifier($hookName)
+	public function hasBehaviorModifier($hookName, $modifier = null)
 	{
 	 	return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
 	}
@@ -182,6 +182,6 @@ abstract class ObjectBuilder extends OMBuilder {
 	 */
 	public function applyBehaviorModifier($hookName, &$script, $tab = "		")
 	{
-		return parent::applyBehaviorModifier($hookName, 'ObjectBuilderModifier', $script, $tab);
+		return $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
 	}
 }
