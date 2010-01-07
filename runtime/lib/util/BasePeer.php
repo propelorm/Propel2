@@ -141,7 +141,11 @@ class BasePeer
 		$affectedRows = 0; // initialize this in case the next loop has no iterations.
 
 		$tables = array_keys($tables_keys);
-
+		
+		if (empty($tables)) {
+			throw new PropelException("Cannot delete from an empty Criteria");
+		}
+		
 		foreach ($tables as $tableName) {
 
 			$whereClause = array();

@@ -109,7 +109,7 @@ EOT;
 	{
 		return <<<EOT
 if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-	\$this->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
+	\$this->addUsingAlias({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
 } else {
 	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
 }
@@ -122,16 +122,21 @@ EOT;
 if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
 	return \$this->softDelete(\$con);
 } else {
-	return \$this->forceDelete(\$con);
+	return \$this->hasWhereClause() ? \$this->forceDelete(\$con) : \$this->forceDeleteAll(\$con);
 }
 EOT;
 	}
 
-	public function queryMethods()
+	public function queryMethods($builder)
 	{
 		return <<<EOT
+
 /**
  * Soft delete the selected rows
+ *
+ * @param     PropelPDO \$con an optional connection object
+ *
+ * @return    int Number of updated rows
  */
 public function softDelete(PropelPDO \$con = null)
 {
@@ -140,16 +145,40 @@ public function softDelete(PropelPDO \$con = null)
 
 /**
  * Bypass the soft_delete behavior and force a hard delete of the selected rows
+ *
+ * @param     PropelPDO \$con an optional connection object
+ *
+ * @return    int Number of deleted rows
  */
 public function forceDelete(PropelPDO \$con = null)
 {
-	return parent::delete(\$con);
+	if (\$con === null) {
+		\$con = Propel::getConnection({$builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+	return \$this->doDelete(\$con);
+}
+
+/**
+ * Bypass the soft_delete behavior and force a hard delete of all the rows
+ *
+ * @param     PropelPDO \$con an optional connection object
+ *
+ * @return    int Number of deleted rows
+ */
+public function forceDeleteAll(PropelPDO \$con = null)
+{
+	if (\$con === null) {
+		\$con = Propel::getConnection({$builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+	return \$this->doDeleteAll(\$con);
 }
 
 /**
  * Undelete selected rows
  *
- * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+ * @param     PropelPDO \$con an optional connection object
+ *
+ * @return    int The number of rows affected by this update and any referring fk objects' save() operations.
  */
 public function unDelete(PropelPDO \$con = null)
 {

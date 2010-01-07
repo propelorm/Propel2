@@ -211,8 +211,112 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertTrue($t->isDeleted(), 'forceDelete() actually deletes a row');
 		Table4Peer::disableSoftDelete();
 		$this->assertEquals(0, Table4Peer::doCount(new Criteria), 'forced deleted rows are not present in the database');
-	}	
+	}
+	
+	public function testQueryForceDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		Table4Query::create()->filterById($t1->getId())->forceDelete();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'forceDelete() actually deletes records');
+	}
 
+	public function testQuerySoftDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		$t3 = new Table4();
+		$t3->save();
+		
+		Table4Query::create()
+			->filterById($t1->getId())
+			->softDelete();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(3, Table4Query::create()->count(), 'softDelete() keeps deleted record in the database');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(2, Table4Query::create()->count(), 'softDelete() marks deleted record as deleted');
+	}
+		
+	public function testQueryDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		
+		Table4Peer::disableSoftDelete();
+		Table4Query::create()->filterById($t1->getId())->delete();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Query::create()->count(), 'delete() calls forceDelete() when soft delete is disabled');
+		Table4Peer::enableSoftDelete();
+		Table4Query::create()->filterById($t2->getId())->delete();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Query::create()->count(), 'delete() calls softDelete() when soft delete is enabled');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'delete() calls softDelete() when soft delete is enabled');
+	}
+	
+	public function testQueryForceDeleteAll()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		Table4Query::create()->forceDeleteAll();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'forceDeleteAll() actually deletes records');
+	}
+
+	public function testQuerySoftDeleteAll()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		Table4Peer::enableSoftDelete();
+		Table4Query::create()->softDelete();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(2, Table4Query::create()->count(), 'softDelete() keeps deleted record in the database');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'softDelete() marks deleted record as deleted');
+	}
+
+	public function testQueryDeleteAll()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		Table4Peer::disableSoftDelete();
+		Table4Query::create()->deleteAll();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'deleteAll() calls forceDeleteAll() when soft delete is disabled');
+		
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		Table4Peer::enableSoftDelete();
+		Table4Query::create()->deleteAll();
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(2, Table4Query::create()->count(), 'deleteAll() calls softDeleteAll() when soft delete is disabled');
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'deleteAll() calls softDeleteAll() when soft delete is disabled');
+	}
+
+	public function testQuerySelect()
+	{
+		$t = new Table4();
+		$t->setDeletedAt(123);
+		$t->save();
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'rows with a deleted_at date are hidden for select queries');
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Query::create()->count(), 'rows with a deleted_at date are visible for select queries once the static soft_delete is enabled');
+		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'Executing a select query enables the static soft delete again');
+	}
+	
 	public function testCustomization()
 	{
 		Table5Peer::disableSoftDelete();
