@@ -368,16 +368,27 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 */
 	public function filterBy$colPhpName(\$$variableName = null)
 	{";
-		if ($col->isNumericType() || $col->isTemporalType()) {
+		if ($col->isPrimaryKey() && ($col->getType() == PropelTypes::INTEGER || $col->getType() == PropelTypes::BIGINT)) {
 			$script .= "
 		if (is_array(\$$variableName)) {
-			if (isset(\${$variableName}['min'])) {
-				\$this->addUsingAlias($qualifiedName, \${$variableName}['min'], Criteria::GREATER_EQUAL);
+			return \$this->addUsingAlias($qualifiedName, \${$variableName}, Criteria::IN);
+		} else {
+			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
+		}";
+		} elseif ($col->isNumericType() || $col->isTemporalType()) {
+			$script .= "
+		if (is_array(\$$variableName)) {
+			if (array_values(\$$variableName) === \$$variableName) {
+				return \$this->addUsingAlias($qualifiedName, \${$variableName}, Criteria::IN);
+			} else {
+				if (isset(\${$variableName}['min'])) {
+					\$this->addUsingAlias($qualifiedName, \${$variableName}['min'], Criteria::GREATER_EQUAL);
+				}
+				if (isset(\${$variableName}['max'])) {
+					\$this->addUsingAlias($qualifiedName, \${$variableName}['max'], Criteria::LESS_EQUAL);
+				}
+				return \$this;	
 			}
-			if (isset(\${$variableName}['max'])) {
-				\$this->addUsingAlias($qualifiedName, \${$variableName}['max'], Criteria::LESS_EQUAL);
-			}
-			return \$this;
 		} else {
 			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
 		}";

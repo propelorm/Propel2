@@ -190,7 +190,22 @@ class QueryBuilderTest extends BookstoreTestBase
 			$this->assertTrue($q instanceof BookQuery, 'filterByColumn() returns the current query instance');
 		}
 	}
-		
+
+	public function testFilterByPk()
+	{
+		$q = BookQuery::create()->filterById(12);
+		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::EQUAL by default');
+
+		$q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
+		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
+
+		$q = BookQuery::create()->filterById(array(10, 11, 12));
+		$q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::IN);
+		$this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::IN when passed a simple array key');
+	}
+	
 	public function testFilterByNumber()
 	{
 		$q = BookQuery::create()->filterByPrice(12);
@@ -200,6 +215,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.PRICE', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
+
+		$q = BookQuery::create()->filterByPrice(array(10, 11, 12));
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::IN);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::IN when passed a simple array key');
 		
 		$q = BookQuery::create()->filterByPrice(array('min' => 10));
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL);
