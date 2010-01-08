@@ -1,5 +1,300 @@
 = What's new in Propel 1.5? =
 
+[[PageOutline]]
+
+== New Query API ==
+
+This is the killer feature of Propel 1.5. It will transform the painful task of writing Criteria queries into a fun moment.
+
+=== Model Queries ===
+
+Along Model and Peer classes, Propel 1.5 now generates one Query class for each table. These Query classes inherit from Criteria, but have additional abilities since the Propel generator has a deep knowledge of your schema. That means that Propel 1.5 advises that you use ModelQueries instead of raw Criteria.
+
+Model queries have smart filter methods for each column, and termination methods on their own. That means that instead of writing:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->add(BookPeer::TITLE, 'War And Peace');
+$book = BookPeer::doSelectOne($c);
+}}}
+
+You can write:
+
+{{{
+#!php
+<?php
+$q = new BookQuery();
+$q->filterByTitle('War And Peace');
+$book = $q->findOne();
+}}}
+
+In addition, each Model Query class benefits from a factory method called `create()`, which returns a new instance of the query class. And the filter methods return the current query object. So it's even easier to write the previous query as follows:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->filterByTitle('War And Peace');
+  ->findOne();
+}}}
+
+The termination methods are `find()`, `findOne()`, `count(), 'update()`, and `delete()`. They all accept a connection object as last parameter.
+
+Remember that a Model Query IS a Criteria. So your Propel 1.4 code snippets still work:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
+  ->add(AuthorPeer::LAST_NAME, 'Tolstoi')
+  ->orderBy(BookPeer::TITLE)
+  ->findOne();
+}}}
+
+But you will soon see that it's faster to use the generated methods of the Model Query classes:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->useAuthorQuery();
+    ->filterByLastName('Tolstoi')
+  ->endUse()
+  ->orderByTitle()
+  ->findOne();
+}}}
+
+That's right, you can embed a query into another; Propel guesses the join to apply from the foreign key declared in your schema.
+
+That makes it very easy to package your own custom model logic into reusable query methods. After a while, your code can easily look like the following:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->filterByPublisher($publisher)
+  ->cheap()
+  ->recent()
+  ->useAuthorQuery();
+    ->stillAlive()
+    ->famous()
+  ->endUse()
+  ->orderByTitle()
+  ->find();
+}}}
+
+The Model Queries can understand `findByXXX()` method calls, where `'XXX'` is the phpName of a column of the model. That answers one of the most common customization need:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()->findOneByTitle('War And Peace');
+}}}
+
+Eventually, these Query classes will replace the Peer classes; you should place all the code necessary to request or alter Model object in these classes. The Criteria/Peer way of doing queries still work exactly the same as in previous Propel versions, so your existing applications won't suffer from this update.
+
+'''Tip''': Incidentally, if you use an IDE with code completion, you will see that writing a query has never been so easy.
+
+=== Collections And On-Demand Hydration ===
+
+The `find()` method of generated Model Query objects returns a `PropelCollection` object. You can use this object just like an array of model objects, iterate over it using `foreach`, access the objects by key, etc.
+  
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->limit(5)
+  ->find();
+foreach ($books as $book) {
+  echo $book->getTitle();
+}
+}}}
+
+The advantage of using a collection instead of an array is that Propel can hydrate model objects on demand. Using this feature, you'll never fall short of memory again. Available through the `setFormatter()` method of Model Queries, on-demand hydration is very easy to trigger:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->limit(50000)
+  ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND) // just add this line
+  ->find();
+foreach ($books as $book) {
+  echo $book->getTitle();
+}
+}}}
+
+In this example, Propel will hydrate the `Book` objects row by row, after the `foreach` call, and reuse the memory between each iteration. The consequence is that the above code won't use more memory when the query returns 50,000 results than when it returns 5.
+
+`ModelCriteria::FORMAT_ON_DEMAND` is one of the many formatters provided by the new Query objects. You can also get a collection of associative arrays instead of objects, if you don't need any of the logic stored in your model object, by using `ModelCriteria::FORMAT_ARRAY`.
+
+The [wiki:Users/Documentation/1.5/ModelCriteria documentation] describes each formatter, and how to use it.
+
+=== Model Criteria ===
+
+Generated Model Queries inherit from `ModelCriteria`, which extends your good old `Criteria`, and adds a few useful features. Basically, a `ModelCriteria` is a `Criteria` linked to a Model; by using the information stored in the generated TableMaps at runtime, `ModelCriteria` offers powerful methods to simplify the process of writing a query.
+
+For instance, `ModelCriteria::where()` provides similar functionality as `Criteria::add()`, except that its PDO-like syntax removes the burden of Criteria constants for comparators.
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->where('Book.Title LIKE ?', 'War And P%')
+  ->findOne();
+}}}
+
+Propel analyzes the clause passed as first argument of `where()` to determine which escaping to use for the value passed as second argument. In the above example, the `Book::TITLE` column is declared as `VARCHAR` in the schema, so Propel will bind the title as a string. 
+
+The `where()` method can also accept more complex clauses. You just need to explicit every column name as `'ModelClassName.ColumnPhpName'`, as follows:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->where('UPPER(Book.Title) LIKE ?', 'WAR AND P%')
+  ->where('(Book.Price * 100) <= ?', 1500)
+  ->findOne();
+}}}
+
+Another great addition of `ModelCriteria` is the `join()` method, which just needs the name of a related model to build a JOIN clause:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->join('Book.Author')
+  ->where('CONCAT(Author.FirstName, " ", Author.LastName) = ?', 'Leo Tolstoi')
+  ->find();
+}}}
+
+`ModelCriteria` has a built-in support for table aliases, which allows to setup a query using two joins on the same table, which was not possible with the `Criteria` object:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create('b') // use 'b' as an alias for 'Book' in the query
+  ->join('b.Author a')          // use 'a' as an alias for 'Author' in the query 
+  ->where('CONCAT(a.FirstName, " ", a.LastName) = ?', 'Leo Tolstoi')
+  ->find();
+}}}
+
+This syntax probably looks familiar, because it is very close to SQL. So you probably won't need long to figure out how to write a complex query with it. The documentation offers [wiki:Users/Documentation/1.5/ModelCriteria an entire chapter] dedicated to the new `ModelCriteria` class. Make sure you read it to see the power of this new query API.
+
+=== Criteria Enhancements ===
+
+Generated queries and ModelQueries are not the only ones to have received a lot of attention in Propel 1.5. The Criteria object itself sees a few improvements, that will ease the writing of queries with complex logic.
+
+`Criteria::addOr()` operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
+
+{{{
+#!php
+<?php
+// addOr() used to work on a column with an existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::TITLE, '%Tolstoi%', Criteria::LIKE);
+// translates in SQL as
+// WHERE (book.TITLE LIKE '%Leo%' OR book.TITLE LIKE '%Tolstoi%')
+
+// addOr() used to fail on a column with no existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
+// translates in SQL as
+// WHERE book.TITLE LIKE '%Leo%' AND book.ISBN = '1234'
+}}}
+
+This is fixed in Propel 1.5. This means that you don't need to call upon the `Criterion` object for a simple OR clause:
+
+{{{
+#!php
+<?php
+// addOr() now works on a column with no existing condition
+$c = new Criteria();
+$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
+// translates in SQL as
+// WHERE (book.TITLE LIKE '%Leo%' OR book.ISBN = '1234')
+
+// and it's much faster to write than
+$c = new Criteria();
+$c1 = $c->getNewCriterion(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
+$c2 = $c->getNewCriterion(BookPeer::ISBN, '1234', Criteria::EQUAL);
+$c1->addOr($c2);
+$c->add($c1);
+}}}
+
+`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic,  Propel 1.4 forced you to use Criterions again. This is no longer the case in Propel 1.5, which provides a new `Criteria::combine()` method. It expects an array of named conditions to be combined, and an operator. Use `Criteria::addCond()` to create a condition, instead of the usual `add()`:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL); // creates a condition named 'cond1'
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL); // creates a condition named 'cond2'
+$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
+// translates in SQL as
+// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
+}}}
+ 
+`combine()` accepts more than two conditions at a time:
+{{{
+#!php
+<?php
+$c = new Criteria();
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
+$c->addCond('cond3', BookPeer::TITLE, 'FooBar', Criteria::EQUAL);
+$c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
+// translates in SQL as
+// WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
+}}}
+
+`combine()` itself can return a named condition to be combined later. So it allows for any level of logical complexity:
+
+{{{
+#!php
+<?php
+$c = new Criteria();
+
+$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
+$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
+$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12');
+
+$c->addCond('cond3', BookPeer::ISBN, '1234', Criteria::EQUAL);
+$c->addCond('cond4', BookPeer::ISBN, '4567', Criteria::EQUAL);
+$c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
+
+$c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
+
+// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
+//   AND (book.ISBN = '1234' OR book.ISBN = '4567');
+}}}
+
+The new `combine()` method makes it much easier to handle logically complex criterions. The good news is that if your application code already uses the old Criterion way, it will continue to work with Propel 1.5 as all these changes are backwards compatible.
+
+Of course, since Model Queries extend Criteria, this new feature is available for all your queries, with a slightly different syntax, in order to support column phpNames:
+
+{{{
+#!php
+<?php
+$books = Bookquery::create()
+    ->condition('cond1', 'Book.Title = ?', 'Foo')
+    ->condition('cond2', 'Book.Title = ?', 'Bar')
+  ->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12')
+    ->condition('cond3', 'Book.ISBN = ?', '1234')
+    ->condition('cond4', 'Book.ISBN = ?', '4567')
+  ->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34')
+  ->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND)
+  ->find();
+// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
+//   AND (book.ISBN = '1234' OR book.ISBN = '4567');
+}}}
+
 == New Behaviors ==
 
 === Nested Set Behavior ===
@@ -149,203 +444,6 @@ echo $t1->getRank(); // 2
 }}}
 
 This new behavior is fully unit tested and very customizable. Check out all you can do with `sortable` in the [wiki:Users/Documentation/1.5/Behaviors/sortable sortable behavior documentation].
-
-== Criteria Enhancements ==
-
-`Criteria::addOr()` operates the way you always expected it to. For instance, in Propel 1.4, `addOr()` resulted in a SQL `AND` if called on a column with no other condition:
-
-{{{
-#!php
-<?php
-// addOr() used to work on a column with an existing condition
-$c = new Criteria();
-$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
-$c->addOr(BookPeer::TITLE, '%Tolstoi%', Criteria::LIKE);
-// translates in SQL as
-// WHERE (book.TITLE LIKE '%Leo%' OR book.TITLE LIKE '%Tolstoi%')
-
-// addOr() used to fail on a column with no existing condition
-$c = new Criteria();
-$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
-$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
-// translates in SQL as
-// WHERE book.TITLE LIKE '%Leo%' AND book.ISBN = '1234'
-}}}
-
-This is fixed in Propel 1.5. This means that you don't need to call upon the `Criterion` object for a simple OR clause:
-
-{{{
-#!php
-<?php
-// addOr() now works on a column with no existing condition
-$c = new Criteria();
-$c->add(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
-$c->addOr(BookPeer::ISBN, '1234', Criteria::EQUAL);
-// translates in SQL as
-// WHERE (book.TITLE LIKE '%Leo%' OR book.ISBN = '1234')
-
-// and it's much faster to write than
-$c = new Criteria();
-$c1 = $c->getNewCriterion(BookPeer::TITLE, '%Leo%', Criteria::LIKE);
-$c2 = $c->getNewCriterion(BookPeer::ISBN, '1234', Criteria::EQUAL);
-$c1->addOr($c2);
-$c->add($c1);
-}}}
-
-`add()` and `addOr()` only allow simple logical operations on a single condition. For more complex logic,  Propel 1.4 forced you to use Criterions again. This is no longer the case in Propel 1.5, which provides a new `Criteria::combine()` method. It expects an array of named conditions to be combined, and an operator. Use `Criteria::addCond()` to create a condition, instead of the usual `add()`:
-
-{{{
-#!php
-<?php
-$c = new Criteria();
-$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL); // creates a condition named 'cond1'
-$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL); // creates a condition named 'cond2'
-$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
-// translates in SQL as
-// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
-}}}
- 
-`combine()` accepts more than two conditions at a time:
-{{{
-#!php
-<?php
-$c = new Criteria();
-$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
-$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
-$c->addCond('cond3', BookPeer::TITLE, 'FooBar', Criteria::EQUAL);
-$c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
-// translates in SQL as
-// WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
-}}}
-
-`combine()` itself can return a named condition to be combined later. So it allows for any level of logical complexity:
-
-{{{
-#!php
-<?php
-$c = new Criteria();
-
-$c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL);
-$c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
-$c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR, 'cond12');
-
-$c->addCond('cond3', BookPeer::ISBN, '1234', Criteria::EQUAL);
-$c->addCond('cond4'BookPeer::ISBN, '4567', Criteria::EQUAL);
-$c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
-
-$c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
-
-// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
-//   AND (book.ISBN = '1234' OR book.ISBN = '4567');
-}}}
-
-The new `combine()` method makes it much easier to handle logically complex criterions. The good news is that if your application code already uses the old Criterion way, it will continue to work with Propel 1.5 as all these changes are backwards compatible.
-
-== Model Criteria ==
-
-Propel 1.5 introduces a new subclass of `Criteria`, that you initialize with the name of one of your model. Using this name, and the runtime introspection data provided by the generated TableMap objects, this new `ModelCriteria` class can do things that were out of the bounds of the simple `Criteria`.
-
-For instance, `ModelCriteria::join()` just needs the name of a related model to build a JOIN clause:
-
-{{{
-#!php
-<?php
-$c = new ModelCriteria('bookstore', 'Book'); // 'bookstore' is the database name, 'Book' is the model name
-$c->join('Book.Author', Criteria::LEFT_JOIN);
-// same as
-$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
-}}}
-
-`ModelCriteria` offers an easy way to add custom SQL conditions on a column, by detecting model column names, deducing the type of the column from the schema, and use this type for the binding of the value:
-
-{{{
-#!php
-<?php
-$c = new ModelCriteria('bookstore', 'Book');
-$c->where("(Book.Price * 100) <= ?', 1500);	
-}}}
-
-Users of PDO will recognize the syntax, where the interrogation point locates the value in the condition. `where()` only accepts simple conditions, with a single replacement token. This allows the `ModelCriteria` to remain lightweight and fast, and saves Propel from a heavy duty parser/lexer tools.
-
-The `where()` method can also accept more simple clauses. You just need to explicit every column name as `'ModelClassName.ColumnPhpName'`, as follows:
-
-{{{
-#!php
-<?php
-$c = new ModelCriteria('bookstore', 'Book');
-$c->where('Book.Title = ?', 'War And Peace');
-// same as
-$c->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
-}}}
-
-`ModelCriteria` has a built-in support for table aliases, which allows to setup a query using two joins on the same table, which was not possible with the `Criteria` object:
-
-{{{
-#!php
-<?php
-$c = new ModelCriteria('bookstore', 'Book', 'b');
-$c->join('b.Author a')
-$c->where('a.FirstName = ?', 'Leo')
-}}}
-
-Since `ModelCriteria` knows about the expected model object, it is also capable of hydrating it, without calling the `doSelect()` method in the generated Peer class:
-
-{{{
-#!php
-<?php
-$c = new ModelCriteria('bookstore', 'Book', 'b');
-$c->join('b.Author a')
-$c->where('a.FirstName = ?', 'Leo')
-$books = $c->find();
-}}}
-
-Just like `Criteria`, `ModelCriteria` methods return the current object, allowing for a fluid interface. In addition, Propel provides a factory for `ModelCriteria` objects, called `PropelQuery`. So the following listing show an alternative way to write the previous query:
-
-{{{
-#!php
-<?php
-$books = PropelQuery::from('Book b')
-  ->join('b.Author a')
-  ->where('a.FirstName = ?', 'Leo')
-  ->find();
-}}}
-
-If this syntax looks familiar, it's probably because it is the standard way to describe a database query in an object-oriented way in PHP. It is used in Doctrine, Zend_Db_Select, and DbFinder. It also looks familiar because it is very close to SQL, so you probably won't need long to figure out how to write a complex query with it.
-
-The `ModelCriteria` can understand `findByXXX()` method calls, where `'XXX'` is the phpName of a column of the model. That answers one of the most common customization need:
-
-{{{
-#!php
-<?php
-$book = PropelQuery::from('Book')->findOneByTitle('War And Peace');
-}}}
-
-'''Tip''': A `ModelCriteria` instance is also a `Criteria` instance, so all the methods you are used to calling on `Criteria` also work on a `ModelCriteria` object.
-
-The documentation offers [wiki:Users/Documentation/1.5/ModelCriteria an entire chapter] dedicated to the new `ModelCriteria` class. Make sure you read it to see the power of this new query API.
-
-== On-Demand Hydration ==
-
-You'll never fall short of memory again. Propel 1.5 provides a new hydration mode called ''On-Demand Hydration''. Available through the new `ModelCriteria` queries, it is very easy to trigger:
-
-{{{
-#!php
-<?php
-$books = PropelQuery::from('Book b')
-  ->join('b.Author a')
-  ->where('a.FirstName = ?', 'Leo')
-  ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND) // just add this line
-  ->find();
-foreach ($books as $book) {
-  echo $book->getTitle();
-}
-}}}
-
-In this example, Propel will hydrate the `Book` objects row by row, after the `foreach` call, and reuse the memory between each iteration. The consequence is that the above code won't use more memory when the query returns 50,000 results than when it returns 5.
-
-`ModelCriteria::FORMAT_ON_DEMAND` is one of the many formatters provided by the new `ModelCriteria` object. The default formatter, `ModelCriteria::FORMAT_OBJECT`, returns a collection of objects over which you can iterate. You can also get a collection of associative arrays instead of objects, if you don't need any of the logic stored in your model object, by using `ModelCriteria::FORMAT_ARRAY`.
-
-The [wiki:Users/Documentation/1.5/ModelCriteria documentation] describes each formatter, and how to use it.
 
 == Better `toArray()` ==
 
