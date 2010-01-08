@@ -50,7 +50,7 @@ Remember that a Model Query IS a Criteria. So your Propel 1.4 code snippets stil
 $book = BookQuery::create()
   ->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
   ->add(AuthorPeer::LAST_NAME, 'Tolstoi')
-  ->orderBy(BookPeer::TITLE)
+  ->addAscendingOrderByColumn(BookPeer::TITLE)
   ->findOne();
 }}}
 
@@ -137,7 +137,7 @@ The [wiki:Users/Documentation/1.5/ModelCriteria documentation] describes each fo
 
 Generated Model Queries inherit from `ModelCriteria`, which extends your good old `Criteria`, and adds a few useful features. Basically, a `ModelCriteria` is a `Criteria` linked to a Model; by using the information stored in the generated TableMaps at runtime, `ModelCriteria` offers powerful methods to simplify the process of writing a query.
 
-For instance, `ModelCriteria::where()` provides similar functionality as `Criteria::add()`, except that its PDO-like syntax removes the burden of Criteria constants for comparators.
+For instance, `ModelCriteria::where()` provides similar functionality to `Criteria::add()`, except that its [http://www.php.net/manual/en/pdostatement.bindparam.php PDO-like syntax] removes the burden of Criteria constants for comparators.
 
 {{{
 #!php
