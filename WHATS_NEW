@@ -506,6 +506,7 @@ During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation ab
 
 == Miscellaneous ==
 
+ * XSL transformation of your schemas is no longer enabled by default. Turn the `propel.schema.transform` setting to `true` in your `build.properties` to enable it again. This change removes the requirement on the lib_xsl extention for Propel.
  * `ModelObject::addSelectColumns()` now accepts an additional parameter to allow the use of table aliases
  * Added `ModelObject::clear()` to reinitialize a model object
  * Added `ModelObject::isPrimaryKeyNull()` method to check of an object was hydrated with no values (in case of a left join)

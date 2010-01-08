@@ -7,7 +7,6 @@ Propel is available as a [http://pear.php.net/manual/en/installation.getting.php
 Propel requirements are very light, allowing it to run on most PHP platforms:
 
  * [http://www.php.net/ PHP 5.2.4] or newer, with the following module enabled:
-   * XSLT (libxslt)
    * DOM (libxml2)
  * A supported database (MySQL, MS SQL Server, PostgreSQL, SQLite, Oracle)
  

@@ -54,7 +54,13 @@ propel.packageObjectModel = true|{false}
 propel.schema.validate = {true}|false
 }}}
 
-Whether to validate the schema using the XSD file.  If you find that the validator is giving you problems with a schema that you think is valid, please let us know so that we can fix the validation.
+Whether to validate the schema using the XSD file. The default XSD file is located under `generator/resources/xsd/database.xsd`, and you can use a custom XSD file by changing the `propel.schema.xsd.file` property.
+
+{{{
+propel.schema.transform = true|{false}
+}}}
+
+Whether to transform the schema using the XSL file. This was used in previous Propel versions to clean up the schema, but tended to hide problems in the schema. It is disabled by default since Propel 1.5. The default XSL file is located under `generator/resources/xsd/database.xsl`, and you can use a custom XSL file by changing the `propel.schema.xsl.file` property.
 
 === Database Settings ===
 
