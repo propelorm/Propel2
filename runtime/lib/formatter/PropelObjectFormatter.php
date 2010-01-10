@@ -36,8 +36,12 @@ class PropelObjectFormatter extends PropelFormatter
 	{
 		$this->checkCriteria();
 		$class = $this->collectionName;
-		$collection = new $class();
-		$collection->setModel($this->getCriteria()->getModelName());
+		if(class_exists($class)) {
+			$collection = new $class();
+			$collection->setModel($this->getCriteria()->getModelName());
+		} else {
+			$collection = array();
+		}
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$collection[] = $this->getAllObjectsFromRow($row);
 		}
