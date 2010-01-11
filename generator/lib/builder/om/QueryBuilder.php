@@ -305,9 +305,6 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		return \$this->find(\$con);";
 		} else {
 			// composite primary key
-			foreach ($pks as $pk){
-				# code...
-			}
 			$script .= "
 		foreach (\$keys as \$key) {";
 			$i = 0;
