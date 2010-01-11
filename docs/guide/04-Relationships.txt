@@ -85,16 +85,16 @@ Propel supports the special case of one-to-one relationships. These relationship
 #!xml
 <table name="bookstore_employee" description="Employees of a bookstore">
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-	<column name="name" type="VARCHAR" size="32"/>
+  <column name="name" type="VARCHAR" size="32"/>
 </table>
 
 <table name="bookstore_employee_account" description="Bookstore employees' login credentials">
-	<column name="employee_id" type="INTEGER" primaryKey="true"/>
-	<column name="login" type="VARCHAR" size="32"/>
-	<column name="password" type="VARCHAR" size="100"/>
-	<foreign-key foreignTable="bookstore_employee">
-	  <reference local="employee_id" foreign="id"/>
-	</foreign-key>
+  <column name="employee_id" type="INTEGER" primaryKey="true"/>
+  <column name="login" type="VARCHAR" size="32"/>
+  <column name="password" type="VARCHAR" size="100"/>
+  <foreign-key foreignTable="bookstore_employee">
+    <reference local="employee_id" foreign="id"/>
+  </foreign-key>
 </table>
 }}}
 
@@ -179,9 +179,9 @@ Propel also supports the ''ON UPDATE'' and ''ON DELETE'' aspect of foreign keys.
   <column name="review_id" type="INTEGER" primaryKey="true" required="true"/>
   <column name="reviewer" type="VARCHAR" size="50" required="true"/>
   <column name="book_id" required="true" type="INTEGER"/>
-	<foreign-key foreignTable="book" onDelete="CASCADE">
+  <foreign-key foreignTable="book" onDelete="CASCADE">
     <reference local="book_id" foreign="id"/>
-  </foreign-key>	  
+  </foreign-key>
 </table>
 }}}
 
@@ -218,7 +218,7 @@ $author = $book->getAuthor();  // Same result, with no supplementary query
 
 Since the call to `with()` adds the columns of the related object to the SELECT part of the query, and uses these columns to populate the related object, that means that a query using `with()` is slower and consumes more memory. So use it only when you actually need the related objects afterwards.
 
-If you don't want to add a filter on a related object but still need to hydrate it, calling `useXXXQuery()`,  `endUse()`, and then `with()` can be a little cumbersome. In that case, Propel provides a proxy method called `joinWith()`. It expects a string made of the initial query name and the foreign query name. For instance:
+If you don't want to add a filter on a related object but still need to hydrate it, calling `useXXXQuery()`,  `endUse()`, and then `with()` can be a little cumbersome. For this case, Propel provides a proxy method called `joinWith()`. It expects a string made of the initial query name and the foreign query name. For instance:
 
 {{{
 #!php
