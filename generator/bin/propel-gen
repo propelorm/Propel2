@@ -27,7 +27,7 @@ if [ -z "$PROPEL_GEN_HOME" ] ; then
     PROPEL_GEN_HOME="${HOME}/usr/propel/generator"
   fi
   
-  ## resolve links - $0 may be a link to phing's home
+  ## resolve links - the script name may be a link to phing's home
   PRG="$0"
   progname=`basename "$0"`
   saveddir=`pwd`
@@ -40,26 +40,31 @@ if [ -z "$PROPEL_GEN_HOME" ] ; then
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`
     if expr "$link" : '/.*' > /dev/null; then
-	PRG="$link"
+      PRG="$link"
     else
-	PRG=`dirname "$PRG"`"/$link"
+      PRG=`dirname "$PRG"`"/$link"
     fi
   done
-  
-  PROPEL_GEN_HOME=`dirname "$PRG"`/..
 
   cd "$saveddir"
+  
+  PROPEL_GEN_HOME=`dirname "$PRG"`/..
 
   # make it fully qualified
   PROPEL_GEN_HOME=`cd "$PROPEL_GEN_HOME" && pwd`
   
   # make it available in PHP via getenv("PROPEL_GEN_HOME")
   export PROPEL_GEN_HOME
+  
 fi
 
-if (test -z "$PHING_COMMAND") ; then
-	# echo "WARNING: PHING_COMMAND environment not set. (Assuming phing on PATH)"
-	export PHING_COMMAND="phing"
+if [ -z "$PHING_COMMAND" ] ; then
+  # echo "WARNING: PHING_COMMAND environment not set. (Assuming phing on PATH)"
+  export PHING_COMMAND="phing"
 fi
 
-$PHING_COMMAND -f $PROPEL_GEN_HOME/build.xml -Dusing.propel-gen=true -Dproject.dir=$*
+if [ $# = 1 ] ; then
+  $PHING_COMMAND -f $PROPEL_GEN_HOME/build.xml -Dusing.propel-gen=true -Dproject.dir=$saveddir $*
+else
+  $PHING_COMMAND -f $PROPEL_GEN_HOME/build.xml -Dusing.propel-gen=true -Dproject.dir=$*
+fi
