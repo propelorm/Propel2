@@ -40,7 +40,7 @@ $book = BookQuery::create()
   ->findOne();
 }}}
 
-The termination methods are `find()`, `findOne()`, `count(), 'update()`, and `delete()`. They all accept a connection object as last parameter.
+The termination methods are `find()`, `findOne()`, `count(), `paginate()`, 'update()`, and `delete()`. They all accept a connection object as last parameter.
 
 Remember that a Model Query IS a Criteria. So your Propel 1.4 code snippets still work:
 

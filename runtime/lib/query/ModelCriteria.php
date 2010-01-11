@@ -988,6 +988,26 @@ class ModelCriteria extends Criteria
 		
 		return $count;
 	}
+	
+	/**
+	 * Issue a SELECT query based on the current ModelCriteria
+	 * and uses a page and a maximum number of results per page
+	 * to compute an offet and a limit.
+	 * 
+	 * @param     int $page number of the page to start the pager on. Page 1 means no offset
+	 * @param     int $maxPerPage maximum number of results per page. Determines the limit
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    PropelModelPager a pager object, supporting iteration
+	 */
+	public function paginate($page = 1, $maxPerPage = 10, $con = null)
+	{
+		$pager = new PropelModelPager($this, $maxPerPage);
+		$pager->setPage($page);
+		$pager->init();
+		
+		return $pager;
+	}
 
 	/**
 	 * Code to execute before every DELETE statement

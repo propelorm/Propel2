@@ -106,7 +106,7 @@ foreach($authors as $author) {
 }
 }}}
 
-To add a simple condition on a given column, use one of the generated `filterByXXX()` methods of the Query object, where `XXX` is a column phpName. For instance, to filter by first name:
+To add a simple condition on a given column, use one of the generated `filterByXXX()` methods of the Query object, where `XXX` is a column phpName. Since `filterByXXX()` methods return the current query object, you can continue to add conditions or end the query with the result of the method call. For instance, to filter by first name:
 
 {{{
 #!php
@@ -118,7 +118,7 @@ $authors = AuthorQuery::create()
 
 When you pass a value to a `filterByXXX()` method, Propel uses the column type to escape this value in PDO. This protects you from SQL injection risks.
 
-You can also easily limit and order the results on a query:
+You can also easily limit and order the results on a query. Once again, the Query methods return the current Query object, so you can easily chain them:
 
 {{{
 #!php
@@ -129,7 +129,7 @@ $authors = AuthorQuery::create()
   ->find();
 }}}
 
-`find()` always returns a colleciton of objects, even if there is only one result. If you know that you need a single result, use `findOne()` instead of `find()`. It will add the limit and return a single object instead of an array:
+`find()` always returns a collection of objects, even if there is only one result. If you know that you need a single result, use `findOne()` instead of `find()`. It will add the limit and return a single object instead of an array:
 
 {{{
 #!php
@@ -149,7 +149,7 @@ $author = AuthorQuery::create()->findOneByFirstName('Jane');
 
 The Propel Query API is very powerful. the next chapter will teach you to use it to add conditions on related objects. If you can't wait, jump to the [wiki:Users/Documentation/1.5/ModelCriteria Query API reference].
 
-==== Using Custom SQL ====
+=== Using Custom SQL ===
 
 The `Query` class provides a relatively simple approach to constructing a query. Its database neutrality and logical simplicity make it a good choice for expressing many common queries. However, for a very complex query, it may prove more effective (and less painful) to simply use a custom SQL query to hydrate your Propel objects.
 
@@ -236,6 +236,69 @@ AuthorQuery::create()
 echo $author->isDeleted();    // true
 echo $author->getFirstName(); // 'Jane'
 }}}
+
+== Termination Methods ==
+
+The Query methods that don't return the current query object are called "Termination Methods". You've alread seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
+
+{{{
+#!php
+<?php
+// count() returns the number of results of the query.
+$nbAuthors = AuthorQuery::create()->count();
+// You could also count the number of results from a find(), but that would be less effective,
+// since it implies hydrating objects just to count them
+
+// paginate() returns a paginated list of results
+$authorPager = AuthorQuery::create()->paginate($page = 1, $maxPerPage = 10);
+// This method will compute an offset and a limit
+// based on the number of the page and the max number of results per page.
+// The result is a PropelModelPager object, over which you can iterate:
+foreach ($authorPager as $author) {
+  echo $author->getFirstName();
+}
+// a pager object gives more information
+echo $pager->getNbResults();   // total number of results if not paginated
+echo $pager->haveToPaginate(); // return true if the total number of results exceeds the maximum per page
+echo $pager->getFirstIndex();  // index of the first result in the page
+echo $pager->getLastIndex();   // index of the last result in the page
+$links = $pager->getLinks(5);  // array of page numbers around the current page; useful to display pagination controls
+}}}
+
+== Collections And On-Demand Hydration ==
+
+The `find()` method of generated Model Query objects returns a `PropelCollection` object. You can use this object just like an array of model objects, iterate over it using `foreach`, access the objects by key, etc.
+  
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->limit(5)
+  ->find();
+foreach ($authors as $author) {
+  echo $authors->getFirstName();
+}
+}}}
+
+The advantage of using a collection instead of an array is that Propel can hydrate model objects on demand. Using this feature, you'll never fall short of memory when retrieving a large number of results. Available through the `setFormatter()` method of Model Queries, on-demand hydration is very easy to trigger:
+
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->limit(50000)
+  ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND) // just add this line
+  ->find();
+foreach ($authors as $author) {
+  echo $authors->getFirstName();
+}
+}}}
+
+In this example, Propel will hydrate the `Author` objects row by row, after the `foreach` call, and reuse the memory between each iteration. The consequence is that the above code won't use more memory when the query returns 50,000 results than when it returns 5.
+
+`ModelCriteria::FORMAT_ON_DEMAND` is one of the many formatters provided by the Query objects. You can also get a collection of associative arrays instead of objects, if you don't need any of the logic stored in your model object, by using `ModelCriteria::FORMAT_ARRAY`.
+
+The [wiki:Users/Documentation/1.5/ModelCriteria Query API reference] describes each formatter, and how to use it.
 
 == Propel Instance Pool ==
 

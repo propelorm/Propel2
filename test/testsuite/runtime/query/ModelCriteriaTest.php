@@ -1099,6 +1099,19 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals(1, $nbBooks, 'count() returns the number of results in the query');
 	}
 	
+	public function testPaginate()
+	{
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->join('b.Author a');
+		$c->where('a.FirstName = ?', 'Neal');
+		$books = $c->paginate(1, 5);
+		$this->assertTrue($books instanceof PropelModelPager, 'paginate() returns a PropelModelPager');
+		$this->assertEquals(1, count($books), 'paginate() returns a countable pager with the correct count');
+		foreach ($books as $book) {
+			$this->assertEquals('Neal', $book->getAuthor()->getFirstName(), 'paginate() returns an iterable pager');
+		}
+	}
+	
 	public function testPreSelect()
 	{
 		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
