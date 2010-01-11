@@ -183,9 +183,9 @@ The "om" command added a new directory in the `bookstore/` project, called `buil
 
 For every table in the database, Propel creates 3 PHP classes:
 
-* a ''model'' class (e.g. `Book`), which represents a row in the database;
-* a ''peer'' class (e.g. `BookPeer`), offering static constants and methods mostly for compatibility with previous Propel versions;
-* a ''query'' class (e.g. `BookQuery`), used to operate on a table to retrieve and update rows
+ * a ''model'' class (e.g. `Book`), which represents a row in the database;
+ * a ''peer'' class (e.g. `BookPeer`), offering static constants and methods mostly for compatibility with previous Propel versions;
+ * a ''query'' class (e.g. `BookQuery`), used to operate on a table to retrieve and update rows
 
 Propel uses the `phpName` attribute of each table as the base for the PHP class names.
 
@@ -306,7 +306,7 @@ Replace the `<adapter>` and the `<connection>` settings wit hthe ones of your da
   
 See the [wiki:Users/Documentation/1.5/Runtime-Configuration runtime configuration reference] for a more detailed explanation of this file.
 
-'''Tip''': Iif you uncomment the `<log>` section, Propel will attempt to instantiate the `Log` class (from the [http://pear.php.net/package/Log/ PEAR Log] package) with the specified parameters and use that to log queries. Propel's statement logging happens at the DEBUG level (7); errors and warnings are logged at the appropriate (non-debug) level.
+'''Tip''': If you uncomment the `<log>` section, Propel will attempt to instantiate the `Log` class (from the [http://pear.php.net/package/Log/ PEAR Log] package) with the specified parameters and use that to log queries. Propel's statement logging happens at the DEBUG level (7); errors and warnings are logged at the appropriate (non-debug) level.
 
 === Building the Runtime Configuration ===
 

@@ -6,11 +6,10 @@ Propel is available as a [http://pear.php.net/manual/en/installation.getting.php
 
 Propel requirements are very light, allowing it to run on most PHP platforms:
 
- * [http://www.php.net/ PHP 5.2.4] or newer, with the following module enabled:
-   * DOM (libxml2)
+ * [http://www.php.net/ PHP 5.2.4] or newer, with the DOM (libxml2) module enabled
  * A supported database (MySQL, MS SQL Server, PostgreSQL, SQLite, Oracle)
  
-Tip: Propel uses the PDO and SPL components, which are bundled and enabled by default in PHP5.
+'''Tip''': Propel uses the PDO and SPL components, which are bundled and enabled by default in PHP5.
 
 == Propel Components ==
 
