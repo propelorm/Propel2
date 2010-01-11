@@ -212,24 +212,38 @@ class ModelCriteria extends Criteria
 	 *
 	 * @see        Criteria::add()
 	 * 
-	 * @param      mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
-	 *                           Or an array of column phpNames
-	 * @param      mixed  $value A value for the condition
-	 *                           Or an array of values
+	 * @param      string $column     A string representing thecolumn phpName, e.g. 'AuthorId'
+	 * @param      mixed  $value      A value for the condition
 	 * @param      string $comparison What to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
 	public function filterBy($column, $value, $comparison = Criteria::EQUAL)
 	{
-		if (is_array($column)) {
-			for ($i = 0, $count = count($column); $i < $count; $i++) {
-				$columnItem = array_shift($column);
-				$valueItem = array_shift($value);
-				$this->add($this->getRealColumnName($columnItem), $valueItem, $comparison);
-			}
-		} else {
-			$this->add($this->getRealColumnName($column), $value, $comparison);
+		return $this->add($this->getRealColumnName($column), $value, $comparison);
+	}
+	
+	/**
+	 * Adds a list of conditions on the columns of the current model
+	 * Uses introspection to translate the column phpName into a fully qualified name
+	 * Warning: recognizes only the phpNames of the main Model (not joined tables)
+	 * <code>
+	 * $c->filterByArray(array(
+	 *  'Title'     => 'War And Peace',
+	 *  'Publisher' => $publisher
+	 * ));
+	 * </code>
+	 *
+	 * @see        filterBy()
+	 * 
+	 * @param      mixed $conditions An array of conditions, using column phpNames as key
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function filterByArray($conditions)
+	{
+		foreach ($conditions as $column => $args) {
+			call_user_func_array(array($this, 'filterBy' . $column), (array) $args);
 		}
 		
 		return $this;
@@ -849,17 +863,39 @@ class ModelCriteria extends Criteria
 	 * @see       filterBy()
 	 * @see       find()
 	 *
-	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
-	 *                          Or an array of column phpNames
-	 * @param     mixed  $value A value for the condition
-	 *                          Or an array of values
-	 * @param     PropelPDO $con an optional connection object
+	 * @param     string    $column A string representing the column phpName, e.g. 'AuthorId'
+	 * @param     mixed     $value  A value for the condition
+	 * @param     PropelPDO $con    An optional connection object
 	 *
 	 * @return    mixed the list of results, formatted by the current formatter
 	 */
 	public function findBy($column, $value, $con = null)
 	{
 		$this->filterBy($column, $value);
+
+		return $this->find($con);
+	}
+
+	/**
+	 * Apply a list of conditions on columns and issues the SELECT query
+	 * <code>
+	 * $c->findByArray(array(
+	 *  'Title'     => 'War And Peace',
+	 *  'Publisher' => $publisher
+	 * ), $con);
+	 * </code>
+	 *
+	 * @see       filterByArray()
+	 * @see       find()
+	 * 
+	 * @param     mixed $conditions An array of conditions, using column phpNames as key
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the list of results, formatted by the current formatter
+	 */
+	public function findByArray($conditions, $con = null)
+	{
+		$this->filterByArray($conditions);
 
 		return $this->find($con);
 	}
@@ -871,9 +907,7 @@ class ModelCriteria extends Criteria
 	 * @see       findOne()
 	 *
 	 * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
-	 *                          Or an array of column phpNames
 	 * @param     mixed  $value A value for the condition
-	 *                          Or an array of values
 	 * @param     PropelPDO $con an optional connection object
 	 *
 	 * @return    mixed the result, formatted by the current formatter
@@ -881,6 +915,30 @@ class ModelCriteria extends Criteria
 	public function findOneBy($column, $value, $con = null)
 	{
 		$this->filterBy($column, $value);
+
+		return $this->findOne($con);
+	}
+
+	/**
+	 * Apply a list of conditions on columns and issues the SELECT ... LIMIT 1 query
+	 * <code>
+	 * $c->findOneByArray(array(
+	 *  'Title'     => 'War And Peace',
+	 *  'Publisher' => $publisher
+	 * ), $con);
+	 * </code>
+	 *
+	 * @see       filterByArray()
+	 * @see       findOne()
+	 * 
+	 * @param     mixed $conditions An array of conditions, using column phpNames as key
+	 * @param     PropelPDO $con an optional connection object
+	 *
+	 * @return    mixed the list of results, formatted by the current formatter
+	 */
+	public function findOneByArray($conditions, $con = null)
+	{
+		$this->filterByArray($conditions);
 
 		return $this->findOne($con);
 	}
@@ -1392,14 +1450,16 @@ EOT;
 			{
 				$columns = substr($name, strlen($method));
 				if(in_array($method, array('findBy', 'findOneBy')) && strpos($columns, 'And') !== false) {
+					$method = $method . 'Array';
 					$columns = explode('And', $columns);
-					$values = array();
-					for($i=0, $count = count($columns); $i < $count; $i++) {
-						$values[]= array_shift($arguments);
+					$conditions = array();
+					foreach ($columns as $column) {
+						$conditions[$column] = array_shift($arguments);
 					}
-					array_unshift($arguments, $values);
-				}				
-				array_unshift($arguments, $columns);
+					array_unshift($arguments, $conditions);
+				} else {
+					array_unshift($arguments, $columns);
+				}
 				return call_user_func_array(array($this, $method), $arguments);
 			}
 		}

@@ -1024,7 +1024,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 
 	}
 	
-	
 	public function testFindBy()
 	{
 		try {
@@ -1045,11 +1044,15 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$book = $books->shift();
 		$this->assertTrue($book instanceof Book, 'findBy() returns an array of Model objects by default');
 		$this->assertEquals('Don Juan', $book->getTitle(), 'findBy() returns the model objects matching the query');
-		
+	}
+
+	public function testFindByArray()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$c = new ModelCriteria('bookstore', 'Book');
-		$books = $c->findBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
+		$books = $c->findByArray(array('Title' => 'Don Juan', 'ISBN' => 12345), $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findBy() adds multiple column conditions');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByArray() adds multiple column conditions');
 	}
 	
 	public function testFindOneBy()
@@ -1069,9 +1072,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds simple column conditions');
 		$this->assertTrue($book instanceof Book, 'findOneBy() returns a Model object by default');
 		$this->assertEquals('Don Juan', $book->getTitle(), 'findOneBy() returns the model object matching the query');
-		
+	}
+
+	public function testFindOneByArray()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$c = new ModelCriteria('bookstore', 'Book');
-		$books = $c->findOneBy(array('Title', 'ISBN'), array('Don Juan', 12345), $con);
+		$book = $c->findOneByArray(array('Title' => 'Don Juan', 'ISBN' => 12345), $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.TITLE='Don Juan' AND book.ISBN=12345 LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds multiple column conditions');
 	}
