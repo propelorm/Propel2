@@ -10,7 +10,7 @@
 	
 	<target name="phpdoc-runtime" description="build runtime docs">
 		<phpdoc title="Propel Runtime" destdir="api/runtime" sourcecode="yes" output="HTML:Smarty:PHP">
-			<fileset dir="${runtime.dir}/classes">
+			<fileset dir="${runtime.dir}/lib">
 				<include name="**/*.php" />
 			</fileset>
 		</phpdoc>
@@ -18,7 +18,7 @@
 
 	<target name="phpdoc-generator" description="build generator docs">
 		<phpdoc title="Propel Generator" destdir="api/generator" sourcecode="yes" output="HTML:Smarty:PHP">
-			<fileset dir="${generator.dir}/classes">
+			<fileset dir="${generator.dir}/lib">
 				<include name="**/*.php" />
 			</fileset>
 			<!--
