@@ -386,17 +386,20 @@ class ForeignKey extends XMLElement
 	 */
 	public function isMatchedByInverseFK()
 	{
+		return (bool) $this->getInverseFK();
+	}
+	
+	public function getInverseFK()
+	{
 		$foreignTable = $this->getForeignTable();
 		$map = $this->getForeignLocalMapping();
 
 		foreach ($foreignTable->getForeignKeys() as $refFK) {
 			$fkMap = $refFK->getLocalForeignMapping();
 			if ( ($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap) ) { // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
-				return true;
+				return $refFK;
 			}
 		}
-
-		return false;
 	}
 
 	/**
