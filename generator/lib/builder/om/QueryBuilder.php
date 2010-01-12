@@ -179,8 +179,9 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 **/
 	protected function addConstructorOpen(&$script)
 	{
+		$table = $this->getTable();
 		$script .= "
-	public function __construct(\$dbName = '" . $this->getTable()->getDatabase()->getName() . "', \$modelName = '" . $this->getTable()->getPhpName() . "', \$modelAlias = null)
+	public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . $this->getNewStubObjectBuilder($table)->getClassname() . "', \$modelAlias = null)
 	{";
 	}
 
@@ -338,7 +339,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		$colPhpName = $col->getPhpName();
 		$colName = $col->getName();
 		$variableName = $col->getStudlyPhpName();
-		$qualifiedName = $col->getConstantName();
+		$qualifiedName = $this->getColumnConstant($col);
 		$script .= "
 	/**
 	 * Filter the query on the $colName column
@@ -420,24 +421,25 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		$table = $this->getTable();
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getForeignTable($fk);
+		$fkPhpName = $this->getNewStubObjectBuilder($fkTable)->getClassname();
 		$relationName = $this->getFKPhpNameAffix($fk);
 		$objectName = '$' . $fkTable->getStudlyPhpName();
 		$script .= "
 	/**
-	 * Filter the query by a related " . $fkTable->getPhpName() . " object
+	 * Filter the query by a related $fkPhpName object
 	 *
-	 * @param     " . $fkTable->getPhpName() . " " . $objectName . " the related object to use as filter
+	 * @param     $fkPhpName $objectName  the related object to use as filter
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName(" . $fkTable->getPhpName() . " $objectName)
+	public function filterBy$relationName($fkPhpName $objectName)
 	{
 		return \$this";
 		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $localColumnObject->getConstantName() . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
+			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
 		}
 		$script .= ";
 	}
@@ -453,24 +455,25 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		$table = $this->getTable();
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
+		$fkPhpName = $this->getNewStubObjectBuilder($fkTable)->getClassname();
 		$relationName = $this->getRefFKPhpNameAffix($fk);
 		$objectName = '$' . $fkTable->getStudlyPhpName();
 		$script .= "
 	/**
-	 * Filter the query by a related " . $fkTable->getPhpName() . " object
+	 * Filter the query by a related $fkPhpName object
 	 *
-	 * @param     " . $fkTable->getPhpName() . " " . $objectName . " the related object to use as filter
+	 * @param     $fkPhpName $objectName  the related object to use as filter
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName(" . $fkTable->getPhpName() . " $objectName)
+	public function filterBy$relationName($fkPhpName $objectName)
 	{
 		return \$this";
 		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $localColumnObject->getConstantName() . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
+			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
 		}
 		$script .= ";
 	}
@@ -485,7 +488,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	{
 		$table = $this->getTable();
 		$fkTable = $this->getForeignTable($fk);
-		$queryClass = $fkTable->getPhpName() . 'Query';
+		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getFKPhpNameAffix($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
 	}
@@ -498,7 +501,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	{
 		$table = $this->getTable();
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
-		$queryClass = $fkTable->getPhpName() . 'Query';
+		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getRefFKPhpNameAffix($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
 	}

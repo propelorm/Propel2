@@ -1524,7 +1524,7 @@ abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->
 			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception \$e) {
-			throw new PropelException(\"Error populating ".$table->getPhpName()." object\", \$e);
+			throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassname()." object\", \$e);
 		}";
 	}
 

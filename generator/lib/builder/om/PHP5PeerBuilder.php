@@ -148,21 +148,26 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addStaticTableMapRegistration(&$script)
 	{
 		$table = $this->getTable();
-
+		
 		$script .= "
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
 ".$this->getClassName()."::buildTableMap();
 
 ";
-    $this->applyBehaviorModifier('peerFilter', $script, "");
+		$this->applyBehaviorModifier('peerFilter', $script, "");
 	}
-
-  public function getTableMapClass()
-  {
-    return ($this->getTable()->isAbstract() ? '' : $this->getTable()->getPhpName()) . 'TableMap';
-  }
-
+	
+	public function getTableMapClass()
+	{
+		return $this->getTablePhpName() . 'TableMap';
+	}
+	
+	public function getTablePhpName()
+	{
+		return ($this->getTable()->isAbstract() ? '' : $this->getStubObjectBuilder()->getClassname());
+	}
+	
 	/**
 	 * Adds constant and variable declarations that go at the top of the class.
 	 * @param      string &$script The script will be modified in this method.
@@ -171,8 +176,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addConstantsAndAttributes(&$script)
 	{
 		$dbName = $this->getDatabase()->getName();
-	  $tableName = $this->prefixTableName($this->getTable()->getName());
-	  $tablePhpName = $this->getTable()->isAbstract() ? '' : $this->getTable()->getPhpName();
+		$tableName = $this->prefixTableName($this->getTable()->getName());
+		$tablePhpName = $this->getTablePhpName();
 		$script .= "
 	/** the default database name for this class */
 	const DATABASE_NAME = '$dbName';

@@ -402,6 +402,34 @@ abstract class DataModelBuilder
 	}
 
 	/**
+	 * Convenience method to return a NEW Object stub class builder instance.
+	 *
+	 * This is used from the query builders to get
+	 * an object builder for a RELATED table.
+	 *
+	 * @param      Table $table
+	 * @return     ObjectBuilder
+	 */
+	public function getNewStubObjectBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
+	}
+
+	/**
+	 * Convenience method to return a NEW query stub class builder instance.
+	 *
+	 * This is used from the query builders to get
+	 * a query builder for a RELATED table.
+	 *
+	 * @param      Table $table
+	 * @return     QueryBuilder
+	 */
+	public function getNewStubQueryBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
+	}
+
+	/**
 	 * Gets the GeneratorConfig object.
 	 *
 	 * @return     GeneratorConfig
