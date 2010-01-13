@@ -14,10 +14,12 @@ But before saving it, you probably want to define the value for its columns. For
 /* initialize Propel, etc. */
 
 $author = new Author();
-$author->setFirstName("Jane");
-$author->setLastName("austen");
+$author->setFirstName('Jane');
+$author->setLastName('austen');
 $author->save();
 }}}
+
+<hartym> ok c'est pas très important, mais sachant que les doubles quotes nécessitent un peu plus de travail pour PHP, les simples sont plus adéquats, imho.
 
 The column names used in the `setXXX()` methods correspond to the `phpName` attribute of the `<column>` tag in your schema, or to a CamelCase version of the column name if the `phpName` is not set.
 
@@ -34,7 +36,7 @@ Propel maps the columns of a table into properties of the generated objects. For
 {{{
 #!php
 <?php
-echo $author->getId();         // 1
+echo $author->getId();        // 1
 echo $author->getFirstName(); // 'Jane'
 echo $author->getLastName();  // 'austen'
 }}}
@@ -94,7 +96,7 @@ $selectedAuthors = AuthorQuery::create()->findPKs(array(1,2,3,4,5,6,7));
 
 To retrieve rows other than by the primary key, use the Query's `find()` method.
 
-An empty Query object carries no condition,and returns all the rows of the table
+An empty Query object carries no condition, and returns all the rows of the table
 {{{
 #!php
 <?php
@@ -124,7 +126,7 @@ You can also easily limit and order the results on a query. Once again, the Quer
 #!php
 <?php
 $authors = AuthorQuery::create()
-  ->orderByLasName()
+  ->orderByLastName()
   ->limit(10)
   ->find();
 }}}
@@ -147,7 +149,7 @@ $author = AuthorQuery::create()
 $author = AuthorQuery::create()->findOneByFirstName('Jane');
 }}}
 
-The Propel Query API is very powerful. the next chapter will teach you to use it to add conditions on related objects. If you can't wait, jump to the [wiki:Users/Documentation/1.5/ModelCriteria Query API reference].
+The Propel Query API is very powerful. The next chapter will teach you to use it to add conditions on related objects. If you can't wait, jump to the [wiki:Users/Documentation/1.5/ModelCriteria Query API reference].
 
 === Using Custom SQL ===
 

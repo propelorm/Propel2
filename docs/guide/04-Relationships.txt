@@ -1,6 +1,6 @@
 = Basic Relationships =
 
-The definition of foreign keys in your schema allows Propel to add smart methods to the generated model and query objects. In practice, these generated methods mean that you will never actually have to deal with primary and foreign keys youself. It makes the task of dealing with relations extremely straighforward. 
+The definition of foreign keys in your schema allows Propel to add smart methods to the generated model and query objects. In practice, these generated methods mean that you will never actually have to deal with primary and foreign keys yourself. It makes the task of dealing with relations extremely straightforward. 
 
 === Inserting A Related Row ===
 
@@ -39,14 +39,14 @@ $author->setFirstName("Leo");
 $author->setLastName("Tolstoy");
 // no need to save the author yet
 
-$pub = new Publisher();
-$pub->setName("Viking Press");
+$publisher = new Publisher();
+$publisher->setName("Viking Press");
 // no need to the publisher yet
 
 $book = new Book();
 $book->setTitle("War & Peace");
 $book->setIsbn("0140444173");
-$book->setPublisher($pub);
+$book->setPublisher($publisher);
 $book->setAuthor($author);
 $book->save(); // saves all 3 objects!
 }}}
@@ -75,7 +75,7 @@ foreach ($books as $book) {
 }
 }}}
 
-Notice that Propel generated a `getBooks()` method returning an array of `Book` objects, rather than a `getBook()` method. This is because the definition of a foreign key defines a many-to-one relaitonship, seen from the other end as a one-to-many relationship.
+Notice that Propel generated a `getBooks()` method returning an array of `Book` objects, rather than a `getBook()` method. This is because the definition of a foreign key defines a many-to-one relationship, seen from the other end as a one-to-many relationship.
 
 === One-to-One Relationships ===
 
@@ -171,7 +171,7 @@ You can see how the indentation of the method calls provide a clear explanation 
 
 == On-Update and On-Delete Triggers ==
 
-Propel also supports the ''ON UPDATE'' and ''ON DELETE'' aspect of foreign keys. These properties can be specified in the ''<foreign-key>'' tag using the `onUpdate` and `onDelete` attributes. Propel supports values of `CASCADE`, `SETNULL`, and `RESTRICT` for these attributes. For databases that have native foreign key support, these trigger events will be specified at the datbase level when the foreign keys are created.  For databases that do not support foreign keys, this functionality will be emulated by Propel.
+Propel also supports the ''ON UPDATE'' and ''ON DELETE'' aspect of foreign keys. These properties can be specified in the `<foreign-key>` tag using the `onUpdate` and `onDelete` attributes. Propel supports values of `CASCADE`, `SETNULL`, and `RESTRICT` for these attributes. For databases that have native foreign key support, these trigger events will be specified at the datbase level when the foreign keys are created. For databases that do not support foreign keys, this functionality will be emulated by Propel.
 
 {{{
 #!xml

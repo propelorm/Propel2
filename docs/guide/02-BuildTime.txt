@@ -143,13 +143,13 @@ propel.database = mysql
 propel.project = bookstore
 }}}
 
-Use your own database vendor name, chosen among pgsql, mysql, sqlite, mssql, and oracles.
+Use your own database vendor driver, chosen among pgsql, mysql, sqlite, mssql, and oracle.
 
-Ypu can learn more about the available build settings and their possible values in the  [wiki:Users/Documentation/1.5/Build-Configuration build configuration reference].
+You can learn more about the available build settings and their possible values in the  [wiki:Users/Documentation/1.5/Build-Configuration build configuration reference].
 
 === Using the `propel-gen` Script To Build The Model ===
 
-The Propel generator uses the `propel-gen` script, as seen in the previous chapter. This executable expects and a command name as its argument.
+The Propel generator uses the `propel-gen` script, as seen in the previous chapter. This executable expects a command name as its argument.
 
 Open a terminal and browse to the `bookstore/` directory, where you saved the two previous files (`schema.xml`, and `build.properties`). Then use the `propel-gen` script to call the "Object Model generator" command using its shortcut - "om":
 

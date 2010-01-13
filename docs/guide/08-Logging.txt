@@ -133,7 +133,7 @@ class MyLogger implements BasicLogger
   public function emergency($m)
   {
     $this->log($m, Propel::LOG_EMERG);
-  } 
+  }
   public function alert($m)
   {
     $this->log($m, Propel::LOG_ALERT);
@@ -162,13 +162,13 @@ class MyLogger implements BasicLogger
   {
     $this->log($m, Propel::LOG_DEBUG);
   }
-  
+
   public function log($message, $priority)
   {
     $color = $this->priorityToColor($priority);
     echo '<p style="color: ' . $color . '">$message</p>';
   }
-  
+
   private function priorityToColor($priority)
   {
      switch($priority) {
@@ -177,7 +177,7 @@ class MyLogger implements BasicLogger
        case Propel::LOG_CRIT:
        case Propel::LOG_ERR:
          return 'red';
-         break;       
+         break;
        case Propel::LOG_WARNING:
          return 'orange';
          break;
@@ -229,7 +229,7 @@ Alternatively, you can ask Propel to always enable the debug mode for a particul
           <classname>DebugPDO</classname>
 }}}
 
-Tip: You can use your own connection class there, but make sure that it extends `PropelPDO` and not only `PDO`. Propel requires certain fixes to PDO API that are provided by `PropelPDO`.
+'''Tip''': You can use your own connection class there, but make sure that it extends `PropelPDO` and not only `PDO`. Propel requires certain fixes to PDO API that are provided by `PropelPDO`.
 
 === Counting Queries ===
 
@@ -271,7 +271,7 @@ $stmt->execute();
 echo $con->getLastExecutedQuery(); // 'SELECT * FROM my_obj where name = "foo"';
 }}}
 
-Tip: The debug mode is intended for development use only. Do not use it in production environment, it logs too much information for a production server, and adds a small overhead to the database queries.
+'''Tip''': The debug mode is intended for development use only. Do not use it in production environment, it logs too much information for a production server, and adds a small overhead to the database queries.
 
 == Full Query Logging ==
 
@@ -443,4 +443,4 @@ $con->setLogger($logger);
 }
 }}}
 
-This will not affect the general Propel logging, but only the full query logging. That wayn you can log the Propel error and warnings in one file, and the SQL queries in another file.
+This will not affect the general Propel logging, but only the full query logging. That way you can log the Propel error and warnings in one file, and the SQL queries in another file.

@@ -1,6 +1,6 @@
 = Behaviors =
 
-Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way. 
+Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way.
 
 == Pre and Post Hooks For `save()` And `delete()` Methods == 
 
@@ -56,7 +56,7 @@ $b->save();
 echo $b->getCreatedAt(); // 2009-10-02 18:14:23
 }}}
 
-Tip: Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
+'''Tip''': Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
 
 {{{
 #!ini
@@ -104,7 +104,7 @@ class Author extends BaseAuthor
     $this->setCreatedAt(time());
   }
 }
-}}} 
+}}}
 
 Even if the code of this example is very simple, the repetition of code is already too much. Just imagine a more complex behavior, and you will understand that using the copy-and-paste technique soon leads to a maintenance nightmare.
 
@@ -198,7 +198,7 @@ Propel will then find the `FormidableBehavior` class whenever you use the `formi
 </table>
 }}}
 
-Tip: If you use autoloading during the build process, and if the behavior classes benefit from the autoloading, then you don't even need to declare the path to the behavior class.
+'''Tip''': If you use autoloading during the build process, and if the behavior classes benefit from the autoloading, then you don't even need to declare the path to the behavior class.
 
 == Applying a Behavior To All Tables ==
 

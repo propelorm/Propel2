@@ -2,7 +2,7 @@
 
 Database transactions are the key to assure the data integrity and the performance of database queries. Propel uses transactions internally, and provides a simple API to use them in your own code.
 
-Tip: If the [http://en.wikipedia.org/wiki/ACID ACID] acronym doesn't ring a bell, you should probably learn some [http://en.wikipedia.org/wiki/Database_transaction fundamentals about database transactions] before reading further.
+'''Tip''': If the [http://en.wikipedia.org/wiki/ACID ACID] acronym doesn't ring a bell, you should probably learn some [http://en.wikipedia.org/wiki/Database_transaction fundamentals about database transactions] before reading further.
 
 == Wrapping Queries Inside a Transaction ==
 
@@ -15,26 +15,24 @@ public function transferMoney($fromAccountNumber, $toAccountNumber, $amount)
 {
   // get the PDO connection object from Propel
   $con = Propel::getConnection(AccountPeer::DATABASE_NAME);
-  
+
   $fromAccount = AccountPeer::retrieveByPk($fromAccountNumber, $con);
   $toAccount   = AccountPeer::retrieveByPk($toAccountNumber, $con);
-  
+
   $con->beginTransaction();
-  
+
   try {
-    
     // remove the amount from $fromAccount
     $fromAccount->setValue($fromAccount->getValue() - $amount);
     $fromAccount->save($con);
     // add the amount to $toAccount
     $toAccount->setValue($toAccount->getValue() + $amount);
-    $toAccount->save($con)
-  
+    $toAccount->save($con);
+
     $con->commit();
-  
   } catch (Exception $e) {
-     $con->rollback();
-     throw $e;
+    $con->rollback();
+    throw $e;
   }
 }
 }}}
@@ -93,7 +91,7 @@ class Book extends BaseBook
     $author = $this->getAuthor();
     $nbBooks = $author->countBooks($con);
     $author->setNbBooks($nbBooks);
-    $author->save($con); 
+    $author->save($con);
   }
 }
 }}}
@@ -110,21 +108,19 @@ class Book extends BaseBook
     $con->beginTransaction();
 
     try {
-      
       // insert/update query for the current object
       $this->doSave($con);
-      
+
       // postSave hook
       $author = $this->getAuthor();
       $nbBooks = $author->countBooks($con);
       $author->setNbBooks($nbBooks);
-      $author->save($con); 
-    
+      $author->save($con);
+
       $con->commit();
-    
     } catch (Exception $e) {
-       $con->rollback();
-       throw $e;
+      $con->rollback();
+      throw $e;
     }
   }
 }
@@ -132,7 +128,7 @@ class Book extends BaseBook
 
 In this example, the `nb_books` column of the `author` table will always we synchronized with the number of books. If anything happens during the transaction, the saving of the book is rolled back, as well as the `nb_books` column update. The transaction serves to preserve data consistency in a denormalized schema ("Consistency" stands for the C in ACID).
 
-Tip: Check the [wiki:Users/Documentation/1.5/Behaviors behaviors documentation] for details about the pre- and post- hooks in Propel model objects.
+'''Tip''': Check the [wiki:Users/Documentation/1.5/Behaviors behaviors documentation] for details about the pre- and post- hooks in Propel model objects.
 
 == Nested Transactions ==
 
@@ -147,49 +143,50 @@ function deleteBooksWithNoPrice(PropelPDO $con)
   try {
     $c = new Criteria();
     $c->add(BookPeer::PRICE, null, Criteria::ISNULL);
-    BookPeer::doDelete($c, $con); 
+    BookPeer::doDelete($c, $con);
     $con->commit();
   } catch (Exception $e) {
-     $con->rollback();
-     throw $e;
+    $con->rollback();
+    throw $e;
   }
 }
 
 function deleteAuthorsWithNoEmail(PropelPDO $con)
 {
   $con->beginTransaction();
-  try {  
+  try {
     $c = new Criteria();
     $c->add(AuthorPeer::EMAIL, null, Criteria::ISNULL);
-    AuthorPeer::doDelete($c, $con); 
+    AuthorPeer::doDelete($c, $con);
     $con->commit();
   } catch (Exception $e) {
-     $con->rollback();
-     throw $e;
+    $con->rollback();
+    throw $e;
   }
 }
 
 function cleanup(PropelPDO $con)
 {
   $con->beginTransaction();
-  try {  
+  try {
     deleteBooksWithNoPrice($con);
     deleteAuthorsWithNoEmail($con);
     $con->commit();
   } catch (Exception $e) {
      $con->rollback();
      throw $e;
-  }  
+  }
 }
 }}}
 
-All three functions alter data in a transaction, ensuring data integrity for each. In addition, the `cleanup()` function actually executes two nested transactions inside one main transaction. 
+All three functions alter data in a transaction, ensuring data integrity for each. In addition, the `cleanup()` function actually executes two nested transactions inside one main transaction.
 
 Propel deals with this case by seeing only the outermost transaction, and ignoring the `beginTransaction()`, `commit()` and `rollback()` statements of nested transactions. If nothing wrong happens, then the last `commit()` call (after both `deleteBooksWithNoPrice()` and `deleteAuthorsWithNoEmail()` end) triggers the actual database commit. However, if an exception is thrown in either one of these nested transactions, it is escalated to the main `catch` statement in `cleanup()` so that the entire transaction (starting at the main `beginTransaction()`) is rolled back.
 
-So you can use transactions everywhere it's necessary in your code, without worrying about nesting them. Propel will always commit or rollback everything altogether.
+So you can use transactions everywhere it's necessary in your code, without worrying about nesting them. Propel will always commit or rollback everything altogether, whether the RDBMS supports nested transactions or not.
 
-Tip: This allows you to wrap all your application code inside one big transaction for a better integrity. 
+'''Tip''': This allows you to wrap all your application code inside one big transaction for a better integrity.
+
 == Using Transactions To Boost Performance ==
 
 A database transaction has a cost in terms of performance. In fact, for simple data manipulation, the cost of the transaction is more important than the cost of the query itself. Take the following example:
@@ -288,4 +285,5 @@ However, it's a good practice to pass the connection explicitely, and for three 
  * Currently there is no support for row locking (e.g. `SELECT blah FOR UPDATE`).
  * You must rethrow the exception caught in the `catch` statement of nested transactions, otherwise there is a risk that the global rollback doesn't occur.
  * True nested transactions, with partial rollback, are only possible in MSSQL, and can be emulated in other RDBMS through savepoints. This feature may be added to Propel in the future, but for the moment, only the outermost PHP transaction triggers a database transaction.
-  * If you rollback a partially executed transaction and ignore the exception thrown, there are good chances that some of your objects are out of sync with the database. The good practice is to always let a transaction exception escalate until it stops the script execution.
+ * If you rollback a partially executed transaction and ignore the exception thrown, there are good chances that some of your objects are out of sync with the database. The good practice is to always let a transaction exception escalate until it stops the script execution.
+
