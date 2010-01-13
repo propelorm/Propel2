@@ -196,7 +196,7 @@ foreach	($root->getBranch() as $node) {
 
 == Parameters ==
 
-By default, the behavior adds three columns to the model - four if you use the scope feature. If these columns are already described in the schema, set the `add_columns` parameter to 'false'. This also allows you to use custom names for the nested sets columns. The following schema illustrates a complete customization of the behavior:
+By default, the behavior adds three columns to the model - four if you use the scope feature. You can use custom names for the nested sets columns. The following schema illustrates a complete customization of the behavior:
 
 {{{
 #!xml
@@ -208,7 +208,6 @@ By default, the behavior adds three columns to the model - four if you use the s
   <column name="thread_id" type="INTEGER" />
   <column name="body" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="nested_set">
-    <parameter name="add_columns" value="false" />
     <parameter name="left_column" value="lft" />
     <parameter name="right_column" value="rgt" />
     <parameter name="level_column" value="lvl" />

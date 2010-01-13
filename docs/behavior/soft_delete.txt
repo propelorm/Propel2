@@ -90,21 +90,7 @@ BookQuery::create()->forceDelete();
 
 == Parameters ==
 
-By default, the behavior adds one column to the model. If this column is already described in the schema, set the `add_columns` parameter to 'false', as follows:
-
-{{{
-#!xml
-<table name="book">
-  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-  <column name="title" type="VARCHAR" required="true" primaryString="true" />
-  <column name="deleted_at" type="TIMESTAMP" />
-  <behavior name="soft_delete">
-    <parameter name="add_columns" value="false" />
-  </behavior>
-</table>
-}}}
-
-You can also change the name of the column by setting the `deleted_column` parameter:
+You can change the name of the column added by the behavior by setting the `deleted_column` parameter:
 
 {{{
 #!xml
@@ -112,20 +98,6 @@ You can also change the name of the column by setting the `deleted_column` param
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <column name="my_deletion_date" type="TIMESTAMP" />
-  <behavior name="soft_delete">
-    <parameter name="add_columns" value="false" />
-    <parameter name="deleted_column" value="my_deletion_date" />
-  </behavior>
-</table>
-}}}
-
-If you keep the `add_columns` parameter to 'true' by set custom column name, then the behavior will generate this column:
-
-{{{
-#!xml
-<table name="book">
-  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-  <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="soft_delete">
     <parameter name="deleted_column" value="my_deletion_date" />
   </behavior>

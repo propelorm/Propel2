@@ -32,7 +32,6 @@ class TimestampableBehavior extends Behavior
 {
   // default parameters value
   protected $parameters = array(
-    'add_columns'   => 'true',
     'create_column' => 'created_at',
     'update_column' => 'updated_at'
   );
@@ -42,12 +41,13 @@ class TimestampableBehavior extends Behavior
    */
   public function modifyTable()
   {
-    if ($this->getParameter('add_columns') == 'true')
-    {
+    if(!$this->getTable()->containsColumn($this->getParameter('create_column'))) {
       $this->getTable()->addColumn(array(
         'name' => $this->getParameter('create_column'),
         'type' => 'TIMESTAMP'
       ));
+    }
+    if(!$this->getTable()->containsColumn($this->getParameter('update_column'))) {
       $this->getTable()->addColumn(array(
         'name' => $this->getParameter('update_column'),
         'type' => 'TIMESTAMP'

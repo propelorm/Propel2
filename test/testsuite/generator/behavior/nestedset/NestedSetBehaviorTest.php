@@ -49,7 +49,7 @@ class NestedSetBehaviorTest extends BookstoreTestBase
 	public function testParameters()
 	{
 		$table10 = Table10Peer::getTableMap();
-		$this->assertEquals(count($table10->getColumns()), 6, 'nested_set does not add columns when add_columns parameter is false');
+		$this->assertEquals(count($table10->getColumns()), 6, 'nested_set does not add columns when they already exist');
 		$this->assertTrue(method_exists('Table10', 'getLeftValue'), 'nested_set maps the left_value getter with the tree_left column');
 		$this->assertTrue(method_exists('Table10', 'getRightValue'), 'nested_set maps the right_value getter with the tree_right column');
 		$this->assertTrue(method_exists('Table10', 'getLevel'), 'nested_set maps the level getter with the tree_level column');

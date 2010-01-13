@@ -11,7 +11,6 @@
 		<column name="created_on" type="TIMESTAMP" />
 		<column name="updated_on" type="TIMESTAMP" />
 		<behavior name="timestampable">
-		  <parameter name="add_columns" value="false" />
 		  <parameter name="create_column" value="created_on" />
 		  <parameter name="update_column" value="updated_on" />
 	  </behavior>
@@ -41,7 +40,6 @@
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 		<column name="deleted_on" type="TIMESTAMP" />
 		<behavior name="soft_delete">
-			<parameter name="add_columns" value="false" />
 			<parameter name="deleted_column" value="deleted_on" />
 		</behavior>
 	</table>

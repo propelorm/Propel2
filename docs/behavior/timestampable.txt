@@ -32,22 +32,7 @@ echo $b->getUpdatedAt(); // 2009-10-02 18:14:25
 
 == Parameters ==
 
-By default, the behavior adds two columns to the model. If these columns are already described in the schema, set the `add_columns` parameter to 'false', as follows:
-
-{{{
-#!xml
-<table name="book">
-  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-  <column name="title" type="VARCHAR" required="true" primaryString="true" />
-  <column name="created_at" type="TIMESTAMP" />
-  <column name="updated_at" type="TIMESTAMP" />
-  <behavior name="timestampable">
-    <parameter name="add_columns" value="false" />
-  </behavior>
-</table>
-}}}
-
-You can also change the name of the columns by setting the `create_column` and `update_column` parameters:
+You can change the name of the columns added by the behavior by setting the `create_column` and `update_column` parameters:
 
 {{{
 #!xml
@@ -56,21 +41,6 @@ You can also change the name of the columns by setting the `create_column` and `
   <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <column name="my_create_date" type="TIMESTAMP" />
   <column name="my_update_date" type="TIMESTAMP" />
-  <behavior name="timestampable">
-    <parameter name="add_columns" value="false" />
-    <parameter name="create_column" value="my_create_date" />
-    <parameter name="update_column" value="my_update_date" />
-  </behavior>
-</table>
-}}}
-
-If you keep the `add_columns` parameter to 'true' by set custom column names, then the behavior will generate these columns:
-
-{{{
-#!xml
-<table name="book">
-  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-  <column name="title" type="VARCHAR" required="true" primaryString="true" />
   <behavior name="timestampable">
     <parameter name="create_column" value="my_create_date" />
     <parameter name="update_column" value="my_update_date" />

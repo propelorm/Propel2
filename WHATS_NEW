@@ -330,7 +330,6 @@ The upgrade path is then pretty straightforward:
   <column name="tree_level" type="INTEGER"/>
   <column name="name" required="true" type="VARCHAR" size="10" />
   <behavior name="nested_set">
-    <parameter name="add_columns" value="false" />
     <parameter name="left_column" value="left" />
     <parameter name="right_column" value="rigt" />
     <parameter name="level_column" value="tree_level" />

@@ -39,7 +39,6 @@
 		<column name="my_level_column" type="INTEGER" required="false"/>
 		<column name="my_scope_column" type="INTEGER" required="false"/>
 		<behavior name="nested_set">
-			<parameter name="add_columns" value="false" />
 			<parameter name="left_column" value="my_left_column" />
 			<parameter name="right_column" value="my_right_column" />
 			<parameter name="level_column" value="my_level_column" />

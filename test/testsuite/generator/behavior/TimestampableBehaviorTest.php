@@ -38,7 +38,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     $this->assertTrue(method_exists('Table2', 'getCreatedAt'), 'Timestamplable adds a created_at column by default');
     $this->assertTrue(method_exists('Table2', 'getUpdatedAt'), 'Timestamplable adds an updated_at column by default');
     $table1 = Table1Peer::getTableMap();
-    $this->assertEquals(count($table1->getColumns()), 4, 'Timestampable does not add two columns when add_column is false');
+    $this->assertEquals(count($table1->getColumns()), 4, 'Timestampable does not add two columns when they already exist');
     $this->assertTrue(method_exists('Table1', 'getCreatedOn'), 'Timestamplable allows customization of create_column name');
     $this->assertTrue(method_exists('Table1', 'getUpdatedOn'), 'Timestamplable allows customization of update_column name');
   }

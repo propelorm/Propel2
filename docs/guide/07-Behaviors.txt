@@ -156,18 +156,17 @@ Behaviors often offer some parameters to tweak their effect. For instance, the `
 </table>
 }}}
 
-The `timestampable` behavior also offers a way to disable the column addition, which is useful if the creation and update date columns are already declared. As above, the customization uses a `<parameter>` tag:
+If the columns already exist in your schema, a behavior is smart enough not to add them one more time.
 
 {{{
 #!xml
-<table name="author">
+<table name="book">
   ...
-  <column name="creation_date" type="timestamp" />
-  <column name="update_date" type="timestamp" />
+  <column name="created_on" type="timestamp" />
+  <column name="updated_on" type="timestamp" />
   <behavior name="timestampable">
-    <parameter name="add_columns" value="false" />
-    <parameter name="create_column" value="creation_date" />
-    <parameter name="update_column" value="update_date" />
+    <parameter name="create_column" value="created_on" />
+    <parameter name="update_column" value="updated_on" />
   </behavior>
 </table>
 }}}

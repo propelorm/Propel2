@@ -33,7 +33,6 @@ class SoftDeleteBehavior extends Behavior
 {
 	// default parameters value
   protected $parameters = array(
-    'add_columns'    => 'true',
     'deleted_column' => 'deleted_at',
   );
   
@@ -42,8 +41,7 @@ class SoftDeleteBehavior extends Behavior
    */
   public function modifyTable()
   {
-    if ($this->getParameter('add_columns') == 'true')
-    {
+    if(!$this->getTable()->containsColumn($this->getParameter('deleted_column'))) {
       $this->getTable()->addColumn(array(
         'name' => $this->getParameter('deleted_column'),
         'type' => 'TIMESTAMP'
