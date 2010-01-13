@@ -238,7 +238,7 @@ $c->addCond('cond1', BookPeer::TITLE, 'Foo', Criteria::EQUAL); // creates a cond
 $c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL); // creates a condition named 'cond2'
 $c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);    // combine 'cond1' and 'cond2' with a logical OR
 // translates in SQL as
-// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar');
+// WHERE (book.TITLE = 'Foo' OR book.TITLE = 'Bar');
 }}}
  
 `combine()` accepts more than two conditions at a time:
@@ -251,7 +251,7 @@ $c->addCond('cond2', BookPeer::TITLE, 'Bar', Criteria::EQUAL);
 $c->addCond('cond3', BookPeer::TITLE, 'FooBar', Criteria::EQUAL);
 $c->combine(array('cond1', 'cond2', 'cond3'), Criteria::LOGICAL_OR);
 // translates in SQL as
-// WHERE ((book.TITLE = 'foo' OR book.TITLE = 'bar') OR book.TITLE = 'FooBar');
+// WHERE ((book.TITLE = 'Foo' OR book.TITLE = 'Bar') OR book.TITLE = 'FooBar');
 }}}
 
 `combine()` itself can return a named condition to be combined later. So it allows for any level of logical complexity:
@@ -271,7 +271,7 @@ $c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34');
 
 $c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND);
 
-// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
+// WHERE (book.TITLE = 'Foo' OR book.TITLE = 'Bar') 
 //   AND (book.ISBN = '1234' OR book.ISBN = '4567');
 }}}
 
@@ -291,7 +291,7 @@ $books = Bookquery::create()
   ->combine(array('cond3', 'cond4'), Criteria::LOGICAL_OR, 'cond34')
   ->combine(array('cond12', 'cond34'), Criteria::LOGICAL_AND)
   ->find();
-// WHERE (book.TITLE = 'foo' OR book.TITLE = 'bar') 
+// WHERE (book.TITLE = 'Foo' OR book.TITLE = 'Bar') 
 //   AND (book.ISBN = '1234' OR book.ISBN = '4567');
 }}}
 
