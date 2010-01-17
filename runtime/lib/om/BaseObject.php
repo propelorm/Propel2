@@ -72,7 +72,7 @@ abstract class BaseObject
 	/**
 	 * Has specified column been modified?
 	 *
-	 * @param      string $col
+	 * @param      string $col column fully qualified name (BasePeer::TYPE_COLNAME), e.g. Book::AUTHOR_ID
 	 * @return     boolean True if $col has been modified.
 	 */
 	public function isColumnModified($col)

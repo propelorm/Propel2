@@ -30,6 +30,35 @@ echo $b->getCreatedAt(); // 2009-10-02 18:14:23
 echo $b->getUpdatedAt(); // 2009-10-02 18:14:25
 }}}
 
+The object query also has specific methods to retrieve recent objects and order them according to their update date:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->recentlyUpdated()  // adds a minimum value for the update date
+  ->lastUpdatedFirst() // orders the results by descending update date
+  ->find();
+}}}
+
+You can use any of the following methods in the object query:
+
+{{{
+#!php
+<?php
+// limits the query to recent objects
+ModelCriteria   recentlyCreated($nbDays = 7)
+ModelCriteria   recentlyUpdated($nbDays = 7)
+// orders the results
+ModelCriteria   lastCreatedFirst()  // order by creation date desc
+ModelCriteria   firstCreatedFirst() // order by creation date asc
+ModelCriteria   lastUpdatedFirst()  // order by update date desc
+ModelCriteria   firstUpdatedFirst() // order by update date asc
+}}}
+
+'''Tip''': You may need to keep the update date unchanged after an update on the object, for instance when you only update a calculated row. In this case, call the `keepUpdateDateUnchanged()` method on the object before saving it.
+
+
 == Parameters ==
 
 You can change the name of the columns added by the behavior by setting the `create_column` and `update_column` parameters:

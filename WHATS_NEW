@@ -444,6 +444,19 @@ echo $t1->getRank(); // 2
 
 This new behavior is fully unit tested and very customizable. Check out all you can do with `sortable` in the [wiki:Users/Documentation/1.5/Behaviors/sortable sortable behavior documentation].
 
+=== Timestampablke Behavior ===
+
+This behavior is not new, since it was introduced in Propel 1.4. However, with the introduction of model queries, it gains specific query methods that will ease your work when retrieving objects based on their update date:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->recentlyUpdated()  // adds a minimum value for the update date
+  ->lastUpdatedFirst() // orders the results by descending update date
+  ->find();
+}}}
+
 == Better `toArray()` ==
 
 When you call `toArray()` on an object, you can now ask for the related objects:
