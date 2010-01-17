@@ -194,44 +194,6 @@ public function unDelete(PropelPDO \$con = null)
  */
 public static function enableSoftDelete()
 {
-	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
-}
-
-/**
- * Disable the soft_delete behavior for this model
- */
-public static function disableSoftDelete()
-{
-	{$this->getTable()->getPhpName()}Peer::disableSoftDelete();
-}
-
-/**
- * Check the soft_delete behavior for this model
- * @return boolean true if the soft_delete behavior is enabled
- */
-public static function isSoftDeleteEnabled()
-{
-	return {$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled();
-}
-
-EOT;
-	}
-
-  public function staticAttributes()
-  {
-  	return "protected static \$softDelete = true;
-";
-  }
-  
-  public function staticMethods()
-  {
-  	return <<<EOT
-
-/**
- * Enable the soft_delete behavior for this model
- */
-public static function enableSoftDelete()
-{
 	self::\$softDelete = true;
 }
 
@@ -250,6 +212,38 @@ public static function disableSoftDelete()
 public static function isSoftDeleteEnabled()
 {
 	return self::\$softDelete;
+}
+
+EOT;
+	}
+  
+  public function staticMethods($builder)
+  {
+  	return <<<EOT
+
+/**
+ * Enable the soft_delete behavior for this model
+ */
+public static function enableSoftDelete()
+{
+	{$builder->getStubQueryBuilder()->getClassname()}::enableSoftDelete();
+}
+
+/**
+ * Disable the soft_delete behavior for this model
+ */
+public static function disableSoftDelete()
+{
+	{$builder->getStubQueryBuilder()->getClassname()}::disableSoftDelete();
+}
+
+/**
+ * Check the soft_delete behavior for this model
+ * @return boolean true if the soft_delete behavior is enabled
+ */
+public static function isSoftDeleteEnabled()
+{
+	return {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled();
 }
 
 /**
