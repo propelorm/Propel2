@@ -66,7 +66,7 @@ class TableTest extends PHPUnit_Framework_TestCase
   public function testGeneratorConfig()
   {
     $xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
     $table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
     $config = new GeneratorConfig();
     $config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
@@ -84,7 +84,7 @@ class TableTest extends PHPUnit_Framework_TestCase
     ));
     $platform->setGeneratorConfig($config);
     $xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
-    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
     $table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
     $this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
   }

@@ -75,7 +75,7 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	public function testGetConstantName()
 	{
 		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-schema.xml');
+    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
     $column = $appData->getDatabase("bookstore-behavior")->getTable('table1')->getColumn('title');
     $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
 	}

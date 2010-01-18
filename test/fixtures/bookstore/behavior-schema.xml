@@ -5,23 +5,6 @@
     <parameter name="foo" value="bar" />
   </behavior>
   
-	<table name="table1">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-		<column name="title" type="VARCHAR" size="100" primaryString="true" />
-		<column name="created_on" type="TIMESTAMP" />
-		<column name="updated_on" type="TIMESTAMP" />
-		<behavior name="timestampable">
-		  <parameter name="create_column" value="created_on" />
-		  <parameter name="update_column" value="updated_on" />
-	  </behavior>
-	</table>
-
-	<table name="table2">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-		<column name="title" type="VARCHAR" size="100" primaryString="true" />
-		<behavior name="timestampable" />
-	</table>
-
 	<table name="table3">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
@@ -29,19 +12,4 @@
 		<behavior name="alternative_coding_standards" />
 	</table>
 
-	<table name="table4">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-		<column name="title" type="VARCHAR" size="100" primaryString="true" />
-		<behavior name="soft_delete" />
-	</table>
-
-	<table name="table5">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-		<column name="title" type="VARCHAR" size="100" primaryString="true" />
-		<column name="deleted_on" type="TIMESTAMP" />
-		<behavior name="soft_delete">
-			<parameter name="deleted_column" value="deleted_on" />
-		</behavior>
-	</table>
-	
 </database>
