@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore-behavior" defaultIdMethod="native" package="behavior">
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.timestampable">
 
 	<table name="table1">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />

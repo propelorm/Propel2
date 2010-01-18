@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore-behavior" defaultIdMethod="native" package="behavior">
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.auto_add_pk">
 	
 	<table name="table6">
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />

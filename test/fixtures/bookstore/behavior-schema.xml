@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore-behavior" defaultIdMethod="native" package="behavior">
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.alternative_coding_standards">
 
   <behavior name="do_nothing">
     <parameter name="foo" value="bar" />
