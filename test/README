@@ -70,7 +70,7 @@ propel.database.password = p@ssw0rd
 
 {{{
 > cd /path/to/propel/test
-> ../generator/bin/propel-gen fixtures/bookstore
+> ../generator/bin/propel-gen fixtures/bookstore main
 > mysqladmin create test
 > ../generator/bin/propel-gen fixtures/bookstore insert-sql
 }}}
