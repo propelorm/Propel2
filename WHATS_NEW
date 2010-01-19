@@ -297,6 +297,8 @@ $books = Bookquery::create()
 
 == New Behaviors ==
 
+The new behavior system, introduced in Propel 1.4, starts to unleash its true power with this release. Three new behaviors implement the most common customizations of object models: `nested_sets`, `sluggable`, and `sortable`.
+
 === Nested Set Behavior ===
 
 Using the `treeMode` attribute in a schema, you could turn a Propel model into a hierarchical data store starting with Propel 1.3. This method is now deprecated in favor of a new `nested_set` behavior, that does eactly the same thing, but in a more extensible and effective way.
@@ -384,11 +386,53 @@ The nested set behavior implementation has a few added benefits:
 
 As a consequence, the use of `treeMode="NestedSet"` in a schema is deprecated. Check the new [wiki:Users/Documentation/1.5/Behaviors/nested_set nested_set behavior documentation] for more details.
 
+=== Sluggable Behavior ===
+
+This behavior answers a very common need: to give a model a unique string representation that can be used to make a user-friendly URL.
+
+The classical example is that of a blog engine, where you need every record of a `post` table to have a unique URL. Simply enable the `sluggable` behavior in your schema and rebuild the model:
+
+{{{
+#!xml
+<table name="post">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" primaryString="true" />
+  <column name="content" type="LONGVARCHAR"/>
+  <behavior name="sluggable">
+    <parameter name="slug_pattern" value="/posts/{Title}" />
+  </behavior>
+</table>
+}}}
+
+Now, every time you save a new `Post` object, Propel will compose its slug according to the pattern defined in the behavior parameter and save it in an additional `slug` column:
+
+{{{
+#!php
+<?php
+$post1 = new Post();
+$post1->setTitle('How Is Life On Earth?');
+$post1->setContent('Lorem Ipsum...');
+$post1->save();
+echo $post1->getSlug(); // '/posts/how-is-life-on-earth'
+}}}
+
+Propel replaces every name enclosed between brackets in the slug pattern by the related column value. It also cleans up the string to make it URL-compatible, and ensures that it is unique.
+
+If you use this slug in URLs, you will need to retrieve a `Post` object based on it. This is just a one-liner:
+
+{{{
+#!php
+<?php
+$post = PostQuery::create()->findOneBySlug('/posts/how-is-life-on-earth');
+}}}
+
+There are many ways to customize the `sluggable` behavior to match the needs of your applications. Check the new [wiki:Users/Documentation/1.5/Behaviors/sluggable sluggable behavior documentation] for more details.
+
 === Sortable Behavior ===
 
 Have you ever enhanced a Propel Model to give it the ability to move up or down in an ordered list? The new `sortable` behavior, new in Propel 1.5, offers exactly that... and even more.
 
-As usual for behavior, activate `sortable` in your schema.yml.
+As usual for behavior, activate `sortable` in your `schema.yml`:
 
 {{{
 #!xml

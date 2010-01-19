@@ -443,7 +443,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		
 		BookPeer::clearInstancePool();
 		
-		$nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
+		$nbBookListRel = BookListRelQuery::create()->prune()->count();
 		$this->assertEquals(2, $nbBookListRel, 'prune() does nothing when passed a null object');
 		
 		$testBookListRel = BookListRelQuery::create()->findOne();
