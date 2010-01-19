@@ -279,13 +279,22 @@ class Database extends XMLElement
 	}
 
 	/**
+	 * Check whether the database has a table.
+	 * @return     boolean
+	 */
+	public function hasTable($name)
+	{
+		return array_key_exists($name, $this->tablesByName);
+	}
+
+	/**
 	 * Return the table with the specified name.
 	 * @param      string $name The name of the table (e.g. 'my_table')
 	 * @return     Table a Table object or null if it doesn't exist
 	 */
 	public function getTable($name)
 	{
-		if (isset($this->tablesByName[$name])) {
+		if ($this->hasTable($name)) {
 			return $this->tablesByName[$name];
 		}
 		return null; // just to be explicit
