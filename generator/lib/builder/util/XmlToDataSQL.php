@@ -226,7 +226,7 @@ class XmlToDataSQL extends AbstractHandler
 
 /**
  * "inner class"
- * @package    propel.generator.propel.engine.database.transform
+ * @package    propel.generator.builder.util
  */
 class DataRow
 {
@@ -252,7 +252,7 @@ class DataRow
 
 /**
  * "inner" class
- * @package    propel.generator.propel.engine.database.transform
+ * @package    propel.generator.builder.util
  */
 class ColumnValue {
 

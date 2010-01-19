@@ -22,11 +22,11 @@
  
  
 /**
- * Behavior to adds nested set tree structure columns and abilities
+ * Behavior to add sortable peer methods
  *
  * @author     François Zaninotto
  * @author     heltem <heltem@o2php.com>
- * @package    propel.generator.behavior.nestedset
+ * @package    propel.generator.behavior.sortable
  */
 class SortableBehaviorPeerBuilderModifier
 {

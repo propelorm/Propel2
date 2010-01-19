@@ -24,7 +24,7 @@
  * Class for iterating over a list of Propel objects
  *
  * @author     Francois Zaninotto
- * @package    propel.collection
+ * @package    propel.runtime.collection
  */
 class PropelObjectCollection extends PropelCollection
 {	

@@ -24,7 +24,7 @@
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author     Francois Zaninotto
- * @package    propel.collection
+ * @package    propel.runtime.collection
  */
 class PropelOnDemandCollection extends PropelCollection implements Iterator
 {

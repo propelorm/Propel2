@@ -37,7 +37,7 @@
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Christian Abegg <abegg.ch@gmail.com>
  * @since      2006-09-22
- * @package    propel.runtime.connexion
+ * @package    propel.runtime.connection
  */
 class PropelPDO extends PDO
 {

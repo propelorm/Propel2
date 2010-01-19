@@ -25,7 +25,7 @@
  * The collection keys must be integers - no associative array accepted
  *
  * @author     Francois Zaninotto
- * @package    propel.formatter
+ * @package    propel.runtime.collection
  */
 class PropelCollection extends ArrayObject implements Serializable
 {
