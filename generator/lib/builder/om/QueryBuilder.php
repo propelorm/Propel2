@@ -125,6 +125,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 			$this->addFilterByRefFK($script, $refFK);
 			$this->addUseRefFKQuery($script, $refFK);
 		}
+		$this->addPrune($script);
 		$this->addBasePreSelect($script);
 		$this->addBasePreDelete($script);
 		$this->addBasePreUpdate($script);
@@ -528,6 +529,55 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 		return \$this
 			->join(\$this->getModelAliasOrName() . '.$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''))
 			->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
+	}
+";
+	}
+
+	/**
+	 * Adds the prune method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addPrune(&$script)
+	{
+		$table = $this->getTable();
+		$class = $this->getStubObjectBuilder()->getClassname();
+		$objectName = '$' . $table->getStudlyPhpName();
+		$script .= "
+	/**
+	 * Exclude object from result
+	 *
+	 * @param     $class $objectName Object to remove from the list of results
+	 *
+	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+	 */
+	public function prune($class $objectName = null)
+	{
+		if ($objectName) {";
+		$pks = $table->getPrimaryKey();
+		if (count($pks) > 1) {
+			$i = 0;
+			$conditions = array();
+			foreach ($pks as $col) {
+				$const = $this->getColumnConstant($col);
+				$condName = "'pruneCond" . $i . "'";
+				$conditions[]= $condName;
+				$script .= "
+			\$this->addCond(". $condName . ", \$this->getAliasedColName($const), " . $objectName . "->get" . $col->getPhpName() . "(), Criteria::NOT_EQUAL);";
+				$i++;
+				}
+			$conditionsString = implode(', ', $conditions);
+			$script .= "
+			\$this->combine(array(" . $conditionsString . "), Criteria::LOGICAL_OR);";
+		} else {
+			$col = $pks[0];
+			$const = $this->getColumnConstant($col);
+			$script .= "
+			\$this->addUsingAlias($const, " . $objectName . "->get" . $col->getPhpName() . "(), Criteria::NOT_EQUAL);";
+		}
+		$script .= "
+	  }
+	  
+		return \$this;
 	}
 ";
 	}

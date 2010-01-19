@@ -410,4 +410,44 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($testOpinion, $opinion, 'Generated query handles filterByRefFk() methods correctly for composite fkeys');
 	}
 
+	public function testPrune()
+	{
+		$q = BookQuery::create()->prune();
+		$this->assertTrue($q instanceof BookQuery, 'prune() returns the current Query object');
+	}
+	
+	public function testPruneSimpleKey()
+	{	
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		$nbBooks = BookQuery::create()->prune()->count();
+		$this->assertEquals(4, $nbBooks, 'prune() does nothing when passed a null object');
+		
+		$testBook = BookQuery::create()->findOne();
+		$nbBooks = BookQuery::create()->prune($testBook)->count();
+		$this->assertEquals(3, $nbBooks, 'prune() removes an object from the result');
+	}
+
+	public function testPruneCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+		
+		BookPeer::clearInstancePool();
+		
+		$nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
+		$this->assertEquals(2, $nbBookListRel, 'prune() does nothing when passed a null object');
+		
+		$testBookListRel = BookListRelQuery::create()->findOne();
+		$nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
+		$this->assertEquals(1, $nbBookListRel, 'prune() removes an object from the result');
+	}
 }

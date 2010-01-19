@@ -581,6 +581,7 @@ orderBy($columnName, $order = 'asc')
 groupBy($columnName)
 join($class, $joinType = 'inner join')
 with($relation, $joinType = 'inner join')
+prune($object)
 
 // termination methods (return model objects)
 count($con = null)
