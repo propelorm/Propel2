@@ -30,7 +30,7 @@ require_once dirname(__FILE__) . '/SortableBehaviorPeerBuilderModifier.php';
  *
  * @author      Massimiliano Arione
  * @version     $Revision$
- * @package     propel.engine.behavior.sortable
+ * @package     propel.generator.behavior.sortable
  */
 class SortableBehavior extends Behavior
 {

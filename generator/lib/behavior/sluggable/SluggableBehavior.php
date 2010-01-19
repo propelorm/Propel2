@@ -26,7 +26,7 @@
  * @author    Francois Zaninotto
  * @author    Massimiliano Arione
  * @version		$Revision$
- * @package		propel.engine.behavior.sluggable
+ * @package		propel.generator.behavior.sluggable
  */
 class SluggableBehavior extends Behavior
 {
