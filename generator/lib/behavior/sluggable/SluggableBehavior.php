@@ -20,8 +20,6 @@
  * <http://propel.phpdb.org>.
  */
 
-require_once 'SluggableTableBehavior.php';
-
 /**
  * Adds a slug column
  *
