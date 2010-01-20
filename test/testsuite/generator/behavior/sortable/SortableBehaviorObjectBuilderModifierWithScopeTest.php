@@ -156,7 +156,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	{
 		$t = new Table12();
 		$t->setScopeValue(1);
-		$t->insertAtRank(5);
+		$t->insertAtRank(6);
 	}
 	
   /**
