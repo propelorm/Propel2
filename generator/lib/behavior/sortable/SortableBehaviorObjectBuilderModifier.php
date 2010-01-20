@@ -302,16 +302,19 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
 	}";
 		}
 		$script .= "
-	if (\$rank < 1 || \$rank > $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
+	\$maxRank = $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+	if (\$rank < 1 || \$rank > \$maxRank + 1) {
 		throw new PropelException('Invalid rank ' . \$rank);
 	}
 	// move the object in the list, at the given rank
 	\$this->{$this->getColumnSetter()}(\$rank);
-	// Keep the list modification query for the save() transaction
-	\$this->sortableQueries []= array(
-		'callable'  => array('$peerClassname', 'shiftRank'),
-		'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
-	);
+	if (\$rank != \$maxRank + 1) {
+		// Keep the list modification query for the save() transaction
+		\$this->sortableQueries []= array(
+			'callable'  => array('$peerClassname', 'shiftRank'),
+			'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
+		);
+	}
 	
 	return \$this;
 }

@@ -110,6 +110,17 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$expected = array(1 => 'row1', 2 => 'new', 3 => 'row2', 4 => 'row3', 5 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtRank() shifts the entire suite');
 	}
+	
+	public function testInsertAtMaxRankPlusOne()
+	{
+		$t = new Table11();
+		$t->setTitle('new');
+		$t->insertAtRank(5);
+		$this->assertEquals(5, $t->getRank(), 'insertAtRank() sets the position');
+		$t->save();
+		$expected = array(1 => 'row1', 2 => 'row2', 3 => 'row3', 4 => 'row4', 5 => 'new');
+		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtRank() can insert an object at the end of the list');
+	}
 
 	/**
 	 * @expectedException PropelException
@@ -126,7 +137,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	public function testInsertAtOverMaxRank()
 	{
 		$t = new Table11();
-		$t->insertAtRank(5);
+		$t->insertAtRank(6);
 	}
 
 	public function testInsertAtBottom()
