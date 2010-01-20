@@ -49,38 +49,22 @@ class SoftDeleteBehavior extends Behavior
     }
   }
   
-  protected function getColumnSetter()
-  {
-  	return 'set' . $this->getColumnForParameter('deleted_column')->getPhpName();
-  }
-  
-  public function preDelete()
-  {
-  	return <<<EOT
-if (!empty(\$ret) && {$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-	\$this->{$this->getColumnSetter()}(time());
-	\$this->save();
-	\$con->commit();
-	return;
-}
-EOT;
-  }
-  
-  public function preSelect()
-  {
-  	return <<<EOT
-if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-	\$criteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
-} else {
-	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
-}
-EOT;
-  }
-  
-  public function objectMethods()
-  {
-  	return <<<EOT
+	protected function getColumnSetter()
+	{
+		return 'set' . $this->getColumnForParameter('deleted_column')->getPhpName();
+	}
 
+	public function objectMethods($builder)
+	{
+		$script = '';
+		$this->addObjectForceDelete($script);
+		$this->addObjectUndelete($script);
+		return $script;
+	}
+	
+	public function addObjectForceDelete(&$script)
+	{
+		$script .= "
 /**
  * Bypass the soft_delete behavior and force a hard delete of the current object
  */
@@ -89,7 +73,12 @@ public function forceDelete(PropelPDO \$con = null)
 	{$this->getTable()->getPhpName()}Peer::disableSoftDelete();
 	\$this->delete(\$con);
 }
-
+";
+	}
+  
+	public function addObjectUndelete(&$script)
+	{
+		$script .= "
 /**
  * Undelete a row that was soft_deleted
  *
@@ -100,41 +89,66 @@ public function unDelete(PropelPDO \$con = null)
 	\$this->{$this->getColumnSetter()}(null);
 	return \$this->save(\$con);
 }
+";
+	}
+
+	public function preDelete($builder)
+	{
+		return <<<EOT
+if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {
+	\$this->{$this->getColumnSetter()}(time());
+	\$this->save();
+	\$con->commit();
+	return;
+}
 EOT;
   }
-
-	public function preSelectQuery()
-	{
-		return <<<EOT
-if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-	\$this->addUsingAlias({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
-} else {
-	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
-}
-EOT;
-	}
-
-	public function preDeleteQuery()
-	{
-		return <<<EOT
-if ({$this->getTable()->getPhpName()}Peer::isSoftDeleteEnabled()) {
-	return \$this->softDelete(\$con);
-} else {
-	return \$this->hasWhereClause() ? \$this->forceDelete(\$con) : \$this->forceDeleteAll(\$con);
-}
-EOT;
-	}
 
 	public function queryAttributes()
 	{
 		return "protected static \$softDelete = true;
+protected \$localSoftDelete = true;
 ";
 	}
 
 	public function queryMethods($builder)
 	{
-		return <<<EOT
-
+		$this->builder = $builder;
+		$script = '';
+		$this->addQueryIncludeDeleted($script);
+		$this->addQuerySoftDelete($script);
+		$this->addQueryForceDelete($script);
+		$this->addQueryForceDeleteAll($script);
+		$this->addQueryUnDelete($script);
+		$this->addQueryEnableSoftDelete($script);
+		$this->addQueryDisableSoftDelete($script);
+		$this->addQueryIsSoftDeleteEnabled($script);
+		
+		return $script;
+	}
+	
+	public function addQueryIncludeDeleted(&$script)
+	{
+		$script .= "
+/**
+ * Temporarily disable the filter on deleted rows
+ * Valid only for the current query
+ * 
+ * @see {$this->builder->getStubQueryBuilder()->getClassname()}::disableSoftDelete() to disable the filter for more than one query
+ *
+ * @return {$this->builder->getStubQueryBuilder()->getClassname()} The current query, for fuid interface
+ */
+public function includeDeleted()
+{
+	\$this->localSoftDelete = false;
+	return \$this;
+}
+";
+	}
+  
+	public function addQuerySoftDelete(&$script)
+	{
+		$script .= "
 /**
  * Soft delete the selected rows
  *
@@ -146,7 +160,12 @@ public function softDelete(PropelPDO \$con = null)
 {
 	return \$this->update(array('{$this->getColumnForParameter('deleted_column')->getPhpName()}' => time()), \$con);
 }
-
+";
+  }
+  
+	public function addQueryForceDelete(&$script)
+	{
+		$script .= "
 /**
  * Bypass the soft_delete behavior and force a hard delete of the selected rows
  *
@@ -157,11 +176,16 @@ public function softDelete(PropelPDO \$con = null)
 public function forceDelete(PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		\$con = Propel::getConnection({$this->builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
 	}
 	return \$this->doDelete(\$con);
 }
+";
+	}
 
+	public function addQueryForceDeleteAll(&$script)
+	{
+		$script .= "
 /**
  * Bypass the soft_delete behavior and force a hard delete of all the rows
  *
@@ -172,11 +196,16 @@ public function forceDelete(PropelPDO \$con = null)
 public function forceDeleteAll(PropelPDO \$con = null)
 {
 	if (\$con === null) {
-		\$con = Propel::getConnection({$builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
+		\$con = Propel::getConnection({$this->builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
 	}
 	return \$this->doDeleteAll(\$con);
 }
+";
+	}
 
+	public function addQueryUnDelete(&$script)
+	{
+		$script .= "
 /**
  * Undelete selected rows
  *
@@ -188,7 +217,12 @@ public function unDelete(PropelPDO \$con = null)
 {
 	return \$this->update(array('{$this->getColumnForParameter('deleted_column')->getPhpName()}' => null), \$con);
 }
+";
+	}
 
+	public function addQueryEnableSoftDelete(&$script)
+	{
+		$script .= "	
 /**
  * Enable the soft_delete behavior for this model
  */
@@ -196,7 +230,12 @@ public static function enableSoftDelete()
 {
 	self::\$softDelete = true;
 }
+";
+	}
 
+	public function addQueryDisableSoftDelete(&$script)
+	{
+		$script .= "
 /**
  * Disable the soft_delete behavior for this model
  */
@@ -204,48 +243,104 @@ public static function disableSoftDelete()
 {
 	self::\$softDelete = false;
 }
+";
+	}
 
+	public function addQueryIsSoftDeleteEnabled(&$script)
+	{
+		$script .= "
 /**
  * Check the soft_delete behavior for this model
+ *
  * @return boolean true if the soft_delete behavior is enabled
  */
 public static function isSoftDeleteEnabled()
 {
 	return self::\$softDelete;
 }
+";
+	}
 
+	public function preSelectQuery($builder)
+	{
+		return <<<EOT
+if ({$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled() && \$this->localSoftDelete) {
+	\$this->addUsingAlias({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
+} else {
+	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
+}
 EOT;
 	}
-  
-  public function staticMethods($builder)
-  {
-  	return <<<EOT
 
+	public function preDeleteQuery($builder)
+	{
+		return <<<EOT
+if ({$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled() && \$this->localSoftDelete) {
+	return \$this->softDelete(\$con);
+} else {
+	return \$this->hasWhereClause() ? \$this->forceDelete(\$con) : \$this->forceDeleteAll(\$con);
+}
+EOT;
+	}
+
+	public function staticMethods($builder)
+	{
+		$this->builder = $builder;
+		$script = '';
+		$this->addPeerEnableSoftDelete($script);
+		$this->addPeerDisableSoftDelete($script);
+		$this->addPeerIsSoftDeleteEnabled($script);
+		$this->addPeerDoSoftDelete($script);
+		$this->addPeerDoDelete2($script);
+		$this->addPeerDoSoftDeleteAll($script);
+		$this->addPeerDoDeleteAll2($script);
+		
+		return $script;
+	}
+
+	public function addPeerEnableSoftDelete(&$script)
+	{
+		$script .= "
 /**
  * Enable the soft_delete behavior for this model
  */
 public static function enableSoftDelete()
 {
-	{$builder->getStubQueryBuilder()->getClassname()}::enableSoftDelete();
+	{$this->builder->getStubQueryBuilder()->getClassname()}::enableSoftDelete();
 }
+";
+	}
 
+	public function addPeerDisableSoftDelete(&$script)
+	{
+		$script .= "
 /**
  * Disable the soft_delete behavior for this model
  */
 public static function disableSoftDelete()
 {
-	{$builder->getStubQueryBuilder()->getClassname()}::disableSoftDelete();
+	{$this->builder->getStubQueryBuilder()->getClassname()}::disableSoftDelete();
 }
-
+";
+	}
+  
+	public function addPeerIsSoftDeleteEnabled(&$script)
+	{
+		$script .= "
 /**
  * Check the soft_delete behavior for this model
  * @return boolean true if the soft_delete behavior is enabled
  */
 public static function isSoftDeleteEnabled()
 {
-	return {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled();
+	return {$this->builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled();
 }
+";
+	}
 
+	public function addPeerDoSoftDelete(&$script)
+	{
+		$script .= "
 /**
  * Soft delete records, given a {$this->getTable()->getPhpName()} or Criteria object OR a primary key value.
  *
@@ -272,7 +367,12 @@ public static function doSoftDelete(\$values, PropelPDO \$con = null)
 	\$criteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, time());
 	return {$this->getTable()->getPhpName()}Peer::doUpdate(\$criteria, \$con);
 }
+";
+	}
 
+	public function addPeerDoDelete2(&$script)
+	{
+		$script .= "
 /**
  * Delete or soft delete records, depending on {$this->getTable()->getPhpName()}Peer::\$softDelete
  *
@@ -290,8 +390,12 @@ public static function doDelete2(\$values, PropelPDO \$con = null)
 	} else {
 		return {$this->getTable()->getPhpName()}Peer::doForceDelete(\$values, \$con);
 	}	
-}
+}";
+	}
 
+	public function addPeerDoSoftDeleteAll(&$script)
+	{
+		$script .= "
 /**
  * Method to soft delete all rows from the {$this->getTable()->getName()} table.
  *
@@ -312,7 +416,12 @@ public static function doSoftDeleteAll(PropelPDO \$con = null)
 	\$modifyCriteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, time());
 	return BasePeer::doUpdate(\$selectCriteria, \$modifyCriteria, \$con);
 }
-
+";
+	}
+  
+	public function addPeerDoDeleteAll2(&$script)
+	{
+		$script .= "
 /**
  * Delete or soft delete all records, depending on {$this->getTable()->getPhpName()}Peer::\$softDelete
  *
@@ -329,9 +438,20 @@ public static function doDeleteAll2(PropelPDO \$con = null)
 		return {$this->getTable()->getPhpName()}Peer::doForceDeleteAll(\$con);
 	}	
 }
+";
+	}
+
+  public function preSelect($builder)
+  {
+  	return <<<EOT
+if ({$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {
+	\$criteria->add({$this->getColumnForParameter('deleted_column')->getConstantName()}, null, Criteria::ISNULL);
+} else {
+	{$this->getTable()->getPhpName()}Peer::enableSoftDelete();
+}
 EOT;
   }
-  
+	  
   public function peerFilter(&$script)
   {
   	$script = str_replace(array(

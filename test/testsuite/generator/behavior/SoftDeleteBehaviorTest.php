@@ -213,6 +213,16 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(0, Table4Peer::doCount(new Criteria), 'forced deleted rows are not present in the database');
 	}
 	
+	public function testQueryIncludeDeleted()
+	{
+		$t = new Table4();
+		$t->setDeletedAt(123);
+		$t->save();
+		Table4Peer::enableSoftDelete();
+		$this->assertEquals(0, Table4Query::create()->count(), 'rows with a deleted_at date are hidden for select queries');
+		$this->assertEquals(1, Table4Query::create()->includeDeleted()->count(), 'rows with a deleted_at date are visible for select queries using includeDeleted()');
+	}
+	
 	public function testQueryForceDelete()
 	{
 		$t1 = new Table4();
