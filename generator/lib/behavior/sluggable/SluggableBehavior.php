@@ -264,7 +264,13 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
 	\$slug2 = empty(\$increment) ? \$slug : \$slug . \$separator . \$increment;
 	\$slugAlreadyExists = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create()
 		->filterBySlug(\$slug2)
-		->prune(\$this)
+		->prune(\$this)";
+		// watch out: some of the columns may be hidden by the soft_delete behavior
+		if ($this->table->hasBehavior('soft_delete')) {
+			$script .= "
+		->includeDeleted()";
+		}
+		$script .= "
 		->count();
 	if (\$slugAlreadyExists) {
 		return \$this->makeSlugUnique(\$slug, \$separator, ++\$increment);

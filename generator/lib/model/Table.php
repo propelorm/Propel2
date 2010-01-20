@@ -794,9 +794,21 @@ class Table extends XMLElement implements IDMethod
   {
     return $this->behaviors;
   }
-  
+
+  /**
+   * check if the table has a behavior by name
+   *
+   * @param string $name the behavior name
+   * @return boolean True if the behavior exists
+   */
+  public function hasBehavior($name)
+  {
+    return array_key_exists($name, $this->behaviors);
+  }
+    
   /**
    * Get one table behavior by name
+   *
    * @param string $name the behavior name
    * @return Behavior a behavior object
    */
