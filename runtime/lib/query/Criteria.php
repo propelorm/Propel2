@@ -811,7 +811,20 @@ class Criteria implements IteratorAggregate
 	 */
 	public function setAll()
 	{
-		$this->selectModifiers[] = self::ALL;
+		//only add the keyword once
+		if (!in_array(self::ALL, $this->selectModifiers))
+		{
+			//overwrite the distinct keyword if it exists, otherwise just add it.
+			if (false !== $key = array_search(self::DISTINCT, $this->selectModifiers))
+			{
+				$this->selectModifiers[$key] = self::ALL;
+			}
+			else
+			{
+				$this->selectModifiers[] = self::ALL;
+			}
+		}
+		
 		return $this;
 	}
 
@@ -821,7 +834,20 @@ class Criteria implements IteratorAggregate
 	 */
 	public function setDistinct()
 	{
-		$this->selectModifiers[] = self::DISTINCT;
+		//only allow the keyword once
+	  if (!in_array(self::DISTINCT, $this->selectModifiers))
+	  {
+			//overwrite the ALL keyword if it exists, otherwise just add it.
+			if (false !== $key = array_search(self::ALL, $this->selectModifiers))
+			{
+				$this->selectModifiers[$key] = self::DISTINCT;
+			}
+			else
+			{
+			  $this->selectModifiers[] = self::DISTINCT;
+			}
+		}
+		
 		return $this;
 	}
 

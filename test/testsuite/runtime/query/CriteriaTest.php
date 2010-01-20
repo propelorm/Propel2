@@ -863,4 +863,27 @@ class CriteriaTest extends BaseTestCase
     $c4->addGroupByColumn('GBY1');
     $this->assertTrue($c4->equals($c3), "Expected Criteria objects to match.");
   }
+
+	/**
+	 * Test whether calling setDistinct twice puts in two distinct keywords or not.
+	 * @link       http://propel.phpdb.org/trac/ticket/716
+	 */
+	public function testDoubleSelectModifiers()
+	{
+		$c = new Criteria();
+		$c->setDistinct();
+		$this->assertEquals(array(Criteria::DISTINCT), $c->getSelectModifiers(), 'Initial setDistinct works');
+		$c->setDistinct();
+		$this->assertEquals(array(Criteria::DISTINCT), $c->getSelectModifiers(), 'Calling setDistinct again leaves a single distinct');
+		$c->setAll();
+		$this->assertEquals(array(Criteria::ALL), $c->getSelectModifiers(), 'All keyword is swaps distinct out');
+		$c->setAll();
+		$this->assertEquals(array(Criteria::ALL), $c->getSelectModifiers(), 'Calling setAll leaves a single all');
+		$c->setDistinct();
+		$this->assertEquals(array(Criteria::DISTINCT), $c->getSelectModifiers(), 'All back to distinct works');
+		
+		$c2 = new Criteria();
+		$c2->setAll();
+		$this->assertEquals(array(Criteria::ALL), $c2->getSelectModifiers(), 'Initial setAll works');
+	}
 }
