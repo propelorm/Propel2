@@ -119,7 +119,23 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 			$i++;
 		}
 		$this->assertEquals(4, $i, 'setPage() doesn\'t change the page count');
-		
+	}
+	
+	public function testIsFirstPage()
+	{
+		$this->createBooks(5);
+		$pager = $this->getPager(4, 1);
+		$this->assertTrue($pager->isFirstPage(), 'isFirstPage() returns true on the first page');
+		$pager = $this->getPager(4, 2);
+		$this->assertFalse($pager->isFirstPage(), 'isFirstPage() returns false when not on the first page');
 	}
 
+	public function testIsLastPage()
+	{
+		$this->createBooks(5);
+		$pager = $this->getPager(4, 1);
+		$this->assertFalse($pager->isLastPage(), 'isLastPage() returns false when not on the last page');
+		$pager = $this->getPager(4, 2);
+		$this->assertTrue($pager->isLastPage(), 'isLastPage() returns true on the last page');
+	}
 }
