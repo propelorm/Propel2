@@ -14,7 +14,7 @@
 		<behavior name="sluggable">
 			<parameter name="slug_column" value="url" />
 			<parameter name="slug_pattern" value="/foo/{Title}/bar" />
-			<parameter name="replace_pattern" value="/[^\\pL\\d\/]+/u" />
+			<parameter name="replace_pattern" value="/[^\w\/]+/" />
 			<parameter name="separator" value="/" />
 		</behavior>
 	</table>

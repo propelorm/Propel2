@@ -59,7 +59,7 @@ By default, the behavior adds one columns to the model. If this column is alread
   <behavior name="sluggable" />
     <parameter name="slug_column" value="url" />
     <parameter name="slug_pattern" value="/posts/{Title}" />
-    <parameter name="replace_pattern" value="/[^\\pL\\d\/]+/u" />
+    <parameter name="replace_pattern" value="/[^\w\/]+/u" />
     <parameter name="replacement" value="-" />
     <parameter name="separator" value="/" />
   </behavior>

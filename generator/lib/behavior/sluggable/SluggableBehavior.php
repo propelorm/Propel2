@@ -34,7 +34,7 @@ class SluggableBehavior extends Behavior
 	protected $parameters = array(
 		'slug_column'     => 'slug',
 		'slug_pattern'    => '',
-		'replace_pattern' => '/[^\\pL\\d]+/u',
+		'replace_pattern' => '/\W+/', // Tip: use '/[^\\pL\\d]+/u' instead if you're in PHP5.3
 		'replacement'     => '-',
 		'separator'       => '-'
 	);
