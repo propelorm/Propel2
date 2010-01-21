@@ -89,9 +89,8 @@ class BasePeer
 
 		$peerclass = 'Base' . $classname . 'Peer'; // TODO is this always true?
 		$callable = array($peerclass, 'getFieldnames');
-		$args = array($type);
 
-		return call_user_func_array($callable, $args);
+		return call_user_func($callable, $type);
 	}
 
 	static public function translateFieldname($classname, $fieldname, $fromType, $toType) {
