@@ -1036,6 +1036,48 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	}
 
 	/**
+	 * Adds the populateObject() method.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addPopulateObject(&$script)
+	{
+		$table = $this->getTable();
+		$script .= "
+	/**
+	 * Populates an object of the default type or an object that inherit from the default.
+	 *
+	 * @param      array \$row PropelPDO resultset row.
+	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 * @return     " . $this->getStubObjectBuilder()->getClassName(). "
+	 */
+	public static function populateObject(\$row, &\$startcol = 0)
+	{
+		\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
+		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
+			// We no longer rehydrate the object, since this can cause data loss.
+			// See http://propel.phpdb.org/trac/ticket/509
+			// \$obj->hydrate(\$row, \$startcol, true); // rehydrate
+			\$startcol += " . $this->getPeerClassname() . "::NUM_COLUMNS;
+		} else {";
+		if (!$table->getChildrenColumn()) {
+			$script .= "
+			\$cls = ".$this->getPeerClassname()."::OM_CLASS;";
+		} else {
+			$script .= "
+			\$cls = ".$this->getPeerClassname()."::getOMClass(\$row, \$startcol, false);";
+		}
+		$script .= "
+			\$obj = new \$cls();
+			\$startcol = \$obj->hydrate(\$row, \$startcol);
+			" . $this->getPeerClassname() . "::addInstanceToPool(\$obj, \$key);
+		}
+		return \$obj;
+	}";
+	}
+
+	/**
 	 * Adds a getOMClass() for non-abstract tables that have inheritance.
 	 * @param      string &$script The script will be modified in this method.
 	 */

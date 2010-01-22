@@ -81,15 +81,13 @@ class PropelObjectFormatter extends PropelFormatter
 	public function getAllObjectsFromRow($row)
 	{
 		$col = 0;
-		$tableMap = $this->getCriteria()->getTableMap();
-		$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $this->class;
-
-		$obj = $this->getSingleObjectFromRow($row, $class, $this->peer, $col);
+		$peer = $this->peer;
+		// tip: we use the variable class instead of call_user_func because $col is passed by reference
+		$obj = $peer::populateObject($row, $col);
 		foreach ($this->getCriteria()->getWith() as $join) {
 			$startObject = $join->getObjectToRelate($obj);
-			$tableMap = $join->getTableMap();
-			$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $tableMap->getClassname();
-			$endObject = $this->getSingleObjectFromRow($row, $class, $tableMap->getPeerClassname(), $col);
+			$peer = $join->getTableMap()->getPeerClassname();
+			$endObject = $peer::populateObject($row, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if ($endObject->isPrimaryKeyNull()) {
@@ -97,31 +95,6 @@ class PropelObjectFormatter extends PropelFormatter
 			}
 			$method = 'set' . $join->getRelationMap()->getName();
 			$startObject->$method($endObject);
-		}
-		return $obj;
-	}
-	
-	/**
-	 * Gets a Propel object hydrated from a selection of columns in statement row
-	 *
-	 * @param     array  $row associative array indexed by column number,
-	 *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
-	 * @param     string $class The classname of the object to create
-	 * @param     string $peer The peer classname of the object to create
-	 * @param     int    $col The start column for the hydration - modified by the method
-	 *
-	 * @return    BaseObject
-	 */
-	public function getSingleObjectFromRow($row, $class, $peer, &$col = 0)
-	{
-		$key = call_user_func(array($peer, 'getPrimaryKeyHashFromRow'), $row, $col);
-		$obj = call_user_func(array($peer, 'getInstanceFromPool'), $key);
-		if (null === $obj) {
-			$obj = new $class();
-			$col = $obj->hydrate($row, $col);
-			call_user_func(array($peer, 'addInstanceToPool'), $obj, $key);
-		} else {
-			$col = $col + constant($peer . '::NUM_COLUMNS');
 		}
 		return $obj;
 	}

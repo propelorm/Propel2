@@ -85,4 +85,23 @@ abstract class PropelFormatter
 		return $this->currentObjects[$col];
 	}
 	
+	/**
+	 * Gets a Propel object hydrated from a selection of columns in statement row
+	 *
+	 * @param     array  $row associative array indexed by column number,
+	 *                   as returned by PDOStatement::fetch(PDO::FETCH_NUM)
+	 * @param     string $class The classname of the object to create
+	 * @param     int    $col The start column for the hydration (modified)
+	 *
+	 * @return    BaseObject
+	 */
+	public function getSingleObjectFromRow($row, $class, &$col = 0)
+	{
+		$obj = $this->getWorkerObject($col, $class);
+		$col = $obj->hydrate($row, $col);
+		
+		return $obj;
+	}
+	
+	
 }
