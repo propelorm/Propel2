@@ -1,0 +1,119 @@
+= Inheritance =
+
+Developers often need the concept of inheritance in their object model. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world. However, using an well-known design pattern, Propel offers [http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html Single Table Inheritance], which is the most efficient implementation from a SQL and query performance perspective.
+
+In this implementation, one table is used for all subclasses. This has the implication that your table must have all columns needed by main class and subclasses. Propel will create stub subclasses.
+
+Let's illustrate this idea with an example. Consider an object model with three classes, `Book`, `Essay`, and `Comic` - the first class being parent of the other two. With single table inheritance, the data of all three classes is stored in one table, named `book`.
+
+== Defining Single Table Inheritance In The Schema ==
+
+A table using Single Table Inheritance requires a column to identify which class should be used to represent the table row. Classically, this column is named `class_key` - but you can choose whatever name fits your taste. The column needs the `inheritance="single"` attribute to make Propel understand that it's the class key column. Note that this 'key' column must be a real column in the table.
+
+{{{
+#!xml
+<table name="book">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="class_key" type="INTEGER" inheritance="single">
+    <inheritance key="1" class="Book"/>
+    <inheritance key="1" class="Essay" extends="Book"/>
+    <inheritance key="2" class="Comic" extends="Book"/>
+  </column>
+</table>
+}}}
+
+Once you rebuild your model, Propel generated all three model classes (`Book`, `Essay`, and `Comic`) and a single query class (`BookQuery`). The `Essay` and `Comic` classes extend the `Book` class.
+
+'''Tip''': An inherited class can extend another inherited class. That mean that you can add a `Manga` kind of book that extends `Comic` instead of `Book`.
+
+== Using Inherited Objects ==
+
+Use inherited objects just like you use regular Propel model objects:
+
+{{{
+#!php
+<?php
+$book = new Book();
+$book->setTitle('War And Peace');
+$book->save();
+$essay = new Essay();
+$essay->setTitle('On the Duty of Civil Disobedience');
+$essay->save();
+$comic = new Comic();
+$comic->setTitle('Little Nemo In Slumberland');
+$comic->save();
+}}}
+
+Inherited objects share the same properties and methods by default, but you can add your own logic to each of the generated classes.
+
+Behind the curtain, Propel sets the `class_key` column based on the model class. So the previous code stores the following rows in the database:
+
+{{{
+id | title                             | class_key
+---|-----------------------------------|----------
+1  | War And Peace                     | Book
+2  | On the Duty of Civil Disobedience | Essay
+3  | Little Nemo In Slumberland        | Comic
+}}}
+
+Incidentally, that means that you can add new classes manually, even if they are not defined as `<inheritance>` tags in the `schema.xml`:
+
+{{{
+#!php
+<?php
+class Novel extends Book
+{
+  public function __construct()
+  {
+    parent::__construct();
+    $this->setClassKey('Novel');
+  }
+}
+$novel = new Novel();
+$novel->setTitle('Harry Potter');
+$novel->save();
+}}}
+
+== Retrieving Inherited objects ==
+
+In order to retrieve books, use the Query object of the main class, as you would usually do:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()->find();
+foreach ($books as $book) {
+  echo get_class($book) . ': ' . $book->getTitle() . "\n";
+}
+// Book: War And Peace
+// Essay: On the Duty of Civil Disobedience
+// Comic: Little Nemo In Slumberland
+// Novel: Harry Potter
+}}}
+
+If you want to retrieve only objects of a certain class, use the query's filter:
+
+{{{
+#!php
+<?php
+$novel = BookQuery::create()
+  ->filterByClassKey('Novel')
+  ->findOne();
+echo get_class($book) . ': ' . $book->getTitle() . "\n";
+// Novel: Harry Potter
+}}}
+
+'''Tip''': You can override the base peer's `getOMClass()` to return the classname to use based on more complex logic (or query).
+
+== Abstract Entities ==
+
+If you wish to enforce using subclasses of an entity, you may declare a table "abstract" in your XML data model:
+
+{{{
+#!xml
+<table name="book" abstract="true">
+  ...
+}}}
+
+That way users will only be able to instanciate `Essay` or `Comic` books, but not `Book`.
