@@ -88,8 +88,6 @@ abstract class PeerBuilder extends OMBuilder {
 		$table = $this->getTable();
 		if ($table->getChildrenColumn()) {
 			if ($table->isAbstract()) {
-				$this->addGetOMClass_Inheritance_Abstract($script);
-			} else {
 				$this->addGetOMClass_Inheritance($script);
 			}
 		} else {

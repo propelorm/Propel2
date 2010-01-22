@@ -1139,29 +1139,6 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	}
 
 	/**
-	 * Adds a getOMClass() signature for abstract tables that have inheritance.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addGetOMClass_Inheritance_Abstract(&$script)
-	{
-		$script .= "
-	/**
-	 * The returned Class will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * This method must be overridden by the stub subclass, because
-	 * ".$this->getObjectClassname()." is declared abstract in the schema.
-	 *
-	 * @param      ResultSet \$rs ResultSet with pointer to record containing om class.
-	 * @param      int \$colnum Column to examine for OM class information (first is 1).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	abstract public static function getOMClass();
-";
-	}
-
-	/**
 	 * Adds a getOMClass() for non-abstract tables that do note use inheritance.
 	 * @param      string &$script The script will be modified in this method.
 	 */
