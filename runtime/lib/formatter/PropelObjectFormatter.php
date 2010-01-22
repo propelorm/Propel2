@@ -81,10 +81,15 @@ class PropelObjectFormatter extends PropelFormatter
 	public function getAllObjectsFromRow($row)
 	{
 		$col = 0;
-		$obj = $this->getSingleObjectFromRow($row, $this->class, $this->peer, $col);
+		$tableMap = $this->getCriteria()->getTableMap();
+		$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $this->class;
+
+		$obj = $this->getSingleObjectFromRow($row, $class, $this->peer, $col);
 		foreach ($this->getCriteria()->getWith() as $join) {
 			$startObject = $join->getObjectToRelate($obj);
-			$endObject = $this->getSingleObjectFromRow($row, $join->getTableMap()->getClassname(), $join->getTableMap()->getPeerClassname(), $col);
+			$tableMap = $join->getTableMap();
+			$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $tableMap->getClassname();
+			$endObject = $this->getSingleObjectFromRow($row, $class, $tableMap->getPeerClassname(), $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if ($endObject->isPrimaryKeyNull()) {

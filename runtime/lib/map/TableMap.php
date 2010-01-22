@@ -67,6 +67,9 @@ class TableMap
   
   // Whether to use an id generator for pkey
   protected $useIdGenerator;
+
+  // Whether the table uses single table inheritance
+  protected $isSingleTableInheritance = false;
   
   // The primary key columns in the table
   protected $primaryKeys = array();
@@ -225,6 +228,24 @@ class TableMap
   public function isUseIdGenerator()
   {
     return $this->useIdGenerator;
+  }
+
+  /**
+   * Set whether or not to this table uses single table inheritance
+   * @param      boolean $bit
+   */
+  public function setSingleTableInheritance($bit)
+  {
+    $this->isSingleTableInheritance = $bit;
+  }
+
+  /**
+   * Whether this table uses single table inheritance
+   * @return     boolean
+   */
+  public function isSingleTableInheritance()
+  {
+    return $this->isSingleTableInheritance;
   }
 
   /**

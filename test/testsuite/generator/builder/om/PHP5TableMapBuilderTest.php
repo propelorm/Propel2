@@ -110,5 +110,15 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $tmap = Propel::getDatabaseMap(Table1Peer::DATABASE_NAME)->getTable(Table1Peer::TABLE_NAME);
     $expectedBehaviorParams = array('timestampable' => array('create_column' => 'created_on', 'update_column' => 'updated_on'));
     $this->assertEquals($tmap->getBehaviors(), $expectedBehaviorParams, 'The map builder creates a getBehaviors() method to retrieve behaviors parameters when behaviors are registered');
-  }  
+  }
+
+ 	public function testSingleTableInheritance()
+	{
+		$bookTable = $this->databaseMap->getTableByPhpName('Book');
+		$this->assertFalse($bookTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns false by default');
+
+		$empTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
+		$this->assertTrue($empTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns true for tables using single table inheritance');
+
+	}
 }

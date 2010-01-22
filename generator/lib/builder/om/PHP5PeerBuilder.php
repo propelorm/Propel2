@@ -1049,10 +1049,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 *
 	 * @param      array \$row PropelPDO result row.
 	 * @param      int \$colnum Column to examine for OM class information (first is 0).
+	 * @param      boolean \$withPrefix Whether or not to return the path with the class name
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function getOMClass(\$row, \$colnum)
+	public static function getOMClass(\$row, \$colnum, \$withPrefix = true)
 	{
 		try {
 ";
@@ -1076,6 +1077,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 			$script .= "
 			} // switch
+			if (!\$withPrefix) {
+				\$omClass = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+			}
 ";
 		} else { /* if not enumerated */
 			$script .= "
@@ -1130,7 +1134,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
-	 * @param      boolean \$withPrefix Whether or not to return the path wit hthe class name 
+	 * @param      boolean \$withPrefix Whether or not to return the path with the class name
 	 * @return     string path.to.ClassName
 	 */
 	public static function getOMClass(\$withPrefix = true)

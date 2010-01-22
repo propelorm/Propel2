@@ -181,6 +181,11 @@ class ".$this->getClassname()." extends TableMap {
 			$script .= "
 		\$this->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');";
 		}
+		
+		if ($this->getTable()->getChildrenColumn()) {
+			$script .= "
+		\$this->setSingleTableInheritance(true);";
+		}
 
 		// Add columns to map
 			$script .= "
