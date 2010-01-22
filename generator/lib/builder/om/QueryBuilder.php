@@ -463,7 +463,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($fkPhpName $objectName)
+	public function filterBy$relationName($objectName)
 	{
 		return \$this";
 		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
@@ -497,7 +497,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($fkPhpName $objectName)
+	public function filterBy$relationName($objectName)
 	{
 		return \$this";
 		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
@@ -580,7 +580,7 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	 *
 	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
 	 */
-	public function prune($class $objectName = null)
+	public function prune($objectName = null)
 	{
 		if ($objectName) {";
 		$pks = $table->getPrimaryKey();

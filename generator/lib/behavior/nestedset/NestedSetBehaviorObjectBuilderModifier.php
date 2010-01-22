@@ -396,7 +396,7 @@ public function isLeaf()
  * @param      $objectClassname \$node Propel node object
  * @return     bool
  */
-public function isDescendantOf($objectClassname \$parent)
+public function isDescendantOf(\$parent)
 {";
 		if ($this->behavior->useScope()) {
 			$script .= "
@@ -420,7 +420,7 @@ public function isDescendantOf($objectClassname \$parent)
  * @param      $objectClassname \$node Propel node object
  * @return     bool
  */
-public function isAncestorOf($objectClassname \$child)
+public function isAncestorOf(\$child)
 {
 	return \$child->isDescendantOf(\$this);
 }
@@ -922,7 +922,7 @@ public function addChild($objectClassname \$child)
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsFirstChildOf($objectClassname \$parent)
+public function insertAsFirstChildOf(\$parent)
 {
 	if (\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToFirstChildOf() instead.');
@@ -964,7 +964,7 @@ public function insertAsFirstChildOf($objectClassname \$parent)
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsLastChildOf($objectClassname \$parent)
+public function insertAsLastChildOf(\$parent)
 {
 	if (\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToLastChildOf() instead.');
@@ -1006,7 +1006,7 @@ public function insertAsLastChildOf($objectClassname \$parent)
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsPrevSiblingOf($objectClassname \$sibling)
+public function insertAsPrevSiblingOf(\$sibling)
 {
 	if (\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
@@ -1048,7 +1048,7 @@ public function insertAsPrevSiblingOf($objectClassname \$sibling)
  *
  * @return     $objectClassname The current Propel object
  */
-public function insertAsNextSiblingOf($objectClassname \$sibling)
+public function insertAsNextSiblingOf(\$sibling)
 {
 	if (\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must not already be in the tree to be inserted. Use the moveToNextSiblingOf() instead.');
@@ -1089,7 +1089,7 @@ public function insertAsNextSiblingOf($objectClassname \$sibling)
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = null)
+public function moveToFirstChildOf(\$parent, PropelPDO \$con = null)
 {
 	if (!\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
@@ -1126,7 +1126,7 @@ public function moveToFirstChildOf($objectClassname \$parent, PropelPDO \$con = 
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = null)
+public function moveToLastChildOf(\$parent, PropelPDO \$con = null)
 {
 	if (!\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
@@ -1163,7 +1163,7 @@ public function moveToLastChildOf($objectClassname \$parent, PropelPDO \$con = n
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+public function moveToPrevSiblingOf(\$sibling, PropelPDO \$con = null)
 {
 	if (!\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
@@ -1203,7 +1203,7 @@ public function moveToPrevSiblingOf($objectClassname \$sibling, PropelPDO \$con 
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToNextSiblingOf($objectClassname \$sibling, PropelPDO \$con = null)
+public function moveToNextSiblingOf(\$sibling, PropelPDO \$con = null)
 {
 	if (!\$this->isInTree()) {
 		throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
@@ -1399,7 +1399,7 @@ public function retrieveParent(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        setParent
  */
-public function setParentNode($objectClassname \$parent = null)
+public function setParentNode(\$parent = null)
 {
 	return;
 }

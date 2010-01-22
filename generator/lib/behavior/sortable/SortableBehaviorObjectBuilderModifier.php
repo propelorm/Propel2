@@ -433,7 +433,7 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
  *
  * @throws Exception if the database cannot execute the two updates
  */
-public function swapWith({$this->objectClassname} \$object, PropelPDO \$con = null)
+public function swapWith(\$object, PropelPDO \$con = null)
 {
 	if (\$con === null) {
 		\$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
