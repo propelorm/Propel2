@@ -210,6 +210,9 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 		\$slug = strtolower(\$slug);
 	}
 	
+	// remove accents resulting from OSX's iconv
+	\$slug = str_replace(array('\'', '`', '^'), '', \$slug);
+	
 	// replace non letter or digits with separator
 	\$slug = preg_replace('" . $this->getParameter('replace_pattern') . "', \$replacement, \$slug);
 	
