@@ -72,6 +72,8 @@ class QueryBuilder extends OMBuilder
 		$tableDesc = $table->getDescription();
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$modelClass = $this->getStubObjectBuilder()->getClassname();
+		$parentClass = $this->getBehaviorContent('parentClass');
+		$parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
 		$script .= "
 
 /**
@@ -124,7 +126,7 @@ class QueryBuilder extends OMBuilder
  *
  * @package    propel.generator.".$this->getPackage()."
  */
-abstract class ".$this->getClassname()." extends ModelCriteria
+abstract class ".$this->getClassname()." extends " . $parentClass . "
 {
 ";
 	}
@@ -811,6 +813,15 @@ abstract class ".$this->getClassname()." extends ModelCriteria
 	public function applyBehaviorModifier($hookName, &$script, $tab = "		")
 	{
 		return $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
+	}
+
+	/**
+	 * Checks whether any registered behavior content creator on that table exists a contentName
+	 * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+	 */
+	public function getBehaviorContent($contentName)
+	{
+		return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
 	}
 
 }

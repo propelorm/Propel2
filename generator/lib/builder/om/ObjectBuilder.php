@@ -184,4 +184,14 @@ abstract class ObjectBuilder extends OMBuilder {
 	{
 		return $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
 	}
+
+	/**
+	 * Checks whether any registered behavior content creator on that table exists a contentName
+	 * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+	 */
+	public function getBehaviorContent($contentName)
+	{
+		return $this->getBehaviorContentBase($contentName, 'ObjectBuilderModifier');
+	}
+
 }

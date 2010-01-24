@@ -365,4 +365,21 @@ abstract class OMBuilder extends DataModelBuilder {
       }
     }
   }
+
+  /**
+   * Checks whether any registered behavior content creator on that table exists a contentName
+   * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassname"
+   * @param string $modifier The name of the modifier object providing the method in the behavior
+   */
+  public function getBehaviorContentBase($contentName, $modifier)
+  {
+    $modifierGetter = 'get' . $modifier;
+    foreach ($this->getTable()->getBehaviors() as $behavior) {
+      $modifier = $behavior->$modifierGetter();
+      if(method_exists($modifier, $contentName)) {
+        return $modifier->$contentName($this);
+      }
+    }
+  }
+
 }

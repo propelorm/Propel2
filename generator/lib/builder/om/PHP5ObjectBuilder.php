@@ -171,7 +171,8 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		$interface = $this->getInterface();
-
+		$parentClass = $this->getBehaviorContent('parentClass');
+		$parentClass = (null !== $parentClass) ? $parentClass : ClassTools::classname($this->getBaseClass());
 		$script .= "
 /**
  * Base class that represents a row from the '$tableName' table.
@@ -189,7 +190,7 @@ class PHP5ObjectBuilder extends ObjectBuilder {
 		$script .= "
  * @package    propel.generator.".$this->getPackage()."
  */
-abstract class ".$this->getClassname()." extends ".ClassTools::classname($this->getBaseClass())." ";
+abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$interface = ClassTools::getInterface($table);
 		if ($interface) {
