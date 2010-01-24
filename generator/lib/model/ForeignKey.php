@@ -259,6 +259,15 @@ class ForeignKey extends XMLElement
 			$this->foreignColumns[] = $p2;
 		}
 	}
+	
+	/**
+	 * Clear the references of this foreign key
+	 */
+	public function clearReferences()
+	{
+		$this->localColumns[] = array();
+		$this->foreignColumns[] = array();
+	}
 
 	/**
 	 * Return a comma delimited string of local column names

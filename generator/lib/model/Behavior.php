@@ -35,6 +35,7 @@ class Behavior extends XMLElement
   protected $database;
   protected $name;
   protected $parameters = array();
+  protected $isTableModified = false;
   
   public function setName($name)
   {
@@ -123,6 +124,16 @@ class Behavior extends XMLElement
    */
   public function modifyTable()
   {
+  }
+
+  public function setTableModified($bool)
+  {
+    $this->isTableModified = $bool;
+  }
+
+  public function isTableModified()
+  {
+    return $this->isTableModified;
   }
   
   /**

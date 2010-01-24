@@ -539,6 +539,23 @@ class Database extends XMLElement
 				} // for each foreign col ref
 			}
 		}
+		
+		// Behaviors may have added behaviors of their own
+		// These behaviors must launch their modifyTable() method,
+		// Until there is no behavior left
+		$behaviorsLeft = true;
+		while ($behaviorsLeft) {
+			$behaviorsLeft = false;
+			foreach ($tables as $table) {
+				foreach ($table->getBehaviors() as $behavior) {
+					if (!$behavior->isTableModified()) {
+						$behavior->getTableModifier()->modifyTable();
+						$behavior->setTableModified(true);
+						$behaviorsLeft = true;
+					}
+				}
+			}
+		}
 	}
 
 	/**

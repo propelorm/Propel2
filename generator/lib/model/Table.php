@@ -359,7 +359,10 @@ class Table extends XMLElement implements IDMethod
     // execute behavior table modifiers
     foreach ($this->getBehaviors() as $behavior)
     {
-      $behavior->getTableModifier()->modifyTable();
+      if (!$behavior->isTableModified()) {
+        $behavior->getTableModifier()->modifyTable();
+        $behavior->setTableModified(true);
+      }
     }
     
     // if idMethod is "native" and in fact there are no autoIncrement
@@ -422,7 +425,7 @@ class Table extends XMLElement implements IDMethod
    * Names composing objects which haven't yet been named.  This
    * currently consists of foreign-key and index entities.
    */
-  private function doNaming() {
+  public function doNaming() {
 
     // Assure names are unique across all databases.
     try {
