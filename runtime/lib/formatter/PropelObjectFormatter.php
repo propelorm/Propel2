@@ -82,12 +82,11 @@ class PropelObjectFormatter extends PropelFormatter
 	{
 		$col = 0;
 		$peer = $this->peer;
-		// tip: we use the variable class instead of call_user_func because $col is passed by reference
-		$obj = $peer::populateObject($row, $col);
+		list($obj, $col) = call_user_func(array($peer, 'populateObject'), $row, $col);
 		foreach ($this->getCriteria()->getWith() as $join) {
 			$startObject = $join->getObjectToRelate($obj);
 			$peer = $join->getTableMap()->getPeerClassname();
-			$endObject = $peer::populateObject($row, $col);
+			list($endObject, $col) = call_user_func(array($peer, 'populateObject'), $row, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if ($endObject->isPrimaryKeyNull()) {

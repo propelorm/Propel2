@@ -1053,16 +1053,16 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * @param      int \$startcol The 0-based offset for reading from the resultset row.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     " . $this->getStubObjectBuilder()->getClassName(). "
+	 * @return     array (" . $this->getStubObjectBuilder()->getClassName(). " object, last column rank)
 	 */
-	public static function populateObject(\$row, &\$startcol = 0)
+	public static function populateObject(\$row, \$startcol = 0)
 	{
 		\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://propel.phpdb.org/trac/ticket/509
 			// \$obj->hydrate(\$row, \$startcol, true); // rehydrate
-			\$startcol += " . $this->getPeerClassname() . "::NUM_COLUMNS;
+			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;
 		} else {";
 		if (!$table->getChildrenColumn()) {
 			$script .= "
@@ -1073,10 +1073,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 		$script .= "
 			\$obj = new \$cls();
-			\$startcol = \$obj->hydrate(\$row, \$startcol);
+			\$col = \$obj->hydrate(\$row, \$startcol);
 			" . $this->getPeerClassname() . "::addInstanceToPool(\$obj, \$key);
 		}
-		return \$obj;
+		return array(\$obj, \$col);
 	}";
 	}
 
