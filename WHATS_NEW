@@ -428,6 +428,96 @@ $post = PostQuery::create()->findOneBySlug('/posts/how-is-life-on-earth');
 
 There are many ways to customize the `sluggable` behavior to match the needs of your applications. Check the new [wiki:Users/Documentation/1.5/Behaviors/sluggable sluggable behavior documentation] for more details.
 
+=== Concrete Table Inheritance Behavior ===
+
+Propel has offered [wiki:Users/Documentation/1.5/Inheritance#SingleTableInheritance Single Table Inheritance] for a long time. But for complex table inheritance needs, it is necessary to provide [http://martinfowler.com/eaaCatalog/concreteTableInheritance.html Concrete Table Inheritance]. Starting with Propel 1.5, this inheritance implementation is supported through the new `concrete_inheritance` behavior.
+
+In the following example, the `article` and `video` tables use this behavior to inherit the columns and foreign keys of their parent table, `content`:
+
+{{{
+#!xml
+<table name="content">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+<table name="category">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="name" type="VARCHAR" size="100" primaryString="true" />
+</table>
+<table name="article">
+  <behavior name="concrete_inheritance">
+    <parameter name="extends" value="content" />
+  </behavior>
+  <column name="body" type="VARCHAR" size="100"/>
+</table>
+<table name="video">
+  <behavior name="concrete_inheritance">
+    <parameter name="extends" value="content" />
+  </behavior>
+  <column name="resource_link" type="VARCHAR" size="100"/>
+</table>
+}}}
+
+The behavior copies the columns of the parent table to the child tables. That means that the generated `Article` and `Video` models have a `Title` property and a `Category` relationship:
+
+{{{
+#!php
+<?php
+// create a new Category
+$cat = new Category();
+$cat->setName('Movie');
+$cat->save();
+// create a new Article
+$art = new Article();
+$art->setTitle('Avatar Makes Best Opening Weekend in the History');
+$art->setCategory($cat);
+$art->setContent('With $232.2 million worldwide total, Avatar had one of the best-opening weekends in the history of cinema.');
+$art->save();
+// create a new Video
+$vid = new Video();
+$vid->setTitle('Avatar Trailer');
+$vid->setCategory($cat);
+$vid->setResourceLink('http://www.avatarmovie.com/index.html')
+$vid->save();
+}}}
+
+If Propel stopped there, the `concrete_inheritance` behavior would only provide a shorcut to avoid repeating tags in the schema. But wait, there is more: the `Article` and `Video` classes actually extend the `Content` class:
+
+{{{
+#!php
+<?php
+class Content extends BaseContent
+{
+  public function getCategoryName()
+  {
+    return $this->getCategory()->getName();
+  }
+}
+echo $art->getCategoryName(); // 'Movie'
+echo $vid->getCategoryName(); // 'Movie'
+}}}
+
+And the true power of Propel's Concrete Table Inheritance is that every time you save an `Article` or a `Video` object, Propel saves a copy of the `title` and `category_id` columns in a `Content` object. Consequently, retrieving objects regardless of their child type becomes very easy:
+
+{{{
+#!php
+<?php 
+$conts = ContentQuery::create()->find();
+foreach ($conts as $content) {
+  echo $content->getTitle() . "(". $content->getCategoryName() ")/n";
+}
+// Avatar Makes Best Opening Weekend in the History (Movie)
+// Avatar Trailer (Movie)
+}}}
+
+The resulting relational model is denormalized - in other terms, data is copied across tables - but the behavior takes care of everything for you. That allows for very effective read queries on complex inheritance structures.
+
+Check out the brand new [wiki:Users/Documentation/1.5/Inheritance#ConcreteTableInheritance Inheritance Documentation] for more details on using and customizing this behavior.
+
 === Sortable Behavior ===
 
 Have you ever enhanced a Propel Model to give it the ability to move up or down in an ordered list? The new `sortable` behavior, new in Propel 1.5, offers exactly that... and even more.
