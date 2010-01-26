@@ -1,14 +1,16 @@
 = Inheritance =
 
-Developers often need the concept of inheritance in their object model. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world. However, using an well-known design pattern, Propel offers [http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html Single Table Inheritance], which is the most efficient implementation from a SQL and query performance perspective.
+Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate.  Propel offers two types of table inheritance: [http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html Single Table Inheritance], which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields ; and [http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html Concrete Table Inheritance], which provides the most features but adds a small overhead on write queries.
 
-In this implementation, one table is used for all subclasses. This has the implication that your table must have all columns needed by main class and subclasses. Propel will create stub subclasses.
+== Single Table Inheritance ==
+
+In this implementation, one table is used for all subclasses. This has the implication that your table must have all columns needed by the main class and subclasses. Propel will create stub subclasses.
 
 Let's illustrate this idea with an example. Consider an object model with three classes, `Book`, `Essay`, and `Comic` - the first class being parent of the other two. With single table inheritance, the data of all three classes is stored in one table, named `book`.
 
-== Defining Single Table Inheritance In The Schema ==
+=== Schema Definition ===
 
-A table using Single Table Inheritance requires a column to identify which class should be used to represent the table row. Classically, this column is named `class_key` - but you can choose whatever name fits your taste. The column needs the `inheritance="single"` attribute to make Propel understand that it's the class key column. Note that this 'key' column must be a real column in the table.
+A table using Single Table Inheritance requires a column to identify which class should be used to represent the ''table'' row. Classically, this column is named `class_key` - but you can choose whatever name fits your taste. The column needs the `inheritance="single"` attribute to make Propel understand that it's the class key column. Note that this 'key' column must be a real column in the table.
 
 {{{
 #!xml
@@ -27,7 +29,7 @@ Once you rebuild your model, Propel generated all three model classes (`Book`, `
 
 '''Tip''': An inherited class can extend another inherited class. That mean that you can add a `Manga` kind of book that extends `Comic` instead of `Book`.
 
-== Using Inherited Objects ==
+=== Using Inherited Objects ===
 
 Use inherited objects just like you use regular Propel model objects:
 
@@ -75,9 +77,9 @@ $novel->setTitle('Harry Potter');
 $novel->save();
 }}}
 
-== Retrieving Inherited objects ==
+=== Retrieving Inherited objects ===
 
-In order to retrieve books, use the Query object of the main class, as you would usually do:
+In order to retrieve books, use the Query object of the main class, as you would usually do. Propel will hydrate children objects instead of the parent object when necessary:
 
 {{{
 #!php
@@ -92,7 +94,7 @@ foreach ($books as $book) {
 // Novel: Harry Potter
 }}}
 
-If you want to retrieve only objects of a certain class, use the query's filter:
+If you want to retrieve only objects of a certain class, use the query's filter method:
 
 {{{
 #!php
@@ -106,7 +108,7 @@ echo get_class($book) . ': ' . $book->getTitle() . "\n";
 
 '''Tip''': You can override the base peer's `getOMClass()` to return the classname to use based on more complex logic (or query).
 
-== Abstract Entities ==
+=== Abstract Entities ===
 
 If you wish to enforce using subclasses of an entity, you may declare a table "abstract" in your XML data model:
 
@@ -117,3 +119,210 @@ If you wish to enforce using subclasses of an entity, you may declare a table "a
 }}}
 
 That way users will only be able to instanciate `Essay` or `Comic` books, but not `Book`.
+
+== Concrete Table Inheritance ==
+
+Concrete Table Inheritance uses one table for each class in the hierarchy. Each table contains columns for the class and all its ancestors, so any fields in a superclass are duplicated across the tables of the subclasses.
+
+Propel implements Concrete Table Inheritance through a behavior.
+
+=== Schema Definition ===
+
+Once again, this is easier to understand through an example. In a Content Management System, content types are often organized in a hierarchy, each subclass adding more fields to the superclass. So let's consider the following schema, where the `article` and `video` tables use the same fields as the main `content` tables, plus additional fields:
+
+{{{
+#!xml
+<table name="content">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+<table name="category">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="name" type="VARCHAR" size="100" primaryString="true" />
+</table>
+<table name="article">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="body" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+<table name="video">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="resource_link" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+}}}
+
+Since the columns of the main table are copied to the child tables, this schema is a simple implementation of Concrete Table Inheritance. This is something that you can write by hand, but the repetition makes it tedious. Instead, you should let the `concrete_inheritance` behavior do it for you:
+
+{{{
+#!xml
+<table name="content">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+<table name="category">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="name" type="VARCHAR" size="100" primaryString="true" />
+</table>
+<table name="article">
+  <behavior name="concrete_inheritance">
+    <parameter name="extends" value="content" />
+  </behavior>
+  <column name="body" type="VARCHAR" size="100"/>
+</table>
+<table name="video">
+  <behavior name="concrete_inheritance">
+    <parameter name="extends" value="content" />
+  </behavior>
+  <column name="resource_link" type="VARCHAR" size="100"/>
+</table>
+}}} 
+
+'''Tip''': The `concrete_inheritance` behavior copies columns, foreign keys, indices and validators.
+
+=== Using Inherited Model Classes ===
+
+For each of the tables in the schema above, Propel generates a Model class:
+
+{{{
+#!php
+<?php
+// create a new Category
+$cat = new Category();
+$cat->setName('Movie');
+$cat->save();
+// create a new Article
+$art = new Article();
+$art->setTitle('Avatar Makes Best Opening Weekend in the History');
+$art->setCategory($cat);
+$art->setContent('With $232.2 million worldwide total, Avatar had one of the best-opening weekends in the history of cinema.');
+$art->save();
+// create a new Video
+$vid = new Video();
+$vid->setTitle('Avatar Trailer');
+$vid->setCategory($cat);
+$vid->setResourceLink('http://www.avatarmovie.com/index.html')
+$vid->save();
+}}}
+
+And since the `concrete_inheritance` behavior tag defines a parent table, the `Article` and `Video` classes extend the `Content` class (same for the generated Query classes):
+
+{{{
+#!php
+<?php
+// methods of the parent model are accessible to the child models
+class Content extends BaseContent
+{
+  public function getCategoryName()
+  {
+    return $this->getCategory()->getName();
+  }
+}
+echo $art->getCategoryName(); // 'Movie'
+echo $vid->getCategoryName(); // 'Movie'
+
+// methods of the parent query are accessible to the child query
+class ContentQuery extends BaseContentQuery
+{
+  public function filterByCategoryName($name)
+  {
+    return $this
+      ->useCategoryQuery()
+        ->filterByName($name)
+      ->endUse();
+  }
+}
+$articles = ArticleQuery::create()
+  ->filterByCategoryName('Movie')
+  ->find();
+}}}
+
+That makes of Concrete Table Inheritance a powerful way to organize your model logic and to avoid repetition, both in the schema and in the model code.
+
+=== Data Replication ===
+
+By default, every time you save an `Article` or a `Video` object, Propel saves a copy of the `title` and `category_id` columns in a `Content` object. Consequently, retrieving objects regardless of their child type becomes very easy:
+
+{{{
+#!php
+<?php 
+$conts = ContentQuery::create()->find();
+foreach ($conts as $content) {
+  echo $content->getTitle() . "(". $content->getCategoryName() ")/n";
+}
+// Avatar Makes Best Opening Weekend in the History (Movie)
+// Avatar Trailer (Movie)
+}}}
+
+Propel also creates a one-to-one relationship between a object and its parent copy. That's why the schema definition above doesn't define any primary key for the `article` and `video` tables: the `concrete_inheritance` behavior creates the `id` primary key which is also a foreign key to the parent `id` column. So once you have a parent object, getting the child object is just one method call away:
+
+{{{
+#!php
+<?php
+class Article extends BaseArticle
+{
+  public function getPreview()
+  {
+    return $this->getContent();
+  }
+}
+class Movie extends BaseMovie
+{
+  public function getPreview()
+  {
+    return $this->getResourceLink();
+  }
+}
+$conts = ContentQuery::create()->find();
+foreach ($conts as $content) {
+  echo $content->getTitle() . "(". $content->getCategoryName() ")/n"
+  if ($content->hasChildObject()) {
+    echo '  ' . $content->getChildObject()->getPreview(), "\n";
+}
+// Avatar Makes Best Opening Weekend in the History (Movie)
+//   With $232.2 million worldwide total, Avatar had one of the best-opening
+//   weekends in the history of cinema.
+// Avatar Trailer (Movie)
+//   http://www.avatarmovie.com/index.html
+}}}
+
+The `hasChildObject()` and `getChildObject()` methods are automatically added by the behavior to the parent class. Behind the curtain, the saved `content` row has an additional `descendant_column` field allowing it to use the right model for the job.
+
+'''Tip''' You can disable the data replication by setting the `copy_data_to_parent` parameter to "false". In that case, the `concrete_inheritance` behavior simply modifies the table at buildtime and does nothing at runtime. Also, with `copy_data_to_parent` disabled, any primary key copied from the parent table is not turned into a foreign key:
+
+{{{
+#!xml
+<table name="article">
+  <behavior name="concrete_inheritance">
+    <parameter name="extends" value="content" />
+    <parameter name="copy_data_to_parent" value="false" />
+  </behavior>
+  <column name="body" type="VARCHAR" size="100"/>
+</table>
+// results in 
+<table name="article">
+  <column name="body" type="VARCHAR" size="100"/>
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="title" type="VARCHAR" size="100"/>
+  <column name="category_id" required="false" type="INTEGER" />
+  <foreign-key foreignTable="category" onDelete="cascade">
+    <reference local="category_id" foreign="id" />
+  </foreign-key>
+</table>
+}}}
