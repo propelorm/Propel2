@@ -57,6 +57,7 @@ class NestedSetBehaviorObjectBuilderModifier
 	{
 		$this->builder = $builder;
 		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
+		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
 		
@@ -151,7 +152,6 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addGetDescendants($script);
 		$this->addGetNumberOfDescendants($script);
 		$this->addGetBranch($script);
-		$this->addGetDescendantsCriteria($script);
 		$this->addGetAncestors($script);
 		
 		$this->addAddChild($script);
@@ -167,6 +167,8 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addMoveSubtreeTo($script);
 		
 		$this->addDeleteDescendants($script);
+		
+		$this->addGetQueryOrCreate($script);
 		
 		$this->addGetIterator($script);
 		
@@ -445,7 +447,6 @@ public function hasParent(PropelPDO \$con = null)
 
 	protected function addGetParent(&$script)
 	{
-		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Gets ancestor for the given node if it exists
@@ -459,16 +460,10 @@ public function getParent(PropelPDO \$con = null)
 	if(!\$this->hasParent()) {
 		return null;
 	} else {
-		\$c = new Criteria($peerClassname::DATABASE_NAME);
-		\$c->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
-		\$c->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);";
-		if ($this->behavior->useScope()) {
-			$script .= "
-		\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
-		}
-		$script .= "		
-		\$c->addAscendingOrderByColumn($peerClassname::RIGHT_COL);
-		return $peerClassname::doSelectOne(\$c, \$con);
+		return {$this->queryClassname}::create()
+			->ancestorsOf(\$this)
+			->addAscendingOrderByColumn({$this->peerClassname}::RIGHT_COL)
+			->findOne();
 	}
 }
 ";
@@ -599,20 +594,20 @@ public function hasChildren()
 /**
  * Gets the children of the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results.
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getChildren(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getChildren(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
-		// save one query
 		return array();
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->childrenOf(\$this)
+			->orderByBranch()
+			->find(\$con);
 	}
-	\$criteria = \$this->getDescendantsCriteria(\$criteria);
-	\$criteria->add($peerClassname::LEVEL_COL, \$this->getLevel() + 1, Criteria::EQUAL);
-
-	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
@@ -625,20 +620,19 @@ public function getChildren(Criteria \$criteria = null, PropelPDO \$con = null)
 /**
  * Gets number of children for the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     int 		Number of children
  */
-public function getNumberOfChildren(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
-		// save one query
 		return 0;
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->childrenOf(\$this)
+			->count(\$con);
 	}
-	\$criteria = \$this->getDescendantsCriteria(\$criteria);
-	\$criteria->add($peerClassname::LEVEL_COL, \$this->getLevel() + 1, Criteria::EQUAL);
-	
-	return $peerClassname::doCount(\$criteria, \$con);
 }
 ";
 	}
@@ -651,20 +645,20 @@ public function getNumberOfChildren(Criteria \$criteria = null, PropelPDO \$con 
 /**
  * Gets the first child of the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getFirstChild(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getFirstChild(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
-		// save one query
 		return array();
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->childrenOf(\$this)
+			->orderByBranch()
+			->findOne(\$con);
 	}
-	\$criteria = \$this->getDescendantsCriteria(\$criteria);
-	\$criteria->add($peerClassname::LEVEL_COL, \$this->getLevel() + 1, Criteria::EQUAL);
-
-	return $peerClassname::doSelectOne(\$criteria, \$con);
 }
 ";
 	}
@@ -677,22 +671,20 @@ public function getFirstChild(Criteria \$criteria = null, PropelPDO \$con = null
 /**
  * Gets the last child of the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getLastChild(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getLastChild(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
-		// save one query
 		return array();
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->childrenOf(\$this)
+			->orderByBranch(true)
+			->findOne(\$con);
 	}
-	if (\$criteria === null) {
-		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-	}
-	\$criteria->addDescendingOrderByColumn($peerClassname::RIGHT_COL);
-
-	return \$this->getFirstChild(\$criteria, \$con);
 }
 ";
 	}
@@ -706,26 +698,24 @@ public function getLastChild(Criteria \$criteria = null, PropelPDO \$con = null)
  * Gets the siblings of the given node
  *
  * @param      bool			\$includeNode Whether to include the current node or not
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  *
  * @return     array 		List of $objectClassname objects
  */
-public function getSiblings(\$includeNode = false, Criteria \$criteria = null, PropelPDO \$con = null)
+public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isRoot()) {
-		// save one query
 		return array();
-	}
-	\$parent = \$this->getParent(\$con);
-	\$siblings = array();
-	foreach (\$parent->getChildren(\$criteria, \$con) as \$sibling) {
-		if (\$this->equals(\$sibling) && !\$includeNode) {
-			continue;
+	} else {
+		\$query = \$this->getQueryOrCreate(\$query)
+				->childrenOf(\$this->getParent(\$con))
+				->orderByBranch(true);
+		if (!\$includeNode) {
+			\$query->prune(\$this);
 		}
-		\$siblings[] = \$sibling;
+		return \$query->find(\$con);
 	}
-	return \$siblings;
 }
 ";
 	}
@@ -738,19 +728,20 @@ public function getSiblings(\$includeNode = false, Criteria \$criteria = null, P
 /**
  * Gets descendants for the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getDescendants(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getDescendants(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
-		// save one query
 		return array();
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->descendantsOf(\$this)
+			->orderByBranch()
+			->find(\$con);
 	}
-	\$criteria = \$this->getDescendantsCriteria(\$criteria);
-	
-	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
@@ -763,19 +754,20 @@ public function getDescendants(Criteria \$criteria = null, PropelPDO \$con = nul
 /**
  * Gets number of descendants for the given node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     int 		Number of descendants
  */
-public function getNumberOfDescendants(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
 		// save one query
 		return 0;
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->descendantsOf(\$this)
+			->count(\$con);
 	}
-	\$criteria = \$this->getDescendantsCriteria(\$criteria);
-	
-	return $peerClassname::doCount(\$criteria, \$con);
 }
 ";
 	}
@@ -788,56 +780,16 @@ public function getNumberOfDescendants(Criteria \$criteria = null, PropelPDO \$c
 /**
  * Gets descendants for the given node, plus the current node
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getBranch(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getBranch(\$query = null, PropelPDO \$con = null)
 {
-	if (\$criteria === null) {
-		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-	}
-	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::GREATER_EQUAL);
-	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::LESS_EQUAL);";
-	if ($this->behavior->useScope()) {
-		$script .= "
-	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
-	}
-	$script .= "		
-	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
-		
-	return $peerClassname::doSelect(\$criteria, \$con);
-}
-";
-	}
-	
-	protected function addGetDescendantsCriteria(&$script)
-	{
-		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
-		$script .= "
-/**
- * Gets a Criteria for the descendants for the given node
- *
- * @param      Criteria \$criteria Criteria to filter results
- * 
- * @return     Criteria Criteria to find the descendants
- */
-protected function getDescendantsCriteria(Criteria \$criteria = null)
-{
-	if (\$criteria === null) {
-		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-	}
-	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::GREATER_THAN);
-	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::LESS_THAN);";
-	if ($this->behavior->useScope()) {
-		$script .= "
-	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
-	}
-	$script .= "		
-	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
-
-	return \$criteria;
+	return \$this->getQueryOrCreate(\$query)
+		->branchOf(\$this)
+		->orderByBranch()
+		->find(\$con);
 }
 ";
 	}
@@ -851,32 +803,21 @@ protected function getDescendantsCriteria(Criteria \$criteria = null)
  * Gets ancestors for the given node, starting with the root node
  * Use it for breadcrumb paths for instance
  *
- * @param      Criteria \$criteria Criteria to filter results. 
+ * @param      Criteria \$query Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
  * @return     array 		List of $objectClassname objects
  */
-public function getAncestors(Criteria \$criteria = null, PropelPDO \$con = null)
+public function getAncestors(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isRoot()) {
 		// save one query
 		return array();
+	} else {
+		return \$this->getQueryOrCreate(\$query)
+			->ancestorsOf(\$this)
+			->orderByBranch()
+			->find(\$con);
 	}
-	if (\$criteria === null) {
-		\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-	}
-	if (\$con === null) {
-		\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
-	}
-	\$criteria->add($peerClassname::LEFT_COL, \$this->getLeftValue(), Criteria::LESS_THAN);
-	\$criteria->add($peerClassname::RIGHT_COL, \$this->getRightValue(), Criteria::GREATER_THAN);";
-	if ($this->behavior->useScope()) {
-		$script .= "
-	\$criteria->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
-	}
-	$script .= "		
-	\$criteria->addAscendingOrderByColumn($peerClassname::LEFT_COL);
-
-	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
@@ -1295,6 +1236,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, PropelPDO \$con = nul
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1322,18 +1264,12 @@ public function deleteDescendants(PropelPDO \$con = null)
 	\$scope = \$this->getScopeValue();";
 		}
 		$script .= "
-	\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-	\$criteria->add($peerClassname::LEFT_COL, \$left, Criteria::GREATER_THAN);
-	\$criteria->add($peerClassname::RIGHT_COL, \$right, Criteria::LESS_THAN);";
-		if ($useScope) {
-			$script .= "
-	\$criteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
-		}
-		$script .= "
 	\$con->beginTransaction();
 	try {
 		// delete descendant nodes (will empty the instance pool)
-		\$ret = $peerClassname::doDelete(\$criteria, \$con);
+		\$ret = $queryClassname::create()
+			->descendantsOf(\$this)
+			->delete(\$con);
 		
 		// fill up the room that was used by descendants
 		$peerClassname::shiftRLValues(\$left - \$right + 1, \$right, null" . ($useScope ? ", \$scope" : "") . ", \$con);
@@ -1351,7 +1287,30 @@ public function deleteDescendants(PropelPDO \$con = null)
 }
 ";
 	}
+	
+	protected function addGetQueryOrCreate(&$script)
+	{
+		$script .= "
+/**
+ * Returns a {$this->queryClassname} object for queries on this object
+ *
+ * @param      Criteria \$criteria The Criteria to use as a base
+ * @return     {$this->queryClassname}
+ */
+public function getQueryOrCreate(\$criteria = null)
+{
+	if (null === \$criteria) {
+		return {$this->queryClassname}::create();
+	} elseif (\$criteria instanceof {$this->queryClassname}) {
+		return \$criteria;
+	} elseif (\$criteria instanceof Criteria) {
+		return {$this->queryClassname}::create()
+			->mergeWith(\$criteria);
+	}
+}
+";
 
+	}
 	protected function addGetIterator(&$script)
 	{
 		$script .= "

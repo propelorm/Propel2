@@ -653,7 +653,9 @@ class ModelCriteria extends Criteria
 		parent::mergeWith($criteria);
 		
 		// merge with
-		$this->with = array_merge($this->getWith(), $criteria->getWith());
+		if ($criteria instanceof ModelCriteria) {
+			$this->with = array_merge($this->getWith(), $criteria->getWith());
+		}
 		
 		return $this;
 	}
