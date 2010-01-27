@@ -168,8 +168,6 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		
 		$this->addDeleteDescendants($script);
 		
-		$this->addGetQueryOrCreate($script);
-		
 		$this->addGetIterator($script);
 		
 		if ($this->getParameter('method_proxies') == 'true')
@@ -462,7 +460,7 @@ public function getParent(PropelPDO \$con = null)
 	} else {
 		return {$this->queryClassname}::create()
 			->ancestorsOf(\$this)
-			->addAscendingOrderByColumn({$this->peerClassname}::RIGHT_COL)
+			->orderByLevel(true)
 			->findOne();
 	}
 }
@@ -472,6 +470,7 @@ public function getParent(PropelPDO \$con = null)
 	protected function addHasPrevSibling(&$script)
 	{
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Determines if the node has previous sibling
@@ -484,21 +483,21 @@ public function hasPrevSibling(PropelPDO \$con = null)
 	if (!{$this->peerClassname}::isValid(\$this)) {
 		return false;
 	}
-	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
+	return $queryClassname::create()
+		->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
 		if ($this->behavior->useScope()) {
 			$script .= "
-	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		->inTree(\$this->getScopeValue())";
 		}
 		$script .= "
-	return $peerClassname::doCount(\$c, \$con) > 0;
+		->count(\$con) > 0;
 }
 ";
 	}
 
 	protected function addGetPrevSibling(&$script)
 	{
-		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets previous sibling for the given node if it exists
@@ -508,14 +507,14 @@ public function hasPrevSibling(PropelPDO \$con = null)
  */
 public function getPrevSibling(PropelPDO \$con = null)
 {
-	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add($peerClassname::RIGHT_COL, \$this->getLeftValue() - 1, Criteria::EQUAL);";
+	return $queryClassname::create()
+		->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
 		if ($this->behavior->useScope()) {
 			$script .= "
-	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		->inTree(\$this->getScopeValue())";
 		}
 		$script .= "
-	return $peerClassname::doSelectOne(\$c, \$con);
+		->findOne(\$con);
 }
 ";
 	}
@@ -523,6 +522,7 @@ public function getPrevSibling(PropelPDO \$con = null)
 	protected function addHasNextSibling(&$script)
 	{
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Determines if the node has next sibling
@@ -535,21 +535,21 @@ public function hasNextSibling(PropelPDO \$con = null)
 	if (!{$this->peerClassname}::isValid(\$this)) {
 		return false;
 	}
-	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
+	return $queryClassname::create()
+		->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
 		if ($this->behavior->useScope()) {
 			$script .= "
-	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		->inTree(\$this->getScopeValue())";
 		}
-		$script .= "		
-	return $peerClassname::doCount(\$c, \$con) > 0;
+		$script .= "
+		->count(\$con) > 0;
 }
 ";
 	}
 
 	protected function addGetNextSibling(&$script)
 	{
-		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets next sibling for the given node if it exists
@@ -559,14 +559,14 @@ public function hasNextSibling(PropelPDO \$con = null)
  */
 public function getNextSibling(PropelPDO \$con = null)
 {
-	\$c = new Criteria($peerClassname::DATABASE_NAME);
-	\$c->add($peerClassname::LEFT_COL, \$this->getRightValue() + 1, Criteria::EQUAL);";
+	return $queryClassname::create()
+		->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
 		if ($this->behavior->useScope()) {
 			$script .= "
-	\$c->add($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL);";
+		->inTree(\$this->getScopeValue())";
 		}
-		$script .= "		
-	return $peerClassname::doSelectOne(\$c, \$con);
+		$script .= "
+		->findOne(\$con);
 }
 ";
 	}
@@ -603,7 +603,7 @@ public function getChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -629,7 +629,7 @@ public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return 0;
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->childrenOf(\$this)
 			->count(\$con);
 	}
@@ -654,7 +654,7 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->findOne(\$con);
@@ -680,7 +680,7 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->childrenOf(\$this)
 			->orderByBranch(true)
 			->findOne(\$con);
@@ -708,7 +708,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	if(\$this->isRoot()) {
 		return array();
 	} else {
-		\$query = \$this->getQueryOrCreate(\$query)
+		\$query = \$this->getQuery(\$query)
 				->childrenOf(\$this->getParent(\$con))
 				->orderByBranch(true);
 		if (!\$includeNode) {
@@ -737,7 +737,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->descendantsOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -764,7 +764,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return 0;
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->descendantsOf(\$this)
 			->count(\$con);
 	}
@@ -786,7 +786,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
  */
 public function getBranch(\$query = null, PropelPDO \$con = null)
 {
-	return \$this->getQueryOrCreate(\$query)
+	return \$this->getQuery(\$query)
 		->branchOf(\$this)
 		->orderByBranch()
 		->find(\$con);
@@ -813,7 +813,7 @@ public function getAncestors(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return array();
 	} else {
-		return \$this->getQueryOrCreate(\$query)
+		return \$this->getQuery(\$query)
 			->ancestorsOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -1288,29 +1288,6 @@ public function deleteDescendants(PropelPDO \$con = null)
 ";
 	}
 	
-	protected function addGetQueryOrCreate(&$script)
-	{
-		$script .= "
-/**
- * Returns a {$this->queryClassname} object for queries on this object
- *
- * @param      Criteria \$criteria The Criteria to use as a base
- * @return     {$this->queryClassname}
- */
-public function getQueryOrCreate(\$criteria = null)
-{
-	if (null === \$criteria) {
-		return {$this->queryClassname}::create();
-	} elseif (\$criteria instanceof {$this->queryClassname}) {
-		return \$criteria;
-	} elseif (\$criteria instanceof Criteria) {
-		return {$this->queryClassname}::create()
-			->mergeWith(\$criteria);
-	}
-}
-";
-
-	}
 	protected function addGetIterator(&$script)
 	{
 		$script .= "
