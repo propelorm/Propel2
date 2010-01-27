@@ -97,13 +97,5 @@ public function getChildObject()
 }
 ";
 	}
-	
-	public function preDelete()
-	{
-		return "if (\$this->hasChildObject()) {
-	throw new PropelException('Cannot delete a parent object. Please delete the child object instead');
-}
-";
-	}
 
 }

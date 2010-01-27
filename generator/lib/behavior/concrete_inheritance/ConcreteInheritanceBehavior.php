@@ -157,6 +157,14 @@ class ConcreteInheritanceBehavior extends Behavior
 ";
 		}
 	}
+
+	public function postDelete($script)
+	{
+		if ($this->isCopyData()) {
+			return "\$this->getParentOrCreate(\$con)->delete(\$con);
+";
+		}
+	}
 	
 	public function objectMethods($builder)
 	{

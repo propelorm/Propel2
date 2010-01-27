@@ -188,4 +188,20 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertEquals($category, $content->getConcreteCategory(), 'getSyncParent() returns a synchronized parent object');
 	}
 	
+	public function testPostDeleteCopyData()
+	{
+	  ConcreteArticleQuery::create()->deleteAll();
+		ConcreteQuizzQuery::create()->deleteAll();
+		ConcreteContentQuery::create()->deleteAll();
+		ConcreteCategoryQuery::create()->deleteAll();
+		$category = new ConcreteCategory();
+		$category->setName('main');
+		$article = new ConcreteArticle();
+		$article->setConcreteCategory($category);
+		$article->save();
+		$id = $article->getId();
+    $article->delete();
+    $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
+	}
+	
 }
