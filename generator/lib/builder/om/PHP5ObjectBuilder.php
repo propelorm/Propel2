@@ -249,7 +249,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$this->addBuildCriteria($script);
 		$this->addBuildPkeyCriteria($script);
-		$this->addGetQuery($script);
 		$this->addGetPrimaryKey($script);
 		$this->addSetPrimaryKey($script);
 		$this->addIsPrimaryKeyNull($script);
@@ -259,6 +258,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (!$table->isAlias()) {
 			$this->addGetPeer($script);
 		}
+		$this->addGetQueryObject($script);
 
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
@@ -1676,7 +1676,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 	}
 
-	protected function addGetQuery(&$script)
+	protected function addGetQueryObject(&$script)
 	{
 		$queryClassname = $this->getStubQueryBuilder()->getClassname();
 		$script .= "
@@ -1686,7 +1686,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Criteria \$criteria The Criteria to use as a base
 	 * @return     $queryClassname
 	 */
-	public function getQuery(\$criteria = null)
+	public function getQueryObject(\$criteria = null)
 	{
 		if (null === \$criteria) {
 			return $queryClassname::create();

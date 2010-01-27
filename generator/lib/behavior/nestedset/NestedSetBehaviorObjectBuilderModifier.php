@@ -603,7 +603,7 @@ public function getChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -629,7 +629,7 @@ public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return 0;
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->childrenOf(\$this)
 			->count(\$con);
 	}
@@ -654,7 +654,7 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->findOne(\$con);
@@ -680,7 +680,7 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->childrenOf(\$this)
 			->orderByBranch(true)
 			->findOne(\$con);
@@ -708,7 +708,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	if(\$this->isRoot()) {
 		return array();
 	} else {
-		\$query = \$this->getQuery(\$query)
+		\$query = \$this->getQueryObject(\$query)
 				->childrenOf(\$this->getParent(\$con))
 				->orderByBranch(true);
 		if (!\$includeNode) {
@@ -737,7 +737,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->descendantsOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -764,7 +764,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return 0;
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->descendantsOf(\$this)
 			->count(\$con);
 	}
@@ -786,7 +786,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
  */
 public function getBranch(\$query = null, PropelPDO \$con = null)
 {
-	return \$this->getQuery(\$query)
+	return \$this->getQueryObject(\$query)
 		->branchOf(\$this)
 		->orderByBranch()
 		->find(\$con);
@@ -813,7 +813,7 @@ public function getAncestors(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return array();
 	} else {
-		return \$this->getQuery(\$query)
+		return \$this->getQueryObject(\$query)
 			->ancestorsOf(\$this)
 			->orderByBranch()
 			->find(\$con);
