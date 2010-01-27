@@ -1532,6 +1532,72 @@ class ModelCriteriaTest extends BookstoreTestBase
 
 	}
 	
+	public function testGetAliasedColName()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$this->assertEquals(BookPeer::TITLE, $c->getAliasedColName(BookPeer::TITLE), 'getAliasedColName() returns the input when the table has no alias');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('foo');
+		$this->assertEquals(BookPeer::TITLE, $c->getAliasedColName(BookPeer::TITLE), 'getAliasedColName() returns the input when the table has a query alias');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('foo', true);
+		$this->assertEquals('foo.TITLE', $c->getAliasedColName(BookPeer::TITLE), 'getAliasedColName() returns the column name with table alias when the table has a true alias');
+	}
+	
+	public function testAddUsingAliasNoAlias()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book');
+		$c1->addUsingAlias(BookPeer::TITLE, 'foo');
+		$c2 = new ModelCriteria('bookstore', 'Book');
+		$c2->add(BookPeer::TITLE, 'foo');
+		$this->assertEquals($c2, $c1, 'addUsingalias() translates to add() when the table has no alias');
+	}
+
+	public function testAddUsingAliasQueryAlias()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c1->addUsingAlias(BookPeer::TITLE, 'foo');
+		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
+		$c2->add(BookPeer::TITLE, 'foo');
+		$this->assertEquals($c2, $c1, 'addUsingalias() translates the colname using the table alias before calling add() when the table has a true alias');
+	}
+
+	public function testAddUsingAliasTrueAlias()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book');
+		$c1->setModelAlias('b', true);
+		$c1->addUsingAlias(BookPeer::TITLE, 'foo');
+		$c2 = new ModelCriteria('bookstore', 'Book');
+		$c2->setModelAlias('b', true);
+		$c2->add('b.TITLE', 'foo');
+		$this->assertEquals($c2, $c1, 'addUsingalias() translates to add() when the table has a true alias');
+	}
+
+	public function testAddUsingAliasTwice()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book');
+		$c1->addUsingAlias(BookPeer::TITLE, 'foo');
+		$c1->addUsingAlias(BookPeer::TITLE, 'bar');
+		$c2 = new ModelCriteria('bookstore', 'Book');
+		$c2->add(BookPeer::TITLE, 'foo');
+		$c2->addAnd(BookPeer::TITLE, 'bar');
+		$this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
+	}
+
+	public function testAddUsingAliasTrueAliasTwice()
+	{
+		$c1 = new ModelCriteria('bookstore', 'Book');
+		$c1->setModelAlias('b', true);
+		$c1->addUsingAlias(BookPeer::TITLE, 'foo');
+		$c1->addUsingAlias(BookPeer::TITLE, 'bar');
+		$c2 = new ModelCriteria('bookstore', 'Book');
+		$c2->setModelAlias('b', true);
+		$c2->add('b.TITLE', 'foo');
+		$c2->addAnd('b.TITLE', 'bar');
+		$this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria
@@ -1542,6 +1608,7 @@ class TestableModelCriteria extends ModelCriteria
 	{
 		return parent::replaceNames($clause);
 	}
+	
 }
 
 class ModelCriteriaWithPreSelectHook extends ModelCriteria

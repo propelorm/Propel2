@@ -1430,7 +1430,7 @@ EOT;
 	 *
 	 * @return    string the fully qualified column name, using table alias if applicatble
 	 */
-	protected function getAliasedColName($colName)
+	public function getAliasedColName($colName)
 	{
 		if ($this->useAliasInSQL) {
 			return $this->modelAlias . substr($colName, strpos($colName, '.'));
@@ -1449,9 +1449,10 @@ EOT;
 	 *
 	 * @return     ModelCriteria A modified Criteria object.
 	 */	
-	protected function addUsingAlias($p1, $value = null, $comparison = null)
+	public function addUsingAlias($p1, $value = null, $comparison = null)
 	{
-		return $this->add($this->getAliasedColName($p1), $value, $comparison);
+		$key = $this->getAliasedColName($p1);
+		return $this->containsKey($key) ? $this->addAnd($key, $value, $comparison) : $this->add($key, $value, $comparison);
 	}
 
 	/**
