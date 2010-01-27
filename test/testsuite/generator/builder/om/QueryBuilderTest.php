@@ -231,7 +231,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByPrice(array('min' => 10, 'max' => 12));
 		$q1 = BookQuery::create()
 			->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL)
-			->add(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
+			->addAnd(BookPeer::PRICE, 12, Criteria::LESS_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a between when passed both a \'min\' and a \'max\' key');
 	}
 
@@ -256,7 +256,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10, 'max' => 12));
 		$q1 = BookstoreEmployeeAccountQuery::create()
 			->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL)
-			->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
+			->addAnd(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::LESS_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a between when passed both a \'min\' and a \'max\' key');
 	}
 
