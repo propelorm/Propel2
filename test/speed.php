@@ -8,11 +8,11 @@ if (!file_exists($conf_path)) {
  // Add build/classes/ and classes/ to path
 set_include_path(
 	realpath(dirname(__FILE__) . '/fixtures/bookstore/build/classes') . PATH_SEPARATOR .
-	dirname(__FILE__) . '/../runtime/classes' . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../runtime/lib' . PATH_SEPARATOR .
 	get_include_path()
 );
 
-require_once 'propel/Propel.php';
+require_once 'Propel.php';
 $conf = include $conf_path;
 $conf['log'] = null;
 Propel::setConfiguration($conf);
@@ -55,13 +55,13 @@ class PropelSpeedTest
 
 	protected function emptyTables()
 	{
-		$res1 = AuthorPeer::doSelect(new Criteria());
-		$res2 = PublisherPeer::doSelect(new Criteria());
-		$res3 = AuthorPeer::doSelect(new Criteria());
-		$res4 = ReviewPeer::doSelect(new Criteria());
-		$res5 = MediaPeer::doSelect(new Criteria());
-		$res6 = BookClubListPeer::doSelect(new Criteria());
-		$res7 = BookListRelPeer::doSelect(new Criteria());	
+		$res1 = AuthorPeer::doDeleteAll();
+		$res2 = PublisherPeer::doDeleteAll();
+		$res3 = AuthorPeer::doDeleteAll();
+		$res4 = ReviewPeer::doDeleteAll();
+		$res5 = MediaPeer::doDeleteAll();
+		$res6 = BookClubListPeer::doDeleteAll();
+		$res7 = BookListRelPeer::doDeleteAll();
 	}
 
 	public function setUp()
@@ -186,32 +186,32 @@ class PropelSpeedTest
 		// Perform a "complex" search
 		// --------------------------
 		
-		$crit = new Criteria();
-		$crit->add(BookPeer::TITLE, 'Harry%', Criteria::LIKE);
-		$results = BookPeer::doSelect($crit);
+		$results = BookQuery::create()
+			->filterByTitle('Harry%')
+			->find();
 		
-		$crit2 = new Criteria();
-		$crit2->add(BookPeer::ISBN, array("0380977427", "0140422161"), Criteria::IN);
-		$results = BookPeer::doSelect($crit2);
+		$results = BookQuery::create()
+			->where('Book.ISBN IN ?', array("0380977427", "0140422161"))
+			->find();
 		
 		// Perform a "limit" search
 		// ------------------------
 		
-		$crit = new Criteria();
-		$crit->setLimit(2);
-		$crit->setOffset(1);
-		$crit->addAscendingOrderByColumn(BookPeer::TITLE);		
-		$results = BookPeer::doSelect($crit);
+		$results = BookQuery::create()
+			->limit(2)
+			->offset(1)
+			->orderByTitle()
+			->find();
 		
 		// Perform a lookup & update!
 		// --------------------------
 		
-		$qs_lookup = BookPeer::retrieveByPk($qs_id);
+		$qs_lookup = BookQuery::create()->findPk($qs_id);
 		$new_title = "Quicksilver (".crc32(uniqid(rand())).")";
 		$qs_lookup->setTitle($new_title);
 		$qs_lookup->save();
 		
-		$qs_lookup2 = BookPeer::retrieveByPk($qs_id);
+		$qs_lookup2 = BookQuery::create()->findPk($qs_id);
 		
 		// Test some basic DATE / TIME stuff
 		// ---------------------------------
@@ -220,12 +220,12 @@ class PropelSpeedTest
 		$control = strtotime('2004-02-29 00:00:00');
 	
 		// should be two in the db
-		$r = ReviewPeer::doSelectOne(new Criteria());
+		$r = ReviewQuery::create()->findOne();
 		$r_id = $r->getId();
 		$r->setReviewDate($control);
 		$r->save();
 	
-		$r2 = ReviewPeer::retrieveByPk($r_id);
+		$r2 = ReviewQuery::create()->findPk($r_id);
 
 		// Testing the DATE/TIME columns
 		// -----------------------------
@@ -234,12 +234,12 @@ class PropelSpeedTest
 		$control = strtotime('2004-02-29 00:00:00');
 	
 		// should be two in the db
-		$r = ReviewPeer::doSelectOne(new Criteria());
+		$r = ReviewQuery::create()->findOne();
 		$r_id = $r->getId();
 		$r->setReviewDate($control);
 		$r->save();
 	
-		$r2 = ReviewPeer::retrieveByPk($r_id);
+		$r2 = ReviewQuery::create()->findPk($r_id);
 
 		// Testing the column validators
 		// -----------------------------
@@ -287,8 +287,7 @@ class PropelSpeedTest
 		// Testing doCount() functionality
 		// -------------------------------
 		
-		$c = new Criteria();
-		$count = BookPeer::doCount($c);
+		$count = BookQuery::create()->count();
 
 		// Testing many-to-many relationships
 		// ----------------------------------
@@ -325,17 +324,17 @@ class PropelSpeedTest
 	
 		// re-fetch books and lists from db to be sure that nothing is cached
 	
-		$crit = new Criteria();
-		$crit->add(BookPeer::ID, $phoenix->getId());
-		$phoenix = BookPeer::doSelectOne($crit);
+		$phoenix = BookQuery::create()
+			->filterById($phoenix->getId())
+			->findOne();
 	
-		$crit = new Criteria();
-		$crit->add(BookClubListPeer::ID, $blc1->getId());
-		$blc1 = BookClubListPeer::doSelectOne($crit);
+		$blc1 = BookClubListQuery::create()
+			->filterById($blc1->getId())
+			->findOne();
 	
-		$crit = new Criteria();
-		$crit->add(BookClubListPeer::ID, $blc2->getId());
-		$blc2 = BookClubListPeer::doSelectOne($crit);
+		$blc2 = BookClubListQuery::create()
+			->filterbyId($blc2->getId())
+			->findOne();
 	
 		$relCount = $phoenix->countBookListRels();
 	
@@ -346,7 +345,7 @@ class PropelSpeedTest
 		// Removing books that were just created
 		// -------------------------------------
 	
-		$hp = BookPeer::retrieveByPk($phoenix_id);
+		$hp = BookQuery::create()->findPk($phoenix_id);
 		$c = new Criteria();
 		$c->add(BookPeer::ID, $hp->getId());
 		// The only way for cascading to work currently
@@ -358,24 +357,25 @@ class PropelSpeedTest
 		BookPeer::doDelete($c);
 	
 		// Attempting to delete books by complex criteria
-		$c = new Criteria();
-		$cn = $c->getNewCriterion(BookPeer::ISBN, "043935806X");
-		$cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0380977427"));
-		$cn->addOr($c->getNewCriterion(BookPeer::ISBN, "0140422161"));
-		$c->add($cn);
-		BookPeer::doDelete($c);
+		BookQuery::create()
+			->filterByISBN("043935806X")
+			->orWhere('Book.ISBN = ?', "0380977427")
+			->orWhere('Book.ISBN = ?', "0140422161")
+			->delete();
+
+		BookQuery::create()->deleteAll();
 	
 		$td->delete();
 	
-		AuthorPeer::doDelete($stephenson_id);
+		AuthorQuery::create()->filterById($stephenson_id)->delete();
 	
-		AuthorPeer::doDelete($byron_id);
+		AuthorQuery::create()->filterById($byron_id)->delete();
 	
 		$grass->delete();
 	
-		PublisherPeer::doDelete($morrow_id);
+		PublisherQuery::create()->filterById($morrow_id)->delete();
 	
-		PublisherPeer::doDelete($penguin_id);
+		PublisherQuery::create()->filterById($penguin_id)->delete();
 	
 		$vintage->delete();
 	
