@@ -362,8 +362,6 @@ class PropelSpeedTest
 			->orWhere('Book.ISBN = ?', "0380977427")
 			->orWhere('Book.ISBN = ?', "0140422161")
 			->delete();
-
-		BookQuery::create()->deleteAll();
 	
 		$td->delete();
 	
