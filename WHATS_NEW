@@ -107,13 +107,48 @@ The `find()` method of generated Model Query objects returns a `PropelCollection
 <?php
 $books = BookQuery::create()
   ->limit(5)
-  ->find();
+  ->find(); // $books is a PropelCollection object
 foreach ($books as $book) {
   echo $book->getTitle();
 }
 }}}
 
-The advantage of using a collection instead of an array is that Propel can hydrate model objects on demand. Using this feature, you'll never fall short of memory again. Available through the `setFormatter()` method of Model Queries, on-demand hydration is very easy to trigger:
+Propel also returns a `PropelCollection` object instead of an array when you use a getter for a one-to-many relationship:
+
+{{{
+#!php
+<?php
+$books = $author->getBooks(); // $books is a PropelCollection object
+}}}
+
+If your code relies on list of objects being arrays, you will need to update it a little. The `PropelCollection` object provides a method for most common array operations:
+
+{{{
+Array                    | Collection object
+------------------------ | ----------------------------------------- 
+foreach($books as $book) | foreach($books as $book)
+count($books)            | count($books)     or $books->count()
+$books[]= $book          | $books[]= $book   or $books->append($book)
+$books[1]                | $books[1]         or $book->getFirst()
+unset($books[1])         | unset($books[1])  or $books->remove(1)
+empty($books)            | $books->isEmpty()
+in_array($book, $books)  | $books->contains($book)
+array_pop($books)        | $books->pop()
+etc.
+}}}
+
+The `PropelCollection` class offers even more methods that you will soon use a lot:
+
+{{{
+#!php
+<?php
+$books->getArrayCopy()   // get the array inside the collection
+$books->toArray()        // turn all objects to associative arrays
+$books->getPrimaryKeys() // get an array of the primary keys of all the objects in the collection
+$books-<getModel()       // return the model of the collection, e.g. 'Book'
+}}}
+
+Another advantage of using a collection instead of an array is that Propel can hydrate model objects on demand. Using this feature, you'll never fall short of memory again. Available through the `setFormatter()` method of Model Queries, on-demand hydration is very easy to trigger:
 
 {{{
 #!php
