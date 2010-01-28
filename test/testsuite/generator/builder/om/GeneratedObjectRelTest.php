@@ -221,7 +221,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$author->setLastName("Public");
 
 		$books = $author->getBooks(); // empty, of course
-		$this->assertEquals(array(), $books, "Expected empty array.");
+		$this->assertEquals(0, count($books), "Expected empty collection.");
 
 		$book = new Book();
 		$book->setTitle("A sample book");

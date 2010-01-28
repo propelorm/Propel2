@@ -2055,7 +2055,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->applyBehaviorModifier('preDelete', $script, "			");
 			$script .= "
 			if (\$ret) {
-				".$this->getPeerClassname()."::doDelete(\$this, \$con);
+				".$this->getQueryClassname()."::create()
+					->filterByPrimaryKey(\$this->getPrimaryKey())
+					->delete(\$con);
 				\$this->postDelete(\$con);";
 			// apply behaviors
 			$this->applyBehaviorModifier('postDelete', $script, "				");
@@ -2623,6 +2625,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$pCollName = $this->getFKPhpNameAffix($fk, $plural = true);
 		
 		$fkPeerBuilder = $this->getNewPeerBuilder($this->getForeignTable($fk));
+		$fkQueryBuilder = $this->getNewStubQueryBuilder($this->getForeignTable($fk));
 		$fkObjectBuilder = $this->getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
 		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
 		
@@ -2675,19 +2678,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (\$this->$varName === null && ($conditional)) {";
 		if ($useRetrieveByPk) {
 			$script .= "
-			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::retrieveByPk(\$this->$clo);";
+			\$this->$varName = ".$fkQueryBuilder->getClassname()."::create()->findPk(\$this->$clo);";
 		} else {
 			$script .= "
-			\$c = new Criteria(".$fkPeerBuilder->getPeerClassname()."::DATABASE_NAME);";
-			foreach ($argmap as $el) {
-				$fcol = $el['foreign'];
-				$lcol = $el['local'];
-				$clo = strtolower($lcol->getName());
-				$script .= "
-			\$c->add(".$fkPeerBuilder->getColumnConstant($fcol).", \$this->".$clo.");";
-			}
-			$script .= "
-			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::doSelectOne(\$c, \$con);";
+			\$this->$varName = ".$fkQueryBuilder->getClassname()."::create()
+				->filterBy" . $this->getRefFKPhpNameAffix($fk, $plural = false) . "(\$this) // here
+				->findOne(\$con);";
 		}
 		if ($fk->isLocalPrimaryKey()) {
 			$script .= "
@@ -2783,6 +2779,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$join_behavior = $this->getGeneratorConfig()->getBuildProperty('useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural=true);
 		$collName = $this->getRefFKCollVarName($refFK);
 		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
@@ -2825,60 +2822,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$join_behavior = $join_behavior)
 	{";
 				$script .= "
-		if (\$criteria === null) {
-			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
+		if (null === \$criteria) {
+			\$query = $fkQueryClassname::create();
+		} elseif (\$criteria instanceof $fkQueryClassname) {
+			\$query = \$criteria;
+		} elseif (\$criteria instanceof Criteria) {
+			\$query = $fkQueryClassname::create()
+				->mergeWith(\$criteria);
 		}
-		elseif (\$criteria instanceof Criteria)
-		{
-			\$criteria = clone \$criteria;
-		}
+		\$query->joinWith('" . $this->getRefFKPhpNameAffix($refFK, $plural=false) . "." . $this->getFKPhpNameAffix($fk2, $plural=false) . "', \$join_behavior);
 
-		if (\$this->$collName === null) {
-			if (\$this->isNew()) {
-				\$this->$collName = array();
-			} else {
-";
-				foreach ($refFK->getForeignColumns() as $columnName) {
-					$column = $table->getColumn($columnName);
-					$flMap = $refFK->getForeignLocalMapping();
-					$colFKName = $flMap[$columnName];
-					$colFK = $tblFK->getColumn($colFKName);
-					if ($colFK === null) {
-						throw new EngineException("Column $colFKName not found in " . $tblFK->getName());
-					}
-					$clo = strtolower($column->getName());
-					$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-				} // end foreach ($fk->getForeignColumns()
-
-				$script .= "
-				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelectJoin$relCol2(\$criteria, \$con, \$join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-";
-				foreach ($refFK->getForeignColumns() as $columnName) {
-					$column = $table->getColumn($columnName);
-					$flMap = $refFK->getForeignLocalMapping();
-					$colFKName = $flMap[$columnName];
-					$colFK = $tblFK->getColumn($colFKName);
-					$clo = strtolower($column->getName());
-					$script .= "
-			\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-				} /* end foreach ($fk->getForeignColumns() */
-
-				$script .= "
-			if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
-				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelectJoin$relCol2(\$criteria, \$con, \$join_behavior);
-			}
-		}
-		\$this->$lastCriteriaName = \$criteria;
-
-		return \$this->$collName;
+		return \$this->get". $relCol . "(\$query, \$con);
 	}
 ";
 			} /* end if ($doJoinGet) */
@@ -2985,7 +2939,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$script .= "
 	/**
-	 * Initializes the $collName collection (array).
+	 * Initializes the $collName collection.
 	 *
 	 * By default this just sets the $collName collection to an empty array (like clear$collName());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
@@ -2995,7 +2949,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	public function init$relCol()
 	{
-		\$this->$collName = array();
+		\$this->$collName = new PropelObjectCollection();
+		\$this->{$collName}->setModel('" . $this->getNewStubObjectBuilder($refFK->getTable())->getClassname() . "');
 	}
 ";
 	} // addRefererInit()
@@ -3027,8 +2982,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (\$this->$collName === null) {
 			\$this->init".$this->getRefFKPhpNameAffix($refFK, $plural = true)."();
 		}
-		if (!in_array(\$l, \$this->$collName, true)) { // only add it if the **same** object is not already associated
-			array_push(\$this->$collName, \$l);
+		if (!\$this->{$collName}->contains(\$l)) { // only add it if the **same** object is not already associated
+			\$this->{$collName}[]= \$l;
 			\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
 	}
@@ -3045,7 +3000,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$tblFK = $refFK->getTable();
 
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
-
+		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
@@ -3068,14 +3023,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 
 		$script .= "
-		if (\$criteria === null) {
-			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-		} else {
-			\$criteria = clone \$criteria;
+		if (null === \$criteria) {
+			\$query = $fkQueryClassname::create();
+		} elseif (\$criteria instanceof $fkQueryClassname) {
+			\$query = \$criteria;
+		} elseif (\$criteria instanceof Criteria) {
+			\$query = $fkQueryClassname::create()
+				->mergeWith(\$criteria);
 		}
 
 		if (\$distinct) {
-			\$criteria->setDistinct();
+			\$query->distinct();
 		}
 
 		\$count = null;
@@ -3084,42 +3042,19 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			if (\$this->isNew()) {
 				\$count = 0;
 			} else {
-";
-		foreach ($refFK->getLocalColumns() as $colFKName) {
-			// $colFKName is local to the referring table (i.e. foreign to this table)
-			$lfmap = $refFK->getLocalForeignMapping();
-			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
-			$colFK = $refFK->getTable()->getColumn($colFKName);
-			$clo = strtolower($localColumn->getName());
-			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-		} // end foreach ($fk->getForeignColumns()
-
-		$script .= "
-				\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, false, \$con);
+				\$count = \$query
+					->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
+					->count(\$con);
 			}
 		} else {
 			// criteria has no effect for a new object
 			if (!\$this->isNew()) {
 				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
+				// called for.  If the query is the same as the last
 				// one, just return count of the collection.
-";
-		foreach ($refFK->getLocalColumns() as $colFKName) {
-			// $colFKName is local to the referring table (i.e. foreign to this table)
-			$lfmap = $refFK->getLocalForeignMapping();
-			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
-			$colFK = $refFK->getTable()->getColumn($colFKName);
-			$clo = strtolower($localColumn->getName());
-			$script .= "
-
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-		} // foreach ($fk->getForeignColumns()
-		$script .= "
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
-					\$count = ".$fkPeerBuilder->getPeerClassname()."::doCount(\$criteria, false, \$con);
+				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
+				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+					\$count = \$query->count(\$con);
 				} else {
 					\$count = count(\$this->$collName);
 				}
@@ -3142,6 +3077,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$tblFK = $refFK->getTable();
 
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
+		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
@@ -3168,35 +3104,22 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 
 		$script .= "
-		if (\$criteria === null) {
-			\$criteria = new Criteria($peerClassname::DATABASE_NAME);
-		}
-		elseif (\$criteria instanceof Criteria)
-		{
-			\$criteria = clone \$criteria;
+		if (null === \$criteria) {
+			\$query = $fkQueryClassname::create();
+		} elseif (\$criteria instanceof $fkQueryClassname) {
+			\$query = \$criteria;
+		} elseif (\$criteria instanceof Criteria) {
+			\$query = $fkQueryClassname::create()
+				->mergeWith(\$criteria);
 		}
 
 		if (\$this->$collName === null) {
 			if (\$this->isNew()) {
-			   \$this->$collName = array();
+			   \$this->init".$this->getRefFKPhpNameAffix($refFK, $plural = true)."();
 			} else {
-";
-		foreach ($refFK->getLocalColumns() as $colFKName) {
-			// $colFKName is local to the referring table (i.e. foreign to this table)
-			$lfmap = $refFK->getLocalForeignMapping();
-			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
-			$colFK = $refFK->getTable()->getColumn($colFKName);
-
-			$clo = strtolower($localColumn->getName());
-
-			$script .= "
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-		} // end foreach ($fk->getForeignColumns()
-
-		$script .= "
-				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-				\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
+				\$this->$collName = \$query
+					->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
+					->find(\$con);
 			}
 		} else {
 			// criteria has no effect for a new object
@@ -3204,26 +3127,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				// the following code is to determine if a new query is
 				// called for.  If the criteria is the same as the last
 				// one, just return the collection.
-";
-		foreach ($refFK->getLocalColumns() as $colFKName) {
-			// $colFKName is local to the referring table (i.e. foreign to this table)
-			$lfmap = $refFK->getLocalForeignMapping();
-			$localColumn = $this->getTable()->getColumn($lfmap[$colFKName]);
-			$colFK = $refFK->getTable()->getColumn($colFKName);
-			$clo = strtolower($localColumn->getName());
-			$script .= "
-
-				\$criteria->add(".$fkPeerBuilder->getColumnConstant($colFK).", \$this->$clo);
-";
-		} // foreach ($fk->getForeignColumns()
-		$script .= "
-				".$fkPeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$criteria)) {
-					\$this->$collName = ".$fkPeerBuilder->getPeerClassname()."::doSelect(\$criteria, \$con);
+				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
+				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+					\$this->$collName = \$query->find(\$con);
 				}
 			}
 		}
-		\$this->$lastCriteriaName = \$criteria;
+		\$this->$lastCriteriaName = \$query;
 		return \$this->$collName;
 	}
 ";
@@ -3240,6 +3150,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$tblFK = $refFK->getTable();
 
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$queryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 		$joinedTablePeerBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
@@ -3257,28 +3168,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 ";
 		$script .= "
-		if (\$this->$varName === null && !\$this->isNew()) {";
-
-		$lfmap = $refFK->getLocalForeignMapping();
-
-		// remember: this object represents the foreign table,
-		// so we need foreign columns of the reffk to know the local columns
-		// that we need to set :)
-
-		$localcols = $refFK->getForeignColumns();
-
-		// we know that at least every column in the primary key of the foreign table
-		// is represented in this foreign key
-
-		$params = array();
-		foreach ($tblFK->getPrimaryKey() as $col) {
-			$localColumn = $table->getColumn($lfmap[$col->getName()]);
-			$clo = strtolower($localColumn->getName());
-			$params[] = "\$this->$clo";
-		}
-
-		$script .= "
-			\$this->$varName = ".$joinedTableObjectBuilder->getPeerClassname()."::retrieveByPK(".implode(", ", $params).", \$con);
+		if (\$this->$varName === null && !\$this->isNew()) {
+			\$this->$varName = $queryClassname::create()->findPk(\$this->getPrimaryKey(), \$con);
 		}
 
 		return \$this->$varName;

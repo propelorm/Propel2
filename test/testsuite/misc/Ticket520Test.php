@@ -29,8 +29,8 @@ class Ticket520Test extends BookstoreTestBase
 		always contain all added FK-related objects (here: the Books) in
 		their internal $colBooks collection. */
 		$books = $a->getBooks();
-		$this->assertContains($b1, $books);
-		$this->assertContains($b2, $books);
+		$this->assertTrue($books->contains($b1));
+		$this->assertTrue($books->contains($b2));
 	}
 
 	public function testNewObjectsWithCriteria()
@@ -158,7 +158,7 @@ class Ticket520Test extends BookstoreTestBase
 		the cache inside the Author object that now is returned. */
 		$books = $a->getBooks();
 		$this->assertEquals(1, count($books));
-		$this->assertContains($b1, $books);
+		$this->assertTrue($books->contains($b1));
 	}
 
 	public function testCachePoisoning()

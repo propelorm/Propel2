@@ -156,6 +156,17 @@ abstract class OMBuilder extends DataModelBuilder {
 	}
 
 	/**
+	 * Shortcut method to return the [stub] query classname for current table.
+	 * This is the classname that is used whenever object or peer classes want
+	 * to invoke methods of the query classes.
+	 * @return     string (e.g. 'Myquery')
+	 * @see        StubQueryBuilder::getClassname()
+	 */
+	public function getQueryClassname() {
+		return $this->getStubQueryBuilder()->getClassname();
+	}
+	
+	/**
 	 * Returns the object classname for current table.
 	 * This is the classname that is used whenever object or peer classes want
 	 * to invoke methods of the object classes.

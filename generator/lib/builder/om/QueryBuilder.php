@@ -146,6 +146,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$this->addConstructor($script);
 		$this->addFindPk($script);
 		$this->addFindPks($script);
+		$this->addFilterByPrimaryKey($script);
 		foreach ($this->getTable()->getColumns() as $col) {
 			$this->addFilterByCol($script, $col);
 		}
@@ -357,6 +358,48 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}
 		
 		return \$this->find(\$con);";
+		}
+		$script .= "
+	}
+";
+	}
+	
+	/**
+	 * Adds the filterByPrimaryKey method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByPrimaryKey(&$script)
+	{
+		$script .= "
+	/**
+	 * Filter the query by primary key
+	 *
+	 * @param     mixed \$key Primary key to use for the query
+	 *
+	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+	 */
+	public function filterByPrimaryKey(\$key)
+	{";
+		$table = $this->getTable();
+		$pks = $table->getPrimaryKey();
+		if (count($pks) === 1) {
+			// simple primary key
+			$col = $pks[0];
+			$const = $this->getColumnConstant($col);
+			$script .= "
+		return \$this->addUsingAlias($const, \$key, Criteria::EQUAL);";
+		} else {
+			// composite primary key
+			$i = 0;
+			foreach ($pks as $col) {
+				$const = $this->getColumnConstant($col);
+				$script .= "
+		\$this->addUsingAlias($const, \$key[$i], Criteria::EQUAL);";
+				$i++;
+			}
+			$script .= "
+		
+		return \$this;";
 		}
 		$script .= "
 	}

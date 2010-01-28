@@ -478,7 +478,7 @@ bool  isLast()
 bool  isEmpty()
 bool  isOdd()
 bool  isEven()
-bool  contains($position)
+bool  contains($value)
 // access methods
 mixed getFirst()
 mixed getPrevious()

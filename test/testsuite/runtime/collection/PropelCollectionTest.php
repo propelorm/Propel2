@@ -243,8 +243,8 @@ class PropelCollectionTest extends BookstoreTestBase
 		$this->assertFalse($col->contains('foo_1'), 'contains() returns false on an empty collection');
 		$data = array('bar1', 'bar2', 'bar3');
 		$col = new PropelCollection($data);
-		$this->assertTrue($col->contains(1), 'contains() returns true when the key exists');
-		$this->assertFalse($col->contains(4), 'contains() returns false when the key does not exist');
+		$this->assertTrue($col->contains('bar1'), 'contains() returns true when the key exists');
+		$this->assertFalse($col->contains('bar4'), 'contains() returns false when the key does not exist');
 	}
 
 	public function testSearch()

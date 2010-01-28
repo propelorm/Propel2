@@ -277,15 +277,14 @@ class PropelCollection extends ArrayObject implements Serializable
 
 	/**
 	 * Whether or not this collection contains a specified element
-	 * Alias for ArrayObject::offsetExists()
 	 *
-	 * @param      mixed $key the key of the element
+	 * @param      mixed $element the element
 	 *
 	 * @return     boolean
 	 */
-	public function contains($key)
+	public function contains($element)
 	{
-		return $this->offsetExists($key);
+		return in_array($element, $this->getArrayCopy(), true);
 	}
 
 	/**

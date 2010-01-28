@@ -107,17 +107,20 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
 		$books = BookPeer::doSelect($c);
 		$obj = $books[0];
-		$size = strlen(serialize($obj));
-
+		// $size = strlen(serialize($obj));
+		
 		BookPeer::clearInstancePool();
 
 		$joinBooks = BookPeer::doSelectJoinAuthor($c);
 		$obj2 = $joinBooks[0];
-		$joinSize = strlen(serialize($obj2));
+		$obj2Array = $obj2->toArray(BasePeer::TYPE_PHPNAME, true, true);
+		// $joinSize = strlen(serialize($obj2));
 
 		$this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");
-
-		$this->assertTrue($joinSize > $size, "Expected a serialized join object to be larger than a non-join object.");
+		
+		// $this->assertTrue($joinSize > $size, "Expected a serialized join object to be larger than a non-join object.");
+		
+		$this->assertTrue(array_key_exists('Author', $obj2Array));
 	}
 
 	/**
