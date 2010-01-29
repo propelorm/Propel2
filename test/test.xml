@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Propel Tests" default="phpunit" basedir=".">
+<project name="Propel Tests" default="phpunit">
 
 	<!--
 		=========================================================================================

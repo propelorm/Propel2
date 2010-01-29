@@ -6,7 +6,7 @@
 
 -->
 
-<project name="propel_runtime" basedir="." default="main">
+<project name="propel_runtime" default="main">
 
 	<property name="propel.home" value=".."/>
 	<property name="build.base.dir" value="build"/>

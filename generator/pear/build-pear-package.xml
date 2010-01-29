@@ -11,7 +11,7 @@
 
 -->
 
-<project name="propel_generator" basedir="." default="main">
+<project name="propel_generator" default="main">
 
 	<property name="propelgen.home" value=".."/>
 	<property name="build.base.dir" value="build"/>

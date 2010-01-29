@@ -1,4 +1,4 @@
-<project name="propel" default="main" basedir=".">
+<project name="propel" default="main">
 
   <!--
     Note - You should not have to edit this file.

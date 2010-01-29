@@ -13,7 +13,7 @@
     $> propel-gen insert-sql /path/to/my/project 
 
 -->
-<project name="propel-project-builder" default="main" basedir=".">
+<project name="propel-project-builder" default="main">
 
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>

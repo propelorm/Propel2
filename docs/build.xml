@@ -1,4 +1,4 @@
-<project name="propel-docs" default="phpdoc" basedir=".">
+<project name="propel-docs" default="phpdoc">
 
 	<property name="runtime.dir" value="../runtime" />
 	<property name="generator.dir" value="../generator" />
