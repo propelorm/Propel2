@@ -294,6 +294,49 @@ For example:
 <column name="ip_address" type="VARCHAR" sqlType="inet"/>
 }}}
 
+=== Adding Vendor Info ===
+
+Propel supports database-specific elements in the schema (currently only for MySQL). This "vendor" parameters affect the generated SQL. To add vendor data, add a `<vendor>` tag with a `type` attribute specifying the target database vendor. In the `<vendor>` tag, add `<parameter>` tags with a `name` and a `value` attribue. For instance:
+
+{{{
+#!xml
+<table name="book">
+  <vendor type="mysql">
+    <parameter name="Engine" value="InnoDB"/>
+    <parameter name="Charset" value="utf8"/>
+  </vendor>
+</table>
+}}}
+
+This will change the generated SQL table creation to look like:
+
+{{{
+#!sql
+CREATE TABLE book
+  ()
+  ENGINE = InnoDB 
+  DEFAULT CHARACTER SET utf8;
+}}}
+
+Propel supports the following vendor parameters for MySQL:
+
+{{{
+Name             | Example values
+-----------------|---------------
+// in <table> element
+Engine           | MYISAM (default), BDB, HEAP, ISAM, InnoDB, MERGE, MRG_MYISAM
+Charset          | utf8, latin1, etc.
+Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
+Checksum         | 0, 1
+Pack_Keys        | 0, 1, DEFAULT
+Delay_key_write  | 0, 1
+// in <column> element
+Charset          | utf8, latin1, etc.
+Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
+// in <index> element
+Index_type       | FULLTEXT
+}}}
+
 === Using Custom Platform ===
 
 For overriding the mapping between Propel types and native SQL types, you can create your own Platform class and override the mapping.
