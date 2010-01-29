@@ -673,8 +673,8 @@ class ModelCriteria extends Criteria
 		parent::clear();
 		
 		$this->with = array();
-		$this->$primaryCriteria = null;
-		$this->$formatter=null;
+		$this->primaryCriteria = null;
+		$this->formatter=null;
 		
 		return $this;
 	}
