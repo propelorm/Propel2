@@ -130,11 +130,19 @@ foreach($books as $book) | foreach($books as $book)
 count($books)            | count($books)     or $books->count()
 $books[]= $book          | $books[]= $book   or $books->append($book)
 $books[1]                | $books[1]         or $book->getFirst()
+$books[123]              | $books[123]       or $book->offsetGet(123)
 unset($books[1])         | unset($books[1])  or $books->remove(1)
 empty($books)            | $books->isEmpty()
 in_array($book, $books)  | $books->contains($book)
 array_pop($books)        | $books->pop()
 etc.
+}}}
+
+'''Tip''': If you can't afford updating your code to support collections instead of arrays, you can still ask Propel to generate 1.4-compatible model objects by overriding the `propel.builder.object.class` setting in your `build.properties`, as follows:
+
+{{{
+#!ini
+propel.builder.object.class = builder.om.PHP5ObjectNoCollectionBuilder
 }}}
 
 The `PropelCollection` class offers even more methods that you will soon use a lot:
