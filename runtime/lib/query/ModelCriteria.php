@@ -647,6 +647,8 @@ class ModelCriteria extends Criteria
 	 * @see Criteria::mergeWith()
 	 * 
 	 * @param     Criteria $criteria The criteria to read properties from
+	 *
+	 * @return    ModelCriteria The primary criteria object
 	 */
 	public function mergeWith(Criteria $criteria)
 	{
@@ -659,7 +661,23 @@ class ModelCriteria extends Criteria
 		
 		return $this;
 	}
-	
+
+	/**
+	 * Clear the conditions to allow the reuse of the query object.
+	 * The ModelCriteria's Model and alias 'all the properties set by construct) will remain.
+	 *
+	 * @return    ModelCriteria The primary criteria object
+	 */
+	public function clear()
+	{
+		parent::clear();
+		
+		$this->with = array();
+		$this->$primaryCriteria = null;
+		$this->$formatter=null;
+		
+		return $this;
+	}
 	/**
 	 * Sets the primary Criteria for this secondary Criteria
 	 *
