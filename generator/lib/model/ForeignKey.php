@@ -32,16 +32,16 @@ require_once 'model/XMLElement.php';
  */
 class ForeignKey extends XMLElement
 {
-
-	private $foreignTableName;
-	private $name;
-	private $phpName;
-	private $refPhpName;
-	private $onUpdate;
-	private $onDelete;
-	private $parentTable;
-	private $localColumns = array();
-	private $foreignColumns = array();
+	protected $foreignTableName;
+	protected $name;
+	protected $phpName;
+	protected $refPhpName;
+	protected $onUpdate;
+	protected $onDelete;
+	protected $isCrossRef = false;
+	protected $parentTable;
+	protected $localColumns = array();
+	protected $foreignColumns = array();
 
 	// the uppercase equivalent of the onDelete/onUpdate values in the dtd
 	const NONE     = "";            // No "ON [ DELETE | UPDATE]" behaviour specified.
@@ -73,6 +73,7 @@ class ForeignKey extends XMLElement
 		$this->refPhpName = $this->getAttribute("refPhpName");
 		$this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
 		$this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
+		$this->isCrossRef = $this->getAttribute("isCrossRef", false);
 	}
 
 	/**
@@ -199,6 +200,25 @@ class ForeignKey extends XMLElement
 	{
 		return $this->foreignTableName;
 	}
+
+	/**
+	 * Gets the crossRef status for this foreign key
+	 * @return     boolean
+	 */
+	public function getIsCrossRef()
+	{
+		return $this->isCrossRef;
+	}
+
+	/**
+	 * Sets a crossref status for this foreign key.
+	 * @param      boolean $isCrossRef
+	 */
+	public function setIsCrossRef($isCrossRef)
+	{
+		$this->isCrossRef = (bool) $isCrossRef;
+	}
+
 
 	/**
 	 * Set the foreignTableName of the FK
@@ -410,7 +430,42 @@ class ForeignKey extends XMLElement
 			}
 		}
 	}
+	
+  /**
+   * Get the cross reference foreign keys
+   * Used in many-to-many relationships
+   *
+   * @return    array
+   */
+	public function getCrossRefFks()
+	{
+	  $crossRefFks = array();
+	  foreach ($this->getTable()->getForeignKeys() as $fk) {
+	    if ($fk != $this && $fk->getIsCrossRef()) {
+	      $crossRefFks[]= $fk;
+	    }
+	  }
+	  
+	  return $crossRefFks;
+	}
 
+  /**
+   * Get the other foreign keys starting on the same table
+   * Used in many-to-many relationships
+   *
+   * @return    array
+   */
+	public function getOtherFks()
+	{
+	  $otherFks = array();
+	  foreach ($this->getTable()->getForeignKeys() as $fk) {
+	    if ($fk != $this) {
+	      $otherFks[]= $fk;
+	    }
+	  }
+	  
+	  return $otherFks;
+	}
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
@@ -437,6 +492,10 @@ class ForeignKey extends XMLElement
 
 		if ($this->getOnUpdate()) {
 			$fkNode->setAttribute('onUpdate', $this->getOnUpdate());
+		}
+		
+		if ($this->getIsCrossRef()) {
+			$fkNode->setAttribute('isCrossRef', $this->getIsCrossRef());
 		}
 
 		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {

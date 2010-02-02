@@ -391,7 +391,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->findOne();
 		$this->assertEquals($testAuthor, $author, 'Generated query handles filterByRefFk() methods correctly for simple fkeys');
 	}
-
+	
 	public function testFilterByRefFkCompositeKey()
 	{
 		BookstoreDataPopulator::depopulate();
@@ -409,7 +409,19 @@ class QueryBuilderTest extends BookstoreTestBase
 			->findOne();
 		$this->assertEquals($testOpinion, $opinion, 'Generated query handles filterByRefFk() methods correctly for composite fkeys');
 	}
-
+	
+	public function testFilterByCrossFK()
+	{
+		$this->assertTrue(method_exists('BookQuery', 'filterByBookClubList'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
+		$this->assertFalse(method_exists('BookQuery', 'filterByBook'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		$blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
+		$nbBooks = BookQuery::create()
+			->filterByBookClubList($blc1)
+			->count();
+	}
+	
 	public function testPrune()
 	{
 		$q = BookQuery::create()->prune();

@@ -157,6 +157,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		foreach ($this->getTable()->getReferrers() as $refFK) {
 			$this->addFilterByRefFK($script, $refFK);
 			$this->addUseRefFKQuery($script, $refFK);
+			if ($refFK->getIsCrossRef()) {
+				foreach ($refFK->getOtherFks() as $crossFK) {
+					$this->addFilterByCrossFK($script, $refFK, $crossFK);
+				}
+			}
 		}
 		$this->addPrune($script);
 		$this->addBasePreSelect($script);
@@ -607,7 +612,36 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	}
 ";
 	}
-
+	
+	protected function addFilterByCrossFK(&$script, $refFK, $crossFK)
+	{
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$crossRefTable = $crossFK->getTable();
+		$foreignTable = $crossFK->getForeignTable();
+		$fkPhpName =  $foreignTable->getPhpName();
+		$crossTableName = $crossRefTable->getName();
+		$relName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+		$objectName = '$' . $foreignTable->getStudlyPhpName();
+		$relationName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+		$script .= "
+	/**
+	 * Filter the query by a related $fkPhpName object
+	 * using the $crossTableName table as cross reference
+	 *
+	 * @param     $fkPhpName $objectName the related object to use as filter
+	 *
+	 * @return    $queryClass The current query, for fluid interface
+	 */
+	public function filterBy{$relName}($objectName)
+	{
+		return \$this
+			->use{$relationName}Query()
+				->filterBy{$relName}($objectName)
+			->endUse();
+	}
+	";
+	}
+	
 	/**
 	 * Adds the prune method for this object.
 	 * @param      string &$script The script will be modified in this method.

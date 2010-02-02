@@ -165,6 +165,8 @@ class BookstoreDataPopulator
 
 		$blc1->addBookListRel($brel1);
 		$blc1->addBookListRel($brel2);
+		
+		$blc1->save();
 
 		$bemp1 = new BookstoreEmployee();
 		$bemp1->setName("John");

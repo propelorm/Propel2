@@ -338,6 +338,56 @@ $books = Bookquery::create()
 //   AND (book.ISBN = '1234' OR book.ISBN = '4567');
 }}}
 
+== Many-to-Many Relationships ==
+
+At last, Propel generates the necessary methods to retrieve related objects in a many-to-many relationship. Since this feature is often needed, many developers already wrote these methods themselves. To avoid method collision, the generation of many-to-many getters is therefore optional.
+
+All you have to do is to add the `isCrossRef` attribute to the `<foreign-key>` tags of the cross reference table, and rebuild your model. For instance, if a `User` has many `Groups`, and the `Group` has many `Users`, the many-to-many relationship is materialized by a `user_group` cross reference table:
+
+{{{
+#!xml
+<table name="user">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="32"/>
+</table>
+
+<table name="group">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="32"/>
+</table>
+
+<table name="user_group">
+  <column name="user_id" type="INTEGER" primaryKey="true"/>
+  <column name="group_id" type="INTEGER" primaryKey="true"/>
+  <foreign-key foreignTable="user" isCrossRef="true">
+    <reference local="user_id" foreign="id"/>
+  </foreign-key>
+  <foreign-key foreignTable="group" isCrossRef="true">
+    <reference local="group_id" foreign="id"/>
+  </foreign-key>
+</table>
+}}}
+
+Now, to retrieve the `Groups` of a `User` object, use the natural syntax you expect:
+
+{{{
+#!php
+<?php
+$groups = $user->getGroups();
+}}}
+
+Propel also generates a smart filter method in the model query:
+
+{{{
+#!php
+<?php
+$groups = GroupPeer::create()
+  ->filterByUser($user)
+  ->find();
+}}}
+
+Find more details about many-to-many relationships in the [wiki:Users/Documentation/1.5/Relationships relationships documentation].
+
 == New Behaviors ==
 
 The new behavior system, introduced in Propel 1.4, starts to unleash its true power with this release. Three new behaviors implement the most common customizations of object models: `nested_sets`, `sluggable`, and `sortable`.
@@ -621,7 +671,7 @@ echo $t1->getRank(); // 2
 
 This new behavior is fully unit tested and very customizable. Check out all you can do with `sortable` in the [wiki:Users/Documentation/1.5/Behaviors/sortable sortable behavior documentation].
 
-=== Timestampablke Behavior ===
+=== Timestampable Behavior ===
 
 This behavior is not new, since it was introduced in Propel 1.4. However, with the introduction of model queries, it gains specific query methods that will ease your work when retrieving objects based on their update date:
 

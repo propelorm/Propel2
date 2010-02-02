@@ -142,6 +142,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	 * Returns a new " . $this->getClassname() . " object.
 	 *
 	 * @param     string \$modelAlias The alias of a model in the query
+	 * @param     Criteria \$criteria Optional Criteria to build the query from
 	 *
 	 * @return    " . $this->getClassname() . "
 	 */";
@@ -154,7 +155,7 @@ class ".$this->getClassname()." extends $baseClassname {
 	protected function addFactoryOpen(&$script)
 	{
 		$script .= "
-	public static function create(\$modelAlias = null)
+	public static function create(\$modelAlias = null, \$criteria = null)
 	{";
 	}
 
@@ -165,7 +166,14 @@ class ".$this->getClassname()." extends $baseClassname {
 	protected function addFactoryBody(&$script)
 	{
 		$script .= "
-		return new self('" . $this->getTable()->getDatabase()->getName() . "', '" . $this->getTable()->getPhpName() . "', \$modelAlias);";
+		if (\$criteria instanceof " . $this->getClassname() . ") {
+			return \$criteria;
+		}
+		\$query = new self('" . $this->getTable()->getDatabase()->getName() . "', '" . $this->getTable()->getPhpName() . "', \$modelAlias);
+		if (\$criteria instanceof Criteria) {
+			\$query->mergeWith(\$criteria);
+		}
+		return \$query;";
 	}
 
 	/**

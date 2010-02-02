@@ -43,7 +43,6 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 	protected function setUp()
 	{
 		parent::setUp();
-		BookstoreDataPopulator::populate();
 	}
 
 	/**
@@ -148,13 +147,76 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
 
 	}
+	
+	public function testManyToManyGetterExists()
+	{
+		$this->assertTrue(method_exists('BookClubList', 'getBooks'), 'Object generator correcly adds getter for the crossRefFk');
+		$this->assertFalse(method_exists('BookClubList', 'getBookClubLists'), 'Object generator correcly adds getter for the crossRefFk');
+	}
+	
+	public function testManyToManyGetterNewObject()
+	{
+		$blc1 = new BookClubList();
+		$books = $blc1->getBooks();
+		$this->assertTrue($books instanceof PropelObjectCollection, 'getCrossRefFK() returns a Propel collection');
+		$this->assertEquals('Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
+		$this->assertEquals(0, count($books), 'getCrossRefFK() returns an empty list for new objects');
+		$query = BookQuery::create()
+			->filterByTitle('Harry Potter and the Order of the Phoenix');
+		$books = $blc1->getBooks($query);
+		$this->assertEquals(0, count($books), 'getCrossRefFK() accepts a query as first parameter');	
+	}
+	
+	public function testManyToManyGetter()
+	{
+		BookstoreDataPopulator::populate();
+		$blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
+		$books = $blc1->getBooks();
+		$this->assertTrue($books instanceof PropelObjectCollection, 'getCrossRefFK() returns a Propel collection');
+		$this->assertEquals('Book', $books->getModel(), 'getCrossRefFK() returns a collection of the correct model');
+		$this->assertEquals(2, count($books), 'getCrossRefFK() returns the correct list of objects');
+		$query = BookQuery::create()
+			->filterByTitle('Harry Potter and the Order of the Phoenix');
+		$books = $blc1->getBooks($query);
+		$this->assertEquals(1, count($books), 'getCrossRefFK() accepts a query as first parameter');	
+	}
 
+	public function testManyToManyCounterExists()
+	{
+		$this->assertTrue(method_exists('BookClubList', 'countBooks'), 'Object generator correcly adds counter for the crossRefFk');
+		$this->assertFalse(method_exists('BookClubList', 'countBookClubLists'), 'Object generator correcly adds counter for the crossRefFk');
+	}
+	
+	public function testManyToManyCounterNewObject()
+	{
+		$blc1 = new BookClubList();
+		$nbBooks = $blc1->countBooks();
+		$this->assertEquals(0, $nbBooks, 'countCrossRefFK() returns 0 for new objects');
+		$query = BookQuery::create()
+			->filterByTitle('Harry Potter and the Order of the Phoenix');
+		$nbBooks = $blc1->countBooks($query);
+		$this->assertEquals(0, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');	
+	}
+	
+	public function testManyToManyCounter()
+	{
+		BookstoreDataPopulator::populate();
+		$blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
+		$nbBooks = $blc1->countBooks();
+		$this->assertEquals(2, $nbBooks, 'countCrossRefFK() returns the correct list of objects');
+		$query = BookQuery::create()
+			->filterByTitle('Harry Potter and the Order of the Phoenix');
+		$nbBooks = $blc1->countBooks($query);
+		$this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');	
+	}
+	
 	/**
 	 * Test behavior of columns that are implicated in multiple foreign keys.
 	 * @link       http://propel.phpdb.org/trac/ticket/228
 	 */
 	public function testMultiFkImplication()
 	{
+		BookstoreDataPopulator::populate();
 		// Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
 		$b = new Bookstore();
 		$b->setStoreName("Foo!");
@@ -191,6 +253,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 	 */
 	public function testClearRefFk()
 	{
+		BookstoreDataPopulator::populate();
 		$book = new Book();
 		$book->setISBN("Foo-bar-baz");
 		$book->setTitle("The book title");
@@ -216,6 +279,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 	 */
 	public function testModifiedObjectOverwrite()
 	{
+		BookstoreDataPopulator::populate();
 		$author = new Author();
 		$author->setFirstName("John");
 		$author->setLastName("Public");
@@ -241,6 +305,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
 	public function testFKGetterUseInstancePool()
 	{
+		BookstoreDataPopulator::populate();
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);

@@ -77,29 +77,6 @@ foreach ($books as $book) {
 
 Notice that Propel generated a `getBooks()` method returning an array of `Book` objects, rather than a `getBook()` method. This is because the definition of a foreign key defines a many-to-one relationship, seen from the other end as a one-to-many relationship.
 
-=== One-to-One Relationships ===
-
-Propel supports the special case of one-to-one relationships. These relationships are defined when the primary key is also a foreign key. For example :
-
-{{{
-#!xml
-<table name="bookstore_employee" description="Employees of a bookstore">
-  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-  <column name="name" type="VARCHAR" size="32"/>
-</table>
-
-<table name="bookstore_employee_account" description="Bookstore employees' login credentials">
-  <column name="employee_id" type="INTEGER" primaryKey="true"/>
-  <column name="login" type="VARCHAR" size="32"/>
-  <column name="password" type="VARCHAR" size="100"/>
-  <foreign-key foreignTable="bookstore_employee">
-    <reference local="employee_id" foreign="id"/>
-  </foreign-key>
-</table>
-}}}
-
-Because the primary key of the `bookstore_employee_account` is also a foreign key to the `bookstore_employee` table, Propel interprets this as a one-to-one relationship and will generate singular methods for both sides of the relationship (`BookstoreEmployee::getBookstoreEmployeeAccount()`, and `BookstoreEmployeeAccount::getBookstoreEmployee()`).
-
 == Using Relationships In A Query ==
 
 === Finding Records Related To Another One ===
@@ -169,7 +146,118 @@ $authors = AuthorQuery::create()
 
 You can see how the indentation of the method calls provide a clear explanation of the embedding logic. That's why it is a good practice to format your Propel queries with a single method call per line, and to add indentation every time a `useXXXQuery()` method is used.
 
-== On-Update and On-Delete Triggers ==
+== Many-to-Many Relationships ==
+
+Databases typically use a cross-reference table, or junction table, to materialize the relationship. For instance, if the `user` and `group` tables are related by a many-to-many relationship, this happens through the rows of a `user_group` table:
+
+{{{
+#!xml
+<table name="user">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="32"/>
+</table>
+
+<table name="group">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="32"/>
+</table>
+
+<table name="user_group">
+  <column name="user_id" type="INTEGER" primaryKey="true"/>
+  <column name="group_id" type="INTEGER" primaryKey="true"/>
+  <foreign-key foreignTable="user">
+    <reference local="user_id" foreign="id"/>
+  </foreign-key>
+  <foreign-key foreignTable="group">
+    <reference local="group_id" foreign="id"/>
+  </foreign-key>
+</table>
+}}}
+
+In order to relate two objects, simply save an instance of the cross reference object:
+
+{{{
+#!php
+<?php
+$user = new User();
+$user->setName('John Doe');
+$user->save();
+$group = new Group();
+$group->setName('Anonymous');
+$group->save();
+// relate $user and $group
+$userGroup = new UserGroup();
+$userGroup->setUser($user);
+$userGroup->setGroup($group);
+$userGroup->save();
+}}}
+
+Propel provides getters and filters to simplify handling of many-to-many relationships. But you must first set the `isCrossRef` attribute of the `<foreign-key>` tags of the cross reference table to true:
+
+{{{
+#!xml
+<table name="user_group">
+  <column name="user_id" type="INTEGER" primaryKey="true"/>
+  <column name="group_id" type="INTEGER" primaryKey="true"/>
+  <foreign-key foreignTable="user" isCrossRef="true">
+    <reference local="user_id" foreign="id"/>
+  </foreign-key>
+  <foreign-key foreignTable="group" isCrossRef="true">
+    <reference local="group_id" foreign="id"/>
+  </foreign-key>
+</table>
+}}}
+
+Once you rebuild your model, the `User` and `Group` model classes now have the necessary getters:
+
+{{{
+#!php
+<?php
+$users = $group->getUsers();
+$nbUsers = $group->countUsers();
+$groups = $user->getGroups();
+$nbGroups = $user->countGroups();
+}}}
+
+Just like regular related object getters, these generated methods accept an optional query object, to further filter the results.
+
+To facilitate queries, Propel also adds new methods to the `UserQuery` and `GroupQuery` classes:
+
+{{{
+#!php
+<?php
+$users = UserPeer::create()
+  ->filterByGroup($group)
+  ->find();
+$groups = GroupPeer::create()
+  ->filterByUser($user)
+  ->find();
+}}}
+
+== One-to-One Relationships ==
+
+Propel supports the special case of one-to-one relationships. These relationships are defined when the primary key is also a foreign key. For example :
+
+{{{
+#!xml
+<table name="bookstore_employee" description="Employees of a bookstore">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="32"/>
+</table>
+
+<table name="bookstore_employee_account" description="Bookstore employees' login credentials">
+  <column name="employee_id" type="INTEGER" primaryKey="true"/>
+  <column name="login" type="VARCHAR" size="32"/>
+  <column name="password" type="VARCHAR" size="100"/>
+  <foreign-key foreignTable="bookstore_employee">
+    <reference local="employee_id" foreign="id"/>
+  </foreign-key>
+</table>
+}}}
+
+Because the primary key of the `bookstore_employee_account` is also a foreign key to the `bookstore_employee` table, Propel interprets this as a one-to-one relationship and will generate singular methods for both sides of the relationship (`BookstoreEmployee::getBookstoreEmployeeAccount()`, and `BookstoreEmployeeAccount::getBookstoreEmployee()`).
+
+== On-Update and On-Delete Triggers =
 
 Propel also supports the ''ON UPDATE'' and ''ON DELETE'' aspect of foreign keys. These properties can be specified in the `<foreign-key>` tag using the `onUpdate` and `onDelete` attributes. Propel supports values of `CASCADE`, `SETNULL`, and `RESTRICT` for these attributes. For databases that have native foreign key support, these trigger events will be specified at the datbase level when the foreign keys are created. For databases that do not support foreign keys, this functionality will be emulated by Propel.
 

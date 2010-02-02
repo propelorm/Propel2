@@ -337,6 +337,7 @@
 		<xs:attribute name="refPhpName" type="php_name" use="optional"/>
 		<xs:attribute name="onDelete" type="delete" default="none"/>
 		<xs:attribute name="onUpdate" type="update" default="none"/>
+		<xs:attribute name="isCrossRef" type="xs:boolean" default="false"/>
 	</xs:complexType>
 
 	<xs:complexType name="external-schema">

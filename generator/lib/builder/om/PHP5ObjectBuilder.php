@@ -262,6 +262,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
+		$this->addCrossFKMethods($script);
 		$this->addClear($script);
 		$this->addClearAllReferences($script);
 		
@@ -323,11 +324,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		foreach ($table->getReferrers() as $refFK) {
-			// if ($refFK->getTable()->getName() != $table->getName()) {
 			$this->addRefFKAttributes($script, $refFK);
-			// }
+			// many-to-many relationships
+			foreach ($refFK->getCrossRefFks() as $crossFK) {
+				$this->addCrossFKAttributes($script, $crossFK);
+			}
 		}
-
+		
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
 		
@@ -2822,14 +2825,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$join_behavior = $join_behavior)
 	{";
 				$script .= "
-		if (null === \$criteria) {
-			\$query = $fkQueryClassname::create();
-		} elseif (\$criteria instanceof $fkQueryClassname) {
-			\$query = \$criteria;
-		} elseif (\$criteria instanceof Criteria) {
-			\$query = $fkQueryClassname::create()
-				->mergeWith(\$criteria);
-		}
+		\$query = $fkQueryClassname::create(null, \$criteria);
 		\$query->joinWith('" . $this->getRefFKPhpNameAffix($refFK, $plural=false) . "." . $this->getFKPhpNameAffix($fk2, $plural=false) . "', \$join_behavior);
 
 		return \$this->get". $relCol . "(\$query, \$con);
@@ -3023,14 +3019,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 
 		$script .= "
-		if (null === \$criteria) {
-			\$query = $fkQueryClassname::create();
-		} elseif (\$criteria instanceof $fkQueryClassname) {
-			\$query = \$criteria;
-		} elseif (\$criteria instanceof Criteria) {
-			\$query = $fkQueryClassname::create()
-				->mergeWith(\$criteria);
-		}
+		\$query = $fkQueryClassname::create(null, \$criteria);
 
 		if (\$distinct) {
 			\$query->distinct();
@@ -3095,8 +3084,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * related $relCol from storage. If this ".$this->getObjectClassname()." is new, it will return
 	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      PropelPDO \$con
 	 * @param      Criteria \$criteria
+	 * @param      PropelPDO \$con
 	 * @return     array {$className}[]
 	 * @throws     PropelException
 	 */
@@ -3104,14 +3093,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 
 		$script .= "
-		if (null === \$criteria) {
-			\$query = $fkQueryClassname::create();
-		} elseif (\$criteria instanceof $fkQueryClassname) {
-			\$query = \$criteria;
-		} elseif (\$criteria instanceof Criteria) {
-			\$query = $fkQueryClassname::create()
-				->mergeWith(\$criteria);
-		}
+		\$query = $fkQueryClassname::create(null, \$criteria);
 
 		if (\$this->$collName === null) {
 			if (\$this->isNew()) {
@@ -3213,7 +3195,158 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 ";
 	} // addPKRefFKSet
+	
+	protected function addCrossFKAttributes(&$script, ForeignKey $crossFK)
+	{
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($crossFK->getForeignTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+		$script .= "
+	/**
+	 * @var        array {$className}[] Collection to store aggregation of $className objects.
+	 */
+	protected $" . $this->getCrossFKVarName($crossFK) . ";
 
+	/**
+	 * @var        Criteria The criteria used to select the current contents of " . $this->getCrossFKVarName($crossFK) .".
+	 */
+	protected $" . $this->getCrossFKLastCriteriaVarName($crossFK) . " = null;
+";
+	}
+
+	protected function getCrossFKVarName(ForeignKey $crossFK)
+	{
+		return 'coll' . $this->getFKPhpNameAffix($crossFK, $plural = true);
+	}
+
+	protected function getCrossFKLastCriteriaVarName(ForeignKey $crossFK)
+	{
+		return 'last' . $this->getFKPhpNameAffix($crossFK, $plural = false) . 'Criteria';
+	}
+	
+	protected function addCrossFKMethods(&$script)
+	{
+		foreach ($this->getTable()->getReferrers() as $refFK) {
+			foreach ($refFK->getCrossRefFks() as $crossFK) {
+				$this->addCrossFKGet($script, $refFK, $crossFK);
+				$this->addCrossFKCount($script, $refFK, $crossFK);
+			}
+		}
+	}
+	
+	protected function addCrossFKGet(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
+		$selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$crossRefTableName = $refFK->getTableName();
+		$collName = $this->getCrossFKVarName($crossFK);
+		$lastCriteriaName = $this->getCrossFKLastCriteriaVarName($crossFK);
+		$script .= "
+	/**
+	 * Gets a collection of $relatedObjectClassName objects related by a many-to-many relationship
+	 * to the current object by way of the $crossRefTableName cross-reference table.
+	 *
+	 * If this ".$this->getObjectClassname()." is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria \$criteria Optional query object to filter the query
+	 * @param      PropelPDO \$con Optional connection object
+	 *
+	 * @return     mixed List of {$relatedObjectClassName} objects
+	 */
+	public function get{$relatedName}(\$criteria = null, PropelPDO \$con = null)
+	{
+		\$query = $relatedQueryClassName::create(null, \$criteria);
+		if (\$this->$collName  === null) {
+			if (\$this->isNew()) {
+				\$this->$collName = new PropelObjectCollection();
+				\$this->{$collName}->setModel('$relatedObjectClassName');
+			} else {
+				\$this->$collName = \$query
+					->filterBy{$selfRelationName}(\$this)
+					->find(\$con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!\$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+				\$query->filterBy{$selfRelationName}(\$this);
+				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+					\$this->$collName = \$query->find(\$con);
+				}
+			}
+		}
+		\$this->$lastCriteriaName = \$query;
+		return \$this->$collName;
+	}
+";
+	}
+
+	protected function addCrossFKCount(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
+		$selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$crossRefTableName = $refFK->getTableName();
+		$collName = $this->getCrossFKVarName($crossFK);
+		$lastCriteriaName = $this->getCrossFKLastCriteriaVarName($crossFK);
+		$script .= "
+	/**
+	 * Gets the number of $relatedObjectClassName objects related by a many-to-many relationship
+	 * to the current object by way of the $crossRefTableName cross-reference table.
+	 *
+	 * If this ".$this->getObjectClassname()." is new, it will return 0,
+	 * the criteria is ignored on a new object.
+	 *
+	 * @param      Criteria \$criteria Optional query object to filter the query
+	 * @param      boolean \$distinct Set to true to force count distinct
+	 * @param      PropelPDO \$con Optional connection object
+	 *
+	 * @return     int the number of related $relatedObjectClassName objects
+	 */
+	public function count{$relatedName}(\$criteria = null, \$distinct = false, PropelPDO \$con = null)
+	{
+		\$query = $relatedQueryClassName::create(null, \$criteria);
+
+		if (\$distinct) {
+			\$query->distinct();
+		}
+
+		\$count = null;
+
+		if (\$this->$collName === null) {
+			if (\$this->isNew()) {
+				\$count = 0;
+			} else {
+				\$count = \$query
+					->filterBy{$selfRelationName}(\$this)
+					->count(\$con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!\$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the query is the same as the last
+				// one, just return count of the collection.
+				\$query->filterBy{$selfRelationName}(\$this);
+				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+					\$count = \$query->count(\$con);
+				} else {
+					\$count = count(\$this->$collName);
+				}
+			} else {
+				\$count = count(\$this->$collName);
+			}
+		}
+		return \$count;
+	}
+";
+	}
+		
 	// ----------------------------------------------------------------
 	//
 	// M A N I P U L A T I O N    M E T H O D S
