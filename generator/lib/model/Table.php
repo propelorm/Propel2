@@ -293,6 +293,13 @@ class Table extends XMLElement implements IDMethod
   protected $behaviors = array();
 
   /**
+   * Whether this table is a cross-reference table for a many-to-many relationship
+   *
+   * @var        boolean
+   */
+  protected $isCrossRef = false;
+  
+  /**
    * Constructs a table object with a name
    *
    * @param      string $name table name
@@ -334,6 +341,7 @@ class Table extends XMLElement implements IDMethod
 
     $this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
     $this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
+    $this->isCrossRef = $this->getAttribute("isCrossRef", false);
   }
 
   /**
@@ -666,6 +674,16 @@ class Table extends XMLElement implements IDMethod
     return $this->referrers;
   }
 
+  public function getCrossFks()
+  {
+    $crossFks = array();
+    foreach ($this->getReferrers() as $refFK) {
+      if ($refFK->getTable()->getIsCrossRef()) {
+        $crossFks[]= array($refFK, $refFK->getOtherFk());
+      }
+    }
+    return $crossFks;
+  }
   /**
    * Set whether this table contains a foreign PK
    */
@@ -1459,6 +1477,24 @@ class Table extends XMLElement implements IDMethod
   public function printPrimaryKey()
   {
     return $this->printList($this->columnList);
+  }
+
+  /**
+   * Gets the crossRef status for this foreign key
+   * @return     boolean
+   */
+  public function getIsCrossRef()
+  {
+    return $this->isCrossRef;
+  }
+
+  /**
+   * Sets a crossref status for this foreign key.
+   * @param      boolean $isCrossRef
+   */
+  public function setIsCrossRef($isCrossRef)
+  {
+    $this->isCrossRef = (bool) $isCrossRef;
   }
 
   /**

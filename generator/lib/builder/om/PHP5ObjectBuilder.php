@@ -324,11 +324,14 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		foreach ($table->getReferrers() as $refFK) {
 			$this->addRefFKAttributes($script, $refFK);
-			// many-to-many relationships
-			foreach ($refFK->getCrossRefFks() as $crossFK) {
-				$this->addCrossFKAttributes($script, $crossFK);
-			}
 		}
+		
+		// many-to-many relationships
+		foreach ($table->getCrossFks() as $fkList) {
+				$crossFK = $fkList[1];
+				$this->addCrossFKAttributes($script, $crossFK);
+		}
+		
 		
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
@@ -3198,11 +3201,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	
 	protected function addCrossFKMethods(&$script)
 	{
-		foreach ($this->getTable()->getReferrers() as $refFK) {
-			foreach ($refFK->getCrossRefFks() as $crossFK) {
-				$this->addCrossFKGet($script, $refFK, $crossFK);
-				$this->addCrossFKCount($script, $refFK, $crossFK);
-			}
+		foreach ($this->getTable()->getCrossFks() as $fkList) {
+			list($refFK, $crossFK) = $fkList;
+			$this->addCrossFKGet($script, $refFK, $crossFK);
+			$this->addCrossFKCount($script, $refFK, $crossFK);
 		}
 	}
 	
@@ -3212,7 +3214,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
 		$selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
 		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
-		$crossRefTableName = $refFK->getTableName();
+		$crossRefTableName = $crossFK->getTableName();
 		$collName = $this->getCrossFKVarName($crossFK);
 		$lastCriteriaName = $this->getCrossFKLastCriteriaVarName($crossFK);
 		$script .= "

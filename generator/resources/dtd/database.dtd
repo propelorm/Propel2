@@ -50,6 +50,7 @@ PHP class or method name.
   skipSql (true|false) "false"
   readOnly (true|false) "false"
   abstract (true|false) "false"
+  isCrossRef (true|false) "false"
   treeMode (MaterializedPath|NestedSet|AdjacencyList) "AdjacencyList"
   package CDATA #IMPLIED
   baseClass CDATA #IMPLIED
@@ -115,7 +116,6 @@ PHP class or method name.
   refPhpName CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
-  isCrossRef (true|false) "false"
 >
 
 <!ELEMENT reference EMPTY>

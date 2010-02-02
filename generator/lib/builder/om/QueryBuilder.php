@@ -157,11 +157,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		foreach ($this->getTable()->getReferrers() as $refFK) {
 			$this->addFilterByRefFK($script, $refFK);
 			$this->addUseRefFKQuery($script, $refFK);
-			if ($refFK->getIsCrossRef()) {
-				foreach ($refFK->getOtherFks() as $crossFK) {
-					$this->addFilterByCrossFK($script, $refFK, $crossFK);
-				}
-			}
+		}
+		foreach ($this->getTable()->getCrossFks() as $fkList) {
+			list($refFK, $crossFK) = $fkList;
+			$this->addFilterByCrossFK($script, $refFK, $crossFK);
 		}
 		$this->addPrune($script);
 		$this->addBasePreSelect($script);

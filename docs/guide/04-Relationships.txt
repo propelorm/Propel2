@@ -192,17 +192,17 @@ $userGroup->setGroup($group);
 $userGroup->save();
 }}}
 
-Propel provides getters and filters to simplify handling of many-to-many relationships. But you must first set the `isCrossRef` attribute of the `<foreign-key>` tags of the cross reference table to true:
+Propel provides getters and filters to simplify handling of many-to-many relationships. But you must first set the `isCrossRef` attribute of the cross reference table to true:
 
 {{{
 #!xml
-<table name="user_group">
+<table name="user_group" isCrossRef="true">
   <column name="user_id" type="INTEGER" primaryKey="true"/>
   <column name="group_id" type="INTEGER" primaryKey="true"/>
-  <foreign-key foreignTable="user" isCrossRef="true">
+  <foreign-key foreignTable="user">
     <reference local="user_id" foreign="id"/>
   </foreign-key>
-  <foreign-key foreignTable="group" isCrossRef="true">
+  <foreign-key foreignTable="group">
     <reference local="group_id" foreign="id"/>
   </foreign-key>
 </table>

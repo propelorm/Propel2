@@ -38,7 +38,6 @@ class ForeignKey extends XMLElement
 	protected $refPhpName;
 	protected $onUpdate;
 	protected $onDelete;
-	protected $isCrossRef = false;
 	protected $parentTable;
 	protected $localColumns = array();
 	protected $foreignColumns = array();
@@ -73,7 +72,6 @@ class ForeignKey extends XMLElement
 		$this->refPhpName = $this->getAttribute("refPhpName");
 		$this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
 		$this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
-		$this->isCrossRef = $this->getAttribute("isCrossRef", false);
 	}
 
 	/**
@@ -200,25 +198,6 @@ class ForeignKey extends XMLElement
 	{
 		return $this->foreignTableName;
 	}
-
-	/**
-	 * Gets the crossRef status for this foreign key
-	 * @return     boolean
-	 */
-	public function getIsCrossRef()
-	{
-		return $this->isCrossRef;
-	}
-
-	/**
-	 * Sets a crossref status for this foreign key.
-	 * @param      boolean $isCrossRef
-	 */
-	public function setIsCrossRef($isCrossRef)
-	{
-		$this->isCrossRef = (bool) $isCrossRef;
-	}
-
 
 	/**
 	 * Set the foreignTableName of the FK
@@ -431,41 +410,21 @@ class ForeignKey extends XMLElement
 		}
 	}
 	
-  /**
-   * Get the cross reference foreign keys
-   * Used in many-to-many relationships
-   *
-   * @return    array
-   */
-	public function getCrossRefFks()
+	/**
+	 * Get the other foreign keys starting on the same table
+	 * Used in many-to-many relationships
+	 *
+	 * @return    ForeignKey
+	 */
+	public function getOtherFk()
 	{
-	  $crossRefFks = array();
-	  foreach ($this->getTable()->getForeignKeys() as $fk) {
-	    if ($fk != $this && $fk->getIsCrossRef()) {
-	      $crossRefFks[]= $fk;
-	    }
-	  }
-	  
-	  return $crossRefFks;
+		foreach ($this->getTable()->getForeignKeys() as $fk) {
+			if ($fk != $this) {
+				return $fk;
+			}
+		}
 	}
-
-  /**
-   * Get the other foreign keys starting on the same table
-   * Used in many-to-many relationships
-   *
-   * @return    array
-   */
-	public function getOtherFks()
-	{
-	  $otherFks = array();
-	  foreach ($this->getTable()->getForeignKeys() as $fk) {
-	    if ($fk != $this) {
-	      $otherFks[]= $fk;
-	    }
-	  }
-	  
-	  return $otherFks;
-	}
+	
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */

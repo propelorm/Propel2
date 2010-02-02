@@ -342,7 +342,7 @@ $books = Bookquery::create()
 
 At last, Propel generates the necessary methods to retrieve related objects in a many-to-many relationship. Since this feature is often needed, many developers already wrote these methods themselves. To avoid method collision, the generation of many-to-many getters is therefore optional.
 
-All you have to do is to add the `isCrossRef` attribute to the `<foreign-key>` tags of the cross reference table, and rebuild your model. For instance, if a `User` has many `Groups`, and the `Group` has many `Users`, the many-to-many relationship is materialized by a `user_group` cross reference table:
+All you have to do is to add the `isCrossRef` attribute to the cross reference table, and rebuild your model. For instance, if a `User` has many `Groups`, and the `Group` has many `Users`, the many-to-many relationship is materialized by a `user_group` cross reference table:
 
 {{{
 #!xml
@@ -356,13 +356,13 @@ All you have to do is to add the `isCrossRef` attribute to the `<foreign-key>` t
   <column name="name" type="VARCHAR" size="32"/>
 </table>
 
-<table name="user_group">
+<table name="user_group" isCrossRef="true">
   <column name="user_id" type="INTEGER" primaryKey="true"/>
   <column name="group_id" type="INTEGER" primaryKey="true"/>
-  <foreign-key foreignTable="user" isCrossRef="true">
+  <foreign-key foreignTable="user">
     <reference local="user_id" foreign="id"/>
   </foreign-key>
-  <foreign-key foreignTable="group" isCrossRef="true">
+  <foreign-key foreignTable="group">
     <reference local="group_id" foreign="id"/>
   </foreign-key>
 </table>
