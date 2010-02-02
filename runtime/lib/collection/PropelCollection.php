@@ -47,7 +47,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Set the data in the collection
 	 *
-	 * @param    array $data
+	 * @param     array $data
 	 */
 	public function setData($data)
 	{
@@ -234,6 +234,24 @@ class PropelCollection extends ArrayObject implements Serializable
 		$ret = array_shift($arr);
 		$this->exchangeArray($arr);
 		
+		return $ret;
+	}
+
+	/**
+	 * Prepend one or more elements to the beginning of the collection
+	 *
+	 * @param     mixed $value the element to prepend
+	 *
+	 * @return    int The number of new elements in the array
+	 */
+	public function prepend($value)
+	{
+		// the reindexing is complicated to deal with through the iterator
+		// so let's use the simple solution
+		$arr = $this->getArrayCopy();
+		$ret = array_unshift($arr, $value);
+		$this->exchangeArray($arr);
+
 		return $ret;
 	}
 

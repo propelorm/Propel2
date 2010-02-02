@@ -491,6 +491,8 @@ mixed search($value)
 // manipulation methods
 mixed pop()
 mixed shift()
+void  append($value)
+int   prepend($value)
 mixed set($position, $value)
 mixed remove($position)
 mixed clear()

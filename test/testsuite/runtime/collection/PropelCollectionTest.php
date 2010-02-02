@@ -196,6 +196,16 @@ class PropelCollectionTest extends BookstoreTestBase
 		$this->assertEquals(array('bar2', 'bar3'), $col->getData(), 'shift() removes the first element of the collection');
 	}
 
+	public function testPrepend()
+	{
+		$col = new PropelCollection();
+		$this->assertEquals(1, $col->prepend('a'), 'prepend() returns 1 on an empty collection');
+		$data = array('bar1', 'bar2', 'bar3');
+		$col = new PropelCollection($data);
+		$this->assertEquals(4, $col->prepend('bar4'), 'prepend() returns the new number of elements in the collection when adding a variable');
+		$this->assertEquals(array('bar4', 'bar1', 'bar2', 'bar3'), $col->getData(), 'prepend() adds new element to the beginning of the collection');
+	}
+
 	public function testSet()
 	{
 		$col = new PropelCollection();
@@ -215,7 +225,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col[1] = 'baz';
 		$col->remove(1);
 		$this->assertEquals(array('bar'), $col->getData(), 'remove() removes an element from its key');
-	}	
+	}
 	
 	/**
 	 * @expectedException PropelException

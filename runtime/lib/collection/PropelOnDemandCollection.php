@@ -182,6 +182,11 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 		throw new PropelException('The On Demand Collection is read only');
 	}
 	
+	public function prepend($value)
+	{
+		throw new PropelException('The On Demand Collection is read only');
+	}
+
 	public function asort()
 	{
 		throw new PropelException('The On Demand Collection is read only');
