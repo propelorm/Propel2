@@ -478,18 +478,25 @@ class ModelCriteria extends Criteria
 	{
 		// relation looks like '$leftName.$relationName $relationAlias'
 		list($fullName, $relationAlias) = self::getClassAndAlias($relation);
-		list($leftName, $relationName) = explode('.', $fullName);
-		
-		// find the TableMap for the left table using the $leftName
-		if ($leftName == $this->getModelAliasOrName()) {
-			$previousJoin = null;
+		if (strpos($fullName, '.') === false) {
 			$tableMap = $this->getTableMap();
-		} elseif (array_key_exists($leftName, $this->joins)) {
-			$previousJoin = $this->joins[$leftName];
-			$tableMap = $previousJoin->getTableMap();
+			$leftName = $this->getModelAliasOrName();
+			$relationName = $fullName;
+			$previousJoin = null;
 		} else {
-			throw new PropelException('Unknown table or alias ' . $leftName);
+			list($leftName, $relationName) = explode('.', $fullName);
+			// find the TableMap for the left table using the $leftName
+			if ($leftName == $this->getModelAliasOrName()) {
+				$previousJoin = null;
+				$tableMap = $this->getTableMap();
+			} elseif (array_key_exists($leftName, $this->joins)) {
+				$previousJoin = $this->joins[$leftName];
+				$tableMap = $previousJoin->getTableMap();
+			} else {
+				throw new PropelException('Unknown table or alias ' . $leftName);
+			}
 		}
+		$leftTableAlias = array_key_exists($leftName, $this->aliases) ? $leftName : null;
 		
 		// find the RelationMap in the TableMap using the $relationName
 		if(!$tableMap->hasRelation($relationName)) {
@@ -505,7 +512,6 @@ class ModelCriteria extends Criteria
 		if(null !== $previousJoin) {
 			$join->setPreviousJoin($previousJoin);
 		}
-		$leftTableAlias = array_key_exists($leftName, $this->aliases) ? $leftName : null;
 		$join->setRelationMap($relationMap, $leftTableAlias, $relationAlias);
 		
 		// add the ModelJoin to the current object

@@ -606,7 +606,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	public function use" . $relationName . "Query(\$relationAlias = '')
 	{
 		return \$this
-			->join(\$this->getModelAliasOrName() . '.$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''))
+			->join('$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''))
 			->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
 	}
 ";

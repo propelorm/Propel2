@@ -495,6 +495,15 @@ class ModelCriteriaTest extends BookstoreTestBase
 			array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'Leo'),
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses a relation to guess the columns');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Author');
+		$c->where('Author.FirstName = ?', 'Leo');
+		$sql = 'SELECT  FROM  INNER JOIN author ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = :p1';
+		$params = array(
+			array('table' => 'author', 'column' => 'FIRST_NAME', 'value' => 'Leo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() uses the current model name when given a simple relation name');
 	}
 	
 	public function testJoinQuery()
@@ -611,6 +620,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation on main alias');
 
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->join('Author');
+		$sql = 'SELECT  FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() can use a simple relation name when the model has an alias');
+
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->join('Book.Author a');
 		$sql = 'SELECT  FROM `book` INNER JOIN author a ON (book.AUTHOR_ID=a.ID)';
@@ -642,6 +657,23 @@ class ModelCriteriaTest extends BookstoreTestBase
 			array('table' => 'publisher', 'column' => 'NAME', 'value' => 'foo'),
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'join() allows the use of relation alias in further join()');
+	}
+
+	public function testJoinTrueTableAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->join('b.Author');
+		$sql = 'SELECT  FROM `book` `b` INNER JOIN author ON (b.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation on true table alias');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->join('Author');
+		$sql = 'SELECT  FROM `book` `b` INNER JOIN author ON (b.AUTHOR_ID=author.ID)';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation without alias name on true table alias');
 	}
 	
 	public function testJoinOnSameTable()
