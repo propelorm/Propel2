@@ -283,6 +283,14 @@ class ".$this->getClassname()." extends TableMap {
       $script .= "
     \$this->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
     }
+    foreach ($this->getTable()->getCrossFks() as $fkList)
+    {
+      list($refFK, $crossFK) = $fkList;
+      $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
+      $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
+      $script .= "
+    \$this->addRelation('" . $this->getFKPhpNameAffix($crossFK) . "', '" . $crossFK->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate);";
+    }
     $script .= "
 	} // buildRelations()
 ";

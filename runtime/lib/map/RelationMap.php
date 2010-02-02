@@ -42,6 +42,7 @@ class RelationMap
     MANY_TO_ONE = 1,
     ONE_TO_MANY = 2,
     ONE_TO_ONE = 3,
+    MANY_TO_MANY = 4,
     // representations
     LOCAL_TO_FOREIGN = 0,
     LEFT_TO_RIGHT = 1;

@@ -33,7 +33,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
   public function testRelationCount()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
-    $this->assertEquals(8, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
+    $this->assertEquals(9, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
   }
   
   public function testSimpleRelationName()
@@ -57,19 +57,34 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertTrue($essayTable->hasRelation('AuthorRelatedBySecondAuthor'), 'The map builder creates relations based on the foreign table name and the foreign key');
   }
   
-  public function testRelationDirection()
+  public function testRelationDirectionManyToOne()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals(RelationMap::MANY_TO_ONE, $bookTable->getRelation('Publisher')->getType(), 'The map builder creates MANY_TO_ONE relations for every foreign key');
     $this->assertEquals(RelationMap::MANY_TO_ONE, $bookTable->getRelation('Author')->getType(), 'The map builder creates MANY_TO_ONE relations for every foreign key');
+  }
+
+  public function testRelationDirectionOneToMany()
+  {
+    $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('Review')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('Media')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('BookListRel')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('BookOpinion')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('ReaderFavorite')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
     $this->assertEquals(RelationMap::ONE_TO_MANY, $bookTable->getRelation('BookstoreContest')->getType(), 'The map builder creates ONE_TO_MANY relations for every incoming foreign key');
+  }
+
+  public function testRelationDirectionOneToOne()
+  {
     $bookEmpTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
     $this->assertEquals(RelationMap::ONE_TO_ONE, $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getType(), 'The map builder creates ONE_TO_ONE relations for every incoming foreign key to a primary key');
+  }
+
+  public function testRelationDirectionManyToMAny()
+  {
+    $bookTable = $this->databaseMap->getTableByPhpName('Book');
+    $this->assertEquals(RelationMap::MANY_TO_MANY, $bookTable->getRelation('BookClubList')->getType(), 'The map builder creates MANY_TO_MANY relations for every cross key');
   }
   
   public function testRelationsColumns()
@@ -88,6 +103,8 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
       'reader_favorite.READER_ID' => 'book_opinion.READER_ID'
     );
     $this->assertEquals($expectedMapping, $rfTable->getRelation('BookOpinion')->getColumnMappings(), 'The map builder adds all columns for composite foreign keys');
+    $expectedMapping = array();
+    $this->assertEquals($expectedMapping, $bookTable->getRelation('BookClubList')->getColumnMappings(), 'The map builder provides no column mapping for many-to-many relationships');
   }
   
   public function testRelationOnDelete()
