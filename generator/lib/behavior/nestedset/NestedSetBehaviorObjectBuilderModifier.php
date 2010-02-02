@@ -590,6 +590,7 @@ public function hasChildren()
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets the children of the given node
@@ -603,7 +604,7 @@ public function getChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -616,6 +617,7 @@ public function getChildren(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets number of children for the given node
@@ -629,7 +631,7 @@ public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return 0;
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->childrenOf(\$this)
 			->count(\$con);
 	}
@@ -641,6 +643,7 @@ public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets the first child of the given node
@@ -654,7 +657,7 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->childrenOf(\$this)
 			->orderByBranch()
 			->findOne(\$con);
@@ -667,6 +670,7 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets the last child of the given node
@@ -680,7 +684,7 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->childrenOf(\$this)
 			->orderByBranch(true)
 			->findOne(\$con);
@@ -693,6 +697,7 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets the siblings of the given node
@@ -708,7 +713,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	if(\$this->isRoot()) {
 		return array();
 	} else {
-		\$query = \$this->getQueryObject(\$query)
+		 \$query = $queryClassname::create(null, \$query)
 				->childrenOf(\$this->getParent(\$con))
 				->orderByBranch(true);
 		if (!\$includeNode) {
@@ -724,6 +729,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets descendants for the given node
@@ -737,7 +743,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 	if(\$this->isLeaf()) {
 		return array();
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->descendantsOf(\$this)
 			->orderByBranch()
 			->find(\$con);
@@ -750,6 +756,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets number of descendants for the given node
@@ -764,7 +771,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return 0;
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->descendantsOf(\$this)
 			->count(\$con);
 	}
@@ -776,6 +783,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets descendants for the given node, plus the current node
@@ -786,7 +794,7 @@ public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
  */
 public function getBranch(\$query = null, PropelPDO \$con = null)
 {
-	return \$this->getQueryObject(\$query)
+	return $queryClassname::create(null, \$query)
 		->branchOf(\$this)
 		->orderByBranch()
 		->find(\$con);
@@ -798,6 +806,7 @@ public function getBranch(\$query = null, PropelPDO \$con = null)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
+		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
  * Gets ancestors for the given node, starting with the root node
@@ -813,7 +822,7 @@ public function getAncestors(\$query = null, PropelPDO \$con = null)
 		// save one query
 		return array();
 	} else {
-		return \$this->getQueryObject(\$query)
+		return $queryClassname::create(null, \$query)
 			->ancestorsOf(\$this)
 			->orderByBranch()
 			->find(\$con);

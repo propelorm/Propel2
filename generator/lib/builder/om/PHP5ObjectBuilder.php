@@ -258,7 +258,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (!$table->isAlias()) {
 			$this->addGetPeer($script);
 		}
-		$this->addGetQueryObject($script);
 
 		$this->addFKMethods($script);
 		$this->addRefFKMethods($script);
@@ -1678,32 +1677,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 ";
 	}
-
-	protected function addGetQueryObject(&$script)
-	{
-		$queryClassname = $this->getStubQueryBuilder()->getClassname();
-		$script .= "
-	/**
-	 * Returns a $queryClassname instance for queries on this model
-	 *
-	 * @param      Criteria \$criteria The Criteria to use as a base
-	 * @return     $queryClassname
-	 */
-	public function getQueryObject(\$criteria = null)
-	{
-		if (null === \$criteria) {
-			return $queryClassname::create();
-		} elseif (\$criteria instanceof $queryClassname) {
-			return \$criteria;
-		} elseif (\$criteria instanceof Criteria) {
-			return $queryClassname::create()
-				->mergeWith(\$criteria);
-		}
-	}
-";
-
-	}
-
 
 	/**
 	 * Adds the toArray method
