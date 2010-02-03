@@ -66,7 +66,7 @@ class DebugPDOStatement extends PDOStatement
 	 * 
 	 * @param      DebugPDO $pdo Reference to the parent PDO instance.
 	 */
-	protected function __construct(DebugPDO $pdo)
+	protected function __construct(PropelPDO $pdo)
 	{
 		$this->pdo = $pdo;
 	}
