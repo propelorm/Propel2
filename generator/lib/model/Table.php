@@ -679,7 +679,9 @@ class Table extends XMLElement implements IDMethod
     $crossFks = array();
     foreach ($this->getReferrers() as $refFK) {
       if ($refFK->getTable()->getIsCrossRef()) {
-        $crossFks[]= array($refFK, $refFK->getOtherFk());
+        foreach ($refFK->getOtherFks() as $crossFK) {
+          $crossFks[]= array($refFK, $crossFK);
+        }
       }
     }
     return $crossFks;

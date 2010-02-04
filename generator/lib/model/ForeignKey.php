@@ -416,13 +416,15 @@ class ForeignKey extends XMLElement
 	 *
 	 * @return    ForeignKey
 	 */
-	public function getOtherFk()
+	public function getOtherFks()
 	{
+		$fks = array();
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			if ($fk != $this) {
-				return $fk;
+				$fks[]= $fk;
 			}
 		}
+		return $fks;
 	}
 	
 	/**
