@@ -2885,7 +2885,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$script .= "
 	/**
-	 * Clears out the $collName collection (array).
+	 * Clears out the $collName collection
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -3062,7 +3062,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 *
 	 * @param      Criteria \$criteria
 	 * @param      PropelPDO \$con
-	 * @return     array {$className}[]
+	 * @return     PropelCollection|array {$className}[] List of $className objects
 	 * @throws     PropelException
 	 */
 	public function get$relCol(\$criteria = null, PropelPDO \$con = null)
@@ -3203,9 +3203,66 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		foreach ($this->getTable()->getCrossFks() as $fkList) {
 			list($refFK, $crossFK) = $fkList;
+			$this->addCrossFKClear($script, $crossFK);
+			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
+			$this->addCrossFKAdd($script, $refFK, $crossFK);
 		}
+	}
+	
+		/**
+	 * Adds the method that clears the referrer fkey collection.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addCrossFKClear(&$script, ForeignKey $crossFK) {
+
+		$relCol = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$collName = $this->getCrossFKVarName($crossFK);
+
+		$script .= "
+	/**
+	 * Clears out the $collName collection
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        add$relCol()
+	 */
+	public function clear$relCol()
+	{
+		\$this->$collName = null; // important to set this to NULL since that means it is uninitialized
+	}
+";
+	} // addRefererClear()
+	
+	/**
+	 * Adds the method that initializes the referrer fkey collection.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addCrossFKInit(&$script, ForeignKey $crossFK) {
+
+		$relCol = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$collName = $this->getCrossFKVarName($crossFK);
+		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
+
+		$script .= "
+	/**
+	 * Initializes the $collName collection.
+	 *
+	 * By default this just sets the $collName collection to an empty collection (like clear$relCol());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function init$relCol()
+	{
+		\$this->$collName = new PropelObjectCollection();
+		\$this->{$collName}->setModel('$relatedObjectClassName');
+	}
+";
 	}
 	
 	protected function addCrossFKGet(&$script, $refFK, $crossFK)
@@ -3228,15 +3285,14 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Criteria \$criteria Optional query object to filter the query
 	 * @param      PropelPDO \$con Optional connection object
 	 *
-	 * @return     mixed List of {$relatedObjectClassName} objects
+	 * @return     PropelCollection|array {$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
 	 */
 	public function get{$relatedName}(\$criteria = null, PropelPDO \$con = null)
 	{
 		\$query = $relatedQueryClassName::create(null, \$criteria);
 		if (\$this->$collName  === null) {
 			if (\$this->isNew()) {
-				\$this->$collName = new PropelObjectCollection();
-				\$this->{$collName}->setModel('$relatedObjectClassName');
+				\$this->init{$relatedName}();
 			} else {
 				\$this->$collName = \$query
 					->filterBy{$selfRelationName}(\$this)
@@ -3318,6 +3374,47 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			}
 		}
 		return \$count;
+	}
+";
+	}
+
+	/**
+	 * Adds the method that adds an object into the referrer fkey collection.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addCrossFKAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+	{
+		$relCol = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$collName = $this->getCrossFKVarName($crossFK);
+		
+		$tblFK = $refFK->getTable();
+		
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+		
+		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
+		$crossObjectName = '$' . $crossFK->getForeignTable()->getStudlyPhpName();
+		
+		$script .= "
+	/**
+	 * Associate a $className object to this object
+	 * through the " . $tblFK->getName() . " cross reference table.
+	 *
+	 * @param      $className $crossObjectName The $className object to relate
+	 * @return     void
+	 */
+	public function add" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "($crossObjectName)
+	{
+		if (\$this->$collName === null) {
+			\$this->init{$relCol}();
+		}
+		if (!\$this->{$collName}->contains($crossObjectName)) { // only add it if the **same** object is not already associated
+			$foreignObjectName = new $className();
+			{$foreignObjectName}->set" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "($crossObjectName);
+			\$this->add" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "($foreignObjectName);
+			
+			\$this->{$collName}[]= $crossObjectName;
+		}
 	}
 ";
 	}

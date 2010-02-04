@@ -368,25 +368,31 @@ All you have to do is to add the `isCrossRef` attribute to the cross reference t
 </table>
 }}}
 
-Now, to retrieve the `Groups` of a `User` object, use the natural syntax you expect:
+Then, both end of the relationship see the other end through a one-to-many relationship. That means that you can deal with related objects just like you normally do, without ever creating instances of the cross reference object:
 
 {{{
 #!php
 <?php
+// create and relate objects as if they shared a one-to-many relationship
+$user = new User();
+$user->setName('John Doe');
+$group = new Group();
+$group->setName('Anonymous');
+// relate $user and $group
+$user->addGroup($group);
+// save the $user object, the $group object, and a new instance of the UserGroup class
+$user->save();
+
+// retrieve objects as if they shared a one-to-many relationship
 $groups = $user->getGroups();
-}}}
 
-Propel also generates a smart filter method in the model query:
-
-{{{
-#!php
-<?php
+// the model query also features a smart filter method for the relation
 $groups = GroupPeer::create()
   ->filterByUser($user)
   ->find();
 }}}
 
-Find more details about many-to-many relationships in the [wiki:Users/Documentation/1.5/Relationships relationships documentation].
+The syntax should be no surprise, since it's the same as the one for one-to-many relationships. Find more details about many-to-many relationships in the [wiki:Users/Documentation/1.5/Relationships relationships documentation].
 
 == New Behaviors ==
 

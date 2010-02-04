@@ -210,6 +210,35 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');	
 	}
 	
+	public function testManyToManyAdd()
+	{
+		$list = new BookClubList();
+		$list->setGroupLeader('Archimedes Q. Porter');
+
+		$book = new Book();
+		$book->setTitle( "Jungle Expedition Handbook" );
+		$book->setISBN('TEST');
+		
+		$list->addBook($book);
+		$this->assertEquals(1, $list->countBooks(), 'addCrossFk() sets the internal collection properly');
+		$this->assertEquals(1, $list->countBookListRels(), 'addCrossFk() sets the internal cross reference collection properly');
+		
+		$list->save();
+		$this->assertFalse($book->isNew(), 'related object is saved if added');
+		$rels = $list->getBookListRels();
+		$rel = $rels[0];
+		$this->assertFalse($rel->isNew(), 'cross object is saved if added');
+		
+		$list->clearBookListRels();
+		$list->clearBooks();
+		$books = $list->getBooks();
+		$expected = new PropelObjectCollection(array($book));
+		$expected->setModel('Book');
+		$this->assertEquals($expected, $books, 'addCrossFk() adds the object properly');
+		$this->assertEquals(1, $list->countBookListRels());
+	}
+
+	
 	/**
 	 * Test behavior of columns that are implicated in multiple foreign keys.
 	 * @link       http://propel.phpdb.org/trac/ticket/228
