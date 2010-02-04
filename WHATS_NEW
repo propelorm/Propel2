@@ -2,6 +2,8 @@
 
 [[PageOutline]]
 
+First and foremost, don't be frightened by the long list of new features that follows. Propel 1.5 is completely backwards compatible with Propel 1.4 and 1.3, so there is no hidden cost to benefit from these features. If you didn't do it already, upgrade the propel libraries, rebuild your model, and you're done - your application can now use the Propel 1.5 features.
+
 == New Query API ==
 
 This is the killer feature of Propel 1.5. It will transform the painful task of writing Criteria queries into a fun moment.
