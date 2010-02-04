@@ -1,5 +1,7 @@
 = Logging And Debugging =
 
+[[PageOutline]]
+
 Propel provides tools to monitor and debug your model. Whether you need to check the SQL code of slow queries, or to look for error messages previously thrown, Propel is your best friend for finding and fixing problems.
 
 == Propel Logs ==

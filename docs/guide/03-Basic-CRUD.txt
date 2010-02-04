@@ -1,5 +1,7 @@
 = Basic C.R.U.D. Operations =
 
+[[PageOutline]]
+
 In this chapter, you will learn how to perform basic C.R.U.D. (Create, Retrieve, Update, Delete) operations on your database using Propel. 
 
 == Creating Rows ==

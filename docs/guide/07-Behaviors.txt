@@ -1,5 +1,7 @@
 = Behaviors =
 
+[[PageOutline]]
+
 Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way.
 
 == Pre and Post Hooks For `save()` And `delete()` Methods == 

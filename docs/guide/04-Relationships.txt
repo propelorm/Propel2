@@ -1,5 +1,7 @@
 = Basic Relationships =
 
+[[PageOutline]]
+
 The definition of foreign keys in your schema allows Propel to add smart methods to the generated model and query objects. In practice, these generated methods mean that you will never actually have to deal with primary and foreign keys yourself. It makes the task of dealing with relations extremely straightforward. 
 
 == Inserting A Related Row ==

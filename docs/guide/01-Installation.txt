@@ -1,5 +1,7 @@
 = Installing Propel =
 
+[[PageOutline]]
+
 Propel is available as a [http://pear.php.net/manual/en/installation.getting.php PEAR] package, as a "traditional" tgz or zip package, and as a checkout from a Subversion repository. Whatever installation method you may choose, getting Propel to work is pretty straightforward.
 
 == Prerequisites ==

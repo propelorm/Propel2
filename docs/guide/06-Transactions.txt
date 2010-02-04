@@ -1,5 +1,7 @@
 = Transactions =
 
+[[PageOutline]]
+
 Database transactions are the key to assure the data integrity and the performance of database queries. Propel uses transactions internally, and provides a simple API to use them in your own code.
 
 '''Tip''': If the [http://en.wikipedia.org/wiki/ACID ACID] acronym doesn't ring a bell, you should probably learn some [http://en.wikipedia.org/wiki/Database_transaction fundamentals about database transactions] before reading further.
