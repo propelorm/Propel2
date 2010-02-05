@@ -191,7 +191,92 @@ class QueryBuilderTest extends BookstoreTestBase
 		}
 	}
 
-	public function testFilterByPk()
+	public function testFilterByPrimaryKeySimpleKey()
+	{
+		$q = BookQuery::create()->filterByPrimaryKey(12);
+		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK column');
+
+		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKey(12);
+		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKey() uses true table alias if set');
+	}
+
+	public function testFilterByPrimaryKeyCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+
+		BookPeer::clearInstancePool();
+		
+		// retrieve the test data
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRelTest = $c->findOne();
+		$pk = $bookListRelTest->getPrimaryKey();
+		
+		$q = new BookListRelQuery();
+		$q->filterByPrimaryKey($pk);
+		
+		$q1 = BookListRelQuery::create()
+			->add(BookListRelPeer::BOOK_ID, $pk[0], Criteria::EQUAL)
+			->add(BookListRelPeer::BOOK_CLUB_LIST_ID, $pk[1], Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK columns');
+	}
+		
+	public function testFilterByPrimaryKeysSimpleKey()
+	{
+		$q = BookQuery::create()->filterByPrimaryKeys(array(10, 11, 12));
+		$q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::IN);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a Criteria::IN on the PK column');
+
+		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrimaryKeys(array(10, 11, 12));
+		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', array(10, 11, 12), Criteria::IN);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() uses true table alias if set');
+	}
+
+	public function testFilterByPrimaryKeysCompositeKey()
+	{
+		BookstoreDataPopulator::depopulate();
+		BookstoreDataPopulator::populate();
+		
+		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
+		$c = new ModelCriteria('bookstore', 'Book');
+		$books = $c->find();
+		foreach ($books as $book) {
+			$book->save();
+		}
+
+		BookPeer::clearInstancePool();
+		
+		// retrieve the test data
+		$c = new ModelCriteria('bookstore', 'BookListRel');
+		$bookListRelTest = $c->find();
+		$search = array();
+		foreach ($bookListRelTest as $obj) {
+			$search[]= $obj->getPrimaryKey();
+		}
+		
+		$q = new BookListRelQuery();
+		$q->filterByPrimaryKeys($search);
+		
+		$q1 = BookListRelQuery::create();
+		foreach ($search as $key) {
+			$cton0 = $q1->getNewCriterion(BookListRelPeer::BOOK_ID, $key[0], Criteria::EQUAL);
+			$cton1 = $q1->getNewCriterion(BookListRelPeer::BOOK_CLUB_LIST_ID, $key[1], Criteria::EQUAL);
+			$cton0->addAnd($cton1);
+			$q1->addOr($cton0);
+		}
+		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a series of Criteria::EQUAL in the PK columns');
+	}
+	
+	public function testFilterByIntegerPk()
 	{
 		$q = BookQuery::create()->filterById(12);
 		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);

@@ -147,6 +147,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$this->addFindPk($script);
 		$this->addFindPks($script);
 		$this->addFilterByPrimaryKey($script);
+		$this->addFilterByPrimaryKeys($script);
 		foreach ($this->getTable()->getColumns() as $col) {
 			$this->addFilterByCol($script, $col);
 		}
@@ -275,32 +276,23 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$table = $this->getTable();
 		$pks = $table->getPrimaryKey();
 		if (count($pks) === 1) {
-			// simple primary key
-			$col = $pks[0];
-			$const = $this->getColumnConstant($col);
-			$script .= "
-		if (\$this->getFormatter()->isObjectFormatter() && (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet('$key').")))) {
+			$poolKeyHashParams = '$key';
+		} else {
+			$poolKeyHashParams = array();
+			for ($i = 0, $count = count($pks); $i < $count; $i++) {
+				$poolKeyHashParams[]= '$key[' . $i . ']';
+			}
+		}
+		$script .= "
+		if (\$this->getFormatter()->isObjectFormatter() && (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams).")))) {
 			// the object is alredy in the instance pool
 			return \$obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			\$this->add($const, \$key, Criteria::EQUAL);
-			return \$this->findOne(\$con);
-		}";
-		} else {
-			// composite primary key
-			$i = 0;
-			foreach ($pks as $col) {
-				$const = $this->getColumnConstant($col);
-				$script .= "
-		\$this->add($const, \$key[$i], Criteria::EQUAL);";
-				$i++;
-			}
-			$script .= "
-		
-		return \$this->findOne(\$con);";
+			return \$this
+				->filterByPrimaryKey(\$key)
+				->findOne(\$con);
 		}
-		$script .= "
 	}
 ";
 	}
@@ -333,37 +325,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * @return    the list of results, formatted by the current formatter
 	 */
 	public function findPks(\$keys, \$con = null)
-	{";
-		if ($count === 1) {
-			// simple primary key
-			$col = $pks[0];
-			$const = $this->getColumnConstant($col);
-			$script .= "
-		\$this->add($const, \$keys, Criteria::IN);
-		
-		return \$this->find(\$con);";
-		} else {
-			// composite primary key
-			$script .= "
-		foreach (\$keys as \$key) {";
-			$i = 0;
-			foreach ($pks as $col) {
-				$const = $this->getColumnConstant($col);
-				$script .= "
-			\$cton$i = \$this->getNewCriterion($const, \$key[$i], Criteria::EQUAL);";
-				if ($i>0) {
-					$script .= "
-			\$cton0->addAnd(\$cton$i);";
-				}
-				$i++;
-			}
-			$script .= "
-			\$this->addOr(\$cton0);
-		}
-		
-		return \$this->find(\$con);";
-		}
-		$script .= "
+	{	
+		return \$this
+			->filterByPrimaryKeys(\$keys)
+			->find(\$con);
 	}
 ";
 	}
@@ -401,6 +366,57 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		\$this->addUsingAlias($const, \$key[$i], Criteria::EQUAL);";
 				$i++;
 			}
+			$script .= "
+		
+		return \$this;";
+		}
+		$script .= "
+	}
+";
+	}
+	
+		/**
+	 * Adds the filterByPrimaryKey method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByPrimaryKeys(&$script)
+	{
+		$script .= "
+	/**
+	 * Filter the query by a list of primary keys
+	 *
+	 * @param     array \$keys The list of primary key to use for the query
+	 *
+	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+	 */
+	public function filterByPrimaryKeys(\$keys)
+	{";
+		$table = $this->getTable();
+		$pks = $table->getPrimaryKey();
+		if (count($pks) === 1) {
+			// simple primary key
+			$col = $pks[0];
+			$const = $this->getColumnConstant($col);
+			$script .= "
+		return \$this->addUsingAlias($const, \$keys, Criteria::IN);";
+		} else {
+			// composite primary key
+			$script .= "
+		foreach (\$keys as \$key) {";
+			$i = 0;
+			foreach ($pks as $col) {
+				$const = $this->getColumnConstant($col);
+				$script .= "
+			\$cton$i = \$this->getNewCriterion($const, \$key[$i], Criteria::EQUAL);";
+				if ($i>0) {
+					$script .= "
+			\$cton0->addAnd(\$cton$i);";
+				}
+				$i++;
+			}
+			$script .= "
+			\$this->addOr(\$cton0);
+		}";
 			$script .= "
 		
 		return \$this;";
