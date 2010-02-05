@@ -4261,12 +4261,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Catches calls to virtual methods
 	 */
-  public function __call(\$name, \$parms)
-  {";
-  	$this->applyBehaviorModifier('objectCall', $script, "		");
-  	$script .= "
-    throw new PropelException('Call to undefined method: ' . \$name);
-  }
+	public function __call(\$name, \$params)
+	{";
+		$this->applyBehaviorModifier('objectCall', $script, "		");
+		$script .= "
+		throw new PropelException('Call to undefined method: ' . \$name);
+	}
 ";
 	}
 } // PHP5ObjectBuilder
