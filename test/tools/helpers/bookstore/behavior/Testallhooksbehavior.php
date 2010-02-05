@@ -103,6 +103,11 @@ class TestAllHooksObjectBuilderModifier
     return 'public function hello() { return "' . get_class($builder) .'"; }';
   }
   
+  public function objectCall($builder)
+  {
+  	return 'if ($name == "foo") return "bar";';
+  }
+  
   public function objectFilter(&$string, $builder)
   {
     $string .= 'class testObjectFilter { const FOO = "' . get_class($builder) . '"; }';

@@ -148,6 +148,12 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $this->assertEquals($t->hello(), 'PHP5ObjectBuilder', 'objectMethods hook is called with the object builder as parameter');
   }
   
+  public function testObjectCall()
+  {
+  	$t = new Table3();
+  	$this->assertEquals('bar', $t->foo(), 'objectCall hook is called when building the magic __call()');
+  }
+  
   public function testObjectFilter()
   {
     $t = new Table3();

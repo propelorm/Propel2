@@ -265,10 +265,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addClear($script);
 		$this->addClearAllReferences($script);
 		
+		$this->addPrimaryString($script);
+		
 		// apply behaviors
 		$this->applyBehaviorModifier('objectMethods', $script, "	");
 		
-		$this->addPrimaryString($script);
+		$this->addMagicCall($script);
 	}
 
 	/**
@@ -4225,15 +4227,15 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 	}
 
-  /**
-   * Adds a magic __toString() method if a string column was defined as primary string
+	/**
+	 * Adds a magic __toString() method if a string column was defined as primary string
 	 * @param      string &$script The script will be modified in this method.
-   */
-  protected function addPrimaryString(&$script)
-  {
-    foreach ($this->getTable()->getColumns() as $column) {
-      if ($column->isPrimaryString()) {
-        $script .= "
+	 */
+	protected function addPrimaryString(&$script)
+	{
+		foreach ($this->getTable()->getColumns() as $column) {
+			if ($column->isPrimaryString()) {
+				$script .= "
 	/**
 	 * Return the string representation of this object
 	 *
@@ -4244,8 +4246,27 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     return (string) \$this->get{$column->getPhpName()}();
   }
 ";
-        break;
-      }
-    }
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Adds a magic __call() method 
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addMagicCall(&$script)
+	{
+		$script .= "
+	/**
+	 * Catches calls to virtual methods
+	 */
+  public function __call(\$name, \$parms)
+  {";
+  	$this->applyBehaviorModifier('objectCall', $script, "		");
+  	$script .= "
+    throw new PropelException('Call to undefined method: ' . \$name);
   }
+";
+	}
 } // PHP5ObjectBuilder
