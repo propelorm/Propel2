@@ -925,6 +925,60 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
 	}
 	
+	public static function conditionsForTestWithColumn()
+	{
+		return array(
+			array('Book.Title', 'BookTitle', 'book.TITLE AS BookTitle'),
+			array('Book.Title', null, 'book.TITLE AS BookTitle'),
+			array('UPPER(Book.Title)', null, 'UPPER(book.TITLE) AS UPPERBookTitle'),
+			array('CONCAT(Book.Title, Book.ISBN)', 'foo', 'CONCAT(book.TITLE, book.ISBN) AS foo'),
+		);
+	}
+	
+	/**
+	 * @dataProvider conditionsForTestWithColumn
+	 */
+	public function testWithColumn($clause, $alias, $selectTranslation)
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->withColumn($clause, $alias);
+		$sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, ' . $selectTranslation . ' FROM `book`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column to the select clause');
+	}
+	
+	public function testWithColumnAndSelectColumns()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->withColumn('UPPER(Book.Title)', 'foo');
+		$sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) AS foo FROM `book`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds the object columns if the criteria has no select columns');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addSelectColumn('book.ID');
+		$c->withColumn('UPPER(Book.Title)', 'foo');
+		$sql = 'SELECT book.ID, UPPER(book.TITLE) AS foo FROM `book`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() does not add the object columns if the criteria already has select columns');
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addSelectColumn('book.ID');
+		$c->withColumn('UPPER(Book.Title)', 'foo');
+		$c->addSelectColumn('book.TITLE');
+		$sql = 'SELECT book.ID, book.TITLE, UPPER(book.TITLE) AS foo FROM `book`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() does adds as column after the select columns even though the withColumn() method was called first');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addSelectColumn('book.ID');
+		$c->withColumn('UPPER(Book.Title)', 'foo');
+		$c->withColumn('UPPER(Book.ISBN)', 'isbn');
+		$sql = 'SELECT book.ID, UPPER(book.TITLE) AS foo, UPPER(book.ISBN) AS isbn FROM `book`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() called repeatedly adds several as colums');
+	}
+	
 	public function testFind()
 	{
 		$c = new ModelCriteria('bookstore', 'Book', 'b');

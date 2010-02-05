@@ -100,7 +100,10 @@ class PropelArrayFormatter extends PropelFormatter
 			}
 			$arrayToAugment[$join->getRelationMap()->getName()] = $secondaryObjectArray;
 		}
-		
+		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
+			$mainObjectArray[$alias] = $row[$col];
+			$col++;
+		}
 		return $mainObjectArray;
 	}
 

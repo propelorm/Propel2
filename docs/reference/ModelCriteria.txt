@@ -425,6 +425,41 @@ $author = PropelQuery::from('Author')
   ->findOne();
 }}}
 
+=== Adding Columns ===
+
+Sometimes you don't need to hydrate a full object in addition to the main object. If you only need one additional column, the `withColumn()` method is a good alternative to `joinWith()`, and it speeds up the query:
+
+{{{
+#!php
+<?php
+$book = PropelQuery::from('Book')
+  ->join('Book.Author')
+  ->withColumn('Author.Name', 'AuthorName')
+  ->findOne();
+$authorName = $book->getAuthorName();
+}}}
+
+Propel adds the 'with' column to the SELECT clause of the query, and uses the second argument of the `withColumn()` call as a column alias. This additional column is later available as a 'virtual' column, i.e. using a getter that does not correspond to a real column. You don't actually need to write the `getAuthorName()` method ; Propel uses the magic `__call()` method of the generated `Book` class to catch the call to a virtual column.
+
+`withColumn()` is also of great use to add calculated columns:
+
+{{{
+#!php
+<?php
+$authors = PropelQuery::from('Author')
+  ->join('Author.Book')
+  ->withColumn('COUNT(Book.Id)', 'NbBooks')
+  ->groupBy('Author.Id')
+  ->find();
+foreach ($authors as $author) {
+	echo $author->getName() . ': ' . $author->getNbBooks() . " books\n";
+}
+}}}
+
+With a single SQL query, you can have both a list of objects and an additional column for each object. That makes of `withColumn()` a great query saver.
+
+'''Tip''': Of course, you can call `withColumn()` multiple times to add more than one virtual column to the resulting objects.
+
 === PropelCollection Methods ===
 
 {{{
@@ -583,6 +618,7 @@ orderBy($columnName, $order = 'asc')
 groupBy($columnName)
 join($class, $joinType = 'inner join')
 with($relation, $joinType = 'inner join')
+withColumn($clause, $alias)
 prune($object)
 
 // termination methods (return model objects)

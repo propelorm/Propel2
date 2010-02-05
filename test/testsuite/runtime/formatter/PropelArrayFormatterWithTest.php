@@ -166,4 +166,45 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('J.K.', $author['FirstName'], 'Related object is correctly hydrated');
 	}
 
+	public function testFindOneWithColumn()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->filterByTitle('The Tin Drum');
+		$c->join('Book.Author');
+		$c->withColumn('Author.FirstName', 'AuthorName');
+		$c->withColumn('Author.LastName', 'AuthorName2');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = $c->findOne($con);
+		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
+		$this->assertEquals('The Tin Drum', $book['Title']);
+		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
+		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+	}
+
+	public function testFindOneWithClassAndColumn()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->filterByTitle('The Tin Drum');
+		$c->join('Book.Author');
+		$c->withColumn('Author.FirstName', 'AuthorName');
+		$c->withColumn('Author.LastName', 'AuthorName2');
+		$c->with('Author');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = $c->findOne($con);
+		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Author', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
+		$this->assertEquals('The Tin Drum', $book['Title']);
+		$this->assertEquals('Gunter', $book['Author']['FirstName'], 'PropelArrayFormatter correctly hydrates withclass and columns');
+		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
+		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+	}
 }

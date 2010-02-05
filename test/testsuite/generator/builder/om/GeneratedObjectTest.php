@@ -1333,4 +1333,11 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$author->delete();
 		$this->assertEquals("Post-Deleted", $author->getLastName());
 	}
+	
+	public function testMagicVirtualColumnGetter()
+	{
+		$book = new Book();
+		$book->setVirtualColumn('Foo', 'bar');
+		$this->assertEquals('bar', $book->getFoo(), 'generated __call() catches getters for virtual columns');
+	}
 }

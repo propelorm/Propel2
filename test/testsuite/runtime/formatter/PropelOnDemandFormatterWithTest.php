@@ -3,18 +3,22 @@
 require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
- * Test class for PropelObjectFormatter when Criteria uses with().
+ * Test class for PropelOnDemandFormatter when Criteria uses with().
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: PropelOnDemandFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.formatter
  */
-class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
+class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 {
 	protected function assertCorrectHydration1($c, $msg)
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$book = $c->findOne($con);
+		$c->limit(1);
+		$books = $c->find($con);
+		foreach ($books as $book) {
+			break;
+		}
 		$count = $con->getQueryCount();
 		$this->assertEquals($book->getTitle(), 'Don Juan', 'Main object is correctly hydrated ' . $msg);
 		$author = $book->getAuthor();
@@ -31,6 +35,7 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->orderBy('Book.Title');
 		$c->join('Book.Author');
 		$c->with('Author');
@@ -45,6 +50,7 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->orderBy('Book.Title');
 		$c->join('Book.Author a');
 		$c->with('a');
@@ -59,6 +65,7 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->setModelAlias('b', true);
 		$c->orderBy('b.Title');
 		$c->join('b.Author a');
@@ -73,6 +80,7 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		BookstoreDataPopulator::populate();
 		// instance pool contains all objects by default, since they were just populated
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->orderBy('Book.Title');
 		$c->join('Book.Author');
 		$c->with('Author');
@@ -88,11 +96,16 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$b->setTitle('Foo');
 		$b->save();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->where('Book.Title = ?', 'Foo');
 		$c->leftJoin('Book.Author');
 		$c->with('Author');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$book = $c->findOne($con);
+		$books = $c->find($con);
+		foreach ($books as $book) {
+			break;
+		}
 		$count = $con->getQueryCount();
 		$author = $book->getAuthor();
 		$this->assertNull($author, 'Related object is not hydrated if empty');
@@ -106,8 +119,12 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$c->join('BookstoreEmployee.Supervisor s');
 		$c->with('s');
 		$c->where('s.Name = ?', 'John');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$emp = $c->findOne($con);
+		$emps = $c->find($con);
+		foreach ($emps as $emp) {
+			break;
+		}
 		$count = $con->getQueryCount();
 		$this->assertEquals($emp->getName(), 'Pieter', 'Main object is correctly hydrated');
 		$sup = $emp->getSupervisor();
@@ -133,11 +150,16 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		EssayPeer::clearInstancePool();
 		
 		$c = new ModelCriteria('bookstore', 'Essay');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->join('Essay.AuthorRelatedByFirstAuthor');
 		$c->with('AuthorRelatedByFirstAuthor');
 		$c->where('Essay.Title = ?', 'Foo');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$essay = $c->findOne($con);
+		$essays = $c->find($con);
+		foreach ($essays as $essay) {
+			break;
+		}
 		$count = $con->getQueryCount();
 		$this->assertEquals($essay->getTitle(), 'Foo', 'Main object is correctly hydrated');
 		$firstAuthor = $essay->getAuthorRelatedByFirstAuthor();
@@ -154,13 +176,18 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Review');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->where('Review.Recommended = ?', true);
 		$c->join('Review.Book');
 		$c->with('Book');
 		$c->join('Book.Author');
 		$c->with('Author');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$review = $c->findOne($con);
+		$reviews = $c->find($con);
+		foreach ($reviews as $review) {
+			break;
+		}
 		$count = $con->getQueryCount();
 		$this->assertEquals($review->getReviewedBy(), 'Washington Post', 'Main object is correctly hydrated');
 		$book = $review->getBook();
@@ -178,12 +205,17 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->filterByTitle('The Tin Drum');
 		$c->join('Book.Author');
 		$c->withColumn('Author.FirstName', 'AuthorName');
 		$c->withColumn('Author.LastName', 'AuthorName2');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$book = $c->findOne($con);
+		$books = $c->find($con);
+		foreach ($books as $book) {
+			break;
+		}
 		$this->assertTrue($book instanceof Book, 'withColumn() do not change the resulting model class');
 		$this->assertEquals('The Tin Drum', $book->getTitle());
 		$this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'PropelObjectFormatter adds withColumns as virtual columns');
@@ -198,13 +230,18 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->filterByTitle('The Tin Drum');
 		$c->join('Book.Author');
 		$c->withColumn('Author.FirstName', 'AuthorName');
 		$c->withColumn('Author.LastName', 'AuthorName2');
 		$c->with('Author');
+		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$book = $c->findOne($con);
+		$books = $c->find($con);
+		foreach ($books as $book) {
+			break;
+		}
 		$this->assertTrue($book instanceof Book, 'withColumn() do not change the resulting model class');
 		$this->assertEquals('The Tin Drum', $book->getTitle());
 		$this->assertTrue($book->getAuthor() instanceof Author, 'PropelObjectFormatter correctly hydrates with class');

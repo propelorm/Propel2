@@ -95,6 +95,10 @@ class PropelObjectFormatter extends PropelFormatter
 			$method = 'set' . $join->getRelationMap()->getName();
 			$startObject->$method($endObject);
 		}
+		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
+			$obj->setVirtualColumn($alias, $row[$col]);
+			$col++;
+		}
 		return $obj;
 	}
 

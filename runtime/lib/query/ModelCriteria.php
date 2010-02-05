@@ -600,7 +600,33 @@ class ModelCriteria extends Criteria
 	{
 		return $this->with;
 	}
-
+	
+	/**
+	 * Adds a supplementary column to the select clause
+	 * These columns can later be retrieved from the hydrated objects using getVirtualColumn()
+	 *
+	 * @param     string $clause The SQL clause with object model column names
+	 *                           e.g. 'UPPER(Author.FirstName)'
+	 * @param     string $name   Optional alias for the added column
+	 *                           If no alias is provided, the clause is used as a column alias
+	 *                           This alias is used for retrieving the column via BaseObject::getVirtualColumn($alias)
+	 */
+	public function withColumn($clause, $name = null)
+	{
+		if (null === $name) {
+			$name = str_replace(array('.', '(', ')'), '', $clause);
+		}
+		$clause = trim($clause);
+		$this->replaceNames($clause);
+		// check that the columns of the main class are already added
+		if (!$this->hasSelectClause()) {
+			$this->addSelfSelectColumns();
+		}
+		$this->addAsColumn($name, $clause);
+		
+		return $this;
+	}
+	
 	/**
 	 * Initializes a secondary ModelCriteria object, to be later merged with the current object
 	 *

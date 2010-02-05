@@ -51,7 +51,14 @@ abstract class BaseObject
 	 * @var        array
 	 */
 	protected $modifiedColumns = array();
-
+	
+	/**
+	 * The (virtual) columns that are added at runtime
+	 * The formatters can add supplementary columns based on a resultset
+	 * @var        array
+	 */
+	protected $virtualColumns = array();
+	 
 	/**
 	 * Empty constructor (this allows people with their own BaseObject implementation to use its constructor)
 	 */
@@ -250,6 +257,55 @@ abstract class BaseObject
 			return crc32(serialize($this));
 		}
 		return crc32(serialize($ok)); // serialize because it could be an array ("ComboKey")
+	}
+	
+	/**
+	 * Get the associative array of the virtual columns in this object
+	 *
+	 * @param      string $name The virtual column name
+	 *
+	 * @return     array
+	 */
+	public function getVirtualColumns()
+	{
+		return $this->virtualColumns;
+	}
+
+	/**
+	 * Checks the existence of a virtual column in this object
+	 *
+	 * @return     boolean
+	 */
+	public function hasVirtualColumn($name)
+	{
+		return array_key_exists($name, $this->virtualColumns);
+	}
+		
+	/**
+	 * Get the value of a virtual column in this object
+	 *
+	 * @return     mixed
+	 */
+	public function getVirtualColumn($name)
+	{
+		if (!$this->hasVirtualColumn($name)) {
+			throw new PropelException('Cannot get value of inexistent virtual column ' . $name);
+		}
+		return $this->virtualColumns[$name];
+	}
+	
+	/**
+	 * Get the value of a virtual column in this object
+	 *
+	 * @param      string $name The virtual column name
+	 * @param      mixed  $value The value to give to the virtual column
+	 *
+	 * @return     BaseObject The current object, for fluid interface
+	 */
+	public function setVirtualColumn($name, $value)
+	{
+		$this->virtualColumns[$name] = $value;
+		return $this;
 	}
 
 	/**

@@ -4265,6 +4265,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 		$this->applyBehaviorModifier('objectCall', $script, "		");
 		$script .= "
+		if (preg_match('/get(\w+)/', \$name, \$matches) && \$this->hasVirtualColumn(\$matches[1])) {
+			return \$this->getVirtualColumn(\$matches[1]);
+		}
 		throw new PropelException('Call to undefined method: ' . \$name);
 	}
 ";
