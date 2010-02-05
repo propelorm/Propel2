@@ -246,6 +246,7 @@ preSave()              // add code to be executed before saving an object (new o
 postSave()             // add code to be executed after saving an object (new or existing)
 preDelete()            // add code to be executed before deleting an object
 postDelete()           // add code to be executed after deleting an object
+objectCall()           // add code to be executed inside the object's __call()
 objectFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
