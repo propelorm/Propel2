@@ -118,6 +118,51 @@ class PropelObjectCollection extends PropelCollection
 		
 		return $ret;
 	}
+	
+	/**
+	 * Makes an additional query to populate the objects related to the collection objects
+	 * by a certain relation
+	 *
+	 * @param     string    $relation Relation name (e.g. 'Book')
+	 * @param     PropelPDO $con      Optional connection object
+	 *
+	 * @return    PropelObjectCollection the list of related objects
+	 */
+	public function populateRelation($relation, $con = null)
+	{
+		if (!Propel::isInstancePoolingEnabled()) {
+			throw new PropelException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
+		}
+		$query = $this->getFormatter()->getCriteria();
+		$relationMap = $query->getTableMap()->getRelation($relation);
+		$symRelationMap = $relationMap->getSymmetricalRelation();
+		
+		// query the db for the related objects
+		$useMethod = 'use' . $symRelationMap->getName() . 'Query';
+		$relatedObjects = PropelQuery::from($relationMap->getRightTable()->getPhpName())
+			->$useMethod()
+			  ->filterByPrimaryKeys($this->getPrimaryKeys())
+			->endUse()
+			->find($con);
+			
+		// associate the related objects to the main objects
+		if ($relationMap->getType() == RelationMap::ONE_TO_MANY) {
+			$getMethod = 'get' . $symRelationMap->getName();
+			$addMethod = 'add' . $relationMap->getName();
+			foreach ($relatedObjects as $object) {
+				$mainObj = $object->$getMethod();  // instance pool is used here to avoid a query
+				$mainObj->$addMethod($object);
+				$mainObj->setNew(true); // ok, that's not true, but it's the only way to have the getter return the inner collection
+			}
+		} elseif ($relationMap->getType() == RelationMap::MANY_TO_ONE) {
+			// nothing to do; the instance pool will catch all calls to getRelatedObject()
+			// and return the object in memory
+		} else {
+			throw new PropelException('populateRelation() does not support this relation type');
+		}
+		
+		return $relatedObjects;
+	}
 
 }
 

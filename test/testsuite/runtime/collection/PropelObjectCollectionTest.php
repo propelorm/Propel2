@@ -110,5 +110,34 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 			$this->assertEquals($books[$key]->toArray(), $book);
 		}
 	}
-
+	
+	public function testPopulateRelationOneToMany()
+	{
+		$con = Propel::getConnection();
+		AuthorPeer::clearInstancePool();
+		BookPeer::clearInstancePool();
+		$authors = AuthorQuery::create()->find($con);
+		$count = $con->getQueryCount();
+		$authors->populateRelation('Book', $con);
+		foreach ($authors as $author) {
+			foreach ($author->getBooks() as $book) {
+				$this->assertEquals($author, $book->getAuthor());
+			}
+		}
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'populateRelation() populates a one-to-many relationship with a single supplementary query');
+	}
+	
+	public function testPopulateRelationManyToOne()
+	{
+		$con = Propel::getConnection();
+		AuthorPeer::clearInstancePool();
+		BookPeer::clearInstancePool();
+		$books = BookQuery::create()->find($con);
+		$count = $con->getQueryCount();
+		$books->populateRelation('Author', $con);
+		foreach ($books as $book) {
+			$author = $book->getAuthor();
+		}
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'populateRelation() populates a many-to-one relationship with a single supplementary query');
+	}
 }

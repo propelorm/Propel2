@@ -283,4 +283,19 @@ class RelationMap
   {
     return $this->onDelete;
   }
+  
+  /**
+   * Gets the symmetrical relation
+   *
+   * @return    RelationMap
+   */
+  public function getSymmetricalRelation()
+  {
+  	$localMapping = array($this->getLeftColumns(), $this->getRightColumns());
+  	foreach ($this->getRightTable()->getRelations() as $relation) {
+  		if ($localMapping == array($relation->getRightColumns(), $relation->getLeftColumns())) {
+  			return $relation;
+  		}
+  	}
+  }
 }

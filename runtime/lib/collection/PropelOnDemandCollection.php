@@ -30,7 +30,6 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 {
 	protected 
 		$stmt, 
-		$formatter, 
 		$currentRow, 
 		$currentKey = -1,
 		$isValid = null;
@@ -38,11 +37,6 @@ class PropelOnDemandCollection extends PropelCollection implements Iterator
 	public function setStatement(PDOStatement $stmt)
 	{
 		$this->stmt = $stmt;
-	}
-
-	public function setFormatter(PropelFormatter $formatter)
-	{
-		$this->formatter = $formatter;
 	}
 	
 	public function closeCursor()

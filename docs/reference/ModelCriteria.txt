@@ -535,6 +535,7 @@ mixed clear()
 void  save() // save all the objects in the collection
 void  delete() // delete all the objects in the collection
 array getPrimaryKeys() // get an array of the primary keys of all the objects in the collection
+coll  populateRelation($name) // makes an additional query to populate the objects related to the current collection objects
 // Import/Export methods
 array toArray() // exports all the objects as array
 void  fromArray($array) // imports a collection from an array

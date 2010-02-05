@@ -39,6 +39,7 @@ class PropelArrayFormatter extends PropelFormatter
 		if(class_exists($class)) {
 			$collection = new $class();
 			$collection->setModel($this->getCriteria()->getModelName());
+			$collection->setFormatter($this);
 		} else {
 			$collection = array();
 		}

@@ -31,6 +31,8 @@ class PropelCollection extends ArrayObject implements Serializable
 {
 	protected $model = '';
 	protected $iterator;
+	protected $formatter; 
+	
 
 	// Generic Collection methods
 	
@@ -382,6 +384,16 @@ class PropelCollection extends ArrayObject implements Serializable
 			throw new PropelException('You must set the collection model before interacting with it');
 		}
 		return constant($this->getModel() . '::PEER');
+	}
+	
+	public function setFormatter(PropelFormatter $formatter)
+	{
+		$this->formatter = $formatter;
+	}
+	
+	public function getFormatter()
+	{
+		return $this->formatter;
 	}
 
 	/**
