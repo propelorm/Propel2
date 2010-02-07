@@ -721,7 +721,7 @@ After writing custom methods to query objects, developers often meet the need to
 #!php
 <?php
 // This doesn't work
-$books = PropelQuery::from('Author')
+$authors = PropelQuery::from('Author')
   ->join('Author.Book')
   ->recent()
   ->find();
@@ -735,7 +735,7 @@ Does that mean that you must repeat the `BookQuery::recent()` code into a new `A
 #!php
 <?php
 // This works
-$books = PropelQuery::from('Author')
+$authors = PropelQuery::from('Author')
   ->join('Author.Book')
   ->useQuery('Book')
     ->recent()
@@ -753,7 +753,7 @@ You can nest queries in as many levels as you like, in order to avoid the repeti
 {{{
 #!php
 <?php
-$books = PropelQuery::from('Author a')
+$authors = PropelQuery::from('Author a')
   ->join('a.Book b')
   ->useQuery('b')
     ->recent()
@@ -761,3 +761,38 @@ $books = PropelQuery::from('Author a')
   ->recent()
   ->find();
 }}}
+
+== Fluis Conditions ==
+
+Thanks to the query factories and the fluid interface, developers can query the database without creating a variable for the Query object. This helps a lot to reduce the amount of code necessary to write a query, and it also makes the code more readable.
+
+But when you need to call a method on a Query object only if a certain condition is satisfied, it becomes compulsory to use a variable for the Query object:
+
+{{{
+#!php
+<?php
+// find all the published books, except if the user is an editor
+$query = PropelQuery::from('Books');
+if (!$user->isEditor()) {
+  $query->where('Book.IsPublished = ?', true);
+}
+$books = $query
+  ->orderByTitle()
+  ->find();
+}}}
+
+The `ModelCriteria` class offers a neat way to keep your code to a minimum in such occasions. It provides `_if()` and `_endif()` methods allowing for inlline conditions. Using thses methods, the previous query can be written as follows:
+
+{{{
+#!php
+<?php
+// find all the published books, except if the user is an editor
+$books = PropelQuery::from('Books')
+  ->_if(!$user->isEditor())
+    ->where('Book.IsPublished = ?', true)
+  ->_endif()
+  ->orderByTitle()
+  ->find();
+}}}
+
+The method calls enclosed between `_if($cond)` and `_endif()` will only be executed if the condition is true. To complete the list of tools available for fluid conditions, you can also use `_else()` and `_elseif($cond)`.

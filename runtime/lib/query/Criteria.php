@@ -1362,4 +1362,60 @@ class Criteria implements IteratorAggregate
 
 		return $this;
 	}
+
+	// Fluid Conditions
+
+	/**
+	 * Returns the current object if the condition is true,
+	 * or a PropelConditionalProxy instance otherwise.
+	 * Allows for conditional statements in a fluid interface.
+	 *
+	 * @param      bool $cond
+	 *
+	 * @return     PropelConditionalProxy|Criteria 
+	 */
+	public function _if($cond)
+	{
+		if($cond) {
+			return $this;
+		} else {
+			return new PropelConditionalProxy($this);
+		}
+	}
+
+	/**
+	 * Returns a PropelConditionalProxy instance.
+	 * Allows for conditional statements in a fluid interface.
+	 *
+	 * @param      bool $cond ignored
+	 *
+	 * @return     PropelConditionalProxy
+	 */
+	public function _elseif($cond)
+	{
+		return new PropelConditionalProxy($this);
+	}
+
+	/**
+	 * Returns a PropelConditionalProxy instance.
+	 * Allows for conditional statements in a fluid interface.
+	 *
+	 * @return     PropelConditionalProxy
+	 */
+	public function _else()
+	{
+		return new PropelConditionalProxy($this);
+	}
+
+	/**
+	 * Returns the current object
+	 * Allows for conditional statements in a fluid interface.
+	 *
+	 * @return     Criteria
+	 */
+	public function _endif()
+	{
+		return $this;
+	}
+	
 }

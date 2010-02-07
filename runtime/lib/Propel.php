@@ -231,6 +231,7 @@ class Propel
 		'NodePeer'            => 'util/NodePeer.php',
 		'PeerInfo'            => 'util/PeerInfo.php',
 		'PropelColumnTypes'   => 'util/PropelColumnTypes.php',
+		'PropelConditionalProxy' => 'util/PropelConditionalProxy.php',
 		'PropelModelPager'    => 'util/PropelModelPager.php',
 		'PropelPager'         => 'util/PropelPager.php',
 		'PropelDateTime'      => 'util/PropelDateTime.php',
