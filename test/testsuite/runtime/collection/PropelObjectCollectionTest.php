@@ -110,6 +110,28 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 			$this->assertEquals($books[$key]->toArray(), $book);
 		}
 	}
+
+	public function testPopulateRelation()
+	{
+		AuthorPeer::clearInstancePool();
+		BookPeer::clearInstancePool();
+		$authors = AuthorQuery::create()->find();
+		$books = $authors->populateRelation('Book');
+		$this->assertTrue($books instanceof PropelObjectCollection, 'populateRelation() returns a PropelCollection instance');
+		$this->assertEquals('Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
+		$this->assertEquals(4, count($books), 'populateRelation() the list of related objects');
+	}
+
+	public function testPopulateRelationCriteria()
+	{
+		AuthorPeer::clearInstancePool();
+		BookPeer::clearInstancePool();
+		$authors = AuthorQuery::create()->find();
+		$c = new Criteria();
+		$c->setLimit(3);
+		$books = $authors->populateRelation('Book', $c);
+		$this->assertEquals(3, count($books), 'populateRelation() accepts an optional criteria object to filter the query');
+	}
 	
 	public function testPopulateRelationOneToMany()
 	{
@@ -118,7 +140,7 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		$authors = AuthorQuery::create()->find($con);
 		$count = $con->getQueryCount();
-		$authors->populateRelation('Book', $con);
+		$books = $authors->populateRelation('Book', null, $con);
 		foreach ($authors as $author) {
 			foreach ($author->getBooks() as $book) {
 				$this->assertEquals($author, $book->getAuthor());
@@ -134,7 +156,7 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		$books = BookQuery::create()->find($con);
 		$count = $con->getQueryCount();
-		$books->populateRelation('Author', $con);
+		$books->populateRelation('Author', null, $con);
 		foreach ($books as $book) {
 			$author = $book->getAuthor();
 		}

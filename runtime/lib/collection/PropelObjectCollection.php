@@ -124,11 +124,12 @@ class PropelObjectCollection extends PropelCollection
 	 * by a certain relation
 	 *
 	 * @param     string    $relation Relation name (e.g. 'Book')
+	 * @param     Criteria  $criteria Optional Criteria object to filter the related object collection
 	 * @param     PropelPDO $con      Optional connection object
 	 *
 	 * @return    PropelObjectCollection the list of related objects
 	 */
-	public function populateRelation($relation, $con = null)
+	public function populateRelation($relation, $criteria = null, $con = null)
 	{
 		if (!Propel::isInstancePoolingEnabled()) {
 			throw new PropelException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
@@ -139,9 +140,13 @@ class PropelObjectCollection extends PropelCollection
 		
 		// query the db for the related objects
 		$useMethod = 'use' . $symRelationMap->getName() . 'Query';
-		$relatedObjects = PropelQuery::from($relationMap->getRightTable()->getPhpName())
+		$query = PropelQuery::from($relationMap->getRightTable()->getPhpName());
+		if (null !== $criteria) {
+			$query->mergeWith($criteria);
+		}
+		$relatedObjects = $query
 			->$useMethod()
-			  ->filterByPrimaryKeys($this->getPrimaryKeys())
+				->filterByPrimaryKeys($this->getPrimaryKeys())
 			->endUse()
 			->find($con);
 			
