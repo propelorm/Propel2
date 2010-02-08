@@ -43,6 +43,7 @@ class Book extends BaseBook
   public function preInsert(PropelPDO $con = null)
   {
     $this->setCreatedAt(time());
+    return true;
   }
 }
 }}}
@@ -57,6 +58,8 @@ $b->setTitle('War And Peace');
 $b->save();
 echo $b->getCreatedAt(); // 2009-10-02 18:14:23
 }}}
+
+If you implement `preInsert()`, `preUpdate()`, `preSave()` or `preDelete()`, these methods must return a boolean value. This determines whether the action (save or delete) may proceed.
 
 '''Tip''': Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
 
