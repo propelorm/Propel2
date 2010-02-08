@@ -99,4 +99,26 @@ class OraclePlatform extends DefaultPlatform
 	{
 		return true;
 	}
+	
+	/**
+	 * Quotes identifiers used in database SQL.
+	 * @see        Platform::quoteIdentifier()
+	 * @param      string $text
+	 * @return     string Quoted identifier.
+	 */
+	public function quoteIdentifier($text)
+	{
+		return $text;
+	}
+
+	/**
+	 * Gets the preferred timestamp formatter for setting date/time values.
+	 * @see        Platform::getTimestampFormatter()
+	 * @return     string 
+	 */
+	public function getTimestampFormatter()
+	{
+		return 'Y-m-d H:i:s';
+	}
+
 }
