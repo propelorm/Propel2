@@ -5,9 +5,6 @@
 # $Id: pear-propel-gen,v 1.2 2004/10/17 13:24:09 hlellelid Exp $
 # ------------------------------------------------------------------------
 
-# Change this to reflect your environment if the default value doesn't work
-export PHING_COMMAND="phing"
-
 # -------------------------------------------------------------------------
 # Do not change anything below this line unless you know what you're doing.
 # -------------------------------------------------------------------------
@@ -15,7 +12,7 @@ export PHING_COMMAND="phing"
 # (currently this is not reached)
 if (test -z "$PHING_COMMAND") ; then
 	echo "WARNING: PHP_COMMAND environment not set. (Assuming phing on PATH)"
-	export PHING_COMMAND=php
+	export PHING_COMMAND="phing"
 fi
 
 $PHING_COMMAND -f @DATA-DIR@/propel_generator/pear-build.xml -Dproject.dir=$*
