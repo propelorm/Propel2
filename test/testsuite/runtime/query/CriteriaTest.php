@@ -886,4 +886,17 @@ class CriteriaTest extends BaseTestCase
 		$c2->setAll();
 		$this->assertEquals(array(Criteria::ALL), $c2->getSelectModifiers(), 'Initial setAll works');
 	}
+
+	public function testAddSelectModifier()
+	{
+		$c = new Criteria();
+		$c->setDistinct();
+		$c->addSelectModifier('SQL_CALC_FOUND_ROWS');
+		$this->assertEquals(array(Criteria::DISTINCT, 'SQL_CALC_FOUND_ROWS'), $c->getSelectModifiers(), 'addSelectModifier() adds a select modifier to the Criteria');
+		$c->addSelectModifier('SQL_CALC_FOUND_ROWS');
+		$this->assertEquals(array(Criteria::DISTINCT, 'SQL_CALC_FOUND_ROWS'), $c->getSelectModifiers(), 'addSelectModifier() adds a select modifier only once');
+		$params = array();
+		$result = BasePeer::createSelectSql($c, $params);
+    $this->assertEquals('SELECT DISTINCT  SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
+	}
 }

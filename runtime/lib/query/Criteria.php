@@ -811,19 +811,8 @@ class Criteria implements IteratorAggregate
 	 */
 	public function setAll()
 	{
-		//only add the keyword once
-		if (!in_array(self::ALL, $this->selectModifiers))
-		{
-			//overwrite the distinct keyword if it exists, otherwise just add it.
-			if (false !== $key = array_search(self::DISTINCT, $this->selectModifiers))
-			{
-				$this->selectModifiers[$key] = self::ALL;
-			}
-			else
-			{
-				$this->selectModifiers[] = self::ALL;
-			}
-		}
+		$this->removeSelectModifier(self::DISTINCT);
+		$this->addSelectModifier(self::ALL);
 		
 		return $this;
 	}
@@ -834,23 +823,57 @@ class Criteria implements IteratorAggregate
 	 */
 	public function setDistinct()
 	{
+		$this->removeSelectModifier(self::ALL);
+		$this->addSelectModifier(self::DISTINCT);
+		
+		return $this;
+	}
+	
+	/**
+	 * Adds a modifier to the SQL statement.
+	 * e.g. self::ALL, self::DISTINCT, 'SQL_CALC_FOUND_ROWS', 'HIGH_PRIORITY', etc.
+	 *
+	 * @param      string $modifier The modifier to add 
+	 *
+	 * @return     Criteria Modified Criteria object (for fluent API)
+	 */
+	public function addSelectModifier($modifier)
+	{
 		//only allow the keyword once
-	  if (!in_array(self::DISTINCT, $this->selectModifiers))
-	  {
-			//overwrite the ALL keyword if it exists, otherwise just add it.
-			if (false !== $key = array_search(self::ALL, $this->selectModifiers))
-			{
-				$this->selectModifiers[$key] = self::DISTINCT;
-			}
-			else
-			{
-			  $this->selectModifiers[] = self::DISTINCT;
-			}
+		if (!$this->hasSelectModifier($modifier)) {
+			$this->selectModifiers[] = $modifier;
 		}
 		
 		return $this;
 	}
-
+	
+	/**
+	 * Removes a modifier to the SQL statement.
+	 * Checks for existence before removal
+	 *
+	 * @param      string $modifier The modifier to add 
+	 *
+	 * @return     Criteria Modified Criteria object (for fluent API)
+	 */
+	public function removeSelectModifier($modifier)
+	{
+		$this->selectModifiers = array_values(array_diff($this->selectModifiers, array($modifier)));
+		
+		return $this;
+	}
+	
+	/**
+	 * Checks the existence of a SQL select modifier
+	 *
+	 * @param      string $modifier The modifier to add 
+	 *
+	 * @return     bool
+	 */
+	public function hasSelectModifier($modifier)
+	{
+		return in_array($modifier, $this->selectModifiers);
+	}
+	
 	/**
 	 * Sets ignore case.
 	 *
