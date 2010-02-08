@@ -686,6 +686,7 @@ class Table extends XMLElement implements IDMethod
     }
     return $crossFks;
   }
+
   /**
    * Set whether this table contains a foreign PK
    */
@@ -1366,6 +1367,11 @@ class Table extends XMLElement implements IDMethod
     if ($this->basePeer !== null) {
       $tableNode->setAttribute('basePeer', $this->basePeer);
     }
+
+    if ($this->getIsCrossRef()) {
+      $tableNode->setAttribute('isCrossRef', $this->getIsCrossRef());
+    }
+
 
     foreach ($this->columnList as $col) {
       $col->appendXml($tableNode);

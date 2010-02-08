@@ -455,10 +455,6 @@ class ForeignKey extends XMLElement
 			$fkNode->setAttribute('onUpdate', $this->getOnUpdate());
 		}
 		
-		if ($this->getIsCrossRef()) {
-			$fkNode->setAttribute('isCrossRef', $this->getIsCrossRef());
-		}
-
 		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
 			$refNode = $fkNode->appendChild($doc->createElement('reference'));
 			$refNode->setAttribute('local', $this->localColumns[$i]);

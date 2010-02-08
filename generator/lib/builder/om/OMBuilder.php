@@ -289,39 +289,32 @@ abstract class OMBuilder extends DataModelBuilder {
 	 *
 	 * @return     string
 	 */
-	protected function getRelatedBySuffix(ForeignKey $fk, $columnCheck = false)
+	protected static function getRelatedBySuffix(ForeignKey $fk, $reverseOnSelf = false)
 	{
-		$relCol = "";
-		foreach ($fk->getLocalColumns() as $columnName) {
+		$relCol = '';
+		foreach ($fk->getLocalForeignMapping() as $columnName => $foreignColumnName) {
 			$column = $fk->getTable()->getColumn($columnName);
 			if (!$column) {
 				throw new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
 			}
 
-			if ( count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
-			|| $fk->getForeignTableName() == $fk->getTable()->getName()) {
-				// if there are seeral foreign keys that point to the same table
+			if (count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1) {
+				// if there are several foreign keys that point to the same table
 				// then we need to generate methods like getAuthorRelatedByColName()
-				// instead of just getAuthor().  Currently we are doing the same
-				// for self-referential foreign keys, to avoid confusion.
+				// instead of just getAuthor().
 				$relCol .= $column->getPhpName();
+			} elseif ($fk->getForeignTableName() == $fk->getTable()->getName()) {
+				// self referential foreign key
+				if ($reverseOnSelf) {
+					$relCol .= $fk->getTable()->getColumn($foreignColumnName)->getPhpName();
+				} else {
+					$relCol .= $column->getPhpName();
+				}
 			}
 		}
 
-		#var_dump($fk->getForeignTableName() . ' - ' .$fk->getTableName() . ' - ' . $this->getTable()->getName());
-
-		#$fk->getForeignTableName() != $this->getTable()->getName() &&
-		// @todo comment on it
-		if ($columnCheck && !$relCol && $fk->getTable()->getColumn($fk->getForeignTableName())) {
-			foreach ($fk->getLocalColumns() as $columnName) {
-				$column = $fk->getTable()->getColumn($columnName);
-				$relCol .= $column->getPhpName();
-			}
-		}
-
-
-		if ($relCol != "") {
-			$relCol = "RelatedBy" . $relCol;
+		if ($relCol != '') {
+			$relCol = 'RelatedBy' . $relCol;
 		}
 
 		return $relCol;
