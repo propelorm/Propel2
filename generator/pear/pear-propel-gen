@@ -15,4 +15,11 @@ if (test -z "$PHING_COMMAND") ; then
 	export PHING_COMMAND="phing"
 fi
 
-$PHING_COMMAND -f @DATA-DIR@/propel_generator/pear-build.xml -Dproject.dir=$*
+if [ $# = 1 ] ; then
+  saveddir=`pwd`
+  $PHING_COMMAND -f @DATA-DIR@/propel_generator/pear-build.xml -Dproject.dir=$saveddir $*
+else
+  $PHING_COMMAND -f @DATA-DIR@/propel_generator/pear-build.xml -Dproject.dir=$*
+fi
+
+
