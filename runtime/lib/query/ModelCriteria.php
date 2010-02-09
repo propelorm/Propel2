@@ -563,6 +563,8 @@ class ModelCriteria extends Criteria
 	 *   $c->join('Book.Author a', Criteria::RIGHT_JOIN);
 	 *   $c->with('a');
 	 * </code>
+	 * WARNING: on a one-to-many relationship, the use of with() combined with limit()
+	 * will return a wrong number of results for the related objects
 	 * 
 	 * @param      string $relation Relation to use for the join
 	 *
@@ -574,8 +576,8 @@ class ModelCriteria extends Criteria
 			throw new PropelException('Unknown relation name or alias ' . $relation);
 		}
 		$join = $this->joins[$relation];
-		if ($join->getRelationMap()->getType() == RelationMap::ONE_TO_MANY) {
-			throw new PropelException('with() only allows hydration for many-to-one or one-to-one relationships');
+		if ($join->getRelationMap()->getType() == RelationMap::MANY_TO_MANY) {
+			throw new PropelException('with() does not allow hydration for many-to-many relationships');
 		}
 		// check that the columns of the main class are already added
 		if (!$this->hasSelectClause()) {

@@ -725,16 +725,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->with('Author');
 	}
 
-	/**
-	 * @expectedException PropelException
-	 */
-	public function testWithThrowsExceptionWhenOneToMany()
-	{
-		$c = new ModelCriteria('bookstore', 'Author');
-		$c->join('Author.Book');
-		$c->with('Book');
-	}
-
 	public function testWithAlias()
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
@@ -838,6 +828,28 @@ class ModelCriteriaTest extends BookstoreTestBase
 			'a.AGE'
 		);
 		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table with an alias if required');
+	}
+	
+	public function testWithOneToManyAddsSelectColumns()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Author');
+		AuthorPeer::addSelectColumns($c);
+		$c->leftJoin('Author.Book');
+		$c->with('Book');
+		$expectedColumns = array(
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE,
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table even in a one-to-many relationship');
 	}
 	
 	public function testJoinWith()

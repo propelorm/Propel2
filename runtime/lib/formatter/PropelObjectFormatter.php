@@ -93,7 +93,13 @@ class PropelObjectFormatter extends PropelFormatter
 			if ($endObject->isPrimaryKeyNull()) {
 				continue;
 			}
-			$method = 'set' . $join->getRelationMap()->getName();
+			$relation = $join->getRelationMap();
+			if ($relation->getType() == RelationMap::ONE_TO_MANY) {
+				$method = 'add' . $relation->getName();
+				$startObject->setNew(true); // ok, that's not true, but it's the only way to have the getter return the inner collection
+			} else {
+				$method = 'set' . $relation->getName();
+			}
 			$startObject->$method($endObject);
 		}
 		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
