@@ -72,7 +72,7 @@ class SortableBehaviorPeerBuilderModifier
 /**
  * rank column
  */
-const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('rank_column') . "';
+const RANK_COL = '" . $tableName . '.' . $this->getColumnConstant('rank_column') . "';
 ";
 
 		if ($this->behavior->useScope()) {
@@ -80,7 +80,7 @@ const RANK_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getCo
 /**
  * Scope column for the set
  */
-const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('scope_column') . "';
+const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column') . "';
 ";
 		}
 		

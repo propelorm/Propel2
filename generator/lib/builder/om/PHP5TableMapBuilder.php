@@ -179,7 +179,7 @@ class ".$this->getClassname()." extends TableMap {
 		\$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
 		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == Platform::SEQUENCE || $platform->getNativeIdMethod() == Platform::SERIAL)) {
 			$script .= "
-		\$this->setPrimaryKeyMethodInfo('".$this->prefixTablename($ddlBuilder->getSequenceName())."');";
+		\$this->setPrimaryKeyMethodInfo('".$ddlBuilder->getSequenceName()."');";
 		}
 		
 		if ($this->getTable()->getChildrenColumn()) {

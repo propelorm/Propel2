@@ -56,11 +56,11 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
 		$script .= "
-DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." CASCADE CONSTRAINTS;
+DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
 ";
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-DROP SEQUENCE ".$this->quoteIdentifier($this->prefixTablename($this->getSequenceName())).";
+DROP SEQUENCE ".$this->quoteIdentifier($this->getSequenceName()).";
 ";
 		}
 	}
@@ -82,7 +82,7 @@ DROP SEQUENCE ".$this->quoteIdentifier($this->prefixTablename($this->getSequence
 		$this->addDropStatements($script);
 
 		$script .= "
-CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
 
@@ -118,7 +118,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 		}
 		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
 			$script .= "
-ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+ALTER TABLE ".$this->quoteIdentifier($table->getName())."
 	ADD CONSTRAINT ".$this->quoteIdentifier(substr($tableName,0,$length)."_PK")."
 	PRIMARY KEY (";
 			$delim = "";
@@ -141,7 +141,7 @@ ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName())).
 		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$this->quoteIdentifier($this->prefixTablename($this->getSequenceName()))."
+CREATE SEQUENCE ".$this->quoteIdentifier($this->getSequenceName())."
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}
@@ -162,7 +162,7 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -177,9 +177,9 @@ CREATE ";
 		$platform = $this->getPlatform();
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
-ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." 
+ALTER TABLE ".$this->quoteIdentifier($table->getName())." 
 	ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
-	FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
+	FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 				//$script .= " ON UPDATE ".$fk->getOnUpdate();

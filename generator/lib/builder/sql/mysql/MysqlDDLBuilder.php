@@ -67,7 +67,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 	protected function addDropStatements(&$script)
 	{
 		$script .= "
-DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->prefixTablename($this->getTable()->getName())).";
+DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->getTable()->getName()).";
 ";
 	}
 
@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->prefixTablename($this->getT
 
 		$script .= "
 
-CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
 
@@ -281,7 +281,7 @@ CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))
 			}
 			$str = "CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
 		FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).")
-		REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName())) . " (".$this->getColumnList($fk->getForeignColumns()).")";
+		REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName()) . " (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				$str .= "
 		ON UPDATE ".$fk->getOnUpdate();

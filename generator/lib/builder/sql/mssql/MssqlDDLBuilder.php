@@ -46,7 +46,7 @@ class MssqlDDLBuilder extends DDLBuilder
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-	ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
+	ALTER TABLE ".$this->quoteIdentifier($table->getName())." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
 ";
 		}
 
@@ -54,7 +54,7 @@ IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName().
 		self::$dropCount++;
 
 		$script .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".$this->prefixTablename($table->getName())."')
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".$table->getName()."')
 BEGIN
 	 DECLARE @reftable_".self::$dropCount." nvarchar(60), @constraintname_".self::$dropCount." nvarchar(60)
 	 DECLARE refcursor CURSOR FOR
@@ -66,7 +66,7 @@ BEGIN
 	   where tables.id = ref.rkeyid
 		 and cons.id = ref.constid
 		 and reftables.id = ref.fkeyid
-		 and tables.name = '".$this->prefixTablename($table->getName())."'
+		 and tables.name = '".$table->getName()."'
 	 OPEN refcursor
 	 FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
 	 while @@FETCH_STATUS = 0
@@ -76,7 +76,7 @@ BEGIN
 	 END
 	 CLOSE refcursor
 	 DEALLOCATE refcursor
-	 DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+	 DROP TABLE ".$this->quoteIdentifier($table->getName())."
 END
 ";
 	}
@@ -100,7 +100,7 @@ END
 
 		$script .= "
 
-CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
 
@@ -141,7 +141,7 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -158,7 +158,7 @@ CREATE ";
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 BEGIN
-ALTER TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($this->prefixTablename($fk->getForeignTableName()))." (".$this->getColumnList($fk->getForeignColumns()).")";
+ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
 			if ($fk->hasOnUpdate()) {
 				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
 					// we have to skip this because it's unsupported.

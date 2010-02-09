@@ -549,13 +549,4 @@ abstract class DataModelBuilder
 		return $this->getBuildProperty('classPrefix') . $identifier;
 	}
 
-	/**
-	 * Returns the name of the current table being built, with a possible prefix.
-	 * @return     string
-	 */
-	public function prefixTablename($identifier)
-	{
-		return $this->getBuildProperty('tablePrefix') . $identifier;
-	}
-
 }

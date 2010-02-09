@@ -91,7 +91,7 @@ class Database extends XMLElement
 		$this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
 		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
 		$this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
-		$this->tablePrefix = $this->getAttribute("tablePrefix");
+		$this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
 	}
 
 	/**
@@ -390,7 +390,20 @@ class Database extends XMLElement
 
   public function getGeneratorConfig()
   {
-    return $this->getAppData()->getPlatform()->getGeneratorConfig();
+  	if ($this->getAppData() && $this->getAppData()->getPlatform()) {
+  		$this->getAppData()->getPlatform()->getGeneratorConfig();
+  	} else {
+  		return null;
+  	}
+  }
+  
+  public function getBuildProperty($key)
+  {
+  	if($config = $this->getGeneratorConfig()) {
+  		return $config->getBuildProperty($key);
+  	} else {
+  		return '';
+  	}
   }
   
   /**
@@ -444,8 +457,7 @@ class Database extends XMLElement
 
 	public function doFinalInitialization()
 	{
-	  $config = $this->getGeneratorConfig();
-    if($config && ($defaultBehaviors = $config->getBuildProperty('behaviorDefault')))
+    if($defaultBehaviors = $this->getBuildProperty('behaviorDefault'))
     {
       // add generic behaviors from build.properties 
       $defaultBehaviors = explode(',', $defaultBehaviors);

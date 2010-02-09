@@ -179,6 +179,10 @@ class AppData
 		} else {
 			// XML attributes array / hash
 			$d = new Database();
+			$d->setAppData($this);
+			if ($d->getPlatform() === null) {
+				$d->setPlatform($this->platform);
+			}
 			$d->loadFromXML($db);
 			return $this->addDatabase($d); // calls self w/ different param type
 		}

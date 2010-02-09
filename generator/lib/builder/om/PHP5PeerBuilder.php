@@ -179,7 +179,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addConstantsAndAttributes(&$script)
 	{
 		$dbName = $this->getDatabase()->getName();
-		$tableName = $this->prefixTableName($this->getTable()->getName());
+		$tableName = $this->getTable()->getName();
 		$tablePhpName = $this->getTablePhpName();
 		$script .= "
 	/** the default database name for this class */
@@ -233,7 +233,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		foreach ($this->getTable()->getColumns() as $col) {
 			$script .= "
 	/** the column name for the ".strtoupper($col->getName()) ." field */
-	const ".$this->getColumnName($col) ." = '".$this->prefixTablename($this->getTable()->getName()).".".strtoupper($col->getName())."';
+	const ".$this->getColumnName($col) ." = '" . $this->getTable()->getName() . ".".strtoupper($col->getName())."';
 ";
 		} // foreach
 	}

@@ -104,6 +104,12 @@ propel.database.encoding =
 }}}
 The encoding to use for the database.  This can affect things such as transforming charsets when exporting to XML, etc.
 
+{{{
+propel.tablePrefix = {empty}|string
+}}}
+
+Add a prefix to all the table names in the database. This does not affect the tables phpName. This setting can be overridden on a per-database basis in the schema.
+
 === Creole Reverse-Engineering Settings ===
 
 {{{

@@ -78,17 +78,17 @@ class NestedSetBehaviorPeerBuilderModifier
 /**
  * Left column for the set
  */
-const LEFT_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('left_column') . "';
+const LEFT_COL = '" . $tableName . '.' . $this->getColumnConstant('left_column') . "';
 
 /**
  * Right column for the set
  */
-const RIGHT_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('right_column') . "';
+const RIGHT_COL = '" . $tableName . '.' . $this->getColumnConstant('right_column') . "';
 
 /**
  * Level column for the set
  */
-const LEVEL_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('level_column') . "';
+const LEVEL_COL = '" . $tableName . '.' . $this->getColumnConstant('level_column') . "';
 ";
 	
 		if ($this->behavior->useScope()) {
@@ -96,7 +96,7 @@ const LEVEL_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getC
 /**
  * Scope column for the set
  */
-const SCOPE_COL = '" . $builder->prefixTablename($tableName) . '.' . $this->getColumnConstant('scope_column') . "';
+const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column') . "';
 ";
 		}
 		

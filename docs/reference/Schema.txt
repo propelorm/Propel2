@@ -55,6 +55,7 @@ Starting with the {{{<database>}}} element.  The ''attributes'' and ''elements''
     [basePeer="/baseClassPeerName/"]
     [defaultPhpNamingMethod="nochange|underscore|phpname"
     [heavyIndexing="true|false"]
+    [tablePrefix="/tablePrefix/"]
   >
     <external-schema>
     <table>
@@ -71,6 +72,7 @@ A Database element may include an {{{<external-schema>}}} element, or multiple {
  * {{{defaultPhpNamingMethod}}} the default naming method to use.
  * {{{heavyIndexing}}} adds indexes for each component of the primary key (when using composite primary keys).
  * {{{package}}} specifies the "package" for the generated classes.
+ * {{{tablePrefix}}} adds a prefix to all the SQL table names.
 
 === <external-schema> element ===
 

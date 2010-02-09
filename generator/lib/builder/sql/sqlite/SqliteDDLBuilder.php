@@ -42,7 +42,7 @@ class SqliteDDLBuilder extends DDLBuilder
 		$platform = $this->getPlatform();
 
 		$script .= "
-DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName())).";
+DROP TABLE ".$this->quoteIdentifier($table->getName()).";
 ";
 	}
 
@@ -65,7 +65,7 @@ DROP TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
 
 		$script .= "
 
-CREATE TABLE ".$this->quoteIdentifier($this->prefixTablename($table->getName()))."
+CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 (
 	";
 
@@ -102,7 +102,7 @@ CREATE ";
 			if ($index->getIsUnique()) {
 				$script .= "UNIQUE";
 			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($this->prefixTablename($table->getName()))." (".$this->getColumnList($index->getColumns()).");
+			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
@@ -119,7 +119,7 @@ CREATE ";
 		foreach ($table->getForeignKeys() as $fk) {
 			$script .= "
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).") REFERENCES ".$this->prefixTablename($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")
+-- FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).") REFERENCES ".$fk->getForeignTableName()." (".$this->getColumnList($fk->getForeignColumns()).")
 ";
 		}
 	}
