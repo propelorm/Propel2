@@ -315,13 +315,13 @@ class Table extends XMLElement implements IDMethod
    */
   public function setupObject()
   {
-    $this->name = $this->getAttribute("name");
-    $this->phpName = $this->getAttribute("phpName");
+    $this->name = $this->getDatabase()->getTablePrefix() . $this->getAttribute("name");
+    // retrieves the method for converting from specified name to a PHP name.
+    $this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
+    $this->phpName = $this->getAttribute("phpName", $this->buildPhpName($this->getAttribute('name')));
     $this->idMethod = $this->getAttribute("idMethod", $this->getDatabase()->getDefaultIdMethod());
     $this->allowPkInsert = $this->booleanValue($this->getAttribute("allowPkInsert"));
 
-    // retrieves the method for converting from specified name to a PHP name.
-    $this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
 
     $this->skipSql = $this->booleanValue($this->getAttribute("skipSql"));
     $this->readOnly = $this->booleanValue($this->getAttribute("readOnly"));
@@ -622,6 +622,7 @@ class Table extends XMLElement implements IDMethod
       return $fk;
     } else {
       $fk = new ForeignKey();
+      $fk->setTable($this);
       $fk->loadFromXML($fkdata);
       return $this->addForeignKey($fk);
     }
@@ -902,6 +903,11 @@ class Table extends XMLElement implements IDMethod
   public function setPhpName($phpName)
   {
     $this->phpName = $phpName;
+  }
+  
+  public function buildPhpName($name)
+  {
+    return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $this->phpNamingMethod));
   }
 
   /**

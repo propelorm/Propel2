@@ -394,5 +394,6 @@
 		<xs:attribute name="basePeer" type="php_class" use="optional"/>
 		<xs:attribute name="defaultPhpNamingMethod" type="phpnamingmethod" default="underscore"/>
 		<xs:attribute name="heavyIndexing" type="xs:boolean" default="false"/>
+		<xs:attribute name="tablePrefix" type="xs:string" use="optional"/>
 	</xs:complexType>
 </xs:schema>

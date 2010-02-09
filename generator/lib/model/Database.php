@@ -56,6 +56,7 @@ class Database extends XMLElement
 	private $tablesByName = array();
 	private $tablesByPhpName = array();
 	private $heavyIndexing;
+	protected $tablePrefix = '';
 
 	private $domainMap = array();
 
@@ -90,6 +91,7 @@ class Database extends XMLElement
 		$this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
 		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
 		$this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
+		$this->tablePrefix = $this->getAttribute("tablePrefix");
 	}
 
 	/**
@@ -427,6 +429,16 @@ class Database extends XMLElement
   public function getBehavior($name)
   {
     return $this->behaviors[$name];
+  }
+
+  /**
+   * Get the table prefix for this database
+   *
+   * @return string the table prefix
+   */
+  public function getTablePrefix()
+  {
+    return $this->tablePrefix;
   }
 
 
