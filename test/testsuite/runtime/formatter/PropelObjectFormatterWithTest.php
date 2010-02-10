@@ -190,6 +190,11 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$reviews = $book->getReviews();
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+		try {
+			$book->save();
+		} catch (Exception $e) {
+			$this->fail('with() does not force objects to be new');
+		}
 	}
 
 	public function testFindOneWithColumn()

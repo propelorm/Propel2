@@ -3015,12 +3015,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			}
 		} else {
 			// criteria has no effect for a new object
-			if (!\$this->isNew()) {
+			if (!\$this->isNew() && null !== \$this->$lastCriteriaName) {
 				// the following code is to determine if a new query is
 				// called for.  If the query is the same as the last
 				// one, just return count of the collection.
 				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+				if (!\$this->".$lastCriteriaName."->equals(\$query)) {
 					\$count = \$query->count(\$con);
 				} else {
 					\$count = count(\$this->$collName);
@@ -3083,12 +3083,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			}
 		} else {
 			// criteria has no effect for a new object
-			if (!\$this->isNew()) {
+			if (!\$this->isNew() && null !== \$this->$lastCriteriaName) {
 				// the following code is to determine if a new query is
 				// called for.  If the criteria is the same as the last
 				// one, just return the collection.
 				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
+				if (!\$this->".$lastCriteriaName."->equals(\$query)) {
 					\$this->$collName = \$query->find(\$con);
 				}
 			}
