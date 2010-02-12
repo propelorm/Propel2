@@ -252,7 +252,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 						// -----------------------------------------------------
 						// (this code is based on PropelOMTask)
 
-						foreach (array('tablemap', 'peerstub', 'objectstub', 'querystub') as $target) {
+						foreach (array('tablemap', 'peerstub', 'objectstub', 'querystub', 'peer', 'object', 'query') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
@@ -293,8 +293,15 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 						// Create tree Node classes
 						// ------------------------
 
-						if ('MaterializedPath' == $table->treeMode()) {
-							foreach (array('nodepeerstub', 'nodestub') as $target) {
+						if ($table->treeMode() == 'MaterializedPath') {
+							foreach (array('nodepeerstub', 'nodestub', 'nodepeer', 'node') as $target) {
+								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+							}
+						}
+						if ($table->treeMode() == 'NestedSet') {
+							foreach (array('nestedset', 'nestedsetpeer') as $target) {
 								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 								$classMap[$builder->getClassname()] = $builder->getClassFilePath();

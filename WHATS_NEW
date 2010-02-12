@@ -755,6 +755,7 @@ During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation ab
 
  * The `propel-gen` script no longer requires a path to the project directory if you call it from a project directory
  * You can now prefix all the table names of a database schema by setting the `tablePrefix` attribute of the `<database>` tag.
+ * The `addIncludes` build property introduced in Propel 1.4 is now set to `false` by default. That means that the runtime autoloading takes care of loading all classes at runtime, including generated Base classes.
  * XSL transformation of your schemas is no longer enabled by default. Turn the `propel.schema.transform` setting to `true` in your `build.properties` to enable it again. This change removes the requirement on the libxslt extention for Propel.
  * `ModelObject::addSelectColumns()` now accepts an additional parameter to allow the use of table aliases
  * Added `ModelObject::clear()` to reinitialize a model object
