@@ -51,6 +51,7 @@ class ModelCriteria extends Criteria
 	protected $formatter;
 	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 	protected $with = array();
+	protected $isWithOneToMany = false;
 		
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -578,6 +579,9 @@ class ModelCriteria extends Criteria
 		$join = $this->joins[$relation];
 		if ($join->getRelationMap()->getType() == RelationMap::MANY_TO_MANY) {
 			throw new PropelException('with() does not allow hydration for many-to-many relationships');
+		} elseif ($join->getRelationMap()->getType() == RelationMap::ONE_TO_MANY) {
+			// For performance reasons, the formatters will use a special routine in this case
+			$this->isWithOneToMany = true;
 		}
 		// check that the columns of the main class are already added
 		if (!$this->hasSelectClause()) {
@@ -601,6 +605,11 @@ class ModelCriteria extends Criteria
 	public function getWith()
 	{
 		return $this->with;
+	}
+	
+	public function isWithOneToMany()
+	{
+		return $this->isWithOneToMany;
 	}
 	
 	/**

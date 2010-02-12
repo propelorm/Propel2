@@ -196,6 +196,33 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 			$this->fail('with() does not force objects to be new');
 		}
 	}
+	
+	public function testFindOneWithOneToManyCustomOrder()
+	{
+		$author1 = new Author();
+		$author1->setFirstName('AA');
+		$author2 = new Author();
+		$author2->setFirstName('BB');
+		$book1 = new Book();
+		$book1->setTitle('Aaa');
+		$book1->setAuthor($author1);
+		$book1->save();
+		$book2 = new Book();
+		$book2->setTitle('Bbb');
+		$book2->setAuthor($author2);
+		$book2->save();
+		$book3 = new Book();
+		$book3->setTitle('Ccc');
+		$book3->setAuthor($author1);
+		$book3->save();
+		$authors = AuthorQuery::create()
+			->leftJoin('Author.Book')
+			->orderBy('Book.Title')
+			->with('Book')
+			->find();
+		$this->assertEquals(2, count($authors), 'with() used on a many-to-many doesn\'t change the main object count');
+	}
+	
 
 	public function testFindOneWithColumn()
 	{

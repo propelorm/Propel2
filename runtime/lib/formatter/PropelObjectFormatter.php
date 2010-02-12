@@ -43,12 +43,19 @@ class PropelObjectFormatter extends PropelFormatter
 		} else {
 			$collection = array();
 		}
-		$previousObject = null;
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$object = $this->getAllObjectsFromRow($row);
-			if ($object != $previousObject) {
-				$collection[] = $object;
-				$previousObject = $object;
+		if ($this->getCriteria()->isWithOneToMany()) {
+			$pks = array();
+			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				$object = $this->getAllObjectsFromRow($row);
+				$pk = $object->getPrimaryKey();
+				if (!in_array($pk, $pks)) {
+					$collection[] = $object;
+					$pks[] = $pk;
+				}
+			}
+		} else {
+			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				$collection[] =  $this->getAllObjectsFromRow($row);
 			}
 		}
 		$stmt->closeCursor();
