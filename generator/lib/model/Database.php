@@ -391,7 +391,7 @@ class Database extends XMLElement
   public function getGeneratorConfig()
   {
   	if ($this->getAppData() && $this->getAppData()->getPlatform()) {
-  		$this->getAppData()->getPlatform()->getGeneratorConfig();
+  		return $this->getAppData()->getPlatform()->getGeneratorConfig();
   	} else {
   		return null;
   	}
