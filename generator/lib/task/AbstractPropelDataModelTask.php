@@ -428,17 +428,17 @@ abstract class AbstractPropelDataModelTask extends Task
 
 				$dom = new DomDocument('1.0', 'UTF-8');
 				$dom->load($xmlFile->getAbsolutePath());
-
+				
+				// modify schema to include any external schema's (and remove the external-schema nodes)
+				$this->includeExternalSchemas($dom, $srcDir);
+				
 				// normalize (or transform) the XML document using XSLT
 				if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xslFile) {
 					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), Project::MSG_VERBOSE);
 					if (!class_exists('XSLTProcessor')) {
 						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", Project::MSG_ERR);
 					} else {
-						// modify schema to include any external schema's (and remove the external-schema nodes)
-						$this->includeExternalSchemas($dom, $srcDir);
 						// normalize the document using normalizer stylesheet
-						
 						$xslDom = new DomDocument('1.0', 'UTF-8');
 						$xslDom->load($this->xslFile->getAbsolutePath());
 						$xsl = new XsltProcessor();
