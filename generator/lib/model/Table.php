@@ -556,6 +556,9 @@ class Table extends XMLElement implements IDMethod
       if ($col->isInheritance()) {
         $this->inheritanceColumn = $col;
       }
+      if (isset($this->columnsByName[$col->getName()])) {
+        throw new EngineException('Duplicate column declared: ' . $col->getName());
+      }
       $this->columnList[] = $col;
       $this->columnsByName[$col->getName()] = $col;
       $this->columnsByPhpName[$col->getPhpName()] = $col;
