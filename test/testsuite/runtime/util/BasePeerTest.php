@@ -111,4 +111,105 @@ class BasePeerTest extends BookstoreTestBase {
 		$expectedSql = "SELECT book.ID, book.TITLE FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID), author WHERE book.AUTHOR_ID=author.ID";
 		$this->assertEquals($expectedSql, $sql);
 	}
+	
+	public function testMssqlApplyLimitNoOffset()
+	{
+		$db = Propel::getDB(BookPeer::DATABASE_NAME);
+		if(! ($db instanceof DBMSSQL))
+		{
+			$this->markTestSkipped();
+		}
+
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(BookPeer::TITLE);
+		$c->addSelectColumn(PublisherPeer::NAME);
+		$c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID)');
+
+		$c->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID, Criteria::LEFT_JOIN);
+
+		$c->setOffset(0);
+		$c->setLimit(20);
+
+		$params = array();
+		$sql = BasePeer::createSelectSql($c, $params);
+
+		$expectedSql = "SELECT TOP 20 book.ID, book.TITLE, publisher.NAME, (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS PublisherName FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)";
+		$this->assertEquals($expectedSql, $sql);
+	}
+
+	public function testMssqlApplyLimitWithOffset()
+	{
+		$db = Propel::getDB(BookPeer::DATABASE_NAME);
+		if(! ($db instanceof DBMSSQL))
+		{
+			$this->markTestSkipped();
+		}
+
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(BookPeer::TITLE);
+		$c->addSelectColumn(PublisherPeer::NAME);
+		$c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID)');
+		$c->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID, Criteria::LEFT_JOIN);
+		$c->setOffset(20);
+		$c->setLimit(20);
+
+		$params = array();
+
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY book.ID) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$sql = BasePeer::createSelectSql($c, $params);
+		$this->assertEquals($expectedSql, $sql);
+	}
+
+	public function testMssqlApplyLimitWithOffsetOrderByAggregate()
+	{
+		$db = Propel::getDB(BookPeer::DATABASE_NAME);
+		if(! ($db instanceof DBMSSQL))
+		{
+			$this->markTestSkipped();
+		}
+
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(BookPeer::TITLE);
+		$c->addSelectColumn(PublisherPeer::NAME);
+		$c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID)');
+		$c->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID, Criteria::LEFT_JOIN);
+		$c->addDescendingOrderByColumn('PublisherName');
+		$c->setOffset(20);
+		$c->setLimit(20);
+
+		$params = array();
+
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$sql = BasePeer::createSelectSql($c, $params);
+		$this->assertEquals($expectedSql, $sql);
+	}
+
+	public function testMssqlApplyLimitWithOffsetMultipleOrderBy()
+	{
+		$db = Propel::getDB(BookPeer::DATABASE_NAME);
+		if(! ($db instanceof DBMSSQL))
+		{
+			$this->markTestSkipped();
+		}
+
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(BookPeer::TITLE);
+		$c->addSelectColumn(PublisherPeer::NAME);
+		$c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID)');
+		$c->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID, Criteria::LEFT_JOIN);
+		$c->addDescendingOrderByColumn('PublisherName');
+		$c->addAscendingOrderByColumn(BookPeer::TITLE);
+		$c->setOffset(20);
+		$c->setLimit(20);
+
+		$params = array();
+
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC, book.TITLE ASC) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$sql = BasePeer::createSelectSql($c, $params);
+		$this->assertEquals($expectedSql, $sql);
+	}	
 }

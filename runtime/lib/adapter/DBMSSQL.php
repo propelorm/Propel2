@@ -38,7 +38,7 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function toUpperCase($in)
 	{
-		return "UPPER(" . $in . ")";
+		return $this->ignoreCase($in);
 	}
 
 	/**
@@ -49,7 +49,7 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function ignoreCase($in)
 	{
-		return "UPPER(" . $in . ")";
+		return 'UPPER(' . $in . ')';
 	}
 
 	/**
@@ -61,7 +61,7 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function concatString($s1, $s2)
 	{
-		return "($s1 + $s2)";
+		return '(' . $s1 . ' + ' . $s2 . ')';
 	}
 
 	/**
@@ -74,7 +74,7 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function subString($s, $pos, $len)
 	{
-		return "SUBSTRING($s, $pos, $len)";
+		return 'SUBSTRING(' . $s . ', ' . $pos . ', ' . $len . ')';
 	}
 
 	/**
@@ -85,7 +85,7 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function strLength($s)
 	{
-		return "LEN($s)";
+		return 'LEN(' . $s . ')';
 	}
 
 	/**
@@ -101,95 +101,119 @@ class DBMSSQL extends DBAdapter
 	 */
 	public function random($seed = null)
 	{
-		return 'rand('.((int) $seed).')';
+		return 'RAND(' . ((int)$seed) . ')';
 	}
 
-  /**
-   * Simulated Limit/Offset
-   * This rewrites the $sql query to apply the offset and limit.
-   * @see        DBAdapter::applyLimit()
-   * @author     Justin Carlson <justin.carlson@gmail.com>
-   * @author     Benjamin Runnels <kraven@kraven.org>
-   */
-  public function applyLimit(&$sql, $offset, $limit)
-  {
-    // make sure offset and limit are numeric
-    if (!is_numeric($offset) || !is_numeric($limit))
-    {
-      throw new Exception("DBMSSQL::applyLimit() expects a number for argument 2 and 3");
-    }
+	/**
+	 * Simulated Limit/Offset
+	 * This rewrites the $sql query to apply the offset and limit.
+	 * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
+	 * @see        DBAdapter::applyLimit()
+	 * @author     Benjamin Runnels <kraven@kraven.org>
+	 */
+	public function applyLimit(&$sql, $offset, $limit)
+	{
+		// make sure offset and limit are numeric
+		if(! is_numeric($offset) || ! is_numeric($limit))
+		{
+			throw new PropelException('DBMSSQL::applyLimit() expects a number for argument 2 and 3');
+		}
 
-    //split the select and from clauses out of the original query
-    $selectSegment = array();
-    preg_match('/\Aselect(.*)from(.*)/si',$sql,$selectSegment);
-    if (count($selectSegment)==3)
-    {      
-      $selectStatement = trim($selectSegment[1]);
-      $fromStatement = trim($selectSegment[2]);      
-    }
-    else
-    {
-      throw new Exception("DBMSSQL::applyLimit() could not locate the select statement at the start of the query. ");
-    }
+		//split the select and from clauses out of the original query
+		$selectSegment = array();
+		preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
+		if(count($selectSegment) == 3) {
+			$selectStatement = trim($selectSegment[1]);
+			$fromStatement = trim($selectSegment[2]);
+		} else {
+			throw new Exception('DBMSSQL::applyLimit() could not locate the select statement at the start of the query.');
+		}
 
-    //handle the ORDER BY clause if present
-    $orderSegment = array();
-    preg_match('/order by(.*)\Z/si',$fromStatement,$orderSegment);
-    if (count($orderSegment)==2)
-    {
-      //remove the ORDER BY from $sql
-      $fromStatement = trim(str_replace($orderSegment[0], '', $fromStatement));
-      //the ORDER BY clause is used in our inner select ROW_NUMBER() clause
-      $countColumn = trim($orderSegment[1]);
-    }
+		// if we're starting at offset 0 then theres no need to simulate limit, 
+		// just grab the top $limit number of rows
+		if($offset == 0) {
+			$sql = 'SELECT TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
+			return;
+		}
 
-    //setup inner and outer select selects
-    $innerSelect = '';
-    $outerSelect = '';
-    foreach(explode(', ',$selectStatement) as $selCol) {
-      @list($column,,$alias) = explode(' ', $selCol);
-      //make sure the current column isn't * or an aggregate
-      if ($column!='*' && !strstr($column,'(')) {
-        //we can use the first non-aggregate column for ROW_NUMBER() if it wasn't already set from an order by clause
-        if(!isset($countColumn)) {
-          $countColumn = $column;
-        }
+		//get the ORDER BY clause if present
+		$orderStatement = stristr($fromStatement, 'ORDER BY');
 
-        //add an alias to the inner select so all columns will be unique
-        $innerSelect .= $column." AS [$column],";
-        
-        //use the alias in the outer select if one was present on the original select column
-        if(isset($alias)) {
-          $outerSelect .= "[$column] AS $alias,";
-        } else {
-          $outerSelect .= "[$column],";
-        }        
-      } else {
-        //agregate columns must always have an alias clause
-        if(!isset($alias)) {
-          throw new Exception("DBMSSQL::applyLimit() requires aggregate columns to have an Alias clause");
-        }
-        //use the whole aggregate column in the inner select
-        $innerSelect .= "$selCol,";
-        //only add the alias for the aggregate to the outer select
-        $outerSelect .= "$alias,";
-      }
-    }
+		if($orderStatement !== false) {
+			//remove order statement from the from statement
+			$fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
 
-    //check if we got this far and still don't have a viable column to user with ROW_NUMBER()
-    if(!isset($countColumn)) {
-      throw new Exception("DBMSSQL::applyLimit() requires an ORDER BY clause or at least one non-aggregate column in the select statement");
-    }
+			$order = str_ireplace('ORDER BY', '', $orderStatement);
+			$orders = explode(',', $order);
 
-    //ROW_NUMBER() starts at 1 not 0
-    $from = ($offset+1);
-    $to = ($limit+$offset);
-       
-    //substring our select strings to get rid of the last comma and add our FROM and SELECT clauses
-    $innerSelect = "SELECT ROW_NUMBER() OVER(ORDER BY $countColumn) AS RowNumber, ".substr($innerSelect,0,-1).' FROM';
-    $outerSelect = 'SELECT '.substr($outerSelect,0,-1).' FROM';
+			for($i = 0; $i < count($orders); $i ++) {
+				$orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = array(
+					'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
+					'key' => $i
+				);
+			}
+		}
 
-    // build the query
-    $sql = "$outerSelect ($innerSelect $fromStatement) AS derivedb WHERE RowNumber BETWEEN $from AND $to";
-  }
+		//setup inner and outer select selects
+		$innerSelect = '';
+		$outerSelect = '';
+		foreach(explode(', ', $selectStatement) as $selCol) {
+			$selColArr = explode(' ', $selCol);
+			$selColCount = count($selColArr);
+
+			//make sure the current column isn't * or an aggregate
+			if($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
+				if(isset($orderArr[$selColArr[0]])) {
+					$orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
+				}
+
+				//use the alias if one was present otherwise use the column name
+				$alias = (! stristr($selCol, ' AS ')) ? $this->quoteIdentifier($selColArr[0]) : $this->quoteIdentifier($selColArr[$selColCount - 1]);
+
+				//save the first non-aggregate column for use in ROW_NUMBER() if required
+				if(! isset($firstColumnOrderStatement)) {
+					$firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
+				}
+
+				//add an alias to the inner select so all columns will be unique
+				$innerSelect .= $selColArr[0] . ' AS ' . $alias . ', ';
+				$outerSelect .= $alias . ', ';
+			} else {
+				//agregate columns must always have an alias clause
+				if(! stristr($selCol, ' AS ')) {
+					throw new Exception('DBMSSQL::applyLimit() requires aggregate columns to have an Alias clause');
+				}
+
+				//aggregate column alias can't be used as the count column you must use the entire aggregate statement
+				if(isset($orderArr[$selColArr[$selColCount - 1]])) {
+					$orders[$orderArr[$selColArr[$selColCount - 1]]['key']] = str_replace($selColArr[$selColCount - 2] . ' ' . $selColArr[$selColCount - 1], '', $selCol) . $orderArr[$selColArr[$selColCount - 1]]['sort'];
+				}
+
+				//quote the alias
+				$alias = $this->quoteIdentifier($selColArr[$selColCount - 1]);
+				$innerSelect .= str_replace($selColArr[$selColCount - 1], $alias, $selCol) . ', ';
+				$outerSelect .= $alias . ', ';
+			}
+		}
+
+		if(is_array($orders)) {
+			$orderStatement = 'ORDER BY ' . implode(', ', $orders);
+		} else {
+			//use the first non aggregate column in our select statement if no ORDER BY clause present
+			if(isset($firstColumnOrderStatement)) {
+				$orderStatement = $firstColumnOrderStatement;
+			} else {
+				throw new Exception('DBMSSQL::applyLimit() unable to find column to use with ROW_NUMBER()');
+			}
+		}
+
+		//substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
+		$innerSelect = 'SELECT ROW_NUMBER() OVER(' . $orderStatement . ') AS RowNumber, ' . substr($innerSelect, 0, - 2) . ' FROM';
+		//outer select can't use * because of the RowNumber column
+		$outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
+
+		//ROW_NUMBER() starts at 1 not 0
+		$sql = $outerSelect . ' (' . $innerSelect . ' ' . $fromStatement . ') AS derivedb WHERE RowNumber BETWEEN ' . ($offset + 1) . ' AND ' . ($limit + $offset);
+		return;
+	}
 }
