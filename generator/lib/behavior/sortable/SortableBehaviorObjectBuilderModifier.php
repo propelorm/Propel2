@@ -57,6 +57,7 @@ class SortableBehaviorObjectBuilderModifier
 	{
 		$this->builder = $builder;
 		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
+		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
 	
@@ -90,7 +91,7 @@ class SortableBehaviorObjectBuilderModifier
 		$useScope = $this->behavior->useScope();
 		$this->setBuilder($builder);
 		return "if (!\$this->isColumnModified({$this->peerClassname}::RANK_COL)) {
-	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
+	\$this->{$this->getColumnSetter()}({$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 }
 ";
 	}
@@ -236,7 +237,7 @@ public function isFirst()
  */
 public function isLast(PropelPDO \$con = null)
 {
-	return \$this->{$this->getColumnGetter()}() == {$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+	return \$this->{$this->getColumnGetter()}() == {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
@@ -254,7 +255,7 @@ public function isLast(PropelPDO \$con = null)
  */
 public function getNext(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
@@ -272,7 +273,7 @@ public function getNext(PropelPDO \$con = null)
  */
 public function getPrevious(PropelPDO \$con = null)
 {
-	return {$this->peerClassname}::retrieveByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
 ";
 	}
@@ -302,7 +303,7 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
 	}";
 		}
 		$script .= "
-	\$maxRank = $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+	\$maxRank = {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 	if (\$rank < 1 || \$rank > \$maxRank + 1) {
 		throw new PropelException('Invalid rank ' . \$rank);
 	}
@@ -344,7 +345,7 @@ public function insertAtBottom(PropelPDO \$con = null)
 	}";
 		}
 		$script .= "
-	\$this->{$this->getColumnSetter()}({$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
+	\$this->{$this->getColumnSetter()}({$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
 	
 	return \$this;
 }
@@ -391,7 +392,7 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-	if (\$newRank < 1 || \$newRank > $peerClassname::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
+	if (\$newRank < 1 || \$newRank > {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con)) {
 		throw new PropelException('Invalid rank ' . \$newRank);
 	}
 
@@ -564,7 +565,7 @@ public function moveToBottom(PropelPDO \$con = null)
 	}
 	\$con->beginTransaction();
 	try {
-		\$bottom = {$this->peerClassname}::getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+		\$bottom = {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 		\$res = \$this->moveToRank(\$bottom, \$con);
 		\$con->commit();
 		

@@ -40,15 +40,15 @@ Once you have built an ordered list, you can traverse it using any of the method
 {{{
 #!php
 <?php
-$firstTask = TaskPeer::retrieveByRank(1); // $t1
+$firstTask = TaskQuery::create()->findOneByRank(1); // $t1
 $secondTask = $firstTask->getNext();      // $t2
 $lastTask = $secondTask->getNext();       // $t3
 $secondTask = $lastTask->getPrevious();   // $t2
 
-$allTasks = TaskPeer::doSelectOrderByRank(new Criteria()); 
-// => array($t1, $t2, $t3)
-$allTasksInReverseOrder = TaskPeer::doSelectOrderByRank(new Criteria(), Criteria::DESC);
-// => array($t3, $t2, $t2)
+$allTasks = TaskQuery::create()->findList(); 
+// => collection($t1, $t2, $t3)
+$allTasksInReverseOrder = TaskQuery::create()->orderByRank('desc')->find();
+// => collection($t3, $t2, $t2)
 }}}
 
 The results returned by these methods are regular Propel model objects, with access to the properties and related models. The `sortable` behavior also adds inspection methods to objects:
@@ -157,19 +157,17 @@ The generated methods now accept a `$scope` parameter to restrict the query to a
 {{{
 #!php
 <?php
-$firstPaulTask = TaskPeer::retrieveByRank($rank = 1, $scope = $paul->getId()); // $t1
+$firstPaulTask = TaskQuery::create()->findOneByRank($rank = 1, $scope = $paul->getId()); // $t1
 $lastPaulTask = $firstTask->getNext();      // $t2
-$firstJohnTask = TaskPeer::retrieveByRank($rank = 1, $scope = $john->getId()); // $t1
+$firstJohnTask = TaskPeer::create()->findOneByRank($rank = 1, $scope = $john->getId()); // $t1
 }}}
 
-Models using the sortable behavior with scope benefit from three additional Peer methods: `retrieveList()`, `countList()`, and `deleteList()`:
+Models using the sortable behavior with scope benefit from one additional Query methods named `inList()`:
 
 {{{
 #!php
 <?php
-$allPaulsTasks = TaskPeer::retrieveList($scope = $paul->getId());
-$nbPaulsTasks = TaskPeer::countList($scope = $paul->getId());
-TaskPeer::deleteList($scope = $paul->getId());
+$allPaulsTasks = TaskPeer::create()->inList($scope = $paul->getId())->find();
 }}}
 
 == Parameters ==
@@ -199,10 +197,20 @@ Whatever name you give to your columns, the `sortable` behavior always adds the 
 {{{
 #!php
 <?php
-$post->getRank();         // returns $task->my_rank_column
-$post->setRank($rank);
-$post->getScopeValue();   // returns $task->user_id
-$post->setScopeValue($scope);
+$task->getRank();         // returns $task->my_rank_column
+$task->setRank($rank);
+$task->getScopeValue();   // returns $task->user_id
+$task->setScopeValue($scope);
+}}}
+
+The same happens for the generated Query object:
+
+{{{
+#!php
+<?php
+$query = TaskQuery::create()->filterByRank();  // proxies to filterByMyRankColumn()
+$query = TaskQuery::create()->orderByRank();   // proxies to orderByMyRankColumn()
+$tasks = TaskQuery::create()->findOneByRank(); // proxies to findOneByMyRankColumn()
 }}}
 
 '''Tip''': The behavior adds columns but no index. Depending on your table structure, you might want to add a column index by hand to speed up queries on sorted lists.
@@ -246,13 +254,28 @@ $object swapWith($object)
 $object removeFromList()
 }}}
 
+Here is a list of the methods added by the behavior to the query objects:
+
+{{{
+#!php
+<?php
+query   filterByRank($order, $scope = null)
+query   orderByRank($order, $scope = null)
+$object findOneByRank($rank, $scope = null)
+coll    findList($scope = null)
+int     getMaxRank($scope = null)
+bool    reorder($newOrder) // $newOrder is a $id => $rank associative array
+// only for behavior with use_scope
+array   inList($scope)
+}}}
+
 The behavior also adds a few methods to the Peer classes:
 
 {{{
 #!php
 <?php
 int     getMaxRank($scope = null)
-$object retrieveByRank($rank, $scope = null
+$object retrieveByRank($rank, $scope = null)
 array   doSelectOrderByRank($order, $scope = null)
 bool    reorder($newOrder) // $newOrder is a $id => $rank associative array
 // only for behavior with use_scope

@@ -21,6 +21,7 @@
  */
 
 require_once dirname(__FILE__) . '/SortableBehaviorObjectBuilderModifier.php';
+require_once dirname(__FILE__) . '/SortableBehaviorQueryBuilderModifier.php';
 require_once dirname(__FILE__) . '/SortableBehaviorPeerBuilderModifier.php';
 
 
@@ -41,7 +42,7 @@ class SortableBehavior extends Behavior
 		'scope_column' => 'sortable_scope',
 	);
 
-  protected $objectBuilderModifier, $peerBuilderModifier;
+  protected $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
 
 	/**
 	 * Add the rank_column to the current table
@@ -71,6 +72,14 @@ class SortableBehavior extends Behavior
 		return $this->objectBuilderModifier;
 	}
 
+	public function getQueryBuilderModifier()
+	{
+		if (is_null($this->queryBuilderModifier)) {
+			$this->queryBuilderModifier = new SortableBehaviorQueryBuilderModifier($this);
+		}
+		return $this->queryBuilderModifier;
+	}
+	
 	public function getPeerBuilderModifier()
 	{
 		if (is_null($this->peerBuilderModifier)) {

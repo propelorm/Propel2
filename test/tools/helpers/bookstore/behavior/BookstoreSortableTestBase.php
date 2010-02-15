@@ -27,6 +27,13 @@ class BookstoreSortableTestBase extends BookstoreTestBase
 	
 	protected function populateTable12()
 	{
+		/* List used for tests
+		 scope=1   scope=2
+		 row1      row5
+		 row2      row6
+		 row3
+		 row4
+		*/
 		Table12Peer::doDeleteAll();
 		$t1 = new Table12();
 		$t1->setRank(1);
