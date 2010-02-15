@@ -350,8 +350,12 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 			}
 		} elseif ($sqlType == 'DATE') {
 			$def = $domain->getDefaultValue();
-			if ($def && $def->isExpression()) { // DATE values don't support expressions in MySQL
+			if ($def && $def->isExpression()) {
 				throw new EngineException("DATE columns cannot have default *expressions* in MySQL.");
+			}
+		} elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
+			if ($domain->getDefaultValue()) {
+				throw new EngineException("BLOB and TEXT columns cannot have DEFAULT values. in MySQL.");
 			}
 		}
 
