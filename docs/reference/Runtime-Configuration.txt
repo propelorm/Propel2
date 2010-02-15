@@ -1,5 +1,7 @@
 = Runtime Configuration File =
 
+[[PageOutline]]
+
 == Example {{{runtime-conf.xml}}} File ==
 
 Here is a the sample runtime configuration file.

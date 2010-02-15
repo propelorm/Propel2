@@ -1,5 +1,7 @@
 = Build Properties Reference =
 
+[[PageOutline]]
+
 Here is a list of properties that can be set to affect how Propel builds database files.  For a complete list, see the {{{default.properties}}} file that is bundled with your version of Propel generator (this will be in PEAR's data directory if you are using a PEAR-installed version of Propel).
 
 First, some conventions:

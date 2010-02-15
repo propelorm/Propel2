@@ -1,5 +1,7 @@
 = Propel Query Reference =
 
+[[PageOutline]]
+
 Propel's Query classes make it easy to write queries of any level of complexity in a simple and reusable way.
 
 == Overview ==
