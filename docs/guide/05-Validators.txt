@@ -1,5 +1,7 @@
 = Validators =
 
+[[PageOutline]]
+
 Validators help you to validate an input before perstisting it to the database. In Propel, validators are rules describing what type of data a column accepts. Validators are referenced in the `schema.xml` file, using `<validator>` tags.
 
 Validators are applied at the PHP level, they are not created as constraints on the database itself. That means that if you also use another language to work with the database, the validator rules will not be enforced.
@@ -17,7 +19,7 @@ In the following example, the `username` column is defined to have a minimum len
   <validator column="username">
     <rule name="minLength"  value="4"  message="Username must be at least ${value} characters !" />
   </validator>
-</table
+</table>
 }}}
 
 Every column rule is represented by a `<rule>` tag. A `<validator>` is a set of `<rule>` tags bound to a column.
@@ -212,7 +214,6 @@ Restrict values to a certain PHP type using the `TypeValidator`:
 </validator>
 }}}
 
-
 == Adding A Custom Validator ==
 
 You can easily add a custom validator. A validator is a class extending `BasicValidator` providing a public `isValid()` method. For instance:
@@ -247,7 +248,6 @@ To enable the new validator on a column, add a corresponding `<rule>` in your sc
 <validator column="<column_name>">
   <rule name="class" class="my.dir.EmailValidator" message="Invalid e-mail address!" />
 </validator>
-
 }}}
 
 The `class` attribute of the `<rule>` tag should contain a path to the validator class accessible from the include_path, where the directory separator is replaced by a dot.
