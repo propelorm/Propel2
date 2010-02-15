@@ -214,7 +214,7 @@ $article = BookQuery::create()
   ->findOne();
 }}}
 
-== Using Magic Query Methods ==
+=== Using Magic Query Methods ===
 
 {{{
 #!php
@@ -613,7 +613,7 @@ With a single SQL query, you can have both a list of objects and an additional c
 
 '''Tip''': You can call `withColumn()` multiple times to add more than one virtual column to the resulting objects.
 
-== Using Methods From Another Query Class ==
+=== Using Methods From Another Query Class ===
 
 After writing custom methods to query objects, developers often meet the need to use the method from another query. For instance, in order to select the authors of the most recent books, you may want to write:
 
@@ -662,7 +662,7 @@ $authors = AuthorQuery::create('a')
   ->find();
 }}}
 
-== Fluid Conditions ==
+=== Fluid Conditions ===
 
 Thanks to the query factories and the fluid interface, developers can query the database without creating a variable for the Query object. This helps a lot to reduce the amount of code necessary to write a query, and it also makes the code more readable.
 
