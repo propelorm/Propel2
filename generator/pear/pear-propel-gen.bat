@@ -17,7 +17,7 @@
 ::---------------------------------------------------------------------------------
 ::---------------------------------------------------------------------------------
 
-"%phingScript%" -f @DATA-DIR@\propel_generator\pear-build.xml -Dproject.dir=%*
+"%phingScript%" -f "@DATA-DIR@\propel_generator\pear-build.xml" -Dproject.dir=%*
 GOTO :EOF
 
 :PAUSE_END
