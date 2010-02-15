@@ -507,6 +507,146 @@ class QueryBuilderTest extends BookstoreTestBase
 			->count();
 	}
 	
+	public function testUseFkQuerySimple()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery()
+				->filterByFirstName('Leo')
+			->endUse();
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::INNER_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on an inner join');
+	}
+
+	public function testUseFkQueryJoinType()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery(null, Criteria::LEFT_JOIN)
+				->filterByFirstName('Leo')
+			->endUse();
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::LEFT_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() accepts a join type as second parameter');
+	}
+	
+	public function testUseFkQueryAlias()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery('a')
+				->filterByFirstName('Leo')
+			->endUse();
+		$join = new ModelJoin();
+		$join->setJoinType(Criteria::INNER_JOIN);
+		$join->setTableMap(AuthorPeer::getTableMap());
+		$join->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
+		$join->setRelationAlias('a');
+		$q1 = BookQuery::create()
+			->addAlias('a', AuthorPeer::TABLE_NAME)
+			->addJoinObject($join, 'a')
+			->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() uses the first argument as a table alias');
+	}
+
+	public function testUseFkQueryMixed()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery()
+				->filterByFirstName('Leo')
+			->endUse()
+			->filterByTitle('War And Peace');
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::INNER_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+			->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() allows combining conditions on main and related query');
+	}
+
+	public function testUseFkQueryTwice()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery()
+				->filterByFirstName('Leo')
+			->endUse()
+			->useAuthorQuery()
+				->filterByLastName('Tolstoi')
+			->endUse();
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::INNER_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+			->add(AuthorPeer::LAST_NAME, 'Tolstoi', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation does not create two joins');
+	}
+
+	public function testUseFkQueryTwiceTwoAliases()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery('a')
+				->filterByFirstName('Leo')
+			->endUse()
+			->useAuthorQuery('b')
+				->filterByLastName('Tolstoi')
+			->endUse();
+		$join1 = new ModelJoin();
+		$join1->setJoinType(Criteria::INNER_JOIN);
+		$join1->setTableMap(AuthorPeer::getTableMap());
+		$join1->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
+		$join1->setRelationAlias('a');
+		$join2 = new ModelJoin();
+		$join2->setJoinType(Criteria::INNER_JOIN);
+		$join2->setTableMap(AuthorPeer::getTableMap());
+		$join2->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'b');
+		$join2->setRelationAlias('b');
+		$q1 = BookQuery::create()
+			->addAlias('a', AuthorPeer::TABLE_NAME)
+			->addJoinObject($join1, 'a')
+			->add('a.FIRST_NAME', 'Leo', Criteria::EQUAL)
+			->addAlias('b', AuthorPeer::TABLE_NAME)
+			->addJoinObject($join2, 'b')
+			->add('b.LAST_NAME', 'Tolstoi', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation with two aliases creates two joins');
+	}
+
+	public function testUseFkQueryNested()
+	{
+		$q = ReviewQuery::create()
+			->useBookQuery()
+				->useAuthorQuery()
+					->filterByFirstName('Leo')
+				->endUse()
+			->endUse();
+		$q1 = ReviewQuery::create()
+			->join('Review.Book', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::INNER_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
+		// embedded queries create joins that keep a relation to the parent
+		// as this is not testable, we need to use another testing technique
+		$params = array();
+		$result = BasePeer::createSelectSql($q, $params);
+		$expectedParams = array();
+		$expectedResult = BasePeer::createSelectSql($q1, $expectedParams);
+		$this->assertEquals($expectedParams, $params, 'useFkQuery() called nested creates two joins');
+		$this->assertEquals($expectedResult, $result, 'useFkQuery() called nested creates two joins');
+	}
+	
+	public function testUseFkQueryTwoRelations()
+	{
+		$q = BookQuery::create()
+			->useAuthorQuery()
+				->filterByFirstName('Leo')
+			->endUse()
+			->usePublisherQuery()
+				->filterByName('Penguin')
+			->endUse();
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::INNER_JOIN)
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+			->join('Book.Publisher', Criteria::INNER_JOIN)
+			->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
+	}
+	
 	public function testPrune()
 	{
 		$q = BookQuery::create()->prune();

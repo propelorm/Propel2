@@ -125,5 +125,22 @@ class ModelJoin extends Join
 		}
 	}
 
+	public function equals($join)
+	{
+		return parent::equals($join)
+			&& $this->tableMap == $join->getTableMap()
+			&& $this->relationMap == $join->getRelationMap()
+			&& $this->previousJoin == $join->getPreviousJoin()
+			&& $this->relationAlias == $join->getRelationAlias();
+	}
+	
+	public function __toString()
+	{
+		return parent::toString()
+			. ' tableMap: ' . ($this->tableMap ? get_class($this->tableMap) : 'null')
+			. ' relationMap: ' . $this->relationMap->getName()
+			. ' previousJoin: ' . ($this->previousJoin ? '(' . $this->previousJoin . ')' : 'null')
+			. ' relationAlias: ' . $this->relationAlias;
+	}
 }
  

@@ -294,11 +294,14 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @param      string $alias
 	 * @param      string $table
-	 * @return     void
+	 *
+	 * @return     Criteria A modified Criteria object.
 	 */
 	public function addAlias($alias, $table)
 	{
 		$this->aliases[$alias] = $table;
+		
+		return $this;
 	}
 	
 	/**
@@ -1178,11 +1181,10 @@ class Criteria implements IteratorAggregate
 	 */
 	public function equals($crit)
 	{
-		$isEquiv = false;
 		if ($crit === null || !($crit instanceof Criteria)) {
-			$isEquiv = false;
+			return false;
 		} elseif ($this === $crit) {
-			$isEquiv = true;
+			return true;
 		} elseif ($this->size() === $crit->size()) {
 
 			// Important: nested criterion objects are checked
@@ -1198,25 +1200,35 @@ class Criteria implements IteratorAggregate
 				&& $this->asColumns       === $criteria->getAsColumns()
 				&& $this->orderByColumns  === $criteria->getOrderByColumns()
 				&& $this->groupByColumns  === $criteria->getGroupByColumns()
-			   ) // what about alias, having and join ??
+				&& $this->aliases         === $criteria->getAliases()
+			   ) // what about having ??
 			{
-				$isEquiv = true;
 				foreach ($criteria->keys() as $key) {
 					if ($this->containsKey($key)) {
 						$a = $this->getCriterion($key);
 						$b = $criteria->getCriterion($key);
 						if (!$a->equals($b)) {
-							$isEquiv = false;
-							break;
+							return false;
 						}
 					} else {
-						$isEquiv = false;
-						break;
+						return false;
 					}
 				}
+				$joins = $criteria->getJoins();
+				if (count($joins) != count($this->joins)) {
+					return false;
+				}
+				foreach ($joins as $key => $join) {
+					if (!$join->equals($this->joins[$key])) {
+						return false;
+					}
+				}
+				return true;
+			} else {
+				return false;
 			}
 		}
-		return $isEquiv;
+		return false;
 	}
 	
 	/**

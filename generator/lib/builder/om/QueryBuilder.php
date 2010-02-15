@@ -615,14 +615,15 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * @see       useQuery()
 	 * 
 	 * @param     string \$relationAlias optional alias for the relation,
-	 *                                  to be used as main alias in the secondary query
+	 *                                   to be used as main alias in the secondary query
+	 * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
 	 *
 	 * @return    $queryClass A secondary query class using the current class as primary query
 	 */
-	public function use" . $relationName . "Query(\$relationAlias = '')
+	public function use" . $relationName . "Query(\$relationAlias = '', \$joinType = Criteria::INNER_JOIN)
 	{
 		return \$this
-			->join('$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''))
+			->join('$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''), \$joinType)
 			->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
 	}
 ";

@@ -518,11 +518,26 @@ class ModelCriteria extends Criteria
 		// add the ModelJoin to the current object
 		if($relationAlias !== null) {
 			$this->addAlias($relationAlias, $rightTable->getName());
-			$this->joins[$relationAlias] = $join;
+			$this->addJoinObject($join, $relationAlias);
 		} else {
-			$this->joins[$relationName] = $join;
+			$this->addJoinObject($join, $relationName);
 		}
 		
+		return $this;
+	}
+
+	/**
+	 * Add a join object to the Criteria
+	 * @see   Criteria::addJoinObject()
+	 * @param Join $join A join object
+	 *
+	 * @return  ModelCriteria The current object, for fluid interface
+	 */
+	public function addJoinObject(Join $join, $name = null)
+	{
+	  if (!in_array($join, $this->joins)) { // compare equality, NOT identity
+			$this->joins[$name] = $join;
+		}
 		return $this;
 	}
 	

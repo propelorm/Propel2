@@ -223,6 +223,14 @@ class Join
 		return substr($this->right[$index], 0, strrpos($this->right[$index], '.'));
 	}
 
+	public function equals($join)
+	{
+		return $join !== null 
+				&& $join instanceof Join
+				&& $this->joinType == $join->getJoinType()
+				&& $this->getConditions() == $join->getConditions();
+	}
+	
 	/**
 	 * returns a String representation of the class,
 	 * mainly for debugging purposes
@@ -232,12 +240,10 @@ class Join
 	public function toString()
 	{
 		$result = '';
-		if ($this->joinType !== null)
-		{
+		if ($this->joinType !== null) {
 			$result .= $this->joinType . ' : ';
 		}
-		foreach ($this->getConditions() as $index => $condition)
-		{
+		foreach ($this->getConditions() as $index => $condition) {
 		  $result .= implode($condition);
 		  if ($index + 1 < $this->count) {
 				$result .= ' AND ';
@@ -246,6 +252,11 @@ class Join
     $result .= '(ignoreCase not considered)';
     
 		return $result;
+	}
+	
+	public function __toString()
+	{
+		return $this->toString();
 	}
 }
  
