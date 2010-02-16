@@ -21,8 +21,6 @@ $author->setLastName('austen');
 $author->save();
 }}}
 
-<hartym> ok c'est pas très important, mais sachant que les doubles quotes nécessitent un peu plus de travail pour PHP, les simples sont plus adéquats, imho.
-
 The column names used in the `setXXX()` methods correspond to the `phpName` attribute of the `<column>` tag in your schema, or to a CamelCase version of the column name if the `phpName` is not set.
 
 In the background, the call to `save()` results in the following SQL being executed on the database:
