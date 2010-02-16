@@ -42,7 +42,7 @@ $book = BookQuery::create()
   ->findOne();
 }}}
 
-The termination methods are `find()`, `findOne()`, `count(), `paginate()`, 'update()`, and `delete()`. They all accept a connection object as last parameter.
+The termination methods are `find()`, `findOne()`, `count()`, `paginate()`, `update()`, and `delete()`. They all accept a connection object as last parameter.
 
 Remember that a Model Query IS a Criteria. So your Propel 1.4 code snippets still work:
 
@@ -131,8 +131,8 @@ Array                    | Collection object
 foreach($books as $book) | foreach($books as $book)
 count($books)            | count($books)     or $books->count()
 $books[]= $book          | $books[]= $book   or $books->append($book)
-$books[1]                | $books[1]         or $book->getFirst()
-$books[123]              | $books[123]       or $book->offsetGet(123)
+$books[1]                | $books[1]         or $books->getFirst()
+$books[123]              | $books[123]       or $books->offsetGet(123)
 unset($books[1])         | unset($books[1])  or $books->remove(1)
 empty($books)            | $books->isEmpty()
 in_array($book, $books)  | $books->contains($book)
@@ -155,7 +155,7 @@ The `PropelCollection` class offers even more methods that you will soon use a l
 $books->getArrayCopy()   // get the array inside the collection
 $books->toArray()        // turn all objects to associative arrays
 $books->getPrimaryKeys() // get an array of the primary keys of all the objects in the collection
-$books-<getModel()       // return the model of the collection, e.g. 'Book'
+$books->getModel()       // return the model of the collection, e.g. 'Book'
 }}}
 
 Another advantage of using a collection instead of an array is that Propel can hydrate model objects on demand. Using this feature, you'll never fall short of memory again. Available through the `setFormatter()` method of Model Queries, on-demand hydration is very easy to trigger:
@@ -478,7 +478,7 @@ The nested set behavior implementation has a few added benefits:
 
  * All the methods that execute several queries use transactions, so a database failure won't break a tree anymore
  * The methods retrieveing a list of nodes accept a Criteria as first parameter, to filter the results
- * New methods make it easir to work with trees: `retrieveRoots()`, `isDescendantOf()`, `isAncestorOf()`, `getBranch()`, `addChild()`, etc.
+ * New methods make it easier to work with trees: `retrieveRoots()`, `isDescendantOf()`, `isAncestorOf()`, `getBranch()`, `addChild()`, etc.
  * There is no longer any introspection at runtime (for instance to check scope support), resulting in yet another boost in performance
  * A few bugs were fixed (for instance in the use of `delete()`)
  * A node can be inserted to the tree after it is saved. This allows for better preparation of data before insertion in the tree
@@ -621,9 +621,9 @@ Check out the brand new [wiki:Users/Documentation/1.5/Inheritance#ConcreteTableI
 
 === Sortable Behavior ===
 
-Have you ever enhanced a Propel Model to give it the ability to move up or down in an ordered list? The new `sortable` behavior, new in Propel 1.5, offers exactly that... and even more.
+Have you ever enhanced a Propel Model to give it the ability to move up or down in an ordered list? The `sortable` behavior, new in Propel 1.5, offers exactly that... and even more.
 
-As usual for behavior, activate `sortable` in your `schema.yml`:
+As usual for behaviors, activate `sortable` in your `schema.yml`:
 
 {{{
 #!xml
@@ -694,7 +694,7 @@ $books = BookQuery::create()
 
 == Better `toArray()` ==
 
-When you call `toArray()` on an object, you can now ask for the related objects:
+When you call `toArray()` on a model object, you can now ask for the related objects:
 
 {{{
 #!php
