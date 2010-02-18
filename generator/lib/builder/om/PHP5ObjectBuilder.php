@@ -2152,7 +2152,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} else {
 				$script .= "
 			\$this->".$this->getRefFKCollVarName($refFK)." = null;
-			\$this->".$this->getRefFKLastCriteriaVarName($refFK)." = null;
 ";
 			}
 		}
@@ -2478,17 +2477,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		return 'single' . $this->getRefFKPhpNameAffix($fk, $plural = false);
 	}
 
-	/**
-	 * Gets variable name for the Criteria which was used to fetch the objects which
-	 * referencing current table by specified foreign key.
-	 * @param      ForeignKey $fk
-	 * @return     string
-	 */
-	protected function getRefFKLastCriteriaVarName(ForeignKey $fk)
-	{
-		return 'last' . $this->getRefFKPhpNameAffix($fk, $plural = false) . 'Criteria';
-	}
-
 	// ----------------------------------------------------------------
 	//
 	// F K    M E T H O D S
@@ -2763,7 +2751,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural=true);
 		$collName = $this->getRefFKCollVarName($refFK);
-		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 
 		$fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
 
@@ -2846,11 +2833,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @var        array {$className}[] Collection to store aggregation of $className objects.
 	 */
 	protected $".$this->getRefFKCollVarName($refFK).";
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of ".$this->getRefFKCollVarName($refFK).".
-	 */
-	private $".$this->getRefFKLastCriteriaVarName($refFK)." = null;
 ";
 		}
 	}
@@ -2979,7 +2961,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
-		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 
 		$className = $fkPeerBuilder->getObjectClassname();
 
@@ -2994,42 +2975,22 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @throws     PropelException
 	 */
 	public function count$relCol(Criteria \$criteria = null, \$distinct = false, PropelPDO \$con = null)
-	{";
-
-		$script .= "
-		\$query = $fkQueryClassname::create(null, \$criteria);
-
-		if (\$distinct) {
-			\$query->distinct();
-		}
-
-		\$count = null;
-
-		if (\$this->$collName === null) {
-			if (\$this->isNew()) {
-				\$count = 0;
+	{
+		if(null === \$this->$collName || null !== \$criteria) {
+			if (\$this->isNew() && null === \$this->$collName) {
+				return 0;
 			} else {
-				\$count = \$query
+				\$query = $fkQueryClassname::create(null, \$criteria);
+				if(\$distinct) {
+					\$query->distinct();
+				}
+				return \$query
 					->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
 					->count(\$con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!\$this->isNew() && null !== \$this->$lastCriteriaName) {
-				// the following code is to determine if a new query is
-				// called for.  If the query is the same as the last
-				// one, just return count of the collection.
-				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
-				if (!\$this->".$lastCriteriaName."->equals(\$query)) {
-					\$count = \$query->count(\$con);
-				} else {
-					\$count = count(\$this->$collName);
-				}
-			} else {
-				\$count = count(\$this->$collName);
-			}
+			return count(\$this->$collName);
 		}
-		return \$count;
 	}
 ";
 	} // addRefererCount
@@ -3049,7 +3010,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
-		$lastCriteriaName = $this->getRefFKLastCriteriaVarName($refFK);
 
 		$className = $fkPeerBuilder->getObjectClassname();
 
@@ -3057,10 +3017,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Gets an array of $className objects which contain a foreign key that references this object.
 	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this ".$this->getObjectClassname()." has previously been saved, it will retrieve
-	 * related $relCol from storage. If this ".$this->getObjectClassname()." is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 * If the \$criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without \$criteria, the cached collection is returned.
+	 * If this ".$this->getObjectClassname()." is new, it will return
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
 	 *
 	 * @param      Criteria \$criteria
 	 * @param      PropelPDO \$con
@@ -3068,32 +3029,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @throws     PropelException
 	 */
 	public function get$relCol(\$criteria = null, PropelPDO \$con = null)
-	{";
-
-		$script .= "
-		\$query = $fkQueryClassname::create(null, \$criteria);
-
-		if (\$this->$collName === null) {
-			if (\$this->isNew()) {
-			   \$this->init".$this->getRefFKPhpNameAffix($refFK, $plural = true)."();
+	{
+		if(null === \$this->$collName || null !== \$criteria) {
+			if (\$this->isNew() && null === \$this->$collName) {
+				// return empty collection
+				\$this->init".$this->getRefFKPhpNameAffix($refFK, $plural = true)."();
 			} else {
-				\$this->$collName = \$query
+				\$$collName = $fkQueryClassname::create(null, \$criteria)
 					->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
 					->find(\$con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!\$this->isNew() && null !== \$this->$lastCriteriaName) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-				\$query->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this);
-				if (!\$this->".$lastCriteriaName."->equals(\$query)) {
-					\$this->$collName = \$query->find(\$con);
+				if (null !== \$criteria) {
+					return \$$collName;
 				}
+				\$this->$collName = \$$collName;
 			}
 		}
-		\$this->$lastCriteriaName = \$query;
 		return \$this->$collName;
 	}
 ";
@@ -3183,22 +3133,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @var        array {$className}[] Collection to store aggregation of $className objects.
 	 */
 	protected $" . $this->getCrossFKVarName($crossFK) . ";
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of " . $this->getCrossFKVarName($crossFK) .".
-	 */
-	protected $" . $this->getCrossFKLastCriteriaVarName($crossFK) . " = null;
 ";
 	}
 
 	protected function getCrossFKVarName(ForeignKey $crossFK)
 	{
 		return 'coll' . $this->getFKPhpNameAffix($crossFK, $plural = true);
-	}
-
-	protected function getCrossFKLastCriteriaVarName(ForeignKey $crossFK)
-	{
-		return 'last' . $this->getFKPhpNameAffix($crossFK, $plural = false) . 'Criteria';
 	}
 	
 	protected function addCrossFKMethods(&$script)
@@ -3275,14 +3215,16 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
 		$crossRefTableName = $crossFK->getTableName();
 		$collName = $this->getCrossFKVarName($crossFK);
-		$lastCriteriaName = $this->getCrossFKLastCriteriaVarName($crossFK);
 		$script .= "
 	/**
 	 * Gets a collection of $relatedObjectClassName objects related by a many-to-many relationship
 	 * to the current object by way of the $crossRefTableName cross-reference table.
 	 *
+	 * If the \$criteria is not null, it is used to always fetch the results from the database.
+	 * Otherwise the results are fetched from the database the first time, then cached.
+	 * Next time the same method is called without \$criteria, the cached collection is returned.
 	 * If this ".$this->getObjectClassname()." is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 * an empty collection or the current collection; the criteria is ignored on a new object.
 	 *
 	 * @param      Criteria \$criteria Optional query object to filter the query
 	 * @param      PropelPDO \$con Optional connection object
@@ -3291,28 +3233,20 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	public function get{$relatedName}(\$criteria = null, PropelPDO \$con = null)
 	{
-		\$query = $relatedQueryClassName::create(null, \$criteria);
-		if (\$this->$collName  === null) {
-			if (\$this->isNew()) {
+		if(null === \$this->$collName || null !== \$criteria) {
+			if (\$this->isNew() && null === \$this->$collName) {
+				// return empty collection
 				\$this->init{$relatedName}();
 			} else {
-				\$this->$collName = \$query
+				\$$collName = $relatedQueryClassName::create(null, \$criteria)
 					->filterBy{$selfRelationName}(\$this)
 					->find(\$con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!\$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-				\$query->filterBy{$selfRelationName}(\$this);
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
-					\$this->$collName = \$query->find(\$con);
+				if (null !== \$criteria) {
+					return \$$collName;
 				}
+				\$this->$collName = \$$collName;
 			}
 		}
-		\$this->$lastCriteriaName = \$query;
 		return \$this->$collName;
 	}
 ";
@@ -3326,14 +3260,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
 		$crossRefTableName = $refFK->getTableName();
 		$collName = $this->getCrossFKVarName($crossFK);
-		$lastCriteriaName = $this->getCrossFKLastCriteriaVarName($crossFK);
 		$script .= "
 	/**
 	 * Gets the number of $relatedObjectClassName objects related by a many-to-many relationship
 	 * to the current object by way of the $crossRefTableName cross-reference table.
-	 *
-	 * If this ".$this->getObjectClassname()." is new, it will return 0,
-	 * the criteria is ignored on a new object.
 	 *
 	 * @param      Criteria \$criteria Optional query object to filter the query
 	 * @param      boolean \$distinct Set to true to force count distinct
@@ -3343,39 +3273,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	public function count{$relatedName}(\$criteria = null, \$distinct = false, PropelPDO \$con = null)
 	{
-		\$query = $relatedQueryClassName::create(null, \$criteria);
-
-		if (\$distinct) {
-			\$query->distinct();
-		}
-
-		\$count = null;
-
-		if (\$this->$collName === null) {
-			if (\$this->isNew()) {
-				\$count = 0;
+		if(null === \$this->$collName || null !== \$criteria) {
+			if (\$this->isNew() && null === \$this->$collName) {
+				return 0;
 			} else {
-				\$count = \$query
+				\$query = $relatedQueryClassName::create(null, \$criteria);
+				if(\$distinct) {
+					\$query->distinct();
+				}
+				return \$query
 					->filterBy{$selfRelationName}(\$this)
 					->count(\$con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!\$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the query is the same as the last
-				// one, just return count of the collection.
-				\$query->filterBy{$selfRelationName}(\$this);
-				if (!isset(\$this->$lastCriteriaName) || !\$this->".$lastCriteriaName."->equals(\$query)) {
-					\$count = \$query->count(\$con);
-				} else {
-					\$count = count(\$this->$collName);
-				}
-			} else {
-				\$count = count(\$this->$collName);
-			}
+			return count(\$this->$collName);
 		}
-		return \$count;
 	}
 ";
 	}
