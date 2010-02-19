@@ -37,13 +37,13 @@ abstract class BaseObject
 	 * attribute to determine if this object has previously been saved.
 	 * @var        boolean
 	 */
-	private $_new = true;
+	protected $_new = true;
 
 	/**
 	 * attribute to determine whether this object has been deleted.
 	 * @var        boolean
 	 */
-	private $_deleted = false;
+	protected $_deleted = false;
 
 	/**
 	 * The columns that have been modified in current object.
@@ -318,6 +318,16 @@ abstract class BaseObject
 	protected function log($msg, $priority = Propel::LOG_INFO)
 	{
 		return Propel::log(get_class($this) . ': ' . $msg, $priority);
+	}
+	
+	/**
+	 * Clean up internal collections prior to serializing
+	 * Avoids recursive loops that turn into segmentation faults when serializing
+	 */
+	public function __sleep()
+	{
+		$this->clearAllReferences();
+		return array_keys(get_object_vars($this));
 	}
 
 }
