@@ -138,6 +138,7 @@ class DBMSSQL extends DBAdapter
 
 		//get the ORDER BY clause if present
 		$orderStatement = stristr($fromStatement, 'ORDER BY');
+		$orders = '';
 
 		if($orderStatement !== false) {
 			//remove order statement from the from statement
@@ -159,7 +160,7 @@ class DBMSSQL extends DBAdapter
 		$outerSelect = '';
 		foreach(explode(', ', $selectStatement) as $selCol) {
 			$selColArr = explode(' ', $selCol);
-			$selColCount = count($selColArr);
+			$selColCount = count($selColArr) - 1;
 
 			//make sure the current column isn't * or an aggregate
 			if($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
@@ -168,7 +169,7 @@ class DBMSSQL extends DBAdapter
 				}
 
 				//use the alias if one was present otherwise use the column name
-				$alias = (! stristr($selCol, ' AS ')) ? $this->quoteIdentifier($selColArr[0]) : $this->quoteIdentifier($selColArr[$selColCount - 1]);
+				$alias = (! stristr($selCol, ' AS ')) ? $this->quoteIdentifier($selColArr[0]) : $this->quoteIdentifier($selColArr[$selColCount]);
 
 				//save the first non-aggregate column for use in ROW_NUMBER() if required
 				if(! isset($firstColumnOrderStatement)) {
@@ -185,13 +186,13 @@ class DBMSSQL extends DBAdapter
 				}
 
 				//aggregate column alias can't be used as the count column you must use the entire aggregate statement
-				if(isset($orderArr[$selColArr[$selColCount - 1]])) {
-					$orders[$orderArr[$selColArr[$selColCount - 1]]['key']] = str_replace($selColArr[$selColCount - 2] . ' ' . $selColArr[$selColCount - 1], '', $selCol) . $orderArr[$selColArr[$selColCount - 1]]['sort'];
+				if(isset($orderArr[$selColArr[$selColCount]])) {
+					$orders[$orderArr[$selColArr[$selColCount]]['key']] = str_replace($selColArr[$selColCount - 1] . ' ' . $selColArr[$selColCount], '', $selCol) . $orderArr[$selColArr[$selColCount]]['sort'];
 				}
 
 				//quote the alias
-				$alias = $this->quoteIdentifier($selColArr[$selColCount - 1]);
-				$innerSelect .= str_replace($selColArr[$selColCount - 1], $alias, $selCol) . ', ';
+				$alias = $this->quoteIdentifier($selColArr[$selColCount]);
+				$innerSelect .= str_replace($selColArr[$selColCount], $alias, $selCol) . ', ';
 				$outerSelect .= $alias . ', ';
 			}
 		}
