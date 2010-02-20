@@ -60,12 +60,12 @@ class Database extends XMLElement
 
 	private $domainMap = array();
 
-  /**
-   * List of behaviors registered for this table
-   * 
-   * @var array
-   */
-  protected $behaviors = array();
+	/**
+	 * List of behaviors registered for this table
+	 * 
+	 * @var array
+	 */
+	protected $behaviors = array();
 
 	/**
 	 * Constructs a new Database object.

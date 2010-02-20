@@ -42,7 +42,7 @@ class SortableBehavior extends Behavior
 		'scope_column' => 'sortable_scope',
 	);
 
-  protected $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
+	protected $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
 
 	/**
 	 * Add the rank_column to the current table

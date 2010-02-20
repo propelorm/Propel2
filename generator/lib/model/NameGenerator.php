@@ -31,6 +31,7 @@
  */
 interface NameGenerator
 {
+
 	/**
 	 * The character used by most implementations as the separator
 	 * between name elements.

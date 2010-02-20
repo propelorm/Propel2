@@ -27,7 +27,8 @@
   * @version    $Revision$
   * @package    propel.generator.builder.om
   */
-class ClassTools {
+class ClassTools
+{
 
 	/**
 	 * Gets just classname, given a dot-path to class.

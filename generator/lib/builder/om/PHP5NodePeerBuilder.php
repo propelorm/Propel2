@@ -34,7 +34,8 @@ require_once 'builder/om/PeerBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5NodePeerBuilder extends PeerBuilder {
+class PHP5NodePeerBuilder extends PeerBuilder
+{
 
 	/**
 	 * Gets the package for the [base] object classes.

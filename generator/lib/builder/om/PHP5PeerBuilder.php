@@ -31,7 +31,8 @@ require_once 'builder/om/PeerBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5PeerBuilder extends PeerBuilder {
+class PHP5PeerBuilder extends PeerBuilder
+{
 
 	/**
 	 * Validates the current table to make sure that it won't

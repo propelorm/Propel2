@@ -30,7 +30,8 @@ require_once 'builder/om/ObjectBuilder.php';
  * @author     Heltem <heltem@o2php.com>
  * @package    propel.generator.builder.om
  */
-class PHP5NestedSetBuilder extends ObjectBuilder {
+class PHP5NestedSetBuilder extends ObjectBuilder
+{
 
 	/**
 	 * Gets the package for the [base] object classes.

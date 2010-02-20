@@ -32,7 +32,8 @@ require_once 'builder/DataModelBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-abstract class OMBuilder extends DataModelBuilder {
+abstract class OMBuilder extends DataModelBuilder
+{
 
 	/**
 	 * Builds the PHP source for current class and returns it as a string.

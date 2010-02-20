@@ -33,7 +33,8 @@ require_once 'builder/om/OMBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-abstract class PeerBuilder extends OMBuilder {
+abstract class PeerBuilder extends OMBuilder
+{
 
 	protected $basePeerClass;
 	protected $basePeerClassname;

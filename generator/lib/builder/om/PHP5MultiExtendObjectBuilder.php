@@ -34,7 +34,8 @@ require_once 'builder/om/ObjectBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5MultiExtendObjectBuilder extends ObjectBuilder {
+class PHP5MultiExtendObjectBuilder extends ObjectBuilder
+{
 
 	/**
 	 * The current child "object" we are operating on.

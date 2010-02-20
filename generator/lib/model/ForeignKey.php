@@ -32,6 +32,7 @@ require_once 'model/XMLElement.php';
  */
 class ForeignKey extends XMLElement
 {
+
 	protected $foreignTableName;
 	protected $name;
 	protected $phpName;

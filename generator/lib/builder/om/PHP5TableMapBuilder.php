@@ -28,7 +28,8 @@ require_once 'builder/om/OMBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5TableMapBuilder extends OMBuilder {
+class PHP5TableMapBuilder extends OMBuilder
+{
 
 	/**
 	 * Gets the package for the map builder classes.

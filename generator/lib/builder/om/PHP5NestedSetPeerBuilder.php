@@ -34,7 +34,8 @@ require_once 'builder/om/PeerBuilder.php';
  * @author     heltem <heltem@o2php.com>
  * @package    propel.generator.builder.om
  */
-class PHP5NestedSetPeerBuilder extends PeerBuilder {
+class PHP5NestedSetPeerBuilder extends PeerBuilder
+{
 
 	/**
 	 * Gets the package for the [base] object classes.

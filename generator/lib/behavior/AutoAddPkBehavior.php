@@ -29,38 +29,38 @@
  */
 class AutoAddPkBehavior extends Behavior
 {
-  // default parameters value
-  protected $parameters = array(
-    'name'          => 'id',
-    'autoIncrement' => 'true',
-    'type'          => 'INTEGER'
-  );
+	// default parameters value
+	protected $parameters = array(
+		'name'					=> 'id',
+		'autoIncrement' => 'true',
+		'type'					=> 'INTEGER'
+	);
 
-  /**
-   * Copy the behavior to the database tables
-   * Only for tables that have no Pk
-   */
-  public function modifyDatabase()
-  {
-    foreach ($this->getDatabase()->getTables() as $table)
-    {
-      if(!$table->hasPrimaryKey())
-      {
-        $b = clone $this;
-        $table->addBehavior($b);
-      }
-    }
-  }
-  
-  /**
-   * Add the primary key to the current table
-   */
-  public function modifyTable()
-  {
-    if (!$this->getTable()->hasPrimaryKey())
-    {
-      $columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
-      $this->getTable()->addColumn($columnAttributes);
-    }
-  }
+	/**
+	 * Copy the behavior to the database tables
+	 * Only for tables that have no Pk
+	 */
+	public function modifyDatabase()
+	{
+		foreach ($this->getDatabase()->getTables() as $table)
+		{
+			if(!$table->hasPrimaryKey())
+			{
+				$b = clone $this;
+				$table->addBehavior($b);
+			}
+		}
+	}
+	
+	/**
+	 * Add the primary key to the current table
+	 */
+	public function modifyTable()
+	{
+		if (!$this->getTable()->hasPrimaryKey())
+		{
+			$columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
+			$this->getTable()->addColumn($columnAttributes);
+		}
+	}
 }

@@ -34,7 +34,8 @@ require_once 'builder/om/PeerBuilder.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */
-class PHP5ExtensionPeerBuilder extends PeerBuilder {
+class PHP5ExtensionPeerBuilder extends PeerBuilder
+{
 
 	/**
 	 * Returns the name of the current class being built.
