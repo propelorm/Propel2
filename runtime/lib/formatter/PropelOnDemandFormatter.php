@@ -36,6 +36,9 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
+		if ($this->getCriteria()->isWithOneToMany()) {
+			throw new PropelException('PropelOnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
+		}
 		$class = $this->collectionName;
 		$collection = new $class();
 		$collection->setModel($this->getCriteria()->getModelName());

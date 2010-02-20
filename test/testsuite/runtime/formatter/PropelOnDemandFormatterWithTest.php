@@ -198,6 +198,23 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('J.K.', $author->getFirstName(), 'Related object is correctly hydrated');
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testFindOneWithOneToMany()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+		$c->add(BookPeer::ISBN, '043935806X');
+		$c->leftJoin('Book.Review');
+		$c->with('Review');
+		$books = $c->find();
+	}
+
 	public function testFindOneWithColumn()
 	{
 		BookstoreDataPopulator::populate();
