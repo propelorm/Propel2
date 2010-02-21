@@ -23,7 +23,7 @@ See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.5&resolution=f
     name="pear-package"
     classname="BuildPropelPEARPackageTask" classpath="."/>
 
-	<fileset dir="${propel.home}/classes/propel" id="classes">
+	<fileset dir="${propel.home}/lib" id="classes">
 		<include name="**"/>
 	</fileset>
 
