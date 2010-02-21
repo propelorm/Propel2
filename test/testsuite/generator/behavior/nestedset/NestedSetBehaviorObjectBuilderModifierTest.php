@@ -285,6 +285,26 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($t4->getParent($this->con), $t2, 'getParent() retrieves the same parent for two siblings');
 	}
 
+	public function testGetParentCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$con = Propel::getConnection();
+		$count = $con->getQueryCount();
+		$parent = $t5->getParent($con);
+		$parent = $t5->getParent($con);
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'getParent() only issues a query once');
+		$this->assertEquals('t3', $parent->getTitle(), 'getParent() returns the parent Node');
+	}
+
 	public function testHasPrevSibling()
 	{
 		Table9Peer::doDeleteAll();
@@ -353,6 +373,18 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertNull($t3->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
 		$this->assertEquals($t6->getNextSibling($this->con), $t7, 'getNextSibling() correctly retrieves next sibling');
 		$this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
+	}
+	
+	public function testAddNestedSetChildren()
+	{
+		$t0 = new Table9();
+		$t1 = new Table9();
+		$t2 = new Table9();
+		$t0->addNestedSetChild($t1);
+		$t0->addNestedSetChild($t2);
+		$this->assertEquals(2, $t0->countChildren(), 'addNestedSetChild() adds the object to the internal children collection');
+		$this->assertEquals($t0, $t1->getParent(), 'addNestedSetChild() sets the object as th parent of the parameter');
+		$this->assertEquals($t0, $t2->getParent(), 'addNestedSetChild() sets the object as th parent of the parameter');
 	}
 	
 	public function testHasChildren()

@@ -82,7 +82,14 @@ protected \$nestedSetQueries = array();
  * Internal cache for children nodes
  * @var        null|PropelObjectCollection
  */
-protected \$nestedSetChildren = null;
+protected \$collNestedSetChildren = null;
+
+/**
+ * Internal cache for parent node
+ * @var        null|$objectClassname
+ */
+protected \$aNestedSetParent = null;
+
 ";
 	}
 	
@@ -111,7 +118,8 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 	
 	public function objectClearReferences($builder)
 	{
-		return "\$this->clearNestedSetChildren();";
+		return "\$this->collNestedSetChildren = null;
+\$this->aNestedSetParent = null;";
 	}
 	
 	public function objectMethods($builder)
@@ -146,6 +154,7 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addIsAncestorOf($script);
 		
 		$this->addHasParent($script);
+		$this->addSetParent($script);
 		$this->addGetParent($script);
 		
 		$this->addHasPrevSibling($script);
@@ -458,11 +467,32 @@ public function hasParent(PropelPDO \$con = null)
 ";
 	}
 
+	protected function addSetParent(&$script)
+	{
+		$objectClassname = $this->objectClassname;
+		$script .= "
+/**
+ * Sets the cache for parent node of the current object.
+ * Warning: this does not move the current object in the tree.
+ * Use moveTofirstChildOf() or moveToLastChildOf() for that purpose
+ *
+ * @param      $objectClassname \$parent
+ * @return     $objectClassname The current object, for fluid interface
+ */
+public function setParent(\$parent = null)
+{
+	\$this->aNestedSetParent = \$parent;
+	return \$this;
+}
+";
+	}
+
+
 	protected function addGetParent(&$script)
 	{
 		$script .= "
 /**
- * Gets ancestor for the given node if it exists
+ * Gets parent node for the current object if it exists
  * The result is cached so further calls to the same method don't issue any queries
  *
  * @param      PropelPDO \$con Connection to use.
@@ -470,14 +500,13 @@ public function hasParent(PropelPDO \$con = null)
  */
 public function getParent(PropelPDO \$con = null)
 {
-	if(!\$this->hasParent()) {
-		return null;
-	} else {
-		return {$this->queryClassname}::create()
+	if (\$this->aNestedSetParent === null && \$this->hasParent()) {
+		\$this->aNestedSetParent = {$this->queryClassname}::create()
 			->ancestorsOf(\$this)
 			->orderByLevel(true)
-			->findOne();
+			->findOne(\$con);
 	}
+	return \$this->aNestedSetParent;
 }
 ";
 	}
@@ -590,7 +619,7 @@ public function getNextSibling(PropelPDO \$con = null)
 	{
 		$script .= "
 /**
- * Clears out the \$nestedSetChildren collection
+ * Clears out the \$collNestedSetChildren collection
  *
  * This does not modify the database; however, it will remove any associated objects, causing
  * them to be refetched by subsequent calls to accessor method.
@@ -599,7 +628,7 @@ public function getNextSibling(PropelPDO \$con = null)
  */
 public function clearNestedSetChildren()
 {
-	\$this->nestedSetChildren = null;
+	\$this->collNestedSetChildren = null;
 }
 ";
 	}
@@ -608,14 +637,14 @@ public function clearNestedSetChildren()
 	{
 		$script .= "
 /**
- * Initializes the \$nestedSetChildren collection.
+ * Initializes the \$collNestedSetChildren collection.
  *
  * @return     void
  */
 public function initNestedSetChildren()
 {
-	\$this->nestedSetChildren = new PropelObjectCollection();
-	\$this->nestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getClassname() . "');
+	\$this->collNestedSetChildren = new PropelObjectCollection();
+	\$this->collNestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getClassname() . "');
 }
 ";
 	}
@@ -626,7 +655,7 @@ public function initNestedSetChildren()
 		$objectName = '$' . $this->table->getStudlyPhpName();
 		$script .= "
 /**
- * Adds an element to the internal \$nestedSetChildren collection.
+ * Adds an element to the internal \$collNestedSetChildren collection.
  * Beware that this doesn't insert a node in the tree.
  * This method is only used to facilitate children hydration.
  *
@@ -636,12 +665,12 @@ public function initNestedSetChildren()
  */
 public function addNestedSetChild($objectName)
 {
-	if (\$this->nestedSetChildren === null) {
+	if (\$this->collNestedSetChildren === null) {
 		\$this->initNestedSetChildren();
 	}
-	if (!\$this->nestedSetChildren->contains($objectName)) { // only add it if the **same** object is not already associated
-		\$this->nestedSetChildren[]= $objectName;
-		// {$objectName}->setParent(\$this);
+	if (!\$this->collNestedSetChildren->contains($objectName)) { // only add it if the **same** object is not already associated
+		\$this->collNestedSetChildren[]= $objectName;
+		{$objectName}->setParent(\$this);
 	}
 }
 ";
@@ -677,22 +706,22 @@ public function hasChildren()
  */
 public function getChildren(\$criteria = null, PropelPDO \$con = null)
 {
-	if(null === \$this->nestedSetChildren || null !== \$criteria) {
-		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->nestedSetChildren)) {
+	if(null === \$this->collNestedSetChildren || null !== \$criteria) {
+		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
 			// return empty collection
 			\$this->initNestedSetChildren();
 		} else {
-			\$nestedSetChildren = $queryClassname::create(null, \$criteria)
+			\$collNestedSetChildren = $queryClassname::create(null, \$criteria)
   			->childrenOf(\$this)
   			->orderByBranch()
 				->find(\$con);
 			if (null !== \$criteria) {
-				return \$nestedSetChildren;
+				return \$collNestedSetChildren;
 			}
-			\$this->nestedSetChildren = \$nestedSetChildren;
+			\$this->collNestedSetChildren = \$collNestedSetChildren;
 		}
 	}
-	return \$this->nestedSetChildren;
+	return \$this->collNestedSetChildren;
 }
 ";
 	}
@@ -712,8 +741,8 @@ public function getChildren(\$criteria = null, PropelPDO \$con = null)
  */
 public function countChildren(\$criteria = null, PropelPDO \$con = null)
 {
-	if(null === \$this->nestedSetChildren || null !== \$criteria) {
-		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->nestedSetChildren)) {
+	if(null === \$this->collNestedSetChildren || null !== \$criteria) {
+		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
 			return 0;
 		} else {
 			return $queryClassname::create(null, \$criteria)
@@ -721,7 +750,7 @@ public function countChildren(\$criteria = null, PropelPDO \$con = null)
 				->count(\$con);
 		}
 	} else {
-		return count(\$this->nestedSetChildren);
+		return count(\$this->collNestedSetChildren);
 	}
 }
 ";
