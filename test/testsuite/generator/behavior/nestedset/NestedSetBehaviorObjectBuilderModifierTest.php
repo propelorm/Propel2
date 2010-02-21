@@ -384,23 +384,56 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertEquals(array(), $t2->getChildren(), 'getChildren() returns an empty array for leafs');
-		$descendants = $t3->getChildren();
+	$this->assertTrue($t2->getChildren() instanceof PropelObjectCollection, 'getChildren() returns a collection');
+		$this->assertEquals(0, count($t2->getChildren()), 'getChildren() returns an empty collection for leafs');
+		$children = $t3->getChildren();
 		$expected = array(
 			't4' => array(5, 6, 2), 
 			't5' => array(7, 12, 2), 
 		);
-		$this->assertEquals($expected, $this->dumpNodes($descendants, true), 'getChildren() returns an array of children');
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
 		$c = new Criteria();
 		$c->add(Table9Peer::TITLE, 't5');
-		$descendants = $t3->getDescendants($c);
+		$children = $t3->getChildren($c);
 		$expected = array(
 			't5' => array(7, 12, 2), 
 		);
-		$this->assertEquals($expected, $this->dumpNodes($descendants, true), 'getChildren() accepts a criteria as parameter');
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() accepts a criteria as parameter');
+	}
+
+	public function testGetChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		$con = Propel::getConnection();
+		$count = $con->getQueryCount();
+		$children = $t3->getChildren(null, $con);
+		$children = $t3->getChildren(null, $con);
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'getChildren() only issues a query once');
+		$expected = array(
+			't4' => array(5, 6, 2), 
+			't5' => array(7, 12, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
+		// when using criteria, cache is not used
+		$c = new Criteria();
+		$c->add(Table9Peer::TITLE, 't5');
+		$children = $t3->getChildren($c, $con);
+		$this->assertEquals($count + 2, $con->getQueryCount(), 'getChildren() issues a new query when âssed a non-null Criteria');
+		$expected = array(
+			't5' => array(7, 12, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() accepts a criteria as parameter');
+		// but not erased either
+		$children = $t3->getChildren(null, $con);
+		$this->assertEquals($count + 2, $con->getQueryCount(), 'getChildren() keeps its internal cache after being called with a Criteria');
+		$expected = array(
+			't4' => array(5, 6, 2), 
+			't5' => array(7, 12, 2), 
+		);
+	$this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
 	}
 	
-	public function testGetNumberOfChildren()
+	public function testCountChildren()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
@@ -412,11 +445,32 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertEquals(0, $t2->getNumberOfChildren(), 'getNumberOfChildren() returns 0 for leafs');
-		$this->assertEquals(2, $t3->getNumberOfChildren(), 'getNumberOfChildren() returns the number of children');
+		$this->assertEquals(0, $t2->countChildren(), 'countChildren() returns 0 for leafs');
+		$this->assertEquals(2, $t3->countChildren(), 'countChildren() returns the number of children');
 		$c = new Criteria();
 		$c->add(Table9Peer::TITLE, 't5');
-		$this->assertEquals(1, $t3->getNumberOfChildren($c), 'getNumberOfChildren() accepts a criteria as parameter');
+		$this->assertEquals(1, $t3->countChildren($c), 'countChildren() accepts a criteria as parameter');
+	}
+
+	public function testCountChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		$con = Propel::getConnection();
+		$count = $con->getQueryCount();
+		$children = $t3->getChildren(null, $con);
+		$nbChildren = $t3->countChildren(null, $con);
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'countChildren() uses the internal collection when passed no Criteria');
+		$nbChildren = $t3->countChildren(new Criteria(), $con);
+		$this->assertEquals($count + 2, $con->getQueryCount(), 'countChildren() issues a new query when passed a Criteria');
 	}
 	
 	public function testGetFirstChild()
@@ -846,6 +900,37 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToFirstChildOf() moves the entire subtree to the same level correctly');
 	}
 
+	public function testMoveToFirstChildOfAndChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		// fill children cache
+		$t3->getChildren();
+		$t1->getChildren();
+		// move
+		$t5->moveToFirstChildOf($t1);
+		$children = $t3->getChildren();
+		$expected = array(
+			't4' => array(11, 12, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToFirstChildOf() reinitializes the child collection of all concerned nodes');
+		$children = $t1->getChildren();
+		$expected = array(
+			't5' => array(2, 7, 1), 
+			't2' => array(8, 9, 1), 
+			't3' => array(10, 13, 1), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToFirstChildOf() reinitializes the child collection of all concerned nodes');
+	}
+	
 	public function testMoveToLastChildOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
@@ -904,6 +989,37 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			't7' => array(8, 9, 3),
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToLastChildOf() moves the entire subtree to the same level correctly');
+	}
+
+	public function testMoveToLastChildOfAndChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		// fill children cache
+		$t3->getChildren();
+		$t1->getChildren();
+		// move
+		$t5->moveToLastChildOf($t1);
+		$children = $t3->getChildren();
+		$expected = array(
+			't4' => array(5, 6, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToLastChildOf() reinitializes the child collection of all concerned nodes');
+		$children = $t1->getChildren();
+		$expected = array(
+			't2' => array(2, 3, 1), 
+			't3' => array(4, 7, 1), 
+			't5' => array(8, 13, 1), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToLastChildOf() reinitializes the child collection of all concerned nodes');
 	}
 
 	public function testMoveToPrevSiblingOf()
@@ -994,7 +1110,69 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'moveToPrevSiblingOf() moves the entire subtree at the same level correctly');
 	}
-	
+
+	public function testMoveToPrevSiblingOfAndChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		// fill children cache
+		$t3->getChildren();
+		$t1->getChildren();
+		// move
+		$t5->moveToPrevSiblingOf($t2);
+		$children = $t3->getChildren();
+		$expected = array(
+			't4' => array(11, 12, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToPrevSiblingOf() reinitializes the child collection of all concerned nodes');
+		$children = $t1->getChildren();
+		$expected = array(
+			't5' => array(2, 7, 1), 
+			't2' => array(8, 9, 1), 
+			't3' => array(10, 13, 1), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToPrevSiblingOf() reinitializes the child collection of all concerned nodes');
+	}
+
+	public function testMoveToNextSiblingOfAndChildrenCache()
+	{
+		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
+		/* Tree used for tests
+		 t1
+		 |  \
+		 t2 t3
+		    |  \
+		    t4 t5
+		       |  \
+		       t6 t7
+		*/
+		// fill children cache
+		$t3->getChildren();
+		$t1->getChildren();
+		// move
+		$t5->moveToNextSiblingOf($t3);
+		$children = $t3->getChildren();
+		$expected = array(
+			't4' => array(5, 6, 2), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToNextSiblingOf() reinitializes the child collection of all concerned nodes');
+		$children = $t1->getChildren();
+		$expected = array(
+			't2' => array(2, 3, 1), 
+			't3' => array(4, 7, 1), 
+			't5' => array(8, 13, 1), 
+		);
+		$this->assertEquals($expected, $this->dumpNodes($children, true), 'moveToNextSiblingOf() reinitializes the child collection of all concerned nodes');
+	}
+
 	public function testMoveToNextSiblingOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
@@ -1138,7 +1316,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	
 	public function testCompatibilityProxies()
 	{
-		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
+		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'getNumberOfChildren', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
 		foreach ($proxies as $method) {
 			$this->assertFalse(method_exists('Table9', $method), 'proxies are not enabled by default');
 			$this->assertTrue(method_exists('Table10', $method), 'setting method_proxies to true adds compatibility proxies');

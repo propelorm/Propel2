@@ -72,7 +72,7 @@ echo $s2->isRoot();      // false
 echo $s2->isLeaf();      // false
 echo $s2->getLevel();    // 1
 echo $s2->hasChildren(); // true
-echo $s2->getNumberOfChildren(); // 1
+echo $s2->countChildren(); // 1
 echo $s2->hasSiblings(); // true
 }}}
 
@@ -289,7 +289,7 @@ bool  hasParent()
 bool  hasPrevSibling()
 bool  hasNextSibling()
 bool  hasChildren()
-int   getNumberOfChildren()
+int   countChildren()
 int   getNumberOfDescendants()
 
 // tree traversal methods

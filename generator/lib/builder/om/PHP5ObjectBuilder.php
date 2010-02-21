@@ -4123,6 +4123,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		} // if (\$deep)
 ";
 
+		$this->applyBehaviorModifier('objectClearReferences', $script, "		");
+		
 		foreach ($vars as $varName) {
 			$script .= "
 		\$this->$varName = null;";

@@ -441,7 +441,8 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 					\$object->setRightValue(\$row[$n]);";
 			} else if ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
 				$script .= "
-					\$object->setLevel(\$row[$n]);";
+					\$object->setLevel(\$row[$n]);
+					\$object->clearNestedSetChildren();";
 			}
 			$n++;
 		}

@@ -77,6 +77,12 @@ class NestedSetBehaviorObjectBuilderModifier
  * @var        array
  */
 protected \$nestedSetQueries = array();
+
+/**
+ * Internal cache for children nodes
+ * @var        null|PropelObjectCollection
+ */
+protected \$nestedSetChildren = null;
 ";
 	}
 	
@@ -101,6 +107,11 @@ protected \$nestedSetQueries = array();
 		return "// fill up the room that was used by the node
 $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->behavior->useScope() ? ", \$this->getScopeValue()" : "") . ", \$con);
 ";
+	}
+	
+	public function objectClearReferences($builder)
+	{
+		return "\$this->clearNestedSetChildren();";
 	}
 	
 	public function objectMethods($builder)
@@ -143,9 +154,13 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addHasNextSibling($script);
 		$this->addGetNextSibling($script);
 		
+		$this->addNestedSetChildrenClear($script);
+		$this->addNestedSetChildrenInit($script);
+		$this->addNestedSetChildAdd($script);
 		$this->addHasChildren($script);
 		$this->addGetChildren($script);
-		$this->addGetNumberOfChildren($script);
+		$this->addCountChildren($script);
+		
 		$this->addGetFirstChild($script);
 		$this->addGetLastChild($script);
 		$this->addGetSiblings($script);
@@ -570,7 +585,68 @@ public function getNextSibling(PropelPDO \$con = null)
 }
 ";
 	}
-	
+
+	protected function addNestedSetChildrenClear(&$script)
+	{
+		$script .= "
+/**
+ * Clears out the \$nestedSetChildren collection
+ *
+ * This does not modify the database; however, it will remove any associated objects, causing
+ * them to be refetched by subsequent calls to accessor method.
+ *
+ * @return     void
+ */
+public function clearNestedSetChildren()
+{
+	\$this->nestedSetChildren = null;
+}
+";
+	}
+
+	protected function addNestedSetChildrenInit(&$script)
+	{
+		$script .= "
+/**
+ * Initializes the \$nestedSetChildren collection.
+ *
+ * @return     void
+ */
+public function initNestedSetChildren()
+{
+	\$this->nestedSetChildren = new PropelObjectCollection();
+	\$this->nestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getClassname() . "');
+}
+";
+	}
+
+	protected function addNestedSetChildAdd(&$script)
+	{
+		$objectClassname = $this->objectClassname;
+		$objectName = '$' . $this->table->getStudlyPhpName();
+		$script .= "
+/**
+ * Adds an element to the internal \$nestedSetChildren collection.
+ * Beware that this doesn't insert a node in the tree.
+ * This method is only used to facilitate children hydration.
+ *
+ * @param      $objectClassname $objectName
+ *
+ * @return     void
+ */
+public function addNestedSetChild($objectName)
+{
+	if (\$this->nestedSetChildren === null) {
+		\$this->initNestedSetChildren();
+	}
+	if (!\$this->nestedSetChildren->contains($objectName)) { // only add it if the **same** object is not already associated
+		\$this->nestedSetChildren[]= $objectName;
+		// {$objectName}->setParent(\$this);
+	}
+}
+";
+	}
+  	
 	protected function addHasChildren(&$script)
 	{
 		$script .= "
@@ -595,25 +671,33 @@ public function hasChildren()
 /**
  * Gets the children of the given node
  *
- * @param      Criteria \$query Criteria to filter results.
+ * @param      Criteria  \$criteria Criteria to filter results.
  * @param      PropelPDO \$con Connection to use.
- * @return     array 		List of $objectClassname objects
+ * @return     array     List of $objectClassname objects
  */
-public function getChildren(\$query = null, PropelPDO \$con = null)
+public function getChildren(\$criteria = null, PropelPDO \$con = null)
 {
-	if(\$this->isLeaf()) {
-		return array();
-	} else {
-		return $queryClassname::create(null, \$query)
-			->childrenOf(\$this)
-			->orderByBranch()
-			->find(\$con);
+	if(null === \$this->nestedSetChildren || null !== \$criteria) {
+		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->nestedSetChildren)) {
+			// return empty collection
+			\$this->initNestedSetChildren();
+		} else {
+			\$nestedSetChildren = $queryClassname::create(null, \$criteria)
+  			->childrenOf(\$this)
+  			->orderByBranch()
+				->find(\$con);
+			if (null !== \$criteria) {
+				return \$nestedSetChildren;
+			}
+			\$this->nestedSetChildren = \$nestedSetChildren;
+		}
 	}
+	return \$this->nestedSetChildren;
 }
 ";
 	}
 
-	protected function addGetNumberOfChildren(&$script)
+	protected function addCountChildren(&$script)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
@@ -622,18 +706,22 @@ public function getChildren(\$query = null, PropelPDO \$con = null)
 /**
  * Gets number of children for the given node
  *
- * @param      Criteria \$query Criteria to filter results. 
+ * @param      Criteria  \$criteria Criteria to filter results. 
  * @param      PropelPDO \$con Connection to use.
- * @return     int 		Number of children
+ * @return     int       Number of children
  */
-public function getNumberOfChildren(\$query = null, PropelPDO \$con = null)
+public function countChildren(\$criteria = null, PropelPDO \$con = null)
 {
-	if(\$this->isLeaf()) {
-		return 0;
+	if(null === \$this->nestedSetChildren || null !== \$criteria) {
+		if (\$this->isLeaf() || (\$this->isNew() && null === \$this->nestedSetChildren)) {
+			return 0;
+		} else {
+			return $queryClassname::create(null, \$criteria)
+				->childrenOf(\$this)
+				->count(\$con);
+		}
 	} else {
-		return $queryClassname::create(null, \$query)
-			->childrenOf(\$this)
-			->count(\$con);
+		return count(\$this->nestedSetChildren);
 	}
 }
 ";
@@ -889,6 +977,9 @@ public function insertAsFirstChildOf(\$parent)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
+	// update the children collection of the parent
+	\$parent->addNestedSetChild(\$this);
+	
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -931,6 +1022,9 @@ public function insertAsLastChildOf(\$parent)
 	\$this->setScopeValue(\$scope);";
 		}
 		$script .= "
+	// update the children collection of the parent
+	\$parent->addNestedSetChild(\$this);
+	
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
@@ -1348,6 +1442,18 @@ public function setParentNode(\$parent = null)
 {
 	return;
 }
+
+/**
+ * Alias for countChildren(), for BC with Propel 1.4 nested sets
+ *
+ * @deprecated since 1.5
+ * @see        setParent
+ */
+public function getNumberOfChildren(PropelPDO \$con = null)
+{
+	return \$this->countChildren(null, \$con);
+}
+
 
 /**
  * Alias for getPrevSibling(), for BC with Propel 1.4 nested sets
