@@ -290,7 +290,7 @@ bool  hasPrevSibling()
 bool  hasNextSibling()
 bool  hasChildren()
 int   countChildren()
-int   getNumberOfDescendants()
+int   countDescendants()
 
 // tree traversal methods
 $node getParent()

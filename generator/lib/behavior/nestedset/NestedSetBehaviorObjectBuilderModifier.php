@@ -174,7 +174,7 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		$this->addGetLastChild($script);
 		$this->addGetSiblings($script);
 		$this->addGetDescendants($script);
-		$this->addGetNumberOfDescendants($script);
+		$this->addCountDescendants($script);
 		$this->addGetBranch($script);
 		$this->addGetAncestors($script);
 		
@@ -869,7 +869,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 ";
 	}
 
-	protected function addGetNumberOfDescendants(&$script)
+	protected function addCountDescendants(&$script)
 	{
 		$objectClassname = $this->objectClassname;
 		$peerClassname = $this->peerClassname;
@@ -882,7 +882,7 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
  * @param      PropelPDO \$con Connection to use.
  * @return     int 		Number of descendants
  */
-public function getNumberOfDescendants(\$query = null, PropelPDO \$con = null)
+public function countDescendants(\$query = null, PropelPDO \$con = null)
 {
 	if(\$this->isLeaf()) {
 		// save one query
@@ -1473,6 +1473,17 @@ public function setParentNode(\$parent = null)
 }
 
 /**
+ * Alias for countDecendants(), for BC with Propel 1.4 nested sets
+ *
+ * @deprecated since 1.5
+ * @see        setParent
+ */
+public function getNumberOfDescendants(PropelPDO \$con = null)
+{
+	return \$this->countDescendants(null, \$con);
+}
+
+/**
  * Alias for countChildren(), for BC with Propel 1.4 nested sets
  *
  * @deprecated since 1.5
@@ -1482,7 +1493,6 @@ public function getNumberOfChildren(PropelPDO \$con = null)
 {
 	return \$this->countChildren(null, \$con);
 }
-
 
 /**
  * Alias for getPrevSibling(), for BC with Propel 1.4 nested sets

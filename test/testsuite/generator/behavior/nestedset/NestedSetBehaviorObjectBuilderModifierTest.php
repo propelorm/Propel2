@@ -604,7 +604,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() accepts a criteria as parameter');
 	}
 	
-	public function testGetNumberOfDescendants()
+	public function testCountDescendants()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
@@ -616,11 +616,11 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       |  \
 		       t6 t7
 		*/
-		$this->assertEquals(0, $t2->getNumberOfDescendants(), 'getNumberOfDescendants() returns 0 for leafs');
-		$this->assertEquals(4, $t3->getNumberOfDescendants(), 'getNumberOfDescendants() returns the number of descendants');
+		$this->assertEquals(0, $t2->countDescendants(), 'countDescendants() returns 0 for leafs');
+		$this->assertEquals(4, $t3->countDescendants(), 'countDescendants() returns the number of descendants');
 		$c = new Criteria();
 		$c->add(Table9Peer::TITLE, 't5');
-		$this->assertEquals(1, $t3->getNumberOfDescendants($c), 'getNumberOfDescendants() accepts a criteria as parameter');
+		$this->assertEquals(1, $t3->countDescendants($c), 'countDescendants() accepts a criteria as parameter');
 	}
 	
 	public function testGetBranch()
@@ -1348,7 +1348,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	
 	public function testCompatibilityProxies()
 	{
-		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'getNumberOfChildren', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
+		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'getNumberOfDescendants', 'getNumberOfChildren', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
 		foreach ($proxies as $method) {
 			$this->assertFalse(method_exists('Table9', $method), 'proxies are not enabled by default');
 			$this->assertTrue(method_exists('Table10', $method), 'setting method_proxies to true adds compatibility proxies');
