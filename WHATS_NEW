@@ -131,7 +131,7 @@ Array                    | Collection object
 foreach($books as $book) | foreach($books as $book)
 count($books)            | count($books)     or $books->count()
 $books[]= $book          | $books[]= $book   or $books->append($book)
-$books[1]                | $books[1]         or $books->getFirst()
+$books[0]                | $books[0]         or $books->getFirst()
 $books[123]              | $books[123]       or $books->offsetGet(123)
 unset($books[1])         | unset($books[1])  or $books->remove(1)
 empty($books)            | $books->isEmpty()
