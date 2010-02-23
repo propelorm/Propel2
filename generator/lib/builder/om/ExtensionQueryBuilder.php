@@ -169,7 +169,10 @@ class ".$this->getClassname()." extends $baseClassname {
 		if (\$criteria instanceof " . $this->getClassname() . ") {
 			return \$criteria;
 		}
-		\$query = new self('" . $this->getTable()->getDatabase()->getName() . "', '" . $this->getTable()->getPhpName() . "', \$modelAlias);
+		\$query = new self();
+		if (null !== \$modelAlias) {
+			\$query->setModelalias(\$modelAlias);
+		}
 		if (\$criteria instanceof Criteria) {
 			\$query->mergeWith(\$criteria);
 		}
