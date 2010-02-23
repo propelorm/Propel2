@@ -1469,7 +1469,7 @@ public function retrieveParent(PropelPDO \$con = null)
  */
 public function setParentNode(\$parent = null)
 {
-	return;
+	return \$this->setParent(\$parent);
 }
 
 /**
