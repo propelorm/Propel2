@@ -148,7 +148,7 @@ class ModelCriteria extends Criteria
 	 * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 	 * </code>
 	 *
-	 * @param     mixed $formatter a formatter class name, or a formatter instance
+	 * @param     string|PropelFormatter $formatter a formatter class name, or a formatter instance
 	 * @return    ModelCriteria The current object, for fluid interface
 	 */
 	public function setFormatter($formatter)
@@ -949,7 +949,8 @@ class ModelCriteria extends Criteria
 	 */
 	public function findBy($column, $value, $con = null)
 	{
-		$this->filterBy($column, $value);
+		$method = 'filterBy' . $column;
+		$this->$method($value);
 
 		return $this->find($con);
 	}
@@ -992,7 +993,8 @@ class ModelCriteria extends Criteria
 	 */
 	public function findOneBy($column, $value, $con = null)
 	{
-		$this->filterBy($column, $value);
+		$method = 'filterBy' . $column;
+		$this->$method($value);
 
 		return $this->findOne($con);
 	}
