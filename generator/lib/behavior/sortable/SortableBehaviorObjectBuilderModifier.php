@@ -254,8 +254,19 @@ public function isLast(PropelPDO \$con = null)
  * @return    {$this->objectClassname}
  */
 public function getNext(PropelPDO \$con = null)
-{
-	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+{";
+		if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
+			$script .= "
+	return {$this->queryClassname}::create()
+		->filterByRank(\$this->{$this->getColumnGetter()}() + 1)
+		->inList(\$this->{$this->getColumnGetter('scope_column')}())
+		->findOne(\$con);";
+		} else {
+			$script .= "
+	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() + 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
+		}
+
+		$script .= "
 }
 ";
 	}
@@ -272,8 +283,18 @@ public function getNext(PropelPDO \$con = null)
  * @return    {$this->objectClassname}
  */
 public function getPrevious(PropelPDO \$con = null)
-{
-	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
+{";
+		if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
+			$script .= "
+	return {$this->queryClassname}::create()
+		->filterByRank(\$this->{$this->getColumnGetter()}() - 1)
+		->inList(\$this->{$this->getColumnGetter('scope_column')}())
+		->findOne(\$con);";
+		} else {
+			$script .= "
+	return {$this->queryClassname}::create()->findOneByRank(\$this->{$this->getColumnGetter()}() - 1, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);";
+		}
+		$script .= "
 }
 ";
 	}
