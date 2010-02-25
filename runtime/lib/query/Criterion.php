@@ -81,16 +81,16 @@ class Criterion
 	public function __construct(Criteria $outer, $column, $value, $comparison = null)
 	{
 		$this->value = $value;
-		$dotPos = strrpos($column,'.');
+		$dotPos = strrpos($column, '.');
 		if ($dotPos === false) {
 			// no dot => aliased column
 			$this->table = null;
 			$this->column = $column;
 		} else {
 			$this->table = substr($column, 0, $dotPos); 
-			$this->column = substr($column, $dotPos+1, strlen($column));
+			$this->column = substr($column, $dotPos + 1);
 		}
-		$this->comparison = $comparison === null ? Criteria::EQUAL : $comparison;
+		$this->comparison = ($comparison === null) ? Criteria::EQUAL : $comparison;
 		$this->init($outer);
 	}
 
@@ -100,7 +100,7 @@ class Criterion
 	*/
 	public function init(Criteria $criteria)
 	{
-		//init $this->db
+		// init $this->db
 		try {
 			$db = Propel::getDB($criteria->getDbName());
 			$this->setDB($db);
@@ -110,12 +110,9 @@ class Criterion
 			Propel::log("Could not get a DBAdapter, sql may be wrong", Propel::LOG_ERR);
 		}
 
-		//init $this->realtable
+		// init $this->realtable
 		$realtable = $criteria->getTableForAlias($this->table);
-		if (! strlen ( $realtable ) ) {
-			$realtable = $this->table;
-		}
-		$this->realtable = $realtable;
+		$this->realtable = $realtable ? $realtable : $this->table;
 
 	}
 
@@ -400,7 +397,6 @@ class Criterion
 	protected function appendBasicToPs(&$sb, array &$params)
 	{
 		$field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
-		$db = $this->getDb();
 		// NULL VALUES need special treatment because the SQL syntax is different
 		// i.e. table.column IS NULL rather than table.column = null
 		if ($this->value !== null) {
@@ -415,7 +411,7 @@ class Criterion
 				// default case, it is a normal col = value expression; value
 				// will be replaced w/ '?' and will be inserted later using PDO bindValue()
 				if ($this->ignoreStringCase) {
-					$sb .= $db->ignoreCase($field) . $this->comparison . $db->ignoreCase(':p'.count($params));
+					$sb .= $this->getDb()->ignoreCase($field) . $this->comparison . $this->getDb()->ignoreCase(':p'.count($params));
 				} else {
 					$sb .= $field . $this->comparison . ':p'.count($params);
 				}

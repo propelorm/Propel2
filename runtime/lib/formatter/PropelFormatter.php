@@ -61,8 +61,8 @@ abstract class PropelFormatter
 		if (null === $this->criteria || !$this->criteria instanceof ModelCriteria) {
 			throw new PropelException('A formatter needs a ModelCriteria. Use PropelFormatter::setCriteria() to set one');
 		}
-		$this->class = $this->getCriteria()->getModelName();
-		$this->peer = $this->getCriteria()->getModelPeerName();		
+		$this->class = $this->criteria->getModelName();
+		$this->peer = $this->criteria->getModelPeerName();		
 	}
 	
 	/**

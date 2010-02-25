@@ -94,8 +94,7 @@ class PropelObjectFormatter extends PropelFormatter
 	public function getAllObjectsFromRow($row)
 	{
 		$col = 0;
-		$peer = $this->peer;
-		list($obj, $col) = call_user_func(array($peer, 'populateObject'), $row, $col);
+		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row, $col);
 		foreach ($this->getCriteria()->getWith() as $join) {
 			$startObject = $join->getObjectToRelate($obj);
 			$peer = $join->getTableMap()->getPeerClassname();

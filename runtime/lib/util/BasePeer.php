@@ -765,12 +765,12 @@ class BasePeer
 					$fromClause[] = $tableName;
 				}
 
-			} // if $dotPost !== null
+			} // if $dotPost !== false
 		}
 
 		// set the aliases
 		foreach ($aliases as $alias => $col) {
-			$selectClause[] = $col . " AS " . $alias;
+			$selectClause[] = $col . ' AS ' . $alias;
 		}
 
 		// add the criteria to WHERE clause
@@ -779,11 +779,9 @@ class BasePeer
 		foreach ($criteria->keys() as $key) {
 
 			$criterion = $criteria->getCriterion($key);
-			$someCriteria = $criterion->getAttachedCriterion();
-			$someCriteriaLength = count($someCriteria);
 			$table = null;
-			for ($i=0; $i < $someCriteriaLength; $i++) {
-				$tableName = $someCriteria[$i]->getTable();
+			foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
+				$tableName = $attachedCriterion->getTable();
 
 				$table = $criteria->getTableForAlias($tableName);
 				if ($table !== null) {
@@ -793,18 +791,15 @@ class BasePeer
 					$table = $tableName;
 				}
 
-				$ignoreCase =
-				(($criteria->isIgnoreCase()
-				|| $someCriteria[$i]->isIgnoreCase())
-				&& (strpos($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType(), "VARCHAR") !== false)
-				);
-
-				$someCriteria[$i]->setIgnoreCase($ignoreCase);
+				if (($criteria->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
+				&& $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+					$attachedCriterion->setIgnoreCase(true);
+				}
 			}
 
 			$criterion->setDB($db);
 
-			$sb = "";
+			$sb = '';
 			$criterion->appendPsTo($sb, $params);
 			$whereClause[] = $sb;
 		}
@@ -812,20 +807,22 @@ class BasePeer
 		// Handle joins
 		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
 		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
-		foreach ((array) $criteria->getJoins() as $join) { 
+		foreach ($criteria->getJoins() as $join) { 
 			// The join might have been established using an alias name
 			$leftTable = $join->getLeftTableName();
-			$leftTableAlias = '';
 			if ($realTable = $criteria->getTableForAlias($leftTable)) {
-				$leftTableAlias = " $leftTable";
+				$leftTableForFrom = $realTable . ' ' . $leftTable;
 				$leftTable = $realTable;
+			} else {
+				$leftTableForFrom = $leftTable;
 			}
 
 			$rightTable = $join->getRightTableName();
-			$rightTableAlias = '';
 			if ($realTable = $criteria->getTableForAlias($rightTable)) {
-				$rightTableAlias = " $rightTable";
+				$rightTableForFrom =  $realTable . ' ' . $rightTable;
 				$rightTable = $realTable;
+			} else {
+				$rightTableForFrom = $rightTable;
 			}
 
 			// determine if casing is relevant.
@@ -837,8 +834,7 @@ class BasePeer
 
 			// build the condition
 			$condition = '';
-			foreach ($join->getConditions() as $index => $conditionDesc)
-			{
+			foreach ($join->getConditions() as $index => $conditionDesc) {
 				if ($ignoreCase) {
 					$condition .= $db->ignoreCase($conditionDesc['left']) . $conditionDesc['operator'] . $db->ignoreCase($conditionDesc['right']);
 				} else {
@@ -853,14 +849,14 @@ class BasePeer
 			if ($joinType = $join->getJoinType()) {
 			  // real join
 				if (!$fromClause) {
-					$fromClause[] = $leftTable . $leftTableAlias;
+					$fromClause[] = $leftTableForFrom;
 				}
-				$joinTables[] = $rightTable . $rightTableAlias;
-				$joinClause[] = $join->getJoinType() . ' ' . $rightTable . $rightTableAlias . " ON ($condition)";
+				$joinTables[] = $rightTableForFrom;
+				$joinClause[] = $join->getJoinType() . ' ' . $rightTableForFrom . " ON ($condition)";
 			} else {
 			  // implicit join, translates to a where
-				$fromClause[] = $leftTable . $leftTableAlias;
-				$fromClause[] = $rightTable . $rightTableAlias;
+				$fromClause[] = $leftTableForFrom;
+				$fromClause[] = $rightTableForFrom;
 				$whereClause[] = $condition;
 			}
 		}
@@ -884,7 +880,7 @@ class BasePeer
 		$having = $criteria->getHaving();
 		$havingString = null;
 		if ($having !== null) {
-			$sb = "";
+			$sb = '';
 			$having->appendPsTo($sb, $params);
 			$havingString = $sb;
 		}
@@ -906,9 +902,8 @@ class BasePeer
 
 				if ($dotPos !== false) {
 					$tableName = substr($orderByColumn, 0, $dotPos);
-					$columnName = substr($orderByColumn, $dotPos+1);
-				}
-				else {
+					$columnName = substr($orderByColumn, $dotPos + 1);
+				} else {
 					$tableName = '';
 					$columnName = $orderByColumn;
 				}
@@ -918,8 +913,7 @@ class BasePeer
 				if ($spacePos !== false) {
 					$direction = substr($columnName, $spacePos);
 					$columnName = substr($columnName, 0, $spacePos);
-				}
-				else {
+				}	else {
 					$direction = '';
 				}
 
@@ -948,7 +942,7 @@ class BasePeer
 			$fromClause[] = $criteria->getPrimaryTableName();
 		}
 
-		// from / join tables quoten if it is necessary
+		// from / join tables quoted if it is necessary
 		if ($db->useQuoteIdentifier()) {
 			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
 			$joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
