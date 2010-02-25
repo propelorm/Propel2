@@ -459,7 +459,7 @@ class Propel
 			}
 		}
 
-		if (!array_key_exists($name, self::$dbMaps)) {
+		if (!isset(self::$dbMaps[$name])) {
 			$clazz = self::$databaseMapClass;
 			self::$dbMaps[$name] = new $clazz($name);
 		}

@@ -59,7 +59,7 @@ class PropelConfiguration implements ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->parameter[$offset]) || array_key_exists($offset, $this->parameters);
+		return array_key_exists($offset, $this->parameters);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class PropelConfiguration implements ArrayAccess
 		$ret = $this->parameters;
 		$parts = explode('.', $name); //name.space.name
 		while ($part = array_shift($parts)) {
-			if (array_key_exists($part, $ret)) {
+			if (isset($ret[$part])) {
 				$ret = $ret[$part];
 			} else {
 				return $default;

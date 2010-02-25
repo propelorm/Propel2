@@ -480,24 +480,25 @@ class ModelCriteria extends Criteria
 		// relation looks like '$leftName.$relationName $relationAlias'
 		list($fullName, $relationAlias) = self::getClassAndAlias($relation);
 		if (strpos($fullName, '.') === false) {
-			$tableMap = $this->getTableMap();
+			// simple relation name, refers to the current table
 			$leftName = $this->getModelAliasOrName();
 			$relationName = $fullName;
 			$previousJoin = null;
+			$tableMap = $this->getTableMap();
 		} else {
 			list($leftName, $relationName) = explode('.', $fullName);
 			// find the TableMap for the left table using the $leftName
 			if ($leftName == $this->getModelAliasOrName()) {
 				$previousJoin = null;
 				$tableMap = $this->getTableMap();
-			} elseif (array_key_exists($leftName, $this->joins)) {
+			} elseif (isset($this->joins[$leftName])) {
 				$previousJoin = $this->joins[$leftName];
 				$tableMap = $previousJoin->getTableMap();
 			} else {
 				throw new PropelException('Unknown table or alias ' . $leftName);
 			}
 		}
-		$leftTableAlias = array_key_exists($leftName, $this->aliases) ? $leftName : null;
+		$leftTableAlias = isset($this->aliases[$leftName]) ? $leftName : null;
 		
 		// find the RelationMap in the TableMap using the $relationName
 		if(!$tableMap->hasRelation($relationName)) {
@@ -588,7 +589,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function with($relation)
 	{
-		if (!array_key_exists($relation, $this->joins)) {
+		if (!isset($this->joins[$relation])) {
 			throw new PropelException('Unknown relation name or alias ' . $relation);
 		}
 		$join = $this->joins[$relation];
@@ -664,7 +665,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function useQuery($relationName, $secondaryCriteriaClass = null)
 	{
-		if (!array_key_exists($relationName, $this->joins)) {
+		if (!isset($this->joins[$relationName])) {
 			throw new PropelException('Unknown class or alias ' . $name);
 		}
 		$className = $this->joins[$relationName]->getTableMap()->getPhpName();
@@ -690,7 +691,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function endUse()
 	{
-		if (array_key_exists($this->modelAlias, $this->aliases)) {
+		if (isset($this->aliases[$this->modelAlias])) {
 			unset($this->aliases[$this->modelAlias]);
 		}
 		$primaryCriteria = $this->getPrimaryCriteria();
@@ -1450,7 +1451,7 @@ EOT;
 		if ($class == $this->getModelAliasOrName()) {
 			// column of the Criteria's model
 			$tableMap = $this->getTableMap();
-		} elseif (array_key_exists($class, $this->joins)) {
+		} elseif (isset($this->joins[$class])) {
 			// column of a relations's model
 			$tableMap = $this->joins[$class]->getTableMap();
 		} else {
@@ -1463,7 +1464,7 @@ EOT;
 		
 		if ($tableMap->hasColumnByPhpName($phpName)) {
 			$column = $tableMap->getColumnByPhpName($phpName);
-			if (array_key_exists($class, $this->aliases)) {
+			if (isset($this->aliases[$class])) {
 				$this->currentAlias = $class;
 				$realColumnName = $class . '.' . $column->getName();
 			} else {
