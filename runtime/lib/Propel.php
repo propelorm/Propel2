@@ -538,11 +538,8 @@ class Propel
 
 		// IF a WRITE-mode connection was requested
 		// or Propel is configured to always use the master connection
-		// or the slave for this connection has already been set to FALSE (indicating no slave)
 		// THEN return the master connection.
-		if ( $mode != Propel::CONNECTION_READ 
-			|| self::$forceMasterConnection
-			|| (isset(self::$connectionMap[$name]['slave']) && self::$connectionMap[$name]['slave'] === false)) {
+		if ($mode != Propel::CONNECTION_READ || self::$forceMasterConnection) {
 			return self::getMasterConnection($name);
 		} else {
 			return self::getSlaveConnection($name);
