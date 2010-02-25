@@ -452,14 +452,15 @@ class BasePeer
 	{
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 		$db = Propel::getDB($criteria->getDbName());
-
+		$stmt = null;
+		
 		if ($con === null) {
 			$con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
 		}
 
-		$stmt = null;
-
-		if ($criteria->isUseTransaction()) $con->beginTransaction();
+		if ($criteria->isUseTransaction()) {
+			$con->beginTransaction();
+		} 
 
 		try {
 
@@ -472,11 +473,17 @@ class BasePeer
 
 			$stmt->execute();
 
-			if ($criteria->isUseTransaction()) $con->commit();
+			if ($criteria->isUseTransaction()) {
+				$con->commit();
+			}
 
 		} catch (Exception $e) {
-			if ($stmt) $stmt = null; // close
-			if ($criteria->isUseTransaction()) $con->rollBack();
+			if ($stmt) {
+				$stmt = null; // close
+			}
+			if ($criteria->isUseTransaction()) {
+				$con->rollBack();
+			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException($e);
 		}

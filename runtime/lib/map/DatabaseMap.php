@@ -120,7 +120,7 @@ class DatabaseMap
     if ( strpos($name, '.') > 0) {
       $name = substr($name, 0, strpos($name, '.'));
     }
-    return isset($this->tables[$name]);
+    return array_key_exists($name, $this->tables);
   }
 
   /**

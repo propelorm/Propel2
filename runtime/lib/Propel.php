@@ -459,7 +459,7 @@ class Propel
 			}
 		}
 
-		if (!isset(self::$dbMaps[$name])) {
+		if (!array_key_exists($name, self::$dbMaps)) {
 			$clazz = self::$databaseMapClass;
 			self::$dbMaps[$name] = new $clazz($name);
 		}
@@ -540,54 +540,87 @@ class Propel
 		// or Propel is configured to always use the master connection
 		// or the slave for this connection has already been set to FALSE (indicating no slave)
 		// THEN return the master connection.
-		if ($mode != Propel::CONNECTION_READ || self::$forceMasterConnection || (isset(self::$connectionMap[$name]['slave']) && self::$connectionMap[$name]['slave'] === false)) {
-			if (!isset(self::$connectionMap[$name]['master'])) {
-				// load connection parameter for master connection
-				$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
-				if (empty($conparams)) {
-					throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
+		if ( $mode != Propel::CONNECTION_READ 
+			|| self::$forceMasterConnection
+			|| (isset(self::$connectionMap[$name]['slave']) && self::$connectionMap[$name]['slave'] === false)) {
+			return self::getMasterConnection($name);
+		} else {
+			return self::getSlaveConnection($name);
+		}
+
+	} 
+	
+	/**
+	 * Gets an already-opened write PDO connection or opens a new one for passed-in db name.
+	 *
+	 * @param      string $name The datasource name that is used to look up the DSN 
+	 *                          from the runtime configuation file. Empty name not allowed.
+	 *
+	 * @return     PDO A database connection
+	 *
+	 * @throws     PropelException - if connection cannot be configured or initialized.
+	 */
+	public static function getMasterConnection($name)
+	{
+		if (!isset(self::$connectionMap[$name]['master'])) {
+			// load connection parameter for master connection
+			$conparams = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
+			if (empty($conparams)) {
+				throw new PropelException('No connection information in your runtime configuration file for datasource ['.$name.']');
+			}
+			// initialize master connection
+			$con = Propel::initConnection($conparams, $name);
+			self::$connectionMap[$name]['master'] = $con;
+		}
+
+		return self::$connectionMap[$name]['master'];		
+	}
+	
+	/**
+	 * Gets an already-opened read PDO connection or opens a new one for passed-in db name.
+	 *
+	 * @param      string $name The datasource name that is used to look up the DSN 
+	 *                          from the runtime configuation file. Empty name not allowed.
+	 *
+	 * @return     PDO A database connection
+	 *
+	 * @throws     PropelException - if connection cannot be configured or initialized.
+	 */
+	public static function getSlaveConnection($name)
+	{
+		if (!isset(self::$connectionMap[$name]['slave'])) {
+
+			$slaveconfigs = isset(self::$configuration['datasources'][$name]['slaves']) ? self::$configuration['datasources'][$name]['slaves'] : null;
+
+			if (empty($slaveconfigs)) { 
+				// no slaves configured for this datasource
+				// fallback to the master connection
+				self::$connectionMap[$name]['slave'] = self::getMasterConnection($name);
+			} else { 
+				// Initialize a new slave
+				if (isset($slaveconfigs['connection']['dsn'])) { 
+					// only one slave connection configured
+					$conparams = $slaveconfigs['connection'];
+				} else {
+					// more than one sleve connection configured
+					// pickup a random one
+					$randkey = array_rand($slaveconfigs['connection']);
+					$conparams = $slaveconfigs['connection'][$randkey];
+					if (empty($conparams)) {
+						throw new PropelException('No connection information in your runtime configuration file for SLAVE ['.$randkey.'] to datasource ['.$name.']');
+					}
 				}
-				// initialize master connection
+
+				// initialize slave connection
 				$con = Propel::initConnection($conparams, $name);
-				self::$connectionMap[$name]['master'] = $con;
+				self::$connectionMap[$name]['slave'] = $con;
 			}
 
-			return self::$connectionMap[$name]['master'];
+		} // if datasource slave not set
 
-		} else {
-
-			if (!isset(self::$connectionMap[$name]['slave'])) {
-
-				// we've already ensured that the configuration exists, in previous if-statement
-				$slaveconfigs = isset(self::$configuration['datasources'][$name]['slaves']) ? self::$configuration['datasources'][$name]['slaves'] : null;
-
-				if (empty($slaveconfigs)) { // no slaves configured for this datasource
-					self::$connectionMap[$name]['slave'] = false;
-					return self::getConnection($name, Propel::CONNECTION_WRITE); // Recurse to get the WRITE connection
-				} else { // Initialize a new slave
-					if (isset($slaveconfigs['connection']['dsn'])) { // only one slave connection configured
-						$conparams = $slaveconfigs['connection'];
-					} else {
-						$randkey = array_rand($slaveconfigs['connection']);
-						$conparams = $slaveconfigs['connection'][$randkey];
-						if (empty($conparams)) {
-							throw new PropelException('No connection information in your runtime configuration file for SLAVE ['.$randkey.'] to datasource ['.$name.']');
-						}
-					}
-
-					// initialize master connection
-					$con = Propel::initConnection($conparams, $name);
-					self::$connectionMap[$name]['slave'] = $con;
-				}
-
-			} // if datasource slave not set
-
-			return self::$connectionMap[$name]['slave'];
-
-		} // if mode == CONNECTION_WRITE
-
-	} // getConnection()
-
+		return self::$connectionMap[$name]['slave'];
+	}
+	
 	/**
 	 * Opens a new PDO connection for passed-in db name.
 	 *

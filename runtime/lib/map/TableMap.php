@@ -92,8 +92,12 @@ class TableMap
    */
   public function __construct($name = null, $dbMap = null)
   {
-    if(!is_null($name)) $this->setName($name);
-    if(!is_null($dbMap)) $this->setDatabaseMap($dbMap);
+    if (null !== $name) {
+    	$this->setName($name);
+    }
+    if (null !== $dbMap) {
+    	$this->setDatabaseMap($dbMap);
+  	}
     $this->initialize();
   }
   
@@ -283,30 +287,27 @@ class TableMap
    */
   public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null, $pk = false, $fkTable = null, $fkColumn = null)
   {
-
     $col = new ColumnMap($name, $this);
-
-    if ($fkTable && $fkColumn) {
-      if (strpos($fkColumn, '.') > 0 && strpos($fkColumn, $fkTable) !== false) {
-        $fkColumn = substr($fkColumn, strlen($fkTable) + 1);
-      }
-      $col->setForeignKey($fkTable, $fkColumn);
-      $this->foreignKeys[$name] = $col;
-    }
-
     $col->setType($type);
     $col->setSize($size);
     $col->setPhpName($phpName);
     $col->setNotNull($isNotNull);
     $col->setDefaultValue($defaultValue);
+    
     if ($pk) {
       $col->setPrimaryKey(true);
       $this->primaryKeys[$name] = $col;
     }
+    
+    if ($fkTable && $fkColumn) {
+      $col->setForeignKey($fkTable, $fkColumn);
+      $this->foreignKeys[$name] = $col;
+    }
+    
     $this->columns[$name] = $col;
     $this->columnsByPhpName[$phpName] = $col;
 
-    return $this->columns[$name];
+    return $col;
   }
   
   /**
@@ -525,11 +526,10 @@ class TableMap
       $columnMapping  = array_flip($columnMapping);
     }
     // set columns
-    foreach ($columnMapping as $key => $value)
-    {
+    foreach ($columnMapping as $local => $foreign) {
       $relation->addColumnMapping(
-        $relation->getLocalTable()->getColumn($key),
-        $relation->getForeignTable()->getColumn($value)
+        $relation->getLocalTable()->getColumn($local),
+        $relation->getForeignTable()->getColumn($foreign)
       );
     }
     $this->relations[$name] = $relation;
