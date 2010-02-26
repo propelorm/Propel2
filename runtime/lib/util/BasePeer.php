@@ -586,11 +586,11 @@ class BasePeer
 			$columnName = $param['column'];
 			$value = $param['value'];
 
-			if ($value === null) {
+			if (null === $value) {
 
 				$stmt->bindValue(':p'.$i++, null, PDO::PARAM_NULL);
 
-			} elseif (isset($tableName) ) {
+			} elseif (null !== $tableName) {
 
 				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
 				$type = $cMap->getType();

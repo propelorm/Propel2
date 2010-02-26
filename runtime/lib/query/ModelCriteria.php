@@ -912,6 +912,8 @@ class ModelCriteria extends Criteria
 	
 	protected function getSelectStatement($con = null)
 	{
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+		$db = Propel::getDB($this->getDbName());
 	  if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
@@ -926,7 +928,11 @@ class ModelCriteria extends Criteria
 		$con->beginTransaction();
 		try {
 			$criteria->basePreSelect($con);
-			$stmt = BasePeer::doSelect($criteria, $con);
+			$params = array();
+			$sql = BasePeer::createSelectSql($criteria, $params);
+			$stmt = $con->prepare($sql);
+			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$stmt->execute();
 			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollback();
