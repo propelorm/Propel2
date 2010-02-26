@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -185,8 +186,6 @@ class Criteria implements IteratorAggregate
 	 * @var        array
 	 */
 	protected $namedCriterions = array();
-	
-	protected $queryCacheKey;
 	
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -1137,19 +1136,7 @@ class Criteria implements IteratorAggregate
 			return $removed;
 		}
 	}
-	
-	public function setQueryCacheKey($key)
-	{
-		$this->queryCacheKey = $key;
-		
-		return $this;
-	}
-	
-	public function getQueryCacheKey()
-	{
-		return $this->queryCacheKey;
-	}
-	
+
 	/**
 	 * Build a string representation of the Criteria.
 	 *

@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -47,7 +48,6 @@ class BasePeer
 	/** Array (hash) that contains cached validators */
 	private static $validatorMap = array();
 
-	protected static $queryCache = array();
 	/**
 	 * phpname type
 	 * e.g. 'AuthorId'
@@ -715,17 +715,6 @@ class BasePeer
 	public static function createSelectSql(Criteria $criteria, &$params)
 	{
 		$db = Propel::getDB($criteria->getDbName());
-		if (($key = $criteria->getQueryCacheKey()) && isset(self::$queryCache[$key])) {
-			foreach ($criteria->keys() as $k) {
-				$criterion = $criteria->getCriterion($k);
-				$criterion->setDB($db);
-				$sb = '';
-				$criterion->appendPsTo($sb, $params);
-			}
-			
-			return self::$queryCache[$key];
-		}
-		
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
 		// redundant definition $selectModifiers = array();
@@ -991,10 +980,7 @@ class BasePeer
 		if ($criteria->getLimit() || $criteria->getOffset()) {
 			$db->applyLimit($sql, $criteria->getOffset(), $criteria->getLimit());
 		}
-		
-		if ($key = $criteria->getQueryCacheKey()) {
-			self::$queryCache[$key] = $sql;
-		}
+
 		return $sql;
 	}
 
