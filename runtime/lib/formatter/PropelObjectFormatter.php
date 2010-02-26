@@ -35,8 +35,7 @@ class PropelObjectFormatter extends PropelFormatter
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		$class = $this->collectionName;
-		if(class_exists($class)) {
+		if($class = $this->collectionName) {
 			$collection = new $class();
 			$collection->setModel($this->class);
 			$collection->setFormatter($this);
@@ -93,8 +92,7 @@ class PropelObjectFormatter extends PropelFormatter
 	 */
 	public function getAllObjectsFromRow($row)
 	{
-		$col = 0;
-		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row, $col);
+		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
 		foreach ($this->getCriteria()->getWith() as $join) {
 			$startObject = $join->getObjectToRelate($obj);
 			$peer = $join->getTableMap()->getPeerClassname();

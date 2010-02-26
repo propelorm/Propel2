@@ -35,10 +35,9 @@ class PropelArrayFormatter extends PropelFormatter
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		$class = $this->collectionName;
-		if(class_exists($class)) {
+		if($class = $this->collectionName) {
 			$collection = new $class();
-			$collection->setModel($this->getCriteria()->getModelName());
+			$collection->setModel($this->class);
 			$collection->setFormatter($this);
 		} else {
 			$collection = array();

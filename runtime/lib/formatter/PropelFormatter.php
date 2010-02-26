@@ -58,7 +58,7 @@ abstract class PropelFormatter
 	 */
 	protected function checkCriteria()
 	{
-		if (null === $this->criteria || !$this->criteria instanceof ModelCriteria) {
+		if (!$this->criteria instanceof ModelCriteria) {
 			throw new PropelException('A formatter needs a ModelCriteria. Use PropelFormatter::setCriteria() to set one');
 		}
 		$this->class = $this->criteria->getModelName();
