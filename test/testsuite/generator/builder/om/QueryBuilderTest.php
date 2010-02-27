@@ -350,10 +350,14 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByTitle('foo');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::EQUAL by default');
-
+		
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.TITLE', 'foo', Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
+		
+		$q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::IN when passed an array');
 		
 		$q = BookQuery::create()->filterByTitle('foo%');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);

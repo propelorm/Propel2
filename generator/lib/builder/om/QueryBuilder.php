@@ -488,7 +488,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}";
 		} elseif ($col->isTextType()) {
 			$script .= "
-		if(preg_match('/[\%\*]/', \$$variableName)) {
+		if (is_array(\$$variableName)) {
+			return \$this->addUsingAlias($qualifiedName, \${$variableName}, Criteria::IN);
+		} elseif(preg_match('/[\%\*]/', \$$variableName)) {
 			return \$this->addUsingAlias($qualifiedName, str_replace('*', '%', \$$variableName), Criteria::LIKE);
 		} else {
 			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
