@@ -751,9 +751,38 @@ To allow custom connection handlers, the debug code that was written in the `Deb
 
 During the change, the [wiki:Users/Documentation/1.5/07-Logging documentation about Propel logging and debugging features] was rewritten and should now be clearer.
 
+== propel-gen Script Modifications ==
+
+The `propel-gen` script no longer requires a path to the project directory if you call it from a project directory. That means that calling `propel-gen` with a single argument defaults to expecting a task name:
+
+{{{
+> cd /path/to/my/project
+> propel-gen reverse
+}}}
+
+By default, the `propel-gen` command called without a task name defaults to the `main` task (and builds the model, the SQL, and the generation).
+
+Note: The behavior of the `propel-gen` script when called with one parameter differs from what it used to be in Propel 1.4, where the script expected a path in every situation. So the following syntax won't work anymore:
+
+{{{
+> propel-gen /path/to/my/project
+}}}
+
+Instead, use either:
+
+{{{
+> cd /path/to/my/project
+> propel-gen
+}}}
+
+or:
+
+{{{
+> propel-gen /path/to/my/project main
+}}}
+
 == Miscellaneous ==
 
- * The `propel-gen` script no longer requires a path to the project directory if you call it from a project directory
  * You can now prefix all the table names of a database schema by setting the `tablePrefix` attribute of the `<database>` tag.
  * The `addIncludes` build property introduced in Propel 1.4 is now set to `false` by default. That means that the runtime autoloading takes care of loading all classes at runtime, including generated Base classes.
  * XSL transformation of your schemas is no longer enabled by default. Turn the `propel.schema.transform` setting to `true` in your `build.properties` to enable it again. This change removes the requirement on the libxslt extention for Propel.
