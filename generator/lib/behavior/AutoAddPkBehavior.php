@@ -42,10 +42,8 @@ class AutoAddPkBehavior extends Behavior
 	 */
 	public function modifyDatabase()
 	{
-		foreach ($this->getDatabase()->getTables() as $table)
-		{
-			if(!$table->hasPrimaryKey())
-			{
+		foreach ($this->getDatabase()->getTables() as $table) {
+			if(!$table->hasPrimaryKey()) {
 				$b = clone $this;
 				$table->addBehavior($b);
 			}
@@ -57,8 +55,8 @@ class AutoAddPkBehavior extends Behavior
 	 */
 	public function modifyTable()
 	{
-		if (!$this->getTable()->hasPrimaryKey())
-		{
+		$table = $this->getTable();
+		if (!$table->hasPrimaryKey() && !$table->hasBehavior('concrete_inheritance')) {
 			$columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
 			$this->getTable()->addColumn($columnAttributes);
 		}
