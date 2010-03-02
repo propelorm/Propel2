@@ -1541,6 +1541,48 @@ EOT;
 		$key = $this->getAliasedColName($p1);
 		return $this->containsKey($key) ? $this->addAnd($key, $value, $comparison) : $this->add($key, $value, $comparison);
 	}
+	
+	/**
+	 * Get all the parameters to bind to this criteria
+	 * Does part of the job of BasePeer::createSelectSql() for the cache
+	 *
+	 * @return    array list of parameters, each parameter being an array like
+	 *                  array('table' => $realtable, 'column' => $column, 'value' => $value)
+	 */
+	public function getParams()
+	{
+		$params = array();
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+
+		foreach ($this->getMap() as $criterion) {
+
+			$table = null;
+			foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
+				$tableName = $attachedCriterion->getTable();
+
+				$table = $this->getTableForAlias($tableName);
+				if (null === $table) {
+					$table = $tableName;
+				}
+
+				if (($this->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
+				&& $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+					$attachedCriterion->setIgnoreCase(true);
+				}
+			}
+
+			$sb = '';
+			$criterion->appendPsTo($sb, $params);
+		}
+
+		$having = $this->getHaving();
+		if ($having !== null) {
+			$sb = '';
+			$having->appendPsTo($sb, $params);
+		}
+
+		return $params;
+	}
 
 	/**
 	 * Handle the magic

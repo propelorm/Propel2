@@ -209,7 +209,7 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
-	 * Get the criteria map.
+	 * Get the criteria map, i.e. the array of Criterions
 	 * @return     array
 	 */
 	public function getMap()
@@ -407,10 +407,7 @@ class Criteria implements IteratorAggregate
 	 */
 	public function getCriterion($column)
 	{
-		if ( isset ( $this->map[$column] ) ) {
-			return $this->map[$column];
-		}
-		return null;
+		return $this->map[$column];
 	}
 	
 	/**
@@ -1118,7 +1115,7 @@ class Criteria implements IteratorAggregate
 	{
 		return $this->having;
 	}
-
+	
 	/**
 	 * Remove an object from the criteria.
 	 *
