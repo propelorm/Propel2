@@ -374,8 +374,8 @@ abstract class DataModelBuilder
 	}
 
 	/**
-	 * Convenience method to return a NEW Peer class builder instance
-	 * .
+	 * Convenience method to return a NEW Peer class builder instance.
+   * 
 	 * This is used very frequently from the peer and object builders to get
 	 * a peer builder for a RELATED table.
 	 *
@@ -385,6 +385,20 @@ abstract class DataModelBuilder
 	public function getNewPeerBuilder(Table $table)
 	{
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peer');
+	}
+	
+	/**
+	 * Convenience method to return a NEW Peer stub class builder instance.
+	 * 
+	 * This is used from the peer and object builders to get
+	 * a peer builder for a RELATED table.
+	 *
+	 * @param      Table $table
+	 * @return     PeerBuilder
+	 */
+	public function getNewStubPeerBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peerstub');
 	}
 
 	/**
@@ -415,6 +429,20 @@ abstract class DataModelBuilder
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
 	}
 
+	/**
+	 * Convenience method to return a NEW query class builder instance.
+	 *
+	 * This is used from the query builders to get
+	 * a query builder for a RELATED table.
+	 *
+	 * @param      Table $table
+	 * @return     QueryBuilder
+	 */
+	public function getNewQueryBuilder(Table $table)
+	{
+		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
+	}
+	
 	/**
 	 * Convenience method to return a NEW query stub class builder instance.
 	 *
