@@ -1596,12 +1596,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	protected function addBuildPkeyCriteriaBody(&$script) {
 		$script .= "
 		\$criteria = new Criteria(".$this->getPeerClassname()."::DATABASE_NAME);";
-		foreach ($this->getTable()->getColumns() as $col) {
+		foreach ($this->getTable()->getPrimaryKey() as $col) {
 			$clo = strtolower($col->getName());
-			if ($col->isPrimaryKey()) {
-				$script .= "
+			$script .= "
 		\$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
-			}
 		}
 	}
 
