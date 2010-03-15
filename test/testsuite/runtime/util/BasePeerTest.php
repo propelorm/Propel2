@@ -28,17 +28,8 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    runtime.util
  */
-class BasePeerTest extends BookstoreTestBase {
-
-	protected function setUp()
-	{
-		parent::setUp();
-	}
-
-	protected function tearDown()
-	{
-		parent::tearDown();
-	}
+class BasePeerTest extends BookstoreTestBase
+{
 
 	/**
 	 * @link       http://propel.phpdb.org/trac/ticket/425
@@ -60,6 +51,91 @@ class BasePeerTest extends BookstoreTestBase {
 		}
 	}
 
+	public function testNeedsSelectAliases()
+	{
+		$c = new Criteria();
+		$this->assertFalse(BasePeer::needsSelectAliases($c), 'Empty Criterias dont need aliases');
+
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(BookPeer::TITLE);
+		$this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with distinct column names dont need aliases');
+		
+		$c = new Criteria();
+		BookPeer::addSelectColumns($c);
+		$this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with only the columns of a model dont need aliases');
+
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addSelectColumn(AuthorPeer::ID);
+		$this->assertTrue(BasePeer::needsSelectAliases($c), 'Criterias with common column names do need aliases');
+	}
+	
+	public function testTurnSelectColumnsToAliases()
+	{
+		$c1 = new Criteria();
+		$c1->addSelectColumn(BookPeer::ID);
+		BasePeer::turnSelectColumnsToAliases($c1);
+		
+		$c2 = new Criteria();
+		$c2->addAsColumn('book_ID', BookPeer::ID);
+		$this->assertTrue($c1->equals($c2));
+	}
+
+	public function testTurnSelectColumnsToAliasesPreservesAliases()
+	{
+		$c1 = new Criteria();
+		$c1->addSelectColumn(BookPeer::ID);
+		$c1->addAsColumn('foo', BookPeer::TITLE);
+		BasePeer::turnSelectColumnsToAliases($c1);
+		
+		$c2 = new Criteria();
+		$c2->addAsColumn('book_ID', BookPeer::ID);
+		$c2->addAsColumn('foo', BookPeer::TITLE);
+		$this->assertTrue($c1->equals($c2));
+	}
+
+	public function testTurnSelectColumnsToAliasesExisting()
+	{
+		$c1 = new Criteria();
+		$c1->addSelectColumn(BookPeer::ID);
+		$c1->addAsColumn('book_ID', BookPeer::ID);
+		BasePeer::turnSelectColumnsToAliases($c1);
+		
+		$c2 = new Criteria();
+		$c2->addAsColumn('book_ID_1', BookPeer::ID);
+		$c2->addAsColumn('book_ID', BookPeer::ID);
+		$this->assertTrue($c1->equals($c2));
+	}
+
+	public function testTurnSelectColumnsToAliasesDuplicate()
+	{
+		$c1 = new Criteria();
+		$c1->addSelectColumn(BookPeer::ID);
+		$c1->addSelectColumn(BookPeer::ID);
+		BasePeer::turnSelectColumnsToAliases($c1);
+		
+		$c2 = new Criteria();
+		$c2->addAsColumn('book_ID', BookPeer::ID);
+		$c2->addAsColumn('book_ID_1', BookPeer::ID);
+		$this->assertTrue($c1->equals($c2));
+	}
+	
+	public function testDoCountDuplicateColumnName()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
+		$c->addSelectColumn(AuthorPeer::ID);
+		$c->setLimit(3);
+		try {
+			$count = BasePeer::doCount($c, $con);
+		} catch (Exception $e) {
+			$this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
+		}
+	}
+	
 	/**
 	 *
 	 */

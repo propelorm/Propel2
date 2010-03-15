@@ -999,8 +999,7 @@ class Criteria implements IteratorAggregate
 	/**
 	 * Get select columns.
 	 *
-	 * @return     array An array with the name of the select
-	 * columns.
+	 * @return     array An array with the name of the select columns.
 	 */
 	public function getSelectColumns()
 	{
@@ -1012,7 +1011,8 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
-	public function clearSelectColumns() {
+	public function clearSelectColumns()
+	{
 		$this->selectColumns = $this->asColumns = array();
 		return $this;
 	}
