@@ -507,10 +507,8 @@ class ModelCriteria extends Criteria
 		$relationMap = $tableMap->getRelation($relationName);
 		
 		// create a ModelJoin object for this join
-		$rightTable = $relationMap->getRightTable();
 		$join = new ModelJoin();
 		$join->setJoinType($joinType);
-		$join->setTableMap($rightTable);
 		if(null !== $previousJoin) {
 			$join->setPreviousJoin($previousJoin);
 		}
@@ -518,7 +516,7 @@ class ModelCriteria extends Criteria
 		
 		// add the ModelJoin to the current object
 		if($relationAlias !== null) {
-			$this->addAlias($relationAlias, $rightTable->getName());
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
 			$this->addJoinObject($join, $relationAlias);
 		} else {
 			$this->addJoinObject($join, $relationName);
@@ -1624,7 +1622,7 @@ EOT;
 				array_push($arguments, $joinType);
 				$method = substr($name, $pos);
 				// no lcfirst in php<5.3...
-				$method = ($method == 'Join') ? 'join' : 'joinWith';
+				$method[0] = strtolower($method[0]);
 				return call_user_func_array(array($this, $method), $arguments);
 			}
 		}

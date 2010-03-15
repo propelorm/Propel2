@@ -538,6 +538,7 @@ class TableMap
 
   /**
    * Gets a RelationMap of the table by relation name
+   * This method will build the relations if they are not built yet
    *
    * @param       String $name The relation name 
    * @return      boolean true if the relation exists
@@ -549,6 +550,7 @@ class TableMap
   
   /**
    * Gets a RelationMap of the table by relation name
+   * This method will build the relations if they are not built yet
    *
    * @param       String $name The relation name 
    * @return      RelationMap The relation object

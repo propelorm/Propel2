@@ -548,6 +548,60 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals(2, $nbBooks, 'Generated query handles filterByCrossRefFK() methods correctly');
 	}
 	
+	public function testJoinFk()
+	{
+		$q = BookQuery::create()
+			->joinAuthor();
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() translates to a left join on non-required columns');
+
+		$q = ReviewQuery::create()
+			->joinBook();
+		$q1 = ReviewQuery::create()
+			->join('Review.Book', Criteria::INNER_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() translates to an inner join on required columns');
+
+		$q = BookQuery::create()
+			->joinAuthor('a');
+		$q1 = BookQuery::create()
+			->join('Book.Author a', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() accepts a relation alias as first parameter');
+
+		$q = BookQuery::create()
+			->joinAuthor('', Criteria::INNER_JOIN);
+		$q1 = BookQuery::create()
+			->join('Book.Author', Criteria::INNER_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() accepts a join type as second parameter');
+	}
+
+	public function testJoinRefFk()
+	{
+		$q = AuthorQuery::create()
+			->joinBook();
+		$q1 = AuthorQuery::create()
+			->join('Author.Book', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a left join on non-required columns');
+
+		$q = BookQuery::create()
+			->joinreview();
+		$q1 = BookQuery::create()
+			->join('Book.Review', Criteria::INNER_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to an inner join on required columns');
+
+		$q = AuthorQuery::create()
+			->joinBook('b');
+		$q1 = AuthorQuery::create()
+			->join('Author.Book b', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinRefFk() accepts a relation alias as first parameter');
+
+		$q = AuthorQuery::create()
+			->joinBook('', Criteria::INNER_JOIN);
+		$q1 = AuthorQuery::create()
+			->join('Author.Book', Criteria::INNER_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinRefFk() accepts a join type as second parameter');
+	}
+	
 	public function testUseFkQuerySimple()
 	{
 		$q = BookQuery::create()
@@ -555,9 +609,18 @@ class QueryBuilderTest extends BookstoreTestBase
 				->filterByFirstName('Leo')
 			->endUse();
 		$q1 = BookQuery::create()
-			->join('Book.Author', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
-		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on an inner join');
+		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
+
+		$q = ReviewQuery::create()
+			->useBookQuery()
+				->filterByTitle('War And Peace')
+			->endUse();
+		$q1 = ReviewQuery::create()
+			->join('Review.Book', Criteria::INNER_JOIN)
+			->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
+		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on aninner join on required columns');
 	}
 
 	public function testUseFkQueryJoinType()
@@ -579,7 +642,7 @@ class QueryBuilderTest extends BookstoreTestBase
 				->filterByFirstName('Leo')
 			->endUse();
 		$join = new ModelJoin();
-		$join->setJoinType(Criteria::INNER_JOIN);
+		$join->setJoinType(Criteria::LEFT_JOIN);
 		$join->setTableMap(AuthorPeer::getTableMap());
 		$join->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
 		$join->setRelationAlias('a');
@@ -598,7 +661,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->endUse()
 			->filterByTitle('War And Peace');
 		$q1 = BookQuery::create()
-			->join('Book.Author', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
 			->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() allows combining conditions on main and related query');
@@ -614,7 +677,7 @@ class QueryBuilderTest extends BookstoreTestBase
 				->filterByLastName('Tolstoi')
 			->endUse();
 		$q1 = BookQuery::create()
-			->join('Book.Author', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
 			->add(AuthorPeer::LAST_NAME, 'Tolstoi', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation does not create two joins');
@@ -630,12 +693,12 @@ class QueryBuilderTest extends BookstoreTestBase
 				->filterByLastName('Tolstoi')
 			->endUse();
 		$join1 = new ModelJoin();
-		$join1->setJoinType(Criteria::INNER_JOIN);
+		$join1->setJoinType(Criteria::LEFT_JOIN);
 		$join1->setTableMap(AuthorPeer::getTableMap());
 		$join1->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'a');
 		$join1->setRelationAlias('a');
 		$join2 = new ModelJoin();
-		$join2->setJoinType(Criteria::INNER_JOIN);
+		$join2->setJoinType(Criteria::LEFT_JOIN);
 		$join2->setTableMap(AuthorPeer::getTableMap());
 		$join2->setRelationMap(BookPeer::getTableMap()->getRelation('Author'), null, 'b');
 		$join2->setRelationAlias('b');
@@ -659,7 +722,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->endUse();
 		$q1 = ReviewQuery::create()
 			->join('Review.Book', Criteria::INNER_JOIN)
-			->join('Book.Author', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
 		// embedded queries create joins that keep a relation to the parent
 		// as this is not testable, we need to use another testing technique
@@ -681,9 +744,9 @@ class QueryBuilderTest extends BookstoreTestBase
 				->filterByName('Penguin')
 			->endUse();
 		$q1 = BookQuery::create()
-			->join('Book.Author', Criteria::INNER_JOIN)
+			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
-			->join('Book.Publisher', Criteria::INNER_JOIN)
+			->join('Book.Publisher', Criteria::LEFT_JOIN)
 			->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
 	}

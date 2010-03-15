@@ -358,6 +358,21 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
+	 * Whether this foreign key uses a required column, or a list or required columns.
+	 *
+	 * @return     boolean
+	 */
+	public function isLocalColumnsRequired()
+	{
+		foreach ($this->getLocalColumns() as $columnName) {
+			if (!$this->getTable()->getColumn($columnName)->isNotNull()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Whether this foreign key is also the primary key of the local table.
 	 *
 	 * @return     boolean
@@ -372,12 +387,6 @@ class ForeignKey extends XMLElement
 		foreach ($localPKColumnObjs as $lPKCol) {
 			$localPKCols[] = $lPKCol->getName();
 		}
-		//
-		//		print "Local key columns: \n";
-		//		print_r($localCols);
-		//
-		//		print "Local table primary key columns: \n";
-		//		print_r($localPKCols);
 
 		return (!array_diff($localPKCols, $localCols));
 	}

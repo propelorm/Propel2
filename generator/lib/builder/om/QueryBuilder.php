@@ -153,10 +153,12 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			$this->addFilterByFK($script, $fk);
+			$this->addJoinFk($script, $fk);
 			$this->addUseFKQuery($script, $fk);
 		}
 		foreach ($this->getTable()->getReferrers() as $refFK) {
 			$this->addFilterByRefFK($script, $refFK);
+			$this->addJoinRefFk($script, $refFK);
 			$this->addUseRefFKQuery($script, $refFK);
 		}
 		foreach ($this->getTable()->getCrossFks() as $fkList) {
@@ -582,6 +584,72 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	}
 	
 	/**
+	 * Adds the joinFk method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addJoinFk(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$fkTable = $this->getForeignTable($fk);
+		$relationName = $this->getFKPhpNameAffix($fk);
+		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$this->addJoinRelated($script, $fkTable, $queryClass, $relationName, $joinType);
+	}
+
+	/**
+	 * Adds the joinRefFk method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addJoinRefFk(&$script, $fk)
+	{
+		$table = $this->getTable();
+		$queryClass = $this->getStubQueryBuilder()->getClassname();
+		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
+		$relationName = $this->getRefFKPhpNameAffix($fk);
+		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$this->addJoinRelated($script, $fkTable, $queryClass, $relationName, $joinType);
+	}
+
+	/**
+	 * Adds a joinRelated method for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType)
+	{
+		$script .= "
+	/**
+	 * Adds a JOIN clause to the query using the " . $relationName . " relation
+	 * 
+	 * @param     string \$relationAlias optional alias for the relation
+	 * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    ". $queryClass . " The current query, for fluid interface
+	 */
+	public function join" . $relationName . "(\$relationAlias = '', \$joinType = " . $joinType . ")
+	{
+		\$tableMap = \$this->getTableMap();
+		\$relationMap = \$tableMap->getRelation('" . $relationName . "');
+		
+		// create a ModelJoin object for this join
+		\$join = new ModelJoin();
+		\$join->setJoinType(\$joinType);
+		\$join->setRelationMap(\$relationMap, \$this->getModelAlias(), \$relationAlias);
+		
+		// add the ModelJoin to the current object
+		if(\$relationAlias) {
+			\$this->addAlias(\$relationAlias, \$relationMap->getRightTable()->getName());
+			\$this->addJoinObject(\$join, \$relationAlias);
+		} else {
+			\$this->addJoinObject(\$join, '" . $relationName . "');
+		}
+		
+		return \$this;
+	}
+";
+	}
+
+	/**
 	 * Adds the useFkQuery method for this object.
 	 * @param      string &$script The script will be modified in this method.
 	 */
@@ -591,7 +659,8 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$fkTable = $this->getForeignTable($fk);
 		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getFKPhpNameAffix($fk);
-		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
+		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 
 	/**
@@ -604,14 +673,15 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
 		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getRefFKPhpNameAffix($fk);
-		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName);
+		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 
 	/**
-	 * Adds the useFkQuery method for this object.
+	 * Adds a useRelatedQuery method for this object.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	protected function addUseRelatedQuery(&$script, $fkTable, $queryClass, $relationName)
+	protected function addUseRelatedQuery(&$script, $fkTable, $queryClass, $relationName, $joinType)
 	{
 		$script .= "
 	/**
@@ -625,10 +695,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 *
 	 * @return    $queryClass A secondary query class using the current class as primary query
 	 */
-	public function use" . $relationName . "Query(\$relationAlias = '', \$joinType = Criteria::INNER_JOIN)
+	public function use" . $relationName . "Query(\$relationAlias = '', \$joinType = " . $joinType . ")
 	{
 		return \$this
-			->join('$relationName' . (\$relationAlias ? ' ' . \$relationAlias : ''), \$joinType)
+			->join" . $relationName . "(\$relationAlias, \$joinType)
 			->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
 	}
 ";

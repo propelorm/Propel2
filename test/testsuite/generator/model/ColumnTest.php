@@ -79,5 +79,15 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
     $column = $appData->getDatabase("bookstore-behavior")->getTable('table1')->getColumn('title');
     $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
 	}
+	
+	public function testIsLocalColumnsRequired()
+	{
+		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+		$appData = $xmlToAppData->parseFile('fixtures/bookstore/schema.xml');
+		$fk = $appData->getDatabase("bookstore")->getTable('book')->getColumnForeignKeys('publisher_id');
+		$this->assertFalse($fk[0]->isLocalColumnsRequired());
+		$fk = $appData->getDatabase("bookstore")->getTable('review')->getColumnForeignKeys('book_id');
+		$this->assertTrue($fk[0]->isLocalColumnsRequired());
+	}
 
 }

@@ -20,18 +20,41 @@
  */
 
 /**
- * A ModelJoin is a Join object tied to a table object
+ * A ModelJoin is a Join object tied to a RelationMap object
  *
  * @author     Francois Zaninotto (Propel)
  * @package    propel.runtime.query
  */
 class ModelJoin extends Join
 {
-	protected $tableMap;
 	protected $relationMap;
+	protected $tableMap;
 	protected $previousJoin;
 	protected $relationAlias;
+
+	public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $rightTableAlias = null)
+	{
+		$leftCols = $relationMap->getLeftColumns();
+		$rightCols = $relationMap->getRightColumns();
+		$nbColumns = $relationMap->countColumnMappings();
+		for ($i=0; $i < $nbColumns; $i++) {
+			$leftColName  = ($leftTableAlias ? $leftTableAlias  : $leftCols[$i]->getTableName()) . '.' . $leftCols[$i]->getName();
+			$rightColName = ($rightTableAlias ? $rightTableAlias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
+			$this->addCondition($leftColName, $rightColName, Criteria::EQUAL);
+		}
+		$this->relationMap = $relationMap;
+		if (null !== $rightTableAlias) {
+			$this->setRelationAlias($rightTableAlias);
+		}
+		
+		return $this;
+	}
 	
+	public function getRelationMap()
+	{
+		return $this->relationMap;
+	}
+
 	/**
 	 * Sets the right tableMap for this join
 	 * 
@@ -53,32 +76,13 @@ class ModelJoin extends Join
 	 */
 	public function getTableMap()
 	{
+		if (null === $this->tableMap && null !== $this->relationMap)
+		{
+			$this->tableMap = $this->relationMap->getRightTable();
+		}
 		return $this->tableMap;
 	}
-
-	public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $rightTableAlias = null)
-	{
-		$leftCols = $relationMap->getLeftColumns();
-		$rightCols = $relationMap->getRightColumns();
-		$nbColumns = $relationMap->countColumnMappings();
-		for ($i=0; $i < $nbColumns; $i++) {
-			$leftColName  = ($leftTableAlias  ? $leftTableAlias  : $leftCols[$i]->getTableName()) . '.' . $leftCols[$i]->getName();
-			$rightColName = ($rightTableAlias ? $rightTableAlias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
-			$this->addCondition($leftColName, $rightColName, Criteria::EQUAL);
-		}
-		$this->relationMap = $relationMap;
-		if (null !== $rightTableAlias) {
-			$this->setRelationAlias($rightTableAlias);
-		}
 		
-		return $this;
-	}
-	
-	public function getRelationMap()
-	{
-		return $this->relationMap;
-	}
-	
 	public function setPreviousJoin(ModelJoin $join)
 	{
 		$this->previousJoin = $join;
@@ -128,7 +132,6 @@ class ModelJoin extends Join
 	public function equals($join)
 	{
 		return parent::equals($join)
-			&& $this->tableMap == $join->getTableMap()
 			&& $this->relationMap == $join->getRelationMap()
 			&& $this->previousJoin == $join->getPreviousJoin()
 			&& $this->relationAlias == $join->getRelationAlias();
