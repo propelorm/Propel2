@@ -442,11 +442,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * ";
 		if ($col->isNumericType() || $col->isTemporalType()) {
 			$script .= "
-	 * @param     " . $col->getPhpType() . "|array \$$variableName The value to use as filter.
+	 * @param     " . $col->getPhpType() . "|array \$$colName The value to use as filter.
 	 *            Accepts an associative array('min' => \$minValue, 'max' => \$maxValue)";
 		} elseif ($col->isTextType()) {
 			$script .= "
-	 * @param     string \$$variableName The value to use as filter.
+	 * @param     string \$$colName The value to use as filter.
 	 *            Accepts wildcards (* and % trigger a LIKE)";
 		} elseif ($col->isBooleanType()) {
 			$script .= "
@@ -454,21 +454,20 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 *            Accepts strings ('false', 'off', '-', 'no', 'n', and '0' are false, the rest is true)";
 		} else {
 			$script .= "
-	 * @param     mixed \$$variableName The value to use as filter";
+	 * @param     mixed \$$colName The value to use as filter";
 		}
 		$script .= "
-	 * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
 	 */
-	public function filterBy$colPhpName(\$$variableName = null, \$comparison = Criteria::EQUAL)
+	public function filterBy$colPhpName(\$$variableName = null)
 	{";
 		if ($col->isPrimaryKey() && ($col->getType() == PropelTypes::INTEGER || $col->getType() == PropelTypes::BIGINT)) {
 			$script .= "
 		if (is_array(\$$variableName)) {
 			return \$this->addUsingAlias($qualifiedName, \${$variableName}, Criteria::IN);
 		} else {
-			return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
 		}";
 		} elseif ($col->isNumericType() || $col->isTemporalType()) {
 			$script .= "
@@ -485,7 +484,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 				return \$this;	
 			}
 		} else {
-			return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
 		}";
 		} elseif ($col->isTextType()) {
 			$script .= "
@@ -494,17 +493,17 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		} elseif(preg_match('/[\%\*]/', \$$variableName)) {
 			return \$this->addUsingAlias($qualifiedName, str_replace('*', '%', \$$variableName), Criteria::LIKE);
 		} else {
-			return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+			return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);
 		}";
 		} elseif ($col->isBooleanType()) {
 			$script .= "
 		if(is_string(\$$variableName)) {
 			\$$colName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0')) ? false : true;
 		}
-		return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);";
+		return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);";
 		} else {
 			$script .= "
-		return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);";
+		return \$this->addUsingAlias($qualifiedName, \$$variableName, Criteria::EQUAL);";
 		}
 		$script .= "
 	}
@@ -528,18 +527,17 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * Filter the query by a related $fkPhpName object
 	 *
 	 * @param     $fkPhpName $objectName  the related object to use as filter
-	 * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($objectName, \$comparison = Criteria::EQUAL)
+	public function filterBy$relationName($objectName)
 	{
 		return \$this";
 		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
 		}
 		$script .= ";
 	}
@@ -563,18 +561,17 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * Filter the query by a related $fkPhpName object
 	 *
 	 * @param     $fkPhpName $objectName  the related object to use as filter
-	 * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($objectName, \$comparison = Criteria::EQUAL)
+	public function filterBy$relationName($objectName)
 	{
 		return \$this";
 		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), Criteria::EQUAL)";
 		}
 		$script .= ";
 	}

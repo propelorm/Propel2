@@ -717,18 +717,19 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
-	 * This is the way that you should add a join of two tables. 
-	 * Example usage:
-	 * <code>
-	 * $c->addJoin(ProjectPeer::ID, FooPeer::PROJECT_ID, Criteria::LEFT_JOIN);
-	 * // LEFT JOIN FOO ON PROJECT.ID = FOO.PROJECT_ID
-	 * </code>
+	 * This is the way that you should add a straight (inner) join of two tables.  For
+	 * example:
+	 *
+	 * <p>
+	 * AND PROJECT.PROJECT_ID=FOO.PROJECT_ID
+	 * <p>
+	 *
+	 * left = PROJECT.PROJECT_ID
+	 * right = FOO.PROJECT_ID
 	 *
 	 * @param      mixed $left A String with the left side of the join.
 	 * @param      mixed $right A String with the right side of the join.
-	 * @param      mixed $operator A String with the join operator
-	 *                             among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
-	 *                             and Criteria::RIGHT_JOIN
+	 * @param      mixed $operator A String with the join operator e.g. LEFT JOIN, ...
    *
 	 * @return     Criteria A modified Criteria object.
 	 */
