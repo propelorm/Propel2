@@ -69,6 +69,16 @@ class AlternativeCodingStandardsBehavior extends Behavior
 		return $this->filter($script);
 	}
 
+	public function queryFilter(&$script)
+	{
+		return $this->filter($script);
+	}
+
+	public function extensionQueryFilter(&$script)
+	{
+		return $this->filter($script);
+	}
+	
 	public function peerFilter(&$script)
 	{
 		return $this->filter($script);
