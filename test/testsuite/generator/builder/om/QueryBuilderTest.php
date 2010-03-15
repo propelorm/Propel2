@@ -282,6 +282,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::EQUAL by default');
 
+		$q = BookQuery::create()->filterById(12, Criteria::NOT_EQUAL);
+		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByPkColumn() accepts an optional comparison operator');
+		
 		$q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
@@ -297,6 +301,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::EQUAL by default');
 
+		$q = BookQuery::create()->filterByPrice(12, Criteria::NOT_EQUAL);
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() accepts an optional comparison operator');
+		
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.PRICE', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
@@ -326,6 +334,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::EQUAL by default');
 
+		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(12, Criteria::NOT_EQUAL);
+		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByDateColumn() accepts an optional comparison operator');
+		
 		$q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
 		$q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.CREATED', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
@@ -350,6 +362,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByTitle('foo');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::EQUAL by default');
+		
+		$q = BookQuery::create()->filterByTitle('foo', Criteria::NOT_EQUAL);
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts an optional comparison operator');
 		
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.TITLE', 'foo', Criteria::EQUAL);
@@ -377,6 +393,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = ReviewQuery::create()->filterByRecommended(true);
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
+
+		$q = ReviewQuery::create()->filterByRecommended(true, Criteria::NOT_EQUAL);
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() accepts an optional comparison operator');
 
 		$q = ReviewQuery::create()->filterByRecommended(false);
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
@@ -430,11 +450,19 @@ class QueryBuilderTest extends BookstoreTestBase
 			->innerJoin('Book.Author') // just in case there are books with no author
 			->findOne();
 		$testAuthor = $testBook->getAuthor();
-
+		
 		$book = BookQuery::create()
 			->filterByAuthor($testAuthor)
 			->findOne();
 		$this->assertEquals($testBook, $book, 'Generated query handles filterByFk() methods correctly for simple fkeys');
+
+		$q = BookQuery::create()->filterByAuthor($testAuthor);
+		$q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByFk() translates to a Criteria::EQUAL by default');
+		
+		$q = BookQuery::create()->filterByAuthor($testAuthor, Criteria::NOT_EQUAL);
+		$q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByFk() accepts an optional comparison operator');
 	}
 
 	public function testFilterByFkCompositeKey()
@@ -479,6 +507,14 @@ class QueryBuilderTest extends BookstoreTestBase
 			->filterByBook($testBook)
 			->findOne();
 		$this->assertEquals($testAuthor, $author, 'Generated query handles filterByRefFk() methods correctly for simple fkeys');
+
+		$q = AuthorQuery::create()->filterByBook($testBook);
+		$q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByRefFk() translates to a Criteria::EQUAL by default');
+
+		$q = AuthorQuery::create()->filterByBook($testBook, Criteria::NOT_EQUAL);
+		$q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::NOT_EQUAL);
+		$this->assertEquals($q1, $q, 'filterByRefFk() accepts an optional comparison operator');
 	}
 	
 	public function testFilterByRefFkCompositeKey()
@@ -509,6 +545,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$nbBooks = BookQuery::create()
 			->filterByBookClubList($blc1)
 			->count();
+		$this->assertEquals(2, $nbBooks, 'Generated query handles filterByCrossRefFK() methods correctly');
 	}
 	
 	public function testUseFkQuerySimple()
