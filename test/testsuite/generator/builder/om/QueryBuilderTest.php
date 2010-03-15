@@ -42,13 +42,13 @@ class QueryBuilderTest extends BookstoreTestBase
 	public function testCreateCustom()
 	{
 		// see the myBookQuery class definition at the end of this file
-		$query = myBookQuery::create();
-		$this->assertTrue($query instanceof myBookQuery, 'create() returns an object of its class');
+		$query = myCustomBookQuery::create();
+		$this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
 		$this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
 		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
 		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
-		$query = myBookQuery::create('foo');
-		$this->assertTrue($query instanceof myBookQuery, 'create() returns an object of its class');
+		$query = myCustomBookQuery::create('foo');
+		$this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
 		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
 		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
 		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
@@ -825,14 +825,14 @@ class QueryBuilderTest extends BookstoreTestBase
 	}
 }
 
-class myBookQuery extends BookQuery
+class myCustomBookQuery extends BookQuery
 {
 	public static function create($modelAlias = null, $criteria = null)
 	{
-		if ($criteria instanceof myBookQuery) {
+		if ($criteria instanceof myCustomBookQuery) {
 			return $criteria;
 		}
-		$query = new myBookQuery();
+		$query = new myCustomBookQuery();
 		if (null !== $modelAlias) {
 			$query->setModelAlias($modelAlias);
 		}
