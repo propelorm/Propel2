@@ -434,7 +434,7 @@ The upgrade path is then pretty straightforward:
   <column name="name" required="true" type="VARCHAR" size="10" />
   <behavior name="nested_set">
     <parameter name="left_column" value="left" />
-    <parameter name="right_column" value="rigt" />
+    <parameter name="right_column" value="right" />
     <parameter name="level_column" value="tree_level" />
   </behavior>
 </table>
