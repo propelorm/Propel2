@@ -171,7 +171,7 @@ class ".$this->getClassname()." extends $baseClassname {
 		}
 		\$query = new self();
 		if (null !== \$modelAlias) {
-			\$query->setModelalias(\$modelAlias);
+			\$query->setModelAlias(\$modelAlias);
 		}
 		if (\$criteria instanceof Criteria) {
 			\$query->mergeWith(\$criteria);
