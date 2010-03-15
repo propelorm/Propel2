@@ -256,7 +256,7 @@ class Column extends XMLElement
 	 */
 	public function getFullyQualifiedName()
 	{
-		return ($this->parentTable->getName() . '.' . name);
+		return ($this->parentTable->getName() . '.' . $this->getName());
 	}
 
 	/**
