@@ -634,7 +634,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		// create a ModelJoin object for this join
 		\$join = new ModelJoin();
 		\$join->setJoinType(\$joinType);
-		\$join->setRelationMap(\$relationMap, \$this->getModelAlias(), \$relationAlias);
+		\$join->setRelationMap(\$relationMap, \$this->useAliasInSQL ? \$this->getModelAlias() : null, \$relationAlias);
 		
 		// add the ModelJoin to the current object
 		if(\$relationAlias) {

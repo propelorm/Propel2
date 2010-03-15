@@ -574,6 +574,23 @@ class QueryBuilderTest extends BookstoreTestBase
 			->join('Book.Author', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinFk() accepts a join type as second parameter');
 	}
+	
+	public function testJoinFkAlias()
+	{
+		$q = BookQuery::create('b')
+			->joinAuthor('a');
+		$q1 = BookQuery::create('b')
+			->join('b.Author a', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() works fine with table aliases');
+
+		$q = BookQuery::create()
+			->setModelAlias('b', true)
+			->joinAuthor('a');
+		$q1 = BookQuery::create()
+			->setModelAlias('b', true)
+			->join('b.Author a', Criteria::LEFT_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinFk() works fine with true table aliases');
+	}
 
 	public function testJoinRefFk()
 	{
