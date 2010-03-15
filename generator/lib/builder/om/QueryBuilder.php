@@ -144,6 +144,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		// apply behaviors
 		$this->applyBehaviorModifier('queryAttributes', $script, "	");
 		$this->addConstructor($script);
+		$this->addFactory($script);
 		$this->addFindPk($script);
 		$this->addFindPks($script);
 		$this->addFilterByPrimaryKey($script);
@@ -246,7 +247,81 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	}
 ";
 	}
-		
+	
+	/**
+	 * Adds the factory for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFactory(&$script)
+	{
+		$this->addFactoryComment($script);
+		$this->addFactoryOpen($script);
+		$this->addFactoryBody($script);
+		$this->addFactoryClose($script);
+	}
+
+		/**
+	 * Adds the comment for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryComment(&$script)
+	{
+		$classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+		$script .= "
+	/**
+	 * Returns a new " . $classname . " object.
+	 *
+	 * @param     string \$modelAlias The alias of a model in the query
+	 * @param     Criteria \$criteria Optional Criteria to build the query from
+	 *
+	 * @return    " . $classname . "
+	 */";
+	}
+
+	/**
+	 * Adds the function declaration for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryOpen(&$script)
+	{
+		$script .= "
+	public static function create(\$modelAlias = null, \$criteria = null)
+	{";
+	}
+
+	/**
+	 * Adds the function body for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryBody(&$script)
+	{
+		$classname = $this->getNewStubQueryBuilder($this->getTable())->getClassname();
+		$script .= "
+		if (\$criteria instanceof " . $classname . ") {
+			return \$criteria;
+		}
+		\$query = new " . $classname . "();
+		if (null !== \$modelAlias) {
+			\$query->setModelAlias(\$modelAlias);
+		}
+		if (\$criteria instanceof Criteria) {
+			\$query->mergeWith(\$criteria);
+		}
+		return \$query;";
+	}
+
+	/**
+	 * Adds the function close for the factory
+	 * @param      string &$script The script will be modified in this method.
+	 **/
+	protected function addFactoryClose(&$script)
+	{
+		$script .= "
+	}
+";
+	}
+	
+	
 	/**
 	 * Adds the findPk method for this object.
 	 * @param      string &$script The script will be modified in this method.

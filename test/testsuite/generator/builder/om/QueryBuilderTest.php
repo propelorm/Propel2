@@ -39,6 +39,21 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
 	}
 	
+	public function testCreateCustom()
+	{
+		// see the myBookQuery class definition at the end of this file
+		$query = myBookQuery::create();
+		$this->assertTrue($query instanceof myBookQuery, 'create() returns an object of its class');
+		$this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
+		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
+		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+		$query = myBookQuery::create('foo');
+		$this->assertTrue($query instanceof myBookQuery, 'create() returns an object of its class');
+		$this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
+		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
+	}
+	
 	public function testBasePreSelect()
 	{
 		$method = new ReflectionMethod('Table4Query', 'basePreSelect');
@@ -808,4 +823,23 @@ class QueryBuilderTest extends BookstoreTestBase
 		$nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
 		$this->assertEquals(1, $nbBookListRel, 'prune() removes an object from the result');
 	}
+}
+
+class myBookQuery extends BookQuery
+{
+	public static function create($modelAlias = null, $criteria = null)
+	{
+		if ($criteria instanceof myBookQuery) {
+			return $criteria;
+		}
+		$query = new myBookQuery();
+		if (null !== $modelAlias) {
+			$query->setModelAlias($modelAlias);
+		}
+		if ($criteria instanceof Criteria) {
+			$query->mergeWith($criteria);
+		}
+		return $query;
+	}
+	
 }

@@ -104,7 +104,6 @@ class ".$this->getClassname()." extends $baseClassname {
 
 	protected function addClassBody(&$script)
 	{
-		$this->addFactory($script);
 	}
 
 	/**
@@ -117,77 +116,6 @@ class ".$this->getClassname()." extends $baseClassname {
 } // " . $this->getClassname() . "
 ";
 		$this->applyBehaviorModifier('extensionQueryFilter', $script, "");
-	}
-
-	/**
-	 * Adds the factory for this object.
-	 * @param      string &$script The script will be modified in this method.
-	 */
-	protected function addFactory(&$script)
-	{
-		$this->addFactoryComment($script);
-		$this->addFactoryOpen($script);
-		$this->addFactoryBody($script);
-		$this->addFactoryClose($script);
-	}
-	
-		/**
-	 * Adds the comment for the factory
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addFactoryComment(&$script)
-	{
-		$script .= "
-	/**
-	 * Returns a new " . $this->getClassname() . " object.
-	 *
-	 * @param     string \$modelAlias The alias of a model in the query
-	 * @param     Criteria \$criteria Optional Criteria to build the query from
-	 *
-	 * @return    " . $this->getClassname() . "
-	 */";
-	}
-
-	/**
-	 * Adds the function declaration for the factory
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addFactoryOpen(&$script)
-	{
-		$script .= "
-	public static function create(\$modelAlias = null, \$criteria = null)
-	{";
-	}
-
-	/**
-	 * Adds the function body for the factory
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addFactoryBody(&$script)
-	{
-		$script .= "
-		if (\$criteria instanceof " . $this->getClassname() . ") {
-			return \$criteria;
-		}
-		\$query = new self();
-		if (null !== \$modelAlias) {
-			\$query->setModelAlias(\$modelAlias);
-		}
-		if (\$criteria instanceof Criteria) {
-			\$query->mergeWith(\$criteria);
-		}
-		return \$query;";
-	}
-
-	/**
-	 * Adds the function close for the factory
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addFactoryClose(&$script)
-	{
-		$script .= "
-	}
-";
 	}
 	
 	/**
