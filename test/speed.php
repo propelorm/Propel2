@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license    MIT License
+ */
+
 $conf_path = realpath(dirname(__FILE__) . '/fixtures/bookstore/build/conf/bookstore-conf.php');
 if (!file_exists($conf_path)) {
 	throw new Exception('Bookstore project must be built');
