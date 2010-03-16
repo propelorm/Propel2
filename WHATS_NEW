@@ -781,6 +781,14 @@ or:
 > propel-gen /path/to/my/project main
 }}}
 
+== License Change ==
+
+Propel is more open-source than ever. To allow for an easier distribution, the open-source license of the Propel library changes from LGPL3 to MIT. This [http://en.wikipedia.org/wiki/MIT_License MIT License] is also known as the X11 License. 
+
+This change removes a usage restriction enforced by the LGPL3: you no longer need to release any modifications to the core Propel source code under a LGPL compatible license. 
+
+Of course, you still have the right to use, copy, modify, merge, publish, distribute, sublicense, and/or sell Propel. In other terms, you can do whatever you want with the Propel code, without worrying about the license, as long as you leave the LICENSE file within.
+
 == Miscellaneous ==
 
  * You can now prefix all the table names of a database schema by setting the `tablePrefix` attribute of the `<database>` tag.
