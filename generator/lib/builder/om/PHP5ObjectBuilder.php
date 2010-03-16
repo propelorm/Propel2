@@ -3307,26 +3307,27 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		
 		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
 		$crossObjectName = '$' . $crossFK->getForeignTable()->getStudlyPhpName();
+		$crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassname();
 		
 		$script .= "
 	/**
-	 * Associate a $className object to this object
+	 * Associate a " . $crossObjectClassName . " object to this object
 	 * through the " . $tblFK->getName() . " cross reference table.
 	 *
-	 * @param      $className $crossObjectName The $className object to relate
+	 * @param      " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
 	 * @return     void
 	 */
-	public function add" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "($crossObjectName)
+	public function add" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName. ")
 	{
-		if (\$this->$collName === null) {
-			\$this->init{$relCol}();
+		if (\$this->" . $collName . " === null) {
+			\$this->init" . $relCol . "();
 		}
-		if (!\$this->{$collName}->contains($crossObjectName)) { // only add it if the **same** object is not already associated
-			$foreignObjectName = new $className();
-			{$foreignObjectName}->set" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "($crossObjectName);
-			\$this->add" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "($foreignObjectName);
+		if (!\$this->" . $collName . "->contains(" . $crossObjectName . ")) { // only add it if the **same** object is not already associated
+			" . $foreignObjectName . " = new " . $className . "();
+			" . $foreignObjectName . "->set" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName . ");
+			\$this->add" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(" . $foreignObjectName . ");
 			
-			\$this->{$collName}[]= $crossObjectName;
+			\$this->" . $collName . "[]= " . $crossObjectName . ";
 		}
 	}
 ";
