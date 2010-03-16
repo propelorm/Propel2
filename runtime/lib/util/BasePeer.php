@@ -529,6 +529,9 @@ class BasePeer
 
 			if ($needsComplexCount) {
 				if (self::needsSelectAliases($criteria)) {
+					if ($criteria->getHaving()) {
+						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+					}
 					self::turnSelectColumnsToAliases($criteria);
 				}
 				$selectSql = self::createSelectSql($criteria, $params);
