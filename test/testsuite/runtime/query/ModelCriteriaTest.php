@@ -937,6 +937,37 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
 	}
 	
+	public function testJoinWithTwice()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->join('Book.Review');
+		$c->joinWith('Book.Author');
+		$c->joinWith('Book.Review');
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE,
+			ReviewPeer::ID,
+			ReviewPeer::REVIEWED_BY,
+			ReviewPeer::REVIEW_DATE,
+			ReviewPeer::RECOMMENDED,
+			ReviewPeer::STATUS,
+			ReviewPeer::BOOK_ID,
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the with');
+		$joins = $c->getJoins();
+		$expectedJoinKeys = array('Review', 'Author');
+		$this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
+	}
+	
 	public static function conditionsForTestWithColumn()
 	{
 		return array(
@@ -1392,6 +1423,24 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$book = $c->findOne();
 		
 		$this->assertEquals('1234', $book->getISBN(), 'preUpdate() can modify the values');
+	}
+	
+	public static function conditionsForTestGetRelationName()
+	{
+		return array(
+			array('Author', 'Author'),
+			array('Book.Author', 'Author'),
+			array('Author.Book', 'Book'),
+			array('Book.Author a', 'a'),
+		);
+	}
+	
+	/**
+	 * @dataProvider conditionsForTestGetRelationName
+	 */
+	public function testGetRelationName($relation, $relationName)
+	{
+		$this->assertEquals($relationName, ModelCriteria::getrelationName($relation));
 	}
 	
 	public function testMagicJoin()

@@ -560,13 +560,11 @@ class ModelCriteria extends Criteria
 	public function joinWith($relation, $joinType = Criteria::INNER_JOIN)
 	{
 		$this->join($relation, $joinType);
-		end($this->joins);
-		$relationName = key($this->joins);
-		$this->with($relationName);
+		$this->with(self::getRelationName($relation)); 
 		
 		return $this;
 	}
-	
+ 	
 	/**
 	 * Adds a relation to hydrate together with the main object
 	 * The relation must be initialized via a join() prior to calling with()
@@ -800,7 +798,29 @@ class ModelCriteria extends Criteria
 	  }
 	  return array($class, $alias);
 	}
-	
+
+	/** 
+	 * Returns the name of a relation from a string.
+	 * The input looks like '$leftName.$relationName $relationAlias'
+	 *
+	 * @param      string $relation Relation to use for the join 
+	 * @return     string the relationName used in the join 
+	 */ 
+	public static function getRelationName($relation) 
+	{ 
+		// get the relationName 
+		list($fullName, $relationAlias) = self::getClassAndAlias($relation); 
+		if ($relationAlias)  { 
+			$relationName = $relationAlias; 
+		} elseif (false === strpos($fullName, '.')) {
+			$relationName = $fullName; 
+		} else { 
+			list($leftName, $relationName) = explode('.', $fullName);
+		} 
+		
+		return $relationName; 
+	}
+		
 	/**
 	 * Code to execute before every SELECT statement
 	 * 
