@@ -156,22 +156,6 @@ class PropelPDO extends PDO
 	}
 
 	/**
-	 * Decrements the current transaction depth by one.
-	 */
-	protected function decrementNestedTransactionCount()
-	{
-		$this->nestedTransactionCount--;
-	}
-
-	/**
-	 * Increments the current transaction depth by one.
-	 */
-	protected function incrementNestedTransactionCount()
-	{
-		$this->nestedTransactionCount++;
-	}
-
-	/**
 	 * Is this PDO connection currently in-transaction?
 	 * This is equivalent to asking whether the current nested transaction count
 	 * is greater than 0.
@@ -188,15 +172,14 @@ class PropelPDO extends PDO
 	public function beginTransaction()
 	{
 		$return = true;
-		$opcount = $this->getNestedTransactionCount();
-		if ( $opcount === 0 ) {
+		if (!$this->nestedTransactionCount) {
 			$return = parent::beginTransaction();
 			if ($this->useDebug) {
 				$this->log('Begin transaction', null, __METHOD__);
 			}
 			$this->isUncommitable = false;
 		}
-		$this->incrementNestedTransactionCount();
+		$this->nestedTransactionCount++;
 		return $return;
 	}
 
@@ -207,7 +190,7 @@ class PropelPDO extends PDO
 	public function commit()
 	{
 		$return = true;
-		$opcount = $this->getNestedTransactionCount();
+		$opcount = $this->nestedTransactionCount;
 		if ($opcount > 0) {
 			if ($opcount === 1) {
 				if ($this->isUncommitable) {
@@ -217,10 +200,9 @@ class PropelPDO extends PDO
 					if ($this->useDebug) {		
 				  	$this->log('Commit transaction', null, __METHOD__);
 					}
-
 				}
 			}
-			$this->decrementNestedTransactionCount();
+		$this->nestedTransactionCount--;
 		}
 		return $return;
 	}
@@ -233,7 +215,7 @@ class PropelPDO extends PDO
 	public function rollBack()
 	{
 		$return = true;
-		$opcount = $this->getNestedTransactionCount();
+		$opcount = $this->nestedTransactionCount;
 		if ($opcount > 0) {
 			if ($opcount === 1) {
 				$return = parent::rollBack();
@@ -243,7 +225,7 @@ class PropelPDO extends PDO
 			} else {
 				$this->isUncommitable = true;
 			}
-			$this->decrementNestedTransactionCount(); 
+			$this->nestedTransactionCount--;
 		}
 		return $return;
 	}
@@ -256,8 +238,7 @@ class PropelPDO extends PDO
 	public function forceRollBack()
 	{
 		$return = true;
-		$opcount = $this->getNestedTransactionCount();
-		if ($opcount > 0) {
+		if ($this->nestedTransactionCount) {
 			// If we're in a transaction, always roll it back
 			// regardless of nesting level.
 			$return = parent::rollBack();
@@ -327,16 +308,15 @@ class PropelPDO extends PDO
 	public function prepare($sql, $driver_options = array())
 	{	
 		if ($this->useDebug) {
-			$debug	= $this->getDebugSnapshot();
+			$debug = $this->getDebugSnapshot();
 		}
 		
 		if ($this->cachePreparedStatements) {
-			$key = $sql;
-			if (!isset($this->preparedStatements[$key])) {
+			if (!isset($this->preparedStatements[$sql])) {
 				$return = parent::prepare($sql, $driver_options);
-				$this->preparedStatements[$key] = $return;
+				$this->preparedStatements[$sql] = $return;
 			} else {
-				$return = $this->preparedStatements[$key];
+				$return = $this->preparedStatements[$sql];
 			}
 		} else {
 			$return = parent::prepare($sql, $driver_options);
@@ -359,10 +339,10 @@ class PropelPDO extends PDO
 	public function exec($sql)
 	{
 	  if ($this->useDebug) {
-			$debug	= $this->getDebugSnapshot();
+			$debug = $this->getDebugSnapshot();
 		}
 		
-		$return	= parent::exec($sql);
+		$return = parent::exec($sql);
 		
 		if ($this->useDebug) {
 			$this->log($sql, null, __METHOD__, $debug);
@@ -385,14 +365,14 @@ class PropelPDO extends PDO
 	public function query()
 	{
 	  if ($this->useDebug) {
-			$debug	= $this->getDebugSnapshot();
+			$debug = $this->getDebugSnapshot();
 		}
 		
-		$args	= func_get_args();
+		$args = func_get_args();
 		if (version_compare(PHP_VERSION, '5.3', '<')) {
-			$return	= call_user_func_array(array($this, 'parent::query'), $args);
+			$return = call_user_func_array(array($this, 'parent::query'), $args);
 		} else {
-			$return	= call_user_func_array('parent::query', $args);
+			$return = call_user_func_array('parent::query', $args);
 		}
 		
 		if ($this->useDebug) {
@@ -442,9 +422,7 @@ class PropelPDO extends PDO
 	{
 		// extending PDOStatement is not supported with persistent connections
 		if ($this->getAttribute(PDO::ATTR_PERSISTENT)) {
-			throw new PropelException('Extending PDOStatement is not supported with persistent connections. ' .
-																'Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. ' .
-																'Either don\'t use persistent connections or don\'t call PropelPDO::getQueryCount()');
+			throw new PropelException('Extending PDOStatement is not supported with persistent connections. Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. Either don\'t use persistent connections or don\'t call PropelPDO::getQueryCount()');
 		}
 		return $this->queryCount;
 	}
@@ -593,9 +571,9 @@ class PropelPDO extends PDO
 	{
 	  if ($this->useDebug) {
 			return array(
-				'microtime'				=> microtime(true),
-				'memory_get_usage'		=> memory_get_usage($this->getLoggingConfig('realmemoryusage', false)),
-				'memory_get_peak_usage'	=> memory_get_peak_usage($this->getLoggingConfig('realmemoryusage', false)),
+				'microtime'             => microtime(true),
+				'memory_get_usage'      => memory_get_usage($this->getLoggingConfig('realmemoryusage', false)),
+				'memory_get_peak_usage' => memory_get_peak_usage($this->getLoggingConfig('realmemoryusage', false)),
 				);
 		} else {
 		  throw new PropelException('Should not get debug snapshot when not debugging');
@@ -723,6 +701,5 @@ class PropelPDO extends PDO
 			$this->log('Closing connection', null, __METHOD__, $this->getDebugSnapshot());
 		}
 	}
-
 
 }
