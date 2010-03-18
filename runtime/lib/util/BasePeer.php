@@ -674,20 +674,9 @@ class BasePeer
 
 			$dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
-			if ($dbMap === null) {
-				throw new PropelException("\$dbMap is null");
-			}
-
-			if ($dbMap->getTable($table) === null) {
-				throw new PropelException("\$dbMap->getTable() is null");
-			}
-
-			$columns = $dbMap->getTable($table)->getColumns();
-			foreach (array_keys($columns) as $key) {
-				if ($columns[$key]->isPrimaryKey()) {
-					$pk = $columns[$key];
-					break;
-				}
+			$pks = $dbMap->getTable($table)->getPrimaryKeys();
+			if (!empty($pks)) {
+				$pk = array_shift($pks);
 			}
 		}
 		return $pk;

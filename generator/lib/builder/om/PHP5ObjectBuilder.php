@@ -3376,13 +3376,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			// foreign key reference.
 ";
 
-			foreach ($table->getForeignKeys() as $fk)
-			{
+			foreach ($table->getForeignKeys() as $fk) {
 				$aVarName = $this->getFKVarName($fk);
 				$script .= "
 			if (\$this->$aVarName !== null) {
-				if (\$this->".$aVarName."->isModified() || \$this->".$aVarName."->isNew()) {
-					\$affectedRows += \$this->".$aVarName."->save(\$con);
+				if (\$this->" . $aVarName . "->isModified() || \$this->" . $aVarName . "->isNew()) {
+					\$affectedRows += \$this->" . $aVarName . "->save(\$con);
 				}
 				\$this->set".$this->getFKPhpNameAffix($fk, $plural = false)."(\$this->$aVarName);
 			}
@@ -3400,30 +3399,52 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= "
 
 			// If this object has been modified, then save it to the database.
-			if (\$this->isModified()";
-
-		$script .= ") {
+			if (\$this->isModified()) {
 				if (\$this->isNew()) {
-					\$pk = ".$this->getPeerClassname()."::doInsert(\$this, \$con);";
+					\$criteria = \$this->buildCriteria();";
+		
+		
+		foreach ($table->getColumns() as $col) {
+			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && !$table->isAllowPkInsert()) {
+				$colConst = $this->getColumnConstant($col);
+				$script .= "
+					if (\$criteria->keyContainsValue(" . $colConst . ") ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('." . $colConst . ".')');
+					}
+";
+				if (!$this->getPlatform()->supportsInsertNullPk()) {
+				  $script .= "
+					// remove pkey col since this table uses auto-increment and passing a null value for it is not valid 
+					\$criteria->remove(" . $colConst . ");
+";
+				}
+			} elseif ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && $table->isAllowPkInsert() && !$this->getPlatform()->supportsInsertNullPk()) {
+				  $script .= "
+					// remove pkey col if it is null since this table does not accept that
+				if (\$criteria->containsKey(" . $colConst . ") && !\$criteria->keyContainsValue(" . $colConst . ") ) {
+					\$criteria->remove(" . $colConst . ");
+				}";
+			}
+		}
+		
+		$script .= "
+					\$pk = " . $this->getNewPeerBuilder($table)->getBasePeerClassname() . "::doInsert(\$criteria, \$con);";
 		if ($reloadOnInsert) {
 			$script .= "
 					if (!\$skipReload) {
 						\$reloadObject = true;
 					}";
 		}
+		$operator = count($table->getForeignKeys()) ? '+=' : '=';
 		$script .= "
-					\$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
-										 // should always be true here (even though technically
-										 // BasePeer::doInsert() can insert multiple rows).
-";
+					\$affectedRows " . $operator . " 1;";
 		if ($table->getIdMethod() != IDMethod::NO_ID_METHOD) {
 
 			if (count($pks = $table->getPrimaryKey())) {
 				foreach ($pks as $pk) {
 					if ($pk->isAutoIncrement()) {
 						$script .= "
-					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
-";
+					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
 					}
 				}
 			}
@@ -3438,8 +3459,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 						\$reloadObject = true;
 					}";
 		}
+		$operator = count($table->getForeignKeys()) ? '+=' : '=';
 		$script .= "
-					\$affectedRows += ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
+					\$affectedRows " . $operator . " ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
 ";
 
