@@ -46,6 +46,7 @@ class QueryCacheBehavior extends Behavior
 	
 	public function queryMethods($builder)
 	{
+		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 		$script = '';
 		$this->addSetQueryKey($script);
 		$this->addGetQueryKey($script);
@@ -159,10 +160,10 @@ public function cacheFetch(\$key)
 		$script .= "
 protected function getSelectStatement(\$con = null)
 {
-	\$dbMap = Propel::getDatabaseMap(\$this->getDbName());
-	\$db = Propel::getDB(\$this->getDbName());
+	\$dbMap = Propel::getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
+	\$db = Propel::getDB(" . $this->peerClassname ."::DATABASE_NAME);
   if (\$con === null) {
-		\$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+		\$con = Propel::getConnection(" . $this->peerClassname ."::DATABASE_NAME, Propel::CONNECTION_READ);
 	}
 	
 	// we may modify criteria, so copy it first
