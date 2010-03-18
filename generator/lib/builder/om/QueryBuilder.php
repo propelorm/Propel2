@@ -90,8 +90,34 @@ class QueryBuilder extends OMBuilder
 			$script .= "
  * @method     $queryClass groupBy" . $column->getPhpName() . "() Group by the " . $column->getName() . " column";
 		}
+		
+		// override the signature of ModelCriteria::left-, right- and innerJoin to specify the class of the returned object, for IDE completion
 		$script .= "
+ *
+ * @method     $queryClass leftJoin(\$relation) Adds a LEFT JOIN clause to the query
+ * @method     $queryClass rightJoin(\$relation) Adds a RIGHT JOIN clause to the query
+ * @method     $queryClass innerJoin(\$relation) Adds a INNER JOIN clause to the query
  *";
+
+		// magic XXXjoinYYY() methods, for IDE completion
+		foreach ($this->getTable()->getForeignKeys() as $fk) {
+			$relationName = $this->getFKPhpNameAffix($fk);
+
+			$script .= "
+ * @method     $queryClass leftJoin" . $relationName . "(\$relationAlias = '') Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
+ * @method     $queryClass rightJoin" . $relationName . "(\$relationAlias = '') Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
+ * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = '') Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+		}
+		foreach ($this->getTable()->getReferrers() as $refFK) {
+			$relationName = $this->getRefFKPhpNameAffix($refFK);
+
+			$script .= "
+ * @method     $queryClass leftJoin" . $relationName . "(\$relationAlias = '') Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
+ * @method     $queryClass rightJoin" . $relationName . "(\$relationAlias = '') Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
+ * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = '') Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+		}
 
 		// override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
 		$script .= "
@@ -655,7 +681,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getForeignTable($fk);
 		$relationName = $this->getFKPhpNameAffix($fk);
-		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$joinType = $this->getJoinType($fk);
 		$this->addJoinRelated($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 
@@ -669,7 +695,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
 		$relationName = $this->getRefFKPhpNameAffix($fk);
-		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$joinType = $this->getJoinType($fk);
 		$this->addJoinRelated($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 
@@ -721,7 +747,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$fkTable = $this->getForeignTable($fk);
 		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getFKPhpNameAffix($fk);
-		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$joinType = $this->getJoinType($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 
@@ -735,7 +761,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
 		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
 		$relationName = $this->getRefFKPhpNameAffix($fk);
-		$joinType = $fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN';
+		$joinType = $this->getJoinType($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
 	}
 

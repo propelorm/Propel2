@@ -15,6 +15,12 @@
  * A ModelCriteria requires additional information to be initialized. 
  * Using a model name and tablemaps, a ModelCriteria can do more powerful things than a simple Criteria
  *
+ * magic methods:
+ *
+ * @method     ModelCriteria leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ModelCriteria rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ModelCriteria innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
  * @author     François Zaninotto
  * @version    $Revision$
  * @package    propel.runtime.query

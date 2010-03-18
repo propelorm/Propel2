@@ -216,6 +216,21 @@ abstract class OMBuilder extends DataModelBuilder
 	}
 
 	/**
+	 * Convenience method to get the default Join Type for a relation.
+	 * If the key is required, an INNER JOIN will be returned, else a LEFT JOIN will be suggested,
+	 * unless the schema is provided with the DefaultJoin attribute, which overrules the default Join Type
+	 * 
+	 * @param ForeignKey $fk
+	 * @return     string
+	 */
+	protected function getJoinType(ForeignKey $fk)
+	{
+		return $fk->getDefaultJoin() ? 
+      "'".$fk->getDefaultJoin()."'" :
+      ($fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN');	  
+	}
+
+	/**
 	 * Gets the PHP method name affix to be used for fkeys for the current table (not referrers to this table).
 	 *
 	 * The difference between this method and the getRefFKPhpNameAffix() method is that in this method the

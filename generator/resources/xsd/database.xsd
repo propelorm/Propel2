@@ -335,6 +335,7 @@
 		<xs:attribute name="name" type="foreign_name" use="optional"/>
 		<xs:attribute name="phpName" type="php_name" use="optional"/>
 		<xs:attribute name="refPhpName" type="php_name" use="optional"/>
+		<xs:attribute name="defaultJoin" type="xs:string" use="optional"/>
 		<xs:attribute name="onDelete" type="delete" default="none"/>
 		<xs:attribute name="onUpdate" type="update" default="none"/>
 	</xs:complexType>

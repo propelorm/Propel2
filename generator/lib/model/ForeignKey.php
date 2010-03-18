@@ -26,6 +26,7 @@ class ForeignKey extends XMLElement
 	protected $name;
 	protected $phpName;
 	protected $refPhpName;
+	protected $defaultJoin;
 	protected $onUpdate;
 	protected $onDelete;
 	protected $parentTable;
@@ -60,6 +61,7 @@ class ForeignKey extends XMLElement
 		$this->name = $this->getAttribute("name");
 		$this->phpName = $this->getAttribute("phpName");
 		$this->refPhpName = $this->getAttribute("refPhpName");
+		$this->defaultJoin = $this->getAttribute('defaultJoin');
 		$this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
 		$this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
 	}
@@ -179,6 +181,24 @@ class ForeignKey extends XMLElement
 	public function setRefPhpName($name)
 	{
 		$this->refPhpName = $name;
+	}
+
+	/**
+	 * Gets the defaultJoin for this foreign key (if any).
+	 * @return     string
+	 */
+	public function getDefaultJoin()
+	{
+		return $this->defaultJoin;
+	}
+
+	/**
+	 * Sets a defaultJoin to use for this foreign key.
+	 * @param      string $name
+	 */
+	public function setDefaultJoin($defaultJoin)
+	{
+		$this->defaultJoin = $defaultJoin;
 	}
 
 	/**
@@ -444,6 +464,10 @@ class ForeignKey extends XMLElement
 
 		if ($this->getRefPhpName()) {
 			$fkNode->setAttribute('refPhpName', $this->getRefPhpName());
+		}
+
+		if ($this->getDefaultJoin()) {
+			$fkNode->setAttribute('defaultJoin', $this->getDefaultJoin());
 		}
 
 		if ($this->getOnDelete()) {

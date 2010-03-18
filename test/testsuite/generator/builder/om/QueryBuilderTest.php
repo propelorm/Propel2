@@ -596,6 +596,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookQuery::create()
 			->join('Book.Author', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinFk() accepts a join type as second parameter');
+
+		$q = EssayQuery::create()
+			->joinAuthorRelatedBySecondAuthor();
+		$q1 = EssayQuery::create()
+			->join('Essay.AuthorRelatedBySecondAuthor', "INNER JOIN");
+		$this->assertTrue($q->equals($q1), 'joinFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');		
 	}
 	
 	public function testJoinFkAlias()
@@ -640,6 +646,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = AuthorQuery::create()
 			->join('Author.Book', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinRefFk() accepts a join type as second parameter');
+
+		$q = AuthorQuery::create()
+			->joinEssayRelatedBySecondAuthor();
+		$q1 = AuthorQuery::create()
+			->join('Author.EssayRelatedBySecondAuthor', Criteria::INNER_JOIN);
+		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');		
 	}
 	
 	public function testUseFkQuerySimple()
