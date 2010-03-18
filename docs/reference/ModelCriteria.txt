@@ -640,7 +640,6 @@ $authors = AuthorQuery::create()
   ->useQuery('Book')
     ->recent()
   ->endUse()
-  ->recent()
   ->find();
 }}}
 
