@@ -38,6 +38,7 @@
 
   <path id="propelclasses">
     <pathelement dir="${propel.home}/lib/"/>
+    <pathelement dir="${propel.project.dir}/"/>
   </path>
 
   <taskdef
