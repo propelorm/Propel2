@@ -1650,6 +1650,29 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a custom secondary criteria');
 	}
 	
+	public function testUseQueryJoinWithFind()
+	{
+		$c = new ModelCriteria('bookstore', 'Review');
+		$c->joinWith('Book');
+		
+		$c2 = $c->useQuery('Book');
+		
+		$joins = $c->getJoins();
+		$this->assertEquals($c->getPreviousJoin(), null, 'The default value for previousJoin remains null');
+		$this->assertEquals($c2->getPreviousJoin(), $joins['Book'], 'useQuery() sets the previousJoin');
+		
+		// join Book with Author, which is possible since previousJoin is set, which makes resolving of relations possible during hydration
+		$c2->joinWith('Author');
+		
+		$c = $c2->endUse();
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT review.ID, review.REVIEWED_BY, review.REVIEW_DATE, review.RECOMMENDED, review.STATUS, review.BOOK_ID, book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM `review` INNER JOIN book ON (review.BOOK_ID=book.ID) INNER JOIN author ON (book.AUTHOR_ID=author.ID)";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and joinWith() can be used together and form a correct query');
+		
+	}
+	
 	public function testMergeWithJoins()
 	{
 		$c1 = new ModelCriteria('bookstore', 'Book', 'b');

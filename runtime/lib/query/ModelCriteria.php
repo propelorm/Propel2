@@ -47,6 +47,7 @@ class ModelCriteria extends Criteria
 	protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 	protected $with = array();
 	protected $isWithOneToMany = false;
+	protected $previousJoin = null; // this is introduced to prevent useQuery->join from going wrong
 		
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -448,6 +449,28 @@ class ModelCriteria extends Criteria
 		
 		return $this;
 	}
+	
+	/**
+	 * This method returns the previousJoin for this ModelCriteria,
+	 * by default this is null, but after useQuery this is set the to the join of that use
+	 * 
+	 * @return Join the previousJoin for this ModelCriteria
+	 */
+	public function getPreviousJoin()
+	{
+		return $this->previousJoin;
+	}
+	
+	/**
+	 * This method sets the previousJoin for this ModelCriteria,
+	 * by default this is null, but after useQuery this is set the to the join of that use
+	 * 
+	 * @param Join $previousJoin The previousJoin for this ModelCriteria
+	 */
+	public function setPreviousJoin(Join $previousJoin)
+	{
+		$this->previousJoin = $previousJoin;
+	}
 
 	/**
 	 * Adds a JOIN clause to the query
@@ -478,13 +501,13 @@ class ModelCriteria extends Criteria
 			// simple relation name, refers to the current table
 			$leftName = $this->getModelAliasOrName();
 			$relationName = $fullName;
-			$previousJoin = null;
+			$previousJoin = $this->getPreviousJoin();
 			$tableMap = $this->getTableMap();
 		} else {
 			list($leftName, $relationName) = explode('.', $fullName);
 			// find the TableMap for the left table using the $leftName
 			if ($leftName == $this->getModelAliasOrName()) {
-				$previousJoin = null;
+				$previousJoin = $this->getPreviousJoin();
 				$tableMap = $this->getTableMap();
 			} elseif (isset($this->joins[$leftName])) {
 				$previousJoin = $this->joins[$leftName];
@@ -590,8 +613,8 @@ class ModelCriteria extends Criteria
 			// For performance reasons, the formatters will use a special routine in this case
 			$this->isWithOneToMany = true;
 		}
-		// check that the columns of the main class are already added
-		if (!$this->hasSelectClause()) {
+		// check that the columns of the main class are already added (but only if this isn't a useQuery)
+		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
 			$this->addSelfSelectColumns();
 		}
 		// add the columns of the related class
@@ -636,8 +659,8 @@ class ModelCriteria extends Criteria
 		}
 		$clause = trim($clause);
 		$this->replaceNames($clause);
-		// check that the columns of the main class are already added
-		if (!$this->hasSelectClause()) {
+		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
+		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
 			$this->addSelfSelectColumns();
 		}
 		$this->addAsColumn($name, $clause);
@@ -668,7 +691,7 @@ class ModelCriteria extends Criteria
 		if ($className != $relationName) {
 			$secondaryCriteria->setModelAlias($relationName, true);
 		}
-		$secondaryCriteria->setPrimaryCriteria($this);
+		$secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);
 		
 		return $secondaryCriteria;
 	}
@@ -732,10 +755,12 @@ class ModelCriteria extends Criteria
 	 * Sets the primary Criteria for this secondary Criteria
 	 *
 	 * @param     ModelCriteria $criteria The primary criteria
+	 * @param Join $previousJoin The previousJoin for this ModelCriteria
 	 */
-	public function setPrimaryCriteria(ModelCriteria $criteria)
+	public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
 	{
 		$this->primaryCriteria = $criteria;
+		$this->setPreviousJoin($previousJoin);
 	}
 
 	/**
@@ -934,7 +959,8 @@ class ModelCriteria extends Criteria
 		// we may modify criteria, so copy it first
 		$criteria = clone $this;
 
-		if (!$criteria->hasSelectClause()) {
+		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
+		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
 			$criteria->addSelfSelectColumns();
 		}
 		
