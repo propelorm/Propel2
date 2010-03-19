@@ -657,7 +657,7 @@ class ModelCriteria extends Criteria
 	public function useQuery($relationName, $secondaryCriteriaClass = null)
 	{
 		if (!isset($this->joins[$relationName])) {
-			throw new PropelException('Unknown class or alias ' . $name);
+			throw new PropelException('Unknown class or alias ' . $relationName);
 		}
 		$className = $this->joins[$relationName]->getTableMap()->getPhpName();
 		if (null === $secondaryCriteriaClass) {
