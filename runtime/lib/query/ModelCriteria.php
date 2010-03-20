@@ -614,7 +614,7 @@ class ModelCriteria extends Criteria
 			$this->isWithOneToMany = true;
 		}
 		// check that the columns of the main class are already added (but only if this isn't a useQuery)
-		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
+		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
 			$this->addSelfSelectColumns();
 		}
 		// add the columns of the related class
@@ -660,7 +660,7 @@ class ModelCriteria extends Criteria
 		$clause = trim($clause);
 		$this->replaceNames($clause);
 		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
-		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
+		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
 			$this->addSelfSelectColumns();
 		}
 		$this->addAsColumn($name, $clause);
@@ -960,7 +960,7 @@ class ModelCriteria extends Criteria
 		$criteria = clone $this;
 
 		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
-		if ((!$this->getPrimaryCriteria()) && (!$this->hasSelectClause())) {
+		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
 			$criteria->addSelfSelectColumns();
 		}
 		
