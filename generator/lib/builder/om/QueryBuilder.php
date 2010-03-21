@@ -374,7 +374,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			}
 		}
 		$script .= "
-		if (\$this->getFormatter()->isObjectFormatter() && (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams).")))) {
+		if ((null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams)."))) && \$this->getFormatter()->isObjectFormatter()) {
 			// the object is alredy in the instance pool
 			return \$obj;
 		} else {
