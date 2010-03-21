@@ -689,7 +689,7 @@ class ModelCriteria extends Criteria
 			$secondaryCriteria = new $secondaryCriteriaClass();
 		}
 		if ($className != $relationName) {
-			$secondaryCriteria->setModelAlias($relationName, true);
+			$secondaryCriteria->setModelAlias($relationName, $relationName == $this->joins[$relationName]->getRelationMap()->getName() ? false : true);
 		}
 		$secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);
 		

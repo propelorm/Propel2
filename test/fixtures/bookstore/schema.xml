@@ -253,7 +253,7 @@
 		<foreign-key foreignTable="contest" onDelete="cascade">
 			<reference local="contest_id" foreign="id" />
 		</foreign-key>
-		<foreign-key foreignTable="book" onDelete="setnull">
+		<foreign-key foreignTable="book" onDelete="setnull" phpName="Work">
 			<reference local="prize_book_id" foreign="id" />
 		</foreign-key>
 	</table>

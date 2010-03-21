@@ -1670,7 +1670,44 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->find($con);
 		$expectedSQL = "SELECT review.ID, review.REVIEWED_BY, review.REVIEW_DATE, review.RECOMMENDED, review.STATUS, review.BOOK_ID, book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM `review` INNER JOIN book ON (review.BOOK_ID=book.ID) INNER JOIN author ON (book.AUTHOR_ID=author.ID)";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and joinWith() can be used together and form a correct query');
+	}
+	
+	public function testUseQueryCustomRelationPhpName()
+	{
+		$c = new ModelCriteria('bookstore', 'BookstoreContest');
+		$c->leftJoin('BookstoreContest.Work');
+		$c2 = $c->useQuery('Work');
+		$this->assertTrue($c2 instanceof BookQuery, 'useQuery() returns a secondary Criteria');
+		$this->assertEquals($c, $c2->getPrimaryCriteria(), 'useQuery() sets the primary Criteria os the secondary Criteria');
+		//$this->assertEquals(array('a' => 'author'), $c2->getAliases(), 'useQuery() sets the secondary Criteria alias correctly');
+		$c2->where('Work.Title = ?', 'War And Peace');
 		
+		$c = $c2->endUse();
+		$this->assertEquals('BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN book ON (bookstore_contest.PRIZE_BOOK_ID=book.ID) WHERE book.TITLE = 'War And Peace'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
+	}
+
+	public function testUseQueryCustomRelationPhpNameAndAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'BookstoreContest');
+		$c->leftJoin('BookstoreContest.Work w');
+		$c2 = $c->useQuery('w');
+		$this->assertTrue($c2 instanceof BookQuery, 'useQuery() returns a secondary Criteria');
+		$this->assertEquals($c, $c2->getPrimaryCriteria(), 'useQuery() sets the primary Criteria os the secondary Criteria');
+		//$this->assertEquals(array('a' => 'author'), $c2->getAliases(), 'useQuery() sets the secondary Criteria alias correctly');
+		$c2->where('w.Title = ?', 'War And Peace');
+		
+		$c = $c2->endUse();
+		$this->assertEquals('BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
+		
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c->find($con);
+		$expectedSQL = "SELECT bookstore_contest.BOOKSTORE_ID, bookstore_contest.CONTEST_ID, bookstore_contest.PRIZE_BOOK_ID FROM `bookstore_contest` LEFT JOIN book w ON (bookstore_contest.PRIZE_BOOK_ID=w.ID) WHERE w.TITLE = 'War And Peace'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
 	}
 	
 	public function testMergeWithJoins()
