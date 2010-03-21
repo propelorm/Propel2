@@ -58,7 +58,10 @@ class ModelCriterion extends Criterion
 	/**
 	 * Figure out which MocelCriterion method to use 
 	 * to build the prepared statement and parameters using to the Criterion comparison
-	 * and call it to append the prepared statement and the parameters of the current clause
+	 * and call it to append the prepared statement and the parameters of the current clause.
+	 * For performance reasons, this method tests the cases of parent::dispatchPsHandling()
+	 * first, and that is not possible through inheritance ; that's why the parent
+	 * code is duplicated here.
 	 *
 	 * @param      string &$sb The string that will receive the Prepared Statement
 	 * @param      array $params A list to which Prepared Statement parameters will be appended
@@ -66,6 +69,22 @@ class ModelCriterion extends Criterion
 	protected function dispatchPsHandling(&$sb, array &$params)
 	{
 		switch ($this->comparison) {
+			case Criteria::CUSTOM:
+				// custom expression with no parameter binding
+				$this->appendCustomToPs($sb, $params);
+				break;
+			case Criteria::IN:
+			case Criteria::NOT_IN:
+				// table.column IN (?, ?) or table.column NOT IN (?, ?)
+				$this->appendInToPs($sb, $params);
+				break;
+			case Criteria::LIKE:
+			case Criteria::NOT_LIKE:
+			case Criteria::ILIKE:
+			case Criteria::NOT_ILIKE:
+				// table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+				$this->appendLikeToPs($sb, $params);
+				break;
 			case ModelCriteria::MODEL_CLAUSE:
 				// regular model clause, e.g. 'book.TITLE = ?'
 				$this->appendModelClauseToPs($sb, $params);
@@ -81,10 +100,11 @@ class ModelCriterion extends Criterion
 			case ModelCriteria::MODEL_CLAUSE_ARRAY:
 				// IN or NOT IN model clause, e.g. 'book.TITLE NOT IN ?'
 				$this->appendModelClauseArrayToPs($sb, $params);
-				break;							
+				break;
 			default:
-				// fallback to Criterion methods
-				parent::dispatchHandling($sb, $params);
+				// table.column = ? or table.column >= ? etc. (traditional expressions, the default)
+				$this->appendBasicToPs($sb, $params);
+
 		}
 	}
 
