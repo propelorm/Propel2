@@ -197,10 +197,8 @@ class SluggableBehaviorTest extends BookstoreTestBase
 		$t->setSlug('');
 		$t->save();
 		$this->assertEquals('hello-world', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
-		$t->setTitle('Hello, My World');
-		$t->save();
-		$this->assertEquals('hello-my-world', $t->getSlug(), 'preSave() regenerates slug on object change');
 
+		Table14Query::create()->deleteAll();
 		$t = new Table14();
 		$t->setTitle('Hello, World2');
 		$t->setSlug('hello-bar2');
@@ -209,6 +207,37 @@ class SluggableBehaviorTest extends BookstoreTestBase
 		$t->setSlug('');
 		$t->save();
 		$this->assertEquals('/foo/hello-world2/bar', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
+	}
+	
+	public function testObjectSlugAutoUpdate()
+	{
+		Table13Query::create()->deleteAll();
+		$t = new Table13();
+		$t->setTitle('Hello, World');
+		$t->save();
+		$this->assertEquals('hello-world', $t->getSlug(), 'preSave() creates a slug for new objects');
+		$t->setTitle('Hello, My World');
+		$t->save();
+		$this->assertEquals('hello-my-world', $t->getSlug(), 'preSave() autoupdates slug on object change');
+		$t->setTitle('Hello, My Whole New World');
+		$t->setSlug('hello-bar');
+		$t->save();
+		$this->assertEquals('hello-bar', $t->getSlug(), 'preSave() does not autoupdate slug when it was set by the user');
+	}
+
+	public function testObjectSlugAutoUpdatePermanent()
+	{
+		Table14Query::create()->deleteAll();
+		$t = new Table14();
+		$t->setTitle('Hello, World');
+		$t->save();
+		$this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() creates a slug for new objects');
+		$t->setTitle('Hello, My World');
+		$t->save();
+		$this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() does not autoupdate slug on object change for permanent slugs');
+		$t->setSlug('hello-bar');
+		$t->save();
+		$this->assertEquals('hello-bar', $t->getSlug(), 'setSlug() still works for permanent slugs');
 	}
 
 	public function testQueryFindOneBySlug()

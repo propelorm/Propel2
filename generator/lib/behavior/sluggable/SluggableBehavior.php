@@ -24,7 +24,8 @@ class SluggableBehavior extends Behavior
 		'slug_pattern'    => '',
 		'replace_pattern' => '/\W+/', // Tip: use '/[^\\pL\\d]+/u' instead if you're in PHP5.3
 		'replacement'     => '-',
-		'separator'       => '-'
+		'separator'       => '-',
+		'permanent'       => 'false'
 	);
 
 	/**
@@ -74,13 +75,22 @@ class SluggableBehavior extends Behavior
 	public function preSave($builder)
 	{
     $const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'), $this->getTable()->getPhpName() . 'Peer');
-		return <<<EOT
+		$script = "
 if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
-	\$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));
+	\$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));";
+		if ($this->getParameter('permanent') == 'true') {
+			$script .= "
+} elseif (!\$this->{$this->getColumnGetter()}()) {
+	\$this->{$this->getColumnSetter()}(\$this->createSlug());
+}";
+		} else {
+			$script .= "
 } else {
 	\$this->{$this->getColumnSetter()}(\$this->createSlug());
-}
-EOT;
+}";
+		}
+		
+		return $script;
 	}
 
 	public function objectMethods($builder)

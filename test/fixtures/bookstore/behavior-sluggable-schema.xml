@@ -16,6 +16,7 @@
 			<parameter name="slug_pattern" value="/foo/{Title}/bar" />
 			<parameter name="replace_pattern" value="/[^\w\/]+/" />
 			<parameter name="separator" value="/" />
+			<parameter name="permanent" value="true" />
 		</behavior>
 	</table>
 

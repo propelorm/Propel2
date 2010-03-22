@@ -62,6 +62,7 @@ By default, the behavior adds one columns to the model. If this column is alread
     <parameter name="replace_pattern" value="/[^\w\/]+/u" />
     <parameter name="replacement" value="-" />
     <parameter name="separator" value="/" />
+    <parameter name="permanent" value="true" />
   </behavior>
 </table>
 }}}
@@ -98,6 +99,8 @@ The `separator` parameter is the character that separates the slug from the incr
 'posts/hello-world/2'
 ...
 }}}
+
+A `permanent` slug is not automatically updated when the fields that constitute it change. This is useful when the slug serves as a permalink, that should work even when the model object properties change. Note that you can still manually change the slug in a model using the `permanent` setting by calling `setSlug()`;
 
 == Further Customization ==
 
