@@ -1653,6 +1653,20 @@ EOT;
 			}
 		}
 		
+		// Maybe it's a magic call to a qualified joinWith method, e.g. 'leftJoinWith' or 'joinWithAuthor'
+		if(($pos = stripos($name, 'joinWith')) !== false) {
+			$type = substr($name, 0, $pos);
+			if(in_array($type, array('left', 'right', 'inner'))) {
+				$joinType = strtoupper($type) . ' JOIN';
+			} else {
+				$joinType = Criteria::INNER_JOIN;
+			}
+			if(!$relation = substr($name, $pos + 8)) {
+			  $relation = $arguments[0];
+			}
+			return $this->joinWith($relation, $joinType);
+		}
+		
 		// Maybe it's a magic call to a qualified join method, e.g. 'leftJoin'
 		if(($pos = strpos($name, 'Join')) > 0)
 		{

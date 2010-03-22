@@ -1521,7 +1521,52 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'leftJoinWith() adds a LEFT JOIN');
 	}
 
-	
+	public function testMagicJoinWithRelation()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->joinWithAuthor();
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWithXXX() adds the join with the XXX relation');
+		$joins = $c->getJoins();
+		$join = $joins['Author'];
+		$this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'joinWithXXX() adds an INNER JOIN');
+	}
+
+	public function testMagicJoinWithTypeAndRelation()
+	{
+		$c = new TestableModelCriteria('bookstore', 'Book');
+		$c->leftJoinWithAuthor();
+		$expectedColumns = array(
+			BookPeer::ID,
+			BookPeer::TITLE,
+			BookPeer::ISBN,
+			BookPeer::PRICE,
+			BookPeer::PUBLISHER_ID,
+			BookPeer::AUTHOR_ID,
+			AuthorPeer::ID,
+			AuthorPeer::FIRST_NAME,
+			AuthorPeer::LAST_NAME,
+			AuthorPeer::EMAIL,
+			AuthorPeer::AGE
+		);
+		$this->assertEquals($expectedColumns, $c->getSelectColumns(), 'leftJoinWithXXX() adds the join with the XXX relation');
+		$joins = $c->getJoins();
+		$join = $joins['Author'];
+		$this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'leftJoinWithXXX() adds an INNER JOIN');
+	}
+		
 	public function testMagicFind()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
