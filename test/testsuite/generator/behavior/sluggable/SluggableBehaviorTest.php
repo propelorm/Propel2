@@ -183,6 +183,33 @@ class SluggableBehaviorTest extends BookstoreTestBase
 		$t->save();
 		$this->assertEquals('/foo/custom/bar/1', $t->getSlug(), 'preSave() uses the given slug if it exists and makes it unique');
 	}
+	
+	public function testObjectSlugLifecycle()
+	{
+		Table13Query::create()->deleteAll();
+		$t = new Table13();
+		$t->setTitle('Hello, World');
+		$t->save();
+		$this->assertEquals('hello-world', $t->getSlug(), 'preSave() creates a slug for new objects');
+		$t->setSlug('hello-bar');
+		$t->save();
+		$this->assertEquals('hello-bar', $t->getSlug(), 'setSlug() allows to override default slug');
+		$t->setSlug('');
+		$t->save();
+		$this->assertEquals('hello-world', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
+		$t->setTitle('Hello, My World');
+		$t->save();
+		$this->assertEquals('hello-my-world', $t->getSlug(), 'preSave() regenerates slug on object change');
+
+		$t = new Table14();
+		$t->setTitle('Hello, World2');
+		$t->setSlug('hello-bar2');
+		$t->save();
+		$this->assertEquals('hello-bar2', $t->getSlug(), 'setSlug() allows to override default slug, even before save');
+		$t->setSlug('');
+		$t->save();
+		$this->assertEquals('/foo/hello-world2/bar', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
+	}
 
 	public function testQueryFindOneBySlug()
 	{

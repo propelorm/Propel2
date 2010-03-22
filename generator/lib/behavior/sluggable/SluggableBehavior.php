@@ -75,10 +75,10 @@ class SluggableBehavior extends Behavior
 	{
     $const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'), $this->getTable()->getPhpName() . 'Peer');
 		return <<<EOT
-if (!\$this->isColumnModified($const)) {
-	\$this->{$this->getColumnSetter()}(\$this->createSlug());
-} else {
+if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
 	\$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));
+} else {
+	\$this->{$this->getColumnSetter()}(\$this->createSlug());
 }
 EOT;
 	}
