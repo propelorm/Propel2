@@ -186,7 +186,7 @@ class ModelCriterion extends Criterion
 		if ($valuesLength !== 0) {
 			$sb .= str_replace('?', '(' . implode(',', $_bindParams) . ')', $this->clause);
 		} else {
-			$sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1=1" : "1<>1";
+			$sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1<>1" : "1=1";
 		}
 		unset ( $value, $valuesLength );
 	}
