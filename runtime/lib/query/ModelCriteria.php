@@ -1187,9 +1187,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function doDelete($con)
 	{
-		$affectedRows = BasePeer::doDelete($this, $con);
-		call_user_func(array($this->modelPeerName, 'clearInstancePool'));
-		call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+		$affectedRows = call_user_func(array($this->modelPeerName, 'doDelete'), $this, $con);
 		
 		return $affectedRows;
 	}
@@ -1232,9 +1230,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function doDeleteAll($con)
 	{
-		$affectedRows = BasePeer::doDeleteAll(constant($this->modelPeerName.'::TABLE_NAME'), $con);
-		call_user_func(array($this->modelPeerName, 'clearInstancePool'));
-		call_user_func(array($this->modelPeerName, 'clearRelatedInstancePool'));
+		$affectedRows = call_user_func(array($this->modelPeerName, 'doDeleteAll'), $con);
 		
 		return $affectedRows;
 	}

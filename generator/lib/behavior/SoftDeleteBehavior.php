@@ -163,10 +163,7 @@ public function softDelete(PropelPDO \$con = null)
  */
 public function forceDelete(PropelPDO \$con = null)
 {
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
-	}
-	return \$this->doDelete(\$con);
+	return {$this->builder->getPeerClassname()}::doForceDelete(\$this, \$con);
 }
 ";
 	}
@@ -183,11 +180,7 @@ public function forceDelete(PropelPDO \$con = null)
  */
 public function forceDeleteAll(PropelPDO \$con = null)
 {
-	if (\$con === null) {
-		\$con = Propel::getConnection({$this->builder->getPeerClassname()}::DATABASE_NAME, Propel::CONNECTION_WRITE);
-	}
-	return \$this->doDeleteAll(\$con);
-}
+	return {$this->builder->getPeerClassname()}::doForceDeleteAll(\$con);}
 ";
 	}
 
