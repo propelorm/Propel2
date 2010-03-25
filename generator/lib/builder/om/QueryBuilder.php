@@ -373,15 +373,18 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 				$poolKeyHashParams[]= '$key[' . $i . ']';
 			}
 		}
+		// tip: we don't use findOne() to avoid putting an unecessary LIMIT 1 statement,
+		// which may be costly on platforms not natively supporting LIMIT (like Oracle)
 		$script .= "
 		if ((null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams)."))) && \$this->getFormatter()->isObjectFormatter()) {
 			// the object is alredy in the instance pool
 			return \$obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			return \$this
+			\$stmt = \$this
 				->filterByPrimaryKey(\$key)
-				->findOne(\$con);
+				->getSelectStatement(\$con);
+			return \$this->getFormatter()->formatOne(\$stmt);
 		}
 	}
 ";
