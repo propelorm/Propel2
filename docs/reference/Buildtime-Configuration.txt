@@ -47,10 +47,10 @@ propel.targetPackage = {propel.project}
 The package to use for the generated classes.  This affects the value of the @package phpdoc tag, ''and it also affects the directory that the classes are placed in.''  By default this will be the same as the project.
 
 {{{
-propel.packageObjectModel = {true}|false
+propel.packageObjectModel = true|{false}
 }}}
 
-Whether to break generated objects out into different directories based on package.
+Whether to break generated objects out into different directories based on package. this implies that all database elements provide a `package` attribute. 
 
 {{{
 propel.schema.validate = {true}|false
