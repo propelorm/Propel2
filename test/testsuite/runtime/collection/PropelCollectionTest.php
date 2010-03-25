@@ -19,6 +19,15 @@ require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
  */
 class PropelCollectionTest extends BookstoreTestBase
 {
+	public function testArrayAccess()
+	{
+		$data = array('bar1', 'bar2', 'bar3');
+		$col = new PropelCollection($data);
+		$this->assertEquals('bar1', $col[0], 'PropelCollection allows access via $foo[$index]');
+		$this->assertEquals('bar2', $col[1], 'PropelCollection allows access via $foo[$index]');
+		$this->assertEquals('bar3', $col[2], 'PropelCollection allows access via $foo[$index]');
+	}
+
 	public function testGetData()
 	{
 		$col = new PropelCollection();
