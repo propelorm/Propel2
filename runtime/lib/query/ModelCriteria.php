@@ -364,12 +364,8 @@ class ModelCriteria extends Criteria
 	 */
 	public function orderBy($columnName, $order = Criteria::ASC)
 	{
-		list($column, $realColumnName) = $this->getColumnFromName($columnName);
-		if (!$column instanceof ColumnMap) {
-			throw new PropelException('ModelCriteria::orderBy() expects a valid column name (e.g. Book.Title) as first argument');
-		}
+		list($column, $realColumnName) = $this->getColumnFromName($columnName, false);
 		$order = strtoupper($order);
-		
 		switch ($order) {
 			case Criteria::ASC:
 				$this->addAscendingOrderByColumn($realColumnName);
@@ -378,7 +374,7 @@ class ModelCriteria extends Criteria
 				$this->addDescendingOrderByColumn($realColumnName);
 				break;
 			default:
-				throw new PropelException('ModelCriteria::orderBy() only accepts "asc" or "desc" as argument');
+				throw new PropelException('ModelCriteria::orderBy() only accepts Criteria::ASC or Criteria::DESC as argument');
 		}
 		
 		return $this;
@@ -398,10 +394,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function groupBy($columnName)
 	{
-		list($column, $realColumnName) = $this->getColumnFromName($columnName);
-		if (!$column instanceof ColumnMap) {
-			throw new PropelException('ModelCriteria::groupBy() expects a valid column name (e.g. Book.AuthorId) as first argument');
-		}
+		list($column, $realColumnName) = $this->getColumnFromName($columnName, false);
 		$this->addGroupByColumn($realColumnName);
 		
 		return $this;
@@ -1492,7 +1485,6 @@ EOT;
 			list($class, $phpName) = explode('.', $phpName);
 		}
 		
-		
 		if ($class == $this->getModelAliasOrName()) {
 			// column of the Criteria's model
 			$tableMap = $this->getTableMap();
@@ -1516,6 +1508,9 @@ EOT;
 				$realColumnName = $column->getFullyQualifiedName();
 			}
 			return array($column, $realColumnName);
+		} elseif (isset($this->asColumns[$phpName])) {
+			// aliased column
+			return array(null, $phpName);
 		} else {
 			if ($failSilently) {
 				return array(null, null);

@@ -26,7 +26,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$result = BasePeer::createSelectSql($criteria, $params);
 		
 		$this->assertEquals($expectedSql, $result, $message);
-		$this->assertEquals($expectedParams, $params, $message); 
+		$this->assertEquals($expectedParams, $params, $message);
 	}
 	
 	public function testGetModelName()
@@ -423,6 +423,17 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a simple column name and adds an ORDER BY clause');
 	}
 	
+	public function testOrderByAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addAsColumn('t', BookPeer::TITLE);
+		$c->orderBy('t');
+		
+		$sql = 'SELECT book.TITLE AS t FROM  ORDER BY t ASC';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a column alias and adds an ORDER BY clause');
+	}
+	
 	public function testGroupBy()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
@@ -449,6 +460,17 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$sql = 'SELECT  FROM  GROUP BY book.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a simple column name and adds a GROUP BY clause');
+	}
+
+	public function testGroupByAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addAsColumn('t', BookPeer::TITLE);
+		$c->groupBy('t');
+		
+		$sql = 'SELECT book.TITLE AS t FROM  GROUP BY t';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a column alias and adds a GROUP BY clause');
 	}
 	
 	public function testDistinct()

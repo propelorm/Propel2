@@ -130,7 +130,7 @@ class Criteria implements IteratorAggregate
 	private $orderByColumns = array();
 	private $groupByColumns = array();
 	private $having = null;
-	private $asColumns = array();
+	protected $asColumns = array();
 	protected $joins = array();
 
 	/** The name of the database. */
