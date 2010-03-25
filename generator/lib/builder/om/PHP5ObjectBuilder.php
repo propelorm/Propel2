@@ -204,10 +204,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addAttributes($script);
 		}
 
-    if ($this->hasDefaultValues()) {
-      $this->addApplyDefaultValues($script);
-      $this->addConstructor($script);
-    }
+		if ($this->hasDefaultValues()) {
+			$this->addApplyDefaultValues($script);
+			$this->addConstructor($script);
+		}
 
 		$this->addColumnAccessorMethods($script);
 		$this->addColumnMutatorMethods($script);
@@ -216,13 +216,14 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$this->addHydrate($script);
 		$this->addEnsureConsistency($script);
+		
+		if (!$table->isReadOnly()) {
+			$this->addManipulationMethods($script);
+		}
 
-		$this->addManipulationMethods($script);
-
-    if ($this->isAddValidateMethod())
-    {
-      $this->addValidationMethods($script);
-    }
+		if ($this->isAddValidateMethod()) {
+			$this->addValidationMethods($script);
+		}
 
 		if ($this->isAddGenericAccessors()) {
 			$this->addGetByName($script);

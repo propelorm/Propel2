@@ -1329,4 +1329,23 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$book->setVirtualColumn('Foo', 'bar');
 		$this->assertEquals('bar', $book->getFoo(), 'generated __call() catches getters for virtual columns');
 	}
+	
+	public static function conditionsForTestReadOnly()
+	{
+		return array(
+			array('reload'),
+			array('delete'),
+			array('save'),
+			array('doSave'),
+		);
+	}
+	
+	/**
+	 * @dataProvider conditionsForTestReadOnly
+	 */
+	public function testReadOnly($method)
+	{
+		$cv = new ContestView();
+		$this->assertFalse(method_exists($cv, $method), 'readOnly tables end up with no ' . $method . ' method in the generated object class');
+	}
 }

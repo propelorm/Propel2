@@ -243,6 +243,12 @@
 		<column name="name" type="VARCHAR" size="100" />
 	</table>
 
+	<!-- Test Views (read-only tables) -->
+	<table name="contest_view" readOnly="true">
+		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="VARCHAR" size="100" />
+	</table>
+
 	<table name="bookstore_contest">
 		<column name="bookstore_id" type="INTEGER" primaryKey="true" />
 		<column name="contest_id" type="INTEGER" primaryKey="true" />
