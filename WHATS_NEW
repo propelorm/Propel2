@@ -140,6 +140,8 @@ array_pop($books)        | $books->pop()
 etc.
 }}}
 
+'''Warning''': `empty($books)` always returns false when using a collection, even on a non-empty one. This is a PHP limitation. Prefer `$books->isEmpty()`, or `count($books)>0`.
+
 '''Tip''': If you can't afford updating your code to support collections instead of arrays, you can still ask Propel to generate 1.4-compatible model objects by overriding the `propel.builder.object.class` setting in your `build.properties`, as follows:
 
 {{{
