@@ -113,10 +113,10 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 		
 		$this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
 		$this->assertEquals(1, count($books), 'PropelOnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
-		$books->next();
-		$book = $books->current();
-		$this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::format() returns a collection of Model objects');
-		$this->assertEquals('Quicksilver', $book->getTitle(), 'PropelOnDemandFormatter::format() returns the model objects matching the query');
+		foreach ($books as $book) {
+			$this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::format() returns a collection of Model objects');
+			$this->assertEquals('Quicksilver', $book->getTitle(), 'PropelOnDemandFormatter::format() returns the model objects matching the query');
+		}
 	}
 
 	public function testFormatNoResult()

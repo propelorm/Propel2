@@ -30,8 +30,7 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 		$class = $this->collectionName;
 		$collection = new $class();
 		$collection->setModel($this->getCriteria()->getModelName());
-		$collection->setFormatter($this);
-		$collection->setStatement($stmt);
+		$collection->initIterator($this, $stmt);
 		
 		return $collection;
 	}

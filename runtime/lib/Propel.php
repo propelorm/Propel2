@@ -175,6 +175,7 @@ class Propel
 		'PropelCollection'    => 'collection/PropelCollection.php',
 		'PropelObjectCollection' => 'collection/PropelObjectCollection.php',
 		'PropelOnDemandCollection' => 'collection/PropelOnDemandCollection.php',
+		'PropelOnDemandIterator' => 'collection/PropelOnDemandIterator.php',
 
 		'PropelConfiguration' => 'config/PropelConfiguration.php',
 		'PropelConfigurationIterator' => 'config/PropelConfigurationIterator.php',
