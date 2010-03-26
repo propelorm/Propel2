@@ -149,6 +149,22 @@ class AppData
 		}
 		return null;
 	}
+	
+	/**
+	 * Checks whether a database with the specified nam exists in this AppData
+	 *
+	 * @param      name database name
+	 * @return     boolean
+	 */
+	public function hasDatabase($name)
+	{
+		foreach ($this->dbList as $db) {
+			if ($db->getName() === $name) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Add a database to the list and sets the AppData property to this
@@ -178,11 +194,7 @@ class AppData
 
 	}
 
-	/**
-	 *
-	 * @return     void
-	 */
-	private function doFinalInitialization()
+	public function doFinalInitialization()
 	{
 		if (!$this->isInitialized) {
 			for ($i=0, $size=count($this->dbList); $i < $size; $i++) {

@@ -54,12 +54,6 @@ abstract class AbstractPropelDataModelTask extends Task
 	protected $dataModelDbMap;
 
 	/**
-	 * Hashtable containing the names of all the databases
-	 * in our collection of schemas.
-	 */
-	protected $databaseNames; // doesn't seem to be used anywhere
-
-	/**
 	 * The target database(s) we are generating SQL
 	 * for. Right now we can only deal with a single
 	 * target, but we will support multiple targets
@@ -463,25 +457,22 @@ abstract class AbstractPropelDataModelTask extends Task
 			throw new BuildException("No schema files were found (matching your schema fileset definition).");
 		}
 
-		if (!$this->packageObjectModel) {
-
-			$this->dataModels = $ads;
-			$this->databaseNames = array(); // doesn't seem to be used anywhere
-			$this->dataModelDbMap = array();
-
-			// Different datamodels may state the same database
-			// names, we just want the unique names of databases.
-			foreach ($this->dataModels as $dm) {
-				$database = $dm->getDatabase();
-				$this->dataModelDbMap[$dm->getName()] = $database->getName();
-				$this->databaseNames[$database->getName()] = $database->getName(); // making list of *unique* dbnames.
-			}
-		} else {
-
-			$this->joinDatamodels($ads);
-			$this->dataModels[0]->getDatabases(); // calls doFinalInitialization()
+		foreach ($ads as $ad) {
+			// map schema filename with database name
+			$this->dataModelDbMap[$ad->getName()] = $ad->getDatabase(null, false)->getName();
 		}
-
+		
+		if (count($ads)>1 && $this->packageObjectModel) {
+			$ad = $this->joinDataModels($ads);
+			$this->dataModels = array($ad);
+		} else {
+			$this->dataModels = $ads;
+		}
+		
+		foreach ($this->dataModels as $ad) {
+			$ad->doFinalInitialization();
+		}
+			
 		$this->dataModelsLoaded = true;
 	}
 
@@ -515,49 +506,42 @@ abstract class AbstractPropelDataModelTask extends Task
 			}
 		}
 	}
+	
 	/**
-	 * Joins the datamodels collected from schema.xml files into one big datamodel
+	 * Joins the datamodels collected from schema.xml files into one big datamodel.
+	 *  We need to join the datamodels in this case to allow for foreign keys 
+	 * that point to tables in different packages.
 	 *
-	 * This applies only when the the packageObjectModel option is set. We need to
-	 * join the datamodels in this case to allow for foreign keys that point to
-	 * tables in different packages.
-	 *
-	 * @param      array $ads The datamodels to join
+	 * @param      array[AppData] $ads The datamodels to join
+	 * @return     AppData        The single datamodel with all other datamodels joined in
 	 */
-	protected function joinDatamodels($ads) {
-
-		foreach ($ads as $ad) {
-			$db = $ad->getDatabase(null, false);
-			$this->dataModelDbMap[$ad->getName()] = $db->getName();
-		}
-
-		foreach ($ads as $addAd) {
-
-			$ad = &$this->dataModels[0];
-			if (!isset($ad)) {
-				$addAd->setName('JoinedDataModel');
-				$ad = $addAd;
+	protected function joinDataModels($ads)
+	{
+		$mainAppData = null;
+		foreach ($ads as $appData) {
+			if (null === $mainAppData) {
+				$mainAppData = $appData;
+				$appData->setName('JoinedDataModel');
 				continue;
 			}
-			foreach ($addAd->getDatabases(false) as $addDb) {
+			// merge subsequent schemas to the first one
+			foreach ($appData->getDatabases(false) as $addDb) {
 				$addDbName = $addDb->getName();
-				if (!$package = $addDb->getPackage()) {
-					throw new BuildException('No package found for database "' . $addDbName . '" in ' . $addAd->getName() . '. The propel.packageObjectModel property requires the package attribute to be set for each database.');
-				}
-				$db = $ad->getDatabase($addDbName, false);
-				if (!$db) {
-					$ad->addDatabase($addDb);
-					continue;
-				}
-				foreach ($addDb->getTables() as $addTable) {
-					$table = $db->getTable($addTable->getName());
-					if ($table) {
-						throw new BuildException('Duplicate table found: ' . $addDbName . '.');
+				if ($mainAppData->hasDatabase($addDbName)) {
+					$db = $mainAppData->getDatabase($addDbName, false);
+					foreach ($addDb->getTables() as $addTable) {
+						$table = $db->getTable($addTable->getName());
+						if ($table) {
+							throw new BuildException('Duplicate table found: ' . $addDbName . '.');
+						}
+						$db->addTable($addTable);
 					}
-					$db->addTable($addTable);
+				} else {
+					$mainAppData->addDatabase($addDb);
 				}
 			}
 		}
+		return $mainAppData;
 	}
 
 	/**
