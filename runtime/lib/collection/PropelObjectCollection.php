@@ -108,6 +108,28 @@ class PropelObjectCollection extends PropelCollection
 	}
 	
 	/**
+	 * Get an associative array representation of the collection
+	 * The first parameter specifies the column to be used for the key,
+	 * And the seconf for the value.
+	 * <code>
+	 * $res = $coll->toKeyValue('Id', 'Name');
+	 * </code>
+	 *
+	 * @return    array
+	 */
+	public function toKeyValue($keyColumn, $valueColumn)
+	{
+		$ret = array();
+		$keyGetterMethod = 'get' . $keyColumn;
+		$valueGetterMethod = 'get' . $valueColumn;
+		foreach ($this as $obj) {
+			$ret[$obj->$keyGetterMethod()] = $obj->$valueGetterMethod();
+		}
+		
+		return $ret;
+	}
+	
+	/**
 	 * Makes an additional query to populate the objects related to the collection objects
 	 * by a certain relation
 	 *

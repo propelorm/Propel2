@@ -114,6 +114,26 @@ class PropelArrayCollection extends PropelCollection
 
 		return $ret;
 	}
+	
+	/**
+	 * Get an associative array representation of the collection
+	 * The first parameter specifies the column to be used for the key,
+	 * And the seconf for the value.
+	 * <code>
+	 * $res = $coll->toKeyValue('Id', 'Name');
+	 * </code>
+	 *
+	 * @return    array
+	 */
+	public function toKeyValue($keyColumn, $valueColumn)
+	{
+		$ret = array();
+		foreach ($this as $obj) {
+			$ret[$obj[$keyColumn]] = $obj[$valueColumn];
+		}
+		
+		return $ret;
+	}
 
 	protected function getWorkerObject()
 	{
