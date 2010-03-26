@@ -44,13 +44,13 @@ The name of your project. This affects names of generated files, etc.
 propel.targetPackage = {propel.project}
 }}}
 
-The package to use for the generated classes.  This affects the value of the @package phpdoc tag, ''and it also affects the directory that the classes are placed in.''  By default this will be the same as the project.
+The package to use for the generated classes.  This affects the value of the @package phpdoc tag, and it also affects the directory that the classes are placed in.  By default this will be the same as the project. Note that the target package (and thus the target directory for generated classes) can be overridden in each `<database>` and `<table>` element in the XML schema.
 
 {{{
-propel.packageObjectModel = {true}|false
+propel.packageObjectModel = true|{false}
 }}}
 
-Whether to break generated objects out into different directories based on package.
+Whether to join schemas using the same database name into a single schema. This allows splitting schemas in packages, and referencing tables in another schema (but in the same database) in a foreign key. Beware that database behaviors will also be joined when this parameter is set to true.
 
 {{{
 propel.schema.validate = {true}|false

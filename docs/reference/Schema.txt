@@ -73,7 +73,7 @@ A Database element may include an {{{<external-schema>}}} element, or multiple {
  * {{{defaultIdMehtod}}} sets the default id method to use for auto-increment columns.
  * {{{defaultPhpNamingMethod}}} the default naming method to use.
  * {{{heavyIndexing}}} adds indexes for each component of the primary key (when using composite primary keys).
- * {{{package}}} specifies the "package" for the generated classes.
+ * {{{package}}} specifies the "package" for the generated classes. Classes are created in subdirectories according to the `package` value. 
  * {{{tablePrefix}}} adds a prefix to all the SQL table names.
 
 === <external-schema> element ===

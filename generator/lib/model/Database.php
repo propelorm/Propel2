@@ -422,6 +422,17 @@ class Database extends XMLElement
   }
   
   /**
+	 * check if the database has a behavior by name
+	 *
+	 * @param     string $name the behavior name
+	 * @return    boolean True if the behavior exists
+	 */
+	public function hasBehavior($name)
+	{
+		return array_key_exists($name, $this->behaviors);
+	}
+	
+  /**
    * Get one database behavior by name
    * @param string $name the behavior name
    * @return Behavior a behavior object
@@ -444,19 +455,16 @@ class Database extends XMLElement
 
 	public function doFinalInitialization()
 	{
-    if($defaultBehaviors = $this->getBuildProperty('behaviorDefault'))
-    {
+    if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
       // add generic behaviors from build.properties 
       $defaultBehaviors = explode(',', $defaultBehaviors);
-      foreach ($defaultBehaviors as $behavior)
-      {
+      foreach ($defaultBehaviors as $behavior) {
         $this->addBehavior(array('name' => trim($behavior)));
       }
     }
     
     // execute behavior database modifiers
-    foreach ($this->getBehaviors() as $behavior)
-    {
+    foreach ($this->getBehaviors() as $behavior) {
       $behavior->modifyDatabase();
     }
 

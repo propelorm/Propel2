@@ -145,7 +145,9 @@ abstract class AbstractPropelDataModelTask extends Task
 	 */
 	public function getDataModels()
 	{
-		if (!$this->dataModelsLoaded) $this->loadDataModels();
+		if (!$this->dataModelsLoaded) {
+			$this->loadDataModels();
+		}
 		return $this->dataModels;
 	}
 
@@ -156,7 +158,9 @@ abstract class AbstractPropelDataModelTask extends Task
 	 */
 	public function getDataModelDbMap()
 	{
-		if (!$this->dataModelsLoaded) $this->loadDataModels();
+		if (!$this->dataModelsLoaded) {
+			$this->loadDataModels();
+		}
 		return $this->dataModelDbMap;
 	}
 
@@ -469,7 +473,7 @@ abstract class AbstractPropelDataModelTask extends Task
 			$this->dataModels = $ads;
 		}
 		
-		foreach ($this->dataModels as $ad) {
+		foreach ($this->dataModels as &$ad) {
 			$ad->doFinalInitialization();
 		}
 			
@@ -529,12 +533,18 @@ abstract class AbstractPropelDataModelTask extends Task
 				$addDbName = $addDb->getName();
 				if ($mainAppData->hasDatabase($addDbName)) {
 					$db = $mainAppData->getDatabase($addDbName, false);
+					// join tables
 					foreach ($addDb->getTables() as $addTable) {
-						$table = $db->getTable($addTable->getName());
-						if ($table) {
+						if ($db->getTable($addTable->getName())) {
 							throw new BuildException('Duplicate table found: ' . $addDbName . '.');
 						}
 						$db->addTable($addTable);
+					}
+					// join database behaviors
+					foreach ($addDb->getBehaviors() as $addBehavior) {
+						if (!$db->hasBehavior($addBehavior->getName())) {
+							$db->addBehavior($addBehavior);
+						}
 					}
 				} else {
 					$mainAppData->addDatabase($addDb);
