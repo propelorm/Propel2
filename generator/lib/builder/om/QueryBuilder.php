@@ -343,6 +343,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	{
 		$table = $this->getTable();
 		$pks = $table->getPrimaryKey();
+		$class = $class = $this->getStubObjectBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Find object by primary key";
@@ -368,7 +369,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * @param     " . $pkType . " \$key Primary key to use for the query
 	 * @param     PropelPDO \$con an optional connection object
 	 *
-	 * @return    mixed the result, formatted by the current formatter
+	 * @return    " . $class . "|array|mixed the result, formatted by the current formatter
 	 */
 	public function findPk(\$key, \$con = null)
 	{";
@@ -422,7 +423,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * @param     array \$keys Primary keys to use for the query
 	 * @param     PropelPDO \$con an optional connection object
 	 *
-	 * @return    the list of results, formatted by the current formatter
+	 * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function findPks(\$keys, \$con = null)
 	{	

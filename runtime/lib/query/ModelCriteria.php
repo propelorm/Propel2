@@ -855,7 +855,7 @@ class ModelCriteria extends Criteria
 	 * 
 	 * @param     PropelPDO $con an optional connection object
 	 *
-	 * @return     mixed the list of results, formatted by the current formatter
+	 * @return     PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function find($con = null)
 	{
