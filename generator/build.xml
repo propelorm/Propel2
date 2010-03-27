@@ -140,10 +140,6 @@
 	<phing phingfile="build-propel.xml" target="create-db"/>
 </target>
 
-<target name="creole" depends="configure">
-	<phing phingfile="build-propel.xml" target="creole"/>
-</target>
-
 <target name="reverse" depends="configure">
 	<phing phingfile="build-propel.xml" target="reverse"/>
 </target>

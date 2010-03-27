@@ -57,9 +57,6 @@
     name="propel-data-sql"
     classname="task.PropelDataSQLTask" classpathRef="propelclasses"/>
    <taskdef
-    name="propel-creole-transform"
-    classname="task.PropelCreoleTransformTask" classpathRef="propelclasses"/>
-   <taskdef
     name="propel-schema-reverse"
     classname="task.PropelSchemaReverseTask" classpathRef="propelclasses"/>
   <taskdef
@@ -271,33 +268,6 @@
       userId="${propel.database.user}"
       password="${propel.database.password}"
     />
-  </target>
-
-  <!-- ================================================================ -->
-  <!-- C R E O L E   T O   X M L                                        -->
-  <!-- ================================================================ -->
-
-  <target
-    name="creole"
-    description="==> generate xml schema from Creole metadata">
-
-    <echo message="+-----------------------------------------------+"/>
-    <echo message="|                                               |"/>
-    <echo message="| Generating XML from Creole connection !       |"/>
-    <echo message="|                                               |"/>
-    <echo message="+-----------------------------------------------+"/>
-
-    <propel-creole-transform
-      dbDriver="${propel.database.creole.driver}"
-      dbSchema="${propel.database.schema}"
-      dbEncoding="${propel.database.encoding}"
-      dbUrl="${propel.database.creole.url}"
-      outputFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
-      samePhpName="${propel.samePhpName}"
-      addVendorInfo="${propel.addVendorInfo}"
-      addValidators="${propel.addValidators}"
-    />
-
   </target>
   
   <!-- ================================================================ -->

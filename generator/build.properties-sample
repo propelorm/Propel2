@@ -110,9 +110,9 @@ propel.packageObjectModel = false
 #  D B   C O N N E C T I O N   S E T T I N G S
 #
 # -------------------------------------------------------------------
-# Creole connection settings. These connection settings are used by
+# PDO connection settings. These connection settings are used by
 # build tagets that perform database operations (e.g. 'insert-sql',
-# 'creole').
+# 'reverse').
 #
 # You can set them here, but it's preferrable to set these properties
 # in a project-specific build.properties file.
@@ -127,7 +127,7 @@ propel.packageObjectModel = false
 # are using multiple databses) you can use the @DB@ token which
 # will be replaced with a database at runtime.
 #
-# propel.database.url = mysql://root@localhost/bookstore
+# propel.database.url = mysql:host=$host;dbname=$database
 
 # For MySQL or Oracle, you also need to specify username & password 
 # propel.database.user = [db username]
@@ -139,23 +139,21 @@ propel.packageObjectModel = false
 # (This does not apply to SQLite since the databse is automatically created
 # when the connection is made -- if it does not already exist.)
 #
-# propel.database.createUrl = mysql://root@localhost/
+# propel.database.createUrl = mysql:host=$host;dbname=$database
 
 
 # -------------------------------------------------------------------
 #
-# C R E O L E  TO  X M L
+# D A T A B A S E  TO  X M L
 #
-# -------------------------------------------------------------------
-# These settings only applies to the 'creole' target.  
 # -------------------------------------------------------------------
 #
 # samePhpName 
-#   If true, the Creole task will set the phpName attribute for the 
+#   If true, the reverse task will set the phpName attribute for the 
 #   tables and columns to be the same as SQL name.
 #
 # addVendorInfo 
-#   If true, the Creole task will add vendor specific information 
+#   If true, the reverse task will add vendor specific information 
 #   to the database schema
 #
 # addValidators 
