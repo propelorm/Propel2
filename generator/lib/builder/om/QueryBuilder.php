@@ -341,30 +341,37 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addFindPk(&$script)
 	{
+		$table = $this->getTable();
+		$pks = $table->getPrimaryKey();
 		$script .= "
 	/**
 	 * Find object by primary key";
-		if (count($this->getTable()->getPrimaryKey()) === 1) {
+		if (count($pks) === 1) {
+			$pkType = 'mixed';
 			$script .= "
 	 * Use instance pooling to avoid a database query if the object exists
 	 * <code>
 	 * \$obj  = \$c->findPk(12, \$con);";
-		} else {	
+		} else {
+			$examplePk = array_slice(array(12, 34, 56, 78, 91), 0, count($pks));
+			$colNames = array();
+			foreach ($pks as $col) {
+				$colNames[]= '$' . $col->getName();
+			}
+			$pkType = 'array['. join($colNames, ', ') . ']';
 			$script .= "
 	 * <code>
-	 * \$obj = \$c->findPk(array(34, 634), \$con);";
+	 * \$obj = \$c->findPk(array(" . join($examplePk, ', ') . "), \$con);";
 		}
 	 	$script .= "
 	 * </code>
-	 * @param     mixed \$key Primary key to use for the query
+	 * @param     " . $pkType . " \$key Primary key to use for the query
 	 * @param     PropelPDO \$con an optional connection object
 	 *
 	 * @return    mixed the result, formatted by the current formatter
 	 */
 	public function findPk(\$key, \$con = null)
 	{";
-		$table = $this->getTable();
-		$pks = $table->getPrimaryKey();
 		if (count($pks) === 1) {
 			$poolKeyHashParams = '$key';
 		} else {
