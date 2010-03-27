@@ -2779,7 +2779,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{";
 				$script .= "
 		\$query = $fkQueryClassname::create(null, \$criteria);
-		\$query->joinWith('" . $this->getRefFKPhpNameAffix($refFK, $plural=false) . "." . $this->getFKPhpNameAffix($fk2, $plural=false) . "', \$join_behavior);
+		\$query->joinWith('" . $this->getFKPhpNameAffix($fk2, $plural=false) . "', \$join_behavior);
 
 		return \$this->get". $relCol . "(\$query, \$con);
 	}
