@@ -77,7 +77,7 @@ class DatabaseMap
   {
     $table->setDatabaseMap($this);
     $this->tables[$table->getName()] = $table;
-    $this->tablesByPhpName[$table->getPhpName()] = $table;
+    $this->tablesByPhpName[$table->getClassname()] = $table;
   }
   
   /**

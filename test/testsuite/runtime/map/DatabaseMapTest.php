@@ -154,7 +154,7 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
       $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on a table with no phpName');
     }
     $tmap2 = new TableMap('foo2');
-    $tmap2->setPhpName('Foo2');
+    $tmap2->setClassname('Foo2');
     $this->databaseMap->addTableObject($tmap2);
     $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
   }
@@ -163,7 +163,8 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
   {
   	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");
 		require_once 'bookstore/map/BookTableMap.php';
-  	require_once 'bookstore/BookPeer.php';
+		require_once 'bookstore/om/BaseBookPeer.php';
+		require_once 'bookstore/BookPeer.php';
 		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
   }
   
