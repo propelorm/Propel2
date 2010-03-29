@@ -48,20 +48,30 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 	public function getAllObjectsFromRow($row)
 	{
 		$col = 0;
-		$tableMap = $this->getCriteria()->getTableMap(); 
+		// main object
+		$tableMap = $this->getCriteria()->getTableMap();
 		$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $this->class;
 		$obj = $this->getSingleObjectFromRow($row, $class, $col);
-		
+		// related objects using 'with'
 		foreach ($this->getCriteria()->getWith() as $join) {
-			$startObject = $join->getObjectToRelate($obj);
-			$tableMap = $join->getTableMap(); 
-			$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $tableMap->getClassname(); 
+			$tableMap = $join->getTableMap();
+			if ($tableMap->isSingleTableInheritance()) {
+				$class = call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false);
+				$refl = new ReflectionClass($class);
+				if ($refl->isAbstract()) {
+					$col += constant($class . 'Peer::NUM_COLUMNS');
+					continue;
+				} 
+			} else {
+				$class = $tableMap->getClassname();
+			}
 			$endObject = $this->getSingleObjectFromRow($row, $class, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if ($endObject->isPrimaryKeyNull()) {
 				continue;
 			}
+			$startObject = $join->getObjectToRelate($obj);
 			$method = 'set' . $join->getRelationMap()->getName();
 			$startObject->$method($endObject);
 		}

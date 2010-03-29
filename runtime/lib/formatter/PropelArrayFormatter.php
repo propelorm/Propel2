@@ -91,7 +91,19 @@ class PropelArrayFormatter extends PropelFormatter
 		$col = 0;
 		$mainObjectArray = $this->getSingleObjectFromRow($row, $this->class, $col)->toArray();
 		foreach ($this->getCriteria()->getWith() as $join) {
-			$secondaryObject = $this->getSingleObjectFromRow($row, $join->getTableMap()->getClassname(), $col);
+			$tableMap = $join->getTableMap();;
+			if ($tableMap->isSingleTableInheritance()) {
+				$class = call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false);
+				$refl = new ReflectionClass($class);
+				if ($refl->isAbstract()) {
+					$col += constant($class . 'Peer::NUM_COLUMNS');
+					continue;
+				} 
+			} else {
+				$class = $tableMap->getClassname();
+			}
+			
+			$secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
 			if ($secondaryObject->isPrimaryKeyNull()) {
 				$secondaryObjectArray = array();
 			} else {
