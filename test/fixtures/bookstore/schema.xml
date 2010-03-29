@@ -72,11 +72,15 @@
 		<column name="first_author" required="false" type="INTEGER" description="Foreign Key Author" />
 		<column name="second_author" required="false" type="INTEGER" description="Foreign Key Author" />
 		<column name="subtitle" type="VARCHAR" phpName="SecondTitle" />
+		<column name="next_essay_id" required="false" type="INTEGER" description="Book Id" />
 		<foreign-key foreignTable="author" onDelete="setnull" onUpdate="cascade">
 			<reference local="first_author" foreign="id" />
 		</foreign-key>
 		<foreign-key foreignTable="author" defaultJoin="INNER JOIN" onDelete="setnull" onUpdate="cascade">
 			<reference local="second_author" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="essay" onDelete="setnull" onUpdate="cascade">
+			<reference local="next_essay_id" foreign="id" />
 		</foreign-key>
 	</table>
 

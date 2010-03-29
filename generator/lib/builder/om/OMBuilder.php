@@ -310,9 +310,9 @@ abstract class OMBuilder extends DataModelBuilder
 			} elseif ($fk->getForeignTableName() == $fk->getTable()->getName()) {
 				// self referential foreign key
 				if ($reverseOnSelf) {
-					$relCol .= $fk->getTable()->getColumn($foreignColumnName)->getPhpName();
-				} else {
 					$relCol .= $column->getPhpName();
+				} else {
+					$relCol .= $fk->getTable()->getColumn($foreignColumnName)->getPhpName();
 				}
 			}
 		}

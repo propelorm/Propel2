@@ -35,18 +35,19 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 		return $fks[$index];
 	}
 	
-	public static function testGetRelatedBySuffixDataProvider()
+	public static function getRelatedBySuffixDataProvider()
 	{
 		return array(
 			array('book', 0, '', ''),
 			array('essay', 0, 'RelatedByFirstAuthor', 'RelatedByFirstAuthor'),
 			array('essay', 1, 'RelatedBySecondAuthor', 'RelatedBySecondAuthor'),
-			array('bookstore_employee', 0, 'RelatedBySupervisorId', 'RelatedById'),
+			array('essay', 2, 'RelatedById', 'RelatedByNextEssayId'),
+			array('bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'),
 		);
 	}
 	
 	/**
-	 * @dataProvider testGetRelatedBySuffixDataProvider
+	 * @dataProvider getRelatedBySuffixDataProvider
 	 */
 	public function testGetRelatedBySuffix($table, $index, $expectedSuffix, $expectedReverseSuffix)
 	{
