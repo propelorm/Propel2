@@ -1051,7 +1051,16 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://propel.phpdb.org/trac/ticket/509
 			// \$obj->hydrate(\$row, \$startcol, true); // rehydrate
-			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;
+			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;";
+		if ($table->isAbstract()) {
+			$script .= "
+		} elseif (null == \$key) {
+			// empty resultset, probably from a left join
+			// since this table is abstract, we can't hydrate an empty object
+			\$obj = null;
+			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;";
+		}
+		$script .= "
 		} else {";
 		if (!$table->getChildrenColumn()) {
 			$script .= "

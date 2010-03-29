@@ -87,7 +87,7 @@ class PropelObjectFormatter extends PropelFormatter
 			list($endObject, $col) = call_user_func(array($peer, 'populateObject'), $row, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
-			if ($endObject->isPrimaryKeyNull()) {
+			if (null === $endObject || $endObject->isPrimaryKeyNull()) {
 				continue;
 			}
 			$relation = $join->getRelationMap();
