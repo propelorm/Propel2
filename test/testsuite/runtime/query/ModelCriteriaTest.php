@@ -1490,7 +1490,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 			->findOne($con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoinX() is turned into join($x, Criteria::LEFT_JOIN)');
-				
+
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->innerJoin('b.Author a');
 		$c->where('a.FirstName = ?', 'Leo');
@@ -1518,6 +1518,13 @@ class ModelCriteriaTest extends BookstoreTestBase
 			->findOne($con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` RIGHT JOIN author a ON (book.AUTHOR_ID=a.ID) WHERE a.FIRST_NAME = 'Leo' LIMIT 1";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'rightJoinX() is turned into join($x, Criteria::RIGHT_JOIN)');
+    
+    $books = BookQuery::create()
+      ->leftJoinAuthor()
+      ->where('Author.FirstName = ?', 'Leo')
+      ->findOne($con);
+    $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE author.FIRST_NAME = 'Leo' LIMIT 1";
+    $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoinX() is turned into join($x, Criteria::LEFT_JOIN)');
 	}
 
 	public function testMagicJoinWith()
