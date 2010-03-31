@@ -795,6 +795,7 @@ Of course, you still have the right to use, copy, modify, merge, publish, distri
 
  * You can now prefix all the table names of a database schema by setting the `tablePrefix` attribute of the `<database>` tag.
  * The `addIncludes` build property introduced in Propel 1.4 is now set to `false` by default. That means that the runtime autoloading takes care of loading all classes at runtime, including generated Base classes.
+ * A bugfix in the name generator for related object getter in tables with two foreign keys related to the same table may have introduced problems in applications relying on old (wrong) names. Check your generated base model classes for the `getXXXrelatedByYYY()` and modify the application code relying on it if it exists. A good rule of thumb to avoid problems in such case is to name your relations by using the `phpName` and `refPhpName` attributes in the `<foreign-key>` element in the schema.
  * XSL transformation of your schemas is no longer enabled by default. Turn the `propel.schema.transform` setting to `true` in your `build.properties` to enable it again. This change removes the requirement on the libxslt extention for Propel.
  * `ModelObject::addSelectColumns()` now accepts an additional parameter to allow the use of table aliases
  * Added `ModelObject::clear()` to reinitialize a model object
