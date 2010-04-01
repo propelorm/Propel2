@@ -104,25 +104,23 @@ class DBOracle extends DBAdapter
 	/**
 	 * @see        DBAdapter::applyLimit()
 	 */
-	public function applyLimit(&$sql, $offset, $limit)
+	public function applyLimit(&$sql, $offset, $limit, $criteria = null)
 	{
-		 $sql =
-			'SELECT B.* FROM (  '
-			.  'SELECT A.*, rownum AS PROPEL_ROWNUM FROM (  '
-			. $sql
-			. '  ) A '
-			.  ' ) B WHERE ';
+		if (BasePeer::needsSelectAliases($criteria)) {
+			$selectSql = BasePeer::createSelectSqlPart($criteria, $params, true);
+			$sql = $selectSql . substr($sql, strpos('FROM', $sql));
+		}
+		$sql = 'SELECT B.* FROM ('
+			. 'SELECT A.*, rownum AS PROPEL_ROWNUM FROM (' . $sql . ') A '
+			. ') B WHERE ';
 
 		if ( $offset > 0 ) {
-			$sql				.= ' B.PROPEL_ROWNUM > ' . $offset;
-
-			if ( $limit > 0 )
-			{
-				$sql			.= ' AND B.PROPEL_ROWNUM <= '
-									. ( $offset + $limit );
+			$sql .= ' B.PROPEL_ROWNUM > ' . $offset;
+			if ( $limit > 0 ) {
+				$sql .= ' AND B.PROPEL_ROWNUM <= ' . ( $offset + $limit );
 			}
 		} else {
-			$sql				.= ' B.PROPEL_ROWNUM <= ' . $limit;
+			$sql .= ' B.PROPEL_ROWNUM <= ' . $limit;
 		}
 	}
 

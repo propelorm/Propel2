@@ -125,9 +125,40 @@ class BasePeerTest extends BookstoreTestBase
 		}
 	}
 	
-	/**
-	 *
-	 */
+	public function testCreateSelectSqlPart()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addAsColumn('book_ID', BookPeer::ID);
+		$fromClause = array();
+		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause);
+		$this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+		$this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+	}
+
+	public function testCreateSelectSqlPartSelectModifier()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addAsColumn('book_ID', BookPeer::ID);
+		$c->setDistinct();
+		$fromClause = array();
+		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause);
+		$this->assertEquals('SELECT DISTINCT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
+		$this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+	}
+
+	public function testCreateSelectSqlPartAliasAll()
+	{
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addAsColumn('book_ID', BookPeer::ID);
+		$fromClause = array();
+		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause, true);
+		$this->assertEquals('SELECT book.ID AS book_ID_1, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
+		$this->assertEquals(array(), $fromClause, 'createSelectSqlPart() does not add the tables from an all-aliased list of select columns');
+	}
+	
 	public function testBigIntIgnoreCaseOrderBy()
 	{
 		BookstorePeer::doDeleteAll();

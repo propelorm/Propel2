@@ -477,7 +477,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->distinct();
-		$sql = 'SELECT DISTINCT   FROM ';
+		$sql = 'SELECT DISTINCT  FROM ';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'distinct() adds a DISTINCT clause');
 	}

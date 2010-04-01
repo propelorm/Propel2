@@ -67,7 +67,7 @@ class Criteria implements IteratorAggregate
 	const CUSTOM_EQUAL = "CUSTOM_EQUAL";
 
 	/** Comparison type. */
-	const DISTINCT = "DISTINCT ";
+	const DISTINCT = "DISTINCT";
 
 	/** Comparison type. */
 	const IN = " IN ";
@@ -76,7 +76,7 @@ class Criteria implements IteratorAggregate
 	const NOT_IN = " NOT IN ";
 
 	/** Comparison type. */
-	const ALL = "ALL ";
+	const ALL = "ALL";
 
 	/** Comparison type. */
 	const JOIN = "JOIN";

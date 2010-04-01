@@ -905,6 +905,6 @@ class CriteriaTest extends BaseTestCase
 		$this->assertEquals(array(Criteria::DISTINCT, 'SQL_CALC_FOUND_ROWS'), $c->getSelectModifiers(), 'addSelectModifier() adds a select modifier only once');
 		$params = array();
 		$result = BasePeer::createSelectSql($c, $params);
-    $this->assertEquals('SELECT DISTINCT  SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
+    $this->assertEquals('SELECT DISTINCT SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
 	}
 }
