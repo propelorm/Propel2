@@ -347,4 +347,15 @@ class CriteriaMergeTest extends BaseTestCase
 		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=publisher.ID(ignoreCase not considered)', $joins[1]->toString(), 'mergeWith() merge joins to an empty join');
 	}
 
+	public function testMergeWithFurtherModified()
+	{
+		$c1 = new Criteria();
+		$c2 = new Criteria();
+		$c2->setLimit(123);
+		$c1->mergeWith($c2);
+		$this->assertEquals(123, $c1->getLimit(), 'mergeWith() makes the merge');
+		$c2->setLimit(456);
+		$this->assertEquals(123, $c1->getLimit(), 'further modifying a merged criteria does not affect the merger');
+	}
+
 }
