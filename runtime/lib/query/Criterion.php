@@ -328,7 +328,7 @@ class Criterion
 				$index++; // increment this first to correct for wanting bind params to start with :p1
 				$bindParams[] = ':p' . $index;
 			}
-			if ($index !== 0) {
+			if (count($bindParams)) {
 				$field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
 				$sb .= $field . $this->comparison . '(' . implode(',', $bindParams) . ')';
 			} else {
