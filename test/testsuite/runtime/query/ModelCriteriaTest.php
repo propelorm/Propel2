@@ -205,6 +205,21 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$sql = 'SELECT  FROM `book` WHERE ' . $sql;
 		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a string clause');
 	}
+
+	public function testWhereTwiceSameColumn()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->where('Book.Id IN ?', array(1, 2, 3));
+		$c->where('Book.Id <> ?', 5);
+		$params = array(
+			array('table' => 'book', 'column' => 'ID', 'value' => '1'),
+			array('table' => 'book', 'column' => 'ID', 'value' => '2'),
+			array('table' => 'book', 'column' => 'ID', 'value' => '3'),
+			array('table' => 'book', 'column' => 'ID', 'value' => '5'),
+		);
+		$sql = 'SELECT  FROM `book` WHERE (book.ID IN (:p1,:p2,:p3) AND book.ID <> :p4)';
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() adds clauses on the same column correctly');
+	}
 	
 	public function testWhereConditions()
 	{

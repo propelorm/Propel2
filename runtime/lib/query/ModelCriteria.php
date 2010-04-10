@@ -275,7 +275,7 @@ class ModelCriteria extends Criteria
 			// where('Book.AuthorId = ?', 12)
 			$criterion = $this->getCriterionForClause($clause, $value);
 		}
-		$this->add($criterion, null, null);
+		$this->addAnd($criterion, null, null);
 		
 		return $this;
 	}
