@@ -400,10 +400,29 @@ class CriteriaTest extends BaseTestCase
       $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
     }
     $this->assertEquals($expect, $result);
+	}
 
+  public function testInEmptyAfterFull()
+  {
+    $c = new Criteria();
+    $c->addSelectColumn("*");
+    $c->add("TABLE.OTHER_COLUMN", array(1, 2, 3), Criteria::IN);
+    $c->add("TABLE.SOME_COLUMN", array(), Criteria::IN);
 
-    // ----------------------------------------------------------------------------------
-    // now do a nested logic test, just for sanity (not that this should be any surprise)
+    $expect = "SELECT * FROM TABLE WHERE TABLE.OTHER_COLUMN IN (:p1,:p2,:p3) AND 1<>1";
+    try {
+      $params = array();
+      $result = BasePeer::createSelectSql($c, $params);
+    } catch (PropelException $e) {
+      print $e->getTraceAsString();
+      $this->fail("PropelException thrown in BasePeer.createSelectSql(): ". $e->getMessage());
+    }
+    $this->assertEquals($expect, $result);
+	}
+	
+	public function testInNested()
+	{
+		// now do a nested logic test, just for sanity (not that this should be any surprise)
 
     $c = new Criteria();
     $c->addSelectColumn("*");
