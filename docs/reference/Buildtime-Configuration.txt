@@ -120,7 +120,7 @@ propel.samePhpName = true|{false}
 Whether to specify PHP names that are the same as the column names.
 
 {{{
-propel.addVendorInfo = {true}|false
+propel.addVendorInfo = true|{false}
 }}}
 Whether to add the vendor info.  This is currently only used for MySQL, but does provide additional information (such as full-text indexes) which can affect the generation of the DDL from the schema.
 
