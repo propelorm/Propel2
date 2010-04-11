@@ -58,7 +58,6 @@ class PropelModelPager implements IteratorAggregate, Countable
 		$count = $qForCount
 			->offset(0)
 			->limit(0)
-			->clearGroupByColumns()
 			->count();
 
 		$this->setNbResults($hasMaxRecordLimit ? min($count, $maxRecordLimit) : $count);
