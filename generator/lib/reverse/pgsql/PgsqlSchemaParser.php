@@ -235,7 +235,12 @@ class PgsqlSchemaParser extends BaseSchemaParser
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
-				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
+				if (in_array($default, array('now()'))) {
+					$type = ColumnDefaultValue::TYPE_EXPR;
+				} else {
+					$type = ColumnDefaultValue::TYPE_VALUE;
+				}
+				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
 			}
 			$column->setAutoIncrement($autoincrement);
 			$column->setNotNull(!$is_nullable);
