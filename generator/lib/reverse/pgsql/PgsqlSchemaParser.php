@@ -113,7 +113,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		// Now populate only columns.
 		$task->log("Reverse Engineering Columns");
 		foreach ($tableWraps as $wrap) {
-			$task->log("  Adding columns for table '" . $$wrap->table->getName() . "'");
+			$task->log("  Adding columns for table '" . $wrap->table->getName() . "'");
 			$this->addColumns($wrap->table, $wrap->oid, $version);
 		}
 
