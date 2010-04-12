@@ -439,7 +439,7 @@ class ForeignKey extends XMLElement
 	{
 		$fks = array();
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
-			if ($fk != $this) {
+			if ($fk !== $this) {
 				$fks[]= $fk;
 			}
 		}
