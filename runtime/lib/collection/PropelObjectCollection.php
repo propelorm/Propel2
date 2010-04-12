@@ -117,11 +117,11 @@ class PropelObjectCollection extends PropelCollection
 	 *
 	 * @return    array
 	 */
-	public function toKeyValue($keyColumn, $valueColumn)
+	public function toKeyValue($keyColumn, $valueColumn = null)
 	{
 		$ret = array();
 		$keyGetterMethod = 'get' . $keyColumn;
-		$valueGetterMethod = 'get' . $valueColumn;
+		$valueGetterMethod = (null === $valueColumn) ? '__toString' : ('get' . $valueColumn);
 		foreach ($this as $obj) {
 			$ret[$obj->$keyGetterMethod()] = $obj->$valueGetterMethod();
 		}
