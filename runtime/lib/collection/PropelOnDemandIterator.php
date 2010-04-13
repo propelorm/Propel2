@@ -21,12 +21,17 @@ class PropelOnDemandIterator implements Iterator
 		$stmt, 
 		$currentRow, 
 		$currentKey = -1,
-		$isValid = null;
+		$isValid = null,
+		$enableInstancePoolingOnFinish = false;
 	
 	public function __construct(PropelFormatter $formatter, PDOStatement $stmt)
 	{
 		$this->formatter = $formatter;
 		$this->stmt = $stmt;
+		if (Propel::isInstancePoolingEnabled()) {
+			Propel::disableInstancePooling();
+			$this->enableInstancePoolingOnFinish = true;
+		}
 	}
 	
 	public function closeCursor()
@@ -81,6 +86,9 @@ class PropelOnDemandIterator implements Iterator
 		$this->isValid = (boolean) $this->currentRow;
 		if (!$this->isValid) {
 			$this->closeCursor();
+			if ($this->enableInstancePoolingOnFinish) {
+				Propel::enableInstancePooling();
+			}
 		}
 	}
 	
