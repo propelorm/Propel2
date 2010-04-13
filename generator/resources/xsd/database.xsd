@@ -109,10 +109,15 @@
 	<xs:simpleType name="update">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="cascade"/>
-			<xs:enumeration value="setnull"/>
+			<xs:enumeration value="CASCADE"/>
 			<xs:enumeration value="set null"/>
+			<xs:enumeration value="SET NULL"/>
+			<xs:enumeration value="setnull"/>
+			<xs:enumeration value="SETNULL"/>
 			<xs:enumeration value="restrict"/>
+			<xs:enumeration value="RESTRICT"/>
 			<xs:enumeration value="none"/>
+			<xs:enumeration value="NONE"/>
 			<xs:enumeration value=""/>
 		</xs:restriction>
 	</xs:simpleType>
