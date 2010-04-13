@@ -7,10 +7,10 @@
 	be aware of it in any way.
 	
     Normal use:
-    $> propel-gen /path/to/my/project
+    $> propel-gen insert-sql
     
     Specific target: 
-    $> propel-gen insert-sql /path/to/my/project 
+    $> propel-gen /path/to/my/project insert-sql
 
 -->
 <project name="propel-project-builder" default="main">

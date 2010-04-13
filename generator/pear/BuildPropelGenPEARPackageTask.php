@@ -84,24 +84,17 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 			$this->log("Creating [default] package.xml file in base directory.", Project::MSG_INFO);
 		}
 
-		// add install exceptions
-		$options['installexceptions'] = array(	'pear/pear-propel-gen' => '/',
-												'pear/pear-propel-gen.bat' => '/',
-												'pear/pear-build.xml' => '/',
-												'pear/build.properties' => '/',
-												);
+		// add baseinstalldir exceptions
+		$options['installexceptions'] = array(
+			'pear/pear-propel-gen' => '/',
+			'pear/pear-propel-gen.bat' => '/',
+		);
 
-		$options['dir_roles'] = array(	'projects' => 'data',
-										'test' => 'test',
-										'templates' => 'data',
-										'resources' => 'data');
-
-		$options['exceptions'] = array(	'pear/pear-propel-gen.bat' => 'script',
-										'pear/pear-propel-gen' => 'script',
-										'pear/pear-build.xml' => 'data',
-										'build.xml' => 'data',
-										'build-propel.xml' => 'data',
-									);
+		$options['dir_roles'] = array(
+			'pear' => 'script',
+			'lib' => 'data',
+			'resources' => 'data'
+		);
 
 		$pkg->setOptions($options);
 
@@ -140,35 +133,23 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 
 		$package->setNotes($this->notes);
 
-		$package->setLicense('LGPL', 'http://www.gnu.org/licenses/lgpl.html');
+		$package->setLicense('MIT', 'http://www.opensource.org/licenses/mit-license.php');
 
 		// Add package maintainers
 		$package->addMaintainer('lead', 'hans', 'Hans Lellelid', 'hans@xmpl.org');
 		$package->addMaintainer('lead', 'david', 'David Zuelke', 'dz@bitxtender.com');
 		$package->addMaintainer('lead', 'francois', 'Francois Zaninotto', 'fzaninotto@[gmail].com');
 
-		// (wow ... this is a poor design ...)
-		//
-		// note that the order of the method calls below is creating
-		// sub-"release" sections which have specific rules.  This replaces
-		// the platformexceptions system in the older version of PEAR's package.xml
-		//
-		// Programmatically, I feel the need to re-iterate that this API for PEAR_PackageFileManager
-		// seems really wrong.  Sub-sections should be encapsulated in objects instead of having
-		// a "flat" API that does not represent the structure being created....
-
-
 		// creating a sub-section for 'windows'
-			$package->addRelease();
-			$package->setOSInstallCondition('windows');
-			$package->addInstallAs('pear/pear-propel-gen.bat', 'propel-gen.bat');
-			$package->addIgnoreToRelease('pear/pear-propel-gen');
+		$package->addRelease();
+		$package->setOSInstallCondition('windows');
+		$package->addInstallAs('pear/pear-propel-gen.bat', 'propel-gen.bat');
+		$package->addIgnoreToRelease('pear/pear-propel-gen');
 
 		// creating a sub-section for non-windows
-			$package->addRelease();
-			$package->addInstallAs('pear/pear-propel-gen', 'propel-gen');
-			$package->addIgnoreToRelease('pear/pear-propel-gen.bat');
-
+		$package->addRelease();
+		$package->addInstallAs('pear/pear-propel-gen', 'propel-gen');
+		$package->addIgnoreToRelease('pear/pear-propel-gen.bat');
 
 		// "core" dependencies
 		$package->setPhpDep('5.2.4');
@@ -182,7 +163,6 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		$package->addExtensionDep('required', 'xsl');
 
 		// now add the replacements ....
-		$package->addReplacement('Phing.php', 'pear-config', '@DATA-DIR@', 'data_dir');
 		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@PHP-BIN@', 'php_bin');
 		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@BIN-DIR@', 'bin_dir');
 		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@PEAR-DIR@', 'php_dir');
@@ -193,10 +173,10 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@PEAR-DIR@', 'php_dir');
 		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@DATA-DIR@', 'data_dir');
 
-		$package->addReplacement('pear/pear-build.xml', 'pear-config', '@PHP-BIN@', 'php_bin');
-		$package->addReplacement('pear/pear-build.xml', 'pear-config', '@BIN-DIR@', 'bin_dir');
-		$package->addReplacement('pear/pear-build.xml', 'pear-config', '@PEAR-DIR@', 'php_dir');
-		$package->addReplacement('pear/pear-build.xml', 'pear-config', '@DATA-DIR@', 'data_dir');
+		$package->addReplacement('pear-build.xml', 'pear-config', '@PHP-BIN@', 'php_bin');
+		$package->addReplacement('pear-build.xml', 'pear-config', '@BIN-DIR@', 'bin_dir');
+		$package->addReplacement('pear-build.xml', 'pear-config', '@PEAR-DIR@', 'php_dir');
+		$package->addReplacement('pear-build.xml', 'pear-config', '@DATA-DIR@', 'data_dir');
 
 
 		// now we run this weird generateContents() method that apparently

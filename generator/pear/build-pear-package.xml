@@ -89,8 +89,11 @@ See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.5&resolution=f
 		<mkdir dir="${build.base.dir}"/>
 
 		<copy todir="${build.src.dir}">
-			<fileset refid="classes"/>
 			<fileset refid="data"/>
+		</copy>
+
+		<copy todir="${build.src.dir}/lib">
+			<fileset refid="classes"/>
 		</copy>
 
 		<!-- some files need to be manually moved here to save headache when
