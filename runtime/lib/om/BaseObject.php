@@ -197,13 +197,11 @@ abstract class BaseObject
 	 */
 	public function resetModified($col = null)
 	{
-		if ($col !== null)
-		{
-			while (($offset = array_search($col, $this->modifiedColumns)) !== false)
+		if ($col !== null) {
+			while (($offset = array_search($col, $this->modifiedColumns)) !== false) {
 				array_splice($this->modifiedColumns, $offset, 1);
-		}
-		else
-		{
+			}
+		} else {
 			$this->modifiedColumns = array();
 		}
 	}
