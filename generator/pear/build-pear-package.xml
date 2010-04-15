@@ -28,18 +28,23 @@ See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.5&resolution=f
     name="pear-package"
     classname="BuildPropelGenPEARPackageTask" classpath="."/>
 
-	<fileset dir="${propelgen.home}/lib" id="classes">
+	<fileset dir="${propelgen.home}/lib" id="lib">
 		<include name="**"/>
 	</fileset>
 
-	<fileset dir="${propelgen.home}" id="data">
-		<!--<include name="build.xml"/>-->
+	<fileset dir="${propelgen.home}/resources" id="resources">
+		<include name="**"/>
+	</fileset>
+
+	<fileset dir="${propelgen.home}" id="root">
 		<include name="build-propel.xml"/>
+		<include name="default.properties"/>
+	</fileset>
+
+	<fileset dir="${propelgen.home}" id="pear">
 		<include name="pear/pear-build.xml"/>
 		<include name="pear/pear-propel*"/>
 		<include name="pear/build.properties"/>
-		<include name="default.properties"/>
-		<include name="resources/**"/>
 	</fileset>
 
 	<!--
@@ -89,19 +94,27 @@ See: http://propel.phpdb.org/trac/query?status=closed&milestone=1.5&resolution=f
 		<mkdir dir="${build.base.dir}"/>
 
 		<copy todir="${build.src.dir}">
-			<fileset refid="data"/>
+			<fileset refid="root"/>
+			<fileset refid="pear"/>
 		</copy>
 
 		<copy todir="${build.src.dir}/lib">
-			<fileset refid="classes"/>
+			<fileset refid="lib"/>
+		</copy>
+	
+		<copy todir="${build.src.dir}/resources">
+			<fileset refid="resources"/>
 		</copy>
 
 		<!-- some files need to be manually moved here to save headache when
 		doing the pear package.xml creation -->
 		<move file="${build.src.dir}/pear/build.properties" todir="${build.src.dir}"/>
 		<move file="${build.src.dir}/pear/pear-build.xml" todir="${build.src.dir}"/>
-
-		<chmod file="${build.src.dir}/pear/pear-propel-gen" mode="755"/>
+		<move file="${build.src.dir}/pear/pear-propel-gen" todir="${build.src.dir}"/>
+		<move file="${build.src.dir}/pear/pear-propel-gen.bat" todir="${build.src.dir}"/>
+    <delete dir="${build.src.dir}/pear/"/>
+    
+		<chmod file="${build.src.dir}/pear-propel-gen" mode="755"/>
 
 	</target>
 

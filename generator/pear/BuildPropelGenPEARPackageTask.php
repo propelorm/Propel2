@@ -86,14 +86,18 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 
 		// add baseinstalldir exceptions
 		$options['installexceptions'] = array(
-			'pear/pear-propel-gen' => '/',
-			'pear/pear-propel-gen.bat' => '/',
+			'pear-propel-gen' => '/',
+			'pear-propel-gen.bat' => '/',
 		);
 
 		$options['dir_roles'] = array(
-			'pear' => 'script',
 			'lib' => 'data',
 			'resources' => 'data'
+		);
+		
+		$options['exceptions'] = array(
+			'pear-propel-gen.bat' => 'script', 
+			'pear-propel-gen' => 'script',
 		);
 
 		$pkg->setOptions($options);
@@ -143,13 +147,13 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		// creating a sub-section for 'windows'
 		$package->addRelease();
 		$package->setOSInstallCondition('windows');
-		$package->addInstallAs('pear/pear-propel-gen.bat', 'propel-gen.bat');
-		$package->addIgnoreToRelease('pear/pear-propel-gen');
+		$package->addInstallAs('pear-propel-gen.bat', 'propel-gen.bat');
+		$package->addIgnoreToRelease('pear-propel-gen');
 
 		// creating a sub-section for non-windows
 		$package->addRelease();
-		$package->addInstallAs('pear/pear-propel-gen', 'propel-gen');
-		$package->addIgnoreToRelease('pear/pear-propel-gen.bat');
+		$package->addInstallAs('pear-propel-gen', 'propel-gen');
+		$package->addIgnoreToRelease('pear-propel-gen.bat');
 
 		// "core" dependencies
 		$package->setPhpDep('5.2.4');
@@ -163,21 +167,8 @@ class BuildPropelGenPEARPackageTask extends MatchingTask {
 		$package->addExtensionDep('required', 'xsl');
 
 		// now add the replacements ....
-		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@PHP-BIN@', 'php_bin');
-		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@BIN-DIR@', 'bin_dir');
-		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@PEAR-DIR@', 'php_dir');
-		$package->addReplacement('pear/pear-propel-gen.bat', 'pear-config', '@DATA-DIR@', 'data_dir');
-
-		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@PHP-BIN@', 'php_bin');
-		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@BIN-DIR@', 'bin_dir');
-		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@PEAR-DIR@', 'php_dir');
-		$package->addReplacement('pear/pear-propel-gen', 'pear-config', '@DATA-DIR@', 'data_dir');
-
-		$package->addReplacement('pear-build.xml', 'pear-config', '@PHP-BIN@', 'php_bin');
-		$package->addReplacement('pear-build.xml', 'pear-config', '@BIN-DIR@', 'bin_dir');
-		$package->addReplacement('pear-build.xml', 'pear-config', '@PEAR-DIR@', 'php_dir');
-		$package->addReplacement('pear-build.xml', 'pear-config', '@DATA-DIR@', 'data_dir');
-
+		$package->addReplacement('pear-propel-gen.bat', 'pear-config', '@DATA-DIR@', 'data_dir');
+		$package->addReplacement('pear-propel-gen', 'pear-config', '@DATA-DIR@', 'data_dir');
 
 		// now we run this weird generateContents() method that apparently
 		// is necessary before we can add replacements ... ?
