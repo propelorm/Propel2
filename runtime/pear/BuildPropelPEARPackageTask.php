@@ -102,11 +102,12 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 
 		$package->setNotes($this->notes);
 
-		$package->setLicense('LGPL', 'http://www.gnu.org/licenses/lgpl.html');
+		$package->setLicense('MIT', 'http://www.opensource.org/licenses/mit-license.php');
 
 		// Add package maintainers
 		$package->addMaintainer('lead', 'hans', 'Hans Lellelid', 'hans@xmpl.org');
 		$package->addMaintainer('lead', 'david', 'David Zuelke', 'dz@bitxtender.com');
+		$package->addMaintainer('lead', 'francois', 'Francois Zaninotto', 'fzaninotto@[gmail].com');
 
 		// "core" dependencies
 		$package->setPhpDep('5.2.0');
