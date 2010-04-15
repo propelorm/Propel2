@@ -793,6 +793,7 @@ Of course, you still have the right to use, copy, modify, merge, publish, distri
 
 == Miscellaneous ==
 
+ * Generated model classes now offer a `fromArray()` and a `toArray()` method by default. This feature existed before, but was disabled by default in the `build.properties`. The `addGenericAccessors` and `addGenericAccessors` settings are therefore enabled by default in Propel 1.5.
  * You can now prefix all the table names of a database schema by setting the `tablePrefix` attribute of the `<database>` tag.
  * The `addIncludes` build property introduced in Propel 1.4 is now set to `false` by default. That means that the runtime autoloading takes care of loading all classes at runtime, including generated Base classes.
  * A bugfix in the name generator for related object getter in tables with two foreign keys related to the same table may have introduced problems in applications relying on old (wrong) names. Check your generated base model classes for the `getXXXrelatedByYYY()` and modify the application code relying on it if it exists. A good rule of thumb to avoid problems in such case is to name your relations by using the `phpName` and `refPhpName` attributes in the `<foreign-key>` element in the schema.
