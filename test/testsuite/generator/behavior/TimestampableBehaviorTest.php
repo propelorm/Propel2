@@ -40,9 +40,23 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$t1->save();
 		$this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable sets updated_column to time() on creation');
 		sleep(1);
+		$t1->setTitle('foo');
 		$tupdate = time();
 		$t1->save();
 		$this->assertEquals($t1->getUpdatedAt('U'), $tupdate, 'Timestampable changes updated_column to time() on update');
+	}
+
+	public function testPreSaveNoChange()
+	{
+		$t1 = new Table2();
+		$this->assertNull($t1->getUpdatedAt());
+		$tsave = time();
+		$t1->save();
+		$this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable sets updated_column to time() on creation');
+		sleep(1);
+		$tupdate = time();
+		$t1->save();
+		$this->assertEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable only changes updated_column if the object was modified');
 	}
 
 	public function testPreSaveManuallyUpdated()
@@ -69,6 +83,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$t1->save();
 		$this->assertEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable sets created_column to time() on creation');
 		sleep(1);
+		$t1->setTitle('foo');
 		$tupdate = time();
 		$t1->save();
 		$this->assertEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable does not update created_column on update');
@@ -91,6 +106,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$t1->save();
 		$this->assertNotEquals($t1->getUpdatedAt('U'), $tsave);
 		// let's save it a second time; the updated_at should be changed
+		$t1->setTitle('foo');
 		$tsave = time();
 		$t1->save();
 		$this->assertEquals($t1->getUpdatedAt('U'), $tsave);
@@ -103,6 +119,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$this->assertNotEquals($t1->getUpdatedAt('U'), $tsave);
 		// let's save it a second time; the updated_at should be changed
 		$t1->keepUpdateDateUnchanged();
+		$t1->setTitle('foo');
 		$tsave = time();
 		$t1->save();
 		$this->assertNotEquals($t1->getUpdatedAt('U'), $tsave, 'keepUpdateDateUnchanged() prevents the behavior from updating the update date');

@@ -55,13 +55,13 @@ class TimestampableBehavior extends Behavior
 	}
 	
 	/**
-	 * Add code in ObjectBuilder::preSave
+	 * Add code in ObjectBuilder::preUpdate
 	 *
 	 * @return    string The code to put at the hook
 	 */
-	public function preSave()
+	public function preUpdate()
 	{
-		return "if (!\$this->isColumnModified(" . $this->getColumnForParameter('update_column')->getConstantName() . ")) {
+		return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnForParameter('update_column')->getConstantName() . ")) {
 	\$this->" . $this->getColumnSetter('update_column') . "(time());
 }";
 	}
@@ -75,6 +75,9 @@ class TimestampableBehavior extends Behavior
 	{
 		return "if (!\$this->isColumnModified(" . $this->getColumnForParameter('create_column')->getConstantName() . ")) {
 	\$this->" . $this->getColumnSetter('create_column') . "(time());
+}
+if (!\$this->isColumnModified(" . $this->getColumnForParameter('update_column')->getConstantName() . ")) {
+	\$this->" . $this->getColumnSetter('update_column') . "(time());
 }";
 	}
 
