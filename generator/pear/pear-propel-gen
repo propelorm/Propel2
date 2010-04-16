@@ -11,7 +11,6 @@
 
 # (currently this is not reached)
 if (test -z "$PHING_COMMAND") ; then
-	echo "WARNING: PHP_COMMAND environment not set. (Assuming phing on PATH)"
 	export PHING_COMMAND="phing"
 fi
 

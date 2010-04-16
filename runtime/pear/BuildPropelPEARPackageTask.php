@@ -18,7 +18,8 @@ include_once 'phing/tasks/ext/pearpackage/Fileset.php';
  * @package    phing.tasks.ext
  * @version    $Revision$
  */
-class BuildPropelPEARPackageTask extends MatchingTask {
+class BuildPropelPEARPackageTask extends MatchingTask
+{
 
 	/** Base directory for reading files. */
 	private $dir;
@@ -32,15 +33,16 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	/** Package file */
 	private $packageFile;
 
-	public function init() {
+	public function init()
+	{
 		include_once 'PEAR/PackageFileManager2.php';
 		if (!class_exists('PEAR_PackageFileManager2')) {
 			throw new BuildException("You must have installed PEAR_PackageFileManager2 (PEAR_PackageFileManager >= 1.6.0) in order to create a PEAR package.xml file.");
 		}
 	}
 
-	private function setOptions($pkg){
-
+	private function setOptions($pkg)
+	{
 		$options['baseinstalldir'] = 'propel';
 		$options['packagedirectory'] = $this->dir->getAbsolutePath();
 
@@ -73,8 +75,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * Main entry point.
 	 * @return     void
 	 */
-	public function main() {
-
+	public function main()
+	{
 		if ($this->dir === null) {
 			throw new BuildException("You must specify the \"dir\" attribute for PEAR package task.");
 		}
@@ -91,7 +93,7 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 		$package->setPackage('propel_runtime');
 		$package->setSummary('Runtime component of the Propel PHP object persistence layer');
 		$package->setDescription('Propel is an object persistence layer for PHP5 based on Apache Torque. This package provides the runtime engine that transparently handles object persistence and retrieval.');
-		$package->setChannel('pear.phpdb.org');
+		$package->setChannel('pear.propelorm.org');
 		$package->setPackageType('php');
 
 		$package->setReleaseVersion($this->version);
@@ -133,7 +135,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * Used by the PEAR_PackageFileManager_PhingFileSet lister.
 	 * @return     array FileSet[]
 	 */
-	public function getFileSets() {
+	public function getFileSets()
+	{
 		return $this->filesets;
 	}
 
@@ -146,7 +149,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 *
 	 * @return     FileSet The created fileset object
 	 */
-	function createFileSet() {
+	function createFileSet()
+	{
 		$num = array_push($this->filesets, new FileSet());
 		return $this->filesets[$num-1];
 	}
@@ -156,7 +160,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * @param      string $v
 	 * @return     void
 	 */
-	public function setVersion($v){
+	public function setVersion($v)
+	{
 		$this->version = $v;
 	}
 
@@ -165,7 +170,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * @param      string $v
 	 * @return     void
 	 */
-	public function setState($v) {
+	public function setState($v)
+	{
 		$this->state = $v;
 	}
 
@@ -174,7 +180,8 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * @param      string $v
 	 * @return     void
 	 */
-	public function setNotes($v) {
+	public function setNotes($v)
+	{
 		$this->notes = $v;
 	}
 	/**
@@ -182,14 +189,16 @@ class BuildPropelPEARPackageTask extends MatchingTask {
 	 * @param      PhingFile $f
 	 * @return     void
 	 */
-	public function setDir(PhingFile $f) {
+	public function setDir(PhingFile $f)
+	{
 		$this->dir = $f;
 	}
 
 	/**
 	 * Sets the file to use for generated package.xml
 	 */
-	public function setDestFile(PhingFile $f) {
+	public function setDestFile(PhingFile $f)
+	{
 		$this->packageFile = $f;
 	}
 

@@ -741,7 +741,7 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * Add a join with multiple conditions
-	 * see http://propel.phpdb.org/trac/ticket/167, http://propel.phpdb.org/trac/ticket/606
+	 * @see http://propel.phpdb.org/trac/ticket/167, http://propel.phpdb.org/trac/ticket/606
 	 * 
 	 * Example usage:
 	 * $c->addMultipleJoin(array(

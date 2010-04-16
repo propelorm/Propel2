@@ -999,7 +999,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
+				// See http://www.propelorm.org/ticket/509
 				// \$obj->hydrate(\$row, 0, true); // rehydrate
 				\$results[] = \$obj;
 			} else {";
@@ -1049,7 +1049,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		\$key = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, \$startcol);
 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
 			// We no longer rehydrate the object, since this can cause data loss.
-			// See http://propel.phpdb.org/trac/ticket/509
+			// See http://www.propelorm.org/ticket/509
 			// \$obj->hydrate(\$row, \$startcol, true); // rehydrate
 			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;";
 		if ($table->isAbstract()) {
@@ -2039,7 +2039,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
+				// See http://www.propelorm.org/ticket/509
 				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {
 ";
@@ -2271,7 +2271,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
+				// See http://www.propelorm.org/ticket/509
 				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {";
 
@@ -2542,7 +2542,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			\$key1 = ".$this->getPeerClassname()."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null !== (\$obj1 = ".$this->getPeerClassname()."::getInstanceFromPool(\$key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
+				// See http://www.propelorm.org/ticket/509
 				// \$obj1->hydrate(\$row, 0, true); // rehydrate
 			} else {";
 			if ($table->getChildrenColumn()) {
