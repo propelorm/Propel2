@@ -16,7 +16,7 @@
 	<!-- some default properties -->
 	<property name="notes"><![CDATA[
 		This is a beta release for the 1.5 branch of the Propel Generator. 
-		See http://www.propelorm.org/query?status=closed&milestone=1.5+Beta+1&resolution=fixed&order=priority for CHANGELOG.
+		See http://bit.ly/dskpCk for CHANGELOG.
 	]]></property>
 	<property name="state" value="beta"/>
 
