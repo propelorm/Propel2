@@ -494,10 +494,11 @@ abstract class AbstractPropelDataModelTask extends Task
 	protected function includeExternalSchemas(DomDocument $dom, $srcDir) {
 		$databaseNode = $dom->getElementsByTagName("database")->item(0);
 		$externalSchemaNodes = $dom->getElementsByTagName("external-schema");
+		$fs = FileSystem::getFileSystem();
 		while ($externalSchema = $externalSchemaNodes->item(0)) {
 			$include = $externalSchema->getAttribute("filename");
 			$externalSchema->parentNode->removeChild($externalSchema);
-			if (strpos($srcDir->getPath(), "/") === 0) {
+			if ($fs->prefixLength($include) != 0) {
 				$externalSchemaFile = new PhingFile($include);
 			} else {
 				$externalSchemaFile = new PhingFile($srcDir, $include);
