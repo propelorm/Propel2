@@ -161,6 +161,7 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
+		Propel::enableInstancePooling();
 		$c = new ModelCriteria('bookstore', 'Review');
 		$c->where('Review.Recommended = ?', true);
 		$c->join('Review.Book');
@@ -272,5 +273,25 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('Gunter', $book->getAuthor()->getFirstName(), 'PropelObjectFormatter correctly hydrates with class');
 		$this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'PropelObjectFormatter adds withColumns as virtual columns');
 		$this->assertEquals('Grass', $book->getVirtualColumn('AuthorName2'), 'PropelObjectFormatter correctly hydrates all virtual columns');
+	}
+
+	public function testFindPkWithOneToMany()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = BookQuery::create()
+			->findOneByTitle('Harry Potter and the Order of the Phoenix', $con);
+		$pk = $book->getPrimaryKey();
+		BookPeer::clearInstancePool();
+		$book = BookQuery::create()
+			->joinWith('Review')
+			->findPk($pk, $con);
+		$count = $con->getQueryCount();
+		$reviews = $book->getReviews();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
 	}
 }

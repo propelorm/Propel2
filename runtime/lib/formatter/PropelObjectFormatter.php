@@ -53,10 +53,9 @@ class PropelObjectFormatter extends PropelFormatter
 	public function formatOne(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+		$result = null;
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$result = $this->getAllObjectsFromRow($row);
-		} else {
-			$result = null;
 		}
 		$stmt->closeCursor();
 		
