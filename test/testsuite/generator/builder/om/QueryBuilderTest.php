@@ -316,6 +316,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterById(array(10, 11, 12));
 		$q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::IN);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() translates to a Criteria::IN when passed a simple array key');
+
+		$q = BookQuery::create()->filterById(array(10, 11, 12), Criteria::NOT_IN);
+		$q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::NOT_IN);
+		$this->assertEquals($q1, $q, 'filterByPkColumn() accepts a comparison when passed a simple array key');
 	}
 	
 	public function testFilterByNumber()
@@ -335,6 +339,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByPrice(array(10, 11, 12));
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::IN);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::IN when passed a simple array key');
+
+		$q = BookQuery::create()->filterByPrice(array(10, 11, 12), Criteria::NOT_IN);
+		$q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::NOT_IN);
+		$this->assertEquals($q1, $q, 'filterByNumColumn() accepts a comparison when passed a simple array key');
 		
 		$q = BookQuery::create()->filterByPrice(array('min' => 10));
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL);
@@ -397,10 +405,18 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::IN when passed an array');
+
+		$q = BookQuery::create()->filterByTitle(array('foo', 'bar'), Criteria::NOT_IN);
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::NOT_IN);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed an array');
 		
 		$q = BookQuery::create()->filterByTitle('foo%');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a % wildcard');
+
+		$q = BookQuery::create()->filterByTitle('foo%', Criteria::NOT_LIKE);
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::NOT_LIKE);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
 
 		$q = BookQuery::create()->filterByTitle('*foo');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, '%foo', Criteria::LIKE);
