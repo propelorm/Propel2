@@ -153,6 +153,9 @@ class BasePeer
 
 			// Execute the statement.
 			try {
+				if ($db->useQuoteIdentifier()) {
+					$tableName = $db->quoteIdentifierTable($tableName); 
+				}
 				$sql = "DELETE FROM " . $tableName . " WHERE " .  implode(" AND ", $whereClause);
 				$stmt = $con->prepare($sql);
 				self::populateStmtValues($stmt, $selectParams, $dbMap, $db);
@@ -276,6 +279,7 @@ class BasePeer
 			// add identifiers
 			if ($adapter->useQuoteIdentifier()) {
 				$columns = array_map(array($adapter, 'quoteIdentifier'), $columns);
+				$tableName = $adapter->quoteIdentifierTable($tableName); 
 			}
 
 			$sql = 'INSERT INTO ' . $tableName
@@ -355,7 +359,11 @@ class BasePeer
 			$stmt = null;
 			try {
 
-				$sql = "UPDATE " . $tableName . " SET ";
+				if ($db->useQuoteIdentifier()) {
+					$sql = "UPDATE " . $db->quoteIdentifierTable($tableName) . " SET "; 
+				} else { 
+					$sql = "UPDATE " . $tableName . " SET ";
+				}
 				$p = 1;
 				foreach ($updateTablesColumns[$tableName] as $col) {
 					$updateColumnName = substr($col, strrpos($col, '.') + 1);
