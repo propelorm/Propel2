@@ -47,7 +47,7 @@ Tip: If you want to install non-stable versions of Propel, change your `preferre
 
 === Dependencies for Tarball and Subversion Versions ===
 
-The Propel generator uses [http://phing.info/ Phing 2.2.x] to manage command line tasks; both the generator and the runtime classes use [http://pear.php.net/package/Log/ PEAR Log] to log events.
+The Propel generator uses [http://phing.info/ Phing 2.3.3] to manage command line tasks; both the generator and the runtime classes use [http://pear.php.net/package/Log/ PEAR Log] to log events.
 
 If you choose to install Propel via PEAR, these components will be automatically installed as dependencies. If you choose to install Propel from a tarball or a Subversion checkout, you'll have to install them manually:
 
