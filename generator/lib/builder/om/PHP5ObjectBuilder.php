@@ -4073,6 +4073,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		
 		$script .= "
+		\$this->alreadyInSave = false;
+		\$this->alreadyInValidation = false;
 		\$this->clearAllReferences();";
 		
 		if ($this->hasDefaultValues()) {
@@ -4081,6 +4083,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		
 		$script .= "
+		\$this->resetModified();
 		\$this->setNew(true);
 	}
 ";
