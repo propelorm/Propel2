@@ -219,29 +219,22 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$platform = $this->getPlatform();
 
 
+		/**
+		 * A collection of indexed columns. The keys is the column name
+		 * (concatenated with a comma in the case of multi-col index), the value is
+		 * an array with the names of the indexes that index these columns. We use
+		 * it to determine which additional indexes must be created for foreign
+		 * keys. It could also be used to detect duplicate indexes, but this is not
+		 * implemented yet.
+		 * @var array
+		 */
 		$_indices = array();
-		$_previousColumns = array();
-
-		// we're building an array of indices here which is smart about multi-column indices.
-		// for example, if we have to indices foo(ColA) and bar(ColB, ColC), we have actually three indices already defined:
-		// ColA, ColB+ColC, and ColB (but not ColC!). This is because of the way SQL multi-column indices work.
-		// we will later match found, defined foreign key and referenced column definitions against this array to know
-		// whether we should create a new index for mysql or not
-		foreach ($table->getPrimaryKey() as $_primaryKeyColumn) {
-			// do the above for primary keys
-			$_previousColumns[] = $this->quoteIdentifier($_primaryKeyColumn->getName());
-			$_indices[] = implode(',', $_previousColumns);
-		}
-
+		
+		$this->collectIndexedColumns('PRIMARY', $table->getPrimaryKey(), $_indices, 'getName');
+		
 		$_tableIndices = array_merge($table->getIndices(), $table->getUnices());
 		foreach ($_tableIndices as $_index) {
-			// same procedure, this time for unices and indices
-			$_previousColumns = array();
-			$_indexColumns = $_index->getColumns();
-			foreach ($_indexColumns as $_indexColumn) {
-				$_previousColumns[] = $this->quoteIdentifier($_indexColumn);
-				$_indices[] = implode(',', $_previousColumns);
-			}
+		  $this->collectIndexedColumns($_index->getName(), $_index->getColumns(), $_indices);
 		}
 
 		// we're determining which tables have foreign keys that point to this table, since MySQL needs an index on
@@ -251,9 +244,14 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		foreach ($allTables as $_table) {
 			foreach ($_table->getForeignKeys() as $_foreignKey) {
 				if ($_foreignKey->getForeignTableName() == $table->getName()) {
-					if (!in_array($this->getColumnList($_foreignKey->getForeignColumns()), $_indices)) {
+				  $referencedColumns = $_foreignKey->getForeignColumns();
+				  $referencedColumnsHash = $this->getColumnList($referencedColumns);
+				  if (!array_key_exists($referencedColumnsHash, $_indices)) {
 						// no matching index defined in the schema, so we have to create one
-						$lines[] = "INDEX ".$this->quoteIdentifier("I_referenced_".$_foreignKey->getName()."_".(++$counter))." (" .$this->getColumnList($_foreignKey->getForeignColumns()).")";
+						$indexName = "I_referenced_".$_foreignKey->getName()."_".(++$counter);
+						$lines[] = "INDEX ".$this->quoteIdentifier($indexName)." (" .$referencedColumnsHash.")";
+						// Add this new index to our collection, otherwise we might add it again (bug #725)
+						$this->collectIndexedColumns($indexName, $referencedColumns, $_indices);
 					}
 				}
 			}
@@ -262,10 +260,14 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		foreach ($table->getForeignKeys() as $fk) {
 
 			$indexName = $this->quoteIdentifier(substr_replace($fk->getName(), 'FI_',  strrpos($fk->getName(), 'FK_'), 3));
+			
+			$localColumns = $fk->getLocalColumns();
+			$localColumnsHash = $this->getColumnList($localColumns);
 
-			if (!in_array($this->getColumnList($fk->getLocalColumns()), $_indices)) {
+			if (!array_key_exists($localColumnsHash, $_indices)) {
 				// no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
-				$lines[] = "INDEX $indexName (".$this->getColumnList($fk->getLocalColumns()).")";
+				$lines[] = "INDEX $indexName (".$localColumnsHash.")";
+				$this->collectIndexedColumns($indexName, $localColumns, $_indices);
 			}
 			$str = "CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
 		FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).")
@@ -280,7 +282,43 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 			}
 			$lines[] = $str;
 		}
-
+	}
+	
+	/**
+	 * Helper function to collect indexed columns.
+	 * @param array $columns The column names, or objects with a $callback method
+	 * @param array $indexedColumns The collected indexes
+	 * @param string $callback The name of a method to call on each of $columns to get the column name, if needed.
+	 * @return unknown_type
+	 */
+	private function collectIndexedColumns($indexName, $columns, &$collectedIndexes, $callback = null)
+	{
+	  // Get the actual column names, using the callback if needed.
+	  // DDLBuilder::getColumnList tests $col instanceof Column, and no callback - maybe we should too?
+	  $colnames = $columns;
+	  if ($callback) {
+	    $colnames = array();
+	    foreach ($columns as $col) {
+	      $colnames[] = $col->$callback();
+	    }
+	  }
+	  
+	  /**
+	   * "If the table has a multiple-column index, any leftmost prefix of the
+	   * index can be used by the optimizer to find rows. For example, if you
+	   * have a three-column index on (col1, col2, col3), you have indexed search
+	   * capabilities on (col1), (col1, col2), and (col1, col2, col3)."
+	   * @link http://dev.mysql.com/doc/refman/5.5/en/mysql-indexes.html
+	   */
+	  $indexedColumns = array();
+	  foreach ($colnames as $colname) {
+	    $indexedColumns[] = $this->quoteIdentifier($colname);
+	    $indexedColumnsHash = implode(',', $indexedColumns);
+	    if (!array_key_exists($indexedColumnsHash, $collectedIndexes)) {
+	      $collectedIndexes[$indexedColumnsHash] = array();
+	    }
+	    $collectedIndexes[$indexedColumnsHash][] = $indexName;
+	  }
 	}
 
 	/**
