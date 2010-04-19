@@ -1344,7 +1344,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(new Criteria(".$this->getPeerClassname() . "::DATABASE_NAME), \$con);
 			";
 		}
-		$script .= "\$affectedRows += {$this->basePeerClassname}::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con);
+		$script .= "\$affectedRows += {$this->basePeerClassname}::doDeleteAll(".$this->getPeerClassname()."::TABLE_NAME, \$con, ".$this->getPeerClassname()."::DATABASE_NAME);
 			// Because this db requires some delete cascade/set null emulation, we have to
 			// clear the cached instance *after* the emulation has happened (since
 			// instances get re-added by the select statement contained therein).

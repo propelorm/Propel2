@@ -291,7 +291,7 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
 		
 		BookPeer::doDeleteAll($con);
-		$latestExecutedQuery = "DELETE FROM book";
+		$latestExecutedQuery = "DELETE FROM `book`";
 		$this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on delete operations');
 		
 		$sql = 'DELETE FROM book WHERE 1=1';
@@ -399,7 +399,7 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
 		BookPeer::doDeleteAll($con);
-		$latestExecutedQuery = "DELETE FROM book";
+		$latestExecutedQuery = "DELETE FROM `book`";
 		$this->assertEquals('log: ' . $latestExecutedQuery, $testLog->latestMessage, 'PropelPDO logs deletion queries in debug mode');
 		
 		$latestExecutedQuery = 'DELETE FROM book WHERE 1=1';

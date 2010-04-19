@@ -179,20 +179,25 @@ class BasePeer
 	 * public static function doDeleteAll($con = null)
 	 * {
 	 *   if ($con === null) $con = Propel::getConnection(self::DATABASE_NAME);
-	 *   BasePeer::doDeleteAll(self::TABLE_NAME, $con);
+	 *   BasePeer::doDeleteAll(self::TABLE_NAME, $con, self::DATABASE_NAME);
 	 * }
 	 * </code>
 	 *
 	 * @param      string $tableName The name of the table to empty.
 	 * @param      PropelPDO $con A PropelPDO connection object.
+	 * @param      string $databaseName the name of the database.
 	 * @return     int	The number of rows affected by the statement.  Note
 	 * 				that the return value does require that this information
 	 * 				is returned (supported) by the Propel db driver.
 	 * @throws     PropelException - wrapping SQLException caught from statement execution.
 	 */
-	public static function doDeleteAll($tableName, PropelPDO $con)
+	public static function doDeleteAll($tableName, PropelPDO $con, $databaseName = null)
 	{
 		try {
+			$db = Propel::getDB($databaseName);
+			if ($db->useQuoteIdentifier()) {
+				$tableName = $db->quoteIdentifierTable($tableName);
+			}
 			$sql = "DELETE FROM " . $tableName;
 			$stmt = $con->prepare($sql);
 			$stmt->execute();
