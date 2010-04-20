@@ -32,7 +32,7 @@ class MssqlPropelPDO extends PropelPDO
 			}
 			$this->isUncommitable = false;
 		}
-		$this->incrementNestedTransactionCount();
+		$this->nestedTransactionCount++;
 		return $return;
 	}
 	
@@ -58,7 +58,7 @@ class MssqlPropelPDO extends PropelPDO
 
 				}
 			}
-			$this->decrementNestedTransactionCount();
+			$this->nestedTransactionCount--;
 		}
 		return $return;
 	}
@@ -82,7 +82,7 @@ class MssqlPropelPDO extends PropelPDO
 			} else {
 				$this->isUncommitable = true;
 			}
-			$this->decrementNestedTransactionCount(); 
+			$this->nestedTransactionCount--; 
 		}
 		return $return;
 	}
