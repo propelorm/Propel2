@@ -187,7 +187,7 @@ For instance, to display an entire tree structure, you can use the following cod
 <?php
 $root = SectionQuery::create()->findRoot();
 foreach ($root->getIterator() as $node) {
-  echo str_repeat(' ', $node->getLevel() . $node->getTitle() . "\n";
+  echo str_repeat(' ', $node->getLevel()) . $node->getTitle() . "\n";
 }
 }}}
 
@@ -200,7 +200,7 @@ Beware, though, that the iterator executes many queries to parse a tree. On smal
 <?php
 $root = SectionQuery::create()->findRoot();
 foreach ($root->getBranch() as $node) {
-  echo str_repeat(' ', $node->getLevel() . $node->getTitle() . "\n";
+  echo str_repeat(' ', $node->getLevel()) . $node->getTitle() . "\n";
 }
 }}}
 
