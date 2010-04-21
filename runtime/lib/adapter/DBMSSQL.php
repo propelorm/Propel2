@@ -109,6 +109,13 @@ class DBMSSQL extends DBAdapter
 
 		//split the select and from clauses out of the original query
 		$selectSegment = array();
+
+		$selectText = 'SELECT ';
+
+		if (preg_match('/\Aselect(\s+)distinct/i', $sql)) {
+			$selectText .= 'DISTINCT ';
+		}
+
 		preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
 		if(count($selectSegment) == 3) {
 			$selectStatement = trim($selectSegment[1]);
@@ -117,10 +124,10 @@ class DBMSSQL extends DBAdapter
 			throw new Exception('DBMSSQL::applyLimit() could not locate the select statement at the start of the query.');
 		}
 
-		// if we're starting at offset 0 then theres no need to simulate limit, 
+		// if we're starting at offset 0 then theres no need to simulate limit,
 		// just grab the top $limit number of rows
 		if($offset == 0) {
-			$sql = 'SELECT TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
+			$sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
 			return;
 		}
 
@@ -197,7 +204,7 @@ class DBMSSQL extends DBAdapter
 		}
 
 		//substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
-		$innerSelect = 'SELECT ROW_NUMBER() OVER(' . $orderStatement . ') AS RowNumber, ' . substr($innerSelect, 0, - 2) . ' FROM';
+		$innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS RowNumber, ' . substr($innerSelect, 0, - 2) . ' FROM';
 		//outer select can't use * because of the RowNumber column
 		$outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
 
