@@ -2741,6 +2741,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$collName = $this->getRefFKCollVarName($refFK);
 
 		$fkPeerBuilder = $this->getNewPeerBuilder($tblFK);
+		$className = $fkPeerBuilder->getObjectClassname();
 
 		$lastTable = "";
 		foreach ($tblFK->getForeignKeys() as $fk2) {
@@ -2774,6 +2775,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in ".$table->getPhpName().".
+	 *
+	 * @param      Criteria \$criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO \$con optional connection object
+	 * @param      string \$join_behavior optional join type to use (defaults to $join_behavior)
+	 * @return     PropelCollection|array {$className}[] List of $className objects
 	 */
 	public function get".$relCol."Join".$relCol2."(\$criteria = null, \$con = null, \$join_behavior = $join_behavior)
 	{";
@@ -3011,8 +3017,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * If this ".$this->getObjectClassname()." is new, it will return
 	 * an empty collection or the current collection; the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria \$criteria
-	 * @param      PropelPDO \$con
+	 * @param      Criteria \$criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO \$con optional connection object
 	 * @return     PropelCollection|array {$className}[] List of $className objects
 	 * @throws     PropelException
 	 */
@@ -3058,7 +3064,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Gets a single $className object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      PropelPDO \$con
+	 * @param      PropelPDO \$con optional connection object
 	 * @return     $className
 	 * @throws     PropelException
 	 */
