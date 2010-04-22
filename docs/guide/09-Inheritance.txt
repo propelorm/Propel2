@@ -27,7 +27,7 @@ A table using Single Table Inheritance requires a column to identify which class
 </table>
 }}}
 
-Once you rebuild your model, Propel generated all three model classes (`Book`, `Essay`, and `Comic`) and a single query class (`BookQuery`). The `Essay` and `Comic` classes extend the `Book` class.
+Once you rebuild your model, Propel generated all three model classes (`Book`, `Essay`, and `Comic`) and three query classes (`BookQuery`, `EssayQuery`, and `ComicQuery`). The `Essay` and `Comic` classes extend the `Book` class, the `EssayQuery` and `ComicQuery` classes extend `BookQuery`.
 
 '''Tip''': An inherited class can extend another inherited class. That mean that you can add a `Manga` kind of book that extends `Comic` instead of `Book`.
 
@@ -96,16 +96,15 @@ foreach ($books as $book) {
 // Novel: Harry Potter
 }}}
 
-If you want to retrieve only objects of a certain class, use the query's filter method:
+If you want to retrieve only objects of a certain class, use the inherited query classes:
 
 {{{
 #!php
 <?php
-$novel = BookQuery::create()
-  ->filterByClassKey('Novel')
+$comic = ComicQuery::create()
   ->findOne();
-echo get_class($book) . ': ' . $book->getTitle() . "\n";
-// Novel: Harry Potter
+echo get_class($comic) . ': ' . $comic->getTitle() . "\n";
+// Comic: Little Nemo In Slumberland
 }}}
 
 '''Tip''': You can override the base peer's `getOMClass()` to return the classname to use based on more complex logic (or query).
