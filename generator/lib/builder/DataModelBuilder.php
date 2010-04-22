@@ -239,7 +239,7 @@ abstract class DataModelBuilder
 		}
 		return $this->stubQueryBuilder;
 	}
-
+	
 	/**
 	 * Returns new or existing stub Interface builder class for this table.
 	 * @return     ObjectBuilder
@@ -444,6 +444,28 @@ abstract class DataModelBuilder
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
 	}
 
+	/**
+	 * Returns new Query Inheritance builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getNewQueryInheritanceBuilder($child)
+	{
+		$queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritance');
+		$queryInheritanceBuilder->setChild($child);
+		return $queryInheritanceBuilder;
+	}
+
+	/**
+	 * Returns new stub Query Inheritance builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getNewStubQueryInheritanceBuilder($child)
+	{
+		$stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritancestub');
+		$stubQueryInheritanceBuilder->setChild($child);
+		return $stubQueryInheritanceBuilder;
+	}
+	
 	/**
 	 * Gets the GeneratorConfig object.
 	 *

@@ -266,10 +266,12 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 						if ($col = $table->getChildrenColumn()) {
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
-									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
-									$builder->setChild($child);
-									$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-									$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+									foreach (array('objectmultiextend', 'queryinheritance', 'queryinheritancestub') as $target) {
+											$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$builder->setChild($child);
+										$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+										$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+									}
 								}
 							}
 						}

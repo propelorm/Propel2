@@ -137,9 +137,19 @@ class PropelOMTask extends AbstractPropelDataModelTask
 							$col = $table->getChildrenColumn();
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
-									$builder = $generatorConfig->getConfiguredBuilder($table, 'objectmultiextend');
-									$builder->setChild($child);
-									$this->build($builder, $overwrite=false);
+									foreach (array('queryinheritance') as $target) {
+										if (!$child->getAncestor()) {
+											continue;
+										}
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$builder->setChild($child);
+										$this->build($builder, $overwrite=true);
+									}
+									foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
+										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
+										$builder->setChild($child);
+										$this->build($builder, $overwrite=false);
+									}
 								} // foreach
 							} // if col->is enumerated
 						} // if tbl->getChildrenCol
