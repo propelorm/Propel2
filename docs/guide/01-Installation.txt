@@ -123,18 +123,18 @@ In order to allow an easier execution the script, you can also:
 
 Propel requires that the runtime classes are in PHP `include_path`. 
 
-The easiest and most permanent way to set your `include_path` is to simply edit your `php.ini` file and add the `propel/runtime/classes/` directory to the `include_path` variable:
+The easiest and most permanent way to set your `include_path` is to simply edit your `php.ini` file and add the `propel/runtime/lib/` directory to the `include_path` variable:
 
 {{{
 ; Unix
-include_path="/usr/local/lib/php:/usr/local/propel/runtime/classes"
+include_path="/usr/local/lib/php:/usr/local/propel/runtime/lib"
 }}}
 
 or, if you're using Windows,
 
 {{{
 ; Windows
-include_path="C:\PHP\PEAR;C:\PHP\apps\propel\runtime\classes"
+include_path="C:\PHP\PEAR;C:\PHP\apps\propel\runtime\lib"
 }}}
 
 If you do not have access to the `php.ini` file and cannot specify the `include_path` value in your `.htaccess` file, you can always do this at runtime within your PHP scripts:
@@ -142,7 +142,7 @@ If you do not have access to the `php.ini` file and cannot specify the `include_
 {{{
 #!php
 <?php 
-set_include_path("/usr/local/propel/runtime/classes" . PATH_SEPARATOR . get_include_path());
+set_include_path("/usr/local/propel/runtime/lib" . PATH_SEPARATOR . get_include_path());
 }}}
 
 Now the Propel runtime environment is ready to be used by your object model. As you will learn later, you will also need to modify the `include_path` to account for your object model PHP classes (i.e. the classes that the Propel generator builds for you).
