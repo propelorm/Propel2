@@ -247,13 +247,10 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 
 					if (!$table->isForReferenceOnly()) {
 
-						// Classes that I'm assuming do not need to be mapped (because they will be required by subclasses):
-						//	- base peer and object classes
-						//	- interfaces
-						//	- base node peer and object classes
-
 						// -----------------------------------------------------
-						// Add Peer & Object stub classes and MapBuilder classes
+						// Add TableMap class,
+						//     Peer, Object & Query stub classes,
+						// and Peer, Object & Query base classes
 						// -----------------------------------------------------
 						// (this code is based on PropelOMTask)
 
@@ -262,6 +259,12 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
 							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
 						}
+
+						// -----------------------------------------------------
+						// Add children classes for object and query,
+						// as well as base child query,
+						// for single tabel inheritance tables.
+						// -----------------------------------------------------
 
 						if ($col = $table->getChildrenColumn()) {
 							if ($col->isEnumeratedClasses()) {
@@ -275,7 +278,11 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 								}
 							}
 						}
-
+						
+						// -----------------------------------------------------
+						// Add base classes for alias tables (undocumented)
+						// -----------------------------------------------------
+						
 						$baseClass = $table->getBaseClass();
 						if ( $baseClass !== null ) {
 							$className = ClassTools::classname($baseClass);
@@ -296,9 +303,19 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 							}
 						}
 						
-						// ------------------------
-						// Create tree Node classes
-						// ------------------------
+						// ----------------------------------------------
+						// Add classes for interface
+						// ----------------------------------------------
+						
+						if ($table->getInterface()) {
+							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
+							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
+							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+						}
+						
+						// ----------------------------------------------
+						// Add classes from old treeMode implementations
+						// ----------------------------------------------
 
 						if ($table->treeMode() == 'MaterializedPath') {
 							foreach (array('nodepeerstub', 'nodestub', 'nodepeer', 'node') as $target) {
