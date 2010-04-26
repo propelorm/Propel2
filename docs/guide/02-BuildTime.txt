@@ -4,7 +4,7 @@
 
 The initial step in every Propel project is the "build". During build time, a developer describes the structure of the datamodel in a XML file called the "schema". From this schema, Propel generates PHP classes, called "model classes", made of object-oriented PHP code optimized for a given RMDBS. The model classes are the primary interface to find and manipulate data in the database in Propel.
 
-The XML schema can also be used to generate SQL code to setup your database. Alternatively, you can generate the schema from an existing database (this is described in another chapter of the documentation - see the [wiki:Users/Documentation/1.5/Existing-Database reverse engineering chapter] for more details).
+The XML schema can also be used to generate SQL code to setup your database. Alternatively, you can generate the schema from an existing database (this is described in another chapter of the documentation - see the [wiki:Documentation/1.5/Existing-Database reverse engineering chapter] for more details).
 
 During build time, a developer also defines the connection settings for communicating with the database.
 
@@ -124,7 +124,7 @@ A table can have several `<foreign-key>` tags, describing foreign keys to foreig
 
 A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`. By default, Propel uses the `phpName` of the foreign table as the `phpName` of the relation. The `refPhpName` defines the name of the relation as seen from the foreign table.
 
-There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [wiki:Users/Documentation/1.5/Schema-Reference reference of the schema syntax], together with a [wiki:Users/Documentation/1.5/Schema-DTD DTD] and a [wiki:Users/Documentation/1.5/Schema-XSD XSD] schema for its validation.
+There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [wiki:Documentation/1.5/Schema reference of the schema syntax], together with a [wiki:Users/Documentation/1.5/Schema-DTD DTD] and a [wiki:Users/Documentation/1.5/Schema-XSD XSD] schema for its validation.
 
 == Building The Model ==
 
@@ -145,7 +145,7 @@ propel.project = bookstore
 
 Use your own database vendor driver, chosen among pgsql, mysql, sqlite, mssql, and oracle.
 
-You can learn more about the available build settings and their possible values in the  [wiki:Users/Documentation/1.5/Build-Configuration build configuration reference].
+You can learn more about the available build settings and their possible values in the  [wiki:Documentation/1.5/BuildConfiguration build configuration reference].
 
 === Using the `propel-gen` Script To Build The Model ===
 
@@ -304,7 +304,7 @@ Notice how the `id` attribute of the `<datasource>` tag matches the connection n
 
 Replace the `<adapter>` and the `<connection>` settings wit hthe ones of your database.
   
-See the [wiki:Users/Documentation/1.5/Runtime-Configuration runtime configuration reference] for a more detailed explanation of this file.
+See the [wiki:Documentation/1.5/RuntimeConfiguration runtime configuration reference] for a more detailed explanation of this file.
 
 '''Tip''': If you uncomment the `<log>` section, Propel will attempt to instantiate the `Log` class (from the [http://pear.php.net/package/Log/ PEAR Log] package) with the specified parameters and use that to log queries. Propel's statement logging happens at the DEBUG level (7); errors and warnings are logged at the appropriate (non-debug) level.
 

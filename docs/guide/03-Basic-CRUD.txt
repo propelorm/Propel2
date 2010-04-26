@@ -149,7 +149,7 @@ $author = AuthorQuery::create()
 $author = AuthorQuery::create()->findOneByFirstName('Jane');
 }}}
 
-The Propel Query API is very powerful. The next chapter will teach you to use it to add conditions on related objects. If you can't wait, jump to the [wiki:Users/Documentation/1.5/ModelCriteria Query API reference].
+The Propel Query API is very powerful. The next chapter will teach you to use it to add conditions on related objects. If you can't wait, jump to the [wiki:Documentation/1.5/ModelCriteria Query API reference].
 
 === Using Custom SQL ===
 
@@ -300,7 +300,7 @@ In this example, Propel will hydrate the `Author` objects row by row, after the 
 
 `ModelCriteria::FORMAT_ON_DEMAND` is one of the many formatters provided by the Query objects. You can also get a collection of associative arrays instead of objects, if you don't need any of the logic stored in your model object, by using `ModelCriteria::FORMAT_ARRAY`.
 
-The [wiki:Users/Documentation/1.5/ModelCriteria Query API reference] describes each formatter, and how to use it.
+The [wiki:Documentation/1.5/ModelCriteria Query API reference] describes each formatter, and how to use it.
 
 == Propel Instance Pool ==
 

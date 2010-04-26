@@ -216,7 +216,7 @@ $con->useDebug(true);
 
 You can also disable the debug mode at runtime, by calling `PropelPDO::useDebug(false)`. Using this method, you can choose to enable the debug mode for only one particular query, or for all queries.
 
-Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `DebugPDO` class instead of the default `PropelPDO` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [wiki:Users/Documentation/1.5/Runtime-Configuration runtime configuration reference] for more details).
+Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `DebugPDO` class instead of the default `PropelPDO` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [wiki:Documentation/1.5/RuntimeConfiguration runtime configuration reference] for more details).
 
 {{{
 #!xml

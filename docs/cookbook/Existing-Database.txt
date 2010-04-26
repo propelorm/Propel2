@@ -16,7 +16,7 @@ Propel 1.3 offers two options for reverse engineering databases:
 
 == Before You Get Started ==
 
-Before you attempt to import an existing database, you should make sure that Propel is properly installed. The ''Installation'' chapter of the [wiki:Users/Documentation/1.3/UserGuide User Guide] provides a walk-through on getting Propel installed.  '''If you are planning to use Creole for reverse engineering, make sure you have also installed the optional [http://creole.phpdb.org Creole] package.'''
+Before you attempt to import an existing database, you should make sure that Propel is properly installed. The ''Installation'' chapter of the [wiki:Documentation/1.5/UserGuide User Guide] provides a walk-through on getting Propel installed.  '''If you are planning to use Creole for reverse engineering, make sure you have also installed the optional [http://creole.phpdb.org Creole] package.'''
 
 This document will describe how to work with existing databases if you are using the PEAR-installed form of Propel (which is the assumed default).  You can certainly apply these instructions to other more advanced installations of Propel (e.g. from SVN).
 
