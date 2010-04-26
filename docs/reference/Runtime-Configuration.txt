@@ -96,7 +96,7 @@ The nested elements correspond to the configuration options for the logger (opti
 ||'''<ident>'''||propel||The identifier tag for the log.||
 ||'''<level>'''||7 (PEAR_LOG_DEBUG)||The logging level.||
 
-This log configuring API is designed to provide a simple way to get log output from Propel; however, if your application already has a logging mechanism, we recommend instead that you use your existing logger (writing a simple log adapter, if you are using an unsupported logger).  See the [wiki:Documentation/1.3/ConfigureLogging] page for more info.
+This log configuring API is designed to provide a simple way to get log output from Propel; however, if your application already has a logging mechanism, we recommend instead that you use your existing logger (writing a simple log adapter, if you are using an unsupported logger). See the [wiki:Documentation/1.5/07-Logging Logging documentation] for more info.
 
 === <datasources> ===
 
@@ -225,7 +225,7 @@ See the [http://www.php.net/pdo PDO documentation] for more details.
 
 ==== <attributes> ====
 
-<attributes> are similar to <options>; the difference is that options specified in '''<attributes>''' are set after the PDO object has been created.  These are set using the [http://us.php.net/PDO-setAttribute PDO->setAttribute()] method.
+`<attributes>` are similar to `<options>`; the difference is that options specified in `<attributes>` are set after the PDO object has been created.  These are set using the [http://us.php.net/PDO-setAttribute PDO->setAttribute()] method.
 
 In addition to the standard attributes that can be set on the PDO object, there are also the following Propel-specific attributes that change the behavior of the PropelPDO connection:
 
@@ -275,7 +275,7 @@ Specifies the character set to use.  Currently you must specify the charset in t
 
 ===== queries =====
 
-Specifies any SQL statements to run when the database connection is initialized.  This can be used for any environment setup or db initialization you would like to perform.  These statements will be executed with every Propel initialization (e.g. every PHP script load).
+Specifies any SQL statements to run when the database connection is initialized.  This can be used for any environment setup or db initialization you would like to perform. These statements will be executed with every Propel initialization (e.g. every PHP script load).
 
 {{{
 #!xml
@@ -304,8 +304,8 @@ Specifies any SQL statements to run when the database connection is initialized.
     <slaves>
 }}}
 
-The <slaves> tag groups slave <connection> elements which provide support for configuring slave db servers -- when using Propel in a master-slave replication environment.  See wiki:Documentation/1.3/Replication for more information.  The nested <connection> elements are configured the same way as the top-level <connection> element is configured.
+The `<slaves>` tag groups slave `<connection>` elements which provide support for configuring slave db servers -- when using Propel in a master-slave replication environment. See the [wiki:Documentation/1.5/Master-Slave Master-Slave documentation] for more information.  The nested `<connection>` elements are configured the same way as the top-level `<connection>` element is configured.
 
 === <debugpdo> ===
 
-The optional <debugpdo> element may be provided to pass additional logging configuration options to DebugPDO.  Note that these settings have no effect unless DebugPDO has been selected in [wiki:Documentation/1.3/RuntimeConf#classname <classname>] as the PDO connection class.  See wiki:Documentation/1.3/DebugPDO for more information on configuring DebugPDO.
+The optional `<debugpdo>` element may be provided to pass additional logging configuration options to DebugPDO. Note that these settings have no effect unless DebugPDO has been selected in [1.5/RuntimeConfiguration#debugpdo `runtime-conf.xml`] as the PDO connection class. See the [wiki:Documentation/1.5/07-Logging Logging documentation] for more information on configuring DebugPDO.

@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-The schema for {{{schema.xml}}} contains a small number of elements with required and optional attributes.  The Propel generator contains a DTD (source:branches/1.3/generator/resources/dtd/database.dtd) that can be used to validate your {{{schema.xml}}} document.  Also, when you build your SQL and OM, the Propel generator will automatically validate your {{{schema.xml}}} file using a new, highly-detailed XSD (source:branches/1.3/generator/resources/xsd/database.xsd).
+The schema for `schema.xml` contains a small number of elements with required and optional attributes. The Propel generator contains a [source:branches/1.5/generator/resources/dtd/database.dtd DTD] that can be used to validate your `schema.xml` document. Also, when you build your SQL and OM, the Propel generator will automatically validate your `schema.xml` file using a new, highly-detailed [source:branches/1.5/generator/resources/xsd/database.xsd XSD].
 
 == At-a-Glance ==
 
@@ -45,7 +45,7 @@ First, some conventions:
 
 === <database> element ===
 
-Starting with the {{{<database>}}} element.  The ''attributes'' and ''elements'' available are:
+Starting with the {{{<database>}}} element. The ''attributes'' and ''elements'' available are:
 
 {{{
 #!xml
@@ -134,7 +134,7 @@ According to the schema, {{{name}}} is the only required attribute.  Also, the {
  * {{{package}}} specifies the "package" for the generated classes.
  * {{{readOnly}}} suppresses the mutator/setter methods, save() and delete() methods.
  * {{{skipSql}}} instructs Propel not to generate DDL SQL for the specified table.  This can be used together with {{{readOnly}}} for supperting VIEWS in Propel.
- * {{{treeMode}}} is used to indicate that this table is part of a node tree.  Currently the only supported values are "!NestedSet" (see [wiki:Documentation/1.5/Behaviors/nested_set]) and "!MaterializedPath" (see: [wiki:Documentation/1.3/Tree/MaterializedPath]).
+ * {{{treeMode}}} is used to indicate that this table is part of a node tree. Currently the only supported values are "!NestedSet" (see [wiki:Documentation/1.5/Behaviors/nested_set]) and "!MaterializedPath" (deprecated).
  * {{{reloadOnInsert}}} is used to indicate that the object should be reloaded from the database when an INSERT is performed.  This is useful if you have triggers (or other server-side functionality like column default expressions) that alters the database row on INSERT.
  * {{{reloadOnUpdate}}} is used to indicate that the object should be reloaded from the database when an UPDATE is performed.  This is useful if you have triggers (or other server-side functionality like column default expressions) that alters the database row on UPDATE.
  * {{{allowPkInsert}}} can be used if you want to define the primary key of a new object being inserted. By default if idMethod is "native", Propel would throw an exception. However, in some cases this feature is useful, for example if you do some replication of data in an master-master environment. It defaults to false.
