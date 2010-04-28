@@ -27,7 +27,7 @@ Propel generates the `setAuthor()` method based on the `phpName` attribute of th
 
 Internally, the call to `Book::setAuthor($author)` translates into `Book::setAuthorId($author->getId())`. But you don't actually have to save a Propel object before associating it to another. In fact, Propel automatically "cascades" INSERT statements when a new object has other related objects added to it.
 
-For one-to-many relationships - meaning, from the other side of a many-to-one relationship - the process is a lisstle different. In the previous example, one `Book` has one `Author`, but one `Author` has many `Books`. From the `Author` point of view, a one-to-many relationships relates it to `Book`. So Propel doesn't generate an `Author::setBook()`, but rather an `Author::addBook()`:
+For one-to-many relationships - meaning, from the other side of a many-to-one relationship - the process is a little different. In the previous example, one `Book` has one `Author`, but one `Author` has many `Books`. From the `Author` point of view, a one-to-many relationships relates it to `Book`. So Propel doesn't generate an `Author::setBook()`, but rather an `Author::addBook()`:
 
 {{{
 #!php
