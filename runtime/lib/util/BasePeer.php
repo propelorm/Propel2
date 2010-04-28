@@ -945,7 +945,7 @@ class BasePeer
 				if ($criteria->isIgnoreCase() && $column && $column->isText()) {
 					$ignoreCaseColumn = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
 					$orderByClause[] =  $ignoreCaseColumn . $direction;
-					$selectSql .= ' ' . $ignoreCaseColumn;
+					$selectSql .= ', ' . $ignoreCaseColumn;
 				} else {
 					$orderByClause[] = $orderByColumn;
 				}

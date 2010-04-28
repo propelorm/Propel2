@@ -289,6 +289,7 @@ class CriteriaTest extends BaseTestCase
    */
   public function testCriterionIgnoreCase()
   {
+  	$originalDB = Propel::getDB();
     $adapters = array(new DBMySQL(), new DBPostgres());
     $expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1");
 
@@ -316,7 +317,25 @@ class CriteriaTest extends BaseTestCase
       $this->assertEquals($expectedIgnore[$i], $sb);
       $i++;
     }
+    Propel::setDB(null, $originalDB);
   }
+  
+	public function testOrderByIgnoreCase()
+	{
+		$originalDB = Propel::getDB();
+		Propel::setDB(null, new DBMySQL());
+		
+		$criteria = new Criteria();
+		$criteria->setIgnoreCase(true);
+		$criteria->addAscendingOrderByColumn(BookPeer::TITLE);
+		BookPeer::addSelectColumns($criteria);
+		$params=array();
+		$sql = BasePeer::createSelectSql($criteria, $params);
+		$expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
+		$this->assertEquals($expectedSQL, $sql);
+		
+		Propel::setDB(null, $originalDB);
+	}
 
   /**
    * Test that true is evaluated correctly.
