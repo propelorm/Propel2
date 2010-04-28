@@ -390,8 +390,11 @@ class Criteria implements IteratorAggregate
 	/**
 	 * Method to return criteria related to columns in a table.
 	 *
+	 * Make sure you call containsKey($column) prior to calling this method,
+	 * since no check on the existence of the $column is made in this method.
+	 *
 	 * @param      string $column Column name.
-	 * @return     Criterion A Criterion or null if $column is invalid.
+	 * @return     Criterion A Criterion object.
 	 */
 	public function getCriterion($column)
 	{
