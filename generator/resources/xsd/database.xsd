@@ -124,16 +124,18 @@
 
 	<xs:simpleType name="rulename">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="mask"/>
+			<xs:enumeration value="match"/>
 			<xs:enumeration value="maxLength"/>
 			<xs:enumeration value="maxValue"/>
 			<xs:enumeration value="minLength"/>
 			<xs:enumeration value="minValue"/>
+			<xs:enumeration value="notMatch"/>
 			<xs:enumeration value="required"/>
+			<xs:enumeration value="type"/>
 			<xs:enumeration value="unique"/>
 			<xs:enumeration value="validValues"/>
-			<xs:enumeration value="notMatch"/>
-			<xs:enumeration value="match"/>
+			<!-- the next validators don't seem to be implemented, keeping them for BC -->
+			<xs:enumeration value="mask"/>
 			<xs:enumeration value="class"/>
 		</xs:restriction>
 	</xs:simpleType>

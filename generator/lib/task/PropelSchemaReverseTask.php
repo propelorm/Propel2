@@ -442,7 +442,7 @@ class PropelSchemaReverseTask extends PDOTask
 				if ($col->isNumericType() && $this->isValidatorRequired(self::VALIDATORS_MAXVALUE)) {
 					$this->log("WARNING: maxValue validator added for column ".$col->getName().". You will have to adjust the size value manually.", Project::MSG_WARN);
 					$validator = $set->getValidator($col);
-					$validator->addRule($this->getValidatorRule($col, 'maxSize', 'REPLACEME'));
+					$validator->addRule($this->getValidatorRule($col, 'maxValue', 'REPLACEME'));
 				}
 
 				if ($col->isPhpPrimitiveType() && $this->isValidatorRequired(self::VALIDATORS_TYPE)) {
