@@ -38,6 +38,13 @@
 		<column name="name" type="VARCHAR" size="100" primaryString="true" />
 	</table>
 
+
+	<table name="concrete_news">
+		<behavior name="concrete_inheritance">
+			<parameter name="extends" value="concrete_article" />
+		</behavior>
+	</table>
+
 	<table name="concrete_quizz">
 		<column name="title" type="VARCHAR" size="200" primaryString="true" />
 		<behavior name="concrete_inheritance">
