@@ -119,6 +119,33 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		}
 	}
 
+	public function testToKeyValue()
+	{
+		$books = PropelQuery::from('Book')->find();
+		
+		$expected = array();
+		foreach ($books as $book) {
+			$expected[$book->getTitle()] = $book->getISBN();
+		}
+		$booksArray = $books->toKeyValue('Title', 'ISBN');
+		$this->assertEquals(4, count($booksArray));
+		$this->assertEquals($expected, $booksArray, 'toKeyValue() turns the collection to an associative array');
+
+		$expected = array();
+		foreach ($books as $book) {
+			$expected[$book->getISBN()] = $book->getTitle();
+		}
+		$booksArray = $books->toKeyValue('ISBN');
+		$this->assertEquals($expected, $booksArray, 'toKeyValue() uses __toString() for the value if no second field name is passed');
+		
+		$expected = array();
+		foreach ($books as $book) {
+			$expected[$book->getId()] = $book->getTitle();
+		}
+		$booksArray = $books->toKeyValue();
+		$this->assertEquals($expected, $booksArray, 'toKeyValue() uses primary key for the key and __toString() for the value if no field name is passed');
+	}
+
 	public function testPopulateRelation()
 	{
 		AuthorPeer::clearInstancePool();

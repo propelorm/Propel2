@@ -117,7 +117,7 @@ class PropelObjectCollection extends PropelCollection
 	 *
 	 * @return    array
 	 */
-	public function toKeyValue($keyColumn, $valueColumn = null)
+	public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null)
 	{
 		$ret = array();
 		$keyGetterMethod = 'get' . $keyColumn;
