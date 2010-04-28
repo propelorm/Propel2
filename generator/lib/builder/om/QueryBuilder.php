@@ -562,11 +562,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 *
 	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
 	 */
-	public function filterBy$colPhpName(\$$variableName = null, \$comparison = Criteria::EQUAL)
+	public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
 	{";
 		if ($col->isPrimaryKey() && ($col->getType() == PropelTypes::INTEGER || $col->getType() == PropelTypes::BIGINT)) {
 			$script .= "
-		if (is_array(\$$variableName) && \$comparison == Criteria::EQUAL) {
+		if (is_array(\$$variableName) && null === \$comparison) {
 			\$comparison = Criteria::IN;
 		}";
 		} elseif ($col->isNumericType() || $col->isTemporalType()) {
@@ -584,19 +584,19 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			if (\$useMinMax) {
 				return \$this;
 			}
-			if (\$comparison == Criteria::EQUAL) {
+			if (null === \$comparison) {
 				\$comparison = Criteria::IN;
 			}
 		}";
 		} elseif ($col->isTextType()) {
 			$script .= "
 		if (is_array(\$$variableName)) {
-			if (\$comparison == Criteria::EQUAL) {
+			if (null === \$comparison) {
 				\$comparison = Criteria::IN;
 			}
 		} elseif (preg_match('/[\%\*]/', \$$variableName)) {
 			\$$variableName = str_replace('*', '%', \$$variableName);
-			if (\$comparison == Criteria::EQUAL) {
+			if (null === \$comparison) {
 				\$comparison = Criteria::LIKE;
 			}
 		}";
@@ -633,7 +633,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($objectName, \$comparison = Criteria::EQUAL)
+	public function filterBy$relationName($objectName, \$comparison = null)
 	{
 		return \$this";
 		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
@@ -668,7 +668,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
-	public function filterBy$relationName($objectName, \$comparison = Criteria::EQUAL)
+	public function filterBy$relationName($objectName, \$comparison = null)
 	{
 		return \$this";
 		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {

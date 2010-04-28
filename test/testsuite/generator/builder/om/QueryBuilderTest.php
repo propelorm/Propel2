@@ -418,6 +418,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::NOT_LIKE);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
 
+		$q = BookQuery::create()->filterByTitle('foo%', Criteria::EQUAL);
+		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
+
 		$q = BookQuery::create()->filterByTitle('*foo');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, '%foo', Criteria::LIKE);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a * wildcard, and turns * into %');
