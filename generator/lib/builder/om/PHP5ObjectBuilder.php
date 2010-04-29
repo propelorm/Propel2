@@ -3100,16 +3100,16 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Sets a single $className object as related to this object by a one-to-one relationship.
 	 *
-	 * @param      $className \$l $className
+	 * @param      $className \$v $className
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function set".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$v)
+	public function set".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$v = null)
 	{
 		\$this->$varName = \$v;
 
 		// Make sure that that the passed-in $className isn't already associated with this object
-		if (\$v->get".$this->getFKPhpNameAffix($refFK, $plural = false)."() === null) {
+		if (\$v !== null && \$v->get".$this->getFKPhpNameAffix($refFK, $plural = false)."() === null) {
 			\$v->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
 
