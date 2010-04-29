@@ -182,7 +182,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$this->addPrune($script);
 		$this->addBasePreSelect($script);
 		$this->addBasePreDelete($script);
+		$this->addBasePostDelete($script);
 		$this->addBasePreUpdate($script);
+		$this->addBasePostUpdate($script);
 		// apply behaviors
 		$this->applyBehaviorModifier('queryMethods', $script, "	");
 	}
@@ -888,56 +890,21 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addBasePreSelect(&$script)
 	{
-		$this->addBasePreSelectComment($script);
-		$this->addBasePreSelectOpen($script);
-		$this->addBasePreSelectBody($script);
-		$this->addBasePreSelectClose($script);
-	}
-
-	/**
-	 * Adds the comment for the basePreSelect
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreSelectComment(&$script)
-	{
+		$behaviorCode = '';
+		$this->applyBehaviorModifier('preSelectQuery', $behaviorCode, "		");
+		if (!$behaviorCode) {
+			return;
+		}
 		$script .= "
 	/**
 	 * Code to execute before every SELECT statement
 	 * 
 	 * @param     PropelPDO \$con The connection object used by the query
-	 */";
-	}
-
-	/**
-	 * Adds the function declaration for the basePreSelect
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreSelectOpen(&$script)
-	{
-		$script .= "
+	 */
 	protected function basePreSelect(PropelPDO \$con)
-	{";
-	}
-
-	/**
-	 * Adds the function body for the basePreSelect
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreSelectBody(&$script)
-	{
-		// apply behaviors
-		$this->applyBehaviorModifier('preSelectQuery', $script, "		");
-		$script .= "
-		return \$this->preSelect(\$con);";
-	}
-
-	/**
-	 * Adds the function close for the basePreSelect
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreSelectClose(&$script)
-	{
-		$script .= "
+	{" . $behaviorCode . "
+		
+		return \$this->preSelect(\$con);
 	}
 ";
 	}
@@ -948,56 +915,47 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addBasePreDelete(&$script)
 	{
-		$this->addBasePreDeleteComment($script);
-		$this->addBasePreDeleteOpen($script);
-		$this->addBasePreDeleteBody($script);
-		$this->addBasePreDeleteClose($script);
-	}
-
-	/**
-	 * Adds the comment for the basePreDelete
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreDeleteComment(&$script)
-	{
+		$behaviorCode = '';
+		$this->applyBehaviorModifier('preDeleteQuery', $behaviorCode, "		");
+		if (!$behaviorCode) {
+			return;
+		}
 		$script .= "
 	/**
 	 * Code to execute before every DELETE statement
 	 * 
 	 * @param     PropelPDO \$con The connection object used by the query
-	 */";
-	}
-
-	/**
-	 * Adds the function declaration for the basePreDelete
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreDeleteOpen(&$script)
-	{
-		$script .= "
+	 */
 	protected function basePreDelete(PropelPDO \$con)
-	{";
+	{" . $behaviorCode . "
+		
+		return \$this->preDelete(\$con);
+	}
+";
 	}
 
 	/**
-	 * Adds the function body for the basePreDelete
+	 * Adds the basePostDelete hook for this object.
 	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreDeleteBody(&$script)
+	 */
+	protected function addBasePostDelete(&$script)
 	{
-		// apply behaviors
-		$this->applyBehaviorModifier('preDeleteQuery', $script, "		");
+		$behaviorCode = '';
+		$this->applyBehaviorModifier('postDeleteQuery', $behaviorCode, "		");
+		if (!$behaviorCode) {
+			return;
+		}
 		$script .= "
-		return \$this->preDelete(\$con);";
-	}
-
 	/**
-	 * Adds the function close for the basePreDelete
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreDeleteClose(&$script)
-	{
-		$script .= "
+	 * Code to execute after every DELETE statement
+	 * 
+	 * @param     int \$affectedRows the number of deleted rows
+	 * @param     PropelPDO \$con The connection object used by the query
+	 */
+	protected function basePostDelete(\$affectedRows, PropelPDO \$con)
+	{" . $behaviorCode . "
+		
+		return \$this->postDelete(\$affectedRows, \$con);
 	}
 ";
 	}
@@ -1008,61 +966,53 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addBasePreUpdate(&$script)
 	{
-		$this->addBasePreUpdateComment($script);
-		$this->addBasePreUpdateOpen($script);
-		$this->addBasePreUpdateBody($script);
-		$this->addBasePreUpdateClose($script);
-	}
-
-	/**
-	 * Adds the comment for the basePreUpdate
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreUpdateComment(&$script)
-	{
+		$behaviorCode = '';
+		$this->applyBehaviorModifier('preUpdateQuery', $behaviorCode, "		");
+		if (!$behaviorCode) {
+			return;
+		}
 		$script .= "
 	/**
 	 * Code to execute before every UPDATE statement
 	 * 
 	 * @param     array \$values The associatiove array of columns and values for the update
 	 * @param     PropelPDO \$con The connection object used by the query
-	 */";
-	}
-
-	/**
-	 * Adds the function declaration for the basePreUpdate
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreUpdateOpen(&$script)
-	{
-		$script .= "
-	protected function basePreUpdate(&\$values, PropelPDO \$con)
-	{";
-	}
-
-	/**
-	 * Adds the function body for the basePreUpdate
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreUpdateBody(&$script)
-	{
-		// apply behaviors
-		$this->applyBehaviorModifier('preUpdateQuery', $script, "		");
-		$script .= "
-		return \$this->preUpdate(\$values, \$con);";
-	}
-
-	/**
-	 * Adds the function close for the basePreUpdate
-	 * @param      string &$script The script will be modified in this method.
-	 **/
-	protected function addBasePreUpdateClose(&$script)
-	{
-		$script .= "
+	 * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+	 */
+	protected function basePreUpdate(&\$values, PropelPDO \$con, \$forceIndividualSaves = false)
+	{" . $behaviorCode . "
+		
+		return \$this->preUpdate(\$values, \$con, \$forceIndividualSaves);
 	}
 ";
 	}
 
+	/**
+	 * Adds the basePostUpdate hook for this object.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addBasePostUpdate(&$script)
+	{
+		$behaviorCode = '';
+		$this->applyBehaviorModifier('postUpdateQuery', $behaviorCode, "		");
+		if (!$behaviorCode) {
+			return;
+		}
+		$script .= "
+	/**
+	 * Code to execute after every UPDATE statement
+	 * 
+	 * @param     int \$affectedRows the number of udated rows
+	 * @param     PropelPDO \$con The connection object used by the query
+	 */
+	protected function basePostUpdate(\$affectedRows, PropelPDO \$con)
+	{" . $behaviorCode . "
+		
+		return \$this->postUpdate(\$affectedRows, \$con);
+	}
+";
+	}
+	
 	/**
 	 * Checks whether any registered behavior on that table has a modifier for a hook
 	 * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"

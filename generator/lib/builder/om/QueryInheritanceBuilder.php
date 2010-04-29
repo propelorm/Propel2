@@ -194,7 +194,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	/**
 	 * Filters the query to target only " . $child->getClassname() . " objects.
 	 */
-	public function preUpdate(&\$values, PropelPDO \$con)
+	public function preUpdate(&\$values, PropelPDO \$con, \$forceIndividualSaves = false)
 	{
 		" . $this->getClassKeyCondition() . "
 	}

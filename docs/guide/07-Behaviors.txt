@@ -243,15 +243,28 @@ Behaviors can add code to the generated model object by implementing one of the 
 objectAttributes()     // add attributes to the object
 objectMethods()        // add methods to the object
 preInsert()            // add code to be executed before insertion of a new object
-postInsert()           // add code to be executed after insertion of a new object
+postInsert()           // add code to be executed after  insertion of a new object
 preUpdate()            // add code to be executed before update of an existing object
-postUpdate()           // add code to be executed after update of an existing object
+postUpdate()           // add code to be executed after  update of an existing object
 preSave()              // add code to be executed before saving an object (new or existing)
-postSave()             // add code to be executed after saving an object (new or existing)
+postSave()             // add code to be executed after  saving an object (new or existing)
 preDelete()            // add code to be executed before deleting an object
-postDelete()           // add code to be executed after deleting an object
+postDelete()           // add code to be executed after  deleting an object
 objectCall()           // add code to be executed inside the object's __call()
 objectFilter(&$script) // do whatever you want with the generated code, passed as reference
+}}}
+
+Behaviors can also add code to the generated query objects by implementing one of the following methods:
+
+{{{
+queryAttributes()     // add attributes to the query class
+queryMethods()        // add methods to the query class
+preSelectQuery()      // add code to be executed before selection of a existing objects
+preUpdateQuery()      // add code to be executed before update of a existing objects
+postUpdateQuery()     // add code to be executed after  update of a existing objects
+preDeleteQuery()      // add code to be executed before deletion of a existing objects
+postDeleteQuery()     // add code to be executed after  deletion of a existing objects
+queryFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
 Behaviors can also add code to the generated peer objects by implementing one of the following methods:

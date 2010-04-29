@@ -10,7 +10,7 @@
 
 class TestAllHooksBehavior extends Behavior
 {
-  protected $tableModifier, $objectBuilderModifier, $peerBuilderModifier;
+  protected $tableModifier, $objectBuilderModifier, $peerBuilderModifier, $queryBuilderModifier;
   
   public function getTableModifier()
   {
@@ -37,6 +37,15 @@ class TestAllHooksBehavior extends Behavior
       $this->peerBuilderModifier = new TestAllHooksPeerBuilderModifier($this);
     }
     return $this->peerBuilderModifier;
+  }
+
+  public function getQueryBuilderModifier()
+  {
+    if (is_null($this->queryBuilderModifier))
+    {
+      $this->queryBuilderModifier = new TestAllHooksQueryBuilderModifier($this);
+    }
+    return $this->queryBuilderModifier;
   }
 }
 
@@ -143,5 +152,32 @@ class TestAllHooksPeerBuilderModifier
   {
     $string .= 'class testPeerFilter { const FOO = "' . get_class($builder) . '"; }';
   }
+}
 
+class TestAllHooksQueryBuilderModifier
+{
+	public function preSelectQuery($builder)
+	{
+		return '// foo';
+	}
+
+	public function preDeleteQuery($builder)
+	{
+		return '// foo';
+	}
+
+	public function postDeleteQuery($builder)
+	{
+		return '// foo';
+	}
+
+	public function preUpdateQuery($builder)
+	{
+		return '// foo';
+	}
+
+	public function postUpdateQuery($builder)
+	{
+		return '// foo';
+	}
 }

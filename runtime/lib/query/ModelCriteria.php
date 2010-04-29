@@ -1141,7 +1141,22 @@ class ModelCriteria extends Criteria
 	protected function preDelete(PropelPDO $con)
 	{
 	}
+
+	/**
+	 * Code to execute after every DELETE statement
+	 * 
+	 * @param     int $affectedRows the number of deleted rows
+	 * @param     PropelPDO $con The connection object used by the query
+	 */
+	protected function basePostDelete($affectedRows, PropelPDO $con)
+	{
+		return $this->postDelete($affectedRows, $con);
+	}
 	
+	protected function postDelete($affectedRows, PropelPDO $con)
+	{
+	}
+		
 	/**
 	 * Issue a DELETE query based on the current ModelCriteria
 	 * An optional hook on basePreDelete() can prevent the actual deletion
@@ -1168,6 +1183,7 @@ class ModelCriteria extends Criteria
 			if(!$affectedRows = $criteria->basePreDelete($con)) {
 				$affectedRows = $criteria->doDelete($con);
 			}
+			$criteria->basePostDelete($affectedRows, $con);
 			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollback();
@@ -1210,6 +1226,7 @@ class ModelCriteria extends Criteria
 			if(!$affectedRows = $this->basePreDelete($con)) {
 				$affectedRows = $this->doDeleteAll($con);
 			}
+			$this->basePostDelete($affectedRows, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -1240,16 +1257,32 @@ class ModelCriteria extends Criteria
 	 * 
 	 * @param     array $values The associatiove array of columns and values for the update
 	 * @param     PropelPDO $con The connection object used by the query
+	 * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
 	 */
-	protected function basePreUpdate(&$values, PropelPDO $con)
+	protected function basePreUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
 	{
-		return $this->preUpdate($values, $con);
+		return $this->preUpdate($values, $con, $forceIndividualSaves);
 	}
 
-	protected function preUpdate(&$values, PropelPDO $con)
+	protected function preUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
 	{
 	}
+
+	/**
+	 * Code to execute after every UPDATE statement
+	 * 
+	 * @param     int $affectedRows the number of updated rows
+	 * @param     PropelPDO $con The connection object used by the query
+	 */
+	protected function basePostUpdate($affectedRows, PropelPDO $con)
+	{
+		return $this->postUpdate($affectedRows, $con);
+	}
 	
+	protected function postUpdate($affectedRows, PropelPDO $con)
+	{
+	}
+		
 	/**
 	* Issue an UPDATE query based the current ModelCriteria and a list of changes.
 	* An optional hook on basePreUpdate() can prevent the actual update.
@@ -1284,6 +1317,7 @@ class ModelCriteria extends Criteria
 			if(!$affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
 				$affectedRows = $criteria->doUpdate($values, $con, $forceIndividualSaves);
 			}
+			$criteria->basePostUpdate($affectedRows, $con);
 			
 			$con->commit();
 		} catch (PropelException $e) {

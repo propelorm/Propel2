@@ -1286,17 +1286,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 		}
 	}
 	
-	public function testPreSelect()
-	{
-		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
-		$books = $c->find();
-		$this->assertEquals(1, count($books), 'preSelect() can modify the Criteria before find() fires the query');
-		
-		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
-		$nbBooks = $c->count();
-		$this->assertEquals(1, $nbBooks, 'preSelect() can modify the Criteria before count() fires the query');
-	}
-	
 	public function testDelete()
 	{
 		BookstoreDataPopulator::depopulate();
@@ -1344,34 +1333,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->deleteAll();
 		$this->assertEquals(4, $nbBooks, 'deleteAll() ignores conditions on the criteria');
-	}
-	
-	public function testPreDelete()
-	{
-		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
-		
-		$c = new ModelCriteria('bookstore', 'Book');
-		$books = $c->find();
-		$count = count($books);
-		$book = $books->shift();
-		
-		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book', 'b');
-		$c->where('b.Id = ?', $book->getId());
-		$nbBooks = $c->delete();
-		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of delete()');
-		
-		$c = new ModelCriteria('bookstore', 'Book');
-		$nbBooks = $c->count();
-		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
-		
-		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book');
-		$nbBooks = $c->deleteAll();
-		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of deleteAll()');
-		
-		$c = new ModelCriteria('bookstore', 'Book');
-		$nbBooks = $c->count();
-		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
 	}
 	
 	public function testUpdate()
@@ -1452,22 +1413,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->where('b.Title = ?', 'Don Juan');
 		$book = $c->findOne();
 		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
-	}
-	
-	public function testPreUpdate()
-	{
-		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
-		
-		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
-		$c->where('b.Title = ?', 'Don Juan');
-		$nbBooks = $c->update(array('Title' => 'foo'));
-		
-		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
-		$c->where('b.Title = ?', 'foo');
-		$book = $c->findOne();
-		
-		$this->assertEquals('1234', $book->getISBN(), 'preUpdate() can modify the values');
 	}
 	
 	public static function conditionsForTestGetRelationName()
@@ -1934,30 +1879,6 @@ class TestableModelCriteria extends ModelCriteria
 		return parent::replaceNames($clause);
 	}
 	
-}
-
-class ModelCriteriaWithPreSelectHook extends ModelCriteria
-{	
-	public function preSelect(PropelPDO $con)
-	{
-		$this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
-	}
-}
-
-class ModelCriteriaWithPreDeleteHook extends ModelCriteria
-{	
-	public function preDelete(PropelPDO $con)
-	{
-		return 12;
-	}
-}
-
-class ModelCriteriaWithPreUpdateHook extends ModelCriteria
-{	
-	public function preUpdate(&$values, PropelPDO $con)
-	{
-		$values['ISBN'] = '1234';
-	}
 }
 
 class ModelCriteriaForUseQuery extends ModelCriteria
