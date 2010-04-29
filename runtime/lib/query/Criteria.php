@@ -292,6 +292,20 @@ class Criteria implements IteratorAggregate
 		
 		return $this;
 	}
+
+	/**
+	 * Remove an alias for a table (useful when merging Criterias).
+	 *
+	 * @param      string $alias
+	 *
+	 * @return     Criteria A modified Criteria object.
+	 */
+	public function removeAlias($alias)
+	{
+		unset($this->aliases[$alias]);
+		
+		return $this;
+	}
 	
 	/**
 	 * Returns the aliases for this Criteria

@@ -699,7 +699,7 @@ class ModelCriteria extends Criteria
 	public function endUse()
 	{
 		if (isset($this->aliases[$this->modelAlias])) {
-			unset($this->aliases[$this->modelAlias]);
+			$this->removeAlias($this->modelAlias);
 		}
 		$primaryCriteria = $this->getPrimaryCriteria();
 		$primaryCriteria->mergeWith($this);
