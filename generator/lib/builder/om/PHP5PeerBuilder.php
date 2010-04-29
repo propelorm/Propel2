@@ -1842,9 +1842,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		$script .= implode(', ', $php);
 
 		$script .= ", PropelPDO \$con = null) {
-		\$key = ".$this->getInstancePoolKeySnippet($php).";";
+		\$_instancePoolKey = ".$this->getInstancePoolKeySnippet($php).";";
  		$script .= "
- 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$key))) {
+ 		if (null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(\$_instancePoolKey))) {
  			return \$obj;
 		}
 
