@@ -331,7 +331,12 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
-	 * Get the keys for the criteria map.
+	 * Get the keys of the criteria map, i.e. the list of columns bearing a condition
+	 * <code>
+	 * print_r($c->keys());
+	 *  => array('book.price', 'book.title', 'author.first_name')
+	 * </code>
+	 *
 	 * @return     array
 	 */
 	public function keys()
@@ -460,18 +465,22 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * Shortcut method to get an array of columns indexed by table.
+	 * <code>
+	 * print_r($c->getTablesColumns());
+	 *  => array(
+	 *       'book'   => array('book.price', 'book.title'), 
+	 *       'author' => array('author.first_name')
+	 *     )
+	 * </code>
+	 *
 	 * @return     array array(table => array(table.column1, table.column2))
 	 */
 	public function getTablesColumns()
 	{
 		$tables = array();
-		foreach ( array_keys ( $this->map ) as $key) {
-			$t = substr ( $key, 0, strrpos ( $key, '.' ) );
-			if ( ! isset ( $tables[$t] ) ) {
-				$tables[$t] = array( $key );
-			} else {
-				$tables[$t][] = $key;
-			}
+		foreach ($this->keys() as $key) {
+			$tableName = substr($key, 0, strrpos($key, '.' ));
+			$tables[$tableName][] = $key;
 		}
 		return $tables;
 	}
