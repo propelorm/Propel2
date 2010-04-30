@@ -107,16 +107,52 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		$booksArray = $books->toArray();
 		$this->assertEquals(4, count($booksArray));
 		
-		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
-		$this->assertEquals($keys, array_keys($booksArray));
-		
-		$booksArray = $books->toArray(false);
-		$keys = array(0, 1, 2, 3);
-		$this->assertEquals($keys, array_keys($booksArray));
-		
 		foreach ($booksArray as $key => $book) {
 			$this->assertEquals($books[$key]->toArray(), $book);
 		}
+		
+		$booksArray = $books->toArray();
+		$keys = array(0, 1, 2, 3);
+		$this->assertEquals($keys, array_keys($booksArray));
+		
+		$booksArray = $books->toArray(null, true);
+		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
+		$this->assertEquals($keys, array_keys($booksArray));
+
+		$booksArray = $books->toArray('Title');
+		$keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
+		$this->assertEquals($keys, array_keys($booksArray));
+
+		$booksArray = $books->toArray('Title', true);
+		$keys = array('Book_Harry Potter and the Order of the Phoenix', 'Book_Quicksilver', 'Book_Don Juan', 'Book_The Tin Drum');
+		$this->assertEquals($keys, array_keys($booksArray));
+	}
+
+	public function testGetArrayCopy()
+	{
+		$books = PropelQuery::from('Book')->find();
+		$booksArray = $books->getArrayCopy();
+		$this->assertEquals(4, count($booksArray));
+		
+		foreach ($booksArray as $key => $book) {
+			$this->assertEquals($books[$key], $book);
+		}
+		
+		$booksArray = $books->getArrayCopy();
+		$keys = array(0, 1, 2, 3);
+		$this->assertEquals($keys, array_keys($booksArray));
+		
+		$booksArray = $books->getArrayCopy(null, true);
+		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
+		$this->assertEquals($keys, array_keys($booksArray));
+
+		$booksArray = $books->getArrayCopy('Title');
+		$keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
+		$this->assertEquals($keys, array_keys($booksArray));
+
+		$booksArray = $books->getArrayCopy('Title', true);
+		$keys = array('Book_Harry Potter and the Order of the Phoenix', 'Book_Quicksilver', 'Book_Don Juan', 'Book_The Tin Drum');
+		$this->assertEquals($keys, array_keys($booksArray));
 	}
 
 	public function testToKeyValue()

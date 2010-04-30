@@ -102,17 +102,52 @@ class PropelArrayCollection extends PropelCollection
 	 * Get an array representation of the collection
 	 * This is not an alias for getData(), since it returns a copy of the data
 	 *
+	 * @param     string $keyColumn If null, the returned array uses an incremental index.
+	 *              Otherwise, the array is indexed using the specified column
+	 * @param     boolean $usePrefix If true, the returned array prefixes keys 
+	 *              with the model class name ('Article_0', 'Article_1', etc).
+	 *
+	 * <code>
+	 * $bookCollection->toArray(); 
+	 * array(
+	 *  0 => array('Id' => 123, 'Title' => 'War And Peace'),
+	 *  1 => array('Id' => 456, 'Title' => 'Don Juan'),
+	 * )
+	 * $bookCollection->toArray('Id'); 
+	 * array(
+	 *  123 => array('Id' => 123, 'Title' => 'War And Peace'),
+	 *  456 => array('Id' => 456, 'Title' => 'Don Juan'),
+	 * )
+	 * $bookCollection->toArray(null, true); 
+	 * array(
+	 *  'Book_0' => array('Id' => 123, 'Title' => 'War And Peace'),
+	 *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
+	 * )
+	 * </code>
 	 * @return    array
 	 */
-	public function toArray($usePrefix = true)
+	public function toArray($keyColumn = null, $usePrefix = false)
 	{
 		$ret = array();
 		foreach ($this as $key => $element) {
+			$key = null === $keyColumn ? $key : $element[$keyColumn];
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key] = $element;
 		}
 
 		return $ret;
+	}
+	
+	/**
+	 * Synonym for toArray(), to provide a similar interface to PopelObjectCollection
+	 */
+	public function getArrayCopy($keyColumn = null, $usePrefix = false)
+	{
+		if (null === $keyColumn && false === $usePrefix) {
+			return parent::getArrayCopy();
+		} else {
+			return $this->toArray($keyColumn, $usePrefix);
+		}
 	}
 	
 	/**
