@@ -307,5 +307,73 @@ class BasePeerTest extends BookstoreTestBase
 		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC, book.TITLE ASC) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
 		$sql = BasePeer::createSelectSql($c, $params);
 		$this->assertEquals($expectedSql, $sql);
-	}	
+	}
+	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testDoDeleteNoCondition()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		BasePeer::doDelete($c, $con);
+	}
+	
+	public function testDoDeleteSimpleCondition()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		BasePeer::doDelete($c, $con);
+		$expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a contition into a WHERE');
+	}
+
+	public function testDoDeleteSeveralConditions()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		$c->add(BookPeer::ID, 12);
+		BasePeer::doDelete($c, $con);
+		$expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace' AND book.ID=12";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE whith an AND');
+	}
+
+	public function testDoDeleteTableAlias()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->addAlias('b', BookPeer::TABLE_NAME);
+		$c->add('b.TITLE', 'War And Peace');
+		BasePeer::doDelete($c, $con);
+		$expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE='War And Peace'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() accepts a Criteria with a table alias');
+	}
+
+	/**
+	 * Not documented anywhere, and probably wrong
+	 * @see http://www.propelorm.org/ticket/952
+	 */
+	public function testDoDeleteSeveralTables()
+	{
+		$con = Propel::getConnection();
+		$count = $con->getQueryCount();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		$c->add(AuthorPeer::FIRST_NAME, 'Leo');
+		BasePeer::doDelete($c, $con);
+		$expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
+		$this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
+		
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->add(AuthorPeer::FIRST_NAME, 'Leo');
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		BasePeer::doDelete($c, $con);
+		$expectedSQL = "DELETE FROM `book` WHERE book.TITLE='War And Peace'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
+		$this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
+	}
+	
 }

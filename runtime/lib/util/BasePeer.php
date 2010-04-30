@@ -113,52 +113,41 @@ class BasePeer
 
 		// Set up a list of required tables (one DELETE statement will
 		// be executed per table)
-
-		$tables_keys = array();
-		foreach ($criteria as $c) {
-			foreach ($c->getAllTables() as $tableName) {
-				$tableName2 = $criteria->getTableForAlias($tableName);
-				if ($tableName2 !== null) {
-					$tables_keys[$tableName2 . ' ' . $tableName] = true;
-				} else {
-					$tables_keys[$tableName] = true;
-				}
-			}
-		} // foreach criteria->keys()
-
-		$affectedRows = 0; // initialize this in case the next loop has no iterations.
-
-		$tables = array_keys($tables_keys);
-		
+		$tables = $criteria->getTablesColumns();
 		if (empty($tables)) {
 			throw new PropelException("Cannot delete from an empty Criteria");
 		}
+
+		$affectedRows = 0; // initialize this in case the next loop has no iterations.
 		
-		foreach ($tables as $tableName) {
+		foreach ($tables as $tableName => $columns) {
 
 			$whereClause = array();
-			$selectParams = array();
-			foreach ($dbMap->getTable($tableName)->getColumns() as $colMap) {
-				$key = $tableName . '.' . $colMap->getColumnName();
-				if ($criteria->containsKey($key)) {
+			$params = array();
+			$stmt = null;
+			try {
+				
+				if ($realTableName = $criteria->getTableForAlias($tableName)) {
+					if ($db->useQuoteIdentifier()) {
+						$realTableName = $db->quoteIdentifierTable($realTableName);
+					}
+					$sql = 'DELETE ' . $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
+				} else {
+					if ($db->useQuoteIdentifier()) {
+						$tableName = $db->quoteIdentifierTable($tableName);
+					}
+					$sql = 'DELETE FROM ' . $tableName;
+				}
+
+				foreach ($columns as $colName) {
 					$sb = "";
-					$criteria->getCriterion($key)->appendPsTo($sb, $selectParams);
+					$criteria->getCriterion($colName)->appendPsTo($sb, $params);
 					$whereClause[] = $sb;
 				}
-			}
+				$sql .= " WHERE " .  implode(" AND ", $whereClause);
 
-			if (empty($whereClause)) {
-				throw new PropelException("Cowardly refusing to delete from table $tableName with empty WHERE clause.");
-			}
-
-			// Execute the statement.
-			try {
-				if ($db->useQuoteIdentifier()) {
-					$tableName = $db->quoteIdentifierTable($tableName); 
-				}
-				$sql = "DELETE FROM " . $tableName . " WHERE " .  implode(" AND ", $whereClause);
 				$stmt = $con->prepare($sql);
-				self::populateStmtValues($stmt, $selectParams, $dbMap, $db);
+				self::populateStmtValues($stmt, $params, $dbMap, $db);
 				$stmt->execute();
 				$affectedRows = $stmt->rowCount();
 			} catch (Exception $e) {
@@ -358,9 +347,7 @@ class BasePeer
 		foreach ($tablesColumns as $tableName => $columns) {
 
 			$whereClause = array();
-			
 			$params = array();
-
 			$stmt = null;
 			try {
 				// is it a table alias?

@@ -1315,6 +1315,25 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$nbBooks = $c->count();
 		$this->assertEquals(3, $nbBooks, 'delete() deletes rows in the database');
 	}
+
+	public function testDeleteUsingTableAlias()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', false);
+		$c->where('b.Title = ?', 'foo');
+		$c->delete();
+		$expectedSQL = "DELETE FROM `book` WHERE book.TITLE = 'foo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'delete() also works on tables with table alias');
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->where('b.Title = ?', 'foo');
+		$c->delete();
+		$expectedSQL = "DELETE b FROM `book` AS b WHERE b.TITLE = 'foo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'delete() also works on tables with true table alias');
+	}
 	
 	public function testDeleteAll()
 	{
