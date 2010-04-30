@@ -713,12 +713,14 @@ class ModelCriteria extends Criteria
 	 * @see Criteria::mergeWith()
 	 * 
 	 * @param     Criteria $criteria The criteria to read properties from
+	 * @param     string $operator The logical operator used to combine conditions
+	 *              Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
 	 *
 	 * @return    ModelCriteria The primary criteria object
 	 */
-	public function mergeWith(Criteria $criteria)
+	public function mergeWith(Criteria $criteria, $operator = Criteria::LOGICAL_AND)
 	{
-		parent::mergeWith($criteria);
+		parent::mergeWith($criteria, $operator);
 		
 		// merge with
 		if ($criteria instanceof ModelCriteria) {

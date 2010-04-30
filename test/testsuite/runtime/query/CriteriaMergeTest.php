@@ -260,6 +260,44 @@ class CriteriaMergeTest extends BaseTestCase
 		$sql = 'SELECT  FROM `book` LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE book.TITLE=:p1 AND author.FIRST_NAME=:p2';
 		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
 	}
+
+	public function testMergeOrWithWhereConditions()
+	{
+		$c1 = new Criteria();
+		$c1->add(BookPeer::TITLE, 'foo');
+		$c2 = new Criteria();
+		$c1->mergeWith($c2, Criteria::LOGICAL_OR);
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() does not remove an existing where condition');
+		$c1 = new Criteria();
+		$c2 = new Criteria();
+		$c2->add(BookPeer::TITLE, 'foo');
+		$c1->mergeWith($c2, Criteria::LOGICAL_OR);
+		$sql = 'SELECT  FROM `book` WHERE book.TITLE=:p1';
+		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to an empty condition');
+		$c1 = new Criteria();
+		$c1->add(BookPeer::ID, 123);
+		$c2 = new Criteria();
+		$c2->add(BookPeer::TITLE, 'foo');
+		$c1->mergeWith($c2, Criteria::LOGICAL_OR);
+		$sql = 'SELECT  FROM `book` WHERE (book.ID=:p1 OR book.TITLE=:p2)';
+		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions');
+		$c1 = new Criteria();
+		$c1->add(BookPeer::TITLE, 'foo');
+		$c2 = new Criteria();
+		$c2->add(BookPeer::TITLE, 'bar');
+		$c1->mergeWith($c2, Criteria::LOGICAL_OR);
+		$sql = 'SELECT  FROM `book` WHERE (book.TITLE=:p1 OR book.TITLE=:p2)';
+		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the same column');
+		$c1 = new Criteria();
+		$c1->add(BookPeer::TITLE, 'foo');
+		$c1->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, Criteria::LEFT_JOIN);
+		$c2 = new Criteria();
+		$c2->add(AuthorPeer::FIRST_NAME, 'bar');
+		$c1->mergeWith($c2, Criteria::LOGICAL_OR);
+		$sql = 'SELECT  FROM `book` LEFT JOIN author ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)';
+		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
+	}
 	
 	public function testMergeWithHavingConditions()
 	{

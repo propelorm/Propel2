@@ -1238,8 +1238,12 @@ class Criteria implements IteratorAggregate
 	 * In case of conflict, the current Criteria keeps its properties
 	 * 
 	 * @param     Criteria $criteria The criteria to read properties from
+	 * @param     string $operator The logical operator used to combine conditions
+	 *              Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
+	 *
+	 * @return    Criteria The current criteria object
 	 */
-	public function mergeWith(Criteria $criteria)
+	public function mergeWith(Criteria $criteria, $operator = Criteria::LOGICAL_AND)
 	{
 		// merge limit
 		$limit = $criteria->getLimit();
@@ -1278,13 +1282,20 @@ class Criteria implements IteratorAggregate
 		$this->groupByColumns = array_unique($groupByColumns);
 		
 		// merge where conditions
-		foreach ($criteria->getMap() as $key => $criterion) {
-			if ($this->containsKey($key)) {
-				$this->addAnd($criterion);
-			} else {
-				$this->add($criterion);
+		if ($operator == Criteria::LOGICAL_AND) {
+			foreach ($criteria->getMap() as $key => $criterion) {
+				if ($this->containsKey($key)) {
+					$this->addAnd($criterion);
+				} else {
+					$this->add($criterion);
+				}
+			}
+		} else {
+			foreach ($criteria->getMap() as $key => $criterion) {
+				$this->addOr($criterion);
 			}
 		}
+
 		
 		// merge having
 		if ($having = $criteria->getHaving()) {
