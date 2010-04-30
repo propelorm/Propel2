@@ -363,11 +363,17 @@ class BasePeer
 
 			$stmt = null;
 			try {
-
+				// is it a table alias?
+				if ($tableName2 = $selectCriteria->getTableForAlias($tableName)) {
+					$udpateTable = $tableName2 . ' ' . $tableName;
+					$tableName = $tableName2;
+				} else {
+					$udpateTable = $tableName;
+				}
 				if ($db->useQuoteIdentifier()) {
-					$sql = "UPDATE " . $db->quoteIdentifierTable($tableName) . " SET "; 
+					$sql = "UPDATE " . $db->quoteIdentifierTable($udpateTable) . " SET "; 
 				} else { 
-					$sql = "UPDATE " . $tableName . " SET ";
+					$sql = "UPDATE " . $udpateTable . " SET ";
 				}
 				$p = 1;
 				foreach ($updateTablesColumns[$tableName] as $col) {

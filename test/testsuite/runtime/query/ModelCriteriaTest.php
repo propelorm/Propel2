@@ -1368,6 +1368,25 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
 	}
 	
+	public function testUpdateUsingTableAlias()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', false);
+		$c->where('b.Title = ?', 'foo');
+		$c->update(array('Title' => 'foo2'), $con);
+		$expectedSQL = "UPDATE `book` SET `TITLE`='foo2' WHERE book.TITLE = 'foo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'update() also works on tables with table alias');
+				
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->where('b.Title = ?', 'foo');
+		$c->update(array('Title' => 'foo2'), $con);
+		$expectedSQL = "UPDATE `book` `b` SET `TITLE`='foo2' WHERE b.TITLE = 'foo'";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'update() also works on tables with true table alias');
+	}
+	
 	public function testUpdateOneByOne()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
