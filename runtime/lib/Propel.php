@@ -856,18 +856,32 @@ class Propel
 
 	/**
 	 * Disable instance pooling.
+	 * 
+	 * @return boolean true if the method changed the instance pooling state,
+	 *                 false if it was already disabled
 	 */
 	public static function disableInstancePooling()
 	{
+		if (!self::$instancePoolingEnabled) {
+			return false;
+		}
 		self::$instancePoolingEnabled = false;
+		return true;
 	}
 
 	/**
 	 * Enable instance pooling (enabled by default).
+	 * 
+	 * @return boolean true if the method changed the instance pooling state,
+	 *                 false if it was already enabled
 	 */
 	public static function enableInstancePooling()
 	{
+		if (self::$instancePoolingEnabled) {
+			return false;
+		}
 		self::$instancePoolingEnabled = true;
+		return true;
 	}
 
 	/**
