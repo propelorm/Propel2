@@ -215,6 +215,7 @@ class Propel
 		'ModelCriteria'       => 'query/ModelCriteria.php',
 		'ModelCriterion'      => 'query/ModelCriterion.php',
 		'ModelJoin'           => 'query/ModelJoin.php',
+		'ModelWith'           => 'query/ModelWith.php',
 		'PropelQuery'         => 'query/PropelQuery.php',
 
 		'BasePeer'            => 'util/BasePeer.php',

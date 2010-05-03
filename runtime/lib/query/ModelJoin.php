@@ -18,23 +18,23 @@ class ModelJoin extends Join
 {
 	protected $relationMap;
 	protected $tableMap;
-	protected $previousJoin;
+	protected $leftTableAlias;
 	protected $relationAlias;
-
-	public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $rightTableAlias = null)
+	protected $previousJoin;
+	
+	public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
 	{
 		$leftCols = $relationMap->getLeftColumns();
 		$rightCols = $relationMap->getRightColumns();
 		$nbColumns = $relationMap->countColumnMappings();
 		for ($i=0; $i < $nbColumns; $i++) {
 			$leftColName  = ($leftTableAlias ? $leftTableAlias  : $leftCols[$i]->getTableName()) . '.' . $leftCols[$i]->getName();
-			$rightColName = ($rightTableAlias ? $rightTableAlias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
+			$rightColName = ($relationAlias ? $relationAlias : $rightCols[$i]->getTableName()) . '.' . $rightCols[$i]->getName();
 			$this->addCondition($leftColName, $rightColName, Criteria::EQUAL);
 		}
 		$this->relationMap = $relationMap;
-		if (null !== $rightTableAlias) {
-			$this->setRelationAlias($rightTableAlias);
-		}
+		$this->leftTableAlias = $leftTableAlias;
+		$this->relationAlias = $relationAlias;
 		
 		return $this;
 	}
@@ -87,6 +87,23 @@ class ModelJoin extends Join
 	public function isPrimary()
 	{
 		return null === $this->previousJoin;
+	}
+
+	public function setLeftTableAlias($leftTableAlias)
+	{
+		$this->leftTableAlias = $leftTableAlias;
+		
+		return $this;
+	}
+	
+	public function getLeftTableAlias()
+	{
+		return $this->leftTableAlias;
+	}
+	
+	public function hasLeftTableAlias()
+	{
+		return null !== $this->leftTableAlias;
 	}
 
 	public function setRelationAlias($relationAlias)

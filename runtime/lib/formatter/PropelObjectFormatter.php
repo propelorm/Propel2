@@ -31,6 +31,7 @@ class PropelObjectFormatter extends PropelFormatter
 			$collection = array();
 		}
 		if ($this->getCriteria()->isWithOneToMany()) {
+			// some one-to-many relationships
 			$pks = array();
 			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				$object = $this->getAllObjectsFromRow($row);
@@ -41,6 +42,7 @@ class PropelObjectFormatter extends PropelFormatter
 				}
 			}
 		} else {
+			// only many-to-one relationships
 			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 				$collection[] =  $this->getAllObjectsFromRow($row);
 			}
@@ -66,7 +68,7 @@ class PropelObjectFormatter extends PropelFormatter
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Hydrates a series of objects from a result row
 	 * The first object to hydrate is the model of the Criteria
@@ -79,24 +81,25 @@ class PropelObjectFormatter extends PropelFormatter
 	 */
 	public function getAllObjectsFromRow($row)
 	{
+		// main object
 		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
-		foreach ($this->getCriteria()->getWith() as $join) {
-			$startObject = $join->getObjectToRelate($obj);
-			$peer = $join->getTableMap()->getPeerClassname();
-			list($endObject, $col) = call_user_func(array($peer, 'populateObject'), $row, $col);
+		// related objects added using with()
+		foreach ($this->getCriteria()->getWith() as $class => $modelWith) {
+			list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if (null === $endObject || $endObject->isPrimaryKeyNull()) {
 				continue;
 			}
-			$relation = $join->getRelationMap();
-			if ($relation->getType() == RelationMap::ONE_TO_MANY) {
-				$method = 'add' . $relation->getName();
+			if (isset($hydrationChain)) {
+				$hydrationChain[$class] = $endObject;
 			} else {
-				$method = 'set' . $relation->getName();
+				$hydrationChain = array($class => $endObject);
 			}
-			$startObject->$method($endObject);
+			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getRelatedClass()];
+			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
+		// columns added using withColumn()
 		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);
 			$col++;

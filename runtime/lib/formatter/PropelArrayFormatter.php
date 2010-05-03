@@ -90,7 +90,8 @@ class PropelArrayFormatter extends PropelFormatter
 	{
 		$col = 0;
 		$mainObjectArray = $this->getSingleObjectFromRow($row, $this->class, $col)->toArray();
-		foreach ($this->getCriteria()->getWith() as $join) {
+		foreach ($this->getCriteria()->getWith() as $modelWith) {
+			$join = $modelWith->getJoin();
 			$tableMap = $join->getTableMap();;
 			if ($tableMap->isSingleTableInheritance()) {
 				$class = call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false);

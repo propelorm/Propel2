@@ -89,6 +89,20 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertCorrectHydration1($c, 'with instance pool');
 	}
 
+	public function testFindOneWithoutUsingInstancePool()
+	{
+		BookstoreDataPopulator::populate();
+		Propel::disableInstancePooling();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->orderBy('Book.Title');
+		$c->join('Book.Author');
+		$c->with('Author');
+		$c->join('Book.Publisher');
+		$c->with('Publisher');
+		$this->assertCorrectHydration1($c, 'without instance pool');
+		Propel::enableInstancePooling();
+	}
+
 	public function testFindOneWithEmptyLeftJoin()
 	{
 		// save a book with no author
@@ -232,7 +246,58 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals(2, count($authors), 'with() used on a many-to-many doesn\'t change the main object count');
 	}
 	
+	public function testFindOneWithOneToManyThenManyToOne()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
+		$c->leftJoinWith('Author.Book');
+		$c->leftJoinWith('Book.Review');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$authors = $c->find($con);
+		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
+		$rowling = $authors[0];
+		$count = $con->getQueryCount();
+		$this->assertEquals($rowling->getFirstName(), 'J.K.', 'Main object is correctly hydrated');
+		$books = $rowling->getBooks();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(1, count($books), 'Related objects are correctly hydrated');
+		$book = $books[0];
+		$this->assertEquals($book->getTitle(), 'Harry Potter and the Order of the Phoenix', 'Related object is correctly hydrated');
+		$reviews = $book->getReviews();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}
 
+	public function testFindOneWithOneToManyThenManyToOneUsingAlias()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
+		$c->leftJoinWith('Author.Book b');
+		$c->leftJoinWith('b.Review r');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$authors = $c->find($con);
+		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
+		$rowling = $authors[0];
+		$count = $con->getQueryCount();
+		$this->assertEquals($rowling->getFirstName(), 'J.K.', 'Main object is correctly hydrated');
+		$books = $rowling->getBooks();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(1, count($books), 'Related objects are correctly hydrated');
+		$book = $books[0];
+		$this->assertEquals($book->getTitle(), 'Harry Potter and the Order of the Phoenix', 'Related object is correctly hydrated');
+		$reviews = $book->getReviews();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}
+	
 	public function testFindOneWithColumn()
 	{
 		BookstoreDataPopulator::populate();

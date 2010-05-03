@@ -758,7 +758,9 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new TestableModelCriteria('bookstore', 'Book');
 		$c->join('Book.Author');
 		$c->with('Author');
-		$this->assertEquals(array($c->joins['Author']), $c->getWith(), 'with() adds a Join object to the $with array');
+		$withs = $c->getWith();
+		$this->assertTrue(array_key_exists('Author', $withs), 'with() adds an entry to the internal list of Withs');
+		$this->assertTrue($withs['Author'] instanceof ModelWith, 'with() creates a ModelWith object');
 	}
 
 	/**
@@ -775,7 +777,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new TestableModelCriteria('bookstore', 'Book');
 		$c->join('Book.Author a');
 		$c->with('a');
-		$this->assertEquals(array($c->joins['a']), $c->getWith(), 'with() adds a Join object to the $with array based on an alias');
+		$withs = $c->getWith();
+		$this->assertTrue(array_key_exists('a', $withs), 'with() uses the alias for the index of the internal list of Withs');
 	}
 
 	/**
@@ -1818,7 +1821,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() does not remove an existing join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() does not remove an existing join');
 
 		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
 		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
@@ -1826,7 +1829,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
 
 		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
 		$c1->leftJoinWith('b.Author a');
@@ -1835,8 +1838,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with[0]->toString(), 'mergeWith() merge joins to an empty join');
-		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=p.ID(ignoreCase not considered)', $with[1]->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=p.ID(ignoreCase not considered)', $with['p']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
 
 	}
 	

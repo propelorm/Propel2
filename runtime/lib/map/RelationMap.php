@@ -125,6 +125,16 @@ class RelationMap
   }
   
   /**
+   * Get the left table of the relation
+   *
+   * @return    TableMap The left table for this relationship
+   */
+  public function getLeftTable()
+  {
+  	return ($this->getType() == RelationMap::MANY_TO_ONE) ? $this->getLocalTable() : $this->getForeignTable();
+  }
+
+  /**
    * Get the right table of the relation
    *
    * @return    TableMap The right table for this relationship

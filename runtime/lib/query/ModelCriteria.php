@@ -606,6 +606,7 @@ class ModelCriteria extends Criteria
 			// For performance reasons, the formatters will use a special routine in this case
 			$this->isWithOneToMany = true;
 		}
+		
 		// check that the columns of the main class are already added (but only if this isn't a useQuery)
 		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
 			$this->addSelfSelectColumns();
@@ -614,13 +615,14 @@ class ModelCriteria extends Criteria
 		$this->addRelationSelectColumns($relation);
 		
 		// list the join for later hydration in the formatter
-		$this->with[]= $join;
+		$this->with[$relation]= new ModelWith($join);
 		
 		return $this;
 	}
 
 	/**
-	 * Gets the array of joins to hydrate together with the main object
+	 * Gets the array of ModelWith specifying which objects must be hydrated
+	 * together with the main object.
 	 * 
 	 * @see       with()
 	 * @return    array
