@@ -123,7 +123,41 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$sup = $emp['Supervisor'];
 		$this->assertEquals($sup['Name'], 'John', 'Related object is correctly hydrated');
 	}
-
+	
+	/**
+	 * @see http://www.propelorm.org/ticket/959
+	 */
+	public function testFindOneWithSameRelatedObject()
+	{
+		BookPeer::doDeleteAll();
+		AuthorPeer::doDeleteAll();
+		$auth = new Author();
+		$auth->setFirstName('John');
+		$auth->save();
+		$book1 = new Book();
+		$book1->setTitle('Hello');
+		$book1->setAuthor($auth);
+		$book1->save();
+		$book2 = new Book();
+		$book2->setTitle('World');
+		$book2->setAuthor($auth);
+		$book2->save();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->join('Book.Author');
+		$c->with('Author');
+		$books = $c->find();
+		
+		$this->assertEquals(2, count($books));
+		$firstBook = $books[0];
+		$this->assertTrue(isset($firstBook['Author']));
+		$secondBook = $books[1];
+		$this->assertTrue(isset($secondBook['Author']));
+	}
+	
 	public function testFindOneWithDuplicateRelation()
 	{
 		EssayPeer::doDeleteAll();
