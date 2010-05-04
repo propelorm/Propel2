@@ -28,10 +28,7 @@ class PropelOnDemandIterator implements Iterator
 	{
 		$this->formatter = $formatter;
 		$this->stmt = $stmt;
-		if (Propel::isInstancePoolingEnabled()) {
-			Propel::disableInstancePooling();
-			$this->enableInstancePoolingOnFinish = true;
-		}
+		$this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
 	}
 	
 	public function closeCursor()

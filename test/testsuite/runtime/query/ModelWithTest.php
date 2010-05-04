@@ -20,15 +20,6 @@ require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
  */
 class ModelWithTest extends BookstoreTestBase 
 {
-	public function testJoin()
-	{
-		$q = BookQuery::create()
-		 ->joinAuthor();
-		$joins = $q->getJoins();
-		$join = $joins['Author'];
-		$with = new ModelWith($join);
-		$this->assertEquals($with->getJoin(), $join, 'A ModelWith keeps the ModelJoin used for instanciation');
-	}
 	
 	public function testModelNameManyToOne()
 	{

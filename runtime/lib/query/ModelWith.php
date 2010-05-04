@@ -10,24 +10,23 @@
 
 /**
  * Data object to describe a joined hydration in a Model Query
+ * ModelWith objects are used by formatters to hydrate related objects
  *
  * @author     Francois Zaninotto (Propel)
  * @package    propel.runtime.query
  */
 class ModelWith
 {
-	protected $join;
-	protected $modelName;
-	protected $modelPeerName;
+	protected $modelName = '';
+	protected $modelPeerName = '';
 	protected $isSingleTableInheritance = false;
 	protected $isAdd = false;
 	protected $relationName = '';
-	protected $relationMethod;
+	protected $relationMethod = '';
 	protected $relatedClass;
 	
 	public function __construct(ModelJoin $join)
 	{
-		$this->join = $join;
 		$tableMap = $join->getTableMap();
 		$this->modelName = $tableMap->getClassname();
 		$this->modelPeerName = $tableMap->getPeerClassname();
@@ -44,11 +43,6 @@ class ModelWith
 		if (!$join->isPrimary()) {
 			$this->relatedClass = $join->hasLeftTableAlias() ? $join->getLeftTableAlias() : $relation->getLeftTable()->getPhpName();
 		}
-	}
-	
-	public function getJoin()
-	{
-		return $this->join;
 	}
 	
 	public function getModelName()
@@ -89,5 +83,10 @@ class ModelWith
 	public function getRelatedClass()
 	{
 		return $this->relatedClass;
+	}
+	
+	public function __toString()
+	{
+		return sprintf("modelName: %s, relationName: %s, relationMethod: %s, relatedClass: %s", $this->modelName, $this->relationName, $this->relationMethod, $this->relatedClass);
 	}
 }

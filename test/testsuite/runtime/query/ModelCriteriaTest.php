@@ -1821,7 +1821,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() does not remove an existing join');
+		$this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, relatedClass: ', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
 
 		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
 		$c2 = new ModelCriteria('bookstore', 'Book', 'b');
@@ -1829,7 +1829,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, relatedClass: ', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
 
 		$c1 = new ModelCriteria('bookstore', 'Book', 'b');
 		$c1->leftJoinWith('b.Author a');
@@ -1838,8 +1838,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$with = $c1->getWith();
 		$this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
-		$this->assertEquals('LEFT JOIN : book.AUTHOR_ID=a.ID(ignoreCase not considered)', $with['a']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
-		$this->assertEquals('INNER JOIN : book.PUBLISHER_ID=p.ID(ignoreCase not considered)', $with['p']->getJoin()->toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, relatedClass: ', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
+		$this->assertEquals('modelName: Publisher, relationName: Publisher, relationMethod: setPublisher, relatedClass: ', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
 
 	}
 	

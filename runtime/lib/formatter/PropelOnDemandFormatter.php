@@ -54,27 +54,29 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 		$obj = $this->getSingleObjectFromRow($row, $class, $col);
 		// related objects using 'with'
 		foreach ($this->getCriteria()->getWith() as $modelWith) {
-			$join = $modelWith->getJoin();
-			$tableMap = $join->getTableMap();
-			if ($tableMap->isSingleTableInheritance()) {
-				$class = call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false);
+			if ($modelWith->isSingleTableInheritance()) {
+				$class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
 				$refl = new ReflectionClass($class);
 				if ($refl->isAbstract()) {
 					$col += constant($class . 'Peer::NUM_COLUMNS');
 					continue;
 				} 
 			} else {
-				$class = $tableMap->getClassname();
+				$class = $modelWith->getModelName();
 			}
 			$endObject = $this->getSingleObjectFromRow($row, $class, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
-			if ($endObject->isPrimaryKeyNull()) {
+			if (null === $endObject || $endObject->isPrimaryKeyNull()) {
 				continue;
 			}
-			$startObject = $join->getObjectToRelate($obj);
-			$method = 'set' . $join->getRelationMap()->getName();
-			$startObject->$method($endObject);
+			if (isset($hydrationChain)) {
+				$hydrationChain[$class] = $endObject;
+			} else {
+				$hydrationChain = array($class => $endObject);
+			}
+			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getRelatedClass()];
+			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
 		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);
