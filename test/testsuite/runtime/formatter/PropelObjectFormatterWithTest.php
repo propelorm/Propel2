@@ -284,6 +284,37 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
 	}
+	
+	public function testFindOneWithOneToManyThenManyToOneUsingJoinRelated()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+
+		$con = Propel::getConnection(AuthorPeer::DATABASE_NAME);
+		$authors = AuthorQuery::create()
+			->filterByLastName('Rowling')
+			->joinBook('book')
+			->with('book')
+			->useQuery('book')
+				->joinReview('review')
+				->with('review')
+			->endUse()
+			->find($con);
+		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
+		$rowling = $authors[0];
+		$count = $con->getQueryCount();
+		$this->assertEquals($rowling->getFirstName(), 'J.K.', 'Main object is correctly hydrated');
+		$books = $rowling->getBooks();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(1, count($books), 'Related objects are correctly hydrated');
+		$book = $books[0];
+		$this->assertEquals($book->getTitle(), 'Harry Potter and the Order of the Phoenix', 'Related object is correctly hydrated');
+		$reviews = $book->getReviews();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}	
 
 	public function testFindOneWithOneToManyThenManyToOneUsingAlias()
 	{
