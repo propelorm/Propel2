@@ -20,16 +20,25 @@
 class PropelOnDemandFormatter extends PropelObjectFormatter
 {
 	protected $collectionName = 'PropelOnDemandCollection';
+	protected $isSingleTableInheritance = false;
+	
+	public function init(ModelCriteria $criteria)
+	{
+		parent::init($criteria);
+		$this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
+		
+		return $this;
+	}
 	
 	public function format(PDOStatement $stmt)
 	{
-		$this->checkCriteria();
-		if ($this->getCriteria()->isWithOneToMany()) {
+		$this->checkInit();
+		if ($this->isWithOneToMany()) {
 			throw new PropelException('PropelOnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
 		}
 		$class = $this->collectionName;
 		$collection = new $class();
-		$collection->setModel($this->getCriteria()->getModelName());
+		$collection->setModel($this->class);
 		$collection->initIterator($this, $stmt);
 		
 		return $collection;
@@ -49,11 +58,10 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 	{
 		$col = 0;
 		// main object
-		$tableMap = $this->getCriteria()->getTableMap();
-		$class = $tableMap->isSingleTableInheritance() ? call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false) : $this->class;
+		$class = $this->isSingleTableInheritance ? call_user_func(array($his->peer, 'getOMClass'), $row, $col, false) : $this->class;
 		$obj = $this->getSingleObjectFromRow($row, $class, $col);
 		// related objects using 'with'
-		foreach ($this->getCriteria()->getWith() as $modelWith) {
+		foreach ($this->getWith() as $modelWith) {
 			if ($modelWith->isSingleTableInheritance()) {
 				$class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
 				$refl = new ReflectionClass($class);
@@ -78,7 +86,7 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getRelatedClass()];
 			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
-		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
+		foreach ($this->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);
 			$col++;
 		}

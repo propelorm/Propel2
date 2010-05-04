@@ -45,7 +45,7 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
@@ -61,7 +61,7 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
@@ -77,7 +77,7 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 				
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
@@ -104,7 +104,7 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$book = $formatter->formatOne($stmt);
 		
 		$this->assertTrue($book instanceof Book, 'PropelObjectFormatter::formatOne() returns a model object');
@@ -116,7 +116,7 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 				
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$book = $formatter->formatOne($stmt);
 		
 		$this->assertNull($book, 'PropelObjectFormatter::formatOne() returns null when no result');

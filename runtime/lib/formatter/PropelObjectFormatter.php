@@ -22,7 +22,7 @@ class PropelObjectFormatter extends PropelFormatter
 	
 	public function format(PDOStatement $stmt)
 	{
-		$this->checkCriteria();
+		$this->checkInit();
 		if($class = $this->collectionName) {
 			$collection = new $class();
 			$collection->setModel($this->class);
@@ -30,9 +30,8 @@ class PropelObjectFormatter extends PropelFormatter
 		} else {
 			$collection = array();
 		}
-		if ($this->getCriteria()->isWithOneToMany()) {
-			// some one-to-many relationships
-			if ($this->getCriteria()->getLimit() != 0) {
+		if ($this->isWithOneToMany()) {
+			if ($this->hasLimit) {
 				throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
 			}
 			$pks = array();
@@ -57,7 +56,7 @@ class PropelObjectFormatter extends PropelFormatter
 	
 	public function formatOne(PDOStatement $stmt)
 	{
-		$this->checkCriteria();
+		$this->checkInit();
 		$result = null;
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$result = $this->getAllObjectsFromRow($row);
@@ -87,7 +86,7 @@ class PropelObjectFormatter extends PropelFormatter
 		// main object
 		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
 		// related objects added using with()
-		foreach ($this->getCriteria()->getWith() as $class => $modelWith) {
+		foreach ($this->getWith() as $class => $modelWith) {
 			list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
@@ -103,7 +102,7 @@ class PropelObjectFormatter extends PropelFormatter
 			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
 		// columns added using withColumn()
-		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
+		foreach ($this->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);
 			$col++;
 		}

@@ -18,20 +18,106 @@
 abstract class PropelFormatter
 {
 	protected
-	  $criteria,
-	  $class,
-	  $peer,
+		$dbName,
+		$class,
+		$peer,
+		$with = array(),
+		$asColumns = array(),
+		$hasLimit = false,
 		$currentObjects = array();
 	
-	public function setCriteria(ModelCriteria $criteria)
+	public function __construct(ModelCriteria $criteria = null)
 	{
-		$this->criteria = $criteria;
+		if (null !== $criteria) {
+			$this->init($criteria);
+		}
 	}
 	
-	public function getCriteria()
+	/**
+	 * Define the hydration schema based on a query object.
+	 * Fills the Formatter's properties using a Criteria as source
+	 *
+	 * @param ModelCriteria $criteria
+	 *
+	 * @return PropelFormatter The current formatter object
+	 */
+	public function init(ModelCriteria $criteria)
 	{
-		return $this->criteria;
+		$this->dbName = $criteria->getDbName();
+		$this->class = $criteria->getModelName();
+		$this->peer = $criteria->getModelPeerName();
+		$this->setWith($criteria->getWith());
+		$this->asColumns = $criteria->getAsColumns();
+		$this->hasLimit = $criteria->getLimit() != 0;
+		
+		return $this;
 	}
+	
+	// DataObject getters & setters
+
+	public function setDbName($dbName)
+	{
+		$this->dbName = $dbName;
+	}
+	
+	public function getDbName()
+	{
+		return $this->dbName;
+	}
+		
+	public function setClass($class)
+	{
+		$this->class = $class;
+	}
+	
+	public function getClass()
+	{
+		return $this->class;
+	}
+	
+	public function setPeer($peer)
+	{
+		$this->peer = $peer;
+	}
+	
+	public function getPeer()
+	{
+		return $this->peer;
+	}
+	
+	public function setWith($withs = array())
+	{
+		$this->with = array();
+		foreach ($withs as $relation => $join) {
+			$this->with[$relation] = new ModelWith($join);
+		}
+	}
+	
+	public function getWith()
+	{
+		return $this->with;
+	}
+
+	public function setAsColumns($asColumns = array())
+	{
+		$this->asColumns = $asColumns;
+	}
+		
+	public function getAsColumns()
+	{
+		return $this->asColumns;
+	}
+
+	public function setHasLimit($hasLimit = false)
+	{
+		$this->hasLimit = $hasLimit;
+	}
+		
+	public function hasLimit()
+	{
+		return $this->hasLimit;
+	}
+	
 	
 	abstract public function format(PDOStatement $stmt);
 
@@ -39,18 +125,26 @@ abstract class PropelFormatter
 	
 	abstract public function isObjectFormatter();
 	
-	/**
-	 * Check that a ModelCriteria was properly set
-	 *
-	 * @throws    PropelException if no Criteria was set, or if the Criteria set is not an instance of ModelCriteria
-	 */
-	protected function checkCriteria()
+	public function checkInit()
 	{
-		if (!$this->criteria instanceof ModelCriteria) {
-			throw new PropelException('A formatter needs a ModelCriteria. Use PropelFormatter::setCriteria() to set one');
+		if (null === $this->peer) {
+			throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
 		}
-		$this->class = $this->criteria->getModelName();
-		$this->peer = $this->criteria->getModelPeerName();		
+	}
+	
+	public function getTableMap()
+	{
+		return Propel::getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
+	}
+	
+	protected function isWithOneToMany()
+	{
+		foreach ($this->with as $modelWith) {
+			if ($modelWith->isAdd()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

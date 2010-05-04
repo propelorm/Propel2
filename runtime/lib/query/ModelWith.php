@@ -25,7 +25,20 @@ class ModelWith
 	protected $relationMethod = '';
 	protected $relatedClass;
 	
-	public function __construct(ModelJoin $join)
+	public function __construct(ModelJoin $join = null)
+	{
+		if (null !== $join) {
+			$this->init($join);
+		}
+	}
+	
+	/**
+	 * Define the joined hydration schema based on a join object.
+	 * Fills the ModelWith properties using a ModelJoin as source
+	 *
+	 * @param ModelJoin $join
+	 */
+	public function init(ModelJoin $join)
 	{
 		$tableMap = $join->getTableMap();
 		$this->modelName = $tableMap->getClassname();
@@ -45,9 +58,21 @@ class ModelWith
 		}
 	}
 	
+	// DataObject getters & setters
+	
+	public function setModelName($modelName)
+	{
+		$this->modelName = $modelName;
+	}
+	
 	public function getModelName()
 	{
 		return $this->modelName;
+	}
+	
+	public function setModelPeerName($modelPeerName)
+	{
+		$this->modelPeerName = $modelPeerName;
 	}
 	
 	public function getModelPeerName()
@@ -55,9 +80,19 @@ class ModelWith
 		return $this->modelPeerName;
 	}
 	
+	public function setIsSingleTableInheritance($isSingleTableInheritance)
+	{
+		$this->isSingleTableInheritance = $isSingleTableInheritance;
+	}
+	
 	public function isSingleTableInheritance()
 	{
 		return $this->isSingleTableInheritance;
+	}
+	
+	public function setIsAdd($isAdd)
+	{
+		$this->isAdd = $isAdd;;
 	}
 	
 	public function isAdd()
@@ -65,24 +100,41 @@ class ModelWith
 		return $this->isAdd;
 	}
 	
+	public function setRelationName($relationName)
+	{
+		$this->relationName = $relationName;
+	}
+	
 	public function getRelationName()
 	{
 		return $this->relationName;
 	}
 	
+	public function setRelationMethod($relationMethod)
+	{
+		$this->relationMethod = $relationMethod;
+	}
+
 	public function getRelationMethod()
 	{
 		return $this->relationMethod;
 	}
-	
-	public function isPrimary()
+		
+	public function setRelatedClass($relatedClass)
 	{
-		return null === $this->relatedClass;
+		$this->relatedClass = $relatedClass;
 	}
 	
 	public function getRelatedClass()
 	{
 		return $this->relatedClass;
+	}
+	
+	// Utility methods
+	
+	public function isPrimary()
+	{
+		return null === $this->relatedClass;
 	}
 	
 	public function __toString()

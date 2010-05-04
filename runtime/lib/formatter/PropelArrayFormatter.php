@@ -24,7 +24,7 @@ class PropelArrayFormatter extends PropelFormatter
 	
 	public function format(PDOStatement $stmt)
 	{
-		$this->checkCriteria();
+		$this->checkInit();
 		if($class = $this->collectionName) {
 			$collection = new $class();
 			$collection->setModel($this->class);
@@ -32,7 +32,7 @@ class PropelArrayFormatter extends PropelFormatter
 		} else {
 			$collection = array();
 		}
-		if ($this->getCriteria()->isWithOneToMany() && $this->getCriteria()->getLimit() != 0) {
+		if ($this->isWithOneToMany() && $this->hasLimit) {
 			throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
 		}
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -49,7 +49,7 @@ class PropelArrayFormatter extends PropelFormatter
 
 	public function formatOne(PDOStatement $stmt)
 	{
-		$this->checkCriteria();
+		$this->checkInit();
 		$result = null;
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			if ($object = &$this->getStructuredArrayFromRow($row)) {
@@ -96,7 +96,7 @@ class PropelArrayFormatter extends PropelFormatter
 		$hydrationChain = array();
 		
 		// related objects added using with()
-		foreach ($this->getCriteria()->getWith() as $relAlias => $modelWith) {
+		foreach ($this->getWith() as $relAlias => $modelWith) {
 			
 			// determine class to use
 			if ($modelWith->isSingleTableInheritance()) {
@@ -139,7 +139,7 @@ class PropelArrayFormatter extends PropelFormatter
 		}
 		
 		// columns added using withColumn()
-		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
+		foreach ($this->getAsColumns() as $alias => $clause) {
 			$this->alreadyHydratedObjects[$this->class][$mainKey][$alias] = $row[$col];
 			$col++;
 		}

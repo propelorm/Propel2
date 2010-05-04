@@ -394,7 +394,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			\$stmt = \$this
 				->filterByPrimaryKey(\$key)
 				->getSelectStatement(\$con);
-			return \$this->getFormatter()->formatOne(\$stmt);
+			return \$this->getFormatter()->init(\$this)->formatOne(\$stmt);
 		}
 	}
 ";

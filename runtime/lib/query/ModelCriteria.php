@@ -155,7 +155,6 @@ class ModelCriteria extends Criteria
 		if (!$formatter instanceof PropelFormatter) {
 			throw new PropelException('setFormatter() only accepts classes extending PropelFormatter');
 		}
-		$formatter->setCriteria($this);
 		$this->formatter = $formatter;
 		
 		return $this;
@@ -170,7 +169,8 @@ class ModelCriteria extends Criteria
 	public function getFormatter()
 	{
 		if (null === $this->formatter) {
-			$this->setFormatter($this->defaultFormatterClass);
+			$formatterClass = $this->defaultFormatterClass;
+			$this->formatter = new $formatterClass();
 		}
 		return $this->formatter;
 	}
@@ -615,7 +615,7 @@ class ModelCriteria extends Criteria
 		$this->addRelationSelectColumns($relation);
 		
 		// list the join for later hydration in the formatter
-		$this->with[$relation]= new ModelWith($join);
+		$this->with[$relation] = $join;
 		
 		return $this;
 	}
@@ -865,7 +865,7 @@ class ModelCriteria extends Criteria
 	{
 		$stmt = $this->getSelectStatement($con);
 		
-		return $this->getFormatter()->format($stmt);
+		return $this->getFormatter()->init($this)->format($stmt);
 	}
 
 	/**
@@ -882,7 +882,7 @@ class ModelCriteria extends Criteria
 		$this->limit(1);
 		$stmt = $this->getSelectStatement($con);
 		
-		return $this->getFormatter()->formatOne($stmt);
+		return $this->getFormatter()->init($this)->formatOne($stmt);
 	}
 	
 	/**

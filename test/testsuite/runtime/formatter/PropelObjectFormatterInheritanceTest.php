@@ -40,7 +40,7 @@ class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 		
 		$stmt = $con->query('SELECT * FROM bookstore_employee');
 		$formatter = new PropelObjectFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'BookstoreEmployee'));
+		$formatter->init(new ModelCriteria('bookstore', 'BookstoreEmployee'));
 		$emps = $formatter->format($stmt);
 		$expectedClass = array(
 			'b1' =>'BookstoreEmployee',

@@ -45,7 +45,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelArrayFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
@@ -61,7 +61,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
 		$formatter = new PropelArrayFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
@@ -79,7 +79,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 				
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
 		$formatter = new PropelArrayFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelCollection, 'PropelArrayFormatter::format() returns a PropelCollection');
@@ -106,7 +106,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelArrayFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$book = $formatter->formatOne($stmt);
 		
 		$this->assertTrue(is_array($book), 'PropelArrayFormatter::formatOne() returns an array');
@@ -119,7 +119,7 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 				
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
 		$formatter = new PropelArrayFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$book = $formatter->formatOne($stmt);
 		
 		$this->assertNull($book, 'PropelArrayFormatter::formatOne() returns null when no result');

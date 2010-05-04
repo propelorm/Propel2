@@ -210,8 +210,7 @@ class PropelObjectCollection extends PropelCollection
 		if (!Propel::isInstancePoolingEnabled()) {
 			throw new PropelException('populateRelation() needs instance pooling to be enabled prior to populating the collection');
 		}
-		$query = $this->getFormatter()->getCriteria();
-		$relationMap = $query->getTableMap()->getRelation($relation);
+		$relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
 		$symRelationMap = $relationMap->getSymmetricalRelation();
 		
 		// query the db for the related objects

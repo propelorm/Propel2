@@ -41,7 +41,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
@@ -61,7 +61,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		foreach ($books as $book) {
@@ -86,7 +86,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
@@ -108,7 +108,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 		
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
@@ -125,7 +125,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 				
 		$stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$books = $formatter->format($stmt);
 		
 		$this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelCollection');
@@ -142,7 +142,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
 
 		$stmt = $con->query('SELECT * FROM book');
 		$formatter = new PropelOnDemandFormatter();
-		$formatter->setCriteria(new ModelCriteria('bookstore', 'Book'));
+		$formatter->init(new ModelCriteria('bookstore', 'Book'));
 		$book = $formatter->formatOne($stmt);
 		
 		$this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::formatOne() returns a model object');
