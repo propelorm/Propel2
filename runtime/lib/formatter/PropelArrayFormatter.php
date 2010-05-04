@@ -19,6 +19,8 @@
 class PropelArrayFormatter extends PropelFormatter
 {
 	protected $collectionName = 'PropelArrayCollection';
+	protected $alreadyHydratedObjects = array();
+	protected $emptyVariable;
 	
 	public function format(PDOStatement $stmt)
 	{
@@ -30,28 +32,16 @@ class PropelArrayFormatter extends PropelFormatter
 		} else {
 			$collection = array();
 		}
-		if ($this->getCriteria()->isWithOneToMany()) {
-			$pks = array();
-			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-				$key = call_user_func(array($this->peer, 'getPrimaryKeyHashFromRow'), $row);
-				$object = $this->getStructuredArrayFromRow($row);
-				if (!array_key_exists($key, $collection)) {
-					$collection[$key] = $object;
-				} else {
-					foreach ($object as $columnKey => $value) {
-						if(is_array($value)) {
-							$collection[$key][$columnKey][] = $value[0];
-						}
-					}
-				}
-			}
-			$collection->setData(array_values($collection->getArrayCopy()));
-		} else {
-			while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-				$collection[] =  $this->getStructuredArrayFromRow($row);
+		if ($this->getCriteria()->isWithOneToMany() && $this->getCriteria()->getLimit() != 0) {
+			throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+		}
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			if ($object = &$this->getStructuredArrayFromRow($row)) {
+				$collection[] = $object;
 			}
 		}
 		$this->currentObjects = array();
+		$this->alreadyHydratedObjects = array();
 		$stmt->closeCursor();
 		
 		return $collection;
@@ -60,12 +50,14 @@ class PropelArrayFormatter extends PropelFormatter
 	public function formatOne(PDOStatement $stmt)
 	{
 		$this->checkCriteria();
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$result = $this->getStructuredArrayFromRow($row);
-		} else {
-			$result = null;
+		$result = null;
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			if ($object = &$this->getStructuredArrayFromRow($row)) {
+				$result = &$object;
+			}
 		}
 		$this->currentObjects = array();
+		$this->alreadyHydratedObjects = array();
 		$stmt->closeCursor();
 		return $result;
 	}
@@ -86,49 +78,78 @@ class PropelArrayFormatter extends PropelFormatter
 	 *
 	 * @return    Array
 	 */
-	public function getStructuredArrayFromRow($row)
+	public function &getStructuredArrayFromRow($row)
 	{
 		$col = 0;
-		$mainObjectArray = $this->getSingleObjectFromRow($row, $this->class, $col)->toArray();
-		foreach ($this->getCriteria()->getWith() as $modelWith) {
-			$join = $modelWith->getJoin();
-			$tableMap = $join->getTableMap();;
-			if ($tableMap->isSingleTableInheritance()) {
-				$class = call_user_func(array($tableMap->getPeerClassname(), 'getOMClass'), $row, $col, false);
+		
+		// hydrate main object or take it from registry
+		$mainObjectIsNew = false;
+		$mainKey = call_user_func(array($this->peer, 'getPrimaryKeyHashFromRow'), $row);
+		// we hydrate the main object even in case of a one-to-many relationship
+		// in order to get the $col variable increased anyway
+		$obj = $this->getSingleObjectFromRow($row, $this->class, $col);
+		if (!isset($this->alreadyHydratedObjects[$this->class][$mainKey])) {
+			$this->alreadyHydratedObjects[$this->class][$mainKey] = $obj->toArray();
+			$mainObjectIsNew = true;
+		}
+		
+		$hydrationChain = array();
+		
+		// related objects added using with()
+		foreach ($this->getCriteria()->getWith() as $relAlias => $modelWith) {
+			
+			// determine class to use
+			if ($modelWith->isSingleTableInheritance()) {
+				$class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
 				$refl = new ReflectionClass($class);
 				if ($refl->isAbstract()) {
 					$col += constant($class . 'Peer::NUM_COLUMNS');
 					continue;
 				} 
 			} else {
-				$class = $tableMap->getClassname();
+				$class = $modelWith->getModelName();
 			}
 			
+			// hydrate related object or take it from registry
+			$key = call_user_func(array($modelWith->getModelPeerName(), 'getPrimaryKeyHashFromRow'), $row, $col);
+			// we hydrate the main object even in case of a one-to-many relationship
+			// in order to get the $col variable increased anyway
 			$secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
-			if ($secondaryObject->isPrimaryKeyNull()) {
-				$secondaryObjectArray = array();
-			} else {
-				$secondaryObjectArray = $secondaryObject->toArray();
-			}
-			$arrayToAugment = &$mainObjectArray;
-			if (!$join->isPrimary()) {
-				$prevJoin = $join;
-				while($prevJoin = $prevJoin->getPreviousJoin()) {
-					$arrayToAugment = &$arrayToAugment[$prevJoin->getRelationMap()->getName()];
+			if (!isset($this->alreadyHydratedObjects[$relAlias][$key])) {
+				
+				if ($secondaryObject->isPrimaryKeyNull()) {
+					$this->alreadyHydratedObjects[$relAlias][$key] = array();
+				} else {
+					$this->alreadyHydratedObjects[$relAlias][$key] = $secondaryObject->toArray();
+				}
+				
+				if ($modelWith->isPrimary()) {
+					$arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
+				} else {
+					$arrayToAugment = &$hydrationChain[$modelWith->getRelatedClass()];
+				}
+				
+				if ($modelWith->isAdd()) {
+					$arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
+				} else {
+					$arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
 				}
 			}
-			$relation = $join->getRelationMap();
-			if ($relation->getType() == RelationMap::ONE_TO_MANY) {
-				$arrayToAugment[$join->getRelationMap()->getName().'s'][] = $secondaryObjectArray;
-			} else {
-				$arrayToAugment[$join->getRelationMap()->getName()] = $secondaryObjectArray;
-			}
+			$hydrationChain[$relAlias] = &$this->alreadyHydratedObjects[$relAlias][$key];
 		}
+		
+		// columns added using withColumn()
 		foreach ($this->getCriteria()->getAsColumns() as $alias => $clause) {
-			$mainObjectArray[$alias] = $row[$col];
+			$this->alreadyHydratedObjects[$this->class][$mainKey][$alias] = $row[$col];
 			$col++;
 		}
-		return $mainObjectArray;
+		
+		if ($mainObjectIsNew) {
+			return $this->alreadyHydratedObjects[$this->class][$mainKey];
+		} else {
+			// we still need to return a reference to something to avoid a warning
+			return $emptyVariable;
+		}
 	}
 
 }

@@ -174,27 +174,21 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('J.K.', $author['FirstName'], 'Related object is correctly hydrated');
 	}
 
-	public function testFindOneWithColumn()
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testFindOneWithOneToManyAndLimit()
 	{
-		BookstoreDataPopulator::populate();
-		BookPeer::clearInstancePool();
-		AuthorPeer::clearInstancePool();
-		ReviewPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-		$c->filterByTitle('The Tin Drum');
-		$c->join('Book.Author');
-		$c->withColumn('Author.FirstName', 'AuthorName');
-		$c->withColumn('Author.LastName', 'AuthorName2');
-		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		$book = $c->findOne($con);
-		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
-		$this->assertEquals('The Tin Drum', $book['Title']);
-		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
-		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+		$c->add(BookPeer::ISBN, '043935806X');
+		$c->leftJoin('Book.Review');
+		$c->with('Review');
+		$c->limit(5);
+		$books = $c->find();
 	}
-
-public function testFindOneWithOneToMany()
+	
+	public function testFindOneWithOneToMany()
 	{
 		BookstoreDataPopulator::populate();
 		BookPeer::clearInstancePool();
@@ -210,8 +204,11 @@ public function testFindOneWithOneToMany()
 		$this->assertEquals(1, count($books), 'with() does not duplicate the main object');
 		$book = $books[0];
 		$this->assertEquals($book['Title'], 'Harry Potter and the Order of the Phoenix', 'Main object is correctly hydrated');
+		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Reviews'), array_keys($book), 'with() adds a plural index for the one to many relationship');
 		$reviews = $book['Reviews'];
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+		$review1 = $reviews[0];
+		$this->assertEquals(array('Id', 'ReviewedBy', 'ReviewDate', 'Recommended', 'Status', 'BookId'), array_keys($review1), 'with() Related objects are correctly hydrated');
 	}
 
 	public function testFindOneWithOneToManyCustomOrder()
@@ -241,6 +238,74 @@ public function testFindOneWithOneToMany()
 		$this->assertEquals(2, count($authors), 'with() used on a many-to-many doesn\'t change the main object count');
 	}
 	
+	public function testFindOneWithOneToManyThenManyToOne()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
+		$c->leftJoinWith('Author.Book');
+		$c->leftJoinWith('Book.Review');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$authors = $c->find($con);
+		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
+		$rowling = $authors[0];
+		$this->assertEquals($rowling['FirstName'], 'J.K.', 'Main object is correctly hydrated');
+		$books = $rowling['Books'];
+		$this->assertEquals(1, count($books), 'Related objects are correctly hydrated');
+		$book = $books[0];
+		$this->assertEquals($book['Title'], 'Harry Potter and the Order of the Phoenix', 'Related object is correctly hydrated');
+		$reviews = $book['Reviews'];
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}
+
+	public function testFindOneWithOneToManyThenManyToOneUsingAlias()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
+		$c->leftJoinWith('Author.Book b');
+		$c->leftJoinWith('b.Review r');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$authors = $c->find($con);
+		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
+		$rowling = $authors[0];
+		$this->assertEquals($rowling['FirstName'], 'J.K.', 'Main object is correctly hydrated');
+		$books = $rowling['Books'];
+		$this->assertEquals(1, count($books), 'Related objects are correctly hydrated');
+		$book = $books[0];
+		$this->assertEquals($book['Title'], 'Harry Potter and the Order of the Phoenix', 'Related object is correctly hydrated');
+		$reviews = $book['Reviews'];
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}
+	
+	public function testFindOneWithColumn()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->filterByTitle('The Tin Drum');
+		$c->join('Book.Author');
+		$c->withColumn('Author.FirstName', 'AuthorName');
+		$c->withColumn('Author.LastName', 'AuthorName2');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = $c->findOne($con);
+		$this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
+		$this->assertEquals('The Tin Drum', $book['Title']);
+		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
+		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+	}
+	
 	public function testFindOneWithClassAndColumn()
 	{
 		BookstoreDataPopulator::populate();
@@ -261,5 +326,24 @@ public function testFindOneWithOneToMany()
 		$this->assertEquals('Gunter', $book['Author']['FirstName'], 'PropelArrayFormatter correctly hydrates withclass and columns');
 		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
 		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+	}
+
+	public function testFindPkWithOneToMany()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = BookQuery::create()
+			->findOneByTitle('Harry Potter and the Order of the Phoenix', $con);
+		$pk = $book->getPrimaryKey();
+		BookPeer::clearInstancePool();
+		$book = BookQuery::create()
+			->setFormatter(ModelCriteria::FORMAT_ARRAY)
+			->joinWith('Review')
+			->findPk($pk, $con);
+		$reviews = $book['Reviews'];
+		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
 	}
 }

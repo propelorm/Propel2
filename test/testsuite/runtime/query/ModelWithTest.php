@@ -30,37 +30,40 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals($with->getJoin(), $join, 'A ModelWith keeps the ModelJoin used for instanciation');
 	}
 	
-	public function testModelPeerNameManyToOne()
+	public function testModelNameManyToOne()
 	{
 		$q = BookQuery::create()
 		 ->joinAuthor();
 		$joins = $q->getJoins();
 		$join = $joins['Author'];
 		$with = new ModelWith($join);
+		$this->assertEquals($with->getModelName(), 'Author', 'A ModelWith computes the model name from the join');
 		$this->assertEquals($with->getModelPeerName(), 'AuthorPeer', 'A ModelWith computes the model peer name from the join');
 	}
 
-	public function testModelPeerNameOneToMany()
+	public function testModelNameOneToMany()
 	{
 		$q = AuthorQuery::create()
 		 ->joinBook();
 		$joins = $q->getJoins();
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
+		$this->assertEquals($with->getModelName(), 'Book', 'A ModelWith computes the model peer name from the join');
 		$this->assertEquals($with->getModelPeerName(), 'BookPeer', 'A ModelWith computes the model peer name from the join');
 	}
 	
-	public function testModelPeerNameAlias()
+	public function testModelNameAlias()
 	{
 		$q = BookQuery::create()
 		 ->joinAuthor('a');
 		$joins = $q->getJoins();
 		$join = $joins['a'];
 		$with = new ModelWith($join);
+		$this->assertEquals($with->getModelName(), 'Author', 'A ModelWith computes the model peer name from the join');
 		$this->assertEquals($with->getModelPeerName(), 'AuthorPeer', 'A ModelWith computes the model peer name from the join');
 	}
 
-	public function testRelationMethodManyToOne()
+	public function testRelationManyToOne()
 	{
 		$q = BookQuery::create()
 		 ->joinAuthor();
@@ -68,9 +71,11 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['Author'];
 		$with = new ModelWith($join);
 		$this->assertEquals($with->getRelationMethod(), 'setAuthor', 'A ModelWith computes the relation method from the join');
+		$this->assertEquals($with->getRelationName(), 'Author', 'A ModelWith computes the relation name from the join');
+		$this->assertFalse($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
 	}
 
-	public function testRelationMethodOneToMany()
+	public function testRelationOneToMany()
 	{
 		$q = AuthorQuery::create()
 		 ->joinBook();
@@ -78,9 +83,11 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
 		$this->assertEquals($with->getRelationMethod(), 'addBook', 'A ModelWith computes the relation method from the join');
+		$this->assertEquals($with->getRelationName(), 'Books', 'A ModelWith computes the relation name from the join');
+		$this->assertTrue($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
 	}
 
-	public function testRelationMethodOneToOne()
+	public function testRelationOneToOne()
 	{
 		$q = BookstoreEmployeeQuery::create()
 		 ->joinBookstoreEmployeeAccount();
@@ -88,6 +95,8 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['BookstoreEmployeeAccount'];
 		$with = new ModelWith($join);
 		$this->assertEquals($with->getRelationMethod(), 'setBookstoreEmployeeAccount', 'A ModelWith computes the relation method from the join');
+		$this->assertEquals($with->getRelationName(), 'BookstoreEmployeeAccount', 'A ModelWith computes the relation name from the join');
+		$this->assertFalse($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
 	}
 	
 	public function testIsPrimary()
