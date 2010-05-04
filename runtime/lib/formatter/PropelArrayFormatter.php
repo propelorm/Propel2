@@ -122,19 +122,22 @@ class PropelArrayFormatter extends PropelFormatter
 				} else {
 					$this->alreadyHydratedObjects[$relAlias][$key] = $secondaryObject->toArray();
 				}
-				
-				if ($modelWith->isPrimary()) {
-					$arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
-				} else {
-					$arrayToAugment = &$hydrationChain[$modelWith->getRelatedClass()];
-				}
-				
-				if ($modelWith->isAdd()) {
-					$arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
-				} else {
-					$arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
-				}
 			}
+				
+			if ($modelWith->isPrimary()) {
+				$arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
+			} else {
+				$arrayToAugment = &$hydrationChain[$modelWith->getRelatedClass()];
+			}
+			
+			if ($modelWith->isAdd()) {
+				if (!isset($arrayToAugment[$modelWith->getRelationName()]) || !in_array($this->alreadyHydratedObjects[$relAlias][$key], $arrayToAugment[$modelWith->getRelationName()])) {
+					$arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
+				}
+			} else {
+				$arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
+			}
+				
 			$hydrationChain[$relAlias] = &$this->alreadyHydratedObjects[$relAlias][$key];
 		}
 		
