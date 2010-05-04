@@ -1131,8 +1131,9 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	{
 		$cu = new Customer;
 		$cu->setPrimaryKey(100000);
-		
 		$cu->save();
+		
+		$this->assertEquals(100000, $cu->getPrimaryKey());
 		
 		$cu2 = CustomerPeer::retrieveByPk(100000);
 				

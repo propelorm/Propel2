@@ -3450,8 +3450,15 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			if (count($pks = $table->getPrimaryKey())) {
 				foreach ($pks as $pk) {
 					if ($pk->isAutoIncrement()) {
-						$script .= "
+						if ($table->isAllowPkInsert()) {
+								$script .= "
+					if (\$pk !== null) {
+						\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
+					}";
+						} else {
+								$script .= "
 					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
+						}
 					}
 				}
 			}
