@@ -13,7 +13,7 @@ In the `schema.xml`, use the `<behavior>` tag to add the `auto_add_pk` behavior 
 </table>
 }}}
 
-Rebuild your model, and insert the table creation sql. You will notice that the `book` table has two tables and not just one. The behavior added an `id` column, of type integer and autoincremented. This column can be used as any other column:
+Rebuild your model, and insert the table creation sql. You will notice that the `book` table has two columns and not just one. The behavior added an `id` column, of type integer and autoincremented. This column can be used as any other column:
 
 {{{
 #!php

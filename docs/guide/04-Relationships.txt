@@ -245,10 +245,10 @@ To facilitate queries, Propel also adds new methods to the `UserQuery` and `Grou
 {{{
 #!php
 <?php
-$users = UserPeer::create()
+$users = UserQuery::create()
   ->filterByGroup($group)
   ->find();
-$groups = GroupPeer::create()
+$groups = GroupQuery::create()
   ->filterByUser($user)
   ->find();
 }}}
