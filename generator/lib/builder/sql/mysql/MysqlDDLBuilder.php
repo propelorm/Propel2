@@ -105,10 +105,12 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 			$entry = $this->getColumnDDL($col);
 			$colinfo = $col->getVendorInfoForType($databaseType);
 			if ( $colinfo->hasParameter('Charset') ) {
-				$entry .= ' CHARACTER SET '.$platform->quote($colinfo->getParamter('Charset'));
+				$entry .= ' CHARACTER SET '.$platform->quote($colinfo->getParameter('Charset'));
 			}
-			if ( $colinfo->hasParameter('Collate') ) {
-				$entry .= ' COLLATE '.$platform->quote($colinfo->getParamter('Collate'));
+			if ( $colinfo->hasParameter('Collation') ) {
+				$entry .= ' COLLATE '.$platform->quote($colinfo->getParameter('Collation'));
+			} elseif ( $colinfo->hasParameter('Collate') ) {
+				$entry .= ' COLLATE '.$platform->quote($colinfo->getParameter('Collate'));
 			}
 			if ($col->getDescription()) {
 				$entry .= " COMMENT ".$platform->quote($col->getDescription());
