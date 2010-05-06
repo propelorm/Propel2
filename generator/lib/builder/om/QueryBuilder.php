@@ -391,10 +391,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			return \$obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			\$stmt = \$this
+			\$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
+			\$stmt = \$criteria
 				->filterByPrimaryKey(\$key)
 				->getSelectStatement(\$con);
-			return \$this->getFormatter()->init(\$this)->formatOne(\$stmt);
+			return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
 		}
 	}
 ";
@@ -429,6 +430,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	public function findPks(\$keys, \$con = null)
 	{	
+		\$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
 		return \$this
 			->filterByPrimaryKeys(\$keys)
 			->find(\$con);

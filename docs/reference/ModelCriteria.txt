@@ -302,15 +302,15 @@ $nbDeletedBooks = BookQuery::create()
 #!php
 <?php
 // Test data
-$author1 = new Book();
+$author1 = new Author();
 $author1->setName('Jane Austen');
 $author1->save();
-$author2 = new Book();
+$author2 = new Author();
 $author2->setName('Leo Tolstoy');
 $author2->save();
 
 // update() issues an UPDATE ... SET query based on an associative array column => value
-$nbUpdatedRows = BookQuery::create()
+$nbUpdatedRows = AuthorQuery::create()
   ->filterByName('Leo Tolstoy')
   ->update(array('Name' => 'Leo Tolstoi'), $con);
 
@@ -320,10 +320,29 @@ echo $nbUpdatedRows; // 1
 // Beware that update() updates all records found in a single row
 // And bypasses any behavior registered on the save() hooks
 // You can force a one-by-one update by setting the third parameter of update() to true
-$nbUpdatedRows = BookQuery::create()
+$nbUpdatedRows = AuthorQuery::create()
   ->filterByName('Leo Tolstoy')
   ->update(array('Name' => 'Leo Tolstoi'), $con, true);
 // Beware that it may take a long time
+}}}
+
+=== Reusing A Query ===
+
+By default, termination methods like `findOne()`, `find()`, `count()`, `paginate()`, or `delete()` alter the original query. That means that if you need to reuse a query after a termination method, you must call the `keepQuery()` method first:
+
+{{{
+#!php
+<?php
+$q = BookQuery::create()->filterByIsPublished(true);
+$book = $q->findOneByTitle('War And Peace');
+// findOneByXXX() adds a limit() to the query
+// so further reuses of the query may show side effects
+echo $q->count(); // 1
+
+// to allos query reuse, call keepQuery() before the termination method
+$q = BookQuery::create()->filterByIsPublished(true)->keepQuery();
+$book = $q->findOneByTitle('War And Peace');
+echo $q->count(); // 34
 }}}
 
 == Relational API ==

@@ -1070,6 +1070,72 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() called repeatedly adds several as colums');
 	}
 	
+	public function testKeepQuery()
+	{
+		$c = BookQuery::create();
+		$this->assertFalse($c->isKeepQuery(), 'keepQuery is disabled by default');
+		$c->keepQuery();
+		$this->assertTrue($c->isKeepQuery(), 'keepQuery() enables the keepQuery property');
+		$c->keepQuery(false);
+		$this->assertFalse($c->isKeepQuery(), 'keepQuery(false) disables the keepQuery property');
+	}
+	
+	public function testKeepQueryFind()
+	{
+		$c = BookQuery::create();
+		$c->filterByTitle('foo');
+		$c->find();
+		$expected = array('book.ID', 'book.TITLE', 'book.ISBN', 'book.PRICE', 'book.PUBLISHER_ID', 'book.AUTHOR_ID');
+		$this->assertEquals($expected, $c->getSelectColumns(), 'find() modifies the query by default');
+
+		$c = BookQuery::create();
+		$c->filterByTitle('foo');
+		$c->keepQuery();
+		$c->find();
+		$this->assertEquals(array(), $c->getSelectColumns(), 'keepQuery() forces find() to use a clone and keep the original query unmodified');
+	}
+	
+	public function testKeepQueryFindOne()
+	{
+		$c = BookQuery::create();
+		$c->filterByTitle('foo');
+		$c->findOne();
+		$this->assertEquals(1, $c->getLimit(), 'findOne() modifies the query by default');
+
+		$c = BookQuery::create();
+		$c->filterByTitle('foo');
+		$c->keepQuery();
+		$c->findOne();
+		$this->assertEquals(0, $c->getLimit(), 'keepQuery() forces findOne() to use a clone and keep the original query unmodified');
+	}
+	
+	public function testKeepQueryFindPk()
+	{
+		$c = BookQuery::create();
+		$c->findPk(1);
+		$expected = array('book.ID', 'book.TITLE', 'book.ISBN', 'book.PRICE', 'book.PUBLISHER_ID', 'book.AUTHOR_ID');
+		$this->assertEquals($expected, $c->getSelectColumns(), 'findPk() modifies the query by default');
+
+		$c = BookQuery::create();
+		$c->keepQuery();
+		$c->findPk(1);
+		$this->assertEquals(array(), $c->getSelectColumns(), 'keepQuery() forces findPk() to use a clone and keep the original query unmodified');
+	}
+
+	public function testKeepQueryCount()
+	{
+		$c = BookQuery::create();
+		$c->orderByTitle();
+		$c->count();
+		$this->assertEquals(array(), $c->getOrderByColumns(), 'count() modifies the query by default');
+
+		$c = BookQuery::create();
+		$c->orderByTitle();
+		$c->keepQuery();
+		$c->count();
+		$this->assertEquals(array('book.TITLE ASC'), $c->getOrderByColumns(), 'keepQuery() forces count() to use a clone and keep the original query unmodified');
+	}
+	
 	public function testFind()
 	{
 		$c = new ModelCriteria('bookstore', 'Book', 'b');

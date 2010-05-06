@@ -48,6 +48,7 @@ class ModelCriteria extends Criteria
 	protected $with = array();
 	protected $isWithOneToMany = false;
 	protected $previousJoin = null; // this is introduced to prevent useQuery->join from going wrong
+	protected $isKeepQuery = false; // whether to clone the current object before termination methods
 		
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -646,6 +647,8 @@ class ModelCriteria extends Criteria
 	 * @param     string $name   Optional alias for the added column
 	 *                           If no alias is provided, the clause is used as a column alias
 	 *                           This alias is used for retrieving the column via BaseObject::getVirtualColumn($alias)
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
 	 */
 	public function withColumn($clause, $name = null)
 	{
@@ -837,7 +840,34 @@ class ModelCriteria extends Criteria
 		
 		return $relationName; 
 	}
+	
+	/**
+	 * Triggers the automated cloning on termination.
+	 * By default, temrination methods don't clone the current object, 
+	 * even though they modify it. If the query must be reused after termination,
+	 * you must call this method prior to temrination.
+	 *
+	 * @param     boolean $isKeepQuery
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function keepQuery($isKeepQuery = true)
+	{
+		$this->isKeepQuery = (bool) $isKeepQuery;
 		
+		return $this;
+	}
+	
+	/**
+	 * Checks whether the automated cloning on termination is enabled.
+	 *
+	 * @return     boolean true if cloning must be done before termination
+	 */
+	public function isKeepQuery()
+	{
+		return $this->isKeepQuery;
+	}
+	
 	/**
 	 * Code to execute before every SELECT statement
 	 * 
@@ -863,9 +893,10 @@ class ModelCriteria extends Criteria
 	 */
 	public function find($con = null)
 	{
-		$stmt = $this->getSelectStatement($con);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
+		$stmt = $criteria->getSelectStatement($con);
 		
-		return $this->getFormatter()->init($this)->format($stmt);
+		return $criteria->getFormatter()->init($criteria)->format($stmt);
 	}
 
 	/**
@@ -879,10 +910,11 @@ class ModelCriteria extends Criteria
 	 */
 	public function findOne($con = null)
 	{
-		$this->limit(1);
-		$stmt = $this->getSelectStatement($con);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
+		$criteria->limit(1);
+		$stmt = $criteria->getSelectStatement($con);
 		
-		return $this->getFormatter()->init($this)->formatOne($stmt);
+		return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 	}
 	
 	/**
@@ -952,20 +984,17 @@ class ModelCriteria extends Criteria
 	  if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
-		
-		// we may modify criteria, so copy it first
-		$criteria = clone $this;
 
 		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
 		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
-			$criteria->addSelfSelectColumns();
+			$this->addSelfSelectColumns();
 		}
 		
 		$con->beginTransaction();
 		try {
-			$criteria->basePreSelect($con);
+			$this->basePreSelect($con);
 			$params = array();
-			$sql = BasePeer::createSelectSql($criteria, $params);
+			$sql = BasePeer::createSelectSql($this, $params);
 			$stmt = $con->prepare($sql);
 			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
@@ -1079,7 +1108,7 @@ class ModelCriteria extends Criteria
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
 		
-		$criteria = clone $this;
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->setDbName($this->getDbName()); // Set the correct dbName
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
@@ -1125,7 +1154,8 @@ class ModelCriteria extends Criteria
 	 */
 	public function paginate($page = 1, $maxPerPage = 10, $con = null)
 	{
-		$pager = new PropelModelPager($this, $maxPerPage);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
+		$pager = new PropelModelPager($criteria, $maxPerPage);
 		$pager->setPage($page);
 		$pager->init();
 		
@@ -1179,7 +1209,7 @@ class ModelCriteria extends Criteria
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
 		
-		$criteria = clone $this;
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->setDbName($this->getDbName());
 
 		$con->beginTransaction();
@@ -1312,7 +1342,7 @@ class ModelCriteria extends Criteria
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
 		}
 		
-		$criteria = clone $this;
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
 		
 		$con->beginTransaction();
