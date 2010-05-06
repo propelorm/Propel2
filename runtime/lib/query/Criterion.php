@@ -530,4 +530,14 @@ class Criterion
 		}
 		return $criterions;
 	}
+	
+	/**
+	 * Ensures deep cloning of attached objects
+	 */
+	public function __clone()
+	{
+		foreach ($this->clauses as $key => $criterion) {
+			$this->clauses[$key] = clone $criterion;
+		}
+	}
 }

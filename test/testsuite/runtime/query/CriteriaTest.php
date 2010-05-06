@@ -945,4 +945,19 @@ class CriteriaTest extends BaseTestCase
 		$result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals('SELECT DISTINCT SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
 	}
+	
+	public function testClone()
+	{
+		$c1 = new Criteria();
+		$c1->add('tbl.COL1', 'foo', Criteria::EQUAL);
+		$c2 = clone $c1;
+		$c2->addAnd('tbl.COL1', 'bar', Criteria::EQUAL);
+		$nbCrit = 0;
+		foreach ($c1->keys() as $key) {
+			foreach ($c1->getCriterion($key)->getAttachedCriterion() as $criterion) {
+				$nbCrit++;
+			}
+		}
+		$this->assertEquals(1, $nbCrit, 'cloning a Criteria clones its Criterions');
+	}
 }

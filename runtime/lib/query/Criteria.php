@@ -123,18 +123,62 @@ class Criteria implements IteratorAggregate
 	/** logical AND operator */
 	const LOGICAL_AND = "AND";
 	
-	private $ignoreCase = false;
-	private $singleRecord = false;
-	private $selectModifiers = array();
-	private $selectColumns = array();
-	private $orderByColumns = array();
-	private $groupByColumns = array();
-	private $having = null;
+	protected $ignoreCase = false;
+	protected $singleRecord = false;
+	
+	/**
+	 * Storage of select data. Collection of column names.
+	 * @var        array
+	 */
+	protected $selectColumns = array();
+	
+	/**
+	 * Storage of aliased select data. Collection of column names.
+	 * @var        array
+	 */
 	protected $asColumns = array();
+	
+	/**
+	 * Storage of select modifiers data. Collection of modifier names.
+	 * @var        array
+	 */
+	protected $selectModifiers = array();
+		
+	/**
+	 * Storage of conditions data. Collection of Criterion objects.
+	 * @var        array
+	 */
+	protected $map = array();
+	
+	/**
+	 * Storage of ordering data. Collection of column names.
+	 * @var        array
+	 */
+	protected $orderByColumns = array();
+	
+	/**
+	 * Storage of grouping data. Collection of column names.
+	 * @var        array
+	 */
+	protected $groupByColumns = array();
+	
+	/**
+	 * Storage of having data.
+	 * @var        Criterion
+	 */
+	protected $having = null;
+	
+	/**
+	 * Storage of join data. colleciton of Join objects.
+	 * @var        array
+	 */
 	protected $joins = array();
 
-	/** The name of the database. */
-	private $dbName;
+	/**
+	 * The name of the database.
+	 * @var        string
+	 */
+	protected $dbName;
 
 	/**
 	 * The primary table for this Criteria.
@@ -142,32 +186,26 @@ class Criteria implements IteratorAggregate
 	 * columns.
 	 * @var        string
 	 */
-	private $primaryTableName;
+	protected $primaryTableName;
 
 	/** The name of the database as given in the contructor. */
-	private $originalDbName;
+	protected $originalDbName;
 
 	/**
 	 * To limit the number of rows to return.  <code>0</code> means return all
 	 * rows.
 	 */
-	private $limit = 0;
+	protected $limit = 0;
 
 	/** To start the results at a row other than the first one. */
-	private $offset = 0;
+	protected $offset = 0;
 
 	// flag to note that the criteria involves a blob.
-	private $blobFlag = null;
+	protected $blobFlag = null;
 
 	protected $aliases = array();
 
-	private $useTransaction = false;
-
-	/**
-	 * Primary storage of criteria data.
-	 * @var        array
-	 */
-	private $map = array();
+	protected $useTransaction = false;
 	
 	/**
 	 * Storage for Criterions expected to be combined
@@ -1473,6 +1511,22 @@ class Criteria implements IteratorAggregate
 	public function _endif()
 	{
 		return $this;
+	}
+	
+	/**
+	 * Ensures deep cloning of attached objects
+	 */
+	public function __clone()
+	{
+		foreach ($this->map as $key => $criterion) {
+			$this->map[$key] = clone $criterion;
+		}
+		foreach ($this->joins as $key => $join) {
+			$this->joins[$key] = clone $join;
+		}
+		if (null !== $this->having) {
+			$this->having = clone $this->having;
+		}
 	}
 	
 }

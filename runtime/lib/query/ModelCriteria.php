@@ -1717,4 +1717,18 @@ EOT;
    
 		throw new PropelException(sprintf('Undefined method %s::%s()', __CLASS__, $name));
 	}
+	
+	/**
+	 * Ensures deep cloning of attached objects
+	 */
+	public function __clone()
+	{
+		parent::__clone();
+		foreach ($this->with as $key => $join) {
+			$this->with[$key] = clone $join;
+		}
+		if (null !== $this->formatter) {
+			$this->formatter = clone $this->formatter;
+		}
+	}
 }

@@ -1909,6 +1909,18 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c2->addAnd('b.TITLE', 'bar');
 		$this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
 	}
+
+	public function testClone()
+	{
+		$bookQuery1 = BookQuery::create()
+			->filterByPrice(1);
+		$bookQuery2 = clone $bookQuery1;
+		$bookQuery2
+		  ->filterByPrice(2);
+		$params = array();
+		$sql = BasePeer::createSelectSql($bookQuery1, $params);
+		$this->assertEquals('SELECT  FROM `book` WHERE book.PRICE=:p1', $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
+	}
 }
 
 class TestableModelCriteria extends ModelCriteria
