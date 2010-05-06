@@ -1117,20 +1117,7 @@ class ModelCriteria extends Criteria
 		// tables go into the FROM clause.
 		$criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
 
-		if (!$criteria->hasSelectClause()) {
-			call_user_func(array($this->modelPeerName, 'addSelectColumns'), $criteria);
-		}
-
-		$con->beginTransaction();
-		try {
-			$criteria->basePreSelect($con);
-			$stmt = BasePeer::doCount($criteria, $con);
-			$con->commit();
-		} catch (PropelException $e) {
-			$con->rollback();
-			throw $e;
-		}		
-
+		$stmt = $criteria->getCountStatement($con);
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
@@ -1139,6 +1126,55 @@ class ModelCriteria extends Criteria
 		$stmt->closeCursor();
 		
 		return $count;
+	}
+	
+	protected function getCountStatement($con = null)
+	{
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+		$db = Propel::getDB($this->getDbName());
+	  if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		
+		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
+		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+			$this->addSelfSelectColumns();
+		}
+
+		$needsComplexCount = $this->getGroupByColumns()
+			|| $this->getOffset()
+			|| $this->getLimit() 
+			|| $this->getHaving() 
+			|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+		
+		$con->beginTransaction();
+		try {
+			$this->basePreSelect($con);
+			$params = array();
+			if ($needsComplexCount) {
+				if (self::needsSelectAliases($criteria)) {
+					if ($this->getHaving()) {
+						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+					}
+					BasePeer::turnSelectColumnsToAliases($this);
+				}
+				$selectSql = BasePeer::createSelectSql($this, $params);
+				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+			} else {
+				// Replace SELECT columns with COUNT(*)
+				$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+				$sql = BasePeer::createSelectSql($this, $params);
+			}
+			$stmt = $con->prepare($sql);
+			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$stmt->execute();
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollback();
+			throw $e;
+		}
+		
+		return $stmt;
 	}
 	
 	/**
