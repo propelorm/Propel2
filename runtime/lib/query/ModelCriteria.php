@@ -467,6 +467,18 @@ class ModelCriteria extends Criteria
 	}
 
 	/**
+	 * This method returns an already defined join clause from the query
+	 * 
+	 * @param      string $name    The name of the join clause
+	 * 
+	 * @return Join A join object 
+	 */
+	public function getJoin($name)
+	{
+		return $this->joins[$name];
+	}
+  	
+	/**
 	 * Adds a JOIN clause to the query
 	 * Infers the ON clause from a relation name
 	 * Uses the Propel table maps, based on the schema, to guess the related columns

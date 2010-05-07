@@ -752,6 +752,15 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT bookstore_employee.ID, bookstore_employee.CLASS_KEY, bookstore_employee.NAME, bookstore_employee.JOB_TITLE, bookstore_employee.SUPERVISOR_ID FROM `bookstore_employee` INNER JOIN bookstore_employee sup ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN bookstore_employee sub ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = 'Foo'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
 	}
+
+	public function testGetJoin()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author');
+		
+		$joins = $c->getJoins();
+		$this->assertEquals($joins['Author'], $c->getJoin('Author'), "getJoin() returns a specific Join from the ModelCriteria");
+	}
 	
 	public function testWith()
 	{
