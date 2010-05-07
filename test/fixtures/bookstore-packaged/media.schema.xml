@@ -5,13 +5,7 @@
 
   <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
   <table name="media">
-   <column
-      name="id"
-      required="true"
-      primaryKey="true"
-	  autoIncrement="true"
-      type="INTEGER"
-      description="Media Id"/>
+   <behavior name="auto_add_pk" />
     <column
       name="cover_image"
       type="BLOB"

@@ -4,13 +4,7 @@
 <database package="util.log" name="bookstore-log" defaultIdMethod="native">
 
   <table name="log" phpName="BookstoreLog" description="Used to test multiple databases support">
-    <column
-      name="id"
-      required="true"
-      primaryKey="true"
-	  autoIncrement="true"
-      type="INTEGER"
-      description="Id"/>
+    <behavior name="auto_add_pk" />
 	<column
       name="time"
       required="true"

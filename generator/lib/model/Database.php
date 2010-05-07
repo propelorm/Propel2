@@ -469,7 +469,17 @@ class Database extends XMLElement
     }
 
 		$tables = $this->getTables();
-
+		
+		// execute early table behaviors
+		foreach ($tables as $table) {
+			foreach ($table->getEarlyBehaviors() as $behavior) {
+				if (!$behavior->isTableModified()) {
+					$behavior->getTableModifier()->modifyTable();
+					$behavior->setTableModified(true);
+				}
+			}
+		}
+			
 		for ($i=0,$size=count($tables); $i < $size; $i++) {
 			$currTable = $tables[$i];
 

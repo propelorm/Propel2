@@ -4,13 +4,7 @@
 <database package="core.author" name="bookstore" defaultIdMethod="native">
 
   <table name="author" description="Author Table">
-    <column
-      name="id"
-      required="true"
-      primaryKey="true"
-	  autoIncrement="true"
-      type="INTEGER"
-      description="Author Id"/>
+		<behavior name="auto_add_pk" />
     <column
       name="first_name"
       required="true"

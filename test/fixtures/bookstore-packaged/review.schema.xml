@@ -4,13 +4,7 @@
 <database package="core.review" name="bookstore" defaultIdMethod="native">
 
   <table name="review" description="Book Review">
-    <column
-      name="id"
-      required="true"
-      primaryKey="true"
-	  autoIncrement="true"
-      type="INTEGER"
-      description="Author Id"/>
+    <behavior name="auto_add_pk" />
     <column
       name="reviewed_by"
       required="true"

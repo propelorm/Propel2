@@ -809,6 +809,21 @@ class Table extends XMLElement implements IDMethod
 	{
 		return $this->behaviors;
 	}
+	
+	/**
+	 * Get the early table behaviors
+	 * @return    Array of Behavior objects
+	 */
+	public function getEarlyBehaviors()
+	{
+		$behaviors = array();
+		foreach ($this->behaviors as $name => $behavior) {
+			if ($behavior->isEarly()) {
+				$behaviors[$name] = $behavior;
+			}
+		}
+		return $behaviors;
+	}
 
 	/**
 	 * check if the table has a behavior by name
