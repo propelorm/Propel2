@@ -708,8 +708,8 @@ class Criteria implements IteratorAggregate
 	 *
 	 * <code>
 	 * $crit = new Criteria();
-	 * $crit->addCond($column1, $value1, Criteria::GREATER_THAN, 'cond1');
-	 * $crit->addCond($column2, $value2, Criteria::EQUAL, 'cond2');
+	 * $crit->addCond('cond1', $column1, $value1, Criteria::GREATER_THAN);
+	 * $crit->addCond('cond2', $column2, $value2, Criteria::EQUAL);
 	 * $crit->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 	 * </code>
 	 *
@@ -718,10 +718,10 @@ class Criteria implements IteratorAggregate
 	 * The name of the table must be used implicitly in the column name,
 	 * so the Column name must be something like 'TABLE.id'.
 	 *
-	 * @param      string $critOrColumn The column to run the comparison on, or Criterion object.
+	 * @param      string $name name to combine the criterion later
+	 * @param      string $p1 The column to run the comparison on, or Criterion object.
 	 * @param      mixed $value
 	 * @param      string $comparison A String.
-	 * @param      string $name name to combine the criterion later
 	 *
 	 * @return     A modified Criteria object.
 	 */
