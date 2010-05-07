@@ -84,8 +84,7 @@ class Join
 	 *                         (may contain an alias name)
 	 * @param string $right    The right column of the join condition
 	 *                         (may contain an alias name)
-	 * @param string $joinType The type of the join. Valid join types are null (implicit join),
-	 *                         Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
+	 * @param string $operator The comparison operator of the join condition, default Join::EQUAL 
 	 */
 	public function addCondition($left, $right, $operator = self::EQUAL)
 	{
