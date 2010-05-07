@@ -1152,7 +1152,7 @@ class ModelCriteria extends Criteria
 			$this->basePreSelect($con);
 			$params = array();
 			if ($needsComplexCount) {
-				if (BasePeer::needsSelectAliases($criteria)) {
+				if (BasePeer::needsSelectAliases($this)) {
 					if ($this->getHaving()) {
 						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
 					}
