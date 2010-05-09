@@ -2,7 +2,7 @@
 <!DOCTYPE database SYSTEM "../dtd/database.dtd">
 
 <database package="core.book" name="bookstore" defaultIdMethod="native">
-
+  <external-schema filename="external/author.schema.xml" />
   <table name="book" description="Book Table">
     <behavior name="auto_add_pk" />
     <column

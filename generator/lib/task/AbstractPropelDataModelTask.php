@@ -415,12 +415,12 @@ abstract class AbstractPropelDataModelTask extends Task
 				$dom = new DomDocument('1.0', 'UTF-8');
 				$dom->load($xmlFile->getAbsolutePath());
 				
-				// modify schema to include any external schema's (and remove the external-schema nodes)
-				$this->includeExternalSchemas($dom, $srcDir);
-				
 				// normalize (or transform) the XML document using XSLT
 				if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xslFile) {
 					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), Project::MSG_VERBOSE);
+					// modify schema to include any external schema's (and remove the external-schema nodes)
+					$this->includeExternalSchemas($dom, $srcDir);
+					
 					if (!class_exists('XSLTProcessor')) {
 						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", Project::MSG_ERR);
 					} else {
@@ -449,7 +449,7 @@ abstract class AbstractPropelDataModelTask extends Task
 						throw new EngineException("XML schema file (".$xmlFile->getPath().") does not validate. See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).", $this->getLocation());
 					}
 				}
-
+				
 				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
 				$ad = $xmlParser->parseFile($xmlFile->getAbsolutePath());
 				$ad->setName($dmFilename); // <-- Important: use the original name, not the -transformed name.
@@ -497,6 +497,7 @@ abstract class AbstractPropelDataModelTask extends Task
 		$fs = FileSystem::getFileSystem();
 		while ($externalSchema = $externalSchemaNodes->item(0)) {
 			$include = $externalSchema->getAttribute("filename");
+			$this->log("Processing external schema: ".$include);
 			$externalSchema->parentNode->removeChild($externalSchema);
 			if ($fs->prefixLength($include) != 0) {
 				$externalSchemaFile = new PhingFile($include);
@@ -505,6 +506,7 @@ abstract class AbstractPropelDataModelTask extends Task
 			}
 			$externalSchemaDom = new DomDocument('1.0', 'UTF-8');
 			$externalSchemaDom->load($externalSchemaFile->getAbsolutePath());
+			// The external schema may have external schemas of its own ; recurse
 			$this->includeExternalSchemas($externalSchemaDom, $srcDir);
 			foreach ($externalSchemaDom->getElementsByTagName("table") as $tableNode) { // see xsd, datatase may only have table or external-schema, the latter was just deleted so this should cover everything
 				$databaseNode->appendChild($dom->importNode($tableNode, true));
