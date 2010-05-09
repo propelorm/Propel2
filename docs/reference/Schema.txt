@@ -187,10 +187,15 @@ To link a column to another table use the following syntax:
      [refPhpName = "/Name for this object in methods generated in the foreign class/"]
      [onDelete = "cascade|setnull|restrict|none"]
      [onUpdate = "cascade|setnull|restrict|none"]
+     [defaultJoin= "Criteria::INNER_JOIN|Criteria::LEFT_JOIN"]
   >
     <reference local="/LocalColumnName/" foreign="/ForeignColumnName/" />
   </foreign-key>
 }}}
+
+==== Description of Attributes ====
+
+ * {{{defaultJoin}}} This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
 
 === <index> element ===
 

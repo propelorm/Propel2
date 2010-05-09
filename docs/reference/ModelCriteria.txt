@@ -506,6 +506,18 @@ $author = BookQuery::create()
   ->join('Book.Review')
   ->where('Review.Recommended = ?', true)
   ->findOne();
+
+// Alternatively, you can use the generated joinXXX() methods
+// Which are a bit faster than join(), but limited to the current model's relationships
+$book = BookQuery::create()
+  ->joinAuthor()
+  ->where('Author.Name = ?', 'Jane Austen')
+  ->findOne();
+// The join type depends on the required attribute of the foreign key column
+// If the column is required, then the default join type is an INNER JOIN
+// Otherwise, the default join type is a LEFT JOIN
+// You can override the default join type for a given relationship
+// By setting the joinType attribute of the foreign key element in the schema.xml
 }}}
 
 === Table Aliases ===
