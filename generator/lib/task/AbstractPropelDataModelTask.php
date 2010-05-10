@@ -415,30 +415,21 @@ abstract class AbstractPropelDataModelTask extends Task
 				$dom = new DomDocument('1.0', 'UTF-8');
 				$dom->load($xmlFile->getAbsolutePath());
 				
+				// modify schema to include any external schemas (and remove the external-schema nodes)
+				$this->includeExternalSchemas($dom, $srcDir);
+					
 				// normalize (or transform) the XML document using XSLT
 				if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xslFile) {
 					$this->log("Transforming " . $xmlFile->getPath() . " using stylesheet " . $this->xslFile->getPath(), Project::MSG_VERBOSE);
-					// modify schema to include any external schema's (and remove the external-schema nodes)
-					$this->includeExternalSchemas($dom, $srcDir);
-					
 					if (!class_exists('XSLTProcessor')) {
-						$this->log("Could not perform XLST transformation.  Make sure PHP has been compiled/configured to support XSLT.", Project::MSG_ERR);
+						$this->log("Could not perform XLST transformation. Make sure PHP has been compiled/configured to support XSLT.", Project::MSG_ERR);
 					} else {
 						// normalize the document using normalizer stylesheet
 						$xslDom = new DomDocument('1.0', 'UTF-8');
 						$xslDom->load($this->xslFile->getAbsolutePath());
 						$xsl = new XsltProcessor();
 						$xsl->importStyleSheet($xslDom);
-						$transformed = $xsl->transformToDoc($dom);
-						$newXmlFilename = substr($xmlFile->getName(), 0, strrpos($xmlFile->getName(), '.')) . '-transformed.xml';
-
-						// now overwrite previous vars to point to newly transformed file
-						$xmlFile = new PhingFile($srcDir, $newXmlFilename);
-						$transformed->save($xmlFile->getAbsolutePath());
-						$this->log("\t- Using new (post-transformation) XML file: " . $xmlFile->getPath(), Project::MSG_VERBOSE);
-
-						$dom = new DomDocument('1.0', 'UTF-8');
-						$dom->load($xmlFile->getAbsolutePath());
+						$dom = $xsl->transformToDoc($dom);
 					}
 				}
 
@@ -451,7 +442,7 @@ abstract class AbstractPropelDataModelTask extends Task
 				}
 				
 				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
-				$ad = $xmlParser->parseFile($xmlFile->getAbsolutePath());
+				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
 				$ad->setName($dmFilename); // <-- Important: use the original name, not the -transformed name.
 				$ads[] = $ad;
 			}

@@ -12,7 +12,8 @@ require_once 'model/AppData.php';
 
 // Phing dependencies
 require_once 'phing/parser/AbstractHandler.php';
-include_once 'phing/system/io/FileReader.php';
+
+require_once 'builder/util/PropelStringReader.php';
 
 /**
  * A class that is used to parse an input xml schema file and creates an AppData
@@ -88,8 +89,25 @@ class XmlToAppData extends AbstractHandler
 			return;
 		}
 
-		$domDocument = new DomDocument('1.0', 'UTF-8');
-		$domDocument->load($xmlFile);
+		$f = new PhingFile($xmlFile);
+		
+		return $this->parseString($f->contents(), $xmlFile);		
+	}
+
+	/**
+	 * Parses a XML input string and returns a newly created and
+	 * populated AppData structure.
+	 *
+	 * @param      string $xmlString The input string to parse.
+	 * @param      string $xmlFile The input file name.
+	 * @return     AppData populated by <code>xmlFile</code>.
+	 */
+	public function parseString($xmlString, $xmlFile)
+	{
+		// we don't want infinite recursion
+		if ($this->isAlreadyParsed($xmlFile)) {
+			return;
+		}
 
 		// store current schema file path
 		$this->schemasTagsStack[$xmlFile] = array();
@@ -97,13 +115,13 @@ class XmlToAppData extends AbstractHandler
 		$this->currentXmlFile = $xmlFile;
 
 		try {
-			$fr = new FileReader($xmlFile);
+			$sr = new PropelStringReader($xmlString);
 		} catch (Exception $e) {
 			$f = new PhingFile($xmlFile);
 			throw new Exception("XML File not found: " . $f->getAbsolutePath());
 		}
 
-		$br = new BufferedReader($fr);
+		$br = new BufferedReader($sr);
 
 		$this->parser = new ExpatParser($br);
 		$this->parser->parserSetOption(XML_OPTION_CASE_FOLDING, 0);
@@ -121,7 +139,7 @@ class XmlToAppData extends AbstractHandler
 
 		return $this->app;
 	}
-
+	
 	/**
 	 * Handles opening elements of the xml file.
 	 *
