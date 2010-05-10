@@ -28,6 +28,11 @@
 class Propel
 {
 	/**
+	 * The Propel version.
+	 */
+	const VERSION = '1.5.1-dev';
+	
+	/**
 	 * A constant for <code>default</code>.
 	 */
 	const DEFAULT_NAME = "default";
@@ -71,11 +76,6 @@ class Propel
 	 * A constant defining 'Debug-level messages' logging level
 	 */
 	const LOG_DEBUG = 7;
-
-	/**
-	 * The Propel version.
-	 */
-	const VERSION = '1.5.1-dev';
 
 	/**
 	 * The class name for a PDO object.
@@ -186,6 +186,7 @@ class Propel
 
 		'PropelException'     => 'exception/PropelException.php',
 		
+		'ModelWith'           => 'formatter/ModelWith.php',
 		'PropelArrayFormatter' => 'formatter/PropelArrayFormatter.php',
 		'PropelFormatter'     => 'formatter/PropelFormatter.php',
 		'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
@@ -215,7 +216,6 @@ class Propel
 		'ModelCriteria'       => 'query/ModelCriteria.php',
 		'ModelCriterion'      => 'query/ModelCriterion.php',
 		'ModelJoin'           => 'query/ModelJoin.php',
-		'ModelWith'           => 'query/ModelWith.php',
 		'PropelQuery'         => 'query/PropelQuery.php',
 
 		'BasePeer'            => 'util/BasePeer.php',
