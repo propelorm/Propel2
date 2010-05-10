@@ -1,0 +1,53 @@
+= Changelog Of The Propel 1.5 Branch =
+
+== 2010-05-10: Version 1.5.1 ==
+
+ * [1759] Moved ModelWith runtime class to formatter directory
+ * [1758] Fixed warning with new StringReader
+ * [1757] Reduced console logging when building an up-to-date schema
+ * [1756] Parsing schemas as strings instead of files (closes #967)
+ * [1755] Reverting r1548 to allow inclusion of external schemas (refs #967)
+ * [1754] Documented custom defaultJoin type (refs #870) (closes #936)
+ * [1749] fix Criteria::addCond() example and php-doc (closes #964)
+ * [1748] fix Join::addCondition() php-doc (closes #963)
+ * [1747] Add getJoin() method to ModelCriteria (closes #961)
+ * [1745] Fixed auto_add_pk behavior when using separate schemas (closes #956)
+ * [1743] Refactored ModelCriteria::count() to allow query cache on counts
+ * [1742] Fixed propel-gen executable on windows (closes #942)
+ * [1741] disabled query cloning by default, you can enable it on a per query basis using keepQuery() (refs #953)
+ * [1740] Fixed shallow Criteria cloning (refs #953)
+ * [1739] Fixed overriding primary key in a new object (closes #960)
+ * [1738] Fixed generated joinXXX() methods used in secondary Criteria (closes #958)
+ * [1737] Fixed array hydration (refs #954, #959)
+ * [1736] Added unit test to demonstrate Array Hydration regression (refs #959)
+ * [1735] Fixed typo in MySQL DDL builder (closes #957)
+ * [1734] fixed doc typos (patch from Frosty) (closes #955)
+ * [1733] Refactored hydration schema
+    * removed circular dependency between Criteria and Formatter (refs #891)
+    * formatters now copy the necessary hydration data from the ModelCriteria
+    * Should improve memory handling in large resultsets
+    * removed PropelFormatter::setCriteria() and checkCriteria (refs #892)
+ * [1732] refactored on demand hydration (refs #954), removed ModelJoin storage in ModelWith
+ * [1731] Refactored Joined Array hydration (refs #954)
+ * [1730] Changed Propel::enableInstancePooling() return value
+ * [1729] Added a exception to explicit the limits of one-to-many joined hydration
+ * [1728] Refactored joined object hydration
+    * Now deals correctly with any join chain (refs #954)
+    * Faster for large resultsets and long join chains
+ * [1727] refactored BasePeer::doDelete() to handle table aliases and perform better (closes #949)
+ * [1726] Small Criteria optimization
+ * [1725] Fixed ModelCriteria::delete() fails when using true table alias (closes #949)
+ * [1724] Allowed Merging of Criteria objects to combien conditions with an OR (closes #951)
+ * [1723] Added the ability to reindex a collection (closes #851)
+ * [1722] Gave a public way to remove an alias (useful when merging Criterias)
+ * [1721] Added ModelCriteria::postUpdate() and ModelCriteria::postDelete() hooks (closes #945)
+ * [1720] Fixed issue with instance pooling and composite fkeys in peer classes (closes #924)
+ * [1719] Fixed E_STRICT warning in concrete table inheritance (closes #910)
+ * [1718] Added unit tests for PropelObjectCollection::toKeyValue(), and made it just a little smarter (closes #943)
+ * [1717] Fixed typo in Relationships doc closes #941)
+ * [1716] Fixed reverse task and validators (closes #928)
+ * [1715] Fixed phpDoc for Criteria::getCriterion() (closes #929)
+ * [1714] Fixed regression in orderBy() used in conjunction with ignoreCase (closes #946)
+ * [1712] Fixed concrete table inheritance with more than one level (closes #922)
+ * [1711] Fixed filterByXXX() when passed an explicit Criteria::EQUAL (closes #944)
+ * [1710] Fixed references to 1.4 pages in documentaton (closes #937)
