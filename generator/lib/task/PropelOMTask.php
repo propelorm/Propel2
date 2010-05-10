@@ -67,22 +67,32 @@ class PropelOMTask extends AbstractPropelDataModelTask
 	 */
 	protected function build(OMBuilder $builder, $overwrite = true)
 	{
-
 		$path = $builder->getClassFilePath();
 		$this->ensureDirExists(dirname($path));
 
 		$_f = new PhingFile($this->getOutputDirectory(), $path);
-		if ($overwrite || !$_f->exists()) {
-			$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
-			$script = $builder->build();
-			file_put_contents($_f->getAbsolutePath(), $script);
-			foreach ($builder->getWarnings() as $warning) {
-				$this->log($warning, Project::MSG_WARN);
-			}
-		} else {
-			$this->log("\t\t-> (exists) " . $builder->getClassname());
+		
+		// skip files already created once
+		if ($_f->exists() && !$overwrite) {
+			$this->log("\t\t-> (exists) " . $builder->getClassname(), Project::MSG_VERBOSE);
+			return 0;
 		}
-
+		
+		$script = $builder->build();
+		foreach ($builder->getWarnings() as $warning) {
+			$this->log($warning, Project::MSG_WARN);
+		}
+		
+		// skip unchanged files
+		if ($_f->exists() && $script == $_f->contents()) {
+			$this->log("\t\t-> (unchanged) " . $builder->getClassname(), Project::MSG_VERBOSE);
+			return 0;
+		}
+		
+		// write / overwrite new / changed files
+		$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
+		file_put_contents($_f->getAbsolutePath(), $script);
+		return 1;
 	}
 
 	/**
@@ -94,7 +104,8 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		$this->validate();
 
 		$generatorConfig = $this->getGeneratorConfig();
-
+		$totalNbFiles = 0;
+		
 		foreach ($this->getDataModels() as $dataModel) {
 			$this->log("Processing Datamodel : " . $dataModel->getName());
 
@@ -105,6 +116,8 @@ class PropelOMTask extends AbstractPropelDataModelTask
 				foreach ($database->getTables() as $table) {
 
 					if (!$table->isForReferenceOnly()) {
+						
+						$nbWrittenFiles = 0;
 
 						$this->log("\t+ " . $table->getName());
 
@@ -115,7 +128,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// these files are always created / overwrite any existing files
 						foreach (array('peer', 'object', 'tablemap', 'query') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-							$this->build($builder);
+							$nbWrittenFiles += $this->build($builder);
 						}
 
 						// -----------------------------------------------------------------------------------------
@@ -125,7 +138,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// these classes are only generated if they don't already exist
 						foreach (array('peerstub', 'objectstub', 'querystub') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-							$this->build($builder, $overwrite=false);
+							$nbWrittenFiles += $this->build($builder, $overwrite=false);
 						}
 
 						// -----------------------------------------------------------------------------------------
@@ -143,12 +156,12 @@ class PropelOMTask extends AbstractPropelDataModelTask
 										}
 										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$builder->setChild($child);
-										$this->build($builder, $overwrite=true);
+										$nbWrittenFiles += $this->build($builder, $overwrite=true);
 									}
 									foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
 										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$builder->setChild($child);
-										$this->build($builder, $overwrite=false);
+										$nbWrittenFiles += $this->build($builder, $overwrite=false);
 									}
 								} // foreach
 							} // if col->is enumerated
@@ -162,7 +175,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// Create [empty] interface if it does not already exist
 						if ($table->getInterface()) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-							$this->build($builder, $overwrite=false);
+							$nbWrittenFiles += $this->build($builder, $overwrite=false);
 						}
 
 						// -----------------------------------------------------------------------------------------
@@ -174,19 +187,19 @@ class PropelOMTask extends AbstractPropelDataModelTask
 								case 'NestedSet':
 									foreach (array('nestedsetpeer', 'nestedset') as $target) {
 										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-										$this->build($builder);
+										$nbWrittenFiles += $this->build($builder);
 									}
 								break;
 
 								case 'MaterializedPath':
 									foreach (array('nodepeer', 'node') as $target) {
 										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-										$this->build($builder);
+										$nbWrittenFiles += $this->build($builder);
 									}
 
 									foreach (array('nodepeerstub', 'nodestub') as $target) {
 										$builder = $generatorConfig->getConfiguredBuilder($table, $target);
-										$this->build($builder, $overwrite=false);
+										$nbWrittenFiles += $this->build($builder, $overwrite=false);
 									}
 								break;
 
@@ -198,7 +211,10 @@ class PropelOMTask extends AbstractPropelDataModelTask
 
 						} // if Table->treeMode()
 
-
+						$totalNbFiles += $nbWrittenFiles;
+						if ($nbWrittenFiles == 0) {
+							$this->log("\t\t(no change)");
+						}
 					} // if !$table->isForReferenceOnly()
 
 				} // foreach table
@@ -206,6 +222,10 @@ class PropelOMTask extends AbstractPropelDataModelTask
 			} // foreach database
 
 		} // foreach dataModel
-
+		if ($totalNbFiles) {
+			$this->log(sprintf("Object model generation complete - %d files written", $totalNbFiles));
+		} else {
+			$this->log("Object model generation complete - All files already up to date");
+		}
 	} // main()
 }
