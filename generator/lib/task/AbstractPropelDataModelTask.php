@@ -414,13 +414,9 @@ abstract class AbstractPropelDataModelTask extends Task
 
 				$dom = new DomDocument('1.0', 'UTF-8');
 				$dom->load($xmlFile->getAbsolutePath());
-				$isDomModified = false;
 				
 				// modify schema to include any external schemas (and remove the external-schema nodes)
-				$nbIncludedSchemas = $this->includeExternalSchemas($dom, $srcDir);
-				if ($nbIncludedSchemas) {
-					$isDomModified = true;
-				}
+				$this->includeExternalSchemas($dom, $srcDir);
 					
 				// normalize (or transform) the XML document using XSLT
 				if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xslFile) {
@@ -434,7 +430,6 @@ abstract class AbstractPropelDataModelTask extends Task
 						$xsl = new XsltProcessor();
 						$xsl->importStyleSheet($xslDom);
 						$dom = $xsl->transformToDoc($dom);
-						$isDomModified = true;
 					}
 				}
 
@@ -447,14 +442,7 @@ abstract class AbstractPropelDataModelTask extends Task
 				}
 				
 				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
-				if ($isDomModified) {
-					// we use the modified DOM
-					// warning: limited to 64kb schemas
-					$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
-				}	else {
-					// we can use the base file, with no limitation in size
-					$ad = $xmlParser->parseFile($xmlFile->getAbsolutePath());
-				}
+				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
 		
 				$ad->setName($dmFilename);
 				$ads[] = $ad;

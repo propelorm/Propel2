@@ -88,39 +88,10 @@ class XmlToAppData extends AbstractHandler
 		if ($this->isAlreadyParsed($xmlFile)) {
 			return;
 		}
+
+		$f = new PhingFile($xmlFile);
 		
-		$domDocument = new DomDocument('1.0', 'UTF-8');
-		$domDocument->load($xmlFile);
-		
-		// store current schema file path
-		$this->schemasTagsStack[$xmlFile] = array();
-		
-		$this->currentXmlFile = $xmlFile;
-		
-		try {
-			$fr = new FileReader($xmlFile);
-		} catch (Exception $e) {
-			$f = new PhingFile($xmlFile);
-			throw new Exception("XML File not found: " . $f->getAbsolutePath());
-		}
-		
-		$br = new BufferedReader($fr);
-		
-		$this->parser = new ExpatParser($br);
-		$this->parser->parserSetOption(XML_OPTION_CASE_FOLDING, 0);
-		$this->parser->setHandler($this);
-		
-		try {
-			$this->parser->parse();
-		} catch (Exception $e) {
-			$br->close();
-			throw $e;
-		}
-		$br->close();
-		
-		array_pop($this->schemasTagsStack);
-		
-		return $this->app;
+		return $this->parseString($f->contents(), $xmlFile);		
 	}
 
 	/**
