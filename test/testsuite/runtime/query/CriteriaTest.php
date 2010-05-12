@@ -960,4 +960,15 @@ class CriteriaTest extends BaseTestCase
 		}
 		$this->assertEquals(1, $nbCrit, 'cloning a Criteria clones its Criterions');
 	}
+	
+	public function testComment()
+	{
+		$c = new Criteria();
+		$this->assertNull($c->getComment(), 'Comment is null by default');
+		$c2 = $c->setComment('foo');
+		$this->assertEquals('foo', $c->getComment(), 'Comment is set by setComment()');
+		$this->assertEquals($c, $c2, 'setComment() returns the current Criteria');
+		$c->setComment();
+		$this->assertNull($c->getComment(), 'Comment is reset by setComment(null)');
+	}
 }

@@ -200,6 +200,12 @@ class Criteria implements IteratorAggregate
 	/** To start the results at a row other than the first one. */
 	protected $offset = 0;
 
+  /**
+   * Comment to add to the SQL query
+	 * @var        string
+   */
+  protected $queryComment;
+  
 	// flag to note that the criteria involves a blob.
 	protected $blobFlag = null;
 
@@ -1032,6 +1038,29 @@ class Criteria implements IteratorAggregate
 	{
 		$this->selectColumns[] = $name;
 		return $this;
+	}
+	
+	/**
+	 * Set the query comment, that appears after the first verb in the SQL query
+	 *
+	 * @param      string $comment The comment to add to the query, without comment sign
+	 * @return     Criteria Modified Criteria object (for fluent API)
+	 */
+	public function setComment($comment = null)
+	{
+		$this->queryComment = $comment;
+		
+		return $this;
+	}
+	
+	/**
+	 * Get the query comment, that appears after the first verb in the SQL query
+	 *
+	 * @return      string The comment to add to the query, without comment sign
+	 */
+	public function getComment()
+	{
+		return $this->queryComment;
 	}
 	
 	/**

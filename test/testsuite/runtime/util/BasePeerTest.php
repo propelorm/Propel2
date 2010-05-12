@@ -376,4 +376,38 @@ class BasePeerTest extends BookstoreTestBase
 		$this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 	}
 	
+	public function testCommentDoSelect()
+	{
+		$c = new Criteria();
+		$c->setComment('Foo');
+		$c->addSelectColumn(BookPeer::ID);
+		$expected = 'SELECT /* Foo */ book.ID FROM `book`';
+		$params = array();
+		$this->assertEquals($expected, BasePeer::createSelectSQL($c, $params), 'Criteria::setComment() adds a comment to select queries');
+	}
+	
+	public function testCommentDoUpdate()
+	{
+		$c1 = new Criteria();
+		$c1->setPrimaryTableName(BookPeer::TABLE_NAME);
+		$c1->setComment('Foo');
+		$c2 = new Criteria();
+		$c2->add(BookPeer::TITLE, 'Updated Title');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BasePeer::doUpdate($c1, $c2, $con);
+		$expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
+		$this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
+	}
+	
+	public function testCommentDoDelete()
+	{
+		$c = new Criteria();
+		$c->setComment('Foo');
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BasePeer::doDelete($c, $con);
+		$expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
+		$this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
+	}
+	
 }

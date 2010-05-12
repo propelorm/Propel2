@@ -126,17 +126,20 @@ class BasePeer
 			$params = array();
 			$stmt = null;
 			try {
-				
+				$sql = 'DELETE ';
+				if ($queryComment = $criteria->getComment()) {
+					$sql .= '/* ' . $queryComment . ' */ ';
+				}
 				if ($realTableName = $criteria->getTableForAlias($tableName)) {
 					if ($db->useQuoteIdentifier()) {
 						$realTableName = $db->quoteIdentifierTable($realTableName);
 					}
-					$sql = 'DELETE ' . $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
+					$sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
 				} else {
 					if ($db->useQuoteIdentifier()) {
 						$tableName = $db->quoteIdentifierTable($tableName);
 					}
-					$sql = 'DELETE FROM ' . $tableName;
+					$sql .= 'FROM ' . $tableName;
 				}
 
 				foreach ($columns as $colName) {
@@ -350,6 +353,10 @@ class BasePeer
 			$params = array();
 			$stmt = null;
 			try {
+				$sql = 'UPDATE ';
+				if ($queryComment = $selectCriteria->getComment()) {
+					$sql .= '/* ' . $queryComment . ' */ ';
+				}
 				// is it a table alias?
 				if ($tableName2 = $selectCriteria->getTableForAlias($tableName)) {
 					$udpateTable = $tableName2 . ' ' . $tableName;
@@ -358,10 +365,11 @@ class BasePeer
 					$udpateTable = $tableName;
 				}
 				if ($db->useQuoteIdentifier()) {
-					$sql = "UPDATE " . $db->quoteIdentifierTable($udpateTable) . " SET "; 
+					$sql .= $db->quoteIdentifierTable($udpateTable); 
 				} else { 
-					$sql = "UPDATE " . $udpateTable . " SET ";
+					$sql .= $udpateTable;
 				}
+				$sql .= " SET ";
 				$p = 1;
 				foreach ($updateTablesColumns[$tableName] as $col) {
 					$updateColumnName = substr($col, strrpos($col, '.') + 1);
@@ -1036,9 +1044,11 @@ class BasePeer
 		}
 
 		$selectModifiers = $criteria->getSelectModifiers();
+		$queryComment = $criteria->getComment();
 		
 		// Build the SQL from the arrays we compiled
 		$sql =  "SELECT " 
+		. ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
 		. ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
 		. implode(", ", $selectClause);
 

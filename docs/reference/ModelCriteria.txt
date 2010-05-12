@@ -553,7 +553,7 @@ $employee = EmployeeQuery::create('e')
 
 === Minimizing Queries ===
 
-Even if you do a oin, Propel will issue new queries when you fetch related objects:
+Even if you do a join, Propel will issue new queries when you fetch related objects:
 
 {{{
 #!php
@@ -643,6 +643,21 @@ foreach ($authors as $author) {
 With a single SQL query, you can have both a list of objects and an additional column for each object. That makes of `withColumn()` a great query saver.
 
 '''Tip''': You can call `withColumn()` multiple times to add more than one virtual column to the resulting objects.
+
+=== Adding A Comment ===
+
+{{{
+#!php
+<?php
+// You can add a comment to the query object
+// For easier SQL log parsing
+AuthorQuery::create()
+  ->setComment('Author Deletion')
+  ->filterByName('Leo Tolstoy')
+  ->delete($con);
+// The comment ends up in the generated SQL query
+// DELETE /* Author Deletion */ FROM `author` WHERE author.NAME = 'Leo Tolstoy'
+}}}
 
 === Using Methods From Another Query Class ===
 
@@ -753,6 +768,7 @@ join($class, $joinType = 'inner join')
 with($relation, $joinType = 'inner join')
 withColumn($clause, $alias)
 prune($object)
+comment($comment)
 
 // termination methods (return model objects)
 count($con = null)
