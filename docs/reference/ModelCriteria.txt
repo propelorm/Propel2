@@ -19,7 +19,7 @@ $books = BookQuery::create()
 
 The first thing to notice here is the fluid interface. Propel queries are made of method calls that return the current query object - `filterByPublishedAt()` and `orderByTitle()` return the current query augmented with conditions. `find()`, on the other hand, is a ''termination method'' that doesn't return the query, but its result - in this case, a collection of `Book` objects.
 
-Propel generates one `filterByXXX()` method for every column in the table. The column name used in the PHP method is not the actual column name in the database ('`published_at`'), but rather a CamelCase version of it ('`PublishedAt`'), called the column ''phpName''. Remember tp always use the phpName in the PHP code ; the actual SQL name only appears in the SQL code.
+Propel generates one `filterByXXX()` method for every column in the table. The column name used in the PHP method is not the actual column name in the database ('`published_at`'), but rather a CamelCase version of it ('`PublishedAt`'), called the column ''phpName''. Remember to always use the phpName in the PHP code ; the actual SQL name only appears in the SQL code.
 
 When a termination method like `find()` is called, Propel builds the SQL code and executes it. The previous example generates the following code when `find()` is called:
 
@@ -362,7 +362,7 @@ $books = BookQuery::create()
 
 }}}
 
-The names passd as parameters in these methods, like 'Book.Author', 'Author.Name', and 'Book.Title', are ''explicit column names''. These names are composed of the phpName of the model, and the phpName of the column, separated by a dot (e.g. 'Author.Name'). Manipulating object model names allows you to be detached from the actual data storage, and alter the database names without necessarily updating the PHP code. It also makes the use of table aliases much easier - more on that matter later.
+The names passed as parameters in these methods, like 'Book.Author', 'Author.Name', and 'Book.Title', are ''explicit column names''. These names are composed of the phpName of the model, and the phpName of the column, separated by a dot (e.g. 'Author.Name'). Manipulating object model names allows you to be detached from the actual data storage, and alter the database names without necessarily updating the PHP code. It also makes the use of table aliases much easier - more on that matter later.
 
 Propel knows how to map the explicit column names to database column names in order to translate the Propel query into an actual database query:
 
