@@ -32,8 +32,8 @@ In order to install the Propel packages, you must add the `pear.propelorm.org` c
 {{{
 #!sh
 > pear channel-discover pear.propelorm.org
-> pear install -a propelorm/propel_generator
-> pear install -a propelorm/propel_runtime
+> pear install -a propel/propel_generator
+> pear install -a propel/propel_runtime
 }}}
 
 Propel is now installed, and you can test it by following the instructions of the '''Testing Propel Installation''' section at the end of this page.
