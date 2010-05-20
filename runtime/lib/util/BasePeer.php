@@ -155,7 +155,7 @@ class BasePeer
 				$affectedRows = $stmt->rowCount();
 			} catch (Exception $e) {
 				Propel::log($e->getMessage(), Propel::LOG_ERR);
-				throw new PropelException("Unable to execute DELETE statement.",$e);
+				throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), $e);
 			}
 
 		} // for each table
@@ -196,7 +196,7 @@ class BasePeer
 			return $stmt->rowCount();
 		} catch (Exception $e) {
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
-			throw new PropelException("Unable to perform DELETE ALL operation.", $e);
+			throw new PropelException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), $e);
 		}
 	}
 
@@ -295,7 +295,7 @@ class BasePeer
 
 		} catch (Exception $e) {
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
-			throw new PropelException("Unable to execute INSERT statement.", $e);
+			throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
 		}
 
 		// If the primary key column is auto-incremented, get the id now.
@@ -434,7 +434,7 @@ class BasePeer
 			} catch (Exception $e) {
 				if ($stmt) $stmt = null; // close
 				Propel::log($e->getMessage(), Propel::LOG_ERR);
-				throw new PropelException("Unable to execute UPDATE statement.", $e);
+				throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), $e);
 			}
 
 		} // foreach table in the criteria
@@ -488,7 +488,7 @@ class BasePeer
 				$con->rollBack();
 			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
-			throw new PropelException($e);
+			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
 		}
 
 		return $stmt;
@@ -560,7 +560,7 @@ class BasePeer
 				$con->rollBack();
 			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
-			throw new PropelException($e);
+			throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), $e);
 		}
 
 		return $stmt;
