@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-The schema for `schema.xml` contains a small number of elements with required and optional attributes. The Propel generator contains a [source:branches/1.5/generator/resources/dtd/database.dtd DTD] that can be used to validate your `schema.xml` document. Also, when you build your SQL and OM, the Propel generator will automatically validate your `schema.xml` file using a new, highly-detailed [source:branches/1.5/generator/resources/xsd/database.xsd XSD].
+The schema for `schema.xml` contains a small number of elements with required and optional attributes. The Propel generator contains a [source:branches/1.5/generator/resources/dtd/database.dtd DTD] that can be used to validate your `schema.xml` document. Also, when you build your SQL and OM, the Propel generator will automatically validate your `schema.xml` file using a highly-detailed [source:branches/1.5/generator/resources/xsd/database.xsd XSD].
 
 == At-a-Glance ==
 
@@ -28,6 +28,15 @@ The hierarchical tree relationship for the elements is:
      <id-method-parameter/>
    </table>
 </database>
+}}}
+
+**Tip**: If you use an IDE supporting autocompletion in XML documents, you can take advantage of the XSD describing the `schema.xml` syntax to suggest elements and attributes as you type. To enable it, add a `xmlns:xsi` and a `xsi:noNamespaceSchemaLocation` attribute to the leading `<database>` tag:
+	
+{{{
+#!xml
+<database name="my_connection_name" defaultIdMethod="native"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://svn.propelorm.org/branches/1.5/generator/resources/xsd/database.xsd" >
 }}}
 
 == Detailed Reference ==
