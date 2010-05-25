@@ -9,9 +9,8 @@
  */
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'query/Criteria.php';
-require_once 'util/PropelConditionalProxy.php';
-
+require_once dirname(__FILE__) . '/../../../../runtime/lib/query/Criteria.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelConditionalProxy.php';
 
 /**
  * Test class for Criteria fluid conditions.

@@ -9,9 +9,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'om/BaseObject.php';
-
-
+require_once dirname(__FILE__) . '/../../../../runtime/lib/om/BaseObject.php';
 
 /**
  * Test class for BaseObject.

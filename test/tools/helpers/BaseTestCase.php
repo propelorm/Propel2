@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'Propel.php';
+require_once dirname(__FILE__) . '/../../../runtime/lib/Propel.php';
 require_once 'PHPUnit/Framework/TestCase.php';
 
 /**

@@ -9,8 +9,8 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'map/ColumnMap.php';
-require_once 'map/TableMap.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
 
 class TestableTableMap extends TableMap
 {

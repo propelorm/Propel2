@@ -9,7 +9,7 @@
  */
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'query/Criteria.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/query/Criteria.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
 Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');

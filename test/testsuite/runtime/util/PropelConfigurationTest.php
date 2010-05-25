@@ -9,7 +9,7 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'config/PropelConfiguration.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/config/PropelConfiguration.php';
 
 /**
  * Test for PropelConfiguration class

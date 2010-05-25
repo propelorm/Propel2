@@ -153,10 +153,14 @@ class Propel
 	private static $forceMasterConnection = false;
 
 	/**
+	 * @var        string Base directory to use for autoloading. Initialized in self::initBaseDir()
+	 */
+  protected static $baseDir;
+  
+	/**
 	 * @var        array A map of class names and their file paths for autoloading
 	 */
-	private static $autoloadMap = array(
-		'PropelException'     => 'PropelException.php',
+	protected static $autoloadMap = array(
 
 		'DBAdapter'           => 'adapter/DBAdapter.php',
 		'DBMSSQL'             => 'adapter/DBMSSQL.php',
@@ -221,6 +225,7 @@ class Propel
 		'BasePeer'            => 'util/BasePeer.php',
 		'NodePeer'            => 'util/NodePeer.php',
 		'PeerInfo'            => 'util/PeerInfo.php',
+		'PropelAutoloader'    => 'util/PropelAutoloader.php',
 		'PropelColumnTypes'   => 'util/PropelColumnTypes.php',
 		'PropelConditionalProxy' => 'util/PropelConditionalProxy.php',
 		'PropelModelPager'    => 'util/PropelModelPager.php',
@@ -258,7 +263,8 @@ class Propel
 		self::$connectionMap = array();
 		
 		if (isset(self::$configuration['classmap']) && is_array(self::$configuration['classmap'])) {
-		  self::$autoloadMap = array_merge(self::$configuration['classmap'], self::$autoloadMap);
+		  PropelAutoloader::getInstance()->addClassPaths(self::$configuration['classmap']);
+		  PropelAutoloader::getInstance()->register();
 	  }
 		
 		self::$isInit = true;
@@ -797,10 +803,20 @@ class Propel
 	public static function autoload($className)
 	{
 		if (isset(self::$autoloadMap[$className])) {
-			require(self::$autoloadMap[$className]);
+			require self::$baseDir . self::$autoloadMap[$className];
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Initialize the base directory for the autoloader.
+	 * Avoids a call to dirname(__FILE__) each time self::autoload() is called.
+	 * FIXME put in the constructor if the Propel class ever becomes a singleton
+	 */
+	public static function initBaseDir()
+	{
+		self::$baseDir = dirname(__FILE__) . '/';
 	}
 
 	/**
@@ -895,4 +911,6 @@ class Propel
 	}
 }
 
+// Since the Propel class is not a true singleton, this code cannot go into the __construct()
+Propel::initBaseDir();
 spl_autoload_register(array('Propel', 'autoload'));

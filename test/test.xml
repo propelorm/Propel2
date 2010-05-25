@@ -40,7 +40,6 @@
 		<pathelement dir="${tests.dir.resolved}" />
 		<pathelement dir="${tests.classes.dir.resolved}" />
 		<pathelement dir="${propel-generator.classes.dir.resolved}" />
-		<pathelement dir="${propel-runtime.classes.dir.resolved}" />
 	</path>
 
 	<target name="configure">
@@ -50,7 +49,8 @@
 		<define name="TESTS_BASE_DIR" value="${tests.dir.resolved}" />
 		<adhoc>
 			<![CDATA[
-			require_once 'Propel.php';
+			// initializes the Propel runtime autoload
+			require_once '${propel-runtime.classes.dir.resolved}/Propel.php';
 		]]>
 		</adhoc>
 

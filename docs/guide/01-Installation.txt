@@ -92,11 +92,9 @@ Download a tarball of each of the Propel components from the Propel website, and
 
 Once this is done, you'll need to setup your PHP environment to use this library.
 
-== Setting Up PHP for Propel ==
+== Setting Up PHP for the Propel Generator ==
 
 The following instructions are only required if you installed Propel from a tarball, or from Subversion.
- 
-=== Generator Setup ===
 
 The Propel generator component bundles a `propel-gen` sh script (and a `propel-gen.bat` script for Windows). This script simplifies the commandline invocation of the Propel generator by hiding any references to Phing.
 
@@ -119,36 +117,6 @@ In order to allow an easier execution the script, you can also:
 > ln -s /usr/local/propel/generator/bin/propel-gen propel-gen
 }}}
 
-=== Runtime Setup ===
-
-Propel requires that the runtime classes are in PHP `include_path`. 
-
-The easiest and most permanent way to set your `include_path` is to simply edit your `php.ini` file and add the `propel/runtime/lib/` directory to the `include_path` variable:
-
-{{{
-; Unix
-include_path="/usr/local/lib/php:/usr/local/propel/runtime/lib"
-}}}
-
-or, if you're using Windows,
-
-{{{
-; Windows
-include_path="C:\PHP\PEAR;C:\PHP\apps\propel\runtime\lib"
-}}}
-
-If you do not have access to the `php.ini` file and cannot specify the `include_path` value in your `.htaccess` file, you can always do this at runtime within your PHP scripts:
-
-{{{
-#!php
-<?php 
-set_include_path("/usr/local/propel/runtime/lib" . PATH_SEPARATOR . get_include_path());
-}}}
-
-Now the Propel runtime environment is ready to be used by your object model. As you will learn later, you will also need to modify the `include_path` to account for your object model PHP classes (i.e. the classes that the Propel generator builds for you).
-
-Note: Only the the runtime classes need to be in the `include_path`; the build process calculates the `include_path` for the generator classes automatically. In other words, this step is not required to build your object model, but it is required to actually use your generated code from a PHP script.
-
 == Testing Propel Installation ==
 
 You can test that the '''Propel generator''' component is properly installed by calling the `propel-gen` script from the CLI:
@@ -169,8 +137,7 @@ You can test that the '''Propel runtime''' component is properly installed by re
 require_once 'propel/Propel.php';
 
 // manual installation
-set_include_path("/usr/local/propel/runtime/lib" . PATH_SEPARATOR . get_include_path());
-require_once 'Propel.php';
+require_once '/usr/local/propel/runtime/lib/Propel.php';
 
 // Propel setup code ... (to be discussed later)
 }}}

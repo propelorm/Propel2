@@ -9,7 +9,7 @@
  */
 
 require_once 'tools/helpers/BaseTestCase.php';
-require_once 'util/PropelDateTime.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelDateTime.php';
 
 /**
  * Test for DateTime subclass to support serialization.
