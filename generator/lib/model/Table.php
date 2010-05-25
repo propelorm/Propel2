@@ -1212,7 +1212,7 @@ class Table extends XMLElement implements IDMethod
 	}
 
 	/**
-	 * Get all the foreign keys from this table to the specufued tabke.
+	 * Get all the foreign keys from this table to the specified table.
 	 * @return    array ForeignKey[]
 	 */
 	public function getForeignKeysReferencingTable($tablename)

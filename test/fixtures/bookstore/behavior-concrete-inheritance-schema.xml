@@ -25,7 +25,7 @@
 	<table name="concrete_article">
 		<column name="body" type="longvarchar" />
 		<column name="author_id" required="false" type="INTEGER" />
-		<foreign-key foreignTable="concrete_author" onDelete="cascade">
+		<foreign-key foreignTable="concrete_author" refPhpName="Article" onDelete="cascade">
 			<reference local="author_id" foreign="id" />
 		</foreign-key>
 		<behavior name="concrete_inheritance">

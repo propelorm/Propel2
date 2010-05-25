@@ -74,6 +74,7 @@ class ConcreteInheritanceBehavior extends Behavior
 		foreach ($parentTable->getForeignKeys() as $fk) {
 			$copiedFk = clone $fk;
 			$copiedFk->setName('');
+			$copiedFk->setRefPhpName('');
 			$this->getTable()->addForeignKey($copiedFk);
 		}
 		

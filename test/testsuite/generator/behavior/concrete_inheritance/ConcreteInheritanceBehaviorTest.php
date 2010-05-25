@@ -87,6 +87,12 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertTrue($article->hasRelation('ConcreteCategory'), 'modifyTable() copies relationships from parent table');
 	}
 
+	public function testModifyTableAddsForeignKeysWithoutDuplicates()
+	{
+		$article = ConcreteAuthorPeer::getTableMap();
+		$this->assertTrue($article->hasRelation('ConcreteNews'), 'modifyTable() copies relationships from parent table and removes hardcoded refPhpName');
+	}
+
 	public function testModifyTableAddsValidators()
 	{
 		$article = ConcreteArticlePeer::getTableMap();
