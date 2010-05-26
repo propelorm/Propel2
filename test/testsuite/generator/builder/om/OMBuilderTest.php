@@ -43,6 +43,8 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 			array('essay', 1, 'RelatedBySecondAuthor', 'RelatedBySecondAuthor'),
 			array('essay', 2, 'RelatedById', 'RelatedByNextEssayId'),
 			array('bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'),
+			array('composite_essay', 0, 'RelatedById0', 'RelatedByFirstEssayId'),
+			array('composite_essay', 1, 'RelatedById1', 'RelatedBySecondEssayId'),
 		);
 	}
 	
@@ -52,17 +54,22 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 	public function testGetRelatedBySuffix($table, $index, $expectedSuffix, $expectedReverseSuffix)
 	{
 		$fk = $this->getForeignKey($table, $index);
-		$this->assertEquals($expectedSuffix, TestableOMBuilder::getRelatedBySuffix($fk));
-		$this->assertEquals($expectedReverseSuffix, TestableOMBuilder::getRelatedBySuffix($fk, true));
+		$this->assertEquals($expectedSuffix, TestableOMBuilder::getRefRelatedBySuffix($fk));
+		$this->assertEquals($expectedReverseSuffix, TestableOMBuilder::getRelatedBySuffix($fk));
 	}
 
 }
 
 class TestableOMBuilder extends OMBuilder
 {
-	public static function getRelatedBySuffix(ForeignKey $fk, $reverseOnSelf = false)
+	public static function getRelatedBySuffix(ForeignKey $fk)
 	{
-		return parent::getRelatedBySuffix($fk, $reverseOnSelf);
+		return parent::getRelatedBySuffix($fk);
+	}
+	
+	public static function getRefRelatedBySuffix(ForeignKey $fk)
+	{
+		return parent::getRefRelatedBySuffix($fk);
 	}
 	
 	public function getUnprefixedClassname() {}

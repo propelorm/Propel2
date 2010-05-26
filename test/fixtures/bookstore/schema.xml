@@ -68,8 +68,8 @@
 	</table>
 	
 	<!-- This table exists to test the related setters on identical table ("relatedByXXX" issues) and column phpNames -->
-	<table name="essay">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+	<table name="essay" package="relation">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" required="true" primaryString="true" />
 		<column name="first_author" required="false" type="INTEGER" description="Foreign Key Author" />
 		<column name="second_author" required="false" type="INTEGER" description="Foreign Key Author" />
@@ -86,6 +86,19 @@
 		</foreign-key>
 	</table>
 
+  <!-- This table exists to test the related setters on identical table ("relatedByXXX" issues) when there is more than one self-referential foreign key -->
+	<table name="composite_essay" package="relation">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" required="true" primaryString="true" />
+		<column name="first_essay_id" required="false" type="INTEGER" description="Book Id" />
+		<column name="second_essay_id" required="false" type="INTEGER" description="Book Id" />
+		<foreign-key foreignTable="composite_essay" onDelete="setnull" onUpdate="cascade">
+			<reference local="first_essay_id" foreign="id" />
+		</foreign-key>
+		<foreign-key foreignTable="composite_essay" onDelete="setnull" onUpdate="cascade">
+			<reference local="second_essay_id" foreign="id" />
+		</foreign-key>
+	</table>
 
 	<!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
 	<table name="media">

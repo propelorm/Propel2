@@ -208,6 +208,7 @@ abstract class OMBuilder extends DataModelBuilder
 
 	/**
 	 * Convenience method to get the foreign Table object for an fkey.
+	 * @deprecated use ForeignKey::getForeignTable() instead
 	 * @return     Table
 	 */
 	protected function getForeignTable(ForeignKey $fk)
@@ -249,14 +250,46 @@ abstract class OMBuilder extends DataModelBuilder
 				return $fk->getPhpName();
 			}
 		} else {
-			$className = $this->getForeignTable($fk)->getPhpName();
+			$className = $fk->getForeignTable()->getPhpName();
 			if ($plural) {
 				$className = $this->getPluralizer()->getPluralForm($className);
 			}
-			return $className . $this->getRelatedBySuffix($fk, true);
+			return $className . $this->getRelatedBySuffix($fk);
 		}
 	}
 
+	/**
+	 * Gets the "RelatedBy*" suffix (if needed) that is attached to method and variable names.
+	 *
+	 * The related by suffix is based on the local columns of the foreign key.  If there is more than
+	 * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix
+	 * will be appended.
+	 *
+	 * @return     string
+	 */
+	protected static function getRelatedBySuffix(ForeignKey $fk)
+	{
+		$relCol = '';
+		foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {
+			$localTable  = $fk->getTable();
+			$localColumn = $localTable->getColumn($localColumnName);
+			if (!$localColumn) {
+				throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
+			}
+			if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1 
+			 || $fk->getForeignTableName() == $fk->getTableName()) {
+				// self referential foreign key, or several foreign keys to the same table
+				$relCol .= $localColumn->getPhpName();
+			}
+		}
+
+		if ($relCol != '') {
+			$relCol = 'RelatedBy' . $relCol;
+		}
+
+		return $relCol;
+	}
+	
 	/**
 	 * Gets the PHP method name affix to be used for referencing foreign key methods and variable names (e.g. set????(), $coll???).
 	 *
@@ -280,40 +313,30 @@ abstract class OMBuilder extends DataModelBuilder
 			if ($plural) {
 				$className = $this->getPluralizer()->getPluralForm($className);
 			}
-			return $className . $this->getRelatedBySuffix($fk);
+			return $className . $this->getRefRelatedBySuffix($fk);
 		}
 	}
-
-	/**
-	 * Gets the "RelatedBy*" suffix (if needed) that is attached to method and variable names.
-	 *
-	 * The related by suffix is based on the local columns of the foreign key.  If there is more than
-	 * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix
-	 * will be appended.
-	 *
-	 * @return     string
-	 */
-	protected static function getRelatedBySuffix(ForeignKey $fk, $reverseOnSelf = false)
+	
+	protected static function getRefRelatedBySuffix(ForeignKey $fk)
 	{
 		$relCol = '';
-		foreach ($fk->getLocalForeignMapping() as $columnName => $foreignColumnName) {
-			$column = $fk->getTable()->getColumn($columnName);
-			if (!$column) {
-				throw new Exception("Could not fetch column: $columnName in table " . $fk->getTable()->getName());
+		foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {
+			$localTable = $fk->getTable();
+			$localColumn = $localTable->getColumn($localColumnName);
+			if (!$localColumn) {
+				throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
 			}
-
-			if (count($column->getTable()->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1) {
-				// if there are several foreign keys that point to the same table
-				// then we need to generate methods like getAuthorRelatedByColName()
-				// instead of just getAuthor().
-				$relCol .= $column->getPhpName();
-			} elseif ($fk->getForeignTableName() == $fk->getTable()->getName()) {
+			$foreignKeysToForeignTable = $localTable->getForeignKeysReferencingTable($fk->getForeignTableName());
+			if ($fk->getForeignTableName() == $fk->getTableName()) {
 				// self referential foreign key
-				if ($reverseOnSelf) {
-					$relCol .= $column->getPhpName();
-				} else {
-					$relCol .= $fk->getTable()->getColumn($foreignColumnName)->getPhpName();
+				$relCol .= $fk->getForeignTable()->getColumn($foreignColumnName)->getPhpName();
+				if (count($foreignKeysToForeignTable) > 1) {
+					// several self-referential foreign keys
+					$relCol .= array_search($fk, $foreignKeysToForeignTable);
 				}
+			} elseif(count($foreignKeysToForeignTable) > 1) {
+				// several foreign keys to the same table
+				$relCol .= $localColumn->getPhpName();
 			}
 		}
 
