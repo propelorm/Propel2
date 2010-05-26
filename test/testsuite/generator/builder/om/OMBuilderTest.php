@@ -45,6 +45,8 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 			array('bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'),
 			array('composite_essay', 0, 'RelatedById0', 'RelatedByFirstEssayId'),
 			array('composite_essay', 1, 'RelatedById1', 'RelatedBySecondEssayId'),
+			array('man', 0, 'RelatedByWifeId', 'RelatedByWifeId'),
+			array('woman', 0, 'RelatedByHusbandId', 'RelatedByHusbandId'),
 		);
 	}
 	

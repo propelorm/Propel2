@@ -277,8 +277,9 @@ abstract class OMBuilder extends DataModelBuilder
 				throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
 			}
 			if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1 
+			 || count($fk->getForeignTable()->getForeignKeysReferencingTable($fk->getTableName())) > 0
 			 || $fk->getForeignTableName() == $fk->getTableName()) {
-				// self referential foreign key, or several foreign keys to the same table
+				// self referential foreign key, or several foreign keys to the same table, or cross-reference fkey
 				$relCol .= $localColumn->getPhpName();
 			}
 		}
@@ -334,8 +335,8 @@ abstract class OMBuilder extends DataModelBuilder
 					// several self-referential foreign keys
 					$relCol .= array_search($fk, $foreignKeysToForeignTable);
 				}
-			} elseif(count($foreignKeysToForeignTable) > 1) {
-				// several foreign keys to the same table
+			} elseif (count($foreignKeysToForeignTable) > 1 || count($fk->getForeignTable()->getForeignKeysReferencingTable($fk->getTableName())) > 0) {
+				// several foreign keys to the same table, or symmetrical foreign key in foreign table
 				$relCol .= $localColumn->getPhpName();
 			}
 		}
