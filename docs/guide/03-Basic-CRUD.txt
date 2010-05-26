@@ -292,7 +292,7 @@ $authors = AuthorQuery::create()
   ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND) // just add this line
   ->find();
 foreach ($authors as $author) {
-  echo $authors->getFirstName();
+  echo $author->getFirstName();
 }
 }}}
 
