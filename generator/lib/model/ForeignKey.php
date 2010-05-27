@@ -319,6 +319,37 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
+	 * Utility method to get local column to foreign column
+	 * mapping for this foreign key.
+	 */
+	public function getForeignLocalMapping()
+	{
+		$h = array();
+		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+			$h[$this->foreignColumns[$i]] = $this->localColumns[$i];
+		}
+		return $h;
+	}
+
+	/**
+	 * Utility method to get local and foreign column objects
+	 * mapping for this foreign key.
+	 */
+	public function getColumnObjectsMapping()
+	{
+		$mapping = array();
+		$localTable = $this->getTable();
+		$foreignTable = $this->getForeignTable();
+		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
+			$mapping[]= array(
+				'local'   => $localTable->getColumn($this->localColumns[$i]),
+				'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
+			);
+		}
+		return $mapping;
+	}
+
+	/**
 	 * Get the foreign column mapped to specified local column.
 	 * @return     string Column name.
 	 */
@@ -351,19 +382,6 @@ class ForeignKey extends XMLElement
 	public function getForeignColumns()
 	{
 		return $this->foreignColumns;
-	}
-
-	/**
-	 * Utility method to get local column to foreign column
-	 * mapping for this foreign key.
-	 */
-	public function getForeignLocalMapping()
-	{
-		$h = array();
-		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
-			$h[ $this->foreignColumns[$i] ] = $this->localColumns[$i];
-		}
-		return $h;
 	}
 
 	/**
