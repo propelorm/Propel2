@@ -63,8 +63,8 @@ require '".$requiredClassFilePath."';
 	 */
 	protected function addClassOpen(&$script)
 	{
-
 		$table = $this->getTable();
+		$this->declareClassFromBuilder($this->getObjectBuilder());
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 

@@ -81,6 +81,12 @@ abstract class DataModelBuilder
 	private $stubQueryBuilder;
 
 	/**
+	 * TableMap builder class for current table.
+	 * @var        DataModelBuilder
+	 */
+	protected $tablemapBuilder;
+	
+	/**
 	 * Stub Interface builder class for current table.
 	 * @var        DataModelBuilder
 	 */
@@ -238,6 +244,18 @@ abstract class DataModelBuilder
 			$this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
 		}
 		return $this->stubQueryBuilder;
+	}
+	
+	/**
+	 * Returns new or existing Object builder class for this table.
+	 * @return     ObjectBuilder
+	 */
+	public function getTableMapBuilder()
+	{
+		if (!isset($this->tablemapBuilder)) {
+			$this->tablemapBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
+		}
+		return $this->tablemapBuilder;
 	}
 	
 	/**

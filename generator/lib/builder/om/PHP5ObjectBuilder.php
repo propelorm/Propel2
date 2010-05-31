@@ -30,6 +30,17 @@ class PHP5ObjectBuilder extends ObjectBuilder
 	{
 		return parent::getPackage() . ".om";
 	}
+	
+	public function getNamespace()
+	{
+		if ($namespace = parent::getNamespace()) {
+			if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
+				return $namespace . '\\' . $omns;
+			} else {
+				return $namespace;
+			}
+		}
+	}
 
 	/**
 	 * Returns the name of the current class being built.
@@ -198,6 +209,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	protected function addClassBody(&$script)
 	{
+		$this->declareClassFromBuilder($this->getStubPeerBuilder());
+		$this->declareClassFromBuilder($this->getStubQueryBuilder());
+		$this->declareClasses('Propel', 'PropelException', 'PDO', 'PropelPDO', 'Criteria', 'BaseObject', 'Persistent', 'BasePeer', 'PropelObjectcollection');
+		
 		$table = $this->getTable();
 		if (!$table->isAlias()) {
 			$this->addConstants($script);
@@ -285,7 +300,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Peer class name
 	 */
-  const PEER = '" . $this->getPeerClassname() . "';
+  const PEER = '" . addslashes($this->getStubPeerBuilder()->getFullyQualifiedClassname()) . "';
 ";
 	}
 
@@ -2478,6 +2493,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	protected function addFKMethods(&$script)
 	{
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
+			$this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()));
+			$this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()));
 			$this->addFKMutator($script, $fk);
 			$this->addFKAccessor($script, $fk);
 		} // foreach fk
@@ -2510,8 +2527,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$tblFK = $this->getForeignTable($fk);
 
 		$joinTableObjectBuilder = $this->getNewObjectBuilder($tblFK);
-
 		$className = $joinTableObjectBuilder->getObjectClassname();
+		
 		$varName = $this->getFKVarName($fk);
 
 		$script .= "
@@ -2838,6 +2855,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	protected function addRefFKMethods(&$script)
 	{
 		foreach ($this->getTable()->getReferrers() as $refFK) {
+			$this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()));
+			$this->declareClassFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
 			if ($refFK->isLocalPrimaryKey()) {
 				$this->addPKRefFKGet($script, $refFK);
 				$this->addPKRefFKSet($script, $refFK);
@@ -2951,12 +2970,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
-		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
-
-		$className = $fkPeerBuilder->getObjectClassname();
+		
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		$script .= "
 	/**
@@ -3000,12 +3019,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$peerClassname = $this->getStubPeerBuilder()->getClassname();
 		$fkQueryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
-		$fkPeerBuilder = $this->getNewPeerBuilder($refFK->getTable());
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$collName = $this->getRefFKCollVarName($refFK);
 
-		$className = $fkPeerBuilder->getObjectClassname();
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
 
 		$script .= "
 	/**
@@ -3054,9 +3073,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$tblFK = $refFK->getTable();
 
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
-		$queryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
-		$joinedTablePeerBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
+		
+		$queryClassname = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 
 		$varName = $this->getPKRefFKVarName($refFK);
 

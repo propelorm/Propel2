@@ -31,6 +31,17 @@ class QueryBuilder extends OMBuilder
 		return parent::getPackage() . ".om";
 	}
 
+	public function getNamespace()
+	{
+		if ($namespace = parent::getNamespace()) {
+			if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
+				return $namespace . '\\' . $omns;
+			} else {
+				return $namespace;
+			}
+		}
+	}
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return     string
@@ -154,6 +165,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addClassBody(&$script)
 	{
+		// namespaces
+		$this->declareClasses('ModelCriteria', 'Criteria', 'ModelJoin');
+		$this->declareClassFromBuilder($this->getStubQueryBuilder());
+		$this->declareClassFromBuilder($this->getStubPeerBuilder());
+		
 		// apply behaviors
 		$this->applyBehaviorModifier('queryAttributes', $script, "	");
 		$this->addConstructor($script);
@@ -238,7 +254,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	{
 		$table = $this->getTable();
 		$script .= "
-	public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . $this->getNewStubObjectBuilder($table)->getClassname() . "', \$modelAlias = null)
+	public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . addslashes($this->getNewStubObjectBuilder($table)->getFullyQualifiedClassname()) . "', \$modelAlias = null)
 	{";
 	}
 

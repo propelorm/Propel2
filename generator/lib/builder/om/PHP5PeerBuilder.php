@@ -69,6 +69,17 @@ class PHP5PeerBuilder extends PeerBuilder
 		return parent::getPackage() . ".om";
 	}
 
+	public function getNamespace()
+	{
+		if ($namespace = parent::getNamespace()) {
+			if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
+				return $namespace . '\\' . $omns;
+			} else {
+				return $namespace;
+			}
+		}
+	}
+	
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param      string &$script The script will be modified in this method.
@@ -114,6 +125,14 @@ class PHP5PeerBuilder extends PeerBuilder
  */
 abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
+	}
+	
+	protected function addClassBody(&$script)
+	{
+		$this->declareClassFromBuilder($this->getStubPeerBuilder());
+		$this->declareClassFromBuilder($this->getStubObjectBuilder());
+		parent::addClassBody($script);
+		$this->declareClasses('Propel', 'PropelException', 'PropelPDO', 'BasePeer', 'Criteria', 'PDO', 'PDOStatement');
 	}
 
 	/**
@@ -169,7 +188,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	{
 		$dbName = $this->getDatabase()->getName();
 		$tableName = $this->getTable()->getName();
-		$tablePhpName = $this->getTablePhpName();
+		$tablePhpName = $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassname());
 		$script .= "
 	/** the default database name for this class */
 	const DATABASE_NAME = '$dbName';
@@ -378,6 +397,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 */
 	protected function addBuildTableMap(&$script)
 	{
+		$this->declareClassFromBuilder($this->getTableMapBuilder());
 		$script .= "
 	/**
 	 * Add a TableMap instance to the database for this peer class.
@@ -820,23 +840,22 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			// $fk is the foreign key in the other table, so localTableName will
 			// actually be the table name of other table
 			$tblFK = $fk->getTable();
-
-			$joinedTablePeerBuilder = $this->getNewPeerBuilder($tblFK);
+			
+			$joinedTablePeerBuilder = $this->getNewStubPeerBuilder($tblFK);
+			$this->declareClassFromBuilder($joinedTablePeerBuilder);
 			$tblFKPackage = $joinedTablePeerBuilder->getStubPeerBuilder()->getPackage();
 
 			if (!$tblFK->isForReferenceOnly()) {
 				// we can't perform operations on tables that are
 				// not within the schema (i.e. that we have no map for, etc.)
 
-				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
-
 				// i'm not sure whether we can allow delete cascade for foreign keys
 				// within the same table?  perhaps we can?
 				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
 				&& $tblFK->getName() != $table->getName()) {
 					$script .= "
-		// invalidate objects in ".$joinedTablePeerBuilder->getPeerClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
-		".$joinedTablePeerBuilder->getPeerClassname()."::clearInstancePool();
+		// invalidate objects in ".$joinedTablePeerBuilder->getClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
+		".$joinedTablePeerBuilder->getClassname()."::clearInstancePool();
 ";
 				} // if fk is on delete cascade
 			} // if (! for ref only)
@@ -1905,6 +1924,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			$tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+			$this->declareClassFromBuilder($this->getNewStubPeerBuilder($tblFK));
 			if ($tblFK->isForReferenceOnly()) {
 				$includeJoinAll = false;
 			}

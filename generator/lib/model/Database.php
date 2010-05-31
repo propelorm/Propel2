@@ -34,6 +34,14 @@ class Database extends XMLElement
 	private $curColumn;
 	private $name;
 	private $pkg;
+
+	/**
+	 * Namespace for the generated OM.
+	 *
+	 * @var       string
+	 */
+	protected $namespace;
+
 	private $baseClass;
 	private $basePeer;
 	private $defaultIdMethod;
@@ -72,6 +80,7 @@ class Database extends XMLElement
 	{
 		$this->name = $this->getAttribute("name");
 		$this->pkg = $this->getAttribute("package");
+		$this->namespace = $this->getAttribute("namespace", '');
 		$this->baseClass = $this->getAttribute("baseClass");
 		$this->basePeer = $this->getAttribute("basePeer");
 		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);
@@ -133,6 +142,24 @@ class Database extends XMLElement
 	public function setPackage($v)
 	{
 		$this->pkg = $v;
+	}
+
+	/**
+	 * Get the value of the namespace.
+	 * @return     value of namespace.
+	 */
+	public function getNamespace()
+	{
+		return $this->namespace;
+	}
+
+	/**
+	 * Set the value of the namespace.
+	 * @param      v  Value to assign to namespace.
+	 */
+	public function setNamespace($v)
+	{
+		$this->namespace = $v;
 	}
 
 	/**

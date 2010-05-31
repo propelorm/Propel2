@@ -191,6 +191,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<!-- Restrict php namespaces name to letters (upper- and lowercase), numbers and the backslash Dot seperated -->
+	<xs:simpleType name="php_namespace">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\\?[\w_]+)+"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<!-- Restrict table name to letters (upper- and lowercase), numbers and the _ -->
 	<xs:simpleType name="table_name">
 		<xs:restriction base="xs:string">
@@ -618,6 +625,13 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="namespace" type="php_namespace" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The PHP 5.3 namespace to use for the generated model classes.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="columnPrefix" type="column_name" use="optional"/>
 		<xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
 			<xs:annotation>
@@ -799,6 +813,13 @@
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					Specifies the "package" for the generated classes. Classes are created in subdirectories according to the package attribute value.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="namespace" type="php_namespace" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The PHP 5.3 namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>

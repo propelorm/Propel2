@@ -51,6 +51,7 @@ require '".$requiredClassFilePath."';
 	protected function addClassOpen(&$script)
 	{
 		$table = $this->getTable();
+		$this->declareClassFromBuilder($this->getQueryBuilder());
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 		$baseClassname = $this->getQueryBuilder()->getClassname();

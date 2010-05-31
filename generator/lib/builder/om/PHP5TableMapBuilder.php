@@ -28,6 +28,17 @@ class PHP5TableMapBuilder extends OMBuilder
 		return parent::getPackage() . '.map';
 	}
 
+	public function getNamespace()
+	{
+		if ($namespace = parent::getNamespace()) {
+			if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceMap')) {
+				return $namespace . '\\' . $omns;
+			} else {
+				return $namespace;
+			}
+		}
+	}
+	
 	/**
 	 * Returns the name of the current class being built.
 	 * @return     string
@@ -86,6 +97,7 @@ class ".$this->getClassname()." extends TableMap {
 	 */
 	protected function addClassBody(&$script)
 	{
+		$this->declareClasses('TableMap');
 		$this->addConstants($script);
 		$this->addAttributes($script);
 		$this->addInitialize($script);
@@ -151,7 +163,7 @@ class ".$this->getClassname()." extends TableMap {
 	  // attributes
 		\$this->setName('".$table->getName()."');
 		\$this->setPhpName('".$table->getPhpName()."');
-		\$this->setClassname('" . $this->getObjectClassname() . "');
+		\$this->setClassname('" . addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassname()) . "');
 		\$this->setPackage('" . parent::getPackage() . "');";
 		if ($table->getIdMethod() == "native") {
 			$script .= "

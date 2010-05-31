@@ -257,7 +257,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 						foreach (array('tablemap', 'peerstub', 'objectstub', 'querystub', 'peer', 'object', 'query') as $target) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+							$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 						}
 
 						// -----------------------------------------------------
@@ -273,7 +273,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 											$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 										$builder->setChild($child);
 										$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-										$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+										$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 									}
 								}
 							}
@@ -310,7 +310,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 						if ($table->getInterface()) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
 							$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-							$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+							$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 						}
 						
 						// ----------------------------------------------
@@ -321,14 +321,14 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 							foreach (array('nodepeerstub', 'nodestub', 'nodepeer', 'node') as $target) {
 								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+								$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 							}
 						}
 						if ($table->treeMode() == 'NestedSet') {
 							foreach (array('nestedset', 'nestedsetpeer') as $target) {
 								$builder = $generatorConfig->getConfiguredBuilder($table, $target);
 								$this->log("Adding class mapping: " . $builder->getClassname() . ' => ' . $builder->getClassFilePath());
-								$classMap[$builder->getClassname()] = $builder->getClassFilePath();
+								$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 							}
 						}
 

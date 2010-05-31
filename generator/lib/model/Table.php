@@ -104,6 +104,13 @@ class Table extends XMLElement implements IDMethod
 	private $phpName;
 
 	/**
+	 * Namespace for the generated OM.
+	 *
+	 * @var       string
+	 */
+	protected $namespace;
+
+	/**
 	 * ID method for the table (e.g. IDMethod::NATIVE, IDMethod::NONE).
 	 *
 	 * @var       string
@@ -306,6 +313,7 @@ class Table extends XMLElement implements IDMethod
 		// retrieves the method for converting from specified name to a PHP name.
 		$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
 		$this->phpName = $this->getAttribute("phpName", $this->buildPhpName($this->getAttribute('name')));
+		$this->namespace = $this->getAttribute("namespace");
 		$this->idMethod = $this->getAttribute("idMethod", $this->getDatabase()->getDefaultIdMethod());
 		$this->allowPkInsert = $this->booleanValue($this->getAttribute("allowPkInsert"));
 
@@ -931,7 +939,25 @@ class Table extends XMLElement implements IDMethod
 			return strtolower($phpname);
 		}
 	}
-	
+
+	/**
+	 * Get the value of the namespace.
+	 * @return     value of namespace.
+	 */
+	public function getNamespace()
+	{
+		return $this->namespace;
+	}
+
+	/**
+	 * Set the value of the namespace.
+	 * @param      v  Value to assign to namespace.
+	 */
+	public function setNamespace($v)
+	{
+		$this->namespace = $v;
+	}
+
 	/**
 	 * Get the method for generating pk's
 	 * [HL] changing behavior so that Database default method is returned 

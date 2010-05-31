@@ -820,7 +820,7 @@ class Propel
 	}
 
 	/**
-	 * Include once a file specified in DOT notation and reutrn unqualified clasname.
+	 * Include once a file specified in DOT notation and return unqualified classname.
 	 *
 	 * Typically, Propel uses autoload is used to load classes and expects that all classes
 	 * referenced within Propel are included in Propel's autoload map.  This method is only

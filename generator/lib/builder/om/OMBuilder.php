@@ -22,7 +22,13 @@ require_once 'builder/DataModelBuilder.php';
  */
 abstract class OMBuilder extends DataModelBuilder
 {
-
+	/**
+	 * Declared fully qualified classnames, to build the 'namespace' statements
+   * according to this table's namespace.
+   * @var array
+	 */
+	protected $declaredClasses = array();
+	
 	/**
 	 * Builds the PHP source for current class and returns it as a string.
 	 *
@@ -37,14 +43,25 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		$this->validateModel();
 
-		$script = "<" . "?php\n"; // intentional concatenation
+		$script = '';
 		if ($this->isAddIncludes()) {
 			$this->addIncludes($script);
 		}
 		$this->addClassOpen($script);
 		$this->addClassBody($script);
 		$this->addClassClose($script);
-		return $script;
+		
+		if($useStatements = $this->getUseStatements($ignoredNamespace = $this->getNamespace())) {
+			$script = $useStatements . $script;
+		}
+		if($namespaceStatement = $this->getNamespaceStatement()) {
+			$script = $namespaceStatement . $script;
+		}
+		//if($this->getTable()->getName() == 'book_club_list') die($ignoredNamespace);
+		
+		return "<" . "?php
+
+" . $script;
 	}
 
 	/**
@@ -79,7 +96,7 @@ abstract class OMBuilder extends DataModelBuilder
 	abstract public function getUnprefixedClassname();
 
 	/**
-	 * Returns the prefixed clasname that is being built by the current class.
+	 * Returns the prefixed classname that is being built by the current class.
 	 * @return     string
 	 * @see        DataModelBuilder#prefixClassname()
 	 */
@@ -87,6 +104,20 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		return $this->prefixClassname($this->getUnprefixedClassname());
 	}
+	
+	/**
+	 * Returns the namespaced classname if there is a namespace, and the raw classname otherwise
+	 * @return     string
+	 */
+	public function getFullyQualifiedClassname()
+	{
+		if ($namespace = $this->getNamespace()) {
+			return $namespace . '\\' . $this->getClassname();
+		} else {
+			return $this->getClassname();
+		}
+	}
+	
 	/**
 	 * Gets the dot-path representation of current class being built.
 	 * @return     string
@@ -133,6 +164,91 @@ abstract class OMBuilder extends DataModelBuilder
 		return strtr($this->getPackage(), '.', '/');
 	}
 
+	/**
+	 * Return the user-defined namespace for this table, 
+	 * or the database namespace otherwise.
+	 *
+	 * @return    string
+	 */
+	public function getNamespace()
+	{
+		if (strpos($this->getTable()->getNamespace(), '\\') === 0) {
+			// absolute table namespace
+			return substr($this->getTable()->getNamespace(), 1);
+		} elseif ($this->getDatabase()->getNamespace() && $this->getTable()->getNamespace()) {
+			return $this->getDatabase()->getNamespace() . '\\' . $this->getTable()->getNamespace();
+		} elseif ($this->getDatabase()->getNamespace()) {
+			return $this->getDatabase()->getNamespace();
+		} else {
+			return $this->getTable()->getNamespace();
+		}
+	}
+	
+	public function declareClassNamespace($class, $namespace = '')
+	{
+		if (isset($this->declaredClasses[$namespace]) 
+		 && in_array($class, $this->declaredClasses[$namespace])) {
+			return;
+		}
+		$this->declaredClasses[$namespace][] = $class;
+	}
+	
+	public function declareClass($fullyQualifiedClassName)
+	{
+		$fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
+		if (($pos = strrpos($fullyQualifiedClassName, '\\')) !== false) {
+			$this->declareClassNamespace(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos));
+		} else {
+			// root namespace
+			$this->declareClassNamespace($fullyQualifiedClassName);
+		} 
+	}
+	
+	public function declareClassFromBuilder($builder)
+	{
+		$this->declareClassNamespace($builder->getClassname(), $builder->getNamespace());
+	}
+	
+	public function declareClasses()
+	{
+		$args = func_get_args();
+		foreach ($args as $class) {
+			$this->declareClass($class);
+		}
+	}
+	
+	public function getDeclaredClasses($namespace = null)
+	{
+		if (null !== $namespace && isset($this->declaredClasses[$namespace])) {
+			return $this->declaredClasses[$namespace];
+		} else {
+			return $this->declaredClasses;
+		}
+	}
+
+	public function getNamespaceStatement()
+	{
+		$namespace = $this->getNamespace();
+		if ($namespace != '') {
+			return sprintf("namespace %s;
+
+", $namespace);
+		}
+	}
+	
+	public function getUseStatements($ignoredNamespace = null)
+	{
+		$declaredClasses = $this->declaredClasses;
+		unset($declaredClasses[$ignoredNamespace]);
+		foreach ($declaredClasses as $namespace => $classes) {
+			foreach ($classes as $class) {
+				$script .= sprintf("use %s\\%s;
+", $namespace, $class);
+			}
+		}
+		return $script;
+	}
+	
 	/**
 	 * Shortcut method to return the [stub] peer classname for current table.
 	 * This is the classname that is used whenever object or peer classes want

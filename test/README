@@ -75,6 +75,8 @@ propel.database.password = p@ssw0rd
 > ../generator/bin/propel-gen fixtures/bookstore insert-sql
 }}}
 
+**Tip**: To run the unit tests for the namespace support in PHP 5.3, you must also build the `fixtures/namespaced` project.
+
 == Run the Unit Tests ==
 
 Run all the unit tests at once using Phing:

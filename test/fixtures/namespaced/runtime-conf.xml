@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config>
+	<!--
+	#
+	#  L O G G I N G
+	#
+	# We use PEAR-compatible Log for all Propel logging and we embed the
+	# log conf properties within our application configuration.
+	#
+	#   type    - the type of log (default 'file')
+	#   name    - the name of log or path to file. (default './propel.log')
+	#   ident   - the text used to identify the log messages
+	#   level   - the log level
+	#                   PEAR_LOG_EMERG    0
+	#                   PEAR_LOG_ALERT    1
+	#                   PEAR_LOG_CRIT     2
+	#                   PEAR_LOG_ERR      3
+	#                   PEAR_LOG_WARNING  4
+	#                   PEAR_LOG_NOTICE   5
+	#                   PEAR_LOG_INFO     6
+	#                   PEAR_LOG_DEBUG    7
+	#
+	# Note that if you omit the <log> config section, Propel will not attempt to
+	# configure a logger, and you will need to specify one manually using
+	# Propel::setLogger() if you want Propel to log debug or error messages.
+	-->
+	<log>
+		<ident>propel-bookstore</ident>
+		<name>propel.log</name>
+		<level>7</level>
+	</log>
+	<!--
+	#
+	#  P R O P E L  P R O P E R T I E S
+	#
+	# Note that you can configure multiple datasources; for example if your
+	# project uses several databases.
+	-->
+	<propel>
+		<datasources default="bookstore_namespaced">
+			<datasource id="bookstore_namespaced">
+			
+				<!-- the Propel adapter to use for this connection -->
+				<adapter>mysql</adapter>
+				<!-- Connection parameters. See PDO documentation for DSN format and available option constants. -->
+				<connection>
+					<classname>DebugPDO</classname>
+					<dsn>mysql:dbname=test</dsn>
+					<!--
+					For MySQL and Oracle you must specify username + password separate from DSN:
+					<user>bookstore</user>
+					<password></password>
+					-->
+					<options>
+						<option id="ATTR_PERSISTENT">false</option>
+					</options>
+					
+					<attributes>
+						<!--
+							For MySQL, you should also turn on prepared statement emulation, 
+								as prepared statements support is buggy in mysql driver
+						-->
+						<option id="ATTR_EMULATE_PREPARES">true</option>
+					</attributes>
+					
+					<settings>
+						<!--  Set the character set for client connection -->
+						<setting id="charset">utf8</setting>
+						<!-- you can also execute arbitrary queries after the connection is created
+						<setting id="queries">
+							<query>SELECT * FROM foo</query>
+							<query>INSERT INTO BAR ('hey', 'there')</query>
+						</setting>
+						-->
+					</settings>
+				</connection>
+			</datasource>
+
+		</datasources>
+	</propel>
+</config>
