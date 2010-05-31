@@ -594,13 +594,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}";
 		} elseif ($col->isTextType()) {
 			$script .= "
-		if (is_array(\$$variableName)) {
-			if (null === \$comparison) {
+		if (null === \$comparison) {
+			if (is_array(\$$variableName)) {
 				\$comparison = Criteria::IN;
-			}
-		} elseif (preg_match('/[\%\*]/', \$$variableName)) {
-			\$$variableName = str_replace('*', '%', \$$variableName);
-			if (null === \$comparison) {
+			} elseif (preg_match('/[\%\*]/', \$$variableName)) {
+				\$$variableName = str_replace('*', '%', \$$variableName);
 				\$comparison = Criteria::LIKE;
 			}
 		}";
