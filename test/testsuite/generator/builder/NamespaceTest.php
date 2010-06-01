@@ -107,6 +107,21 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 	{
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		\Baz\NamespacedPublisherQuery::create()->deleteAll();
+		$publisher = new \Baz\NamespacedPublisher();
+		$book = new \Foo\Bar\NamespacedBook();
+		$book->setNamespacedPublisher($publisher);
+		$book->save();
+		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
+		\Baz\NamespacedPublisherPeer::clearInstancePool();
+		$book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
+		$publisher2 = $book2->getNamespacedPublisher();
+		$this->assertEquals($publisher->getId(), $publisher2->getId());
+	}
+
+	public function testGetRelatedOneToMany()
+	{
+		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
+		\Baz\NamespacedPublisherQuery::create()->deleteAll();
 		$author = new NamespacedAuthor();
 		$book = new \Foo\Bar\NamespacedBook();
 		$book->setNamespacedAuthor($author);
@@ -118,7 +133,7 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($book->getId(), $book2->getId());
 	}
 	
-	public function testGetRelatedOneToMany()
+	public function testFindWithManyToOne()
 	{
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		\Baz\NamespacedPublisherQuery::create()->deleteAll();
@@ -128,9 +143,28 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		$book->save();
 		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
 		\Baz\NamespacedPublisherPeer::clearInstancePool();
-		$book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
+		$book2 = \Foo\Bar\NamespacedBookQuery::create()
+			->joinWith('NamespacedPublisher')
+			->findPk($book->getId());
 		$publisher2 = $book2->getNamespacedPublisher();
 		$this->assertEquals($publisher->getId(), $publisher2->getId());
+	}
+
+	public function testFindWithOneToMany()
+	{
+		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
+		NamespacedAuthorQuery::create()->deleteAll();
+		$author = new NamespacedAuthor();
+		$book = new \Foo\Bar\NamespacedBook();
+		$book->setNamespacedAuthor($author);
+		$book->save();
+		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
+		NamespacedAuthorPeer::clearInstancePool();
+		$author2 = NamespacedAuthorQuery::create()
+			->joinWith('NamespacedBook')
+			->findPk($author->getId());
+		$book2 = $author2->getNamespacedBooks()->getFirst();
+		$this->assertEquals($book->getId(), $book2->getId());
 	}
 	
 }

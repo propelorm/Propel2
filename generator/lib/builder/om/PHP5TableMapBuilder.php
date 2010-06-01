@@ -97,7 +97,7 @@ class ".$this->getClassname()." extends TableMap {
 	 */
 	protected function addClassBody(&$script)
 	{
-		$this->declareClasses('TableMap');
+		$this->declareClasses('TableMap', 'RelationMap');
 		$this->addConstants($script);
 		$this->addAttributes($script);
 		$this->addInitialize($script);
@@ -269,7 +269,7 @@ class ".$this->getClassname()." extends TableMap {
       $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
       $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . $fkey->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
+    \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
     }
     foreach ($this->getTable()->getReferrers() as $fkey)
     {
@@ -282,7 +282,7 @@ class ".$this->getClassname()." extends TableMap {
       $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
       $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$this->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . $fkey->getTable()->getPhpName() . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
+    \$this->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassname()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
     }
     foreach ($this->getTable()->getCrossFks() as $fkList)
     {
@@ -290,7 +290,7 @@ class ".$this->getClassname()." extends TableMap {
       $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
       $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
       $script .= "
-    \$this->addRelation('" . $this->getFKPhpNameAffix($crossFK) . "', '" . $crossFK->getForeignTable()->getPhpName() . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate);";
+    \$this->addRelation('" . $this->getFKPhpNameAffix($crossFK) . "', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate);";
     }
     $script .= "
 	} // buildRelations()
