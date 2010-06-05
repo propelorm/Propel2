@@ -1,7 +1,22 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license    MIT License
+ */
+
 include_once 'phing/system/io/Reader.php';
 
+/**
+ * Overrides Phing's StringReader to allow inclusin inside a BufferedReader
+ *
+ * @author     François Zaninotto
+ * @version    $Revision$
+ * @package    propel.generator.builder.util
+ */
 class PropelStringReader extends Reader
 {
 	/**

@@ -44,21 +44,18 @@ class AggregateColumnRelationBehavior extends Behavior
 	
 	public function objectMethods($builder)
 	{
+		return $this->addObjectUpdateRelated($builder);
+	}
+	
+	protected function addObjectUpdateRelated($builder)
+	{
 		$relationName = $this->getRelationName($builder);
-		$variableName = self::lcfirst($relationName);
 		$updateMethodName = $this->getParameter('update_method');
-		return "
-protected function updateRelated{$relationName}(PropelPDO \$con)
-{
-	if (\${$variableName} = \$this->get{$relationName}()) {
-		\${$variableName}->{$updateMethodName}(\$con);
-	}
-	if (\$this->old{$relationName}) {
-		\$this->old{$relationName}->{$updateMethodName}(\$con);
-		\$this->old{$relationName} = null;
-	}
-}
-";
+		return $this->renderTemplate('objectUpdateRelated', array(
+			'relationName'     => $relationName,
+			'variableName'     => self::lcfirst($relationName),
+			'updateMethodName' => $this->getParameter('update_method'),
+		));
 	}
 	
 	public function objectFilter(&$script, $builder)
@@ -109,42 +106,34 @@ protected function updateRelated{$relationName}(PropelPDO \$con)
 	
 	public function queryMethods($builder)
 	{
-		$foreignTable = $this->getForeignTable();
+		$script = '';
+		$script .= $this->addQueryFindRelated($builder);
+		$script .= $this->addQueryUpdateRelated($builder);
+		
+		return $script;
+	}
+	
+	protected function addQueryFindRelated($builder)
+	{
 		$foreignKey = $this->getForeignKey();
 		$relationName = $this->getRelationName($builder);
-		$refRelationName = $builder->getRefFKPhpNameAffix($this->getForeignKey());
-		$variableName = self::lcfirst($relationName);
-		$foreignQueryName = $foreignKey->getForeignTable()->getPhpName() . 'Query';
-		$updateMethodName = $this->getParameter('update_method');
-		return "
-/**
- * Finds the related {$foreignTable->getPhpName()} objects and keep them for later
- *
- * @param PropelPDO \$con A connection object
- */
-protected function findRelated{$relationName}s(\$con)
-{
-	\$criteria = clone \$this;
-	if (\$this->useAliasInSQL) {
-		\$alias = \$this->getModelAlias();
-		\$criteria->removeAlias(\$alias);
-	} else {
-		\$alias = '';
+		return $this->renderTemplate('queryFindRelated', array(
+			'foreignTable'     => $this->getForeignTable(),
+			'relationName'     => $relationName,
+			'variableName'     => self::lcfirst($relationName),
+			'foreignQueryName' => $foreignKey->getForeignTable()->getPhpName() . 'Query',
+			'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
+		));
 	}
-	\$this->{$variableName}s = {$foreignQueryName}::create()
-		->join{$refRelationName}(\$alias)
-		->mergeWith(\$criteria)
-		->find(\$con);
-}
 
-protected function updateRelated{$relationName}s(\$con)
-{
-	foreach (\$this->{$variableName}s as \${$variableName}) {
-		\${$variableName}->{$updateMethodName}(\$con);
-	}
-	\$this->{$variableName}s = array();
-}
-";
+	protected function addQueryUpdateRelated($builder)
+	{
+		$relationName = $this->getRelationName($builder);
+		return $this->renderTemplate('queryUpdateRelated', array(
+			'relationName'     => $relationName,
+			'variableName'     => self::lcfirst($relationName),
+			'updateMethodName' => $this->getParameter('update_method'),
+		));
 	}
 
 	protected function getForeignTable()

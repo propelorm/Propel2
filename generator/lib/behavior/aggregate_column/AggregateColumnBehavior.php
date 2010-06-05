@@ -59,55 +59,42 @@ class AggregateColumnBehavior extends Behavior
 	
 	public function objectMethods($builder)
 	{
-		$table = $this->getTable();
-		$database = $table->getDatabase();
-		$column = $this->getColumn();
-		$columnPhpName = $column->getPhpName();
 		if (!$foreignTableName = $this->getParameter('foreign_table')) {
-			throw new InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
+			throw new InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
 		}
-		$columnReferences = $this->getForeignKey()->getColumnObjectsMapping();
+		$script = '';
+		$script .= $this->addObjectCompute();
+		$script .= $this->addObjectUpdate();
+		
+		return $script;
+	}
+	
+	protected function addObjectCompute()
+	{
 		$conditions = array();
 		$bindings = array();
-		$i = 1;
-		foreach ($columnReferences as $columnReference) {
-			$conditions[]= $columnReference['local']->getFullyQualifiedName() . ' = :p' . $i;
-			$bindings[]= '	$stmt->bindValue(\':p' . $i . '\', $this->get' . $columnReference['foreign']->getPhpName() . '());';
-			$i++;
+		foreach ($this->getForeignKey()->getColumnObjectsMapping() as $index => $columnReference) {
+			$conditions[] = $columnReference['local']->getFullyQualifiedName() . ' = :p' . ($index + 1);
+			$bindings[$index + 1]   = $columnReference['foreign']->getPhpName();
 		}
 		$sql = sprintf('SELECT %s FROM %s WHERE %s',
 			$this->getParameter('expression'),
-			$database->getPlatform()->quoteIdentifier($this->getParameter('foreign_table')),
+			$this->getTable()->getDatabase()->getPlatform()->quoteIdentifier($this->getParameter('foreign_table')),
 			implode(' AND ', $conditions)
 		);
-		$binding = implode("\n", $bindings);
-		return "
-/**
- * Computes the value of the aggregate column {$column->getName()}
- *
- * @param PropelPDO \$con A connection object
- *
- * @return mixed The scalar result from the aggregate query
- */
-public function compute{$columnPhpName}(PropelPDO \$con)
-{
-	\$stmt = \$con->prepare('{$sql}');
-{$binding}
-	\$stmt->execute();
-	return \$stmt->fetchColumn();
-}
-
-/**
- * Updates the aggregate column {$column->getName()}
- *
- * @param PropelPDO \$con A connection object
- */
-public function update{$columnPhpName}(PropelPDO \$con)
-{
-	\$this->set{$columnPhpName}(\$this->compute{$columnPhpName}(\$con));
-	\$this->save(\$con);
-}
-";
+		
+		return $this->renderTemplate('objectCompute', array(
+			'column'   => $this->getColumn(),
+			'sql'      => $sql,
+			'bindings' => $bindings,
+		));
+	}
+	
+	protected function addObjectUpdate()
+	{
+		return $this->renderTemplate('objectUpdate', array(
+			'column'  => $this->getColumn(),
+		));
 	}
 	
 	protected function getForeignTable()
