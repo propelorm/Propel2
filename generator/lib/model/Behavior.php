@@ -9,6 +9,7 @@
  */
 
 require_once 'model/Index.php';
+require_once 'builder/util/PropelTemplate.php';
 
 /**
  * Information about behaviors of a table.
@@ -26,6 +27,7 @@ class Behavior extends XMLElement
 	protected $parameters = array();
 	protected $isTableModified = false;
 	protected $isEarly = false;
+	protected $dirname;
 	
 	public function setName($name)
 	{
@@ -134,6 +136,50 @@ class Behavior extends XMLElement
 	public function isEarly()
 	{
 		return $this->isEarly;
+	}
+	
+	/**
+	 * Use Propel's simple templating system to render a PHP file
+	 * using variables passed as arguments.
+	 *
+	 * @param string $filename    The template file name, relative to the behavior's dirname
+	 * @param array  $vars        An associative array of argumens to be rendered
+	 * @param string $templateDir The name of the template subdirectory
+	 *
+	 * @return string The rendered template
+	 */
+	public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
+	{
+		$filePath = $this->getDirname() . $templateDir . $filename;
+		if (!file_exists($filePath)) {
+			// try with '.php' at the end
+			$filePath = $filePath . '.php';
+			if (!file_exists($filePath)) {
+				throw new InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+					$filename,
+					$this->getDirname() . $templateDir
+				));
+			}
+		}
+		$template = new PropelTemplate();
+		$template->setTemplateFile($filePath);
+		$vars = array_merge($vars, array('behavior' => $this));
+		
+		return $template->render($vars);
+	}
+	
+	/**
+	 * Returns the current dirname of this behavior (also works for descendants)
+	 *
+	 * @return string The absolute directory name
+	 */
+	protected function getDirname()
+	{
+		if (null === $this->dirname) {
+			$r = new ReflectionObject($this);
+			$this->dirname = dirname($r->getFileName());
+		}
+		return $this->dirname;
 	}
 	
 	/**
