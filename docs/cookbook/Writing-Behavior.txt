@@ -216,6 +216,61 @@ class BasePollQuestion extends BaseObject
  
 Behaviors offer similar hook methods to allow the addition of methods to the query classes (`queryMethods()`) and to the peer classes (`peerMethods()`). And if you need to add attributes, just implement one of the `objectAttributes()`, `queryAttributes()`, or `peerAttributes()` methods.
 
+== Using a Template For Generated Code ==
+
+The behavior's `addUpdateAggregateColumn()` method is somehow hard to read, because of the large string containing the PHP code canvas for the added method. Propel behaviors can take advantage of Propel's simple templating system to use an external file as template for the code to insert. 
+
+Let's refactor the `addUpdateAggregateColumn()` method to take advantage of this feature:
+
+{{{
+#!php
+<?php
+class AggregateColumnBehavior extends Behavior
+{ 
+  // ...
+  
+  protected function addUpdateAggregateColumn()
+  {
+    $sql = sprintf('SELECT %s FROM %s WHERE %s = ?',
+      $this->getParameter('expression'),
+      $this->getParameter('foreign_table'),
+      $this->getParameter('foreign_column')
+    );
+    $table = $this->getTable();
+    $aggregateColumn = $table->getColumn($this->getParameter('name'));
+    return $this->renderTemplate('objectUpdateAggregate', array(
+      'aggregateColumn' => $aggregateColumn,
+      'columnPhpName'   => $aggregateColumn->getPhpName(),
+      'localColumn'     => $table->getColumn($this->getParameter('local_column')),
+      'sql' => $sql,
+    ));
+  }
+}
+}}}
+
+The method no longer returns a string created by hand, but a ''rendered template''. Propel templates are simple PHP files executed in a sandbox - they have only access to the variables declared as second argument of the `renderTemplate()` call. 
+
+Now create a `templates/` directory in the same directory as the `AggregateColumnBehavior` class file, and add in a `objectUpdateAggregate.php` file with the following code:
+
+{{{
+#!php
+/**
+ * Updates the aggregate column <?php echo $aggregateColumn->getName() ?>
+ *
+ * @param PropelPDO $con A connection object
+ */
+public function update<?php echo $columnPhpName ?>(PropelPDO $con)
+{
+  $sql = '<?php echo $sql ?>';
+  $stmt = $con->prepare($sql);
+  $stmt->execute(array($this->get<?php echo $localColumn->getPhpName() ?>()));
+  $this->set<?php echo $columnPhpName ?>($stmt->fetchColumn());
+  $this->save($con);
+}
+}}}
+
+No need to escape dollar signs anymore: this syntax allows for a cleaner separation, and is very convenient for large behaviors.
+
 == Adding Another Behavior From A Behavior ==
  
 This is where it's getting tricky. In the [http://propel.posterous.com/getting-to-know-propel-15-keeping-an-aggregat blog post] describing the column aggregation technique, the calls to the `updateTotalNbVotes()` method come from the `postSave()` and `postDelete()` hooks of the `PollAnswer` class. But the current behavior is applied to the `poll_question` table, how can it modify the code of a class based on another table?
