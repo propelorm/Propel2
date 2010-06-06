@@ -243,8 +243,9 @@ In addition to the standard attributes that can be set on the PDO object, there 
     <connection>
      <!-- ... -->
      <attributes>
-      <option id="ATTR_EMULATE_PREPARES">true</option>
-      <option id="PROPEL_ATTR_EMULATE_PREPARES">true</option>
+      <option id="ATTR_ERRMODE">PDO::ERRMODE_WARNING</option>
+      <option id="ATTR_STATEMENT_CLASS">myPDOStatement</option>
+      <option id="PROPEL_ATTR_CACHE_PREPARES">true</option>
      </attributes>
 }}}
 
