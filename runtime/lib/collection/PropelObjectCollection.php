@@ -120,6 +120,7 @@ class PropelObjectCollection extends PropelCollection
 	 */
 	public function toArray($keyColumn = null, $usePrefix = false)
 	{
+		$ret = array();
 		$keyGetterMethod = 'get' . $keyColumn;
 		foreach ($this as $key => $obj) {
 			$key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
