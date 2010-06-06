@@ -9,7 +9,8 @@
  */
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';	
+require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/namespaced/build/classes");	
 
 /**
  * Tests for Namespaces in generated classes class
@@ -20,21 +21,21 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
  */
 class NamespaceTest extends PHPUnit_Framework_TestCase
 {
-	protected static $initialized = false;
-	
 	protected function setUp()
 	{
 		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
 			$this->markTestSkipped('Namespace support requires PHP 5.3');
 		}
 		parent::setUp();
-		if (!self::$initialized) {
-			set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/namespaced/build/classes");	
-			Propel::init('fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
-			self::$initialized = true;
-		}
+		Propel::init('fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
 	}
 
+	protected function tearDown()
+	{
+		parent::tearDown();
+		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
+	}
+	
 	public function testInsert()
 	{
 		$book = new \Foo\Bar\NamespacedBook();
