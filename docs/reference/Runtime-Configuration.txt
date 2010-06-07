@@ -249,6 +249,12 @@ In addition to the standard attributes that can be set on the PDO object, there 
      </attributes>
 }}}
 
+'''Tip''': If you are using MySQL and get the following error : "SQLSTATE[HY000]: General error: 2014 Cannot execute queries while other unbuffered queries are active", you can try adding the following attribute:
+
+{{{
+<option id="MYSQL_ATTR_USE_BUFFERED_QUERY">true</option>
+}}}
+
 ==== <settings> ====
 
 Settings are Propel-specific options used to further configure the connection -- or perform other user-defined initialization tasks.
