@@ -3158,6 +3158,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		foreach ($this->getTable()->getCrossFks() as $fkList) {
 			list($refFK, $crossFK) = $fkList;
+			$this->declareClassFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()));
+			$this->declareClassFromBuilder($this->getNewStubQueryBuilder($crossFK->getForeignTable()));
+			
 			$this->addCrossFKClear($script, $crossFK);
 			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);

@@ -192,4 +192,34 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $nbMan);
 	}
 	
+	public function testManyToMany()
+	{
+		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
+		\Baz\NamespacedBookClubQuery::create()->deleteAll();
+		NamespacedBookListRelQuery::create()->deleteAll();
+		$book1 = new \Foo\Bar\NamespacedBook();
+		$book1->setTitle('bar');
+		$book1->save();
+		$book2 = new \Foo\Bar\NamespacedBook();
+		$book2->setTitle('foo');
+		$book2->save();
+		$bookClub1 = new \Baz\NamespacedBookClub();
+		$bookClub1->addNamespacedBook($book1);
+		$bookClub1->addNamespacedBook($book2);
+		$bookClub1->save();
+		$bookClub2 = new \Baz\NamespacedBookClub();
+		$bookClub2->addNamespacedBook($book1);
+		$bookClub2->save();
+		$this->assertEquals(2, $book1->countNamespacedBookClubs());
+		$this->assertEquals(1, $book2->countNamespacedBookClubs());
+		$nbRels = NamespacedBookListRelQuery::create()->count();
+		$this->assertEquals(3, $nbRels);
+		$con = Propel::getConnection(NamespacedBookListRelPeer::DATABASE_NAME);
+		$books = \Foo\Bar\NamespacedBookQuery::create()
+			->orderByTitle()
+			->joinWith('NamespacedBookListRel')
+			->joinWith('NamespacedBookListRel.NamespacedBookClub')
+			->find($con);
+	}
+	
 }
