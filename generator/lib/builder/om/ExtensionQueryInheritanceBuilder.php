@@ -82,7 +82,9 @@ require '".$requiredClassFilePath."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 
-		$baseClassname = $this->getNewQueryInheritanceBuilder($this->getChild())->getClassname();
+		$baseBuilder = $this->getNewQueryInheritanceBuilder($this->getChild());
+		$this->declareClassFromBuilder($baseBuilder);
+		$baseClassname = $baseBuilder->getClassname();
 
 		$script .= "
 

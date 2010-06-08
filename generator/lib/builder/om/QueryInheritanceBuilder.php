@@ -46,6 +46,17 @@ class QueryInheritanceBuilder extends OMBuilder
 		return parent::getPackage() . ".om";
 	}
 
+	public function getNamespace()
+	{
+		if ($namespace = parent::getNamespace()) {
+			if ($this->getGeneratorConfig() && $omns = $this->getGeneratorConfig()->getBuildProperty('namespaceOm')) {
+				return $namespace . '\\' . $omns;
+			} else {
+				return $namespace;
+			}
+		}
+	}
+
 	/**
 	 * Set the child object that we're operating on currrently.
 	 * @param      $child Inheritance
@@ -91,7 +102,9 @@ require '".$requiredClassFilePath."';
 		$tableName = $table->getName();
 		$tableDesc = $table->getDescription();
 
-		$baseClassname = $this->getStubQueryBuilder()->getClassname();
+		$baseBuilder = $this->getStubQueryBuilder();
+		$this->declareClassFromBuilder($baseBuilder);
+		$baseClassname = $baseBuilder->getClassname();
 
 		$script .= "
 
@@ -129,6 +142,8 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	 */
 	protected function addClassBody(&$script)
 	{
+		$this->declareClassFromBuilder($this->getStubPeerBuilder());
+		$this->declareClasses('PropelPDO', 'Criteria');
 		$this->addFactory($script);
 		$this->addPreSelect($script);
 		$this->addPreUpdate($script);
@@ -142,7 +157,9 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	 */
 	protected function addFactory(&$script)
 	{
-		$classname = $this->getNewStubQueryInheritanceBuilder($this->getChild())->getClassname();
+		$builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
+		$this->declareClassFromBuilder($builder);
+		$classname = $builder->getClassname();
 		$script .= "
 	/**
 	 * Returns a new " . $classname . " object.

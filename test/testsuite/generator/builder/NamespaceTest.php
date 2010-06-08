@@ -168,4 +168,28 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($book->getId(), $book2->getId());
 	}
 	
+	public function testSingleTableInheritance()
+	{
+		\Foo\Bar\NamespacedBookstoreEmployeeQuery::create()->deleteAll();
+		$emp = new \Foo\Bar\NamespacedBookstoreEmployee();
+		$emp->setName('Henry');
+		$emp->save();
+		$man = new \Foo\Bar\NamespacedBookstoreManager();
+		$man->setName('John');
+		$man->save();
+		$cas = new \Foo\Bar\NamespacedBookstoreCashier();
+		$cas->setName('William');
+		$cas->save();
+		$emps = \Foo\Bar\NamespacedBookstoreEmployeeQuery::create()
+			->orderByName()
+			->find();
+		$this->assertEquals(3, count($emps));
+		$this->assertTrue($emps[0] instanceof \Foo\Bar\NamespacedBookstoreEmployee);
+		$this->assertTrue($emps[1] instanceof \Foo\Bar\NamespacedBookstoreManager);
+		$this->assertTrue($emps[2] instanceof \Foo\Bar\NamespacedBookstoreCashier);
+		$nbMan = \Foo\Bar\NamespacedBookstoreManagerQuery::create()
+			->count();
+		$this->assertEquals(1, $nbMan);
+	}
+	
 }
