@@ -89,6 +89,8 @@ Each column also requires a `type`. The XML schema is database agnostic, so the 
 
 As for the other column attributes, `required`, `primaryKey`, and `autoIncrement`, they mean exactly what their names suppose.
 
+'''Tip''': Propel supports namespaces (for PHP > 5.3). If you specify a `namespace` attribute in a `<table>` element, the generated PHP classes for this table will use this namespace.
+
 === Foreign Keys ===
 
 A table can have several `<foreign-key>` tags, describing foreign keys to foreign tables. Each `<foreign-key>` tag consists of one or more mappings between a local column and a foreign column.
