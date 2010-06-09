@@ -52,7 +52,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function getPosition()
 	{
-		return (int) $this->getIterator()->key();
+		return (int) $this->getInternalIterator()->key();
 	}
 
 	/**
@@ -63,7 +63,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function getFirst()
 	{
-		$this->getIterator()->rewind();
+		$this->getInternalIterator()->rewind();
 		return $this->getCurrent();
 	}
 	
@@ -89,7 +89,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		if ($pos == 0) {
 			return null;
 		} else {
-			$this->getIterator()->seek($pos - 1);
+			$this->getInternalIterator()->seek($pos - 1);
 			return $this->getCurrent();
 		}
 	}
@@ -101,7 +101,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function getCurrent()
 	{
-		return $this->getIterator()->current();
+		return $this->getInternalIterator()->current();
 	}
 
 	/**
@@ -112,7 +112,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function getNext()
 	{
-		$this->getIterator()->next();
+		$this->getInternalIterator()->next();
 		return $this->getCurrent();
 	}
 
@@ -128,7 +128,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		if ($count == 0) {
 			return null;
 		} else {
-			$this->getIterator()->seek($count - 1);
+			$this->getInternalIterator()->seek($count - 1);
 			return $this->getCurrent();
 		}
 	}
@@ -166,7 +166,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function isOdd()
 	{
-		return (boolean) ($this->getIterator()->key() % 2);
+		return (boolean) ($this->getInternalIterator()->key() % 2);
 	}
 
 	/**
@@ -206,7 +206,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	    return null;
 	  }
 		$ret = $this->getLast();
-		$lastKey = $this->getIterator()->key();
+		$lastKey = $this->getInternalIterator()->key();
 		$this->offsetUnset((string) $lastKey);
 		return $ret;
 	}
@@ -328,13 +328,19 @@ class PropelCollection extends ArrayObject implements Serializable
 	// IteratorAggregate method
 	
 	/**
-	 * Overrides ArrayObject::getIterator() to return always the same iterator object
-	 * Instead of a new instance for each call
+	 * Overrides ArrayObject::getIterator() to save the iterator object
+	 * for internal use e.g. getNext(), isOdd(), etc.
 	 */
 	public function getIterator()
 	{
+		$this->iterator = new ArrayIterator($this);
+		return $this->iterator;
+	}
+	
+	public function getInternalIterator()
+	{
 		if (null === $this->iterator) {
-			$this->iterator = new ArrayIterator($this);
+			return $this->getIterator();
 		}
 		return $this->iterator;
 	}
