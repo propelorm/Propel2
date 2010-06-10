@@ -60,6 +60,17 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expectedReverseSuffix, TestableOMBuilder::getRelatedBySuffix($fk));
 	}
 
+	public function testClear()
+	{
+		$b = new Book();
+		$b->setNew(false);
+		$b->clear();
+		$this->assertTrue($b->isNew(), 'clear() sets the object to new');
+		$b = new Book();
+		$b->setDeleted(true);
+		$b->clear();
+		$this->assertFalse($b->isDeleted(), 'clear() sets the object to not deleted');
+	}
 }
 
 class TestableOMBuilder extends OMBuilder

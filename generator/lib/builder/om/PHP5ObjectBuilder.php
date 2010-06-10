@@ -4120,6 +4120,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= "
 		\$this->resetModified();
 		\$this->setNew(true);
+		\$this->setDeleted(false);
 	}
 ";
 	}
