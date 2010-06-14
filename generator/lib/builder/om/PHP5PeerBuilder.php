@@ -1495,11 +1495,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			";
 
 		if ($this->isDeleteCascadeEmulationNeeded()) {
-			$script .= "\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(\$criteria, \$con);
+			$script .= "
+			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+			\$c = clone \$criteria;
+			\$affectedRows += ".$this->getPeerClassname()."::doOnDeleteCascade(\$c, \$con);
 			";
 		}
 		if ($this->isDeleteSetNullEmulationNeeded()) {
-			$script .= $this->getPeerClassname() . "::doOnDeleteSetNull(\$criteria, \$con);
+			$script .= "
+			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+			\$c = clone \$criteria;
+			" . $this->getPeerClassname() . "::doOnDeleteSetNull(\$c, \$con);
 			";
 		}
 
