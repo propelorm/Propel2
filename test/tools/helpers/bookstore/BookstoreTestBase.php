@@ -30,11 +30,18 @@ abstract class BookstoreTestBase extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * This is run after each unit test.  It empties the database.
+	 * This is run after each unit test. It empties the database.
 	 */
 	protected function tearDown()
 	{
 		parent::tearDown();
-		$this->con->commit();
+		// Only commit if the transaction hasn't failed.
+		// This is because tearDown() is also executed on a failed tests, 
+		// and we don't want to call PropelPDO::commit() in that case 
+		// since it will trigger an exception on its own 
+		// ('Cannot commit because a nested transaction was rolled back')
+		if ($this->con->isCommitable()) {
+			$this->con->commit();
+		}
 	}
 }
