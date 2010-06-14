@@ -31,6 +31,11 @@ class PropelStatementFormatter extends PropelFormatter
 			return $stmt;
 		}
 	}
+	
+	public function formatRecord($record = null)
+	{
+		throw new PropelException('The Statement formatter cannot transform a record into a statement');
+	}
 
 	public function isObjectFormatter()
 	{

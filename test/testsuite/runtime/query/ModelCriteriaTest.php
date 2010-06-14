@@ -1197,6 +1197,49 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('Don Juan', $book->getTitle(), 'find() returns the model objects matching the query');
 	}
 	
+	public function testFindOneOrCreateNotExists()
+	{
+		BookQuery::create()->deleteAll();
+		$book = BookQuery::create('b')
+			->where('b.Title = ?', 'foo')
+			->filterByPrice(125)
+			->findOneOrCreate();
+		$this->assertTrue($book instanceof Book, 'findOneOrCreate() returns an instance of the model when the request has no result');
+		$this->assertTrue($book->isNew(), 'findOneOrCreate() returns a new instance of the model when the request has no result');
+		$this->assertEquals('foo', $book->getTitle(), 'findOneOrCreate() returns a populated objects based on the conditions');
+		$this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
+	}
+
+	public function testFindOneOrCreateNotExistsFormatter()
+	{
+		BookQuery::create()->deleteAll();
+		$book = BookQuery::create('b')
+			->where('b.Title = ?', 'foo')
+			->filterByPrice(125)
+			->setFormatter(ModelCriteria::FORMAT_ARRAY)
+			->findOneOrCreate();
+		$this->assertTrue(is_array($book), 'findOneOrCreate() uses the query formatter even when the request has no result');
+		$this->assertEquals('foo', $book['Title'], 'findOneOrCreate() returns a populated array based on the conditions');
+		$this->assertEquals(125, $book['Price'], 'findOneOrCreate() returns a populated array based on the conditions');
+	}
+
+	public function testFindOneOrCreateExists()
+	{
+		BookQuery::create()->deleteAll();
+		$book = new Book();
+		$book->setTitle('foo');
+		$book->setPrice(125);
+		$book->save();
+		$book = BookQuery::create('b')
+			->where('b.Title = ?', 'foo')
+			->filterByPrice(125)
+			->findOneOrCreate();
+		$this->assertTrue($book instanceof Book, 'findOneOrCreate() returns an instance of the model when the request has one result');
+		$this->assertFalse($book->isNew(), 'findOneOrCreate() returns an existing instance of the model when the request has one result');
+		$this->assertEquals('foo', $book->getTitle(), 'findOneOrCreate() returns a populated objects based on the conditions');
+		$this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
+	}
+	
 	public function testFindPkSimpleKey()
 	{
 		BookstoreDataPopulator::depopulate();

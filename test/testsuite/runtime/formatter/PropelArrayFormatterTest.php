@@ -125,4 +125,5 @@ class PropelArrayFormatterTest extends BookstoreEmptyTestBase
 		$this->assertNull($book, 'PropelArrayFormatter::formatOne() returns null when no result');
 	}
 
+
 }

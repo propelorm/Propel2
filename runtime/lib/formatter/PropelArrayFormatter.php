@@ -62,6 +62,18 @@ class PropelArrayFormatter extends PropelFormatter
 		return $result;
 	}
 
+	/**
+	 * Formats an ActiveRecord object
+	 *
+	 * @param BaseObject $record the object to format
+	 *
+	 * @return array The original record turned into an array
+	 */
+	public function formatRecord($record = null)
+	{
+		return $record ? $record->toArray() : array();
+	}
+	
 	public function isObjectFormatter()
 	{
 		return false;

@@ -118,6 +118,17 @@ abstract class PropelFormatter
 		return $this->hasLimit;
 	}
 	
+	/**
+	 * Formats an ActiveRecord object
+	 *
+	 * @param BaseObject $record the object to format
+	 *
+	 * @return BaseObject The original record
+	 */
+	public function formatRecord($record = null)
+	{
+		return $record;
+	}
 	
 	abstract public function format(PDOStatement $stmt);
 

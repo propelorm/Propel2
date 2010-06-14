@@ -326,6 +326,30 @@ $nbUpdatedRows = AuthorQuery::create()
 // Beware that it may take a long time
 }}}
 
+=== Creating An Object Based on a Query ===
+
+You may often create a new object based on values used in conditions if a query returns no result. This happens a lot when dealing with cross-reference tables in many-to-many relationships. To avoid repeating yourself, use `findOneOrCreate()` instead of `findOne()` in such cases:
+
+{{{
+#!php
+<?php
+// The long way
+$bookTag = BookTagQuery::create()
+  ->filterByBook($book)
+  ->filterByTag('crime')
+  ->findOne();
+if (!$bookTag) {
+	$bookTag = new BookTag();
+	$bookTag->setBook($book);
+	$bookTag->setTag('crime');
+}
+// The short way
+$bookTag = BookTagQuery::create()
+  ->filterByBook($book)
+  ->filterByTag('crime')
+  ->findOneOrCreate();
+}}}
+
 === Reusing A Query ===
 
 By default, termination methods like `findOne()`, `find()`, `count()`, `paginate()`, or `delete()` alter the original query. That means that if you need to reuse a query after a termination method, you must call the `keepQuery()` method first:
@@ -774,6 +798,7 @@ comment($comment)
 count($con = null)
 find($con = null)
 findOne($con = null)
+finOneOrCreate($con = null)
 findBy($columnName, $value, $con = null)
 findByArray($conditions, $con = null)
 findOneBy($columnName, $value, $con = null)
