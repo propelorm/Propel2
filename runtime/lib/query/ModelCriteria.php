@@ -1036,9 +1036,13 @@ class ModelCriteria extends Criteria
 			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
 			$con->commit();
-		} catch (PropelException $e) {
-			$con->rollback();
-			throw $e;
+		} catch (Exception $e) {
+			if ($stmt) {
+				$stmt = null; // close
+			}
+			$con->rollBack();
+			Propel::log($e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
 		}
 		
 		return $stmt;
