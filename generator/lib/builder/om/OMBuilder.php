@@ -231,7 +231,9 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		$declaredClasses = $this->declaredClasses;
 		unset($declaredClasses[$ignoredNamespace]);
+		ksort($declaredClasses);
 		foreach ($declaredClasses as $namespace => $classes) {
+			sort($classes);
 			foreach ($classes as $class) {
 				$script .= sprintf("use %s\\%s;
 ", $namespace, $class);

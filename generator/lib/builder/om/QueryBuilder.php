@@ -73,7 +73,6 @@ class QueryBuilder extends OMBuilder
 		$parentClass = $this->getBehaviorContent('parentClass');
 		$parentClass = null === $parentClass ? 'ModelCriteria' : $parentClass;
 		$script .= "
-
 /**
  * Base class that represents a query for the '$tableName' table.
  *
