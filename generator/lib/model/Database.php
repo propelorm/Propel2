@@ -79,8 +79,13 @@ class Database extends XMLElement
 	protected function setupObject()
 	{
 		$this->name = $this->getAttribute("name");
-		$this->pkg = $this->getAttribute("package");
-		$this->namespace = $this->getAttribute("namespace", '');
+		$namespace = $this->getAttribute("namespace", '');
+		$package = $this->getAttribute("package");
+		if ($namespace && !$package && $this->getBuildProperty('namespaceAutoPackage')) {
+			$package = str_replace('\\', '.', $namespace);
+		}
+		$this->namespace = $namespace;
+		$this->pkg = $package;
 		$this->baseClass = $this->getAttribute("baseClass");
 		$this->basePeer = $this->getAttribute("basePeer");
 		$this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);

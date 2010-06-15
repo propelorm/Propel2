@@ -171,7 +171,7 @@ class DatabaseMap
     } else if (class_exists($tmClass = $phpName . 'TableMap')) {
       $this->addTableFromMapClass($tmClass);
       return $this->tablesByPhpName[$phpName];
-    } else if (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap')) {
+    } else if (class_exists($tmClass = substr_replace($phpName, '\\map\\', strrpos($phpName, '\\'), 1) . 'TableMap')) {
       $this->addTableFromMapClass($tmClass);
       return $this->tablesByPhpName[$phpName];
     } else {
