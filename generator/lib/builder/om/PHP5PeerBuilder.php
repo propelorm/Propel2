@@ -1585,9 +1585,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 				$fkClassName = $joinedTablePeerBuilder->getObjectClassname();
 
-				// i'm not sure whether we can allow delete cascade for foreign keys
-				// within the same table?  perhaps we can?
-				if ( $fk->getOnDelete() == ForeignKey::CASCADE && $tblFK->getName() != $table->getName()) {
+				if ($fk->getOnDelete() == ForeignKey::CASCADE) {
 
 					// backwards on purpose
 					$columnNamesF = $fk->getLocalColumns();
@@ -1666,10 +1664,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 				$fkClassName = $refTablePeerBuilder->getObjectClassname();
 
-				// i'm not sure whether we can allow delete setnull for foreign keys
-				// within the same table?  perhaps we can?
-				if ( $fk->getOnDelete() == ForeignKey::SETNULL &&
-				$fk->getTable()->getName() != $table->getName()) {
+				if ($fk->getOnDelete() == ForeignKey::SETNULL) {
 
 					// backwards on purpose
 					$columnNamesF = $fk->getLocalColumns();
@@ -1689,7 +1684,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 					}
 
 					$script .= "
-					{$this->basePeerClassname}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+			{$this->basePeerClassname}::doUpdate(\$selectCriteria, \$updateValues, \$con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
 ";
 				} // if setnull && fkey table name != curr table name
 			} // if not for ref only
