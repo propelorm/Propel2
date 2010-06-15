@@ -849,14 +849,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 				// we can't perform operations on tables that are
 				// not within the schema (i.e. that we have no map for, etc.)
 
-				// i'm not sure whether we can allow delete cascade for foreign keys
-				// within the same table?  perhaps we can?
-				if ( ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL )
-				&& $tblFK->getName() != $table->getName()) {
+				if ($fk->getOnDelete() == ForeignKey::CASCADE || $fk->getOnDelete() == ForeignKey::SETNULL) {
 					$script .= "
-		// invalidate objects in ".$joinedTablePeerBuilder->getClassname()." instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
-		".$joinedTablePeerBuilder->getClassname()."::clearInstancePool();
-";
+		// Invalidate objects in ".$joinedTablePeerBuilder->getClassname()." instance pool, 
+		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+		".$joinedTablePeerBuilder->getClassname()."::clearInstancePool();";
 				} // if fk is on delete cascade
 			} // if (! for ref only)
 		} // foreach
