@@ -2655,7 +2655,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (\$this->$varName === null && ($conditional)) {";
 		if ($useRetrieveByPk) {
 			$script .= "
-			\$this->$varName = ".$fkQueryBuilder->getClassname()."::create()->findPk(\$this->$clo);";
+			\$this->$varName = ".$fkQueryBuilder->getClassname()."::create()->findPk(\$this->$clo, \$con);";
 		} else {
 			$script .= "
 			\$this->$varName = ".$fkQueryBuilder->getClassname()."::create()
