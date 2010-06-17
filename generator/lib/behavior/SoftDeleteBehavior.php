@@ -267,6 +267,7 @@ EOT;
 
 	public function staticMethods($builder)
 	{
+		$builder->declareClassFromBuilder($builder->getStubQueryBuilder());
 		$this->builder = $builder;
 		$script = '';
 		$this->addPeerEnableSoftDelete($script);
