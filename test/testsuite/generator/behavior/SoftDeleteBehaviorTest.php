@@ -47,6 +47,23 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'enableSoftDelete() enables the static soft delete');		
 	}
 	
+	public function testInstancePoolingAndSoftDelete()
+	{
+		Table4Peer::doForceDeleteAll($this->con);
+		$t = new Table4();
+		$t->save($this->con);
+		Table4Peer::enableSoftDelete();
+		$t->delete($this->con);
+		$t2 = Table4Peer::retrieveByPk($t->getPrimaryKey(), $this->con);
+		$this->assertNull($t2, 'An object is removed from the instance pool on soft deletion');
+		Table4Peer::disableSoftDelete();
+		$t2 = Table4Peer::retrieveByPk($t->getPrimaryKey(), $this->con);
+		$this->assertNotNull($t2);
+		Table4Peer::enableSoftDelete();
+		$t2 = Table4Peer::retrieveByPk($t->getPrimaryKey(), $this->con);
+		$this->assertNull($t2, 'A soft deleted object is removed from the instance pool when the soft delete behavior is enabled');
+	}
+	
 	public function testStaticDoForceDelete()
 	{
 		$t1 = new Table4();

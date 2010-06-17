@@ -85,8 +85,9 @@ public function unDelete(PropelPDO \$con = null)
 		return <<<EOT
 if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {
 	\$this->{$this->getColumnSetter()}(time());
-	\$this->save();
+	\$this->save(\$con);
 	\$con->commit();
+	{$builder->getStubPeerBuilder()->getClassname()}::removeInstanceFromPool(\$this);
 	return;
 }
 EOT;
@@ -288,6 +289,8 @@ EOT;
 public static function enableSoftDelete()
 {
 	{$this->builder->getStubQueryBuilder()->getClassname()}::enableSoftDelete();
+	// some soft_deleted objects may be in the instance pool
+	{$this->builder->getStubPeerBuilder()->getClassname()}::clearInstancePool();
 }
 ";
 	}
