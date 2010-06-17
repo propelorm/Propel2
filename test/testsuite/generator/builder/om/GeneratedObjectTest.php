@@ -1329,6 +1329,9 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$book = new Book();
 		$book->setVirtualColumn('Foo', 'bar');
 		$this->assertEquals('bar', $book->getFoo(), 'generated __call() catches getters for virtual columns');
+		$book = new Book();
+		$book->setVirtualColumn('foo', 'bar');
+		$this->assertEquals('bar', $book->getFoo(), 'generated __call() catches getters for virtual columns starting with a lowercase character');
 	}
 	
 	public static function conditionsForTestReadOnly()
