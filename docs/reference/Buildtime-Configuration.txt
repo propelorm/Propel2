@@ -180,12 +180,12 @@ Set whether the '''doSelectJoin*()''' methods use LEFT JOIN or INNER JOIN (see t
 === MySQL-specific Settings ===
 
 {{{
-propel.mysqlTableType = /DefaultTableEngine/
+propel.mysql.tableType = /DefaultTableEngine/
 }}}
 Default table engine - defaults to MyISAM. You can override this setting if you wish to default to another engine for all tables (for instance InnoDB, or HEAP). This setting can also be overridden on a per-table basis using the `<vendor>` element in the schema (see [wiki:Documentation/1.5/Schema#AddingVendorInfo]).
 
 {{{
-propel.mysqlTableEngineKeyword = /EngineKeyword/
+propel.mysql.tableEngineKeyword = /EngineKeyword/
 }}}
 Keyword used to specify the table engine in the CREATE SQL statement. Defaults to 'ENGINE', users of MYSQL < 5 should use 'TYPE' instead.
 
