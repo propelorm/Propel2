@@ -203,6 +203,20 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		$books = $authors->populateRelation('Book', $c);
 		$this->assertEquals(3, count($books), 'populateRelation() accepts an optional criteria object to filter the query');
 	}
+
+	public function testPopulateRelationEmpty()
+	{
+		AuthorPeer::clearInstancePool();
+		BookPeer::clearInstancePool();
+		$authors = AuthorQuery::create()->add(null, '1<>1', Criteria::CUSTOM)->find();
+		$con = Propel::getConnection();
+		$count = $con->getQueryCount();
+		$books = $authors->populateRelation('Book');
+		$this->assertTrue($books instanceof PropelObjectCollection, 'populateRelation() returns a PropelCollection instance');
+		$this->assertEquals('Book', $books->getModel(), 'populateRelation() returns a collection of the related objects');
+		$this->assertEquals(0, count($books), 'populateRelation() the list of related objects');
+		$this->assertEquals($count, $con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empy collections');
+	}
 	
 	public function testPopulateRelationOneToMany()
 	{

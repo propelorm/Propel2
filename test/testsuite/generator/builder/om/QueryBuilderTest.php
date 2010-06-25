@@ -324,6 +324,14 @@ class QueryBuilderTest extends BookstoreTestBase
 			$q1->addOr($cton0);
 		}
 		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to a series of Criteria::EQUAL in the PK columns');
+
+		$q = new BookListRelQuery();
+		$q->filterByPrimaryKeys(array());
+		
+		$q1 = BookListRelQuery::create();
+		$q1->add(null, '1<>1', Criteria::CUSTOM);
+		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to an always failing test on empty arrays');
+
 	}
 	
 	public function testFilterByIntegerPk()
