@@ -316,4 +316,12 @@ abstract class BaseObject
 		return array_keys(get_object_vars($this));
 	}
 
+	/** 
+	 * Catches calls to undefined methods
+	 * Allows to define default __call() behavior if you use a custom BaseObject
+	 */ 
+	public function __call($name, $params) 
+	{ 
+		throw new PropelException('Call to undefined method: ' . $name); 
+	} 
 }

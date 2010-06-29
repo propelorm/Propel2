@@ -1334,6 +1334,15 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->assertEquals('bar', $book->getFoo(), 'generated __call() catches getters for virtual columns starting with a lowercase character');
 	}
 	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testMagicCallUndefined()
+	{
+		$book = new Book();
+		$book->fooMethodName();
+	}
+	
 	public static function conditionsForTestReadOnly()
 	{
 		return array(
