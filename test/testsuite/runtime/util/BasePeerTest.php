@@ -318,6 +318,18 @@ class BasePeerTest extends BookstoreTestBase
 		$c = new Criteria(BookPeer::DATABASE_NAME);
 		BasePeer::doDelete($c, $con);
 	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testDoDeleteJoin()
+	{
+		$con = Propel::getConnection();
+		$c = new Criteria(BookPeer::DATABASE_NAME);
+		$c->add(BookPeer::TITLE, 'War And Peace');
+		$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
+		BasePeer::doDelete($c, $con);
+	}
 	
 	public function testDoDeleteSimpleCondition()
 	{

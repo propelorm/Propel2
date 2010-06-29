@@ -110,7 +110,12 @@ class BasePeer
 	{
 		$db = Propel::getDB($criteria->getDbName());
 		$dbMap = Propel::getDatabaseMap($criteria->getDbName());
-
+		
+		//join are not supported with DELETE statement
+		if (count($criteria->getJoins())) {
+			throw new PropelException('Delete does not support join');
+		}
+		
 		// Set up a list of required tables (one DELETE statement will
 		// be executed per table)
 		$tables = $criteria->getTablesColumns();
