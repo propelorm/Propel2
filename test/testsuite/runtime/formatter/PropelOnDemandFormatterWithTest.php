@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Test class for PropelOnDemandFormatter when Criteria uses with().

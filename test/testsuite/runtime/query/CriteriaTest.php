@@ -8,12 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/BaseTestCase.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/query/Criteria.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/util/BasePeer.php';
-
-set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
+require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Test class for Criteria.
@@ -23,7 +18,7 @@ Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
  * @version    $Id$
  * @package    runtime.query
  */
-class CriteriaTest extends BaseTestCase
+class CriteriaTest extends BookstoreTestBase
 {
 
   /**

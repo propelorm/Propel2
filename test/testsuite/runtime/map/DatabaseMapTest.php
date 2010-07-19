@@ -8,40 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/map/DatabaseMap.php';
-
-class TestDatabaseBuilder
-{
-  protected static $dmap = null;
-  protected static $tmap = null;
-  public static function getDmap()
-  {
-    if (is_null(self::$dmap)) {
-        self::$dmap = new DatabaseMap('foodb');
-    }
-    return self::$dmap;
-  }
-  public static function setTmap($tmap)
-  {
-    self::$tmap = $tmap;
-  }
-  public static function getTmap()
-  {
-    return self::$tmap;
-  }    
-}
-
-class BazTableMap extends TableMap
-{
-  public function initialize()
-  {
-    $this->setName('baz');
-    $this->setPhpName('Baz');
-  }
-}
+require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
 
 /**
  * Test class for DatabaseMap.
@@ -50,7 +17,7 @@ class BazTableMap extends TableMap
  * @version    $Id$
  * @package    runtime.map
  */
-class DatabaseMapTest extends PHPUnit_Framework_TestCase 
+class DatabaseMapTest extends BookstoreTestBase 
 { 
   protected $databaseMap;
 
@@ -161,11 +128,37 @@ class DatabaseMapTest extends PHPUnit_Framework_TestCase
     
   public function testGetTableByPhpNameNotLoaded()
   {
-  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");
-		require_once 'bookstore/map/BookTableMap.php';
-		require_once 'bookstore/om/BaseBookPeer.php';
-		require_once 'bookstore/BookPeer.php';
 		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
   }
   
+}
+
+class TestDatabaseBuilder
+{
+  protected static $dmap = null;
+  protected static $tmap = null;
+  public static function getDmap()
+  {
+    if (is_null(self::$dmap)) {
+        self::$dmap = new DatabaseMap('foodb');
+    }
+    return self::$dmap;
+  }
+  public static function setTmap($tmap)
+  {
+    self::$tmap = $tmap;
+  }
+  public static function getTmap()
+  {
+    return self::$tmap;
+  }    
+}
+
+class BazTableMap extends TableMap
+{
+  public function initialize()
+  {
+    $this->setName('baz');
+    $this->setPhpName('Baz');
+  }
 }

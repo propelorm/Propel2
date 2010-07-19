@@ -9,8 +9,8 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
-require_once 'tools/helpers/bookstore/BookstoreDataPopulator.php';
+require_once dirname(__FILE__) . '/BookstoreTestBase.php';
+require_once dirname(__FILE__) . '/BookstoreDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.

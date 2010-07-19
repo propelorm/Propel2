@@ -8,47 +8,12 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/map/RelationMap.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
-
-class TestableTableMap extends TableMap
-{
-  public function hasPrefix($data)
-  {
-    return parent::hasPrefix($data);
-  }
-
-  public function removePrefix($data)
-  {
-    return parent::removePrefix($data);
-  }
-  
-  public function normalizeColName($name)
-  {
-    return parent::normalizeColName($name);
-  }
-}
-
-class FooTableMap extends TableMap
-{ 
-  public $rmap;
-  public function buildRelations()
-  {
-    $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
-  }
-}
-
-class BarTableMap extends TableMap
-{
-  public function initialize()
-  {
-    $this->setName('bar');
-    $this->setPhpName('Bar');
-  }
-}
-
-
+require_once dirname(__FILE__) . '/../../../../runtime/lib/map/DatabaseMap.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/exception/PropelException.php';
 
 /**
  * Test class for TableMap.
@@ -203,15 +168,17 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $expected = array('BAR' => $column1, 'BAZZ' => $column3);
     $this->assertEquals($expected, $this->tmap->getForeignKeys(), 'getForeignKeys() returns an array of the table foreign keys');
   }
+
+	/**
+	 * @expectedException PropelException
+	 */
+  public function testLoadWrongRelations()
+  {
+    $this->tmap->getRelation('Bar');
+  }
   
   public function testLazyLoadRelations()
   {
-    try {
-      $this->tmap->getRelation('Bar');
-      $this->fail('getRelation() throws an exception when called on a table with no relations');    
-    } catch (PropelException $e) {
-      $this->assertTrue(true, 'getRelation() throws an exception when called on a table with no relations');
-    }
     $foreigntmap = new BarTableMap();
     $this->databaseMap->addTableObject($foreigntmap);
     $localtmap = new FooTableMap();
@@ -282,5 +249,41 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals('baz', $tmap->removePrefix('barbaz'), 'removePrefix returns string without prefix if found at the beginning');
     $this->assertEquals('bazbaz', $tmap->removePrefix('bazbaz'), 'removePrefix returns original string when prefix is not found');
     $this->assertEquals('bazbar', $tmap->removePrefix('bazbar'), 'removePrefix returns original string when prefix is not found at the beginning');
+  }
+}
+
+class TestableTableMap extends TableMap
+{
+  public function hasPrefix($data)
+  {
+    return parent::hasPrefix($data);
+  }
+
+  public function removePrefix($data)
+  {
+    return parent::removePrefix($data);
+  }
+  
+  public function normalizeColName($name)
+  {
+    return parent::normalizeColName($name);
+  }
+}
+
+class FooTableMap extends TableMap
+{ 
+  public $rmap;
+  public function buildRelations()
+  {
+    $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
+  }
+}
+
+class BarTableMap extends TableMap
+{
+  public function initialize()
+  {
+    $this->setName('bar');
+    $this->setClassName('Bar');
   }
 }

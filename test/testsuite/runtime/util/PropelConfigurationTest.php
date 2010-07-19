@@ -8,8 +8,9 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/config/PropelConfiguration.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/config/PropelConfigurationIterator.php';
 
 /**
  * Test for PropelConfiguration class

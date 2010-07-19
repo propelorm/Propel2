@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/BaseTestCase.php';
+require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelDateTime.php';
 
 /**
@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelDateTime.p
  * @author     Soenke Ruempler
  * @package    runtime.util
  */
-class PropelDateTimeTest extends BaseTestCase
+class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 {
 
 	/**
