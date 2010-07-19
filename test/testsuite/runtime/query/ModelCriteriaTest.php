@@ -515,6 +515,16 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
 	}
+	
+	public function testAddJoin()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
+		$c->addJoin(BookPeer::PUBLISHER_ID, PublisherPeer::ID);
+		$sql = 'SELECT  FROM `book`, `author`, `publisher` WHERE book.AUTHOR_ID=author.ID AND book.PUBLISHER_ID=publisher.ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'addJoin() works the same as in Criteria');
+	}
 
 	public function testJoin()
 	{

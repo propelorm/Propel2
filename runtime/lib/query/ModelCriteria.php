@@ -558,8 +558,12 @@ class ModelCriteria extends Criteria
 	 */
 	public function addJoinObject(Join $join, $name = null)
 	{
-	  if (!in_array($join, $this->joins)) { // compare equality, NOT identity
-			$this->joins[$name] = $join;
+		if (!in_array($join, $this->joins)) { // compare equality, NOT identity
+			if (null === $name) {
+				$this->joins[] = $join;
+			} else {
+				$this->joins[$name] = $join;
+			}
 		}
 		return $this;
 	}
