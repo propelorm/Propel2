@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework.php';
 
 /**
  * Tests some of the methods of generated Object classes. These are:

@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once dirname(__FILE__) . '/../../tools/helpers/bookstore/BookstoreTestBase.php';
 
 /* It's only fair to admit that these tests were carefully crafted
 after studying the current implementation to make it look as bad as

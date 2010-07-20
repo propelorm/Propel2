@@ -8,7 +8,7 @@
  * @license    MIT License
  */ 
 
-include_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+require_once dirname(__FILE__) . '/../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests a functional scenario using the Bookstore model
@@ -240,7 +240,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// Test Validators
 		// ---------------
 
-		require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
+		require_once dirname(__FILE__) . '/../../tools/helpers/bookstore/validator/ISBNValidator.php';
 
 		$bk1 = new Book();
 		$bk1->setTitle("12345"); // min length is 10
@@ -662,7 +662,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// Test Validators
 		// ---------------
 
-		require_once 'tools/helpers/bookstore/validator/ISBNValidator.php';
+		require_once dirname(__FILE__) . '/../../tools/helpers/bookstore/validator/ISBNValidator.php';
 
 		$bk1 = new Book();
 		$bk1->setTitle("12345"); // min length is 10
