@@ -8,10 +8,11 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');
-include_once 'tools/helpers/cms/CmsDataPopulator.php';
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));
+Propel::init(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php');
+include_once dirname(__FILE__) . '/CmsDataPopulator.php';
 
 /**
  * Base class contains some methods shared by subclass test cases.

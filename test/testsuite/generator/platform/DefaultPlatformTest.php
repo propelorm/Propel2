@@ -8,7 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'generator/platform/PlatformTestBase.php';
+require_once dirname(__FILE__) . '/PlatformTestBase.php';
+
 /**
  *
  * @package    generator.platform 

@@ -9,7 +9,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/behavior/BookstoreNestedSetTestBase.php';
+require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/BookstoreNestedSetTestBase.php';
 
 /**
  * Tests for NestedSetBehaviorQueryBuilderModifier class

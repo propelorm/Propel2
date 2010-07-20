@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'model/Index.php';
+require_once dirname(__FILE__) . '/Index.php';
 
 /**
  * Information about unique columns of a table.  This class assumes

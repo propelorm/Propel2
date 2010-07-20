@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'generator/platform/DefaultPlatformTest.php';
+require_once dirname(__FILE__) . '/DefaultPlatformTest.php';
 
 /**
  * 

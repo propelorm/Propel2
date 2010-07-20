@@ -9,10 +9,10 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'builder/util/XmlToAppData.php';
-require_once 'platform/MysqlPlatform.php';
-require_once 'config/GeneratorConfig.php';
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorConfig.php';
 
 /**
  * Tests for package handling.
@@ -34,7 +34,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
 
 		//$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
-		$this->appData = $this->xmlToAppData->parseFile("etc/schema/tabletest-schema.xml");
+		$this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../etc/schema/tabletest-schema.xml'));
 
 		$db = $this->appData->getDatabase("iddb");
 		$expected = IDMethod::NATIVE;
@@ -55,7 +55,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 	public function testGeneratorConfig()
 	{
 		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
+		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
 		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
@@ -66,6 +66,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 	
 	public function testAddBehavior()
 	{
+		set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../../generator/lib/'));
 		$platform = new MysqlPlatform();
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array(
@@ -73,7 +74,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 		));
 		$platform->setGeneratorConfig($config);
 		$xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
+		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
 		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
 		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
 	}
@@ -86,7 +87,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 		$xmlToAppData = new XmlToAppData($platform, 'defaultpackage', null);
 		try
 		{
-			$appData = $xmlToAppData->parseFile('fixtures/unique-column/column-schema.xml');
+			$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/unique-column/column-schema.xml'));
 			$this->fail('Parsing file with duplicate column names in one table throws exception');
 		} catch (EngineException $e) {
 			$this->assertTrue(true, 'Parsing file with duplicate column names in one table throws exception');
@@ -100,7 +101,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 		$platform->setGeneratorConfig($config);
 		$xmlToAppData = new XmlToAppData($platform, 'defaultpackage', null);
 		try {
-			$appData = $xmlToAppData->parseFile('fixtures/unique-column/table-schema.xml');
+			$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/unique-column/table-schema.xml'));
 			$this->fail('Parsing file with duplicate table name throws exception');
 		} catch (EngineException $e) {
 			$this->assertTrue(true, 'Parsing file with duplicate table name throws exception');

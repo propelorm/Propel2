@@ -8,11 +8,11 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'platform/MysqlPlatform.php';
-require_once 'model/Behavior.php';
-require_once 'model/Table.php';
-require_once 'platform/MysqlPlatform.php';
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/Behavior.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
 
 /**
  * Tests for Behavior class
@@ -72,9 +72,9 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
    */
   public function testXmlToAppData()
   {
-  	include_once 'builder/util/XmlToAppData.php';
+  	include_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
     $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
+    $this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
     $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
     $behaviors = $table->getBehaviors();
     $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
@@ -85,17 +85,17 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
   
   public function testMofifyTable()
   {
-  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
+  	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));		
+		Propel::init(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php'));	
     $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
     $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
   }
   
   public function testModifyDatabase()
   {
-  	set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+  	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));		
 		require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
-		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
+		Propel::init(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php'));	
     $tmap = Propel::getDatabaseMap(Table3Peer::DATABASE_NAME)->getTable(Table3Peer::TABLE_NAME);
     $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
   }
@@ -103,7 +103,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
   public function testGetColumnForParameter()
   {
   	$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $this->appData = $this->xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
+    $this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
     
     $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
     $behavior = $table->getBehavior('timestampable');

@@ -8,10 +8,10 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
-require_once 'builder/om/OMBuilder.php';
-require_once 'builder/util/XmlToAppData.php';
-require_once 'platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreTestBase.php';
+require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/om/OMBuilder.php';
+require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/util/XmlToAppData.php';
+require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/MysqlPlatform.php';
 
 /**
  * Test class for OMBuilder.
@@ -25,7 +25,7 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/schema.xml');
+		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../../fixtures/bookstore/schema.xml'));
 		$this->database = $appData->getDatabase("bookstore");
 	}
 	

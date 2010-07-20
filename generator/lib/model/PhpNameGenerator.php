@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'model/NameGenerator.php';
+require_once dirname(__FILE__) . '/NameGenerator.php';
 
 /**
  * A <code>NameGenerator</code> implementation for PHP-esque names.

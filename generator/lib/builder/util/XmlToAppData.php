@@ -8,12 +8,12 @@
  * @license    MIT License
  */
 
-require_once 'model/AppData.php';
+require_once dirname(__FILE__) . '/../../model/AppData.php';
 
 // Phing dependencies
-require_once 'phing/parser/AbstractHandler.php';
+require_once 'phing/Phing.php';
 
-require_once 'builder/util/PropelStringReader.php';
+require_once dirname(__FILE__) .  '/PropelStringReader.php';
 
 /**
  * A class that is used to parse an input xml schema file and creates an AppData
@@ -88,10 +88,8 @@ class XmlToAppData extends AbstractHandler
 		if ($this->isAlreadyParsed($xmlFile)) {
 			return;
 		}
-
-		$f = new PhingFile($xmlFile);
 		
-		return $this->parseString($f->contents(), $xmlFile);		
+		return $this->parseString(file_get_contents($xmlFile), $xmlFile);
 	}
 
 	/**

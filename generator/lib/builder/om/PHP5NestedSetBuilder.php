@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'builder/om/ObjectBuilder.php';
+require_once dirname(__FILE__) . '/ObjectBuilder.php';
 
 /**
  * Generates a PHP5 tree node Object class for user object model (OM) using Nested Set way.

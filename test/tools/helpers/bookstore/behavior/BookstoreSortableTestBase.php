@@ -8,9 +8,9 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreTestBase.php';
+require_once dirname(__FILE__) . '/../BookstoreTestBase.php';
 
-class BookstoreSortableTestBase extends BookstoreTestBase
+abstract class BookstoreSortableTestBase extends BookstoreTestBase
 {
 	protected function populateTable11()
 	{

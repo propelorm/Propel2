@@ -8,7 +8,11 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+
+if (!defined('TESTS_BASE_DIR')) {
+	define('TESTS_BASE_DIR', realpath(dirname(__FILE__) . '/../../../..'));
+}
 
 /**
  * Tests the generated Object classes and LOB behavior.

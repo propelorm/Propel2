@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'builder/om/ObjectBuilder.php';
+require_once dirname(__FILE__) . '/ObjectBuilder.php';
 
 /**
  * Generates the empty PHP5 stub interface for user object model (OM).

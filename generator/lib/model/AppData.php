@@ -8,8 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'exception/EngineException.php';
-require_once 'model/Database.php';
+require_once dirname(__FILE__) . '/../exception/EngineException.php';
+require_once dirname(__FILE__) . '/Database.php';
 
 /**
  * A class for holding application data structures.

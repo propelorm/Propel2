@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/bookstore/BookstoreEmptyTestBase.php';
+require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/BookstoreEmptyTestBase.php';
 
 /**
  * Tests the generated Object classes.
@@ -31,7 +31,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	protected function setUp()
 	{
 		parent::setUp();
-		require_once 'tools/helpers/bookstore/behavior/TestAuthor.php';
+		require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/TestAuthor.php';
 	}
 
 	/**

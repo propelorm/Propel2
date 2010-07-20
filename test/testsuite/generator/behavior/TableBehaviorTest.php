@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework.php';
 
 /**
  * Tests the table structure behavior hooks.

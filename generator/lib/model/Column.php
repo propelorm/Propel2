@@ -8,12 +8,12 @@
  * @license    MIT License
  */
 
-require_once 'model/XMLElement.php';
-require_once 'exception/EngineException.php';
-require_once 'model/PropelTypes.php';
-require_once 'model/Inheritance.php';
-require_once 'model/Domain.php';
-require_once 'model/ColumnDefaultValue.php';
+require_once dirname(__FILE__) . '/XMLElement.php';
+require_once dirname(__FILE__) . '/../exception/EngineException.php';
+require_once dirname(__FILE__) . '/PropelTypes.php';
+require_once dirname(__FILE__) . '/Inheritance.php';
+require_once dirname(__FILE__) . '/Domain.php';
+require_once dirname(__FILE__) . '/ColumnDefaultValue.php';
 
 /**
  * A Class for holding data about a column used in an Application.

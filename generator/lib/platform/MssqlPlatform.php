@@ -8,8 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'platform/DefaultPlatform.php';
-require_once 'model/Domain.php';
+require_once dirname(__FILE__) . '/DefaultPlatform.php';
+require_once dirname(__FILE__) . '/../model/Domain.php';
 
 /**
  * MS SQL Platform implementation.

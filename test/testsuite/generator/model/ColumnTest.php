@@ -8,10 +8,10 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'model/Column.php';
-require_once 'builder/util/XmlToAppData.php';
-require_once 'platform/MysqlPlatform.php';
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
 
 
 /**
@@ -21,7 +21,8 @@ require_once 'platform/MysqlPlatform.php';
  * @version    $Revision$
  * @package    generator.model
  */
-class ColumnTest extends PHPUnit_Framework_TestCase {
+class ColumnTest extends PHPUnit_Framework_TestCase
+{
 
 	/**
 	 * Tests static Column::makeList() method.
@@ -52,8 +53,8 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	
 	public function testPhpNamingMethod()
 	{
-		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
-		Propel::init('fixtures/bookstore/build/conf/bookstore-conf.php');	
+		set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));
+		Propel::init(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php'));	
 	  $bookTmap = Propel::getDatabaseMap(BookPeer::DATABASE_NAME)->getTable(BookPeer::TABLE_NAME);
 	  $this->assertEquals('AuthorId', $bookTmap->getColumn('AUTHOR_ID')->getPhpName(), 'setPhpName() uses the default phpNamingMethod');
 	  $pageTmap = Propel::getDatabaseMap(PagePeer::DATABASE_NAME)->getTable(PagePeer::TABLE_NAME);
@@ -63,7 +64,7 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	public function testGetConstantName()
 	{
 		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $appData = $xmlToAppData->parseFile('fixtures/bookstore/behavior-timestampable-schema.xml');
+    $appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
     $column = $appData->getDatabase("bookstore-behavior")->getTable('table1')->getColumn('title');
     $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
 	}
@@ -71,7 +72,7 @@ class ColumnTest extends PHPUnit_Framework_TestCase {
 	public function testIsLocalColumnsRequired()
 	{
 		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile('fixtures/bookstore/schema.xml');
+		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/schema.xml'));
 		$fk = $appData->getDatabase("bookstore")->getTable('book')->getColumnForeignKeys('publisher_id');
 		$this->assertFalse($fk[0]->isLocalColumnsRequired());
 		$fk = $appData->getDatabase("bookstore")->getTable('review')->getColumnForeignKeys('book_id');

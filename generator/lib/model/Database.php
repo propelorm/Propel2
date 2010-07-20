@@ -8,11 +8,11 @@
  * @license    MIT License
  */
 
-require_once 'model/XMLElement.php';
-require_once 'model/IDMethod.php';
-require_once 'model/NameGenerator.php';
-require_once 'model/Table.php';
-require_once 'model/Behavior.php';
+require_once dirname(__FILE__) . '/XMLElement.php';
+require_once dirname(__FILE__) . '/IDMethod.php';
+require_once dirname(__FILE__) . '/NameGenerator.php';
+require_once dirname(__FILE__) . '/Table.php';
+require_once dirname(__FILE__) . '/Behavior.php';
 
 /**
  * A class for holding application data structures.

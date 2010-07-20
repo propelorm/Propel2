@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'model/VendorInfo.php';
+require_once dirname(__FILE__) . '/VendorInfo.php';
 
 /**
  * An abstract class for elements represented by XML tags (e.g. Column, Table).

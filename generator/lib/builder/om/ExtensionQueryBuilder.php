@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'builder/om/OMBuilder.php';
+require_once dirname(__FILE__) . '/OMBuilder.php';
 
 /**
  * Generates the empty PHP5 stub class for object query

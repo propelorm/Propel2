@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'platform/DefaultPlatform.php';
+require_once dirname(__FILE__) . '/DefaultPlatform.php';
 
 /**
  * MySql Platform implementation.

@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'model/XMLElement.php';
+require_once dirname(__FILE__) . '/XMLElement.php';
 
 /**
  * A class for holding data about a domain used in the schema.

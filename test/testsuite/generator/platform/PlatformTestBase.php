@@ -8,13 +8,13 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
+require_once 'PHPUnit/Framework.php';
 
 /**
  * 
  * @package    generator.platform
  */
-class PlatformTestBase extends PHPUnit_Framework_TestCase
+abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * Platform object.
@@ -31,7 +31,7 @@ class PlatformTestBase extends PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$clazz = preg_replace('/Test$/', '', get_class($this));
-		include_once 'platform/' . $clazz . '.php';
+		include_once dirname(__FILE__) . '/../../../../generator/lib/platform/' . $clazz . '.php';
 		$this->platform = new $clazz();
 	}
 

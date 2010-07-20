@@ -8,9 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'model/PhpNameGenerator.php';
-
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/PhpNameGenerator.php';
 
 /**
  * Tests for PhpNamleGenerator

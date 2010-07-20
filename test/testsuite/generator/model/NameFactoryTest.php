@@ -8,10 +8,10 @@
  * @license    MIT License
  */
 
-require_once 'tools/helpers/BaseTestCase.php';
-require_once 'model/NameFactory.php';
-require_once 'platform/MysqlPlatform.php';
-require_once 'model/AppData.php';
+require_once dirname(__FILE__) . '/../../../tools/helpers/BaseTestCase.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/NameFactory.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/AppData.php';
 
 /**
  * <p>Unit tests for class <code>NameFactory</code> and known

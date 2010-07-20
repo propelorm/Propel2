@@ -8,8 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework/TestCase.php';
-require_once 'builder/util/PropelTemplate.php';
+require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/util/PropelTemplate.php';
 
 /**
  * Tests for PropelTemplate class
