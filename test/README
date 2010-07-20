@@ -2,28 +2,17 @@
 
 == Background ==
 
-Propel uses [http://www.phpunit.de PHPUnit 3.9] to test the build and runtime frameworks.
+Propel uses [http://www.phpunit.de PHPUnit] to test the build and runtime frameworks.
 
 You can find the unit test classes and support files in the [browser:branches/1.4/test/testsuite] directory.
 
 == Install PHPUnit ==
 
-In order to run the tests, you must install PHPUnit, PEAR:Log, and Phing:
+In order to run the tests, you must install PHPUnit:
 {{{
 > pear channel-discover pear.phpunit.de
-> pear install phpunit/PHPUnit-3.3.9
+> pear install phpunit/PHPUnit
 }}}
-
-{{{
-> pear channel-discover pear.phing.info
-> pear install phing/phing-2.3.3
-}}}
-
-{{{
-> pear install log
-}}}
-
-Tip: The latest release of PHPUnit (3.4) is not totally BC with the 3.3, and doesn't have a Phing adapter yet. That's why the Propel unit tests still use PHPUnit version 3.3.
 
 == Configure the Database to be Used in the Tests ==
 
@@ -79,21 +68,18 @@ propel.database.password = p@ssw0rd
 
 == Run the Unit Tests ==
 
-Run all the unit tests at once using Phing:
+Run all the unit tests at once using the `phpunit` command:
 {{{
 > cd /path/to/propel/test
-> phing -f test.xml -verbose
+> phpunit testsuite
 }}}
 
-'''Tip''': The `-verbose` option will force the display of PHP notices, which are hidden by default.
-
-To run a single test, specify the classname (minus 'Test' ending) on the commandline, using the `test` property. For example to run only GeneratedObjectTest:
+To run a single test, go inside the unit test directory, and run the test using the command line. For example to run only GeneratedObjectTest:
 
 {{{
-> phing -f test.xml -verbose -Dtest=GeneratedObject
+> cd testsuite/generator/builder/om
+> phpunit GeneratedObjectTest
 }}}
-
-Tip: If you want to set up custom Phing properties for your unit tests, create a `test.properties` file inside the main `test/` directory. Phing will automatically try to load it if it exists.
 
 == How the Tests Work ==
 
@@ -133,7 +119,7 @@ public function testSaveWithDefaultValues() {
 Run the test again using the command line to check that it passes:
 
 {{{
-> phing -f test.xml -Dtest=GeneratedObject
+> phpunit GeneratedObjectTest
 }}}
 
-You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The Phing task will find these files automatically and run them.
+You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The ``phpunit command will find these files automatically and run them.
