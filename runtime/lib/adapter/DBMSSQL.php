@@ -212,4 +212,11 @@ class DBMSSQL extends DBAdapter
 		$sql = $outerSelect . ' (' . $innerSelect . ' ' . $fromStatement . ') AS derivedb WHERE RowNumber BETWEEN ' . ($offset + 1) . ' AND ' . ($limit + $offset);
 		return;
 	}
+
+	/**
+	 * @see        parent::getTimestampFormatter()
+	 */
+	public function getTimestampFormatter() {
+		return "Y-m-d H:i:s.u";
+	}
 }
