@@ -196,6 +196,7 @@ class Propel
 		'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
 		'PropelOnDemandFormatter' => 'formatter/PropelOnDemandFormatter.php',
 		'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
+    'PropelSimpleArrayFormatter' => 'formatter/PropelSimpleArrayFormatter.php',
 		
 		'BasicLogger'         => 'logger/BasicLogger.php',
 		'MojaviLogAdapter'    => 'logger/MojaviLogAdapter.php',
