@@ -862,6 +862,38 @@ class Table extends XMLElement implements IDMethod
 	{
 		return $this->behaviors[$name];
 	}
+	
+	/**
+	 * Check whether one of the table behaviors offer an additional builder
+	 *
+	 * @return boolean true in the table has at least one behavior 
+	 *                with an additional builder, false otherwise
+	 */
+	public function hasAdditionalBuilders()
+	{
+		foreach ($this->getBehaviors() as $behavior) {
+			if ($behavior->hasAdditionalBuilders()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Get the additional builders provided by the table behaviors
+	 *
+	 * @return array list of builder class names
+	 */
+	public function getAdditionalBuilders()
+	{
+		$additionalBuilders = array();
+		foreach ($this->getBehaviors() as $behavior) {
+			$additionalBuilders = array_merge($additionalBuilders, $behavior->getAdditionalBuilders());
+		}
+		
+		return $additionalBuilders;
+	}
 
 	/**
 	 * Get the name of the Table

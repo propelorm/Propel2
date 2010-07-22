@@ -28,6 +28,7 @@ class Behavior extends XMLElement
 	protected $isTableModified = false;
 	protected $isEarly = false;
 	protected $dirname;
+	protected $additionalBuilders = array();
 	
 	public function setName($name)
 	{
@@ -243,5 +244,15 @@ class Behavior extends XMLElement
 	public function getTableMapBuilderModifier()
 	{
 		return $this;
+	}
+
+	public function hasAdditionalBuilders()
+	{
+		return !empty($this->additionalBuilders);
+	}
+	
+	public function getAdditionalBuilders()
+	{
+		return $this->additionalBuilders;
 	}
 }

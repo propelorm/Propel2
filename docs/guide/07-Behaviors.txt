@@ -236,7 +236,37 @@ propel.behavior.default = soft_delete, timestampable
 
 == Writing a Behavior ==
 
+Check the behaviors bundled with Propel to see how to implement your own behavior: they are the best starting point to understanding the power of behaviors and builders.
+
+=== Modifying the Data Model ===
+
 Behaviors can modify their table, and even add another table, by implementing the `modifyTable` method. In this method, use `$this->getTable()` to retrieve the table buildtime model and manipulate it.
+
+For instance, to add a new column named 'foo' in the current table, add the following method to a behavior:
+
+{{{
+#!php
+<?php
+// default parameters value
+protected $parameters = array(
+  'column_name' => 'foo',
+);
+
+public function modifyTable()
+{
+  $table = $this->getTable();
+  $columnName = $this->getParameter('column_name');
+  // add the column if not present
+  if(!$this->getTable()->containsColumn($columnName)) {
+    $column = $this->getTable()->addColumn(array(
+      'name'    => $columnName,
+      'type'    => 'INTEGER',
+    ));
+  }
+}
+}}}
+
+=== Modifying the ActiveRecord Classes ===
 
 Behaviors can add code to the generated model object by implementing one of the following methods:
 
@@ -255,6 +285,8 @@ objectCall()           // add code to be executed inside the object's __call()
 objectFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
+=== Modifying the Query Classes ===
+
 Behaviors can also add code to the generated query objects by implementing one of the following methods:
 
 {{{
@@ -268,6 +300,8 @@ postDeleteQuery()     // add code to be executed after  deletion of a existing o
 queryFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
+=== Modifying the Peer Classes ===
+
 Behaviors can also add code to the generated peer objects by implementing one of the following methods:
 
 {{{
@@ -277,4 +311,63 @@ preSelect()          // adds code before every select query
 peerFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
-Check the behaviors bundled with Propel to see how to implement your own behavior.
+=== Adding New Classes Classes ===
+
+Behaviors can add entirely new classes based on the data model. To build a new class, a behavior must provide an array of builder class names (in return to `getAdditionalBuilders()`) and the builder classes themselves. 
+
+For instance, to add an empty child class for the ActiveRecord class, create the following behavior:
+
+{{{
+#!php
+<?php
+require_once 'AddChildBehaviorBuilder.php';
+
+class AddChildBehavior extends Behavior
+{
+	protected $additionalBuilders = array('AddChildBehaviorBuilder');
+}
+}}}
+
+Next, write a builder extending the `OMBuilder` class, and implement the `getUnprefixedClassName()`, `addClassOpen()``, and `addClassBody()` methods:
+
+{{{
+#!php
+<?php
+class AddChildBehaviorBuilder extends OMBuilder
+{
+
+	public function getUnprefixedClassname()
+	{
+		return $this->getStubObjectBuilder()->getUnprefixedClassname() . 'Child';
+	}
+	
+	protected function addClassOpen(&$script)
+	{
+		$table = $this->getTable();
+		$tableName = $table->getName();
+		$script .= "
+/**
+ * Test class for Additional builder enabled on the '$tableName' table.
+ *
+ */
+class " . $this->getClassname() . " extends " . $this->getStubObjectBuilder() . "
+{
+";
+	}
+
+	protected function addClassBody(&$script)
+	{
+		$script .= "  // no code";
+	}
+
+	protected function addClassClose(&$script)
+	{
+		$script .= "
+}";
+	}
+}
+}}}
+
+By default, classes added by a behavior are generated each time the model is rebuilt. To limit the generation to the first time (for instance for stub classes), add a public `$overwrite` attribute to the builder and set it to `false`.
+
+You can set the additional class to be generated in a subfolder by implementing the `getPackage()` method.

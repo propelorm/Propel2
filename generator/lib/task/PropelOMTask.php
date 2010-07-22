@@ -211,6 +211,17 @@ class PropelOMTask extends AbstractPropelDataModelTask
 
 						} // if Table->treeMode()
 
+						// ----------------------------------
+						// Create classes added by behaviors
+						// ----------------------------------
+						if ($table->hasAdditionalBuilders()) {
+							foreach ($table->getAdditionalBuilders() as $builderClass) {
+								$builder = new $builderClass($table);
+								$builder->setGeneratorConfig($generatorConfig);
+								$nbWrittenFiles += $this->build($builder, isset($builder->overwrite) ? $builder->overwrite : true);
+							}
+						}
+						
 						$totalNbFiles += $nbWrittenFiles;
 						if ($nbWrittenFiles == 0) {
 							$this->log("\t\t(no change)");
