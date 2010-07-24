@@ -46,7 +46,7 @@ abstract class DBAdapter
 		'mysqli' => 'DBMySQLi',
 		'mssql'  => 'DBMSSQL',
 		'dblib'  => 'DBMSSQL',
-    'sqlsrv' => 'DBSQLSRV',	
+		'sqlsrv' => 'DBSQLSRV',
 		'sybase' => 'DBSybase',
 		'oracle' => 'DBOracle',
 		'oci'    => 'DBOracle',

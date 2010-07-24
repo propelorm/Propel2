@@ -165,8 +165,7 @@ class Propel
 		'DBAdapter'           => 'adapter/DBAdapter.php',
 		'DBMSSQL'             => 'adapter/DBMSSQL.php',
 		'MssqlPropelPDO'      => 'adapter/MSSQL/MssqlPropelPDO.php',
-		'MssqlDebugPDO'       => 'adapter/MSSQL/MssqlDebugPDO.php',	
-		'MssqlDateTime'       => 'adapter/MSSQL/MssqlDateTime.class.php',
+		'MssqlDebugPDO'       => 'adapter/MSSQL/MssqlDebugPDO.php',
 		'DBMySQL'             => 'adapter/DBMySQL.php',
 		'DBMySQLi'            => 'adapter/DBMySQLi.php',
 		'DBNone'              => 'adapter/DBNone.php',
@@ -174,7 +173,7 @@ class Propel
 		'DBPostgres'          => 'adapter/DBPostgres.php',
 		'DBSQLite'            => 'adapter/DBSQLite.php',
 		'DBSybase'            => 'adapter/DBSybase.php',
-    'DBSQLSRV'            => 'adapter/DBSQLSRV.php',	
+		'DBSQLSRV'            => 'adapter/DBSQLSRV.php',
 
 		'PropelArrayCollection' => 'collection/PropelArrayCollection.php',
 		'PropelCollection'    => 'collection/PropelCollection.php',
@@ -197,7 +196,7 @@ class Propel
 		'PropelObjectFormatter' => 'formatter/PropelObjectFormatter.php',
 		'PropelOnDemandFormatter' => 'formatter/PropelOnDemandFormatter.php',
 		'PropelStatementFormatter' => 'formatter/PropelStatementFormatter.php',
-    'PropelSimpleArrayFormatter' => 'formatter/PropelSimpleArrayFormatter.php',	
+		'PropelSimpleArrayFormatter' => 'formatter/PropelSimpleArrayFormatter.php',
 		
 		'BasicLogger'         => 'logger/BasicLogger.php',
 		'MojaviLogAdapter'    => 'logger/MojaviLogAdapter.php',

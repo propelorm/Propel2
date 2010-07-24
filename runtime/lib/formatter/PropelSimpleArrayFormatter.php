@@ -14,7 +14,7 @@
  * or an array
  *
  * @author     Benjamin Runnels
- * @version    $Revision: 1796 $
+ * @version    $Revision$
  * @package    propel.runtime.formatter
  */
 class PropelSimpleArrayFormatter extends PropelFormatter {
