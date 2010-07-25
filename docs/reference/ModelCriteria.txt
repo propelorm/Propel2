@@ -226,19 +226,16 @@ $articles = ArticleQuery::create()
   ->select(array('Id', 'Title', 'Content', 'Category.Name'))
   ->find();
 // returns PropelArrayCollection(
-array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo',
-'Category.Name' => 'Miscellaneous'),
-array('Id' => 456, 'Title' => 'bar', 'Content' => 'This is bar',
-'Category.Name' => 'Main')
-)
+//   array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo', 'Category.Name' => 'Miscellaneous'),
+//   array('Id' => 456, 'Title' => 'bar', 'Content' => 'This is bar', 'Category.Name' => 'Main')
+// )
 
 // When you need only one record, use select() with findOne()
 $articles = ArticleQuery::create()
   ->join('Category')
   ->select(array('Id', 'Title', 'Content', 'Category.Name'))
   ->findOne();
-// returns array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is
-foo', 'Category.Name' => 'Miscellaneous')
+// returns array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo', 'Category.Name' => 'Miscellaneous')
 
 // When you need only one column, use a column name as the select() argument
 $articles = ArticleQuery::create()
@@ -263,18 +260,18 @@ $nbComments = ArticleQuery::create()
   ->select(array('Article.Title', 'nbComments'))
   ->find();
 // returns PropelArrayCollection(
-array('foo', 25),
-array('bar', 32)
-)
+//   array('Article.Title' => 'foo', 'nbComments' => 25),
+//   array('Article.Title' => 'bar', 'nbComments' => 32)
+// )
 
 // When you want to select all the columns from the main class, use select('*')
 $articles = ArticleQuery::create()
   ->select('*')
   ->find();
 // returns PropelArrayCollection(
-array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo'),
-array('Id' => 456, 'Title' => 'bar', 'Content' => 'This is bar')
-)
+//   array('Id' => 123, 'Title' => 'foo', 'Content' => 'This is foo'),
+//   array('Id' => 456, 'Title' => 'bar', 'Content' => 'This is bar')
+// )
 }}}
 
 === Using Magic Query Methods ===
