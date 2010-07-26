@@ -155,6 +155,7 @@
 			<inheritance key="0" class="BookstoreEmployee" />
 			<inheritance key="1" class="BookstoreManager" extends="BookstoreEmployee" />
 			<inheritance key="2" class="BookstoreCashier" extends="BookstoreEmployee" />
+			<inheritance key="3" class="BookstoreHead" extends="BookstoreManager"/>
 		</column>
 		<column name="name" type="VARCHAR" size="32" description="Employee name" />
 		<column name="job_title" type="VARCHAR" size="32" description="Employee job title" />

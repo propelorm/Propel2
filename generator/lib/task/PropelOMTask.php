@@ -146,8 +146,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						// -----------------------------------------------------------------------------------------
 
 						// If table has enumerated children (uses inheritance) then create the empty child stub classes if they don't already exist.
-						if ($table->getChildrenColumn()) {
-							$col = $table->getChildrenColumn();
+						if ($col = $table->getChildrenColumn()) {
 							if ($col->isEnumeratedClasses()) {
 								foreach ($col->getChildren() as $child) {
 									foreach (array('queryinheritance') as $target) {

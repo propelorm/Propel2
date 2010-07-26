@@ -301,6 +301,7 @@ class Database extends XMLElement
 
 	/**
 	 * Check whether the database has a table.
+	 * @param      string $name the name of the table (e.g. 'my_table')
 	 * @return     boolean
 	 */
 	public function hasTable($name)
@@ -321,6 +322,16 @@ class Database extends XMLElement
 		return null; // just to be explicit
 	}
 
+	/**
+	 * Check whether the database has a table.
+	 * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
+	 * @return     boolean
+	 */
+	public function hasTableByPhpName($phpName)
+	{
+		return array_key_exists($phpName, $this->tablesByPhpName);
+	}
+	
 	/**
 	 * Return the table with the specified phpName.
 	 * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
