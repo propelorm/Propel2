@@ -343,61 +343,6 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 			)
 		);
 		$this->assertEquals(serialize($rows->getData()), serialize($expectedRows), 'find() called after select(array) can cope with a column added with withColumn()');
-
-		$c = new ModelCriteria('bookstore', 'Book');
-		$c->join('Book.Author');
-		$c->withColumn('Book.Title');
-		$c->select(array('Author.FirstName', 'Book.Title'));
-		$row = $c->findOne($this->con);
-		$expectedSQL = 'SELECT book.TITLE AS "Book.Title", author.FIRST_NAME AS "Author.FirstName" FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID) LIMIT 1';
-		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'findOne() does not request twice the columns added by way of withColumn() and select(array) when not supplying an alias to withColumn()');
-
-		$expectedRows = array (
-			'Author.FirstName' => 'Neal',
-			'Book.Title' => 'Quicksilver',
-		);
-		$this->assertEquals(serialize($row), serialize($expectedRows), 'findOne() does not request twice the columns added by way of withColumn() and select(array) select(array) when not supplying an alias to withColumn()');
-
-		$c = new ModelCriteria('bookstore', 'Book');
-		$c->join('Book.Author');
-		$c->withColumn('Author.FirstName');
-		$c->withColumn('Book.Title');
-		$c->select(array('Author.FirstName', 'Book.Title'));
-		$row = $c->findOne($this->con);
-		$expectedSQL = 'SELECT author.FIRST_NAME AS "Author.FirstName", book.TITLE AS "Book.Title" FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID) LIMIT 1';
-		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(array) can cope when all columns are added via withColumn() when not supplying an alias');
-
-		$expectedRows = array (
-			'Author.FirstName' => 'Neal',
-			'Book.Title' => 'Quicksilver',
-		);
-		$this->assertEquals(serialize($row), serialize($expectedRows), 'select(array) can cope when all columns are added via withColumn() when not supplying an alias');
-	}
-
-	/*
-	 * This demonstrates the use case for having spaces in the alias name.
-	 * The following test will throw an error without quoting an alias
-	 * with whitespace in withcolumn
-	 *
-	 * With the alias quoted the test will return:
-	 * array ('Author First Name' => 'Neal', 'Book Title' => 'Quicksilver')
-	 *
-	 * This makes the returned array much more flexible.  For instance
-	 * you could loop and use the $key => $value directly in a template.
-	 */
-	public function testSelectStringWithSpaces()
-	{
-		BookstoreDataPopulator::depopulate($this->con);
-		BookstoreDataPopulator::populate($this->con);
-		
-		$c = new ModelCriteria('bookstore', 'Book');
-		$c->join('Book.Author');
-		$c->withColumn('Author.FirstName', 'Author First Name');
-		$c->withColumn('Book.Title', 'Book Title');
-		$c->select(array('Author First Name', 'Book Title'));
-		$row = $c->findOne($this->con);
-		$expectedSQL = 'SELECT author.FIRST_NAME AS "Author First Name", book.TITLE AS "Book Title" FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID) LIMIT 1';
-		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'columns added via withColumn that have aliases with spaces are properly returned');
 	}
 }
 
