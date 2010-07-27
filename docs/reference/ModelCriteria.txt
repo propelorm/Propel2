@@ -1002,7 +1002,7 @@ Propel provides four formatters:
  * `PropelObjectFormatter`: The default formatter, returning a model object for `findOne()`, and a `PropelObjectCollection` of model objects for `find()`
  * `PropelOnDemandFormatter`: To save memory for large resultsets, prefer this formatter ; it hydrates rows one by one as they are iterated on, and doesn't create a new Propel Model object at each row. Note that this formatter doesn't use the Instance Pool.
  * `PropelArrayFormatter`: The array formatter, returning an associative array for `findOne()`, and a `PropelArrayCollection` of arrays for `find()`
- * `PropelSimpleArrayFormatter`: An array formatter for 'select()' queries, returning a string, an associative array for `findOne()`, or a `PropelArrayCollection` of arrays for `find()`
+ * `PropelSimpleArrayFormatter`: An array formatter for `select()` queries, returning a string, an associative array for `findOne()`, or a `PropelArrayCollection` of arrays for `find()`
  * `PropelStatementFormatter`: The 'raw' formatter, returning a `PDOStatement` in any case.
 
 You can easily write your own formatter to format the resultas the way you want. A formatter is basically a subclass of `PropelFormatter` providing a `format()` and a `formatOne()` method expecting a PDO statement.
