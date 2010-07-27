@@ -400,6 +400,31 @@ class ForeignKey extends XMLElement
 	}
 	
 	/**
+	 * Whether this foreign key is also the primary key of the foreign table.
+	 *
+	 * @return     boolean
+	 */
+	public function isForeignPrimaryKey()
+	{
+		$lfmap = $this->getLocalForeignMapping();
+		$foreignTable = $this->getForeignTable();
+		
+		$foreignPKCols = array();
+		foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
+			$foreignPKCols[] = $fPKCol->getName();
+		}
+
+		$foreignCols = array ();
+		foreach ($this->getLocalColumns() as $colName) {
+			$foreignCols[] = $foreignTable->getColumn($lfmap[$colName])->getName();
+		}
+
+		return ((count($foreignPKCols) === count($foreignCols)) &&
+			!array_diff($foreignPKCols, $foreignCols));
+	}
+
+
+	/**
 	 * Whether this foreign key is also the primary key of the local table.
 	 *
 	 * @return     boolean
@@ -415,7 +440,8 @@ class ForeignKey extends XMLElement
 			$localPKCols[] = $lPKCol->getName();
 		}
 
-		return (!array_diff($localPKCols, $localCols));
+		return ((count($localPKCols) === count($localCols)) &&
+			!array_diff($localPKCols, $localCols));
 	}
 
 	/**
