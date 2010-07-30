@@ -45,7 +45,7 @@ class PropelCSVParser extends PropelParser
 		$rows = array();
 		if ($isList) {
 			if ($includeHeading) {
-				$rows[] = implode($this->formatRow(array_keys(array_shift($array))), $this->delimiter);
+				$rows[] = implode($this->formatRow(array_keys(reset($array))), $this->delimiter);
 			}
 			foreach ($array as $row) {
 				$rows[] = implode($this->formatRow($row), $this->delimiter);
