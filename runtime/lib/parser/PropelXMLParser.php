@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license    MIT License
+ */
+
+/**
+ * XML parser. Converts data between associative array and XML formats
+ *
+ * @author     Francois Zaninotto
+ * @package    propel.runtime.parser
+ */
+class PropelXMLParser extends PropelParser
+{
+
+	/**
+	 * Converts data from an associative array to XML.
+	 *
+	 * @param  array   $array Source data to convert
+	 * @param  string  $rootElementName Name of the root element of the XML document
+	 * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+	 *
+	 * @return string Converted data, as an XML string
+	 */
+	public function fromArray($array, $rootElementName = 'data', $charset = null)
+	{
+		$xml = new DOMDocument('1.0', 'UTF-8');
+		$xml->preserveWhiteSpace = false;
+		$xml->formatOutput = true;
+		$rootElement = $xml->createElement($rootElementName);
+		$xml->appendChild($rootElement);
+		$this->arrayToDOM($array, $rootElement, $charset);
+		
+		return $xml->saveXML();
+	}
+
+	/**
+	 * Alias for PropelXMLParser::fromArray()
+	 *
+	 * @param  array   $array Source data to convert
+	 * @param  string  $rootElementName Name of the root element of the XML document
+	 * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+	 *
+	 * @return string Converted data, as an XML string
+	 */
+	public function toXML($array, $rootElementName = 'data', $charset = null)
+	{
+		return $this->fromArray($array, $rootElementName, $charset);
+	}
+
+	protected function arrayToDOM($array, $rootElement, $charset = null)
+	{
+		foreach ($array as $key => $value) {
+			$key = preg_replace('/[^a-z]/i', '', $key);
+			$element = $rootElement->ownerDocument->createElement($key);
+			if (is_array($value)) {
+				if (!empty($value)) {
+					$element = $this->arrayToDOM($value, $element, $charset);
+				}
+			} elseif (is_string($value)) {
+				$charset = $charset ? $charset : 'utf-8';
+				if (function_exists('iconv') && strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
+					$value = iconv($charset, 'UTF-8', $value);
+				}
+				$value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
+				$child = $element->ownerDocument->createCDATASection($value);
+				$element->appendChild($child);
+			} else {
+				$child = $element->ownerDocument->createTextNode($value);
+				$element->appendChild($child);
+			}
+			$rootElement->appendChild($element);	
+		}
+
+		return $rootElement;
+	}
+    
+	/**
+	 * Converts data from XML to an associative array.
+	 *
+	 * @param  string $data Source data to convert, as an XML string
+	 * @return array Converted data
+	 */
+	public function toArray($data)
+	{
+		return $this->simpleXmlToArray(simplexml_load_string($data));
+	}
+
+	/**
+	 * Alias for PropelXMLParser::toArray()
+	 *
+	 * @param  string $data Source data to convert, as an XML string
+	 * @return array Converted data
+	 */
+	public function fromXML($data)
+	{
+		return $this->toArray($data);
+	}
+	
+	protected function simpleXmlToArray(SimpleXMLElement $data)
+	{
+		// check if the elements are all the same to see if this is a list
+		$elementNames = array();
+		foreach ($data->children() as $element => $value) {
+			if (isset($elementNames[$element])) {
+				$elementNames[$element]++;
+			} else {
+				$elementNames[$element] = 1;
+			}
+		}
+		$isList = count($elementNames) == 1 && array_shift($elementNames) != 1;
+		$array = array();
+		$i = 0;
+		foreach ($data->children() as $element => $value) {
+			$index = $isList ? ($element . $i++) : $element;
+			if ($value->count() > 0) {
+				$array[$index] = $this->simpleXmlToArray($value, false);
+			} else {
+				$array[$index] = htmlspecialchars_decode((string) $value);
+			}
+		}
+		return $array;
+	}
+
+}

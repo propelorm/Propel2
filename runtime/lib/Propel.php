@@ -214,6 +214,12 @@ class Propel
 		'NestedSetPreOrderNodeIterator' => 'om/NestedSetPreOrderNodeIterator.php',
 		'NestedSetRecursiveIterator' => 'om/NestedSetRecursiveIterator.php',
 
+		'PropelCSVParser'     => 'parser/PropelCSVParser.php',
+		'PropelJSONParser'    => 'parser/PropelJSONParser.php',
+		'PropelParser'        => 'parser/PropelParser.php',
+		'PropelXMLParser'     => 'parser/PropelXMLParser.php',
+		'PropelYAMLParser'    => 'parser/PropelYAMLParser.php',
+		
 		'Criteria'            => 'query/Criteria.php',
 		'Criterion'           => 'query/Criterion.php',
 		'CriterionIterator'   => 'query/CriterionIterator.php',
