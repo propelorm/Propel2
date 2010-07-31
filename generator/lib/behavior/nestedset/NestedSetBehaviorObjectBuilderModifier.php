@@ -125,7 +125,8 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		if ($this->getColumnPhpName('level_column') != 'Level') {
 			$this->addGetLevel($script);
 		}
-		if ($this->getParameter('use_scope') == 'true') {
+		if ($this->getParameter('use_scope') == 'true'
+		 && $this->getColumnPhpName('scope_column') != 'ScopeValue') {
 			$this->addGetScope($script);
 		}
 		
@@ -138,7 +139,8 @@ $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->b
 		if ($this->getColumnPhpName('level_column') != 'Level') {
 			$this->addSetLevel($script);
 		}
-		if ($this->getParameter('use_scope') == 'true') {
+		if ($this->getParameter('use_scope') == 'true'
+		 && $this->getColumnPhpName('scope_column') != 'ScopeValue') {
 			$this->addSetScope($script);
 		}
 		
