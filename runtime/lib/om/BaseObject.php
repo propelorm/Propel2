@@ -12,6 +12,15 @@
  * This class contains attributes and methods that are used by all
  * business objects within the system.
  *
+ * @method     BaseObject fromXML(string $data) Populate the object from an XML string
+ * @method     BaseObject fromYAML(string $data) Populate the object from a YAML string
+ * @method     BaseObject fromJSON(string $data) Populate the object from a JSON string
+ * @method     BaseObject fromCSV(string $data) Populate the object from a CSV string
+ * @method     string toXML() Export the object to an XML string
+ * @method     string toYAML() Export the object to a YAML string
+ * @method     string toJSON() Export the object to a JSON string
+ * @method     string toCSV() Export the object to a CSV string
+ *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Frank Y. Kim <frank.kim@clearink.com> (Torque)
  * @author     John D. McNally <jmcnally@collab.net> (Torque)
@@ -313,7 +322,7 @@ abstract class BaseObject
 	 * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
 	 * </code>
 	 *
-	 * @param mixed  $parser A parser instance (extending PropelParser),
+	 * @param mixed  $parser A PropelParser instance,
 	 *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
 	 * @param string $data   The source data to import from
 	 *
@@ -335,7 +344,7 @@ abstract class BaseObject
 	 *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
 	 * </code>
 	 *
-	 * @param  mixed  $parser A parser instance (extending PropelParser),
+	 * @param  mixed  $parser A PropelParser instance,
 	 *                        or a format name ('XML', 'YAML', 'JSON', 'CSV')
 	 * @return string The exported data
 	 */
