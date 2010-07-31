@@ -45,6 +45,17 @@ The `id` column was set automatically by the database, since the `schema.xml` de
 
 These calls don't issue a database query, since the `Author` object is already loaded in memory.
 
+You can also export all the properties of an object by calling one of the following methods: `toArray()`, `toXML()`, `toYAML()`, `toJSON()`, and `toCSV()`:
+
+{{{
+#!php
+<?php
+echo $author->toJSON();
+// {"Id":1,"FirstName":"Jane","LastName":"Austen"}
+}}}
+
+'''Tip''': For each export method, Propel also provides an import method counterpart. So you can easily populate an object from an array using `fromArray()`, and from a string using any of `fromXML()`, `fromYAML()`, `fromJSON()`, and `fromCSV()`.
+
 == Retrieving Rows ==
 
 Retrieving objects from the database, also referred to as ''hydrating'' objects, is essentially the process of executing a SELECT query against the database and populating a new instance of the appropriate object with the contents of each returned row.
