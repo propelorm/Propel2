@@ -33,6 +33,13 @@ class PropelXMLParserTest extends PHPUnit_Framework_TestCase
   <b>2</b>
 </data>
 ", 'associative array'),
+			array(array('a' => 0, 'b' => null, 'c' => ''), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<data>
+  <a>0</a>
+  <b></b>
+  <c><![CDATA[]]></c>
+</data>
+", 'associative array with empty values'),
 			array(array('a' => 1, 'b' => 'bar'), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <data>
   <a>1</a>

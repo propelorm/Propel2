@@ -24,7 +24,8 @@ class PropelCSVParserTest extends PHPUnit_Framework_TestCase
 	public static function arrayCsvConversionDataProvider()
 	{
 		return array(
-			array(array(), "\r\n\r\n", 'empty array'), 
+			array(array(), "\r\n\r\n", 'empty array'),
+			array(array('a' => 0, 'b' => null, 'c' => ''), "a,b,c\r\n0,N;,\r\n", 'associative array with empty values'),
 			array(array('a' => 1, 'b' => 'bar'), "a,b\r\n1,bar\r\n", 'associative array with strings'),
 			array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'), "a\r\n\"<html><body><p style=\\\"width:30px;\\\">Hello, World!</p></body></html>\"\r\n", 'associative array with code'),
 			array(array('a' => 1, 'b' => array('foo' => 2)), "a,b\r\n1,\"a:1:{s:3:\\\"foo\\\";i:2;}\"\r\n", 'nested associative arrays'),

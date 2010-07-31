@@ -192,6 +192,10 @@ class PropelCSVParser extends PropelParser
 			if ($keys === array('') && $values === array()) {
 				$array = array();
 			} else {
+				if (count($keys) > count($values)) {
+					// empty values at the end of the row are not match bu the getColumns() regexp
+					$values = array_pad($values, count($keys), null);
+				}
 				$array = array_combine($keys, $values);
 			}
 		}
@@ -220,6 +224,9 @@ class PropelCSVParser extends PropelParser
 			}
 			if ($this->isSerialized($column)) {
 				$column = $this->unserialize($column);
+			}
+			if ($column === 'N;') {
+				$column = null;
 			}
 			$row[$key] = $column;
 		}

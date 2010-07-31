@@ -46,6 +46,10 @@ class PropelYAMLParserTest extends PHPUnit_Framework_TestCase
 "a: 1
 b: 2
 ", 'associative array'),
+			array(array('a' => 0, 'b' => null, 'c' => ''), "a: 0
+b: null
+c: ''
+", 'associative array with empty values'),
 			array(array('a' => 1, 'b' => 'bar'), 
 "a: 1
 b: bar
