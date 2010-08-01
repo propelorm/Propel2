@@ -110,6 +110,19 @@ class PropelXMLParserTest extends PHPUnit_Framework_TestCase
 		$parser = new PropelXMLParser();
 		$this->assertEquals($arrayData, $parser->fromXML($xmlData), 'PropelXMLParser::fromXML() converts to ' . $type . ' correctly');
 	}
+	
+	public function testToArrayRespectsNullValues()
+	{
+		$xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<data>
+<Id></Id>
+<Title><![CDATA[]]></Title>
+</data>";
+		$parser = new PropelXMLParser();
+		$data = $parser->fromXML($xmlData);
+		$this->assertNull($data['Id']);
+		$this->assertSame('', $data['Title']);
+	}
 
 	public static function listToXMLDataProvider()
 	{

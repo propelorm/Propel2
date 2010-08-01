@@ -87,7 +87,10 @@ class PropelXMLParser extends PropelParser
 	 */
 	public function toArray($data)
 	{
-		return $this->simpleXmlToArray(simplexml_load_string($data));
+		$doc = new DomDocument('1.0', 'UTF-8');
+		$doc->loadXML($data);
+		$element = $doc->documentElement;
+		return $this->convertDOMElementToArray($element);
 	}
 
 	/**
@@ -101,29 +104,47 @@ class PropelXMLParser extends PropelParser
 		return $this->toArray($data);
 	}
 	
-	protected function simpleXmlToArray(SimpleXMLElement $data)
+	protected function convertDOMElementToArray(DOMNode $data)
 	{
-		// check if the elements are all the same to see if this is a list
-		$elementNames = array();
-		foreach ($data->children() as $element => $value) {
-			if (isset($elementNames[$element])) {
-				$elementNames[$element]++;
-			} else {
-				$elementNames[$element] = 1;
-			}
-		}
-		$isList = count($elementNames) == 1 && array_shift($elementNames) != 1;
 		$array = array();
-		$i = 0;
-		foreach ($data->children() as $element => $value) {
-			$index = $isList ? ($element . $i++) : $element;
-			if ($value->count() > 0) {
-				$array[$index] = $this->simpleXmlToArray($value, false);
+		$elementNames = array();
+		foreach ($data->childNodes as $element) {
+			if ($element->nodeType == XML_TEXT_NODE) {
+				continue;
+			}
+			$name = $element->nodeName;
+			if (isset($elementNames[$name])) {
+				if (isset($array[$name])) {
+					// change the first 'book' to 'book0'
+					$array[$name . $elementNames[$name]] = $array[$name];
+					unset($array[$name]);
+				}
+				$elementNames[$name] += 1;
+				$index = $name . $elementNames[$name];
 			} else {
-				$array[$index] = htmlspecialchars_decode((string) $value);
+				$index = $name;
+				$elementNames[$name] = 0;
+			}
+			if ($element->hasChildNodes() && !$this->hasOnlyTextNodes($element)) {
+				$array[$index] = $this->convertDOMElementToArray($element);
+			} elseif ($element->hasChildNodes() && $element->firstChild->nodeType == XML_CDATA_SECTION_NODE) {
+				$array[$index] = htmlspecialchars_decode($element->firstChild->textContent);
+			} elseif (!$element->hasChildNodes()) {
+				$array[$index] = null;
+			} else {
+				$array[$index] = $element->textContent;
 			}
 		}
 		return $array;
 	}
 
+	protected function hasOnlyTextNodes(DomNode $node)
+	{
+		foreach ($node->childNodes as $childNode) {
+			if ($childNode->nodeType != XML_CDATA_SECTION_NODE && $childNode->nodeType != XML_TEXT_NODE) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
