@@ -241,7 +241,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 		$m1->reload(); // refresh from db
 
 		// Assert that we've updated the db
-		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), "Expected the updated BLOB value after setting with a stream.");
+		$this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1->getCoverImage())), "Expected the updated BLOB value after setting with a stream.");
 
 		// 7) Assert that 'w' mode works
 
@@ -275,18 +275,18 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 		fclose($stream);
 
 		$m2->reload();
-		$this->assertEquals(file_get_contents($blob2_path), stream_get_contents($m2->getCoverImage()), "Expected contents to match when setting stream w/ 'w' mode");
+		$this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2->getCoverImage())), "Expected contents to match when setting stream w/ 'w' mode");
 
 		$stream2 = fopen("php://memory", 'w+');
 		fwrite($stream2, file_get_contents($blob_path));
 		rewind($stream2);
-		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($stream2), "Expecting setup to be correct");
+		$this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($stream2)), "Expecting setup to be correct");
 
 		$m2->setCoverImage($stream2);
 		$m2->save();
 		$m2->reload();
 
-		$this->assertEquals(file_get_contents($blob_path), stream_get_contents($m2->getCoverImage()), "Expected contents to match when setting stream w/ 'w+' mode");
+		$this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m2->getCoverImage())), "Expected contents to match when setting stream w/ 'w+' mode");
 
 	}
 
