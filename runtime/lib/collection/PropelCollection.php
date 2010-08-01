@@ -432,11 +432,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		if (!$parser instanceof PropelParser) {
 			$parser = PropelParser::getParser($parser);
 		}
-		if ($parser instanceof PropelCSVParser) {
-			// PropelCSVParser requires lists to be identified as such
-			return $this->fromArray($parser->toArray($data, true), BasePeer::TYPE_PHPNAME);
-		}
-		return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
+		return $this->fromArray($parser->listToArray($data), BasePeer::TYPE_PHPNAME);
 	}
 
 	/**
@@ -456,11 +452,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		if (!$parser instanceof PropelParser) {
 			$parser = PropelParser::getParser($parser);
 		}
-		if ($parser instanceof PropelCSVParser) {
-			// PropelCSVParser requires lists to be identified as such
-			return $parser->fromArray($this->toArray(null, true), true);
-		}
-		return $parser->fromArray($this->toArray(null, true));
+		return $parser->listFromArray($this->toArray(null, true));
 	}
 
 	/** 

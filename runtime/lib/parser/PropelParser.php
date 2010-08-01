@@ -36,7 +36,17 @@ abstract class PropelParser
 	 * @return array Converted data
 	 */
 	abstract public function toArray($data);
+
+	public function listFromArray($data)
+	{
+		return $this->fromArray($data);
+	}
 	
+	public function listToArray($data)
+	{
+		return $this->toArray($data);
+	}
+
 	/**
 	 * Loads data from a file. Executes PHP code blocks in the file.
 	 *

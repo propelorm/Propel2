@@ -60,6 +60,11 @@ class PropelCSVParser extends PropelParser
 		return implode($rows, $this->lineTerminator) . $this->lineTerminator;
 	}
 	
+	public function listFromArray($array)
+	{
+		return $this->fromArray($array, true);
+	}
+	
 	/**
 	 * Accepts a row of data and returns it formatted
 	 * 
@@ -202,7 +207,12 @@ class PropelCSVParser extends PropelParser
 		
 		return $array;
 	}
-	
+
+	public function listToArray($array)
+	{
+		return $this->toArray($array, true);
+	}
+
 	protected function getColumns($row)
 	{
 		$delim = preg_quote($this->delimiter, '/');
