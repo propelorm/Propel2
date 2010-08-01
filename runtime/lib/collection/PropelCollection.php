@@ -12,6 +12,15 @@
  * Class for iterating over a list of Propel elements
  * The collection keys must be integers - no associative array accepted
  *
+ * @method     PropelCollection fromXML(string $data) Populate the collection from an XML string
+ * @method     PropelCollection fromYAML(string $data) Populate the collection from a YAML string
+ * @method     PropelCollection fromJSON(string $data) Populate the collection from a JSON string
+ * @method     PropelCollection fromCSV(string $data) Populate the collection from a CSV string
+ * @method     string toXML() Export the collection to an XML string
+ * @method     string toYAML() Export the collection to a YAML string
+ * @method     string toJSON() Export the collection to a JSON string
+ * @method     string toCSV() Export the collection to a CSV string
+ *
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
  */
@@ -403,7 +412,71 @@ class PropelCollection extends ArrayObject implements Serializable
 		
 		return Propel::getConnection($databaseName, $type);
 	}
-	
-}
 
-?>
+	/**
+	 * Populate the current collection from a string, using a given parser format
+	 * <code>
+	 * $coll = new PropelObjectCollection();
+	 * $coll->setModel('Book');
+	 * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
+	 * </code>
+	 *
+	 * @param mixed  $parser A PropelParser instance,
+	 *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+	 * @param string $data   The source data to import from
+	 *
+	 * @return BaseObject    The current object, for fluid interface
+	 */
+	public function importFrom($parser, $data)
+	{
+		if (!$parser instanceof PropelParser) {
+			$parser = PropelParser::getParser($parser);
+		}
+		if ($parser instanceof PropelCSVParser) {
+			// PropelCSVParser requires lists to be identified as such
+			return $this->fromArray($parser->toArray($data, true), BasePeer::TYPE_PHPNAME);
+		}
+		return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
+	}
+
+	/**
+	 * Export the current collection to a string, using a given parser format
+	 * <code>
+	 * $books = BookQuery::create()->find();
+	 * echo $book->exportTo('JSON');
+	 *  => {{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
+	 * </code>
+	 *
+	 * @param  mixed  $parser A PropelParser instance,
+	 *                        or a format name ('XML', 'YAML', 'JSON', 'CSV')
+	 * @return string The exported data
+	 */
+	public function exportTo($parser)
+	{
+		if (!$parser instanceof PropelParser) {
+			$parser = PropelParser::getParser($parser);
+		}
+		if ($parser instanceof PropelCSVParser) {
+			// PropelCSVParser requires lists to be identified as such
+			return $parser->fromArray($this->toArray(null, true), true);
+		}
+		return $parser->fromArray($this->toArray(null, true));
+	}
+
+	/** 
+	 * Catches calls to undefined methods.
+	 * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
+	 * Allows to define default __call() behavior if you use a custom BaseObject
+	 */ 
+	public function __call($name, $params)
+	{
+		if (preg_match('/^from(\w+)$/', $name, $matches)) {
+			return $this->importFrom($matches[1], reset($params));
+		}
+		if (preg_match('/^to(\w+)$/', $name, $matches)) {
+			return $this->exportTo($matches[1]);
+		}
+		throw new PropelException('Call to undefined method: ' . $name); 
+	} 
+
+}
