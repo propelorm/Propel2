@@ -74,6 +74,8 @@ Run all the unit tests at once using the `phpunit` command:
 > phpunit testsuite
 }}}
 
+'''Warning''': The `testsuite/generator/builder/NamespaceTest.php` file uses PHP 5.3 namespaces, and therefore will create a parse error under PHP 5.2. To launch the unit test suite in a PHP 5.2 platform, simply delete this test file.
+
 To run a single test, go inside the unit test directory, and run the test using the command line. For example to run only GeneratedObjectTest:
 
 {{{
