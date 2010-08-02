@@ -122,6 +122,40 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$this->assertEquals($keys, array_keys($booksArray));
 	}
 
+	public function testToArrayDeep()
+	{
+		$author = new Author();
+		$author->setId(5678);
+		$author->setFirstName('George');
+		$author->setLastName('Byron');
+		$book = new Book();
+		$book->setId(9012);
+		$book->setTitle('Don Juan');
+		$book->setISBN('0140422161');
+		$book->setPrice(12.99);
+		$book->setAuthor($author);
+		
+		$coll = new PropelArrayCollection();
+		$coll->setModel('Book');
+		$coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, true);
+		$expected = array(array(
+			'Id' => 9012,
+			'Title' => 'Don Juan',
+			'ISBN' => '0140422161',
+			'Price' => 12.99,
+			'PublisherId' => null,
+			'AuthorId' => 5678,
+			'Author' => array(
+				'Id' => 5678,
+				'FirstName' => 'George',
+				'LastName' => 'Byron',
+				'Email' => null,
+				'Age' => null,
+			),
+		));
+		$this->assertEquals($expected, $coll->toArray());
+	}
+
 	public function getWorkerObject()
 	{
 		$col = new TestablePropelArrayCollection();

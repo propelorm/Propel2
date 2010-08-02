@@ -125,7 +125,7 @@ class PropelObjectCollection extends PropelCollection
 		foreach ($this as $key => $obj) {
 			$key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-			$ret[$key] = $obj->toArray();
+			$ret[$key] = $obj->toArray(BasePeer::TYPE_PHPNAME, true, true);
 		}
 		
 		return $ret;
