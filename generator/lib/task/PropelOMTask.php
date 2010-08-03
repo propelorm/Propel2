@@ -74,7 +74,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		
 		// skip files already created once
 		if ($_f->exists() && !$overwrite) {
-			$this->log("\t\t-> (exists) " . $builder->getClassname(), Project::MSG_VERBOSE);
+			$this->log("\t-> (exists) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
 			return 0;
 		}
 		
@@ -85,12 +85,12 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		
 		// skip unchanged files
 		if ($_f->exists() && $script == $_f->contents()) {
-			$this->log("\t\t-> (unchanged) " . $builder->getClassname(), Project::MSG_VERBOSE);
+			$this->log("\t-> (unchanged) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
 			return 0;
 		}
 		
 		// write / overwrite new / changed files
-		$this->log("\t\t-> " . $builder->getClassname() . " [builder: " . get_class($builder) . "]");
+		$this->log("\t-> Writing " . $builder->getClassFilePath() . " [builder: " . get_class($builder) . "]");
 		file_put_contents($_f->getAbsolutePath(), $script);
 		return 1;
 	}
@@ -107,11 +107,11 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		$totalNbFiles = 0;
 		
 		foreach ($this->getDataModels() as $dataModel) {
-			$this->log("Processing Datamodel : " . $dataModel->getName());
+			$this->log("Datamodel: " . $dataModel->getName());
 
 			foreach ($dataModel->getDatabases() as $database) {
 
-				$this->log("  - processing database : " . $database->getName());
+				$this->log(" - Database: " . $database->getName());
 
 				foreach ($database->getTables() as $table) {
 
@@ -119,7 +119,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						
 						$nbWrittenFiles = 0;
 
-						$this->log("\t+ " . $table->getName());
+						$this->log("  + Table: " . $table->getName());
 
 						// -----------------------------------------------------------------------------------------
 						// Create Peer, Object, and TableMap classes
@@ -223,7 +223,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						
 						$totalNbFiles += $nbWrittenFiles;
 						if ($nbWrittenFiles == 0) {
-							$this->log("\t\t(no change)");
+							$this->log("\t\t(no change)", Project::MSG_VERBOSE);
 						}
 					} // if !$table->isForReferenceOnly()
 
