@@ -1891,7 +1891,7 @@ EOT;
 				$joinType = strtoupper($type) . ' JOIN';
 				// Test if first argument is suplied, else don't provide an alias to joinXXX (default value)
         if (!isset($arguments[0])) {
-          $arguments[0] = '';
+          $arguments[0] = null;
         } 
 				array_push($arguments, $joinType);
 				$method = substr($name, $pos);

@@ -905,6 +905,24 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
 	}
 	
+	public function testUseFkQueryNoAliasThenWith()
+	{
+		$con = Propel::getConnection();
+		$books = BookQuery::create()
+			->useAuthorQuery()
+				->filterByFirstName('Leo')
+			->endUse()
+			->with('Author')
+			->find($con);
+		$q1 = $con->getLastExecutedQuery();
+		$books = BookQuery::create()
+			->leftJoinWithAuthor()
+			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
+			->find($con);
+		$q2 = $con->getLastExecutedQuery();
+		$this->assertEquals($q1, $q2, 'with() can be used after a call to useFkQuery() with no alias');
+	}
+	
 	public function testPrune()
 	{
 		$q = BookQuery::create()->prune();
