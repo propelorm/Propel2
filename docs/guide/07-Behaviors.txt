@@ -311,7 +311,7 @@ preSelect()          // adds code before every select query
 peerFilter(&$script) // do whatever you want with the generated code, passed as reference
 }}}
 
-=== Adding New Classes Classes ===
+=== Adding New Classes ===
 
 Behaviors can add entirely new classes based on the data model. To build a new class, a behavior must provide an array of builder class names (in return to `getAdditionalBuilders()`) and the builder classes themselves. 
 
