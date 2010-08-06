@@ -306,6 +306,24 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
+	 * Return a local column name.
+	 * @return     string
+	 */
+	public function getLocalColumnName($index = 0)
+	{
+		return $this->localColumns[$index];
+	}
+
+	/**
+	 * Return a local column object.
+	 * @return     Column
+	 */
+	public function getLocalColumn($index = 0)
+	{
+		return $this->getTable()->getColumn($this->getLocalColumnName($index));
+	}
+
+	/**
 	 * Utility method to get local column to foreign column
 	 * mapping for this foreign key.
 	 */
@@ -385,6 +403,24 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
+	 * Return a foreign column name.
+	 * @return     string
+	 */
+	public function getForeignColumnName($index = 0)
+	{
+		return $this->foreignColumns[$index];
+	}
+
+	/**
+	 * Return a foreign column object.
+	 * @return     Column
+	 */
+	public function getForeignColumn($index = 0)
+	{
+		return $this->getForeignTable()->getColumn($this->getForeignColumnName($index));
+	}
+	
+	/**
 	 * Whether this foreign key uses a required column, or a list or required columns.
 	 *
 	 * @return     boolean
@@ -423,6 +459,15 @@ class ForeignKey extends XMLElement
 			!array_diff($foreignPKCols, $foreignCols));
 	}
 
+  /**
+   * Whether this foreign key relies on more than one column binding
+   *
+   * @return Boolean
+   */
+  public function isComposite()
+  {
+    return count($this->getLocalColumns()) > 1;
+  }
 
 	/**
 	 * Whether this foreign key is also the primary key of the local table.

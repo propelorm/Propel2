@@ -649,22 +649,52 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$script .= "
 	/**
 	 * Filter the query by a related $fkPhpName object
-	 *
-	 * @param     $fkPhpName $objectName  the related object to use as filter
+	 *";
+		if ($fk->isComposite()) {
+			$script .= "
+	 * @param     $fkPhpName $objectName The related object to use as filter";
+		} else {
+			$script .= "
+	 * @param     $fkPhpName|PropelCollection $objectName The related object(s) to use as filter";
+		}
+		$script .= "
 	 * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    $queryClass The current query, for fluid interface
 	 */
 	public function filterBy$relationName($objectName, \$comparison = null)
 	{
-		return \$this";
+		if ($objectName instanceof $fkPhpName) {
+			return \$this";
 		foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+				->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
 		}
-		$script .= ";
+		$script .= ";";
+		if (!$fk->isComposite()) {
+			$localColumnConstant = $this->getColumnConstant($fk->getLocalColumn());
+			$foreignColumnName = $fk->getForeignColumn()->getPhpName();
+			$script .= "
+		} elseif ($objectName instanceof PropelCollection) {
+			if (null === \$comparison) {
+				\$comparison = Criteria::IN;
+			}
+			return \$this
+				->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('PrimaryKey', '$foreignColumnName'), \$comparison);";
+		}
+		$script .= "
+		} else {";
+		if ($fk->isComposite()) {
+			$script .= "
+			throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName');";
+		} else {
+			$script .= "
+			throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or PropelCollection');";
+		}
+		$script .= "
+		}
 	}
 ";
 	}
@@ -692,14 +722,34 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	public function filterBy$relationName($objectName, \$comparison = null)
 	{
-		return \$this";
+		if ($objectName instanceof $fkPhpName) {
+			return \$this";
 		foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
 			$localColumnObject = $table->getColumn($localColumn);
 			$foreignColumnObject = $fkTable->getColumn($foreignColumn);
 			$script .= "
-			->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+				->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
 		}
-		$script .= ";
+		$script .= ";";
+		if (!$fk->isComposite()) {
+			$script .= "
+		} elseif ($objectName instanceof PropelCollection) {
+			return \$this
+				->use{$relationName}Query()
+					->filterByPrimaryKeys({$objectName}->getPrimaryKeys())
+				->endUse();";
+		}
+		$script .= "
+		} else {";
+		if ($fk->isComposite()) {
+			$script .= "
+			throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName');";
+		} else {
+			$script .= "
+			throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or PropelCollection');";
+		}
+		$script .= "
+		}
 	}
 ";
 	}

@@ -561,6 +561,29 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($testFavorite, $favorite, 'Generated query handles filterByFk() methods correctly for composite fkeys');
 	}
 	
+	public function testFilterByFkObjectCollection()
+	{
+		BookstoreDataPopulator::depopulate($this->con);
+		BookstoreDataPopulator::populate($this->con);
+		
+		$authors = AuthorQuery::create()
+			->orderByFirstName()
+			->limit(2)
+			->find($this->con);
+		
+		$books = BookQuery::create()
+			->filterByAuthor($authors)
+			->find($this->con);
+		$q1 = $this->con->getLastExecutedQuery();
+		
+		$books = BookQuery::create()
+			->add(BookPeer::AUTHOR_ID, $authors->getPrimaryKeys(), Criteria::IN)
+			->find($this->con);
+		$q2 = $this->con->getLastExecutedQuery();
+		
+		$this->assertEquals($q2, $q1, 'filterByFk() accepts a collection and results to an IN query');
+	}
+	
 		public function testFilterByRefFk()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
@@ -612,7 +635,31 @@ class QueryBuilderTest extends BookstoreTestBase
 			->findOne();
 		$this->assertEquals($testOpinion, $opinion, 'Generated query handles filterByRefFk() methods correctly for composite fkeys');
 	}
-	
+
+	public function testFilterByRefFkObjectCollection()
+	{
+		BookstoreDataPopulator::depopulate($this->con);
+		BookstoreDataPopulator::populate($this->con);
+		
+		$books = BookQuery::create()
+			->orderByTitle()
+			->limit(2)
+			->find($this->con);
+		
+		$authors = AuthorQuery::create()
+			->filterByBook($books)
+			->find($this->con);
+		$q1 = $this->con->getLastExecutedQuery();
+		
+		$authors = AuthorQuery::create()
+			->addJoin(AuthorPeer::ID, BookPeer::AUTHOR_ID, Criteria::LEFT_JOIN)
+			->add(BookPeer::ID, $books->getPrimaryKeys(), Criteria::IN)
+			->find($this->con);
+		$q2 = $this->con->getLastExecutedQuery();
+		
+		$this->assertEquals($q2, $q1, 'filterByRefFk() accepts a collection and results to an IN query in the joined table');
+	}
+		
 	public function testFilterByCrossFK()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByBookClubList'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
