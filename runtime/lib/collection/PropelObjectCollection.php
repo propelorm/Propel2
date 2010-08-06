@@ -220,20 +220,17 @@ class PropelObjectCollection extends PropelCollection
 		}
 		$symRelationMap = $relationMap->getSymmetricalRelation();
 		
-		// query the db for the related objects
-		$useMethod = 'use' . $symRelationMap->getName() . 'Query';
 		$query = PropelQuery::from($relationMap->getRightTable()->getPhpName());
 		if (null !== $criteria) {
 			$query->mergeWith($criteria);
 		}
+		// query the db for the related objects
+		$filterMethod = 'filterBy' . $symRelationMap->getName();
 		$relatedObjects = $query
-			->$useMethod()
-				->filterByPrimaryKeys($this->getPrimaryKeys())
-			->endUse()
-			->find($con);
-			
-		// associate the related objects to the main objects
+			->$filterMethod($this)
+			->find($con);	
 		if ($relationMap->getType() == RelationMap::ONE_TO_MANY) {
+			// associate the related objects to the main objects
 			$getMethod = 'get' . $symRelationMap->getName();
 			$addMethod = 'add' . $relationMap->getName();
 			foreach ($relatedObjects as $object) {
