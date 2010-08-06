@@ -351,6 +351,9 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 			}
 		}
 		
+		// sort the classmap by class name, to avoid discrepancies between OS
+		ksort($phpconfClassmap);
+		
 		return $phpconfClassmap;
 	}
 }
