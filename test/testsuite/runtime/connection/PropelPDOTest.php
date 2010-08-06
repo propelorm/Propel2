@@ -29,9 +29,10 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(PDO::CASE_LOWER, $con->getAttribute(PDO::ATTR_CASE));
 	}
 
-public function testCommitBeforeFetch()
+	public function testCommitBeforeFetch()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		AuthorPeer::doDeleteAll($con);
 		$a = new Author();
 		$a->setFirstName('Test');
 		$a->setLastName('User');
@@ -52,12 +53,12 @@ public function testCommitBeforeFetch()
 		} catch (PDOException $e) {
 			$this->fail("PDO driver does not support calling \$stmt->fetch after the transaction has been closed.\nFails with error ".$e->getMessage());
 		}
-		AuthorPeer::doDeleteAll($con);
 	}
 
 	public function testCommitAfterFetch()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		AuthorPeer::doDeleteAll($con);
 		$a = new Author();
 		$a->setFirstName('Test');
 		$a->setLastName('User');
@@ -74,7 +75,6 @@ public function testCommitBeforeFetch()
 		$stmt->closeCursor();
 		$con->commit();
 		$this->assertEquals($authorArr, $row, 'PDO driver supports calling $stmt->fetch before the transaction has been closed');
-		AuthorPeer::doDeleteAll($con);
 	}
 
 	public function testNestedTransactionCommit()
