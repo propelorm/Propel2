@@ -795,7 +795,7 @@ class Table extends XMLElement implements IDMethod
 	 */
 	public function getGeneratorConfig()
 	{
-		return $this->getDatabase()->getAppData()->getPlatform()->getGeneratorConfig();
+		return $this->getDatabase()->getAppData()->getGeneratorConfig();
 	}
 	
 	/**

@@ -76,6 +76,16 @@ class XmlToAppData extends AbstractHandler
 	}
 
 	/**
+	 * Set the AppData generator configuration
+	 *
+	 * @param GeneratorConfig $generatorConfig
+	 */
+	public function setGeneratorConfig(GeneratorConfig $generatorConfig)
+	{
+		$this->app->setGeneratorConfig($generatorConfig);
+	}
+
+	/**
 	 * Parses a XML input file and returns a newly created and
 	 * populated AppData structure.
 	 *

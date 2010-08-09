@@ -141,12 +141,12 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 
 		$generatorConfig = $this->getGeneratorConfig();
 
-		$builderClazz = $generatorConfig->getBuilderClassname('ddl');
-
 		foreach ($dataModels as $package => $dataModel) {
 
 			foreach ($dataModel->getDatabases() as $database) {
-
+				
+				$builderClazz = $generatorConfig->getConfiguredDDLBuilderClassname($database->getName());
+				
 				// Clear any start/end DLL
 				call_user_func(array($builderClazz, 'reset'));
 
@@ -167,7 +167,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 				foreach ($database->getTables() as $table) {
 
 					if (!$table->isSkipSql()) {
-						$builder = $generatorConfig->getConfiguredBuilder($table, 'ddl');
+						$builder = $generatorConfig->getConfiguredDDLBuilder($table);
 						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
 						$ddl .= $builder->build();
 						foreach ($builder->getWarnings() as $warning) {
@@ -219,6 +219,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 						$dbClone = $this->cloneDatabase($db);
 						$dbClone->setPackage($package);
 						$ad = new AppData($platform);
+						$ad->setGeneratorConfig($this->getGeneratorConfig());
 						$ad->setName($dataModel->getName());
 						$ad->addDatabase($dbClone);
 						$packagedDataModels[$package] = $ad;
@@ -227,7 +228,6 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 				}
 			}
 		}
-
 		return $packagedDataModels;
 	}
 

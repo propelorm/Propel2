@@ -14,7 +14,8 @@
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.config
  */
-class GeneratorConfig {
+class GeneratorConfig
+{
 
   /**
    * The build properties.
@@ -22,6 +23,9 @@ class GeneratorConfig {
    * @var        array
    */
   private $buildProperties = array();
+
+	protected $buildConnections = null;
+	protected $defaultBuildConnection = null;
 
   /**
    * Construct a new GeneratorConfig.
@@ -139,10 +143,16 @@ class GeneratorConfig {
    * @param      PDO $con
    * @return     Platform
    */
-  public function getConfiguredPlatform(PDO $con = null)
+  public function getConfiguredPlatform(PDO $con = null, $database = null)
   {
-    $clazz = $this->getClassname("platformClass");
-    $platform = new $clazz();
+		$buildConnection = $this->getBuildConnection($database);
+		if (null !== $buildConnection['adapter']) {
+			$clazz = Phing::import('platform.' . ucfirst($buildConnection['adapter']) . 'Platform');
+		} else {
+			// propel.platform.class = platform.${propel.database}Platform by default
+			$clazz = $this->getClassname("platformClass");
+		}
+		$platform = new $clazz();
 
     if (!$platform instanceof Platform) {
       throw new BuildException("Specified platform class ($clazz) does not implement Platform interface.", $this->getLocation());
@@ -185,6 +195,27 @@ class GeneratorConfig {
     return $builder;
   }
 
+	public function getConfiguredDDLBuilderClassName($database = null)
+	{
+		$buildConnection = $this->getBuildConnection($database);
+		if (null !== $buildConnection['adapter']) {
+			$pf = $buildConnection['adapter'];
+			return Phing::import('builder.sql.' . $pf . '.' .ucfirst($pf) . 'DDLBuilder');
+		} else {
+			// propel.platform.class = platform.${propel.database}Platform by default
+			// propel.builder.ddl.class =  builder.sql.${propel.database}.${propel.database}DDLBuilder
+			return $this->getClassname('builderDdlClass');
+		}
+	}
+
+	public function getConfiguredDDLBuilder(Table $table)
+	{
+		$classname = $this->getConfiguredDDLBuilderClassName($table->getDatabase()->getName());
+		$builder = new $classname($table);
+		$builder->setGeneratorConfig($this);
+		return $builder;
+	}
+
   /**
    * Gets a configured Pluralizer class.
    *
@@ -214,4 +245,47 @@ class GeneratorConfig {
     }
     return $ret;    
   }
+
+	public function getBuildConnections()
+	{
+		if (null === $this->buildConnections) {
+			$buildTimeConfigPath = $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile');
+			if (file_exists($buildTimeConfigPath)) {
+				$conf = simplexml_load_file($buildTimeConfigPath);
+				$this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
+				$buildConnections = array();
+				foreach ($conf->propel->datasources->datasource as $datasource) {
+					$buildConnections[(string) $datasource['id']] = array(
+						'adapter'  => (string) $datasource->adapter,
+						'dsn'      => (string) $datasource->connection->dsn,
+						'user'     => (string) $datasource->connection->user,
+						'password' => (string) $datasource->connection->password,
+					);
+				}
+				$this->buildConnections = $buildConnections;
+			} else {
+				$this->buildConnections = array();
+			}
+		}
+		return $this->buildConnections;
+	}
+	
+	public function getBuildConnection($databaseName = null)
+	{
+		$connections = $this->getBuildConnections();
+		if (null === $databaseName) {
+			$databaseName = $this->defaultBuildConnection;
+		}
+		if (isset($connections[$databaseName])) {
+			return $connections[$databaseName];
+		} else {
+			// fallback to the single connection from build.properties
+			return array(
+				'adapter'  => $this->getBuildProperty('databaseAdapter'),
+				'dsn'      => $this->getBuildProperty('databaseUrl'),
+				'user'     => $this->getBuildProperty('databaseUser'),
+				'password' => $this->getBuildProperty('databasePassword'),
+			);
+		}
+	}
 }

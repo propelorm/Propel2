@@ -442,6 +442,7 @@ abstract class AbstractPropelDataModelTask extends Task
 				}
 				
 				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
+				$xmlParser->setGeneratorConfig($this->getGeneratorConfig());
 				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
 		
 				$ad->setName($dmFilename);

@@ -361,7 +361,7 @@ abstract class DataModelBuilder
 	public function getDDLBuilder()
 	{
 		if (!isset($this->ddlBuilder)) {
-			$this->ddlBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'ddl');
+			$this->ddlBuilder = $this->getGeneratorConfig()->getConfiguredDDLBuilder($this->getTable());
 		}
 		return $this->ddlBuilder;
 	}
