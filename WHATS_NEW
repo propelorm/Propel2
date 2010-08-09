@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-Propel 1.6 is a new backwards compatible iteration of the Propel 1.x branch.
+Propel 1.6 is a new backwards compatible iteration of the Propel 1.x branch. As usual, don't forget to rebuild your model once you upgrade to this new version.
 
 == XML/YAML/JSON/CSV Parsing and Dumping ==
 
@@ -87,3 +87,20 @@ Here is an example buildtime configuration file that defines a MySQL and a SQLit
 }}}
 
 Now that Propel can deal with database vendors at buildtime more accurately, the generated classes offer more optimizations for the database they rely one. Incidentally, that means that you should rebuild your model if you use different database vendors. Thats includes cases when your developement and production environments use different vendors.
+
+== Foreign Key Filters Now Accept a Collection ==
+
+The generated `filterByRelationName()` methods in the model queries now accept a `PropelCollection` as argument. This will allow you to keep using objects and avoid dealing with foreign keys completely:
+
+{{{
+#!php
+<?php
+// get young authors
+$authors = AuthorQuery::create()
+  ->filterByAge(array('max' => 35))
+  ->find(); // $authors is a PropelObjectCollection
+// get all books by young authors
+$books = BookQuery::create()
+  ->filterByAuthor($authors) // <= That's new
+  ->find();
+}}}
