@@ -320,27 +320,28 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$c->join('Book.Author');
 		$c->withColumn('LOWER(Book.Title)', 'LowercaseTitle');
 		$c->select(array('LowercaseTitle', 'Book.Title'));
+		$c->orderBy('Book.Title');
 		$rows = $c->find($this->con);
-		$expectedSQL = 'SELECT LOWER(book.TITLE) AS LowercaseTitle, book.TITLE AS "Book.Title" FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID)';
+		$expectedSQL = 'SELECT LOWER(book.TITLE) AS LowercaseTitle, book.TITLE AS "Book.Title" FROM `book` INNER JOIN author ON (book.AUTHOR_ID=author.ID) ORDER BY book.TITLE ASC';
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(array) can cope with a column added with withColumn()');
 
 		$expectedRows = array (
-			array (
-				'LowercaseTitle' => 'quicksilver',
-				'Book.Title' => 'Quicksilver',
-			),
 			array (
 				'LowercaseTitle' => 'don juan',
 				'Book.Title' => 'Don Juan',
 			),
 			array (
+				'LowercaseTitle' => 'harry potter and the order of the phoenix',
+				'Book.Title' => 'Harry Potter and the Order of the Phoenix',
+			),
+			array (
+				'LowercaseTitle' => 'quicksilver',
+				'Book.Title' => 'Quicksilver',
+			),
+			array (
 				'LowercaseTitle' => 'the tin drum',
 				'Book.Title' => 'The Tin Drum',
 			),
-			array (
-				'LowercaseTitle' => 'harry potter and the order of the phoenix',
-				'Book.Title' => 'Harry Potter and the Order of the Phoenix',
-			)
 		);
 		$this->assertEquals(serialize($rows->getData()), serialize($expectedRows), 'find() called after select(array) can cope with a column added with withColumn()');
 	}
