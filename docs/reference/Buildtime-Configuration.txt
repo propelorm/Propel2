@@ -251,7 +251,7 @@ propel.output.dir = ${propel.project.dir}/build
 # The directory where Propel will create generated object model classes.
 propel.php.dir = ${propel.output.dir}/classes
 
-The directory where Propel will create the php-ified version of your `runtime-conf.xml`.
+# The directory where Propel will create the php-ified version of your `runtime-conf.xml`.
 propel.phpconf.dir = ${propel.output.dir}/conf
 
 # The directory where Propel will place generated DDL (or data insert statements, etc.)
