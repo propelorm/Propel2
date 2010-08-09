@@ -4,7 +4,7 @@ The following topics are targeted for developers who already have a working data
 
 == Working with Database Structures ==
 
-Propel uses an abstract XML schema file to represent databases (the [wiki:Documentation/1.5/Schema schema]). Propel builds the SQL specific to a database based on this schema. Propel also provides a way to reverse-engineer the generic schema file based on database metadata.
+Propel uses an abstract XML schema file to represent databases (the [wiki:Documentation/1.6/Schema schema]). Propel builds the SQL specific to a database based on this schema. Propel also provides a way to reverse-engineer the generic schema file based on database metadata.
 
 === Creating an XML Schema from a DB Structure ===
 

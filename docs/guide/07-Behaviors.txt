@@ -137,16 +137,16 @@ Then rebuild your model, and there you go: two columns, `created_at` and `update
 
 Propel currently bundles several behaviors. Check the behavior documentation for details on usage:
 
- * [wiki:Documentation/1.5/Behaviors/aggregate_column aggregate_column]
- * [wiki:Documentation/1.5/Behaviors/alternative_coding_standards alternative_coding_standards]
- * [wiki:Documentation/1.5/Behaviors/auto_add_pk auto_add_pk]
- * [wiki:Documentation/1.5/Behaviors/timestampable timestampable]
- * [wiki:Documentation/1.5/Behaviors/sluggable sluggable]
- * [wiki:Documentation/1.5/Behaviors/soft_delete soft_delete]
- * [wiki:Documentation/1.5/Behaviors/sortable sortable]
- * [wiki:Documentation/1.5/Behaviors/nested_set nested_set]
- * [wiki:Documentation/1.5/Behaviors/query_cache query_cache]
- * And [wiki:Documentation/1.5/Inheritance#ConcreteTableInheritance concrete_inheritance], documented in the Inheritance Chapter even if it's a behavior
+ * [wiki:Documentation/1.6/Behaviors/aggregate_column aggregate_column]
+ * [wiki:Documentation/1.6/Behaviors/alternative_coding_standards alternative_coding_standards]
+ * [wiki:Documentation/1.6/Behaviors/auto_add_pk auto_add_pk]
+ * [wiki:Documentation/1.6/Behaviors/timestampable timestampable]
+ * [wiki:Documentation/1.6/Behaviors/sluggable sluggable]
+ * [wiki:Documentation/1.6/Behaviors/soft_delete soft_delete]
+ * [wiki:Documentation/1.6/Behaviors/sortable sortable]
+ * [wiki:Documentation/1.6/Behaviors/nested_set nested_set]
+ * [wiki:Documentation/1.6/Behaviors/query_cache query_cache]
+ * And [wiki:Documentation/1.6/Inheritance#ConcreteTableInheritance concrete_inheritance], documented in the Inheritance Chapter even if it's a behavior
 
 Behaviors bundled with Propel require no further installation and work out of the box.
 

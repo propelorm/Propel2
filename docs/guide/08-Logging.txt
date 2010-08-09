@@ -216,7 +216,7 @@ $con->useDebug(true);
 
 You can also disable the debug mode at runtime, by calling `PropelPDO::useDebug(false)`. Using this method, you can choose to enable the debug mode for only one particular query, or for all queries.
 
-Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `DebugPDO` class instead of the default `PropelPDO` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [wiki:Documentation/1.5/RuntimeConfiguration runtime configuration reference] for more details).
+Alternatively, you can ask Propel to always enable the debug mode for a particular connection by using the `DebugPDO` class instead of the default `PropelPDO` class. This is accomplished in the `runtime-conf.xml` file, in the `<classname>` tag of a given datasource connection (see the [wiki:Documentation/1.6/RuntimeConfiguration runtime configuration reference] for more details).
 
 {{{
 #!xml
@@ -397,7 +397,7 @@ The following settings can be customized at runtime or in the configuration file
 ||`debugpdo.logging.innerglue`||`": "`||String to use for combining the title of a detail and its value||
 ||`debugpdo.logging.outerglue`||`" | "`||String to use for combining details together on a log line||
 ||`debugpdo.logging.realmemoryusage`||`false`||Parameter to [http://www.php.net/manual/en/function.memory-get-usage.php memory_get_usage()] and [http://www.php.net/manual/en/function.memory-get-peak-usage.php memory_get_peak_usage()] calls||
-||`debugpdo.logging.methods`||[http://propel.propelorm.org/browser/branches/1.5/runtime/classes/propel/util/DebugPDO.php#L151 array(...)]||An array of method names `Class::method`) to be included in method call logging||
+||`debugpdo.logging.methods`||[http://propel.propelorm.org/browser/branches/1.6/runtime/classes/propel/util/DebugPDO.php#L151 array(...)]||An array of method names `Class::method`) to be included in method call logging||
 ||`debugpdo.logging.details.slow.enabled`||`false`||Enables flagging of slow method calls||
 ||`debugpdo.logging.details.slow.threshold`||`0.1`||Method calls taking more seconds than this threshold are considered slow||
 ||`debugpdo.logging.details.time.enabled`||`false`||Enables logging of method execution times||

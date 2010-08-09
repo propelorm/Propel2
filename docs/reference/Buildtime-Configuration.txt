@@ -124,7 +124,7 @@ propel.database.encoding = {empty}|string
 propel.tablePrefix = {empty}|string
 }}}
 
-'''Tip''': If you need more than one database connection at buildtime, the INI format is not enough. Therefore, you can add a `buildtime-conf.xml` file in the same directory as the `build.properties` file, and Propel will use the connections defined in this file instead of the ones defined by `propel.database.XXX` settings. The buildtime configuration file uses the same format as the `runtime-conf.xml` (see the [wiki:Documentation/1.5/RuntimeConfiguration runtime documentation reference] for more details about this format).
+'''Tip''': If you need more than one database connection at buildtime, the INI format is not enough. Therefore, you can add a `buildtime-conf.xml` file in the same directory as the `build.properties` file, and Propel will use the connections defined in this file instead of the ones defined by `propel.database.XXX` settings. The buildtime configuration file uses the same format as the `runtime-conf.xml` (see the [wiki:Documentation/1.6/RuntimeConfiguration runtime documentation reference] for more details about this format).
 
 === Reverse-Engineering Settings ===
 
@@ -197,7 +197,7 @@ propel.useLeftJoinsInDoJoinMethods = {true}|false
 # You can override this setting if you wish to default to another engine for
 # all tables (for instance InnoDB, or HEAP). This setting can also be
 # overridden on a per-table basis using the `<vendor>` element in the schema
-# (see [wiki:Documentation/1.5/Schema#AddingVendorInfo]).
+# (see [wiki:Documentation/1.6/Schema#AddingVendorInfo]).
 propel.mysql.tableType = {MyISAM}|string
 
 # Keyword used to specify the table engine in the CREATE SQL statement. 

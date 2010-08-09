@@ -142,7 +142,7 @@ require_once '/usr/local/propel/runtime/lib/Propel.php';
 // Propel setup code ... (to be discussed later)
 }}}
 
-At this point, Propel should be setup and ready to use. You can follow the steps in the [wiki:Documentation/1.5/BuildTime Build Guide] to try it out.
+At this point, Propel should be setup and ready to use. You can follow the steps in the [wiki:Documentation/1.6/BuildTime Build Guide] to try it out.
 
 == Troubleshooting ==
 

@@ -6,7 +6,7 @@ In the tutorial "[http://propel.posterous.com/getting-to-know-propel-15-keeping-
  
 == Boostrapping A Behavior ==
  
-A behavior is a class that can alter the generated classes for a table of your model. It must only extend the [browser:branches/1.5/generator/lib/model/Behavior.php `Behavior`] class and implement special "hook" methods. Here is the class skeleton to start with for the `aggregate_column` behavior:
+A behavior is a class that can alter the generated classes for a table of your model. It must only extend the [browser:branches/1.6/generator/lib/model/Behavior.php `Behavior`] class and implement special "hook" methods. Here is the class skeleton to start with for the `aggregate_column` behavior:
  
 {{{
 #!php
@@ -91,7 +91,7 @@ class AggregateColumnBehavior extends Behavior
 }
 }}}
  
-This method shows that a behavior class has access to the `<parameters>` defined for it in the `schema.xml` through the `getParameter()` command. Behaviors can also always access the `Table` object attached to them, by calling `getTable()`. A `Table` can check if a column exists and add a new one easily. The `Table` class is one of the numerous generator classes that serve to describe the object model at buildtime, together with `Column`, `ForeignKey`, `Index`, and a lot more classes. You can find all the buildtime model classes under the [browser:branches/1.5/generator/lib/model generator/lib/model] directory.
+This method shows that a behavior class has access to the `<parameters>` defined for it in the `schema.xml` through the `getParameter()` command. Behaviors can also always access the `Table` object attached to them, by calling `getTable()`. A `Table` can check if a column exists and add a new one easily. The `Table` class is one of the numerous generator classes that serve to describe the object model at buildtime, together with `Column`, `ForeignKey`, `Index`, and a lot more classes. You can find all the buildtime model classes under the [browser:branches/1.6/generator/lib/model generator/lib/model] directory.
 
 '''Tip''': Don't mix up the ''runtime'' database model (`DatabaseMap`, `TableMap`, `ColumnMap`, `ValidatorMap`, `RelationMap`) with the ''buildtime'' database model (`Database`, `Table`, `Column`, `Validator`, etc.). The buildtime model is very detailed, in order to ease the work of the builders that write the ActiveRecord and Query classes. On the other hand, the runtime model is optimized for speed, and carries minimal information to allow correct hydration and binding at runtime. Behaviors use the buildtime object model, because they are run at buildtime, so they have access to the most powerful model.
 
@@ -417,8 +417,8 @@ protected function updateRelatedTotalNbVotes(PropelPDO $con)
  
 == What's Left ==
  
-These are the basics of behavior writing: implement one of the methods documented in the [wiki:Documentation/1.5/Behaviors#WritingaBehavior behaviors chapter] of the Propel guide, and return strings containing the code to be added to the ActiveRecord, Query, and Peer classes. In addition to the behavior code, you should always write unit tests - all the behaviors bundled with Propel have full unit test coverage. And to make your behavior usable by others, documentation is highly recommended. Once again, Propel core behaviors are fully documented, to let users understand the behavior usage without having to peek into the code.
+These are the basics of behavior writing: implement one of the methods documented in the [wiki:Documentation/1.6/Behaviors#WritingaBehavior behaviors chapter] of the Propel guide, and return strings containing the code to be added to the ActiveRecord, Query, and Peer classes. In addition to the behavior code, you should always write unit tests - all the behaviors bundled with Propel have full unit test coverage. And to make your behavior usable by others, documentation is highly recommended. Once again, Propel core behaviors are fully documented, to let users understand the behavior usage without having to peek into the code.
 
 As for the `AggregateColumnBehavior`, the job is not finished. The [http://propel.posterous.com/getting-to-know-propel-15-keeping-an-aggregat blog post] emphasized the need for hooks in the Query class, and these are not yet implemented in the above code. Besides, the  post kept quiet about one use case that left the aggregate column not up to date (when a question is detached from a poll without deleting it). Lastly, the parameters required for this behavior are currently a bit verbose, especially concerning the need to define the foreign table and the foreign key - this could be simplified thanks to the knowledge of the object model that behaviors have.
 
-All this is left to the reader as an exercise. Fortunately, the final behavior is part of the Propel core behaviors, so the [browser:branches/1.5/generator/lib/behavior/aggregate_column code], [browser:branches/1.5/test/testsuite/generator/behavior/aggregate_column unit tests], and [wiki:Documentation/1.5/Behaviors/aggregate_column documentation] are all ready to help you to further understand the power of Propel's behavior system.
+All this is left to the reader as an exercise. Fortunately, the final behavior is part of the Propel core behaviors, so the [browser:branches/1.6/generator/lib/behavior/aggregate_column code], [browser:branches/1.5/test/testsuite/generator/behavior/aggregate_column unit tests], and [wiki:Documentation/1.6/Behaviors/aggregate_column documentation] are all ready to help you to further understand the power of Propel's behavior system.
