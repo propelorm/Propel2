@@ -66,14 +66,14 @@ Installing from SVN trunk ensures that you have the most up-to-date source code.
 
 {{{
 #!sh
-> svn checkout http://svn.propelorm.org/branches/1.5 /usr/local/propel
+> svn checkout http://svn.propelorm.org/branches/1.6 /usr/local/propel
 }}}
 
 This will export both the generator and runtime components to your local `propel` directory. In addition, you'll also get Propel documentation and unit tests - that's why this method is the preferred installation method for Propel contributors.
 
 Once this is done, you'll need to setup your PHP environment to use this library - see the '''Setting Up PHP for Propel''' section below.
 
-Note: `branches/1.5` is currently more uptodate code than `trunk`; trunk is what will become 2.0, however it has had very little work done to it in a long time.
+Note: `branches/1.6` is currently more uptodate code than `trunk`; trunk is what will become 2.0, however it has had very little work done to it in a long time.
 
 === Installing Propel From a Tarball ===
 

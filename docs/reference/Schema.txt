@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-The schema for `schema.xml` contains a small number of elements with required and optional attributes. The Propel generator contains a [source:branches/1.6/generator/resources/dtd/database.dtd DTD] that can be used to validate your `schema.xml` document. Also, when you build your SQL and OM, the Propel generator will automatically validate your `schema.xml` file using a highly-detailed [source:branches/1.5/generator/resources/xsd/database.xsd XSD].
+The schema for `schema.xml` contains a small number of elements with required and optional attributes. The Propel generator contains a [source:branches/1.6/generator/resources/dtd/database.dtd DTD] that can be used to validate your `schema.xml` document. Also, when you build your SQL and OM, the Propel generator will automatically validate your `schema.xml` file using a highly-detailed [source:branches/1.6/generator/resources/xsd/database.xsd XSD].
 
 == At-a-Glance ==
 

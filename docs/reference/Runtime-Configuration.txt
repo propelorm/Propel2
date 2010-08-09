@@ -315,4 +315,4 @@ The `<slaves>` tag groups slave `<connection>` elements which provide support fo
 
 === <debugpdo> ===
 
-The optional `<debugpdo>` element may be provided to pass additional logging configuration options to DebugPDO. Note that these settings have no effect unless DebugPDO has been selected in [1.5/RuntimeConfiguration#debugpdo `runtime-conf.xml`] as the PDO connection class. See the [wiki:Documentation/1.6/07-Logging Logging documentation] for more information on configuring DebugPDO.
+The optional `<debugpdo>` element may be provided to pass additional logging configuration options to DebugPDO. Note that these settings have no effect unless DebugPDO has been selected in [wiki:Documentation/1.6/RuntimeConfiguration#debugpdo `runtime-conf.xml`] as the PDO connection class. See the [wiki:Documentation/1.6/07-Logging Logging documentation] for more information on configuring DebugPDO.
