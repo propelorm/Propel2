@@ -27,7 +27,7 @@ echo $books->toYAML();
 //     Id: 456
 //     FirstName: Jane
 //     LastName: Austen
-// Book2:
+// Book_2:
 //   Id: 789
 //   Title: War and Peace
 //   AuthorId: 147
