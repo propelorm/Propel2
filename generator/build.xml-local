@@ -84,10 +84,6 @@
 	<phing phingfile="${propel.home}/build-propel.xml" target="creole"/>
 </target>
 
-<target name="datadtd" depends="configure">
-	<phing phingfile="${propel.home}/build-propel.xml" target="datadtd"/>
-</target>
-
 <target name="datadump" depends="configure">
 	<phing phingfile="${propel.home}/build-propel.xml" target="datadump"/>
 </target>

@@ -42,14 +42,8 @@
   </path>
 
   <taskdef
-    name="propel-data-model"
-    classname="task.PropelDataModelTemplateTask" classpathRef="propelclasses"/>
-  <taskdef
     name="propel-om"
     classname="task.PropelOMTask" classpathRef="propelclasses"/>
-  <taskdef
-    name="propel-data-dtd"
-    classname="task.PropelDataDTDTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-data-dump"
     classname="task.PropelDataDumpTask" classpathRef="propelclasses"/>
@@ -222,23 +216,6 @@
     <fail message="create-db target temporarily disabled, while we replace creole components."/>
 
 	<!--
-    <propel-data-model
-      validate="${propel.schema.validate}"
-      xsd="${propel.schema.xsd.file}"
-      xsl="${propel.schema.xsl.file}"
-      controlTemplate="${propel.template.sqlDbInit}"
-      outputDirectory="${propel.sql.dir}"
-      outputFile="create-db.sql"
-      targetDatabase="${propel.database}"
-      dbEncoding="${propel.database.encoding}"
-      templatePath="${propel.templatePath}"
-      packageObjectModel="${propel.packageObjectModel}">
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.create-db.includes}"
-        excludes="${propel.schema.create-db.excludes}"
-      />
-    </propel-data-model>
-
     <echo message="Executing the create-db.sql script ..."/>
 
     <sql
@@ -364,38 +341,6 @@
         excludes="${propel.schema.datadtd.excludes}"
       />
      </propel-data-dump>
-  </target>
-
-  <!-- ================================================================ -->
-  <!-- G E N E R A T E  P R O J E C T  D A T A  D T D                   -->
-  <!-- ================================================================ -->
-  <!-- Generate the DATA DTD for your project                           -->
-  <!-- ================================================================ -->
-
-  <target
-    name="datadtd"
-    description="==> generates the DATA DTD for your project">
-
-    <echo message="+-----------------------------------------------+"/>
-    <echo message="|                                               |"/>
-    <echo message="| Generating Data DTD for YOUR Propel project!  |"/>
-    <echo message="|                                               |"/>
-    <echo message="+-----------------------------------------------+"/>
-
-    <propel-data-dtd
-      validate="${propel.schema.validate}"
-      xsd="${propel.schema.xsd.file}"
-      xsl="${propel.schema.xsl.file}"
-      targetDatabase="${propel.database}"
-      outputDirectory="${propel.output.dir}"
-      templatePath="${propel.templatePath}">
-      <!-- TODO: add properties for the mapper type, from, and to -->
-      <mapper type="glob" from="${propel.datadtd.mapper.from}" to="${propel.datadtd.mapper.to}"/>
-      <schemafileset dir="${propel.schema.dir}"
-        includes="${propel.schema.datadtd.includes}"
-        excludes="${propel.schema.datadtd.excludes}"
-      />
-    </propel-data-dtd>
   </target>
 
   <!-- ================================================================ -->

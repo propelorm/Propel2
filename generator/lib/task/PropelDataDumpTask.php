@@ -11,8 +11,7 @@
 /**
  * Dumps the contenst of selected databases to XML data dump file.
  *
- * The generated XML files can have corresponding DTD files generated using the
- * PropelDataDTDTask.  The results of the data dump can be converted to SQL using
+ * The results of the data dump can be converted to SQL using
  * the PropelDataSQLTask class.
  *
  * The database may be specified (via 'databaseName' attribute) if you only want to dump
@@ -322,7 +321,7 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
 	{
 		$doc = new DOMDocument('1.0', 'utf-8');
 		$doc->formatOutput = true; // pretty printing
-		$doc->appendChild($doc->createComment("Created by data/dump/Control.tpl template."));
+		$doc->appendChild($doc->createComment("Created by PropelDataDumpTask."));
 
 		$dsNode = $doc->createElement("dataset");
 		$dsNode->setAttribute("name", "all");

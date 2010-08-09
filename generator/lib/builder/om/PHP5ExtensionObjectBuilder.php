@@ -16,9 +16,6 @@ require_once dirname(__FILE__) . '/ObjectBuilder.php';
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
  *
- * This class replaces the ExtensionObject.tpl, with the intent of being easier for users
- * to customize (through extending & overriding).
- *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */

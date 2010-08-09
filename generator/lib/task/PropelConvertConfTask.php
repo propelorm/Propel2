@@ -9,7 +9,7 @@
  */
 
 require_once 'phing/Task.php';
-require_once 'task/PropelDataModelTemplateTask.php';
+require_once 'task/AbstractPropelDataModelTask.php';
 require_once 'builder/om/OMBuilder.php';
 require_once 'builder/om/ClassTools.php';
 

@@ -16,9 +16,6 @@ require_once dirname(__FILE__) . '/ObjectBuilder.php';
  * This class produces the empty stub interface when the interface="" attribute is used
  * in the the schema xml.
  *
- * This class replaces the Interface.tpl, with the intent of being easier for users
- * to customize (through extending & overriding).
- *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */

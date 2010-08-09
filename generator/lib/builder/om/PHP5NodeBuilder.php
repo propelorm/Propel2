@@ -16,9 +16,6 @@ require_once dirname(__FILE__) . '/ObjectBuilder.php';
  * This class produces the base tree node object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
  *
- * This class replaces the Node.tpl, with the intent of being easier for users
- * to customize (through extending & overriding).
- *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.builder.om
  */

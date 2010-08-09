@@ -16,9 +16,6 @@ require_once dirname(__FILE__) . '/PeerBuilder.php';
  * This class produces the base tree nested set object class (e.g. BaseMyTable) which contains all
  * the custom-built accessor and setter methods.
  *
- * This class replaces the Node.tpl, with the intent of being easier for users
- * to customize (through extending & overriding).
- *
  * @author     heltem <heltem@o2php.com>
  * @package    propel.generator.builder.om
  */
