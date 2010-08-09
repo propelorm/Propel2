@@ -4,6 +4,55 @@
 
 Propel 1.6 is a new backwards compatible iteration of the Propel 1.x branch.
 
+== XML/YAML/JSON/CSV Parsing and Dumping ==
+
+ActiveRecord and Collection objects now have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats.
+
+The syntax is very intuitive: ActiveRecord and collection objects now offer a `toXML()` and a `fromXML()` method (same for YAML, JSON, and CSV). Here are a few examples:
+
+{{{
+#!php
+<?php
+// dump a collection to YAML
+$books = BookQuery::create()
+  ->orderByTitle()
+  ->joinWith('Author')
+  ->find();
+echo $books->toYAML();
+// Book_1:
+//   Id: 123
+//   Title: Pride and Prejudice
+//   AuthorId: 456
+//   Author:
+//     Id: 456
+//     FirstName: Jane
+//     LastName: Austen
+// Book2:
+//   Id: 789
+//   Title: War and Peace
+//   AuthorId: 147
+//   Author:
+//     Id: 147
+//     FirstName: Leo
+//     LastName: Tolstoi
+
+// parse an XML string into an object
+$bookString = <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <Id>9012</Id>
+  <Title><![CDATA[Don Juan]]></Title>
+  <ISBN><![CDATA[0140422161]]></ISBN>
+  <Price>12.99</Price>
+  <PublisherId>1234</PublisherId>
+  <AuthorId>5678</AuthorId>
+</data>
+EOF;
+$book = new Book();
+$book->fromXML($bookString);
+echo $book->getTitle(); // Don Juan
+}}}
+
 == Multiple Buildtime Connections ==
 
 Propel 1.5 used the `build.properties` for buildtime connection settings. This had one major drawback: it used to be impossible to deal with several connections at buildtime, let alone several RDBMS.
