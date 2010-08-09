@@ -59,7 +59,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
-		$table->getDatabase()->getAppData()->getPlatform()->setGeneratorConfig($config);
+		$table->getDatabase()->getAppData()->setGeneratorConfig($config);
 		$this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
 		$this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
 	}
@@ -70,10 +70,11 @@ class TableTest extends PHPUnit_Framework_TestCase
 		$platform = new MysqlPlatform();
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array(
+			'propel.platform.class' => 'propel.engine.platform.MysqlPlatform',
 			'propel.behavior.timestampable.class' => 'behavior.TimestampableBehavior'
 		));
-		$platform->setGeneratorConfig($config);
 		$xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
+		$xmlToAppData->setGeneratorConfig($config);
 		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
 		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
 		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');

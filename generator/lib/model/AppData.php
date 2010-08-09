@@ -203,8 +203,12 @@ class AppData
 		if ($db instanceof Database) {
 			$db->setAppData($this);
 			if ($db->getPlatform() === null) {
-				$pf = $this->getGeneratorConfig()->getConfiguredPlatform(null, $db->getName());
-				$db->setPlatform($pf ? $pf : $this->platform);
+				if ($config = $this->getGeneratorConfig()) {
+					$pf = $config->getConfiguredPlatform(null, $db->getName());
+					$db->setPlatform($pf ? $pf : $this->platform);
+				} else {
+					$db->setPlatform($this->platform);
+				}
 			}
 			$this->dbList[] = $db;
 			return $db;

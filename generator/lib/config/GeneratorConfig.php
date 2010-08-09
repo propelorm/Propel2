@@ -250,7 +250,7 @@ class GeneratorConfig
 	{
 		if (null === $this->buildConnections) {
 			$buildTimeConfigPath = $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile');
-			if (file_exists($buildTimeConfigPath)) {
+			if ($buildTimeConfigPath != DIRECTORY_SEPARATOR && file_exists($buildTimeConfigPath)) {
 				$conf = simplexml_load_file($buildTimeConfigPath);
 				$this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
 				$buildConnections = array();
