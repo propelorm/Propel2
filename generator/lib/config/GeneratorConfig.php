@@ -249,25 +249,36 @@ class GeneratorConfig
 	public function getBuildConnections()
 	{
 		if (null === $this->buildConnections) {
-			$buildTimeConfigPath = $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile');
-			if ($buildTimeConfigPath != DIRECTORY_SEPARATOR && file_exists($buildTimeConfigPath)) {
-				$conf = simplexml_load_file($buildTimeConfigPath);
-				$this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
-				$buildConnections = array();
-				foreach ($conf->propel->datasources->datasource as $datasource) {
-					$buildConnections[(string) $datasource['id']] = array(
-						'adapter'  => (string) $datasource->adapter,
-						'dsn'      => (string) $datasource->connection->dsn,
-						'user'     => (string) $datasource->connection->user,
-						'password' => (string) $datasource->connection->password,
-					);
-				}
-				$this->buildConnections = $buildConnections;
+			$buildTimeConfigPath = $this->getBuildProperty('buildtimeConfFile') ? $this->getBuildProperty('projectDir') . DIRECTORY_SEPARATOR .  $this->getBuildProperty('buildtimeConfFile') : null;
+			if ($buildTimeConfigString = $this->getBuildProperty('buildtimeConf')) {
+				// configuration passed as propel.buildtimeConf string
+				// probably using the command line, which doesn't accept whitespace
+				// therefore base64 encoded
+				$this->parseBuildConnections(base64_decode($buildTimeConfigString));
+			} elseif (file_exists($buildTimeConfigPath)) {
+				// configuration stored in a buildtime-conf.xml file
+				$this->parseBuildConnections(file_get_contents($buildTimeConfigPath));
 			} else {
 				$this->buildConnections = array();
 			}
 		}
 		return $this->buildConnections;
+	}
+	
+	protected function parseBuildConnections($xmlString)
+	{
+		$conf = simplexml_load_string($xmlString);
+		$this->defaultBuildConnection = (string) $conf->propel->datasources['default'];
+		$buildConnections = array();
+		foreach ($conf->propel->datasources->datasource as $datasource) {
+			$buildConnections[(string) $datasource['id']] = array(
+				'adapter'  => (string) $datasource->adapter,
+				'dsn'      => (string) $datasource->connection->dsn,
+				'user'     => (string) $datasource->connection->user,
+				'password' => (string) $datasource->connection->password,
+			);
+		}
+		$this->buildConnections = $buildConnections;
 	}
 	
 	public function getBuildConnection($databaseName = null)
