@@ -488,6 +488,68 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a column alias and adds a GROUP BY clause');
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testGroupByClassThrowsExceptionOnUnkownClass()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->groupByClass('Author');
+	}
+	
+	public function testGroupByClass()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->groupByClass('Book');
+		
+		$sql = 'SELECT  FROM  GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class name and adds a GROUP BY clause for all columns of the class');
+	}
+
+	public function testGroupByClassAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book', 'b');
+		$c->groupByClass('b');
+		
+		$sql = 'SELECT  FROM  GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class alias and adds a GROUP BY clause for all columns of the class');
+	}
+
+	public function testGroupByClassTrueAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->setModelAlias('b', true);
+		$c->groupByClass('b');
+		
+		$sql = 'SELECT  FROM  GROUP BY b.ID,b.TITLE,b.ISBN,b.PRICE,b.PUBLISHER_ID,b.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a true class alias and adds a GROUP BY clause for all columns of the class');
+	}
+
+	public function testGroupByClassJoinedModel()
+	{
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->join('Author.Book');
+		$c->groupByClass('Book');
+		
+		$sql = 'SELECT  FROM `author` INNER JOIN book ON (author.ID=book.AUTHOR_ID) GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the class name of a joined model');
+	}
+
+	public function testGroupByClassJoinedModelWithAlias()
+	{
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->join('Author.Book b');
+		$c->groupByClass('b');
+		
+		$sql = 'SELECT  FROM `author` INNER JOIN book b ON (author.ID=b.AUTHOR_ID) GROUP BY b.ID,b.TITLE,b.ISBN,b.PRICE,b.PUBLISHER_ID,b.AUTHOR_ID';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the alias of a joined model');
+	}
+
 	public function testDistinct()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');

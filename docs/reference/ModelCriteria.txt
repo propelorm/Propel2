@@ -709,7 +709,9 @@ $authorName = $book->getAuthorName();
 
 Propel adds the 'with' column to the SELECT clause of the query, and uses the second argument of the `withColumn()` call as a column alias. This additional column is later available as a 'virtual' column, i.e. using a getter that does not correspond to a real column. You don't actually need to write the `getAuthorName()` method ; Propel uses the magic `__call()` method of the generated `Book` class to catch the call to a virtual column.
 
-`withColumn()` is also of great use to add calculated columns:
+'''Tip''': You can call `withColumn()` multiple times to add more than one virtual column to the resulting objects.
+
+`withColumn()` is also of great use to add calculated columns, using aggregate functions and a GROUP BY statement:
 
 {{{
 #!php
@@ -726,7 +728,17 @@ foreach ($authors as $author) {
 
 With a single SQL query, you can have both a list of objects and an additional column for each object. That makes of `withColumn()` a great query saver.
 
-'''Tip''': You can call `withColumn()` multiple times to add more than one virtual column to the resulting objects.
+'''Tip''': Users of PostgreSQL will need to use the alternative method `groupByClass($class)` to force the grouping on all the columns of a given model whenever they use an aggregate function:
+
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->join('Author.Book')
+  ->withColumn('COUNT(Book.Id)', 'NbBooks')
+  ->groupByClass('Author')
+  ->find();
+}}}
 
 === Adding A Comment ===
 
