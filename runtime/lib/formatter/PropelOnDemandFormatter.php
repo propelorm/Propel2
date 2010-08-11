@@ -79,11 +79,11 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 				continue;
 			}
 			if (isset($hydrationChain)) {
-				$hydrationChain[$class] = $endObject;
+				$hydrationChain[$modelWith->getRightPhpName()] = $endObject;
 			} else {
-				$hydrationChain = array($class => $endObject);
+				$hydrationChain = array($modelWith->getRightPhpName() => $endObject);
 			}
-			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getRelatedClass()];
+			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getLeftPhpName()];
 			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
 		foreach ($this->getAsColumns() as $alias => $clause) {

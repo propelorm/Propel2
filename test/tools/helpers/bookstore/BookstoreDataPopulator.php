@@ -191,6 +191,11 @@ class BookstoreDataPopulator
 		$store->setTotalBooks(500000);
 		$store->save($con);
 		
+		$summary = new BookSummary();
+		$summary->setSummarizedBook($phoenix);
+		$summary->setSummary("Harry Potter does some amazing magic!");
+		$summary->save();
+		
 		$con->commit();
 	}
 	
@@ -241,6 +246,7 @@ class BookstoreDataPopulator
 		PublisherPeer::doDeleteAll($con);
 		ReaderFavoritePeer::doDeleteAll($con);
 		ReviewPeer::doDeleteAll($con);
+		BookSummaryPeer::doDeleteAll($con);
 		$con->commit();
 	}
 

@@ -48,6 +48,16 @@
 			<rule name="maxValue" value="100" message="Impressive age! Just kidding, hm?" />
 		</validator>
 	</table>
+	
+	<!-- This table exists to test multi-level JOINS with renamed relations -->
+	<table name="book_summary">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="book_id" required="true" type="INTEGER" />
+		<column name="summary" required="true" type="LONGVARCHAR" />
+		<foreign-key phpName="SummarizedBook" foreignTable="book" onDelete="cascade">
+			<reference local="book_id" foreign="id" />
+		</foreign-key>
+	</table>
 
 	<table name="review" description="Book Review">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />

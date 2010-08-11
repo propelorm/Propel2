@@ -194,6 +194,28 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('J.K.', $author->getFirstName(), 'Related object is correctly hydrated');
 	}
 	
+	public function testFindOneWithDistantClassRenamedRelation()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		Propel::enableInstancePooling();
+		$c = new ModelCriteria('bookstore', 'BookSummary');
+		$c->joinWith('BookSummary.SummarizedBook');
+		$c->joinWith('SummarizedBook.Author');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$summary = $c->findOne($con);
+		$count = $con->getQueryCount();
+		$this->assertEquals('Harry Potter does some amazing magic!', $summary->getSummary(), 'Main object is correctly hydrated');
+		$book = $summary->getSummarizedBook();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query');
+		$this->assertEquals('Harry Potter and the Order of the Phoenix', $book->getTitle(), 'Related object is correctly hydrated');
+		$author = $book->getAuthor();
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query');
+		$this->assertEquals('J.K.', $author->getFirstName(), 'Related object is correctly hydrated');
+	}
+	
 	/**
 	 * @expectedException PropelException
 	 */

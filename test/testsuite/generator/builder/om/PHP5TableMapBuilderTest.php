@@ -41,7 +41,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
   public function testRelationCount()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
-    $this->assertEquals(9, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
+    $this->assertEquals(10, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
   }
   
   public function testSimpleRelationName()

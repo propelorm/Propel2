@@ -116,28 +116,28 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertFalse($with->isPrimary(), 'A ModelWith initialized from a non-primary join is not primary');
 	}
 	
-	public function testGetRelatedClass()
+	public function testGetLeftPhpName()
 	{
 		$q = AuthorQuery::create()
 		 ->joinBook();
 		$joins = $q->getJoins();
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
-		$this->assertNull($with->getRelatedClass(), 'A ModelWith initialized from a primary join has a null related class');
+		$this->assertNull($with->getLeftPhpName(), 'A ModelWith initialized from a primary join has a null left phpName');
 
 		$q = AuthorQuery::create('a')
 		 ->joinBook();
 		$joins = $q->getJoins();
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
-		$this->assertNull($with->getRelatedClass(), 'A ModelWith initialized from a primary join with alias has a null related class');
+		$this->assertNull($with->getLeftPhpName(), 'A ModelWith initialized from a primary join with alias has a null left phpName');
 
 		$q = AuthorQuery::create()
 		 ->joinBook('b');
 		$joins = $q->getJoins();
 		$join = $joins['b'];
 		$with = new ModelWith($join);
-		$this->assertNull($with->getRelatedClass(), 'A ModelWith initialized from a primary join with alias has a null related class');
+		$this->assertNull($with->getLeftPhpName(), 'A ModelWith initialized from a primary join with alias has a null left phpName');
 		
 		$q = AuthorQuery::create()
 		 ->join('Author.Book')
@@ -145,7 +145,7 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['Publisher'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'Book', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = ReviewQuery::create()
 		 ->join('Review.Book')
@@ -154,7 +154,7 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['Publisher'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'Book', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = ReviewQuery::create()
 		 ->join('Review.Book')
@@ -163,10 +163,10 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['BookOpinion'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'Book', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 		$join = $joins['BookReader'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'BookOpinion', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('BookOpinion', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = BookReaderQuery::create()
 		 ->join('BookReader.BookOpinion')
@@ -175,9 +175,64 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'BookOpinion', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('BookOpinion', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as related class');
 		$join = $joins['Author'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getRelatedClass(), 'Book', 'A ModelWith uses the previous join relation name as related class');
+		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
+		
+		$q = BookSummaryQuery::create()
+		 ->join('BookSummary.SummarizedBook')
+		 ->join('SummarizedBook.Author');
+		$joins = $q->getJoins();
+		$join = $joins['Author'];
+		$with = new ModelWith($join);
+		$this->assertEquals('SummarizedBook', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
+	}
+
+	public function testGetRightPhpName()
+	{
+		$q = AuthorQuery::create()
+		 ->joinBook();
+		$joins = $q->getJoins();
+		$join = $joins['Book'];
+		$with = new ModelWith($join);
+		$this->assertEquals('Book', $with->getRightPhpName(), 'A ModelWith initialized from a primary join has a right phpName');
+
+		$q = AuthorQuery::create('a')
+		 ->joinBook();
+		$joins = $q->getJoins();
+		$join = $joins['Book'];
+		$with = new ModelWith($join);
+		$this->assertEquals('Book', $with->getRightPhpName(), 'A ModelWith initialized from a primary join with alias has a right phpName');
+
+		$q = AuthorQuery::create()
+		 ->joinBook('b');
+		$joins = $q->getJoins();
+		$join = $joins['b'];
+		$with = new ModelWith($join);
+		$this->assertEquals('b', $with->getRightPhpName(), 'A ModelWith initialized from a primary join with alias uses the alias as right phpName');
+		
+		$q = AuthorQuery::create()
+		 ->join('Author.Book')
+		 ->join('Book.Publisher');
+		$joins = $q->getJoins();
+		$join = $joins['Publisher'];
+		$with = new ModelWith($join);
+		$this->assertEquals('Publisher', $with->getRightPhpName(), 'A ModelWith has a right phpName even when there are previous joins');
+
+		$q = BookSummaryQuery::create()
+		 ->join('BookSummary.SummarizedBook');
+		$joins = $q->getJoins();
+		$join = $joins['SummarizedBook'];
+		$with = new ModelWith($join);
+		$this->assertEquals('SummarizedBook', $with->getRightPhpName(), 'A ModelWith uses the relation name rather than the class phpName when it exists');
+		
+		$q = BookSummaryQuery::create()
+		 ->join('BookSummary.SummarizedBook')
+		 ->join('SummarizedBook.Author');
+		$joins = $q->getJoins();
+		$join = $joins['Author'];
+		$with = new ModelWith($join);
+		$this->assertEquals('Author', $with->getRightPhpName(), 'A ModelWith has a right phpName even when there are previous joins with custom relation names');
 	}
 }
