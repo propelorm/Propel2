@@ -34,7 +34,6 @@ class XmlToAppData extends AbstractHandler
 	const DEBUG = false;
 
 	private $app;
-	private $platform;
 	private $currDB;
 	private $currTable;
 	private $currColumn;
@@ -62,14 +61,13 @@ class XmlToAppData extends AbstractHandler
 	/**
 	 * Creates a new instance for the specified database type.
 	 *
-	 * @param      Platform $platform The type of database for the application.
+	 * @param      Platform $defaultPlatform The default database platform for the application.
 	 * @param      string $defaultPackage the default PHP package used for the om
 	 * @param      string $encoding The database encoding.
 	 */
-	public function __construct(Platform $platform, $defaultPackage, $encoding = 'iso-8859-1')
+	public function __construct(Platform $defaultPlatform, $defaultPackage, $encoding = 'iso-8859-1')
 	{
-		$this->app = new AppData($platform);
-		$this->platform = $platform;
+		$this->app = new AppData($defaultPlatform);
 		$this->defaultPackage = $defaultPackage;
 		$this->firstPass = true;
 		$this->encoding = $encoding;

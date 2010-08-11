@@ -404,7 +404,7 @@ abstract class AbstractPropelDataModelTask extends Task
 
 			$dataModelFiles = $ds->getIncludedFiles();
 
-			$platform = $this->getGeneratorConfig()->getConfiguredPlatform();
+			$defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
 			// Make a transaction for each file
 			foreach ($dataModelFiles as $dmFilename) {
@@ -441,7 +441,7 @@ abstract class AbstractPropelDataModelTask extends Task
 					}
 				}
 				
-				$xmlParser = new XmlToAppData($platform, $this->getTargetPackage(), $this->dbEncoding);
+				$xmlParser = new XmlToAppData($defaultPlatform, $this->getTargetPackage(), $this->dbEncoding);
 				$xmlParser->setGeneratorConfig($this->getGeneratorConfig());
 				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
 		

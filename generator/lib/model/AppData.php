@@ -57,11 +57,11 @@ class AppData
 	/**
 	 * Creates a new instance for the specified database type.
 	 *
-	 * @param      Platform $platform The platform object to use for any databases added to this application model.
+	 * @param      Platform $platform The default platform object to use for any databases added to this application model.
 	 */
-	public function __construct(Platform $platform)
+	public function __construct(Platform $defaultPlatform)
 	{
-		$this->platform = $platform;
+		$this->platform = $defaultPlatform;
 	}
   
 	/**

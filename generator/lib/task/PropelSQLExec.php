@@ -96,6 +96,13 @@ class PropelSQLExec extends Task
 	private $sqldbmap;
 
 	/**
+	 * The buildtime connection settings
+	 *
+	 * @var        Array
+	 */
+	protected $buildConnections = array();
+	
+	/**
 	 * Set the sqldbmap properties file.
 	 *
 	 * @param      sqldbmap filename for the sqldbmap
@@ -113,6 +120,45 @@ class PropelSQLExec extends Task
 	public function getSqlDbMap()
 	{
 		return $this->sqldbmap;
+	}
+
+	/**
+	 * Set the buildtime connection settings.
+	 *
+	 * @param      array $buildConnections
+	 */
+	public function setBuildConnections($buildConnections)
+	{
+		$this->buildConnections = $buildConnections;
+	}
+
+	/**
+	 * Get the buildtime connection settings.
+	 *
+	 * @return     array $buildConnections
+	 */
+	public function getBuildConnections()
+	{
+		return $this->buildConnections;
+	}
+	
+	/**
+	 * Get the buildtime connection settings for a given database name.
+	 *
+	 * @param      string $database
+	 * @return     array $buildConnections
+	 */
+	public function getBuildConnection($database)
+	{
+		if (!isset($this->buildConnections[$database])) {
+			// fallback to default connection settings from build.properties
+			return array(
+				'dsn'      => $this->url,
+				'user'     => $this->userId,
+				'password' => $this->password,
+			);
+		}
+		return $this->buildConnections[$database];
 	}
 
 	/**
@@ -260,6 +306,10 @@ class PropelSQLExec extends Task
 	 */
 	public function main()
 	{
+		$conf = new GeneratorConfig();
+		$conf->setBuildProperties($this->getProject()->getProperties());
+		$this->setBuildConnections($conf->getBuildConnections());
+			
 		$this->sqlCommand = trim($this->sqlCommand);
 
 		if ($this->sqldbmap === null || $this->getSqlDbMap()->exists() === false) {
@@ -279,15 +329,11 @@ class PropelSQLExec extends Task
 			throw new BuildException("Cannot open and process the sqldbmap!");
 		}
 
+		// get an ordered list of SQL files to execute
 		$databases = array();
+		foreach ($map->getProperties() as $sqlfile => $database) {
 
-		foreach ($map->keys() as $sqlfile) {
-
-			$database = $map->getProperty($sqlfile);
-
-			// Q: already there?
 			if (!isset($databases[$database])) {
-			// A: No.
 				$databases[$database] = array();
 			}
 
@@ -297,59 +343,56 @@ class PropelSQLExec extends Task
 				// add to the beginning of the array
 				array_unshift($databases[$database], $sqlfile);
 			} else {
+				// add to the end of the array
 				array_push($databases[$database], $sqlfile);
 			}
 		}
 
-		foreach ($databases as $db => $files) {
+		$successfullStatements = 0;
+		// execute the SQL files
+		foreach ($databases as $database => $files) {
+			
 			$transactions = array();
-
 			foreach ($files as $fileName) {
-
 				$file = new PhingFile($this->srcDir, $fileName);
-
 				if ($file->exists()) {
-					$this->log("Executing statements in file: " . $file->__toString());
+					$this->log(sprintf('Reading statements in "%s"', $file->__toString()), Project::MSG_VERBOSE);
 					$transaction = new PropelSQLExecTransaction($this);
 					$transaction->setSrc($file);
 					$transactions[] = $transaction;
 				} else {
-					$this->log("File '" . $file->__toString()
-							. "' in sqldbmap does not exist, so skipping it.");
+					$this->log(sprintf('File "%s" in sqldbmap does not exist, skipping it.', $file->__toString()));
 				}
 			}
-			$this->insertDatabaseSqlFiles($this->url, $db, $transactions);
+			
+			$successfullStatements += $this->insertDatabaseSqlFiles($database, $transactions);
 		}
+		
+		$this->log(sprintf('SQL insertion complete. %d statements successfully executed', $successfullStatements));
 	}
 
 	/**
-	 * Take the base url, the target database and insert a set of SQL
+	 * Take the basethe target database and insert a set of SQL
 	 * files into the target database.
 	 *
-	 * @param      string $url
 	 * @param      string $database
 	 * @param      array $transactions
+	 *
+	 * @return integer the number of successful statements
 	 */
-	private function insertDatabaseSqlFiles($url, $database, $transactions)
+	private function insertDatabaseSqlFiles($database, $transactions)
 	{
-		$url = str_replace("@DB@", $database, $url);
-		$this->log("Our new url -> " . $url);
+		$buildConnection = $this->getBuildConnection($database);
+		$dsn = str_replace("@DB@", $database, $buildConnection['dsn']);
+		$this->log(sprintf('Connecting to database "%s" using DSN "%s"', $database, $dsn));
 
 		try {
+ 			
+			// Set user + password to null if they are empty strings or missing
+			$username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
+			$password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
 
-			$buf = "Database settings:" . PHP_EOL
-			. " URL: " . $url . PHP_EOL
-			. ($this->userId ? " user: " . $this->userId . PHP_EOL : "")
-			. ($this->password ? " password: " . $this->password . PHP_EOL : "");
-
-			$this->log($buf, Project::MSG_VERBOSE);
-
-			// Set user + password to null if they are empty strings
-			if (!$this->userId) { $this->userId = null; }
-
-			if (!$this->password) { $this->password = null; }
-
-			$this->conn = new PDO($url, $this->userId, $this->password);
+			$this->conn = new PDO($dsn, $username, $password);
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// $this->conn->setAutoCommit($this->autocommit);
@@ -359,7 +402,7 @@ class PropelSQLExec extends Task
 
 			try {
 				if ($this->output !== null) {
-					$this->log("Opening PrintStream to output file " . $this->output->__toString(), Project::MSG_VERBOSE);
+					$this->log("  Opening PrintStream to output file " . $this->output->__toString(), Project::MSG_VERBOSE);
 					$out = new FileWriter($this->output);
 				}
 
@@ -367,7 +410,7 @@ class PropelSQLExec extends Task
 				for ($i=0,$size=count($transactions); $i < $size; $i++) {
 					$transactions[$i]->runTransaction($out);
 					if (!$this->autocommit) {
-						$this->log("Commiting transaction", Project::MSG_VERBOSE);
+						$this->log("  Commiting transaction", Project::MSG_VERBOSE);
 						$this->conn->commit();
 					}
 				}
@@ -382,7 +425,7 @@ class PropelSQLExec extends Task
 					$this->conn->rollBack();
 				} catch (PDOException $ex) {
 					// do nothing.
-					System::println("Rollback failed.");
+					System::println("  Rollback failed.");
 				}
 			}
 			if ($this->statement) $this->statement = null; // close
@@ -393,7 +436,7 @@ class PropelSQLExec extends Task
 					$this->conn->rollBack();
 				} catch (PDOException $ex) {
 					// do nothing.
-					System::println("Rollback failed");
+					System::println("  Rollback failed");
 				}
 			}
 			if ($this->statement) $this->statement = null; // close
@@ -402,8 +445,9 @@ class PropelSQLExec extends Task
 
 		   $this->statement = null; // close
 
-		$this->log($this->goodSql . " of " . $this->totalSql
-				. " SQL statements executed successfully");
+		$this->log(sprintf('  %d of %d SQL statements executed successfully', $this->goodSql, $this->totalSql));
+		
+		return $this->goodSql;
 	}
 
 	/**
@@ -687,12 +731,12 @@ class PropelSQLExecTransaction
 	public function runTransaction($out = null)
 	{
 		if (!empty($this->tSqlCommand)) {
-			$this->parent->log("Executing commands", Project::MSG_INFO);
+			$this->parent->log("  Executing commands", Project::MSG_INFO);
 			$this->parent->runStatements($this->tSqlCommand, $out);
 		}
 
 		if ($this->tSrcFile !== null) {
-			$this->parent->log("Executing file: " . $this->tSrcFile->getAbsolutePath(), Project::MSG_INFO);
+			$this->parent->log("  Executing file: " . $this->tSrcFile->getAbsolutePath(), Project::MSG_INFO);
 			$reader = new FileReader($this->tSrcFile);
 			$this->parent->runStatements($reader, $out);
 			$reader->close();
