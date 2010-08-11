@@ -640,10 +640,13 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addFilterByFk(&$script, $fk)
 	{
+		$this->declareClasses('PropelCollection', 'PropelException');
 		$table = $this->getTable();
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getForeignTable($fk);
-		$fkPhpName = $this->getNewStubObjectBuilder($fkTable)->getClassname();
+		$fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
+		$this->declareClassFromBuilder($fkStubObjectBuilder);
+		$fkPhpName = $fkStubObjectBuilder->getClassname();
 		$relationName = $this->getFKPhpNameAffix($fk);
 		$objectName = '$' . $fkTable->getStudlyPhpName();
 		$script .= "
@@ -705,10 +708,13 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 */
 	protected function addFilterByRefFk(&$script, $fk)
 	{
+		$this->declareClasses('PropelCollection', 'PropelException');
 		$table = $this->getTable();
 		$queryClass = $this->getStubQueryBuilder()->getClassname();
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
-		$fkPhpName = $this->getNewStubObjectBuilder($fkTable)->getClassname();
+		$fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
+		$this->declareClassFromBuilder($fkStubObjectBuilder);
+		$fkPhpName = $fkStubObjectBuilder->getClassname();
 		$relationName = $this->getRefFKPhpNameAffix($fk);
 		$objectName = '$' . $fkTable->getStudlyPhpName();
 		$script .= "
