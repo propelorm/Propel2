@@ -201,5 +201,34 @@ EOF;
 		
 		$this->assertEquals($this->coll, $coll);
 	}
+	
+	/**
+	 * @dataProvider toYamlDataProvider
+	 */
+	public function testToStringUsesDefaultStringFormat($expected)
+	{
+		$this->assertEquals($expected, (string) $this->coll, 'PropelCollection::__toString() uses the YAML representation by default');
+	}
+	
+	public function testToStringUsesCustomStringFormat()
+	{
+		$coll = new PropelObjectCollection();
+		$coll->setModel('Publisher');
+		$publisher = new Publisher();
+		$publisher->setId(12345);
+		$publisher->setName('Penguinoo');
+		$coll[]= $publisher;
+		$expected = <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <Publisher>
+    <Id>12345</Id>
+    <Name><![CDATA[Penguinoo]]></Name>
+  </Publisher>
+</data>
+
+EOF;
+		$this->assertEquals($expected, (string) $coll);
+	}
 
 }

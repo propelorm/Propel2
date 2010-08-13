@@ -26,7 +26,7 @@
 		</validator>
 	</table>
 
-	<table name="publisher" description="Publisher Table">
+	<table name="publisher" description="Publisher Table" defaultStringFormat="XML">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
 		<column name="name" required="true" type="VARCHAR" size="128" default="Penguin" description="Publisher Name" />
 	</table>

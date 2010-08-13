@@ -215,6 +215,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		$this->addInheritanceColumnConstants($script);
 
 		$script .= "
+	/** The default string format for model objects of the related table **/
+	const DEFAULT_STRING_FORMAT = '" . $this->getTable()->getDefaultStringFormat() . "';
+	
 	/**
 	 * An identiy map to hold any loaded instances of ".$this->getObjectClassname()." objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN

@@ -470,5 +470,15 @@ class PropelCollection extends ArrayObject implements Serializable
 		}
 		throw new PropelException('Call to undefined method: ' . $name); 
 	} 
+	
+	/** 
+	 * Returns a string representation of the current collection.
+	 * Based on the string representation of the underlying objects, defined in 
+	 * the Peer::DEFAULT_STRING_FORMAT constant
+	 */ 
+	public function __toString()
+	{
+		return (string) $this->exportTo(constant($this->getPeerClass() . '::DEFAULT_STRING_FORMAT'));
+	}
 
 }

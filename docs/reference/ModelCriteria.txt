@@ -962,7 +962,16 @@ coll  populateRelation($name) // makes an additional query to populate the objec
 // Import/Export methods
 array toArray() // exports all the objects as array
 array toKeyValue($keyColumn, $valueColumn) // exports two columns as a hash
+string toXML()
+string toYAML()
+string toJSON()
+string toCSV()
+string __toString() // exports to a string using the default string representation (YAML)
 void  fromArray($array) // imports a collection from an array
+void toXML($xml)
+void toYAML($yaml)
+void toJSON($json)
+void toCSV($csv)
 }}}
 
 '''Tip''': `PropelCollection` extends `ArrayObject`, so you can also call all the methods of this SPL class on a collection (including `count()`, `append()`, `ksort()`, etc.).

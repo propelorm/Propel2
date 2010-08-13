@@ -33,6 +33,7 @@ PHP class or method name.
   defaultPhpNamingMethod (nochange|underscore|phpname) "underscore"
   heavyIndexing (true|false) "false"
   tablePrefix CDATA #IMPLIED
+  defaultStringFormat CDATA #IMPLIED
 >
 
 <!ELEMENT external-schema EMPTY>
@@ -63,6 +64,7 @@ PHP class or method name.
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   heavyIndexing (true|false) #IMPLIED
   description CDATA #IMPLIED
+  defaultStringFormat CDATA #IMPLIED
 >
 
 <!ELEMENT id-method-parameter EMPTY>

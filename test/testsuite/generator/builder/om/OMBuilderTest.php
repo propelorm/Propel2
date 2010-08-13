@@ -71,6 +71,35 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 		$b->clear();
 		$this->assertFalse($b->isDeleted(), 'clear() sets the object to not deleted');
 	}
+	
+	public function testToStringUsesDefaultStringFormat()
+	{
+		$author = new Author();
+		$author->setFirstName('John');
+		$author->setLastName('Doe');
+		$expected = <<<EOF
+Id: null
+FirstName: John
+LastName: Doe
+Email: null
+Age: null
+
+EOF;
+		$this->assertEquals($expected, (string) $author, 'generated __toString() uses default string format and exportTo()');
+		
+		$publisher = new Publisher();
+		$publisher->setId(345345);
+		$publisher->setName('Peguinoo');
+		$expected = <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <Id>345345</Id>
+  <Name><![CDATA[Peguinoo]]></Name>
+</data>
+
+EOF;
+		$this->assertEquals($expected, (string) $publisher, 'generated __toString() uses default string format and exportTo()');
+	}
 }
 
 class TestableOMBuilder extends OMBuilder

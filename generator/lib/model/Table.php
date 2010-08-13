@@ -292,6 +292,14 @@ class Table extends XMLElement implements IDMethod
 	 * @var       boolean
 	 */
 	protected $isCrossRef = false;
+
+	/**
+	 * The default string format for objects based on this table
+	 * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
+	 *
+	 * @var       string
+	 */
+	protected $defaultStringFormat;
 	
 	/**
 	 * Constructs a table object with a name
@@ -345,6 +353,7 @@ class Table extends XMLElement implements IDMethod
 		$this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
 		$this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
 		$this->isCrossRef = $this->getAttribute("isCrossRef", false);
+		$this->defaultStringFormat = $this->getAttribute('defaultStringFormat');
 	}
 
 	/**
@@ -1007,6 +1016,30 @@ class Table extends XMLElement implements IDMethod
 		$this->namespace = $v;
 	}
 
+	/**
+	 * Set the default string format for ActiveRecord objects in this Table.
+	 *
+	 * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
+	 */
+	public function setDefaultStringFormat($defaultStringFormat)
+	{
+		$this->defaultStringFormat = $defaultStringFormat;
+	}
+
+	/**
+	 * Get the default string format for ActiveRecord objects in this Table,
+	 * or the one for the whole database if not set.
+	 *
+	 * @return     string The default string representation
+	 */
+	public function getDefaultStringFormat()
+	{
+		if (!$this->defaultStringFormat && $this->getDatabase() && $this->getDatabase()->getDefaultStringFormat()) {
+			return $this->getDatabase()->getDefaultStringFormat();
+		}
+		return $this->defaultStringFormat;
+	}
+	
 	/**
 	 * Get the method for generating pk's
 	 * [HL] changing behavior so that Database default method is returned 

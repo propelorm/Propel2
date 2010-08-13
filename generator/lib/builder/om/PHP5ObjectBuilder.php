@@ -4213,9 +4213,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     return (string) \$this->get{$column->getPhpName()}();
   }
 ";
-				break;
+				return;
 			}
 		}
+		// no primary string column, falling back to default string format
+		$script .= "
+	/**
+	 * Return the string representation of this object
+	 *
+	 * @return string
+	 */
+  public function __toString()
+  {
+    return (string) \$this->exportTo(" . $this->getPeerClassname() . "::DEFAULT_STRING_FORMAT);
+  }
+";
 	}
 	
 	/**

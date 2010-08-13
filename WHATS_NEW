@@ -53,6 +53,72 @@ $book->fromXML($bookString);
 echo $book->getTitle(); // Don Juan
 }}}
 
+== Model Objects String Representation ==
+
+Taking advantage of the dumping abilities just introduced, all ActiveRecord objects now have a string representation based on a YAML dump of their properties:
+
+{{{
+#!php
+<?php
+$author = new Author();
+$author->setFirstName('Leo');
+$author->setLastName('Tolstoi');
+echo $author;
+// Id: null
+// FirstName: Leo
+// LastName: Tolstoi
+// Email: null
+// Age: null
+}}}
+
+'''Tip''': Tables with a column using the `isPrimaryString` attribute still output the value of a single column as string representation.
+
+`PropelCollection` objects also take advantage from this possibility:
+
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->orderByLastName()
+  ->find();
+echo $authors;
+// Author_0:
+//   Id: 456
+//   FirstName: Jane
+//   LastName: Austen
+//   Email: null
+//   Age: null
+// Author_1:
+//   Id: 147
+//   FirstName: Leo
+//   LastName: Tolstoi
+//   Email: null
+//   Age: null
+}}}
+
+If you want to use another format for the default string representation instead of YAML, you can set the `defaultStringFormat` attribute to any of the supported formats in either the `<database>` or the `<table>` elements in the XML schema:
+	
+{{{
+#!php
+<table name="publisher" defaultStringFormat="XML">
+	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+	<column name="name" required="true" type="VARCHAR" size="128" />
+</table>
+}}}
+
+{{{
+#!php
+<?php
+$publisher = new Publisher();
+$publisher->setName('Penguin');
+echo $publisher;
+//<?xml version="1.0" encoding="UTF-8"?>
+//<data>
+//  <Id></Id>
+//  <Name><![CDATA[Peguin]]></Name>
+//</data>
+}}}
+
 == Multiple Buildtime Connections ==
 
 Propel 1.5 used the `build.properties` for buildtime connection settings. This had one major drawback: it used to be impossible to deal with several connections at buildtime, let alone several RDBMS.

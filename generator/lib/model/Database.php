@@ -53,6 +53,14 @@ class Database extends XMLElement
 	private $heavyIndexing;
 	protected $tablePrefix = '';
 
+	/**
+	 * The default string format for objects based on this database
+	 * (e.g. 'XML', 'YAML', 'CSV', 'JSON')
+	 *
+	 * @var       string
+	 */
+	protected $defaultStringFormat;
+
 	private $domainMap = array();
 
 	/**
@@ -93,6 +101,7 @@ class Database extends XMLElement
 		$this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
 		$this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
 		$this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('tablePrefix'));
+		$this->defaultStringFormat = $this->getAttribute('defaultStringFormat', 'YAML');
 	}
 
 	/**
@@ -251,6 +260,26 @@ class Database extends XMLElement
 	}
 
 	/**
+	 * Set the default string format for ActiveRecord objects in this Db.
+	 *
+	 * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
+	 */
+	public function setDefaultStringFormat($defaultStringFormat)
+	{
+		$this->defaultStringFormat = $defaultStringFormat;
+	}
+
+	/**
+	 * Get the default string format for ActiveRecord objects in this Db.
+	 *
+	 * @return     string The default string format
+	 */
+	public function getDefaultStringFormat()
+	{
+		return $this->defaultStringFormat;
+	}
+
+	/**
 	 * Set the value of defaultTranslateMethod.
 	 * @param      string $v The default translate method to use.
 	 */
@@ -258,7 +287,7 @@ class Database extends XMLElement
 	{
 		$this->defaultTranslateMethod = $v;
 	}
-
+	
 	/**
 	 * Get the value of heavyIndexing.
 	 *
