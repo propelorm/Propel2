@@ -466,10 +466,6 @@ class BasePeer
 			$con = Propel::getConnection($criteria->getDbName(), Propel::CONNECTION_READ);
 		}
 
-		if ($criteria->isUseTransaction()) {
-			$con->beginTransaction();
-		} 
-
 		try {
 
 			$params = array();
@@ -481,16 +477,9 @@ class BasePeer
 
 			$stmt->execute();
 
-			if ($criteria->isUseTransaction()) {
-				$con->commit();
-			}
-
 		} catch (Exception $e) {
 			if ($stmt) {
 				$stmt = null; // close
-			}
-			if ($criteria->isUseTransaction()) {
-				$con->rollBack();
 			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
@@ -519,10 +508,6 @@ class BasePeer
 		}
 
 		$stmt = null;
-
-		if ($criteria->isUseTransaction()) {
-			$con->beginTransaction();
-		}
 
 		$needsComplexCount = $criteria->getGroupByColumns() 
 			|| $criteria->getOffset()
@@ -553,16 +538,9 @@ class BasePeer
 			self::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
 
-			if ($criteria->isUseTransaction()) {
-				$con->commit();
-			}
-
 		} catch (Exception $e) {
 			if ($stmt !== null) {
 				$stmt = null;
-			}
-			if ($criteria->isUseTransaction()) {
-				$con->rollBack();
 			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), $e);
