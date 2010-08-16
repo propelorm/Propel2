@@ -171,6 +171,21 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertEquals($article->getId(), $content->getId(), 'getParentOrCreate() returns the parent object related to the current object');
 	}
 	
+	public function testGetParentOrCreateExistingParent()
+	{
+		ConcreteContentQuery::create()->deleteAll();
+		ConcreteArticleQuery::create()->deleteAll();
+		$content = new ConcreteContent();
+		$content->save();
+		$id = $content->getId();
+		ConcreteContentPeer::clearInstancePool();
+		$article = new ConcreteArticle();
+		$article->setId($id);
+		$article->save();
+		$this->assertEquals($id, $article->getId(), 'getParentOrCreate() keeps manually set pk');
+		$this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
+	}
+	
 	public function testGetSyncParent()
 	{
 		$category = new ConcreteCategory();

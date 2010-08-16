@@ -181,7 +181,7 @@ class ConcreteInheritanceBehavior extends Behavior
  */
 public function getParentOrCreate(\$con = null)
 {
-	if (\$this->isNew()) {
+	if (\$this->isNew() && \$this->isPrimaryKeyNull()) {
 		\$parent = new " . $parentClass . "();
 		\$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getClassname() . "');
 		return \$parent;
