@@ -131,21 +131,7 @@ class BasePeer
 			$params = array();
 			$stmt = null;
 			try {
-				$sql = 'DELETE ';
-				if ($queryComment = $criteria->getComment()) {
-					$sql .= '/* ' . $queryComment . ' */ ';
-				}
-				if ($realTableName = $criteria->getTableForAlias($tableName)) {
-					if ($db->useQuoteIdentifier()) {
-						$realTableName = $db->quoteIdentifierTable($realTableName);
-					}
-					$sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
-				} else {
-					if ($db->useQuoteIdentifier()) {
-						$tableName = $db->quoteIdentifierTable($tableName);
-					}
-					$sql .= 'FROM ' . $tableName;
-				}
+				$sql = $db->getDeleteFromClause($criteria, $tableName);
 
 				foreach ($columns as $colName) {
 					$sb = "";

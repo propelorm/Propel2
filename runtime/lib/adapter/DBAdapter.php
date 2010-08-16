@@ -294,5 +294,30 @@ abstract class DBAdapter
 	 * @param      mixed $seed (optional) seed value for databases that support this
 	 */
 	public abstract function random($seed = null);
+	
+	/**
+	 * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
+	 * @return     string
+	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 */
+	public function getDeleteFromClause($criteria, $tableName)
+	{
+		$sql = 'DELETE ';
+		if ($queryComment = $criteria->getComment()) {
+			$sql .= '/* ' . $queryComment . ' */ ';
+		}
+		if ($realTableName = $criteria->getTableForAlias($tableName)) {
+			if ($this->useQuoteIdentifier()) {
+				$realTableName = $this->quoteIdentifierTable($realTableName);
+			}
+			$sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
+		} else {
+			if ($this->useQuoteIdentifier()) {
+				$tableName = $this->quoteIdentifierTable($tableName);
+			}
+			$sql .= 'FROM ' . $tableName;
+		}
+		return $sql;
+	}
 
 }

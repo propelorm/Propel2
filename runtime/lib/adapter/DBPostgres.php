@@ -138,4 +138,27 @@ class DBPostgres extends DBAdapter
 	{
 		return 'random()';
 	}
+	
+	/**
+	 * @see        DBAdapter::getDeleteFromClause()
+	 */
+	public function getDeleteFromClause($criteria, $tableName)
+	{
+		$sql = 'DELETE ';
+		if ($queryComment = $criteria->getComment()) {
+			$sql .= '/* ' . $queryComment . ' */ ';
+		}
+		if ($realTableName = $criteria->getTableForAlias($tableName)) {
+			if ($this->useQuoteIdentifier()) {
+				$realTableName = $this->quoteIdentifierTable($realTableName);
+			}
+			$sql .= 'FROM ' . $realTableName . ' AS ' . $tableName;
+		} else {
+			if ($this->useQuoteIdentifier()) {
+				$tableName = $this->quoteIdentifierTable($tableName);
+			}
+			$sql .= 'FROM ' . $tableName;
+		}
+		return $sql;
+	}
 }
