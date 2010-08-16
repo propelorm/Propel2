@@ -124,19 +124,28 @@ book0:
   Title: 'Pride and Prejudice'
   AuthorId: 456
   ISBN: '0553213105'
-  Author: { Id: 456, FirstName: Jane, LastName: Austen }
+  Author:
+    Id: 456
+    FirstName: Jane
+    LastName: Austen
 book1:
   Id: 82
   Title: 'Anna Karenina'
   AuthorId: 543
   ISBN: '0143035002'
-  Author: { Id: 543, FirstName: Leo, LastName: Tolstoi }
+  Author:
+    Id: 543
+    FirstName: Leo
+    LastName: Tolstoi
 book2:
   Id: 567
   Title: 'War and Peace'
   AuthorId: 543
   ISBN: 067003469X
-  Author: { Id: 543, FirstName: Leo, LastName: Tolstoi }
+  Author:
+    Id: 543
+    FirstName: Leo
+    LastName: Tolstoi
 
 EOF;
 		return array(array($list, $yaml));

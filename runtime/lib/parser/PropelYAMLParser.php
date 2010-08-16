@@ -27,7 +27,7 @@ class PropelYAMLParser extends PropelParser
 	 */
 	public function fromArray($array)
 	{
-		return sfYaml::dump($array);
+		return sfYaml::dump($array, 3);
 	}
 	
 	/**
