@@ -1209,13 +1209,29 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->assertTrue($b->isPrimaryKeyNull());
 	}
 	
-	public function testAddPrimaryString()
+	public function testAddToStringDefault()
 	{
-	  $this->assertFalse(method_exists('Author', '__toString'), 'addPrimaryString() does not add a __toString() method if no column has the primaryString attribute');
+	  $this->assertTrue(method_exists('Author', '__toString'), 'addPrimaryString() adds a __toString() method even if no column has the primaryString attribute');
+	  $author = new Author();
+	  $author->setFirstName('Leo');
+	  $author->setLastName('Tolstoi');
+	  $expected = <<<EOF
+Id: null
+FirstName: Leo
+LastName: Tolstoi
+Email: null
+Age: null
+
+EOF;
+		$this->assertEquals($expected, (string) $author, 'addPrimaryString() adds a __toString() method returning the YAML representation of the object where no column is defined as primaryString');
+	}
+	
+	public function testAddToStringPrimaryString()
+	{
 	  $this->assertTrue(method_exists('Book', '__toString'), 'addPrimaryString() adds a __toString() method if a column has the primaryString attribute');
 	  $book = new Book();
 	  $book->setTitle('foo');
-	  $this->assertEquals((string) $book, 'foo', 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
+	  $this->assertEquals('foo', (string) $book, 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
 	}
 
 	public function testPreInsert()
