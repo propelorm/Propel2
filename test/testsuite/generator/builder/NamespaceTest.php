@@ -40,6 +40,7 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 	{
 		$book = new \Foo\Bar\NamespacedBook();
 		$book->setTitle('foo');
+		$book->setISBN('something');
 		$book->save();
 		$this->assertFalse($book->isNew());
 		
@@ -52,6 +53,7 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 	{
 		$book = new \Foo\Bar\NamespacedBook();
 		$book->setTitle('foo');
+		$book->setISBN('something');
 		$book->save();
 		$book->setTitle('bar');
 		$book->save();
@@ -61,14 +63,22 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 	public function testRelate()
 	{
 		$author = new NamespacedAuthor();
+		$author->setFirstName('Chuck');
+		$author->setLastname('Norris');
 		$book = new \Foo\Bar\NamespacedBook();
 		$book->setNamespacedAuthor($author);
+		$book->setTitle('foo');
+		$book->setISBN('something');
 		$book->save();
 		$this->assertFalse($book->isNew());
 		$this->assertFalse($author->isNew());
 		
 		$author = new NamespacedAuthor();
+		$author->setFirstName('Henning');
+		$author->setLastname('Mankell');
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('Mördare utan ansikte');
+		$book->setISBN('1234');
 		$author->addNamespacedBook($book);
 		$author->save();
 		$this->assertFalse($book->isNew());
@@ -76,6 +86,8 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		
 		$publisher = new \Baz\NamespacedPublisher();
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('Där vi en gång gått');
+		$book->setISBN('1234');
 		$book->setNamespacedPublisher($publisher);
 		$book->save();
 		$this->assertFalse($book->isNew());
@@ -97,6 +109,7 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		$book = new \Foo\Bar\NamespacedBook();
 		$book->setTitle('War And Peace');
+		$book->setISBN('1234');
 		$book->save();
 		$book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
 		$this->assertEquals($book, $book2);
@@ -110,6 +123,8 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		\Baz\NamespacedPublisherQuery::create()->deleteAll();
 		$publisher = new \Baz\NamespacedPublisher();
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('Something');
+		$book->setISBN('1234');
 		$book->setNamespacedPublisher($publisher);
 		$book->save();
 		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
@@ -124,7 +139,11 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		\Baz\NamespacedPublisherQuery::create()->deleteAll();
 		$author = new NamespacedAuthor();
+		$author->setFirstName('Foo');
+		$author->setLastName('Bar');
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('Quux');
+		$book->setISBN('1235');
 		$book->setNamespacedAuthor($author);
 		$book->save();
 		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
@@ -140,6 +159,8 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		\Baz\NamespacedPublisherQuery::create()->deleteAll();
 		$publisher = new \Baz\NamespacedPublisher();
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('asdf');
+		$book->setISBN('something');
 		$book->setNamespacedPublisher($publisher);
 		$book->save();
 		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
@@ -156,7 +177,11 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		NamespacedAuthorQuery::create()->deleteAll();
 		$author = new NamespacedAuthor();
+		$author->setFirstName('Foo');
+		$author->setLastName('Bar');
 		$book = new \Foo\Bar\NamespacedBook();
+		$book->setTitle('asdf');
+		$book->setISBN('something');
 		$book->setNamespacedAuthor($author);
 		$book->save();
 		\Foo\Bar\NamespacedBookPeer::clearInstancePool();
@@ -199,16 +224,20 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 		NamespacedBookListRelQuery::create()->deleteAll();
 		$book1 = new \Foo\Bar\NamespacedBook();
 		$book1->setTitle('bar');
+		$book1->setISBN('1234');
 		$book1->save();
 		$book2 = new \Foo\Bar\NamespacedBook();
 		$book2->setTitle('foo');
+		$book2->setISBN('4567');
 		$book2->save();
 		$bookClub1 = new \Baz\NamespacedBookClub();
 		$bookClub1->addNamespacedBook($book1);
 		$bookClub1->addNamespacedBook($book2);
+		$bookClub1->setGroupLeader('Someone1');
 		$bookClub1->save();
 		$bookClub2 = new \Baz\NamespacedBookClub();
 		$bookClub2->addNamespacedBook($book1);
+		$bookClub2->setGroupLeader('Someone2');
 		$bookClub2->save();
 		$this->assertEquals(2, $book1->countNamespacedBookClubs());
 		$this->assertEquals(1, $book2->countNamespacedBookClubs());
