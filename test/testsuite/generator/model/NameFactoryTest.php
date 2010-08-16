@@ -117,7 +117,8 @@ class NameFactoryTest extends BaseTestCase
 	/**
 	 * @throws     Exception on fail
 	 */
-	public function testNames() {
+	public function testNames()
+	{
 		for ($algoIndex = 0; $algoIndex < count(self::$ALGORITHMS); $algoIndex++) {
 			$algo = self::$ALGORITHMS[$algoIndex];
 			$algoInputs = self::$INPUTS[$algoIndex];
@@ -125,7 +126,7 @@ class NameFactoryTest extends BaseTestCase
 				$inputs = $this->makeInputs($algo, $algoInputs[$i]);
 				$generated = NameFactory::generateName($algo, $inputs);
 				$expected = self::$OUTPUTS[$algoIndex][$i];
-				$this->assertEquals($expected, $generated, 0, "Algorithm " . $algo . " failed to generate an unique name");
+				$this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
 			}
 		}
 	}
