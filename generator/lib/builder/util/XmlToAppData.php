@@ -61,11 +61,11 @@ class XmlToAppData extends AbstractHandler
 	/**
 	 * Creates a new instance for the specified database type.
 	 *
-	 * @param      Platform $defaultPlatform The default database platform for the application.
+	 * @param      PropelPlatformInterface $defaultPlatform The default database platform for the application.
 	 * @param      string $defaultPackage the default PHP package used for the om
 	 * @param      string $encoding The database encoding.
 	 */
-	public function __construct(Platform $defaultPlatform, $defaultPackage, $encoding = 'iso-8859-1')
+	public function __construct(PropelPlatformInterface $defaultPlatform, $defaultPackage, $encoding = 'iso-8859-1')
 	{
 		$this->app = new AppData($defaultPlatform);
 		$this->defaultPackage = $defaultPackage;

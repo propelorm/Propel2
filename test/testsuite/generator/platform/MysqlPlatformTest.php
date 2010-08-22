@@ -15,35 +15,9 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
  *
  * @package    generator.platform 
  */
-class DefaultPlatformTest extends PlatformTestBase
+class MysqlPlatformTest extends PlatformTestBase
 {
 
-	protected function setUp()
-	{
-		parent::setUp();
-	}
-
-	public function tearDown()
-	{
-		 parent::tearDown();
-	}
-
-	public function testQuote()
-	{
-		$p = $this->getPlatform();
-
-		$unquoted = "Nice";
-		$quoted = $p->quote($unquoted);
-
-		$this->assertEquals("'$unquoted'", $quoted);
-
-
-		$unquoted = "Naughty ' string";
-		$quoted = $p->quote($unquoted);
-		$expected = "'Naughty '' string'";
-		$this->assertEquals($expected, $quoted);
-	}
-	
 	public function testGetColumnDDL()
 	{
 		$c = new Column('foo');
@@ -52,7 +26,7 @@ class DefaultPlatformTest extends PlatformTestBase
 		$c->getDomain()->replaceSize(3);
 		$c->setNotNull(true);
 		$c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-		$expected = '"foo" DOUBLE(3,2) DEFAULT 123 NOT NULL';
+		$expected = '`foo` DOUBLE(3,2) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
 	}
 

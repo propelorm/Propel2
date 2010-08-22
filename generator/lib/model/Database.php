@@ -105,9 +105,9 @@ class Database extends XMLElement
 	}
 
 	/**
-	 * Returns the Platform implementation for this database.
+	 * Returns the PropelPlatformInterface implementation for this database.
 	 *
-	 * @return     Platform a Platform implementation
+	 * @return     PropelPlatformInterface a Platform implementation
 	 */
 	public function getPlatform()
 	{
@@ -115,9 +115,9 @@ class Database extends XMLElement
 	}
 
 	/**
-	 * Sets the Platform implementation for this database.
+	 * Sets the PropelPlatformInterface implementation for this database.
 	 *
-	 * @param      Platform $platform A Platform implementation
+	 * @param      PropelPlatformInterface $platform A Platform implementation
 	 */
 	public function setPlatform($platform)
 	{

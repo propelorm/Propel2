@@ -112,7 +112,7 @@ class Column extends XMLElement
 	 * a list of <code>String</code> objects with column names.
 	 * @deprecated Use the DDLBuilder->getColumnList() method instead; this will be removed in 1.3
 	 */
-	public static function makeList($columns, Platform $platform)
+	public static function makeList($columns, PropelPlatformInterface $platform)
 	{
 		$list = array();
 		foreach ($columns as $col) {
@@ -962,7 +962,7 @@ class Column extends XMLElement
 		$dflt = "";
 		$defaultValue = $this->getDefaultValue();
 		if ($defaultValue !== null) {
-			$dflt .= "default ";
+			$dflt .= "DEFAULT ";
 
 			if ($this->getDefaultValue()->isExpression()) {
 				$dflt .= $this->getDefaultValue()->getValue();
@@ -1162,26 +1162,6 @@ class Column extends XMLElement
 		return $this->getTable()->getDatabase()->getPlatform();
 	}
 
-	/**
-	 *
-	 * @return		 string
-	 * @deprecated Use DDLBuilder->getColumnDDL() instead; this will be removed in 1.3
-	 */
-	public function getSqlString()
-	{
-		$sb = "";
-		$sb .= $this->getPlatform()->quoteIdentifier($this->getName()) . " ";
-		$sb .= $this->getDomain()->getSqlType();
-		if ($this->getPlatform()->hasSize($this->getDomain()->getSqlType())) {
-			$sb .= $this->getDomain()->printSize();
-		}
-		$sb .= " ";
-		$sb .= $this->getDefaultSetting() . " ";
-		$sb .= $this->getNotNullString() . " ";
-		$sb .= $this->getAutoIncrementString();
-		return trim($sb);
-	}
-	
 	public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
 		return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
 	}

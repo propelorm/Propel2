@@ -16,7 +16,7 @@
  * @version    $Revision$
  * @package    propel.generator.platform
  */
-interface Platform 
+interface PropelPlatformInterface
 {
 
 	/**
@@ -70,7 +70,7 @@ interface Platform
 	/**
 	 * Returns the native IdMethod (sequence|identity)
 	 *
-	 * @return     string The native IdMethod (Platform:IDENTITY, Platform::SEQUENCE).
+	 * @return     string The native IdMethod (PropelPlatformInterface:IDENTITY, PropelPlatformInterface::SEQUENCE).
 	 */
 	public function getNativeIdMethod();
 
@@ -99,6 +99,12 @@ interface Platform
 	 * @return     The RDBMS-specific SQL fragment for autoincrement.
 	 */
 	public function getAutoIncrement();
+
+	/**
+	 * Builds the DDL SQL for a Column object.
+	 * @return     string
+	 */
+	public function getColumnDDL(Column $col);
 
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.

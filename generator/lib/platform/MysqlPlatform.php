@@ -11,7 +11,7 @@
 require_once dirname(__FILE__) . '/DefaultPlatform.php';
 
 /**
- * MySql Platform implementation.
+ * MySql PropelPlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -38,38 +38,88 @@ class MysqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
 	}
 
-	/**
-	 * @see        Platform#getAutoIncrement()
-	 */
 	public function getAutoIncrement()
 	{
 		return "AUTO_INCREMENT";
 	}
 
-	/**
-	 * @see        Platform#getMaxColumnNameLength()
-	 */
 	public function getMaxColumnNameLength()
 	{
 		return 64;
 	}
 
-	/**
-	 * @see        Platform::supportsNativeDeleteTrigger()
-	 */
 	public function supportsNativeDeleteTrigger()
 	{
 		$usingInnoDB = false;
-		if (class_exists('DataModelBuilder', false))
-		{
+		if (class_exists('DataModelBuilder', false)) {
 			$usingInnoDB = strtolower($this->getBuildProperty('mysqlTableType')) == 'innodb';
 		}
 		return $usingInnoDB || false;
 	}
 
 	/**
-	 * @see        Platform#hasSize(String)
+	 * Builds the DDL SQL for a Column object.
+	 * @return     string
 	 */
+	public function getColumnDDL(Column $col)
+	{
+		$domain = $col->getDomain();
+		$sqlType = $domain->getSqlType();
+		$notNullString = $this->getNullString($col->isNotNull());
+		$defaultSetting = $col->getDefaultSetting();
+
+		// Special handling of TIMESTAMP/DATETIME types ...
+		// See: http://propel.phpdb.org/trac/ticket/538
+		if ($sqlType == 'DATETIME') {
+			$def = $domain->getDefaultValue();
+			if ($def && $def->isExpression()) { // DATETIME values can only have constant expressions
+				$sqlType = 'TIMESTAMP';
+			}
+		} elseif ($sqlType == 'DATE') {
+			$def = $domain->getDefaultValue();
+			if ($def && $def->isExpression()) {
+				throw new EngineException("DATE columns cannot have default *expressions* in MySQL.");
+			}
+		} elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
+			if ($domain->getDefaultValue()) {
+				throw new EngineException("BLOB and TEXT columns cannot have DEFAULT values. in MySQL.");
+			}
+		}
+
+		$ddl = array($this->quoteIdentifier($col->getName()));
+		if ($this->hasSize($sqlType)) {
+			$ddl []= $sqlType . $domain->printSize();
+		} else {
+			$ddl []= $sqlType;
+		}
+		if ($sqlType == 'TIMESTAMP') {
+			if ($notNullString == '') {
+				$notNullString = 'NULL';
+			}
+			if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
+				$defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
+			}
+			if ($notNullString) {
+				$ddl []= $notNullString;
+			}
+			if ($defaultSetting) {
+				$ddl []= $defaultSetting;
+			}
+		} else {
+			if ($defaultSetting) {
+				$ddl []= $defaultSetting;
+			}
+			if ($notNullString) {
+				$ddl []= $notNullString;
+			}
+		}
+		if ($autoIncrement = $col->getAutoIncrementString()) {
+			$ddl []= $autoIncrement;
+		}
+
+		return implode(' ', $ddl);
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
@@ -91,18 +141,11 @@ class MysqlPlatform extends DefaultPlatform
 		}
 	}
 
-	/**
-	 * @see        Platform::quoteIdentifier()
-	 */
 	public function quoteIdentifier($text)
 	{
 		return '`' . $text . '`';
 	}
 
-	/**
-	 * Gets the preferred timestamp formatter for setting date/time values.
-	 * @return     string
-	 */
 	public function getTimestampFormatter()
 	{
 		return 'Y-m-d H:i:s';

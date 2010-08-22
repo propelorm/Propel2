@@ -178,7 +178,7 @@ class ".$this->getClassname()." extends TableMap {
 			$imp = $params[0];
 			$script .= "
 		\$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
-		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == Platform::SEQUENCE || $platform->getNativeIdMethod() == Platform::SERIAL)) {
+		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
 			$script .= "
 		\$this->setPrimaryKeyMethodInfo('".$ddlBuilder->getSequenceName()."');";
 		}

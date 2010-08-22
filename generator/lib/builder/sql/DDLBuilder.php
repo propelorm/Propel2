@@ -74,24 +74,11 @@ abstract class DDLBuilder extends DataModelBuilder
 	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
+	 * @deprecated since 1.6, use DefaultPlatform::getColumnDDL() instead
 	 */
 	public function getColumnDDL(Column $col)
 	{
-		$platform = $this->getPlatform();
-		$domain = $col->getDomain();
-
-		$sb = "";
-		$sb .= $this->quoteIdentifier($col->getName()) . " ";
-		$sb .= $domain->getSqlType();
-		if ($platform->hasSize($domain->getSqlType())) {
-			$sb .= $domain->printSize();
-		}
-		$sb .= " ";
-		$sb .= $col->getDefaultSetting() . " ";
-		$sb .= $col->getNotNullString() . " ";
-		$sb .= $col->getAutoIncrementString();
-
-		return trim($sb);
+		return $this->getPlatform()->getColumnDDL($col);
 	}
 
 	/**

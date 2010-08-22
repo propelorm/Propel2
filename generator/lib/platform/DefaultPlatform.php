@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/Platform.php';
+require_once dirname(__FILE__) . '/PropelPlatformInterface.php';
 require_once dirname(__FILE__) . '/../model/Domain.php';
 require_once dirname(__FILE__) . '/../model/PropelTypes.php';
 
@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../model/PropelTypes.php';
  * @version    $Revision$
  * @package    propel.generator.platform
  */
-class DefaultPlatform implements Platform
+class DefaultPlatform implements PropelPlatformInterface
 {
 
 	/**
@@ -34,12 +34,12 @@ class DefaultPlatform implements Platform
 	 *
 	 * @var        GeneratorConfig
 	 */
-	private $generatorConfig;
+	protected $generatorConfig;
 
 	/**
 	 * @var        PDO Database connection.
 	 */
-	private $con;
+	protected $con;
 
 	/**
 	 * Default constructor.
@@ -58,6 +58,15 @@ class DefaultPlatform implements Platform
 	public function setConnection(PDO $con = null)
 	{
 		$this->con = $con;
+	}
+
+	/**
+	 * Returns the database connection to use for this Platform class.
+	 * @return     PDO The database connection or NULL if none has been set.
+	 */
+	public function getConnection()
+	{
+		return $this->con;
 	}
 
 	/**
@@ -92,15 +101,6 @@ class DefaultPlatform implements Platform
 			return $this->generatorConfig->getBuildProperty($name);
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the database connection to use for this Platform class.
-	 * @return     PDO The database connection or NULL if none has been set.
-	 */
-	public function getConnection()
-	{
-		return $this->con;
 	}
 
 	/**
@@ -142,7 +142,9 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::getMaxColumnNameLength()
+	 * Returns the max column length supported by the db.
+	 *
+	 * @return     int The max column length
 	 */
 	public function getMaxColumnNameLength()
 	{
@@ -150,15 +152,20 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::getNativeIdMethod()
+	 * Returns the native IdMethod (sequence|identity)
+	 *
+	 * @return     string The native IdMethod (PropelPlatformInterface:IDENTITY, PropelPlatformInterface::SEQUENCE).
 	 */
 	public function getNativeIdMethod()
 	{
-		return Platform::IDENTITY;
+		return PropelPlatformInterface::IDENTITY;
 	}
 
 	/**
-	 * @see        Platform::getDomainForType()
+	 * Returns the db specific domain for a propelType.
+	 *
+	 * @param      string $propelType the Propel type name.
+	 * @return     Domain The db specific domain.
 	 */
 	public function getDomainForType($propelType)
 	{
@@ -169,8 +176,8 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @return     string Returns the SQL fragment to use if null values are disallowed.
-	 * @see        Platform::getNullString(boolean)
+	 * @return     string The RDBMS-specific SQL fragment for <code>NULL</code>
+	 * or <code>NOT NULL</code>.
 	 */
 	public function getNullString($notNull)
 	{
@@ -178,7 +185,7 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::getAutoIncrement()
+	 * @return     The RDBMS-specific SQL fragment for autoincrement.
 	 */
 	public function getAutoIncrement()
 	{
@@ -186,15 +193,38 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::hasScale(String)
+	 * Builds the DDL SQL for a Column object.
+	 * @return     string
 	 */
-	public function hasScale($sqlType)
+	public function getColumnDDL(Column $col)
 	{
-		return true;
+		$domain = $col->getDomain();
+		
+		$ddl = array($this->quoteIdentifier($col->getName()));
+		$sqlType = $domain->getSqlType();
+		if ($this->hasSize($sqlType)) {
+			$ddl []= $sqlType . $domain->printSize();
+		} else {
+			$ddl []= $sqlType;
+		}
+		if ($default = $col->getDefaultSetting()) {
+			$ddl []= $default;
+		}
+		if ($notNull = $this->getNullString($col->isNotNull())) {
+			$ddl []= $notNull;
+		}
+		if ($autoIncrement = $col->getAutoIncrementString()) {
+			$ddl []= $autoIncrement;
+		}
+
+		return implode(' ', $ddl);
 	}
 
 	/**
-	 * @see        Platform::hasSize(String)
+	 * Returns if the RDBMS-specific SQL type has a size attribute.
+	 *
+	 * @param      string $sqlType the SQL type
+	 * @return     boolean True if the type has a size attribute
 	 */
 	public function hasSize($sqlType)
 	{
@@ -202,12 +232,25 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::quote()
+	 * Returns if the RDBMS-specific SQL type has a scale attribute.
+	 *
+	 * @param      string $sqlType the SQL type
+	 * @return     boolean True if the type has a scale attribute
+	 */
+	public function hasScale($sqlType)
+	{
+		return true;
+	}
+
+	/**
+	 * Quote and escape needed characters in the string for unerlying RDBMS.
+	 * @param      string $text
+	 * @return     string
 	 */
 	public function quote($text)
 	{
-		if ($this->getConnection()) {
-			return $this->getConnection()->quote($text);
+		if ($con = $this->getConnection()) {
+			return $con->quote($text);
 		} else {
 			return "'" . $this->disconnectedEscapeText($text) . "'";
 		}
@@ -228,7 +271,9 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::quoteIdentifier()
+	 * Quotes identifiers used in database SQL.
+	 * @param      string $text
+	 * @return     string Quoted identifier.
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -236,7 +281,8 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::supportsNativeDeleteTrigger()
+	 * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
+	 * @return     boolean
 	 */
 	public function supportsNativeDeleteTrigger()
 	{
@@ -244,7 +290,8 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::supportsInsertNullPk()
+	 * Whether RDBMS supports INSERT null values in autoincremented primary keys
+	 * @return     boolean
 	 */
 	public function supportsInsertNullPk()
 	{
@@ -261,7 +308,16 @@ class DefaultPlatform implements Platform
 	}
 
 	/**
-	 * @see        Platform::getBooleanString()
+	 * Returns the boolean value for the RDBMS.
+	 *
+	 * This value should match the boolean value that is set
+	 * when using Propel's PreparedStatement::setBoolean().
+	 *
+	 * This function is used to set default column values when building
+	 * SQL.
+	 *
+	 * @param      mixed $tf A boolean or string representation of boolean ('y', 'true').
+	 * @return     mixed
 	 */
 	public function getBooleanString($b)
 	{

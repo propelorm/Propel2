@@ -60,6 +60,8 @@ DROP SEQUENCE ".$this->quoteIdentifier($this->getSequenceName()).";
 	protected function addTable(&$script)
 	{
 		$table = $this->getTable();
+		$platform = $this->getPlatform();
+		
 		$script .= "
 
 -----------------------------------------------------------------------
@@ -77,7 +79,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$lines = array();
 
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $this->getColumnDDL($col);
+			$lines[] = $platform->getColumnDDL($col);
 		}
 
 		$sep = ",

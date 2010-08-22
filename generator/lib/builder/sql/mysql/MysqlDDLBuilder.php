@@ -99,10 +99,10 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 
 		$lines = array();
 
-		$databaseType = $this->getPlatform()->getDatabaseType();
+		$databaseType = $platform->getDatabaseType();
 
 		foreach ($table->getColumns() as $col) {
-			$entry = $this->getColumnDDL($col);
+			$entry = $platform->getColumnDDL($col);
 			$colinfo = $col->getVendorInfoForType($databaseType);
 			if ( $colinfo->hasParameter('Charset') ) {
 				$entry .= ' CHARACTER SET '.$platform->quote($colinfo->getParameter('Charset'));
@@ -357,57 +357,10 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
+	 * @deprecated since 1.6, use MysqlPlatform::getColumnDDL() instead
 	 */
 	public function getColumnDDL(Column $col)
 	{
-		$platform = $this->getPlatform();
-		$domain = $col->getDomain();
-		$sqlType = $domain->getSqlType();
-		$notNullString = $col->getNotNullString();
-		$defaultSetting = $col->getDefaultSetting();
-
-		// Special handling of TIMESTAMP/DATETIME types ...
-		// See: http://propel.phpdb.org/trac/ticket/538
-		if ($sqlType == 'DATETIME') {
-			$def = $domain->getDefaultValue();
-			if ($def && $def->isExpression()) { // DATETIME values can only have constant expressions
-				$sqlType = 'TIMESTAMP';
-			}
-		} elseif ($sqlType == 'DATE') {
-			$def = $domain->getDefaultValue();
-			if ($def && $def->isExpression()) {
-				throw new EngineException("DATE columns cannot have default *expressions* in MySQL.");
-			}
-		} elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
-			if ($domain->getDefaultValue()) {
-				throw new EngineException("BLOB and TEXT columns cannot have DEFAULT values. in MySQL.");
-			}
-		}
-
-		$sb = "";
-		$sb .= $this->quoteIdentifier($col->getName()) . " ";
-		$sb .= $sqlType;
-		if ($platform->hasSize($sqlType)) {
-			$sb .= $domain->printSize();
-		}
-		$sb .= " ";
-
-		if ($sqlType == 'TIMESTAMP') {
-			$notNullString = $col->getNotNullString();
-			$defaultSetting = $col->getDefaultSetting();
-			if ($notNullString == '') {
-				$notNullString = 'NULL';
-			}
-			if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
-				$defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
-			}
-			$sb .= $notNullString . " " . $defaultSetting . " ";
-		} else {
-			$sb .= $defaultSetting . " ";
-			$sb .= $notNullString . " ";
-		}
-		$sb .= $col->getAutoIncrementString();
-
-		return trim($sb);
+		return $this->getPlatform()->getColumnDDL($col);
 	}
 }

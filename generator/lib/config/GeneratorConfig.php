@@ -154,8 +154,8 @@ class GeneratorConfig
 		}
 		$platform = new $clazz();
 
-    if (!$platform instanceof Platform) {
-      throw new BuildException("Specified platform class ($clazz) does not implement Platform interface.", $this->getLocation());
+    if (!$platform instanceof PropelPlatformInterface) {
+      throw new BuildException("Specified platform class ($clazz) does not implement teh PropelPlatformInterface interface.");
     }
 
     $platform->setConnection($con);

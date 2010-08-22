@@ -94,7 +94,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$lines = array();
 
 		foreach ($table->getColumns() as $col) {
-			$lines[] = $this->getColumnDDL($col);
+			$lines[] = $platform->getColumnDDL($col);
 		}
 
 		if ($table->hasPrimaryKey()) {

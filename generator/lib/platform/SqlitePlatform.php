@@ -11,7 +11,7 @@
 require_once dirname(__FILE__) . '/DefaultPlatform.php';
 
 /**
- * SQLite Platform implementation.
+ * SQLite PropelPlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$
@@ -37,7 +37,6 @@ class SqlitePlatform extends DefaultPlatform
 	}
 
 	/**
-	 * @see        Platform#getAutoIncrement()
 	 * @link       http://www.sqlite.org/autoinc.html
 	 */
 	public function getAutoIncrement()
@@ -46,17 +45,11 @@ class SqlitePlatform extends DefaultPlatform
 		return "PRIMARY KEY";
 	}
 
-	/**
-	 * @see        Platform#getMaxColumnNameLength()
-	 */
 	public function getMaxColumnNameLength()
 	{
 		return 1024;
 	}
 
-	/**
-	 * @see        Platform#hasSize(String)
-	 */
 	public function hasSize($sqlType) {
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
 				|| "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType
@@ -77,9 +70,6 @@ class SqlitePlatform extends DefaultPlatform
 		}
 	}
 
-	/**
-	 * @see        Platform::quoteIdentifier()
-	 */
 	public function quoteIdentifier($text)
 	{
 		return '[' . $text . ']';

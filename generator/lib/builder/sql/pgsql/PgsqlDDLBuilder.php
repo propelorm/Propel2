@@ -156,7 +156,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 
 		foreach ($table->getColumns() as $col) {
 			/* @var $col Column */
-			$colDDL = $this->getColumnDDL($col);
+			$colDDL = $platform->getColumnDDL($col);
 			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
 				if ($col->getType() === PropelTypes::BIGINT) {
 					$colDDL = str_replace($col->getDomain()->getSqlType(), 'bigserial', $colDDL);

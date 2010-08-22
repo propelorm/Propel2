@@ -11,7 +11,7 @@
 require_once dirname(__FILE__) . '/DefaultPlatform.php';
 
 /**
- * Oracle Platform implementation.
+ * Oracle PropelPlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -48,33 +48,21 @@ class OraclePlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));
 	}
 
-	/**
-	 * @see        Platform#getMaxColumnNameLength()
-	 */
 	public function getMaxColumnNameLength()
 	{
 		return 30;
 	}
 
-	/**
-	 * @see        Platform#getNativeIdMethod()
-	 */
 	public function getNativeIdMethod()
 	{
-		return Platform::SEQUENCE;
+		return PropelPlatformInterface::SEQUENCE;
 	}
 
-	/**
-	 * @see        Platform#getAutoIncrement()
-	 */
 	public function getAutoIncrement()
 	{
 		return "";
 	}
 
-	/**
-	 * @see        Platform::supportsNativeDeleteTrigger()
-	 */
 	public function supportsNativeDeleteTrigger()
 	{
 		return true;
@@ -89,22 +77,11 @@ class OraclePlatform extends DefaultPlatform
 		return true;
 	}
 	
-	/**
-	 * Quotes identifiers used in database SQL.
-	 * @see        Platform::quoteIdentifier()
-	 * @param      string $text
-	 * @return     string Quoted identifier.
-	 */
 	public function quoteIdentifier($text)
 	{
 		return $text;
 	}
 
-	/**
-	 * Gets the preferred timestamp formatter for setting date/time values.
-	 * @see        Platform::getTimestampFormatter()
-	 * @return     string 
-	 */
 	public function getTimestampFormatter()
 	{
 		return 'Y-m-d H:i:s';

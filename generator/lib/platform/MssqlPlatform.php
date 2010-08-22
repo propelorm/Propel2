@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../model/Domain.php';
 
 /**
- * MS SQL Platform implementation.
+ * MS SQL PropelPlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -44,64 +44,39 @@ class MssqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "IMAGE"));
 	}
 
-	/**
-	 * @see        Platform#getMaxColumnNameLength()
-	 */
 	public function getMaxColumnNameLength()
 	{
 		return 128;
 	}
 
-	/**
-	 * @return     Explicitly returns <code>NULL</code> if null values are
-	 * allowed (as recomended by Microsoft).
-	 * @see        Platform#getNullString(boolean)
-	 */
 	public function getNullString($notNull)
 	{
 		return ($notNull ? "NOT NULL" : "NULL");
 	}
 
-	/**
-	 * @see        Platform::supportsNativeDeleteTrigger()
-	 */
 	public function supportsNativeDeleteTrigger()
 	{
 		return true;
 	}
 
-	/**
-	 * @see        Platform::supportsInsertNullPk()
-	 */
 	public function supportsInsertNullPk()
 	{
 		return false;
 	}
 	
-	/**
-	 * @see        Platform::hasSize(String)
-	 */
 	public function hasSize($sqlType)
 	{
 		return !("INT" == $sqlType || "TEXT" == $sqlType);
 	}
 
-	/**
-	 * @see        Platform::quoteIdentifier()
-	 */
 	public function quoteIdentifier($text)
 	{
 		return '[' . $text . ']';
 	}
 
-   /**
-   * Gets the preferred timestamp formatter for setting date/time values.
-   * @return     string
-   */
-  public function getTimestampFormatter()
-  {
-    return 'Y-m-d H:i:s';
-  }
-
+	public function getTimestampFormatter()
+	{
+		return 'Y-m-d H:i:s';
+	}
 
 }

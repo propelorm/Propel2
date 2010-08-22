@@ -23,9 +23,6 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 	 */
 	protected $platform;
 
-	/**
-	 *
-	 */
 	protected function setUp()
 	{
 		parent::setUp();
@@ -36,14 +33,7 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 *
-	 */
-	protected function tearDown()
-	{
-		parent::tearDown();
-	}
-
-	/**
+	 * Get the Platform object for this class
 	 *
 	 * @return     Platform
 	 */

@@ -11,7 +11,7 @@
 require_once dirname(__FILE__) . '/DefaultPlatform.php';
 
 /**
- * Postgresql Platform implementation.
+ * Postgresql PropelPlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -41,25 +41,16 @@ class PgsqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
 	}
 
-	/**
-	 * @see        Platform#getNativeIdMethod()
-	 */
 	public function getNativeIdMethod()
 	{
-		return Platform::SERIAL;
+		return PropelPlatformInterface::SERIAL;
 	}
 
-	/**
-	 * @see        Platform#getAutoIncrement()
-	 */
 	public function getAutoIncrement()
 	{
 		return "";
 	}
 
-	/**
-	 * @see        Platform#getMaxColumnNameLength()
-	 */
 	public function getMaxColumnNameLength()
 	{
 		return 32;
@@ -79,9 +70,6 @@ class PgsqlPlatform extends DefaultPlatform
 		}
 	}
 
-	/**
-	 * @see        Platform::getBooleanString()
-	 */
 	public function getBooleanString($b)
 	{
 		// parent method does the checking for allowes tring
@@ -90,27 +78,16 @@ class PgsqlPlatform extends DefaultPlatform
 		return ($b ? "'t'" : "'f'");
 	}
 
-	/**
-	 * @see        Platform::supportsNativeDeleteTrigger()
-	 */
 	public function supportsNativeDeleteTrigger()
 	{
 		return true;
 	}
 
-	/**
-	 * @see        Platform::hasSize(String)
-	 * TODO collect info for all platforms
-	 */
 	public function hasSize($sqlType)
 	{
 		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);
 	}
 
-	/**
-	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-	 * @return     boolean
-	 */
 	public function hasStreamBlobImpl()
 	{
 		return true;
