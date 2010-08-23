@@ -64,6 +64,13 @@ class MssqlPlatform extends DefaultPlatform
 		return false;
 	}
 	
+	public function getPrimaryKeyDDL(Table $table)
+	{
+		if ($table->hasPrimaryKey()) {
+			return 'CONSTRAINT ' . $this->quoteIdentifier($table->getName() . '_PK') . ' PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+		}
+	}
+	
 	public function hasSize($sqlType)
 	{
 		return !("INT" == $sqlType || "TEXT" == $sqlType);

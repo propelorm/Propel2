@@ -159,7 +159,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		}
 
 		if ($table->hasPrimaryKey()) {
-			$lines[] = "PRIMARY KEY (".$this->getColumnList($table->getPrimaryKey()).")";
+			$lines[] = $platform->getPrimaryKeyDDL($table);
 		}
 
 		foreach ($table->getUnices() as $unique ) {

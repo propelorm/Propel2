@@ -10,6 +10,7 @@
 
 require_once dirname(__FILE__) . '/PropelPlatformInterface.php';
 require_once dirname(__FILE__) . '/../model/Column.php';
+require_once dirname(__FILE__) . '/../model/Table.php';
 require_once dirname(__FILE__) . '/../model/Domain.php';
 require_once dirname(__FILE__) . '/../model/PropelTypes.php';
 
@@ -263,12 +264,23 @@ class DefaultPlatform implements PropelPlatformInterface
 	{
 		$list = array();
 		foreach ($columns as $column) {
-			if ($col instanceof Column) {
+			if ($column instanceof Column) {
 				$column = $column->getName();
 			}
 			$list[] = $this->quoteIdentifier($column);
 		}
 		return implode($delimiter, $list);
+	}
+	
+	/**
+	 * Returns the SQL for the primary key of a Table object
+	 * @return     string
+	 */
+	public function getPrimaryKeyDDL(Table $table)
+	{
+		if ($table->hasPrimaryKey()) {
+			return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+		}
 	}
 
 	/**

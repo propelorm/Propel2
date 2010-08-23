@@ -68,6 +68,16 @@ class OraclePlatform extends DefaultPlatform
 		return true;
 	}
 
+	public function getPrimaryKeyDDL(Table $table)
+	{
+		$tableName = $table->getName();
+		// pk constraint name must be 30 chars at most
+		$tableName = substr($tableName, 0, min(27, strlen($tableName)));
+		if ($table->hasPrimaryKey()) {
+			return 'CONSTRAINT ' . $this->quoteIdentifier($tableName . '_PK') . ' PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+		}
+	}
+	
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean

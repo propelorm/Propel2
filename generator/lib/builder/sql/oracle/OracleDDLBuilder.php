@@ -101,22 +101,10 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		$tableName = $table->getName();
-		$length = strlen($tableName);
-		if ($length > 27) {
-			$length = 27;
-		}
-		if ( is_array($table->getPrimaryKey()) && count($table->getPrimaryKey()) ) {
+		if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
 			$script .= "
-ALTER TABLE ".$this->quoteIdentifier($table->getName())."
-	ADD CONSTRAINT ".$this->quoteIdentifier(substr($tableName,0,$length)."_PK")."
-	PRIMARY KEY (";
-			$delim = "";
-			foreach ($table->getPrimaryKey() as $col) {
-				$script .= $delim . $this->quoteIdentifier($col->getName());
-				$delim = ",";
-			}
-	$script .= ");
+ALTER TABLE " . $this->quoteIdentifier($table->getName()) . "
+	ADD " . $platform->getPrimaryKeyDDL($table) . ";
 ";
 		}
 	}

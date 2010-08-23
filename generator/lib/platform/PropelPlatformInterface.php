@@ -125,6 +125,12 @@ interface PropelPlatformInterface
 	 * @return     string
 	 */
 	public function getColumnListDDL($columns, $delimiter = ',');
+
+	/**
+	 * Returns the SQL for the primary key of a Table object
+	 * @return     string
+	 */
+	public function getPrimaryKeyDDL(Table $table);
 	
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
