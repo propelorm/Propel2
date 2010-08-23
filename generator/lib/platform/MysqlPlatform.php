@@ -66,7 +66,7 @@ class MysqlPlatform extends DefaultPlatform
 		$domain = $col->getDomain();
 		$sqlType = $domain->getSqlType();
 		$notNullString = $this->getNullString($col->isNotNull());
-		$defaultSetting = $col->getDefaultSetting();
+		$defaultSetting = $this->getColumnDefaultValueDDL($col);
 
 		// Special handling of TIMESTAMP/DATETIME types ...
 		// See: http://propel.phpdb.org/trac/ticket/538
@@ -115,6 +115,18 @@ class MysqlPlatform extends DefaultPlatform
 		}
 		if ($autoIncrement = $col->getAutoIncrementString()) {
 			$ddl []= $autoIncrement;
+		}
+		$colinfo = $col->getVendorInfoForType($this->getDatabaseType());
+		if ($colinfo->hasParameter('Charset')) {
+			$ddl []= 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
+		}
+		if ($colinfo->hasParameter('Collation')) {
+			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
+		} elseif ($colinfo->hasParameter('Collate')) {
+			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
+		}
+		if ($col->getDescription()) {
+			$ddl []= 'COMMENT ' . $this->quote($col->getDescription());
 		}
 
 		return implode(' ', $ddl);

@@ -954,29 +954,13 @@ class Column extends XMLElement
 	}
 
 	/**
-	 * Return a string that will give this column a default value.
+	 * Return a string that will give this column a default value in SQL
+	 * @deprecated use Platform::getColumnDefaultValueDDL() instead
 	 * @return		 string
 	 */
 	public function getDefaultSetting()
 	{
-		$dflt = "";
-		$defaultValue = $this->getDefaultValue();
-		if ($defaultValue !== null) {
-			$dflt .= "DEFAULT ";
-
-			if ($this->getDefaultValue()->isExpression()) {
-				$dflt .= $this->getDefaultValue()->getValue();
-			} else {
-				if ($this->isTextType()) {
-					$dflt .= $this->getPlatform()->quote($defaultValue->getValue());
-				} elseif ($this->getType() == PropelTypes::BOOLEAN) {
-					$dflt .= $this->getPlatform()->getBooleanString($defaultValue->getValue());
-				} else {
-					$dflt .= $defaultValue->getValue();
-				}
-			}
-		}
-		return $dflt;
+		return $this->getPlatform()->getColumnDefaultValueDDL($this);
 	}
 
 	/**
@@ -1062,7 +1046,7 @@ class Column extends XMLElement
 	 */
 	public function getAutoIncrementString()
 	{
-		if ($this->isAutoIncrement()&& IDMethod::NATIVE === $this->getTable()->getIdMethod()) {
+		if ($this->isAutoIncrement() && IDMethod::NATIVE === $this->getTable()->getIdMethod()) {
 			return $this->getPlatform()->getAutoIncrement();
 		} elseif ($this->isAutoIncrement()) {
 			throw new EngineException("You have specified autoIncrement for column '" . $this->name . "' but you have not specified idMethod=\"native\" for table '" . $this->getTable()->getName() . "'.");

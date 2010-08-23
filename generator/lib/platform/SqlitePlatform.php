@@ -41,7 +41,6 @@ class SqlitePlatform extends DefaultPlatform
 	 */
 	public function getAutoIncrement()
 	{
-
 		return "PRIMARY KEY";
 	}
 

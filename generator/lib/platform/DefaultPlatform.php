@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PropelPlatformInterface.php';
+require_once dirname(__FILE__) . '/../model/Column.php';
 require_once dirname(__FILE__) . '/../model/Domain.php';
 require_once dirname(__FILE__) . '/../model/PropelTypes.php';
 
@@ -207,7 +208,7 @@ class DefaultPlatform implements PropelPlatformInterface
 		} else {
 			$ddl []= $sqlType;
 		}
-		if ($default = $col->getDefaultSetting()) {
+		if ($default = $this->getColumnDefaultValueDDL($col)) {
 			$ddl []= $default;
 		}
 		if ($notNull = $this->getNullString($col->isNotNull())) {
@@ -218,6 +219,56 @@ class DefaultPlatform implements PropelPlatformInterface
 		}
 
 		return implode(' ', $ddl);
+	}
+	
+	/**
+	 * Returns the SQL for the default value of a Column object
+	 * @return     string
+	 */
+	public function getColumnDefaultValueDDL(Column $col)
+	{
+		$default = '';
+		$defaultValue = $col->getDefaultValue();
+		if ($defaultValue !== null) {
+			$default .= 'DEFAULT ';
+			if ($defaultValue->isExpression()) {
+				$default .= $defaultValue->getValue();
+			} else {
+				if ($col->isTextType()) {
+					$default .= $this->quote($defaultValue->getValue());
+				} elseif ($col->getType() == PropelTypes::BOOLEAN) {
+					$default .= $this->getBooleanString($defaultValue->getValue());
+				} else {
+					$default .= $defaultValue->getValue();
+				}
+			}
+		}
+		
+		return $default;
+	}
+
+	/**
+	 * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+	 * @example
+	 * <code>
+	 * echo $platform->getColumnListDDL(array('foo', 'bar');
+	 * // '"foo","bar"'
+	 * </code>
+	 * @param      array Column[] or string[]
+	 * @param      string $delim The delimiter to use in separating the column names.
+	 *
+	 * @return     string
+	 */
+	public function getColumnListDDL($columns, $delimiter = ',')
+	{
+		$list = array();
+		foreach ($columns as $column) {
+			if ($col instanceof Column) {
+				$column = $column->getName();
+			}
+			$list[] = $this->quoteIdentifier($column);
+		}
+		return implode($delimiter, $list);
 	}
 
 	/**

@@ -10,6 +10,7 @@
 
 require_once dirname(__FILE__) . '/PlatformTestBase.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
 
 /**
  *
@@ -20,14 +21,53 @@ class MysqlPlatformTest extends PlatformTestBase
 
 	public function testGetColumnDDL()
 	{
-		$c = new Column('foo');
-		$c->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
-		$c->getDomain()->replaceScale(2);
-		$c->getDomain()->replaceSize(3);
-		$c->setNotNull(true);
-		$c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
+		$column->getDomain()->replaceScale(2);
+		$column->getDomain()->replaceSize(3);
+		$column->setNotNull(true);
+		$column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
 		$expected = '`foo` DOUBLE(3,2) DEFAULT 123 NOT NULL';
-		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+	}
+	
+	public function testGetColumnDDLCharsetVendor()
+	{
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
+		$vendor = new VendorInfo('mysql');
+		$vendor->setParameter('Charset', 'greek');
+		$column->addVendorInfo($vendor);
+		$expected = '`foo` TEXT CHARACTER SET \'greek\'';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
 
+	public function testGetColumnDDLCharsetCollation()
+	{
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
+		$vendor = new VendorInfo('mysql');
+		$vendor->setParameter('Collate', 'latin1_german2_ci');
+		$column->addVendorInfo($vendor);
+		$expected = '`foo` TEXT COLLATE \'latin1_german2_ci\'';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
+		$vendor = new VendorInfo('mysql');
+		$vendor->setParameter('Collation', 'latin1_german2_ci');
+		$column->addVendorInfo($vendor);
+		$expected = '`foo` TEXT COLLATE \'latin1_german2_ci\'';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+	}
+
+	public function testGetColumnDDLComment()
+	{
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('INTEGER'));
+		$column->setDescription('This is column Foo');
+		$expected = '`foo` INTEGER COMMENT \'This is column Foo\'';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+	}
+	
 }

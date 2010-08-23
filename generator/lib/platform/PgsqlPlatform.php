@@ -48,7 +48,7 @@ class PgsqlPlatform extends DefaultPlatform
 
 	public function getAutoIncrement()
 	{
-		return "";
+		return '';
 	}
 
 	public function getMaxColumnNameLength()
@@ -83,6 +83,34 @@ class PgsqlPlatform extends DefaultPlatform
 		return true;
 	}
 
+	public function getColumnDDL(Column $col)
+	{
+		$domain = $col->getDomain();
+		
+		$ddl = array($this->quoteIdentifier($col->getName()));
+		$sqlType = $domain->getSqlType();
+		$table = $col->getTable();
+		if ($col->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+			$sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
+		}
+		if ($this->hasSize($sqlType)) {
+			$ddl []= $sqlType . $domain->printSize();
+		} else {
+			$ddl []= $sqlType;
+		}
+		if ($default = $this->getColumnDefaultValueDDL($col)) {
+			$ddl []= $default;
+		}
+		if ($notNull = $this->getNullString($col->isNotNull())) {
+			$ddl []= $notNull;
+		}
+		if ($autoIncrement = $col->getAutoIncrementString()) {
+			$ddl []= $autoIncrement;
+		}
+
+		return implode(' ', $ddl);
+	}
+	
 	public function hasSize($sqlType)
 	{
 		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);

@@ -155,16 +155,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$lines = array();
 
 		foreach ($table->getColumns() as $col) {
-			/* @var $col Column */
-			$colDDL = $platform->getColumnDDL($col);
-			if ($col->isAutoIncrement() && $table->getIdMethodParameters() == null) {
-				if ($col->getType() === PropelTypes::BIGINT) {
-					$colDDL = str_replace($col->getDomain()->getSqlType(), 'bigserial', $colDDL);
-				} else {
-					$colDDL = str_replace($col->getDomain()->getSqlType(), 'serial', $colDDL);
-				}
-			}
-			$lines[] = $colDDL;
+			$lines []= $platform->getColumnDDL($col);
 		}
 
 		if ($table->hasPrimaryKey()) {

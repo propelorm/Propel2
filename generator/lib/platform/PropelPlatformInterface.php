@@ -101,11 +101,31 @@ interface PropelPlatformInterface
 	public function getAutoIncrement();
 
 	/**
-	 * Builds the DDL SQL for a Column object.
+	 * Returns the DDL SQL for a Column object.
 	 * @return     string
 	 */
 	public function getColumnDDL(Column $col);
 
+	/**
+	 * Returns the SQL for the default value of a Column object.
+	 * @return     string
+	 */
+	public function getColumnDefaultValueDDL(Column $col);
+
+	/**
+	 * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+	 * @example
+	 * <code>
+	 * echo $platform->getColumnListDDL(array('foo', 'bar');
+	 * // '"foo","bar"'
+	 * </code>
+	 * @param      array Column[] or string[]
+	 * @param      string $delim The delimiter to use in separating the column names.
+	 *
+	 * @return     string
+	 */
+	public function getColumnListDDL($columns, $delimiter = ',');
+	
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *

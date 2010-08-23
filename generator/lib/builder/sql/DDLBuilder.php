@@ -83,6 +83,7 @@ abstract class DDLBuilder extends DataModelBuilder
 
 	/**
 	 * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+	 * @deprecated use Platform::getColumnList() instead
 	 * @param      array Column[] or string[]
 	 * @param      string $delim The delimiter to use in separating the column names.
 	 * @return     string

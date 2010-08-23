@@ -102,20 +102,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$databaseType = $platform->getDatabaseType();
 
 		foreach ($table->getColumns() as $col) {
-			$entry = $platform->getColumnDDL($col);
-			$colinfo = $col->getVendorInfoForType($databaseType);
-			if ( $colinfo->hasParameter('Charset') ) {
-				$entry .= ' CHARACTER SET '.$platform->quote($colinfo->getParameter('Charset'));
-			}
-			if ( $colinfo->hasParameter('Collation') ) {
-				$entry .= ' COLLATE '.$platform->quote($colinfo->getParameter('Collation'));
-			} elseif ( $colinfo->hasParameter('Collate') ) {
-				$entry .= ' COLLATE '.$platform->quote($colinfo->getParameter('Collate'));
-			}
-			if ($col->getDescription()) {
-				$entry .= " COMMENT ".$platform->quote($col->getDescription());
-			}
-			$lines[] = $entry;
+			$lines []= $platform->getColumnDDL($col);
 		}
 
 		if ($table->hasPrimaryKey()) {
@@ -132,7 +119,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$script .= "
 )";
 
-		$vendorSpecific = $table->getVendorInfoForType($this->getPlatform()->getDatabaseType());
+		$vendorSpecific = $table->getVendorInfoForType($databaseType);
 		if ($vendorSpecific->hasParameter('Type')) {
 			$mysqlTableType = $vendorSpecific->getParameter('Type');
 		} elseif ($vendorSpecific->hasParameter('Engine')) {
