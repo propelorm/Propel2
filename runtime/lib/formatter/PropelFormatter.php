@@ -44,8 +44,7 @@ abstract class PropelFormatter
 	public function init(ModelCriteria $criteria)
 	{
 		$this->dbName = $criteria->getDbName();
-		$this->class = $criteria->getModelName();
-		$this->peer = $criteria->getModelPeerName();
+		$this->setClass($criteria->getModelName());
 		$this->setWith($criteria->getWith());
 		$this->asColumns = $criteria->getAsColumns();
 		$this->hasLimit = $criteria->getLimit() != 0;
@@ -68,6 +67,7 @@ abstract class PropelFormatter
 	public function setClass($class)
 	{
 		$this->class = $class;
+		$this->peer = constant($this->class . '::PEER');
 	}
 	
 	public function getClass()

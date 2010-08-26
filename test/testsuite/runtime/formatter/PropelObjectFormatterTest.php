@@ -39,6 +39,16 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
 		}
 	}
 	
+	public function testFormatValidClass()
+	{
+		$stmt = $this->con->query('SELECT * FROM book');
+		$formatter = new PropelObjectFormatter();
+		$formatter->setClass('Book');
+		$books = $formatter->format($stmt);
+		$this->assertTrue($books instanceof PropelObjectCollection);
+		$this->assertEquals(4, $books->count());
+	}
+	
 	public function testFormatManyResults()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);

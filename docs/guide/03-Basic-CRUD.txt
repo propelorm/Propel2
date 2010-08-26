@@ -177,7 +177,7 @@ $sql = "SELECT * FROM book WHERE id NOT IN "
         ." INNER JOIN author ON (book_review.author_id=author.ID)"
         ." WHERE author.last_name = :name)";
 $stmt = $con->prepare($sql);
-$stmt->execute(array(':name' => 'Tolstoy');
+$stmt->execute(array(':name' => 'Austen'));
 }}}
 
 With only a little bit more work, you can also populate `Book` objects from the resulting statement. Create a new `PropelObjectCollection` for the `Book` model, and call the `format()` method using the statement:
@@ -185,9 +185,9 @@ With only a little bit more work, you can also populate `Book` objects from the 
 {{{
 #!php
 <?php
-$coll = new PropelObjectCollection();
-$coll->setModelName('Book');
-$books = $coll->format($stmt);
+$formatter = new PropelObjectFormatter();
+$formatter->setClass('Book');
+$books = $formatter->format($stmt);
 // $books contains a collection of Book objects
 }}}
 
