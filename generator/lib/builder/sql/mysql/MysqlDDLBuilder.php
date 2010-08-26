@@ -254,18 +254,9 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 				$lines[] = "INDEX $indexName (".$localColumnsHash.")";
 				$this->collectIndexedColumns($indexName, $localColumns, $_indices);
 			}
-			$str = "CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
-		FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).")
-		REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName()) . " (".$this->getColumnList($fk->getForeignColumns()).")";
-			if ($fk->hasOnUpdate()) {
-				$str .= "
-		ON UPDATE ".$fk->getOnUpdate();
-			}
-			if ($fk->hasOnDelete()) {
-				$str .= "
-		ON DELETE ".$fk->getOnDelete();
-			}
-			$lines[] = $str;
+			$lines[] = str_replace("
+	", "
+		", $platform->getForeignKeyDDL($fk));
 		}
 	}
 	

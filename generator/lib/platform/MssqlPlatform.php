@@ -71,6 +71,25 @@ class MssqlPlatform extends DefaultPlatform
 		}
 	}
 
+	public function getForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';
+		$script = sprintf($pattern,
+			$this->quoteIdentifier($fk->getName()),
+			$this->getColumnListDDL($fk->getLocalColumns()),
+			$this->quoteIdentifier($fk->getForeignTableName()),
+			$this->getColumnListDDL($fk->getForeignColumns())
+		);
+		if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) { 
+			$script .= ' ON UPDATE ' . $fk->getOnUpdate();
+		}
+		if ($fk->hasOnDelete() && $fk->getOnDelete() != ForeignKey::SETNULL) {
+			$script .= ' ON DELETE '.  $fk->getOnDelete();
+		}
+		
+		return $script;
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("INT" == $sqlType || "TEXT" == $sqlType);

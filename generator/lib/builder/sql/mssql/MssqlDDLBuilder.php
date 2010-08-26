@@ -121,32 +121,25 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-
-		foreach ($table->getForeignKeys() as $fk) {
-			$script .= "
+		$pattern = "
 BEGIN
-ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
-			if ($fk->hasOnUpdate()) {
-				if ($fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
-					// we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
-				} else {
-					$script .= " ON UPDATE ".$fk->getOnUpdate();
-				}
-
-			}
-			if ($fk->hasOnDelete()) {
-				if ($fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
-					// we have to skip this because it's unsupported.
-					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
-				} else {
-					$script .= " ON DELETE ".$fk->getOnDelete();
-				}
-			}
-			$script .= "
+ALTER TABLE %s ADD %s
 END
 ;
 ";
+		foreach ($table->getForeignKeys() as $fk) {
+			$script .= sprintf($pattern, 
+				$this->quoteIdentifier($table->getName()),
+				$platform->getForeignKeyDDL($fk)
+			);
+			if ($fk->hasOnUpdate() && $fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
+				// we have to skip this because it's unsupported.
+					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
+			}
+			if ($fk->hasOnDelete() && $fk->getOnDelete() == ForeignKey::SETNULL) { // there may be others that also won't work
+				// we have to skip this because it's unsupported.
+				$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
+			}
 		}
 	}
 

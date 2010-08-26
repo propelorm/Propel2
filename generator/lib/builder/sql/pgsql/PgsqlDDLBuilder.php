@@ -255,19 +255,15 @@ CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($this->getSequenceName()))."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-
-		foreach ($table->getForeignKeys() as $fk) {
-			$privscript = "
-ALTER TABLE ".$this->quoteIdentifier($table->getName())." ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())." FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
-			if ($fk->hasOnUpdate()) {
-				$privscript .= " ON UPDATE ".$fk->getOnUpdate();
-			}
-			if ($fk->hasOnDelete()) {
-				$privscript .= " ON DELETE ".$fk->getOnDelete();
-			}
-			$privscript .= ";
+		$pattern = "
+ALTER TABLE %s
+	ADD %s;
 ";
-			self::$queuedConstraints[] = $privscript;
+		foreach ($table->getForeignKeys() as $fk) {
+			self::$queuedConstraints[] = sprintf($pattern, 
+				$this->quoteIdentifier($table->getName()),
+				$platform->getForeignKeyDDL($fk)
+			);
 		}
 	}
 

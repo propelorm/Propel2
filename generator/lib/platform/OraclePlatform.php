@@ -90,6 +90,25 @@ class OraclePlatform extends DefaultPlatform
 			$this->getColumnListDDL($unique->getColumns())
 		);
 	}
+
+	public function getForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "CONSTRAINT %s
+	FOREIGN KEY (%s) REFERENCES %s (%s)";
+		$script = sprintf($pattern,
+			$this->quoteIdentifier($fk->getName()),
+			$this->getColumnListDDL($fk->getLocalColumns()),
+			$this->quoteIdentifier($fk->getForeignTableName()),
+			$this->getColumnListDDL($fk->getForeignColumns())
+		);
+		if ($fk->hasOnDelete()) {
+			$script .= "
+	ON DELETE " . $fk->getOnDelete();
+		}
+		
+		return $script;
+	}
+
 	
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).

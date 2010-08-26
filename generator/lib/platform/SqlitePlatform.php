@@ -49,6 +49,19 @@ class SqlitePlatform extends DefaultPlatform
 		return 1024;
 	}
 
+	public function getForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY (%s) REFERENCES %s (%s)
+"; 
+		return sprintf($pattern, 
+			$this->getColumnListDDL($fk->getLocalColumns()),
+			$fk->getForeignTableName(),
+			$this->getColumnListDDL($fk->getForeignColumns())
+		);
+	}
+
 	public function hasSize($sqlType) {
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
 				|| "BLOB" == $sqlType || "MEDIUMBLOB" == $sqlType

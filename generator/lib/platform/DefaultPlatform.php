@@ -318,6 +318,33 @@ CREATE " . $this->getIndexDDL($index) . ";
 	}
 
 	/**
+	 * Builds the DDL SQL for a ForeignKey object.
+	 * @return     string
+	 */	
+	public function getForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "CONSTRAINT %s
+	FOREIGN KEY (%s)
+	REFERENCES %s (%s)";
+		$script = sprintf($pattern,
+			$this->quoteIdentifier($fk->getName()),
+			$this->getColumnListDDL($fk->getLocalColumns()),
+			$this->quoteIdentifier($fk->getForeignTableName()),
+			$this->getColumnListDDL($fk->getForeignColumns())
+		);
+		if ($fk->hasOnUpdate()) {
+			$script .= "
+	ON UPDATE " . $fk->getOnUpdate();
+		}
+		if ($fk->hasOnDelete()) {
+			$script .= "
+	ON DELETE " . $fk->getOnDelete();
+		}
+		
+		return $script;
+	}
+
+	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
 	 * @param      string $sqlType the SQL type

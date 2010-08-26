@@ -98,4 +98,17 @@ class SqlitePlatformTest extends DefaultPlatformTest
 		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetForeignKeyDDL($fk)
+	{
+		$expected = "
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([bar_id]) REFERENCES bar ([id])
+";
+		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+	}
+
+
 }

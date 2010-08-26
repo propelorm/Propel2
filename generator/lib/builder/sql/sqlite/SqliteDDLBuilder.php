@@ -89,10 +89,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$platform = $this->getPlatform();
 
 		foreach ($table->getForeignKeys() as $fk) {
-			$script .= "
--- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()).") REFERENCES ".$fk->getForeignTableName()." (".$this->getColumnList($fk->getForeignColumns()).")
-";
+			$script .= $platform->getForeignKeyDDL($fk);
 		}
 	}
 

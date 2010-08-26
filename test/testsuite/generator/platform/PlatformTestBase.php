@@ -81,4 +81,24 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function providerForTestGetForeignKeyDDL()
+	{
+		$table1 = new Table('foo');
+		$column1 = new Column('bar_id');
+		$column1->getDomain()->copy(new Domain('FOOTYPE'));
+		$table1->addColumn($column1);
+		$table2 = new Table('bar');
+		$column2 = new Column('id');
+		$column2->getDomain()->copy(new Domain('BARTYPE'));
+		$table2->addColumn($column2);
+		$fk = new ForeignKey('foo_bar_FK');
+		$fk->setForeignTableName('bar');
+		$fk->addReference($column1, $column2);
+		$fk->setOnDelete('CASCADE');
+		$table1->addForeignKey($fk);
+		return array(
+			array($fk)
+		);
+	}
+
 }

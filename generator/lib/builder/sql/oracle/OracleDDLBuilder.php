@@ -137,21 +137,18 @@ CREATE SEQUENCE ".$this->quoteIdentifier($this->getSequenceName())."
 	{
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		foreach ($table->getForeignKeys() as $fk) {
-			$script .= "
-ALTER TABLE ".$this->quoteIdentifier($table->getName())." 
-	ADD CONSTRAINT ".$this->quoteIdentifier($fk->getName())."
-	FOREIGN KEY (".$this->getColumnList($fk->getLocalColumns()) .") REFERENCES ".$this->quoteIdentifier($fk->getForeignTableName())." (".$this->getColumnList($fk->getForeignColumns()).")";
-			if ($fk->hasOnUpdate()) {
-				$this->warn("ON UPDATE not yet implemented for Oracle builder.(ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
-				//$script .= " ON UPDATE ".$fk->getOnUpdate();
-			}
-			if ($fk->hasOnDelete()) {
-				$script .= " 
-	ON DELETE ".$fk->getOnDelete();
-			}
-			$script .= ";
+		$pattern = "
+ALTER TABLE %s 
+	ADD %s;
 ";
+		foreach ($table->getForeignKeys() as $fk) {
+			$script .= sprintf($pattern,
+				$this->quoteIdentifier($table->getName()),
+				$platform->getForeignKeyDDL($fk)
+			);
+			if ($fk->hasOnUpdate()) {
+				$this->warn(sprintf('ON UPDATE not yet implemented for Foreign Keys on Oracle builder (ignoring for %s)', $fk->getName()));
+			}
 		}
 	}
 

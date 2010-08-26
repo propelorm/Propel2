@@ -88,4 +88,17 @@ class PgsqlPlatformTest extends PlatformTestBase
 		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetForeignKeyDDL($fk)
+	{
+		$expected = "CONSTRAINT \"foo_bar_FK\"
+	FOREIGN KEY (\"bar_id\")
+	REFERENCES \"bar\" (\"id\")
+	ON DELETE CASCADE";
+		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+	}
+
+
 }

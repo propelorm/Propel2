@@ -27,8 +27,8 @@ class ForeignKey extends XMLElement
 	protected $phpName;
 	protected $refPhpName;
 	protected $defaultJoin;
-	protected $onUpdate;
-	protected $onDelete;
+	protected $onUpdate = '';
+	protected $onDelete = '';
 	protected $parentTable;
 	protected $localColumns = array();
 	protected $foreignColumns = array();
