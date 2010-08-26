@@ -185,12 +185,11 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		$platform = $this->getPlatform();
 
 		foreach ($table->getUnices() as $unique) {
-			$lines[] = "UNIQUE KEY ".$this->quoteIdentifier($unique->getName())." (".$this->getIndexColumnList($unique).")";
+			$lines[] = $platform->getUniqueDDL($unique);
 		}
 
 		foreach ($table->getIndices() as $index ) {
-			$vendorInfo = $index->getVendorInfoForType($platform->getDatabaseType());
-			$lines[] .= (($vendorInfo && $vendorInfo->getParameter('Index_type') == 'FULLTEXT') ? 'FULLTEXT ' : '') . "KEY " . $this->quoteIdentifier($index->getName()) . "(" . $this->getIndexColumnList($index) . ")";
+			$lines[] = $platform->getIndexDDL($index);
 		}
 
 	}

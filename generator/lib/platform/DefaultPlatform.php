@@ -284,6 +284,40 @@ class DefaultPlatform implements PropelPlatformInterface
 	}
 
 	/**
+	 * Builds the DDL SQL for an Index object.
+	 * @return     string
+	 */
+	public function getIndexDDL(Index $index)
+	{
+		return sprintf('%sINDEX %s ON %s (%s)', 
+			$index->getIsUnique() ? 'UNIQUE ' : '',
+			$this->quoteIdentifier($index->getName()),
+			$this->quoteIdentifier($index->getTable()->getName()),
+			$this->getColumnListDDL($index->getColumns())
+		);
+	}
+	
+	/**
+	 * Builds the DDL SQL for creating an Index.
+	 * @return     string
+	 */
+	public function getCreateIndexDDL(Index $index)
+	{
+		return "
+CREATE " . $this->getIndexDDL($index) . ";
+";
+	}
+
+	/**
+	 * Builds the DDL SQL for a Unique constraint object.
+	 * @return     string
+	 */
+	public function getUniqueDDL(Unique $unique)
+	{
+		return sprintf('UNIQUE (%s)' , $this->getColumnListDDL($unique->getColumns()));
+	}
+
+	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
 	 * @param      string $sqlType the SQL type

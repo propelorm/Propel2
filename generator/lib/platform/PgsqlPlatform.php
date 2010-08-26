@@ -110,6 +110,14 @@ class PgsqlPlatform extends DefaultPlatform
 
 		return implode(' ', $ddl);
 	}
+
+	public function getUniqueDDL(Unique $unique)
+	{
+		return sprintf('CONSTRAINT %s UNIQUE (%s)',
+			$this->quoteIdentifier($unique->getName()),
+			$this->getColumnListDDL($unique->getColumns())
+		);
+	}
 	
 	public function hasSize($sqlType)
 	{

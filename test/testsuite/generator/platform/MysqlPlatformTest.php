@@ -92,4 +92,53 @@ class MysqlPlatformTest extends PlatformTestBase
 		$expected = 'PRIMARY KEY (`bar1`,`bar2`)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testGetIndexDDL($index)
+	{
+		$expected = 'KEY `babar` (`bar1`, `bar2`)';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	public function testGetIndexDDLKeySize()
+	{
+		$table = new Table('foo');
+		$column1 = new Column('bar1');
+		$column1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
+		$column1->setSize(5);
+		$table->addColumn($column1);
+		$index = new Index('bar_index');
+		$index->addColumn($column1);
+		$table->addIndex($index);
+		$expected = 'KEY `bar_index` (`bar1`(5))';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	public function testGetIndexDDLFulltext()
+	{
+		$table = new Table('foo');
+		$column1 = new Column('bar1');
+		$column1->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
+		$table->addColumn($column1);
+		$index = new Index('bar_index');
+		$index->addColumn($column1);
+		$vendor = new VendorInfo('mysql');
+		$vendor->setParameter('Index_type', 'FULLTEXT');
+		$index->addVendorInfo($vendor);
+		$table->addIndex($index);
+		$expected = 'FULLTEXT KEY `bar_index` (`bar1`)';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetUniqueDDL
+	 */
+	public function testGetUniqueDDL($index)
+	{
+		$expected = 'UNIQUE KEY `babar` (`bar1`, `bar2`)';
+		$this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
+	}
+
 }

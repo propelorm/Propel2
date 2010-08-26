@@ -25,7 +25,8 @@ class OraclePlatformTest extends PlatformTestBase
 		$column = new Column('bar');
 		$column->setPrimaryKey(true);
 		$table->addColumn($column);
-		$expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar)';
+		$expected = "CONSTRAINT foo_PK
+	PRIMARY KEY (bar)";
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -35,7 +36,8 @@ class OraclePlatformTest extends PlatformTestBase
 		$column = new Column('bar');
 		$column->setPrimaryKey(true);
 		$table->addColumn($column);
-		$expected = 'CONSTRAINT this_table_has_a_very_long__PK PRIMARY KEY (bar)';
+		$expected = "CONSTRAINT this_table_has_a_very_long__PK
+	PRIMARY KEY (bar)";
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -48,7 +50,27 @@ class OraclePlatformTest extends PlatformTestBase
 		$column2 = new Column('bar2');
 		$column2->setPrimaryKey(true);
 		$table->addColumn($column2);
-		$expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar1,bar2)';
+		$expected = "CONSTRAINT foo_PK
+	PRIMARY KEY (bar1,bar2)";
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testGetIndexDDL($index)
+	{
+		$expected = 'INDEX babar ON foo (bar1,bar2)';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetUniqueDDL
+	 */
+	public function testGetUniqueDDL($index)
+	{
+		$expected = 'CONSTRAINT babar UNIQUE (bar1,bar2)';
+		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
+	}
+
 }

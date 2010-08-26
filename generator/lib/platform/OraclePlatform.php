@@ -74,8 +74,21 @@ class OraclePlatform extends DefaultPlatform
 		// pk constraint name must be 30 chars at most
 		$tableName = substr($tableName, 0, min(27, strlen($tableName)));
 		if ($table->hasPrimaryKey()) {
-			return 'CONSTRAINT ' . $this->quoteIdentifier($tableName . '_PK') . ' PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+			$pattern = "CONSTRAINT %s
+	PRIMARY KEY (%s)";
+			return sprintf($pattern,
+				$this->quoteIdentifier($tableName . '_PK'),
+				$this->getColumnListDDL($table->getPrimaryKey())
+			);
 		}
+	}
+
+	public function getUniqueDDL(Unique $unique)
+	{
+		return sprintf('CONSTRAINT %s UNIQUE (%s)',
+			$this->quoteIdentifier($unique->getName()),
+			$this->getColumnListDDL($unique->getColumns())
+		);
 	}
 	
 	/**

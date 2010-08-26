@@ -70,7 +70,7 @@ class MssqlPlatform extends DefaultPlatform
 			return 'CONSTRAINT ' . $this->quoteIdentifier($table->getName() . '_PK') . ' PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
 		}
 	}
-	
+
 	public function hasSize($sqlType)
 	{
 		return !("INT" == $sqlType || "TEXT" == $sqlType);

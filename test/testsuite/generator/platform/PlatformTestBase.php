@@ -9,6 +9,7 @@
  */
 
 require_once 'PHPUnit/Framework.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
 
 /**
  * 
@@ -40,6 +41,44 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 	protected function getPlatform()
 	{
 		return $this->platform;
+	}
+
+	public function providerForTestGetUniqueDDL()
+	{
+		$table = new Table('foo');
+		$column1 = new Column('bar1');
+		$column1->getDomain()->copy(new Domain('FOOTYPE'));
+		$table->addColumn($column1);
+		$column2 = new Column('bar2');
+		$column2->getDomain()->copy(new Domain('BARTYPE'));
+		$table->addColumn($column2);
+		$index = new Unique('babar');
+		$index->addColumn($column1);
+		$index->addColumn($column2);
+		$table->addUnique($index);
+
+		return array(
+			array($index)
+		);
+	}
+
+	public function providerForTestGetIndexDDL()
+	{
+		$table = new Table('foo');
+		$column1 = new Column('bar1');
+		$column1->getDomain()->copy(new Domain('FOOTYPE'));
+		$table->addColumn($column1);
+		$column2 = new Column('bar2');
+		$column2->getDomain()->copy(new Domain('BARTYPE'));
+		$table->addColumn($column2);
+		$index = new Index('babar');
+		$index->addColumn($column1);
+		$index->addColumn($column2);
+		$table->addIndex($index);
+
+		return array(
+			array($index)
+		);
 	}
 
 }

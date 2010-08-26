@@ -69,4 +69,23 @@ class PgsqlPlatformTest extends PlatformTestBase
 		$expected = 'PRIMARY KEY ("bar1","bar2")';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testGetIndexDDL($index)
+	{
+		$expected = 'INDEX "babar" ON "foo" ("bar1","bar2")';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetUniqueDDL
+	 */
+	public function testGetUniqueDDL($index)
+	{
+		$expected = 'CONSTRAINT "babar" UNIQUE ("bar1","bar2")';
+		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
+	}
+
 }

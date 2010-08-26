@@ -132,6 +132,44 @@ class MysqlPlatform extends DefaultPlatform
 		return implode(' ', $ddl);
 	}
 
+	/**
+	 * Creates a comma-separated list of column names for the index.
+	 * For MySQL unique indexes there is the option of specifying size, so we cannot simply use
+	 * the getColumnsList() method.
+	 * @param      Index $index
+	 * @return     string
+	 */
+	protected function getIndexColumnListDDL(Index $index)
+	{
+		$list = array();
+		foreach ($index->getColumns() as $col) {
+			$list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
+		}
+		return implode(', ', $list);
+	}
+
+	/**
+	 * Builds the DDL SQL for an Index object.
+	 * @return     string
+	 */
+	public function getIndexDDL(Index $index)
+	{
+		$vendorInfo = $index->getVendorInfoForType($this->getDatabaseType());
+		return sprintf('%sKEY %s (%s)', 
+			$vendorInfo && $vendorInfo->getParameter('Index_type') == 'FULLTEXT' ? 'FULLTEXT ' : '',
+			$this->quoteIdentifier($index->getName()),
+			$this->getIndexColumnListDDL($index)
+		);
+	}
+
+	public function getUniqueDDL(Unique $unique)
+	{
+		return sprintf('UNIQUE KEY %s (%s)',
+			$this->quoteIdentifier($unique->getName()),
+			$this->getIndexColumnListDDL($unique)
+		);
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType

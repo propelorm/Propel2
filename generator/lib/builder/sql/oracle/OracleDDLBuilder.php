@@ -81,6 +81,10 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		foreach ($table->getColumns() as $col) {
 			$lines[] = $platform->getColumnDDL($col);
 		}
+		
+		foreach ($table->getUnices() as $unique ) {
+			$lines[] = $platform->getUniqueDDL($unique);
+		}
 
 		$sep = ",
 	";
@@ -121,26 +125,6 @@ ALTER TABLE " . $this->quoteIdentifier($table->getName()) . "
 			$script .= "
 CREATE SEQUENCE ".$this->quoteIdentifier($this->getSequenceName())."
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
-";
-		}
-	}
-
-
-	/**
-	 * Adds CREATE INDEX statements for this table.
-	 * @see        parent::addIndices()
-	 */
-	protected function addIndices(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-		foreach ($table->getIndices() as $index) {
-			$script .= "
-CREATE ";
-			if ($index->getIsUnique()) {
-				$script .= "UNIQUE";
-			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName()) ." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}

@@ -140,10 +140,15 @@ abstract class DDLBuilder extends DataModelBuilder
 	abstract protected function addTable(&$script);
 
 	/**
-	 * Adds index definitions.
+	 * Adds CREATE INDEX statements for this table.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	abstract protected function addIndices(&$script);
+	protected function addIndices(&$script)
+	{
+		foreach ($this->getTable()->getIndices() as $index) {
+			$script .= $this->getPlatform()->getCreateIndexDDL($index);
+		}
+	}
 
 	/**
 	 * Adds foreign key constraint definitions.

@@ -41,4 +41,23 @@ class MssqlPlatformTest extends PlatformTestBase
 		$expected = 'CONSTRAINT [foo_PK] PRIMARY KEY ([bar1],[bar2])';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testGetIndexDDL($index)
+	{
+		$expected = 'INDEX [babar] ON [foo] ([bar1],[bar2])';
+		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetUniqueDDL
+	 */
+	public function testGetUniqueDDL($index)
+	{
+		$expected = 'UNIQUE ([bar1],[bar2])';
+		$this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
+	}
+
 }

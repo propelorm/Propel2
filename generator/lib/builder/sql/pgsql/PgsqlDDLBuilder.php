@@ -163,7 +163,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 		}
 
 		foreach ($table->getUnices() as $unique ) {
-			$lines[] = "CONSTRAINT ".$this->quoteIdentifier($unique->getName())." UNIQUE (".$this->getColumnList($unique->getColumns()).")";
+			$lines[] = $platform->getUniqueDDL($unique);
 		}
 
 		$sep = ",
@@ -243,27 +243,6 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteId
 		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters() != null) {
 			$script .= "
 CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($this->getSequenceName())).";
-";
-		}
-	}
-
-
-	/**
-	 * Adds CREATE INDEX statements for this table.
-	 * @see        parent::addIndices()
-	 */
-	protected function addIndices(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-
-		foreach ($table->getIndices() as $index) {
-			$script .= "
-CREATE ";
-			if ($index->getIsUnique()) {
-				$script .= "UNIQUE";
-			}
-			$script .= "INDEX ".$this->quoteIdentifier($index->getName())." ON ".$this->quoteIdentifier($table->getName())." (".$this->getColumnList($index->getColumns()).");
 ";
 		}
 	}
