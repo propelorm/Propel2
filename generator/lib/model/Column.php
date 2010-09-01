@@ -866,6 +866,10 @@ class Column extends XMLElement
 			$colNode->setAttribute('scale', $domain->getScale());
 		}
 
+		if ($this->description !== null) {
+			$colNode->setAttribute('description', $this->description);
+		}
+
 		if ($this->isPrimaryKey) {
 			$colNode->setAttribute('primaryKey', var_export($this->isPrimaryKey, true));
 		}
