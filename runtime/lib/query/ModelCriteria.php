@@ -1395,7 +1395,7 @@ class ModelCriteria extends Criteria
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_WRITE);
 		}
 
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
