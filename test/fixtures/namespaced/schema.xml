@@ -54,6 +54,7 @@
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="group_leader" required="true" type="VARCHAR" size="100" />
 		<column name="theme" required="false" type="VARCHAR" size="50" />
+		<column name="created_at" required="false" type="TIMESTAMP" />
 	</table>
 
 	<table name="book_x_list" phpName="NamespacedBookListRel" isCrossRef="true">

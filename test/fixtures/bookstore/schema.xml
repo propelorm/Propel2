@@ -143,6 +143,7 @@
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Unique ID for a school reading list." />
 		<column name="group_leader" required="true" type="VARCHAR" size="100" description="The name of the teacher in charge of summer reading." />
 		<column name="theme" required="false" type="VARCHAR" size="50" description="The theme, if applicable, for the reading list." />
+		<column name="created_at" required="false" type="TIMESTAMP" />
 	</table>
 
 	<table name="book_x_list" phpName="BookListRel" isCrossRef="true"
