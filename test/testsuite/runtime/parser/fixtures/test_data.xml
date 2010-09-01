@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL ?>
 <foo>
 <?php for($i=0;$i<2;$i++): ?>
   <bar prop="<?php echo $i ?>"/>
