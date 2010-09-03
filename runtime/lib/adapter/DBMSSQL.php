@@ -164,7 +164,9 @@ class DBMSSQL extends DBAdapter
 				}
 
 				//use the alias if one was present otherwise use the column name
-				$alias = (! stristr($selCol, ' AS ')) ? $this->quoteIdentifier($selColArr[0]) : $this->quoteIdentifier($selColArr[$selColCount]);
+				$alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
+				//don't quote the identifier if it is already quoted
+				if($alias[0] != '[') $alias = $this->quoteIdentifier($alias);
 
 				//save the first non-aggregate column for use in ROW_NUMBER() if required
 				if(! isset($firstColumnOrderStatement)) {
@@ -186,7 +188,9 @@ class DBMSSQL extends DBAdapter
 				}
 
 				//quote the alias
-				$alias = $this->quoteIdentifier($selColArr[$selColCount]);
+				$alias = $selColArr[$selColCount];
+				//don't quote the identifier if it is already quoted
+				if($alias[0] != '[') $alias = $this->quoteIdentifier($alias);
 				$innerSelect .= str_replace($selColArr[$selColCount], $alias, $selCol) . ', ';
 				$outerSelect .= $alias . ', ';
 			}
@@ -204,7 +208,7 @@ class DBMSSQL extends DBAdapter
 		}
 
 		//substring the select strings to get rid of the last comma and add our FROM and SELECT clauses
-		$innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS RowNumber, ' . substr($innerSelect, 0, - 2) . ' FROM';
+		$innerSelect = $selectText . 'ROW_NUMBER() OVER(' . $orderStatement . ') AS [RowNumber], ' . substr($innerSelect, 0, - 2) . ' FROM';
 		//outer select can't use * because of the RowNumber column
 		$outerSelect = 'SELECT ' . substr($outerSelect, 0, - 2) . ' FROM';
 
