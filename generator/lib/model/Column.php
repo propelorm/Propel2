@@ -918,7 +918,7 @@ class Column extends XMLElement
 	 */
 	public function getSize()
 	{
-		return $this->domain->getSize();
+		return $this->domain ? $this->domain->getSize() : false;
 	}
 
 	/**

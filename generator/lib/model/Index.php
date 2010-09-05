@@ -248,6 +248,26 @@ class Index extends XMLElement
 		return $this->getColumns();
 	}
 
+	/**
+	 * Check whether this index has a given column at a given position
+	 *
+	 * @param integer $pos Position in the column list
+	 * @param string  $name Column name
+	 * @param integer $size optional size check
+	 */
+	public function hasColumnAtPosition($pos, $name, $size = null)
+	{
+		if (!isset($this->indexColumns[$pos])) {
+			return false;
+		}
+		if ($this->indexColumns[$pos] != $name) {
+			return false;
+		}
+		if (null !== $size && $this->indexColumnSizes[$name] != $size) {
+			return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Check whether the index has columns.
