@@ -44,6 +44,11 @@ class DefaultPlatform implements PropelPlatformInterface
 	protected $con;
 
 	/**
+	 * @var        boolean whether the identifier quoting is enabled
+	 */
+	protected $isIdentifierQuotingEnabled = true;
+
+	/**
 	 * Default constructor.
 	 * @param      PDO $con Optional database connection to use in this platform.
 	 */
@@ -401,7 +406,17 @@ CREATE " . $this->getIndexDDL($index) . ";
 	 */
 	public function quoteIdentifier($text)
 	{
-		return '"' . $text . '"';
+		return $this->isIdentifierQuotingEnabled ? '"' . $text . '"' : $text;
+	}
+	
+	public function setIdentifierQuoting($enabled = true)
+	{
+		$this->isIdentifierQuotingEnabled = $enabled;
+	}
+
+	public function getIdentifierQuoting()
+	{
+		return $this->isIdentifierQuotingEnabled;
 	}
 
 	/**

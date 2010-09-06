@@ -152,7 +152,12 @@ abstract class DataModelBuilder
 	 */
 	private $pluralizer;
 
-
+	/**
+	 * The platform class
+	 * @var 			PropelPlatformInterface
+	 */
+	protected $platform;
+	
 	/**
 	 * Creates new instance of DataModelBuilder subclass.
 	 * @param      Table $table The Table which we are using to build [OM, DDL, etc.].
@@ -552,13 +557,27 @@ abstract class DataModelBuilder
 
 	/**
 	 * Convenience method to returns the Platform class for this table (database).
-	 * @return     Platform
+	 * @return     PropelPlatformInterface
 	 */
 	public function getPlatform()
 	{
-		if ($this->getTable() && $this->getTable()->getDatabase()) {
-			return $this->getTable()->getDatabase()->getPlatform();
+		if (null === $this->platform) {
+			// try to load the platform from the table
+			if ($this->getTable() && $this->getTable()->getDatabase()) {
+				$this->setPlatform($this->getTable()->getDatabase()->getPlatform());
+			}
 		}
+		return $this->platform;
+	}
+	
+	/**
+	 * Platform setter
+	 * 
+	 * @param PropelPlatformInterface $platform
+	 */
+	public function setPlatform(PropelPlatformInterface $platform)
+	{
+		$this->platform = $platform;
 	}
 
 	/**

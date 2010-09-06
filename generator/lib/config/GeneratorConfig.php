@@ -213,6 +213,11 @@ class GeneratorConfig
 		$classname = $this->getConfiguredDDLBuilderClassName($table->getDatabase()->getName());
 		$builder = new $classname($table);
 		$builder->setGeneratorConfig($this);
+		$platform = $table->getDatabase()->getPlatform();
+		if ($this->getBuildProperty('disableIdentifierQuoting')) {
+			$platform->setIdentifierQuoting(false);
+		}
+		$builder->setPlatform($platform);
 		return $builder;
 	}
 

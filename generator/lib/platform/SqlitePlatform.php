@@ -84,6 +84,6 @@ class SqlitePlatform extends DefaultPlatform
 
 	public function quoteIdentifier($text)
 	{
-		return '[' . $text . ']';
+		return $this->isIdentifierQuotingEnabled ? '[' . $text . ']' : $text;
 	}
 }
