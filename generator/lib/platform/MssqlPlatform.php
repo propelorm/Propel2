@@ -21,7 +21,8 @@ require_once dirname(__FILE__) . '/../model/Domain.php';
  */
 class MssqlPlatform extends DefaultPlatform
 {
-
+	protected static $dropCount = 0;
+	
 	/**
 	 * Initializes db specific domain mapping.
 	 */
@@ -62,6 +63,47 @@ class MssqlPlatform extends DefaultPlatform
 	public function supportsInsertNullPk()
 	{
 		return false;
+	}
+	
+	public function getDropTableDDL(Table $table)
+	{
+		$ret = '';
+		foreach ($table->getForeignKeys() as $fk) {
+			$ret .= "
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='" . $fk->getName() . "')
+	ALTER TABLE " . $this->quoteIdentifier($table->getName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($fk->getName()) . ";
+";
+		}
+
+		self::$dropCount++;
+
+		$ret .= "
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '" . $table->getName() . "')
+BEGIN
+	DECLARE @reftable_" . self::$dropCount . " nvarchar(60), @constraintname_" . self::$dropCount . " nvarchar(60)
+	DECLARE refcursor CURSOR FOR
+	select reftables.name tablename, cons.name constraintname
+		from sysobjects tables,
+			sysobjects reftables,
+			sysobjects cons,
+			sysreferences ref
+		where tables.id = ref.rkeyid
+			and cons.id = ref.constid
+			and reftables.id = ref.fkeyid
+			and tables.name = '" . $table->getName() . "'
+	OPEN refcursor
+	FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+	while @@FETCH_STATUS = 0
+	BEGIN
+		exec ('alter table '+@reftable_" . self::$dropCount . "+' drop constraint '+@constraintname_" . self::$dropCount . ")
+		FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+	END
+	CLOSE refcursor
+	DEALLOCATE refcursor
+	DROP TABLE " . $this->quoteIdentifier($table->getName()) . "
+END
+";
+		return $ret;
 	}
 	
 	public function getPrimaryKeyDDL(Table $table)

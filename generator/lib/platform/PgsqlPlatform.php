@@ -83,6 +83,50 @@ class PgsqlPlatform extends DefaultPlatform
 		return true;
 	}
 
+	/**
+	 * Override to provide sequence names that conform to postgres' standard when
+	 * no id-method-parameter specified.
+	 *
+	 * @param      Table $table
+	 *
+	 * @return     string
+	 */
+	public function getSequenceName(Table $table)
+	{
+		static $longNamesMap = array();
+		$result = null;
+		if ($table->getIdMethod() == IDMethod::NATIVE) {
+			$idMethodParams = $table->getIdMethodParameters();
+			if (empty($idMethodParams)) {
+				$result = null;
+				// We're going to ignore a check for max length (mainly
+				// because I'm not sure how Postgres would handle this w/ SERIAL anyway)
+				foreach ($table->getColumns() as $col) {
+					if ($col->isAutoIncrement()) {
+						$result = $table->getName() . '_' . $col->getName() . '_seq';
+						break; // there's only one auto-increment column allowed
+					}
+				}
+			} else {
+				$result = $idMethodParams[0]->getValue();
+			}
+		}
+		return $result;
+	}
+	
+	public function getDropTableDDL(Table $table)
+	{
+		$ret = "
+DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE;
+";
+		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters()) {
+			$ret .= "
+DROP SEQUENCE " . $this->quoteIdentifier(strtolower($this->getSequenceName($table))) . ";
+";
+		}
+		return $ret;
+	}
+	
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();

@@ -242,7 +242,7 @@ class TableMap
   }
 
   /**
-   * Sets the pk information needed to generate a key
+   * Sets the name of the sequencxe used to generate a key
    *
    * @param      $pkInfo information needed to generate a key
    */
@@ -252,7 +252,7 @@ class TableMap
   }
   
   /**
-   * Get the information used to generate a primary key
+   * Get the name of the sequence used to generate a primary key
    *
    * @return     An Object.
    */

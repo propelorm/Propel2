@@ -200,6 +200,51 @@ class DefaultPlatform implements PropelPlatformInterface
 	}
 
 	/**
+	 * Gets the name to use for creating a sequence for a table.
+	 *
+	 * This will create a new name or use one specified in an id-method-parameter
+	 * tag, if specified.
+	 *
+	 * @param      Table $table
+	 *
+	 * @return     string Sequence name for this table.
+	 */
+	public function getSequenceName(Table $table)
+	{
+		static $longNamesMap = array();
+		$result = null;
+		if ($table->getIdMethod() == IDMethod::NATIVE) {
+			$idMethodParams = $table->getIdMethodParameters();
+			$maxIdentifierLength = $this->getMaxColumnNameLength();
+			if (empty($idMethodParams)) {
+				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
+					if (!isset($longNamesMap[$table->getName()])) {
+						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
+					}
+					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
+				}
+				else {
+					$result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
+				}
+			} else {
+				$result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * Builds the DDL SQL to drop a table
+	 * @return     string
+	 */
+	public function getDropTableDDL(Table $table)
+	{
+		return "
+DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
+";
+	}
+	
+	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
 	 */

@@ -68,6 +68,19 @@ class OraclePlatform extends DefaultPlatform
 		return true;
 	}
 
+	public function getDropTableDDL(Table $table)
+	{
+		$ret = "
+DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS;
+";
+		if ($table->getIdMethod() == IDMethod::NATIVE) {
+			$ret .= "
+DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
+";
+		}
+		return $ret;
+	}
+	
 	public function getPrimaryKeyDDL(Table $table)
 	{
 		$tableName = $table->getName();

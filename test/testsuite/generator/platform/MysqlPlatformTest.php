@@ -18,7 +18,35 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class MysqlPlatformTest extends PlatformTestBase
 {
+	public function testGetSequenceNameDefault()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = 'foo_SEQ';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
 
+	public function testGetSequenceNameCustom()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$idMethodParameter = new IdMethodParameter();
+		$idMethodParameter->setValue('foo_sequence');
+		$table->addIdMethodParameter($idMethodParameter);
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = 'foo_sequence';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+	
+	public function testGetDropTableDDL()
+	{
+		$table = new Table('foo');
+		$expected = "
+DROP TABLE IF EXISTS `foo`;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+	
 	public function testGetColumnDDL()
 	{
 		$column = new Column('foo');

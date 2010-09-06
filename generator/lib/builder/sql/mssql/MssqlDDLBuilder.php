@@ -19,55 +19,6 @@ require_once 'builder/sql/DDLBuilder.php';
 class MssqlDDLBuilder extends DDLBuilder
 {
 
-	private static $dropCount = 0;
-
-	/**
-	 *
-	 * @see        parent::addDropStatement()
-	 */
-	protected function addDropStatements(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-
-		foreach ($table->getForeignKeys() as $fk) {
-			$script .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='".$fk->getName()."')
-	ALTER TABLE ".$this->quoteIdentifier($table->getName())." DROP CONSTRAINT ".$this->quoteIdentifier($fk->getName()).";
-";
-		}
-
-
-		self::$dropCount++;
-
-		$script .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '".$table->getName()."')
-BEGIN
-	 DECLARE @reftable_".self::$dropCount." nvarchar(60), @constraintname_".self::$dropCount." nvarchar(60)
-	 DECLARE refcursor CURSOR FOR
-	 select reftables.name tablename, cons.name constraintname
-	  from sysobjects tables,
-		   sysobjects reftables,
-		   sysobjects cons,
-		   sysreferences ref
-	   where tables.id = ref.rkeyid
-		 and cons.id = ref.constid
-		 and reftables.id = ref.fkeyid
-		 and tables.name = '".$table->getName()."'
-	 OPEN refcursor
-	 FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
-	 while @@FETCH_STATUS = 0
-	 BEGIN
-	   exec ('alter table '+@reftable_".self::$dropCount."+' drop constraint '+@constraintname_".self::$dropCount.")
-	   FETCH NEXT from refcursor into @reftable_".self::$dropCount.", @constraintname_".self::$dropCount."
-	 END
-	 CLOSE refcursor
-	 DEALLOCATE refcursor
-	 DROP TABLE ".$this->quoteIdentifier($table->getName())."
-END
-";
-	}
-
 	/**
 	 * @see        parent::addColumns()
 	 */
@@ -83,7 +34,7 @@ END
 
 ";
 
-		$this->addDropStatements($script);
+		$script .= $platform->getDropTableDDL($table);
 
 		$script .= "
 

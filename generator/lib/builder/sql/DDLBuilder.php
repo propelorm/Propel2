@@ -39,39 +39,6 @@ abstract class DDLBuilder extends DataModelBuilder
 	}
 
 	/**
-	 * Gets the name to use for creating a sequence for the current table.
-	 *
-	 * This will create a new name or use one specified in an id-method-parameter
-	 * tag, if specified.
-	 *
-	 * @return     string Sequence name for this table.
-	 */
-	public function getSequenceName()
-	{
-		$table = $this->getTable();
-		static $longNamesMap = array();
-		$result = null;
-		if ($table->getIdMethod() == IDMethod::NATIVE) {
-			$idMethodParams = $table->getIdMethodParameters();
-			$maxIdentifierLength = $table->getDatabase()->getPlatform()->getMaxColumnNameLength();
-			if (empty($idMethodParams)) {
-				if (strlen($table->getName() . "_SEQ") > $maxIdentifierLength) {
-					if (!isset($longNamesMap[$table->getName()])) {
-						$longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
-					}
-					$result = substr($table->getName(), 0, $maxIdentifierLength - strlen("_SEQ_" . $longNamesMap[$table->getName()])) . "_SEQ_" . $longNamesMap[$table->getName()];
-				}
-				else {
-					$result = substr($table->getName(), 0, $maxIdentifierLength -4) . "_SEQ";
-				}
-			} else {
-				$result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
-			}
-		}
-		return $result;
-	}
-
-	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
 	 * @deprecated since 1.6, use DefaultPlatform::getColumnDDL() instead

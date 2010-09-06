@@ -148,7 +148,6 @@ class ".$this->getClassname()." extends TableMap {
 
 		$table = $this->getTable();
 		$platform = $this->getPlatform();
-		$ddlBuilder = $this->getDDLBuilder();
 
 		$script .= "
 	/**
@@ -180,7 +179,7 @@ class ".$this->getClassname()." extends TableMap {
 		\$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
 		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
 			$script .= "
-		\$this->setPrimaryKeyMethodInfo('".$ddlBuilder->getSequenceName()."');";
+		\$this->setPrimaryKeyMethodInfo('".$platform->getSequenceName($table)."');";
 		}
 		
 		if ($this->getTable()->getChildrenColumn()) {

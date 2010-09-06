@@ -34,24 +34,6 @@ ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
 ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ";
 	}
-	
-	/**
-	 *
-	 * @see        parent::addDropStatement()
-	 */
-	protected function addDropStatements(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-		$script .= "
-DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE CONSTRAINTS;
-";
-		if ($table->getIdMethod() == "native") {
-			$script .= "
-DROP SEQUENCE ".$this->quoteIdentifier($this->getSequenceName()).";
-";
-		}
-	}
 
 	/**
 	 *
@@ -69,7 +51,7 @@ DROP SEQUENCE ".$this->quoteIdentifier($this->getSequenceName()).";
 -----------------------------------------------------------------------
 ";
 
-		$this->addDropStatements($script);
+		$script .= $platform->getDropTableDDL($table);
 
 		$script .= "
 CREATE TABLE ".$this->quoteIdentifier($table->getName())."
@@ -123,7 +105,7 @@ ALTER TABLE " . $this->quoteIdentifier($table->getName()) . "
 		$platform = $this->getPlatform();
 		if ($table->getIdMethod() == "native") {
 			$script .= "
-CREATE SEQUENCE ".$this->quoteIdentifier($this->getSequenceName())."
+CREATE SEQUENCE ".$this->quoteIdentifier($platform->getSequenceName($table))."
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		}

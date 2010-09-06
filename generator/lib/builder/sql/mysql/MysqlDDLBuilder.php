@@ -47,18 +47,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 		return $ddl;
 	}
 
-
-	/**
-	 *
-	 * @see        parent::addDropStatement()
-	 */
-	protected function addDropStatements(&$script)
-	{
-		$script .= "
-DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->getTable()->getName()).";
-";
-	}
-
 	/**
 	 * Builds the SQL for current table and returns it as a string.
 	 *
@@ -89,7 +77,7 @@ DROP TABLE IF EXISTS ".$this->quoteIdentifier($this->getTable()->getName()).";
 #-----------------------------------------------------------------------------
 ";
 
-		$this->addDropStatements($script);
+		$script .= $platform->getDropTableDDL($table);
 
 		$script .= "
 

@@ -103,26 +103,6 @@ class PgsqlDDLBuilder extends DDLBuilder
 
 	/**
 	 *
-	 * @see        parent::addDropStatement()
-	 */
-	protected function addDropStatements(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-
-		$script .= "
-DROP TABLE ".$this->quoteIdentifier($table->getName())." CASCADE;
-";
-
-		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters()) {
-			$script .= "
-DROP SEQUENCE ".$this->quoteIdentifier(strtolower($this->getSequenceName())).";
-";
-		}
-	}
-
-	/**
-	 *
 	 * @see        parent::addColumns()
 	 */
 	protected function addTable(&$script)
@@ -143,7 +123,8 @@ DROP SEQUENCE ".$this->quoteIdentifier(strtolower($this->getSequenceName())).";
 			$script .= "\nSET search_path TO " . $this->quoteIdentifier($schemaName) . ";\n";
 		}
 
-		$this->addDropStatements($script);
+		$script .= $platform->getDropTableDDL($table);
+		
 		$this->addSequences($script);
 
 		$script .= "
@@ -201,37 +182,6 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteId
 	}
 
 	/**
-	 * Override to provide sequence names that conform to postgres' standard when
-	 * no id-method-parameter specified.
-	 *
-	 * @see        DataModelBuilder::getSequenceName()
-	 * @return     string
-	 */
-	public function getSequenceName()
-	{
-		$table = $this->getTable();
-		static $longNamesMap = array();
-		$result = null;
-		if ($table->getIdMethod() == IDMethod::NATIVE) {
-			$idMethodParams = $table->getIdMethodParameters();
-			if (empty($idMethodParams)) {
-				$result = null;
-				// We're going to ignore a check for max length (mainly
-				// because I'm not sure how Postgres would handle this w/ SERIAL anyway)
-				foreach ($table->getColumns() as $col) {
-					if ($col->isAutoIncrement()) {
-						$result = $table->getName() . '_' . $col->getName() . '_seq';
-						break; // there's only one auto-increment column allowed
-					}
-				}
-			} else {
-				$result = $idMethodParams[0]->getValue();
-			}
-		}
-		return $result;
-	}
-
-	/**
 	 * Adds CREATE SEQUENCE statements for this table.
 	 *
 	 */
@@ -242,7 +192,7 @@ COMMENT ON COLUMN ".$this->quoteIdentifier($table->getName()).".".$this->quoteId
 
 		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters() != null) {
 			$script .= "
-CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($this->getSequenceName())).";
+CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($platform->getSequenceName($table))).";
 ";
 		}
 	}

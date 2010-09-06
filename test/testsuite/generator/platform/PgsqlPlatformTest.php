@@ -19,6 +19,57 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class PgsqlPlatformTest extends PlatformTestBase
 {
+	public function testGetSequenceNameDefault()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$col = new Column('bar');
+		$col->getDomain()->copy($this->getPlatform()->getDomainForType('INTEGER'));
+		$col->setAutoIncrement(true);
+		$table->addColumn($col);
+		$expected = 'foo_bar_seq';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+
+	public function testGetSequenceNameCustom()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$idMethodParameter = new IdMethodParameter();
+		$idMethodParameter->setValue('foo_sequence');
+		$table->addIdMethodParameter($idMethodParameter);
+		$table->setIdMethod(IDMethod::NATIVE);
+		$col = new Column('bar');
+		$col->getDomain()->copy($this->getPlatform()->getDomainForType('INTEGER'));
+		$col->setAutoIncrement(true);
+		$table->addColumn($col);
+		$expected = 'foo_sequence';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+	
+	public function testGetDropTableDDL()
+	{
+		$table = new Table('foo');
+		$expected = "
+DROP TABLE \"foo\" CASCADE;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	public function testGetDropTableWithSequenceDDL()
+	{
+		$table = new Table('foo');
+		$idMethodParameter = new IdMethodParameter();
+		$idMethodParameter->setValue('foo_sequence');
+		$table->addIdMethodParameter($idMethodParameter);
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = "
+DROP TABLE \"foo\" CASCADE;
+
+DROP SEQUENCE \"foo_sequence\";
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
 
 	public function testGetColumnDDL()
 	{

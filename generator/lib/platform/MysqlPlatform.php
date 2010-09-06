@@ -57,10 +57,13 @@ class MysqlPlatform extends DefaultPlatform
 		return $usingInnoDB || false;
 	}
 
-	/**
-	 * Builds the DDL SQL for a Column object.
-	 * @return     string
-	 */
+	public function getDropTableDDL(Table $table)
+	{
+		return "
+DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
+";
+	}
+	
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();

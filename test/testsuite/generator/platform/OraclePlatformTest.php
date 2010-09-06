@@ -18,7 +18,50 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class OraclePlatformTest extends PlatformTestBase
 {
+	public function testGetSequenceNameDefault()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = 'foo_SEQ';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
 
+	public function testGetSequenceNameCustom()
+	{
+		$table = new Table('foo');
+		$table->setIdMethod(IDMethod::NATIVE);
+		$idMethodParameter = new IdMethodParameter();
+		$idMethodParameter->setValue('foo_sequence');
+		$table->addIdMethodParameter($idMethodParameter);
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = 'foo_sequence';
+		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+	
+	public function testGetDropTableDDL()
+	{
+		$table = new Table('foo');
+		$expected = "
+DROP TABLE foo CASCADE CONSTRAINTS;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	public function testGetDropTableWithSequenceDDL()
+	{
+		$table = new Table('foo');
+		$idMethodParameter = new IdMethodParameter();
+		$idMethodParameter->setValue('foo_sequence');
+		$table->addIdMethodParameter($idMethodParameter);
+		$table->setIdMethod(IDMethod::NATIVE);
+		$expected = "
+DROP TABLE foo CASCADE CONSTRAINTS;
+
+DROP SEQUENCE foo_sequence;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+	
 	public function testGetPrimaryKeyDDLSimpleKey()
 	{
 		$table = new Table('foo');

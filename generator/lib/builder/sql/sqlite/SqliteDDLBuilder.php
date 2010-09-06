@@ -22,20 +22,6 @@ class SqliteDDLBuilder extends DDLBuilder
 
 	/**
 	 *
-	 * @see        parent::addDropStatement()
-	 */
-	protected function addDropStatements(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-
-		$script .= "
-DROP TABLE ".$this->quoteIdentifier($table->getName()).";
-";
-	}
-
-	/**
-	 *
 	 * @see        parent::addColumns()
 	 */
 	protected function addTable(&$script)
@@ -49,7 +35,7 @@ DROP TABLE ".$this->quoteIdentifier($table->getName()).";
 -----------------------------------------------------------------------------
 ";
 
-		$this->addDropStatements($script);
+		$script .= $platform->getDropTableDDL($table);
 
 		$script .= "
 
