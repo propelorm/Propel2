@@ -73,8 +73,7 @@ class PropelSQLParser
 	 */
 	public static function parseString($input)
 	{
-		$class = __CLASS__;
-		$parser = new $class;
+		$parser = new self();
 		$parser->setSQL($input);
 		$parser->convertLineFeedsToUnixStyle();
 		$parser->stripSQLCommentLines();

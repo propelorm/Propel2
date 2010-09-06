@@ -69,7 +69,7 @@ class ForeignKey extends XMLElement
 	/**
 	 * normalizes the input of onDelete, onUpdate attributes
 	 */
-	private function normalizeFKey($attrib)
+	public function normalizeFKey($attrib)
 	{
 		if ($attrib === null  || strtoupper($attrib) == "NONE") {
 			$attrib = self::NONE;
