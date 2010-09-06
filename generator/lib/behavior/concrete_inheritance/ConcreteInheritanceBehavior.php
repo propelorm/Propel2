@@ -115,7 +115,8 @@ class ConcreteInheritanceBehavior extends Behavior
 	
 	protected function getParentTable()
 	{
-		return $this->getTable()->getDatabase()->getTable($this->getParameter('extends'));
+		$database = $this->getTable()->getDatabase();
+		return $database->getTable($database->getTablePrefix() . $this->getParameter('extends'));
 	}
 	
 	protected function isCopyData()
