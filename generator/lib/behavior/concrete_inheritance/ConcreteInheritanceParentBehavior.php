@@ -44,7 +44,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
 	public function objectMethods($builder)
 	{
 		$this->builder = $builder;
-		$script .= '';
+		$script = '';
 		$this->addHasChildObject($script);
 		$this->addGetChildObject($script);
 		

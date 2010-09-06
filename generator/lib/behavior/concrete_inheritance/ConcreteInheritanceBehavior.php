@@ -163,7 +163,7 @@ class ConcreteInheritanceBehavior extends Behavior
 			return;
 		}
 		$this->builder = $builder;
-		$script .= '';
+		$script = '';
 		$this->addObjectGetParentOrCreate($script);
 		$this->addObjectGetSyncParent($script);
 		
