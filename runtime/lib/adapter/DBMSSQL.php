@@ -230,4 +230,49 @@ class DBMSSQL extends DBAdapter
 	public function getTimestampFormatter() {
 		return "Y-m-d H:i:s.u";
 	}
+
+	/**
+	 * @see        parent::cleanupSQL()
+	 */
+	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
+	{
+		$i = 1;
+		$qualCols = array();
+		foreach ($params as $param) {
+			$tableName = $param['table'];
+			$columnName = $param['column'];
+			$value = $param['value'];
+			if (null !== $tableName) {
+				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
+				/* MSSQL pdo_dblib and pdo_mssql blob values must be converted to hex and then the hex added
+				 * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
+				 * an error with the insert or update.
+				 */
+				if (is_resource($value) && $cMap->isLob()) {
+					// we always need to make sure that the stream is rewound, otherwise nothing will
+					// get written to database.
+					rewind($value);
+					$binaryString  = stream_get_contents($value);
+					$arrData  = unpack("H*hex", $binaryString);
+					$hexString = '0x'.$arrData['hex'];
+					$sql = str_replace(":p$i", $hexString, $sql);
+
+				} else {
+					$paramCols[] = $param;
+				}
+			}
+			$i++;
+		}
+
+		//if we made changes re-number the params
+		if($params != $paramCols)
+		{
+			$params = $paramCols;
+			preg_match_all('/:p\d/', $sql, $matches);
+			foreach($matches[0] as $key => $match)
+			{
+				$sql = str_replace($match, ':p'.($key+1), $sql);
+			}
+		}
+	}
 }

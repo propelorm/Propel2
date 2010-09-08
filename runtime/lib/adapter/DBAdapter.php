@@ -282,6 +282,18 @@ abstract class DBAdapter
 	}
 
 	/**
+	 * Allows manipulation of the query string before PDOStatement is instantiated.
+	 *
+	 * @param      string $sql The sql statement
+	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
+	 * @param      Criteria $values
+	 * @param      DatabaseMap $dbMap
+	 */
+	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
+	{
+	}
+
+	/**
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
