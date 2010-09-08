@@ -122,14 +122,38 @@ DROP TABLE IF EXISTS `foo`;
 	}
 
 	/**
+	 * @dataProvider providerForTestGetIndicesDDL
+	 */
+	public function testAddIndicesDDL($table)
+	{
+		$expected = "
+CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
+
+CREATE INDEX `foo_index` ON `foo` (`bar1`);
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
 	public function testAddIndexDDL($index)
 	{
 		$expected = "
-CREATE KEY `babar` (`bar1`, `bar2`);
+CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testDropIndexDDL($index)
+	{
+		$expected = "
+ALTER TABLE `foo` DROP INDEX `babar`;
+";
+		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
 	
 	/**
@@ -137,7 +161,7 @@ CREATE KEY `babar` (`bar1`, `bar2`);
 	 */
 	public function testGetIndexDDL($index)
 	{
-		$expected = 'KEY `babar` (`bar1`, `bar2`)';
+		$expected = 'INDEX `babar` (`bar1`, `bar2`)';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 
@@ -151,7 +175,7 @@ CREATE KEY `babar` (`bar1`, `bar2`);
 		$index = new Index('bar_index');
 		$index->addColumn($column1);
 		$table->addIndex($index);
-		$expected = 'KEY `bar_index` (`bar1`(5))';
+		$expected = 'INDEX `bar_index` (`bar1`(5))';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 
@@ -167,7 +191,7 @@ CREATE KEY `babar` (`bar1`, `bar2`);
 		$vendor->setParameter('Index_type', 'FULLTEXT');
 		$index->addVendorInfo($vendor);
 		$table->addIndex($index);
-		$expected = 'FULLTEXT KEY `bar_index` (`bar1`)';
+		$expected = 'FULLTEXT INDEX `bar_index` (`bar1`)';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 
@@ -176,7 +200,7 @@ CREATE KEY `babar` (`bar1`, `bar2`);
 	 */
 	public function testGetUniqueDDL($index)
 	{
-		$expected = 'UNIQUE KEY `babar` (`bar1`, `bar2`)';
+		$expected = 'UNIQUE INDEX `babar` (`bar1`, `bar2`)';
 		$this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
 	}
 

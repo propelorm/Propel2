@@ -99,6 +99,19 @@ DROP SEQUENCE foo_sequence;
 	}
 
 	/**
+	 * @dataProvider providerForTestGetIndicesDDL
+	 */
+	public function testAddIndicesDDL($table)
+	{
+		$expected = "
+CREATE INDEX babar ON foo (bar1,bar2);
+
+CREATE INDEX foo_index ON foo (bar1);
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
 	public function testAddIndexDDL($index)
@@ -108,13 +121,24 @@ CREATE INDEX babar ON foo (bar1,bar2);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
+	public function testDropIndexDDL($index)
+	{
+		$expected = "
+DROP INDEX babar;
+";
+		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
+	}
 	
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
 	public function testGetIndexDDL($index)
 	{
-		$expected = 'INDEX babar ON foo (bar1,bar2)';
+		$expected = 'INDEX babar (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 

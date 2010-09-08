@@ -61,7 +61,29 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 			array($index)
 		);
 	}
-	
+
+	public function providerForTestGetIndicesDDL()
+	{
+		$table = new Table('foo');
+		$column1 = new Column('bar1');
+		$column1->getDomain()->copy(new Domain('FOOTYPE'));
+		$table->addColumn($column1);
+		$column2 = new Column('bar2');
+		$column2->getDomain()->copy(new Domain('BARTYPE'));
+		$table->addColumn($column2);
+		$index1 = new Index('babar');
+		$index1->addColumn($column1);
+		$index1->addColumn($column2);
+		$table->addIndex($index1);
+		$index2 = new Index('foo_index');
+		$index2->addColumn($column1);
+		$table->addIndex($index2);
+		
+		return array(
+			array($table)
+		);
+	}
+		
 	public function providerForTestGetIndexDDL()
 	{
 		$table = new Table('foo');

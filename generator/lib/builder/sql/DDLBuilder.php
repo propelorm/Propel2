@@ -112,9 +112,7 @@ abstract class DDLBuilder extends DataModelBuilder
 	 */
 	protected function addIndices(&$script)
 	{
-		foreach ($this->getTable()->getIndices() as $index) {
-			$script .= $this->getPlatform()->getAddIndexDDL($index);
-		}
+	  $script .= $this->getPlatform()->getAddIndicesDDL($this->getTable());
 	}
 
 	/**

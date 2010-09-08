@@ -332,6 +332,21 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 			return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
 		}
 	}
+
+	/**
+	 * Builds the DDL SQL to add the indices of a table.
+	 *
+	 * @param      Table $table
+	 * @return     string
+	 */
+	public function getAddIndicesDDL(Table $table)
+	{
+		$ret = '';
+		foreach ($table->getIndices() as $fk) {
+			$ret .= $this->getAddIndexDDL($fk);
+		}
+		return $ret;
+	}
 	
 	/**
 	 * Builds the DDL SQL to add an Index.
@@ -341,11 +356,33 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 	 */
 	public function getAddIndexDDL(Index $index)
 	{
-		return "
-CREATE " . $this->getIndexDDL($index) . ";
+		$pattern = "
+CREATE %sINDEX %s ON %s (%s);
 ";
+		return sprintf($pattern, 
+			$index->getIsUnique() ? 'UNIQUE ' : '',
+			$this->quoteIdentifier($index->getName()),
+			$this->quoteIdentifier($index->getTable()->getName()),
+			$this->getColumnListDDL($index->getColumns())
+		);
 	}
 
+	/**
+	 * Builds the DDL SQL to drop an Index.
+	 *
+	 * @param      Index $index
+	 * @return     string
+	 */
+	public function getDropIndexDDL(Index $index)
+	{
+		$pattern = "
+DROP INDEX %s;
+";
+		return sprintf($pattern, 
+			$this->quoteIdentifier($index->getName())
+		);
+	}
+	
 	/**
 	 * Builds the DDL SQL for an Index object.
 	 *
@@ -354,10 +391,9 @@ CREATE " . $this->getIndexDDL($index) . ";
 	 */
 	public function getIndexDDL(Index $index)
 	{
-		return sprintf('%sINDEX %s ON %s (%s)', 
+		return sprintf('%sINDEX %s (%s)', 
 			$index->getIsUnique() ? 'UNIQUE ' : '',
 			$this->quoteIdentifier($index->getName()),
-			$this->quoteIdentifier($index->getTable()->getName()),
 			$this->getColumnListDDL($index->getColumns())
 		);
 	}
@@ -374,7 +410,7 @@ CREATE " . $this->getIndexDDL($index) . ";
 	}
 
 	/**
-	 * Builds the DDL SQL to add the foreign of a table.
+	 * Builds the DDL SQL to add the foreign keys of a table.
 	 *
 	 * @param      Table $table
 	 * @return     string

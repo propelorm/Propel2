@@ -152,22 +152,69 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 	}
 
 	/**
+	 * Builds the DDL SQL to add an Index.
+	 *
+	 * @param      Index $index
+	 * @return     string
+	 */
+	public function getAddIndexDDL(Index $index)
+	{
+		$pattern = "
+CREATE %sINDEX %s ON %s (%s);
+";
+		return sprintf($pattern, 
+			$this->getIndexType($index),
+			$this->quoteIdentifier($index->getName()),
+			$this->quoteIdentifier($index->getTable()->getName()),
+			$this->getColumnListDDL($index->getColumns())
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to drop an Index.
+	 *
+	 * @param      Index $index
+	 * @return     string
+	 */
+	public function getDropIndexDDL(Index $index)
+	{
+		$pattern = "
+ALTER TABLE %s DROP INDEX %s;
+";
+		return sprintf($pattern, 
+			$this->quoteIdentifier($index->getTable()->getName()),
+			$this->quoteIdentifier($index->getName())
+		);
+	}
+		
+	/**
 	 * Builds the DDL SQL for an Index object.
 	 * @return     string
 	 */
 	public function getIndexDDL(Index $index)
 	{
-		$vendorInfo = $index->getVendorInfoForType($this->getDatabaseType());
-		return sprintf('%sKEY %s (%s)', 
-			$vendorInfo && $vendorInfo->getParameter('Index_type') == 'FULLTEXT' ? 'FULLTEXT ' : '',
+		return sprintf('%sINDEX %s (%s)',
+			$this->getIndexType($index),
 			$this->quoteIdentifier($index->getName()),
 			$this->getIndexColumnListDDL($index)
 		);
 	}
+	
+	protected function getIndexType(Index $index)
+	{
+		$type = '';
+		$vendorInfo = $index->getVendorInfoForType($this->getDatabaseType());
+		if ($vendorInfo && $vendorInfo->getParameter('Index_type')) {
+			$type = $vendorInfo->getParameter('Index_type') . ' ';
+		} elseif ($index->getIsUnique()) {
+			$type = 'UNIQUE ';
+		}
+		return $type;
+	}
 
 	public function getUniqueDDL(Unique $unique)
 	{
-		return sprintf('UNIQUE KEY %s (%s)',
+		return sprintf('UNIQUE INDEX %s (%s)',
 			$this->quoteIdentifier($unique->getName()),
 			$this->getIndexColumnListDDL($unique)
 		);
