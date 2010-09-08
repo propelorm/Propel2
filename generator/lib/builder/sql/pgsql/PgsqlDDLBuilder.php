@@ -203,18 +203,7 @@ CREATE SEQUENCE ".$this->quoteIdentifier(strtolower($platform->getSequenceName($
 	 */
 	protected function addForeignKeys(&$script)
 	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-		$pattern = "
-ALTER TABLE %s
-	ADD %s;
-";
-		foreach ($table->getForeignKeys() as $fk) {
-			self::$queuedConstraints[] = sprintf($pattern, 
-				$this->quoteIdentifier($table->getName()),
-				$platform->getForeignKeyDDL($fk)
-			);
-		}
+		self::$queuedConstraints[] = $this->getPlatform()->getAddForeignKeysDDL($this->getTable());
 	}
 
 }

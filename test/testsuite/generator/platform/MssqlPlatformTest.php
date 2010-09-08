@@ -96,6 +96,17 @@ END
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
+	public function testAddIndexDDL($index)
+	{
+		$expected = "
+CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
 	public function testGetIndexDDL($index)
 	{
 		$expected = 'INDEX [babar] ON [foo] ([bar1],[bar2])';
@@ -111,6 +122,50 @@ END
 		$this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetForeignKeysDDL
+	 */
+	public function testGetAddForeignKeysDDL($table)
+	{
+		$expected = "
+BEGIN
+ALTER TABLE [foo] ADD CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE
+END
+;
+
+BEGIN
+ALTER TABLE [foo] ADD CONSTRAINT [foo_baz_FK] FOREIGN KEY ([baz_id]) REFERENCES [baz] ([id])
+END
+;
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetAddForeignKeyDDL($fk)
+	{
+		$expected = "
+BEGIN
+ALTER TABLE [foo] ADD CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE
+END
+;
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetDropForeignKeyDDL($fk)
+	{
+		$expected = "
+ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
+";
+		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+	}
+	
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */

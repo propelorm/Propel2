@@ -118,20 +118,12 @@ CREATE SEQUENCE ".$this->quoteIdentifier($platform->getSequenceName($table))."
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
-		$platform = $this->getPlatform();
-		$pattern = "
-ALTER TABLE %s 
-	ADD %s;
-";
 		foreach ($table->getForeignKeys() as $fk) {
-			$script .= sprintf($pattern,
-				$this->quoteIdentifier($table->getName()),
-				$platform->getForeignKeyDDL($fk)
-			);
 			if ($fk->hasOnUpdate()) {
 				$this->warn(sprintf('ON UPDATE not yet implemented for Foreign Keys on Oracle builder (ignoring for %s)', $fk->getName()));
 			}
 		}
+		$script .= $this->getPlatform()->getAddForeignKeysDDL($table);
 	}
 
 

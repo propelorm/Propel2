@@ -61,7 +61,7 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 			array($index)
 		);
 	}
-
+	
 	public function providerForTestGetIndexDDL()
 	{
 		$table = new Table('foo');
@@ -101,4 +101,41 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function providerForTestGetForeignKeysDDL()
+	{
+		$table1 = new Table('foo');
+		
+		$column1 = new Column('bar_id');
+		$column1->getDomain()->copy(new Domain('FOOTYPE'));
+		$table1->addColumn($column1);
+		$table2 = new Table('bar');
+		$column2 = new Column('id');
+		$column2->getDomain()->copy(new Domain('BARTYPE'));
+		$table2->addColumn($column2);
+		
+		$fk = new ForeignKey('foo_bar_FK');
+		$fk->setForeignTableName('bar');
+		$fk->addReference($column1, $column2);
+		$fk->setOnDelete('CASCADE');
+		$table1->addForeignKey($fk);
+		
+		$column3 = new Column('baz_id');
+		$column3->getDomain()->copy(new Domain('BAZTYPE'));
+		$table1->addColumn($column3);
+		$table3 = new Table('baz');
+		$column4 = new Column('id');
+		$column4->getDomain()->copy(new Domain('BAZTYPE'));
+		$table3->addColumn($column4);
+
+		$fk = new ForeignKey('foo_baz_FK');
+		$fk->setForeignTableName('baz');
+		$fk->addReference($column3, $column4);
+		$fk->setOnDelete('SETNULL');
+		$table1->addForeignKey($fk);
+		
+		return array(
+			array($table1)
+		);
+	}
+	
 }

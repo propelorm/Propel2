@@ -112,6 +112,17 @@ DROP TABLE [foo];
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
+	public function testAddIndexDDL($index)
+	{
+		$expected = "
+CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetIndexDDL
+	 */
 	public function testGetIndexDDL($index)
 	{
 		$expected = 'INDEX [babar] ON [foo] ([bar1],[bar2])';
@@ -127,6 +138,42 @@ DROP TABLE [foo];
 		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetForeignKeysDDL
+	 */
+	public function testGetAddForeignKeysDDL($table)
+	{
+		$expected = "
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([bar_id]) REFERENCES bar ([id])
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([baz_id]) REFERENCES baz ([id])
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetAddForeignKeyDDL($fk)
+	{
+		$expected = "
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([bar_id]) REFERENCES bar ([id])
+";
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetDropForeignKeyDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+	}
+	
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */

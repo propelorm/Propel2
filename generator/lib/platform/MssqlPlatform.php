@@ -113,6 +113,20 @@ END
 		}
 	}
 
+	public function getAddForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "
+BEGIN
+ALTER TABLE %s ADD %s
+END
+;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fk->getTable()->getName()),
+			$this->getForeignKeyDDL($fk)
+		);
+	}
+	
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
 		$pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';

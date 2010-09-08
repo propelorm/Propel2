@@ -71,18 +71,7 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 	protected function addForeignKeys(&$script)
 	{
 		$table = $this->getTable();
-		$platform = $this->getPlatform();
-		$pattern = "
-BEGIN
-ALTER TABLE %s ADD %s
-END
-;
-";
 		foreach ($table->getForeignKeys() as $fk) {
-			$script .= sprintf($pattern, 
-				$this->quoteIdentifier($table->getName()),
-				$platform->getForeignKeyDDL($fk)
-			);
 			if ($fk->hasOnUpdate() && $fk->getOnUpdate() == ForeignKey::SETNULL) { // there may be others that also won't work
 				// we have to skip this because it's unsupported.
 					$this->warn("MSSQL doesn't support the 'SET NULL' option for ON UPDATE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
@@ -92,6 +81,7 @@ END
 				$this->warn("MSSQL doesn't support the 'SET NULL' option for ON DELETE (ignoring for ".$this->getColumnList($fk->getLocalColumns())." fk).");
 			}
 		}
+		$script .= $this->getPlatform()->getAddForeignKeysDDL($table);
 	}
 
 }

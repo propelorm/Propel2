@@ -113,7 +113,7 @@ abstract class DDLBuilder extends DataModelBuilder
 	protected function addIndices(&$script)
 	{
 		foreach ($this->getTable()->getIndices() as $index) {
-			$script .= $this->getPlatform()->getCreateIndexDDL($index);
+			$script .= $this->getPlatform()->getAddIndexDDL($index);
 		}
 	}
 
@@ -121,6 +121,9 @@ abstract class DDLBuilder extends DataModelBuilder
 	 * Adds foreign key constraint definitions.
 	 * @param      string &$script The script will be modified in this method.
 	 */
-	abstract protected function addForeignKeys(&$script);
+	protected function addForeignKeys(&$script)
+	{
+		$script .= $this->getPlatform()->getAddForeignKeysDDL($this->getTable());
+	}
 
 }

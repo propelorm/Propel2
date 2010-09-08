@@ -332,9 +332,24 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 			return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
 		}
 	}
+	
+	/**
+	 * Builds the DDL SQL to add an Index.
+	 *
+	 * @param      Index $index
+	 * @return     string
+	 */
+	public function getAddIndexDDL(Index $index)
+	{
+		return "
+CREATE " . $this->getIndexDDL($index) . ";
+";
+	}
 
 	/**
 	 * Builds the DDL SQL for an Index object.
+	 *
+	 * @param      Index $index
 	 * @return     string
 	 */
 	public function getIndexDDL(Index $index)
@@ -348,18 +363,9 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 	}
 	
 	/**
-	 * Builds the DDL SQL for creating an Index.
-	 * @return     string
-	 */
-	public function getCreateIndexDDL(Index $index)
-	{
-		return "
-CREATE " . $this->getIndexDDL($index) . ";
-";
-	}
-
-	/**
 	 * Builds the DDL SQL for a Unique constraint object.
+	 *
+	 * @param      Unique $unique
 	 * @return     string
 	 */
 	public function getUniqueDDL(Unique $unique)
@@ -367,6 +373,55 @@ CREATE " . $this->getIndexDDL($index) . ";
 		return sprintf('UNIQUE (%s)' , $this->getColumnListDDL($unique->getColumns()));
 	}
 
+	/**
+	 * Builds the DDL SQL to add the foreign of a table.
+	 *
+	 * @param      Table $table
+	 * @return     string
+	 */
+	public function getAddForeignKeysDDL(Table $table)
+	{
+		$ret = '';
+		foreach ($table->getForeignKeys() as $fk) {
+			$ret .= $this->getAddForeignKeyDDL($fk);
+		}
+		return $ret;
+	}
+
+	/**
+	 * Builds the DDL SQL to add a foreign key.
+	 *
+	 * @param      ForeignKey $fk
+	 * @return     string
+	 */
+	public function getAddForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "
+ALTER TABLE %s ADD %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fk->getTable()->getName()),
+			$this->getForeignKeyDDL($fk)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to drop a foreign key.
+	 *
+	 * @param      ForeignKey $fk
+	 * @return     string
+	 */
+	public function getDropForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "
+ALTER TABLE %s DROP CONSTRAINT %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fk->getTable()->getName()),
+			$this->quoteIdentifier($fk->getName())
+		);
+	}
+	
 	/**
 	 * Builds the DDL SQL for a ForeignKey object.
 	 * @return     string

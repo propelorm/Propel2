@@ -173,6 +173,17 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 		);
 	}
 
+	public function getDropForeignKeyDDL(ForeignKey $fk)
+	{
+		$pattern = "
+ALTER TABLE %s DROP FOREIGN KEY %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fk->getTable()->getName()),
+			$this->quoteIdentifier($fk->getName())
+		);
+	}
+	
 	public function hasSize($sqlType)
 	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType

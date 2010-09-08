@@ -65,18 +65,4 @@ CREATE TABLE ".$this->quoteIdentifier($table->getName())."
 ";
 	}
 
-	/**
-	 *
-	 * @see        parent::addForeignKeys()
-	 */
-	protected function addForeignKeys(&$script)
-	{
-		$table = $this->getTable();
-		$platform = $this->getPlatform();
-
-		foreach ($table->getForeignKeys() as $fk) {
-			$script .= $platform->getForeignKeyDDL($fk);
-		}
-	}
-
 }
