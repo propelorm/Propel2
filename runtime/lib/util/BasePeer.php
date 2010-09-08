@@ -606,7 +606,17 @@ class BasePeer
 					rewind($value);
 				}
 
-				$stmt->bindValue(':p'.$i++, $value, $pdoType);
+				// pdo_sqlsrv must have bind binaries using bindParam so that the PDO::SQLSRV_ENCODING_BINARY
+				// driver option can be utilized.  This requires a unique blob parameter because the bindParam
+				// value is passed by reference and if we didn't do this then the referenced parameter value
+				// would change on the next loop
+				if($db instanceof DBSQLSRV && is_resource($value) && $cMap->isLob()) {
+					$blob = "blob".$i;
+					$$blob = $value;
+					$stmt->bindParam(':p'.$i++,  ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+				} else {
+					$stmt->bindValue(':p'.$i++, $value, $pdoType);
+				}
 			} else {
 				$stmt->bindValue(':p'.$i++, $value);
 			}
