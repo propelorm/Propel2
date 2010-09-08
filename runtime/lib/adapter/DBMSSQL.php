@@ -17,6 +17,13 @@
  */
 class DBMSSQL extends DBAdapter
 {
+	/**
+	 * MS SQL Server does not support SET NAMES
+	 * @see        DBAdapter::setCharset()
+	 */
+	public function setCharset(PDO $con, $charset)
+	{
+	}
 
 	/**
 	 * This method is used to ignore case.

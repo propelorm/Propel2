@@ -45,9 +45,7 @@ abstract class DBAdapter
 		'mysql'  => 'DBMySQL',
 		'mysqli' => 'DBMySQLi',
 		'mssql'  => 'DBMSSQL',
-		'dblib'  => 'DBMSSQL',
 		'sqlsrv' => 'DBSQLSRV',
-		'sybase' => 'DBSybase',
 		'oracle' => 'DBOracle',
 		'oci'    => 'DBOracle',
 		'pgsql'  => 'DBPostgres',
@@ -294,7 +292,7 @@ abstract class DBAdapter
 	 * @param      mixed $seed (optional) seed value for databases that support this
 	 */
 	public abstract function random($seed = null);
-	
+
 	/**
 	 * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
 	 * @return     string
