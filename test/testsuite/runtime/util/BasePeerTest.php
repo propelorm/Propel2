@@ -253,7 +253,7 @@ class BasePeerTest extends BookstoreTestBase
 
 		$params = array();
 
-		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY book.ID) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY book.ID) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
 		$sql = BasePeer::createSelectSql($c, $params);
 		$this->assertEquals($expectedSql, $sql);
 	}
@@ -278,7 +278,7 @@ class BasePeerTest extends BookstoreTestBase
 
 		$params = array();
 
-		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
 		$sql = BasePeer::createSelectSql($c, $params);
 		$this->assertEquals($expectedSql, $sql);
 	}
@@ -304,7 +304,7 @@ class BasePeerTest extends BookstoreTestBase
 
 		$params = array();
 
-		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC, book.TITLE ASC) AS RowNumber, book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
+		$expectedSql = "SELECT [book.ID], [book.TITLE], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) DESC, book.TITLE ASC) AS [RowNumber], book.ID AS [book.ID], book.TITLE AS [book.TITLE], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.ID = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
 		$sql = BasePeer::createSelectSql($c, $params);
 		$this->assertEquals($expectedSql, $sql);
 	}
