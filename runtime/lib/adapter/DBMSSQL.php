@@ -225,13 +225,6 @@ class DBMSSQL extends DBAdapter
 	}
 
 	/**
-	 * @see        parent::getTimestampFormatter()
-	 */
-	public function getTimestampFormatter() {
-		return "Y-m-d H:i:s.u";
-	}
-
-	/**
 	 * @see        parent::cleanupSQL()
 	 */
 	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
