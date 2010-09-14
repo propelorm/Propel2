@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/../model/Domain.php';
 class MssqlPlatform extends DefaultPlatform
 {
 	protected static $dropCount = 0;
-	
+
 	/**
 	 * Initializes db specific domain mapping.
 	 */
@@ -32,17 +32,17 @@ class MssqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "INT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "INT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "VARCHAR(MAX)"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "VARCHAR(MAX)"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BINARY(7132)"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "IMAGE"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "IMAGE"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "IMAGE"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "VARBINARY(MAX)"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "VARBINARY(MAX)"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "VARBINARY(MAX)"));
 	}
 
 	public function getMaxColumnNameLength()
@@ -64,7 +64,7 @@ class MssqlPlatform extends DefaultPlatform
 	{
 		return false;
 	}
-	
+
 	public function getDropTableDDL(Table $table)
 	{
 		$ret = '';
@@ -105,7 +105,7 @@ END
 ";
 		return $ret;
 	}
-	
+
 	public function getPrimaryKeyDDL(Table $table)
 	{
 		if ($table->hasPrimaryKey()) {
@@ -126,7 +126,7 @@ END
 			$this->getForeignKeyDDL($fk)
 		);
 	}
-	
+
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
 		$pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';
@@ -136,13 +136,13 @@ END
 			$this->quoteIdentifier($fk->getForeignTableName()),
 			$this->getColumnListDDL($fk->getForeignColumns())
 		);
-		if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) { 
+		if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) {
 			$script .= ' ON UPDATE ' . $fk->getOnUpdate();
 		}
 		if ($fk->hasOnDelete() && $fk->getOnDelete() != ForeignKey::SETNULL) {
 			$script .= ' ON DELETE '.  $fk->getOnDelete();
 		}
-		
+
 		return $script;
 	}
 
