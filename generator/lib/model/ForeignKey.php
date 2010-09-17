@@ -306,6 +306,20 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
+	 * Return an array of local column objects.
+	 * @return     array Column[]
+	 */
+	public function getLocalColumnObjects()
+	{
+		$columns = array();
+		$localTable = $this->getTable();
+		foreach ($this->localColumns as $columnName) {
+			$columns []= $localTable->getColumn($columnName);
+		}
+		return $columns;
+	}
+
+	/**
 	 * Return a local column name.
 	 * @return     string
 	 */
@@ -394,12 +408,26 @@ class ForeignKey extends XMLElement
 	}
 
 	/**
-	 * Return an array of foreign column objects.
-	 * @return     array Column[]
+	 * Return an array of foreign column names.
+	 * @return     array string[]
 	 */
 	public function getForeignColumns()
 	{
 		return $this->foreignColumns;
+	}
+
+	/**
+	 * Return an array of foreign column objects.
+	 * @return     array Column[]
+	 */
+	public function getForeignColumnObjects()
+	{
+		$columns = array();
+		$foreignTable = $this->getForeignTable();
+		foreach ($this->foreignColumns as $columnName) {
+			$columns []= $foreignTable->getColumn($columnName);
+		}
+		return $columns;
 	}
 
 	/**
