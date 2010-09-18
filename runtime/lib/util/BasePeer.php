@@ -807,57 +807,15 @@ class BasePeer
 		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
 		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
 		foreach ($criteria->getJoins() as $join) {
-			// The join might have been established using an alias name
-			$leftTable = $join->getLeftTableName();
-			if ($realTable = $criteria->getTableForAlias($leftTable)) {
-				$leftTableForFrom = $realTable . ' ' . $leftTable;
-				$leftTable = $realTable;
-			} else {
-				$leftTableForFrom = $leftTable;
-			}
-
-			$rightTable = $join->getRightTableName();
-			if ($realTable = $criteria->getTableForAlias($rightTable)) {
-				$rightTableForFrom =  $realTable . ' ' . $rightTable;
-				$rightTable = $realTable;
-			} else {
-				$rightTableForFrom = $rightTable;
-			}
-
-			// determine if casing is relevant.
-			if ($ignoreCase = $criteria->isIgnoreCase()) {
-				$leftColType = $dbMap->getTable($leftTable)->getColumn($join->getLeftColumnName())->getType();
-				$rightColType = $dbMap->getTable($rightTable)->getColumn($join->getRightColumnName())->getType();
-				$ignoreCase = ($leftColType == 'string' || $rightColType == 'string');
-			}
-
-			// build the condition
-			$condition = '';
-			foreach ($join->getConditions() as $index => $conditionDesc) {
-				if ($ignoreCase) {
-					$condition .= $db->ignoreCase($conditionDesc['left']) . $conditionDesc['operator'] . $db->ignoreCase($conditionDesc['right']);
-				} else {
-					$condition .= implode($conditionDesc);
-				}
-				if ($index + 1 < $join->countConditions()) {
-					$condition .= ' AND ';
-				}
-			}
+			
+			$join->setDB($db);
 
 			// add 'em to the queues..
-			if ($joinType = $join->getJoinType()) {
-				// real join
-				if (!$fromClause) {
-					$fromClause[] = $leftTableForFrom;
-				}
-				$joinTables[] = $rightTableForFrom;
-				$joinClause[] = $join->getJoinType() . ' ' . $rightTableForFrom . " ON ($condition)";
-			} else {
-				// implicit join, translates to a where
-				$fromClause[] = $leftTableForFrom;
-				$fromClause[] = $rightTableForFrom;
-				$whereClause[] = $condition;
+			if (!$fromClause) {
+				$fromClause[] = $join->getLeftTableWithAlias();
 			}
+			$joinTables[] = $join->getRightTableWithAlias();
+			$joinClause[] = $join->getClause();
 		}
 
 		// Unique from clause elements

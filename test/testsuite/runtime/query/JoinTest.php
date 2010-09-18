@@ -87,11 +87,47 @@ class JoinTest extends BaseTestCase
     $this->assertEquals(array('bar', 'bal'), $j->getRightColumns());
     $this->assertEquals($expect, $j->getConditions());
   }
+
+  public function testAddExplicitConditionWithoutAlias()
+  {
+    $j = new Join();
+    $j->addExplicitCondition('a', 'foo', null, 'b', 'bar', null);
+    $this->assertEquals('=', $j->getOperator());
+    $this->assertEquals('a.foo', $j->getLeftColumn());
+    $this->assertEquals('b.bar', $j->getRightColumn());
+    $this->assertEquals('a', $j->getLeftTableName());
+    $this->assertEquals('b', $j->getRightTableName());
+    $this->assertNull($j->getLeftTableAlias());
+    $this->assertNull($j->getRightTableAlias());
+    $this->assertEquals(1, $j->countConditions());
+  }
+
+  public function testAddExplicitConditionWithAlias()
+  {
+    $j = new Join();
+    $j->addExplicitCondition('a', 'foo', 'Alias', 'b', 'bar', 'Blias');
+    $this->assertEquals('=', $j->getOperator());
+    $this->assertEquals('Alias.foo', $j->getLeftColumn());
+    $this->assertEquals('Blias.bar', $j->getRightColumn());
+    $this->assertEquals('a', $j->getLeftTableName());
+    $this->assertEquals('b', $j->getRightTableName());
+    $this->assertEquals('Alias', $j->getLeftTableAlias());
+    $this->assertEquals('Blias', $j->getRightTableAlias());
+  }
+
+  public function testAddExplicitConditionWithOperator()
+  {
+    $j = new Join();
+    $j->addExplicitCondition('a', 'foo', null, 'b', 'bar', null, '>=');
+    $this->assertEquals('>=', $j->getOperator());
+    $this->assertEquals('a.foo', $j->getLeftColumn());
+    $this->assertEquals('b.bar', $j->getRightColumn());
+  }
   
   public function testEmptyJoinType()
   {
     $j = new Join();
-    $this->assertNull($j->getJoinType());
+    $this->assertEquals(Join::INNER_JOIN, $j->getJoinType());
   }
   
   public function testSetJoinType()
@@ -128,7 +164,6 @@ class JoinTest extends BaseTestCase
     $this->assertEquals(1, $j->countConditions());
     $j->addCondition('foo1', 'bar1');
     $this->assertEquals(2, $j->countConditions());
-
   }
 
 }

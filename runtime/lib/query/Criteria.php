@@ -375,6 +375,23 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
+	 * Returns the table name and alias based on a table alias or name.
+	 * Use this method to get the details of a table name that comes in a clause,
+	 * which can be either a table name or an alias name.
+	 *
+	 * @param      string $tableAliasOrName
+	 * @return     array($tableName, $tableAlias) 
+	 */
+	public function getTableNameAndAlias($tableAliasOrName)
+	{
+		if (isset($this->aliases[$tableAliasOrName])) {
+			return array($this->aliases[$alias], $tableAliasOrName);
+		} else {
+			return array($tableAliasOrName, null);
+		}
+	}
+	
+	/**
 	 * Get the keys of the criteria map, i.e. the list of columns bearing a condition
 	 * <code>
 	 * print_r($c->keys());
@@ -779,31 +796,44 @@ class Criteria implements IteratorAggregate
 	 * Example usage:
 	 * <code>
 	 * $c->addJoin(ProjectPeer::ID, FooPeer::PROJECT_ID, Criteria::LEFT_JOIN);
-	 * // LEFT JOIN FOO ON PROJECT.ID = FOO.PROJECT_ID
+	 * // LEFT JOIN FOO ON (PROJECT.ID = FOO.PROJECT_ID)
 	 * </code>
 	 *
-	 * @param      mixed $left A String with the left side of the join.
+	 * @param      mixed $left  A String with the left side of the join.
 	 * @param      mixed $right A String with the right side of the join.
-	 * @param      mixed $operator A String with the join operator
+	 * @param      mixed $joinType A String with the join operator
 	 *                             among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
 	 *                             and Criteria::RIGHT_JOIN
    *
 	 * @return     Criteria A modified Criteria object.
 	 */
-	public function addJoin($left, $right, $operator = null)
+	public function addJoin($left, $right, $joinType = null)
 	{
-		$join = new Join();
-		if (!is_array($left)) {
-			// simple join
-			$join->addCondition($left, $right);
-		} else {
-			// join with multiple conditions
-			// deprecated: use addMultipleJoin() instead
+		if (is_array($left)) {
+			$conditions = array();
 			foreach ($left as $key => $value) {
-				$join->addCondition($value, $right[$key]);
+				$condition = array($value, $right[$key]);
+				$conditions []= $condition;
 			}
+			return $this->addMultipleJoin($conditions, $joinType);
 		}
-		$join->setJoinType($operator);
+		
+		$join = new Join();
+		
+		// is the left table an alias ?
+		list($leftTableAlias, $leftColumnName) = explode('.', $left);
+		list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
+
+		// is the right table an alias ?
+		list($rightTableAlias, $rightColumnName) = explode('.', $right);
+		list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
+		
+		$join->addExplicitCondition(
+			$leftTableName, $leftColumnName, $leftTableAlias,
+			$rightTableName, $rightColumnName, $rightTableAlias,
+			Join::EQUAL);
+		
+		$join->setJoinType($joinType);
 		
 		return $this->addJoinObject($join);
 	}
@@ -829,8 +859,30 @@ class Criteria implements IteratorAggregate
 	public function addMultipleJoin($conditions, $joinType = null) 
 	{
 		$join = new Join();
+		
 		foreach ($conditions as $condition) {
-			$join->addCondition($condition[0], $condition[1], isset($condition[2]) ? $condition[2] : Criteria::EQUAL);
+			$left = $condition[0];
+			$right = $condition[1];
+			
+			if ($pos = strrpos($left, '.')) {
+				list($leftTableAlias, $leftColumnName) = explode('.', $left);
+				list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
+			} else {
+				list($leftTableName, $leftTableAlias) = array(null, null);
+				$leftColumnName = $left;
+			}
+			if ($pos = strrpos($right, '.')) {
+				list($rightTableAlias, $rightColumnName) = explode('.', $right);
+				list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
+			} else {
+				list($rightTableName, $rightTableAlias) = array(null, null);
+				$rightColumnName = $right;
+			}
+			
+			$join->addExplicitCondition(
+				$leftTableName, $leftColumnName, $leftTableAlias,
+				$rightTableName, $rightColumnName, $rightTableAlias,
+				isset($condition[2]) ? $condition[2] : JOIN::EQUAL);
 		}
 		$join->setJoinType($joinType);
 		
