@@ -232,7 +232,7 @@ class AppData
 	}
 
 	/**
-	 * Creats a string representation of this AppData.
+	 * Creates a string representation of this AppData.
 	 * The representation is given in xml format.
 	 *
 	 * @return     string Representation in xml format
@@ -240,10 +240,23 @@ class AppData
 	public function toString()
 	{
 		$result = "<app-data>\n";
-		for ($i=0,$size=count($this->dbList); $i < $size; $i++) {
-			$result .= $this->dbList[$i]->toString();
+		foreach ($this->dbList as $dbList) {
+			$result .= $dbList->toString();
+		}
+		if ($this->dbList) {
+			$result .= "\n";
 		}
 		$result .= "</app-data>";
+		
 		return $result;
+	}
+
+	/**
+	 * Magic string method
+	 * @see toString()
+	 */
+	public function __toString()
+	{
+	  return $this->toString();
 	}
 }

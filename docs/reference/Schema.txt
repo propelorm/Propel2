@@ -30,6 +30,8 @@ The hierarchical tree relationship for the elements is:
 </database>
 }}}
 
+You can find example schemas in the [source:branches/1.6/test/fixtures/ test fixtures] that the Propel development team uses for unit testing. For instance, the [source:branches/1.6/test/fixtures/bookstore/schema.xml bookstore schema] describes the model of a Bookstore application.
+
 **Tip**: If you use an IDE supporting autocompletion in XML documents, you can take advantage of the XSD describing the `schema.xml` syntax to suggest elements and attributes as you type. To enable it, add a `xmlns:xsi` and a `xsi:noNamespaceSchemaLocation` attribute to the leading `<database>` tag:
 	
 {{{
@@ -89,16 +91,21 @@ A Database element may include an `<external-schema>` element, or multiple `<tab
 
 === <external-schema> element ===
 
-The `<external-schema>` element is pretty simple. It just includes a schema file from somewhere on the file systems.  The format is:
+The `<external-schema>` element includes another schema file from the filesystem into the current schema. The format is:
 
 {{{
 #!xml
-  <external-schema filename="/a path to a file/" />
+  <external-schema
+    filename="/a path to a file/"
+    referenceOnly="{true]|false"
+  />
 }}}
+
+The `filename` can be relative or absolute. Beware that the external schema must contain a `<database>` with the same name as the current element. By default, tables from external schemas are ignored by the `sql` task - that means that Propel won't try to ''insert'' the external tables. If you want Propel to take the tables from an external schema into account in SQL, set the `referenceOnly` attribute to `false`.
 
 === <table> element ===
 
-The `<table>` element is the most complicated of the usable elements.  Its definition looks like this:
+The `<table>` element is the most complicated of the usable elements. Its definition looks like this:
 
 {{{
 #!xml
