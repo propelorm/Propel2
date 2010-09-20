@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="columnTest" defaultIdMethod="native">
-
-	<table name="columnTestTable">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
-		<column name="title" type="VARCHAR" required="true" description="Book Title" />
-		<column name="title" type="VARCHAR" required="true" description="Book Title" />
-	</table>
-</database>

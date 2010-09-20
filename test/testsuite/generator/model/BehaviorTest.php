@@ -9,10 +9,11 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Behavior.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/behavior/TimestampableBehavior.php';
 
 /**
  * Tests for Behavior class
@@ -65,49 +66,90 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $b->setParameters(array('foo3' => 'bar3', 'foo4' => 'bar4'));
     $this->assertEquals($b->getParameters(), array('foo3' => 'bar3', 'foo4' => 'bar4'), 'setParameters() changes the whole parameter array');
   }
-  
-  /**
-   * test if the tables get the package name from the properties file
-   *
-   */
-  public function testXmlToAppData()
-  {
-  	include_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
-    $this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
-    $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
-    $behaviors = $table->getBehaviors();
-    $this->assertEquals(count($behaviors), 1, 'XmlToAppData ads as many behaviors as there are behaviors tags');
-    $behavior = $table->getBehavior('timestampable');
-    $this->assertEquals($behavior->getTable()->getName(), 'table1', 'XmlToAppData sets the behavior table correctly');
-    $this->assertEquals($behavior->getParameters(), array('create_column' => 'created_on', 'update_column' => 'updated_on'), 'XmlToAppData sets the behavior parameters correctly');
-  }
-  
-  public function testMofifyTable()
-  {
-  	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));		
-		Propel::init(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php'));	
-    $tmap = Propel::getDatabaseMap(Table2Peer::DATABASE_NAME)->getTable(Table2Peer::TABLE_NAME);
-    $this->assertEquals(count($tmap->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
-  }
-  
+
+	/**
+	 * test if the tables get the package name from the properties file
+	 *
+	 */
+	public function testXmlToAppData()
+	{
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table1">
+    <column name="id" type="INTEGER" primaryKey="true" />
+    <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <column name="created_on" type="TIMESTAMP" />
+    <column name="updated_on" type="TIMESTAMP" />
+    <behavior name="timestampable">
+      <parameter name="create_column" value="created_on" />
+      <parameter name="update_column" value="updated_on" />
+    </behavior>
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table = $appData->getDatabase('test1')->getTable('table1');
+		$behaviors = $table->getBehaviors();
+		$this->assertEquals(1, count($behaviors), 'XmlToAppData ads as many behaviors as there are behaviors tags');
+		$behavior = $table->getBehavior('timestampable');
+		$this->assertEquals('table1', $behavior->getTable()->getName(), 'XmlToAppData sets the behavior table correctly');
+		$this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on'), $behavior->getParameters(), 'XmlToAppData sets the behavior parameters correctly');
+	}
+
+	public function testModifyTable()
+	{
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table2">
+    <column name="id" type="INTEGER" primaryKey="true" />
+    <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <behavior name="timestampable" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table = $appData->getDatabase('test1')->getTable('table2');
+		$this->assertEquals(count($table->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
+	}
+
   public function testModifyDatabase()
   {
-  	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/classes'));		
-		require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
-		Propel::init(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php'));	
-    $tmap = Propel::getDatabaseMap(Table3Peer::DATABASE_NAME)->getTable(Table3Peer::TABLE_NAME);
-    $this->assertTrue(array_key_exists('do_nothing', $tmap->getBehaviors()), 'A database behavior is automatically copied to all its table');
-  }
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test1">
+  <behavior name="foo" />
+  <table name="table1">
+    <column name="id" type="INTEGER" primaryKey="true" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table = $appData->getDatabase('test1')->getTable('table1');
+		$this->assertTrue(array_key_exists('foo', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
+	}
   
   public function testGetColumnForParameter()
   {
-  	$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-    $this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
-    
-    $table = $this->appData->getDatabase("bookstore-behavior")->getTable('table1');
-    $behavior = $table->getBehavior('timestampable');
-    $this->assertEquals($table->getColumn('created_on'), $behavior->getColumnForParameter('create_column'), 'getColumnForParameter() returns the configured column for behavior based on a parameter name');
-
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table1">
+    <column name="id" type="INTEGER" primaryKey="true" />
+    <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <column name="created_on" type="TIMESTAMP" />
+    <column name="updated_on" type="TIMESTAMP" />
+    <behavior name="timestampable">
+      <parameter name="create_column" value="created_on" />
+      <parameter name="update_column" value="updated_on" />
+    </behavior>
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table = $appData->getDatabase('test1')->getTable('table1');
+		$behavior = $table->getBehavior('timestampable');
+		$this->assertEquals($table->getColumn('created_on'), $behavior->getColumnForParameter('create_column'), 'getColumnForParameter() returns the configured column for behavior based on a parameter name');
   }
 }

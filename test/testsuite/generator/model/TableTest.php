@@ -11,7 +11,7 @@
 
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorConfig.php';
 
 /**
@@ -23,40 +23,50 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorCon
  */
 class TableTest extends PHPUnit_Framework_TestCase
 {
-	private $xmlToAppData;
-	private $appData;
 
 	/**
 	 * test if the tables get the package name from the properties file
 	 *
 	 */
-	public function testIdMethodHandling() {
-		$this->xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
+	public function testIdMethodHandling()
+	{
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="iddb" defaultIdMethod="native">
+  <table name="table_native">
+    <column name="table_a_id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
+    <column name="col_a" type="CHAR" size="5" />
+  </table>
+  <table name="table_none" idMethod="none">
+    <column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
+    <column name="col_a" type="CHAR" size="5" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
 
-		//$this->appData = $this->xmlToAppData->parseFile(dirname(__FILE__) . "/tabletest-schema.xml");
-		$this->appData = $this->xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../etc/schema/tabletest-schema.xml'));
+		$db = $appData->getDatabase("iddb");
+		$this->assertEquals(IDMethod::NATIVE, $db->getDefaultIdMethod());
 
-		$db = $this->appData->getDatabase("iddb");
-		$expected = IDMethod::NATIVE;
-		$result = $db->getDefaultIdMethod();
-		$this->assertEquals($expected, $result);
+		$table1 = $db->getTable("table_native");
+		$this->assertEquals(IDMethod::NATIVE, $table1->getIdMethod());
 
-		$table2 = $db->getTable("table_native");
-		$expected = IDMethod::NATIVE;
-		$result = $table2->getIdMethod();
-		$this->assertEquals($expected, $result);
-
-		$table = $db->getTable("table_none");
-		$expected = IDMethod::NO_ID_METHOD;
-		$result = $table->getIdMethod();
-		$this->assertEquals($expected, $result);
+		$table2 = $db->getTable("table_none");
+		$this->assertEquals(IDMethod::NO_ID_METHOD, $table2->getIdMethod());
 	}
 	
 	public function testGeneratorConfig()
 	{
-		$xmlToAppData = new XmlToAppData(new MysqlPlatform(), "defaultpackage", null);
-		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
-		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table1">
+    <column name="id" type="INTEGER" primaryKey="true" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table = $appData->getDatabase('test1')->getTable('table1');
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array('propel.foo.bar.class' => 'bazz'));
 		$table->getDatabase()->getAppData()->setGeneratorConfig($config);
@@ -66,46 +76,67 @@ class TableTest extends PHPUnit_Framework_TestCase
 	
 	public function testAddBehavior()
 	{
-		set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../../generator/lib/'));
-		$platform = new MysqlPlatform();
+		$include_path = get_include_path();
+		set_include_path($include_path . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../../generator/lib'));
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
 		$config = new GeneratorConfig();
 		$config->setBuildProperties(array(
-			'propel.platform.class' => 'propel.engine.platform.MysqlPlatform',
+			'propel.platform.class' => 'propel.engine.platform.DefaultPlatform',
 			'propel.behavior.timestampable.class' => 'behavior.TimestampableBehavior'
 		));
-		$xmlToAppData = new XmlToAppData($platform, "defaultpackage", null);
 		$xmlToAppData->setGeneratorConfig($config);
-		$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/bookstore/behavior-timestampable-schema.xml'));
-		$table = $appData->getDatabase("bookstore-behavior")->getTable('table1');
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table1">
+    <behavior name="timestampable" />
+    <column name="id" type="INTEGER" primaryKey="true" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		set_include_path($include_path);
+		$table = $appData->getDatabase('test1')->getTable('table1');
 		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
 	}
 	
+	/**
+	 * @expectedException EngineException
+	 */
 	public function testUniqueColumnName()
 	{
-		$platform = new MysqlPlatform();
-		$config = new GeneratorConfig();
-		$platform->setGeneratorConfig($config);
-		$xmlToAppData = new XmlToAppData($platform, 'defaultpackage', null);
-		try
-		{
-			$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/unique-column/column-schema.xml'));
-			$this->fail('Parsing file with duplicate column names in one table throws exception');
-		} catch (EngineException $e) {
-			$this->assertTrue(true, 'Parsing file with duplicate column names in one table throws exception');
-		}
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="columnTest" defaultIdMethod="native">
+	<table name="columnTestTable">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+		<column name="title" type="VARCHAR" required="true" description="Book Title" />
+		<column name="title" type="VARCHAR" required="true" description="Book Title" />
+	</table>
+</database>
+EOF;
+		// Parsing file with duplicate column names in one table throws exception
+		$appData = $xmlToAppData->parseString($schema);
 	}
 	
+	/**
+	 * @expectedException EngineException
+	 */
 	public function testUniqueTableName()
 	{
-		$platform = new MysqlPlatform();
-		$config = new GeneratorConfig();
-		$platform->setGeneratorConfig($config);
-		$xmlToAppData = new XmlToAppData($platform, 'defaultpackage', null);
-		try {
-			$appData = $xmlToAppData->parseFile(realpath(dirname(__FILE__) . '/../../../fixtures/unique-column/table-schema.xml'));
-			$this->fail('Parsing file with duplicate table name throws exception');
-		} catch (EngineException $e) {
-			$this->assertTrue(true, 'Parsing file with duplicate table name throws exception');
-		}
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="columnTest" defaultIdMethod="native">
+	<table name="columnTestTable">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+		<column name="title" type="VARCHAR" required="true" description="Book Title" />
+	</table>
+	<table name="columnTestTable">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
+		<column name="title" type="VARCHAR" required="true" description="Book Title" />
+	</table>
+</database>
+EOF;
+		// Parsing file with duplicate table name throws exception
+		$appData = $xmlToAppData->parseString($schema);
 	}
 }
