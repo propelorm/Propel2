@@ -11,7 +11,6 @@ The hierarchical tree relationship for the elements is:
 {{{
 #!xml
 <database>
-   <external-schema />
    <table>
      <column>
        <inheritance />
@@ -27,6 +26,7 @@ The hierarchical tree relationship for the elements is:
      </unique>
      <id-method-parameter/>
    </table>
+   <external-schema />
 </database>
 }}}
 
@@ -71,8 +71,8 @@ Starting with the {{{<database>}}} element. The ''attributes'' and ''elements'' 
     [heavyIndexing="true|false"]
     [tablePrefix="/tablePrefix/"]
   >
-    <external-schema>
     <table>
+    <external-schema>
     ...
   </database>
 }}}
@@ -88,20 +88,6 @@ A Database element may include an `<external-schema>` element, or multiple `<tab
  * `defaultPhpNamingMethod` the default naming method to use for tables of this database. Defaults to `underscore`, which transforms table names into CamelCase phpNames.
  * `heavyIndexing` adds indexes for each component of the primary key (when using composite primary keys).
  * `tablePrefix` adds a prefix to all the SQL table names.
-
-=== <external-schema> element ===
-
-The `<external-schema>` element includes another schema file from the filesystem into the current schema. The format is:
-
-{{{
-#!xml
-  <external-schema
-    filename="/a path to a file/"
-    referenceOnly="{true]|false"
-  />
-}}}
-
-The `filename` can be relative or absolute. Beware that the external schema must contain a `<database>` with the same name as the current element. By default, tables from external schemas are ignored by the `sql` task - that means that Propel won't try to ''insert'' the external tables. If you want Propel to take the tables from an external schema into account in SQL, set the `referenceOnly` attribute to `false`.
 
 === <table> element ===
 
@@ -256,6 +242,20 @@ If you are using a database that uses sequences for auto-increment columns (e.g.
 #!xml
   <id-method-parameter value="my_custom_sequence_name"/>
 }}}
+
+=== <external-schema> element ===
+
+The `<external-schema>` element includes another schema file from the filesystem into the current schema. The format is:
+
+{{{
+#!xml
+  <external-schema
+    filename="/a path to a file/"
+    referenceOnly="{true}|false"
+  />
+}}}
+
+The `filename` can be relative or absolute. Beware that the external schema must contain a `<database>` with the same name as the current element. By default, tables from external schemas are ignored by the `sql` task - that means that Propel won't try to ''insert'' the external tables. If you want Propel to take the tables from an external schema into account in SQL, set the `referenceOnly` attribute to `false`.
 
 == Column Types ==
 
