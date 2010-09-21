@@ -611,6 +611,9 @@ class Database extends XMLElement
 					}
 				} // foreach foreignColumnNames
 				
+				if ($this->platform instanceof MysqlPLatform) {
+					$table->addExtraIndices();
+				}
 			} // foreach foreign keys
 		} // foreach tables
 		

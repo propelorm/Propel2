@@ -404,9 +404,9 @@ class Table extends XMLElement implements IDMethod
 	}
 
 	/**
-	 * <p>Adds extra indices for multi-part primary key columns.</p>
+	 * Adds extra indices for multi-part primary key columns.
 	 *
-	 * <p>For databases like MySQL, values in a where clause much
+	 * For databases like MySQL, values in a where clause much
 	 * match key part order from the left to right.	 So, in the key
 	 * definition <code>PRIMARY KEY (FOO_ID, BAR_ID)</code>,
 	 * <code>FOO_ID</code> <i>must</i> be the first element used in
@@ -414,11 +414,11 @@ class Table extends XMLElement implements IDMethod
 	 * this table for the primary key index to be used.	 This feature
 	 * could cause problems under MySQL with heavily indexed tables,
 	 * as MySQL currently only supports 16 indices per table (i.e. it
-	 * might cause too many indices to be created).</p>
+	 * might cause too many indices to be created).
 	 *
-	 * <p>See <a href="http://www.mysql.com/doc/E/X/EXPLAIN.html">the
-	 * manual</a> for a better description of why heavy indexing is
-	 * useful for quickly searchable database tables.</p>
+	 * See the mysqm manual http://www.mysql.com/doc/E/X/EXPLAIN.html
+	 * for a better description of why heavy indexing is useful for 
+	 * quickly searchable database tables.
 	 */
 	private function doHeavyIndexing()
 	{
@@ -437,6 +437,111 @@ class Table extends XMLElement implements IDMethod
 			$idx->setColumns(array_slice($pk, $i, $size));
 			$this->addIndex($idx);
 		}
+	}
+
+	/**
+	 * Adds extra indices for reverse foreign keys
+	 * This is required for MySQL databases, 
+	 * and is called from Database::doFinalInitialization()
+	 */
+	public function addExtraIndices()
+	{
+		/**
+		 * A collection of indexed columns. The keys is the column name
+		 * (concatenated with a comma in the case of multi-col index), the value is
+		 * an array with the names of the indexes that index these columns. We use
+		 * it to determine which additional indexes must be created for foreign
+		 * keys. It could also be used to detect duplicate indexes, but this is not
+		 * implemented yet.
+		 * @var array
+		 */
+		$_indices = array();
+		
+		$this->collectIndexedColumns('PRIMARY', $this->getPrimaryKey(), $_indices);
+		
+		$_tableIndices = array_merge($this->getIndices(), $this->getUnices());
+		foreach ($_tableIndices as $_index) {
+		  $this->collectIndexedColumns($_index->getName(), $_index->getColumns(), $_indices);
+		}
+
+		// we're determining which tables have foreign keys that point to this table, 
+		// since MySQL needs an index on any column that is referenced by another table
+		// (yep, MySQL _is_ a PITA)
+		$counter = 0;
+		foreach ($this->getReferrers() as $foreignKey) {
+			$referencedColumns = $foreignKey->getForeignColumnObjects();
+			$referencedColumnsHash = $this->getColumnList($referencedColumns);
+		  if (!array_key_exists($referencedColumnsHash, $_indices)) {
+				// no matching index defined in the schema, so we have to create one
+				$index = new Index();
+				$index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
+				$index->setColumns($referencedColumns);
+				$this->addIndex($index);
+				// Add this new index to our collection, otherwise we might add it again (bug #725)
+				$this->collectIndexedColumns($indexName, $referencedColumns, $_indices);
+			}
+		}
+		
+		// we're adding indices for this table foreign keys
+		foreach ($this->getForeignKeys() as $foreignKey) {
+			$localColumns = $foreignKey->getLocalColumnObjects();
+			$localColumnsHash = $this->getColumnList($localColumns);
+			if (!array_key_exists($localColumnsHash, $_indices)) {
+				// no matching index defined in the schema, so we have to create one. MySQL needs indices on any columns that serve as foreign keys. these are not auto-created prior to 4.1.2
+				$index = new Index();
+				$index->setName(substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3));
+				$index->setColumns($localColumns);
+				$this->addIndex($index);
+				$this->collectIndexedColumns($indexName, $localColumns, $_indices);
+			}
+		}
+	}
+
+	/**
+	 * Helper function to collect indexed columns.
+	 *
+	 * @param string $indexName The name of the index
+	 * @param array $columns The column names or objects
+	 * @param array $collectedIndexes The collected indexes
+	 */
+	protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes)
+	{ 
+		/**
+		 * "If the table has a multiple-column index, any leftmost prefix of the
+		 * index can be used by the optimizer to find rows. For example, if you
+		 * have a three-column index on (col1, col2, col3), you have indexed search
+		 * capabilities on (col1), (col1, col2), and (col1, col2, col3)."
+		 * @link http://dev.mysql.com/doc/refman/5.5/en/mysql-indexes.html
+		*/
+		$indexedColumns = array();
+		foreach ($columns as $column) {
+			$indexedColumns[] = $column;
+			$indexedColumnsHash = $this->getColumnList($indexedColumns);
+			if (!array_key_exists($indexedColumnsHash, $collectedIndexes)) {
+				$collectedIndexes[$indexedColumnsHash] = array();
+			}
+			$collectedIndexes[$indexedColumnsHash][] = $indexName;
+		}
+	}
+
+	/**
+	 * Creates a delimiter-delimited string list of column names
+	 *
+	 * @see        Platform::getColumnList() if quoting is required
+	 * @param      array Column[] or string[]
+	 * @param      string $delim The delimiter to use in separating the column names.
+	 * @return     string
+	 */
+	public function getColumnList($columns, $delim = ',')
+	{
+		$list = array();
+		foreach ($columns as $col) {
+			if ($col instanceof Column) {
+				$col = $col->getName();
+			}
+			$list[] = $col;
+		}
+		return implode($delim, $list);
 	}
 
 	/**
@@ -1628,7 +1733,7 @@ class Table extends XMLElement implements IDMethod
 	 * @return    A CSV list.
 	 * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
 	 */
-	private function printList($list){
+	private function printList($list) {
 		$result = "";
 		$comma = 0;
 		for ($i=0,$_i=count($list); $i < $_i; $i++) {
