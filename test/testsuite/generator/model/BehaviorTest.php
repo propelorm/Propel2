@@ -9,7 +9,6 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Behavior.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
@@ -73,7 +72,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testXmlToAppData()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -99,7 +98,7 @@ EOF;
 
 	public function testModifyTable()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
   <table name="table2">
@@ -116,7 +115,7 @@ EOF;
 
   public function testModifyDatabase()
   {
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
   <behavior name="foo" />
@@ -132,7 +131,7 @@ EOF;
   
   public function testGetColumnForParameter()
   {
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
   <table name="table1">

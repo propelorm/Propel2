@@ -11,8 +11,8 @@
 
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorConfig.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 
 /**
  * Tests for package handling.
@@ -30,7 +30,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testIdMethodHandling()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="iddb" defaultIdMethod="native">
   <table name="table_native">
@@ -57,7 +57,7 @@ EOF;
 	
 	public function testGeneratorConfig()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
   <table name="table1">
@@ -104,7 +104,7 @@ EOF;
 	 */
 	public function testUniqueColumnName()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
 	<table name="columnTestTable">
@@ -123,7 +123,7 @@ EOF;
 	 */
 	public function testUniqueTableName()
 	{
-		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="columnTest" defaultIdMethod="native">
 	<table name="columnTestTable">

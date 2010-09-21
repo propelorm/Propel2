@@ -10,8 +10,6 @@
 
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/util/XmlToAppData.php';
-require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/DefaultPlatform.php';
-
 
 /**
  * Tests for XmlToAppData class
@@ -21,15 +19,11 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/Default
  */
 class XmlToAppDataTest extends PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
-		$this->platform = new DefaultPlatform();
-	}
 	
 	public function testParseStringEmptySchema()
 	{
 		$schema = '<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>';
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseString($schema);
 		$expectedAppData = "<app-data>
 </app-data>";
@@ -39,7 +33,7 @@ class XmlToAppDataTest extends PHPUnit_Framework_TestCase
 	public function testParseStringSchemaWithoutXmlDeclaration()
 	{
 		$schema = '';
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseString($schema);
 		$expectedAppData = "<app-data>
 </app-data>";
@@ -52,14 +46,14 @@ class XmlToAppDataTest extends PHPUnit_Framework_TestCase
 	public function testParseStringIncorrectSchema()
 	{
 		$schema = '<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>';
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseString($schema);
 	}
 
 	public function testParseStringDatabase()
 	{
 		$schema = '<database name="foo"></database>';
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseString($schema);
 		$expectedDatabase = '<database name="foo" defaultIdMethod="native" defaultPhpNamingMethod="underscore" defaultTranslateMethod="none"/>';
 		$database = $appData->getDatabase();
@@ -71,7 +65,7 @@ class XmlToAppDataTest extends PHPUnit_Framework_TestCase
 	public function testParseStringTable()
 	{
 		$schema = '<database name="foo"><table name="bar"><column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/></table></database>';
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseString($schema);
 		$database = $appData->getDatabase();
 		$table = $database->getTable('bar');
@@ -86,7 +80,7 @@ EOF;
 	public function testParseFile()
 	{
 		$path = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'testSchema.xml');
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseFile($path);
 		$expectedAppData = <<<EOF
 <app-data>
@@ -103,7 +97,7 @@ EOF;
 	public function testParseFileExternalSchema()
 	{
 		$path = realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'outerSchema.xml');
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData();
 		$appData = $xtad->parseFile($path);
 		$expectedAppData = <<<EOF
 <app-data>

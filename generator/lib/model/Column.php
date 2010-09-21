@@ -137,9 +137,19 @@ class Column extends XMLElement
 			} else {
 				$type = strtoupper($this->getAttribute("type"));
 				if ($type) {
-					$this->getDomain()->copy($this->getPlatform()->getDomainForType($type));
+					if ($platform = $this->getPlatform()) {
+						$this->getDomain()->copy($this->getPlatform()->getDomainForType($type));
+					} else {
+						// no platform - probably during tests
+						$this->setDomain(new Domain($type));
+					}
 				} else {
-					$this->getDomain()->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
+					if ($platform = $this->getPlatform()) {
+						$this->getDomain()->copy($this->getPlatform()->getDomainForType(self::DEFAULT_TYPE));
+					} else {
+						// no platform - probably during tests
+						$this->setDomain(new Domain(self::DEFAULT_TYPE));
+					}
 				}
 			}
 
@@ -238,6 +248,15 @@ class Column extends XMLElement
 			$this->domain = new Domain();
 		}
 		return $this->domain;
+	}
+
+	/**
+	 * Sets domain for this column
+	 * @param		 Domain $domain
+	 */
+	public function setDomain(Domain $domain)
+	{
+		$this->domain = $domain;
 	}
 
 	/**

@@ -13,7 +13,6 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 
-
 /**
  * Tests for package handling.
  *

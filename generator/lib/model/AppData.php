@@ -59,11 +59,23 @@ class AppData
 	 *
 	 * @param      PropelPlatformInterface $platform The default platform object to use for any databases added to this application model.
 	 */
-	public function __construct(PropelPlatformInterface $defaultPlatform)
+	public function __construct(PropelPlatformInterface $defaultPlatform = null)
 	{
-		$this->platform = $defaultPlatform;
+		if (null !== $defaultPlatform) {
+			$this->platform = $defaultPlatform;
+		}
 	}
-  
+
+	/**
+	 * Sets the platform object to use for any databases added to this application model. 
+	 *
+	 * @param PropelPlatformInterface $defaultPlatform
+	 */
+	public function setPlatform(PropelPlatformInterface $defaultPlatform)
+	{
+	  $this->platform = $defaultPlatform;
+	}
+	  
 	/**
 	 * Gets the platform object to use for any databases added to this application model. 
 	 *
