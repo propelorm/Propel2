@@ -527,18 +527,18 @@ class Database extends XMLElement
 
 	public function doFinalInitialization()
 	{
-    if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
-      // add generic behaviors from build.properties 
-      $defaultBehaviors = explode(',', $defaultBehaviors);
-      foreach ($defaultBehaviors as $behavior) {
-        $this->addBehavior(array('name' => trim($behavior)));
-      }
-    }
-    
-    // execute behavior database modifiers
-    foreach ($this->getBehaviors() as $behavior) {
-      $behavior->modifyDatabase();
-    }
+		if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
+			// add generic behaviors from build.properties 
+			$defaultBehaviors = explode(',', $defaultBehaviors);
+			foreach ($defaultBehaviors as $behavior) {
+				$this->addBehavior(array('name' => trim($behavior)));
+			}
+		}
+		
+		// execute behavior database modifiers
+		foreach ($this->getBehaviors() as $behavior) {
+			$behavior->modifyDatabase();
+		}
 
 		$tables = $this->getTables();
 		
@@ -552,94 +552,67 @@ class Database extends XMLElement
 			}
 		}
 			
-		for ($i=0,$size=count($tables); $i < $size; $i++) {
-			$currTable = $tables[$i];
+		foreach ($tables as $table) {
 
-			// check schema integrity
-			// if idMethod="autoincrement", make sure a column is
-			// specified as autoIncrement="true"
-			// FIXME: Handle idMethod="native" via DB adapter.
-			/*
-
-			--- REMOVING THIS BECAUSE IT'S ANNOYING
-
-			if ($currTable->getIdMethod() == IDMethod::NATIVE ) {
-			$columns = $currTable->getColumns();
-			$foundOne = false;
-			for ($j=0, $cLen=count($columns); $j < $cLen && !$foundOne; $j++) {
-			$foundOne = $columns[$j]->isAutoIncrement();
-			}
-
-			if (!$foundOne) {
-			$errorMessage = "Table '" . $currTable->getName()
-			. "' is set to use native id generation, but it does not "
-			. "have a column which declared as the one to "
-			. "auto increment (i.e. autoIncrement=\"true\")";
-
-			throw new BuildException($errorMessage);
-			}
-			}
-			*/
-
-			$currTable->doFinalInitialization();
+			$table->doFinalInitialization();
 
 			// setup reverse fk relations
-			$fks = $currTable->getForeignKeys();
-			for ($j=0, $fksLen=count($fks); $j < $fksLen; $j++) {
-				$currFK = $fks[$j];
-				$foreignTable = $this->getTable($currFK->getForeignTableName());
+			$fks = $table->getForeignKeys();
+			foreach ($table->getForeignKeys() as $foreignKey) {
+				$foreignTable = $this->getTable($foreignKey->getForeignTableName());
 				if ($foreignTable === null) {
-					throw new BuildException("ERROR!! Attempt to set foreign"
-					. " key to nonexistent table, "
-					. $currFK->getForeignTableName() . "!");
+					throw new BuildException(sprintf(
+						'Table "%s" contains a foreign key to nonexistent table "%s"',
+						$table->getName(),
+						$foreignKey->getForeignTableName()
+					));
 				}
 
 				$referrers = $foreignTable->getReferrers();
-				if ($referrers === null || !in_array($currFK, $referrers, true) ) {
-					$foreignTable->addReferrer($currFK);
+				if ($referrers === null || !in_array($foreignKey, $referrers, true) ) {
+					$foreignTable->addReferrer($foreignKey);
 				}
 
 				// local column references
-				$localColumnNames = $currFK->getLocalColumns();
-
-				for ($k=0,$lcnLen=count($localColumnNames); $k < $lcnLen; $k++) {
-
-					$local = $currTable->getColumn($localColumnNames[$k]);
-
+				$localColumnNames = $foreignKey->getLocalColumns();
+				foreach ($localColumnNames as $localColumnName) {
+					$localColumn = $table->getColumn($localColumnName);
 					// give notice of a schema inconsistency.
 					// note we do not prevent the npe as there is nothing
 					// that we can do, if it is to occur.
-					if ($local === null) {
-						throw new BuildException("ERROR!! Attempt to define foreign"
-						. " key with nonexistent column, "
-						. $localColumnNames[$k] . ", in table, "
-						. $currTable->getName() . "!");
+					if ($localColumn === null) {
+						throw new BuildException(sprintf(
+							'Table "%s" contains a foreign key with nonexistent local column "%s"',
+							$table->getName(),
+							$localColumnName
+						));
 					}
-
-					//check for foreign pk's
-					if ($local->isPrimaryKey()) {
-						$currTable->setContainsForeignPK(true);
+					// check for foreign pk's
+					if ($localColumn->isPrimaryKey()) {
+						$table->setContainsForeignPK(true);
 					}
-
-				} // for each local col name
+				} // foreach localColumnNames
 
 				// foreign column references
-				$foreignColumnNames = $currFK->getForeignColumns();
-				for ($k=0,$fcnLen=count($localColumnNames); $k < $fcnLen; $k++) {
-					$foreign = $foreignTable->getColumn($foreignColumnNames[$k]);
+				$foreignColumnNames = $foreignKey->getForeignColumns();
+				foreach ($foreignColumnNames as $foreignColumnName) {
+					$foreignColumn = $foreignTable->getColumn($foreignColumnName);
 					// if the foreign column does not exist, we may have an
 					// external reference or a misspelling
-					if ($foreign === null) {
-						throw new BuildException("ERROR!! Attempt to set foreign"
-						. " key to nonexistent column, "
-						. $foreignColumnNames[$k] . ", in table, "
-						. $foreignTable->getName() . "!");
+					if ($foreignColumn === null) {
+						throw new BuildException(sprintf(
+							'Table "%s" contains a foreign key to table "%s" with nonexistent column "%s"',
+							$table->getName(),
+							$foreignTable->getName(),
+							$foreignColumnName
+						));
 					} else {
-						$foreign->addReferrer($currFK);
+						$foreignColumn->addReferrer($foreignKey);
 					}
-				} // for each foreign col ref
-			}
-		}
+				} // foreach foreignColumnNames
+				
+			} // foreach foreign keys
+		} // foreach tables
 		
 		// Behaviors may have added behaviors of their own
 		// These behaviors must launch their modifyTable() method,

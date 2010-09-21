@@ -377,8 +377,7 @@ class Table extends XMLElement implements IDMethod
 		$this->doNaming();
 
 		// execute behavior table modifiers
-		foreach ($this->getBehaviors() as $behavior)
-		{
+		foreach ($this->getBehaviors() as $behavior) {
 			if (!$behavior->isTableModified()) {
 				$behavior->getTableModifier()->modifyTable();
 				$behavior->setTableModified(true);
@@ -397,10 +396,9 @@ class Table extends XMLElement implements IDMethod
 			$this->setIdMethod(IDMethod::NO_ID_METHOD);
 		}
 		
-		// If there is no PK, then throw an error. Propel 1.3 requires primary keys.
-		$pk = $this->getPrimaryKey();
-		if (empty($pk)) {
-			throw new EngineException("Table '".$this->getName()."' does not have a primary key defined.	Propel requires all tables to have a primary key.");
+		// If there is no PK, then throw an error. Propel requires primary keys.
+		if (!$this->hasPrimaryKey()) {
+			throw new EngineException(sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $this->getName()));
 		}
 
 	}
