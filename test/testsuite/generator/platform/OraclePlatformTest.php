@@ -37,7 +37,76 @@ class OraclePlatformTest extends PlatformTestBase
 		$expected = 'foo_sequence';
 		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
 	}
-	
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSimplePK
+	 */
+	public function testGetAddTableDDLSimplePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+-- This is foo table
+CREATE TABLE foo
+(
+	id NUMBER NOT NULL,
+	bar NVARCHAR2(255) NOT NULL
+);
+
+ALTER TABLE foo
+	ADD CONSTRAINT foo_PK
+	PRIMARY KEY (id);
+
+CREATE SEQUENCE foo_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLCompositePK
+	 */
+	public function testGetAddTableDDLCompositePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE foo
+(
+	foo NUMBER NOT NULL,
+	bar NUMBER NOT NULL,
+	baz NVARCHAR2(255) NOT NULL
+);
+
+ALTER TABLE foo
+	ADD CONSTRAINT foo_PK
+	PRIMARY KEY (foo,bar);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+	 */
+	public function testGetAddTableDDLUniqueIndex($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE foo
+(
+	id NUMBER NOT NULL,
+	bar NUMBER,
+	CONSTRAINT foo_U_1 UNIQUE (bar)
+);
+
+ALTER TABLE foo
+	ADD CONSTRAINT foo_PK
+	PRIMARY KEY (id);
+
+CREATE SEQUENCE foo_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');

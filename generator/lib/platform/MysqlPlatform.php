@@ -20,7 +20,10 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
  */
 class MysqlPlatform extends DefaultPlatform
 {
-
+	
+	protected $tableEngineKeyword = 'ENGINE';
+	protected $defaultTableEngine = 'InnoDB';
+	
 	/**
 	 * Initializes db specific domain mapping.
 	 */
@@ -36,6 +39,46 @@ class MysqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "LONGBLOB"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
+	}
+
+	/**
+	 * Setter for the tableEngineKeyword property
+	 *
+	 * @param string $tableEngineKeyword
+	 */
+	function setTableEngineKeyword($tableEngineKeyword)
+	{
+		$this->tableEngineKeyword = $tableEngineKeyword;
+	}
+
+	/**
+	 * Getter for the tableEngineKeyword property
+	 *
+	 * @return string
+	 */
+	function getTableEngineKeyword()
+	{
+		return $this->tableEngineKeyword;
+	}
+
+	/**
+	 * Setter for the defaultTableEngine property
+	 *
+	 * @param string $defaultTableEngine
+	 */
+	function setDefaultTableEngine($defaultTableEngine)
+	{
+		$this->defaultTableEngine = $defaultTableEngine;
+	}
+
+	/**
+	 * Getter for the defaultTableEngine property
+	 *
+	 * @return string
+	 */
+	function getDefaultTableEngine()
+	{
+		return $this->defaultTableEngine;
 	}
 
 	public function getAutoIncrement()
@@ -55,6 +98,90 @@ class MysqlPlatform extends DefaultPlatform
 			$usingInnoDB = strtolower($this->getBuildProperty('mysqlTableType')) == 'innodb';
 		}
 		return $usingInnoDB || false;
+	}
+
+	public function getAddTableDDL(Table $table)
+	{
+		$lines = array();
+
+		foreach ($table->getColumns() as $column) {
+			$lines[] = $this->getColumnDDL($column);
+		}
+
+		if ($table->hasPrimaryKey()) {
+			$lines[] = $this->getPrimaryKeyDDL($table);
+		}
+
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = $this->getUniqueDDL($unique);
+		}
+
+		foreach ($table->getIndices() as $index ) {
+			$lines[] = $this->getIndexDDL($index);
+		}
+
+		foreach ($table->getForeignKeys() as $foreignKey) {
+			$lines[] = str_replace("
+	", "
+		", $this->getForeignKeyDDL($foreignKey));
+		}
+
+		$vendorSpecific = $table->getVendorInfoForType('mysql');
+		if ($vendorSpecific->hasParameter('Type')) {
+			$mysqlTableType = $vendorSpecific->getParameter('Type');
+		} elseif ($vendorSpecific->hasParameter('Engine')) {
+			$mysqlTableType = $vendorSpecific->getParameter('Engine');
+		} else {
+			$mysqlTableType = $this->getDefaultTableEngine();
+		}
+
+		$tableOptions = $this->getTableOptions($table);
+
+		if ($table->getDescription()) {
+			$tableOptions []= 'COMMENT=' . $this->quote($table->getDescription());
+		}
+
+		$tableOptions = $tableOptions ? ' ' . implode(' ', $tableOptions) : '';
+		$sep = ",
+	";
+
+		$pattern = "
+CREATE TABLE %s
+(
+	%s
+) %s=%s%s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($table->getName()),
+			implode($sep, $lines),
+			$this->getTableEngineKeyword(),
+			$mysqlTableType,
+			$tableOptions
+		);
+	}
+	
+	protected function getTableOptions(Table $table)
+	{
+		$dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
+		$tableVI = $table->getVendorInfoForType('mysql');
+		$vi = $dbVI->getMergedVendorInfo($tableVI);
+		$tableOptions = array();
+		$supportedOptions = array(
+			'Charset'         => 'CHARACTER SET',
+			'Collate'         => 'COLLATE',
+			'Checksum'        => 'CHECKSUM',
+			'Pack_Keys'       => 'PACK_KEYS',
+			'Delay_key_write' => 'DELAY_KEY_WRITE',
+		);
+		foreach ($supportedOptions as $name => $sqlName) {
+			if ($vi->hasParameter($name)) {
+				$tableOptions []= sprintf('%s=%s', 
+					$sqlName, 
+					$this->quote($vi->getParameter($name))
+				);
+			}
+		}
+		return $tableOptions;
 	}
 
 	public function getDropTableDDL(Table $table)

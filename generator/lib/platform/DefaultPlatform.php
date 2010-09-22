@@ -243,6 +243,46 @@ class DefaultPlatform implements PropelPlatformInterface
 DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 ";
 	}
+
+	/**
+	 * Builds the DDL SQL to add a table
+	 * without index and foreign keys
+	 *
+	 * @return     string
+	 */
+	public function getAddTableDDL(Table $table)
+	{
+		$tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
+
+		$lines = array();
+
+		foreach ($table->getColumns() as $column) {
+			$lines[] = $this->getColumnDDL($column);
+		}
+
+		if ($table->hasPrimaryKey()) {
+			$lines[] = $this->getPrimaryKeyDDL($table);
+		}
+
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = $this->getUniqueDDL($unique);
+		}
+
+		$sep = ",
+	";
+
+		$pattern = "
+%sCREATE TABLE %s
+(
+	%s
+);
+";
+		return sprintf($pattern,
+			$tableDescription,
+			$this->quoteIdentifier($table->getName()),
+			implode($sep, $lines)
+		);
+	}
 	
 	/**
 	 * Builds the DDL SQL for a Column object.
@@ -483,6 +523,13 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 		}
 		
 		return $script;
+	}
+	
+	public function getCommentLineDDL($comment)
+	{
+		$pattern = "-- %s
+";
+		return sprintf($pattern, $comment);
 	}
 
 	/**

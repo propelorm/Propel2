@@ -11,6 +11,7 @@
 require_once dirname(__FILE__) . '/PlatformTestBase.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 
 /**
  *
@@ -36,6 +37,166 @@ class MysqlPlatformTest extends PlatformTestBase
 		$table->setIdMethod(IDMethod::NATIVE);
 		$expected = 'foo_sequence';
 		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSimplePK
+	 */
+	public function testGetAddTableDDLSimplePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar` VARCHAR(255) NOT NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB COMMENT='This is foo table';
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLCompositePK
+	 */
+	public function testGetAddTableDDLCompositePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`foo` INTEGER NOT NULL,
+	`bar` INTEGER NOT NULL,
+	`baz` VARCHAR(255) NOT NULL,
+	PRIMARY KEY (`foo`,`bar`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+	 */
+	public function testGetAddTableDDLUniqueIndex($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar` INTEGER,
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `foo_U_1` (`bar`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableDDLIndex()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<index>
+			<index-column name="bar" />
+		</index>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar` INTEGER,
+	PRIMARY KEY (`id`),
+	INDEX `foo_I_1` (`bar`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableDDLForeignKey()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar_id" type="INTEGER" />
+		<foreign-key foreignTable="bar">
+			<reference local="bar_id" foreign="id" />
+		</foreign-key>
+	</table>
+	<table name="bar">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar_id` INTEGER,
+	PRIMARY KEY (`id`),
+	INDEX `foo_FI_1` (`bar_id`),
+	CONSTRAINT `foo_FK_1`
+		FOREIGN KEY (`bar_id`)
+		REFERENCES `bar` (`id`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableDDLEngine()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+	</table>
+</database>
+EOF;
+		$platform = new MysqlPlatform();
+		$platform->setTableEngineKeyword('TYPE');
+		$platform->setDefaultTableEngine('MEMORY');
+		$xtad = new XmlToAppData($platform);
+		$appData = $xtad->parseString($schema);
+		$table = $appData->getDatabase()->getTable('foo');
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (`id`)
+) TYPE=MEMORY;
+";
+		$this->assertEquals($expected, $platform->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableDDLVendor()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<vendor type="mysql">
+			<parameter name="Engine" value="MyISAM"/>
+			<parameter name="Charset" value="utf8"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY (`id`)
+) ENGINE=MyISAM CHARACTER SET='utf8';
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
 	
 	public function testGetDropTableDDL()

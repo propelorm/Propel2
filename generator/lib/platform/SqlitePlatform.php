@@ -49,6 +49,40 @@ class SqlitePlatform extends DefaultPlatform
 		return 1024;
 	}
 
+	public function getAddTableDDL(Table $table)
+	{
+		$tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
+
+		$lines = array();
+
+		foreach ($table->getColumns() as $column) {
+			$lines[] = $this->getColumnDDL($column);
+		}
+
+		if ($table->hasPrimaryKey() && count($table->getPrimaryKey()) > 1) {
+			$lines[] = $this->getPrimaryKeyDDL($table);
+		}
+
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = $this->getUniqueDDL($unique);
+		}
+
+		$sep = ",
+	";
+
+		$pattern = "
+%sCREATE TABLE %s
+(
+	%s
+);
+";
+		return sprintf($pattern,
+			$tableDescription,
+			$this->quoteIdentifier($table->getName()),
+			implode($sep, $lines)
+		);
+	}
+
 	public function getAddForeignKeyDDL(ForeignKey $fk)
 	{
 		// no need for an alter table to return comments

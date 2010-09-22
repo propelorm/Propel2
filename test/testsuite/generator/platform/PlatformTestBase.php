@@ -42,6 +42,57 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 	{
 		return $this->platform;
 	}
+	
+	protected function getTableFromSchema($schema, $tableName = 'foo')
+	{
+		$xtad = new XmlToAppData($this->platform);
+		$appData = $xtad->parseString($schema);
+		return $appData->getDatabase()->getTable($tableName);
+	}
+	
+	public function providerForTestGetAddTableDDLSimplePK()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo" description="This is foo table">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="VARCHAR" size="255" required="true" />
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
+
+	public function providerForTestGetAddTableDDLCompositePK()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="foo" primaryKey="true" type="INTEGER" />
+		<column name="bar" primaryKey="true" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="255" required="true" />
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
+
+	public function providerForTestGetAddTableDDLUniqueIndex()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<unique>
+			<unique-column name="bar" />
+		</unique>
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
+
 
 	public function providerForTestGetUniqueDDL()
 	{

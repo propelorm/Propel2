@@ -11,6 +11,7 @@
 require_once dirname(__FILE__) . '/PlatformTestBase.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 
 /**
  *
@@ -37,7 +38,61 @@ class MssqlPlatformTest extends PlatformTestBase
 		$expected = 'foo_sequence';
 		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
 	}
-	
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSimplePK
+	 */
+	public function testGetAddTableDDLSimplePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+-- This is foo table
+CREATE TABLE [foo]
+(
+	[id] INT NOT NULL IDENTITY,
+	[bar] VARCHAR(255) NOT NULL,
+	CONSTRAINT [foo_PK] PRIMARY KEY ([id])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLCompositePK
+	 */
+	public function testGetAddTableDDLCompositePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE [foo]
+(
+	[foo] INT NOT NULL,
+	[bar] INT NOT NULL,
+	[baz] VARCHAR(255) NOT NULL,
+	CONSTRAINT [foo_PK] PRIMARY KEY ([foo],[bar])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+	 */
+	public function testGetAddTableDDLUniqueIndex($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE [foo]
+(
+	[id] INT NOT NULL IDENTITY,
+	[bar] INT NULL,
+	CONSTRAINT [foo_PK] PRIMARY KEY ([id]),
+	UNIQUE ([bar])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');

@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/DefaultPlatformTest.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 
 /**
  * 
@@ -63,6 +64,58 @@ class SqlitePlatformTest extends DefaultPlatformTest
 		$table->setIdMethod(IDMethod::NATIVE);
 		$expected = 'foo_sequence';
 		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSimplePK
+	 */
+	public function testGetAddTableDDLSimplePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+-- This is foo table
+CREATE TABLE [foo]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[bar] VARCHAR(255) NOT NULL
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLCompositePK
+	 */
+	public function testGetAddTableDDLCompositePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE [foo]
+(
+	[foo] INTEGER NOT NULL,
+	[bar] INTEGER NOT NULL,
+	[baz] VARCHAR(255) NOT NULL,
+	PRIMARY KEY ([foo],[bar])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+	 */
+	public function testGetAddTableDDLUniqueIndex($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE [foo]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[bar] INTEGER,
+	UNIQUE ([bar])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
 	
 	public function testGetDropTableDDL()

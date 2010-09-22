@@ -68,6 +68,68 @@ class OraclePlatform extends DefaultPlatform
 		return true;
 	}
 
+	public function getAddTableDDL(Table $table)
+	{
+		$tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
+
+		$lines = array();
+
+		foreach ($table->getColumns() as $column) {
+			$lines[] = $this->getColumnDDL($column);
+		}
+
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = $this->getUniqueDDL($unique);
+		}
+
+		$sep = ",
+	";
+
+		$pattern = "
+%sCREATE TABLE %s
+(
+	%s
+);
+";
+		$ret = sprintf($pattern,
+			$tableDescription,
+			$this->quoteIdentifier($table->getName()),
+			implode($sep, $lines)
+		);
+
+		$ret .= $this->getAddPrimaryKeyDDL($table);
+		$ret .= $this->getAddSequencesDDL($table);
+		
+		return $ret;
+	}
+	
+	public function getAddPrimaryKeyDDL(Table $table)
+	{
+		if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
+			$pattern = "
+ALTER TABLE %s
+	ADD %s;
+";
+			return sprintf($pattern,
+				$this->quoteIdentifier($table->getName()),
+				$this->getPrimaryKeyDDL($table)
+			);
+		}
+	}
+	
+	public function getAddSequencesDDL(Table $table)
+	{
+		if ($table->getIdMethod() == "native") {
+			$pattern = "
+CREATE SEQUENCE %s
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+";
+			return sprintf($pattern, 
+				$this->quoteIdentifier($this->getSequenceName($table))
+			);
+		}
+	}
+	
 	public function getDropTableDDL(Table $table)
 	{
 		$ret = "

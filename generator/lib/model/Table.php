@@ -478,7 +478,7 @@ class Table extends XMLElement implements IDMethod
 				$index->setColumns($referencedColumns);
 				$this->addIndex($index);
 				// Add this new index to our collection, otherwise we might add it again (bug #725)
-				$this->collectIndexedColumns($indexName, $referencedColumns, $_indices);
+				$this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
 			}
 		}
 		
@@ -492,7 +492,7 @@ class Table extends XMLElement implements IDMethod
 				$index->setName(substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3));
 				$index->setColumns($localColumns);
 				$this->addIndex($index);
-				$this->collectIndexedColumns($indexName, $localColumns, $_indices);
+				$this->collectIndexedColumns($index->getName(), $localColumns, $_indices);
 			}
 		}
 	}
@@ -1029,6 +1029,14 @@ class Table extends XMLElement implements IDMethod
 	public function getDescription()
 	{
 		return $this->description;
+	}
+
+	/**
+	 * Whether the Table has a description
+	 */
+	public function hasDescription()
+	{
+		return (bool) $this->description;
 	}
 
 	/**

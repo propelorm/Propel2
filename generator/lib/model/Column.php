@@ -1072,9 +1072,14 @@ class Column extends XMLElement
 		if ($this->isAutoIncrement() && IDMethod::NATIVE === $this->getTable()->getIdMethod()) {
 			return $this->getPlatform()->getAutoIncrement();
 		} elseif ($this->isAutoIncrement()) {
-			throw new EngineException("You have specified autoIncrement for column '" . $this->name . "' but you have not specified idMethod=\"native\" for table '" . $this->getTable()->getName() . "'.");
+			throw new EngineException(sprintf(
+				'You have specified autoIncrement for column "%s", but you have not specified idMethod="native" for table "%s".',
+				$this->name,
+				$this->getTable()->getName()
+			));
 		}
-		return "";
+		
+		return '';
 	}
 
 	/**
