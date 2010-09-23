@@ -46,13 +46,181 @@ class PgsqlPlatformTest extends PlatformTestBase
 		$expected = 'foo_sequence';
 		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
 	}
-	
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSimplePK
+	 */
+	public function testGetAddTableDDLSimplePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE TABLE "foo"
+(
+	"id" serial NOT NULL,
+	"bar" VARCHAR(255) NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+COMMENT ON TABLE "foo" IS 'This is foo table';
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLCompositePK
+	 */
+	public function testGetAddTableDDLCompositePK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE TABLE "foo"
+(
+	"foo" INTEGER NOT NULL,
+	"bar" INTEGER NOT NULL,
+	"baz" VARCHAR(255) NOT NULL,
+	PRIMARY KEY ("foo","bar")
+);
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+	 */
+	public function testGetAddTableDDLUniqueIndex($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE TABLE "foo"
+(
+	"id" serial NOT NULL,
+	"bar" INTEGER,
+	PRIMARY KEY ("id"),
+	CONSTRAINT "foo_U_1" UNIQUE ("bar")
+);
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableWithSchemaDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<vendor type="pgsql">
+			<parameter name="schema" value="Woopah"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+SET search_path TO "Woopah";
+
+CREATE TABLE "foo"
+(
+	"id" serial NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+SET search_path TO public;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableWithSequenceDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<id-method-parameter value="my_custom_sequence_name"/>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE SEQUENCE "my_custom_sequence_name";
+
+CREATE TABLE "foo"
+(
+	"id" INTEGER NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableWithColumnCommentsDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" description="identifier column"/>
+		<column name="bar" type="INTEGER" description="your name here"/>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE TABLE "foo"
+(
+	"id" serial NOT NULL,
+	"bar" INTEGER,
+	PRIMARY KEY ("id")
+);
+
+COMMENT ON COLUMN "foo"."id" IS 'identifier column';
+
+COMMENT ON COLUMN "foo"."bar" IS 'your name here';
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');
 		$expected = "
 DROP TABLE \"foo\" CASCADE;
 ";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	public function testGetDropTableWithSchemaDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<vendor type="pgsql">
+			<parameter name="schema" value="Woopah"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = <<<EOF
+
+SET search_path TO "Woopah";
+
+DROP TABLE "foo" CASCADE;
+
+SET search_path TO public;
+
+EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
 

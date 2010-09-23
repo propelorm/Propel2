@@ -113,17 +113,136 @@ class PgsqlPlatform extends DefaultPlatform
 		}
 		return $result;
 	}
-	
-	public function getDropTableDDL(Table $table)
+
+	protected function getAddSequenceDDL(Table $table)
 	{
-		$ret = "
-DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE;
+		if ($table->getIdMethod() == IDMethod::NATIVE 
+		 && $table->getIdMethodParameters() != null) {
+			$pattern = "
+CREATE SEQUENCE %s;
 ";
-		if ($table->getIdMethod() == IDMethod::NATIVE && $table->getIdMethodParameters()) {
-			$ret .= "
-DROP SEQUENCE " . $this->quoteIdentifier(strtolower($this->getSequenceName($table))) . ";
+			return sprintf($pattern,
+				$this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+			);
+		}
+	}
+
+	protected function getDropSequenceDDL(Table $table)
+	{
+		if ($table->getIdMethod() == IDMethod::NATIVE 
+		 && $table->getIdMethodParameters() != null) {
+			$pattern = "
+DROP SEQUENCE %s;
+";
+			return sprintf($pattern,
+				$this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+			);
+		}
+	}
+
+	public function getUseSchemaDDL(Table $table)
+	{
+		$vi = $table->getVendorInfoForType('pgsql');
+		if ($vi->hasParameter('schema')) {
+			$pattern = "
+SET search_path TO %s;
+";
+			return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
+		}
+	}
+
+	public function getResetSchemaDDL(Table $table)
+	{
+		$vi = $table->getVendorInfoForType('pgsql');
+		if ($vi->hasParameter('schema')) {
+			return "
+SET search_path TO public;
 ";
 		}
+	}
+	
+	public function getAddTableDDL(Table $table)
+	{
+		$ret = '';
+		$ret .= $this->getUseSchemaDDL($table);
+		$ret .= $this->getAddSequenceDDL($table);
+
+		$lines = array();
+
+		foreach ($table->getColumns() as $column) {
+			$lines[] = $this->getColumnDDL($column);
+		}
+
+		if ($table->hasPrimaryKey()) {
+			$lines[] = $this->getPrimaryKeyDDL($table);
+		}
+
+		foreach ($table->getUnices() as $unique) {
+			$lines[] = $this->getUniqueDDL($unique);
+		}
+
+		$sep = ",
+	";
+		$pattern = "
+CREATE TABLE %s
+(
+	%s
+);
+";
+		$ret .= sprintf($pattern,
+			$this->quoteIdentifier($table->getName()),
+			implode($sep, $lines)
+		);
+		
+		if ($table->hasDescription()) {
+			$pattern = "
+COMMENT ON TABLE %s IS %s;
+";
+			$ret .= sprintf($pattern,
+				$this->quoteIdentifier($table->getName()),
+				$this->quote($table->getDescription())
+			);
+		}
+		
+		$ret .= $this->getAddColumnsComments($table);
+		$ret .= $this->getResetSchemaDDL($table);
+		
+		return $ret;
+	}
+	
+	protected function getAddColumnsComments(Table $table)
+	{
+		$ret = '';
+		foreach ($table->getColumns() as $column) {
+			$ret .= $this->getAddColumnComment($column);
+		}
+		return $ret;
+	}
+
+	protected function getAddColumnComment(Column $column)
+	{
+		$pattern = "
+COMMENT ON COLUMN %s.%s IS %s;
+";
+		if ($description = $column->getDescription()) {
+			return sprintf($pattern,
+				$this->quoteIdentifier($column->getTable()->getName()),
+				$this->quoteIdentifier($column->getName()),
+				$this->quote($description)
+			);
+		}
+	}
+
+	public function getDropTableDDL(Table $table)
+	{
+		$ret = '';
+		$ret .= $this->getUseSchemaDDL($table);
+		$pattern = "
+DROP TABLE %s CASCADE;
+";
+		$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()));
+		$ret .= $this->getDropSequenceDDL($table);
+		$ret .= $this->getResetSchemaDDL($table);
 		return $ret;
 	}
 	
