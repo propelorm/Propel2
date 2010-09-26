@@ -48,6 +48,136 @@ class PgsqlPlatformTest extends PlatformTestBase
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesDDL
+	 */
+	public function testGetAddTablesDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- book
+-----------------------------------------------------------------------
+
+DROP TABLE "book" CASCADE;
+
+CREATE TABLE "book"
+(
+	"id" serial NOT NULL,
+	"title" VARCHAR(255) NOT NULL,
+	"author_id" INTEGER,
+	PRIMARY KEY ("id")
+);
+
+CREATE INDEX "book_I_1" ON "book" ("title");
+
+-----------------------------------------------------------------------
+-- author
+-----------------------------------------------------------------------
+
+DROP TABLE "author" CASCADE;
+
+CREATE TABLE "author"
+(
+	"id" serial NOT NULL,
+	"first_name" VARCHAR(100),
+	"last_name" VARCHAR(100),
+	PRIMARY KEY ("id")
+);
+
+ALTER TABLE "book" ADD CONSTRAINT "book_FK_1"
+	FOREIGN KEY ("author_id")
+	REFERENCES "author" ("id");
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	public function testGetAddTablesWithSchemaDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="table1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<vendor type="pgsql">
+			<parameter name="schema" value="Woopah"/>
+		</vendor>
+	</table>
+	<table name="table2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+	</table>
+	<table name="table3">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<vendor type="pgsql">
+			<parameter name="schema" value="Yipee"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+CREATE SCHEMA "Woopah";
+
+CREATE SCHEMA "Yipee";
+
+-----------------------------------------------------------------------
+-- table1
+-----------------------------------------------------------------------
+
+SET search_path TO "Woopah";
+
+DROP TABLE "table1" CASCADE;
+
+SET search_path TO public;
+
+SET search_path TO "Woopah";
+
+CREATE TABLE "table1"
+(
+	"id" serial NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+SET search_path TO public;
+
+-----------------------------------------------------------------------
+-- table2
+-----------------------------------------------------------------------
+
+DROP TABLE "table2" CASCADE;
+
+CREATE TABLE "table2"
+(
+	"id" serial NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+-----------------------------------------------------------------------
+-- table3
+-----------------------------------------------------------------------
+
+SET search_path TO "Yipee";
+
+DROP TABLE "table3" CASCADE;
+
+SET search_path TO public;
+
+SET search_path TO "Yipee";
+
+CREATE TABLE "table3"
+(
+	"id" serial NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+SET search_path TO public;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK
 	 */
 	public function testGetAddTableDDLSimplePK($schema)

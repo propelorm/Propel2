@@ -42,12 +42,42 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 	{
 		return $this->platform;
 	}
-	
-	protected function getTableFromSchema($schema, $tableName = 'foo')
+
+	protected function getDatabaseFromSchema($schema)
 	{
 		$xtad = new XmlToAppData($this->platform);
 		$appData = $xtad->parseString($schema);
-		return $appData->getDatabase()->getTable($tableName);
+		return $appData->getDatabase();
+	}
+	
+	protected function getTableFromSchema($schema, $tableName = 'foo')
+	{
+		return $this->getDatabaseFromSchema($schema)->getTable($tableName);
+	}
+
+	public function providerForTestGetAddTablesDDL()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="book">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="title" type="VARCHAR" size="255" required="true" />
+		<index>
+			<index-column name="title" />
+		</index>
+		<column name="author_id" type="INTEGER"/>
+		<foreign-key foreignTable="author">
+			<reference local="author_id" foreign="id" />
+		</foreign-key>
+	</table>
+	<table name="author">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="first_name" type="VARCHAR" size="100" />
+		<column name="last_name" type="VARCHAR" size="100" />
+	</table>
+</database>
+EOF;
+		return array(array($schema));
 	}
 	
 	public function providerForTestGetAddTableDDLSimplePK()

@@ -140,6 +140,32 @@ DROP SEQUENCE %s;
 		}
 	}
 
+	public function getAddSchemasDDL(Database $database)
+	{
+		$ret = '';
+		$schemas = array();
+		foreach ($database->getTables() as $table) {
+			$vi = $table->getVendorInfoForType('pgsql');
+			if ($vi->hasParameter('schema') && !isset($schemas[$vi->getParameter('schema')])) {
+				$schemas[$vi->getParameter('schema')] = true;
+				$ret .= $this->getAddSchemaDDL($table);
+			}
+		}
+		return $ret;
+	}
+
+	public function getAddSchemaDDL(Table $table)
+	{
+		$vi = $table->getVendorInfoForType('pgsql');
+		if ($vi->hasParameter('schema')) {
+			$pattern = "
+CREATE SCHEMA %s;
+";
+			return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
+		};
+	}
+
+
 	public function getUseSchemaDDL(Table $table)
 	{
 		$vi = $table->getVendorInfoForType('pgsql');
@@ -159,6 +185,23 @@ SET search_path TO %s;
 SET search_path TO public;
 ";
 		}
+	}
+	
+	public function getAddTablesDDL(Database $database)
+	{
+		$ret = $this->getBeginDDL();
+		$ret .= $this->getAddSchemasDDL($database);
+		foreach ($database->getTables() as $table) {
+			$ret .= $this->getCommentBlockDDL($table->getName());
+			$ret .= $this->getDropTableDDL($table);
+			$ret .= $this->getAddTableDDL($table);
+			$ret .= $this->getAddIndicesDDL($table);
+		}
+		foreach ($database->getTables() as $table) {
+			$ret .= $this->getAddForeignKeysDDL($table);
+		}
+		$ret .= $this->getEndDDL();
+		return $ret;
 	}
 	
 	public function getAddTableDDL(Table $table)

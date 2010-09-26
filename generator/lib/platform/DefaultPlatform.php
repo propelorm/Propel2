@@ -232,6 +232,44 @@ class DefaultPlatform implements PropelPlatformInterface
 		}
 		return $result;
 	}
+
+	/**
+	 * Builds the DDL SQL to add the tables of a database
+	 * together with index and foreign keys
+	 *
+	 * @return     string
+	 */
+	public function getAddTablesDDL(Database $database)
+	{
+		$ret = $this->getBeginDDL();
+		foreach ($database->getTables() as $table) {
+			$ret .= $this->getCommentBlockDDL($table->getName());
+			$ret .= $this->getDropTableDDL($table);
+			$ret .= $this->getAddTableDDL($table);
+			$ret .= $this->getAddIndicesDDL($table);
+			$ret .= $this->getAddForeignKeysDDL($table);
+		}
+		$ret .= $this->getEndDDL();
+		return $ret;
+	}
+
+	/**
+	 * Gets the requests to execute at the beginning of a DDL file
+	 *
+	 * @return     string
+	 */
+	public function getBeginDDL()
+	{
+	}
+
+	/**
+	 * Gets the requests to execute at the end of a DDL file
+	 *
+	 * @return     string
+	 */
+	public function getEndDDL()
+	{
+	}
 	
 	/**
 	 * Builds the DDL SQL to drop a table
@@ -243,7 +281,7 @@ class DefaultPlatform implements PropelPlatformInterface
 DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 ";
 	}
-
+	
 	/**
 	 * Builds the DDL SQL to add a table
 	 * without index and foreign keys
@@ -528,6 +566,16 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 	public function getCommentLineDDL($comment)
 	{
 		$pattern = "-- %s
+";
+		return sprintf($pattern, $comment);
+	}
+
+	public function getCommentBlockDDL($comment)
+	{
+		$pattern = "
+-----------------------------------------------------------------------
+-- %s
+-----------------------------------------------------------------------
 ";
 		return sprintf($pattern, $comment);
 	}

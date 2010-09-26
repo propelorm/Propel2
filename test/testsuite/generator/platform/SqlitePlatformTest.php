@@ -67,6 +67,49 @@ class SqlitePlatformTest extends DefaultPlatformTest
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesDDL
+	 */
+	public function testGetAddTablesDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- book
+-----------------------------------------------------------------------
+
+DROP TABLE [book];
+
+CREATE TABLE [book]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[title] VARCHAR(255) NOT NULL,
+	[author_id] INTEGER
+);
+
+CREATE INDEX [book_I_1] ON [book] ([title]);
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([author_id]) REFERENCES author ([id])
+
+-----------------------------------------------------------------------
+-- author
+-----------------------------------------------------------------------
+
+DROP TABLE [author];
+
+CREATE TABLE [author]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[first_name] VARCHAR(100),
+	[last_name] VARCHAR(100)
+);
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK
 	 */
 	public function testGetAddTableDDLSimplePK($schema)

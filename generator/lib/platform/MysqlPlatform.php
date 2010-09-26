@@ -100,6 +100,35 @@ class MysqlPlatform extends DefaultPlatform
 		return $usingInnoDB || false;
 	}
 
+	public function getAddTablesDDL(Database $database)
+	{
+		$ret = $this->getBeginDDL();
+		foreach ($database->getTables() as $table) {
+			$ret .= $this->getCommentBlockDDL($table->getName());
+			$ret .= $this->getDropTableDDL($table);
+			$ret .= $this->getAddTableDDL($table);
+		}
+		$ret .= $this->getEndDDL();
+		return $ret;
+	}
+
+	public function getBeginDDL()
+	{
+		return "
+# This is a fix for InnoDB in MySQL >= 4.1.x
+# It \"suspends judgement\" for fkey relationships until are tables are set.
+SET FOREIGN_KEY_CHECKS = 0;
+";
+	}
+
+	public function getEndDDL()
+	{
+		return "
+# This restores the fkey checks, after having unset them earlier
+SET FOREIGN_KEY_CHECKS = 1;
+";
+	}
+
 	public function getAddTableDDL(Table $table)
 	{
 		$lines = array();

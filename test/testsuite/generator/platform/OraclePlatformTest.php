@@ -39,6 +39,70 @@ class OraclePlatformTest extends PlatformTestBase
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesDDL
+	 */
+	public function testGetAddTablesDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
+ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
+
+-----------------------------------------------------------------------
+-- book
+-----------------------------------------------------------------------
+
+DROP TABLE book CASCADE CONSTRAINTS;
+
+DROP SEQUENCE book_SEQ;
+
+CREATE TABLE book
+(
+	id NUMBER NOT NULL,
+	title NVARCHAR2(255) NOT NULL,
+	author_id NUMBER
+);
+
+ALTER TABLE book
+	ADD CONSTRAINT book_PK
+	PRIMARY KEY (id);
+
+CREATE SEQUENCE book_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+CREATE INDEX book_I_1 ON book (title);
+
+ALTER TABLE book ADD CONSTRAINT book_FK_1
+	FOREIGN KEY (author_id) REFERENCES author (id);
+
+-----------------------------------------------------------------------
+-- author
+-----------------------------------------------------------------------
+
+DROP TABLE author CASCADE CONSTRAINTS;
+
+DROP SEQUENCE author_SEQ;
+
+CREATE TABLE author
+(
+	id NUMBER NOT NULL,
+	first_name NVARCHAR2(100),
+	last_name NVARCHAR2(100)
+);
+
+ALTER TABLE author
+	ADD CONSTRAINT author_PK
+	PRIMARY KEY (id);
+
+CREATE SEQUENCE author_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK
 	 */
 	public function testGetAddTableDDLSimplePK($schema)
