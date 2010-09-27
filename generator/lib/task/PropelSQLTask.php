@@ -145,51 +145,70 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 
 			foreach ($dataModel->getDatabases() as $database) {
 				
-				$builderClazz = $generatorConfig->getConfiguredDDLBuilderClassname($database->getName());
-				
-				// Clear any start/end DLL
-				call_user_func(array($builderClazz, 'reset'));
-
-				// file we are going to create
+				$platform = $database->getPlatform();
 				if (!$this->packageObjectModel) {
 					$name = $dataModel->getName();
 				} else {
 					$name = ($package ? $package . '.' : '') . 'schema.xml';
 				}
-
 				$outFile = $this->getMappedFile($name);
-
-				$this->log("Writing to SQL file: " . $outFile->getPath());
-
-				// First add any "header" SQL
-				$ddl = call_user_func(array($builderClazz, 'getDatabaseStartDDL'));
-
-				foreach ($database->getTables() as $table) {
-
-					if (!$table->isSkipSql()) {
-						$builder = $generatorConfig->getConfiguredDDLBuilder($table);
-						$this->log("\t+ " . $table->getName() . " [builder: " . get_class($builder) . "]");
-						$ddl .= $builder->build();
-						foreach ($builder->getWarnings() as $warning) {
-							$this->log($warning, Project::MSG_WARN);
-						}
-					} else {
-						$this->log("\t + (skipping) " . $table->getName());
-					}
-
-				} // foreach database->getTables()
-
-				// Finally check to see if there is any "footer" SQL
-				$ddl .= call_user_func(array($builderClazz, 'getDatabaseEndDDL'));
-
-				// Now we're done.  Write the file!
-				file_put_contents($outFile->getAbsolutePath(), $ddl);
+				$absPath = $outFile->getAbsolutePath();
+				if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
+					$platform->setIdentifierQuoting(false);
+				}
+				$this->log('Using ' . get_class($platform), Project::MSG_VERBOSE);
+				$ddl = $platform->getAddTablesDDL($database);
+				if (file_exists($absPath) && $ddl == file_get_contents($absPath)) {
+					$this->log('[Unchanged] ' . $outFile->getName());
+				} else {
+					$this->getWarnings($database, $platform);
+					$this->log('Writing to SQL file: ' . $outFile->getPath());
+					file_put_contents($absPath, $ddl);
+				}
 
 			} // foreach database
 		} //foreach datamodels
 
 	} // main()
 
+	public function getWarnings(Database $database, PropelPLatformInterface $platform)
+	{
+		foreach ($database->getTablesForSql() as $table) {
+			foreach ($table->getForeignKeys() as $fk) {
+				
+				if ($platform instanceof MssqlPlatform && $fk->hasOnUpdate() && $fk->getOnUpdate() == ForeignKey::SETNULL) {
+					// there may be others that also won't work
+					// we have to skip this because it's unsupported.
+						$this->log(sprintf(
+							'Ignoring the "ON UPDATE SET NULL" option for "%s" fk on "%s" table (unsupported by MSSQL).',
+							$fk->getLocalColumnNames(),
+							$table->getName()
+						), Project::MSG_WARN);
+				}
+				
+				if ($platform instanceof MssqlPlatform && $fk->hasOnDelete() && $fk->getOnDelete() == ForeignKey::SETNULL) {
+					// there may be others that also won't work
+					// we have to skip this because it's unsupported.
+					$this->log(sprintf(
+						'Ignoring the "ON DELETE SET NULL" option for "%s" fk on "%s" table (unsupported by MSSQL).',
+						$fk->getLocalColumnNames(),
+						$table->getName()
+					), Project::MSG_WARN);
+				}
+				
+				if ($platform instanceof OraclePlatform && $fk->hasOnUpdate()) {
+					// there may be others that also won't work
+					// we have to skip this because it's unsupported.
+					$this->log(sprintf(
+						'Ignoring the "ON UPDATE" option for "%s" fk on "%s" table (unsupported by current Oracle adapter).',
+						$fk->getLocalColumnNames(),
+						$table->getName()
+					), Project::MSG_WARN);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Packages the datamodels to one datamodel per package
 	 *

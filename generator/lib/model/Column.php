@@ -110,7 +110,7 @@ class Column extends XMLElement
 	 *
 	 * @param			 columns Either a list of <code>Column</code> objects, or
 	 * a list of <code>String</code> objects with column names.
-	 * @deprecated Use the DDLBuilder->getColumnList() method instead; this will be removed in 1.3
+	 * @deprecated Use the Platform::getColumnListDDL() method instead
 	 */
 	public static function makeList($columns, PropelPlatformInterface $platform)
 	{

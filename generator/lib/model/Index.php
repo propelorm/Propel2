@@ -232,7 +232,7 @@ class Index extends XMLElement
 
 	/**
 	 * Return a comma delimited string of the columns which compose this index.
-	 * @deprecated because Column::makeList() is deprecated; use the array-returning getColumns() and DDLBuilder->getColumnList() instead instead.
+	 * @deprecated because Column::makeList() is deprecated; use the array-returning getColumns() instead.
 	 */
 	public function getColumnList()
 	{

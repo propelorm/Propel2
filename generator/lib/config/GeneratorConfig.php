@@ -110,8 +110,8 @@ class GeneratorConfig
       throw new BuildException("Unable to find class path for '$propname' property.");
     }
 
-    // This is a slight hack to workaround camel case inconsistencies for the DDL classes.
-    // Basically, we want to turn ?.?.?.sqliteDDLBuilder into ?.?.?.SqliteDDLBuilder
+    // This is a slight hack to workaround camel case inconsistencies for the DataSQL classes.
+    // Basically, we want to turn ?.?.?.sqliteDataSQLBuilder into ?.?.?.SqliteDataSQLBuilder
     $lastdotpos = strrpos($classpath, '.');
     if ($lastdotpos !== null) {
       $classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
@@ -197,33 +197,7 @@ class GeneratorConfig
     $builder->setGeneratorConfig($this);
     return $builder;
   }
-
-	public function getConfiguredDDLBuilderClassName($database = null)
-	{
-		$buildConnection = $this->getBuildConnection($database);
-		if (null !== $buildConnection['adapter']) {
-			$pf = $buildConnection['adapter'];
-			return Phing::import('builder.sql.' . $pf . '.' .ucfirst($pf) . 'DDLBuilder');
-		} else {
-			// propel.platform.class = platform.${propel.database}Platform by default
-			// propel.builder.ddl.class =  builder.sql.${propel.database}.${propel.database}DDLBuilder
-			return $this->getClassname('builderDdlClass');
-		}
-	}
-
-	public function getConfiguredDDLBuilder(Table $table)
-	{
-		$classname = $this->getConfiguredDDLBuilderClassName($table->getDatabase()->getName());
-		$builder = new $classname($table);
-		$builder->setGeneratorConfig($this);
-		$platform = $table->getDatabase()->getPlatform();
-		if ($this->getBuildProperty('disableIdentifierQuoting')) {
-			$platform->setIdentifierQuoting(false);
-		}
-		$builder->setPlatform($platform);
-		return $builder;
-	}
-
+  
   /**
    * Gets a configured Pluralizer class.
    *

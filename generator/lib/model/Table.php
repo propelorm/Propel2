@@ -1710,7 +1710,7 @@ class Table extends XMLElement implements IDMethod
 	 * Returns all parts of the primary key, separated by commas.
 	 *
 	 * @return    A CSV list of primary key parts.
-	 * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
+	 * @deprecated Use the Platform::getColumnListDDL() with the #getPrimaryKey() method.
 	 */
 	public function printPrimaryKey()
 	{
@@ -1739,7 +1739,7 @@ class Table extends XMLElement implements IDMethod
 	 * Returns the elements of the list, separated by commas.
 	 * @param     array $list
 	 * @return    A CSV list.
-	 * @deprecated Use the DDLBuilder->getColumnList() with the #getPrimaryKey() method.
+	 * @deprecated Use the Platform::getColumnListDDL() method.
 	 */
 	private function printList($list) {
 		$result = "";

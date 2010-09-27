@@ -135,12 +135,6 @@ abstract class DataModelBuilder
 	private $nestedSetPeerBuilder;
 
 	/**
-	 * The DDL builder for current table.
-	 * @var        DDLBuilder
-	 */
-	private $ddlBuilder;
-
-	/**
 	 * The Data-SQL builder for current table.
 	 * @var        DataSQLBuilder
 	 */
@@ -357,18 +351,6 @@ abstract class DataModelBuilder
 			$this->nestedSetPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedsetpeer');
 		}
 		return $this->nestedSetPeerBuilder;
-	}
-
-	/**
-	 * Returns new or existing ddl builder class for this table.
-	 * @return     DDLBuilder
-	 */
-	public function getDDLBuilder()
-	{
-		if (!isset($this->ddlBuilder)) {
-			$this->ddlBuilder = $this->getGeneratorConfig()->getConfiguredDDLBuilder($this->getTable());
-		}
-		return $this->ddlBuilder;
 	}
 
 	/**

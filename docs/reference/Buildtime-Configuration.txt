@@ -178,9 +178,8 @@ propel.basePrefix = {Base}|string
 # "My_ORM_Prefix_" just like "My_ORM_Prefix_BookPeer".
 propel.classPrefix = {empty}|string
 
-# Identifier quoting is only implemented at the DDL layer at this point.
-# Since this may result in undesired behavior (especially in Postgres), 
-# it can be disabled by setting this property to true.
+# Identifier quoting may result in undesired behavior (especially in Postgres),
+# it can be disabled in DDL by setting this property to true in your build.properties file.
 propel.disableIdentifierQuoting = true|{false}
 
 # Whether the generated `doSelectJoin*()` methods use LEFT JOIN or INNER JOIN
@@ -290,7 +289,6 @@ propel.builder.nestedsetpeer.class = builder.om.PHP5NestedSetPeerBuilder
 propel.builder.pluralizer.class = builder.util.DefaultEnglishPluralizer
 
 # SQL builders
-propel.builder.ddl.class = propel.engine.builder.sql.${propel.database}.${propel.database}DDLBuilder
 propel.builder.datasql.class = propel.engine.builder.sql.${propel.database}.${propel.database}DataSQLBuilder
 
 # Platform classes
