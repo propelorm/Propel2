@@ -191,13 +191,13 @@ SET search_path TO public;
 	{
 		$ret = $this->getBeginDDL();
 		$ret .= $this->getAddSchemasDDL($database);
-		foreach ($database->getTables() as $table) {
+		foreach ($database->getTablesForSql() as $table) {
 			$ret .= $this->getCommentBlockDDL($table->getName());
 			$ret .= $this->getDropTableDDL($table);
 			$ret .= $this->getAddTableDDL($table);
 			$ret .= $this->getAddIndicesDDL($table);
 		}
-		foreach ($database->getTables() as $table) {
+		foreach ($database->getTablesForSql() as $table) {
 			$ret .= $this->getAddForeignKeysDDL($table);
 		}
 		$ret .= $this->getEndDDL();

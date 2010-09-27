@@ -108,6 +108,16 @@ CREATE TABLE [author]
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+	 */
+	public function testGetAddTablesSkipSQLDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
 	
 	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK

@@ -321,11 +321,27 @@ class Database extends XMLElement
 	}
 
 	/**
-	 * Return an array of all tables
+	 * Return the list of all tables
+	 * @return array
 	 */
 	public function getTables()
 	{
 		return $this->tableList;
+	}
+
+	/**
+	 * Return the list of all tables that have a SQL representation
+	 * @return array
+	 */
+	public function getTablesForSql()
+	{
+		$tables = array();
+		foreach ($this->tableList as $table) {
+			if (!$table->isSkipSql()) {
+				$tables []= $table;
+			}
+		}
+		return $tables;
 	}
 
 	/**

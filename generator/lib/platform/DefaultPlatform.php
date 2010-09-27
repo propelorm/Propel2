@@ -242,7 +242,7 @@ class DefaultPlatform implements PropelPlatformInterface
 	public function getAddTablesDDL(Database $database)
 	{
 		$ret = $this->getBeginDDL();
-		foreach ($database->getTables() as $table) {
+		foreach ($database->getTablesForSql() as $table) {
 			$ret .= $this->getCommentBlockDDL($table->getName());
 			$ret .= $this->getDropTableDDL($table);
 			$ret .= $this->getAddTableDDL($table);
