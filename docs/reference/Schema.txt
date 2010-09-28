@@ -212,7 +212,7 @@ To create an index on one or more columns, use the following syntax:
 
 {{{
 #!xml
-  <index>
+  <index [name="/IndexName/"]>
      <index-column name="/ColumnName/" [size="/LengthOfIndexColumn/"] />
      ...
   </index>
@@ -226,7 +226,7 @@ To create a unique index on one or more columns, use the following syntax:
 
 {{{
 #!xml
-  <unique>
+  <unique [name="/IndexName/"]>
      <unique-column name="/ColumnName/" [size="/LengthOfIndexColumn/"] />
      ...
   </unique>

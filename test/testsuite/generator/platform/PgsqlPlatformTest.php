@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformTestProvider.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/PgsqlPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Database.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
@@ -19,6 +20,17 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class PgsqlPlatformTest extends PlatformTestProvider
 {
+	
+	/**
+	 * Get the Platform object for this class
+	 *
+	 * @return     Platform
+	 */
+	protected function getPlatform()
+	{
+		return new PgsqlPlatform();
+	}
+	
 	public function testGetSequenceNameDefault()
 	{
 		$table = new Table('foo');

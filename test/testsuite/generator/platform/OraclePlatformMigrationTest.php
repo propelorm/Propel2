@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformMigrationTestProvider.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/OraclePlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
 
@@ -18,15 +19,21 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
 {
+	/**
+	 * Get the Platform object for this class
+	 *
+	 * @return     Platform
+	 */
+	protected function getPlatform()
+	{
+		return new OraclePlatform();
+	}
 
 	/**
 	 * @dataProvider providerForTestGetModifyDatabaseDDL
 	 */
-	public function testGetModifyDatabaseDDL($schema1, $schema2)
+	public function testGetModifyDatabaseDDL($databaseDiff)
 	{
-		$d1 = $this->getDatabaseFromSchema($schema1);
-		$d2 = $this->getDatabaseFromSchema($schema2);
-		$databaseDiff = PropelDatabaseComparator::computeDiff($d1, $d2);
 		$expected = "
 ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
 ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
@@ -87,15 +94,51 @@ ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
 ALTER TABLE foo MODIFY
 (
-	baz VARCHAR(12)
+	baz NVARCHAR2(12)
 );
 
 ALTER TABLE foo ADD
 (
-	baz3 LONGVARCHAR DEFAULT 'baz3'
+	baz3 NVARCHAR2(2000) DEFAULT 'baz3'
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetModifyIndicesDDL
+	 */
+	public function testGetModifyIndicesDDL($tableDiff)
+	{
+		$expected = "
+DROP INDEX bar_FK;
+
+CREATE INDEX baz_FK ON foo (baz);
+
+DROP INDEX bar_baz_FK;
+
+CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getModifyIndicesDDL($tableDiff));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetModifyForeignKeysDDL
+	 */
+	public function testGetModifyForeignKeysDDL($tableDiff)
+	{
+		$expected = "
+ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
+
+ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_3
+	FOREIGN KEY (baz) REFERENCES foo2 (baz);
+
+ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
+
+ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
+	FOREIGN KEY (bar,id) REFERENCES foo2 (bar,id);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getModifyForeignKeysDDL($tableDiff));
 	}
 	
 	/**
@@ -152,7 +195,7 @@ ALTER TABLE foo MODIFY
 	public function testGetAddColumnDDL($column)
 	{
 		$expected = "
-ALTER TABLE foo ADD bar INTEGER;
+ALTER TABLE foo ADD bar NUMBER;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
 	}
@@ -165,8 +208,8 @@ ALTER TABLE foo ADD bar INTEGER;
 		$expected = "
 ALTER TABLE foo ADD
 (
-	bar1 INTEGER,
-	bar2 DOUBLE(3,2) DEFAULT -1 NOT NULL
+	bar1 NUMBER,
+	bar2 FLOAT(3,2) DEFAULT -1 NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));

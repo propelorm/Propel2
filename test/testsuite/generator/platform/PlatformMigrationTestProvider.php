@@ -58,7 +58,9 @@ EOF;
 	</table>
 </database>
 EOF;
-		return array(array($schema1, $schema2));
+		$d1 = $this->getDatabaseFromSchema($schema1);
+		$d2 = $this->getDatabaseFromSchema($schema2);
+		return array(array(PropelDatabaseComparator::computeDiff($d1, $d2)));
 	}
 	
 	public function providerForTestGetRenameTableDDL()
@@ -96,6 +98,103 @@ EOF;
 		return array(array($tc->getTableDiff()));
 	}
 	
+	public function providerForTestGetModifyIndicesDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+		<index name="bar_FK">
+			<index-column name="bar"/>
+		</index>
+		<index name="bar_baz_FK">
+			<index-column name="bar"/>
+			<index-column name="baz"/>
+		</index>
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+		<index name="bar_baz_FK">
+			<index-column name="id"/>
+			<index-column name="bar"/>
+			<index-column name="baz"/>
+		</index>
+		<index name="baz_FK">
+			<index-column name="baz"/>
+		</index>
+	</table>
+</database>
+EOF;
+		$t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
+		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
+		$tc = new PropelTableComparator();
+		$tc->setFromTable($t1);
+		$tc->setToTable($t2);
+		$tc->compareIndices();
+		return array(array($tc->getTableDiff()));
+	}
+
+	public function providerForTestGetModifyForeignKeysDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+		<foreign-key name="foo1_FK_1" foreignTable="foo2">
+			<reference local="bar" foreign="bar" />
+		</foreign-key>
+		<foreign-key name="foo1_FK_2" foreignTable="foo2">
+			<reference local="bar" foreign="bar" />
+			<reference local="baz" foreign="baz" />
+		</foreign-key>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+		<foreign-key name="foo1_FK_2" foreignTable="foo2">
+			<reference local="bar" foreign="bar" />
+			<reference local="id" foreign="id" />
+		</foreign-key>
+		<foreign-key name="foo1_FK_3" foreignTable="foo2">
+			<reference local="baz" foreign="baz" />
+		</foreign-key>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+</database>
+EOF;
+		$t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
+		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
+		$tc = new PropelTableComparator();
+		$tc->setFromTable($t1);
+		$tc->setToTable($t2);
+		$tc->compareForeignKeys();
+		return array(array($tc->getTableDiff()));
+	}
+
 	public function providerForTestGetRemoveColumnDDL()
 	{
 		$table = new Table('foo');

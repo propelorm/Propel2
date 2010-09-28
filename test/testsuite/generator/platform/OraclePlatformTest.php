@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformTestProvider.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/OraclePlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
 
@@ -18,6 +19,17 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class OraclePlatformTest extends PlatformTestProvider
 {
+
+	/**
+	 * Get the Platform object for this class
+	 *
+	 * @return     Platform
+	 */
+	protected function getPlatform()
+	{
+		return new OraclePlatform();
+	}
+	
 	public function testGetSequenceNameDefault()
 	{
 		$table = new Table('foo');

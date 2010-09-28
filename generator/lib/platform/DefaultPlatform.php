@@ -653,6 +653,63 @@ ALTER TABLE %s RENAME TO %s;
 		if ($addedColumns = $tableDiff->getAddedColumns()) {
 			$ret .= $this->getAddColumnsDDL($addedColumns);
 		}
+		
+		$ret .= $this->getModifyIndicesDDL($tableDiff);
+		$ret .= $this->getModifyForeignKeysDDL($tableDiff);
+
+		return $ret;
+	}
+
+	/**
+	 * Builds the DDL SQL to alter a table's indices
+	 * based on a PropelTableDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyIndicesDDL(PropelTableDiff $tableDiff)
+	{
+		$ret = '';
+		
+		foreach ($tableDiff->getRemovedIndices() as $index) {
+			$ret .= $this->getDropIndexDDL($index);
+		}
+
+		foreach ($tableDiff->getAddedIndices() as $index) {
+			$ret .= $this->getAddIndexDDL($index);
+		}
+
+		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
+			list($fromIndex, $toIndex) = $indexModification;
+			$ret .= $this->getDropIndexDDL($fromIndex);
+			$ret .= $this->getAddIndexDDL($toIndex);
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Builds the DDL SQL to alter a table's foreign keys
+	 * based on a PropelTableDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyForeignKeysDDL(PropelTableDiff $tableDiff)
+	{
+		$ret = '';
+		
+		foreach ($tableDiff->getRemovedFks() as $fk) {
+			$ret .= $this->getDropForeignKeyDDL($fk);
+		}
+
+		foreach ($tableDiff->getAddedFks() as $fk) {
+			$ret .= $this->getAddForeignKeyDDL($fk);
+		}
+
+		foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
+			list($fromFk, $toFk) = $fkModification;
+			$ret .= $this->getDropForeignKeyDDL($fromFk);
+			$ret .= $this->getAddForeignKeyDDL($toFk);
+		}
 
 		return $ret;
 	}

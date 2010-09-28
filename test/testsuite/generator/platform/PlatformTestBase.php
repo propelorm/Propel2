@@ -18,35 +18,12 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToA
  */
 abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * Platform object.
-	 *
-	 * @var        Platform
-	 */
-	protected $platform;
 
-	protected function setUp()
-	{
-		parent::setUp();
-
-		$clazz = preg_replace('/(Test|MigrationTest)$/', '', get_class($this));
-		include_once dirname(__FILE__) . '/../../../../generator/lib/platform/' . $clazz . '.php';
-		$this->platform = new $clazz();
-	}
-
-	/**
-	 * Get the Platform object for this class
-	 *
-	 * @return     Platform
-	 */
-	protected function getPlatform()
-	{
-		return $this->platform;
-	}
+	abstract protected function getPlatform();
 
 	protected function getDatabaseFromSchema($schema)
 	{
-		$xtad = new XmlToAppData($this->platform);
+		$xtad = new XmlToAppData($this->getPlatform());
 		$appData = $xtad->parseString($schema);
 		return $appData->getDatabase();
 	}

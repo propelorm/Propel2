@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformTestBase.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 
 /**
@@ -17,6 +18,25 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
  */
 class DefaultPlatformTest extends PlatformTestBase
 {
+	/**
+	 * Platform object.
+	 *
+	 * @var        Platform
+	 */
+	protected static $platform;
+	
+	/**
+	 * Get the Platform object for this class
+	 *
+	 * @return     Platform
+	 */
+	protected function getPlatform()
+	{
+		if (null === self::$platform) {
+			self::$platform = new DefaultPlatform();
+		}
+		return self::$platform;
+	}
 
 	public function testQuote()
 	{

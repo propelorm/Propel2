@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformTestProvider.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/SqlitePlatform.php';
 
 /**
  * 
@@ -16,27 +17,21 @@ require_once dirname(__FILE__) . '/PlatformTestProvider.php';
  */
 class SqlitePlatformTest extends PlatformTestProvider
 {
+
 	/**
-	 * @var        PDO The PDO connection to SQLite DB.
+	 * Get the Platform object for this class
+	 *
+	 * @return     Platform
 	 */
-	private $pdo;
-
-	protected function setUp()
+	protected function getPlatform()
 	{
-		parent::setUp();
-		$this->pdo = new PDO("sqlite::memory:");
-
-	}
-
-	public function tearDown()
-	{
-		 parent::tearDown();
+		return new SqlitePlatform();
 	}
 
 	public function testQuoteConnected()
 	{
 		$p = $this->getPlatform();
-		$p->setConnection($this->pdo);
+		$p->setConnection(new PDO("sqlite::memory:"));
 
 		$unquoted = "Naughty ' string";
 		$quoted = $p->quote($unquoted);
