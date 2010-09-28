@@ -2155,7 +2155,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-		if (\$deep) {  // also de-associate any related objects?";
+		if (\$deep) {  // also de-associate any related objects?\n";
 
 		foreach ($table->getForeignKeys() as $fk) {
 			$varName = $this->getFKVarName($fk);
@@ -2166,10 +2166,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($table->getReferrers() as $refFK) {
 			if ($refFK->isLocalPrimaryKey()) {
 				$script .= "
-			\$this->".$this->getPKRefFKVarName($refFK)." = null;";
+			\$this->".$this->getPKRefFKVarName($refFK)." = null;\n";
 			} else {
 				$script .= "
-			\$this->".$this->getRefFKCollVarName($refFK)." = null;";
+			\$this->".$this->getRefFKCollVarName($refFK)." = null;\n";
 			}
 		}
 
