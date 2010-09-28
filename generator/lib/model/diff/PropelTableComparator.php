@@ -25,8 +25,6 @@ require_once dirname(__FILE__) . '/PropelForeignKeyComparator.php';
 class PropelTableComparator
 {
 	protected $tableDiff;
-	protected $fromTable;
-	protected $toTable;
 	
 	public function __construct($tableDiff = null)
 	{
@@ -39,43 +37,43 @@ class PropelTableComparator
 	}
 	
 	/**
-	 * Setter for the fromTable property
+	 * Set the table the comparator starts from
 	 *
 	 * @param Table $fromTable
 	 */
 	function setFromTable(Table $fromTable)
 	{
-		$this->fromTable = $fromTable;
+		$this->tableDiff->setFromTable($fromTable);
 	}
 
 	/**
-	 * Getter for the fromTable property
+	 * Get the table the comparator starts from
 	 *
 	 * @return Table
 	 */
 	function getFromTable()
 	{
-		return $this->fromTable;
+		return $this->tableDiff->getFromTable();
 	}
 
 	/**
-	 * Setter for the toTable property
+	 * Set the table the comparator goes to
 	 *
 	 * @param Table $toTable
 	 */
 	function setToTable(Table $toTable)
 	{
-		$this->toTable = $toTable;
+		$this->tableDiff->setToTable($toTable);
 	}
 
 	/**
-	 * Getter for the toTable property
+	 * Get the table the comparator goes to
 	 *
 	 * @return Table
 	 */
 	function getToTable()
 	{
-		return $this->toTable;
+		return $this->tableDiff->getToTable();
 	}
 
 	/**
@@ -109,13 +107,13 @@ class PropelTableComparator
 	 */
 	public function compareColumns()
 	{
-		$fromTableColumns = $this->fromTable->getColumns();
-		$toTableColumns = $this->toTable->getColumns();
+		$fromTableColumns = $this->getFromTable()->getColumns();
+		$toTableColumns = $this->getToTable()->getColumns();
 		$columnDifferences = 0;
 		
 		// check for new columns in $toTable
 		foreach ($toTableColumns as $column) {
-			if (!$this->fromTable->hasColumn($column->getName())) {
+			if (!$this->getFromTable()->hasColumn($column->getName())) {
 				$this->tableDiff->addAddedColumn($column->getName(), $column);
 				$columnDifferences++;
 			}
@@ -123,7 +121,7 @@ class PropelTableComparator
 		
 		// check for removed columns in $toTable
 		foreach ($fromTableColumns as $column) {
-			if (!$this->toTable->hasColumn($column->getName())) {
+			if (!$this->getToTable()->hasColumn($column->getName())) {
 				$this->tableDiff->addRemovedColumn($column->getName(), $column);
 				$columnDifferences++;
 			}
@@ -131,8 +129,8 @@ class PropelTableComparator
 		
 		// check for column differences
 		foreach ($fromTableColumns as $fromColumn) {
-			if ($this->toTable->hasColumn($fromColumn->getName())) {
-				$toColumn = $this->toTable->getColumn($fromColumn->getName());
+			if ($this->getToTable()->hasColumn($fromColumn->getName())) {
+				$toColumn = $this->getToTable()->getColumn($fromColumn->getName());
 				$columnDiff = PropelColumnComparator::computeDiff($fromColumn, $toColumn);
 				if ($columnDiff) {
 					$this->tableDiff->addModifiedColumn($fromColumn->getName(), $columnDiff);
@@ -167,13 +165,13 @@ class PropelTableComparator
 	public function comparePrimaryKeys()
 	{
 		$pkDifferences = 0;
-		$fromTablePk = $this->fromTable->getPrimaryKey();
-		$toTablePk = $this->toTable->getPrimaryKey();
+		$fromTablePk = $this->getFromTable()->getPrimaryKey();
+		$toTablePk = $this->getToTable()->getPrimaryKey();
 		
 		// check for new pk columns in $toTable
 		foreach ($toTablePk as $column) {
-			if (!$this->fromTable->hasColumn($column->getName()) ||
-					!$this->fromTable->getColumn($column->getName())->isPrimaryKey()) {
+			if (!$this->getFromTable()->hasColumn($column->getName()) ||
+					!$this->getFromTable()->getColumn($column->getName())->isPrimaryKey()) {
 				$this->tableDiff->addAddedPkColumn($column->getName(), $column);
 				$pkDifferences++;
 			}
@@ -181,8 +179,8 @@ class PropelTableComparator
 		
 		// check for removed pk columns in $toTable
 		foreach ($fromTablePk as $column) {
-			if (!$this->toTable->hasColumn($column->getName()) ||
-					!$this->toTable->getColumn($column->getName())->isPrimaryKey()) {
+			if (!$this->getToTable()->hasColumn($column->getName()) ||
+					!$this->getToTable()->getColumn($column->getName())->isPrimaryKey()) {
 				$this->tableDiff->addRemovedPkColumn($column->getName(), $column);
 				$pkDifferences++;
 			}
@@ -214,8 +212,8 @@ class PropelTableComparator
 	public function compareIndices()
 	{
 		$indexDifferences = 0;
-		$fromTableIndices = array_merge($this->fromTable->getIndices(), $this->fromTable->getUnices());
-		$toTableIndices = array_merge($this->toTable->getIndices(), $this->toTable->getUnices());
+		$fromTableIndices = array_merge($this->getFromTable()->getIndices(), $this->getFromTable()->getUnices());
+		$toTableIndices = array_merge($this->getToTable()->getIndices(), $this->getToTable()->getUnices());
 
 		foreach ($toTableIndices as $toTableIndexPos => $toTableIndex) {
 			foreach ($fromTableIndices as $fromTableIndexPos => $fromTableIndex) {
@@ -257,8 +255,8 @@ class PropelTableComparator
 	public function compareForeignKeys()
 	{
 		$fkDifferences = 0;
-		$fromTableFks = $this->fromTable->getForeignKeys();
-		$toTableFks = $this->toTable->getForeignKeys();
+		$fromTableFks = $this->getFromTable()->getForeignKeys();
+		$toTableFks = $this->getToTable()->getForeignKeys();
 
 		foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
 			foreach ($toTableFks as $toTableFkPos => $toTableFk) {

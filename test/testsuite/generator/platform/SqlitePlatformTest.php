@@ -8,14 +8,13 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/DefaultPlatformTest.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
+require_once dirname(__FILE__) . '/PlatformTestProvider.php';
 
 /**
  * 
  * @package    generator.platform
  */
-class SqlitePlatformTest extends DefaultPlatformTest
+class SqlitePlatformTest extends PlatformTestProvider
 {
 	/**
 	 * @var        PDO The PDO connection to SQLite DB.

@@ -581,6 +581,211 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 	}
 
 	/**
+	 * Builds the DDL SQL to modify a database
+	 * based on a PropelDatabaseDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyDatabaseDDL(PropelDatabaseDiff $databaseDiff)
+	{
+		$ret = $this->getBeginDDL();
+
+		foreach ($databaseDiff->getRemovedTables() as $table) {
+			$ret .= $this->getDropTableDDL($table);
+		}
+
+		foreach ($databaseDiff->getRenamedTables() as $fromTableName => $toTableName) {
+			$ret .= $this->getRenameTableDDL($fromTableName, $toTableName);
+		}
+
+		foreach ($databaseDiff->getModifiedTables() as $tableDiff) {
+			$ret .= $this->getModifyTableDDL($tableDiff);
+		}
+
+		foreach ($databaseDiff->getAddedTables() as $table) {
+			$ret .= $this->getAddTableDDL($table);
+			$ret .= $this->getAddIndicesDDL($table);
+			$ret .= $this->getAddForeignKeysDDL($table);
+		}
+		
+		$ret .= $this->getEndDDL();
+		
+		return $ret;
+	}
+
+	/**
+	 * Builds the DDL SQL to rename a table
+	 * @return     string
+	 */
+	public function getRenameTableDDL($fromTableName, $toTableName)
+	{
+		$pattern = "
+ALTER TABLE %s RENAME TO %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fromTableName),
+			$this->quoteIdentifier($toTableName)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to alter a table
+	 * based on a PropelTableDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyTableDDL(PropelTableDiff $tableDiff)
+	{
+		$ret = '';
+		
+		foreach ($tableDiff->getRemovedColumns() as $column) {
+			$ret .= $this->getRemoveColumnDDL($column);
+		}
+
+		foreach ($tableDiff->getRenamedColumns() as $fromColumnName => $toColumnName) {
+			$ret .= $this->getRenameColumnDDL($tableDiff->getToTable(), $fromColumnName, $toColumnName);
+		}
+
+		if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+			$ret .= $this->getModifyColumnsDDL($modifiedColumns);
+		}
+
+		if ($addedColumns = $tableDiff->getAddedColumns()) {
+			$ret .= $this->getAddColumnsDDL($addedColumns);
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Builds the DDL SQL to remove a column
+	 *
+	 * @return     string
+	 */
+	public function getRemoveColumnDDL(Column $column)
+	{
+		$pattern = "
+ALTER TABLE %s DROP COLUMN %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($column->getTable()->getName()),
+			$this->quoteIdentifier($column->getName())
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to rename a column
+	 * @return     string
+	 */
+	public function getRenameColumnDDL(Table $table, $fromColumnName, $toColumnName)
+	{
+		$pattern = "
+ALTER TABLE %s RENAME COLUMN %s TO %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($table->getName()),
+			$this->quoteIdentifier($fromColumnName),
+			$this->quoteIdentifier($toColumnName)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to modify a column
+	 *
+	 * @return     string
+	 */
+	public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+	{
+		$toColumn = $columnDiff->getToColumn();
+		$pattern = "
+ALTER TABLE %s MODIFY %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($toColumn->getTable()->getName()),
+			$this->getColumnDDL($toColumn)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to modify a list of columns
+	 *
+	 * @return     string
+	 */
+	public function getModifyColumnsDDL($columnDiffs)
+	{
+		$lines = array();
+		$tableName = null;
+		foreach ($columnDiffs as $columnDiff) {
+			$toColumn = $columnDiff->getToColumn();
+			if (null === $tableName) {
+				$tableName = $toColumn->getTable()->getName();
+			}
+			$lines []= $this->getColumnDDL($toColumn);
+		}
+
+		$sep = ",
+	";
+
+		$pattern = "
+ALTER TABLE %s MODIFY
+(
+	%s
+);
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($tableName),
+			implode($sep, $lines)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to remove a column
+	 *
+	 * @return     string
+	 */
+	public function getAddColumnDDL(Column $column)
+	{
+		$pattern = "
+ALTER TABLE %s ADD %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($column->getTable()->getName()),
+			$this->getColumnDDL($column)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to remove a list of columns
+	 *
+	 * @return     string
+	 */
+	public function getAddColumnsDDL($columns)
+	{
+		$lines = array();
+		$tableName = null;
+		foreach ($columns as $column) {
+			if (null === $tableName) {
+				$tableName = $column->getTable()->getName();
+			}
+			$lines []= $this->getColumnDDL($column);
+		}
+		
+		$sep = ",
+	";
+		
+		$pattern = "
+ALTER TABLE %s ADD
+(
+	%s
+);
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($tableName),
+			implode($sep, $lines)
+		);
+	}
+	
+	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
 	 * @param      string $sqlType the SQL type

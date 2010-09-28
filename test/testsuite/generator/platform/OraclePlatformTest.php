@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/PlatformTestBase.php';
+require_once dirname(__FILE__) . '/PlatformTestProvider.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
 
@@ -16,7 +16,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  *
  * @package    generator.platform 
  */
-class OraclePlatformTest extends PlatformTestBase
+class OraclePlatformTest extends PlatformTestProvider
 {
 	public function testGetSequenceNameDefault()
 	{

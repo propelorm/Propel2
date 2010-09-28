@@ -18,16 +18,6 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 class DefaultPlatformTest extends PlatformTestBase
 {
 
-	protected function setUp()
-	{
-		parent::setUp();
-	}
-
-	public function tearDown()
-	{
-		 parent::tearDown();
-	}
-
 	public function testQuote()
 	{
 		$p = $this->getPlatform();

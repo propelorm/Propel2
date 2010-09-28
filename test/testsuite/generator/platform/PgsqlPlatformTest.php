@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/PlatformTestBase.php';
+require_once dirname(__FILE__) . '/PlatformTestProvider.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Database.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  *
  * @package    generator.platform 
  */
-class PgsqlPlatformTest extends PlatformTestBase
+class PgsqlPlatformTest extends PlatformTestProvider
 {
 	public function testGetSequenceNameDefault()
 	{

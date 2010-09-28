@@ -20,6 +20,9 @@ require_once dirname(__FILE__) . '/PropelColumnDiff.php';
  */
 class PropelTableDiff
 {
+	protected $fromTable;
+	protected $toTable;
+	
 	protected $addedColumns = array();
 	protected $removedColumns = array();
 	protected $modifiedColumns = array();
@@ -36,7 +39,47 @@ class PropelTableDiff
 	protected $addedFks = array();
 	protected $removedFks = array();
 	protected $modifiedFks = array();
-	
+
+	/**
+	 * Setter for the fromTable property
+	 *
+	 * @param Table $fromTable
+	 */
+	function setFromTable(Table $fromTable)
+	{
+		$this->fromTable = $fromTable;
+	}
+
+	/**
+	 * Getter for the fromTable property
+	 *
+	 * @return Table
+	 */
+	function getFromTable()
+	{
+		return $this->fromTable;
+	}
+
+	/**
+	 * Setter for the toTable property
+	 *
+	 * @param Table $toTable
+	 */
+	function setToTable(Table $toTable)
+	{
+		$this->toTable = $toTable;
+	}
+
+	/**
+	 * Getter for the toTable property
+	 *
+	 * @return Table
+	 */
+	function getToTable()
+	{
+		return $this->toTable;
+	}
+		
 	/**
 	 * Setter for the addedColumns property
 	 *
