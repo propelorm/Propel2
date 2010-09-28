@@ -20,7 +20,6 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class PgsqlPlatformTest extends PlatformTestProvider
 {
-	
 	/**
 	 * Get the Platform object for this class
 	 *

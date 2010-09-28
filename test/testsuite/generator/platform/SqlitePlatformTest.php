@@ -17,7 +17,6 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/platform/SqlitePlat
  */
 class SqlitePlatformTest extends PlatformTestProvider
 {
-
 	/**
 	 * Get the Platform object for this class
 	 *

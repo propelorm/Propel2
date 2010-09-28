@@ -9,7 +9,6 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/model/Table.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 
 /**
