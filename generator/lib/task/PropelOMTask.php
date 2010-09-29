@@ -90,7 +90,8 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		}
 		
 		// write / overwrite new / changed files
-		$this->log("\t-> Writing " . $builder->getClassFilePath() . " [builder: " . get_class($builder) . "]");
+		$action = $_f->exists() ? 'Updating' : 'Creating';
+		$this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
 		file_put_contents($_f->getAbsolutePath(), $script);
 		return 1;
 	}
@@ -106,12 +107,15 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		$generatorConfig = $this->getGeneratorConfig();
 		$totalNbFiles = 0;
 		
-		foreach ($this->getDataModels() as $dataModel) {
-			$this->log("Datamodel: " . $dataModel->getName());
+		$dataModels = $this->getDataModels();
+		$this->log('Generating PHP files...');
+		
+		foreach ($dataModels as $dataModel) {
+			$this->log("Datamodel: " . $dataModel->getName(), Project::MSG_VERBOSE);
 
 			foreach ($dataModel->getDatabases() as $database) {
 
-				$this->log(" - Database: " . $database->getName());
+				$this->log(" - Database: " . $database->getName(), Project::MSG_VERBOSE);
 
 				foreach ($database->getTables() as $table) {
 
@@ -119,7 +123,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 						
 						$nbWrittenFiles = 0;
 
-						$this->log("  + Table: " . $table->getName());
+						$this->log("  + Table: " . $table->getName(), Project::MSG_VERBOSE);
 
 						// -----------------------------------------------------------------------------------------
 						// Create Peer, Object, and TableMap classes

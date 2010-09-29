@@ -328,6 +328,15 @@ class Database extends XMLElement
 	{
 		return $this->tableList;
 	}
+	
+	/**
+	 * Return the number of tables in the database
+	 * @return integer
+	 */
+	public function countTables()
+	{
+		return count($this->tableList);
+	}
 
 	/**
 	 * Return the list of all tables that have a SQL representation
