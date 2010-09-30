@@ -83,4 +83,16 @@ class PropelColumnDiff
 		return $this->toColumn;
 	}
 	
+	public function __toString()
+	{
+		$ret = '';
+		$ret .= sprintf("      %s:\n", $this->getFromColumn()->getFullyQualifiedName());
+		$ret .= "        modifiedProperties:\n";
+		foreach ($this->getChangedProperties() as $key => $value) {
+			$ret .= sprintf("          %s: %s\n", $key, json_encode($value));
+		}
+		
+		return $ret;
+	}
+	
 }

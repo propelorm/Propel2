@@ -232,4 +232,36 @@ class PropelDatabaseDiff
 	{
 		return count($this->renamedTables);
 	}
+
+	public function __toString()
+	{
+		$ret = '';
+		if ($addedTables = $this->getAddedTables()) {
+			$ret .= "addedTables:\n";
+			foreach ($addedTables as $tableName => $table) {
+				$ret .= sprintf("  - %s\n", $tableName);
+			}
+		}
+		if ($removedTables = $this->getRemovedTables()) {
+			$ret .= "removedTables:\n";
+			foreach ($removedTables as $tableName => $table) {
+				$ret .= sprintf("  - %s\n", $tableName);
+			}
+		}
+		if ($modifiedTables = $this->getModifiedTables()) {
+			$ret .= "modifiedTables:\n";
+			foreach ($modifiedTables as $tableName => $tableDiff) {
+				$ret .= $tableDiff->__toString();
+			}
+		}
+		if ($renamedTables = $this->getRenamedTables()) {
+			$ret .= "renamedTables:\n";
+			foreach ($renamedTables as $fromName => $toName) {
+				$ret .= sprintf("  %s: %s\n", $fromName, $toName);
+			}
+		}
+		
+		return $ret;
+	}
+
 }

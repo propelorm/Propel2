@@ -289,7 +289,7 @@ class PropelSQLExec extends Task
 		$this->log(sprintf('  Connecting to database "%s" using DSN "%s"', $database, $dsn));
 
 		try {
- 			
+
 			// Set user + password to null if they are empty strings or missing
 			$username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
 			$password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;

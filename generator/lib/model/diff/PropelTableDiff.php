@@ -579,4 +579,89 @@ class PropelTableDiff
 		return $this->modifiedFks;
 	}
 	
+	public function __toString()
+	{
+		$ret = '';
+		$ret .= sprintf("  %s:\n", $this->getFromTable()->getName());
+		if ($addedColumns = $this->getAddedColumns()) {
+			$ret .= "    addedColumns:\n";
+			foreach ($addedColumns as $colname => $column) {
+				$ret .= sprintf("      - %s\n", $colname);
+			}
+		}
+		if ($removedColumns = $this->getRemovedColumns()) {
+			$ret .= "    removedColumns:\n";
+			foreach ($removedColumns as $colname => $column) {
+				$ret .= sprintf("      - %s\n", $colname);
+			}
+		}
+		if ($modifiedColumns = $this->getModifiedColumns()) {
+			$ret .= "    modifiedColumns:\n";
+			foreach ($modifiedColumns as $colname => $colDiff) {
+				$ret .= $colDiff->__toString();
+			}
+		}
+		if ($renamedColumns = $this->getRenamedColumns()) {
+			$ret .= "    renamedColumns:\n";
+			foreach ($renamedColumns as $fromName => $toName) {
+				$ret .= sprintf("      %s: %s\n", $fromName, $toName);
+			}
+		}
+		if ($addedIndices = $this->getAddedIndices()) {
+			$ret .= "    addedIndices:\n";
+			foreach ($addedIndices as $indexName => $index) {
+				$ret .= sprintf("      - %s\n", $indexName);
+			}
+		}
+		if ($removedIndices = $this->getRemovedIndices()) {
+			$ret .= "    removedIndices:\n";
+			foreach ($removedIndices as $indexName => $index) {
+				$ret .= sprintf("      - %s\n", $indexName);
+			}
+		}
+		if ($modifiedIndices = $this->getModifiedIndices()) {
+			$ret .= "    modifiedIndices:\n";
+			foreach ($modifiedIndices as $indexName => $indexDiff) {
+				$ret .= sprintf("      - %s\n", $indexName);
+			}
+		}
+		if ($addedFks = $this->getAddedFks()) {
+			$ret .= "    addedFks:\n";
+			foreach ($addedFks as $fkName => $fk) {
+				$ret .= sprintf("      - %s\n", $fkName);
+			}
+		}
+		if ($removedFks = $this->getRemovedFks()) {
+			$ret .= "    removedFks:\n";
+			foreach ($removedFks as $fkName => $fk) {
+				$ret .= sprintf("      - %s\n", $fkName);
+			}
+		}
+		if ($modifiedFks = $this->getModifiedFks()) {
+			$ret .= "    modifiedFks:\n";
+			foreach ($modifiedFks as $fkName => $fkFromTo) {
+				$ret .= sprintf("      %s:\n", $fkName);
+				list($fromFk, $toFk) = $fkFromTo;
+				$fromLocalColumns = json_encode($fromFk->getLocalColumns());
+				$toLocalColumns = json_encode($toFk->getLocalColumns());
+				if ($fromLocalColumns != $toLocalColumns) {
+					$ret .= sprintf("          localColumns: from %s to %s\n", $fromLocalColumns, $toLocalColumns);
+				}
+				$fromForeignColumns = json_encode($fromFk->getForeignColumns());
+				$toForeignColumns = json_encode($toFk->getForeignColumns());
+				if ($fromForeignColumns != $toForeignColumns) {
+					$ret .= sprintf("          foreignColumns: from %s to %s\n", $fromForeignColumns, $toForeignColumns);
+				}
+				if ($fromFk->normalizeFKey($fromFk->getOnUpdate()) != $toFk->normalizeFKey($toFk->getOnUpdate())) {
+					$ret .= sprintf("          onUpdate: from %s to %s\n", $fromFk->getOnUpdate(), $toFk->getOnUpdate());
+				}
+				if ($fromFk->normalizeFKey($fromFk->getOnDelete()) != $toFk->normalizeFKey($toFk->getOnDelete())) {
+					$ret .= sprintf("          onDelete: from %s to %s\n", $fromFk->getOnDelete(), $toFk->getOnDelete());
+				}
+			}
+		}
+		
+		return $ret;
+	}
+	
 }

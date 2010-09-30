@@ -57,14 +57,28 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$platform = $generatorConfig->getConfiguredPlatform($con);
 		
 		// loading model from database
-		$this->log('Reading database structure...');
-		$con = $this->getConnection();
-		$database = new Database($this->getDatabaseName());
-		$database->setPlatform($platform);
-		$database->setDefaultIdMethod(IDMethod::NATIVE);
-		$parser = $generatorConfig->getConfiguredSchemaParser($con);
-		$nbTables = $parser->parse($database, $this);
-		$this->log(sprintf('%d tables found.', $nbTables));
+		$this->log('Reading databases structure...');
+		$connections = $generatorConfig->getBuildConnections();
+		if (!$connections) {
+			throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use diff');
+		}
+		$totalNbTables = 0;
+		$ad = new AppData();
+		foreach ($connections as $name => $params) {
+			$this->log(sprintf('Connectig to database "%s" using DSN "%s"', $name, $params['dsn']), Project::MSG_VERBOSE);
+			$pdo = $generatorConfig->getBuildPDO($name);
+			$database = new Database($name);
+			$platform = $generatorConfig->getConfiguredPlatform($pdo);
+			$database->setPlatform($platform);
+			$database->setDefaultIdMethod(IDMethod::NATIVE);
+			$parser = $generatorConfig->getConfiguredSchemaParser($pdo);
+			$nbTables = $parser->parse($database, $this);
+			$ad->addDatabase($database);
+			$totalNbTables += $nbTables;
+			$this->log(sprintf('%d tables imported from databae "%s"', $nbTables, $name), Project::MSG_VERBOSE);
+		}
+		$this->log(sprintf('%d tables imported from databases.', $totalNbTables));
+
 		
 		// loading model from XML
 		$this->packageObjectModel = true;
@@ -73,26 +87,36 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		
 		// comparing models
 		$this->log('Comparing models...');
-		$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase());
-		if (!$databaseDiff) {
-			$this->log('Same XML and database structures - no diff to generate');
-			return;
-		}
+		foreach ($ad->getDatabases() as $database) {
+			$name = $database->getName();
+			$this->log(sprintf('Comparing database "%s"', $name), Project::MSG_VERBOSE);
+			if (!$appDataFromXml->hasDatabase($name)) {
+				// FIXME: tables present in database but not in XML
+				continue;
+			}
+			$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name));
+			
+			if (!$databaseDiff) {
+				$this->log('Same XML and database structures - no diff to generate', Project::MSG_VERBOSE);
+				continue;
+			}
 		
-		$messages = array();
-		if ($count = $databaseDiff->countAddedTables()) {
-			$messages []= sprintf('%d added tables', $count);
+			$messages = array();
+			if ($count = $databaseDiff->countAddedTables()) {
+				$messages []= sprintf('%d added tables', $count);
+			}
+			if ($count = $databaseDiff->countRemovedTables()) {
+				$messages []= sprintf('%d removed tables', $count);
+			}
+			if ($count = $databaseDiff->countModifiedTables()) {
+				$messages []= sprintf('%d modified tables', $count);
+			}
+			if ($count = $databaseDiff->countRenamedTables()) {
+				$messages []= sprintf('%d renamed tables', $count);
+			}
+			$this->log(sprintf('Structure of database "%s" was modified: %s', $name, implode(', ', $messages)));
+			
+			echo $platform->getModifyDatabaseDDL($databaseDiff);
 		}
-		if ($count = $databaseDiff->countRemovedTables()) {
-			$messages []= sprintf('%d removed tables', $count);
-		}
-		if ($count = $databaseDiff->countModifiedTables()) {
-			$messages []= sprintf('%d modified tables', $count);
-		}
-		if ($count = $databaseDiff->countRenamedTables()) {
-			$messages []= sprintf('%d renamed tables', $count);
-		}
-		$this->log(sprintf('Structure was modified: %s', implode(', ', $messages)));
-		echo $platform->getModifyDatabaseDDL($databaseDiff);
 	}
 }
