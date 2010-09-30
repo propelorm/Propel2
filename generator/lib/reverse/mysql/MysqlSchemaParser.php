@@ -30,7 +30,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	 * @var        array
 	 */
 	private static $mysqlTypeMap = array(
-		'tinyint' => PropelTypes::TINYINT,
+		'tinyint' => PropelTypes::BOOLEAN,
 		'smallint' => PropelTypes::SMALLINT,
 		'mediumint' => PropelTypes::SMALLINT,
 		'int' => PropelTypes::INTEGER,
@@ -144,6 +144,14 @@ class MysqlSchemaParser extends BaseSchemaParser
 						$size = (int) $matches[2];
 					}
 				}
+				if ($nativeType == 'int' && $size == '11') {
+					// int(11) is the default for int
+					$size = null;
+				}
+				if ($nativeType == 'tinyint' && $size == '4') {
+					// tinyint(4) is the default for boolean
+					$size = null;
+				}
 			} elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
 				$nativeType = $matches[1];
 			} else {
@@ -235,6 +243,13 @@ class MysqlSchemaParser extends BaseSchemaParser
 						if ($result && is_array($result) && isset($result[1])) {
 							$fkactions[$fkaction] = $result[1];
 						}
+					}
+				}
+				
+				// restrict is the default
+				foreach ($fkactions as $key => $action) {
+					if ($action == ForeignKey::RESTRICT) {
+						$fkactions[$key] = null;
 					}
 				}
 				
