@@ -148,6 +148,14 @@ class MysqlSchemaParser extends BaseSchemaParser
 					// int(11) is the default for int
 					$size = null;
 				}
+				if ($nativeType == 'bigint' && $size == '20') {
+					// bigint(20) is the default for int
+					$size = null;
+				}
+				if ($nativeType == 'decimal' && $size == '10') {
+					// decimal(10) is the default for decimal
+					$size = null;
+				}
 				if ($nativeType == 'tinyint' && $size == '4') {
 					// tinyint(4) is the default for boolean
 					$size = null;
