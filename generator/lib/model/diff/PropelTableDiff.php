@@ -45,7 +45,7 @@ class PropelTableDiff
 	 *
 	 * @param Table $fromTable
 	 */
-	function setFromTable(Table $fromTable)
+	public function setFromTable(Table $fromTable)
 	{
 		$this->fromTable = $fromTable;
 	}
@@ -55,7 +55,7 @@ class PropelTableDiff
 	 *
 	 * @return Table
 	 */
-	function getFromTable()
+	public function getFromTable()
 	{
 		return $this->fromTable;
 	}
@@ -65,7 +65,7 @@ class PropelTableDiff
 	 *
 	 * @param Table $toTable
 	 */
-	function setToTable(Table $toTable)
+	public function setToTable(Table $toTable)
 	{
 		$this->toTable = $toTable;
 	}
@@ -75,7 +75,7 @@ class PropelTableDiff
 	 *
 	 * @return Table
 	 */
-	function getToTable()
+	public function getToTable()
 	{
 		return $this->toTable;
 	}
@@ -85,7 +85,7 @@ class PropelTableDiff
 	 *
 	 * @param array $addedColumns
 	 */
-	function setAddedColumns($addedColumns)
+	public function setAddedColumns($addedColumns)
 	{
 		$this->addedColumns = $addedColumns;
 	}
@@ -96,7 +96,7 @@ class PropelTableDiff
 	 * @param string $columnName
 	 * @param Column $addedColumn
 	 */
-	function addAddedColumn($columnName, Column $addedColumn)
+	public function addAddedColumn($columnName, Column $addedColumn)
 	{
 		$this->addedColumns[$columnName] = $addedColumn;
 	}
@@ -106,7 +106,7 @@ class PropelTableDiff
 	 *
 	 * @param string $columnName
 	 */
-	function removeAddedColumn($columnName)
+	public function removeAddedColumn($columnName)
 	{
 		unset($this->addedColumns[$columnName]);
 	}
@@ -116,7 +116,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getAddedColumns()
+	public function getAddedColumns()
 	{
 		return $this->addedColumns;
 	}
@@ -128,7 +128,7 @@ class PropelTableDiff
 	 *
 	 * @param Column
 	 */
-	function getAddedColumn($columnName)
+	public function getAddedColumn($columnName)
 	{
 		return $this->addedColumns[$columnName];
 	}
@@ -138,7 +138,7 @@ class PropelTableDiff
 	 *
 	 * @param array $removedColumns
 	 */
-	function setRemovedColumns($removedColumns)
+	public function setRemovedColumns($removedColumns)
 	{
 		$this->removedColumns = $removedColumns;
 	}
@@ -149,7 +149,7 @@ class PropelTableDiff
 	 * @param string $columnName
 	 * @param Column $removedColumn
 	 */
-	function addRemovedColumn($columnName, Column $removedColumn)
+	public function addRemovedColumn($columnName, Column $removedColumn)
 	{
 		$this->removedColumns[$columnName] = $removedColumn;
 	}
@@ -159,7 +159,7 @@ class PropelTableDiff
 	 *
 	 * @param string $columnName
 	 */
-	function removeRemovedColumn($columnName)
+	public function removeRemovedColumn($columnName)
 	{
 		unset($this->removedColumns[$columnName]);
 	}
@@ -169,7 +169,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRemovedColumns()
+	public function getRemovedColumns()
 	{
 		return $this->removedColumns;
 	}
@@ -181,7 +181,7 @@ class PropelTableDiff
 	 *
 	 * @param Column
 	 */
-	function getRemovedColumn($columnName)
+	public function getRemovedColumn($columnName)
 	{
 		return $this->removedColumns[$columnName];
 	}
@@ -191,7 +191,7 @@ class PropelTableDiff
 	 *
 	 * @param array $modifiedColumns
 	 */
-	function setModifiedColumns($modifiedColumns)
+	public function setModifiedColumns($modifiedColumns)
 	{
 		$this->modifiedColumns = $modifiedColumns;
 	}
@@ -202,7 +202,7 @@ class PropelTableDiff
 	 * @param string $columnName
 	 * @param PropelColumnDiff $modifiedColumn
 	 */
-	function addModifiedColumn($columnName, PropelColumnDiff $modifiedColumn)
+	public function addModifiedColumn($columnName, PropelColumnDiff $modifiedColumn)
 	{
 		$this->modifiedColumns[$columnName] = $modifiedColumn;
 	}
@@ -212,7 +212,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getModifiedColumns()
+	public function getModifiedColumns()
 	{
 		return $this->modifiedColumns;
 	}
@@ -222,7 +222,7 @@ class PropelTableDiff
 	 *
 	 * @param array $renamedColumns
 	 */
-	function setRenamedColumns($renamedColumns)
+	public function setRenamedColumns($renamedColumns)
 	{
 		$this->renamedColumns = $renamedColumns;
 	}
@@ -233,7 +233,7 @@ class PropelTableDiff
 	 * @param string $fromName
 	 * @param string $toName
 	 */
-	function addRenamedColumn($fromName, $toName)
+	public function addRenamedColumn($fromName, $toName)
 	{
 		$this->renamedColumns[$fromName] = $toName;
 	}
@@ -243,7 +243,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRenamedColumns()
+	public function getRenamedColumns()
 	{
 		return $this->renamedColumns;
 	}
@@ -253,7 +253,7 @@ class PropelTableDiff
 	 *
 	 * @param  $addedPkColumns
 	 */
-	function setAddedPkColumns($addedPkColumns)
+	public function setAddedPkColumns($addedPkColumns)
 	{
 		$this->addedPkColumns = $addedPkColumns;
 	}
@@ -264,7 +264,7 @@ class PropelTableDiff
 	 * @param string $columnName
 	 * @param Column $addedPkColumn
 	 */
-	function addAddedPkColumn($columnName, Column $addedPkColumn)
+	public function addAddedPkColumn($columnName, Column $addedPkColumn)
 	{
 		$this->addedPkColumns[$columnName] = $addedPkColumn;
 	}
@@ -274,7 +274,7 @@ class PropelTableDiff
 	 *
 	 * @param string $columnName
 	 */
-	function removeAddedPkColumn($columnName)
+	public function removeAddedPkColumn($columnName)
 	{
 		unset($this->addedPkColumns[$columnName]);
 	}
@@ -284,7 +284,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getAddedPkColumns()
+	public function getAddedPkColumns()
 	{
 		return $this->addedPkColumns;
 	}
@@ -294,7 +294,7 @@ class PropelTableDiff
 	 *
 	 * @param  $removedPkColumns
 	 */
-	function setRemovedPkColumns($removedPkColumns)
+	public function setRemovedPkColumns($removedPkColumns)
 	{
 		$this->removedPkColumns = $removedPkColumns;
 	}
@@ -305,7 +305,7 @@ class PropelTableDiff
 	 * @param string $columnName
 	 * @param Column $removedColumn
 	 */
-	function addRemovedPkColumn($columnName, Column $removedPkColumn)
+	public function addRemovedPkColumn($columnName, Column $removedPkColumn)
 	{
 		$this->removedPkColumns[$columnName] = $removedPkColumn;
 	}
@@ -315,7 +315,7 @@ class PropelTableDiff
 	 *
 	 * @param string $columnName
 	 */
-	function removeRemovedPkColumn($columnName)
+	public function removeRemovedPkColumn($columnName)
 	{
 		unset($this->removedPkColumns[$columnName]);
 	}
@@ -325,7 +325,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRemovedPkColumns()
+	public function getRemovedPkColumns()
 	{
 		return $this->removedPkColumns;
 	}
@@ -335,7 +335,7 @@ class PropelTableDiff
 	 *
 	 * @param $renamedPkColumns
 	 */
-	function setRenamedPkColumns($renamedPkColumns)
+	public function setRenamedPkColumns($renamedPkColumns)
 	{
 		$this->renamedPkColumns = $renamedPkColumns;
 	}
@@ -346,7 +346,7 @@ class PropelTableDiff
 	 * @param string $fromName
 	 * @param string $toName
 	 */
-	function addRenamedPkColumn($fromName, $toName)
+	public function addRenamedPkColumn($fromName, $toName)
 	{
 		$this->renamedPkColumns[$fromName] = $toName;
 	}
@@ -356,7 +356,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRenamedPkColumns()
+	public function getRenamedPkColumns()
 	{
 		return $this->renamedPkColumns;
 	}
@@ -376,7 +376,7 @@ class PropelTableDiff
 	 *
 	 * @param  $addedIndices
 	 */
-	function setAddedIndices($addedIndices)
+	public function setAddedIndices($addedIndices)
 	{
 		$this->addedIndices = $addedIndices;
 	}
@@ -387,7 +387,7 @@ class PropelTableDiff
 	 * @param string $indexName
 	 * @param Index $addedIndex
 	 */
-	function addAddedIndex($indexName, Index $addedIndex)
+	public function addAddedIndex($indexName, Index $addedIndex)
 	{
 		$this->addedIndices[$indexName] = $addedIndex;
 	}
@@ -397,7 +397,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getAddedIndices()
+	public function getAddedIndices()
 	{
 		return $this->addedIndices;
 	}
@@ -407,7 +407,7 @@ class PropelTableDiff
 	 *
 	 * @param  $removedIndices
 	 */
-	function setRemovedIndices($removedIndices)
+	public function setRemovedIndices($removedIndices)
 	{
 		$this->removedIndices = $removedIndices;
 	}
@@ -418,7 +418,7 @@ class PropelTableDiff
 	 * @param string $indexName
 	 * @param Index $removedIndex
 	 */
-	function addRemovedIndex($indexName, Index $removedIndex)
+	public function addRemovedIndex($indexName, Index $removedIndex)
 	{
 		$this->removedIndices[$indexName] = $removedIndex;
 	}
@@ -428,7 +428,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRemovedIndices()
+	public function getRemovedIndices()
 	{
 		return $this->removedIndices;
 	}
@@ -438,7 +438,7 @@ class PropelTableDiff
 	 *
 	 * @param  $modifiedIndices
 	 */
-	function setModifiedIndices( $modifiedIndices)
+	public function setModifiedIndices( $modifiedIndices)
 	{
 		$this->modifiedIndices = $modifiedIndices;
 	}
@@ -450,7 +450,7 @@ class PropelTableDiff
 	 * @param Index $fromIndex
 	 * @param Index $toIndex
 	 */
-	function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
+	public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
 	{
 		$this->modifiedIndices[$indexName] = array($fromIndex, $toIndex);
 	}
@@ -460,7 +460,7 @@ class PropelTableDiff
 	 *
 	 * @return 
 	 */
-	function getModifiedIndices()
+	public function getModifiedIndices()
 	{
 		return $this->modifiedIndices;
 	}
@@ -470,7 +470,7 @@ class PropelTableDiff
 	 *
 	 * @param  $addedFks
 	 */
-	function setAddedFks($addedFks)
+	public function setAddedFks($addedFks)
 	{
 		$this->addedFks = $addedFks;
 	}
@@ -481,7 +481,7 @@ class PropelTableDiff
 	 * @param string $fkName
 	 * @param ForeignKey $addedFk
 	 */
-	function addAddedFk($fkName, ForeignKey $addedFk)
+	public function addAddedFk($fkName, ForeignKey $addedFk)
 	{
 		$this->addedFks[$fkName] = $addedFk;
 	}
@@ -491,7 +491,7 @@ class PropelTableDiff
 	 *
 	 * @param string $fkName
 	 */
-	function removeAddedFk($fkName)
+	public function removeAddedFk($fkName)
 	{
 		unset($this->addedFks[$fkName]);
 	}
@@ -501,7 +501,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getAddedFks()
+	public function getAddedFks()
 	{
 		return $this->addedFks;
 	}
@@ -511,7 +511,7 @@ class PropelTableDiff
 	 *
 	 * @param  $removedFks
 	 */
-	function setRemovedFks($removedFks)
+	public function setRemovedFks($removedFks)
 	{
 		$this->removedFks = $removedFks;
 	}
@@ -522,7 +522,7 @@ class PropelTableDiff
 	 * @param string $fkName
 	 * @param ForeignKey $removedColumn
 	 */
-	function addRemovedFk($fkName, ForeignKey $removedFk)
+	public function addRemovedFk($fkName, ForeignKey $removedFk)
 	{
 		$this->removedFks[$fkName] = $removedFk;
 	}
@@ -532,7 +532,7 @@ class PropelTableDiff
 	 *
 	 * @param string $fkName
 	 */
-	function removeRemovedFk($fkName)
+	public function removeRemovedFk($fkName)
 	{
 		unset($this->removedFks[$columnName]);
 	}
@@ -542,7 +542,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getRemovedFks()
+	public function getRemovedFks()
 	{
 		return $this->removedFks;
 	}
@@ -552,7 +552,7 @@ class PropelTableDiff
 	 *
 	 * @param array $modifiedFks
 	 */
-	function setModifiedFks($modifiedFks)
+	public function setModifiedFks($modifiedFks)
 	{
 		$this->modifiedFks = $modifiedFks;
 	}
@@ -564,7 +564,7 @@ class PropelTableDiff
 	 * @param ForeignKey $fromFk
 	 * @param ForeignKey $toFk
 	 */
-	function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk)
+	public function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk)
 	{
 		$this->modifiedFks[$fkName] = array($fromFk, $toFk);
 	}
@@ -574,7 +574,7 @@ class PropelTableDiff
 	 *
 	 * @return array
 	 */
-	function getModifiedFks()
+	public function getModifiedFks()
 	{
 		return $this->modifiedFks;
 	}

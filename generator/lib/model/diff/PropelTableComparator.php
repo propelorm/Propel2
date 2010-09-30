@@ -41,7 +41,7 @@ class PropelTableComparator
 	 *
 	 * @param Table $fromTable
 	 */
-	function setFromTable(Table $fromTable)
+	public function setFromTable(Table $fromTable)
 	{
 		$this->tableDiff->setFromTable($fromTable);
 	}
@@ -51,7 +51,7 @@ class PropelTableComparator
 	 *
 	 * @return Table
 	 */
-	function getFromTable()
+	public function getFromTable()
 	{
 		return $this->tableDiff->getFromTable();
 	}
@@ -61,7 +61,7 @@ class PropelTableComparator
 	 *
 	 * @param Table $toTable
 	 */
-	function setToTable(Table $toTable)
+	public function setToTable(Table $toTable)
 	{
 		$this->tableDiff->setToTable($toTable);
 	}
@@ -71,7 +71,7 @@ class PropelTableComparator
 	 *
 	 * @return Table
 	 */
-	function getToTable()
+	public function getToTable()
 	{
 		return $this->tableDiff->getToTable();
 	}

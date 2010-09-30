@@ -28,7 +28,7 @@ class PropelColumnDiff
 	 *
 	 * @param array $changedProperties
 	 */
-	function setChangedProperties($changedProperties)
+	public function setChangedProperties($changedProperties)
 	{
 		$this->changedProperties = $changedProperties;
 	}
@@ -38,7 +38,7 @@ class PropelColumnDiff
 	 *
 	 * @return array
 	 */
-	function getChangedProperties()
+	public function getChangedProperties()
 	{
 		return $this->changedProperties;
 	}
@@ -48,7 +48,7 @@ class PropelColumnDiff
 	 *
 	 * @param Column $fromColumn
 	 */
-	function setFromColumn(Column $fromColumn)
+	public function setFromColumn(Column $fromColumn)
 	{
 		$this->fromColumn = $fromColumn;
 	}
@@ -58,7 +58,7 @@ class PropelColumnDiff
 	 *
 	 * @return Column
 	 */
-	function getFromColumn()
+	public function getFromColumn()
 	{
 		return $this->fromColumn;
 	}
@@ -68,7 +68,7 @@ class PropelColumnDiff
 	 *
 	 * @param Column $toColumn
 	 */
-	function setToColumn(Column $toColumn)
+	public function setToColumn(Column $toColumn)
 	{
 		$this->toColumn = $toColumn;
 	}
@@ -78,7 +78,7 @@ class PropelColumnDiff
 	 *
 	 * @return Column
 	 */
-	function getToColumn()
+	public function getToColumn()
 	{
 		return $this->toColumn;
 	}

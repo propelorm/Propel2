@@ -40,7 +40,7 @@ class PropelDatabaseComparator
 	 *
 	 * @param Database $fromDatabase
 	 */
-	function setFromDatabase(Database $fromDatabase)
+	public function setFromDatabase(Database $fromDatabase)
 	{
 		$this->fromDatabase = $fromDatabase;
 	}
@@ -50,7 +50,7 @@ class PropelDatabaseComparator
 	 *
 	 * @return Database
 	 */
-	function getFromDatabase()
+	public function getFromDatabase()
 	{
 		return $this->fromDatabase;
 	}
@@ -60,7 +60,7 @@ class PropelDatabaseComparator
 	 *
 	 * @param Database $toDatabase
 	 */
-	function setToDatabase(Database $toDatabase)
+	public function setToDatabase(Database $toDatabase)
 	{
 		$this->toDatabase = $toDatabase;
 	}
@@ -70,7 +70,7 @@ class PropelDatabaseComparator
 	 *
 	 * @return Database
 	 */
-	function getToDatabase()
+	public function getToDatabase()
 	{
 		return $this->toDatabase;
 	}
