@@ -638,6 +638,68 @@ ALTER TABLE %s RENAME TO %s;
 	{
 		$ret = '';
 		
+		// drop indices, foreign keys
+		foreach ($tableDiff->getRemovedIndices() as $index) {
+			$ret .= $this->getDropIndexDDL($index);
+		}
+		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
+			list($fromIndex, $toIndex) = $indexModification;
+			$ret .= $this->getDropIndexDDL($fromIndex);
+		}
+		foreach ($tableDiff->getRemovedFks() as $fk) {
+			$ret .= $this->getDropForeignKeyDDL($fk);
+		}
+		foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
+			list($fromFk, $toFk) = $fkModification;
+			$ret .= $this->getDropForeignKeyDDL($fromFk);
+		}
+		foreach ($tableDiff->getRemovedColumns() as $column) {
+			$ret .= $this->getRemoveColumnDDL($column);
+		}
+		
+		// alter table structure
+		foreach ($tableDiff->getRenamedColumns() as $fromColumnName => $toColumnName) {
+			$ret .= $this->getRenameColumnDDL($tableDiff->getToTable(), $fromColumnName, $toColumnName);
+		}
+		if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+			$ret .= $this->getModifyColumnsDDL($modifiedColumns);
+		}
+		if ($addedColumns = $tableDiff->getAddedColumns()) {
+			$ret .= $this->getAddColumnsDDL($addedColumns);
+		}
+		foreach ($tableDiff->getRemovedColumns() as $column) {
+			$ret .= $this->getRemoveColumnDDL($column);
+		}
+		
+		// add new indices and foreign keys
+		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
+			list($fromIndex, $toIndex) = $indexModification;
+			$ret .= $this->getAddIndexDDL($toIndex);
+		}
+		foreach ($tableDiff->getAddedIndices() as $index) {
+			$ret .= $this->getAddIndexDDL($index);
+		}
+		foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
+			list($fromFk, $toFk) = $fkModification;
+			$ret .= $this->getAddForeignKeyDDL($toFk);
+		}
+		foreach ($tableDiff->getAddedFks() as $fk) {
+			$ret .= $this->getAddForeignKeyDDL($fk);
+		}
+
+		return $ret;
+	}
+	
+	/**
+	 * Builds the DDL SQL to alter a table
+	 * based on a PropelTableDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyTableColumnsDDL(PropelTableDiff $tableDiff)
+	{
+		$ret = '';
+		
 		foreach ($tableDiff->getRemovedColumns() as $column) {
 			$ret .= $this->getRemoveColumnDDL($column);
 		}
@@ -653,9 +715,6 @@ ALTER TABLE %s RENAME TO %s;
 		if ($addedColumns = $tableDiff->getAddedColumns()) {
 			$ret .= $this->getAddColumnsDDL($addedColumns);
 		}
-		
-		$ret .= $this->getModifyIndicesDDL($tableDiff);
-		$ret .= $this->getModifyForeignKeysDDL($tableDiff);
 
 		return $ret;
 	}
@@ -666,7 +725,7 @@ ALTER TABLE %s RENAME TO %s;
 	 *
 	 * @return     string
 	 */
-	public function getModifyIndicesDDL(PropelTableDiff $tableDiff)
+	public function getModifyTableIndicesDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
 		
@@ -693,7 +752,7 @@ ALTER TABLE %s RENAME TO %s;
 	 *
 	 * @return     string
 	 */
-	public function getModifyForeignKeysDDL(PropelTableDiff $tableDiff)
+	public function getModifyTableForeignKeysDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
 		

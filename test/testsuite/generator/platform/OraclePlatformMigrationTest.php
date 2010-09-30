@@ -83,11 +83,47 @@ ALTER TABLE foo1 RENAME TO foo2;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameTableDDL($fromName, $toName));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableDDL
 	 */
 	public function testGetModifyTableDDL($tableDiff)
+	{
+		$expected = "
+DROP INDEX bar_baz_FK;
+
+DROP INDEX bar_FK;
+
+ALTER TABLE foo DROP CONSTRAINT foo1_FK_2;
+
+ALTER TABLE foo DROP CONSTRAINT foo1_FK_1;
+
+ALTER TABLE foo RENAME COLUMN bar TO bar1;
+
+ALTER TABLE foo MODIFY
+(
+	baz NVARCHAR2(12)
+);
+
+ALTER TABLE foo ADD
+(
+	baz3 NVARCHAR2(2000) DEFAULT 'baz3'
+);
+
+CREATE INDEX bar_FK ON foo (bar1);
+
+CREATE INDEX baz_FK ON foo (baz3);
+
+ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
+	FOREIGN KEY (bar1) REFERENCES foo2 (bar);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetModifyTableColumnsDDL
+	 */
+	public function testGetModifyTableColumnsDDL($tableDiff)
 	{
 		$expected = "
 ALTER TABLE foo RENAME COLUMN bar TO bar1;
@@ -102,13 +138,13 @@ ALTER TABLE foo ADD
 	baz3 NVARCHAR2(2000) DEFAULT 'baz3'
 );
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
 	}
 
 	/**
-	 * @dataProvider providerForTestGetModifyIndicesDDL
+	 * @dataProvider providerForTestGetModifyTableIndicesDDL
 	 */
-	public function testGetModifyIndicesDDL($tableDiff)
+	public function testGetModifyTableIndicesDDL($tableDiff)
 	{
 		$expected = "
 DROP INDEX bar_FK;
@@ -119,13 +155,13 @@ DROP INDEX bar_baz_FK;
 
 CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getModifyIndicesDDL($tableDiff));
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
 	}
 
 	/**
-	 * @dataProvider providerForTestGetModifyForeignKeysDDL
+	 * @dataProvider providerForTestGetModifyTableForeignKeysDDL
 	 */
-	public function testGetModifyForeignKeysDDL($tableDiff)
+	public function testGetModifyTableForeignKeysDDL($tableDiff)
 	{
 		$expected = "
 ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
@@ -138,7 +174,7 @@ ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
 	FOREIGN KEY (bar,id) REFERENCES foo2 (bar,id);
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getModifyForeignKeysDDL($tableDiff));
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 	}
 	
 	/**

@@ -67,8 +67,66 @@ EOF;
 	{
 		return array(array('foo1', 'foo2'));
 	}
-	
+
 	public function providerForTestGetModifyTableDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+		<foreign-key name="foo1_FK_1" foreignTable="foo2">
+			<reference local="bar" foreign="bar" />
+		</foreign-key>
+		<foreign-key name="foo1_FK_2" foreignTable="foo2">
+			<reference local="baz" foreign="baz" />
+		</foreign-key>
+		<index name="bar_FK">
+			<index-column name="bar"/>
+		</index>
+		<index name="bar_baz_FK">
+			<index-column name="bar"/>
+			<index-column name="baz"/>
+		</index>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar1" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="false" />
+		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />
+		<foreign-key name="foo1_FK_1" foreignTable="foo2">
+			<reference local="bar1" foreign="bar" />
+		</foreign-key>
+		<index name="bar_FK">
+			<index-column name="bar1"/>
+		</index>
+		<index name="baz_FK">
+			<index-column name="baz3"/>
+		</index>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+</database>
+EOF;
+		$t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
+		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
+		return array(array(PropelTableComparator::computeDiff($t1,$t2)));
+	}
+	
+	public function providerForTestGetModifyTableColumnsDDL()
 	{
 		$schema1 = <<<EOF
 <database name="test">
@@ -85,7 +143,7 @@ EOF;
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar1" type="INTEGER" />
 		<column name="baz" type="VARCHAR" size="12" required="false" />
-		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />
+		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />		
 	</table>
 </database>
 EOF;
@@ -98,7 +156,7 @@ EOF;
 		return array(array($tc->getTableDiff()));
 	}
 	
-	public function providerForTestGetModifyIndicesDDL()
+	public function providerForTestGetModifyTableIndicesDDL()
 	{
 		$schema1 = <<<EOF
 <database name="test">
@@ -142,7 +200,7 @@ EOF;
 		return array(array($tc->getTableDiff()));
 	}
 
-	public function providerForTestGetModifyForeignKeysDDL()
+	public function providerForTestGetModifyTableForeignKeysDDL()
 	{
 		$schema1 = <<<EOF
 <database name="test">
