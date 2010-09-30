@@ -57,6 +57,9 @@
     name="propel-sql"
     classname="task.PropelSQLTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-sql-diff"
+    classname="task.PropelSQLDiffTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-sql-exec"
     classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
@@ -276,7 +279,46 @@
 
   </target>
 
+  <!-- ================================================================ -->
+  <!-- D I F F  B E T W E E N  X M L  A N D  D A T A B A S E            -->
+  <!-- ================================================================ -->
+  
+  <target
+    name="sql-diff"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    unless="propel.internal.sql.uptodate"
+    description="==> generates a SQL diff for your project">
 
+    <echo message="+----------------------------------------------+"/>
+    <echo message="|                                              |"/>
+    <echo message="| Generating SQL diff between the XML schemas  |"/>
+    <echo message="| and the current database structure.          |"/>
+    <echo message="|                                              |"/>
+    <echo message="+----------------------------------------------+"/>
+
+    <phingcall target="sql-diff-template"/>
+  </target>
+
+  <target name="sql-diff-template">
+    <propel-sql-diff
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
+      outputDirectory="${propel.sql.dir}"
+      targetDatabase="${propel.database}"
+      packageObjectModel="${propel.packageObjectModel}"
+      databaseName="${propel.project}"
+      url="${propel.database.url}"
+      userId="${propel.database.user}"
+      password="${propel.database.password}">
+      <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
+      <schemafileset dir="${propel.schema.dir}"
+        includes="${propel.schema.sql.includes}"
+        excludes="${propel.schema.sql.excludes}"
+      />
+    </propel-sql-diff>
+  </target>
+  
   <!-- ================================================================ -->
   <!-- Generate SQL from XML data file                                  -->
   <!-- ================================================================ -->

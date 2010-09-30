@@ -74,7 +74,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	/**
 	 *
 	 */
-	public function parse(Database $database, PDOTask $task = null)
+	public function parse(Database $database, Task $task = null)
 	{
 		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
@@ -82,26 +82,26 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
-		$task->log("Reverse Engineering Tables");
+		$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
-			$task->log("  Adding table '" . $name . "'");
+			$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
 			$table = new Table($name);
 			$database->addTable($table);
 			$tables[] = $table;
 		}
 		
 		// Now populate only columns.
-		$task->log("Reverse Engineering Columns");
+		$task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
 		foreach ($tables as $table) {
-			$task->log("  Adding columns for table '" . $table->getName() . "'");
+			$task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addColumns($table);
 		}
 
 		// Now add indices and constraints.
-		$task->log("Reverse Engineering Indices And Constraints");
+		$task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
 		foreach ($tables as $table) {
-			$task->log("  Adding indices and constraints for table '" . $table->getName() . "'");
+			$task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);

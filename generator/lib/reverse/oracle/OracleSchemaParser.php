@@ -70,12 +70,12 @@ class OracleSchemaParser extends BaseSchemaParser
 	 * Searches for tables in the database. Maybe we want to search also the views.
 	 * @param	Database $database The Database model class to add tables to.
 	 */
-	public function parse(Database $database, PDOTask $task = null)
+	public function parse(Database $database, Task $task = null)
 	{
 		$tables = array();
 		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 		
-		$task->log("Reverse Engineering Table Structures");
+		$task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			if (strpos($row['OBJECT_NAME'], '$') !== false) {
@@ -83,7 +83,7 @@ class OracleSchemaParser extends BaseSchemaParser
 				continue;
 			}
 			$table = new Table($row['OBJECT_NAME']);
-			$task->log("Adding table '" . $table->getName() . "'");
+			$task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$database->addTable($table);
 			// Add columns, primary keys and indexes.
 			$this->addColumns($table);
@@ -92,10 +92,10 @@ class OracleSchemaParser extends BaseSchemaParser
 			$tables[] = $table;
 		}
 
-		$task->log("Reverse Engineering Foreign Keys");
+		$task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
 		
 		foreach ($tables as $table) {
-			$task->log("Adding foreign keys for table '" . $table->getName() . "'");
+			$task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addForeignKeys($table);
 		}
 		
