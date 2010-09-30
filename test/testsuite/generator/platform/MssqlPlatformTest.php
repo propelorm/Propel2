@@ -263,7 +263,29 @@ END
 		$expected = 'CONSTRAINT [foo_PK] PRIMARY KEY ([bar1],[bar2])';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
-
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetDropPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE [foo] DROP CONSTRAINT [foo_PK];
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetAddPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE [foo] ADD CONSTRAINT [foo_PK] PRIMARY KEY ([bar]);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
+	}
+	
 	/**
 	 * @dataProvider providerForTestGetIndicesDDL
 	 */

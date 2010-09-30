@@ -399,6 +399,16 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 		}
 		return implode($delimiter, $list);
 	}
+
+	/**
+	 * Returns the name of a table primary key
+	 * @return     string
+	 */
+	public function getPrimaryKeyName(Table $table)
+	{
+		$tableName = $table->getName();
+		return $tableName . '_PK';
+	}
 	
 	/**
 	 * Returns the SQL for the primary key of a Table object
@@ -411,6 +421,40 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 		}
 	}
 
+	/**
+	 * Builds the DDL SQL to drop the primary key of a table.
+	 *
+	 * @param      Table $table
+	 * @return     string
+	 */
+	public function getDropPrimaryKeyDDL(Table $table)
+	{
+		$pattern = "
+ALTER TABLE %s DROP CONSTRAINT %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($table->getName()),
+			$this->quoteIdentifier($this->getPrimaryKeyName($table))
+		);
+	}
+	
+	/**
+	 * Builds the DDL SQL to add the primary key of a table.
+	 *
+	 * @param      Table $table
+	 * @return     string
+	 */
+	public function getAddPrimaryKeyDDL(Table $table)
+	{
+		$pattern = "
+ALTER TABLE %s ADD %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($table->getName()),
+			$this->getPrimaryKeyDDL($table)
+		);
+	}
+	
 	/**
 	 * Builds the DDL SQL to add the indices of a table.
 	 *
@@ -639,6 +683,9 @@ ALTER TABLE %s RENAME TO %s;
 		$ret = '';
 		
 		// drop indices, foreign keys
+		if ($tableDiff->hasModifiedPk()) {
+			$ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
+		}
 		foreach ($tableDiff->getRemovedIndices() as $index) {
 			$ret .= $this->getDropIndexDDL($index);
 		}
@@ -672,6 +719,9 @@ ALTER TABLE %s RENAME TO %s;
 		}
 		
 		// add new indices and foreign keys
+		if ($tableDiff->hasModifiedPk()) {
+			$ret .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
+		}
 		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
 			list($fromIndex, $toIndex) = $indexModification;
 			$ret .= $this->getAddIndexDDL($toIndex);
@@ -719,6 +769,24 @@ ALTER TABLE %s RENAME TO %s;
 		return $ret;
 	}
 
+	/**
+	 * Builds the DDL SQL to alter a table's primary key
+	 * based on a PropelTableDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyTablePrimaryKeyDDL(PropelTableDiff $tableDiff)
+	{
+		$ret = '';
+		
+		if ($tableDiff->hasModifiedPk()) {
+			$ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
+			$ret .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
+		}
+
+		return $ret;
+	}
+	
 	/**
 	 * Builds the DDL SQL to alter a table's indices
 	 * based on a PropelTableDiff instance

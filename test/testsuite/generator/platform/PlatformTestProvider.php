@@ -170,7 +170,18 @@ EOF;
 			array($index)
 		);
 	}
-
+	
+	public function providerForTestPrimaryKeyDDL()
+	{
+		$table = new Table('foo');
+		$column = new Column('bar');
+		$column->setPrimaryKey(true);
+		$table->addColumn($column);
+		return array(
+			array($table)
+		);
+	}
+	
 	public function providerForTestGetForeignKeyDDL()
 	{
 		$table1 = new Table('foo');

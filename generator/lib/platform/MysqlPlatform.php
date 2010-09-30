@@ -308,6 +308,22 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 	}
 
 	/**
+	 * Builds the DDL SQL to drop the primary key of a table.
+	 *
+	 * @param      Table $table
+	 * @return     string
+	 */
+	public function getDropPrimaryKeyDDL(Table $table)
+	{
+		$pattern = "
+ALTER TABLE %s DROP PRIMARY KEY;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($table->getName())
+		);
+	}
+	
+	/**
 	 * Builds the DDL SQL to add an Index.
 	 *
 	 * @param      Index $index

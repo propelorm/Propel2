@@ -209,6 +209,26 @@ DROP TABLE [foo];
 	}
 
 	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetDropPrimaryKeyDDL($table)
+	{
+		// not supported by SQLite
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetAddPrimaryKeyDDL($table)
+	{
+		// not supported by SQLite
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetIndicesDDL
 	 */
 	public function testAddIndicesDDL($table)

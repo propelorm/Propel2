@@ -362,6 +362,28 @@ DROP TABLE IF EXISTS `foo`;
 	}
 
 	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetDropPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE `foo` DROP PRIMARY KEY;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetAddPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE `foo` ADD PRIMARY KEY (`bar`);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetIndicesDDL
 	 */
 	public function testAddIndicesDDL($table)

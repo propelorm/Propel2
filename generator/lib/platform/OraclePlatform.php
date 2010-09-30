@@ -114,14 +114,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 	public function getAddPrimaryKeyDDL(Table $table)
 	{
 		if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
-			$pattern = "
-ALTER TABLE %s
-	ADD %s;
-";
-			return sprintf($pattern,
-				$this->quoteIdentifier($table->getName()),
-				$this->getPrimaryKeyDDL($table)
-			);
+			return parent::getAddPrimaryKeyDDL($table);
 		}
 	}
 	
@@ -151,16 +144,20 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 		return $ret;
 	}
 	
-	public function getPrimaryKeyDDL(Table $table)
+	public function getPrimaryKeyName(Table $table)
 	{
 		$tableName = $table->getName();
 		// pk constraint name must be 30 chars at most
 		$tableName = substr($tableName, 0, min(27, strlen($tableName)));
+		return $tableName . '_PK';
+	}
+
+	public function getPrimaryKeyDDL(Table $table)
+	{
 		if ($table->hasPrimaryKey()) {
-			$pattern = "CONSTRAINT %s
-	PRIMARY KEY (%s)";
+			$pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
 			return sprintf($pattern,
-				$this->quoteIdentifier($tableName . '_PK'),
+				$this->quoteIdentifier($this->getPrimaryKeyName($table)),
 				$this->getColumnListDDL($table->getPrimaryKey())
 			);
 		}

@@ -83,6 +83,18 @@ class SqlitePlatform extends DefaultPlatform
 		);
 	}
 
+	public function getDropPrimaryKeyDDL(Table $table)
+	{
+		// FIXME: not supported by SQLite
+		return '';
+	}
+	
+	public function getAddPrimaryKeyDDL(Table $table)
+	{
+		// FIXME: not supported by SQLite
+		return '';
+	}
+	
 	public function getAddForeignKeyDDL(ForeignKey $fk)
 	{
 		// no need for an alter table to return comments

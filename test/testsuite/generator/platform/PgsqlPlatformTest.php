@@ -441,6 +441,28 @@ DROP SEQUENCE \"foo_sequence\";
 	}
 
 	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetDropPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_pkey\";
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetAddPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE \"foo\" ADD PRIMARY KEY (\"bar\");
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
+	}
+	
+	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
 	public function testAddIndexDDL($index)

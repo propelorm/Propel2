@@ -360,6 +360,16 @@ class PropelTableDiff
 	{
 		return $this->renamedPkColumns;
 	}
+	
+	/**
+	 * Whether the primary key was modified
+	 *
+	 * @return boolean
+	 */
+	public function hasModifiedPk()
+	{
+		return $this->renamedPkColumns || $this->removedPkColumns || $this->addedPkColumns;
+	}
 
 	/**
 	 * Setter for the addedIndices property

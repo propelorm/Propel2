@@ -109,7 +109,11 @@ END
 	public function getPrimaryKeyDDL(Table $table)
 	{
 		if ($table->hasPrimaryKey()) {
-			return 'CONSTRAINT ' . $this->quoteIdentifier($table->getName() . '_PK') . ' PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
+			$pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
+			return sprintf($pattern,
+				$this->quoteIdentifier($this->getPrimaryKeyName($table)),
+				$this->getColumnListDDL($table->getPrimaryKey())
+			);
 		}
 	}
 

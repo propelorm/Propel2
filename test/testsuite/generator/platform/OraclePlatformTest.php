@@ -75,9 +75,7 @@ CREATE TABLE book
 	author_id NUMBER
 );
 
-ALTER TABLE book
-	ADD CONSTRAINT book_PK
-	PRIMARY KEY (id);
+ALTER TABLE book ADD CONSTRAINT book_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE book_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -102,9 +100,7 @@ CREATE TABLE author
 	last_name NVARCHAR2(100)
 );
 
-ALTER TABLE author
-	ADD CONSTRAINT author_PK
-	PRIMARY KEY (id);
+ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE author_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -140,9 +136,7 @@ CREATE TABLE foo
 	bar NVARCHAR2(255) NOT NULL
 );
 
-ALTER TABLE foo
-	ADD CONSTRAINT foo_PK
-	PRIMARY KEY (id);
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -164,9 +158,7 @@ CREATE TABLE foo
 	baz NVARCHAR2(255) NOT NULL
 );
 
-ALTER TABLE foo
-	ADD CONSTRAINT foo_PK
-	PRIMARY KEY (foo,bar);
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (foo,bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -185,9 +177,7 @@ CREATE TABLE foo
 	CONSTRAINT foo_U_1 UNIQUE (bar)
 );
 
-ALTER TABLE foo
-	ADD CONSTRAINT foo_PK
-	PRIMARY KEY (id);
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -219,14 +209,12 @@ DROP SEQUENCE foo_sequence;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
 	
-	public function testGetPrimaryKeyDDLSimpleKey()
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetPrimaryKeyDDLSimpleKey($table)
 	{
-		$table = new Table('foo');
-		$column = new Column('bar');
-		$column->setPrimaryKey(true);
-		$table->addColumn($column);
-		$expected = "CONSTRAINT foo_PK
-	PRIMARY KEY (bar)";
+		$expected ='CONSTRAINT foo_PK PRIMARY KEY (bar)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -236,8 +224,7 @@ DROP SEQUENCE foo_sequence;
 		$column = new Column('bar');
 		$column->setPrimaryKey(true);
 		$table->addColumn($column);
-		$expected = "CONSTRAINT this_table_has_a_very_long__PK
-	PRIMARY KEY (bar)";
+		$expected = 'CONSTRAINT this_table_has_a_very_long__PK PRIMARY KEY (bar)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -250,9 +237,30 @@ DROP SEQUENCE foo_sequence;
 		$column2 = new Column('bar2');
 		$column2->setPrimaryKey(true);
 		$table->addColumn($column2);
-		$expected = "CONSTRAINT foo_PK
-	PRIMARY KEY (bar1,bar2)";
+		$expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetDropPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE foo DROP CONSTRAINT foo_PK;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+	}
+	
+	/**
+	 * @dataProvider providerForTestPrimaryKeyDDL
+	 */
+	public function testGetAddPrimaryKeyDDL($table)
+	{
+		$expected = "
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (bar);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
 
 	/**

@@ -288,7 +288,13 @@ DROP TABLE %s CASCADE;
 		$ret .= $this->getResetSchemaDDL($table);
 		return $ret;
 	}
-	
+
+	public function getPrimaryKeyName(Table $table)
+	{
+		$tableName = $table->getName();
+		return $tableName . '_pkey';
+	}
+		
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();

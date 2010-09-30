@@ -63,9 +63,7 @@ CREATE TABLE foo5
 	dfgdsgf NVARCHAR2(2000)
 );
 
-ALTER TABLE foo5
-	ADD CONSTRAINT foo5_PK
-	PRIMARY KEY (id);
+ALTER TABLE foo5 ADD CONSTRAINT foo5_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo5_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
@@ -141,6 +139,19 @@ ALTER TABLE foo ADD
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+	 */
+	public function testGetModifyTablePrimaryKeysDDL($tableDiff)
+	{
+		$expected = "
+ALTER TABLE foo DROP CONSTRAINT foo_PK;
+
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id,bar);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
+	}
+	
 	/**
 	 * @dataProvider providerForTestGetModifyTableIndicesDDL
 	 */

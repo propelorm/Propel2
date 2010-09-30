@@ -155,6 +155,35 @@ EOF;
 		$tc->compareColumns();
 		return array(array($tc->getTableDiff()));
 	}
+
+	public function providerForTestGetModifyTablePrimaryKeysDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" />
+		<column name="bar" type="INTEGER" primaryKey="true" />
+		<column name="baz" type="VARCHAR" size="12" required="false" />	
+	</table>
+</database>
+EOF;
+		$t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
+		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
+		$tc = new PropelTableComparator();
+		$tc->setFromTable($t1);
+		$tc->setToTable($t2);
+		$tc->comparePrimaryKeys();
+		return array(array($tc->getTableDiff()));
+	}
 	
 	public function providerForTestGetModifyTableIndicesDDL()
 	{
