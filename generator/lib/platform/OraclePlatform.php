@@ -76,6 +76,24 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ";
 	}
 
+	public function getAddTablesDDL(Database $database)
+	{
+		$ret = $this->getBeginDDL();
+		foreach ($database->getTablesForSql() as $table) {
+			$ret .= $this->getCommentBlockDDL($table->getName());
+			$ret .= $this->getDropTableDDL($table);
+			$ret .= $this->getAddTableDDL($table);
+			$ret .= $this->getAddIndicesDDL($table);
+		}
+		$ret .= $this->getCommentBlockDDL('Foreign Keys');
+		foreach ($database->getTablesForSql() as $table) {
+			$ret .= $this->getAddForeignKeysDDL($table);
+		}
+
+		$ret .= $this->getEndDDL();
+		return $ret;
+	}
+
 	public function getAddTableDDL(Table $table)
 	{
 		$tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
