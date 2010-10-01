@@ -82,9 +82,6 @@ CREATE SEQUENCE book_SEQ
 
 CREATE INDEX book_I_1 ON book (title);
 
-ALTER TABLE book ADD CONSTRAINT book_FK_1
-	FOREIGN KEY (author_id) REFERENCES author (id);
-
 -----------------------------------------------------------------------
 -- author
 -----------------------------------------------------------------------
@@ -104,6 +101,13 @@ ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE author_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+-----------------------------------------------------------------------
+-- Foreign Keys
+-----------------------------------------------------------------------
+
+ALTER TABLE book ADD CONSTRAINT book_FK_1
+	FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));

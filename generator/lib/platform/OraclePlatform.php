@@ -85,11 +85,13 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 			$ret .= $this->getAddTableDDL($table);
 			$ret .= $this->getAddIndicesDDL($table);
 		}
-		$ret .= $this->getCommentBlockDDL('Foreign Keys');
+		$ret2 = '';
 		foreach ($database->getTablesForSql() as $table) {
-			$ret .= $this->getAddForeignKeysDDL($table);
+			$ret2 .= $this->getAddForeignKeysDDL($table);
 		}
-
+		if ($ret2) {
+			$ret .= $this->getCommentBlockDDL('Foreign Keys') . $ret2;
+		}
 		$ret .= $this->getEndDDL();
 		return $ret;
 	}
