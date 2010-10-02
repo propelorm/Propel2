@@ -25,6 +25,17 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		BookstoreDataPopulator::populate($this->con);
 	}
 	
+	public function testContains()
+	{
+		$col = new PropelObjectCollection();
+		$books = PropelQuery::from('Book')->find();
+		$this->assertFalse($col->contains($books[0]));
+		$this->assertFalse($col->contains($books[1]));
+		$col []= $books[0];
+		$this->assertTrue($col->contains($books[0]));
+		$this->assertFalse($col->contains($books[1]));
+	}
+	
 	public function testSave()
 	{
 		$books = PropelQuery::from('Book')->find();
