@@ -170,7 +170,6 @@ class PropelSQLParser
 					break;
 			}
 
-			$parsedString .= $char;
 			$this->pos++;
 			
 			if ($char !== "\\") {
@@ -181,6 +180,8 @@ class PropelSQLParser
 			if (!$isInString && $char == $this->delimiter) {
 				return trim($parsedString);
 			}
+			
+			$parsedString .= $char;
 		}
 		
 		return trim($parsedString);

@@ -73,14 +73,14 @@ class PropelSQLParserTest extends PHPUnit_Framework_TestCase
 		return array(
 			array('', array()),
 			array('foo', array('foo')),
-			array('foo;', array('foo;')),
-			array('foo; ', array('foo;')),
-			array('foo;bar', array('foo;', 'bar')),
-			array('foo;bar;', array('foo;', 'bar;')),
-			array("f\no\no;\nb\nar\n;", array("f\no\no;", "b\nar\n;")),
-			array('foo";"bar;baz', array('foo";"bar;', 'baz')),
-			array('foo\';\'bar;baz', array('foo\';\'bar;', 'baz')),
-			array('foo"\";"bar;', array('foo"\";"bar;')),
+			array('foo;', array('foo')),
+			array('foo; ', array('foo')),
+			array('foo;bar', array('foo', 'bar')),
+			array('foo;bar;', array('foo', 'bar')),
+			array("f\no\no;\nb\nar\n;", array("f\no\no", "b\nar")),
+			array('foo";"bar;baz', array('foo";"bar', 'baz')),
+			array('foo\';\'bar;baz', array('foo\';\'bar', 'baz')),
+			array('foo"\";"bar;', array('foo"\";"bar')),
 		);
 	}
 	/**
