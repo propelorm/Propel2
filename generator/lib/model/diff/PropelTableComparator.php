@@ -144,7 +144,7 @@ class PropelTableComparator
 			foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
 				if (!PropelColumnComparator::computeDiff($addedColumn, $removedColumn)) {
 					// no difference except the name, that's probably a renaming
-					$this->tableDiff->addRenamedColumn($removedColumnName, $addedColumnName);
+					$this->tableDiff->addRenamedColumn($removedColumn, $addedColumn);
 					$this->tableDiff->removeAddedColumn($addedColumnName);
 					$this->tableDiff->removeRemovedColumn($removedColumnName);
 					$columnDifferences--;
@@ -191,7 +191,7 @@ class PropelTableComparator
 			foreach ($this->tableDiff->getRemovedPkColumns() as $removedColumnName => $removedColumn) {
 				if (!PropelColumnComparator::computeDiff($addedColumn, $removedColumn)) {
 					// no difference except the name, that's probably a renaming
-					$this->tableDiff->addRenamedPkColumn($removedColumnName, $addedColumnName);
+					$this->tableDiff->addRenamedPkColumn($removedColumn, $addedColumn);
 					$this->tableDiff->removeAddedPkColumn($addedColumnName);
 					$this->tableDiff->removeRemovedPkColumn($removedColumnName);
 					$pkDifferences--;

@@ -413,7 +413,7 @@ CREATE INDEX `babar` ON `foo` (`bar1`,`bar2`);
 	public function testDropIndexDDL($index)
 	{
 		$expected = "
-ALTER TABLE `foo` DROP INDEX `babar`;
+DROP INDEX `babar` ON `foo`;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}

@@ -45,7 +45,7 @@ EOF;
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar1" type="INTEGER" />
 		<column name="baz" type="VARCHAR" size="12" required="false" />
-		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />
+		<column name="baz3" type="LONGVARCHAR" />
 	</table>
 	<table name="foo4">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -103,7 +103,7 @@ EOF;
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar1" type="INTEGER" />
 		<column name="baz" type="VARCHAR" size="12" required="false" />
-		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />
+		<column name="baz3" type="LONGVARCHAR" />
 		<foreign-key name="foo1_FK_1" foreignTable="foo2">
 			<reference local="bar1" foreign="bar" />
 		</foreign-key>
@@ -143,7 +143,7 @@ EOF;
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar1" type="INTEGER" />
 		<column name="baz" type="VARCHAR" size="12" required="false" />
-		<column name="baz3" type="LONGVARCHAR" defaultValue="baz3" />		
+		<column name="baz3" type="LONGVARCHAR" />
 	</table>
 </database>
 EOF;
@@ -292,8 +292,19 @@ EOF;
 	
 	public function providerForTestGetRenameColumnDDL()
 	{
-		$table = new Table('foo');
-		return array(array($table, 'bar1', 'bar2'));
+		$t1 = new Table('foo');
+		$c1 = new Column('bar1');
+		$c1->getDomain()->setType('DOUBLE');
+		$c1->getDomain()->setSqlType('DOUBLE');
+		$c1->getDomain()->replaceSize(2);
+		$t1->addColumn($c1);
+		$t2 = new Table('foo');
+		$c2 = new Column('bar2');
+		$c2->getDomain()->setType('DOUBLE');
+		$c2->getDomain()->setSqlType('DOUBLE');
+		$c2->getDomain()->replaceSize(2);
+		$t2->addColumn($c2);
+		return array(array($c1, $c2));
 	}
 	
 	public function providerForTestGetModifyColumnDDL()

@@ -351,11 +351,11 @@ CREATE %sINDEX %s ON %s (%s);
 	public function getDropIndexDDL(Index $index)
 	{
 		$pattern = "
-ALTER TABLE %s DROP INDEX %s;
+DROP INDEX %s ON %s;
 ";
-		return sprintf($pattern, 
-			$this->quoteIdentifier($index->getTable()->getName()),
-			$this->quoteIdentifier($index->getName())
+		return sprintf($pattern,
+			$this->quoteIdentifier($index->getName()),
+			$this->quoteIdentifier($index->getTable()->getName())
 		);
 	}
 		
@@ -402,7 +402,87 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 			$this->quoteIdentifier($fk->getName())
 		);
 	}
-	
+
+	/**
+	 * Builds the DDL SQL to rename a table
+	 * @return     string
+	 */
+	public function getRenameTableDDL($fromTableName, $toTableName)
+	{
+		$pattern = "
+RENAME TABLE %s TO %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fromTableName),
+			$this->quoteIdentifier($toTableName)
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to remove a column
+	 *
+	 * @return     string
+	 */
+	public function getRemoveColumnDDL(Column $column)
+	{
+		$pattern = "
+ALTER TABLE %s DROP %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($column->getTable()->getName()),
+			$this->quoteIdentifier($column->getName())
+		);
+	}
+
+	/**
+	 * Builds the DDL SQL to rename a column
+	 * @return     string
+	 */
+	public function getRenameColumnDDL($fromColumn, $toColumn)
+	{
+		return $this->getChangeColumnDDL($fromColumn, $toColumn);
+	}
+
+	/**
+	 * Builds the DDL SQL to modify a column
+	 *
+	 * @return     string
+	 */
+	public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+	{
+		return $this->getChangeColumnDDL($columnDiff->getFromColumn(), $columnDiff->getToColumn());
+	}
+
+	/**
+	 * Builds the DDL SQL to change a column
+	 * @return     string
+	 */
+	public function getChangeColumnDDL($fromColumn, $toColumn)
+	{
+		$pattern = "
+ALTER TABLE %s CHANGE %s %s;
+";
+		return sprintf($pattern,
+			$this->quoteIdentifier($fromColumn->getTable()->getName()),
+			$this->quoteIdentifier($fromColumn->getName()),
+			$this->getColumnDDL($toColumn)
+		);
+	}
+	/**
+	 * Builds the DDL SQL to modify a list of columns
+	 *
+	 * @return     string
+	 */
+	public function getModifyColumnsDDL($columnDiffs)
+	{
+		$ret = '';
+		foreach ($columnDiffs as $columnDiff) {
+			$ret .= $this->getModifyColumnDDL($columnDiff);
+		}
+
+		return $ret;
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType

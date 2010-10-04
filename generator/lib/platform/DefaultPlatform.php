@@ -706,8 +706,8 @@ ALTER TABLE %s RENAME TO %s;
 		}
 		
 		// alter table structure
-		foreach ($tableDiff->getRenamedColumns() as $fromColumnName => $toColumnName) {
-			$ret .= $this->getRenameColumnDDL($tableDiff->getToTable(), $fromColumnName, $toColumnName);
+		foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
+			$ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
 		}
 		if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
 			$ret .= $this->getModifyColumnsDDL($modifiedColumns);
@@ -755,8 +755,8 @@ ALTER TABLE %s RENAME TO %s;
 			$ret .= $this->getRemoveColumnDDL($column);
 		}
 
-		foreach ($tableDiff->getRenamedColumns() as $fromColumnName => $toColumnName) {
-			$ret .= $this->getRenameColumnDDL($tableDiff->getToTable(), $fromColumnName, $toColumnName);
+		foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
+			$ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
 		}
 
 		if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
@@ -862,15 +862,15 @@ ALTER TABLE %s DROP COLUMN %s;
 	 * Builds the DDL SQL to rename a column
 	 * @return     string
 	 */
-	public function getRenameColumnDDL(Table $table, $fromColumnName, $toColumnName)
+	public function getRenameColumnDDL($fromColumn, $toColumn)
 	{
 		$pattern = "
 ALTER TABLE %s RENAME COLUMN %s TO %s;
 ";
 		return sprintf($pattern,
-			$this->quoteIdentifier($table->getName()),
-			$this->quoteIdentifier($fromColumnName),
-			$this->quoteIdentifier($toColumnName)
+			$this->quoteIdentifier($fromColumn->getTable()->getName()),
+			$this->quoteIdentifier($fromColumn->getName()),
+			$this->quoteIdentifier($toColumn->getName())
 		);
 	}
 

@@ -159,7 +159,7 @@ class PropelTableColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$tableDiff = $tc->getTableDiff();
 		$this->assertEquals(1, $nbDiffs);
 		$this->assertEquals(1, count($tableDiff->getRenamedColumns()));
-		$this->assertEquals(array('Foo' => 'Bar'), $tableDiff->getRenamedColumns());
+		$this->assertEquals(array(array($c1, $c2)), $tableDiff->getRenamedColumns());
 		$this->assertEquals(array(), $tableDiff->getAddedColumns());
 		$this->assertEquals(array(), $tableDiff->getRemovedColumns());
 	}
@@ -205,7 +205,7 @@ class PropelTableColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$nbDiffs = $tc->compareColumns();
 		$tableDiff = $tc->getTableDiff();
 		$this->assertEquals(4, $nbDiffs);
-		$this->assertEquals(array('col2' => 'col22'), $tableDiff->getRenamedColumns());
+		$this->assertEquals(array(array($c2, $c5)), $tableDiff->getRenamedColumns());
 		$this->assertEquals(array('col4' => $c6), $tableDiff->getAddedColumns());
 		$this->assertEquals(array('col3' => $c3), $tableDiff->getRemovedColumns());
 		$columnDiff = PropelColumnComparator::computeDiff($c1, $c4);

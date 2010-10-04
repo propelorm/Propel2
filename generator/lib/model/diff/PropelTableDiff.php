@@ -230,12 +230,12 @@ class PropelTableDiff
 	/**
 	 * Add a renamed column
 	 *
-	 * @param string $fromName
-	 * @param string $toName
+	 * @param Column $fromColumn
+	 * @param Column $toColumn
 	 */
-	public function addRenamedColumn($fromName, $toName)
+	public function addRenamedColumn($fromColumn, $toColumn)
 	{
-		$this->renamedColumns[$fromName] = $toName;
+		$this->renamedColumns[] = array($fromColumn, $toColumn);
 	}
 
 	/**
@@ -343,12 +343,12 @@ class PropelTableDiff
 	/**
 	 * Add a renamed Pk column
 	 *
-	 * @param string $fromName
-	 * @param string $toName
+	 * @param Column $fromColumn
+	 * @param Column $toColumn
 	 */
-	public function addRenamedPkColumn($fromName, $toName)
+	public function addRenamedPkColumn($fromColumn, $toColumn)
 	{
-		$this->renamedPkColumns[$fromName] = $toName;
+		$this->renamedPkColumns[] = array($fromColumn, $toColumn);
 	}
 
 	/**
@@ -603,8 +603,9 @@ class PropelTableDiff
 		}
 		if ($renamedColumns = $this->getRenamedColumns()) {
 			$ret .= "    renamedColumns:\n";
-			foreach ($renamedColumns as $fromName => $toName) {
-				$ret .= sprintf("      %s: %s\n", $fromName, $toName);
+			foreach ($renamedColumns as $columnRenaming) {
+				list($fromColumn, $toColumn) = $columnRenaming;
+				$ret .= sprintf("      %s: %s\n", $fromColumn->getName(), $toColumn->getName());
 			}
 		}
 		if ($addedIndices = $this->getAddedIndices()) {

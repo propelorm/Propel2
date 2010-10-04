@@ -9,7 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/PlatformMigrationTestProvider.php';
-require_once dirname(__FILE__) . '/../../../../generator/lib/platform/OraclePlatform.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/platform/MysqlPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.php';
 
@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  *
  * @package    generator.platform 
  */
-class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
+class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
 	/**
 	 * Get the Platform object for this class
@@ -26,7 +26,7 @@ class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
 	 */
 	protected function getPlatform()
 	{
-		return new OraclePlatform();
+		return new MysqlPlatform();
 	}
 
 	/**
@@ -35,38 +35,33 @@ class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
 	public function testGetModifyDatabaseDDL($databaseDiff)
 	{
 		$expected = "
-ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
-ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
+# This is a fix for InnoDB in MySQL >= 4.1.x
+# It \"suspends judgement\" for fkey relationships until are tables are set.
+SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE foo1 CASCADE CONSTRAINTS;
+DROP TABLE IF EXISTS `foo1`;
 
-DROP SEQUENCE foo1_SEQ;
+RENAME TABLE `foo3` TO `foo4`;
 
-ALTER TABLE foo3 RENAME TO foo4;
+ALTER TABLE `foo2` CHANGE `bar` `bar1` INTEGER;
 
-ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
+ALTER TABLE `foo2` CHANGE `baz` `baz` VARCHAR(12);
 
-ALTER TABLE foo2 MODIFY
+ALTER TABLE `foo2` ADD
 (
-	baz NVARCHAR2(12)
+	`baz3` TEXT
 );
 
-ALTER TABLE foo2 ADD
+CREATE TABLE `foo5`
 (
-	baz3 NVARCHAR2(2000)
-);
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`lkdjfsh` INTEGER,
+	`dfgdsgf` TEXT,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
-CREATE TABLE foo5
-(
-	id NUMBER NOT NULL,
-	lkdjfsh NUMBER,
-	dfgdsgf NVARCHAR2(2000)
-);
-
-ALTER TABLE foo5 ADD CONSTRAINT foo5_PK PRIMARY KEY (id);
-
-CREATE SEQUENCE foo5_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+# This restores the fkey checks, after having unset them earlier
+SET FOREIGN_KEY_CHECKS = 1;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}
@@ -77,7 +72,7 @@ CREATE SEQUENCE foo5_SEQ
 	public function testGetRenameTableDDL($fromName, $toName)
 	{
 		$expected = "
-ALTER TABLE foo1 RENAME TO foo2;
+RENAME TABLE `foo1` TO `foo2`;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameTableDDL($fromName, $toName));
 	}
@@ -88,32 +83,32 @@ ALTER TABLE foo1 RENAME TO foo2;
 	public function testGetModifyTableDDL($tableDiff)
 	{
 		$expected = "
-DROP INDEX bar_baz_FK;
+DROP INDEX `bar_baz_FK` ON `foo`;
 
-DROP INDEX bar_FK;
+DROP INDEX `foo1_FI_2` ON `foo`;
 
-ALTER TABLE foo DROP CONSTRAINT foo1_FK_2;
+DROP INDEX `bar_FK` ON `foo`;
 
-ALTER TABLE foo DROP CONSTRAINT foo1_FK_1;
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_2`;
 
-ALTER TABLE foo RENAME COLUMN bar TO bar1;
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
 
-ALTER TABLE foo MODIFY
+ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
+
+ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
+
+ALTER TABLE `foo` ADD
 (
-	baz NVARCHAR2(12)
+	`baz3` TEXT
 );
 
-ALTER TABLE foo ADD
-(
-	baz3 NVARCHAR2(2000)
-);
+CREATE INDEX `bar_FK` ON `foo` (`bar1`);
 
-CREATE INDEX bar_FK ON foo (bar1);
+CREATE INDEX `baz_FK` ON `foo` (`baz3`);
 
-CREATE INDEX baz_FK ON foo (baz3);
-
-ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
-	FOREIGN KEY (bar1) REFERENCES foo2 (bar);
+ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
+	FOREIGN KEY (`bar1`)
+	REFERENCES `foo2` (`bar`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
@@ -124,16 +119,13 @@ ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
 	public function testGetModifyTableColumnsDDL($tableDiff)
 	{
 		$expected = "
-ALTER TABLE foo RENAME COLUMN bar TO bar1;
+ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
 
-ALTER TABLE foo MODIFY
-(
-	baz NVARCHAR2(12)
-);
+ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
-ALTER TABLE foo ADD
+ALTER TABLE `foo` ADD
 (
-	baz3 NVARCHAR2(2000)
+	`baz3` TEXT
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
@@ -145,9 +137,9 @@ ALTER TABLE foo ADD
 	public function testGetModifyTablePrimaryKeysDDL($tableDiff)
 	{
 		$expected = "
-ALTER TABLE foo DROP CONSTRAINT foo_PK;
+ALTER TABLE `foo` DROP PRIMARY KEY;
 
-ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id,bar);
+ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
 	}
@@ -158,13 +150,13 @@ ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id,bar);
 	public function testGetModifyTableIndicesDDL($tableDiff)
 	{
 		$expected = "
-DROP INDEX bar_FK;
+DROP INDEX `bar_FK` ON `foo`;
 
-CREATE INDEX baz_FK ON foo (baz);
+CREATE INDEX `baz_FK` ON `foo` (`baz`);
 
-DROP INDEX bar_baz_FK;
+DROP INDEX `bar_baz_FK` ON `foo`;
 
-CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
+CREATE INDEX `bar_baz_FK` ON `foo` (`id`,`bar`,`baz`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
 	}
@@ -175,15 +167,17 @@ CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
 	public function testGetModifyTableForeignKeysDDL($tableDiff)
 	{
 		$expected = "
-ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
+ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
 
-ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_3
-	FOREIGN KEY (baz) REFERENCES foo2 (baz);
+ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_3`
+	FOREIGN KEY (`baz`)
+	REFERENCES `foo2` (`baz`);
 
-ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
+ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_2`;
 
-ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
-	FOREIGN KEY (bar,id) REFERENCES foo2 (bar,id);
+ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
+	FOREIGN KEY (`bar`,`id`)
+	REFERENCES `foo2` (`bar`,`id`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 	}
@@ -194,7 +188,7 @@ ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
 	public function testGetRemoveColumnDDL($column)
 	{
 		$expected = "
-ALTER TABLE foo DROP COLUMN bar;
+ALTER TABLE `foo` DROP `bar`;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRemoveColumnDDL($column));
 	}
@@ -205,7 +199,7 @@ ALTER TABLE foo DROP COLUMN bar;
 	public function testGetRenameColumnDDL($fromColumn, $toColumn)
 	{
 		$expected = "
-ALTER TABLE foo RENAME COLUMN bar1 TO bar2;
+ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
 	}
@@ -216,7 +210,7 @@ ALTER TABLE foo RENAME COLUMN bar1 TO bar2;
 	public function testGetModifyColumnDDL($columnDiff)
 	{
 		$expected = "
-ALTER TABLE foo MODIFY bar DOUBLE(3);
+ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE(3);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
 	}
@@ -227,11 +221,9 @@ ALTER TABLE foo MODIFY bar DOUBLE(3);
 	public function testGetModifyColumnsDDL($columnDiffs)
 	{
 		$expected = "
-ALTER TABLE foo MODIFY
-(
-	bar1 DOUBLE(3),
-	bar2 INTEGER NOT NULL
-);
+ALTER TABLE `foo` CHANGE `bar1` `bar1` DOUBLE(3);
+
+ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
 	}
@@ -242,7 +234,7 @@ ALTER TABLE foo MODIFY
 	public function testGetAddColumnDDL($column)
 	{
 		$expected = "
-ALTER TABLE foo ADD bar NUMBER;
+ALTER TABLE `foo` ADD `bar` INTEGER;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
 	}
@@ -253,10 +245,10 @@ ALTER TABLE foo ADD bar NUMBER;
 	public function testGetAddColumnsDDL($columns)
 	{
 		$expected = "
-ALTER TABLE foo ADD
+ALTER TABLE `foo` ADD
 (
-	bar1 NUMBER,
-	bar2 FLOAT(3,2) DEFAULT -1 NOT NULL
+	`bar1` INTEGER,
+	`bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
