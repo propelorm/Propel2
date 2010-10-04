@@ -701,9 +701,6 @@ ALTER TABLE %s RENAME TO %s;
 			list($fromIndex, $toIndex) = $indexModification;
 			$ret .= $this->getDropIndexDDL($fromIndex);
 		}
-		foreach ($tableDiff->getRemovedColumns() as $column) {
-			$ret .= $this->getRemoveColumnDDL($column);
-		}
 		
 		// alter table structure
 		foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
