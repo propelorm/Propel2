@@ -687,19 +687,19 @@ ALTER TABLE %s RENAME TO %s;
 		if ($tableDiff->hasModifiedPk()) {
 			$ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
 		}
-		foreach ($tableDiff->getRemovedIndices() as $index) {
-			$ret .= $this->getDropIndexDDL($index);
-		}
-		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
-			list($fromIndex, $toIndex) = $indexModification;
-			$ret .= $this->getDropIndexDDL($fromIndex);
-		}
 		foreach ($tableDiff->getRemovedFks() as $fk) {
 			$ret .= $this->getDropForeignKeyDDL($fk);
 		}
 		foreach ($tableDiff->getModifiedFks() as $fkName => $fkModification) {
 			list($fromFk, $toFk) = $fkModification;
 			$ret .= $this->getDropForeignKeyDDL($fromFk);
+		}
+		foreach ($tableDiff->getRemovedIndices() as $index) {
+			$ret .= $this->getDropIndexDDL($index);
+		}
+		foreach ($tableDiff->getModifiedIndices() as $indexName => $indexModification) {
+			list($fromIndex, $toIndex) = $indexModification;
+			$ret .= $this->getDropIndexDDL($fromIndex);
 		}
 		foreach ($tableDiff->getRemovedColumns() as $column) {
 			$ret .= $this->getRemoveColumnDDL($column);

@@ -60,6 +60,15 @@ class MysqlSchemaParser extends BaseSchemaParser
 		'enum' => PropelTypes::CHAR,
 		'set' => PropelTypes::CHAR,
 	);
+	
+	protected static $defaultTypeSizes = array(
+		'char'     => 1,
+		'tinyint'  => 4,
+		'smallint' => 6,
+		'int'      => 11,
+		'bigint'   => 20,
+		'decimal'  => 10,
+	);
 
 	/**
 	 * Gets a type mapping from native types to Propel types
@@ -144,21 +153,11 @@ class MysqlSchemaParser extends BaseSchemaParser
 						$size = (int) $matches[2];
 					}
 				}
-				if ($nativeType == 'int' && $size == '11') {
-					// int(11) is the default for int
-					$size = null;
-				}
-				if ($nativeType == 'bigint' && $size == '20') {
-					// bigint(20) is the default for int
-					$size = null;
-				}
-				if ($nativeType == 'decimal' && $size == '10') {
-					// decimal(10) is the default for decimal
-					$size = null;
-				}
-				if ($nativeType == 'tinyint' && $size == '4') {
-					// tinyint(4) is the default for boolean
-					$size = null;
+				foreach (self::$defaultTypeSizes as $type => $defaultSize) {
+					if ($nativeType == $type && $size == $defaultSize) {
+						$size = null;
+						continue;
+					}
 				}
 			} elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
 				$nativeType = $matches[1];
@@ -183,6 +182,10 @@ class MysqlSchemaParser extends BaseSchemaParser
 			$column->getDomain()->replaceSize($size);
 			$column->getDomain()->replaceScale($scale);
 			if ($default !== null) {
+				if ($propelType == PropelTypes::BOOLEAN) {
+					if ($default == '1') $default = 'true';
+					if ($default == '0') $default = 'false';
+				}
 				if (in_array($default, array('CURRENT_TIMESTAMP'))) {
 					$type = ColumnDefaultValue::TYPE_EXPR;
 				} else {

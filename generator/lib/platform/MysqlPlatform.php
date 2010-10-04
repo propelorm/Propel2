@@ -404,6 +404,37 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 	}
 
 	/**
+	 * Builds the DDL SQL to modify a database
+	 * based on a PropelDatabaseDiff instance
+	 *
+	 * @return     string
+	 */
+	public function getModifyDatabaseDDL(PropelDatabaseDiff $databaseDiff)
+	{
+		$ret = $this->getBeginDDL();
+
+		foreach ($databaseDiff->getRemovedTables() as $table) {
+			$ret .= $this->getDropTableDDL($table);
+		}
+
+		foreach ($databaseDiff->getRenamedTables() as $fromTableName => $toTableName) {
+			$ret .= $this->getRenameTableDDL($fromTableName, $toTableName);
+		}
+
+		foreach ($databaseDiff->getModifiedTables() as $tableDiff) {
+			$ret .= $this->getModifyTableDDL($tableDiff);
+		}
+
+		foreach ($databaseDiff->getAddedTables() as $table) {
+			$ret .= $this->getAddTableDDL($table);
+		}
+		
+		$ret .= $this->getEndDDL();
+		
+		return $ret;
+	}
+
+	/**
 	 * Builds the DDL SQL to rename a table
 	 * @return     string
 	 */
