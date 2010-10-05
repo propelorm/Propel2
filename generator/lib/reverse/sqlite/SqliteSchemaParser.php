@@ -81,6 +81,9 @@ class SqliteSchemaParser extends BaseSchemaParser
 		$tables = array();
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+			if ($name == $this->getMigrationTable()) {
+				continue;
+			}
 			$table = new Table($name);
 			$database->addTable($table);
 			$tables[] = $table;

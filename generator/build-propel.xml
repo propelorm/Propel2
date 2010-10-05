@@ -60,6 +60,9 @@
     name="propel-sql-diff"
     classname="task.PropelSQLDiffTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-migration-status"
+    classname="task.PropelMigrationStatusTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-sql-exec"
     classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
@@ -280,7 +283,7 @@
   </target>
 
   <!-- ================================================================ -->
-  <!-- D I F F  B E T W E E N  X M L  A N D  D A T A B A S E            -->
+  <!-- M I G R A T I O N   T A S K S                                    -->
   <!-- ================================================================ -->
   
   <target
@@ -304,19 +307,43 @@
       validate="${propel.schema.validate}"
       xsd="${propel.schema.xsd.file}"
       xsl="${propel.schema.xsl.file}"
-      outputDirectory="${propel.sql.dir}"
+      outputDirectory="${propel.migration.dir}"
       targetDatabase="${propel.database}"
       packageObjectModel="${propel.packageObjectModel}"
       databaseName="${propel.project}"
       url="${propel.database.url}"
       userId="${propel.database.user}"
-      password="${propel.database.password}">
+      password="${propel.database.password}"
+      editorCmd="${propel.migration.editor}">
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"
         excludes="${propel.schema.sql.excludes}"
       />
     </propel-sql-diff>
+  </target>
+
+  <target
+    name="migration-status"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    unless="propel.internal.sql.uptodate"
+    description="Lists the migrations left to be executed">
+
+    <echo message="+----------------------------------------------+"/>
+    <echo message="|                                              |"/>
+    <echo message="| Look for Migration classes and lists         |"/>
+    <echo message="| the ones not yet executed.                   |"/>
+    <echo message="|                                              |"/>
+    <echo message="+----------------------------------------------+"/>
+
+    <phingcall target="migration-status-template"/>
+  </target>
+
+  <target name="migration-status-template">
+    <propel-migration-status
+      migrationTable="${propel.migration.table}"
+      outputDirectory="${propel.migration.dir}">
+    </propel-migration-status>
   </target>
   
   <!-- ================================================================ -->

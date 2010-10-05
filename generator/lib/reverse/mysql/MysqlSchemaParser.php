@@ -94,6 +94,9 @@ class MysqlSchemaParser extends BaseSchemaParser
 		$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+			if ($name == $this->getMigrationTable()) {
+				continue;
+			}
 			$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
 			$table = new Table($name);
 			$database->addTable($table);

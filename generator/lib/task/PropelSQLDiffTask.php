@@ -22,6 +22,7 @@ require_once dirname(__FILE__) . '/../model/diff/PropelDatabaseComparator.php';
 class PropelSQLDiffTask extends AbstractPropelDataModelTask
 {
 	protected $databaseName;
+	protected $editorCmd;
 	
 	/**
 	 * Gets the datasource name.
@@ -45,6 +46,26 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$this->databaseName = $v;
 	}
 	
+	/**
+	 * Setter for the editorCmd property
+	 *
+	 * @param string $editorCmd
+	 */
+	public function setEditorCmd($editorCmd)
+	{
+		$this->editorCmd = $editorCmd;
+	}
+
+	/**
+	 * Getter for the editorCmd property
+	 *
+	 * @return string
+	 */
+	public function getEditorCmd()
+	{
+		return $this->editorCmd;
+	}
+
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
@@ -79,7 +100,6 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		}
 		$this->log(sprintf('%d tables imported from databases.', $totalNbTables));
 
-		
 		// loading model from XML
 		$this->packageObjectModel = true;
 		$appDatasFromXml = $this->getDataModels();
@@ -87,6 +107,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		
 		// comparing models
 		$this->log('Comparing models...');
+		$migrationsUp = array();
 		foreach ($ad->getDatabases() as $database) {
 			$name = $database->getName();
 			$this->log(sprintf('Comparing database "%s"', $name), Project::MSG_VERBOSE);
@@ -97,7 +118,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name));
 			
 			if (!$databaseDiff) {
-				$this->log('Same XML and database structures - no diff to generate', Project::MSG_VERBOSE);
+				$this->log(sprintf('Same XML and database structures for datasource "%s" - no diff to generate', $name), Project::MSG_VERBOSE);
 				continue;
 			}
 		
@@ -114,9 +135,63 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			if ($count = $databaseDiff->countRenamedTables()) {
 				$messages []= sprintf('%d renamed tables', $count);
 			}
-			$this->log(sprintf('Structure of database "%s" was modified: %s', $name, implode(', ', $messages)));
+			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, implode(', ', $messages)));
 			
-			echo $platform->getModifyDatabaseDDL($databaseDiff);
+			$migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
+		}
+		
+		if (!$migrationsUp) {
+			$this->log('Same XML and database structures for all datasource - no diff to generate');
+			return;
+		}
+		
+		$time = time();
+		$migrationClassName = sprintf('PropelMigration_%d', $time);
+		$migrationFileName = sprintf('%s.php', $migrationClassName);
+		$migrationUpString = var_export($migrationsUp, true);
+		$migrationClassBody = <<<EOP
+<?php
+
+/**
+ * Data object containing the SQL and PHP code to migrate the database
+ * up to version $time.
+ */
+class $migrationClassName
+{
+	
+	public function preUp(\$connections)
+	{
+		// add the pre-migration code here
+	}
+
+	public function postUp(\$connections)
+	{
+		// add the post-migration code here
+	}
+
+	/**
+	 * Get the SQL statements for the Up migration
+	 *
+	 * @return array list of the SQL strings to execute for the Up migration
+	 *               the keys being the datasources
+	 */
+	public function getUpSQL()
+	{
+		return $migrationUpString;
+	}
+
+}
+EOP;
+
+		$_f = new PhingFile($this->getOutputDirectory(), $migrationFileName);
+		file_put_contents($_f->getAbsolutePath(), $migrationClassBody);
+		$this->log(sprintf('"%s" file successfully created in %s', $_f->getName(), $_f->getParent()));
+		if ($editorCmd = $this->getEditorCmd()) {
+			$this->log(sprintf('Using "%s" as text editor', $editorCmd));
+			shell_exec($editorCmd . ' ' . escapeshellarg($_f->getAbsolutePath()));
+		} else {
+			$this->log('Please review the generated SQL statements, and add data migration code if necessary.');
+			$this->log('Once the migration class is valid, call the "migrate" task to execute it.');
 		}
 	}
 }

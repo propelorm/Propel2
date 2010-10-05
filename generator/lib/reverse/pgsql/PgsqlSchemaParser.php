@@ -105,6 +105,9 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$name = $row['relname'];
+			if ($name == $this->getMigrationTable()) {
+				continue;
+			}
 			$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
 			$oid = $row['oid'];
 			$table = new Table($name);

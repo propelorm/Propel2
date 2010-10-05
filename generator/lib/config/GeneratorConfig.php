@@ -179,6 +179,7 @@ class GeneratorConfig
       throw new BuildException("Specified platform class ($clazz) does implement SchemaParser interface.", $this->getLocation());
     }
     $parser->setConnection($con);
+    $parser->setMigrationTable($this->getBuildProperty('migrationTable'));
     $parser->setGeneratorConfig($this);
     return $parser;
   }

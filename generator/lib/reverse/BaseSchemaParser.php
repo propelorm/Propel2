@@ -53,7 +53,14 @@ abstract class BaseSchemaParser implements SchemaParser
 	 * @var        array
 	 */
 	protected $reverseTypeMap;
-
+	
+	/**
+	 * Name of the propel migration table - to be ignored in reverse
+	 *
+	 * @var string
+	 */
+	protected $migrationTable = 'propel_migration';
+	
 	/**
 	 * @param      PDO $dbh Optional database connection
 	 */
@@ -81,6 +88,27 @@ abstract class BaseSchemaParser implements SchemaParser
 		return $this->dbh;
 	}
 
+	/**
+	 * Setter for the migrationTable property
+	 *
+	 * @param string $migrationTable
+	 */
+	public function setMigrationTable($migrationTable)
+	{
+		$this->migrationTable = $migrationTable;
+	}
+
+	/**
+	 * Getter for the migrationTable property
+	 *
+	 * @return string
+	 */
+	public function getMigrationTable()
+	{
+		return $this->migrationTable;
+	}
+
+	
 	/**
 	 * Pushes a message onto the stack of warnings.
 	 *

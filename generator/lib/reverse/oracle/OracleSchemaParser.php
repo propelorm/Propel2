@@ -82,6 +82,9 @@ class OracleSchemaParser extends BaseSchemaParser
 				// this is an Oracle internal table or materialized view - prune
 				continue;
 			}
+			if (strtoupper($name) == strtoupper($this->getMigrationTable())) {
+				continue;
+			}
 			$table = new Table($row['OBJECT_NAME']);
 			$task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$database->addTable($table);
