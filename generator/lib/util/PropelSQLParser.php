@@ -46,6 +46,32 @@ class PropelSQLParser
 		return $this->sql;
 	}
 	
+	public static function executeString($input, $connection)
+	{
+		return self::executeStatements(self::parseString($input), $connection);
+	}
+	
+	public static function executeFile($file, $connection)
+	{
+		return self::executeStatements(self::parseFile($file), $connection);
+	}
+	
+	/**
+	 * Execute a list of DDL statements
+	 * Does not use transactions since they are not supported in DDL statements
+	 *
+	 * @param array $statements a list of SQL statements
+	 * @param PDO $connection a connection object
+	 */
+	protected static function executeStatements($statements, $connection)
+	{
+		foreach ($statements as $statement) {
+			$stmt = $connection->prepare($statement);
+			$stmt->execute();
+		}
+		return true;
+	}
+	
 	/**
 	 * Explodes a SQL string into an array of SQL statements.
 	 * @example

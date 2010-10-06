@@ -1011,9 +1011,14 @@ class Column extends XMLElement
 	
 	/**
 	 * Set a string that will give this column a default value.
+	 * 
+	 * @param ColumnDefaultValue|scalar column default value
 	 */
 	public function setDefaultValue($def)
 	{
+		if (!$def instanceof ColumnDefaultValue) {
+			$def = new ColumnDefaultValue($def, ColumnDefaultValue::TYPE_VALUE);
+		}
 		$this->domain->setDefaultValue($def);
 	}
 

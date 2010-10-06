@@ -9,6 +9,7 @@
  */
 
 require_once 'phing/Task.php';
+require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
 
 /**
  * This Task creates the OM classes based on the XML schema file.
@@ -99,41 +100,6 @@ class PropelMigrationStatusTask extends Task
 		return $this->generatorConfig;
 	}
 	
-	protected function getOldestDatabaseVersion()
-	{
-		$generatorConfig = $this->getGeneratorConfig();
-		$connections = $generatorConfig->getBuildConnections();
-		if (!$connections) {
-			throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
-		}
-		$oldestMigrationTimestamp = null;
-		$migrationTimestamps = array();
-		foreach ($connections as $name => $params) {
-			$pdo = $generatorConfig->getBuildPDO($name);
-			$sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-			$stmt = $pdo->prepare($sql);
-			try {
-				$stmt->execute();
-				if ($migrationTimestamp = $stmt->fetchColumn()) {
-					$migrationTimestamps[$name] = $migrationTimestamp;
-				}
-			} catch (PDOException $e) {
-				$this->log(sprintf('Creating %s table in database "%s"', $this->getMigrationTable(), $name), Project::MSG_VERBOSE);
-				$sql = sprintf('CREATE TABLE %s (version INTEGER DEFAULT 0)', $this->getMigrationTable());
-				$stmt = $pdo->prepare($sql);
-				if (!$stmt->execute()) {
-					throw new Exception('Unable to create migration table');
-				}
-				$oldestMigrationTimestamp = 0;
-			}
-		}
-		if ($oldestMigrationTimestamp === null && $migrationTimestamps) {
-			sort($migrationTimestamps);
-			$oldestMigrationTimestamp = array_shift($migrationTimestamps);
-		}
-		
-		return $oldestMigrationTimestamp;
-	}
 	
 	protected function getMigrationTimestamps($path)
 	{
@@ -157,47 +123,65 @@ class PropelMigrationStatusTask extends Task
 	public function main()
 	{
 		$generatorConfig = $this->getGeneratorConfig();
-		$connections = $generatorConfig->getBuildConnections();
-		if (!$connections) {
-			throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
-		}
+		$manager = new PropelMigrationManager();
+		$manager->setConnections($generatorConfig->getBuildConnections());
+		$manager->setMigrationTable($this->getMigrationTable());
+		$manager->setMigrationDir($this->getOutputDirectory());
+		
+		// the following is a verbose version of PropelMigrationManager::getValidMigrationTimestamps()
+		// mostly for explicit output
 		
 		$this->log('Checking Database Versions...');
-		if ($oldestMigrationTimestamp = $this->getOldestDatabaseVersion()) {
+		foreach ($manager->getConnections() as $name => $params) {
+			if (!$manager->migrationTableExists($name)) {
+				$this->log(sprintf(
+					'Migration table does not exist in datasource "%s"; creating it.', 
+					$name
+				), Project::MSG_VERBOSE);
+				$manager->createMigrationTable($name);
+			}
+		}
+		
+		if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
 			$this->log(sprintf(
 				'Oldest migration was achieved on %s (timestamp %d)', 
 				date('Y-m-d H:i:s', $oldestMigrationTimestamp),
-				$oldestMigrationTimestamp)
-			, Project::MSG_VERBOSE);
+				$oldestMigrationTimestamp
+			), Project::MSG_VERBOSE);
 		} else {
 			$this->log('No migration was ever executed on these connection settings.', Project::MSG_VERBOSE);
 		}
 
 		$this->log('Listing Migration files...');
-		$migrationTimestamps = $this->getMigrationTimestamps($this->getOutputDirectory());
-		if (!$migrationTimestamps) {
-			$this->log('No migration file found. Make sure you run the sql-diff task.');
+		$dir = $this->getOutputDirectory();
+		$migrationTimestamps = $manager->getMigrationTimestamps();
+		$nbExistingMigrations = count($migrationTimestamps);
+		if ($migrationTimestamps) {
+			$this->log(sprintf(
+				'%d valid migration classes found in "%s"',
+				$nbExistingMigrations,
+				$dir
+			), Project::MSG_VERBOSE);
+		} else {
+			$this->log(sprintf('No migration file found in "%s". Make sure you run the sql-diff task.', $dir));
 			return false;
 		}
-		
-		// removing already executed migrations
-		sort($migrationTimestamps);
-		foreach ($migrationTimestamps as $key => $value) {
-			if ($value <= $oldestMigrationTimestamp) {
-				$this->log(sprintf('Migration "PropelMigration_%d.php" was already executed', $value), Project::MSG_VERBOSE);
-				unset($migrationTimestamps[$key]);
-			}
-		}
-		
-		if (!$migrationTimestamps) {
-			$this->log('All %d migration files were already executed - Nothing to migrate.');
+		$migrationTimestamps = $manager->getValidMigrationTimestamps();
+		$nbNotYetExecutedMigrations = count($migrationTimestamps);
+		if (!$nbNotYetExecutedMigrations) {
+			$this->log('All migration files were already executed - Nothing to migrate.');
 			return false;
+		} elseif ($nbExecutedMigrations = $nbExistingMigrations - $nbNotYetExecutedMigrations) {
+			$this->log(sprintf(
+				'%d migrations were already executed',
+				$nbExecutedMigrations
+			), Project::MSG_VERBOSE);
 		}
 		
-		$this->log('Some migration files need to be executed:');
+		$this->log('Some migrations need to be executed:');
 		foreach ($migrationTimestamps as $timestamp) {
-			$this->log(sprintf('  PropelMigration_%d.php',$timestamp));
+			$this->log(sprintf('  %s', $manager->getMigrationClassName($timestamp)));
 		}
-		$this->log('Call the "migrate" task to execute these migrations');
+		$this->log('Call the "migrate" task to execute them');
 	}
 }
