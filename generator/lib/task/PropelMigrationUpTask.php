@@ -118,12 +118,34 @@ class PropelMigrationUpTask extends Task
 		
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
 		$this->log(sprintf('Executing migration %s', $manager->getMigrationClassName($nextMigrationTimestamp)));
-		foreach ($migration->getUpSQL() as $datasource => $statements) {
+		foreach ($migration->getUpSQL() as $datasource => $sql) {
 			$pdo = $manager->getPdoConnection($datasource);
-			$res = PropelSQLParser::executeString($statements, $pdo);
+			$res = 0;
+			$statements = PropelSQLParser::parseString($sql);
+			foreach ($statements as $statement) {
+				try {
+					$this->log(sprintf('  Executing statement "%s"', $statement), Project::MSG_VERBOSE);
+					$stmt = $pdo->prepare($statement);
+					$stmt->execute();
+					$res++;
+				} catch (PDOException $e) {
+					$this->log(sprintf('Failed to execute SQL "%s"', $statement), Project::MSG_ERR);
+					// continue
+				}
+			}
+			if (!$res) {
+				$this->log('No statement was executed. The version was not updated.');
+				$this->log(sprintf(
+					'Please review the code in "%s"', 
+					$manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
+				));
+				$this->log('Migration aborted', Project::MSG_ERR);
+				return false;
+			}
 			$this->log(sprintf(
-				'%s statements successfully executed on datasource "%s"',
+				'%d of %d SQL statements executed successfully on datasource "%s"',
 				$res,
+				count($statements),
 				$datasource
 			));
 			$manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
@@ -132,6 +154,7 @@ class PropelMigrationUpTask extends Task
 				$nextMigrationTimestamp,
 				$datasource
 			), Project::MSG_VERBOSE);
+			
 		}
 		if ($timestamps = $manager->getValidMigrationTimestamps()) {
 			$this->log(sprintf('Migration complete. %d migrations left to execute.', count($timestamps)));
