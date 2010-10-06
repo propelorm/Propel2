@@ -190,6 +190,24 @@ class PropelMigrationManager
 		}
 	}
 	
+	public function updateLatestMigrationTimestamp($datasource, $timestamp)
+	{
+		$platform = $this->getPlatform($datasource);
+		$pdo = $this->getPdoConnection($datasource);
+		$sql = sprintf('DELETE FROM %s', $this->getMigrationTable());
+		$pdo->beginTransaction();
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute();
+		$sql = sprintf('INSERT INTO %s (%s) VALUES (?)',
+			$this->getMigrationTable(),
+			$platform->quoteIdentifier('version')
+		);
+		$stmt = $pdo->prepare($sql);
+		$stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
+		$stmt->execute();
+		$pdo->commit();
+	}
+	
 	public function getMigrationTimestamps()
 	{
 		$path = $this->getMigrationDir();
@@ -218,6 +236,16 @@ class PropelMigrationManager
 		sort($migrationTimestamps);
 		
 		return $migrationTimestamps;
+	}
+	
+	public function getFirstUpMigrationTimestamp()
+	{
+		return array_shift($this->getValidMigrationTimestamps());
+	}
+	
+	public function getFirstDownMigrationTimestamp()
+	{
+		return $this->getOldestDatabaseVersion();
 	}
 	
 	public function getMigrationClassName($timestamp)

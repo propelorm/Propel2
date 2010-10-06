@@ -63,6 +63,9 @@
     name="propel-migration-status"
     classname="task.PropelMigrationStatusTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-migration-up"
+    classname="task.PropelMigrationUpTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-sql-exec"
     classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
@@ -344,6 +347,29 @@
       migrationTable="${propel.migration.table}"
       outputDirectory="${propel.migration.dir}">
     </propel-migration-status>
+  </target>
+
+  <target
+    name="migration-up"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    unless="propel.internal.sql.uptodate"
+    description="Execute the next migration">
+
+    <echo message="+----------------------------------------------+"/>
+    <echo message="|                                              |"/>
+    <echo message="| Look for next Migration class                |"/>
+    <echo message="| and execute it                               |"/>
+    <echo message="|                                              |"/>
+    <echo message="+----------------------------------------------+"/>
+
+    <phingcall target="migration-up-template"/>
+  </target>
+
+  <target name="migration-up-template">
+    <propel-migration-up
+      migrationTable="${propel.migration.table}"
+      outputDirectory="${propel.migration.dir}">
+    </propel-migration-up>
   </target>
   
   <!-- ================================================================ -->

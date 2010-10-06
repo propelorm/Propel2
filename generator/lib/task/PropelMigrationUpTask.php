@@ -12,12 +12,12 @@ require_once 'phing/Task.php';
 require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
 
 /**
- * This Task lists the migrations yet to be executed
+ * This Task executes the next migration up
  *
  * @author     Francois Zaninotto
  * @package    propel.generator.task
  */
-class PropelMigrationStatusTask extends Task
+class PropelMigrationUpTask extends Task
 {
 	/**
 	 * Destination directory for results of template scripts.
@@ -101,6 +101,9 @@ class PropelMigrationStatusTask extends Task
 	}
 	
 	
+	/**
+	 * Main method builds all the targets for a typical propel project.
+	 */
 	public function main()
 	{
 		$manager = new PropelMigrationManager();
@@ -108,60 +111,32 @@ class PropelMigrationStatusTask extends Task
 		$manager->setMigrationTable($this->getMigrationTable());
 		$manager->setMigrationDir($this->getOutputDirectory());
 		
-		// the following is a verbose version of PropelMigrationManager::getValidMigrationTimestamps()
-		// mostly for explicit output
-		
-		$this->log('Checking Database Versions...');
-		foreach ($manager->getConnections() as $name => $params) {
-			if (!$manager->migrationTableExists($name)) {
-				$this->log(sprintf(
-					'Migration table does not exist in datasource "%s"; creating it.', 
-					$name
-				), Project::MSG_VERBOSE);
-				$manager->createMigrationTable($name);
-			}
-		}
-		
-		if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
-			$this->log(sprintf(
-				'Oldest migration was achieved on %s (timestamp %d)', 
-				date('Y-m-d H:i:s', $oldestMigrationTimestamp),
-				$oldestMigrationTimestamp
-			), Project::MSG_VERBOSE);
-		} else {
-			$this->log('No migration was ever executed on these connection settings.', Project::MSG_VERBOSE);
-		}
-
-		$this->log('Listing Migration files...');
-		$dir = $this->getOutputDirectory();
-		$migrationTimestamps = $manager->getMigrationTimestamps();
-		$nbExistingMigrations = count($migrationTimestamps);
-		if ($migrationTimestamps) {
-			$this->log(sprintf(
-				'%d valid migration classes found in "%s"',
-				$nbExistingMigrations,
-				$dir
-			), Project::MSG_VERBOSE);
-		} else {
-			$this->log(sprintf('No migration file found in "%s". Make sure you run the sql-diff task.', $dir));
+		if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+			$this->log('All migrations were already executed - nothing to migrate.');
 			return false;
 		}
-		$migrationTimestamps = $manager->getValidMigrationTimestamps();
-		$nbNotYetExecutedMigrations = count($migrationTimestamps);
-		if (!$nbNotYetExecutedMigrations) {
-			$this->log('All migration files were already executed - Nothing to migrate.');
-			return false;
-		} elseif ($nbExecutedMigrations = $nbExistingMigrations - $nbNotYetExecutedMigrations) {
+		
+		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
+		$this->log(sprintf('Executing migration %s', $manager->getMigrationClassName($nextMigrationTimestamp)));
+		foreach ($migration->getUpSQL() as $datasource => $statements) {
+			$pdo = $manager->getPdoConnection($datasource);
+			$res = PropelSQLParser::executeString($statements, $pdo);
 			$this->log(sprintf(
-				'%d migrations were already executed',
-				$nbExecutedMigrations
+				'%s statements successfully executed on datasource "%s"',
+				$res,
+				$datasource
+			));
+			$manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
+			$this->log(sprintf(
+				'Updated latest migration date to %d for datasource "%s"',
+				$nextMigrationTimestamp,
+				$datasource
 			), Project::MSG_VERBOSE);
 		}
-		
-		$this->log('Some migrations need to be executed:');
-		foreach ($migrationTimestamps as $timestamp) {
-			$this->log(sprintf('  %s', $manager->getMigrationClassName($timestamp)));
+		if ($timestamps = $manager->getValidMigrationTimestamps()) {
+			$this->log(sprintf('Migration complete. %d migrations left to execute.', count($timestamps)));
+		} else {
+			$this->log('Migration complete. No further migration to execute.');
 		}
-		$this->log('Call the "migrate" task to execute them');
 	}
 }

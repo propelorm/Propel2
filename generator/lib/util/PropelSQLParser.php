@@ -45,23 +45,43 @@ class PropelSQLParser
 	{
 		return $this->sql;
 	}
-	
+
+	/**
+	 * Execute a list of DDL statements based on a string
+	 * Does not use transactions since they are not supported in DDL statements
+	 *
+	 * @param string $input The SQL statements
+	 * @param PDO $connection a connection object
+	 * 
+	 * @return integer the number of executed statements
+	 */
 	public static function executeString($input, $connection)
 	{
 		return self::executeStatements(self::parseString($input), $connection);
 	}
-	
+
+	/**
+	 * Execute a list of DDL statements based on the path to the SQL file
+	 * Does not use transactions since they are not supported in DDL statements
+	 *
+	 * @param string $file the path to the SQL file
+	 * @param PDO $connection a connection object
+	 * 
+	 * @return integer the number of executed statements
+	 */
 	public static function executeFile($file, $connection)
 	{
 		return self::executeStatements(self::parseFile($file), $connection);
 	}
 	
 	/**
-	 * Execute a list of DDL statements
+	 * Execute a list of DDL statements based on an array
 	 * Does not use transactions since they are not supported in DDL statements
 	 *
 	 * @param array $statements a list of SQL statements
 	 * @param PDO $connection a connection object
+	 * 
+	 * @return integer the number of executed statements
 	 */
 	protected static function executeStatements($statements, $connection)
 	{
@@ -69,7 +89,7 @@ class PropelSQLParser
 			$stmt = $connection->prepare($statement);
 			$stmt->execute();
 		}
-		return true;
+		return count($statements);
 	}
 	
 	/**
