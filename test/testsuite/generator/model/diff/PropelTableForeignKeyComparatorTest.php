@@ -60,6 +60,25 @@ class PropelTableForeignKeyComparatorTest extends PHPUnit_Framework_TestCase
 		$diff = PropelTableComparator::computeDiff($t1, $t2);
 		$this->assertTrue($diff instanceof PropelTableDiff);
 	}
+
+	public function testCaseInsensitive()
+	{
+		$t1 = new Table('Baz');
+		$c1 = new Column('Foo');
+		$c2 = new Column('Bar');
+		$fk1 = new ForeignKey();
+		$fk1->addReference($c1, $c2);
+		$t1->addForeignKey($fk1);
+
+		$t2 = new Table('bAZ');
+		$c3 = new Column('fOO');
+		$c4 = new Column('bAR');
+		$fk2 = new ForeignKey();
+		$fk2->addReference($c3, $c4);
+		$t2->addForeignKey($fk2);
+
+		$this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+	}
 	
 	public function testCompareAddedFks()
 	{

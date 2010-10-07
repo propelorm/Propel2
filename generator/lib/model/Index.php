@@ -254,13 +254,20 @@ class Index extends XMLElement
 	 * @param integer $pos Position in the column list
 	 * @param string  $name Column name
 	 * @param integer $size optional size check
+	 * @param boolean $caseInsensitive Whether the comparison is case insensitive.
+	 *                                 False by default.
+	 *
+	 * @return boolean
 	 */
-	public function hasColumnAtPosition($pos, $name, $size = null)
+	public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)
 	{
 		if (!isset($this->indexColumns[$pos])) {
 			return false;
 		}
-		if ($this->indexColumns[$pos] != $name) {
+		$test = $caseInsensitive ?
+			strtolower($this->indexColumns[$pos]) != strtolower($name) :
+			$this->indexColumns[$pos] != $name;
+		if ($test) {
 			return false;
 		}
 		if (null !== $size && $this->indexColumnSizes[$name] != $size) {

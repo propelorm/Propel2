@@ -60,6 +60,21 @@ class PropelTableColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$diff = PropelTableComparator::computeDiff($t1, $t2);
 		$this->assertTrue($diff instanceof PropelTableDiff);
 	}
+	
+	public function testCompareCaseInsensitive()
+	{
+		$t1 = new Table();
+		$c1 = new Column('Foo');
+		$t1->addColumn($c1);
+		$t2 = new Table();
+		$c2 = new Column('fOO');
+		$t2->addColumn($c2);
+
+		$diff = PropelTableComparator::computeDiff($t1, $t2);
+		$this->assertTrue($diff instanceof PropelTableDiff);
+
+		$this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+	}
 
 	public function testCompareAddedColumn()
 	{

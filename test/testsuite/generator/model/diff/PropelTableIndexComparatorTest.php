@@ -83,6 +83,34 @@ class PropelTableIndexComparatorTest extends PHPUnit_Framework_TestCase
 		$diff = PropelTableComparator::computeDiff($t1, $t2);
 		$this->assertTrue($diff instanceof PropelTableDiff);
 	}
+
+	public function testCompareCaseInsensitive()
+	{
+		$t1 = new Table();
+		$c1 = new Column('Foo');
+		$c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c1->getDomain()->replaceScale(2);
+		$c1->getDomain()->replaceSize(3);
+		$c1->setNotNull(true);
+		$c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t1->addColumn($c1);
+		$i1 = new Index('Foo_Index');
+		$i1->addColumn($c1);
+		$t1->addIndex($i1);
+		$t2 = new Table();
+		$c2 = new Column('fOO');
+		$c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c2->getDomain()->replaceScale(2);
+		$c2->getDomain()->replaceSize(3);
+		$c2->setNotNull(true);
+		$c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t2->addColumn($c2);
+		$i2 = new Index('fOO_iNDEX');
+		$i2->addColumn($c2);
+		$t2->addIndex($i2);
+		
+		$this->assertFalse(PropelTableComparator::computeDiff($t1, $t2, true));
+	}
 	
 	public function testCompareAddedIndices()
 	{

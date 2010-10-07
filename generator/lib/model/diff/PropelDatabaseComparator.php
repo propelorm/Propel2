@@ -80,16 +80,18 @@ class PropelDatabaseComparator
 	 *
 	 * @param Database $fromDatabase
 	 * @param Database $toDatabase
+	 * @param  boolean $caseInsensitive Whether the comparison is case insensitive.
+	 *                                  False by default.
 	 *
 	 * @return PropelDatabaseDiff|boolean return false if the two databases are similar
 	 */
-	public static function computeDiff(Database $fromDatabase, Database $toDatabase)
+	public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false)
 	{
 		$dc = new self();
 		$dc->setFromDatabase($fromDatabase);
 		$dc->setToDatabase($toDatabase);
 		$differences = 0;
-		$differences += $dc->compareTables();
+		$differences += $dc->compareTables($caseInsensitive);
 		
 		return ($differences > 0) ? $dc->getDatabaseDiff() : false;
 	}
@@ -99,9 +101,12 @@ class PropelDatabaseComparator
 	 * and modifies the inner databaseDiff if necessary.
 	 * Returns the number of differences.
 	 *
+	 * @param  boolean $caseInsensitive Whether the comparison is case insensitive.
+	 *                                  False by default.
+	 *
 	 * @return integer The number of table differences
 	 */
-	public function compareTables()
+	public function compareTables($caseInsensitive = false)
 	{
 		$fromDatabaseTables = $this->fromDatabase->getTables();
 		$toDatabaseTables = $this->toDatabase->getTables();
@@ -109,7 +114,7 @@ class PropelDatabaseComparator
 		
 		// check for new tables in $toDatabase
 		foreach ($toDatabaseTables as $table) {
-			if (!$this->fromDatabase->hasTable($table->getName())) {
+			if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive)) {
 				$this->databaseDiff->addAddedTable($table->getName(), $table);
 				$databaseDifferences++;
 			}
@@ -117,7 +122,7 @@ class PropelDatabaseComparator
 		
 		// check for removed tables in $toDatabase
 		foreach ($fromDatabaseTables as $table) {
-			if (!$this->toDatabase->hasTable($table->getName())) {
+			if (!$this->toDatabase->hasTable($table->getName(), $caseInsensitive)) {
 				$this->databaseDiff->addRemovedTable($table->getName(), $table);
 				$databaseDifferences++;
 			}
@@ -125,9 +130,9 @@ class PropelDatabaseComparator
 		
 		// check for table differences
 		foreach ($fromDatabaseTables as $fromTable) {
-			if ($this->toDatabase->hasTable($fromTable->getName())) {
-				$toTable = $this->toDatabase->getTable($fromTable->getName());
-				$databaseDiff = PropelTableComparator::computeDiff($fromTable, $toTable);
+			if ($this->toDatabase->hasTable($fromTable->getName(), $caseInsensitive)) {
+				$toTable = $this->toDatabase->getTable($fromTable->getName(), $caseInsensitive);
+				$databaseDiff = PropelTableComparator::computeDiff($fromTable, $toTable, $caseInsensitive);
 				if ($databaseDiff) {
 					$this->databaseDiff->addModifiedTable($fromTable->getName(), $databaseDiff);
 					$databaseDifferences++;
@@ -138,7 +143,7 @@ class PropelDatabaseComparator
 		// check for table renamings
 		foreach ($this->databaseDiff->getAddedTables() as $addedTableName => $addedTable) {
 			foreach ($this->databaseDiff->getRemovedTables() as $removedTableName => $removedTable) {
-				if (!PropelTableComparator::computeDiff($addedTable, $removedTable)) {
+				if (!PropelTableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
 					// no difference except the name, that's probably a renaming
 					$this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);
 					$this->databaseDiff->removeAddedTable($addedTableName);

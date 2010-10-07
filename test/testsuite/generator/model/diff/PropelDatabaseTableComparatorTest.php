@@ -70,6 +70,18 @@ class PropelDatabaseTableComparatorTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($diff instanceof PropelDatabaseDiff);
 	}
 
+	public function testCompareCaseInsensitive()
+	{
+		$d1 = new Database();
+		$t1 = new Table('Foo');
+		$d1->addTable($t1);
+		$d2 = new Database();
+		$t2 = new Table('fOO');
+		$d2->addTable($t2);
+		
+		$this->assertFalse(PropelDatabaseComparator::computeDiff($d1, $d2, true));
+	}
+	
 	public function testCompareAddedTable()
 	{
 		$d1 = new Database();

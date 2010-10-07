@@ -323,7 +323,8 @@
       url="${propel.database.url}"
       userId="${propel.database.user}"
       password="${propel.database.password}"
-      editorCmd="${propel.migration.editor}">
+      editorCmd="${propel.migration.editor}"
+      caseInsensitive="${propel.migration.caseInsensitive}">
       <mapper type="glob" from="${propel.sql.mapper.from}" to="${propel.sql.mapper.to}"/>
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"

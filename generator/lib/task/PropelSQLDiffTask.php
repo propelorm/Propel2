@@ -24,16 +24,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 {
 	protected $databaseName;
 	protected $editorCmd;
-	
-	/**
-	 * Gets the datasource name.
-	 *
-	 * @return     string
-	 */
-	public function getDatabaseName()
-	{
-		return $this->databaseName;
-	}
+	protected $isCaseInsensitive = false;
 
 	/**
 	 * Sets the datasource name.
@@ -47,6 +38,16 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$this->databaseName = $v;
 	}
 	
+	/**
+	 * Gets the datasource name.
+	 *
+	 * @return     string
+	 */
+	public function getDatabaseName()
+	{
+		return $this->databaseName;
+	}
+
 	/**
 	 * Setter for the editorCmd property
 	 *
@@ -67,6 +68,26 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		return $this->editorCmd;
 	}
 
+	/**
+	 * Defines whether the comparison is case insensitive
+	 *
+	 * @param  boolean $isCaseInsensitive
+	 */
+	public function setCaseInsensitive($isCaseInsensitive)
+	{
+		$this->isCaseInsensitive = $isCaseInsensitive;
+	}
+
+	/**
+	 * Checks whether the comparison is case insensitive
+	 *
+	 * @return boolean
+	 */
+	public function isCaseInsensitive()
+	{
+		return $this->isCaseInsensitive;
+	}
+	
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
@@ -117,7 +138,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 				// FIXME: tables present in database but not in XML
 				continue;
 			}
-			$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name));
+			$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name), $this->isCaseInsensitive());
 			
 			if (!$databaseDiff) {
 				$this->log(sprintf('Same XML and database structures for datasource "%s" - no diff to generate', $name), Project::MSG_VERBOSE);

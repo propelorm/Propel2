@@ -25,15 +25,24 @@ class PropelForeignKeyComparator
 	 * @param ForeignKey $fromFk
 	 * @param ForeignKey $toFk
 	 *
+	 * @param boolean $caseInsensitive Whether the comparison is case insensitive.
+	 *                                 False by default.
+	 *
 	 * @return boolean false if the two fks are similar, true if they have differences
 	 */
-	static public function computeDiff(ForeignKey $fromFk, ForeignKey $toFk)
+	static public function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false)
 	{
 		// Check for differences in local and remote table
-		if ($fromFk->getTableName() != $toFk->getTableName()) {
+		$test = $caseInsensitive ? 
+			strtolower($fromFk->getTableName()) != strtolower($toFk->getTableName()) :
+			$fromFk->getTableName() != $toFk->getTableName();
+		if ($test) {
 			return true;
 		}
-		if ($fromFk->getForeignTableName() != $toFk->getForeignTableName()) {
+		$test = $caseInsensitive ?
+			strtolower($fromFk->getForeignTableName()) != strtolower($toFk->getForeignTableName()) :
+			$fromFk->getForeignTableName() != $toFk->getForeignTableName();
+		if ($test) {
 			return true;
 		}
 		

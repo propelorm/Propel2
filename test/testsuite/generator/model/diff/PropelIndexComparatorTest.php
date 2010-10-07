@@ -41,6 +41,17 @@ class PropelIndexComparatorTest extends PHPUnit_Framework_TestCase
 		$i2->addColumn($c4);
 		$this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2));
 	}
+
+	public function testCompareCaseInsensitive()
+	{
+		$c1 = new Column('Foo');
+		$i1 = new Index('Foo_Index');
+		$i1->addColumn($c1);
+		$c2 = new Column('fOO');
+		$i2 = new Index('fOO_iNDEX');
+		$i2->addColumn($c2);
+		$this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2, true));
+	}
 	
 	public function testCompareType()
 	{

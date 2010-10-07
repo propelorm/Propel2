@@ -269,8 +269,8 @@ class MysqlSchemaParser extends BaseSchemaParser
 				
 				$localColumns = array();
 				$foreignColumns = array();
-				
-				$foreignTable = $database->getTable($ftbl);
+				;
+				$foreignTable = $database->getTable($ftbl, true);
 				
 				foreach($fcols as $fcol) {
 					$foreignColumns[] = $foreignTable->getColumn($fcol);
