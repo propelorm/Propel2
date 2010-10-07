@@ -108,6 +108,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		// comparing models
 		$this->log('Comparing models...');
 		$migrationsUp = array();
+		$migrationsDown = array();
 		foreach ($ad->getDatabases() as $database) {
 			$name = $database->getName();
 			$this->log(sprintf('Comparing database "%s"', $name), Project::MSG_VERBOSE);
@@ -138,6 +139,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, implode(', ', $messages)));
 			
 			$migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
+			$migrationsDown[$name] = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
 		}
 		
 		if (!$migrationsUp) {
@@ -146,15 +148,18 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		}
 		
 		$time = time();
+		$timeInWords = date('Y-m-d H:i:s', $time);
 		$migrationClassName = sprintf('PropelMigration_%d', $time);
 		$migrationFileName = sprintf('%s.php', $migrationClassName);
 		$migrationUpString = var_export($migrationsUp, true);
+		$migrationDownString = var_export($migrationsDown, true);
 		$migrationClassBody = <<<EOP
 <?php
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
  * up to version $time.
+ * Generated on $timeInWords
  */
 class $migrationClassName
 {
@@ -169,6 +174,16 @@ class $migrationClassName
 		// add the post-migration code here
 	}
 
+	public function preDown(\$connections)
+	{
+		// add the pre-migration code here
+	}
+
+	public function postDown(\$connections)
+	{
+		// add the post-migration code here
+	}
+	
 	/**
 	 * Get the SQL statements for the Up migration
 	 *
@@ -178,6 +193,17 @@ class $migrationClassName
 	public function getUpSQL()
 	{
 		return $migrationUpString;
+	}
+
+	/**
+	 * Get the SQL statements for the Down migration
+	 *
+	 * @return array list of the SQL strings to execute for the Down migration
+	 *               the keys being the datasources
+	 */
+	public function getDownSQL()
+	{
+		return $migrationDownString;
 	}
 
 }
@@ -190,8 +216,8 @@ EOP;
 			$this->log(sprintf('Using "%s" as text editor', $editorCmd));
 			shell_exec($editorCmd . ' ' . escapeshellarg($_f->getAbsolutePath()));
 		} else {
-			$this->log('Please review the generated SQL statements, and add data migration code if necessary.');
-			$this->log('Once the migration class is valid, call the "migrate" task to execute it.');
+			$this->log('  Please review the generated SQL statements, and add data migration code if necessary.');
+			$this->log('  Once the migration class is valid, call the "migrate" task to execute it.');
 		}
 	}
 }

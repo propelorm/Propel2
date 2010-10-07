@@ -83,6 +83,29 @@ class PropelColumnDiff
 		return $this->toColumn;
 	}
 	
+	/**
+	 * Get the reverse diff for this diff
+	 *
+	 * @return PropelColumnDiff
+	 */
+	public function getReverseDiff()
+	{
+		$diff = new self();
+		
+		// columns
+		$diff->setFromColumn($this->getToColumn());
+		$diff->setToColumn($this->getFromColumn());
+		
+		// properties
+		$changedProperties = array();
+		foreach ($this->getChangedProperties() as $name => $propertyChange) {
+			$changedProperties[$name] = array_reverse($propertyChange);
+		}
+		$diff->setChangedProperties($changedProperties);
+		
+		return $diff;
+	}
+	
 	public function __toString()
 	{
 		$ret = '';

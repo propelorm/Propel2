@@ -228,8 +228,23 @@ class PropelMigrationManager
 		$oldestMigrationTimestamp = $this->getOldestDatabaseVersion();
 		$migrationTimestamps = $this->getMigrationTimestamps();
 		// removing already executed migrations
-		foreach ($migrationTimestamps as $key => $value) {
-			if ($value <= $oldestMigrationTimestamp) {
+		foreach ($migrationTimestamps as $key => $timestamp) {
+			if ($timestamp <= $oldestMigrationTimestamp) {
+				unset($migrationTimestamps[$key]);
+			}
+		}
+		sort($migrationTimestamps);
+		
+		return $migrationTimestamps;
+	}
+	
+	public function getAlreadyExecutedMigrationTimestamps()
+	{
+		$oldestMigrationTimestamp = $this->getOldestDatabaseVersion();
+		$migrationTimestamps = $this->getMigrationTimestamps();
+		// removing already executed migrations
+		foreach ($migrationTimestamps as $key => $timestamp) {
+			if ($timestamp > $oldestMigrationTimestamp) {
 				unset($migrationTimestamps[$key]);
 			}
 		}

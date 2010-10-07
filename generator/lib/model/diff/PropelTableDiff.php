@@ -578,6 +578,63 @@ class PropelTableDiff
 	{
 		return $this->modifiedFks;
 	}
+
+	/**
+	 * Get the reverse diff for this diff
+	 *
+	 * @return PropelTableDiff
+	 */
+	public function getReverseDiff()
+	{
+		$diff = new self();
+		
+		// tables
+		$diff->setFromTable($this->getToTable());
+		$diff->setToTable($this->getFromTable());
+		
+		// columns
+		$diff->setAddedColumns($this->getRemovedColumns());
+		$diff->setRemovedColumns($this->getAddedColumns());
+		$renamedColumns = array();
+		foreach ($this->getRenamedColumns() as $columnRenaming) {
+			$renamedColumns[]= array_reverse($columnRenaming);
+		}
+		$diff->setRenamedColumns($renamedColumns);
+		$columnDiffs = array();
+		foreach ($this->getModifiedColumns() as $name => $columnDiff) {
+			$columnDiffs[$name] = $columnDiff->getReverseDiff();
+		}
+		$diff->setModifiedColumns($columnDiffs);
+		
+		// pks
+		$diff->setAddedPkColumns($this->getRemovedPkColumns());
+		$diff->setRemovedPkColumns($this->getAddedPkColumns());
+		$renamedPkColumns = array();
+		foreach ($this->getRenamedPkColumns() as $columnRenaming) {
+			$renamedPkColumns[]= array_reverse($columnRenaming);
+		}
+		$diff->setRenamedPkColumns($renamedPkColumns);
+		
+		// indices
+		$diff->setAddedIndices($this->getRemovedIndices());
+		$diff->setRemovedIndices($this->getAddedIndices());
+		$indexDiffs = array();
+		foreach ($this->getModifiedIndices() as $name => $indexDiff) {
+			$indexDiffs[$name] = array_reverse($indexDiff);
+		}
+		$diff->setModifiedIndices($indexDiffs);
+		
+		// fks
+		$diff->setAddedFks($this->getRemovedFks());
+		$diff->setRemovedFks($this->getAddedFks());
+		$fkDiffs = array();
+		foreach ($this->getModifiedFks() as $name => $fkDiff) {
+			$fkDiffs[$name] = array_reverse($fkDiff);
+		}
+		$diff->setModifiedFks($fkDiffs);
+		
+		return $diff;
+	}
 	
 	public function __toString()
 	{

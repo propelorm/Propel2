@@ -232,7 +232,34 @@ class PropelDatabaseDiff
 	{
 		return count($this->renamedTables);
 	}
-
+	
+	/**
+	 * Get the reverse diff for this diff
+	 *
+	 * @return PropelDatabaseDiff
+	 */
+	public function getReverseDiff()
+	{
+		$diff = new self();
+		$diff->setAddedTables($this->getRemovedTables());
+		// idMethod is not set for tables build from reverse engineering
+		// FIXME: this should be handled by reverse classes
+		foreach ($diff->getAddedTables() as $name => $table) {
+			if ($table->getIdMethod() == IDMethod::NO_ID_METHOD) {
+				$table->setIdMethod(IDMethod::NATIVE);
+			}
+		}
+		$diff->setRemovedTables($this->getAddedTables());
+		$diff->setRenamedTables(array_flip($this->getRenamedTables()));
+		$tableDiffs = array();
+		foreach ($this->getModifiedTables() as $name => $tableDiff) {
+			$tableDiffs[$name] = $tableDiff->getReverseDiff();
+		}
+		$diff->setModifiedTables($tableDiffs);
+		
+		return $diff;
+	}
+	
 	public function __toString()
 	{
 		$ret = '';

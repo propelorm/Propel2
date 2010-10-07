@@ -66,6 +66,9 @@
     name="propel-migration-up"
     classname="task.PropelMigrationUpTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-migration-down"
+    classname="task.PropelMigrationDownTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-sql-exec"
     classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
@@ -371,7 +374,29 @@
       outputDirectory="${propel.migration.dir}">
     </propel-migration-up>
   </target>
-  
+
+  <target
+    name="migration-down"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    unless="propel.internal.sql.uptodate"
+    description="Execute the next migration">
+
+    <echo message="+----------------------------------------------+"/>
+    <echo message="|                                              |"/>
+    <echo message="| Look for next Migration class                |"/>
+    <echo message="| and execute it                               |"/>
+    <echo message="|                                              |"/>
+    <echo message="+----------------------------------------------+"/>
+
+    <phingcall target="migration-down-template"/>
+  </target>
+
+  <target name="migration-down-template">
+    <propel-migration-down
+      migrationTable="${propel.migration.table}"
+      outputDirectory="${propel.migration.dir}">
+    </propel-migration-down>
+  </target>
   <!-- ================================================================ -->
   <!-- Generate SQL from XML data file                                  -->
   <!-- ================================================================ -->
