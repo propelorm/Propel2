@@ -33,9 +33,17 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 			$this->log('All migrations were already executed - nothing to migrate.');
 			return false;
 		}
+		$this->log(sprintf(
+			'Executing migration %s up',
+			$manager->getMigrationClassName($nextMigrationTimestamp)
+		));
 		
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
-		$this->log(sprintf('Executing migration %s up', $manager->getMigrationClassName($nextMigrationTimestamp)));
+		if (false === $migration->preUp($manager)) {
+			$this->log('preUp() returned false. Aborting migration.', Project::MSG_ERR);
+			return false;
+		}
+		
 		foreach ($migration->getUpSQL() as $datasource => $sql) {
 			$connection = $manager->getConnection($datasource);
 			$this->log(sprintf(
@@ -53,7 +61,8 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 					$stmt->execute();
 					$res++;
 				} catch (PDOException $e) {
-					$this->log(sprintf('Failed to execute SQL "%s"', $statement), Project::MSG_ERR);
+					$this->log(sprintf('Failed to execute SQL "%s". Aborting migration.', $statement), Project::MSG_ERR);
+					return false;
 					// continue
 				}
 			}
@@ -78,10 +87,15 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 				$nextMigrationTimestamp,
 				$datasource
 			), Project::MSG_VERBOSE);
-			
 		}
+		
+		$migration->postUp($manager);
+		
 		if ($timestamps = $manager->getValidMigrationTimestamps()) {
-			$this->log(sprintf('Migration complete. %d migrations left to execute.', count($timestamps)));
+			$this->log(sprintf(
+				'Migration complete. %d migrations left to execute.',
+				count($timestamps)
+			));
 		} else {
 			$this->log('Migration complete. No further migration to execute.');
 		}

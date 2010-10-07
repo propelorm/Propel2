@@ -35,9 +35,23 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 			$this->log('No migration were ever executed on this database - nothing to reverse.');
 			return false;
 		}
+		$this->log(sprintf(
+			'Executing migration %s down',
+			$manager->getMigrationClassName($nextMigrationTimestamp)
+		));
+		
+		if ($nbPreviousTimestamps = count($previousTimestamps)) {
+			$previousTimestamp = array_pop($previousTimestamps);
+		} else {
+			$previousTimestamp = 0;
+		}
 		
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
-		$this->log(sprintf('Executing migration %s down', $manager->getMigrationClassName($nextMigrationTimestamp)));
+		if (false === $migration->preDown($manager)) {
+			$this->log('preDown() returned false. Aborting migration.', Project::MSG_ERR);
+			return false;
+		}
+		
 		foreach ($migration->getDownSQL() as $datasource => $sql) {
 			$connection = $manager->getConnection($datasource);
 			$this->log(sprintf(
@@ -75,24 +89,20 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 				$datasource
 			));
 			
-		  if ($nbPreviousTimestamps = count($previousTimestamps)) {
-		  	$previousTimestamp = array_pop($previousTimestamps);
-		  } else {
-		  	$previousTimestamp = 0;
-		  }
 			$manager->updateLatestMigrationTimestamp($datasource, $previousTimestamp);
 			$this->log(sprintf(
 				'Downgraded migration date to %d for datasource "%s"',
 				$previousTimestamp,
 				$datasource
 			), Project::MSG_VERBOSE);
-			if ($nbPreviousTimestamps) {
-				$this->log(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
-			} else {
-				$this->log('Reverse migration complete. No more migration available for reverse');
-			}
-			
 		}
 		
+		$migration->postDown($manager);
+		
+		if ($nbPreviousTimestamps) {
+			$this->log(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
+		} else {
+			$this->log('Reverse migration complete. No more migration available for reverse');
+		}
 	}
 }

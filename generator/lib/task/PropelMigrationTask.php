@@ -39,8 +39,15 @@ class PropelMigrationTask extends BasePropelMigrationTask
 			$this->log(sprintf('%d migrations to execute', count($timestamps)));
 		}
 		foreach ($timestamps as $timestamp) {
+			$this->log(sprintf(
+				'Executing migration %s up',
+				$manager->getMigrationClassName($timestamp)
+			));
 			$migration = $manager->getMigrationObject($timestamp);
-			$this->log(sprintf('Executing migration %s up', $manager->getMigrationClassName($timestamp)));
+			if (false === $migration->preUp($manager)) {
+				$this->log('preUp() returned false. Aborting migration.', Project::MSG_ERR);
+				return false;
+			}
 			foreach ($migration->getUpSQL() as $datasource => $sql) {
 				$connection = $manager->getConnection($datasource);
 				$this->log(sprintf(
@@ -84,6 +91,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
 					$datasource
 				), Project::MSG_VERBOSE);
 			}
+			$migration->postUp($manager);
 		}
 		
 		$this->log('Migration complete. No further migration to execute.');

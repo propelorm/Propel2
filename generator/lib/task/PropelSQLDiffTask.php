@@ -166,22 +166,22 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 class $migrationClassName
 {
 	
-	public function preUp(\$connections)
+	public function preUp(\$manager)
 	{
 		// add the pre-migration code here
 	}
 
-	public function postUp(\$connections)
+	public function postUp(\$manager)
 	{
 		// add the post-migration code here
 	}
 
-	public function preDown(\$connections)
+	public function preDown(\$manager)
 	{
 		// add the pre-migration code here
 	}
 
-	public function postDown(\$connections)
+	public function postDown(\$manager)
 	{
 		// add the post-migration code here
 	}
