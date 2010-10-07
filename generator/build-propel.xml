@@ -69,6 +69,9 @@
     name="propel-migration-down"
     classname="task.PropelMigrationDownTask" classpathRef="propelclasses"/>
   <taskdef
+    name="propel-migration"
+    classname="task.PropelMigrationTask" classpathRef="propelclasses"/>
+  <taskdef
     name="propel-sql-exec"
     classname="task.PropelSQLExec" classpathRef="propelclasses"/>
   <taskdef
@@ -383,7 +386,7 @@
 
     <echo message="+----------------------------------------------+"/>
     <echo message="|                                              |"/>
-    <echo message="| Look for next Migration class                |"/>
+    <echo message="| Look for previous Migration class            |"/>
     <echo message="| and execute it                               |"/>
     <echo message="|                                              |"/>
     <echo message="+----------------------------------------------+"/>
@@ -397,6 +400,30 @@
       outputDirectory="${propel.migration.dir}">
     </propel-migration-down>
   </target>
+
+  <target
+    name="migration"
+    depends="sql-check,pgsql-quoting-check,mysqli-check"
+    unless="propel.internal.sql.uptodate"
+    description="Execute the next migration">
+
+    <echo message="+----------------------------------------------+"/>
+    <echo message="|                                              |"/>
+    <echo message="| Look for next Migration class                |"/>
+    <echo message="| and execute it                               |"/>
+    <echo message="|                                              |"/>
+    <echo message="+----------------------------------------------+"/>
+
+    <phingcall target="migration-template"/>
+  </target>
+
+  <target name="migration-template">
+    <propel-migration
+      migrationTable="${propel.migration.table}"
+      outputDirectory="${propel.migration.dir}">
+    </propel-migration>
+  </target>
+  
   <!-- ================================================================ -->
   <!-- Generate SQL from XML data file                                  -->
   <!-- ================================================================ -->

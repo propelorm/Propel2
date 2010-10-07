@@ -12,6 +12,7 @@ require_once dirname(__FILE__) . '/AbstractPropelDataModelTask.php';
 require_once dirname(__FILE__) . '/../builder/om/ClassTools.php';
 require_once dirname(__FILE__) . '/../builder/om/OMBuilder.php';
 require_once dirname(__FILE__) . '/../model/diff/PropelDatabaseComparator.php';
+require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
 
 /**
  * This Task creates the OM classes based on the XML schema file.
@@ -149,6 +150,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		
 		$time = time();
 		$timeInWords = date('Y-m-d H:i:s', $time);
+		$migrationAuthor = ($author = PropelMigrationManager::getUser()) ? 'by ' . $author : '';
 		$migrationClassName = sprintf('PropelMigration_%d', $time);
 		$migrationFileName = sprintf('%s.php', $migrationClassName);
 		$migrationUpString = var_export($migrationsUp, true);
@@ -159,7 +161,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 /**
  * Data object containing the SQL and PHP code to migrate the database
  * up to version $time.
- * Generated on $timeInWords
+ * Generated on $timeInWords $migrationAuthor
  */
 class $migrationClassName
 {

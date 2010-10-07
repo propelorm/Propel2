@@ -255,7 +255,8 @@ class PropelMigrationManager
 	
 	public function getFirstUpMigrationTimestamp()
 	{
-		return array_shift($this->getValidMigrationTimestamps());
+		$validTimestamps = $this->getValidMigrationTimestamps();
+		return array_shift($validTimestamps);
 	}
 	
 	public function getFirstDownMigrationTimestamp()
@@ -276,5 +277,16 @@ class PropelMigrationManager
 			$className
 		);
 		return new $className();
+	}
+	
+	public static function getUser()
+	{
+		if (function_exists('posix_getuid')) {
+			$currentUser = posix_getpwuid(posix_getuid());
+			if (isset($currentUser['name'])) {
+				return $currentUser['name'];
+			}
+		}
+		return '';
 	}
 }

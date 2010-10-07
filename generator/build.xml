@@ -192,6 +192,12 @@
 
 <target name="migrate-down" depends="migration-down" />
 
+<target name="migration" depends="configure">
+	<phing phingfile="build-propel.xml" target="migration"/>
+</target>
+
+<target name="migrate" depends="migration" />
+
 <target name="old-sql" depends="configure">
 	<phing phingfile="build-propel.xml" target="old-sql"/>
 </target>
