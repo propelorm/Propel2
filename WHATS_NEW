@@ -4,6 +4,42 @@
 
 Propel 1.6 is a new backwards compatible iteration of the Propel 1.x branch. As usual, don't forget to rebuild your model once you upgrade to this new version.
 
+== Migrations ==
+
+How do you manage changes to your database as the Model evolves and the schema changes? Calling the `sql` and `insert-sql` task each time the schema is updated has one dreadful drawback: it erases all the data in the database.
+
+Starting with Propel 1.6, the `sql`-`insert-sql` sequence is replaced by the `diff`-`migrate` sequence:
+
+{{{
+> propel-gen diff
+
+[propel-sql-diff] Reading databases structure...
+[propel-sql-diff] 1 tables imported from databases.
+[propel-sql-diff] Loading XML schema files...
+[propel-sql-diff] 2 tables found in 1 schema file.
+[propel-sql-diff] Comparing models...
+[propel-sql-diff] Structure of database was modified: 1 added table, 1 modified table
+[propel-sql-diff] "PropelMigration_1286484196.php" file successfully created in /path/to/project/build/migrations
+[propel-sql-diff]   Please review the generated SQL statements, and add data migration code if necessary.
+[propel-sql-diff]   Once the migration class is valid, call the "migrate" task to execute it.
+
+> propel-gen migrate
+
+[propel-migration] Executing migration PropelMigration_1286484196 up
+[propel-migration] 4 of 4 SQL statements executed successfully on datasource "bookstore"
+[propel-migration] Migration complete. No further migration to execute.
+}}}
+
+`diff` compares the schema to the database, and generates a class with all the required `ALTER TABLE` and `CREATE TABLE` statements to update the database structure. This migration class then feeds the `migrate` task, which connects to the database and executes the migrations - with no data loss.
+
+Migrations are a fantastic way to work on complex projects with always evolving models ; they are also a great tool for team work, since migration classes can be shared among all developers. That way, when a developer adds a table to the model, a second developer just needs to run the related migration to have the table added to the table.
+
+Propel migrations can also be executed incrementally - the new `up` and `down` tasks are there for that. And when you're lost in migration, call the `status` task to chack which migrations were already executed, and which ones should be executed to update the database structure.
+
+The Propel guide offers [wiki:Users/Documentation/1.6/Migrations an entire chapter on Migrations] to explain how to use them and how they work.
+
+Migrations only work on MySQL for now. On other platforms, you should continue to use `sql` and `insert-sql`.
+
 == XML/YAML/JSON/CSV Parsing and Dumping ==
 
 ActiveRecord and Collection objects now have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats.
