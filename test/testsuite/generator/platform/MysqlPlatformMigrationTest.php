@@ -83,15 +83,15 @@ RENAME TABLE `foo1` TO `foo2`;
 	public function testGetModifyTableDDL($tableDiff)
 	{
 		$expected = "
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_2`;
+
+ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
+
 DROP INDEX `bar_baz_FK` ON `foo`;
 
 DROP INDEX `foo1_FI_2` ON `foo`;
 
 DROP INDEX `bar_FK` ON `foo`;
-
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_2`;
-
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_FK_1`;
 
 ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
 

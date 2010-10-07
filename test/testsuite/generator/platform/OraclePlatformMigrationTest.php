@@ -88,13 +88,13 @@ ALTER TABLE foo1 RENAME TO foo2;
 	public function testGetModifyTableDDL($tableDiff)
 	{
 		$expected = "
-DROP INDEX bar_baz_FK;
-
-DROP INDEX bar_FK;
-
 ALTER TABLE foo DROP CONSTRAINT foo1_FK_2;
 
 ALTER TABLE foo DROP CONSTRAINT foo1_FK_1;
+
+DROP INDEX bar_baz_FK;
+
+DROP INDEX bar_FK;
 
 ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
