@@ -118,9 +118,13 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			$nbTables = $parser->parse($database, $this);
 			$ad->addDatabase($database);
 			$totalNbTables += $nbTables;
-			$this->log(sprintf('%d tables imported from databae "%s"', $nbTables, $name), Project::MSG_VERBOSE);
+			$this->log(sprintf('%d tables imported from database "%s"', $nbTables, $name), Project::MSG_VERBOSE);
 		}
-		$this->log(sprintf('%d tables imported from databases.', $totalNbTables));
+		if ($totalNbTables) {
+			$this->log(sprintf('%d tables imported from databases.', $totalNbTables));
+		} else {
+			$this->log('Database is empty');
+		}
 
 		// loading model from XML
 		$this->packageObjectModel = true;
