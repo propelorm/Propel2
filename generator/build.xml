@@ -186,11 +186,15 @@
 
 <target name="migrate-up" depends="migration-up" />
 
+<target name="up" depends="migration-up" />
+
 <target name="migration-down" depends="configure">
 	<phing phingfile="build-propel.xml" target="migration-down"/>
 </target>
 
 <target name="migrate-down" depends="migration-down" />
+
+<target name="down" depends="migration-down" />
 
 <target name="migration" depends="configure">
 	<phing phingfile="build-propel.xml" target="migration"/>

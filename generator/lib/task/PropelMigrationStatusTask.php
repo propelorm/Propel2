@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'phing/Task.php';
+require_once dirname(__FILE__) . '/BasePropelMigrationTask.php';
 require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
 
 /**
@@ -17,90 +17,8 @@ require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
  * @author     Francois Zaninotto
  * @package    propel.generator.task
  */
-class PropelMigrationStatusTask extends Task
+class PropelMigrationStatusTask extends BasePropelMigrationTask
 {
-	/**
-	 * Destination directory for results of template scripts.
-	 * @var        PhingFile
-	 */
-	protected $outputDirectory;
-	
-	/**
-	 * An initialized GeneratorConfig object containing the converted Phing props.
-	 *
-	 * @var        GeneratorConfig
-	 */
-	protected $generatorConfig;
-	
-	/**
-	 * The migration table name
-	 * @var string
-	 */
-	protected $migrationTable = 'propel_migration';
-	
-	/**
-	 * Set the migration Table name
-	 *
-	 * @param string $migrationTable
-	 */
-	public function setMigrationTable($migrationTable)
-	{
-		$this->migrationTable = $migrationTable;
-	}
-
-	/**
-	 * Get the migration Table name
-	 *
-	 * @return string
-	 */
-	public function getMigrationTable()
-	{
-		return $this->migrationTable;
-	}
-	
-	/**
-	 * [REQUIRED] Set the output directory. It will be
-	 * created if it doesn't exist.
-	 * @param      PhingFile $outputDirectory
-	 * @return     void
-	 * @throws     Exception
-	 */
-	public function setOutputDirectory(PhingFile $outputDirectory) {
-		try {
-			if (!$outputDirectory->exists()) {
-				$this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),Project::MSG_VERBOSE);
-				if (!$outputDirectory->mkdirs()) {
-					throw new IOException("Unable to create Ouptut directory: " . $outputDirectory->getAbsolutePath());
-				}
-			}
-			$this->outputDirectory = $outputDirectory->getCanonicalPath();
-		} catch (IOException $ioe) {
-			throw new BuildException($ioe);
-		}
-	}
-
-	/**
-	 * Get the output directory.
-	 * @return     string
-	 */
-	public function getOutputDirectory() {
-		return $this->outputDirectory;
-	}
-	
-	/**
-	 * Gets the GeneratorConfig object for this task or creates it on-demand.
-	 * @return     GeneratorConfig
-	 */
-	protected function getGeneratorConfig()
-	{
-		if ($this->generatorConfig === null) {
-			$this->generatorConfig = new GeneratorConfig();
-			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
-		}
-		return $this->generatorConfig;
-	}
-	
-	
 	public function main()
 	{
 		$manager = new PropelMigrationManager();
@@ -112,19 +30,24 @@ class PropelMigrationStatusTask extends Task
 		// mostly for explicit output
 		
 		$this->log('Checking Database Versions...');
-		foreach ($manager->getConnections() as $name => $params) {
-			if (!$manager->migrationTableExists($name)) {
+		foreach ($manager->getConnections() as $datasource => $params) {
+			$this->log(sprintf(
+				'Connecting to database "%s" using DSN "%s"',
+				$datasource,
+				$params['dsn']
+			), Project::MSG_VERBOSE);
+			if (!$manager->migrationTableExists($datasource)) {
 				$this->log(sprintf(
 					'Migration table does not exist in datasource "%s"; creating it.', 
-					$name
+					$datasource
 				), Project::MSG_VERBOSE);
-				$manager->createMigrationTable($name);
+				$manager->createMigrationTable($datasource);
 			}
 		}
 		
 		if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
 			$this->log(sprintf(
-				'Oldest migration was achieved on %s (timestamp %d)', 
+				'Latest migration was executed on %s (timestamp %d)', 
 				date('Y-m-d H:i:s', $oldestMigrationTimestamp),
 				$oldestMigrationTimestamp
 			), Project::MSG_VERBOSE);
@@ -142,8 +65,25 @@ class PropelMigrationStatusTask extends Task
 				$nbExistingMigrations,
 				$dir
 			), Project::MSG_VERBOSE);
+			if ($validTimestamps = $manager->getValidMigrationTimestamps()) {
+				$countValidTimestamps = count($validTimestamps);
+				if ($countValidTimestamps == 1) {
+					$this->log('1 migration needs to be executed:');
+				} else {
+					$this->log(sprintf('%d migrations need to be executed:', $countValidTimestamps));
+				}
+			}
+			foreach ($migrationTimestamps as $timestamp) {
+				$this->log(sprintf(
+					' %s %s %s',
+					$timestamp == $oldestMigrationTimestamp ? '>' : ' ',
+					$manager->getMigrationClassName($timestamp),
+					$timestamp <= $oldestMigrationTimestamp ? '(executed)' : ''
+				), $timestamp <= $oldestMigrationTimestamp ? Project::MSG_VERBOSE : Project::MSG_INFO);
+			}
 		} else {
-			$this->log(sprintf('No migration file found in "%s". Make sure you run the sql-diff task.', $dir));
+			$this->log(sprintf('No migration file found in "%s".', $dir));
+			$this->log('Make sure you run the sql-diff task.');
 			return false;
 		}
 		$migrationTimestamps = $manager->getValidMigrationTimestamps();
@@ -151,17 +91,10 @@ class PropelMigrationStatusTask extends Task
 		if (!$nbNotYetExecutedMigrations) {
 			$this->log('All migration files were already executed - Nothing to migrate.');
 			return false;
-		} elseif ($nbExecutedMigrations = $nbExistingMigrations - $nbNotYetExecutedMigrations) {
-			$this->log(sprintf(
-				'%d migrations were already executed',
-				$nbExecutedMigrations
-			), Project::MSG_VERBOSE);
 		}
-		
-		$this->log('Some migrations need to be executed:');
-		foreach ($migrationTimestamps as $timestamp) {
-			$this->log(sprintf('  %s', $manager->getMigrationClassName($timestamp)));
-		}
-		$this->log('Call the "migrate" task to execute them');
+		$this->log(sprintf(
+			'Call the "migrate" task to execute %s',
+			$countValidTimestamps == 1 ? 'it' : 'them'
+		));
 	}
 }

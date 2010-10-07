@@ -87,7 +87,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$totalNbTables = 0;
 		$ad = new AppData();
 		foreach ($connections as $name => $params) {
-			$this->log(sprintf('Connectig to database "%s" using DSN "%s"', $name, $params['dsn']), Project::MSG_VERBOSE);
+			$this->log(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']), Project::MSG_VERBOSE);
 			$pdo = $generatorConfig->getBuildPDO($name);
 			$database = new Database($name);
 			$platform = $generatorConfig->getConfiguredPlatform($pdo);

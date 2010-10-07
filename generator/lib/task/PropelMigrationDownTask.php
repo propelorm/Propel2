@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'phing/Task.php';
+require_once dirname(__FILE__) . '/BasePropelMigrationTask.php';
 require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
 
 /**
@@ -17,90 +17,9 @@ require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
  * @author     Francois Zaninotto
  * @package    propel.generator.task
  */
-class PropelMigrationDownTask extends Task
+class PropelMigrationDownTask extends BasePropelMigrationTask
 {
-	/**
-	 * Destination directory for results of template scripts.
-	 * @var        PhingFile
-	 */
-	protected $outputDirectory;
-	
-	/**
-	 * An initialized GeneratorConfig object containing the converted Phing props.
-	 *
-	 * @var        GeneratorConfig
-	 */
-	protected $generatorConfig;
-	
-	/**
-	 * The migration table name
-	 * @var string
-	 */
-	protected $migrationTable = 'propel_migration';
-	
-	/**
-	 * Set the migration Table name
-	 *
-	 * @param string $migrationTable
-	 */
-	public function setMigrationTable($migrationTable)
-	{
-		$this->migrationTable = $migrationTable;
-	}
 
-	/**
-	 * Get the migration Table name
-	 *
-	 * @return string
-	 */
-	public function getMigrationTable()
-	{
-		return $this->migrationTable;
-	}
-	
-	/**
-	 * [REQUIRED] Set the output directory. It will be
-	 * created if it doesn't exist.
-	 * @param      PhingFile $outputDirectory
-	 * @return     void
-	 * @throws     Exception
-	 */
-	public function setOutputDirectory(PhingFile $outputDirectory) {
-		try {
-			if (!$outputDirectory->exists()) {
-				$this->log("Output directory does not exist, creating: " . $outputDirectory->getPath(),Project::MSG_VERBOSE);
-				if (!$outputDirectory->mkdirs()) {
-					throw new IOException("Unable to create Ouptut directory: " . $outputDirectory->getAbsolutePath());
-				}
-			}
-			$this->outputDirectory = $outputDirectory->getCanonicalPath();
-		} catch (IOException $ioe) {
-			throw new BuildException($ioe);
-		}
-	}
-
-	/**
-	 * Get the output directory.
-	 * @return     string
-	 */
-	public function getOutputDirectory() {
-		return $this->outputDirectory;
-	}
-	
-	/**
-	 * Gets the GeneratorConfig object for this task or creates it on-demand.
-	 * @return     GeneratorConfig
-	 */
-	protected function getGeneratorConfig()
-	{
-		if ($this->generatorConfig === null) {
-			$this->generatorConfig = new GeneratorConfig();
-			$this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
-		}
-		return $this->generatorConfig;
-	}
-	
-	
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
@@ -118,14 +37,20 @@ class PropelMigrationDownTask extends Task
 		}
 		
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
-		$this->log(sprintf('Executing migration %s', $manager->getMigrationClassName($nextMigrationTimestamp)));
+		$this->log(sprintf('Executing migration %s down', $manager->getMigrationClassName($nextMigrationTimestamp)));
 		foreach ($migration->getDownSQL() as $datasource => $sql) {
+			$connection = $manager->getConnection($datasource);
+			$this->log(sprintf(
+				'Connecting to database "%s" using DSN "%s"',
+				$datasource,
+				$connection['dsn']
+			), Project::MSG_VERBOSE);
 			$pdo = $manager->getPdoConnection($datasource);
 			$res = 0;
 			$statements = PropelSQLParser::parseString($sql);
 			foreach ($statements as $statement) {
 				try {
-					$this->log(sprintf('  Executing statement "%s"', $statement), Project::MSG_VERBOSE);
+					$this->log(sprintf('Executing statement "%s"', $statement), Project::MSG_VERBOSE);
 					$stmt = $pdo->prepare($statement);
 					$stmt->execute();
 					$res++;
@@ -162,7 +87,7 @@ class PropelMigrationDownTask extends Task
 				$datasource
 			), Project::MSG_VERBOSE);
 			if ($nbPreviousTimestamps) {
-				$this->log(sprintf('Reverse migration complete. %d more migrations available for reverse', $nbPreviousTimestamps));
+				$this->log(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
 			} else {
 				$this->log('Reverse migration complete. No more migration available for reverse');
 			}
