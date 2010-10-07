@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorCon
 require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
 
 /**
- * Tests for package handling.
+ * Tests for Table model class
  *
  * @author     Martin Poeschl (mpoeschl@marmot.at)
  * @version    $Revision$
@@ -138,5 +138,55 @@ EOF;
 EOF;
 		// Parsing file with duplicate table name throws exception
 		$appData = $xmlToAppData->parseString($schema);
+	}
+
+	public function providerForTestHasColumn()
+	{
+		$table = new Table();
+		$column = new Column('Foo');
+		$table->addColumn($column);
+		return array(
+			array($table, $column)
+		);
+	}
+	
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testHasColumn($table, $column)
+	{
+		$this->assertTrue($table->hasColumn('Foo'));
+		$this->assertFalse($table->hasColumn('foo'));
+		$this->assertFalse($table->hasColumn('FOO'));
+	}
+
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testHasColumnCaseInsensitive($table, $column)
+	{
+		$this->assertTrue($table->hasColumn('Foo', true));
+		$this->assertTrue($table->hasColumn('foo', true));
+		$this->assertTrue($table->hasColumn('FOO', true));
+	}
+
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testGetColumn($table, $column)
+	{
+		$this->assertEquals($column, $table->getColumn('Foo'));
+		$this->assertNull($table->getColumn('foo'));
+		$this->assertNull($table->getColumn('FOO'));
+	}
+
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testGetColumnCaseInsensitive($table, $column)
+	{
+		$this->assertEquals($column, $table->getColumn('Foo', true));
+		$this->assertEquals($column, $table->getColumn('foo', true));
+		$this->assertEquals($column, $table->getColumn('FOO', true));
 	}
 }

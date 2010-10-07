@@ -230,6 +230,13 @@ class Table extends XMLElement implements IDMethod
 	private $columnsByName = array();
 
 	/**
+	 * Map of columns by lowercase name.
+	 *
+	 * @var       array
+	 */
+	private $columnsByLowercaseName = array();
+	
+	/**
 	 * Map of columns by phpName.
 	 *
 	 * @var       array
@@ -676,6 +683,7 @@ class Table extends XMLElement implements IDMethod
 			}
 			$this->columnList[] = $col;
 			$this->columnsByName[$col->getName()] = $col;
+			$this->columnsByLowercaseName[strtolower($col->getName())] = $col;
 			$this->columnsByPhpName[$col->getPhpName()] = $col;
 			$col->setPosition(count($this->columnList));
 			$this->needsTransactionInPostgres |= $col->requiresTransactionInPostgres();
@@ -1402,23 +1410,40 @@ class Table extends XMLElement implements IDMethod
 	{
 		return $this->unices;
 	}
-
-	/**
-	 * Check whether the table has a column.
-	 * @return    boolean
-	 */
-	public function hasColumn($name)
-	{
-		return array_key_exists($name, $this->columnsByName);
-	}
 	
 	/**
-	 * Returns a specified column.
-	 * @return    Column Return a Column object or null if it does not exist.
+	 * Check whether the table has a column.
+	 * @param      string $name the name of the column (e.g. 'my_column')
+	 * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+	 *
+	 * @return     boolean
 	 */
-	public function getColumn($name)
+	public function hasColumn($name, $caseInsensitive = false)
 	{
-		return @$this->columnsByName[$name];
+		if ($caseInsensitive) {
+			return array_key_exists(strtolower($name), $this->columnsByLowercaseName);
+		} else {
+			return array_key_exists($name, $this->columnsByName);
+		}
+	}
+
+	/**
+	 * Return the column with the specified name.
+	 * @param      string $name The name of the column (e.g. 'my_column')
+	 * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+	 *
+	 * @return     Column a Column object or null if it doesn't exist
+	 */
+	public function getColumn($name, $caseInsensitive = false)
+	{
+		if ($this->hasColumn($name, $caseInsensitive)) {
+			if ($caseInsensitive) {
+				return $this->columnsByLowercaseName[strtolower($name)];
+			} else {
+				return $this->columnsByName[$name];
+			}
+		}
+		return null; // just to be explicit
 	}
 
 	/**
@@ -1427,7 +1452,10 @@ class Table extends XMLElement implements IDMethod
 	 */
 	public function getColumnByPhpName($phpName)
 	{
-		return @$this->columnsByPhpName[$phpName];
+		if (isset($this->columnsByPhpName[$phpName])) {
+			return $this->columnsByPhpName[$phpName];
+		}
+		return null; // just to be explicit
 	}
 
 	/**

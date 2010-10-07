@@ -49,6 +49,7 @@ class Database extends XMLElement
 	private $defaultTranslateMethod;
 	private $dbParent;
 	private $tablesByName = array();
+	private $tablesByLowercaseName = array();
 	private $tablesByPhpName = array();
 	private $heavyIndexing;
 	protected $tablePrefix = '';
@@ -356,22 +357,34 @@ class Database extends XMLElement
 	/**
 	 * Check whether the database has a table.
 	 * @param      string $name the name of the table (e.g. 'my_table')
+	 * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+	 *
 	 * @return     boolean
 	 */
-	public function hasTable($name)
+	public function hasTable($name, $caseInsensitive = false)
 	{
-		return array_key_exists($name, $this->tablesByName);
+		if ($caseInsensitive) {
+			return array_key_exists(strtolower($name), $this->tablesByLowercaseName);
+		} else {
+			return array_key_exists($name, $this->tablesByName);
+		}
 	}
 
 	/**
 	 * Return the table with the specified name.
 	 * @param      string $name The name of the table (e.g. 'my_table')
+	 * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
+	 *
 	 * @return     Table a Table object or null if it doesn't exist
 	 */
-	public function getTable($name)
+	public function getTable($name, $caseInsensitive = false)
 	{
-		if ($this->hasTable($name)) {
-			return $this->tablesByName[$name];
+		if ($this->hasTable($name, $caseInsensitive)) {
+			if ($caseInsensitive) {
+				return $this->tablesByLowercaseName[strtolower($name)];
+			} else {
+				return $this->tablesByName[$name];
+			}
 		}
 		return null; // just to be explicit
 	}
@@ -411,7 +424,8 @@ class Database extends XMLElement
 				throw new EngineException("Duplicate table declared: " . $tbl->getName());
 			}
 			$this->tableList[] = $tbl;
-			$this->tablesByName[ $tbl->getName() ] = $tbl;
+			$this->tablesByName[$tbl->getName()] = $tbl;
+			$this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
 			$this->tablesByPhpName[ $tbl->getPhpName() ] = $tbl;
 			if ($tbl->getPackage() === null) {
 				$tbl->setPackage($this->getPackage());
