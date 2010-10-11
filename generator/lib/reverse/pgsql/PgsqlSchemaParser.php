@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'reverse/BaseSchemaParser.php';
+require_once dirname(__FILE__) . '/../BaseSchemaParser.php';
 
 /**
  * Postgresql database schema parser.
@@ -102,13 +102,13 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		$tableWraps = array();
 
 		// First load the tables (important that this happen before filling out details of tables)
-		$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+		if ($task) $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$name = $row['relname'];
 			if ($name == $this->getMigrationTable()) {
 				continue;
 			}
-			$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
 			$oid = $row['oid'];
 			$table = new Table($name);
 			$database->addTable($table);
@@ -121,16 +121,16 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		}
 
 		// Now populate only columns.
-		$task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+		if ($task) $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
 		foreach ($tableWraps as $wrap) {
-			$task->log("  Adding columns for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("  Adding columns for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addColumns($wrap->table, $wrap->oid, $version);
 		}
 
 		// Now add indexes and constraints.
-		$task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+		if ($task) $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
 		foreach ($tableWraps as $wrap) {
-			$task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("  Adding indices and constraints for table '" . $wrap->table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addForeignKeys($wrap->table, $wrap->oid, $version);
 			$this->addIndexes($wrap->table, $wrap->oid, $version);
 			$this->addPrimaryKey($wrap->table, $wrap->oid, $version);

@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'reverse/BaseSchemaParser.php';
+require_once dirname(__FILE__) . '/../BaseSchemaParser.php';
 
 /**
  * Microsoft SQL Server database schema parser.

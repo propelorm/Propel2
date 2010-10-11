@@ -229,6 +229,11 @@ class GeneratorConfig
     return $ret;    
   }
 
+	public function setBuildConnections($buildConnections)
+	{
+		$this->buildConnections = $buildConnections;
+	}
+	
 	public function getBuildConnections()
 	{
 		if (null === $this->buildConnections) {

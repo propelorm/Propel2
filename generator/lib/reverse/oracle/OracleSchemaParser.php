@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'reverse/BaseSchemaParser.php';
+require_once dirname(__FILE__) . '/../BaseSchemaParser.php';
 
 /**
  * Oracle database schema parser.
@@ -75,7 +75,7 @@ class OracleSchemaParser extends BaseSchemaParser
 		$tables = array();
 		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 		
-		$task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
+		if ($task) $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			if (strpos($row['OBJECT_NAME'], '$') !== false) {
@@ -86,7 +86,7 @@ class OracleSchemaParser extends BaseSchemaParser
 				continue;
 			}
 			$table = new Table($row['OBJECT_NAME']);
-			$task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$database->addTable($table);
 			// Add columns, primary keys and indexes.
 			$this->addColumns($table);
@@ -95,10 +95,10 @@ class OracleSchemaParser extends BaseSchemaParser
 			$tables[] = $table;
 		}
 
-		$task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
+		if ($task) $task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
 		
 		foreach ($tables as $table) {
-			$task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addForeignKeys($table);
 		}
 		

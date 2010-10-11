@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'reverse/SchemaParser.php';
+require_once dirname(__FILE__) . '/SchemaParser.php';
 
 /**
  * Base class for reverse engineering a database schema.
@@ -60,6 +60,8 @@ abstract class BaseSchemaParser implements SchemaParser
 	 * @var string
 	 */
 	protected $migrationTable = 'propel_migration';
+	
+	protected $platform;
 	
 	/**
 	 * @param      PDO $dbh Optional database connection
@@ -208,9 +210,23 @@ abstract class BaseSchemaParser implements SchemaParser
 	 */
 	protected function getNewVendorInfoObject(array $params)
 	{
-		$type = $this->getGeneratorConfig()->getConfiguredPlatform()->getDatabaseType();
+		$type = $this->getPlatform()->getDatabaseType();
 		$vi = new VendorInfo($type);
 		$vi->setParameters($params);
 		return $vi;
+	}
+	
+	public function setPlatform($platform)
+	{
+	  $this->platform = $platform;
+	}
+	
+	public function getPlatform()
+	{
+	  if (null === $this->platform)
+	  {
+	    $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
+	  }
+	  return $this->platform;
 	}
 }
