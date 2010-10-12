@@ -244,6 +244,52 @@ class AppData
 	}
 
 	/**
+	 * Merge other appData objects into this object
+	 *
+	 * @param array[AppData] $ads 
+	 */
+	public function joinAppDatas($ads)
+	{
+		foreach ($ads as $appData) {
+			foreach ($appData->getDatabases(false) as $addDb) {
+				$addDbName = $addDb->getName();
+				if ($this->hasDatabase($addDbName)) {
+					$db = $this->getDatabase($addDbName, false);
+					// join tables
+					foreach ($addDb->getTables() as $addTable) {
+						if ($db->getTable($addTable->getName())) {
+							throw new Exception(sprintf('Duplicate table found: %s.', $addDbName));
+						}
+						$db->addTable($addTable);
+					}
+					// join database behaviors
+					foreach ($addDb->getBehaviors() as $addBehavior) {
+						if (!$db->hasBehavior($addBehavior->getName())) {
+							$db->addBehavior($addBehavior);
+						}
+					}
+				} else {
+					$this->addDatabase($addDb);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Returns the number of tables in all the databases of this AppData object
+	 *
+	 * @return integer
+	 */
+	public function countTables()
+	{
+		$nb = 0;
+		foreach ($this->getDatabases() as $database) {
+			$nb += $database->countTables();
+		}
+		return $nb;
+	}
+
+	/**
 	 * Creates a string representation of this AppData.
 	 * The representation is given in xml format.
 	 *

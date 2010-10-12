@@ -525,36 +525,9 @@ abstract class AbstractPropelDataModelTask extends Task
 	 */
 	protected function joinDataModels($ads)
 	{
-		$mainAppData = null;
-		foreach ($ads as $appData) {
-			if (null === $mainAppData) {
-				$mainAppData = $appData;
-				$appData->setName('JoinedDataModel');
-				continue;
-			}
-			// merge subsequent schemas to the first one
-			foreach ($appData->getDatabases(false) as $addDb) {
-				$addDbName = $addDb->getName();
-				if ($mainAppData->hasDatabase($addDbName)) {
-					$db = $mainAppData->getDatabase($addDbName, false);
-					// join tables
-					foreach ($addDb->getTables() as $addTable) {
-						if ($db->getTable($addTable->getName())) {
-							throw new BuildException('Duplicate table found: ' . $addDbName . '.');
-						}
-						$db->addTable($addTable);
-					}
-					// join database behaviors
-					foreach ($addDb->getBehaviors() as $addBehavior) {
-						if (!$db->hasBehavior($addBehavior->getName())) {
-							$db->addBehavior($addBehavior);
-						}
-					}
-				} else {
-					$mainAppData->addDatabase($addDb);
-				}
-			}
-		}
+		$mainAppData = array_shift($ads);
+		$mainAppData->joinAppDatas($ads);
+		
 		return $mainAppData;
 	}
 
