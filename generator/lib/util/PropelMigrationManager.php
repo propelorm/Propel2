@@ -264,7 +264,7 @@ class PropelMigrationManager
 		return $this->getOldestDatabaseVersion();
 	}
 	
-	public function getMigrationClassName($timestamp)
+	public static function getMigrationClassName($timestamp)
 	{
 		return sprintf('PropelMigration_%d', $timestamp);
 	}
@@ -277,6 +277,76 @@ class PropelMigrationManager
 			$className
 		);
 		return new $className();
+	}
+	
+	public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp)
+	{
+		$timeInWords = date('Y-m-d H:i:s', $timestamp);
+		$migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
+		$migrationClassName = $this->getMigrationClassName($timestamp);
+		$migrationUpString = var_export($migrationsUp, true);
+		$migrationDownString = var_export($migrationsDown, true);
+		$migrationClassBody = <<<EOP
+<?php
+
+/**
+ * Data object containing the SQL and PHP code to migrate the database
+ * up to version $timestamp.
+ * Generated on $timeInWords $migrationAuthor
+ */
+class $migrationClassName
+{
+
+	public function preUp(\$manager)
+	{
+		// add the pre-migration code here
+	}
+
+	public function postUp(\$manager)
+	{
+		// add the post-migration code here
+	}
+
+	public function preDown(\$manager)
+	{
+		// add the pre-migration code here
+	}
+
+	public function postDown(\$manager)
+	{
+		// add the post-migration code here
+	}
+
+	/**
+	 * Get the SQL statements for the Up migration
+	 *
+	 * @return array list of the SQL strings to execute for the Up migration
+	 *               the keys being the datasources
+	 */
+	public function getUpSQL()
+	{
+		return $migrationUpString;
+	}
+
+	/**
+	 * Get the SQL statements for the Down migration
+	 *
+	 * @return array list of the SQL strings to execute for the Down migration
+	 *               the keys being the datasources
+	 */
+	public function getDownSQL()
+	{
+		return $migrationDownString;
+	}
+
+}
+EOP;
+		return $migrationClassBody;
+	}
+	
+	public static function getMigrationFileName($timestamp)
+	{
+		return sprintf('%s.php', self::getMigrationClassName($timestamp));
 	}
 	
 	public static function getUser()

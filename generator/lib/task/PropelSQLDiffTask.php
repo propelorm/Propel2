@@ -133,6 +133,9 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		
 		// comparing models
 		$this->log('Comparing models...');
+		$manager = new PropelMigrationManager();
+		$manager->setConnections($connections);
+		$manager->setMigrationDir($this->getOutputDirectory());
 		$migrationsUp = array();
 		$migrationsDown = array();
 		foreach ($ad->getDatabases() as $database) {
@@ -160,68 +163,9 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			return;
 		}
 		
-		$time = time();
-		$timeInWords = date('Y-m-d H:i:s', $time);
-		$migrationAuthor = ($author = PropelMigrationManager::getUser()) ? 'by ' . $author : '';
-		$migrationClassName = sprintf('PropelMigration_%d', $time);
-		$migrationFileName = sprintf('%s.php', $migrationClassName);
-		$migrationUpString = var_export($migrationsUp, true);
-		$migrationDownString = var_export($migrationsDown, true);
-		$migrationClassBody = <<<EOP
-<?php
-
-/**
- * Data object containing the SQL and PHP code to migrate the database
- * up to version $time.
- * Generated on $timeInWords $migrationAuthor
- */
-class $migrationClassName
-{
-	
-	public function preUp(\$manager)
-	{
-		// add the pre-migration code here
-	}
-
-	public function postUp(\$manager)
-	{
-		// add the post-migration code here
-	}
-
-	public function preDown(\$manager)
-	{
-		// add the pre-migration code here
-	}
-
-	public function postDown(\$manager)
-	{
-		// add the post-migration code here
-	}
-	
-	/**
-	 * Get the SQL statements for the Up migration
-	 *
-	 * @return array list of the SQL strings to execute for the Up migration
-	 *               the keys being the datasources
-	 */
-	public function getUpSQL()
-	{
-		return $migrationUpString;
-	}
-
-	/**
-	 * Get the SQL statements for the Down migration
-	 *
-	 * @return array list of the SQL strings to execute for the Down migration
-	 *               the keys being the datasources
-	 */
-	public function getDownSQL()
-	{
-		return $migrationDownString;
-	}
-
-}
-EOP;
+		$timestamp = time();
+		$migrationFileName = $manager->getMigrationFileName($timestamp);
+		$migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp);
 
 		$_f = new PhingFile($this->getOutputDirectory(), $migrationFileName);
 		file_put_contents($_f->getAbsolutePath(), $migrationClassBody);
