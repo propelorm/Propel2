@@ -348,9 +348,9 @@ class PgsqlSchemaParser extends BaseSchemaParser
 								          confupdtype,
 								          confdeltype,
 								          CASE nl.nspname WHEN 'public' THEN cl.relname ELSE nl.nspname||'.'||cl.relname END as fktab,
-								          a2.attname as fkcol,
+										  array_agg(DISTINCT a2.attname) AS fkcols,
 								          CASE nr.nspname WHEN 'public' THEN cr.relname ELSE nr.nspname||'.'||cr.relname END as reftab,
-								          a1.attname as refcol
+								          array_agg(DISTINCT a1.attname) AS refcols
 								    FROM pg_constraint ct
 								         JOIN pg_class cl ON cl.oid=conrelid
 								         JOIN pg_class cr ON cr.oid=confrelid
@@ -361,8 +361,9 @@ class PgsqlSchemaParser extends BaseSchemaParser
 								    WHERE
 								         contype='f'
 								         AND conrelid = ?
-								         AND a2.attnum = ct.conkey[1]
-								         AND a1.attnum = ct.confkey[1]
+							         	 AND a2.attnum = ANY (ct.conkey)
+							         	 AND a1.attnum = ANY (ct.confkey)
+									GROUP BY conname, confupdtype, confdeltype, fktab, reftab
 								    ORDER BY conname");
 		$stmt->bindValue(1, $oid);
 		$stmt->execute();
@@ -373,9 +374,9 @@ class PgsqlSchemaParser extends BaseSchemaParser
 
 			$name = $row['conname'];
 			$local_table = $row['fktab'];
-			$local_column = $row['fkcol'];
+			$local_columns = explode(',', trim($row['fkcols'], '{}'));
 			$foreign_table = $row['reftab'];
-			$foreign_column = $row['refcol'];
+			$foreign_columns = explode(',', trim($row['refcols'], '{}'));
 
 			// On Update
 			switch ($row['confupdtype']) {
@@ -409,10 +410,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 			}
 
 			$foreignTable = $database->getTable($foreign_table);
-			$foreignColumn = $foreignTable->getColumn($foreign_column);
-
 			$localTable   = $database->getTable($local_table);
-			$localColumn   = $localTable->getColumn($local_column);
 
 			if (!isset($foreignKeys[$name])) {
 				$fk = new ForeignKey($name);
@@ -422,8 +420,13 @@ class PgsqlSchemaParser extends BaseSchemaParser
 				$table->addForeignKey($fk);
 				$foreignKeys[$name] = $fk;
 			}
-
-			$foreignKeys[$name]->addReference($localColumn, $foreignColumn);
+			
+			for ($i = 0; $i < count($local_columns); $i++) {
+				$foreignKeys[$name]->addReference(
+					$localTable->getColumn($local_columns[$i]),
+					$foreignTable->getColumn($foreign_columns[$i])
+				);
+			}
 		}
 	}
 
