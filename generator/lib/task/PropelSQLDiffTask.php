@@ -149,20 +149,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 				continue;
 			}
 		
-			$messages = array();
-			if ($count = $databaseDiff->countAddedTables()) {
-				$messages []= sprintf('%d added tables', $count);
-			}
-			if ($count = $databaseDiff->countRemovedTables()) {
-				$messages []= sprintf('%d removed tables', $count);
-			}
-			if ($count = $databaseDiff->countModifiedTables()) {
-				$messages []= sprintf('%d modified tables', $count);
-			}
-			if ($count = $databaseDiff->countRenamedTables()) {
-				$messages []= sprintf('%d renamed tables', $count);
-			}
-			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, implode(', ', $messages)));
+			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, $databaseDiff->getDescription()));
 			
 			$migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
 			$migrationsDown[$name] = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
