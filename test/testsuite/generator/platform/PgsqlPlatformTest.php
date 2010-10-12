@@ -398,7 +398,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$c->getDomain()->replaceSize(3);
 		$c->setNotNull(true);
 		$c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-		$expected = '"foo" DOUBLE PRECISION(3,2) DEFAULT 123 NOT NULL';
+		$expected = '"foo" DOUBLE PRECISION DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
 	}
 	

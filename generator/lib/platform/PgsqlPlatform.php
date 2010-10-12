@@ -333,11 +333,93 @@ DROP TABLE %s CASCADE;
 	
 	public function hasSize($sqlType)
 	{
-		return !("BYTEA" == $sqlType || "TEXT" == $sqlType);
+		return !("BYTEA" == $sqlType || "TEXT" == $sqlType || "DOUBLE PRECISION" == $sqlType);
 	}
 
 	public function hasStreamBlobImpl()
 	{
 		return true;
+	}
+	
+	/**
+	 * Overrides the implementation from DefaultPlatform
+	 *
+	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 * @return     string
+	 * @see        DefaultPlatform::getModifyColumnDDL
+	 */
+	public function getModifyColumnDDL(PropelColumnDiff $columnDiff)
+	{
+		$ret = '';
+		$changedProperties = $columnDiff->getChangedProperties();
+		
+		$toColumn = $columnDiff->getToColumn();
+		
+		$table = $toColumn->getTable();
+		
+		$colName = $this->quoteIdentifier($toColumn->getName());
+		
+		$pattern = "
+ALTER TABLE %s ALTER COLUMN %s;
+";
+		foreach ($changedProperties as $key => $property) {
+			switch ($key) {
+				case 'defaultValueType':
+					continue;
+				case 'size':
+					$sqlType = $toColumn->getDomain()->getSqlType();
+					if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+						$sqlType = $toColumn->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
+					}
+					if ($this->hasSize($sqlType)) {
+						$sqlType .= $toColumn->getDomain()->printSize();
+					}
+					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
+					break;
+				case 'defaultValueValue':
+					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET DEFAULT ' . $property[1]);
+					break;
+				case 'notNull':
+					$notNull = " DROP NOT NULL";
+					if ($property[1]) {
+						$notNull = " SET NOT NULL";
+					}
+					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . $notNull);
+					break;
+			}
+		}
+		return $ret;
+	}
+	
+	/**
+	 * Overrides the implementation from DefaultPlatform
+	 *
+	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 * @return     string
+	 * @see        DefaultPlatform::getModifyColumnsDDL
+	 */
+	public function getModifyColumnsDDL($columnDiffs)
+	{
+		$ret = '';
+		foreach ($columnDiffs as $columnDiff) {
+			$ret .= $this->getModifyColumnDDL($columnDiff);
+		}
+		return $ret;
+	}
+	
+	/**
+	 * Overrides the implementation from DefaultPlatform
+	 *
+	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 * @return     string
+	 * @see        DefaultPlatform::getAddColumnsDLL
+	 */
+	public function getAddColumnsDDL($columns)
+	{
+		$ret = '';
+		foreach ($columns as $column) {
+			$ret .= $this->getAddColumnDDL($column);
+		}
+		return $ret;
 	}
 }
