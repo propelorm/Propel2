@@ -97,7 +97,6 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$this->validate();
 		
 		$generatorConfig = $this->getGeneratorConfig();
-		$platform = $generatorConfig->getConfiguredPlatform($con);
 		
 		// loading model from database
 		$this->log('Reading databases structure...');
@@ -153,7 +152,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			}
 		
 			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, $databaseDiff->getDescription()));
-			
+			$platform = $manager->getPlatform($name);
 			$migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
 			$migrationsDown[$name] = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
 		}
