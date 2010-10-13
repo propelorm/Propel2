@@ -1052,8 +1052,7 @@ class ModelCriteria extends Criteria
 	{
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->limit(1);
-		$stmt = $criteria->getSelectStatement($con);
-		if (!$ret = $this->findOne($con)) {
+		if (!$ret = $criteria->findOne($con)) {
 			$class = $this->getModelName();
 			$obj = new $class();
 			foreach ($this->keys() as $key) {

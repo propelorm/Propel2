@@ -1314,6 +1314,31 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('foo', $book->getTitle(), 'findOneOrCreate() returns a populated objects based on the conditions');
 		$this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
 	}
+	
+	public function testFindOneOrCreateMakesOneQueryWhenRecordNotExists()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BookQuery::create()->deleteAll($con);
+		$count = $con->getQueryCount();
+		$book = BookQuery::create('b')
+			->filterByPrice(125)
+			->findOneOrCreate($con);
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'findOneOrCreate() makes only a single query when the record doesn\'t exist');
+	}
+
+	public function testFindOneOrCreateMakesOneQueryWhenRecordExists()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		BookQuery::create()->deleteAll($con);
+		$book = new Book();
+		$book->setPrice(125);
+		$book->save($con);
+		$count = $con->getQueryCount();
+		$book = BookQuery::create('b')
+			->filterByPrice(125)
+			->findOneOrCreate($con);
+		$this->assertEquals($count + 1, $con->getQueryCount(), 'findOneOrCreate() makes only a single query when the record exists');
+	}
 
 	public function testFindPkSimpleKey()
 	{
