@@ -1545,7 +1545,9 @@ public function retrieveLastChild(PropelPDO \$con = null)
  */
 public function getPath(PropelPDO \$con = null)
 {
-	return \$this->getAncestors(null, \$con);
+	\$path = \$this->getAncestors(null, \$con);
+	\$path []= \$this;
+	return \$path;
 }
 ";
 	}
