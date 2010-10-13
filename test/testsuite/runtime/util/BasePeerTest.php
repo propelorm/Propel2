@@ -60,56 +60,6 @@ class BasePeerTest extends BookstoreTestBase
 		$this->assertTrue(BasePeer::needsSelectAliases($c), 'Criterias with common column names do need aliases');
 	}
 	
-	public function testTurnSelectColumnsToAliases()
-	{
-		$c1 = new Criteria();
-		$c1->addSelectColumn(BookPeer::ID);
-		BasePeer::turnSelectColumnsToAliases($c1);
-		
-		$c2 = new Criteria();
-		$c2->addAsColumn('book_ID', BookPeer::ID);
-		$this->assertTrue($c1->equals($c2));
-	}
-
-	public function testTurnSelectColumnsToAliasesPreservesAliases()
-	{
-		$c1 = new Criteria();
-		$c1->addSelectColumn(BookPeer::ID);
-		$c1->addAsColumn('foo', BookPeer::TITLE);
-		BasePeer::turnSelectColumnsToAliases($c1);
-		
-		$c2 = new Criteria();
-		$c2->addAsColumn('book_ID', BookPeer::ID);
-		$c2->addAsColumn('foo', BookPeer::TITLE);
-		$this->assertTrue($c1->equals($c2));
-	}
-
-	public function testTurnSelectColumnsToAliasesExisting()
-	{
-		$c1 = new Criteria();
-		$c1->addSelectColumn(BookPeer::ID);
-		$c1->addAsColumn('book_ID', BookPeer::ID);
-		BasePeer::turnSelectColumnsToAliases($c1);
-		
-		$c2 = new Criteria();
-		$c2->addAsColumn('book_ID_1', BookPeer::ID);
-		$c2->addAsColumn('book_ID', BookPeer::ID);
-		$this->assertTrue($c1->equals($c2));
-	}
-
-	public function testTurnSelectColumnsToAliasesDuplicate()
-	{
-		$c1 = new Criteria();
-		$c1->addSelectColumn(BookPeer::ID);
-		$c1->addSelectColumn(BookPeer::ID);
-		BasePeer::turnSelectColumnsToAliases($c1);
-		
-		$c2 = new Criteria();
-		$c2->addAsColumn('book_ID', BookPeer::ID);
-		$c2->addAsColumn('book_ID_1', BookPeer::ID);
-		$this->assertTrue($c1->equals($c2));
-	}
-	
 	public function testDoCountDuplicateColumnName()
 	{
 		$con = Propel::getConnection();
@@ -123,40 +73,6 @@ class BasePeerTest extends BookstoreTestBase
 		} catch (Exception $e) {
 			$this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
 		}
-	}
-	
-	public function testCreateSelectSqlPart()
-	{
-		$c = new Criteria();
-		$c->addSelectColumn(BookPeer::ID);
-		$c->addAsColumn('book_ID', BookPeer::ID);
-		$fromClause = array();
-		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause);
-		$this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
-		$this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
-	}
-
-	public function testCreateSelectSqlPartSelectModifier()
-	{
-		$c = new Criteria();
-		$c->addSelectColumn(BookPeer::ID);
-		$c->addAsColumn('book_ID', BookPeer::ID);
-		$c->setDistinct();
-		$fromClause = array();
-		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause);
-		$this->assertEquals('SELECT DISTINCT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
-		$this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
-	}
-
-	public function testCreateSelectSqlPartAliasAll()
-	{
-		$c = new Criteria();
-		$c->addSelectColumn(BookPeer::ID);
-		$c->addAsColumn('book_ID', BookPeer::ID);
-		$fromClause = array();
-		$selectSql = BasePeer::createSelectSqlPart($c, $fromClause, true);
-		$this->assertEquals('SELECT book.ID AS book_ID_1, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
-		$this->assertEquals(array(), $fromClause, 'createSelectSqlPart() does not add the tables from an all-aliased list of select columns');
 	}
 	
 	public function testBigIntIgnoreCaseOrderBy()

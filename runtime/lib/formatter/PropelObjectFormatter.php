@@ -85,6 +85,7 @@ class PropelObjectFormatter extends PropelFormatter
 	{
 		// main object
 		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
+		
 		// related objects added using with()
 		foreach ($this->getWith() as $modelWith) {
 			list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
@@ -102,6 +103,7 @@ class PropelObjectFormatter extends PropelFormatter
 			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getLeftPhpName()];
 			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
+		
 		// columns added using withColumn()
 		foreach ($this->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);

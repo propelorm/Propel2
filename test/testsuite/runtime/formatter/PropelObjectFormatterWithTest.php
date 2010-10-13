@@ -384,6 +384,30 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('Gunter', $book->getAuthorName(), 'PropelObjectFormatter adds withColumns as virtual columns');
 	}
 
+	public function testFindOneWithColumnAndAlias()
+	{
+		BookstoreDataPopulator::populate();
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->filterByTitle('Harry Potter and the Order of the Phoenix');
+		$c->joinWith('Book.BookSummary');
+		$c->joinWith('Book.Review');
+		$c->join('Book.Author');
+		$c->withColumn('Author.FirstName', 'AuthorName');
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$book = $c->findOne($con);
+		$count = $con->getQueryCount();
+		$reviews = $book->getReviews();
+
+		//Washington Post
+		$this->assertTrue($book instanceof Book, 'withColumn() do not change the resulting model class');
+		$this->assertEquals(1, count($reviews), 'Related objects are correctly hydrated');
+		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
+		$this->assertEquals('J.K.', $book->getVirtualColumn('AuthorName'), 'PropelObjectFormatter adds withColumns as virtual columns');
+	}
+
 	public function testFindOneWithClassAndColumn()
 	{
 		BookstoreDataPopulator::populate();

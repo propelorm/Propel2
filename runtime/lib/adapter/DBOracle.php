@@ -107,8 +107,8 @@ class DBOracle extends DBAdapter
 	public function applyLimit(&$sql, $offset, $limit, $criteria = null)
 	{
 		if (BasePeer::needsSelectAliases($criteria)) {
-			$selectSql = BasePeer::createSelectSqlPart($criteria, $params, true);
-			$sql = $selectSql . substr($sql, strpos('FROM', $sql));
+			$selectSql = $this->createSelectSqlPart($criteria, $params, true);
+			$sql = $selectSql . substr($sql, strpos($sql, 'FROM') - 1);
 		}
 		$sql = 'SELECT B.* FROM ('
 			. 'SELECT A.*, rownum AS PROPEL_ROWNUM FROM (' . $sql . ') A '
@@ -146,5 +146,43 @@ class DBOracle extends DBAdapter
 		return 'dbms_random.value';
 	}
 
+	/**
+	 * Ensures uniqueness of select column names by turning them all into aliases
+	 * This is necessary for queries on more than one table when the tables share a column name
+	 * @see http://propel.phpdb.org/trac/ticket/795
+	 *
+	 * @param Criteria $criteria
+	 *
+	 * @return Criteria The input, with Select columns replaced by aliases
+	 */
+	public function turnSelectColumnsToAliases(Criteria $criteria)
+	{
+		$selectColumns = $criteria->getSelectColumns();
+		// clearSelectColumns also clears the aliases, so get them too
+		$asColumns = $criteria->getAsColumns();
+		$criteria->clearSelectColumns();
+		$columnAliases = $asColumns;
+		// add the select columns back
+		foreach ($selectColumns as $id => $clause) {
+			// Generate a unique alias
+			$baseAlias = "ORA_COL_ALIAS_".$id;
+			$alias = $baseAlias;
+			// If it already exists, add a unique suffix
+			$i = 0;
+			while (isset($columnAliases[$alias])) {
+				$i++;
+				$alias = $baseAlias . '_' . $i;
+			}
+			// Add it as an alias
+			$criteria->addAsColumn($alias, $clause);
+			$columnAliases[$alias] = $clause;
+		}
+		// Add the aliases back, don't modify them
+		foreach ($asColumns as $name => $clause) {
+			$criteria->addAsColumn($name, $clause);
+		}
+
+		return $criteria;
+	}
 
 }

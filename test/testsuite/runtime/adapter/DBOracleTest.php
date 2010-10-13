@@ -41,7 +41,21 @@ class DBOracleTest extends BookstoreTestBase
 		$c->setLimit(1);
 		$params = array();
 		$sql = BasePeer::createSelectSql($c, $params);
-		$this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS book_ID, book.TITLE AS book_TITLE, book.ISBN AS book_ISBN, book.PRICE AS book_PRICE, book.PUBLISHER_ID AS book_PUBLISHER_ID, book.AUTHOR_ID AS book_AUTHOR_ID, author.ID AS author_ID, author.FIRST_NAME AS author_FIRST_NAME, author.LAST_NAME AS author_LAST_NAME, author.EMAIL AS author_EMAIL, author.AGE AS author_AGESELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
+		$this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS ORA_COL_ALIAS_0, book.TITLE AS ORA_COL_ALIAS_1, book.ISBN AS ORA_COL_ALIAS_2, book.PRICE AS ORA_COL_ALIAS_3, book.PUBLISHER_ID AS ORA_COL_ALIAS_4, book.AUTHOR_ID AS ORA_COL_ALIAS_5, author.ID AS ORA_COL_ALIAS_6, author.FIRST_NAME AS ORA_COL_ALIAS_7, author.LAST_NAME AS ORA_COL_ALIAS_8, author.EMAIL AS ORA_COL_ALIAS_9, author.AGE AS ORA_COL_ALIAS_10 FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
 	}
+
+	public function testCreateSelectSqlPart()
+	{
+		Propel::setDb('oracle', new DBOracle());
+		$db = Propel::getDB();
+		$c = new Criteria();
+		$c->addSelectColumn(BookPeer::ID);
+		$c->addAsColumn('book_ID', BookPeer::ID);
+		$fromClause = array();
+		$selectSql = $db->createSelectSqlPart($c, $fromClause);
+		$this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+		$this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+	}
+
 
 }

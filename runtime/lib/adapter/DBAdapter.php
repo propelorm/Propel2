@@ -330,4 +330,111 @@ abstract class DBAdapter
 		return $sql;
 	}
 
+	/**
+	 * Builds the SELECT part of a SQL statement based on a Criteria
+	 * taking into account select columns and 'as' columns (i.e. columns aliases)
+	 * Move from BasePeer to DBAdapter and turn from static to non static
+	 */
+	public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
+	{
+		$selectClause = array();
+
+		if ($aliasAll) {
+			$this->turnSelectColumnsToAliases($criteria);
+			// no select columns after that, they are all aliases
+		} else {
+			foreach ($criteria->getSelectColumns() as $columnName) {
+
+				// expect every column to be of "table.column" formation
+				// it could be a function:  e.g. MAX(books.price)
+
+				$tableName = null;
+
+				$selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
+
+				$parenPos = strrpos($columnName, '(');
+				$dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
+
+				if ($dotPos !== false) {
+					if ($parenPos === false) { // table.column
+						$tableName = substr($columnName, 0, $dotPos);
+					} else { // FUNC(table.column)
+						// functions may contain qualifiers so only take the last
+						// word as the table name.
+						// COUNT(DISTINCT books.price)
+						$lastSpace = strpos($tableName, ' ');
+						if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
+							$tableName = substr($tableName, $lastSpace + 1);
+						} else {
+							$tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
+						}
+					}
+					// is it a table alias?
+					$tableName2 = $criteria->getTableForAlias($tableName);
+					if ($tableName2 !== null) {
+						$fromClause[] = $tableName2 . ' ' . $tableName;
+					} else {
+						$fromClause[] = $tableName;
+					}
+				} // if $dotPost !== false
+			}
+		}
+
+		// set the aliases
+		foreach ($criteria->getAsColumns() as $alias => $col) {
+			$selectClause[] = $col . ' AS ' . $alias;
+		}
+
+		$selectModifiers = $criteria->getSelectModifiers();
+		$queryComment = $criteria->getComment();
+
+		// Build the SQL from the arrays we compiled
+		$sql =  "SELECT "
+		. ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
+		. ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
+		. implode(", ", $selectClause);
+
+		return $sql;
+	}
+
+	/**
+	 * Ensures uniqueness of select column names by turning them all into aliases
+	 * This is necessary for queries on more than one table when the tables share a column name
+	 * @see http://propel.phpdb.org/trac/ticket/795
+	 * Move from BasePeer to DBAdapter and turn from static to non static
+	 *
+	 * @param Criteria $criteria
+	 *
+	 * @return Criteria The input, with Select columns replaced by aliases
+	 */
+	public function turnSelectColumnsToAliases(Criteria $criteria)
+	{
+		$selectColumns = $criteria->getSelectColumns();
+		// clearSelectColumns also clears the aliases, so get them too
+		$asColumns = $criteria->getAsColumns();
+		$criteria->clearSelectColumns();
+		$columnAliases = $asColumns;
+		// add the select columns back
+		foreach ($selectColumns as $clause) {
+			// Generate a unique alias
+			$baseAlias = preg_replace('/\W/', '_', $clause);
+			$alias = $baseAlias;
+			// If it already exists, add a unique suffix
+			$i = 0;
+			while (isset($columnAliases[$alias])) {
+				$i++;
+				$alias = $baseAlias . '_' . $i;
+			}
+			// Add it as an alias
+			$criteria->addAsColumn($alias, $clause);
+			$columnAliases[$alias] = $clause;
+		}
+		// Add the aliases back, don't modify them
+		foreach ($asColumns as $name => $clause) {
+			$criteria->addAsColumn($name, $clause);
+		}
+
+		return $criteria;
+	}
+
 }
