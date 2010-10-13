@@ -1261,7 +1261,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (!$dateTimeClass) {
 			$dateTimeClass = 'DateTime';
 		}
-		$this->declareClasses($dateTimeClass);
+		$this->declareClasses($dateTimeClass, 'DateTimeZone');
 
 		$script .= "
 	/**
