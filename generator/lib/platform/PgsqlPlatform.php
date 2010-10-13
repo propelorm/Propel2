@@ -377,7 +377,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
 					break;
 				case 'defaultValueValue':
-					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET DEFAULT ' . $property[1]);
+					$ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' SET ' . $this->getColumnDefaultValueDDL($toColumn));
 					break;
 				case 'notNull':
 					$notNull = " DROP NOT NULL";

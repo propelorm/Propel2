@@ -152,7 +152,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 	 */
 	protected function addColumns(Table $table, $oid, $version)
 	{
-
+		var_dump($table->getName(), $oid);
 		// Get the columns, types, etc.
 		// Based on code from pgAdmin3 (http://www.pgadmin.org/)
 		$stmt = $this->dbh->prepare("SELECT
@@ -221,8 +221,8 @@ class PgsqlSchemaParser extends BaseSchemaParser
 			// if column has a default
 			if (($boolHasDefault == 't') && (strlen (trim ($default)) > 0)) {
 				if (!preg_match('/^nextval\(/', $default)) {
-					$strDefault= preg_replace ('/::[\W\D]*/', '', $default);
-					$default = str_replace ("'", '', $strDefault);
+					$strDefault= preg_replace('/::[\W\D]*/', '', $default);
+					$default = preg_replace('/(\'?)\'/', '${1}', $strDefault);
 				} else {
 					$autoincrement = true;
 					$default = null;
