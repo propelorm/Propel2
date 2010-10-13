@@ -831,7 +831,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	} else {
 		 \$query = $queryClassname::create(null, \$query)
 				->childrenOf(\$this->getParent(\$con))
-				->orderByBranch(true);
+				->orderByBranch();
 		if (!\$includeNode) {
 			\$query->prune(\$this);
 		}

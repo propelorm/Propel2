@@ -535,17 +535,17 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		       t6 t7
 		*/
 		$this->assertEquals(array(), $t1->getSiblings(), 'getSiblings() returns an empty array for root');
-		$descendants = $t5->getSiblings();
+		$siblings = $t5->getSiblings();
 		$expected = array(
-			't4' => array(5, 6, 2), 
+			't4' => array(5, 6, 2),
 		);
-		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getSiblings() returns an array of siblings');
-		$descendants = $t5->getSiblings(true);
+		$this->assertEquals($expected, $this->dumpNodes($siblings), 'getSiblings() returns an array of siblings');
+		$siblings = $t5->getSiblings(true);
 		$expected = array(
-			't4' => array(5, 6, 2), 
-			't5' => array(7, 12, 2), 
+			't4' => array(5, 6, 2),
+			't5' => array(7, 12, 2) 
 		);
-		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getSiblings(true) includes the current node');
+		$this->assertEquals($expected, $this->dumpNodes($siblings), 'getSiblings(true) includes the current node');
 		$t5->moveToNextSiblingOf($t3);
 		/* Results in
 		 t1
@@ -555,12 +555,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		    t4  t6 t7
 		*/
 		$this->assertEquals(0, count($t4->getSiblings()), 'getSiblings() returns an empty colleciton for lone children');
-		$descendants = $t3->getSiblings();
+		$siblings = $t3->getSiblings();
 		$expected = array(
-			't2' => array(2, 3, 1), 
-			't5' => array(8, 13, 1), 
+			't2' => array(2, 3, 1),
+			't5' => array(8, 13, 1),
 		);
-		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getSiblings() returns all siblings');
+		$this->assertEquals($expected, $this->dumpNodes($siblings), 'getSiblings() returns all siblings');
+		$this->assertEquals('t2', $siblings[0]->getTitle(), 'getSiblings() returns siblings in natural order');
+		$this->assertEquals('t5', $siblings[1]->getTitle(), 'getSiblings() returns siblings in natural order');
 	}
 	
 	public function testGetDescendants()
