@@ -107,7 +107,8 @@ class DBOracle extends DBAdapter
 	public function applyLimit(&$sql, $offset, $limit, $criteria = null)
 	{
 		if (BasePeer::needsSelectAliases($criteria)) {
-			$selectSql = $this->createSelectSqlPart($criteria, $params, true);
+			$crit = clone $criteria;
+			$selectSql = $this->createSelectSqlPart($crit, $params, true);
 			$sql = $selectSql . substr($sql, strpos($sql, 'FROM') - 1);
 		}
 		$sql = 'SELECT B.* FROM ('

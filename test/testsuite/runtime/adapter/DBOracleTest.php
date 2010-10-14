@@ -44,6 +44,22 @@ class DBOracleTest extends BookstoreTestBase
 		$this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS ORA_COL_ALIAS_0, book.TITLE AS ORA_COL_ALIAS_1, book.ISBN AS ORA_COL_ALIAS_2, book.PRICE AS ORA_COL_ALIAS_3, book.PUBLISHER_ID AS ORA_COL_ALIAS_4, book.AUTHOR_ID AS ORA_COL_ALIAS_5, author.ID AS ORA_COL_ALIAS_6, author.FIRST_NAME AS ORA_COL_ALIAS_7, author.LAST_NAME AS ORA_COL_ALIAS_8, author.EMAIL AS ORA_COL_ALIAS_9, author.AGE AS ORA_COL_ALIAS_10 FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
 	}
 
+	public function testApplyLimitDuplicateColumnNameWithColumn()
+	{
+		Propel::setDb('oracle', new DBOracle());
+		$c = new Criteria();
+		$c->setDbName('oracle');
+		BookPeer::addSelectColumns($c);
+		AuthorPeer::addSelectColumns($c);
+		$c->addAsColumn('BOOK_PRICE', BookPeer::PRICE);
+		$c->setLimit(1);
+		$params = array();
+		$asColumns = $c->getAsColumns();
+		$sql = BasePeer::createSelectSql($c, $params);
+		$this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS ORA_COL_ALIAS_0, book.TITLE AS ORA_COL_ALIAS_1, book.ISBN AS ORA_COL_ALIAS_2, book.PRICE AS ORA_COL_ALIAS_3, book.PUBLISHER_ID AS ORA_COL_ALIAS_4, book.AUTHOR_ID AS ORA_COL_ALIAS_5, author.ID AS ORA_COL_ALIAS_6, author.FIRST_NAME AS ORA_COL_ALIAS_7, author.LAST_NAME AS ORA_COL_ALIAS_8, author.EMAIL AS ORA_COL_ALIAS_9, author.AGE AS ORA_COL_ALIAS_10, book.PRICE AS BOOK_PRICE FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
+		$this->assertEquals($asColumns, $c->getAsColumns(), 'createSelectSql supplementary add alias column');
+	}
+
 	public function testCreateSelectSqlPart()
 	{
 		Propel::setDb('oracle', new DBOracle());
