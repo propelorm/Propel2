@@ -152,7 +152,6 @@ class PgsqlSchemaParser extends BaseSchemaParser
 	 */
 	protected function addColumns(Table $table, $oid, $version)
 	{
-		var_dump($table->getName(), $oid);
 		// Get the columns, types, etc.
 		// Based on code from pgAdmin3 (http://www.pgadmin.org/)
 		$stmt = $this->dbh->prepare("SELECT
