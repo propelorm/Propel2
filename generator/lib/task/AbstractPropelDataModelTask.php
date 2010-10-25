@@ -404,6 +404,7 @@ abstract class AbstractPropelDataModelTask extends Task
 			$srcDir = $fs->getDir($this->project);
 
 			$dataModelFiles = $ds->getIncludedFiles();
+			sort($dataModelFiles);
 
 			$defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
