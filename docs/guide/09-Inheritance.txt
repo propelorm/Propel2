@@ -21,8 +21,8 @@ A table using Single Table Inheritance requires a column to identify which class
   <column name="title" type="VARCHAR" size="100"/>
   <column name="class_key" type="INTEGER" inheritance="single">
     <inheritance key="1" class="Book"/>
-    <inheritance key="1" class="Essay" extends="Book"/>
-    <inheritance key="2" class="Comic" extends="Book"/>
+    <inheritance key="2" class="Essay" extends="Book"/>
+    <inheritance key="3" class="Comic" extends="Book"/>
   </column>
 </table>
 }}}
@@ -30,6 +30,8 @@ A table using Single Table Inheritance requires a column to identify which class
 Once you rebuild your model, Propel generated all three model classes (`Book`, `Essay`, and `Comic`) and three query classes (`BookQuery`, `EssayQuery`, and `ComicQuery`). The `Essay` and `Comic` classes extend the `Book` class, the `EssayQuery` and `ComicQuery` classes extend `BookQuery`.
 
 '''Tip''': An inherited class can extend another inherited class. That mean that you can add a `Manga` kind of book that extends `Comic` instead of `Book`.
+
+'''Tip''': If you define an `<inheritance>` tag with no `extends` attribute, as in the example above, it must use the table `phpName` as its `class` attribute.  
 
 === Using Inherited Objects ===
 
