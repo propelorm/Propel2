@@ -1146,7 +1146,7 @@ class ModelCriteria extends Criteria
 			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
 		} catch (Exception $e) {
-			if ($stmt) {
+			if (isset($stmt)) {
 				$stmt = null; // close
 			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
