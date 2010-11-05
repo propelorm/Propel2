@@ -212,7 +212,6 @@ class PropelMigrationManager
 	{
 		$path = $this->getMigrationDir();
 		$migrationTimestamps = array();
-		$migrationsDir = new PhingFile($path);
 		$files = scandir($path);
 		foreach ($files as $file) {
 			if (preg_match('/^PropelMigration_(\d+)\.php$/', $file, $matches)) {
