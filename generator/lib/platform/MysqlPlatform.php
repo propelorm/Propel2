@@ -251,6 +251,15 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 		} else {
 			$ddl []= $sqlType;
 		}
+		$colinfo = $col->getVendorInfoForType($this->getDatabaseType());
+		if ($colinfo->hasParameter('Charset')) {
+			$ddl []= 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
+		}
+		if ($colinfo->hasParameter('Collation')) {
+			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
+		} elseif ($colinfo->hasParameter('Collate')) {
+			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
+		}
 		if ($sqlType == 'TIMESTAMP') {
 			if ($notNullString == '') {
 				$notNullString = 'NULL';
@@ -274,15 +283,6 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 		}
 		if ($autoIncrement = $col->getAutoIncrementString()) {
 			$ddl []= $autoIncrement;
-		}
-		$colinfo = $col->getVendorInfoForType($this->getDatabaseType());
-		if ($colinfo->hasParameter('Charset')) {
-			$ddl []= 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
-		}
-		if ($colinfo->hasParameter('Collation')) {
-			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
-		} elseif ($colinfo->hasParameter('Collate')) {
-			$ddl []= 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
 		}
 		if ($col->getDescription()) {
 			$ddl []= 'COMMENT ' . $this->quote($col->getDescription());

@@ -338,6 +338,19 @@ DROP TABLE IF EXISTS `foo`;
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
 	
+	public function testGetColumnDDLCharsetNotNull()
+	{
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('LONGVARCHAR'));
+		$column->setNotNull(true);
+		$vendor = new VendorInfo('mysql');
+		$vendor->setParameter('Charset', 'greek');
+		$column->addVendorInfo($vendor);
+		$expected = '`foo` TEXT CHARACTER SET \'greek\' NOT NULL';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+
+	}
+	
 	public function testGetPrimaryKeyDDLSimpleKey()
 	{
 		$table = new Table('foo');
