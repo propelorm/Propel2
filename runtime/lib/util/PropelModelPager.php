@@ -33,13 +33,13 @@ class PropelModelPager implements IteratorAggregate, Countable
 		$results         = null,
 		$resultsCounter  = 0;
 
-	public function __construct(Criteria $query, $maxPerPage = 10)
+	public function __construct(ModelCriteria $query, $maxPerPage = 10)
 	{
 		$this->setQuery($query);
 		$this->setMaxPerPage($maxPerPage);
 	}
 	
-	public function setQuery(Criteria $query)
+	public function setQuery(ModelCriteria $query)
 	{
 		$this->query = $query;
 	}
@@ -90,13 +90,12 @@ class PropelModelPager implements IteratorAggregate, Countable
 	/**
 	 * Get the collection of results in the page
 	 *
-	 * @return PropelObjectCollection A collection of results
+	 * @return PropelCollection A collection of results
 	 */
 	public function getResults()
 	{
 		if (null === $this->results) {
 			$this->results = $this->getQuery()
-				->setFormatter(ModelCriteria::FORMAT_OBJECT)
 				->find();
 		}
 		return $this->results;
