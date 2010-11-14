@@ -134,7 +134,8 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		for ($i=0; $i < 10; $i++) { 
 			$t = new Table2();
 			$t->setTitle('UpdatedAt' . $i);
-			$t->setUpdatedAt(time() - $i * 24 * 60 * 60);
+			/* additional -30 in case the check is done in the same second (which we can't guarantee, so no assert(8 ...) below).*/
+			$t->setUpdatedAt(time() - $i * 24 * 60 * 60 - 30);
 			$ts[]= $t;
 		}
 		$ts->save();
@@ -148,7 +149,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		for ($i=0; $i < 10; $i++) { 
 			$t = new Table2();
 			$t->setTitle('CreatedAt' . $i);
-			$t->setCreatedAt(time() - $i * 24 * 60 * 60);
+			$t->setCreatedAt(time() - $i * 24 * 60 * 60 - 30);
 			$ts[]= $t;
 		}
 		$ts->save();
@@ -160,9 +161,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$this->assertTrue($q instanceof Table2Query, 'recentlyUpdated() returns the current Query object');
 		$this->populateUpdatedAt();
 		$ts = Table2Query::create()->recentlyUpdated()->count();
-		$this->assertEquals(8, $ts, 'recentlyUpdated() returns the elements updated in the last 7 days by default');
+		$this->assertEquals(7, $ts, 'recentlyUpdated() returns the elements updated in the last 7 days by default');
 		$ts = Table2Query::create()->recentlyUpdated(5)->count();
-		$this->assertEquals(6, $ts, 'recentlyUpdated() accepts a number of days as parameter');
+		$this->assertEquals(5, $ts, 'recentlyUpdated() accepts a number of days as parameter');
 	}
 	
 	public function testQueryRecentlyCreated()
@@ -171,9 +172,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$this->assertTrue($q instanceof Table2Query, 'recentlyCreated() returns the current Query object');
 		$this->populateCreatedAt();
 		$ts = Table2Query::create()->recentlyCreated()->count();
-		$this->assertEquals(8, $ts, 'recentlyCreated() returns the elements created in the last 7 days by default');
+		$this->assertEquals(7, $ts, 'recentlyCreated() returns the elements created in the last 7 days by default');
 		$ts = Table2Query::create()->recentlyCreated(5)->count();
-		$this->assertEquals(6, $ts, 'recentlyCreated() accepts a number of days as parameter');
+		$this->assertEquals(5, $ts, 'recentlyCreated() accepts a number of days as parameter');
 	}
 	
 	public function testQueryLastUpdatedFirst()
