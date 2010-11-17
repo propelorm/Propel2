@@ -44,7 +44,7 @@ class QueryInheritanceBuilder extends OMBuilder
 	 */
 	public function getPackage()
 	{
-		return parent::getPackage() . ".om";
+		return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . ".om";
 	}
 
 	public function getNamespace()
