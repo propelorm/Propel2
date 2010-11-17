@@ -1650,8 +1650,8 @@ class ModelCriteria extends Criteria
 	 * Replaces complete column names (like Article.AuthorId) in an SQL clause
 	 * by their exact Propel column fully qualified name (e.g. article.AUTHOR_ID)
 	 * but ignores the column names inside quotes
-	 *
-	 * Note: if you know a way to do so in one step, and in an efficient way, I'm interested :)
+	 * e.g. 'CONCAT(Book.Title, "Book.Title") = ?'
+	 *   => 'CONCAT(book.TITLE, "Book.Title") = ?'
 	 *
 	 * @param string $clause SQL clause to inspect (modified by the method)
 	 *
@@ -1662,33 +1662,50 @@ class ModelCriteria extends Criteria
 		$this->replacedColumns = array();
 		$this->currentAlias = '';
 		$this->foundMatch = false;
-		$regexp = <<<EOT
-|
-	(["'][^"']*?["'])?  # string
-	([^"']+)?           # not string
-|x
-EOT;
-		$clause = preg_replace_callback($regexp, array($this, 'doReplaceName'), $clause);
-		return $this->foundMatch;
-	}
-
-	/**
-	 * Callback function to replace expressions containing column names with expressions using the real column names
-	 * Handles strings properly
-	 * e.g. 'CONCAT(Book.Title, "Book.Title") = ?'
-	 *   => 'CONCAT(book.TITLE, "Book.Title") = ?'
-	 *
-	 * @param array $matches Matches found by preg_replace_callback
-	 *
-	 * @return string the expression replacement
-	 */
-	protected function doReplaceName($matches)
-	{
-		if(!$matches[0]) {
-			return '';
+		$isAfterBackslash = false;
+		$isInString = false;
+		$stringQuotes = '';
+		$parsedString = '';
+		$stringToTransform = '';
+		$len = strlen($clause);
+		$pos = 0;
+		while ($pos < $len) {
+			$char = $clause[$pos];
+			// check flags for strings or escaper
+			switch ($char) {
+				case "\\":
+					$isAfterBackslash = true;
+					break;
+				case "'":
+				case "\"":
+					if ($isInString && $stringQuotes == $char) {
+						if (!$isAfterBackslash) {
+							$isInString = false;
+						}
+					} elseif (!$isInString) {
+						$parsedString .= preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
+						$stringToTransform = '';
+						$stringQuotes = $char;
+						$isInString = true;
+					}
+					break;
+			}
+			if ($char !== "\\") {
+				$isAfterBackslash = false;
+			}
+			if ($isInString) {
+				$parsedString .= $char;
+			} else {
+				$stringToTransform .= $char;
+			}
+			$pos++;
 		}
-		// replace names only in expressions, not in strings delimited by quotes
-		return $matches[1] . preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $matches[2]);
+		if ($stringToTransform) {
+			$parsedString .= preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
+		}
+		
+		$clause = $parsedString;
+		return $this->foundMatch;
 	}
 
 	/**

@@ -80,6 +80,10 @@ class ModelCriteriaTest extends BookstoreTestBase
 			array('Book.AuthorId LIKE ?', 'AuthorId', 'book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
 			array('(Book.AuthorId) LIKE ?', 'AuthorId', '(book.AUTHOR_ID) LIKE ?'), // with parenthesis
 			array('(Book.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
+			// dealing with quotes
+			array("Book.Id + ' ' + Book.AuthorId", null, "book.ID + ' ' + book.AUTHOR_ID"),
+			array("'Book.Id' + Book.AuthorId", null, "'Book.Id' + book.AUTHOR_ID"),
+			array("Book.Id + 'Book.AuthorId'", null, "book.ID + 'Book.AuthorId'"),
 			array('1=1', null, '1=1'), // with no name
 			array('', null, '') // with empty string
 		);
@@ -1120,6 +1124,34 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$sql = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, ' . $selectTranslation . ' FROM `book`';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column to the select clause');
+	}
+	
+	public static function conditionsForTestWithColumnAndQuotes()
+	{
+		return array(
+			// Examples for simple string concatenation needed for MSSQL.
+			// MSSQL has no CONCAT() function so uses + to join strings.
+			array("CONVERT(varchar, Author.Age, 120) + \' GMT\'", 'GMTCreatedAt', "CONVERT(varchar, author.AGE, 120) + \' GMT\' AS GMTCreatedAt"),
+			array("(Author.FirstName + ' ' + Author.LastName)", 'AuthorFullname', "(author.FIRST_NAME + ' ' + author.LAST_NAME) AS AuthorFullname"),
+			array("('\"' + Author.FirstName + ' ' + Author.LastName + '\"')", 'QuotedAuthorFullname', "('\"' + author.FIRST_NAME + ' ' + author.LAST_NAME + '\"') AS QuotedAuthorFullname"),
+
+			// Examples for simple string concatenation needed for Sqlite
+			// Sqlite has no CONCAT() function so uses || to join strings.  || can also be used to join strings in PQSql and Oracle
+			array("(Author.FirstName || ' ' || Author.LastName)", 'AuthorFullname', "(author.FIRST_NAME || ' ' || author.LAST_NAME) AS AuthorFullname"),
+			array("('\"' || Author.FirstName || ' ' || Author.LastName || '\"')", 'QuotedAuthorFullname', "('\"' || author.FIRST_NAME || ' ' || author.LAST_NAME || '\"') AS QuotedAuthorFullname"),
+		);
+	}
+
+	/**
+	 * @dataProvider conditionsForTestWithColumnAndQuotes
+	 */
+	public function testWithColumnAndQuotes($clause, $alias, $selectTranslation)
+	{
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->withColumn($clause, $alias);
+		$sql = 'SELECT author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL, author.AGE, ' . $selectTranslation . ' FROM `author`';
+		$params = array();
+		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column using quotes to the select clause');
 	}
 
 	public function testWithColumnAndSelectColumns()
