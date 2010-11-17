@@ -74,7 +74,7 @@ class SluggableBehavior extends Behavior
 	 */
 	public function preSave($builder)
 	{
-    $const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'), $this->getTable()->getPhpName() . 'Peer');
+		$const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'));
 		$script = "
 if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
 	\$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));";
