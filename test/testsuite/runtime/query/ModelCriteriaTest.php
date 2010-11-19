@@ -831,6 +831,16 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT bookstore_employee.ID, bookstore_employee.CLASS_KEY, bookstore_employee.NAME, bookstore_employee.JOB_TITLE, bookstore_employee.SUPERVISOR_ID FROM `bookstore_employee` INNER JOIN `bookstore_employee` `sup` ON (bookstore_employee.SUPERVISOR_ID=sup.ID) INNER JOIN `bookstore_employee` `sub` ON (sup.ID=sub.SUPERVISOR_ID) WHERE sub.NAME = 'Foo'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
 	}
+	
+	public function testJoinCustomCondition()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author', Criteria::INNER_JOIN, 'Book.AuthorId = Author.Id AND Book.Title IS NOT NULL');
+		$books = BookPeer::doSelect($c, $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID = author.ID AND book.TITLE IS NOT NULL)";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions');
+	}
 
 	public function testGetJoin()
 	{

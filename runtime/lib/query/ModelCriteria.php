@@ -602,10 +602,12 @@ class ModelCriteria extends Criteria
 	 *
 	 * @param      string $relation Relation to use for the join
 	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 * @param      string $customCondition SQL clause to replace the join condition
+	 *                    May contain phpNames, e.g. 'Book.AuthorId=Author.Id'
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function join($relation, $joinType = Criteria::INNER_JOIN)
+	public function join($relation, $joinType = Criteria::INNER_JOIN, $customCondition = null)
 	{
 		// relation looks like '$leftName.$relationName $relationAlias'
 		list($fullName, $relationAlias) = self::getClassAndAlias($relation);
@@ -650,6 +652,11 @@ class ModelCriteria extends Criteria
 			$this->addJoinObject($join, $relationAlias);
 		} else {
 			$this->addJoinObject($join, $relationName);
+		}
+		
+		if (null !== $customCondition) {
+			$this->replaceNames($customCondition);
+			$join->setJoinCondition($customCondition);
 		}
 
 		return $this;

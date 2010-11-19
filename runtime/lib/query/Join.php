@@ -54,6 +54,8 @@ class Join
 	protected $leftTableAlias;
 	protected $rightTableAlias;
 	
+	protected $joinCondition;
+	
 	/**
 	 * Constructor
 	 * Use it preferably with no arguments, and then use addCondition() and setJoinType()
@@ -451,11 +453,24 @@ class Join
 		$this->db = $db;
 	}
 	
+	public function setJoinCondition($joinCondition)
+	{
+		$this->joinCondition = $joinCondition;
+	}
+	
+	public function getJoinCondition()
+	{
+		return $this->joinCondition;
+	}
+	
 	public function getClause()
 	{
-		$conditions = array();
-		for ($i=0; $i < $this->count; $i++) {
-			$conditions []= $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
+		if (null === $this->joinCondition) {
+			$conditions = array();
+			for ($i=0; $i < $this->count; $i++) {
+				$conditions []= $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
+			}
+			$this->joinCondition = implode($conditions, ' AND ');
 		}
 		
 		$rightTableName = $this->getRightTableWithAlias();
@@ -467,7 +482,7 @@ class Join
 		return sprintf('%s %s ON (%s)',
 			$this->getJoinType(),
 			$rightTableName,
-			implode($conditions, ' AND ')
+			$this->joinCondition
 		);
 	}
 
