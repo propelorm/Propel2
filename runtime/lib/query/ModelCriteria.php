@@ -660,7 +660,7 @@ class ModelCriteria extends Criteria
 	 * @example
 	 * <code>
 	 * $query->join('Book.Author');
-	 * $query->addJoinCondition('Author', 'Book.Title LIKE ?', 'foo%'); 
+	 * $query->addJoinCondition('Author', 'Book.Title LIKE ?', 'foo%');
 	 * </code>
 	 *
 	 * @param string $name The relation name or alias on which the join was created
@@ -672,6 +672,9 @@ class ModelCriteria extends Criteria
 	 */
 	public function addJoinCondition($name, $clause, $value = null, $operator = null)
 	{
+		if (!isset($this->joins[$name])) {
+			throw new PropelException(sprintf('Adding a condition to a nonexistent join, %s. Try calling join() first.', $name));
+		}
 		$join = $this->joins[$name];
 		if (!$join->getJoinCondition() instanceof Criterion) {
 			$join->buildJoinCondition($this);
@@ -680,6 +683,37 @@ class ModelCriteria extends Criteria
 		$method = $operator === Criteria::LOGICAL_OR ? 'addOr' : 'addAnd';
 		$join->getJoinCondition()->$method($criterion);
 		
+		return $this;
+	}
+	
+	/**
+	 * Replace the condition of an already added join
+	 * @example
+	 * <code>
+	 * $query->join('Book.Author');
+	 * $query->condition('cond1', 'Book.AuthorId = Author.Id')
+	 * $query->condition('cond2', 'Book.Title LIKE ?', 'War%')
+	 * $query->combine(array('cond1', 'cond2'), 'and', 'cond3')
+	 * $query->setJoinCondition('Author', 'cond3');
+	 * </code>
+	 *
+	 * @param string $name The relation name or alias on which the join was created
+	 * @param mixed $condition A Criterion object, or a condition name
+	 *
+	 * @return ModelCriteria The current object, for fluid interface
+	 */
+	public function setJoinCondition($name, $condition)
+	{
+		if (!isset($this->joins[$name])) {
+			throw new PropelException(sprintf('Setting a condition to a nonexistent join, %s. Try calling join() first.', $name));
+		}
+		if ($condition instanceof Criterion) {
+			$this->getJoin($name)->setJoinCondition($condition);
+		} elseif (isset($this->namedCriterions[$condition])) {
+			$this->getJoin($name)->setJoinCondition($this->namedCriterions[$condition]);
+		} else {
+			throw new PropelException(sprintf('Cannot add condition %s on join %s. setJoinCondition() expects either a Criterion, or a condition added by way of condition()', $condition, $name));
+		}
 		return $this;
 	}
 

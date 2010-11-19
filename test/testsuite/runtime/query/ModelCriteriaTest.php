@@ -840,7 +840,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('Author', 'Book.Title IS NOT NULL');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID AND book.TITLE IS NOT NULL)";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions');
 	}
 	
 	public function testAddJoinConditionBinding()
@@ -851,7 +851,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('Author', 'Book.Title = ?', 'foo');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID AND book.TITLE = 'foo')";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions with values to bind');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with values to bind');
 	}
 
 	public function testAddJoinConditionSeveral()
@@ -863,7 +863,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('Author', 'Book.ISBN IS NOT NULL');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON ((book.AUTHOR_ID=author.ID AND book.TITLE = 'foo') AND book.ISBN IS NOT NULL)";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of several custom conditions');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of several custom conditions');
 	}
 
 	public function testAddJoinConditionBindingAndWhere()
@@ -875,7 +875,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('Author', 'Book.Title = ?', 'foo');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID AND book.TITLE = 'foo') WHERE book.TITLE LIKE 'foo%'";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions with values and lives well with WHERE conditions');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with values and lives well with WHERE conditions');
 	}
 
 	public function testAddJoinConditionAlias()
@@ -886,7 +886,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('a', 'Book.Title IS NOT NULL');
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` `a` ON (book.AUTHOR_ID=a.ID AND book.TITLE IS NOT NULL)";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions even on aliased relations');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions even on aliased relations');
 	}
 
 	public function testAddJoinConditionOperator()
@@ -897,7 +897,31 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->addJoinCondition('Author', 'Book.Title IS NOT NULL', null, Criteria::LOGICAL_OR);
 		$books = BookPeer::doSelect($c, $con);
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID OR book.TITLE IS NOT NULL)";
-		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of custom conditions with a custom operator');
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with a custom operator');
+	}
+	
+	public function testSetJoinConditionCriterion()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author', Criteria::INNER_JOIN);
+		$criterion = $c->getNewCriterion(BookPeer::TITLE, BookPeer::TITLE . ' = ' . AuthorPeer::FIRST_NAME, Criteria::CUSTOM);
+		$c->setJoinCondition('Author', $criterion);
+		$books = BookPeer::doSelect($c, $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON book.TITLE = author.FIRST_NAME";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'setJoinCondition() can override a previous join condition with a Criterion');
+	}
+
+	public function testSetJoinConditionNamedCondition()
+	{
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->join('Book.Author', Criteria::INNER_JOIN);
+		$c->condition('cond1', 'Book.Title = Author.FirstName');
+		$c->setJoinCondition('Author', 'cond1');
+		$books = BookPeer::doSelect($c, $con);
+		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON book.TITLE = author.FIRST_NAME";
+		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'setJoinCondition() can override a previous join condition with a named condition');
 	}
 
 	public function testGetJoin()

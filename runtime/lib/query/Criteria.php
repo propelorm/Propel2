@@ -840,6 +840,8 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * Add a join with multiple conditions
+	 * @deprecated use Join::setJoinCondition($criterion) instead
+	 *
 	 * @see http://propel.phpdb.org/trac/ticket/167, http://propel.phpdb.org/trac/ticket/606
 	 * 
 	 * Example usage:
@@ -859,11 +861,10 @@ class Criteria implements IteratorAggregate
 	public function addMultipleJoin($conditions, $joinType = null) 
 	{
 		$join = new Join();
-		
+		$joinCondition = null;
 		foreach ($conditions as $condition) {
 			$left = $condition[0];
 			$right = $condition[1];
-			
 			if ($pos = strrpos($left, '.')) {
 				list($leftTableAlias, $leftColumnName) = explode('.', $left);
 				list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
@@ -878,14 +879,26 @@ class Criteria implements IteratorAggregate
 				list($rightTableName, $rightTableAlias) = array(null, null);
 				$rightColumnName = $right;
 			}
-			
-			$join->addExplicitCondition(
-				$leftTableName, $leftColumnName, $leftTableAlias,
-				$rightTableName, $rightColumnName, $rightTableAlias,
-				isset($condition[2]) ? $condition[2] : JOIN::EQUAL);
+			if (!$join->getRightTableName()) {
+				$join->setRightTableName($rightTableName);
+			}
+			if (!$join->getRightTableAlias()) {
+				$join->setRightTableAlias($rightTableAlias);
+			}
+			$conditionClause = $leftTableAlias ? $leftTableAlias . '.' : ($leftTableName ? $leftTableName . '.' : '');
+			$conditionClause .= $leftColumnName;
+			$conditionClause .= isset($condition[2]) ? $condition[2] : JOIN::EQUAL;
+			$conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
+			$conditionClause .= $rightColumnName;
+			$criterion = $this->getNewCriterion($leftTableName.'.'.$leftColumnName, $conditionClause, Criteria::CUSTOM);
+			if (null === $joinCondition) {
+				$joinCondition = $criterion;
+			} else {
+				$joinCondition = $joinCondition->addAnd($criterion);
+			}
 		}
 		$join->setJoinType($joinType);
-		
+		$join->setJoinCondition($joinCondition);
 		return $this->addJoinObject($join);
 	}
 	

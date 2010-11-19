@@ -675,7 +675,7 @@ class CriteriaTest extends BookstoreTestBase
       addJoin(array('TABLE_A.FOO_ID'), array('TABLE_B.ID'), Criteria::LEFT_JOIN)->
       addSelectColumn("TABLE_A.ID");
 
-    $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID)';
+    $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON TABLE_A.FOO_ID=TABLE_B.ID';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
