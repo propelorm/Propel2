@@ -640,7 +640,8 @@ class CriteriaTest extends BookstoreTestBase
   }
 
   /**
-   * @link       http://propel.phpdb.org/trac/ticket/451
+   * @link       http://www.propelorm.org/ticket/451
+   * @link       http://www.propelorm.org/ticket/283#comment:8
    */
   public function testSeveralMixedJoinOrders()
   {
@@ -650,16 +651,7 @@ class CriteriaTest extends BookstoreTestBase
       addJoin("TABLE_A.BAR_ID", "TABLE_C.ID")->
       addSelectColumn("TABLE_A.ID");
 
-    # These are no longer different, see http://propel.phpdb.org/trac/ticket/283#comment:8
-    #$db = Propel::getDB();
-    #
-    #if ($db instanceof DBMySQL) {
-    #  $expect = 'SELECT TABLE_A.ID FROM (TABLE_A CROSS JOIN TABLE_C)'
-    #      .' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
-    #} else {
-      $expect = 'SELECT TABLE_A.ID FROM TABLE_A CROSS JOIN TABLE_C'
-          .' LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) WHERE TABLE_A.BAR_ID=TABLE_C.ID';
-    #}
+    $expect = 'SELECT TABLE_A.ID FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID) INNER JOIN TABLE_C ON (TABLE_A.BAR_ID=TABLE_C.ID)';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
