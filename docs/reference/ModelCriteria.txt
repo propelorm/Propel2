@@ -602,6 +602,16 @@ $book = BookQuery::create()
 // Otherwise, the default join type is a LEFT JOIN
 // You can override the default join type for a given relationship
 // By setting the joinType attribute of the foreign key element in the schema.xml
+
+// Add more conditions to an existing join 
+// by calling addJoinCondition($joinName, $clause, $value)
+$book = BookQuery::create()
+  ->joinAuthor()
+  ->addJoinCondition('Author', 'Author.LastName <> ?', 'Austen')
+  ->findOne();
+  // SELECT book.* FROM book 
+  // INNER JOIN author ON (book.AUTHOR_ID = author.ID AND author.LAST_NAME <> 'Austen')
+  // LIMIT 1;
 }}}
 
 === Table Aliases ===

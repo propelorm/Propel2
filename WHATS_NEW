@@ -206,3 +206,33 @@ $books = BookQuery::create()
   ->filterByAuthor($authors) // <= That's new
   ->find();
 }}}
+
+== Join With Several Conditions ==
+
+Creating a Join with more than one connection is now very easy. Just call `ModelCriteria::addJoinCondition($joinName, $condition)` after a `ModelCriteria::join()` to add further conditions to a join:
+
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->join('Author.Book')
+  ->addJoinCondition('Book', 'Book.Title IS NOT NULL')
+  ->find();
+// SELECT * FROM author
+// INNER JOIN book ON (author.ID=book.AUTHOR_ID AND book.TITLE IS NOT NULL);
+}}}
+
+If you need to bind a variable to the condition, set the variable as last parameter of the `addJoinCondition()` call. Propel correctly binds the value using PDO:
+
+{{{
+#!php
+<?php
+$authors = AuthorQuery::create()
+  ->join('Author.Book')
+  ->addJoinCondition('Book', 'Book.Title LIKE ?', 'War%')
+  ->find();
+// SELECT * FROM author
+// INNER JOIN book ON (author.ID=book.AUTHOR_ID AND book.TITLE LIKE 'War%');
+}}}
+
+'''Tip''': `Criteria::addMultipleJoin()`, which allowed the same feature to some extent in previous versions, is now deprecated, since it was vulnerable in SQL injection attacks.
