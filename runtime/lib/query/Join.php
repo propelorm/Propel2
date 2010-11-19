@@ -453,24 +453,72 @@ class Join
 		$this->db = $db;
 	}
 	
-	public function setJoinCondition($joinCondition)
+	/**
+	 * Set a custom join condition
+	 * 
+	 * @param Criterion $joinCondition a Join condition
+	 */
+	public function setJoinCondition(Criterion $joinCondition)
 	{
 		$this->joinCondition = $joinCondition;
 	}
-	
+
+	/**
+	 * Get the custom join condition, if previously set
+	 * 
+	 * @return Criterion
+	 */
 	public function getJoinCondition()
 	{
 		return $this->joinCondition;
 	}
 	
-	public function getClause()
+	/**
+	 * Set the custom join condition Criterion based on the conditions of this join
+	 *
+	 * @param Criteria $c A Criteria object to get Criterions from
+	 */
+	public function buildJoinCondition(Criteria $c)
+	{
+		$joinCondition = null;
+		for ($i=0; $i < $this->count; $i++) {
+			$criterion = $c->getNewCriterion($this->getLeftColumn($i), $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i), Criteria::CUSTOM);
+			if (null === $joinCondition) {
+				$joinCondition = $criterion;
+			} else {
+				$joinCondition = $joinCondition->addAnd($criterion);
+			}
+		}
+		$this->joinCondition = $joinCondition;
+	}
+	
+	/**
+	 * Get the join clause for this Join.
+	 * If the join condition needs binding, uses the passed params array.
+	 * @example
+	 * <code>
+	 * $join = new Join();
+	 * $join->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID');
+	 * $params = array();
+	 * echo $j->getClause($params);
+	 * // 'LEFT JOIN author ON (book.AUTHOR_ID=author.ID)'
+	 * </code>
+	 * 
+	 * @param array &$params
+	 *
+	 * @return string SQL join clause with join condition
+	 */
+	public function getClause(&$params)
 	{
 		if (null === $this->joinCondition) {
 			$conditions = array();
 			for ($i=0; $i < $this->count; $i++) {
 				$conditions []= $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
 			}
-			$this->joinCondition = implode($conditions, ' AND ');
+			$joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
+		} else {
+			$joinCondition = '';
+			$this->getJoinCondition()->appendPsTo($joinCondition, $params);
 		}
 		
 		$rightTableName = $this->getRightTableWithAlias();
@@ -479,10 +527,10 @@ class Join
 			$rightTableName = $this->db->quoteIdentifierTable($rightTableName);
 		}
 
-		return sprintf('%s %s ON (%s)',
+		return sprintf('%s %s ON %s',
 			$this->getJoinType(),
 			$rightTableName,
-			$this->joinCondition
+			$joinCondition
 		);
 	}
 
@@ -501,12 +549,13 @@ class Join
 	 */
 	public function toString()
 	{
-		return $this->getClause();
+		$params = array();
+		return $this->getClause($params);
 	}
 	
 	public function __toString()
 	{
-		return $this->getClause();
+		return $this->toString();
 	}
 }
  

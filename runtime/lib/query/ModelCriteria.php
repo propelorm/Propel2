@@ -602,12 +602,10 @@ class ModelCriteria extends Criteria
 	 *
 	 * @param      string $relation Relation to use for the join
 	 * @param      string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-	 * @param      string $customCondition SQL clause to replace the join condition
-	 *                    May contain phpNames, e.g. 'Book.AuthorId=Author.Id'
 	 *
 	 * @return     ModelCriteria The current object, for fluid interface
 	 */
-	public function join($relation, $joinType = Criteria::INNER_JOIN, $customCondition = null)
+	public function join($relation, $joinType = Criteria::INNER_JOIN)
 	{
 		// relation looks like '$leftName.$relationName $relationAlias'
 		list($fullName, $relationAlias) = self::getClassAndAlias($relation);
@@ -653,12 +651,35 @@ class ModelCriteria extends Criteria
 		} else {
 			$this->addJoinObject($join, $relationName);
 		}
-		
-		if (null !== $customCondition) {
-			$this->replaceNames($customCondition);
-			$join->setJoinCondition($customCondition);
-		}
 
+		return $this;
+	}
+	
+	/**
+	 * Add another condition to an already added join
+	 * @example
+	 * <code>
+	 * $query->join('Book.Author');
+	 * $query->addJoinCondition('Author', 'Book.Title LIKE ?', 'foo%'); 
+	 * </code>
+	 *
+	 * @param string $name The relation name or alias on which the join was created
+	 * @param string $clause SQL clause, may contain column and table phpNames
+	 * @param mixed  $value An optional value to bind to the clause
+	 * @param string $operator The operator to use to add the condition. Defaults to 'AND'
+	 *
+	 * @return ModelCriteria The current object, for fluid interface
+	 */
+	public function addJoinCondition($name, $clause, $value = null, $operator = null)
+	{
+		$join = $this->joins[$name];
+		if (!$join->getJoinCondition() instanceof Criterion) {
+			$join->buildJoinCondition($this);
+		}
+		$criterion = $this->getCriterionForClause($clause, $value);
+		$method = $operator === Criteria::LOGICAL_OR ? 'addOr' : 'addAnd';
+		$join->getJoinCondition()->$method($criterion);
+		
 		return $this;
 	}
 
@@ -1601,14 +1622,14 @@ class ModelCriteria extends Criteria
 	 * Creates a Criterion object based on a list of existing condition names and a comparator
 	 *
 	 * @param      array $conditions The list of condition names, e.g. array('cond1', 'cond2')
-	 * @param      string  $comparator A comparator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
+	 * @param      string  $operator An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
 	 *
 	 * @return     Criterion a Criterion or ModelCriterion object
 	 */
-	protected function getCriterionForConditions($conditions, $comparator = null)
+	protected function getCriterionForConditions($conditions, $operator = null)
 	{
-		$comparator = (null === $comparator) ? Criteria::LOGICAL_AND : $comparator;
-		$this->combine($conditions, $comparator, 'propel_temp_name');
+		$operator = (null === $operator) ? Criteria::LOGICAL_AND : $operator;
+		$this->combine($conditions, $operator, 'propel_temp_name');
 		$criterion = $this->namedCriterions['propel_temp_name'];
 		unset($this->namedCriterions['propel_temp_name']);
 

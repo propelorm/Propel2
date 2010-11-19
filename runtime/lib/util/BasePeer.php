@@ -733,6 +733,21 @@ class BasePeer
 		// get the first part of the SQL statement, the SELECT part
 		$selectSql = $db->createSelectSqlPart($criteria, $fromClause);
 
+		// Handle joins
+		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
+		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
+		foreach ($criteria->getJoins() as $join) {
+			
+			$join->setDB($db);
+
+			// add 'em to the queues..
+			if (!$fromClause) {
+				$fromClause[] = $join->getLeftTableWithAlias();
+			}
+			$joinTables[] = $join->getRightTableWithAlias();
+			$joinClause[] = $join->getClause($params);
+		}
+		
 		// add the criteria to WHERE clause
 		// this will also add the table names to the FROM clause if they are not already
 		// included via a LEFT JOIN
@@ -762,21 +777,6 @@ class BasePeer
 			$sb = '';
 			$criterion->appendPsTo($sb, $params);
 			$whereClause[] = $sb;
-		}
-
-		// Handle joins
-		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
-		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
-		foreach ($criteria->getJoins() as $join) {
-			
-			$join->setDB($db);
-
-			// add 'em to the queues..
-			if (!$fromClause) {
-				$fromClause[] = $join->getLeftTableWithAlias();
-			}
-			$joinTables[] = $join->getRightTableWithAlias();
-			$joinClause[] = $join->getClause();
 		}
 
 		// Unique from clause elements
