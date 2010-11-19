@@ -87,10 +87,7 @@ abstract class PropelFormatter
 	
 	public function setWith($withs = array())
 	{
-		$this->with = array();
-		foreach ($withs as $relation => $join) {
-			$this->with[$relation] = new ModelWith($join);
-		}
+		$this->with = $withs;
 	}
 	
 	public function getWith()

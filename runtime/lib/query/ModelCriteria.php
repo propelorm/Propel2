@@ -738,7 +738,7 @@ class ModelCriteria extends Criteria
 		$this->addRelationSelectColumns($relation);
 
 		// list the join for later hydration in the formatter
-		$this->with[$relation] = $join;
+		$this->with[$relation] = new ModelWith($join);
 
 		return $this;
 	}

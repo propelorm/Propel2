@@ -124,7 +124,26 @@ class Join
 			$this->addCondition($left, $rights[$key], isset($operators[$key]) ? $operators[$key] : self::EQUAL);
 		}
 	}
-		
+
+	/**
+	 * Join condition definition. 
+	 * @example
+	 * <code>
+	 * $join = new Join();
+	 * $join->setJoinType(Criteria::LEFT_JOIN);
+	 * $join->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID', 'a', Join::EQUAL);
+	 * echo $join->getClause();
+	 * // LEFT JOIN author a ON (book.AUTHOR_ID=a.ID)
+	 * </code>
+	 *
+	 * @param string $leftTableName
+	 * @param string $leftColumnName
+	 * @param string $leftTableAlias
+	 * @param string $rightTableName
+	 * @param string $rightColumnName
+	 * @param string $rightTableAlias
+	 * @param string $operator The comparison operator of the join condition, default Join::EQUAL 
+	 */
 	public function addExplicitCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $rightTableName, $rightColumnName, $rightTableAlias = null, $operator = self::EQUAL)
 	{
 		$this->leftTableName   = $leftTableName;
