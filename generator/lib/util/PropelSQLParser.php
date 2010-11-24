@@ -87,7 +87,10 @@ class PropelSQLParser
 	{
 		foreach ($statements as $statement) {
 			$stmt = $connection->prepare($statement);
-			$stmt->execute();
+			if ($stmt instanceof PDOStatement) {
+				// only execute if has no error
+				$stmt->execute();
+			}
 		}
 		return count($statements);
 	}

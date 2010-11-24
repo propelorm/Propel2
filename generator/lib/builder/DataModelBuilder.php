@@ -34,7 +34,7 @@ abstract class DataModelBuilder
 	/**
 	 * The generator config object holding build properties, etc.
 	 *
-	 * @var        GeneratorConfig
+	 * @var        GeneratorConfigInterface
 	 */
 	private $generatorConfig;
 
@@ -514,7 +514,7 @@ abstract class DataModelBuilder
 	 *
 	 * @param      GeneratorConfig $v
 	 */
-	public function setGeneratorConfig(GeneratorConfig $v)
+	public function setGeneratorConfig(GeneratorConfigInterface $v)
 	{
 		$this->generatorConfig = $v;
 	}
