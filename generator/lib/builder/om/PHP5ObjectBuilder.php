@@ -367,6 +367,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				$this->addColumnAttributeLoaderComment($script, $col);
 				$this->addColumnAttributeLoaderDeclaration($script, $col);
 			}
+			if ($col->getType() == PropelTypes::OBJECT) {
+				$this->addColumnAttributeUnserializedComment($script, $col);
+				$this->addColumnAttributeUnserializedDeclaration($script, $col);
+			}
 		}
 	}
 
@@ -436,6 +440,35 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$clo = strtolower($col->getName());
 		$script .= "
 	protected \$".$clo."_isLoaded = false;
+";
+	}
+
+	/**
+	 * Adds the comment about the serialized attribute 
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeUnserializedComment(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$script .= "
+	/**
+	 * The unserialized \$$clo value - i.e. the persisted object.
+	 * This is necessary to avoid repeated calls to unserialize() at runtime.
+	 * @var        object
+	 */";
+	}
+
+	/**
+	 * Adds the declaration of the serialized attribute
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col
+	 **/
+	protected function addColumnAttributeUnserializedDeclaration(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName()) . "_unserialized";
+		$script .= "
+	protected \$" . $clo . ";
 ";
 	}
 
@@ -847,6 +880,46 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= "
 	}
 ";
+	}
+
+	/**
+	 * Adds an object getter method.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnAccessors()
+	 */
+	protected function addObjectAccessor(&$script, Column $col)
+	{
+		$this->addDefaultAccessorComment($script, $col);
+		$this->addDefaultAccessorOpen($script, $col);
+		$this->addObjectAccessorBody($script, $col);
+		$this->addDefaultAccessorClose($script, $col);
+	}
+
+	/**
+	 * Adds the function body for an object accessor method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addObjectAccessorBody(&$script, Column $col)
+	{
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+		$cloUnserialized = $clo.'_unserialized';
+		if ($col->isLazyLoad()) {
+			$script .= "
+		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
+			\$this->load$cfc(\$con);
+		}
+";
+		}
+
+		$script .= "
+		if (null == \$this->$cloUnserialized && null !== \$this->$clo) {
+			\$this->$cloUnserialized = unserialize(\$this->$clo);
+		}
+		return \$this->$cloUnserialized;";
 	}
 
 	/**
@@ -1335,6 +1408,32 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 
 	/**
+	 * Adds a setter for Object columns.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnMutators()
+	 */
+	protected function addObjectMutator(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$cloUnserialized = $clo.'_unserialized';
+		$this->addMutatorOpen($script, $col);
+
+		$script .= "
+		if (\$this->$cloUnserialized !== \$v";
+		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+			$script .= " || \$this->isNew()";
+		}
+		$script .= ") {
+			\$this->$cloUnserialized = \$v;
+			\$this->$clo = serialize(\$v);
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
+
+	/**
 	 * Adds setter method for "normal" columns.
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col The current column.
@@ -1528,6 +1627,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				} elseif ($col->isPhpPrimitiveType()) {
 					$script .= "
 			\$this->$clo = (\$row[\$startcol + $n] !== null) ? (".$col->getPhpType().") \$row[\$startcol + $n] : null;";
+				} elseif ($col->getType() == PropelTypes::OBJECT) {
+					$script .= "
+			\$this->$clo = \$row[\$startcol + $n];";
 				} elseif ($col->isPhpObjectType()) {
 					$script .= "
 			\$this->$clo = (\$row[\$startcol + $n] !== null) ? new ".$col->getPhpType()."(\$row[\$startcol + $n]) : null;";

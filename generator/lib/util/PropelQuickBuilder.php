@@ -68,6 +68,13 @@ class PropelQuickBuilder
 		return $this->config;
 	}
 	
+	public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
+	{
+		$builder = new self;
+		$builder->setSchema($schema);
+		return $builder->build($dsn, $user, $pass, $adapter);
+	}
+	
 	public function build($dsn = null, $user = null, $pass = null, $adapter = null)
 	{
 		if (null === $dsn) {

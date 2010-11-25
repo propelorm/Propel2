@@ -45,7 +45,8 @@ class PropelColumnTypes
 		BU_DATE = "BU_DATE",
 		BU_TIMESTAMP = "BU_TIMESTAMP",
 		BOOLEAN = "BOOLEAN",
-		BOOLEAN_EMU = "BOOLEAN_EMU";
+		BOOLEAN_EMU = "BOOLEAN_EMU",
+		OBJECT = "OBJECT";
 
 	private static $propelToPdoMap = array(
 		self::CHAR        => PDO::PARAM_STR,
@@ -73,6 +74,7 @@ class PropelColumnTypes
 		self::BU_TIMESTAMP => PDO::PARAM_STR,
 		self::BOOLEAN     => PDO::PARAM_BOOL,
 		self::BOOLEAN_EMU => PDO::PARAM_INT,
+		self::OBJECT      => PDO::PARAM_STR,
 	);
 
 	/**

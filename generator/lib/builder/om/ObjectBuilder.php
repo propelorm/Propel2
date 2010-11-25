@@ -58,6 +58,8 @@ abstract class ObjectBuilder extends OMBuilder
 			// if they're not using the DateTime class than we will generate "compatibility" accessor method
 			if ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
 				$this->addTemporalAccessor($script, $col);
+			} else if ($col->getType() === PropelTypes::OBJECT) {
+				$this->addObjectAccessor($script, $col);
 			} else {
 				$this->addDefaultAccessor($script, $col);
 			}
@@ -77,11 +79,12 @@ abstract class ObjectBuilder extends OMBuilder
 	protected function addColumnMutatorMethods(&$script)
 	{
 		foreach ($this->getTable()->getColumns() as $col) {
-
 			if ($col->isLobType()) {
 				$this->addLobMutator($script, $col);
 			} elseif ($col->getType() === PropelTypes::DATE || $col->getType() === PropelTypes::TIME || $col->getType() === PropelTypes::TIMESTAMP) {
 				$this->addTemporalMutator($script, $col);
+			} else if ($col->getType() === PropelTypes::OBJECT) {
+				$this->addObjectMutator($script, $col);
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}

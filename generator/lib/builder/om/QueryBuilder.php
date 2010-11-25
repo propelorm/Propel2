@@ -614,6 +614,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 				\$comparison = Criteria::IN;
 			}
 		}";
+		} elseif ($col->getType() == PropelTypes::OBJECT) {
+			$script .= "
+		if (null === \$comparison && is_object(\$$variableName)) {
+			\$$variableName = serialize(\$$variableName);
+		}";
 		} elseif ($col->isTextType()) {
 			$script .= "
 		if (null === \$comparison) {
