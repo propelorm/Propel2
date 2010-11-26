@@ -39,7 +39,6 @@
 			<xs:enumeration value="LONGVARBINARY"/>
 			<xs:enumeration value="NULL"/>
 			<xs:enumeration value="OTHER"/>
-			<xs:enumeration value="PHP_OBJECT"/>
 			<xs:enumeration value="DISTINCT"/>
 			<xs:enumeration value="STRUCT"/>
 			<xs:enumeration value="ARRAY"/>
@@ -50,6 +49,7 @@
 			<xs:enumeration value="BOOLEANCHAR"/>
 			<xs:enumeration value="DOUBLE"/>
 			<xs:enumeration value="BOOLEAN"/>
+			<xs:enumeration value="OBJECT"/>
 		</xs:restriction>
 	</xs:simpleType>
 

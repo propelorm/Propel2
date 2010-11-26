@@ -12,6 +12,12 @@ require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
 require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
 
+/**
+ * Tests the generated objects for complex column types accessor & mutator
+ *
+ * @author     Francois Zaninotto
+ * @package    generator.builder.om
+ */
 class GeneratedObjectComplexTypeTest extends PHPUnit_Framework_TestCase
 {
 	public function testObjectColumnType()
@@ -38,10 +44,6 @@ EOF;
 		ComplexColumnTypeEntity1Peer::clearInstancePool();
 		$e = ComplexColumnTypeEntity1Query::create()->findOne();
 		$this->assertEquals($c, $e->getBar(), 'object columns are persisted');
-		$nb = ComplexColumnTypeEntity1Query::create()->where('ComplexColumnTypeEntity1.Bar LIKE ?', '%1234%')->count();
-		$this->assertEquals(1, $nb, 'object columns are searchable by serialized string');
-		$nb = ComplexColumnTypeEntity1Query::create()->filterByBar($c)->count();
-		$this->assertEquals(1, $nb, 'object columns are searchable by object');
 	}
 }
 

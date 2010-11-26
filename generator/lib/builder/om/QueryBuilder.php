@@ -616,7 +616,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}";
 		} elseif ($col->getType() == PropelTypes::OBJECT) {
 			$script .= "
-		if (null === \$comparison && is_object(\$$variableName)) {
+		if (is_object(\$$variableName)) {
 			\$$variableName = serialize(\$$variableName);
 		}";
 		} elseif ($col->isTextType()) {
