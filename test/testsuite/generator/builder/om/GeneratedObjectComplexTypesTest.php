@@ -52,27 +52,23 @@ EOF;
 <database name="generated_object_complex_type_test_2">
 	<table name="complex_column_type_entity_2">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="ARRAY" />
+		<column name="tags" type="ARRAY" />
 	</table>
 </database>
 EOF;
-		//$builder = new PropelQuickBuilder();
-		//$builder->setSchema($schema);
-		//echo $builder->getSQL();
-		//exit();
 		PropelQuickBuilder::buildSchema($schema);
 		$e = new ComplexColumnTypeEntity2();
-		$this->assertequals(array(), $e->getBar(), 'array columns return an empty array by default');
+		$this->assertequals(array(), $e->getTags(), 'array columns return an empty array by default');
 		$value = array('foo', 1234);
-		$e->setBar($value);
-		$this->assertEquals($value, $e->getBar(), 'array columns can store arrays');
-		$e->setBar(array());
-		$this->assertEquals(array(), $e->getBar(), 'object columns can be reset');
-		$e->setBar($value);
+		$e->setTags($value);
+		$this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
+		$e->setTags(array());
+		$this->assertEquals(array(), $e->getTags(), 'object columns can be reset');
+		$e->setTags($value);
 		$e->save();
 		ComplexColumnTypeEntity2Peer::clearInstancePool();
 		$e = ComplexColumnTypeEntity2Query::create()->findOne();
-		$this->assertEquals($value, $e->getBar(), 'array columns are persisted');
+		$this->assertEquals($value, $e->getTags(), 'array columns are persisted');
 	}
 }
 
