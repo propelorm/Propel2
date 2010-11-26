@@ -40,6 +40,7 @@ class MysqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "TEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "TEXT"));
 	}
 
 	/**

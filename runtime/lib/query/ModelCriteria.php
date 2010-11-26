@@ -1895,16 +1895,16 @@ class ModelCriteria extends Criteria
 	 * Overrides Criteria::add() to force the use of a true table alias if it exists
 	 *
 	 * @see        Criteria::add()
-	 * @param      string $column The colName of column to run the comparison on (e.g. BookPeer::ID)
+	 * @param      string $column The colName of column to run the condition on (e.g. BookPeer::ID)
 	 * @param      mixed $value
-	 * @param      string $comparison A String.
+	 * @param      string $operator A String, like Criteria::EQUAL.
 	 *
 	 * @return     ModelCriteria A modified Criteria object.
 	 */
-	public function addUsingAlias($p1, $value = null, $comparison = null)
+	public function addUsingAlias($p1, $value = null, $operator = null)
 	{
 		$key = $this->getAliasedColName($p1);
-		return $this->containsKey($key) ? $this->addAnd($key, $value, $comparison) : $this->add($key, $value, $comparison);
+		return $this->containsKey($key) ? $this->addAnd($key, $value, $operator) : $this->add($key, $value, $operator);
 	}
 
 	/**

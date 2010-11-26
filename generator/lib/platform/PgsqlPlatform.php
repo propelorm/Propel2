@@ -40,6 +40,7 @@ class PgsqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "BYTEA"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "TEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "TEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "TEXT"));
 	}
 
 	public function getNativeIdMethod()

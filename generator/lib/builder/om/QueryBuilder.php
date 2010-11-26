@@ -619,7 +619,26 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		if (is_object(\$$variableName)) {
 			\$$variableName = serialize(\$$variableName);
 		}";
-		} elseif ($col->isTextType()) {
+		} elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
+			$script .= "
+		if (null === \$comparison || \$comparison == Criteria::CONTAINS) {
+			if (is_scalar(\$$variableName)) {
+				\$$variableName = '%| ' . \$$variableName . ' |%';
+				\$comparison = Criteria::LIKE;
+			}
+		} elseif (\$comparison == Criteria::NOT_CONTAINS) {
+			\$$variableName = '%| ' . \$$variableName . ' |%';
+			\$comparison = Criteria::NOT_LIKE;
+			\$key = \$this->getAliasedColName($qualifiedName);
+			if(\$this->containsKey(\$key)) {
+				\$this->addAnd(\$key, \$$variableName, \$comparison);
+			} else {
+				\$this->addAnd(\$key, \$$variableName, \$comparison);
+			}
+			\$this->addOr(\$key, null, Criteria::ISNULL);
+			return \$this;
+		}";
+			} elseif ($col->isTextType()) {
 			$script .= "
 		if (null === \$comparison) {
 			if (is_array(\$$variableName)) {

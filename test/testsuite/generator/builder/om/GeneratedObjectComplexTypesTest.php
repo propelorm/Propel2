@@ -23,7 +23,7 @@ class GeneratedObjectComplexTypeTest extends PHPUnit_Framework_TestCase
 	public function testObjectColumnType()
 	{
 		$schema = <<<EOF
-<database name="generated_object_complex_type_test">
+<database name="generated_object_complex_type_test_1">
 	<table name="complex_column_type_entity_1">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="OBJECT" />
@@ -44,6 +44,35 @@ EOF;
 		ComplexColumnTypeEntity1Peer::clearInstancePool();
 		$e = ComplexColumnTypeEntity1Query::create()->findOne();
 		$this->assertEquals($c, $e->getBar(), 'object columns are persisted');
+	}
+
+	public function testArrayColumnType()
+	{
+		$schema = <<<EOF
+<database name="generated_object_complex_type_test_2">
+	<table name="complex_column_type_entity_2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="ARRAY" />
+	</table>
+</database>
+EOF;
+		//$builder = new PropelQuickBuilder();
+		//$builder->setSchema($schema);
+		//echo $builder->getSQL();
+		//exit();
+		PropelQuickBuilder::buildSchema($schema);
+		$e = new ComplexColumnTypeEntity2();
+		$this->assertequals(array(), $e->getBar(), 'array columns return an empty array by default');
+		$value = array('foo', 1234);
+		$e->setBar($value);
+		$this->assertEquals($value, $e->getBar(), 'array columns can store arrays');
+		$e->setBar(array());
+		$this->assertEquals(array(), $e->getBar(), 'object columns can be reset');
+		$e->setBar($value);
+		$e->save();
+		ComplexColumnTypeEntity2Peer::clearInstancePool();
+		$e = ComplexColumnTypeEntity2Query::create()->findOne();
+		$this->assertEquals($value, $e->getBar(), 'array columns are persisted');
 	}
 }
 

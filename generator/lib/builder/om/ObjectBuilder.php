@@ -60,6 +60,8 @@ abstract class ObjectBuilder extends OMBuilder
 				$this->addTemporalAccessor($script, $col);
 			} else if ($col->getType() === PropelTypes::OBJECT) {
 				$this->addObjectAccessor($script, $col);
+			} else if ($col->getType() === PropelTypes::PHP_ARRAY) {
+				$this->addArrayAccessor($script, $col);
 			} else {
 				$this->addDefaultAccessor($script, $col);
 			}
@@ -85,6 +87,8 @@ abstract class ObjectBuilder extends OMBuilder
 				$this->addTemporalMutator($script, $col);
 			} else if ($col->getType() === PropelTypes::OBJECT) {
 				$this->addObjectMutator($script, $col);
+			} else if ($col->getType() === PropelTypes::PHP_ARRAY) {
+				$this->addArrayMutator($script, $col);
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}

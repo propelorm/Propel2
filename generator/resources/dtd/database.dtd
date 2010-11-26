@@ -82,12 +82,12 @@ PHP class or method name.
   required (true|false) "false"
   type
     (
-          BIT  | TINYINT | SMALLINT    | INTEGER    | BIGINT    | FLOAT
-        | REAL | NUMERIC | DECIMAL     | CHAR       | VARCHAR   | LONGVARCHAR
-        | DATE | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
-        | NULL | OTHER   | PHP_OBJECT  | DISTINCT   | STRUCT    | ARRAY
-        | BLOB | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
-        | DOUBLE | BOOLEAN | OBJECT
+          BIT    | TINYINT | SMALLINT    | INTEGER    | BIGINT    | FLOAT
+        | REAL   | NUMERIC | DECIMAL     | CHAR       | VARCHAR   | LONGVARCHAR
+        | DATE   | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
+        | NULL   | OTHER   | PHP_OBJECT  | DISTINCT   | STRUCT    | ARRAY
+        | BLOB   | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
+        | DOUBLE | BOOLEAN | OBJECT      | ARRAY
     ) "VARCHAR"
   phpType CDATA #IMPLIED
   sqlType CDATA #IMPLIED

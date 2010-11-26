@@ -41,7 +41,6 @@
 			<xs:enumeration value="OTHER"/>
 			<xs:enumeration value="DISTINCT"/>
 			<xs:enumeration value="STRUCT"/>
-			<xs:enumeration value="ARRAY"/>
 			<xs:enumeration value="BLOB"/>
 			<xs:enumeration value="CLOB"/>
 			<xs:enumeration value="REF"/>
@@ -50,6 +49,7 @@
 			<xs:enumeration value="DOUBLE"/>
 			<xs:enumeration value="BOOLEAN"/>
 			<xs:enumeration value="OBJECT"/>
+			<xs:enumeration value="ARRAY"/>
 		</xs:restriction>
 	</xs:simpleType>
 

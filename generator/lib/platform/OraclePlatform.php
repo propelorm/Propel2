@@ -46,7 +46,8 @@ class OraclePlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "LONG RAW"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BLOB"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "NVARCHAR2", "2000")); 
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "NVARCHAR2", "2000"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "NVARCHAR2", "2000"));
 		
 	}
 

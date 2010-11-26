@@ -84,6 +84,7 @@ class PropelQuickBuilder
 			$adapter = new DBSQLite();
 		}
 		$con = new PropelPDO($dsn, $user, $pass);
+		$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		$this->buildSQL($con);
 		$this->buildClasses();
 		$name = $this->getDatabase()->getName();
@@ -104,7 +105,19 @@ class PropelQuickBuilder
 	
 	public function buildSQL(PDO $con)
 	{
-		return PropelSQLParser::executeString($this->getSQL(), $con);
+		$statements = PropelSQLParser::parseString($this->getSQL());
+		foreach ($statements as $statement) {
+			if (strpos($statement, 'DROP') === 0) {
+				// drop statements cause errors since the table doesn't exist
+				continue;
+			}
+			$stmt = $con->prepare($statement);
+			if ($stmt instanceof PDOStatement) {
+				// only execute if has no error
+				$stmt->execute();
+			}
+		}
+		return count($statements);
 	}
 	
 	public function getSQL()

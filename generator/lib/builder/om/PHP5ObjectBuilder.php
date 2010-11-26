@@ -367,7 +367,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				$this->addColumnAttributeLoaderComment($script, $col);
 				$this->addColumnAttributeLoaderDeclaration($script, $col);
 			}
-			if ($col->getType() == PropelTypes::OBJECT) {
+			if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
 				$this->addColumnAttributeUnserializedComment($script, $col);
 				$this->addColumnAttributeUnserializedDeclaration($script, $col);
 			}
@@ -923,6 +923,50 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 
 	/**
+	 * Adds an array getter method.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnAccessors()
+	 */
+	protected function addArrayAccessor(&$script, Column $col)
+	{
+		$this->addDefaultAccessorComment($script, $col);
+		$this->addDefaultAccessorOpen($script, $col);
+		$this->addArrayAccessorBody($script, $col);
+		$this->addDefaultAccessorClose($script, $col);
+	}
+
+	/**
+	 * Adds the function body for an array accessor method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addArrayAccessorBody(&$script, Column $col)
+	{
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+		$cloUnserialized = $clo.'_unserialized';
+		if ($col->isLazyLoad()) {
+			$script .= "
+		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
+			\$this->load$cfc(\$con);
+		}
+";
+		}
+
+		$script .= "
+		if (null === \$this->$cloUnserialized) {
+			\$this->$cloUnserialized = array();
+		}
+		if (!\$this->$cloUnserialized && null !== \$this->$clo) {
+			\$$cloUnserialized = substr(\$this->$clo, 2, -2);
+			\$this->$cloUnserialized = \$$cloUnserialized ? explode(' | ', \$$cloUnserialized) : array();
+		}
+		return \$this->$cloUnserialized;";
+	}
+		
+	/**
 	 * Adds a normal (non-temporal) getter method.
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col The current column.
@@ -1427,6 +1471,32 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= ") {
 			\$this->$cloUnserialized = \$v;
 			\$this->$clo = serialize(\$v);
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
+
+	/**
+	 * Adds a setter for Array columns.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnMutators()
+	 */
+	protected function addArrayMutator(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$cloUnserialized = $clo.'_unserialized';
+		$this->addMutatorOpen($script, $col);
+
+		$script .= "
+		if (\$this->$cloUnserialized !== \$v";
+		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+			$script .= " || \$this->isNew()";
+		}
+		$script .= ") {
+			\$this->$cloUnserialized = \$v;
+			\$this->$clo = '| ' . implode(' | ', \$v) . ' |';
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
 ";
