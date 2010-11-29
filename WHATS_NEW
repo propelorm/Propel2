@@ -135,10 +135,10 @@ echo $authors;
 If you want to use another format for the default string representation instead of YAML, you can set the `defaultStringFormat` attribute to any of the supported formats in either the `<database>` or the `<table>` elements in the XML schema:
 	
 {{{
-#!php
+#!xml
 <table name="publisher" defaultStringFormat="XML">
-	<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-	<column name="name" required="true" type="VARCHAR" size="128" />
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="name" required="true" type="VARCHAR" size="128" />
 </table>
 }}}
 
@@ -148,11 +148,11 @@ If you want to use another format for the default string representation instead 
 $publisher = new Publisher();
 $publisher->setName('Penguin');
 echo $publisher;
-//<?xml version="1.0" encoding="UTF-8"?>
-//<data>
-//  <Id></Id>
-//  <Name><![CDATA[Peguin]]></Name>
-//</data>
+// <?xml version="1.0" encoding="UTF-8"?>
+// <data>
+//   <Id></Id>
+//   <Name><![CDATA[Peguin]]></Name>
+// </data>
 }}}
 
 == Multiple Buildtime Connections ==
@@ -236,3 +236,7 @@ $authors = AuthorQuery::create()
 }}}
 
 '''Tip''': `Criteria::addMultipleJoin()`, which allowed the same feature to some extent in previous versions, is now deprecated, since it was vulnerable in SQL injection attacks.
+
+== New Reference Chapter in the Documentation: Active Record ==
+
+There wasn't any one-stop place to read about the abilities of the generated Active Record objects in the Propel documentation. Since Propel 1.6, the new [wiki:Documentation/1.6/ActiveRecord Active Record reference] makes it easier to learn the  usage of Propel models using code examples.

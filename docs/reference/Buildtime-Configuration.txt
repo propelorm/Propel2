@@ -148,7 +148,7 @@ propel.addValidators = {none}|maxvalue|type|required|unique|all
 {{{
 #!ini
 # Whether to add generic getter/setter methods. 
-# Generic accessors are `getByName()`, `getByPOsition(), ` and `toArray()`.
+# Generic accessors are `getByName()`, `getByPosition(), ` and `toArray()`.
 propel.addGenericAccessors = {true}|false
 # Generic mutators are `setByName()`, `setByPosition()`, and `fromArray()`.
 propel.addGenericMutators = {true}|false
