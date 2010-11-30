@@ -1,5 +1,7 @@
 = Working with Advanced Column Types =
 
+[[PageOutline]]
+
 == LOB Columns ==
 
 Propel uses PHP streams internally for storing ''Binary'' Locator Objects (BLOBs).  This choice was made because PDO itself uses streams as a convention when returning LOB columns in a resultset and when binding values to prepared statements.  Unfortunately, not all PDO drivers support this (see, for example, http://bugs.php.net/bug.php?id=40913); in those cases, Propel creates a {{{php://temp}}} stream to hold the LOB contents and thus provide a consistent API.
