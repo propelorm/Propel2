@@ -372,7 +372,7 @@ if ($fp !== null) {
 // The 'house' table has a 'coordinates' column of type OBJECT
 $house = new House();
 $house->setCoordinates(new GeographicCoordinates(48.8527, 2.3510));
-echo $house->getCoordinate()->isInNorthernHemisphere(); // true
+echo $house->getCoordinates()->isInNorthernHemisphere(); // true
 // The setter serializes the PHP object and stores it as a string
 // The getter deserializes the string into a PHP object
 // All that is transparent to the end user, who just manipulates PHP objects

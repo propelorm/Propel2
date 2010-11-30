@@ -237,6 +237,54 @@ $authors = AuthorQuery::create()
 
 '''Tip''': `Criteria::addMultipleJoin()`, which allowed the same feature to some extent in previous versions, is now deprecated, since it was vulnerable in SQL injection attacks.
 
+== Advanced Column Types ==
+
+Propel 1.6 introduces a new set of column types. The database-agnostic implementation allows these types to work on all supported RDBMS.
+
+=== OBJECT Columns ===
+
+An `OBJECT` column can store PHP objects (mostly Value Objects) in the database. The column setter serializes the object, which is later stored to the database as a string. The column getter unserializes the string and returns the object. Therefore, for the end user, the column contains an object.
+
+{{{
+#!php
+<?php
+class GeographicCoordinates
+{
+  public $latitude, $longitude;
+  
+  public function __construct($latitude, $longitude)
+  {
+    $this->latitude = $latitude;
+    $this->longitude = $longitude;
+  }
+  
+  public function isInNorthernHemisphere()
+  {
+    return $this->latitude > 0;
+  }
+}
+
+// The 'house' table has a 'coordinates' column of type OBJECT
+$house = new House();
+$house->setCoordinates(new GeographicCoordinates(48.8527, 2.3510));
+echo $house->getCoordinates()->isInNorthernHemisphere(); // true
+$house->save();
+}}}
+
+Not only do `OBJECT` columns benefit from these smart getter and setter in the generated Active Record class, they are also searchable using the generated `filterByXXX()` method in the query class:
+
+{{{
+#!php
+<?php
+$house = HouseQuery::create()
+ ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
+ ->find();
+}}}
+
+Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
+
+'''Warning''': `ModelCriteria::where()` does not work with object values - only the generated `filterByXXX()` method does.
+
 == New Reference Chapter in the Documentation: Active Record ==
 
 There wasn't any one-stop place to read about the abilities of the generated Active Record objects in the Propel documentation. Since Propel 1.6, the new [wiki:Documentation/1.6/ActiveRecord Active Record reference] makes it easier to learn the  usage of Propel models using code examples.

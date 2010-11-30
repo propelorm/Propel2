@@ -1,10 +1,12 @@
-= Working with LOB Columns =
+= Working with Advanced Column Types =
+
+== LOB Columns ==
 
 Propel uses PHP streams internally for storing ''Binary'' Locator Objects (BLOBs).  This choice was made because PDO itself uses streams as a convention when returning LOB columns in a resultset and when binding values to prepared statements.  Unfortunately, not all PDO drivers support this (see, for example, http://bugs.php.net/bug.php?id=40913); in those cases, Propel creates a {{{php://temp}}} stream to hold the LOB contents and thus provide a consistent API.
 
 Note that CLOB (''Character'' Locator Objects) are treated as strings in Propel, as there is no convention for them to be treated as streams by PDO.
 
-== Getting BLOB Values ==
+=== Getting BLOB Values ===
 
 BLOB values will be returned as PHP stream resources from the accessor methods.  Alternatively, if the value is NULL in the database, then the accessors will return the PHP value NULL.
 
@@ -18,26 +20,19 @@ if ($fp !== null) {
 }
 }}}
 
-== Setting BLOB Values ==
+=== Setting BLOB Values ===
 
 When setting a BLOB column, you can either pass in a stream or the blob contents.
 
-=== Setting using a stream ===
 {{{
 #!php
 <?php
-
+// Setting using a stream
 $fp = fopen("/path/to/file.ext", "rb");
-
 $media = new Media();
 $media->setCoverImage($fp);
-}}}
 
-=== Setting using file contents ===
-{{{
-#!php
-<?php
-
+// Setting using file contents
 $media = new Media();
 $media->setCoverImage(file_get_contents("/path/to/file.ext"));
 }}}
@@ -48,7 +43,6 @@ For example:
 {{{
 #!php
 <?php
-
 $media = new Media();
 $media->setCoverImage(file_get_contents("/path/to/file.ext"));
 
@@ -71,3 +65,51 @@ $media->setCoverImage($fp);
 
 var_export($media->isModified()); // TRUE
 }}}
+
+== OBJECT Columns ==
+
+Propel offers an `OBJECT` column type to store PHP objects in the database. The column setter serializes the object, which is later stored to the database as a string. The column getter unserializes the string and returns the object. Therefore, for the end user, the column contains an object.
+
+=== Getting and Setting OBJECT Values ===
+
+{{{
+#!php
+<?php
+class GeographicCoordinates
+{
+  public $latitude, $longitude;
+  
+  public function __construct($latitude, $longitude)
+  {
+    $this->latitude = $latitude;
+    $this->longitude = $longitude;
+  }
+  
+  public function isInNorthernHemisphere()
+  {
+    return $this->latitude > 0;
+  }
+}
+
+// The 'house' table has a 'coordinates' column of type OBJECT
+$house = new House();
+$house->setCoordinates(new GeographicCoordinates(48.8527, 2.3510));
+echo $house->getCoordinates()->isInNorthernHemisphere(); // true
+$house->save();
+}}}
+
+=== Retrieving Records based on OBJECT Values ===
+
+Not only do `OBJECT` columns benefit from these smart getter and setter in the generated Active Record class, they are also searchable using the generated `filterByXXX()` method in the query class:
+
+{{{
+#!php
+<?php
+$house = HouseQuery::create()
+ ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
+ ->find();
+}}}
+
+Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
+
+'''Warning''': `ModelCriteria::where()` does not work with object values - only the generated `filterByXXX()` method does.
