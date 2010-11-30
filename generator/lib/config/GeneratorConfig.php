@@ -18,7 +18,7 @@ require_once 'phing/Phing.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @package    propel.generator.config
  */
-class GeneratorConfig
+class GeneratorConfig implements GeneratorConfigInterface
 {
 
   /**
