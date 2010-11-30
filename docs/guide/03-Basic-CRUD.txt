@@ -56,11 +56,13 @@ echo $author->toJSON();
 
 '''Tip''': For each export method, Propel also provides an import method counterpart. So you can easily populate an object from an array using `fromArray()`, and from a string using any of `fromXML()`, `fromYAML()`, `fromJSON()`, and `fromCSV()`.
 
+There are a lot more useful methods offered by the generated objects. You can find an extensive  list of these methods in the [wiki:Documentation/1.6/ActiveRecord Active Record reference].
+
 == Retrieving Rows ==
 
 Retrieving objects from the database, also referred to as ''hydrating'' objects, is essentially the process of executing a SELECT query against the database and populating a new instance of the appropriate object with the contents of each returned row.
 
-In Propel, you use the generated Query objects to select existing rows from the database.
+In Propel, you use the generated Query objects to retrieve existing rows from the database.
 
 === Retrieving by Primary Key ===
 
@@ -105,7 +107,7 @@ $selectedAuthors = AuthorQuery::create()->findPKs(array(1,2,3,4,5,6,7));
 
 === Querying the Database ===
 
-To retrieve rows other than by the primary key, use the Query's `find()` method.
+To retrieve rows other than by the primary key, use the Query `find()` method.
 
 An empty Query object carries no condition, and returns all the rows of the table
 {{{
@@ -193,7 +195,7 @@ $books = $formatter->format($stmt);
 
 There are a few important things to remember when using custom SQL to populate Propel:
   * The resultset columns must be numerically indexed
-  * The resultset must contain all columns in the object
+  * The resultset must contain all the columns of the table (except lazy-load columns)
   * The resultset must have columns ''in the same order'' as they are defined in the `schema.xml` file
 
 == Updating Objects ==
@@ -250,7 +252,7 @@ echo $author->isDeleted();    // true
 echo $author->getFirstName(); // 'Jane'
 }}}
 
-== Termination Methods ==
+== Query Termination Methods ==
 
 The Query methods that don't return the current query object are called "Termination Methods". You've alread seen come of them: `find()`, `findOne()`, `update()`, `delete()`. There are two more termination methods that you should know about:
 
@@ -270,7 +272,7 @@ $authorPager = AuthorQuery::create()->paginate($page = 1, $maxPerPage = 10);
 foreach ($authorPager as $author) {
   echo $author->getFirstName();
 }
-// a pager object gives more information
+// A pager object gives more information
 echo $pager->getNbResults();   // total number of results if not paginated
 echo $pager->haveToPaginate(); // return true if the total number of results exceeds the maximum per page
 echo $pager->getFirstIndex();  // index of the first result in the page
