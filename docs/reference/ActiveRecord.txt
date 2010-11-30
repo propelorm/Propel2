@@ -8,7 +8,7 @@ Propel generates smart Active Record classes based on the schema definition of t
 
 For each table present in the XML schema, Propel generates one Active Record class - also called the Model class on some parts of the documentation. Instances of the Active Record classes represent a single row from the database, as specified in the [http://en.wikipedia.org/wiki/Active_record_pattern Active record design pattern]. That makes it easy to create, edit, insert or delete an individual row in the persistence layer.
 
-Consider the following schema, describing a simple `book` table with three columns:
+Consider the following schema, describing a simple `book` table with four columns:
 
 {{{
 #!xml
@@ -16,6 +16,7 @@ Consider the following schema, describing a simple `book` table with three colum
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
   <column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" />
+  <column name="author_id" required="false" type="INTEGER" />
 </table>
 }}}
 
@@ -144,7 +145,7 @@ To use a custom name for these methods, set the `phpName` attribute in the `<col
 <!-- getISBN(), setISBN() !-->
 
 <!-- set the phpName to customize the PHP name when you don't control the column name !-->
-<column name="bz_ygt" required="true" type="VARCHAR" size="24" phpName="title" />
+<column name="bz_ygt" required="true" type="VARCHAR" size="24" phpName="Title" />
 <!-- getTitle(), setTitle() !-->
 }}}
 
@@ -166,7 +167,7 @@ $book->save();
 // On tables with autoincremented PKs, the PK value is available immediately after saving
 echo $book->getId(); // 1234
 
-// To update an object in the database, also use save()
+// To update an object in the database, also use save().
 // Propel knows when an object is new and when it was already persisted
 // Therefore it correctly translates save() to either INSERT or UPDATE in SQL
 $book->setTitle('War and Peace');
@@ -202,7 +203,7 @@ Consider the previous `book` table, now with a foreign key to an `author` table:
   <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="title" type="VARCHAR" required="true" />
   <column name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" />
-  <column name="author_id" required="false" type="INTEGER"  />
+  <column name="author_id" required="false" type="INTEGER" />
   <foreign-key foreignTable="author">
     <reference local="author_id" foreign="id" />
   </foreign-key>
@@ -216,8 +217,8 @@ Consider the previous `book` table, now with a foreign key to an `author` table:
 
 Based on this schema, Propel defines:
 
-* A many-to-one relationship between the `Book` and `Author` classes
-* A one-to-many relationship between the `Author` and `Book` classes
+* A many-to-one relationship from the `Book` class to the `Author` class
+* A one-to-many relationship from the `Author` class to the `Book` class
 
 See the [wiki:Documentation/1.6/04-Relationships Relationships documentation] for more details.
 
@@ -237,7 +238,8 @@ $book->setTitle('War and Peace');
 // A Book has a one Author, therefore Propel generates Book::setAuthor() and Book::getAuthor() methods
 $book->setAuthor($author);
 echo $book->getAuthor()->getLastName(); // Tolstoi
-// This allows to relate two objects without worrying about the primary and foreign keys
+// This allows to relate two objects without worrying about the primary and foreign keys,
+// and it even works on objects not yet persisted.
 }}}
 
 '''Tip''': By default, Propel uses the name of the Active Record class to generate the related object getter and setter. However, you can customize this name by setting the `phpName` attribute in the `<foreign-key>` tag:
@@ -275,16 +277,18 @@ $author->clearBooks(); // removes the relationship
 
 {{{
 #!xml
-<foreign-key foreignTable="author" refName="Publication">
-  <reference local="author_id" foreign="id" />
-</foreign-key>
+<table name="book">
+  <foreign-key foreignTable="author" refName="Publication">
+    <reference local="author_id" foreign="id" />
+  </foreign-key>
+</table>
 <!-- Generated methods will then be Author::addPublication(), Author::getPublications(),
      Author::countPublications(), and Author::clearPublications()
 }}}
 
 === Many-to-many relationships ===
 
-A Many-to-many relationship is defined by a cross reference table. Both sides of the relationship see it as a one-to-many relationship
+A Many-to-many relationship is defined by a cross reference table. Both sides of the relationship see it as a one-to-many relationship.
 
 {{{
 #!php
@@ -297,13 +301,13 @@ Author::addBook(), Author::getBooks(), Author::countBooks(), Author::clearBooks(
 
 === One-to-one relationships ===
 
-If a table contains a foreign key that is also a primary key, Propel sees if as a one-to-one relationship, seen as a many-to-one relationship from both sides.
+If a table contains a foreign key that is also a primary key, Propel sees it as a one-to-one relationship, seen as a many-to-one relationship from both sides.
 
 {{{
 #!php
 <?php
-// If a User has one Profile using the user PK as foreign key, that's a one-to-one relationship
-// Therefore Propel generates the following methods
+// If a User has one Profile using the user PK as foreign key, that's a one-to-one relationship.
+// Therefore Propel generates the following methods:
 User::getProfile(), User::setProfile()
 Profile::getUser(), Profile::setUser()
 }}}
@@ -317,21 +321,47 @@ For some column types, Propel generates getter and setters with additional funct
 {{{
 #!php
 <?php
-// No need to convert a date or time before using the setter on a temporal column.
-// The generated methods accept strings, timestamps, and DateTime objects,
-// And automatically convert the argument to the internal storage format.
-// So the three following calls are equivalent
+// No need to convert a date or time before using the setter on a temporal column
+// (i.e. of type DATE, TIME, TIMESTAMP, BU_DATE, or BU_TIMESTAMP).
+// The generated setter accepts strings, timestamps, and DateTime objects,
+// And automatically converts the argument to the internal storage format.
+// So the three following calls are equivalent:
 $book->setCreatedAt('now');
 $book->setCreatedAt(time());
 $book->setCreatedAt(new DateTime());
 
-// The generated getter returns a DateTime object, butt accepts a format string as argument
+// The generated getter returns a DateTime object, but accepts a format string as argument
 echo $book->getCreatedAt(); // DateTime Object
 echo $book->getCreatedAt('U'); // 1291065396 (timestamp)
 echo $book->getCreatedAt('Y-m-d H:i:s'); // 2010-11-29 22:20:21
 }}}
 
-== Generic Getter and Setters ==
+=== BLOB Columns ===
+
+{{{
+#!php
+<?php
+// The setter for a BLOB column accepts either a string or a stream as parameter.
+// Setting the value from a string
+$media = new Media();
+$media->setCoverImage(file_get_contents("/path/to/file.ext"));
+// Setting the value from a stream
+$fp = fopen("/path/to/file.ext", "rb");
+$media = new Media();
+$media->setCoverImage($fp);
+
+// The getter for a BLOB column returns a PHP stream resource,
+// or NULL if the value is not set in the database.
+$media = MediaQuery::create()->findPk(43564376);
+$fp = $media->getCoverImage();
+if ($fp !== null) {
+  echo stream_get_contents($fp);
+}
+}}}
+
+'''Tip''': CLOB (''Character'' Locator Objects) are treated as strings in Propel, so the getter and setter for a CLOB column have no special functionality.
+
+== Generic Getters and Setters ==
 
 {{{
 #!php
@@ -340,7 +370,7 @@ echo $book->getCreatedAt('Y-m-d H:i:s'); // 2010-11-29 22:20:21
 $book = new Book();
 $book->setByName('Title', 'War and Peace');
 echo $book->getByName('Title'); // War and Peace
-// The name used is the column phpName - the same name used in getters and setters.
+// The name used is the column phpName - the same name used in generated getters and setters.
 // You can also use the table column name by adding a converter argument
 $book->setByName('title', 'War and Peace', BookPeer::TYPE_FIELDNAME);
 echo $book->getByName('title', BookPeer::TYPE_FIELDNAME); // War and Peace
@@ -427,7 +457,7 @@ See the [wiki:Documentation/1.6/05-Validators Validators documentation] for more
 
 == Import and Export Capabilities ==
 
-Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `BaseObject` classes make the related methods visible to an IDE.
+Active Record objects have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats. This ability uses magic methods, but the phpDoc blocks defined in the `BaseObject` class make the related methods visible to an IDE.
 
 Each Active Record object accepts the following method calls:
 
@@ -497,8 +527,8 @@ $book = new Book();
 $book->fromXML($xml);
 echo $book->getTitle(); // War and Peace
 
-// Active Record Objects also provide generic importFrom() and ExportTo() methods
-// Accepting either a format name, or a parser instance (extending PropelParser)
+// Active Record Objects also provide generic importFrom() and exportTo() methods,
+// accepting either a format name, or a parser instance (extending PropelParser)
 $book->importFrom('XML', $xml);
 echo $book->exportTo('XML');
 // This allows for custom parser formats
@@ -513,7 +543,7 @@ echo $book->exportTo('XML');
 
 == Virtual Columns ==
 
-Propel queries allow to hydrate additional columns from related objects, at runtime. These columns can be fetched using the `getVirtulColumn($name)` method, or using the magic getter supported by the generated `__call()` method:
+Propel queries allow to hydrate additional columns from related objects, at runtime. These columns can be fetched using the `getVirtualColumn($name)` method, or using the magic getter supported by the generated `__call()` method:
 
 {{{
 #!php
@@ -552,8 +582,6 @@ See the [wiki:Documentation/1.6/07-Behaviors Behaviors guide] for more details.
 
 == Persistence Status ==
 
-isNew(), setNew(), isDeleted(), setDeleted(), isModified(), isColumnModified(), getModifiedColumns(), reload(), hydrate(), 
-
 {{{
 #!php
 <?php
@@ -585,7 +613,7 @@ $book->delete();
 echo $book->isDeleted(); // true
 
 // You can test and list the modified columns using isColumnModified() and getModifiedColumns()
-// The function uses fully qualified column names (i.e. BasePeer::TYPE_COLNAME)
+// The function uses fully qualified column names (i.e. of type BasePeer::TYPE_COLNAME)
 $book = new Book();
 $book->setTitle('War and Peace');
 echo $book->isColumnModified('book.ISBN'); // false
@@ -604,11 +632,11 @@ echo $book->isColumnModified($colname); // true
 <?php
 // Active Record objects have even more methods
 echo $book->hasOnlyDefaultValues(); // returns true if the column values are default ones
-echo $book->hashCode(); // returns a has code for the instance
+echo $book->hashCode(); // returns a hash code for the instance
 
 $book->clear(); // resets all the user-modified properties and returns the object to a new state
 $book->clearAllReferences() // resets all collections of referencing foreign keys
-// clear() and clearAllReferences() may help in PHP 5.2 to compensate PHP's inability to garbate collect
+// clear() and clearAllReferences() may help in PHP 5.2 to compensate PHP's inability to garbage collect
 
 $book1 = BookQuery::create()->findPk(1234);
 $book2 = book1->copy(); // creates a copy of an Active Record instance
@@ -617,4 +645,4 @@ echo $book1->equals($book2); // compares two ActiveRecord instances
 
 == Conclusion == 
 
-Active Record classes are not only an object-oriented tool to execute SQL queries in a database-independent way. They provide a lot of features to streamline day-to-day work with persisted objects. They can also be seen as a capability of persistence that can be added to any PHP object.
+Active Record classes are not only an object-oriented tool to execute SQL queries in a database-independent way. They provide a lot of features to streamline day-to-day work with persisted objects. They can also be seen as a persistence ability that can be added to any PHP object.
