@@ -158,7 +158,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
     [peerName = "/PEERNAME/"]
     [primaryKey = "true|{false}"]
     [required = "true|{false}"]
-    [type = "BOOLEAN|TINYINT|SMALLINT|INTEGER|BIGINT|DOUBLE|FLOAT|REAL|DECIMAL|CHAR|{VARCHAR}|LONGVARCHAR|DATE|TIME|TIMESTAMP|BLOB|CLOB"]
+    [type = "BOOLEAN|TINYINT|SMALLINT|INTEGER|BIGINT|DOUBLE|FLOAT|REAL|DECIMAL|CHAR|{VARCHAR}|LONGVARCHAR|DATE|TIME|TIMESTAMP|BLOB|CLOB|OBJECT"]
     [phpType = "boolean|int|integer|double|float|string|/BuiltInClassName/|/UserDefinedClassName/"]
     [sqlType = "/NativeDatabaseColumnType/"
     [size = "/NumericLengthOfColumn/"]
@@ -177,11 +177,13 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
    </column>
 }}}
 
-==== Description of Attributes ====
+==== Column Attributes ====
 
- * {{{defaultValue}}} The default value that the object will have for this column in the PHP instance after creating a "new Object". This value is always interpreted as a string.
- * {{{defaultExpr}}} The default value for this column as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the column.
- * {{{primaryString}}} A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
+ * `type` The database-agnostic column type. Propel maps native SQL types to these types depending on the RDBMS. Using Propel types guarantees that a column definition is portable. 
+ * `sqlType` The SQL type to be used in CREATE and ALTER statements (overriding the mapping between Propel types and RMDBS type)
+ * `defaultValue` The default value that the object will have for this column in the PHP instance after creating a "new Object". This value is always interpreted as a string.
+ * `defaultExpr` The default value for this column as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the column.
+ * `primaryString` A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
 
 === <foreign-key> element ===
 
@@ -202,7 +204,7 @@ To link a column to another table use the following syntax:
   </foreign-key>
 }}}
 
-==== Description of Attributes ====
+==== Foreign Key Attributes ====
 
  * {{{defaultJoin}}} This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
 
@@ -259,15 +261,19 @@ The `filename` can be relative or absolute. Beware that the external schema must
 
 == Column Types ==
 
-Here are the Propel column types with some example mappings to native database and PHP types.  There are also several ways to customize the mapping between these types.
+Here are the Propel column types with some example mappings to native database and PHP types. There are also several ways to customize the mapping between these types.
+
+==== Column Types ====
 
 === Text Types ===
 
 ||'''Propel Type'''||'''Desc'''||'''Example Default DB Type (MySQL)'''||'''Default PHP Native Type'''||
-||CHAR||Fixed-lenght character data||CHAR||string||
-||VARCHAR||Variable-lenght character data||VARCHAR||string||
+||CHAR||Fixed-length character data||CHAR||string||
+||VARCHAR||Variable-length character data||VARCHAR||string||
 ||LONGVARCHAR||Long variable-length character data||TEXT||string||
 ||CLOB||Character LOB (locator object)||LONGTEXT||string||
+
+`LONGVARCHAR` and `CLOB` need no declared size, and allow for very large strings (up to 2^16 and 2^32 characters in MySQL for instance).
 
 === Numeric Types ===
 
@@ -282,23 +288,31 @@ Here are the Propel column types with some example mappings to native database a
 ||FLOAT||Floating point number||FLOAT||double||
 ||DOUBLE||Floating point number||DOUBLE||double||
 
+'''Tip''': `BIGINT` maps to a PHP string, and therefore allows for 64 bit integers even on 32 bit systems.
+
 === Binary Types ===
 
 ||'''Propel Type'''||'''Desc'''||'''Example Default DB Type (MySQL)'''||'''Default PHP Native Type'''||
 ||BINARY||Fixed-length binary data||BLOB||double||
 ||VARBINARY||Variable-length binary data||MEDIUMBLOB||double||
 ||LONGVARBINARY||Long variable-length binary data||LONGBLOB||double||
-||BLOB||Binary LOB (locator object)||LONGBLOB||string||
+||BLOB||Binary LOB (locator object)||LONGBLOB||stream or string||
+
+'''Tip''': `BLOB` columns map to PHP as streams, and allows the storage of large binary objects (like images).
 
 === Temporal (Date/Time) Types ===
-
 
 ||'''Propel Type'''||'''Desc'''||'''Example Default DB Type (MySQL)'''||'''Default PHP Native Type'''||
 ||DATE||Date (e.g. YYYY-MM-DD)||DATE||DateTime object||
 ||TIME||Time (e.g. HH:MM:SS)||TIME||DateTime object||
 ||TIMESTAMP||Date + time (e.g. YYYY-MM-DD HH:MM:SS)||TIMESTAMP||DateTime object||
 
-==== Legacy Temporal Types ====
+=== Other Types ===
+
+* `BOOLEAN` columns map to a boolean in PHP. Depending on the native support for this type, they are stored in SQL as `BOOLEAN` or `TINYINT`.
+* `OBJECT` columns map to PHP objects and are stored as strings.
+
+=== Legacy Temporal Types ===
 
 The following Propel 1.2 types are still supported, but are no longer needed with Propel 1.3.
 

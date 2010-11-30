@@ -361,6 +361,39 @@ if ($fp !== null) {
 
 '''Tip''': CLOB (''Character'' Locator Objects) are treated as strings in Propel, so the getter and setter for a CLOB column have no special functionality.
 
+=== OBJECT columns ===
+
+{{{
+#!php
+<?php
+// OBJECT columns allow to store PHP objects in the database.
+// That's especially useful for Value Objects
+
+// The 'house' table has a 'coordinates' column of type OBJECT
+$house = new House();
+$house->setCoordinates(new GeographicCoordinates(48.8527, 2.3510));
+echo $house->getCoordinate()->isInNorthernHemisphere(); // true
+// The setter serializes the PHP object and stores it as a string
+// The getter deserializes the string into a PHP object
+// All that is transparent to the end user, who just manipulates PHP objects
+
+class GeographicCoordinates
+{
+  public $latitude, $longitude;
+  
+  public function __construct($latitude, $longitude)
+  {
+    $this->latitude = $latitude;
+    $this->longitude = $longitude;
+  }
+  
+  public function isInNorthernHemisphere()
+  {
+    return $this->latitude > 0;
+  }
+}
+}}}
+
 == Generic Getters and Setters ==
 
 {{{

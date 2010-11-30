@@ -85,7 +85,7 @@ Within each set of `<table>` tags, define the columns that belong to that table:
 
 Each column has a `name` (the one used by the database), and an optional `phpName` attribute. Once again, the Propel default behavior is to use a CamelCase version of the `name` as `phpName` when not specified.
 
-Each column also requires a `type`. The XML schema is database agnostic, so the column types and attributes are probably not exactly the same as the one you use in your own database. But Propel knows how to map the schema types with SQL types for many database vendors. Existing Propel column types are boolean, tinyint, smallint, integer, bigint, double, float, real, decimal, char, varchar, longvarchar, date, time, timestamp, blob, and clob. Some column types use a `size` (like `varchar` and `int`), some have unlimited size (`longvarchar`, `clob`, `blob`).
+Each column also requires a `type`. The XML schema is database agnostic, so the column types and attributes are probably not exactly the same as the one you use in your own database. But Propel knows how to map the schema types with SQL types for many database vendors. Existing Propel column types are `boolean`, `tinyint`, `smallint`, `integer`, `bigint`, `double`, `float`, `real`, `decimal`, `char`, `varchar`, `longvarchar`, `date`, `time`, `timestamp`, `blob`, `clob`, and `object`. Some column types use a `size` (like `varchar` and `int`), some have unlimited size (`longvarchar`, `clob`, `blob`). Check the [wiki:Documentation/1.6/Schema#ColumnTypes schema reference] for more details on each column type.
 
 As for the other column attributes, `required`, `primaryKey`, and `autoIncrement`, they mean exactly what their names suppose.
 
@@ -126,7 +126,7 @@ A table can have several `<foreign-key>` tags, describing foreign keys to foreig
 
 A foreign key represents a relationship. Just like a table or a column, a relationship has a `phpName`. By default, Propel uses the `phpName` of the foreign table as the `phpName` of the relation. The `refPhpName` defines the name of the relation as seen from the foreign table.
 
-There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [wiki:Documentation/1.6/Schema reference of the schema syntax], together with a [source:branches/1.6/generator/resources/dtd/database.dtd DTD] and a [source:branches/1.6/generator/resources/xsd/database.xsd XSD] schema for its validation.
+There are many more attributes and elements available to describe a datamodel. Propel's documentation provides a complete [wiki:Documentation/1.6/Schema of the schema syntax], together with a [source:branches/1.6/generator/resources/dtd/database.dtd DTD] and a [source:branches/1.6/generator/resources/xsd/database.xsd XSD] schema for its validation.
 
 == Building The Model ==
 
