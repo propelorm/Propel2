@@ -151,6 +151,8 @@ To use a custom name for these methods, set the `phpName` attribute in the `<col
 
 '''Tip''': Calling the setter on an autoincremented PK will throw an exception as soon as you try to save the object. You can allow PK inserts on such columns by setting the `allowPkInsert` attribute to `true` in the `<table>` tag of the XML schema. 
 
+'''Tip''': Calling a getter doesn't issue any database query, except for lazy-loaded columns.
+
 == Persistence Methods ==
 
 Active Record objects provide only two methods that may alter the data stored in the database: `save()`, and `delete()`.

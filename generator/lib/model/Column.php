@@ -1060,8 +1060,8 @@ class Column extends XMLElement
 	}
 
 	/**
-	 * Return auto increment/sequence string for the target database. We need to
-	 * pass in the props for the target database!
+	 * Return true if the columns has to be lazy loaded, i.e. if a runtime query 
+	 * on the table doesn't hydrate this column, but a getter does.
 	 */
 	public function isLazyLoad()
 	{

@@ -1075,7 +1075,7 @@ Propel provides four formatters:
  * `PropelSimpleArrayFormatter`: An array formatter for `select()` queries, returning a string, an associative array for `findOne()`, or a `PropelArrayCollection` of arrays for `find()`
  * `PropelStatementFormatter`: The 'raw' formatter, returning a `PDOStatement` in any case.
 
-You can easily write your own formatter to format the resultas the way you want. A formatter is basically a subclass of `PropelFormatter` providing a `format()` and a `formatOne()` method expecting a PDO statement.
+You can easily write your own formatter to format the results the way you want. A formatter is basically a subclass of `PropelFormatter` providing a `format()` and a `formatOne()` method expecting a PDO statement.
 
 == Writing Your Own business Logic Into A Query ==
 
