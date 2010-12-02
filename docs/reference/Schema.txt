@@ -80,6 +80,8 @@ Starting with the {{{<database>}}} element. The ''attributes'' and ''elements'' 
 The `package`, `baseClass`, `basePeer`, `defaultPhpNamingMethod`, and `heavyIndexing` attributes are generally optional.
 A Database element may include an `<external-schema>` element, or multiple `<table>` elements.
 
+==== Database Attributes ====
+
  * `defaultIdMethod` sets the default id method to use for auto-increment columns.
  * `package` specifies the "package" for the generated classes. Classes are created in subdirectories according to the `package` value. 
  * `namespace` specifies the default namespace that generated model classes will use (PHP 5.3 only). This attribute can be completed or overridden at the table level.
@@ -130,7 +132,7 @@ The `<table>` element is the most complicated of the usable elements. Its defini
 
 According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `namespace`, `phpNamingMethod`, `baseClass`, `basePeer`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
 
-==== Description of Attributes ====
+==== Table Attributes ====
 
  * `idMethod` sets the id method to use for auto-increment columns.
  * `phpName` specifies object model class name. By default, Propel uses a CamelCase version of the table name as phpName.
@@ -262,8 +264,6 @@ The `filename` can be relative or absolute. Beware that the external schema must
 == Column Types ==
 
 Here are the Propel column types with some example mappings to native database and PHP types. There are also several ways to customize the mapping between these types.
-
-==== Column Types ====
 
 === Text Types ===
 
