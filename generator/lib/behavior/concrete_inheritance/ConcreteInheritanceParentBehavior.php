@@ -9,9 +9,9 @@
  */
  
 /**
- * Gives a model class the ability to remain in database even when the user deletes object
- * Uses an additional column storing the deletion date
- * And an additional condition for every read query to only consider rows with no deletion date
+ * Symmetrical behavior of the concrete_inheritance. When model A extends model B,
+ * model A gets the concrete_inheritance behavior, and model B gets the 
+ * concrete_inheritance_parent
  *
  * @author     François Zaninotto
  * @version    $Revision$

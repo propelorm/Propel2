@@ -11,9 +11,11 @@
 require_once 'ConcreteInheritanceParentBehavior.php';
 
 /**
- * Gives a model class the ability to remain in database even when the user deletes object
- * Uses an additional column storing the deletion date
- * And an additional condition for every read query to only consider rows with no deletion date
+ * Makes a model inherit another one. The model with this behavior gets a copy
+ * of the structure of the parent model. In addition, both the ActiveRecord and
+ * ActiveQuery classes will extend the related classes of the parent model.
+ * Lastly (an optionally), the data from a model with this behavior is copied
+ * to the parent model.
  *
  * @author     François Zaninotto
  * @version    $Revision$
