@@ -135,7 +135,7 @@ PHP class or method name.
 >
 
 <!ELEMENT behavior (parameter+)>
-<!ATTLIST index
+<!ATTLIST behavior
   name CDATA #IMPLIED
 >
 
