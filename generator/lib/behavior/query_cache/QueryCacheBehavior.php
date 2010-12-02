@@ -232,7 +232,7 @@ protected function getCountStatement(\$con = null)
 					if (\$this->getHaving()) {
 						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
 					}
-					BasePeer::turnSelectColumnsToAliases(\$this);
+					\$db->turnSelectColumnsToAliases(\$this);
 				}
 				\$selectSql = BasePeer::createSelectSql(\$this, \$params);
 				\$sql = 'SELECT COUNT(*) FROM (' . \$selectSql . ') propelmatch4cnt';
