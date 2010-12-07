@@ -13,12 +13,12 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuick
 require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
 
 /**
- * Tests the generated objects for complex column types accessor & mutator
+ * Tests the generated objects for object column types accessor & mutator
  *
  * @author     Francois Zaninotto
  * @package    generator.builder.om
  */
-class GeneratedObjectComplexTypeTest extends PHPUnit_Framework_TestCase
+class GeneratedObjectObjectColumnTypeTest extends PHPUnit_Framework_TestCase
 {
 	public function testObjectColumnType()
 	{
@@ -44,31 +44,6 @@ EOF;
 		ComplexColumnTypeEntity1Peer::clearInstancePool();
 		$e = ComplexColumnTypeEntity1Query::create()->findOne();
 		$this->assertEquals($c, $e->getBar(), 'object columns are persisted');
-	}
-
-	public function testArrayColumnType()
-	{
-		$schema = <<<EOF
-<database name="generated_object_complex_type_test_2">
-	<table name="complex_column_type_entity_2">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="tags" type="ARRAY" />
-	</table>
-</database>
-EOF;
-		PropelQuickBuilder::buildSchema($schema);
-		$e = new ComplexColumnTypeEntity2();
-		$this->assertequals(array(), $e->getTags(), 'array columns return an empty array by default');
-		$value = array('foo', 1234);
-		$e->setTags($value);
-		$this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
-		$e->setTags(array());
-		$this->assertEquals(array(), $e->getTags(), 'object columns can be reset');
-		$e->setTags($value);
-		$e->save();
-		ComplexColumnTypeEntity2Peer::clearInstancePool();
-		$e = ComplexColumnTypeEntity2Query::create()->findOne();
-		$this->assertEquals($value, $e->getTags(), 'array columns are persisted');
 	}
 }
 
