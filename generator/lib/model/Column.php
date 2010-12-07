@@ -284,6 +284,22 @@ class Column extends XMLElement
 	}
 
 	/**
+	 * Determines whether a column name is plural
+	 */
+	public function isNamePlural()
+	{
+		return $this->getSingularName() != $this->name;
+	}
+	
+	/**
+	 * Gets the singular name for the column
+	 */
+	public function getSingularName()
+	{
+		return rtrim($this->name, 's');
+	}
+	
+	/**
 	 * Get the description for the Table
 	 */
 	public function getDescription()

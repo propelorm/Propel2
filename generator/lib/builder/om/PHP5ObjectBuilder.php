@@ -965,7 +965,41 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		return \$this->$cloUnserialized;";
 	}
-		
+	
+	/**
+	 * Adds a tester method for an array column.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 */
+	protected function addHasArrayElement(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$cfc = $col->getPhpName();
+		$visibility = $col->getAccessorVisibility();
+		$singularPhpName = rtrim($cfc, 's');
+		$script .= "
+	/**
+	 * Test the presence of a value in the [$clo] array column value.
+	 * @param      mixed \$value
+	 * ".$col->getDescription();
+		if ($col->isLazyLoad()) {
+			$script .= "
+	 * @param      PropelPDO An optional PropelPDO connection to use for fetching this lazy-loaded column.";
+		}
+		$script .= "
+	 * @return     Boolean
+	 */
+	$visibility function has$singularPhpName(\$value";
+		if ($col->isLazyLoad()) $script .= ", PropelPDO \$con = null";
+		$script .= ")
+	{
+		return in_array(\$value, \$this->get$cfc(";
+		if ($col->isLazyLoad()) $script .= "\$con";
+		$script .= "));
+	} // has$singularPhpName()
+";
+	}
+	
 	/**
 	 * Adds a normal (non-temporal) getter method.
 	 * @param      string &$script The script will be modified in this method.
@@ -1501,6 +1535,87 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 ";
 		$this->addMutatorClose($script, $col);
+	}
+
+	/**
+	 * Adds a push method for an array column.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 */
+	protected function addAddArrayElement(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$cfc = $col->getPhpName();
+		$visibility = $col->getAccessorVisibility();
+		$singularPhpName = rtrim($cfc, 's');
+		$script .= "
+	/**
+	 * Adds a value to the [$clo] array column value.
+	 * @param      mixed \$value
+	 * ".$col->getDescription();
+		if ($col->isLazyLoad()) {
+			$script .= "
+	 * @param      PropelPDO An optional PropelPDO connection to use for fetching this lazy-loaded column.";
+		}
+		$script .= "
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 */
+	$visibility function add$singularPhpName(\$value";
+		if ($col->isLazyLoad()) $script .= ", PropelPDO \$con = null";
+		$script .= ")
+	{
+		\$currentArray = \$this->get$cfc(";
+		if ($col->isLazyLoad()) $script .= "\$con";
+		$script .= ");
+		\$currentArray []= \$value;
+		\$this->set$cfc(\$currentArray);
+		
+		return \$this;
+	} // add$singularPhpName()
+";
+	}
+
+	/**
+	 * Adds a remove method for an array column.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 */
+	protected function addRemoveArrayElement(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$cfc = $col->getPhpName();
+		$visibility = $col->getAccessorVisibility();
+		$singularPhpName = rtrim($cfc, 's');
+		$script .= "
+	/**
+	 * Removes a value from the [$clo] array column value.
+	 * @param      mixed \$value
+	 * ".$col->getDescription();
+		if ($col->isLazyLoad()) {
+			$script .= "
+	 * @param      PropelPDO An optional PropelPDO connection to use for fetching this lazy-loaded column.";
+		}
+		$script .= "
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 */
+	$visibility function remove$singularPhpName(\$value";
+		if ($col->isLazyLoad()) $script .= ", PropelPDO \$con = null";
+		// we want to reindex the array, so array_ functions are not the best choice
+		$script .= ")
+	{
+		\$targetArray = array();
+		foreach (\$this->get$cfc(";
+		if ($col->isLazyLoad()) $script .= "\$con";
+		$script .= ") as \$element) {
+			if (\$element !== \$value) {
+				\$targetArray []= \$element;
+			}
+		}
+		\$this->set$cfc(\$targetArray);
+
+		return \$this;
+	} // remove$singularPhpName()
+";
 	}
 
 	/**

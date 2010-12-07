@@ -132,5 +132,25 @@ EOF;
 		$fk = $appData->getDatabase('test')->getTable('table1')->getColumnForeignKeys('table2_bar');
 		$this->assertTrue($fk[0]->isLocalColumnsRequired());
 	}
+	
+	public function testIsNamePlural()
+	{
+		$column = new Column('foo');
+		$this->assertFalse($column->isNamePlural());
+		$column = new Column('foos');
+		$this->assertTrue($column->isNamePlural());
+		$column = new Column('foso');
+		$this->assertFalse($column->isNamePlural());
+	}
+
+	public function testGetSingularName()
+	{
+		$column = new Column('foo');
+		$this->assertEquals('foo', $column->getSingularName());
+		$column = new Column('foos');
+		$this->assertEquals('foo', $column->getSingularName());
+		$column = new Column('foso');
+		$this->assertEquals('foso', $column->getSingularName());
+	}
 
 }

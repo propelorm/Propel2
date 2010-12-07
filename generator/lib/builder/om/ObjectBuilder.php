@@ -62,6 +62,9 @@ abstract class ObjectBuilder extends OMBuilder
 				$this->addObjectAccessor($script, $col);
 			} else if ($col->getType() === PropelTypes::PHP_ARRAY) {
 				$this->addArrayAccessor($script, $col);
+				if ($col->isNamePlural()) {
+					$this->addHasArrayElement($script, $col);
+				}
 			} else {
 				$this->addDefaultAccessor($script, $col);
 			}
@@ -89,6 +92,10 @@ abstract class ObjectBuilder extends OMBuilder
 				$this->addObjectMutator($script, $col);
 			} else if ($col->getType() === PropelTypes::PHP_ARRAY) {
 				$this->addArrayMutator($script, $col);
+				if ($col->isNamePlural()) {
+					$this->addAddArrayElement($script, $col);
+					$this->addRemoveArrayElement($script, $col);
+				}
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}
