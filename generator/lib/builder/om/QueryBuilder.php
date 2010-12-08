@@ -181,6 +181,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		$this->addFilterByPrimaryKeys($script);
 		foreach ($this->getTable()->getColumns() as $col) {
 			$this->addFilterByCol($script, $col);
+			if ($col->getType() === PropelTypes::PHP_ARRAY && $col->isNamePlural()) {
+				$this->addFilterByArrayCol($script, $col);
+			}
 		}
 		foreach ($this->getTable()->getForeignKeys() as $fk) {
 			$this->addFilterByFK($script, $fk);
@@ -571,6 +574,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			$script .= "
 	 * @param     " . $col->getPhpType() . "|array \$$variableName The value to use as filter.
 	 *            Accepts an associative array('min' => \$minValue, 'max' => \$maxValue)";
+		} elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
+			$script .= "
+	 * @param     array \$$variableName The values to use as filter.";
 		} elseif ($col->isTextType()) {
 			$script .= "
 	 * @param     string \$$variableName The value to use as filter.
@@ -621,19 +627,35 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}";
 		} elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
 			$script .= "
-		if (null === \$comparison || \$comparison == Criteria::CONTAINS) {
-			if (is_scalar(\$$variableName)) {
-				\$$variableName = '%| ' . \$$variableName . ' |%';
-				\$comparison = Criteria::LIKE;
+		\$key = \$this->getAliasedColName($qualifiedName);
+		if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
+			foreach (\$$variableName as \$value) {
+				\$value = '%| ' . \$value . ' |%';
+				if(\$this->containsKey(\$key)) {
+					\$this->addAnd(\$key, \$value, Criteria::LIKE);
+				} else {
+					\$this->add(\$key, \$value, Criteria::LIKE);
+				}
 			}
-		} elseif (\$comparison == Criteria::NOT_CONTAINS) {
-			\$$variableName = '%| ' . \$$variableName . ' |%';
-			\$comparison = Criteria::NOT_LIKE;
-			\$key = \$this->getAliasedColName($qualifiedName);
-			if(\$this->containsKey(\$key)) {
-				\$this->addAnd(\$key, \$$variableName, \$comparison);
-			} else {
-				\$this->addAnd(\$key, \$$variableName, \$comparison);
+			return \$this;
+		} elseif (\$comparison == Criteria::CONTAINS_SOME) {
+			foreach (\$$variableName as \$value) {
+				\$value = '%| ' . \$value . ' |%';
+				if(\$this->containsKey(\$key)) {
+					\$this->addOr(\$key, \$value, Criteria::LIKE);
+				} else {
+					\$this->add(\$key, \$value, Criteria::LIKE);
+				}
+			}
+			return \$this;
+		} elseif (\$comparison == Criteria::CONTAINS_NONE) {
+			foreach (\$$variableName as \$value) {
+				\$value = '%| ' . \$value . ' |%';
+				if(\$this->containsKey(\$key)) {
+					\$this->addAnd(\$key, \$value, Criteria::NOT_LIKE);
+				} else {
+					\$this->add(\$key, \$value, Criteria::NOT_LIKE);
+				}
 			}
 			\$this->addOr(\$key, null, Criteria::ISNULL);
 			return \$this;
@@ -655,6 +677,49 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		}";
 		}
 		$script .= "
+		return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+	}
+";
+	}
+
+	/**
+	 * Adds the singular filterByCol method for an Arry column.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addFilterByArrayCol(&$script, $col)
+	{
+		$colPhpName = $col->getPhpName();
+		$singularPhpName = rtrim($colPhpName, 's');
+		$colName = $col->getName();
+		$variableName = $col->getStudlyPhpName();
+		$qualifiedName = $this->getColumnConstant($col);
+		$script .= "
+	/**
+	 * Filter the query on the $colName column
+	 * @param     mixed \$$variableName The value to use as filter
+	 * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+	 *
+	 * @return    " . $this->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
+	 */
+	public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
+	{
+		if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
+			if (is_scalar(\$$variableName)) {
+				\$$variableName = '%| ' . \$$variableName . ' |%';
+				\$comparison = Criteria::LIKE;
+			}
+		} elseif (\$comparison == Criteria::CONTAINS_NONE) {
+			\$$variableName = '%| ' . \$$variableName . ' |%';
+			\$comparison = Criteria::NOT_LIKE;
+			\$key = \$this->getAliasedColName($qualifiedName);
+			if(\$this->containsKey(\$key)) {
+				\$this->addAnd(\$key, \$$variableName, \$comparison);
+			} else {
+				\$this->addAnd(\$key, \$$variableName, \$comparison);
+			}
+			\$this->addOr(\$key, null, Criteria::ISNULL);
+			return \$this;
+		}
 		return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
 	}
 ";

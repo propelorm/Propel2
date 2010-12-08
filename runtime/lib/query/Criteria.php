@@ -55,10 +55,13 @@ class Criteria implements IteratorAggregate
 	const NOT_LIKE = " NOT LIKE ";
 
 	/** Comparison for array column types */
-	const CONTAINS = "CONTAINS";
+	const CONTAINS_ALL = "CONTAINS_ALL";
 
 	/** Comparison for array column types */
-	const NOT_CONTAINS = "NOT_CONTAINS";
+	const CONTAINS_SOME = "CONTAINS_SOME";
+
+	/** Comparison for array column types */
+	const CONTAINS_NONE = "CONTAINS_NONE";
 	
 	/** PostgreSQL comparison type */
 	const ILIKE = " ILIKE ";
