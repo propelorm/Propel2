@@ -287,7 +287,7 @@ Propel looks in the database for a serialized version of the object passed as pa
 
 === ARRAY Columns ===
 
-An `ARRAY` column can store a simple PHP array in the database (nested arrays and associative arrays are not accepted). The column setter serializes the array, which is later stored to the database as a string. The column getter unserializes the string and returns the array. Therefore, for the end user, the column contains an object.
+An `ARRAY` column can store a simple PHP array in the database (nested arrays and associative arrays are not accepted). The column setter serializes the array, which is later stored to the database as a string. The column getter unserializes the string and returns the array. Therefore, for the end user, the column contains an array.
 
 {{{
 #!php
@@ -311,17 +311,17 @@ Propel doesn't use `serialize()` to transform the array into a string. Instead, 
 {{{
 #!php
 <?php
-// Search books that contains all the specified tags
+// Search books that contain all the specified tags
 $books = BookQuery::create()
   ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_ALL)
   ->find();
 
-// Search books that contains some of the specified tags
+// Search books that contain at least one of the specified tags
 $books = BookQuery::create()
   ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_SOME)
   ->find();
 
-// Search books that contains none of the specified tags
+// Search books that don't contain any of the specified tags
 $books = BookQuery::create()
   ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_NONE)
   ->find();
