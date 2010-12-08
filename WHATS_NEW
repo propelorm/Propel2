@@ -36,9 +36,9 @@ Migrations are a fantastic way to work on complex projects with always evolving 
 
 Propel migrations can also be executed incrementally - the new `up` and `down` tasks are there for that. And when you're lost in migration, call the `status` task to chack which migrations were already executed, and which ones should be executed to update the database structure.
 
-The Propel guide offers [wiki:Users/Documentation/1.6/Migrations an entire chapter on Migrations] to explain how to use them and how they work.
+The Propel guide offers [wiki:Documentation/1.6/Migrations an entire chapter on Migrations] to explain how to use them and how they work.
 
-Migrations only work on MySQL for now. On other platforms, you should continue to use `sql` and `insert-sql`.
+Migrations only work on MySQL and PostgreSQL for now. On other platforms, you should continue to use `sql` and `insert-sql`.
 
 == XML/YAML/JSON/CSV Parsing and Dumping ==
 
