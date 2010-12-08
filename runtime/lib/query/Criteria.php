@@ -391,7 +391,7 @@ class Criteria implements IteratorAggregate
 	public function getTableNameAndAlias($tableAliasOrName)
 	{
 		if (isset($this->aliases[$tableAliasOrName])) {
-			return array($this->aliases[$alias], $tableAliasOrName);
+			return array($this->aliases[$tableAliasOrName], $tableAliasOrName);
 		} else {
 			return array($tableAliasOrName, null);
 		}
