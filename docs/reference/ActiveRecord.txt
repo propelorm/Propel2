@@ -396,6 +396,36 @@ class GeographicCoordinates
 }
 }}}
 
+'''Tip''': OBJECT columns are searchable, given an object as the search value. See the [http://www.propelorm.org/wiki/Documentation/1.6/ModelCriteria#ColumnFilterMethods Query reference] for more details.
+
+=== ARRAY columns ===
+
+{{{
+#!php
+<?php
+// ARRAY columns allow to store simple PHP arrays in the database.
+// Nested arrays and associative arrays are not accepted.
+
+// The 'book' table has a 'tags' column of type ARRAY
+$book = new Book();
+$book->setTags(array('novel', 'russian'));
+print_r($book->getTags()); // array('novel', 'russian')
+// The setter serializes the PHP array and stores it as a string
+// The getter deserializes the string into a PHP array
+// All that is transparent to the end user, who just manipulates PHP arrays
+
+// If the column name is plural, Propel also generates hasXXX(), addXXX(),
+// and removeXXX() methods, where XXX is the singular column name
+echo $book->hasTag('novel'); // true
+$book->addTag('romantic');
+print_r($book->getTags()); // array('novel', 'russian', 'romantic')
+$book->removeTag('russian');
+print_r($book->getTags()); // array('novel', 'romantic')
+}}}
+
+'''Tip''': ARRAY columns are searchable, given an array or a scalar as the search value. See the [http://www.propelorm.org/wiki/Documentation/1.6/ModelCriteria#ColumnFilterMethods Query reference] for more details.
+
+
 == Generic Getters and Setters ==
 
 {{{

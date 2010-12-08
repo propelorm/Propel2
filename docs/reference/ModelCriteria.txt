@@ -148,13 +148,47 @@ WHERE book.PUBLISHED_AT < :p1; // :p1 => 1291065396
 {{{
 #!php
 <?php
-$house = HouseQuery::create()
- ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
- ->find();
+$houses = HouseQuery::create()
+  ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
+  ->find();
 // example Query generated for a MySQL database
 $query = 'SELECT house.* from `house`
 WHERE house.COORDINATES = :p1; // :p1 => 'O:21:"GeographicCoordinates":2:{s:8:"latitude";d:48.8527;s:9:"longitude";d:2.3510;}'
 }}}
+
+ * for Array columns, Propel stores a serialized version of the array that makes it searchable. Therefore, `filterByXXX()` accepts a PHP array. Use any of `Criteria::CONTAINS_ALL`, `Criteria::CONTAINS_SOME`, or `Criteria::CONTAINS_NONE` as second argument to the filter method.
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_ALL)
+  ->find();
+// example Query generated for a MySQL database
+$query = 'SELECT book.* from `book`
+WHERE book.TAGS LIKE :p1  // :p1 => '%| novel |%'
+OR    book.TAGS LIKE :p2; // :p2 => '%| russian |%'
+
+$books = BookQuery::create()
+  ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_NONE)
+  ->find();
+// example Query generated for a MySQL database
+$query = 'SELECT book.* from `book`
+WHERE book.TAGS NOT LIKE :p1 // :p1 => '%| novel |%'
+AND   book.TAGS NOT LIKE :p2 // :p2 => '%| russian |%'
+OR    book.TAGS IS NULL;
+
+// If the column name is plural, Propel also generates singular filter methods
+// expecting a scalar parameter instead of an array
+$books = BookQuery::create()
+  ->filterByTag('russian')
+  ->find();
+// example Query generated for a MySQL database
+$query = 'SELECT book.* from `book`
+WHERE book.TAGS LIKE :p1; // :p1 => '%| russian |%'
+}}}
+
+'''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
 === Relation Filter Methods ===
 

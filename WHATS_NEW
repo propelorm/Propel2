@@ -277,13 +277,65 @@ Not only do `OBJECT` columns benefit from these smart getter and setter in the g
 #!php
 <?php
 $house = HouseQuery::create()
- ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
- ->find();
+  ->filterByCoordinates(new GeographicCoordinates(48.8527, 2.3510))
+  ->find();
 }}}
 
 Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
 
-'''Warning''': `ModelCriteria::where()` does not work with object values - only the generated `filterByXXX()` method does.
+'''Warning''': `ModelCriteria::where()` does not work with `OBJECT` columns - only the generated `filterByXXX()` method does.
+
+=== ARRAY Columns ===
+
+An `ARRAY` column can store a simple PHP array in the database (nested arrays and associative arrays are not accepted). The column setter serializes the array, which is later stored to the database as a string. The column getter unserializes the string and returns the array. Therefore, for the end user, the column contains an object.
+
+{{{
+#!php
+<?php
+// The 'book' table has a 'tags' column of type ARRAY
+$book = new Book();
+$book->setTags(array('novel', 'russian'));
+print_r($book->getTags()); // array('novel', 'russian')
+
+// If the column name is plural, Propel also generates hasXXX(), addXXX(),
+// and removeXXX() methods, where XXX is the singular column name
+echo $book->hasTag('novel'); // true
+$book->addTag('romantic');
+print_r($book->getTags()); // array('novel', 'russian', 'romantic')
+$book->removeTag('russian');
+print_r($book->getTags()); // array('novel', 'romantic')
+}}}
+
+Propel doesn't use `serialize()` to transform the array into a string. Instead, it uses a special serialization function, that makes it possible to search for values of `ARRAY` columns.
+
+{{{
+#!php
+<?php
+// Search books that contains all the specified tags
+$books = BookQuery::create()
+  ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_ALL)
+  ->find();
+
+// Search books that contains some of the specified tags
+$books = BookQuery::create()
+  ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_SOME)
+  ->find();
+
+// Search books that contains none of the specified tags
+$books = BookQuery::create()
+  ->filterByTags(array('novel', 'russian'), Criteria::CONTAINS_NONE)
+  ->find();
+
+// If the column name is plural, Propel also generates singular filter methods
+// expecting a scalar parameter instead of an array
+$books = BookQuery::create()
+  ->filterByTag('russian')
+  ->find();
+}}}
+
+'''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
+
+'''Warning''': Just like for `OBJECT` columns, `ModelCriteria::where()` does not work with `ARRAY` columns.
 
 == New Reference Chapter in the Documentation: Active Record ==
 
