@@ -65,6 +65,8 @@ abstract class ObjectBuilder extends OMBuilder
 				if ($col->isNamePlural()) {
 					$this->addHasArrayElement($script, $col);
 				}
+			} else if ($col->isEnumType()) {
+				$this->addEnumAccessor($script, $col);
 			} else {
 				$this->addDefaultAccessor($script, $col);
 			}
@@ -96,6 +98,8 @@ abstract class ObjectBuilder extends OMBuilder
 					$this->addAddArrayElement($script, $col);
 					$this->addRemoveArrayElement($script, $col);
 				}
+			} else if ($col->isEnumType()) {
+				$this->addEnumMutator($script, $col);
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}

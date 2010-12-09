@@ -47,7 +47,8 @@ class PropelColumnTypes
 		BOOLEAN = "BOOLEAN",
 		BOOLEAN_EMU = "BOOLEAN_EMU",
 		OBJECT = "OBJECT",
-		PHP_ARRAY = "ARRAY";
+		PHP_ARRAY = "ARRAY",
+		ENUM = "ENUM";
 
 	private static $propelToPdoMap = array(
 		self::CHAR        => PDO::PARAM_STR,
@@ -77,6 +78,7 @@ class PropelColumnTypes
 		self::BOOLEAN_EMU => PDO::PARAM_INT,
 		self::OBJECT      => PDO::PARAM_STR,
 		self::PHP_ARRAY   => PDO::PARAM_STR,
+		self::ENUM   => PDO::PARAM_INT,
 	);
 
 	/**

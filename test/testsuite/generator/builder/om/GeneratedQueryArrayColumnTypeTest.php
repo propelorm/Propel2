@@ -28,9 +28,6 @@ class GeneratedQueryArrayColumnTypeTest extends PHPUnit_Framework_TestCase
 	<table name="complex_column_type_entity_11">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="tags" type="ARRAY" />
-	</table>
-	<table name="complex_column_type_entity_12">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="value_set" type="ARRAY" />
 	</table>
 </database>
@@ -55,7 +52,7 @@ EOF;
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity11Query', 'filterByTags'));
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity11Query', 'filterByTag'));
 		// only plural column names get a singular filter
-		$this->assertTrue(method_exists('ComplexColumnTypeEntity12Query', 'filterByValueSet'));
+		$this->assertTrue(method_exists('ComplexColumnTypeEntity11Query', 'filterByValueSet'));
 	}
 
 	public function testColumnHydration()

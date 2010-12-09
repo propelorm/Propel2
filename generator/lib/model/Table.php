@@ -1365,6 +1365,20 @@ class Table extends XMLElement implements IDMethod
 		}
 		return $count;
 	}
+	
+	/**
+	 * Checks whether one of the columns is of type ENUM
+	 * @return boolean
+	 */
+	public function hasEnumColumns()
+	{
+		foreach ($this->getColumns() as $col) {
+			if ($col->isEnumType()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Returns an Array containing all the validators in the table

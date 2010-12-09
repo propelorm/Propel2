@@ -28,9 +28,6 @@ class GeneratedObjectArrayColumnTypeTest extends PHPUnit_Framework_TestCase
 	<table name="complex_column_type_entity_2">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="tags" type="ARRAY" />
-	</table>
-	<table name="complex_column_type_entity_3">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="value_set" type="ARRAY" />
 	</table>
 </database>
@@ -47,11 +44,11 @@ EOF;
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'addTag'));
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'removeTag'));
 		// only plural column names get a tester, an adder, and a remover method
-		$this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'getValueSet'));
-		$this->assertFalse(method_exists('ComplexColumnTypeEntity3', 'hasValueSet'));
-		$this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'setValueSet'));
-		$this->assertFalse(method_exists('ComplexColumnTypeEntity3', 'addValueSet'));
-		$this->assertFalse(method_exists('ComplexColumnTypeEntity3', 'removeValueSet'));
+		$this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'getValueSet'));
+		$this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'hasValueSet'));
+		$this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'setValueSet'));
+		$this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'addValueSet'));
+		$this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'removeValueSet'));
 	}
 	
 	public function testGetterDefaultValue()
@@ -121,7 +118,7 @@ EOF;
 		$this->assertEquals(array(12, 34), $e->getTags());
 	}
 	
-	public function testValueIsPersisted($value='')
+	public function testValueIsPersisted()
 	{
 		$e = new ComplexColumnTypeEntity2();
 		$value = array('foo', 1234);

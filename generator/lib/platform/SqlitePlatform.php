@@ -36,6 +36,7 @@ class SqlitePlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "LONGTEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "MEDIUMTEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "MEDIUMTEXT"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
 	}
 
 	/**

@@ -45,6 +45,7 @@ class PropelTypes
 	const BOOLEAN_EMU = "BOOLEAN_EMU";
 	const OBJECT = "OBJECT";
 	const PHP_ARRAY = "ARRAY";
+	const ENUM = "ENUM";
 
 	private static $TEXT_TYPES = array(
 		self::CHAR, self::VARCHAR, self::LONGVARCHAR, self::CLOB, self::DATE, self::TIME, self::TIMESTAMP, self::BU_DATE, self::BU_TIMESTAMP
@@ -93,6 +94,7 @@ class PropelTypes
 	const BOOLEAN_EMU_NATIVE_TYPE = "boolean";
 	const OBJECT_NATIVE_TYPE = "";
 	const PHP_ARRAY_NATIVE_TYPE = "array";
+	const ENUM_NATIVE_TYPE = "string";
 	
 	/**
 	 * Mapping between Propel types and PHP native types.
@@ -127,6 +129,7 @@ class PropelTypes
 			self::BOOLEAN_EMU => self::BOOLEAN_EMU_NATIVE_TYPE,
 			self::OBJECT => self::OBJECT_NATIVE_TYPE,
 			self::PHP_ARRAY => self::PHP_ARRAY_NATIVE_TYPE,
+			self::ENUM => self::ENUM_NATIVE_TYPE,
 	);
 
 	/**
@@ -160,6 +163,7 @@ class PropelTypes
 			self::BOOLEAN_EMU => self::BOOLEAN_EMU,
 			self::OBJECT => self::OBJECT,
 			self::PHP_ARRAY => self::PHP_ARRAY,
+			self::ENUM => self::ENUM,
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric
 			// timestamps on Windows.
@@ -199,6 +203,7 @@ class PropelTypes
 			self::BOOLEAN_EMU => PDO::PARAM_INT,
 			self::OBJECT => PDO::PARAM_STR,
 			self::PHP_ARRAY => PDO::PARAM_STR,
+			self::ENUM => PDO::PARAM_INT,
 
 			// These are pre-epoch dates, which we need to map to String type
 			// since they cannot be properly handled using strtotime() -- or even numeric

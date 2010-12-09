@@ -89,6 +89,11 @@ class Column extends XMLElement
 
 	/** class name to do input validation on this column */
 	private $inputValidator = null;
+	
+	/**
+	 * @var stores the possible values of an ENUM column
+	 */
+	protected $valueSet = array();
 
 	/**
 	 * @var				 Domain The domain object associated with this Column.
@@ -166,7 +171,7 @@ class Column extends XMLElement
 			}
 
 			// Accessor visibility
-			if ($this->getAttribute('accessorVisibility', null) !==	 null) {
+			if ($this->getAttribute('accessorVisibility', null) !== null) {
 				$this->setAccessorVisibility($this->getAttribute('accessorVisibility'));
 			} elseif ($this->getTable()->getAttribute('defaultAccessorVisibility', null) !== null) {
 				$this->setAccessorVisibility($this->getTable()->getAttribute('defaultAccessorVisibility'));
@@ -177,7 +182,7 @@ class Column extends XMLElement
 			}
 
 			// Mutator visibility
-			if ($this->getAttribute('mutatorVisibility', null) !==	null) {
+			if ($this->getAttribute('mutatorVisibility', null) !== null) {
 				$this->setMutatorVisibility($this->getAttribute('mutatorVisibility'));
 			} elseif ($this->getTable()->getAttribute('defaultMutatorVisibility', null) !== null) {
 				$this->setMutatorVisibility($this->getTable()->getAttribute('defaultMutatorVisibility'));
@@ -224,6 +229,12 @@ class Column extends XMLElement
 				$this->getDomain()->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
 			} elseif ($this->getAttribute("defaultExpr") !== null) {
 				$this->getDomain()->setDefaultValue(new ColumnDefaultValue($this->getAttribute("defaultExpr"), ColumnDefaultValue::TYPE_EXPR));
+			}
+			
+			if ($this->getAttribute('valueSet', null) !== null) {
+				$valueSet = explode(',', $this->getAttribute("valueSet"));
+				$valueSet = array_map('trim', $valueSet);
+				$this->valueSet = $valueSet;
 			}
 
 			$this->inheritanceType = $this->getAttribute("inheritance");
@@ -873,6 +884,24 @@ class Column extends XMLElement
 	public function isTemporalType()
 	{
 		return PropelTypes::isTemporalType($this->getType());
+	}
+	
+	/**
+	 * Utility method to know whether column is an ENUM column.
+	 * @return		 boolean
+	 */
+	public function isEnumType()
+	{
+		return $this->getType() == PropelTypes::ENUM;
+	}
+	
+	/**
+	 * Returns the list of possible values for an ENUM column
+	 * @return array 
+	 */
+	public function getValueSet()
+	{
+		return $this->valueSet;
 	}
 
 	/**

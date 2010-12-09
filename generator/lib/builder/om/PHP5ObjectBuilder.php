@@ -967,6 +967,49 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 	
 	/**
+	 * Adds an enum getter method.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnAccessors()
+	 */
+	protected function addEnumAccessor(&$script, Column $col)
+	{
+		$this->addDefaultAccessorComment($script, $col);
+		$this->addDefaultAccessorOpen($script, $col);
+		$this->addEnumAccessorBody($script, $col);
+		$this->addDefaultAccessorClose($script, $col);
+	}
+
+	/**
+	 * Adds the function body for an enum accessor method
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        addDefaultAccessor()
+	 **/
+	protected function addEnumAccessorBody(&$script, Column $col)
+	{
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+		if ($col->isLazyLoad()) {
+			$script .= "
+		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
+			\$this->load$cfc(\$con);
+		}
+";
+		}
+
+		$script .= "
+		if (null === \$this->$clo) {
+			return null;
+		}
+		\$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+		if (!isset(\$valueSet[\$this->$clo])) {
+			throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
+		}
+		return \$valueSet[\$this->$clo];";
+	}
+	
+	/**
 	 * Adds a tester method for an array column.
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col The current column.
@@ -1618,6 +1661,38 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 	}
 
+	/**
+	 * Adds a setter for Enum columns.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnMutators()
+	 */
+	protected function addEnumMutator(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+		$this->addMutatorOpen($script, $col);
+
+		$script .= "
+		if (\$v !== null) {
+			\$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+			if (!in_array(\$v, \$valueSet)) {
+				throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
+			}
+			\$v = array_search(\$v, \$valueSet);
+		}
+
+		if (\$this->$clo !== \$v";
+		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+			$script .= " || \$this->isNew()";
+		}
+		$script .= ") {
+			\$this->$clo = \$v;
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
+	
 	/**
 	 * Adds setter method for "normal" columns.
 	 * @param      string &$script The script will be modified in this method.

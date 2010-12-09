@@ -234,6 +234,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		
 		$this->addFieldNamesAttribute($script);
 		$this->addFieldKeysAttribute($script);
+
+		if ($this->getTable()->hasEnumColumns()) {
+			$this->addEnumColumnAttributes($script);
+		}
 	}
 
 	/**
@@ -346,6 +350,27 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 	} // addFielKeysAttribute
 
+	/**
+	 * Adds the valueSet attributes for ENUM columns.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addEnumColumnAttributes(&$script)
+	{
+		$script .= "
+	/** The enumerated values for this table */
+	protected static \$enumValueSets = array(
+";
+		foreach ($this->getTable()->getColumns() as $col) {
+			if ($col->isEnumType()) {
+				$script .= "
+		self::" . $this->getColumnName($col) ." => " . var_export($col->getValueSet(), true) . ",
+";
+			}
+		}
+		$script .= "
+	);
+";
+	}
 
 	protected function addGetFieldNames(&$script)
 	{
@@ -395,6 +420,45 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 	} // addTranslateFieldName()
 
+	/**
+	 * Adds the getValueSets() method.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addGetValueSets(&$script)
+	{
+		$this->declareClassFromBuilder($this->getTableMapBuilder());
+		$script .= "
+	/**
+	 * Gets the list of values for all ENUM columns
+	 * @return array
+	 */
+	public static function getValueSets()
+	{
+	  return self::\$enumValueSets;
+	}
+";
+	}
+
+	/**
+	 * Adds the getValueSet() method.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addGetValueSet(&$script)
+	{
+		$this->declareClassFromBuilder($this->getTableMapBuilder());
+		$script .= "
+	/**
+	 * Gets the list of values for an ENUM column
+	 * @return array list of possible values for the column
+	 */
+	public static function getValueSet(\$colname)
+	{
+		\$valueSet = self::\$enumValueSets[\$colname];
+	  return \$valueSet;
+	}
+";
+	}
+	
 	/**
 	 * Adds the buildTableMap() method.
 	 * @param      string &$script The script will be modified in this method.

@@ -50,6 +50,7 @@
 			<xs:enumeration value="BOOLEAN"/>
 			<xs:enumeration value="OBJECT"/>
 			<xs:enumeration value="ARRAY"/>
+			<xs:enumeration value="ENUM"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -477,6 +478,13 @@
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					 A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="valueSet" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					 The list of values for an ENUM column, separated by commas
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>

@@ -87,7 +87,7 @@ PHP class or method name.
         | DATE   | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
         | NULL   | OTHER   | PHP_OBJECT  | DISTINCT   | STRUCT    | ARRAY
         | BLOB   | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
-        | DOUBLE | BOOLEAN | OBJECT      | ARRAY
+        | DOUBLE | BOOLEAN | OBJECT      | ARRAY      | ENUM
     ) "VARCHAR"
   phpType CDATA #IMPLIED
   sqlType CDATA #IMPLIED
@@ -103,6 +103,7 @@ PHP class or method name.
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"
   primaryString (true|false) "false"
+  valueSet CDATA #IMPLIED
 >
 
 <!ELEMENT inheritance EMPTY>
