@@ -28,6 +28,7 @@ class GeneratedObjectObjectEnumTypeTest extends PHPUnit_Framework_TestCase
 	<table name="complex_column_type_entity_13">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
+		<column name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar" />
 	</table>
 </database>
 EOF;
@@ -65,6 +66,12 @@ EOF;
 		$e = new PublicComplexColumnTypeEntity13();
 		$e->bar = 156;
 		$e->getBar();
+	}
+	
+	public function testGetterDefaultValue()
+	{
+		$e = new PublicComplexColumnTypeEntity13();
+		$this->assertEquals('bar', $e->getBar2());
 	}
 
 	public function testSetter()

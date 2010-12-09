@@ -650,8 +650,18 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$colconsts = array();
 		foreach ($colsWithDefaults as $col) {
 			$clo = strtolower($col->getName());
+			if ($col->isEnumType()) {
+				$defaultValue = $col->getPhpDefaultValue();
+				$valueSet = $col->getValueSet();
+				if (!in_array($defaultValue, $valueSet)) {
+					throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $defaultValue));
+				}
+				$defaultValue = array_search($defaultValue, $valueSet);
+			} else {
+				$defaultValue = $this->getDefaultValueString($col);
+			}
 			$script .= "
-		\$this->".$clo." = ".$this->getDefaultValueString($col).";";
+		\$this->".$clo." = $defaultValue;";
 
 		}
 	}
