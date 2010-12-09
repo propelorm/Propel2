@@ -239,7 +239,35 @@ $authors = AuthorQuery::create()
 
 == Advanced Column Types ==
 
-Propel 1.6 introduces a new set of column types. The database-agnostic implementation allows these types to work on all supported RDBMS.
+Propel 1.6 introduces a new set of column types. The database-agnostic implementation allows these column types to work on all supported RDBMS.
+
+=== ENUM Columns ===
+
+Although stored in the database as integers, ENUM columns let users manipulate a set of predefined values, without worrying about their storage.
+
+{{{
+#!xml
+<table name="book">
+  ...
+  <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
+</table>
+}}}
+
+{{{
+#!php
+<?php
+// The ActiveRecord setter and getter let users use any value from the valueSet
+$book = new Book();
+$book->setStyle('novel');
+echo $house->getStyle(); // novel
+// Trying to set a value not in the valueSet throws an exception
+
+// ENUM columns are also searchable, using the generated filterByXXX() method
+// or other ModelCritera methods (like where(), orWhere(), condition())
+$books = BookQuery::create()
+  ->filterByStyle('novel')
+  ->find();
+}}}
 
 === OBJECT Columns ===
 
@@ -282,8 +310,6 @@ $house = HouseQuery::create()
 }}}
 
 Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
-
-'''Warning''': `Criteria` alone does support conditions on `OBJECT` columns - only `ModelCriteria` and generated Query classes do.
 
 === ARRAY Columns ===
 
@@ -335,8 +361,7 @@ $books = BookQuery::create()
 
 '''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
-'''Warning''': Just like for `OBJECT` columns, `Criteria` alone does support conditions on `ARRAY` columns.
-
+'''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, `orWhere()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does support conditions on such columns. 
 == New Reference Chapter in the Documentation: Active Record ==
 
 There wasn't any one-stop place to read about the abilities of the generated Active Record objects in the Propel documentation. Since Propel 1.6, the new [wiki:Documentation/1.6/ActiveRecord Active Record reference] makes it easier to learn the  usage of Propel models using code examples.

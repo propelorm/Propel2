@@ -363,6 +363,22 @@ if ($fp !== null) {
 
 '''Tip''': CLOB (''Character'' Locator Objects) are treated as strings in Propel, so the getter and setter for a CLOB column have no special functionality.
 
+=== ENUM columns ===
+
+{{{
+#!php
+<?php
+// ENUM columns accept only values chosen from a list of permitted values
+// that are enumerated explicitly in the column specification at table creation time.
+
+// Example for the book table:
+// <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
+$book = new Book();
+$book->setStyle('novel');
+echo $house->getStyle(); // novel
+// An enum is stored as a TINYINT in the database
+}}}
+
 === OBJECT columns ===
 
 {{{
