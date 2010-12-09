@@ -375,7 +375,7 @@ if ($fp !== null) {
 // <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
 $book = new Book();
 $book->setStyle('novel');
-echo $house->getStyle(); // novel
+echo $book->getStyle(); // novel
 // An enum is stored as a TINYINT in the database
 }}}
 

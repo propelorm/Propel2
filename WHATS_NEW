@@ -259,7 +259,7 @@ Although stored in the database as integers, ENUM columns let users manipulate a
 // The ActiveRecord setter and getter let users use any value from the valueSet
 $book = new Book();
 $book->setStyle('novel');
-echo $house->getStyle(); // novel
+echo $book->getStyle(); // novel
 // Trying to set a value not in the valueSet throws an exception
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
