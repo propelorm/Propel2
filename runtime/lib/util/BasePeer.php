@@ -141,7 +141,7 @@ class BasePeer
 				$sql .= " WHERE " .  implode(" AND ", $whereClause);
 
 				$stmt = $con->prepare($sql);
-				self::populateStmtValues($stmt, $params, $dbMap, $db);
+				$db->bindValues($stmt, $params, $dbMap);
 				$stmt->execute();
 				$affectedRows = $stmt->rowCount();
 			} catch (Exception $e) {
@@ -285,7 +285,7 @@ class BasePeer
 			$db->cleanupSQL($sql, $params, $criteria, $dbMap);
 
 			$stmt = $con->prepare($sql);
-			self::populateStmtValues($stmt, $params, $dbMap, $db);
+			$db->bindValues($stmt, $params, $dbMap, $db);
 			$stmt->execute();
 
 		} catch (Exception $e) {
@@ -420,7 +420,7 @@ class BasePeer
 				$stmt = $con->prepare($sql);
 
 				// Replace ':p?' with the actual values
-				self::populateStmtValues($stmt, $params, $dbMap, $db);
+				$db->bindValues($stmt, $params, $dbMap, $db);
 
 				$stmt->execute();
 
@@ -465,7 +465,7 @@ class BasePeer
 
 			$stmt = $con->prepare($sql);
 
-			self::populateStmtValues($stmt, $params, $dbMap, $db);
+			$db->bindValues($stmt, $params, $dbMap);
 
 			$stmt->execute();
 
@@ -527,7 +527,7 @@ class BasePeer
 			}
 
 			$stmt = $con->prepare($sql);
-			self::populateStmtValues($stmt, $params, $dbMap, $db);
+			$db->bindValues($stmt, $params, $dbMap);
 			$stmt->execute();
 
 		} catch (Exception $e) {
@@ -539,88 +539,6 @@ class BasePeer
 		}
 
 		return $stmt;
-	}
-
-	/**
-	 * Populates values in a prepared statement.
-	 *
-	 * This method is designed to work with the createSelectSql() method, which creates
-	 * both the SELECT SQL statement and populates a passed-in array of parameter
-	 * values that should be substituted.
-	 *
-	 * <code>
-	 * $params = array();
-	 * $sql = BasePeer::createSelectSql($criteria, $params);
-	 * BasePeer::populateStmtValues($stmt, $params, Propel::getDatabaseMap($critera->getDbName()), Propel::getDB($criteria->getDbName()));
-	 * </code>
-	 *
-	 * @param      PDOStatement $stmt
-	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
-	 * @param      DatabaseMap $dbMap
-	 * @return     int The number of params replaced.
-	 * @see        createSelectSql()
-	 * @see        doSelect()
-	 */
-	public static function populateStmtValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap, DBAdapter $db)
-	{
-		$i = 1;
-		foreach ($params as $param) {
-			$tableName = $param['table'];
-			$columnName = $param['column'];
-			$value = $param['value'];
-
-			if (null === $value) {
-
-				$stmt->bindValue(':p'.$i++, null, PDO::PARAM_NULL);
-
-			} elseif (null !== $tableName) {
-
-				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
-				$type = $cMap->getType();
-				$pdoType = $cMap->getPdoType();
-
-				// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
-				// See http://pecl.php.net/bugs/bug.php?id=9919
-				if ($pdoType == PDO::PARAM_BOOL && $db instanceof DBMySQL) {
-					$value = (int) $value;
-					$pdoType = PDO::PARAM_INT;
-				} elseif (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
-					if ($type == PropelColumnTypes::TIMESTAMP) {
-						$value = date($db->getTimestampFormatter(), $value);
-					} else if ($type == PropelColumnTypes::DATE) {
-						$value = date($db->getDateFormatter(), $value);
-					} else if ($type == PropelColumnTypes::TIME) {
-						$value = date($db->getTimeFormatter(), $value);
-					}
-				} elseif ($value instanceof DateTime && $cMap->isTemporal()) { // it's a timestamp that needs to be formatted
-					if ($type == PropelColumnTypes::TIMESTAMP || $type == PropelColumnTypes::BU_TIMESTAMP) {
-						$value = $value->format($db->getTimestampFormatter());
-					} else if ($type == PropelColumnTypes::DATE || $type == PropelColumnTypes::BU_DATE) {
-						$value = $value->format($db->getDateFormatter());
-					} else if ($type == PropelColumnTypes::TIME) {
-						$value = $value->format($db->getTimeFormatter());
-					}
-				} elseif (is_resource($value) && $cMap->isLob()) {
-					// we always need to make sure that the stream is rewound, otherwise nothing will
-					// get written to database.
-					rewind($value);
-				}
-
-				// pdo_sqlsrv must have bind binaries using bindParam so that the PDO::SQLSRV_ENCODING_BINARY
-				// driver option can be utilized.  This requires a unique blob parameter because the bindParam
-				// value is passed by reference and if we didn't do this then the referenced parameter value
-				// would change on the next loop
-				if($db instanceof DBSQLSRV && is_resource($value) && $cMap->isLob()) {
-					$blob = "blob".$i;
-					$$blob = $value;
-					$stmt->bindParam(':p'.$i++,  ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-				} else {
-					$stmt->bindValue(':p'.$i++, $value, $pdoType);
-				}
-			} else {
-				$stmt->bindValue(':p'.$i++, $value);
-			}
-		} // foreach
 	}
 
 	/**

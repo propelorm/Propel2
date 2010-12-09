@@ -141,5 +141,28 @@ class DBMySQL extends DBAdapter
 	{
 		return 'rand('.((int) $seed).')';
 	}
+	
+	/**
+	 * @see        DBAdapter::bindValue()
+	 */
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap)
+	{
+		$pdoType = $cMap->getPdoType();
+		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
+		// See http://pecl.php.net/bugs/bug.php?id=9919
+		if ($pdoType == PDO::PARAM_BOOL) {
+			$value = (int) $value;
+			$pdoType = PDO::PARAM_INT;
+			return $stmt->bindValue($parameter, $value, $pdoType);
+		} elseif ($cMap->isTemporal()) {
+			$value = $this->formatTemporalValue($value, $cMap);
+		} elseif (is_resource($value) && $cMap->isLob()) {
+			// we always need to make sure that the stream is rewound, otherwise nothing will
+			// get written to database.
+			rewind($value);
+		}
+
+		return $stmt->bindValue($parameter, $value, $pdoType);
+	}
 
 }

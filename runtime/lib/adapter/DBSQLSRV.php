@@ -65,4 +65,27 @@ class DBSQLSRV extends DBMSSQL
 			$i++;
 		}
 	}
+	
+	/**
+	 * @see        DBAdapter::bindValue()
+	 */
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap)
+	{
+		if ($cMap->isTemporal()) {
+			$value = $this->formatTemporalValue($value, $cMap);
+		} elseif (is_resource($value) && $cMap->isLob()) {
+			// we always need to make sure that the stream is rewound, otherwise nothing will
+			// get written to database.
+			rewind($value);
+			// pdo_sqlsrv must have bind binaries using bindParam so that the PDO::SQLSRV_ENCODING_BINARY
+			// driver option can be utilized. This requires a unique blob parameter because the bindParam
+			// value is passed by reference and if we didn't do this then the referenced parameter value
+			// would change on the next loop
+			$blob = "blob".$position;
+			$$blob = $value;
+			return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+		}
+
+		return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
+	}
 }

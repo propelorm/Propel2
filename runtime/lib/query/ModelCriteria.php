@@ -1205,7 +1205,7 @@ class ModelCriteria extends Criteria
 			$params = array();
 			$sql = BasePeer::createSelectSql($this, $params);
 			$stmt = $con->prepare($sql);
-			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$db->bindValues($stmt, $params, $dbMap);
 			$stmt->execute();
 		} catch (Exception $e) {
 			if (isset($stmt)) {
@@ -1378,7 +1378,7 @@ class ModelCriteria extends Criteria
 				$sql = BasePeer::createSelectSql($this, $params);
 			}
 			$stmt = $con->prepare($sql);
-			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$db->bindValues($stmt, $params, $dbMap);
 			$stmt->execute();
 		} catch (PropelException $e) {
 			if ($stmt) {

@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  * @author     Francois Zaninotto
  * @package    generator.builder.om
  */
-class GeneratedObjectObjectEnumTypeTest extends PHPUnit_Framework_TestCase
+class GeneratedObjectEnumColumnTypeTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
