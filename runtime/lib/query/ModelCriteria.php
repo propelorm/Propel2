@@ -1712,13 +1712,27 @@ class ModelCriteria extends Criteria
 	
 	/**
 	 * Converts value for some column types
+	 *
+	 * @param  mixed     $value  The value to convert
+	 * @param  ColumnMap $colMap The ColumnMap object
+	 * @return mixed             The converted value
 	 */
-	protected function convertValueForColumn($value, $colMap)
+	protected function convertValueForColumn($value, ColumnMap $colMap)
 	{
 		if ($colMap->getType() == 'OBJECT' && is_object($value)) {
-			$value = serialize($value);
+			if (is_array($value)) {
+				$value = array_map('serialize', $value);
+			} else {
+				$value = serialize($value);
+			}
 		} elseif ($colMap->getType() == 'ARRAY' && is_array($value)) {
 			$value = '| ' . implode(' | ', $value) . ' |';
+		} elseif ($colMap->getType() == 'ENUM') {
+			if (is_array($value)) {
+				$value = array_map(array($colMap, 'getValueSetKey'), $value);
+			} else {
+				$value = $colMap->getValueSetKey($value);
+			}
 		}
 		
 		return $value;

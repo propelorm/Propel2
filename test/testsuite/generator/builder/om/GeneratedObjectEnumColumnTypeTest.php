@@ -22,10 +22,10 @@ class GeneratedObjectEnumColumnTypeTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		if (!class_exists('ComplexColumnTypeEntity13')) {
+		if (!class_exists('ComplexColumnTypeEntity3')) {
 			$schema = <<<EOF
-<database name="generated_object_complex_type_test_13">
-	<table name="complex_column_type_entity_13">
+<database name="generated_object_complex_type_test_3">
+	<table name="complex_column_type_entity_3">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
 		<column name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar" />
@@ -35,7 +35,7 @@ EOF;
 			PropelQuickBuilder::buildSchema($schema);
 			// ok this is hackish but it makes testing of getter and sette rindependent of each other
 			$publicAccessorCode = <<<EOF
-class PublicComplexColumnTypeEntity13 extends ComplexColumnTypeEntity13
+class PublicComplexColumnTypeEntity3 extends ComplexColumnTypeEntity3
 {
 	public \$bar; 
 }
@@ -46,10 +46,10 @@ EOF;
 	
 	public function testGetter()
 	{
-		$this->assertTrue(method_exists('ComplexColumnTypeEntity13', 'getBar'));
-		$e = new ComplexColumnTypeEntity13();
+		$this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'getBar'));
+		$e = new ComplexColumnTypeEntity3();
 		$this->assertNull($e->getBar());
-		$e = new PublicComplexColumnTypeEntity13();
+		$e = new PublicComplexColumnTypeEntity3();
 		$e->bar = 0;
 		$this->assertEquals('foo', $e->getBar());
 		$e->bar = 3;
@@ -63,21 +63,21 @@ EOF;
 	 */
 	public function testGetterThrowsExceptionOnUnknownKey()
 	{
-		$e = new PublicComplexColumnTypeEntity13();
+		$e = new PublicComplexColumnTypeEntity3();
 		$e->bar = 156;
 		$e->getBar();
 	}
 	
 	public function testGetterDefaultValue()
 	{
-		$e = new PublicComplexColumnTypeEntity13();
+		$e = new PublicComplexColumnTypeEntity3();
 		$this->assertEquals('bar', $e->getBar2());
 	}
 
 	public function testSetter()
 	{
-		$this->assertTrue(method_exists('ComplexColumnTypeEntity13', 'setBar'));
-		$e = new PublicComplexColumnTypeEntity13();
+		$this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'setBar'));
+		$e = new PublicComplexColumnTypeEntity3();
 		$e->setBar('foo');
 		$this->assertEquals(0, $e->bar);
 		$e->setBar(1);
@@ -93,17 +93,17 @@ EOF;
 	 */
 	public function testSetterThrowsExceptionOnUnknownValue()
 	{
-		$e = new ComplexColumnTypeEntity13();
+		$e = new ComplexColumnTypeEntity3();
 		$e->setBar('bazz');
 	}
 	
 	public function testValueIsPersisted()
 	{
-		$e = new ComplexColumnTypeEntity13();
+		$e = new ComplexColumnTypeEntity3();
 		$e->setBar('baz');
 		$e->save();
-		ComplexColumnTypeEntity13Peer::clearInstancePool();
-		$e = ComplexColumnTypeEntity13Query::create()->findOne();
+		ComplexColumnTypeEntity3Peer::clearInstancePool();
+		$e = ComplexColumnTypeEntity3Query::create()->findOne();
 		$this->assertEquals('baz', $e->getBar());
 	}
 }

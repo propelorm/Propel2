@@ -660,7 +660,25 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 			\$this->addOr(\$key, null, Criteria::ISNULL);
 			return \$this;
 		}";
-			} elseif ($col->isTextType()) {
+		} elseif ($col->getType() == PropelTypes::ENUM) {
+			$script .= "
+		\$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+		if (is_scalar(\$$variableName)) {
+			if (!in_array(\$$variableName, \$valueSet)) {
+				throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$variableName));
+			}
+			\$$variableName = array_search(\$$variableName, \$valueSet);
+		} elseif (is_array(\$$variableName)) {
+			\$convertedValues = array();
+			foreach (\$$variableName as \$value) {
+				if (!in_array(\$value, \$valueSet)) {
+					throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$value));
+				}
+				\$convertedValues []= array_search(\$value, \$valueSet);
+			}
+			\$$variableName = \$convertedValues;
+		}";
+		} elseif ($col->isTextType()) {
 			$script .= "
 		if (null === \$comparison) {
 			if (is_array(\$$variableName)) {

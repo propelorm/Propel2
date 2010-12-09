@@ -59,6 +59,9 @@ class ColumnMap
   // The validators for this column
   protected $validators = array();
 
+  // The allowed values for an ENUM column
+  protected $valueSet = array();
+
   /**
    * Constructor.
    *
@@ -111,7 +114,7 @@ class ColumnMap
   }
 
   /**
-   * Set the php anme of this column.
+   * Set the php name of this column.
    *
    * @param      string $phpName A string representing the PHP name.
    * @return     void
@@ -416,6 +419,36 @@ class ColumnMap
   public function getValidators()
   {
     return $this->validators;
+  }
+  
+  /**
+   * Set the valueSet of this column (only valid for ENUM columns).
+   *
+   * @param      array $values A list of allowed values
+   */
+  public function setValueSet($values)
+  {
+    $this->valueSet = $values;
+  }
+  
+  /**
+   * Get the valueSet of this column (only valid for ENUM columns).
+   *
+   * @return     array A list of allowed values
+   */
+  public function getValueSet()
+  {
+    return $this->valueSet;
+  }
+  
+  public function isInValueSet($value)
+  {
+    return in_array($value, $this->valueSet);
+  }
+  
+  public function getValueSetKey($value)
+  {
+    return array_search($value, $this->valueSet);
   }
   
   /**

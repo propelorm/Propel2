@@ -215,11 +215,15 @@ class ".$this->getClassname()." extends TableMap {
 						$script .= "
 		\$this->addForeignKey('$cup', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".strtoupper($fk->getMappedForeignColumn($col->getName()))."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
 					}
-			} else {
+				} else {
 					$script .= "
 		\$this->addColumn('$cup', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
 				}
 			} // if col-is prim key
+			if ($col->isEnumType()) {
+				$script .= "
+		\$this->getColumn('$cup', false)->setValueSet(" . var_export($col->getValueSet(), true). ");";
+			}
 		} // foreach
 
 		// validators
