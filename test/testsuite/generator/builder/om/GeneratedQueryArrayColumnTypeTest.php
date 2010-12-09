@@ -61,6 +61,20 @@ EOF;
 		$this->assertEquals(array('foo', 'bar', 'baz'), $e->getTags(), 'array columns are correctly hydrated');
 	}
 
+	public function testWhere()
+	{
+		$e = ComplexColumnTypeEntity11Query::create()
+			->where('ComplexColumnTypeEntity11.Tags LIKE ?', '%| bar23 |%')
+			->find();
+		$this->assertEquals(1, $e->count());
+		$this->assertEquals(array('bar23'), $e[0]->getTags(), 'array columns are searchable by serialized object using where()');
+		$e = ComplexColumnTypeEntity11Query::create()
+			->where('ComplexColumnTypeEntity11.Tags = ?', array('bar23'))
+			->find();
+		$this->assertEquals(1, $e->count());
+		$this->assertEquals(array('bar23'), $e[0]->getTags(), 'array columns are searchable by object using where()');
+	}
+
 	public function testFilterByColumn()
 	{
 		$e = ComplexColumnTypeEntity11Query::create()

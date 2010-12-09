@@ -188,7 +188,7 @@ $query = 'SELECT book.* from `book`
 WHERE book.TAGS LIKE :p1'; // :p1 => '%| russian |%'
 }}}
 
-'''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
+'''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires an expensive table scan, and is not suited for large tables.
 
 === Relation Filter Methods ===
 

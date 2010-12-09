@@ -283,7 +283,7 @@ $house = HouseQuery::create()
 
 Propel looks in the database for a serialized version of the object passed as parameter of the `filterByXXX()` method.
 
-'''Warning''': `ModelCriteria::where()` does not work with `OBJECT` columns - only the generated `filterByXXX()` method does.
+'''Warning''': `Criteria` alone does support conditions on `OBJECT` columns - only `ModelCriteria` and generated Query classes do.
 
 === ARRAY Columns ===
 
@@ -335,7 +335,7 @@ $books = BookQuery::create()
 
 '''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
-'''Warning''': Just like for `OBJECT` columns, `ModelCriteria::where()` does not work with `ARRAY` columns.
+'''Warning''': Just like for `OBJECT` columns, `Criteria` alone does support conditions on `ARRAY` columns.
 
 == New Reference Chapter in the Documentation: Active Record ==
 

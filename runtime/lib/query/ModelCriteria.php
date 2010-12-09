@@ -1694,7 +1694,9 @@ class ModelCriteria extends Criteria
 			} else {
 				$operator = ModelCriteria::MODEL_CLAUSE;
 			}
-			$criterion = new ModelCriterion($this, $this->replacedColumns[0], $value, $operator, $clause);
+			$colMap = $this->replacedColumns[0];
+			$value = $this->convertValueForColumn($value, $colMap);
+			$criterion = new ModelCriterion($this, $colMap, $value, $operator, $clause);
 			if ($this->currentAlias != '') {
 				$criterion->setTable($this->currentAlias);
 			}
@@ -1706,6 +1708,20 @@ class ModelCriteria extends Criteria
 			$criterion = new Criterion($this, null, $clause, Criteria::CUSTOM);
 		}
 		return $criterion;
+	}
+	
+	/**
+	 * Converts value for some column types
+	 */
+	protected function convertValueForColumn($value, $colMap)
+	{
+		if ($colMap->getType() == 'OBJECT' && is_object($value)) {
+			$value = serialize($value);
+		} elseif ($colMap->getType() == 'ARRAY' && is_array($value)) {
+			$value = '| ' . implode(' | ', $value) . ' |';
+		}
+		
+		return $value;
 	}
 
 	/**
