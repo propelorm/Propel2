@@ -500,21 +500,22 @@ $bookTag = BookTagQuery::create()
 
 === Reusing A Query ===
 
-By default, termination methods like `findOne()`, `find()`, `count()`, `paginate()`, or `delete()` alter the original query. That means that if you need to reuse a query after a termination method, you must call the `keepQuery()` method first:
+By default, termination methods like `findOne()`, `find()`, `count()`, `paginate()`, or `delete()` clone the original query. That means that you can reuse a query after a termination method:
 
 {{{
 #!php
 <?php
 $q = BookQuery::create()->filterByIsPublished(true);
 $book = $q->findOneByTitle('War And Peace');
-// findOneByXXX() adds a limit() to the query
-// so further reuses of the query may show side effects
-echo $q->count(); // 1
-
-// to allos query reuse, call keepQuery() before the termination method
-$q = BookQuery::create()->filterByIsPublished(true)->keepQuery();
-$book = $q->findOneByTitle('War And Peace');
+// findOneByXXX() adds a limit(1) to the query
+// but further reuses of the query are not affected
 echo $q->count(); // 34
+
+// You can disable query reuse by calling keepQuery(false) before the termination method
+// This will bring a small boost in performance
+$q = BookQuery::create()->filterByIsPublished(true)->keepQuery(false);
+$book = $q->findOneByTitle('War And Peace');
+echo $q->count(); // 1
 }}}
 
 == Relational API ==

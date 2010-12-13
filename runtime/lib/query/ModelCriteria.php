@@ -48,7 +48,7 @@ class ModelCriteria extends Criteria
 	protected $with = array();
 	protected $isWithOneToMany = false;
 	protected $previousJoin = null; // this is introduced to prevent useQuery->join from going wrong
-	protected $isKeepQuery = false; // whether to clone the current object before termination methods
+	protected $isKeepQuery = true; // whether to clone the current object before termination methods
 	protected $select = null;  // this is for the select method
 
 	/**

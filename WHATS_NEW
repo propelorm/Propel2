@@ -366,3 +366,7 @@ $books = BookQuery::create()
 == New Reference Chapter in the Documentation: Active Record ==
 
 There wasn't any one-stop place to read about the abilities of the generated Active Record objects in the Propel documentation. Since Propel 1.6, the new [wiki:Documentation/1.6/ActiveRecord Active Record reference] makes it easier to learn the  usage of Propel models using code examples.
+
+== Miscellaneous ==
+
+ * `ModelCriteria::keepQuery()` is now ON by default. This will remove bad surprises when doing a `count()` before a `find()`, and has a very limited impact on performance. You should not need to manually call `keepQuery()` anymore.  
