@@ -9,9 +9,7 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../../fixtures/schemas/build/classes'));
+require_once dirname(__FILE__) . '/../../../../tools/helpers/schemas/SchemasTestBase.php';
 
 /**
  * Tests for AggregateColumnBehavior class
@@ -20,24 +18,19 @@ set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__
  * @version		$Revision$
  * @package		generator.behavior.aggregate_column
  */
-class AggregateColumnBehaviorWithSchemaTest extends PHPUnit_Framework_TestCase
+class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 {
 	protected function setUp()
 	{
 		parent::setUp();
-		if (!file_exists(dirname(__FILE__) . '/../../../../fixtures/schemas/build/conf/bookstore-conf.php')) {
-			$this->markTestSkipped('You must build the schemas project fot this tests to run');
-		}
-		Propel::init(dirname(__FILE__) . '/../../../../fixtures/schemas/build/conf/bookstore-conf.php');
 		$this->con = Propel::getConnection(BookstoreSchemasBookstorePeer::DATABASE_NAME);
 		$this->con->beginTransaction();
 	}
 
 	protected function tearDown()
 	{
-		parent::tearDown();
 		$this->con->commit();
-		Propel::init(dirname(__FILE__) . '/../../../../fixtures/bookstore/build/conf/bookstore-conf.php');
+		parent::tearDown();
 	}
 	
 	public function testParametersWithSchema()

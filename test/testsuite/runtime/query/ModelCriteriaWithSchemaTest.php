@@ -8,32 +8,17 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__) . '/../../../fixtures/schemas/build/classes'));
+require_once dirname(__FILE__) . '/../../../tools/helpers/schemas/SchemasTestBase.php';
 
 /**
- * Test class for ModelCriteria.
+ * Test class for ModelCriteria withs schemas.
  *
  * @author     Francois Zaninotto
  * @version    $Id: ModelCriteriaTest.php 2090 2010-12-13 22:37:03Z francois $
  * @package    runtime.query
  */
-class ModelCriteriaWithSchemaTest extends PHPUnit_Framework_TestCase
+class ModelCriteriaWithSchemaTest extends SchemasTestBase
 {
-	protected function setUp()
-	{
-		if (!file_exists(dirname(__FILE__) . '/../../../fixtures/schemas/build/conf/bookstore-conf.php')) {
-			$this->markTestSkipped('You must build the schemas project fot this tests to run');
-		}
-		Propel::init(dirname(__FILE__) . '/../../../fixtures/schemas/build/conf/bookstore-conf.php');
-	}
-	
-	protected function tearDown()
-	{
-		parent::tearDown();
-		Propel::init(dirname(__FILE__) . '/../../../fixtures/bookstore/build/conf/bookstore-conf.php');
-	}
 	
 	protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
 	{
