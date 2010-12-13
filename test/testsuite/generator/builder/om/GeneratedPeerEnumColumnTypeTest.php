@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
  * @author     Francois Zaninotto
  * @package    generator.builder.om
  */
-class GeneratedObjectObjectEnumTypeTest extends PHPUnit_Framework_TestCase
+class GeneratedPeerEnumColumnTypeTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
@@ -33,6 +33,28 @@ class GeneratedObjectObjectEnumTypeTest extends PHPUnit_Framework_TestCase
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
+	}
+	
+	public function valueSetConstantProvider()
+	{
+		return array(
+			array('ComplexColumnTypeEntity103Peer::BAR_FOO', 'foo'),
+			array('ComplexColumnTypeEntity103Peer::BAR_BAR', 'bar'),
+			array('ComplexColumnTypeEntity103Peer::BAR_BAZ', 'baz'),
+			array('ComplexColumnTypeEntity103Peer::BAR_1', '1'),
+			array('ComplexColumnTypeEntity103Peer::BAR_4', '4'),
+			array('ComplexColumnTypeEntity103Peer::BAR__', '('),
+			array('ComplexColumnTypeEntity103Peer::BAR_FOO_BAR', 'foo bar'),
+		);
+	}
+	
+	/**
+	 * @dataProvider valueSetConstantProvider
+	 */
+	public function testValueSetConstants($constantName, $value)
+	{
+		$this->assertTrue(defined($constantName));
+		$this->assertEquals($value, constant($constantName));
 	}
 	
 	public function testGetValueSets()

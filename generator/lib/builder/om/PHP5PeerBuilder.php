@@ -214,7 +214,10 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 		$this->addColumnNameConstants($script);
 		$this->addInheritanceColumnConstants($script);
-
+		if ($this->getTable()->hasEnumColumns()) {
+			$this->addEnumColumnConstants($script);
+		}
+		
 		$script .= "
 	/** The default string format for model objects of the related table **/
 	const DEFAULT_STRING_FORMAT = '" . $this->getTable()->getDefaultStringFormat() . "';
@@ -248,12 +251,37 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	{
 		foreach ($this->getTable()->getColumns() as $col) {
 			$script .= "
-	/** the column name for the ".strtoupper($col->getName()) ." field */
+	/** the column name for the " . strtoupper($col->getName()) ." field */
 	const ".$this->getColumnName($col) ." = '" . $this->getTable()->getName() . ".".strtoupper($col->getName())."';
 ";
 		} // foreach
 	}
 
+	/**
+	 * Adds the valueSet constants for ENUM columns.
+	 * @param      string &$script The script will be modified in this method.
+	 */
+	protected function addEnumColumnConstants(&$script)
+	{
+		foreach ($this->getTable()->getColumns() as $col) {
+			if ($col->isEnumType()) {
+				$script .= "
+	/** The enumerated values for the " . strtoupper($col->getName()) . " field */";
+				foreach ($col->getValueSet() as $value) {
+					$script .= "
+	const " . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . " = '" . $value . "';";
+				}
+				$script .= "
+";
+			}
+		}
+	}
+	
+	protected function getEnumValueConstant($value)
+	{
+		return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
+	}
+	
 	protected function addFieldNamesAttribute(&$script)
 	{
 		$table = $this->getTable();
@@ -358,13 +386,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	{
 		$script .= "
 	/** The enumerated values for this table */
-	protected static \$enumValueSets = array(
-";
+	protected static \$enumValueSets = array(";
 		foreach ($this->getTable()->getColumns() as $col) {
 			if ($col->isEnumType()) {
 				$script .= "
-		self::" . $this->getColumnName($col) ." => " . var_export($col->getValueSet(), true) . ",
+		self::" . $this->getColumnName($col) ." => array(
 ";
+				foreach ($col->getValueSet() as $value) {
+					$script .= "			" . $this->getStubPeerBuilder()->getClassname() . '::' . $this->getColumnName($col) . '_' . $this->getEnumValueConstant($value) . ",
+";
+				}
+				$script .= "		),";
 			}
 		}
 		$script .= "
