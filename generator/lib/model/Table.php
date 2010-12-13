@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/XMLElement.php';
+require_once dirname(__FILE__) . '/ScopedElement.php';
 require_once dirname(__FILE__) . '/../exception/EngineException.php';
 require_once dirname(__FILE__) . '/IDMethod.php';
 require_once dirname(__FILE__) . '/NameFactory.php';
@@ -32,7 +32,7 @@ require_once dirname(__FILE__) . '/Behavior.php';
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Table extends XMLElement implements IDMethod
+class Table extends ScopedElement implements IDMethod
 {
 
 	/**
@@ -87,7 +87,7 @@ class Table extends XMLElement implements IDMethod
 	 *
 	 * @var       string
 	 */
-	private $name;
+	private $commonName;
 
 	/**
 	 * Table description.
@@ -102,13 +102,6 @@ class Table extends XMLElement implements IDMethod
 	 * @var       string
 	 */
 	private $phpName;
-
-	/**
-	 * Namespace for the generated OM.
-	 *
-	 * @var       string
-	 */
-	protected $namespace;
 
 	/**
 	 * ID method for the table (e.g. IDMethod::NATIVE, IDMethod::NONE).
@@ -200,13 +193,6 @@ class Table extends XMLElement implements IDMethod
 	 * @var       string
 	 */
 	private $enterface;
-
-	/**
-	 * The package for the generated OM.
-	 *
-	 * @var       string
-	 */
-	private $pkg;
 
 	/**
 	 * The base class to extend for the generated "object" class.
@@ -315,7 +301,21 @@ class Table extends XMLElement implements IDMethod
 	 */
 	public function __construct($name = null)
 	{
-		$this->name = $name;
+		$this->commonName = $name;
+	}
+
+	/**
+	 * get a qualified name of this table with scheme and common name separated by '_'
+	 * if schemaAutoPrefix is set. Otherwise get the common name.
+	 * @return string
+	 */
+	private function getStdSeparatedName()
+	{
+		if ($this->schema && $this->getBuildProperty('schemaAutoPrefix')) {
+			return $this->schema . NameGenerator::STD_SEPARATOR_CHAR . $this->getCommonName();
+		} else {
+			return $this->getCommonName();
+		}
 	}
 
 	/**
@@ -324,20 +324,14 @@ class Table extends XMLElement implements IDMethod
 	 */
 	public function setupObject()
 	{
-		$this->name = $this->getDatabase()->getTablePrefix() . $this->getAttribute("name");
+		parent::setupObject();
+		$this->commonName = $this->getDatabase()->getTablePrefix() . $this->getAttribute("name");
+
 		// retrieves the method for converting from specified name to a PHP name.
 		$this->phpNamingMethod = $this->getAttribute("phpNamingMethod", $this->getDatabase()->getDefaultPhpNamingMethod());
-		$this->phpName = $this->getAttribute("phpName", $this->buildPhpName($this->getAttribute('name')));
-		
-		$namespace = $this->getAttribute("namespace", '');
-		$package = $this->getAttribute("package");
-		if ($namespace && !$package && $this->getDatabase()->getBuildProperty('namespaceAutoPackage')) {
-			$package = str_replace('\\', '.', $namespace);
-		}
-		$this->namespace = $namespace;
-		$this->pkg = $package;
-		
-		$this->namespace = $this->getAttribute("namespace");
+
+		$this->phpName = $this->getAttribute("phpName", $this->buildPhpName($this->getStdSeparatedName()));
+
 		$this->idMethod = $this->getAttribute("idMethod", $this->getDatabase()->getDefaultIdMethod());
 		$this->allowPkInsert = $this->booleanValue($this->getAttribute("allowPkInsert"));
 
@@ -361,6 +355,17 @@ class Table extends XMLElement implements IDMethod
 		$this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
 		$this->isCrossRef = $this->getAttribute("isCrossRef", false);
 		$this->defaultStringFormat = $this->getAttribute('defaultStringFormat');
+	}
+
+	/**
+	 * get a build property for the database this table belongs to
+	 *
+	 * @param string $key key of the build property
+	 * @return string value of the property
+	 */
+	public function getBuildProperty($key)
+	{
+		return $this->getDatabase() ? $this->getDatabase()->getBuildProperty($key) : '';
 	}
 
 	/**
@@ -430,7 +435,7 @@ class Table extends XMLElement implements IDMethod
 	private function doHeavyIndexing()
 	{
 		if (self::DEBUG) {
-			print("doHeavyIndex() called on table " . $this->name."\n");
+			print("doHeavyIndex() called on table " . $this->getName()."\n");
 		}
 
 		$pk = $this->getPrimaryKey();
@@ -608,7 +613,7 @@ class Table extends XMLElement implements IDMethod
 	{
 		$inputs = array();
 		$inputs[] = $this->getDatabase();
-		$inputs[] = $this->getName();
+		$inputs[] = $this->getCommonName();
 		$inputs[] = $nameType;
 		$inputs[] = $nbr;
 		return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
@@ -1020,15 +1025,12 @@ class Table extends XMLElement implements IDMethod
 	 */
 	public function getName()
 	{
-		return $this->name;
-	}
-
-	/**
-	 * Set the name of the Table
-	 */
-	public function setName($newName)
-	{
-		$this->name = $newName;
+		if ($this->schema && $this->getDatabase() && $this->getDatabase()->getPlatform() &&
+				$this->getDatabase()->getPlatform()->supportsSchemas()) {
+			return $this->schema . '.' . $this->commonName;
+		} else {
+			return $this->commonName;
+		}
 	}
 
 	/**
@@ -1065,7 +1067,7 @@ class Table extends XMLElement implements IDMethod
 	{
 		if ($this->phpName === null) {
 			$inputs = array();
-			$inputs[] = $this->name;
+			$inputs[] = $this->getStdSeparatedName();
 			$inputs[] = $this->phpNamingMethod;
 			try {
 				$this->phpName = NameFactory::generateName(NameFactory::PHP_GENERATOR, $inputs);
@@ -1109,30 +1111,39 @@ class Table extends XMLElement implements IDMethod
 	}
 
 	/**
+	 * Get the name without schema
+	 */
+	public function getCommonName()
+	{
+		return $this->commonName;
+	}
+
+	/**
+	 * Set the common name of the table (without schema)
+	 */
+	public function setCommonName($v)
+	{
+		$this->commonName = $v;
+	}
+
+	/**
 	 * Get the value of the namespace.
 	 * @return     value of namespace.
 	 */
 	public function getNamespace()
 	{
-		if (strpos($this->namespace, '\\') === 0) {
+		if ($this->namespace && strpos($this->namespace, '\\') === 0) {
 			// absolute table namespace
 			return substr($this->namespace, 1);
-		} elseif ($this->namespace && $this->getDatabase() && $this->getDatabase()->getNamespace()) {
-			return $this->getDatabase()->getNamespace() . '\\' . $this->namespace;
 		} elseif ($this->getDatabase() && $this->getDatabase()->getNamespace()) {
-			return $this->getDatabase()->getNamespace();
+			if ($this->namespace) {
+				return $this->getDatabase()->getNamespace() . '\\' . $this->namespace;
+			} else {
+				return $this->getDatabase()->getNamespace();
+			}
 		} else {
 			return $this->namespace;
 		}
-	}
-
-	/**
-	 * Set the value of the namespace.
-	 * @param      v  Value to assign to namespace.
-	 */
-	public function setNamespace($v)
-	{
-		$this->namespace = $v;
 	}
 
 	/**
@@ -1315,24 +1326,6 @@ class Table extends XMLElement implements IDMethod
 	public function setAbstract($v)
 	{
 		$this->abstractValue = (boolean) $v;
-	}
-
-	/**
-	 * Get the value of package.
-	 * @return    value of package.
-	 */
-	public function getPackage()
-	{
-		return $this->pkg;
-	}
-
-	/**
-	 * Set the value of package.
-	 * @param     v	Value to assign to package.
-	 */
-	public function setPackage($v)
-	{
-		$this->pkg = $v;
 	}
 
 	/**

@@ -27,7 +27,8 @@ class ConcreteInheritanceBehavior extends Behavior
 	protected $parameters = array(
 		'extends'             => '',
 		'descendant_column'   => 'descendant_class',
-		'copy_data_to_parent' => 'true'
+		'copy_data_to_parent' => 'true',
+		'schema'              => ''
 	);
 	
 	public function modifyTable()
@@ -63,7 +64,8 @@ class ConcreteInheritanceBehavior extends Behavior
 			$table->addColumn($copiedColumn);
 			if ($column->isPrimaryKey() && $this->isCopyData()) {
 				$fk = new ForeignKey();
-				$fk->setForeignTableName($column->getTable()->getName());
+				$fk->setForeignTableCommonName($column->getTable()->getCommonName());
+				$fk->setForeignSchemaName($column->getTable()->getSchema());
 				$fk->setOnDelete('CASCADE');
 				$fk->setOnUpdate(null);
 				$fk->addReference($copiedColumn, $column);
@@ -118,7 +120,11 @@ class ConcreteInheritanceBehavior extends Behavior
 	protected function getParentTable()
 	{
 		$database = $this->getTable()->getDatabase();
-		return $database->getTable($database->getTablePrefix() . $this->getParameter('extends'));
+		$tableName = $database->getTablePrefix() . $this->getParameter('extends');
+		if ($database->getPlatform()->supportsSchemas() && $this->getParameter('schema')) {
+			$tableName = $this->getParameter('schema').'.'.$tableName;
+		}
+		return $database->getTable($tableName);
 	}
 	
 	protected function isCopyData()

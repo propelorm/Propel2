@@ -413,7 +413,8 @@ class PgsqlSchemaParser extends BaseSchemaParser
 
 			if (!isset($foreignKeys[$name])) {
 				$fk = new ForeignKey($name);
-				$fk->setForeignTableName($foreignTable->getName());
+				$fk->setForeignTableCommonName($foreignTable->getCommonName());
+				$fk->setForeignSchemaName($foreignTable->getSchema());
 				$fk->setOnDelete($ondelete);
 				$fk->setOnUpdate($onupdate);
 				$table->addForeignKey($fk);

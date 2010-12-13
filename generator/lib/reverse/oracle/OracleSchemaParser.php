@@ -222,7 +222,7 @@ class OracleSchemaParser extends BaseSchemaParser
 						
 			if (!isset($foreignKeys[$row["CONSTRAINT_NAME"]])) {
 				$fk = new ForeignKey($row["CONSTRAINT_NAME"]);
-				$fk->setForeignTableName($foreignReferenceInfo['TABLE_NAME']);
+				$fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
 				$onDelete = ($row["DELETE_RULE"] == 'NO ACTION') ? 'NONE' : $row["DELETE_RULE"];
 				$fk->setOnDelete($onDelete);
 				$fk->setOnUpdate($onDelete);

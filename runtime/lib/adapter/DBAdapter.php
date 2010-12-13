@@ -196,6 +196,9 @@ abstract class DBAdapter
 
 	/**
 	 * Quotes a database table which could have space seperating it from an alias, both should be identified seperately
+	 * This doesn't take care of dots which separate schema names from table names. Adapters for RDBMs which support
+	 * schemas have to implement that in the platform-specific way.
+	 *
 	 * @param      string $table The table name to quo
 	 * @return     string The quoted table name
 	 **/

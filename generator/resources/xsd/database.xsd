@@ -206,6 +206,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<!-- Restrict schema name to letters (upper- and lowercase), numbers and the _ -->
+	<xs:simpleType name="schema_name">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\w_]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<!-- Restrict index name to letters (upper- and lowercase), numbers and the _ -->
 	<xs:simpleType name="index_name">
 		<xs:restriction base="xs:string">
@@ -508,6 +515,13 @@
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="foreignSchema" type="schema_name" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The other schema name
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:attribute name="name" type="foreign_name" use="optional">
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
@@ -623,6 +637,13 @@
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					The name of the table as it appears in the database.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="schema" type="schema_name" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The table's schema for RDBMs supporting multiple schemas per database.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
@@ -835,6 +856,13 @@
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
 					The PHP 5.3 namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="schema" type="schema_name" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					Specify a schema for the tables in this database. Useful for RDBMs which support multiple schemas per database.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>

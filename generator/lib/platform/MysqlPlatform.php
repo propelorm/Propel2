@@ -517,6 +517,15 @@ ALTER TABLE %s CHANGE %s %s;
 		return $ret;
 	}
 
+
+	/**
+	 * @see        Platform::supportsSchemas()
+	 */
+	public function supportsSchemas()
+	{
+		return true;
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("MEDIUMTEXT" == $sqlType || "LONGTEXT" == $sqlType
@@ -538,9 +547,17 @@ ALTER TABLE %s CHANGE %s %s;
 		}
 	}
 
+	/**
+	 * MySQL documentation says that identifiers cannot contain '.'. Thus it
+	 * should be safe to split the string by '.' and quote each part individually
+	 * to allow for a <schema>.<table> or <table>.<column> syntax.
+	 *
+	 * @param       string $text the identifier
+	 * @return      string the quoted identifier
+	 */
 	public function quoteIdentifier($text)
 	{
-		return $this->isIdentifierQuotingEnabled ? '`' . $text . '`' : $text;
+		return $this->isIdentifierQuotingEnabled ? '`' . strtr($text, array('.' => '`.`')) . '`' : $text;
 	}
 
 	public function getTimestampFormatter()

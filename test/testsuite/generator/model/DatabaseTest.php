@@ -11,6 +11,7 @@
 
 require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Database.php';
+require_once dirname(__FILE__) . '/../../../tools/helpers/DummyPlatforms.php';
 
 /**
  * Tests for Database model class.
@@ -30,6 +31,23 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 		);
 	}
 	
+	public function testTableInheritsSchema()
+	{
+		$database = new Database();
+		$database->setPlatform(new SchemaPlatform());
+		$database->setSchema("Foo");
+		$table = new Table("Bar");
+		$database->addTable($table);
+		$this->assertTrue($database->hasTable("Foo.Bar"));
+		$this->assertFalse($database->hasTable("Bar"));
+
+		$database = new Database();
+		$database->setPlatform(new NoSchemaPlatform());
+		$database->addTable($table);
+		$this->assertFalse($database->hasTable("Foo.Bar"));
+		$this->assertTrue($database->hasTable("Bar"));
+	}
+
 	/**
 	 * @dataProvider providerForTestHasTable
 	 */

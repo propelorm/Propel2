@@ -830,11 +830,15 @@ class Criteria implements IteratorAggregate
 		$join = new Join();
 		
 		// is the left table an alias ?
-		list($leftTableAlias, $leftColumnName) = explode('.', $left);
+		$dotpos = strrpos($left, '.');
+		$leftTableAlias = substr($left, 0, $dotpos);
+		$leftColumnName = substr($left, $dotpos + 1);
 		list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
 
 		// is the right table an alias ?
-		list($rightTableAlias, $rightColumnName) = explode('.', $right);
+		$dotpos = strrpos($right, '.');
+		$rightTableAlias = substr($right, 0, $dotpos);
+		$rightColumnName = substr($right, $dotpos + 1);
 		list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
 		
 		$join->addExplicitCondition(
@@ -875,14 +879,16 @@ class Criteria implements IteratorAggregate
 			$left = $condition[0];
 			$right = $condition[1];
 			if ($pos = strrpos($left, '.')) {
-				list($leftTableAlias, $leftColumnName) = explode('.', $left);
+				$leftTableAlias = substr($left, 0, $pos);
+				$leftColumnName = substr($left, $pos + 1);
 				list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
 			} else {
 				list($leftTableName, $leftTableAlias) = array(null, null);
 				$leftColumnName = $left;
 			}
 			if ($pos = strrpos($right, '.')) {
-				list($rightTableAlias, $rightColumnName) = explode('.', $right);
+				$rightTableAlias = substr($right, 0, $pos);
+				$rightColumnName = substr($right, $pos + 1);
 				list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
 			} else {
 				list($rightTableName, $rightTableAlias) = array(null, null);

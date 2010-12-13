@@ -41,7 +41,7 @@ class SluggableBehavior extends Behavior
 			));
 			// add a unique to column
 			$unique = new Unique($this->getColumnForParameter('slug_column'));
-			$unique->setName($this->getTable()->getName() . '_slug');
+			$unique->setName($this->getTable()->getCommonName() . '_slug');
 			$unique->addColumn($this->getTable()->getColumn($this->getParameter('slug_column')));
 			$this->getTable()->addUnique($unique);
 		}

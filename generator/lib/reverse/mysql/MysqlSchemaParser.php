@@ -281,7 +281,8 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 				if (!isset($foreignKeys[$name])) {
 					$fk = new ForeignKey($name);
-					$fk->setForeignTableName($foreignTable->getName());
+					$fk->setForeignTableCommonName($foreignTable->getCommonName());
+					$fk->setForeignSchemaName($foreignTable->getSchema());
 					$fk->setOnDelete($fkactions['ON DELETE']);
 					$fk->setOnUpdate($fkactions['ON UPDATE']);
 					$table->addForeignKey($fk);

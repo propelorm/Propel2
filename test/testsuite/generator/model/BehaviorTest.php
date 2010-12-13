@@ -46,7 +46,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $b = new Behavior();
     $this->assertNull($b->getTable(), 'Behavior Table is null by default');
     $t = new Table();
-    $t->setName('fooTable');
+    $t->setCommonName('fooTable');
     $b->setTable($t);
     $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
   }

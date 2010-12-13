@@ -50,6 +50,77 @@ class MysqlPlatformTest extends PlatformTestProvider
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesWithSchemaDDL
+	 */
+	public function testGetAddTablesWithSchemaDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+# This is a fix for InnoDB in MySQL >= 4.1.x
+# It "suspends judgement" for fkey relationships until are tables are set.
+SET FOREIGN_KEY_CHECKS = 0;
+
+-----------------------------------------------------------------------
+-- x.book
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `x`.`book`;
+
+CREATE TABLE `x`.`book`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`title` VARCHAR(255) NOT NULL,
+	`author_id` INTEGER,
+	PRIMARY KEY (`id`),
+	INDEX `book_I_1` (`title`),
+	INDEX `book_FI_1` (`author_id`),
+	CONSTRAINT `book_FK_1`
+		FOREIGN KEY (`author_id`)
+		REFERENCES `y`.`author` (`id`)
+) ENGINE=InnoDB;
+
+-----------------------------------------------------------------------
+-- y.author
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `y`.`author`;
+
+CREATE TABLE `y`.`author`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`first_name` VARCHAR(100),
+	`last_name` VARCHAR(100),
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-----------------------------------------------------------------------
+-- x.book_summary
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `x`.`book_summary`;
+
+CREATE TABLE `x`.`book_summary`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`book_id` INTEGER NOT NULL,
+	`summary` TEXT NOT NULL,
+	PRIMARY KEY (`id`),
+	INDEX `book_summary_FI_1` (`book_id`),
+	CONSTRAINT `book_summary_FK_1`
+		FOREIGN KEY (`book_id`)
+		REFERENCES `x`.`book` (`id`)
+		ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+# This restores the fkey checks, after having unset them earlier
+SET FOREIGN_KEY_CHECKS = 1;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetAddTablesDDL
 	 */
 	public function testGetAddTablesDDL($schema)

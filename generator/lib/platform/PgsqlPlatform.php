@@ -334,6 +334,14 @@ DROP TABLE %s CASCADE;
 		);
 	}
 	
+	/**
+	 * @see        Platform::supportsSchemas()
+	 */
+	public function supportsSchemas()
+	{
+		return true;
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("BYTEA" == $sqlType || "TEXT" == $sqlType || "DOUBLE PRECISION" == $sqlType);

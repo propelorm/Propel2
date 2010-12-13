@@ -175,6 +175,12 @@ interface PropelPlatformInterface
 	public function supportsInsertNullPk();
 	
 	/**
+	 * Whether RDBMS supports native schemas for table layout.
+	 * @return boolean
+	 */
+	public function supportsSchemas();
+
+	/**
 	 * Returns the boolean value for the RDBMS.
 	 *
 	 * This value should match the boolean value that is set

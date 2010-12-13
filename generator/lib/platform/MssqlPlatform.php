@@ -153,6 +153,14 @@ END
 		return $script;
 	}
 
+	/**
+	 * @see        Platform::supportsSchemas()
+	 */
+	public function supportsSchemas()
+	{
+		return true;
+	}
+
 	public function hasSize($sqlType)
 	{
 		return !("INT" == $sqlType || "TEXT" == $sqlType);
@@ -160,7 +168,7 @@ END
 
 	public function quoteIdentifier($text)
 	{
-		return $this->isIdentifierQuotingEnabled ? '[' . $text . ']' : $text;
+		return $this->isIdentifierQuotingEnabled ? '[' . strtr($text, array('.' => '].[')) . ']' : $text;
 	}
 
 	public function getTimestampFormatter()

@@ -16,13 +16,15 @@ require_once dirname(__FILE__) . '/XMLElement.php';
  * @author     Hans Lellelid <hans@xmpl.org>
  * @author     Fedor <fedor.karpelevitch@home.com>
  * @author     Daniel Rall <dlr@finemaltcoding.com>
+ * @author     Ulf Hermann <ulfhermann@kulturserver.de>
  * @version    $Revision$
  * @package    propel.generator.model
  */
 class ForeignKey extends XMLElement
 {
 
-	protected $foreignTableName;
+	protected $foreignTableCommonName;
+	protected $foreignSchemaName;
 	protected $name;
 	protected $phpName;
 	protected $refPhpName;
@@ -57,7 +59,13 @@ class ForeignKey extends XMLElement
 	 */
 	protected function setupObject()
 	{
-		$this->foreignTableName = $this->getTable()->getDatabase()->getTablePrefix() . $this->getAttribute("foreignTable");
+		$this->foreignTableCommonName = $this->getTable()->getDatabase()->getTablePrefix() . $this->getAttribute("foreignTable");
+		$this->foreignSchemaName = $this->getAttribute("foreignSchema");
+		if (!$this->foreignSchemaName) {
+			if ($this->getTable()->getSchema()) {
+				$this->foreignSchemaName = $this->getTable()->getSchema();
+			}
+		}
 		$this->name = $this->getAttribute("name");
 		$this->phpName = $this->getAttribute("phpName");
 		$this->refPhpName = $this->getAttribute("refPhpName");
@@ -203,18 +211,32 @@ class ForeignKey extends XMLElement
 
 	/**
 	 * Get the foreignTableName of the FK
+	 * @return    string foreign table qualified name
 	 */
 	public function getForeignTableName()
 	{
-		return $this->foreignTableName;
+		if ($this->foreignSchemaName && $this->getTable()->getDatabase()->getPlatform()->supportsSchemas()) {
+			return $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
+		} else {
+			return $this->foreignTableCommonName;
+		}
 	}
 
 	/**
-	 * Set the foreignTableName of the FK
+	 * Get the foreign table name without schema
+	 * @return    string foreign table common name
 	 */
-	public function setForeignTableName($tableName)
+	public function getForeignTableCommonName()
 	{
-		$this->foreignTableName = $tableName;
+		return $this->foreignTableCommonName;
+	}
+
+	/**
+	 * Set the foreignTableCommonName of the FK
+	 */
+	public function setForeignTableCommonName($tableName)
+	{
+		$this->foreignTableCommonName = $tableName;
 	}
 
 	/**
@@ -224,6 +246,22 @@ class ForeignKey extends XMLElement
 	public function getForeignTable()
 	{
 		return $this->getTable()->getDatabase()->getTable($this->getForeignTableName());
+	}
+
+	/**
+	 * Get the foreignSchemaName of the FK
+	 */
+	public function getForeignSchemaName()
+	{
+		return $this->foreignSchemaName;
+	}
+
+	/**
+	 * Set the foreignSchemaName of the FK
+	 */
+	public function setForeignSchemaName($schemaName)
+	{
+		$this->foreignSchemaName = $schemaName;
 	}
 
 	/**
@@ -248,6 +286,14 @@ class ForeignKey extends XMLElement
 	public function getTableName()
 	{
 		return $this->parentTable->getName();
+	}
+
+	/**
+	 * Returns the Name of the schema the foreign key is in
+	 */
+	public function getSchemaName()
+	{
+		return $this->parentTable->getSchema();
 	}
 
 	/**
@@ -572,7 +618,8 @@ class ForeignKey extends XMLElement
 
 		$fkNode = $node->appendChild($doc->createElement('foreign-key'));
 
-		$fkNode->setAttribute('foreignTable', $this->getForeignTableName());
+		$fkNode->setAttribute('foreignTable', $this->getForeignTableCommonName());
+		$fkNode->setAttribute('foreignSchema', $this->getForeignSchemaName());
 		$fkNode->setAttribute('name', $this->getName());
 
 		if ($this->getPhpName()) {

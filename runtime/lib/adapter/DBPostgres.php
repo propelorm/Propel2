@@ -161,4 +161,13 @@ class DBPostgres extends DBAdapter
 		}
 		return $sql;
 	}
+
+	/**
+	 * @see        DBAdapter::quoteIdentifierTable()
+	 */
+	public function quoteIdentifierTable($table)
+	{
+		// e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
+		return '"' . strtr($table, array('.' => '"."', ' ' => '" "')) . '"';
+	}
 }

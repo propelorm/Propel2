@@ -475,7 +475,7 @@ class ColumnMap
    */
   public static function normalizeName($name)
   {
-    if (false !== ($pos = strpos($name, '.'))) {
+    if (false !== ($pos = strrpos($name, '.'))) {
       $name = substr($name, $pos + 1);
     }
     $name = strtoupper($name);

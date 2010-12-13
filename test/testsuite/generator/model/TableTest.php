@@ -13,6 +13,7 @@ require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/builder/util/XmlToAppData.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/config/GeneratorConfig.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/platform/DefaultPlatform.php';
+require_once dirname(__FILE__) . '/../../../tools/helpers/DummyPlatforms.php';
 
 /**
  * Tests for Table model class
@@ -189,4 +190,20 @@ EOF;
 		$this->assertEquals($column, $table->getColumn('foo', true));
 		$this->assertEquals($column, $table->getColumn('FOO', true));
 	}
+
+	public function testQualifiedName()
+	{
+		$table = new Table();
+		$table->setSchema("foo");
+		$table->setCommonName("bar");
+		$this->assertEquals($table->getName(), "bar");
+		$this->assertEquals($table->getCommonName(), "bar");
+		$database = new Database();
+		$database->addTable($table);
+		$database->setPlatform(new NoSchemaPlatform());
+		$this->assertEquals($table->getName(), "bar");
+		$database->setPlatform(new SchemaPlatform());
+		$this->assertEquals($table->getName(), "foo.bar");
+	}
+
 }

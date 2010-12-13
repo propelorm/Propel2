@@ -49,7 +49,7 @@ class Index extends XMLElement
 		$table = $this->getTable();
 		$inputs = array();
 		$inputs[] = $table->getDatabase();
-		$inputs[] = $table->getName();
+		$inputs[] = $table->getCommonName();
 		if ($this->isUnique()) {
 			$inputs[] = "U";
 		} else {

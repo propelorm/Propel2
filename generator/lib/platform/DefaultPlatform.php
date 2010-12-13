@@ -407,7 +407,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 	 */
 	public function getPrimaryKeyName(Table $table)
 	{
-		$tableName = $table->getName();
+		$tableName = $table->getCommonName();
 		return $tableName . '_PK';
 	}
 	
@@ -1024,7 +1024,7 @@ ALTER TABLE %s ADD
 	 */
 	public function quoteIdentifier($text)
 	{
-		return $this->isIdentifierQuotingEnabled ? '"' . $text . '"' : $text;
+		return $this->isIdentifierQuotingEnabled ? '"' . strtr($text, array('.' => '"."')) . '"' : $text;
 	}
 	
 	public function setIdentifierQuoting($enabled = true)
@@ -1060,6 +1060,14 @@ ALTER TABLE %s ADD
 	 * @return     boolean
 	 */
 	public function hasStreamBlobImpl()
+	{
+		return false;
+	}
+
+	/**
+	 * @see        Platform::supportsSchemas()
+	 */
+	public function supportsSchemas()
 	{
 		return false;
 	}

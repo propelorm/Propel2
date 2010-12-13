@@ -115,6 +115,15 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
+	 * @see        DBAdapter::quoteIdentifierTable()
+	 */
+	public function quoteIdentifierTable($table)
+	{
+		// e.g. 'database.table alias' should be escaped as '`database`.`table` `alias`'
+		return '`' . strtr($table, array('.' => '`.`', ' ' => '` `')) . '`';
+	}
+
+	/**
 	 * @see        DBAdapter::useQuoteIdentifier()
 	 */
 	public function useQuoteIdentifier()

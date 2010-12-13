@@ -80,7 +80,6 @@
 		<column name="job_title" type="VARCHAR" size="32" />
 		<column name="supervisor_id" type="INTEGER" />
 		<column name="photo" type="BLOB" lazyLoad="true" />
-		<column name="created_at" type="TIMESTAMP" />
 		<foreign-key foreignTable="bookstore_employee" phpName="Supervisor" refPhpName="Subordinate" onDelete="setnull">
 			<reference local="supervisor_id" foreign="id" />
 		</foreign-key>
