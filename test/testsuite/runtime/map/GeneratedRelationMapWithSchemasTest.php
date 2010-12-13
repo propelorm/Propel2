@@ -26,6 +26,9 @@ class GeneratedRelationMapWithSchemasTest extends PHPUnit_Framework_TestCase
 	protected function setUp()
 	{
 		parent::setUp();
+		if (!file_exists(dirname(__FILE__) . '/../../../fixtures/schemas/build/conf/bookstore-conf.php')) {
+			$this->markTestSkipped('You must build the schemas project fot this tests to run');
+		}
 		Propel::init(dirname(__FILE__) . '/../../../fixtures/schemas/build/conf/bookstore-conf.php');
 		$this->databaseMap = Propel::getDatabaseMap('bookstore-schemas');
 	}

@@ -89,18 +89,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 		);
 	}
 
-	public static function conditionsForTestReplaceNamesWithSchemas()
-	{
-		return array(
-			array('ContestBookstoreContest.PrizeBookId = ?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID = ?'), // basic case
-			array('ContestBookstoreContest.PrizeBookId=?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID=?'), // without spaces
-			array('ContestBookstoreContest.Id<= ?', 'Id', 'contest.bookstore_contest.ID<= ?'), // with non-equal comparator
-			array('ContestBookstoreContest.BookstoreId LIKE ?', 'BookstoreId', 'contest.bookstore_contest.BOOKSTORE_ID LIKE ?'), // with SQL keyword separator
-			array('(ContestBookstoreContest.BookstoreId) LIKE ?', 'BookstoreId', '(contest.bookstore_contest.BOOKSTORE_ID) LIKE ?'), // with parenthesis
-			array('(ContestBookstoreContest.Id*1.5)=1', 'Id', '(contest.bookstore_contest.ID*1.5)=1') // ignore numbers
-		);
-	}
-
 	/**
 	 * @dataProvider conditionsForTestReplaceNames
 	 */
@@ -108,15 +96,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		$c = new TestableModelCriteria('bookstore', 'Book');
 		$this->doTestReplaceNames($c, BookPeer::getTableMap(), $origClause, $columnPhpName = false, $modifiedClause);
-	}
-
-	/**
-	 * @dataProvider conditionsForTestReplaceNamesWithSchemas
-	 */
-	public function testReplaceNamesWithSchemas($origClause, $columnPhpName = false, $modifiedClause)
-	{
-		$c = new TestableModelCriteria('bookstore-schemas', 'ContestBookstoreContest');
-		$this->doTestReplaceNames($c, ContestBookstoreContestPeer::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
 	}
 
 	public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
