@@ -11,7 +11,10 @@
 require_once dirname(__FILE__) . '/Pluralizer.php';
 
 /**
- * A standard English pluralizer class.
+ * Standard replacement English pluralizer class. Based on the links below
+ *
+ * @link http://kuwamoto.org/2007/12/17/improved-pluralizing-in-php-actionscript-and-ror/
+ * @link http://blogs.msdn.com/dmitryr/archive/2007/01/11/simple-english-noun-pluralizer-in-c.aspx
  *
  * @author     paul.hanssen
  * @version    $Revision$
