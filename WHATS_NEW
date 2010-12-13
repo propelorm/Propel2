@@ -363,6 +363,19 @@ $books = BookQuery::create()
 
 '''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, `orWhere()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns.
 
+== Better Pluralizer ==
+
+Have you ever considered Propel as a lame English speaker? Due to its poor pluralizer, Propel used to be unable to create proper getter methods in one-to-many relationships when dealing with foreign objects named 'Child', 'Category', 'Wife', or 'Sheep'.
+
+Starting with Propel 1.6, Propel adds a new pluralizer class named `StandardEnglishPluralizer`, which should take care of most of the irregular plural forms of your domain class names. This new pluralizer is disabled by default for backwards compatibility reasons, but it's very easy to turn it on in your `build.properties` file:
+
+{{{
+#!ini
+propel.builder.pluralizer.class = builder.util.StandardEnglishPluralizer
+}}}
+
+Rebuild your model, and voila: ActiveRecord objects can now retrieve foreign objects using `getChildren()`, `getCategories()`, `getWives()`, and... `getSheep()`.
+
 == New Reference Chapter in the Documentation: Active Record ==
 
 There wasn't any one-stop place to read about the abilities of the generated Active Record objects in the Propel documentation. Since Propel 1.6, the new [wiki:Documentation/1.6/ActiveRecord Active Record reference] makes it easier to learn the  usage of Propel models using code examples.

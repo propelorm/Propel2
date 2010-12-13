@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-require_once 'builder/util/Pluralizer.php';
+require_once dirname(__FILE__) . '/Pluralizer.php';
 
 /**
  * The default Enlglish pluralizer class.

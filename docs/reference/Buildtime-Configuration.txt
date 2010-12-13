@@ -286,16 +286,16 @@ propel.builder.nodepeerstub.class = builder.om.PHP5ExtensionNodePeerBuilder
 propel.builder.nestedset.class = builder.om.PHP5NestedSetBuilder
 propel.builder.nestedsetpeer.class = builder.om.PHP5NestedSetPeerBuilder
 
-propel.builder.pluralizer.class = builder.util.DefaultEnglishPluralizer
-
 # SQL builders
-propel.builder.datasql.class = propel.engine.builder.sql.${propel.database}.${propel.database}DataSQLBuilder
+propel.builder.datasql.class = builder.sql.${propel.database}.${propel.database}DataSQLBuilder
 
 # Platform classes
-propel.platform.class = propel.engine.platform.${propel.database}Platform
+propel.platform.class = platform.${propel.database}Platform
 
 # Pluralizer class (used to generate plural forms)
-propel.builder.pluralizer.class = propel.engine.builder.util.DefaultEnglishPluralizer
+propel.builder.pluralizer.class = builder.util.DefaultEnglishPluralizer
+# Use StandardEnglishPluralizer instead of DefaultEnglishPluralizer for better pluralization
+# (Handles uncountable and irregular nouns)
 }}}
 
 As you can see, you can specify your own builder and platform classes if you want to extend & override behavior in the default classes
