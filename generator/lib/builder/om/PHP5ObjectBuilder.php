@@ -1660,7 +1660,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach (\$this->get$cfc(";
 		if ($col->isLazyLoad()) $script .= "\$con";
 		$script .= ") as \$element) {
-			if (\$element !== \$value) {
+			if (\$element != \$value) {
 				\$targetArray []= \$element;
 			}
 		}

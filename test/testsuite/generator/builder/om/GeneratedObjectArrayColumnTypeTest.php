@@ -109,12 +109,12 @@ EOF;
 		$e->setTags(array('foo', 1234));
 		$e->removeTag('foo');
 		$this->assertEquals(array(1234), $e->getTags());
-		$e->removeTag('1234');
-		$this->assertEquals(array(1234), $e->getTags());
 		$e->removeTag(1234);
 		$this->assertEquals(array(), $e->getTags());
-		$e->setTags(array(12, 34));
+		$e->setTags(array(12, 34, 1234));
 		$e->removeTag('foo');
+		$this->assertEquals(array(12, 34, 1234), $e->getTags());
+		$e->removeTag('1234');
 		$this->assertEquals(array(12, 34), $e->getTags());
 	}
 	
