@@ -392,4 +392,13 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 
+	public function testGetCommentBlockDDL()
+	{
+		$expected = "
+-----------------------------------------------------------------------
+-- foo bar
+-----------------------------------------------------------------------
+";
+		$this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
+	}
 }

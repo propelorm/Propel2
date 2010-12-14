@@ -406,6 +406,16 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 		);
 	}
 
+	public function getCommentBlockDDL($comment)
+	{
+		$pattern = "
+-- ---------------------------------------------------------------------
+-- %s
+-- ---------------------------------------------------------------------
+";
+		return sprintf($pattern, $comment);
+	}
+	
 	/**
 	 * Builds the DDL SQL to modify a database
 	 * based on a PropelDatabaseDiff instance

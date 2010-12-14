@@ -329,5 +329,14 @@ DROP INDEX [babar];
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 
+	public function testGetCommentBlockDDL()
+	{
+		$expected = "
+-----------------------------------------------------------------------
+-- foo bar
+-----------------------------------------------------------------------
+";
+		$this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
+	}
 
 }
