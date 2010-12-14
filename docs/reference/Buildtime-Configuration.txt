@@ -59,13 +59,13 @@ propel.packageObjectModel = true|{false}
 # will also stipulate the subdirectory in which model classes get generated.
 propel.namespace.autoPackage = true|{false}
 
-# Whether to validate the schema using the XSD file.
+# Whether to validate the XML schema using the XSD file.
 # The default XSD file is located under `generator/resources/xsd/database.xsd`
 # and you can use a custom XSD file by changing the `propel.schema.xsd.file` 
 # property.
 propel.schema.validate = {true}|false
 
-# Whether to transform the schema using the XSL file.
+# Whether to transform the XML schema using the XSL file.
 # This was used in previous Propel versions to clean up the schema, but tended
 # to hide problems in the schema. It is disabled by default since Propel 1.5.
 # The default XSL file is located under `generator/resources/xsd/database.xsl`

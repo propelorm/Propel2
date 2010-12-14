@@ -64,6 +64,7 @@ Starting with the {{{<database>}}} element. The ''attributes'' and ''elements'' 
     name="/DatabaseName/"
     defaultIdMethod="native|none"
     [package="/ProjectName/"]
+    [schema="/SQLSchema/"]
     [namespace="/ClassNamespace/"]
     [baseClass="/baseClassName/"]
     [basePeer="/baseClassPeerName/"]
@@ -77,13 +78,15 @@ Starting with the {{{<database>}}} element. The ''attributes'' and ''elements'' 
   </database>
 }}}
 
-The `package`, `baseClass`, `basePeer`, `defaultPhpNamingMethod`, and `heavyIndexing` attributes are generally optional.
+Only the `name` and the `defaultIdMethod` attributes are required.
+
 A Database element may include an `<external-schema>` element, or multiple `<table>` elements.
 
 ==== Database Attributes ====
 
  * `defaultIdMethod` sets the default id method to use for auto-increment columns.
- * `package` specifies the "package" for the generated classes. Classes are created in subdirectories according to the `package` value. 
+ * `package` specifies the "package" for the generated classes. Classes are created in subdirectories according to the `package` value.
+ * `schema` specifies the default SQL schema containing the tables. Ignored on RDBMS not supporting database schemas. 
  * `namespace` specifies the default namespace that generated model classes will use (PHP 5.3 only). This attribute can be completed or overridden at the table level.
  * `baseClass` allows you to specify a default base class that all generated Propel objects should extend (in place of `propel.om.BaseObject`).
  * `basePeer` instructs Propel to use a different SQL-generating `BasePeer` class (or sub-class of `BasePeer`) for all generated objects.
@@ -102,6 +105,7 @@ The `<table>` element is the most complicated of the usable elements. Its defini
      [idMethod = "native|{none}"]
      [phpName = "/PhpObjectName/"]
      [package="/PhpObjectPackage/"]
+     [schema="/SQLSchema/"]
      [namespace = "/PhpObjectNamespace/"]
      [skipSql = "true|false"]
      [abstract = "true|false"]
@@ -130,13 +134,14 @@ The `<table>` element is the most complicated of the usable elements. Its defini
   </table>
 }}}
 
-According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `namespace`, `phpNamingMethod`, `baseClass`, `basePeer`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
+According to the schema, `name` is the only required attribute.  Also, the `idMethod`, `package`, `schema`, `namespace`, `phpNamingMethod`, `baseClass`, `basePeer`, and `heavyIndexing` attributes all default to what is specified by the `<database>` element.
 
 ==== Table Attributes ====
 
  * `idMethod` sets the id method to use for auto-increment columns.
  * `phpName` specifies object model class name. By default, Propel uses a CamelCase version of the table name as phpName.
  * `package` specifies the "package" (or subdirectory) in which model classes get generated.
+ * `schema` specifies the default SQL schema containing the table. Ignored on RDBMS not supporting database schemas. 
  * `namespace` specifies the namespace that the generated model classes will use (PHP 5.3 only). If the table namespace starts with a `\`, it overrides the namespace defined in the `<database>` tag; otherwise, the actual table namespace is the concatenation of the database namespace and the table namespace.
  * `skipSql` instructs Propel not to generate DDL SQL for the specified table.  This can be used together with `readOnly` for supperting VIEWS in Propel.
  * `abstract` Whether the generated ''stub'' class will be abstract (e.g. if you're using inheritance)
@@ -200,6 +205,7 @@ To link a column to another table use the following syntax:
 #!xml
   <foreign-key
      foreignTable = "/TheOtherTableName/"
+     [foreignSchema = "/TheOtherTableSQLSchema/"]
      [name = "/Name for this foreign key/"]
      [phpName = "/Name for the foreign object in methods generated in this class/"]
      [refPhpName = "/Name for this object in methods generated in the foreign class/"]
@@ -213,7 +219,7 @@ To link a column to another table use the following syntax:
 
 ==== Foreign Key Attributes ====
 
- * {{{defaultJoin}}} This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
+ * `defaultJoin` This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
 
 === <index> element ===
 
