@@ -4,7 +4,7 @@
 
 Propel uses [http://www.phpunit.de PHPUnit] to test the build and runtime frameworks.
 
-You can find the unit test classes and support files in the [browser:branches/1.4/test/testsuite] directory.
+You can find the unit test classes and support files in the [browser:branches/1.6/test/testsuite] directory.
 
 == Install PHPUnit ==
 
@@ -55,6 +55,9 @@ propel.database.password = p@ssw0rd
 </datasource>
 }}}
 
+**Tip**: To run the unit tests for the namespace support in PHP 5.3, you must also configure the `fixtures/namespaced` project.
+**Tip**: To run the unit tests for the database schema support, you must also configure the `fixtures/schemas` project. This projects requires that your database supports schemas, and already contains the following schemas: `bookstore_schemas`, `contest`, and `second_hand_books`. Note that the user defined in `build.properties` and `runtime-conf.xml` must have access to these schemas. 
+
 == Build the Propel Model and Initialize the Database ==
 
 {{{
@@ -65,6 +68,21 @@ propel.database.password = p@ssw0rd
 }}}
 
 **Tip**: To run the unit tests for the namespace support in PHP 5.3, you must also build the `fixtures/namespaced` project.
+**Tip**: To run the unit tests for the database schema support, you must also build the `fixtures/schemas` project.
+
+If you test on MySQL, the following SQL script will create all the necessary test databases and grant access to the anonymous user, so the unit tests should pass without any special configuration:
+
+{{{
+#!sql
+CREATE DATABASE test;
+GRANT ALL ON test.* TO ''@'localhost';
+CREATE DATABASE bookstore_schemas;
+GRANT ALL ON bookstore_schemas.* TO ''@'localhost';
+CREATE DATABASE contest;
+GRANT ALL ON contest.* TO ''@'localhost';
+CREATE DATABASE second_hand_books;
+GRANT ALL ON second_hand_books.* TO ''@'localhost';
+}}}
 
 == Run the Unit Tests ==
 
@@ -87,13 +105,13 @@ To run a single test, go inside the unit test directory, and run the test using 
 
 Every method in the test classes that begins with 'test' is run as a test case by PHPUnit.  All tests are run in isolation; the `setUp()` method is called at the beginning of ''each'' test and the `tearDown()` method is called at the end.
 
-The [browser:branches/1.4/test/tools/helpers/bookstore/BookstoreTestBase.php BookstoreTestBase] class specifies `setUp()` and `tearDown()` methods which populate and depopulate, respectively, the database.  This means that every unit test is run with a cleanly populated database.  To see the sample data that is populated, take a look at the [browser:branches/1.4/test/tools/helpers/bookstore/BookstoreDataPopulator.php BookstoreDataPopulator] class. You can also add data to this class, if needed by your tests; however, proceed cautiously when changing existing data in there as there may be unit tests that depend on it. More typically, you can simply create the data you need from within your test method. It will be deleted by the `tearDown()` method, so no need to clean up after yourself.
+The [browser:branches/1.6/test/tools/helpers/bookstore/BookstoreTestBase.php BookstoreTestBase] class specifies `setUp()` and `tearDown()` methods which populate and depopulate, respectively, the database.  This means that every unit test is run with a cleanly populated database.  To see the sample data that is populated, take a look at the [browser:branches/1.6/test/tools/helpers/bookstore/BookstoreDataPopulator.php BookstoreDataPopulator] class. You can also add data to this class, if needed by your tests; however, proceed cautiously when changing existing data in there as there may be unit tests that depend on it. More typically, you can simply create the data you need from within your test method. It will be deleted by the `tearDown()` method, so no need to clean up after yourself.
 
 == Writing Tests ==
 
 If you've made a change to a template or to Propel behavior, the right thing to do is write a unit test that ensures that it works properly -- and continues to work in the future.
 
-Writing a unit test often means adding a method to one of the existing test classes. For example, let's test a feature in the Propel templates that supports saving of objects when only default values have been specified. Just add a `testSaveWithDefaultValues()` method to the [browser:branches/1.4/test/testsuite/generator/engine/builder/om/php5/GeneratedObjectTest.php GeneratedObjectTest] class, as follows:
+Writing a unit test often means adding a method to one of the existing test classes. For example, let's test a feature in the Propel templates that supports saving of objects when only default values have been specified. Just add a `testSaveWithDefaultValues()` method to the [browser:branches/1.6/test/testsuite/generator/engine/builder/om/php5/GeneratedObjectTest.php GeneratedObjectTest] class, as follows:
 
 {{{
 #!php
