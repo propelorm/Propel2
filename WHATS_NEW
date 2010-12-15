@@ -216,7 +216,7 @@ For complex models showing a large number of tables, database administrators oft
 
 Propel also supports foreign keys between tables assigned to two different schemas. For MySQL, where "SQL schema" is a synonym for "database", this allows for cross-database queries.
 
-The Propel documentation contains a new tutorial aboutthe SQL schema attributes and usage, called [wiki:Documentation/1.6/Using-SQL-Schemas Using SQL Schemas].
+The Propel documentation contains a new tutorial about the SQL schema attributes and usage, called [wiki:Documentation/1.6/Using-SQL-Schemas Using SQL Schemas].
 
 == Foreign Key Filters Now Accept a Collection ==
 
