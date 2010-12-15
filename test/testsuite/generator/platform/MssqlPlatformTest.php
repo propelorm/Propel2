@@ -146,6 +146,147 @@ EOF;
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesDDLSchema
+	 */
+	public function testGetAddTablesDDLSchemas($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- x.book
+-----------------------------------------------------------------------
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_FK_1')
+	ALTER TABLE [x].[book] DROP CONSTRAINT [book_FK_1];
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book')
+BEGIN
+	DECLARE @reftable_3 nvarchar(60), @constraintname_3 nvarchar(60)
+	DECLARE refcursor CURSOR FOR
+	select reftables.name tablename, cons.name constraintname
+		from sysobjects tables,
+			sysobjects reftables,
+			sysobjects cons,
+			sysreferences ref
+		where tables.id = ref.rkeyid
+			and cons.id = ref.constid
+			and reftables.id = ref.fkeyid
+			and tables.name = 'x.book'
+	OPEN refcursor
+	FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+	while @@FETCH_STATUS = 0
+	BEGIN
+		exec ('alter table '+@reftable_3+' drop constraint '+@constraintname_3)
+		FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+	END
+	CLOSE refcursor
+	DEALLOCATE refcursor
+	DROP TABLE [x].[book]
+END
+
+CREATE TABLE [x].[book]
+(
+	[id] INT NOT NULL IDENTITY,
+	[title] VARCHAR(255) NOT NULL,
+	[author_id] INT NULL,
+	CONSTRAINT [book_PK] PRIMARY KEY ([id])
+);
+
+CREATE INDEX [book_I_1] ON [x].[book] ([title]);
+
+BEGIN
+ALTER TABLE [x].[book] ADD CONSTRAINT [book_FK_1] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
+END
+;
+
+-----------------------------------------------------------------------
+-- y.author
+-----------------------------------------------------------------------
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'y.author')
+BEGIN
+	DECLARE @reftable_4 nvarchar(60), @constraintname_4 nvarchar(60)
+	DECLARE refcursor CURSOR FOR
+	select reftables.name tablename, cons.name constraintname
+		from sysobjects tables,
+			sysobjects reftables,
+			sysobjects cons,
+			sysreferences ref
+		where tables.id = ref.rkeyid
+			and cons.id = ref.constid
+			and reftables.id = ref.fkeyid
+			and tables.name = 'y.author'
+	OPEN refcursor
+	FETCH NEXT from refcursor into @reftable_4, @constraintname_4
+	while @@FETCH_STATUS = 0
+	BEGIN
+		exec ('alter table '+@reftable_4+' drop constraint '+@constraintname_4)
+		FETCH NEXT from refcursor into @reftable_4, @constraintname_4
+	END
+	CLOSE refcursor
+	DEALLOCATE refcursor
+	DROP TABLE [y].[author]
+END
+
+CREATE TABLE [y].[author]
+(
+	[id] INT NOT NULL IDENTITY,
+	[first_name] VARCHAR(100) NULL,
+	[last_name] VARCHAR(100) NULL,
+	CONSTRAINT [author_PK] PRIMARY KEY ([id])
+);
+
+-----------------------------------------------------------------------
+-- x.book_summary
+-----------------------------------------------------------------------
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_FK_1')
+	ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_FK_1];
+
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book_summary')
+BEGIN
+	DECLARE @reftable_5 nvarchar(60), @constraintname_5 nvarchar(60)
+	DECLARE refcursor CURSOR FOR
+	select reftables.name tablename, cons.name constraintname
+		from sysobjects tables,
+			sysobjects reftables,
+			sysobjects cons,
+			sysreferences ref
+		where tables.id = ref.rkeyid
+			and cons.id = ref.constid
+			and reftables.id = ref.fkeyid
+			and tables.name = 'x.book_summary'
+	OPEN refcursor
+	FETCH NEXT from refcursor into @reftable_5, @constraintname_5
+	while @@FETCH_STATUS = 0
+	BEGIN
+		exec ('alter table '+@reftable_5+' drop constraint '+@constraintname_5)
+		FETCH NEXT from refcursor into @reftable_5, @constraintname_5
+	END
+	CLOSE refcursor
+	DEALLOCATE refcursor
+	DROP TABLE [x].[book_summary]
+END
+
+CREATE TABLE [x].[book_summary]
+(
+	[id] INT NOT NULL IDENTITY,
+	[book_id] INT NOT NULL,
+	[summary] VARCHAR(MAX) NOT NULL,
+	CONSTRAINT [book_summary_PK] PRIMARY KEY ([id])
+);
+
+BEGIN
+ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_FK_1] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
+END
+;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetAddTablesSkipSQLDDL
 	 */
 	public function testGetAddTablesSkipSQLDDL($schema)
@@ -209,13 +350,30 @@ CREATE TABLE [foo]
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetAddTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = "
+CREATE TABLE [Woopah].[foo]
+(
+	[id] INT NOT NULL IDENTITY,
+	[bar] INT NULL,
+	CONSTRAINT [foo_PK] PRIMARY KEY ([id])
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');
 		$expected = "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'foo')
 BEGIN
-	DECLARE @reftable_3 nvarchar(60), @constraintname_3 nvarchar(60)
+	DECLARE @reftable_6 nvarchar(60), @constraintname_6 nvarchar(60)
 	DECLARE refcursor CURSOR FOR
 	select reftables.name tablename, cons.name constraintname
 		from sysobjects tables,
@@ -227,15 +385,50 @@ BEGIN
 			and reftables.id = ref.fkeyid
 			and tables.name = 'foo'
 	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+	FETCH NEXT from refcursor into @reftable_6, @constraintname_6
 	while @@FETCH_STATUS = 0
 	BEGIN
-		exec ('alter table '+@reftable_3+' drop constraint '+@constraintname_3)
-		FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+		exec ('alter table '+@reftable_6+' drop constraint '+@constraintname_6)
+		FETCH NEXT from refcursor into @reftable_6, @constraintname_6
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
 	DROP TABLE [foo]
+END
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetDropTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = "
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'Woopah.foo')
+BEGIN
+	DECLARE @reftable_7 nvarchar(60), @constraintname_7 nvarchar(60)
+	DECLARE refcursor CURSOR FOR
+	select reftables.name tablename, cons.name constraintname
+		from sysobjects tables,
+			sysobjects reftables,
+			sysobjects cons,
+			sysreferences ref
+		where tables.id = ref.rkeyid
+			and cons.id = ref.constid
+			and reftables.id = ref.fkeyid
+			and tables.name = 'Woopah.foo'
+	OPEN refcursor
+	FETCH NEXT from refcursor into @reftable_7, @constraintname_7
+	while @@FETCH_STATUS = 0
+	BEGIN
+		exec ('alter table '+@reftable_7+' drop constraint '+@constraintname_7)
+		FETCH NEXT from refcursor into @reftable_7, @constraintname_7
+	END
+	CLOSE refcursor
+	DEALLOCATE refcursor
+	DROP TABLE [Woopah].[foo]
 END
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));

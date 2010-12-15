@@ -42,7 +42,7 @@ EOF;
 		return array(array($schema));
 	}
 
-	public function providerForTestGetAddTablesWithSchemaDDL()
+	public function providerForTestGetAddTablesDDLSchema()
 	{
 		$schema = <<<EOF
 <database name="test" schema="x">
@@ -137,6 +137,19 @@ EOF;
 		<unique>
 			<unique-column name="bar" />
 		</unique>
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
+
+	public function providerForTestGetAddTableDDLSchema()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo" schema="Woopah">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
 	</table>
 </database>
 EOF;

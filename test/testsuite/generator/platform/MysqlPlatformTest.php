@@ -50,9 +50,9 @@ class MysqlPlatformTest extends PlatformTestProvider
 	}
 
 	/**
-	 * @dataProvider providerForTestGetAddTablesWithSchemaDDL
+	 * @dataProvider providerForTestGetAddTablesDDLSchema
 	 */
-	public function testGetAddTablesWithSchemaDDL($schema)
+	public function testGetAddTablesDDLSchema($schema)
 	{
 		$database = $this->getDatabaseFromSchema($schema);
 		$expected = <<<EOF
@@ -348,12 +348,41 @@ CREATE TABLE `foo`
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetAddTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = "
+CREATE TABLE `Woopah`.`foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar` INTEGER,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
 	
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');
 		$expected = "
 DROP TABLE IF EXISTS `foo`;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetDropTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = "
+DROP TABLE IF EXISTS `Woopah`.`foo`;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}

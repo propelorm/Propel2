@@ -107,14 +107,14 @@ EOF;
 	/**
 	 * @dataProvider providerForTestGetAddTablesSkipSQLDDL
 	 */
-	public function testGetAddTablesSkipSQLDDL($schema)
+	public function testGetAddTablesDDLSkipSQL($schema)
 	{
 		$database = $this->getDatabaseFromSchema($schema);
 		$expected = '';
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
 	}
 
-	public function testGetAddTablesWithSchemaDDL()
+	public function testGetAddTablesDDLSchemasVendor()
 	{
 		$schema = <<<EOF
 <database name="test">
@@ -199,6 +199,71 @@ EOF;
 	}
 
 	/**
+	 * @dataProvider providerForTestGetAddTablesDDLSchema
+	 */
+	public function testGetAddTablesDDLSchemas($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- x.book
+-----------------------------------------------------------------------
+
+DROP TABLE "x"."book" CASCADE;
+
+CREATE TABLE "x"."book"
+(
+	"id" serial NOT NULL,
+	"title" VARCHAR(255) NOT NULL,
+	"author_id" INTEGER,
+	PRIMARY KEY ("id")
+);
+
+CREATE INDEX "book_I_1" ON "x"."book" ("title");
+
+-----------------------------------------------------------------------
+-- y.author
+-----------------------------------------------------------------------
+
+DROP TABLE "y"."author" CASCADE;
+
+CREATE TABLE "y"."author"
+(
+	"id" serial NOT NULL,
+	"first_name" VARCHAR(100),
+	"last_name" VARCHAR(100),
+	PRIMARY KEY ("id")
+);
+
+-----------------------------------------------------------------------
+-- x.book_summary
+-----------------------------------------------------------------------
+
+DROP TABLE "x"."book_summary" CASCADE;
+
+CREATE TABLE "x"."book_summary"
+(
+	"id" serial NOT NULL,
+	"book_id" INTEGER NOT NULL,
+	"summary" TEXT NOT NULL,
+	PRIMARY KEY ("id")
+);
+
+ALTER TABLE "x"."book" ADD CONSTRAINT "book_FK_1"
+	FOREIGN KEY ("author_id")
+	REFERENCES "y"."author" ("id");
+
+ALTER TABLE "x"."book_summary" ADD CONSTRAINT "book_summary_FK_1"
+	FOREIGN KEY ("book_id")
+	REFERENCES "x"."book" ("id")
+	ON DELETE CASCADE;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK
 	 */
 	public function testGetAddTableDDLSimplePK($schema)
@@ -259,7 +324,7 @@ EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
 
-	public function testGetAddTableWithSchemaDDL()
+	public function testGetAddTableDDLSchemaVendor()
 	{
 		$schema = <<<EOF
 <database name="test">
@@ -287,8 +352,27 @@ SET search_path TO public;
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
+	
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetAddTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = <<<EOF
 
-	public function testGetAddTableWithSequenceDDL()
+CREATE TABLE "Woopah"."foo"
+(
+	"id" serial NOT NULL,
+	"bar" INTEGER,
+	PRIMARY KEY ("id")
+);
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
+
+	public function testGetAddTableDDLSequence()
 	{
 		$schema = <<<EOF
 <database name="test">
@@ -313,7 +397,7 @@ EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
 
-	public function testGetAddTableWithColumnCommentsDDL()
+	public function testGetAddTableDDLColumnComments()
 	{
 		$schema = <<<EOF
 <database name="test">
@@ -350,7 +434,7 @@ DROP TABLE \"foo\" CASCADE;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
 
-	public function testGetDropTableWithSchemaDDL()
+	public function testGetDropTableDDLSchemaVendor()
 	{
 		$schema = <<<EOF
 <database name="test">
@@ -370,6 +454,20 @@ SET search_path TO "Woopah";
 DROP TABLE "foo" CASCADE;
 
 SET search_path TO public;
+
+EOF;
+		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLSchema
+	 */
+	public function testGetDropTableDDLSchema($schema)
+	{
+		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
+		$expected = <<<EOF
+
+DROP TABLE "Woopah"."foo" CASCADE;
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
