@@ -190,6 +190,34 @@ Here is an example buildtime configuration file that defines a MySQL and a SQLit
 
 Now that Propel can deal with database vendors at buildtime more accurately, the generated classes offer more optimizations for the database they rely one. Incidentally, that means that you should rebuild your model if you use different database vendors. Thats includes cases when your developement and production environments use different vendors.
 
+== Support For SQL Schemas ==
+
+For complex models showing a large number of tables, database administrators often like to group tables into "SQL schemas", which are namespaces in the SQL server. Starting with Propel 1.6, it is now possible to assign tables to SQL schemas using the `schema` attribute in the `<database>` of the `<table>` tag:
+
+{{{
+#!xml
+<database name="my_connection">
+  <table name="book" schema="bookstore">
+    <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+    <column name="title" type="VARCHAR" required="true" />
+    <column name="author_id" type="INTGER" />
+    <foreign-key foreignTable="author" foreignSchema="people" onDelete="setnull" onUpdate="cascade">
+      <reference local="author_id" foreign="id" />
+    </foreign-key>
+  </table>
+  <table name="author" schema="people">
+    <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+    <column name="name" type="VARCHAR" required="true" />
+  </table>
+</database>
+}}}
+
+'''Tip''': This feature is only available in PostgreSQL, MSSQL, and MySQL. The `schema` attribute is simply ignored in Oracle and SQLite.
+
+Propel also supports foreign keys between tables assigned to two different schemas. For MySQL, where "SQL schema" is a synonym for "database", this allows for cross-database queries.
+
+The Propel documentation contains a new tutorial aboutthe SQL schema attributes and usage, called [wiki:Documentation/1.6/Using-SQL-Schemas Using SQL Schemas].
+
 == Foreign Key Filters Now Accept a Collection ==
 
 The generated `filterByRelationName()` methods in the model queries now accept a `PropelCollection` as argument. This will allow you to keep using objects and avoid dealing with foreign keys completely:
