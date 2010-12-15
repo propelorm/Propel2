@@ -105,6 +105,8 @@ class Book extends BaseBook
 }
 }}}
 
+'''Tip''': See the [wiki:Documentation/1.6/Namespaces PHP 5.3 Namespaces] chepter for more information on namespace usage in Propel.
+
 == Generated Getter and Setter ==
 
 {{{

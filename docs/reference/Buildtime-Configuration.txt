@@ -59,6 +59,15 @@ propel.packageObjectModel = true|{false}
 # will also stipulate the subdirectory in which model classes get generated.
 propel.namespace.autoPackage = true|{false}
 
+# If your XML schema specifies SQL schemas for each table, you can copy the
+# value of the `schema` attribute to other attributes.
+# To copy the schema attribute to the package attribute, set this to true
+propel.schema.autoPackage = true|{false}
+# To copy the schema attribute to the namespace attribute, set this to true
+propel.schema.autoNamespace = true|{false}
+# To use the schema attribute as a prefix to all table names, set this to true
+propel.schema.autoPrefix = true|{false}
+
 # Whether to validate the XML schema using the XSD file.
 # The default XSD file is located under `generator/resources/xsd/database.xsd`
 # and you can use a custom XSD file by changing the `propel.schema.xsd.file` 
