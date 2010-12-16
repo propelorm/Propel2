@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/VersionableBehaviorObjectBuilderModifier.php';
+require_once dirname(__FILE__) . '/VersionableBehaviorQueryBuilderModifier.php';
 
 /**
  * Keeps tracks of all the modifications in an ActiveRecord object
@@ -25,7 +26,7 @@ class VersionableBehavior extends Behavior
 		'version_table' => '',
 	);
 
-	protected $versionTable, $objectBuilderModifier;
+	protected $versionTable, $objectBuilderModifier, $queryBuilderModifier;
 	
 	/**
 	 * Add the version_column to the current table
@@ -95,6 +96,15 @@ class VersionableBehavior extends Behavior
 			$this->objectBuilderModifier = new VersionableBehaviorObjectBuilderModifier($this);
 		}
 		return $this->objectBuilderModifier;
+	}
+
+	public function getQueryBuilderModifier()
+	{
+		if (is_null($this->queryBuilderModifier))
+		{
+			$this->queryBuilderModifier = new VersionableBehaviorQueryBuilderModifier($this);
+		}
+		return $this->queryBuilderModifier;
 	}
 	
 }

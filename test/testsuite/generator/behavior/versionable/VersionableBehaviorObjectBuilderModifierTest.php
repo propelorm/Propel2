@@ -50,7 +50,6 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 	</table>
 </database>>
 EOF;
-			//PropelQuickBuilder::debugClassesForTable($schema, 'versionable_behavior_test_1');
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
@@ -210,8 +209,6 @@ EOF;
 	
 	public function testToVersion()
 	{
-		VersionableBehaviorTest1Query::create()->deleteAll();
-		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
 		$o = new VersionableBehaviorTest1();
 		$o->setBar(123); // version 1
 		$o->save();
@@ -245,5 +242,36 @@ EOF;
 		$o->setBar(123); // version 1
 		$o->save();
 		$o->toVersion(2);
+	}
+
+	public function testGetLastVersionNumber()
+	{
+		$o = new VersionableBehaviorTest1();
+		$this->assertEquals(0, $o->getLastVersionNumber());
+		$o->setBar(123); // version 1
+		$o->save();
+		$this->assertEquals(1, $o->getLastVersionNumber());
+		$o->setBar(456); // version 2
+		$o->save();
+		$this->assertEquals(2, $o->getLastVersionNumber());
+		$o->toVersion(1);
+		$o->save();
+		$this->assertEquals(3, $o->getLastVersionNumber());
+	}
+	
+	public function testIsLastVersion()
+	{
+		$o = new VersionableBehaviorTest1();
+		$this->assertTrue($o->isLastVersion());
+		$o->setBar(123); // version 1
+		$o->save();
+		$this->assertTrue($o->isLastVersion());
+		$o->setBar(456); // version 2
+		$o->save();
+		$this->assertTrue($o->isLastVersion());
+		$o->toVersion(1);
+		$this->assertFalse($o->isLastVersion());
+		$o->save();
+		$this->assertTrue($o->isLastVersion());
 	}
 }

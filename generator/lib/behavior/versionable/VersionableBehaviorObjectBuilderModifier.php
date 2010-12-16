@@ -39,6 +39,16 @@ class VersionableBehaviorObjectBuilderModifier
 		return $this->behavior->getColumnForParameter($name)->getPhpName();
 	}
 	
+	protected function getVersionQueryClassName()
+	{
+		return $this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
+	}
+	
+	protected function getActiveRecordClassName()
+	{
+		return $this->builder->getStubObjectBuilder()->getClassname();
+	}
+	
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -77,26 +87,26 @@ class VersionableBehaviorObjectBuilderModifier
 	public function preUpdate($builder)
 	{
 		return "if (\$this->isModified()) {
-	\$this->{$this->getColumnAttribute()} += 1;
+	\$this->set{$this->getColumnPhpName()}(\$this->getLastVersionNumber(\$con) + 1);
 	\$this->wasModified = true;
 }";
 	}
 	
 	public function postSave($builder)
 	{
-		$versionTablePhpName = $this->behavior->getVersionTablePhpName();
+		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
 		$script = "if (\$this->wasModified) {
-			\$version = new {$versionTablePhpName}();
-			\$this->copyInto(\$version);";
+	\$version = new {$versionTablePhpName}();
+	\$this->copyInto(\$version);";
 		foreach ($this->table->getPrimaryKey() as $col) {
 			if ($col->isAutoIncrement()) {
 				$phpName = $col->getPhpName();
 				$script .= "
-			\$version->set{$phpName}(\$this->get{$phpName}());";
+	\$version->set{$phpName}(\$this->get{$phpName}());";
 			}
 		}
 		$script .= "
-			\$version->save(\$con);
+	\$version->save(\$con);
 }
 \$this->wasModified = false;";
 		return $script;
@@ -104,11 +114,11 @@ class VersionableBehaviorObjectBuilderModifier
 
 	public function postDelete($builder)
 	{
-		$queryClassName = $builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
+		$this->builder = $builder;
 		if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
 			$script = "// emulate delete cascade
-{$queryClassName}::create()
-	->filterBy{$this->table->getPhpName()}(\$this)
+{$this->getVersionQueryClassName()}::create()
+	->filterBy{$this->getActiveRecordClassName()}(\$this)
 	->delete(\$con);";
 			return $script;
 		}
@@ -136,6 +146,8 @@ protected \$wasModified = false;
 			$this->addVersionGetter($script);
 		}
 		$this->addToVersion($script);
+		$this->addGetLastVersionNumber($script);
+		$this->addIsLastVersion($script);
 		
 		return $script;
 	}
@@ -173,8 +185,7 @@ public function getVersion()
 
 	protected function addToVersion(&$script)
 	{
-		$ARclassName = $this->builder->getStubObjectBuilder()->getClassname();
-		$queryClassName = $this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
+		$ARclassName = $this->getActiveRecordClassName();
 		$script .= "
 /**
  * Sets the properties of the curent object to the value they had at a specific version
@@ -186,18 +197,58 @@ public function getVersion()
  */
 public function toVersion(\$version, \$con = null)
 {
-	\$v = {$queryClassName}::create()
+	\$v = {$this->getVersionQueryClassName()}::create()
 		->filterBy{$ARclassName}(\$this)
 		->filterBy{$this->getColumnPhpName()}(\$version)
 		->findOne(\$con);
 	if (!\$v) {
 		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
 	}
-	\$currentVersion = \$this->getVersion();
 	\$v->copyInto(\$this, false, false);
-	\$this->setVersion(\$currentVersion);
 	return \$this;
 }
 ";
 	}
+	
+	protected function addGetLastVersionNumber(&$script)
+	{
+		$script .= "
+/**
+ * Gets the latest persisted version number for the current object
+ *
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  integer
+ */
+public function getLastVersionNumber(\$con = null)
+{
+	\$v = {$this->getVersionQueryClassName()}::create()
+		->filterBy{$this->getActiveRecordClassName()}(\$this)
+		->orderBy{$this->getColumnPhpName()}('desc')
+		->findOne(\$con);
+	if (!\$v) {
+		return 0;
+	}
+	return \$v->get{$this->getColumnPhpName()}();
+}
+";
+	}
+
+	protected function addIsLastVersion(&$script)
+	{
+		$script .= "
+/**
+ * Checks whether the current object is the latest one
+ *
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  Boolean
+ */
+public function isLastVersion(\$con = null)
+{
+	return \$this->getLastVersionNumber(\$con) == \$this->getVersion();
+}
+";
+	}
+
 }
