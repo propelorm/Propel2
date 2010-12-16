@@ -24,6 +24,13 @@ interface GeneratorConfigInterface
 	public function getConfiguredBuilder(Table $table, $type);
 
 	/**
+	* Gets a configured Pluralizer class.
+	*
+	* @return     Pluralizer
+	*/
+	public function getConfiguredPluralizer();
+	
+	/**
 	 * Gets a specific propel (renamed) property from the build.
 	 *
 	 * @param      string $name

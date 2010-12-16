@@ -87,6 +87,17 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
 	}
 
 	/**
+	* Gets a configured Pluralizer class.
+	*
+	* @return     Pluralizer
+	*/
+	public function getConfiguredPluralizer()
+	{
+		require_once dirname(__FILE__) . '/../builder/util/DefaultEnglishPluralizer.php';
+		return new DefaultEnglishPluralizer();
+	}
+  
+	/**
 	 * Parses the passed-in properties, renaming and saving eligible properties in this object.
 	 *
 	 * Renames the propel.xxx properties to just xxx and renames any xxx.yyy properties

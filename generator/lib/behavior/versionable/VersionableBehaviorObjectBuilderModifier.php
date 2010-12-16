@@ -70,14 +70,60 @@ class VersionableBehaviorObjectBuilderModifier
 
 	public function preInsert($builder)
 	{
-		return "\$this->{$this->getColumnAttribute()} = 1;";
+		return "\$this->{$this->getColumnAttribute()} = 1;
+\$this->wasModified = true;";
 	}
 	
 	public function preUpdate($builder)
 	{
 		return "if (\$this->isModified()) {
 	\$this->{$this->getColumnAttribute()} += 1;
+	\$this->wasModified = true;
 }";
+	}
+	
+	public function postSave($builder)
+	{
+		$versionTablePhpName = $this->behavior->getVersionTablePhpName();
+		$script = "if (\$this->wasModified) {
+			\$version = new {$versionTablePhpName}();
+			\$this->copyInto(\$version);";
+		foreach ($this->table->getPrimaryKey() as $col) {
+			if ($col->isAutoIncrement()) {
+				$phpName = $col->getPhpName();
+				$script .= "
+			\$version->set{$phpName}(\$this->get{$phpName}());";
+			}
+		}
+		$script .= "
+			\$version->save(\$con);
+}
+\$this->wasModified = false;";
+		return $script;
+	}
+
+	public function postDelete($builder)
+	{
+		if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
+			$script = "// emulate delete cascade
+{$this->behavior->getVersionTablePhpName()}Query::create()
+	->filterBy{$this->table->getPhpName()}(\$this)
+	->delete(\$con);";
+			return $script;
+		}
+	}
+	
+	public function objectAttributes($builder)
+	{
+		return "
+
+/**
+ * Whether the object was modified. Useful for the postSave() hooks.
+ * @var        boolean
+ */
+protected \$wasModified = false;
+
+";
 	}
 	
 	public function objectMethods($builder)

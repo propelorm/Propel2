@@ -22,6 +22,7 @@ class VersionableBehavior extends Behavior
 	// default parameters value
 	protected $parameters = array(
 		'version_column' => 'version',
+		'version_table' => '',
 	);
 
 	protected $objectBuilderModifier;
@@ -31,13 +32,52 @@ class VersionableBehavior extends Behavior
 	 */
 	public function modifyTable()
 	{
-		if(!$this->getTable()->containsColumn($this->getParameter('version_column'))) {
-			$this->getTable()->addColumn(array(
+		$table = $this->getTable();
+		if(!$table->containsColumn($this->getParameter('version_column'))) {
+			$table->addColumn(array(
 				'name' => $this->getParameter('version_column'),
 				'type' => 'INTEGER',
 				'default' => 0
 			));
 		}
+		$database = $table->getDatabase();
+		$versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getName() . '_version');
+		if (!$database->hasTable($versionTableName)) {
+			// create the version table
+			$versionTable = $database->addTable(array(
+				'name' => $versionTableName,
+				'phpName' => $this->getVersionTablePhpName(),
+				'package' => $table->getPackage(),
+				'schema' => $table->getSchema(),
+				'namespace' => $table->getNamespace(),
+			));
+			// copy all the columns
+			foreach ($table->getColumns() as $column) {
+				$columnInVersionTable = clone $column;
+				if ($columnInVersionTable->isAutoincrement()) {
+					$columnInVersionTable->setAutoIncrement(false);
+				}
+				$versionTable->addColumn($columnInVersionTable);
+			}
+			// create the foreign key
+			$fk = new ForeignKey();
+			$fk->setForeignTableCommonName($table->getCommonName());
+			$fk->setForeignSchemaName($table->getSchema());
+			$fk->setOnDelete('CASCADE');
+			$fk->setOnUpdate(null);
+			$tablePKs = $table->getPrimaryKey();
+			foreach ($versionTable->getPrimaryKey() as $key => $column) {
+				$fk->addReference($column, $tablePKs[$key]);
+			}
+			$versionTable->addForeignKey($fk);
+			// add the version column to the primary key
+			$versionTable->getColumn($this->getParameter('version_column'))->setPrimaryKey(true);
+		}
+	}
+	
+	public function getVersionTablePhpName()
+	{
+		return $this->getTable()->getPhpName() . 'Version';
 	}
 
 	public function getObjectBuilderModifier()

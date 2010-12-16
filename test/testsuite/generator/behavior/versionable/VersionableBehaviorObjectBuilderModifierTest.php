@@ -41,11 +41,15 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 			<parameter name="version_column" value="foo_ver" />
 		</behavior>
 	</table>
+	<table name="versionable_behavior_test_3">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<behavior name="versionable">
+		  <parameter name="version_table" value="foo_ver" />
+		</behavior>
+	</table>
 </database>>
 EOF;
-$b = new PropelQuickBuilder();
-$b->setSchema($schema);
-//echo $b->getClasses();
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
@@ -129,4 +133,77 @@ $b->setSchema($schema);
 		$this->assertEquals(1, $o->getVersion());
 	}
 	
+	public function testNewVersionCreatesRecordInVersionTable()
+	{
+		VersionableBehaviorTest1Query::create()->deleteAll();
+		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest1();
+		$o->save();
+		$versions = VersionableBehaviorTest1VersionQuery::create()->find();
+		$this->assertEquals(1, $versions->count());
+		$this->assertEquals($o, $versions[0]->getVersionableBehaviorTest1());
+		$o->save();
+		$versions = VersionableBehaviorTest1VersionQuery::create()->find();
+		$this->assertEquals(1, $versions->count());
+		$o->setBar(123);
+		$o->save();
+		$versions = VersionableBehaviorTest1VersionQuery::create()->orderByVersion()->find();
+		$this->assertEquals(2, $versions->count());
+		$this->assertEquals($o->getId(), $versions[0]->getId());
+		$this->assertNull($versions[0]->getBar());
+		$this->assertEquals($o->getId(), $versions[1]->getId());
+		$this->assertEquals(123, $versions[1]->getBar());
+	}
+	
+		public function testNewVersionCreatesRecordInVersionTableWithCustomName()
+	{
+		VersionableBehaviorTest3Query::create()->deleteAll();
+		VersionableBehaviorTest3VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest3();
+		$o->save();
+		$versions = VersionableBehaviorTest3VersionQuery::create()->find();
+		$this->assertEquals(1, $versions->count());
+		$this->assertEquals($o, $versions[0]->getVersionableBehaviorTest3());
+		$o->save();
+		$versions = VersionableBehaviorTest3VersionQuery::create()->find();
+		$this->assertEquals(1, $versions->count());
+		$o->setBar(123);
+		$o->save();
+		$versions = VersionableBehaviorTest3VersionQuery::create()->orderByVersion()->find();
+		$this->assertEquals(2, $versions->count());
+		$this->assertEquals($o->getId(), $versions[0]->getId());
+		$this->assertNull($versions[0]->getBar());
+		$this->assertEquals($o->getId(), $versions[1]->getId());
+		$this->assertEquals(123, $versions[1]->getBar());
+	}
+
+	public function testDeleteObjectDeletesRecordInVersionTable()
+	{
+		VersionableBehaviorTest1Query::create()->deleteAll();
+		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest1();
+		$o->save();
+		$o->setBar(123);
+		$o->save();
+		$nbVersions = VersionableBehaviorTest1VersionQuery::create()->count();
+		$this->assertEquals(2, $nbVersions);
+		$o->delete();
+		$nbVersions = VersionableBehaviorTest1VersionQuery::create()->count();
+		$this->assertEquals(0, $nbVersions);
+	}
+
+	public function testDeleteObjectDeletesRecordInVersionTableWithCustomName()
+	{
+		VersionableBehaviorTest3Query::create()->deleteAll();
+		VersionableBehaviorTest3VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest3();
+		$o->save();
+		$o->setBar(123);
+		$o->save();
+		$nbVersions = VersionableBehaviorTest3VersionQuery::create()->count();
+		$this->assertEquals(2, $nbVersions);
+		$o->delete();
+		$nbVersions = VersionableBehaviorTest3VersionQuery::create()->count();
+		$this->assertEquals(0, $nbVersions);
+	}	
 }
