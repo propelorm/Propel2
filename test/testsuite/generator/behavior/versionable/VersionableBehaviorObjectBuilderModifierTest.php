@@ -45,7 +45,16 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable">
-		  <parameter name="version_table" value="foo_ver" />
+			<parameter name="version_table" value="foo_ver" />
+		</behavior>
+	</table>
+	<table name="versionable_behavior_test_4">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<behavior name="versionable">
+			<parameter name="log_created_at" value="true" />
+			<parameter name="log_created_by" value="true" />
+			<parameter name="log_comment" value="true" />
 		</behavior>
 	</table>
 </database>>
@@ -273,5 +282,63 @@ EOF;
 		$this->assertFalse($o->isLastVersion());
 		$o->save();
 		$this->assertTrue($o->isLastVersion());
+	}
+
+	public function testVersionCreatedAt()
+	{
+		$o = new VersionableBehaviorTest4();
+		$t = time();
+		$o->save();
+		$version = VersionableBehaviorTest4VersionQuery::create()
+			->filterByVersionableBehaviorTest4($o)
+			->findOne();
+		$this->assertEquals($t, $version->getVersionCreatedAt('U'));
+		
+		$o = new VersionableBehaviorTest4();
+		$inThePast = time() - 123456;
+		$o->setVersionCreatedAt($inThePast);
+		$o->save();
+		$this->assertEquals($inThePast, $o->getVersionCreatedAt('U'));
+		$version = VersionableBehaviorTest4VersionQuery::create()
+			->filterByVersionableBehaviorTest4($o)
+			->findOne();
+		$this->assertEquals($o->getVersionCreatedAt(), $version->getVersionCreatedAt());
+	}
+
+	public function testVersionCreatedBy()
+	{
+		$o = new VersionableBehaviorTest4();
+		$o->setVersionCreatedBy('me me me');
+		$o->save();
+		$version = VersionableBehaviorTest4VersionQuery::create()
+			->filterByVersionableBehaviorTest4($o)
+			->findOne();
+		$this->assertEquals('me me me', $version->getVersionCreatedBy());
+	}
+
+	public function testVersionComment()
+	{
+		$o = new VersionableBehaviorTest4();
+		$o->setVersionComment('Because you deserve it');
+		$o->save();
+		$version = VersionableBehaviorTest4VersionQuery::create()
+			->filterByVersionableBehaviorTest4($o)
+			->findOne();
+		$this->assertEquals('Because you deserve it', $version->getVersionComment());
+	}
+
+	public function testToVersionWorksWithComments()
+	{
+		$o = new VersionableBehaviorTest4();
+		$o->setVersionComment('Because you deserve it');
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setVersionComment('Unless I change my mind');
+		$o->setBar(456); // version 2
+		$o->save();
+		$o->toVersion(1);
+		$this->assertEquals('Because you deserve it', $o->getVersionComment());
+		$o->toVersion(2);
+		$this->assertEquals('Unless I change my mind', $o->getVersionComment());
 	}
 }

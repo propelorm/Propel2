@@ -234,4 +234,80 @@ CREATE TABLE [versionable_behavior_test_1_version]
 EOF;
 		$this->assertEquals($expected, $builder->getSQL());
 	}
+
+	public function logSchemaDataProvider()
+	{
+		$schema = <<<EOF
+<database name="versionable_behavior_test_1">
+	<table name="versionable_behavior_test_1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<behavior name="versionable">
+		  <parameter name="log_created_at" value="true" />
+		  <parameter name="log_created_by" value="true" />
+		  <parameter name="log_comment" value="true" />
+		</behavior>
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
+	
+	/**
+	 * @dataProvider logSchemaDataProvider
+	 */
+	public function testModifyTableAddsLogColumns($schema)
+	{
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$expected = <<<EOF
+-----------------------------------------------------------------------
+-- versionable_behavior_test_1
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_1];
+
+CREATE TABLE [versionable_behavior_test_1]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[bar] INTEGER,
+	[version] INTEGER DEFAULT 0,
+	[version_created_at] TIMESTAMP,
+	[version_created_by] VARCHAR(100),
+	[version_comment] VARCHAR(255)
+);
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+	}
+	
+	/**
+	 * @dataProvider logSchemaDataProvider
+	 */
+	public function testModifyTableAddsVersionTableLogColumns($schema)
+	{
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$expected = <<<EOF
+-----------------------------------------------------------------------
+-- versionable_behavior_test_1_version
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_1_version];
+
+CREATE TABLE [versionable_behavior_test_1_version]
+(
+	[id] INTEGER NOT NULL,
+	[bar] INTEGER,
+	[version] INTEGER DEFAULT 0,
+	[version_created_at] TIMESTAMP,
+	[version_created_by] VARCHAR(100),
+	[version_comment] VARCHAR(255),
+	PRIMARY KEY ([id],[version])
+);
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_1 ([id])
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+	}
 }

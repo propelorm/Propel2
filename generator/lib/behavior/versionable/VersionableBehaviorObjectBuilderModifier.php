@@ -77,6 +77,15 @@ class VersionableBehaviorObjectBuilderModifier
 		return 'set' . $this->getColumnPhpName($name);
 	}
 	
+	public function preSave($builder)
+	{
+		if ($this->behavior->getParameter('log_created_at') == 'true') {
+			return "
+if (!\$this->getVersionCreatedAt()) {
+	\$this->setVersionCreatedAt(time());
+}";
+		}
+	}
 
 	public function preInsert($builder)
 	{
@@ -126,7 +135,7 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function objectAttributes($builder)
 	{
-		return "
+		$script = "
 
 /**
  * Whether the object was modified. Useful for the postSave() hooks.
@@ -135,6 +144,7 @@ class VersionableBehaviorObjectBuilderModifier
 protected \$wasModified = false;
 
 ";
+		return $script;
 	}
 	
 	public function objectMethods($builder)
@@ -148,7 +158,6 @@ protected \$wasModified = false;
 		$this->addToVersion($script);
 		$this->addGetLastVersionNumber($script);
 		$this->addIsLastVersion($script);
-		
 		return $script;
 	}
 

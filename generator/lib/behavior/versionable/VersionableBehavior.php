@@ -23,7 +23,10 @@ class VersionableBehavior extends Behavior
 	// default parameters value
 	protected $parameters = array(
 		'version_column' => 'version',
-		'version_table' => '',
+		'version_table'  => '',
+		'log_created_at' => 'false',
+		'log_created_by' => 'false',
+		'log_comment'    => 'false',
 	);
 
 	protected $versionTable, $objectBuilderModifier, $queryBuilderModifier;
@@ -34,11 +37,33 @@ class VersionableBehavior extends Behavior
 	public function modifyTable()
 	{
 		$table = $this->getTable();
+		// add the version column
 		if(!$table->containsColumn($this->getParameter('version_column'))) {
 			$table->addColumn(array(
-				'name' => $this->getParameter('version_column'),
-				'type' => 'INTEGER',
+				'name'    => $this->getParameter('version_column'),
+				'type'    => 'INTEGER',
 				'default' => 0
+			));
+		}
+		// add the log columns
+		if ($this->getParameter('log_created_at') == 'true' && !$table->containsColumn('version_created_at')) {
+			$table->addColumn(array(
+				'name' => 'version_created_at',
+				'type' => 'TIMESTAMP'
+			));
+		}
+		if ($this->getParameter('log_created_by') == 'true' && !$table->containsColumn('version_created_by')) {
+			$table->addColumn(array(
+				'name' => 'version_created_by',
+				'type' => 'VARCHAR',
+				'size' => 100
+			));
+		}
+		if ($this->getParameter('log_comment') == 'true'  && !$table->containsColumn('version_comment')) {
+			$table->addColumn(array(
+				'name' => 'version_comment',
+				'type' => 'VARCHAR',
+				'size' => 255
 			));
 		}
 		$database = $table->getDatabase();
@@ -46,10 +71,10 @@ class VersionableBehavior extends Behavior
 		if (!$database->hasTable($versionTableName)) {
 			// create the version table
 			$versionTable = $database->addTable(array(
-				'name' => $versionTableName,
-				'phpName' => $this->getVersionTablePhpName(),
-				'package' => $table->getPackage(),
-				'schema' => $table->getSchema(),
+				'name'      => $versionTableName,
+				'phpName'   => $this->getVersionTablePhpName(),
+				'package'   => $table->getPackage(),
+				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace(),
 			));
 			// copy all the columns
