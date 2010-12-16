@@ -104,9 +104,10 @@ class VersionableBehaviorObjectBuilderModifier
 
 	public function postDelete($builder)
 	{
+		$queryClassName = $builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
 		if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
 			$script = "// emulate delete cascade
-{$this->behavior->getVersionTablePhpName()}Query::create()
+{$queryClassName}::create()
 	->filterBy{$this->table->getPhpName()}(\$this)
 	->delete(\$con);";
 			return $script;
@@ -134,6 +135,7 @@ protected \$wasModified = false;
 			$this->addVersionSetter($script);
 			$this->addVersionGetter($script);
 		}
+		$this->addToVersion($script);
 		
 		return $script;
 	}
@@ -165,6 +167,36 @@ public function setVersion(\$v)
 public function getVersion()
 {
 	return \$this->" . $this->getColumnGetter() . "();
+}
+";
+	}
+
+	protected function addToVersion(&$script)
+	{
+		$ARclassName = $this->builder->getStubObjectBuilder()->getClassname();
+		$queryClassName = $this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
+		$script .= "
+/**
+ * Sets the properties of the curent object to the value they had at a specific version
+ *
+ * @param   integer \$version The version number to read
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  {$ARclassName} The current object (for fluent API support)
+ */
+public function toVersion(\$version, \$con = null)
+{
+	\$v = {$queryClassName}::create()
+		->filterBy{$ARclassName}(\$this)
+		->filterBy{$this->getColumnPhpName()}(\$version)
+		->findOne(\$con);
+	if (!\$v) {
+		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
+	}
+	\$currentVersion = \$this->getVersion();
+	\$v->copyInto(\$this, false, false);
+	\$this->setVersion(\$currentVersion);
+	return \$this;
 }
 ";
 	}

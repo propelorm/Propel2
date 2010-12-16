@@ -25,7 +25,7 @@ class VersionableBehavior extends Behavior
 		'version_table' => '',
 	);
 
-	protected $objectBuilderModifier;
+	protected $versionTable, $objectBuilderModifier;
 	
 	/**
 	 * Add the version_column to the current table
@@ -72,7 +72,15 @@ class VersionableBehavior extends Behavior
 			$versionTable->addForeignKey($fk);
 			// add the version column to the primary key
 			$versionTable->getColumn($this->getParameter('version_column'))->setPrimaryKey(true);
+			$this->versionTable = $versionTable;
+		} else {
+			$this->versionTable = $database->getTable($versionTableName);
 		}
+	}
+	
+	public function getVersionTable()
+	{
+		return $this->versionTable;
 	}
 	
 	public function getVersionTablePhpName()

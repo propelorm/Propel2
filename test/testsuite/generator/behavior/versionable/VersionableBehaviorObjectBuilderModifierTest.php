@@ -50,6 +50,7 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 	</table>
 </database>>
 EOF;
+			//PropelQuickBuilder::debugClassesForTable($schema, 'versionable_behavior_test_1');
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
@@ -205,5 +206,44 @@ EOF;
 		$o->delete();
 		$nbVersions = VersionableBehaviorTest3VersionQuery::create()->count();
 		$this->assertEquals(0, $nbVersions);
-	}	
+	}
+	
+	public function testToVersion()
+	{
+		VersionableBehaviorTest1Query::create()->deleteAll();
+		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest1();
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setBar(456); // version 2
+		$o->save();
+		$o->toVersion(1);
+		$this->assertEquals(123, $o->getBar());
+		$o->toVersion(2);
+		$this->assertEquals(456, $o->getBar());
+	}
+	
+	public function testToVersionAllowsFurtherSave()
+	{
+		$o = new VersionableBehaviorTest1();
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setBar(456); // version 2
+		$o->save();
+		$o->toVersion(1);
+		$this->assertTrue($o->isModified());
+		$o->save();
+		$this->assertEquals(3, $o->getVersion());
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testToVersionThrowsExceptionOnIncorrectVersion()
+	{
+		$o = new VersionableBehaviorTest1();
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->toVersion(2);
+	}
 }

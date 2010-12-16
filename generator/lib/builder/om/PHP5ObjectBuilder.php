@@ -4404,9 +4404,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 *
 	 * @param      object \$copyObj An object of ".$this->getObjectClassname()." (or compatible) type.
 	 * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+	 * @param      boolean \$makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto(\$copyObj, \$deepCopy = false)
+	public function copyInto(\$copyObj, \$deepCopy = false, \$makeNew = true)
 	{";
 
 		$autoIncCols = array();
@@ -4467,8 +4468,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		} /* if (count referrers > 0 ) */
 
 		$script .= "
-
-		\$copyObj->setNew(true);";
+		if (\$makeNew) {
+			\$copyObj->setNew(true);";
 
 		// Note: we're no longer resetting non-autoincrement primary keys to default values
 		// due to: http://propel.phpdb.org/trac/ticket/618
@@ -4476,9 +4477,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				$coldefval = $col->getPhpDefaultValue();
 				$coldefval = var_export($coldefval, true);
 				$script .= "
-		\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value";
+			\$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value";
 		} // foreach
 		$script .= "
+		}
 	}
 ";
 	} // addCopyInto()
