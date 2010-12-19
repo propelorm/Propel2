@@ -79,8 +79,7 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function preSave($builder)
 	{
-		return "
-if (\$this->isVersioningNecessary()) {
+		return "if (\$this->isVersioningNecessary()) {
 	\$this->addVersion(\$con);
 }";
 	}
@@ -110,6 +109,9 @@ if (\$this->isVersioningNecessary()) {
 		$this->addToVersion($script);
 		$this->addGetLastVersionNumber($script);
 		$this->addIsLastVersion($script);
+		$this->addGetOneVersion($script);
+		$this->addGetAllVersions($script);
+		$this->addCompareVersions($script);
 		return $script;
 	}
 
@@ -207,10 +209,7 @@ public function addVersion(\$con = null)
  */
 public function toVersion(\$version, \$con = null)
 {
-	\$v = {$this->getVersionQueryClassName()}::create()
-		->filterBy{$ARclassName}(\$this)
-		->filterBy{$this->getColumnPhpName()}(\$version)
-		->findOne(\$con);
+	\$v = \$this->getOneVersion(\$version, \$con);
 	if (!\$v) {
 		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
 	}
@@ -261,4 +260,119 @@ public function isLastVersion(\$con = null)
 ";
 	}
 
+	protected function addGetOneVersion(&$script)
+	{
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
+		$script .= "
+/**
+ * Retrieves a version object for this entity and a version number
+ *
+ * @param   integer \$version The version number to read
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  {$versionARClassname} A version object
+ */
+public function getOneVersion(\$version, \$con = null)
+{
+	return {$this->getVersionQueryClassName()}::create()
+		->filterBy{$this->getActiveRecordClassName()}(\$this)
+		->filterBy{$this->getColumnPhpName()}(\$version)
+		->findOne(\$con);
+}
+";
+	}
+
+	protected function addGetAllVersions(&$script)
+	{
+		$versionTable = $this->behavior->getVersionTable();
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
+		$versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
+		$fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
+		$relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
+		$script .= "
+/**
+ * Gets all the versions of this object, in incremental order
+ *
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  PropelObjectCollection A list of {$versionARClassname} objects
+ */
+public function getAllVersions(\$con = null)
+{
+	\$criteria = new Criteria();
+	\$criteria->addAscendingOrderByColumn({$this->builder->getColumnConstant($versionForeignColumn)});
+	return \$this->get{$relCol}(\$criteria, \$con);
+}
+";
+	}
+
+	protected function addCompareVersions(&$script)
+	{
+		$versionTable = $this->behavior->getVersionTable();
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
+		$versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
+		$fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
+		$relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural = true);
+		$script .= "
+/**
+ * Gets all the versions of this object, in incremental order.
+ * <code>
+ * print_r(\$book->compare(1, 2));
+ * => array(
+ *   '1' => array('Title' => 'Book title at version 1'),
+ *   '2' => array('Title' => 'Book title at version 2')
+ * );
+ * </code>
+ *
+ * @param   integer   \$fromVersionNumber
+ * @param   integer   \$toVersionNumber
+ * @param   string    \$keys Main key used for the result diff (versions|columns)
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  array A list of differences
+ */
+public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', \$con = null)
+{
+	\$fromVersion = \$this->getOneVersion(\$fromVersionNumber, \$con)->toArray();
+	\$toVersion = \$this->getOneVersion(\$toVersionNumber, \$con)->toArray();
+	\$ignoredColumns = array(
+		'{$this->getColumnPhpName()}',";
+		if ($this->behavior->getParameter('log_created_at') == 'true') {
+			$script .= "
+		'VersionCreatedAt',";
+		}
+		if ($this->behavior->getParameter('log_created_by') == 'true') {
+			$script .= "
+		'VersionCreatedBy',";
+		}
+		if ($this->behavior->getParameter('log_comment') == 'true') {
+			$script .= "
+		'VersionComment',";
+		}
+		$script .= "
+	);
+	\$diff = array();
+	foreach (\$fromVersion as \$key => \$value) {
+		if (in_array(\$key, \$ignoredColumns)) {
+			continue;
+		}
+		if (\$toVersion[\$key] != \$value) {
+			switch (\$keys) {
+				case 'versions':
+					\$diff[\$fromVersionNumber][\$key] = \$value;
+					\$diff[\$toVersionNumber][\$key] = \$toVersion[\$key];
+					break;
+				default:
+					\$diff[\$key] = array(
+						\$fromVersionNumber => \$value,
+						\$toVersionNumber => \$toVersion[\$key],
+					);
+					break;
+			}
+		}
+	}
+	return \$diff;
+}
+";
+	}
 }

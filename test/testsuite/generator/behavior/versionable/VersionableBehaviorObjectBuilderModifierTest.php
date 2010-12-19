@@ -348,6 +348,7 @@ EOF;
 		$versions = VersionableBehaviorTest1VersionQuery::create()->find();
 		$this->assertEquals(1, $versions->count());
 		$this->assertEquals($o, $versions[0]->getVersionableBehaviorTest1());
+		VersionableBehaviorTest1Peer::enableVersioning();
 	}
 
 	public function testVersionCreatedAt()
@@ -406,5 +407,64 @@ EOF;
 		$this->assertEquals('Because you deserve it', $o->getVersionComment());
 		$o->toVersion(2);
 		$this->assertEquals('Unless I change my mind', $o->getVersionComment());
+	}
+
+	public function testGetOneVersion()
+	{
+		$o = new VersionableBehaviorTest1();
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setBar(456); // version 2
+		$o->save();
+		$version = $o->getOneVersion(1);
+		$this->assertTrue($version instanceof VersionableBehaviorTest1Version);
+		$this->assertEquals(1, $version->getVersion());
+		$this->assertEquals(123, $version->getBar());
+		$version = $o->getOneVersion(2);
+		$this->assertEquals(2, $version->getVersion());
+		$this->assertEquals(456, $version->getBar());
+	}
+		
+	public function testGetAllVersions()
+	{
+		$o = new VersionableBehaviorTest1();
+		$versions = $o->getAllVersions();
+		$this->assertTrue($versions->isEmpty());
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setBar(456); // version 2
+		$o->save();
+		$versions = $o->getAllVersions();
+		$this->assertTrue($versions instanceof PropelObjectCollection);
+		$this->assertEquals(2, $versions->count());
+		$this->assertEquals(1, $versions[0]->getVersion());
+		$this->assertEquals(123, $versions[0]->getBar());
+		$this->assertEquals(2, $versions[1]->getVersion());
+		$this->assertEquals(456, $versions[1]->getBar());
+	}
+	
+	public function testCompareVersions()
+	{
+		$o = new VersionableBehaviorTest4();
+		$versions = $o->getAllVersions();
+		$this->assertTrue($versions->isEmpty());
+		$o->setBar(123); // version 1
+		$o->save();
+		$o->setBar(456); // version 2
+		$o->save();
+		$o->setBar(789); // version 3
+		$o->setVersionComment('Foo');
+		$o->save();
+		$diff = $o->compareVersions(1, 3);
+		$expected = array(
+			'Bar' => array(1 => 123, 3 => 789)
+		);
+		$this->assertEquals($expected, $diff);
+		$diff = $o->compareVersions(1, 3, 'versions');
+		$expected = array(
+			1 => array('Bar' => 123),
+			3 => array('Bar' => 789)
+		);
+		$this->assertEquals($expected, $diff);
 	}
 }
