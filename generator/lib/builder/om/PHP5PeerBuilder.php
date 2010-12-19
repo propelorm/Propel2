@@ -459,6 +459,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	protected function addGetValueSets(&$script)
 	{
 		$this->declareClassFromBuilder($this->getTableMapBuilder());
+		$callingClass = $this->getStubPeerBuilder()->getClassname();
 		$script .= "
 	/**
 	 * Gets the list of values for all ENUM columns
@@ -466,7 +467,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 */
 	public static function getValueSets()
 	{
-	  return self::\$enumValueSets;
+	  return {$callingClass}::\$enumValueSets;
 	}
 ";
 	}
@@ -485,8 +486,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 */
 	public static function getValueSet(\$colname)
 	{
-		\$valueSet = self::\$enumValueSets[\$colname];
-	  return \$valueSet;
+		\$valueSets = self::getValueSets();
+		return \$valueSets[\$colname];
 	}
 ";
 	}
