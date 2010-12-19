@@ -57,6 +57,16 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 			<parameter name="log_comment" value="true" />
 		</behavior>
 	</table>
+	<table name="versionable_behavior_test_5">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="foo" type="VARCHAR" size="100" />
+		<column name="foreign_id" type="INTEGER" />
+		<foreign-key foreignTable="versionable_behavior_test_4">
+			<reference local="foreign_id" foreign="id" />
+		</foreign-key>
+		<behavior name="versionable" />
+	</table>
+
 </database>>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
@@ -466,5 +476,16 @@ EOF;
 			3 => array('Bar' => 789)
 		);
 		$this->assertEquals($expected, $diff);
+	}
+	
+	public function testForeignKeyVersion()
+	{
+		$this->markTestSkipped();
+		$a = new VersionableBehaviorTest4();
+		$a->setBar(123);
+		$b = new VersionableBehaviorTest5();
+		$b->setFoo('Hello');
+		$b->setVersionableBehaviorTest4($a);
+		$b->save();
 	}
 }

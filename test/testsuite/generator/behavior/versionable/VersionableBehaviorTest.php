@@ -123,6 +123,47 @@ EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
 
+	public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned()
+	{
+			$schema = <<<EOF
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="foreign_id" type="INTEGER" />
+		<foreign-key foreignTable="versionable_behavior_test_1">
+			<reference local="foreign_id" foreign="id" />
+		</foreign-key>
+		<behavior name="versionable" />
+	</table>
+	<table name="versionable_behavior_test_1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<behavior name="versionable" />
+	</table>
+</database>
+EOF;
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$expected = <<<EOF
+-----------------------------------------------------------------------
+-- versionable_behavior_test_0
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_0];
+
+CREATE TABLE [versionable_behavior_test_0]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[bar] INTEGER,
+	[foreign_id] INTEGER,
+	[version] INTEGER DEFAULT 0,
+	[foreign_id_version] INTEGER DEFAULT 0
+);
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+	}
+
 	/**
 	 * @dataProvider basicSchemaDataProvider
 	 */

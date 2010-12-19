@@ -31,12 +31,21 @@ class VersionableBehavior extends Behavior
 		'log_comment'    => 'false',
 	);
 
-	protected $versionTable, $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
+	protected 
+		$versionTable,
+		$objectBuilderModifier,
+		$queryBuilderModifier,
+		$peerBuilderModifier;
 	
-	/**
-	 * Add the version_column to the current table
-	 */
 	public function modifyTable()
+	{
+		$this->addVersionColumn();
+		$this->addForeignKeyVersionColumns();
+		$this->addLogColumns();
+		$this->addVersionTable();
+	}
+	
+	protected function addVersionColumn()
 	{
 		$table = $this->getTable();
 		// add the version column
@@ -47,7 +56,32 @@ class VersionableBehavior extends Behavior
 				'default' => 0
 			));
 		}
-		// add the log columns
+	}
+	
+	public function addForeignKeyVersionColumns()
+	{
+		$table = $this->getTable();
+		foreach ($table->getForeignKeys() as $fk) {
+			if ($fk->getForeignTable()->hasBehavior('versionable')) {
+				if ($fk->isComposite()) {
+					// skip for now
+					continue;
+				}
+				$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+				if (!$table->containsColumn($fkVersionColumnName)) {
+					$table->addColumn(array(
+						'name'    => $fkVersionColumnName,
+						'type'    => 'INTEGER',
+						'default' => 0
+					));
+				}
+			}
+		}
+	}
+	
+	protected function addLogColumns()
+	{
+		$table = $this->getTable();
 		if ($this->getParameter('log_created_at') == 'true' && !$table->containsColumn('version_created_at')) {
 			$table->addColumn(array(
 				'name' => 'version_created_at',
@@ -68,6 +102,11 @@ class VersionableBehavior extends Behavior
 				'size' => 255
 			));
 		}
+	}
+	
+	protected function addVersionTable()
+	{
+		$table = $this->getTable();
 		$database = $table->getDatabase();
 		$versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getName() . '_version');
 		if (!$database->hasTable($versionTableName)) {

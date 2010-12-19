@@ -80,8 +80,42 @@ class VersionableBehaviorObjectBuilderModifier
 	public function preSave($builder)
 	{
 		return "if (\$this->isVersioningNecessary()) {
-	\$this->addVersion(\$con);
+	\$version = \$this->addVersion(\$con);
 }";
+	}
+
+	public function postSave($builder)
+	{
+		return;
+		if ($fks = $this->table->getForeignKeys()) {
+			$versionableFKs = array();
+			foreach ($fks as $fk) {
+				if ($fk->getForeignTable()->hasBehavior('versionable') && ! $fk->isComposite()) {
+					$versionableFKs []= $fk;
+				}
+			}
+		}
+		if (!isset($versionableFKs) || !$versionableFKs) {
+			return;
+		}
+		$peerClass = $this->builder->getStubPeerBuilder()->getClassname();
+		$script = "if (isset(\$version)) {";
+		foreach ($versionableFKs as $fk) {
+			$fkGetter = $builder->getFKPhpNameAffix($fk, $plural = false);
+			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+			$fkVersionColumnPhpName = $this->table->getColumn($fkVersionColumnName)->getPhpName();
+			$script .= "
+	if ((\$related = \$this->get{$fkGetter}(\$con)) && \$related->getVersion()) {
+		\$this->set{$fkVersionColumnPhpName}(\$related->getVersion());
+		\$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
+	}";
+			// save all
+			$script .= "
+		\$this->doSave(\$con);";
+		}
+		$script .= "
+}";
+		return $script;
 	}
 
 	public function postDelete($builder)
@@ -165,7 +199,7 @@ public function isVersioningNecessary()
 	protected function addAddVersion(&$script)
 	{
 		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
-		$ARclassName = $this->getActiveRecordClassName();
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
 		$script .= "
 /**
  * Creates a version of the current object.
@@ -173,7 +207,7 @@ public function isVersioningNecessary()
  *
  * @param   PropelPDO \$con the connection to use
  *
- * @return  {$ARclassName} The current object (for fluent API support)
+ * @return  {$versionARClassname} A version object
  */
 public function addVersion(\$con = null)
 {
@@ -188,9 +222,9 @@ public function addVersion(\$con = null)
 		$script .= "
 	\$version = new {$versionTablePhpName}();
 	\$this->copyInto(\$version);
-	\$version->set{$ARclassName}(\$this);
+	\$version->set{$this->getActiveRecordClassName()}(\$this);
 	
-	return \$this;
+	return \$version;
 }
 ";
 	}

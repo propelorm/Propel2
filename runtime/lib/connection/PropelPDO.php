@@ -357,7 +357,7 @@ class PropelPDO extends PDO
 		
 		if ($this->useDebug) {
 			$this->log($sql, null, __METHOD__, $debug);
-			$this->setLastExecutedQuery($sql); 	
+			$this->setLastExecutedQuery($sql);
 			$this->incrementQueryCount();
 		}
 		
