@@ -179,6 +179,7 @@ public function getVersion()
 
 	protected function addIsVersioningNecessary(&$script)
 	{
+		$peerClass = $this->builder->getStubPeerBuilder()->getClassname();
 		$script .= "
 /**
  * Checks whether the current state must be recorded as a version
@@ -187,7 +188,7 @@ public function getVersion()
  */
 public function isVersioningNecessary()
 {
-	return \$this->isNew() || \$this->isModified();
+	return {$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified());
 }
 ";
 	}

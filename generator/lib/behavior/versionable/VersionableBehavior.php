@@ -10,6 +10,8 @@
 
 require_once dirname(__FILE__) . '/VersionableBehaviorObjectBuilderModifier.php';
 require_once dirname(__FILE__) . '/VersionableBehaviorQueryBuilderModifier.php';
+require_once dirname(__FILE__) . '/VersionableBehaviorPeerBuilderModifier.php';
+
 
 /**
  * Keeps tracks of all the modifications in an ActiveRecord object
@@ -29,7 +31,7 @@ class VersionableBehavior extends Behavior
 		'log_comment'    => 'false',
 	);
 
-	protected $versionTable, $objectBuilderModifier, $queryBuilderModifier;
+	protected $versionTable, $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
 	
 	/**
 	 * Add the version_column to the current table
@@ -130,6 +132,15 @@ class VersionableBehavior extends Behavior
 			$this->queryBuilderModifier = new VersionableBehaviorQueryBuilderModifier($this);
 		}
 		return $this->queryBuilderModifier;
+	}
+
+	public function getPeerBuilderModifier()
+	{
+		if (is_null($this->peerBuilderModifier))
+		{
+			$this->peerBuilderModifier = new VersionableBehaviorPeerBuilderModifier($this);
+		}
+		return $this->peerBuilderModifier;
 	}
 	
 }

@@ -26,8 +26,8 @@ class VersionableBehaviorTest extends PHPUnit_Framework_TestCase
 	public function basicSchemaDataProvider()
 	{
 		$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable" />
@@ -46,12 +46,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1];
+DROP TABLE [versionable_behavior_test_0];
 
-CREATE TABLE [versionable_behavior_test_1]
+CREATE TABLE [versionable_behavior_test_0]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
@@ -64,8 +64,8 @@ EOF;
 	public function testModifyTableAddsVersionColumnCustomName()
 	{
 			$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable">
@@ -78,12 +78,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1];
+DROP TABLE [versionable_behavior_test_0];
 
-CREATE TABLE [versionable_behavior_test_1]
+CREATE TABLE [versionable_behavior_test_0]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
@@ -96,8 +96,8 @@ EOF;
 	public function testModifyTableDoesNotAddVersionColumnIfExists()
 	{
 			$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<column name="version" type="BIGINT" />
@@ -108,12 +108,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1];
+DROP TABLE [versionable_behavior_test_0];
 
-CREATE TABLE [versionable_behavior_test_1]
+CREATE TABLE [versionable_behavior_test_0]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
@@ -132,12 +132,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1_version];
+DROP TABLE [versionable_behavior_test_0_version];
 
-CREATE TABLE [versionable_behavior_test_1_version]
+CREATE TABLE [versionable_behavior_test_0_version]
 (
 	[id] INTEGER NOT NULL,
 	[bar] INTEGER,
@@ -146,7 +146,7 @@ CREATE TABLE [versionable_behavior_test_1_version]
 );
 
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_1 ([id])
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_0 ([id])
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
@@ -154,8 +154,8 @@ EOF;
 	public function testModifyTableAddsVersionTableCustomName()
 	{
 		$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable">
@@ -182,7 +182,7 @@ CREATE TABLE [foo_ver]
 );
 
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_1 ([id])
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_0 ([id])
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
@@ -190,13 +190,13 @@ EOF;
 	public function testModifyTableDoesNotAddVersionTableIfExists()
 	{
 		$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable" />
 	</table>
-	<table name="versionable_behavior_test_1_version">
+	<table name="versionable_behavior_test_0_version">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="baz" type="INTEGER" />
 	</table>
@@ -207,12 +207,12 @@ EOF;
 		$expected = <<<EOF
 
 -----------------------------------------------------------------------
--- versionable_behavior_test_1
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1];
+DROP TABLE [versionable_behavior_test_0];
 
-CREATE TABLE [versionable_behavior_test_1]
+CREATE TABLE [versionable_behavior_test_0]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
@@ -220,12 +220,12 @@ CREATE TABLE [versionable_behavior_test_1]
 );
 
 -----------------------------------------------------------------------
--- versionable_behavior_test_1_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1_version];
+DROP TABLE [versionable_behavior_test_0_version];
 
-CREATE TABLE [versionable_behavior_test_1_version]
+CREATE TABLE [versionable_behavior_test_0_version]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[baz] INTEGER
@@ -238,8 +238,8 @@ EOF;
 	public function logSchemaDataProvider()
 	{
 		$schema = <<<EOF
-<database name="versionable_behavior_test_1">
-	<table name="versionable_behavior_test_1">
+<database name="versionable_behavior_test_0">
+	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar" type="INTEGER" />
 		<behavior name="versionable">
@@ -262,12 +262,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1];
+DROP TABLE [versionable_behavior_test_0];
 
-CREATE TABLE [versionable_behavior_test_1]
+CREATE TABLE [versionable_behavior_test_0]
 (
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
@@ -289,12 +289,12 @@ EOF;
 		$builder->setSchema($schema);
 		$expected = <<<EOF
 -----------------------------------------------------------------------
--- versionable_behavior_test_1_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE [versionable_behavior_test_1_version];
+DROP TABLE [versionable_behavior_test_0_version];
 
-CREATE TABLE [versionable_behavior_test_1_version]
+CREATE TABLE [versionable_behavior_test_0_version]
 (
 	[id] INTEGER NOT NULL,
 	[bar] INTEGER,
@@ -306,7 +306,7 @@ CREATE TABLE [versionable_behavior_test_1_version]
 );
 
 -- SQLite does not support foreign keys; this is just for reference
--- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_1 ([id])
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_0 ([id])
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}

@@ -59,7 +59,6 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 	</table>
 </database>>
 EOF;
-//PropelQuickBuilder::debugClassesForTable($schema, 'versionable_behavior_test_4');
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
@@ -142,6 +141,24 @@ EOF;
 		$o->save();
 		$this->assertEquals(1, $o->getVersion());
 	}
+
+	/**
+	 * @dataProvider providerForNewActiveRecordTests
+	 */
+	public function testVersionDoesNotIncrementWhenVersioningIsDisabled($o)
+	{
+		VersionableBehaviorTest1Peer::disableVersioning();
+		VersionableBehaviorTest2Peer::disableVersioning();
+		$o->setBar(12);
+		$o->save();
+		$this->assertEquals(0, $o->getVersion());
+		$o->setBar(13);
+		$o->save();
+		$this->assertEquals(0, $o->getVersion());
+		VersionableBehaviorTest1Peer::enableVersioning();
+		VersionableBehaviorTest2Peer::enableVersioning();
+
+	}
 	
 	public function testNewVersionCreatesRecordInVersionTable()
 	{
@@ -165,7 +182,7 @@ EOF;
 		$this->assertEquals(123, $versions[1]->getBar());
 	}
 	
-		public function testNewVersionCreatesRecordInVersionTableWithCustomName()
+	public function testNewVersionCreatesRecordInVersionTableWithCustomName()
 	{
 		VersionableBehaviorTest3Query::create()->deleteAll();
 		VersionableBehaviorTest3VersionQuery::create()->deleteAll();
@@ -185,6 +202,18 @@ EOF;
 		$this->assertNull($versions[0]->getBar());
 		$this->assertEquals($o->getId(), $versions[1]->getId());
 		$this->assertEquals(123, $versions[1]->getBar());
+	}
+
+	public function testNewVersionDoesNotCreateRecordInVersionTableWhenVersioningIsDisabled()
+	{
+		VersionableBehaviorTest1Query::create()->deleteAll();
+		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
+		VersionableBehaviorTest1Peer::disableVersioning();
+		$o = new VersionableBehaviorTest1();
+		$o->save();
+		$versions = VersionableBehaviorTest1VersionQuery::create()->find();
+		$this->assertEquals(0, $versions->count());
+		VersionableBehaviorTest1Peer::enableVersioning();
 	}
 
 	public function testDeleteObjectDeletesRecordInVersionTable()
@@ -295,6 +324,17 @@ EOF;
 		$this->assertTrue($o->isVersioningNecessary());
 		$o->save();
 		$this->assertFalse($o->isVersioningNecessary());
+
+		VersionableBehaviorTest1Peer::disableVersioning();
+		$o = new VersionableBehaviorTest1();
+		$this->assertFalse($o->isVersioningNecessary());
+		$o->save();
+		$this->assertFalse($o->isVersioningNecessary());
+		$o->setBar(123);
+		$this->assertFalse($o->isVersioningNecessary());
+		$o->save();
+		$this->assertFalse($o->isVersioningNecessary());
+		VersionableBehaviorTest1Peer::enableVersioning();
 	}
 
 	public function testVersionCreatedAt()
