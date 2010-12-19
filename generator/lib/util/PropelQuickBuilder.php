@@ -209,7 +209,7 @@ class PropelQuickBuilder
 		foreach ($builder->getDatabase()->getTables() as $table) {
 			if ($table->getName() == $tableName) {
 				echo $builder->getClassesForTable($table);
-			}		
+			}
 		}
 	}
 }

@@ -59,6 +59,7 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 	</table>
 </database>>
 EOF;
+//PropelQuickBuilder::debugClassesForTable($schema, 'versionable_behavior_test_4');
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
@@ -282,6 +283,18 @@ EOF;
 		$this->assertFalse($o->isLastVersion());
 		$o->save();
 		$this->assertTrue($o->isLastVersion());
+	}
+	
+	public function testIsVersioningNecessary()
+	{
+		$o = new VersionableBehaviorTest1();
+		$this->assertTrue($o->isVersioningNecessary());
+		$o->save();
+		$this->assertFalse($o->isVersioningNecessary());
+		$o->setBar(123);
+		$this->assertTrue($o->isVersioningNecessary());
+		$o->save();
+		$this->assertFalse($o->isVersioningNecessary());
 	}
 
 	public function testVersionCreatedAt()

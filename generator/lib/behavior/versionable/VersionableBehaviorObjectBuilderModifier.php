@@ -79,45 +79,28 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function preSave($builder)
 	{
+		$script = "
+if (\$this->isVersioningNecessary()) {
+	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);
+	\$this->isVersioningNecessary = true;";
 		if ($this->behavior->getParameter('log_created_at') == 'true') {
-			return "
-if (!\$this->getVersionCreatedAt()) {
-	\$this->setVersionCreatedAt(time());
-}";
-		}
-	}
-
-	public function preInsert($builder)
-	{
-		return "\$this->{$this->getColumnAttribute()} = 1;
-\$this->wasModified = true;";
-	}
-	
-	public function preUpdate($builder)
-	{
-		return "if (\$this->isModified()) {
-	\$this->set{$this->getColumnPhpName()}(\$this->getLastVersionNumber(\$con) + 1);
-	\$this->wasModified = true;
-}";
-	}
-	
-	public function postSave($builder)
-	{
-		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
-		$script = "if (\$this->wasModified) {
-	\$version = new {$versionTablePhpName}();
-	\$this->copyInto(\$version);";
-		foreach ($this->table->getPrimaryKey() as $col) {
-			if ($col->isAutoIncrement()) {
-				$phpName = $col->getPhpName();
-				$script .= "
-	\$version->set{$phpName}(\$this->get{$phpName}());";
-			}
+			$col = $this->behavior->getTable()->getColumn('version_created_at');
+			$script .= "
+	if (!\$this->isColumnModified({$builder->getColumnConstant($col)})) {
+		\$this->setVersionCreatedAt(time());
+	}";
 		}
 		$script .= "
-	\$version->save(\$con);
-}
-\$this->wasModified = false;";
+}";
+		return $script;
+	}
+
+	public function postSave($builder)
+	{
+		$script = "if (\$this->isVersioningNecessary) {
+	\$this->addVersion(\$con);
+	\$this->isVersioningNecessary = false;
+}";
 		return $script;
 	}
 
@@ -138,10 +121,10 @@ if (!\$this->getVersionCreatedAt()) {
 		$script = "
 
 /**
- * Whether the object was modified. Useful for the postSave() hooks.
+ * Whether the object needs to be versioned. Useful for the postSave() hooks.
  * @var        boolean
  */
-protected \$wasModified = false;
+protected \$isVersioningNecessary = false;
 
 ";
 		return $script;
@@ -155,6 +138,8 @@ protected \$wasModified = false;
 			$this->addVersionSetter($script);
 			$this->addVersionGetter($script);
 		}
+		$this->addIsVersioningNecessary($script);
+		$this->addAddVersion($script);
 		$this->addToVersion($script);
 		$this->addGetLastVersionNumber($script);
 		$this->addIsLastVersion($script);
@@ -188,6 +173,49 @@ public function setVersion(\$v)
 public function getVersion()
 {
 	return \$this->" . $this->getColumnGetter() . "();
+}
+";
+	}
+
+	protected function addIsVersioningNecessary(&$script)
+	{
+		$script .= "
+/**
+ * Checks whether the current state must be recorded as a version
+ *
+ * @return  boolean
+ */
+public function isVersioningNecessary()
+{
+	return \$this->isNew() || \$this->isModified();
+}
+";
+	}
+
+	protected function addAddVersion(&$script)
+	{
+		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
+		$script .= "
+/**
+ * Save a copy of the current object in the version repository
+ *
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  {$this->getActiveRecordClassName()} The current object (for fluent API support)
+ */
+public function addVersion(\$con = null)
+{
+	\$version = new {$versionTablePhpName}();
+	\$this->copyInto(\$version);";
+		foreach ($this->table->getPrimaryKey() as $col) {
+			if ($col->isAutoIncrement()) {
+				$phpName = $col->getPhpName();
+				$script .= "
+	\$version->set{$phpName}(\$this->get{$phpName}());";
+			}
+		}
+		$script .= "
+	\$version->save(\$con);
 }
 ";
 	}
