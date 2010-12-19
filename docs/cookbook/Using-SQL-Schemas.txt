@@ -89,4 +89,13 @@ propel.schema.autoPackage = true
 propel.schema.autoNamespace = true
 }}}
 
-With such a configuration, a `book` table assigned to the `bookstore` schema will generate a `Book` ActiveRecord class under the `bookstore/` subdirectory, and with the `Bookstore` namespace.
+With such a configuration, a `book` table assigned to the `bookstore` schema will generate a `Bookstore\Book` ActiveRecord class under the `bookstore/` subdirectory.
+
+If you're stuck with PHP 5.2, you probably need to use the schema name as a class prefix rather than a namespace. That's what the `autoPrefix` setting is for:
+
+{{{
+#!ini
+propel.schema.autoPrefix = true
+}}}
+
+With such a configuration, a `book` table assigned to the `bookstore` schema will generate a `BookstoreBook` ActiveRecord class.

@@ -65,7 +65,7 @@ propel.namespace.autoPackage = true|{false}
 propel.schema.autoPackage = true|{false}
 # To copy the schema attribute to the namespace attribute, set this to true
 propel.schema.autoNamespace = true|{false}
-# To use the schema attribute as a prefix to all table names, set this to true
+# To use the schema attribute as a prefix to all model phpNames, set this to true
 propel.schema.autoPrefix = true|{false}
 
 # Whether to validate the XML schema using the XSD file.
