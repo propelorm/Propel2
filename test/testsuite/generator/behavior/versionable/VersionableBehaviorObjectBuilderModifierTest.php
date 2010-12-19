@@ -336,6 +336,19 @@ EOF;
 		$this->assertFalse($o->isVersioningNecessary());
 		VersionableBehaviorTest1Peer::enableVersioning();
 	}
+	
+	public function testAddVersionNewObject()
+	{
+		VersionableBehaviorTest1Peer::disableVersioning();
+		VersionableBehaviorTest1Query::create()->deleteAll();
+		VersionableBehaviorTest1VersionQuery::create()->deleteAll();
+		$o = new VersionableBehaviorTest1();
+		$o->addVersion();
+		$o->save();
+		$versions = VersionableBehaviorTest1VersionQuery::create()->find();
+		$this->assertEquals(1, $versions->count());
+		$this->assertEquals($o, $versions[0]->getVersionableBehaviorTest1());
+	}
 
 	public function testVersionCreatedAt()
 	{

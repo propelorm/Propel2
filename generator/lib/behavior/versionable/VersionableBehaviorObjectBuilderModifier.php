@@ -80,9 +80,7 @@ class VersionableBehaviorObjectBuilderModifier
 	public function preSave($builder)
 	{
 		$script = "
-if (\$this->isVersioningNecessary()) {
-	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);
-	\$this->isVersioningNecessary = true;";
+if (\$this->isVersioningNecessary()) {";
 		if ($this->behavior->getParameter('log_created_at') == 'true') {
 			$col = $this->behavior->getTable()->getColumn('version_created_at');
 			$script .= "
@@ -91,15 +89,7 @@ if (\$this->isVersioningNecessary()) {
 	}";
 		}
 		$script .= "
-}";
-		return $script;
-	}
-
-	public function postSave($builder)
-	{
-		$script = "if (\$this->isVersioningNecessary) {
 	\$this->addVersion(\$con);
-	\$this->isVersioningNecessary = false;
 }";
 		return $script;
 	}
@@ -196,27 +186,24 @@ public function isVersioningNecessary()
 	protected function addAddVersion(&$script)
 	{
 		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
+		$ARclassName = $this->getActiveRecordClassName();
 		$script .= "
 /**
- * Save a copy of the current object in the version repository
+ * Creates a version of the current object.
+ * It will be saved when the main object is saved.
  *
  * @param   PropelPDO \$con the connection to use
  *
- * @return  {$this->getActiveRecordClassName()} The current object (for fluent API support)
+ * @return  {$ARclassName} The current object (for fluent API support)
  */
 public function addVersion(\$con = null)
 {
+	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);
 	\$version = new {$versionTablePhpName}();
-	\$this->copyInto(\$version);";
-		foreach ($this->table->getPrimaryKey() as $col) {
-			if ($col->isAutoIncrement()) {
-				$phpName = $col->getPhpName();
-				$script .= "
-	\$version->set{$phpName}(\$this->get{$phpName}());";
-			}
-		}
-		$script .= "
-	\$version->save(\$con);
+	\$this->copyInto(\$version);
+	\$version->set{$ARclassName}(\$this);
+	
+	return \$this;
 }
 ";
 	}
