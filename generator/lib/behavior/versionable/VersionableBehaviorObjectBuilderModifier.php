@@ -79,23 +79,28 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function preSave($builder)
 	{
-		return "if (\$this->isVersioningNecessary()) {
+		return "if (\$this->isVersioningNecessary() && !\$this->alreadyInSave) {
 	\$version = \$this->addVersion(\$con);
 }";
 	}
 
-	public function postSave($builder)
+	protected function getVersionableFks()
 	{
-		return;
+		$versionableFKs = array();
 		if ($fks = $this->table->getForeignKeys()) {
-			$versionableFKs = array();
 			foreach ($fks as $fk) {
 				if ($fk->getForeignTable()->hasBehavior('versionable') && ! $fk->isComposite()) {
 					$versionableFKs []= $fk;
 				}
 			}
 		}
-		if (!isset($versionableFKs) || !$versionableFKs) {
+		return $versionableFKs;
+	}
+	
+	public function postSave($builder)
+	{
+		$versionableFKs = $this->getVersionableFks();
+		if (!$versionableFKs) {
 			return;
 		}
 		$peerClass = $this->builder->getStubPeerBuilder()->getClassname();
@@ -191,7 +196,19 @@ public function getVersion()
  */
 public function isVersioningNecessary()
 {
-	return {$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified());
+	if ({$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified())) {
+		return true;
+	}";
+		foreach ($this->getVersionableFks() as $fk) {
+			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
+			$script .= "
+	if (\$this->get{$fkGetter}()->isModified()) {
+		return true;
+	}
+";
+		}
+		$script .= "
+	return false;
 }
 ";
 	}

@@ -480,12 +480,24 @@ EOF;
 	
 	public function testForeignKeyVersion()
 	{
-		$this->markTestSkipped();
 		$a = new VersionableBehaviorTest4();
-		$a->setBar(123);
+		$a->setBar(123); // a1
 		$b = new VersionableBehaviorTest5();
-		$b->setFoo('Hello');
+		$b->setFoo('Hello'); 
 		$b->setVersionableBehaviorTest4($a);
-		$b->save();
+		$b->save(); //b1
+		$this->assertEquals($b->getVersion(), 1);
+		$this->assertEquals($b->getForeignIdVersion(), 1);
+		$this->assertEquals($a->getVersion(), 1);
+		$a->setBar(456); //a2
+		$b->save(); // b2
+		$this->assertEquals($b->getVersion(), 2);
+		$this->assertEquals($b->getForeignIdVersion(), 2);
+		$this->assertEquals($a->getVersion(), 2);
+		$b->setFoo('World');
+		$b->save(); // b3
+		$this->assertEquals($b->getVersion(), 3);
+		$this->assertEquals($b->getForeignIdVersion(), 2);
+		$this->assertEquals($a->getVersion(), 2);
 	}
 }
