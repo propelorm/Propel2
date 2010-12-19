@@ -79,19 +79,10 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function preSave($builder)
 	{
-		$script = "
-if (\$this->isVersioningNecessary()) {";
-		if ($this->behavior->getParameter('log_created_at') == 'true') {
-			$col = $this->behavior->getTable()->getColumn('version_created_at');
-			$script .= "
-	if (!\$this->isColumnModified({$builder->getColumnConstant($col)})) {
-		\$this->setVersionCreatedAt(time());
-	}";
-		}
-		$script .= "
+		return "
+if (\$this->isVersioningNecessary()) {
 	\$this->addVersion(\$con);
 }";
-		return $script;
 	}
 
 	public function postDelete($builder)
@@ -104,20 +95,6 @@ if (\$this->isVersioningNecessary()) {";
 	->delete(\$con);";
 			return $script;
 		}
-	}
-	
-	public function objectAttributes($builder)
-	{
-		$script = "
-
-/**
- * Whether the object needs to be versioned. Useful for the postSave() hooks.
- * @var        boolean
- */
-protected \$isVersioningNecessary = false;
-
-";
-		return $script;
 	}
 	
 	public function objectMethods($builder)
@@ -198,7 +175,15 @@ public function isVersioningNecessary()
  */
 public function addVersion(\$con = null)
 {
-	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);
+	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
+		if ($this->behavior->getParameter('log_created_at') == 'true') {
+			$col = $this->behavior->getTable()->getColumn('version_created_at');
+			$script .= "
+	if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
+		\$this->setVersionCreatedAt(time());
+	}";
+		}
+		$script .= "
 	\$version = new {$versionTablePhpName}();
 	\$this->copyInto(\$version);
 	\$version->set{$ARclassName}(\$this);
