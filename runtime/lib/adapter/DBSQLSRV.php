@@ -24,6 +24,7 @@ class DBSQLSRV extends DBMSSQL
 	{
 		$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+		parent::initConnection($con, $settings);
 	}
 
 	/**
