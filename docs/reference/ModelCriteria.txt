@@ -1060,7 +1060,7 @@ array getPrimaryKeys() // get an array of the primary keys of all the objects in
 coll  populateRelation($name) // makes an additional query to populate the objects related to the current collection objects
 // Import/Export methods
 array toArray() // exports all the objects as array
-array toKeyValue($keyColumn, $valueColumn) // exports two columns as a hash
+array toKeyValue($keyColumn, $valueColumn) // exports all the objects as a hash
 string toXML()
 string toYAML()
 string toJSON()
