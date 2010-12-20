@@ -67,7 +67,7 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 		<behavior name="versionable" />
 	</table>
 
-</database>>
+</database>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
@@ -293,6 +293,30 @@ EOF;
 		$o->toVersion(2);
 	}
 
+	public function testToVersionPreservesVersionedRelatedObjects()
+	{
+		$a = new VersionableBehaviorTest4();
+		$a->setBar(123); // a1
+		$b = new VersionableBehaviorTest5();
+		$b->setFoo('Hello'); 
+		$b->setVersionableBehaviorTest4($a);
+		$b->save(); //b1
+		$a->setBar(456); //a2
+		$b->save(); // b2
+		$b->setFoo('World');
+		$b->save(); // b3
+		$b->toVersion(2);
+		$this->assertEquals($b->getVersion(), 2);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
+		$b->toVersion(1);
+		$this->assertEquals($b->getVersion(), 1);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 1);
+		$b->toVersion(3);
+		$this->assertEquals($b->getVersion(), 3);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
+	}
+
+
 	public function testGetLastVersionNumber()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -487,17 +511,14 @@ EOF;
 		$b->setVersionableBehaviorTest4($a);
 		$b->save(); //b1
 		$this->assertEquals($b->getVersion(), 1);
-		$this->assertEquals($b->getForeignIdVersion(), 1);
-		$this->assertEquals($a->getVersion(), 1);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 1);
 		$a->setBar(456); //a2
 		$b->save(); // b2
 		$this->assertEquals($b->getVersion(), 2);
-		$this->assertEquals($b->getForeignIdVersion(), 2);
-		$this->assertEquals($a->getVersion(), 2);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
 		$b->setFoo('World');
 		$b->save(); // b3
 		$this->assertEquals($b->getVersion(), 3);
-		$this->assertEquals($b->getForeignIdVersion(), 2);
-		$this->assertEquals($a->getVersion(), 2);
+		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
 	}
 }

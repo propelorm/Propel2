@@ -79,48 +79,26 @@ class VersionableBehaviorObjectBuilderModifier
 	
 	public function preSave($builder)
 	{
-		return "if (\$this->isVersioningNecessary() && !\$this->alreadyInSave) {
-	\$version = \$this->addVersion(\$con);
-}";
-	}
-
-	protected function getVersionableFks()
-	{
-		$versionableFKs = array();
-		if ($fks = $this->table->getForeignKeys()) {
-			foreach ($fks as $fk) {
-				if ($fk->getForeignTable()->hasBehavior('versionable') && ! $fk->isComposite()) {
-					$versionableFKs []= $fk;
-				}
-			}
-		}
-		return $versionableFKs;
-	}
-	
-	public function postSave($builder)
-	{
-		$versionableFKs = $this->getVersionableFks();
-		if (!$versionableFKs) {
-			return;
-		}
-		$peerClass = $this->builder->getStubPeerBuilder()->getClassname();
-		$script = "if (isset(\$version)) {";
-		foreach ($versionableFKs as $fk) {
-			$fkGetter = $builder->getFKPhpNameAffix($fk, $plural = false);
-			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-			$fkVersionColumnPhpName = $this->table->getColumn($fkVersionColumnName)->getPhpName();
+		$script = "if (\$this->isVersioningNecessary()) {
+	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
+		if ($this->behavior->getParameter('log_created_at') == 'true') {
+			$col = $this->behavior->getTable()->getColumn('version_created_at');
 			$script .= "
-	if ((\$related = \$this->get{$fkGetter}(\$con)) && \$related->getVersion()) {
-		\$this->set{$fkVersionColumnPhpName}(\$related->getVersion());
-		\$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
+	if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
+		\$this->setVersionCreatedAt(time());
 	}";
-			// save all
-			$script .= "
-		\$this->doSave(\$con);";
 		}
 		$script .= "
+	\$createVersion = true; // for postSave hook
 }";
 		return $script;
+	}
+
+	public function postSave($builder)
+	{
+		return "if (isset(\$createVersion)) {
+	\$this->addVersion(\$con);
+}";
 	}
 
 	public function postDelete($builder)
@@ -153,7 +131,7 @@ class VersionableBehaviorObjectBuilderModifier
 		$this->addCompareVersions($script);
 		return $script;
 	}
-
+	
 	protected function addVersionSetter(&$script)
 	{
 		$script .= "
@@ -196,10 +174,13 @@ public function getVersion()
  */
 public function isVersioningNecessary()
 {
+	if (\$this->alreadyInSave) {
+		return false;
+	}
 	if ({$peerClass}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified())) {
 		return true;
 	}";
-		foreach ($this->getVersionableFks() as $fk) {
+		foreach ($this->behavior->getVersionableFks() as $fk) {
 			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
 			$script .= "
 	if (\$this->get{$fkGetter}()->isModified()) {
@@ -215,12 +196,11 @@ public function isVersioningNecessary()
 
 	protected function addAddVersion(&$script)
 	{
-		$versionTablePhpName = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
-		$versionARClassname = $this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable())->getClassname();
+		$versionTable = $this->behavior->getVersionTable();
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
 		$script .= "
 /**
- * Creates a version of the current object.
- * It will be saved when the main object is saved.
+ * Creates a version of the current object and saves it.
  *
  * @param   PropelPDO \$con the connection to use
  *
@@ -228,18 +208,24 @@ public function isVersioningNecessary()
  */
 public function addVersion(\$con = null)
 {
-	\$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
-		if ($this->behavior->getParameter('log_created_at') == 'true') {
-			$col = $this->behavior->getTable()->getColumn('version_created_at');
+	\$version = new {$versionARClassname}();";
+		foreach ($this->table->getColumns() as $col) {
 			$script .= "
-	if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
-		\$this->setVersionCreatedAt(time());
-	}";
+	\$version->set" . $col->getPhpName() . "(\$this->" . strtolower($col->getName()) . ");";
 		}
 		$script .= "
-	\$version = new {$versionTablePhpName}();
-	\$this->copyInto(\$version);
-	\$version->set{$this->getActiveRecordClassName()}(\$this);
+	\$version->set{$this->getActiveRecordClassName()}(\$this);";
+		foreach ($this->behavior->getVersionableFks() as $fk) {
+			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
+			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+			$fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getPhpName();
+			$script .= "
+	if ((\$related = \$this->get{$fkGetter}(\$con)) && \$related->getVersion()) {
+		\$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
+	}";
+		}
+			$script .= "
+	\$version->save(\$con);
 	
 	return \$version;
 }
@@ -253,18 +239,34 @@ public function addVersion(\$con = null)
 /**
  * Sets the properties of the curent object to the value they had at a specific version
  *
- * @param   integer \$version The version number to read
+ * @param   integer \$versionNumber The version number to read
  * @param   PropelPDO \$con the connection to use
  *
  * @return  {$ARclassName} The current object (for fluent API support)
  */
-public function toVersion(\$version, \$con = null)
+public function toVersion(\$versionNumber, \$con = null)
 {
-	\$v = \$this->getOneVersion(\$version, \$con);
-	if (!\$v) {
+	\$version = \$this->getOneVersion(\$versionNumber, \$con);
+	if (!\$version) {
 		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
-	}
-	\$v->copyInto(\$this, false, false);
+	}";
+		foreach ($this->table->getColumns() as $col) {
+			$script .= "
+	\$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
+		}
+		$versionTable = $this->behavior->getVersionTable();
+		foreach ($this->behavior->getVersionableFks() as $fk) {
+			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
+			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+			$fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getPhpName();
+			$script .= "
+	// FIXME: breaks lazy-loading
+	if (\$related = \$this->get{$fkGetter}(\$con)) {
+		\$related->toVersion(\$version->get{$fkVersionColumnPhpName}(), \$con);
+	}";
+		}
+
+		$script .= "
 	return \$this;
 }
 ";

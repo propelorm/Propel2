@@ -157,9 +157,30 @@ CREATE TABLE [versionable_behavior_test_0]
 	[id] INTEGER NOT NULL PRIMARY KEY,
 	[bar] INTEGER,
 	[foreign_id] INTEGER,
-	[version] INTEGER DEFAULT 0,
-	[foreign_id_version] INTEGER DEFAULT 0
+	[version] INTEGER DEFAULT 0
 );
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- versionable_behavior_test_0_version
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_0_version];
+
+CREATE TABLE [versionable_behavior_test_0_version]
+(
+	[id] INTEGER NOT NULL,
+	[bar] INTEGER,
+	[foreign_id] INTEGER,
+	[version] INTEGER DEFAULT 0,
+	[foreign_id_version] INTEGER DEFAULT 0,
+	PRIMARY KEY ([id],[version])
+);
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_0 ([id])
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}

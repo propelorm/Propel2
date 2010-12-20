@@ -40,9 +40,9 @@ class VersionableBehavior extends Behavior
 	public function modifyTable()
 	{
 		$this->addVersionColumn();
-		$this->addForeignKeyVersionColumns();
 		$this->addLogColumns();
 		$this->addVersionTable();
+		$this->addForeignKeyVersionColumns();
 	}
 	
 	protected function addVersionColumn()
@@ -55,27 +55,6 @@ class VersionableBehavior extends Behavior
 				'type'    => 'INTEGER',
 				'default' => 0
 			));
-		}
-	}
-	
-	public function addForeignKeyVersionColumns()
-	{
-		$table = $this->getTable();
-		foreach ($table->getForeignKeys() as $fk) {
-			if ($fk->getForeignTable()->hasBehavior('versionable')) {
-				if ($fk->isComposite()) {
-					// skip for now
-					continue;
-				}
-				$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-				if (!$table->containsColumn($fkVersionColumnName)) {
-					$table->addColumn(array(
-						'name'    => $fkVersionColumnName,
-						'type'    => 'INTEGER',
-						'default' => 0
-					));
-				}
-			}
 		}
 	}
 	
@@ -145,6 +124,21 @@ class VersionableBehavior extends Behavior
 			$this->versionTable = $database->getTable($versionTableName);
 		}
 	}
+
+	public function addForeignKeyVersionColumns()
+	{
+		$table = $this->getTable();
+		foreach ($this->getVersionableFks() as $fk) {
+			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+			if (!$this->versionTable->containsColumn($fkVersionColumnName)) {
+				$this->versionTable->addColumn(array(
+					'name'    => $fkVersionColumnName,
+					'type'    => 'INTEGER',
+					'default' => 0
+				));
+			}
+		}
+	}
 	
 	public function getVersionTable()
 	{
@@ -155,6 +149,20 @@ class VersionableBehavior extends Behavior
 	{
 		return $this->getTable()->getPhpName() . 'Version';
 	}
+	
+	public function getVersionableFks()
+	{
+		$versionableFKs = array();
+		if ($fks = $this->getTable()->getForeignKeys()) {
+			foreach ($fks as $fk) {
+				if ($fk->getForeignTable()->hasBehavior('versionable') && ! $fk->isComposite()) {
+					$versionableFKs []= $fk;
+				}
+			}
+		}
+		return $versionableFKs;
+	}
+
 
 	public function getObjectBuilderModifier()
 	{
