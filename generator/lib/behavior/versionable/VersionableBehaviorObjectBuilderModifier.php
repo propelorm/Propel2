@@ -124,6 +124,7 @@ class VersionableBehaviorObjectBuilderModifier
 		$this->addIsVersioningNecessary($script);
 		$this->addAddVersion($script);
 		$this->addToVersion($script);
+		$this->addPopulateFromVersion($script);
 		$this->addGetLastVersionNumber($script);
 		$this->addIsLastVersion($script);
 		$this->addGetOneVersion($script);
@@ -249,20 +250,53 @@ public function toVersion(\$versionNumber, \$con = null)
 	\$version = \$this->getOneVersion(\$versionNumber, \$con);
 	if (!\$version) {
 		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
-	}";
+	}
+	\$this->populateFromVersion(\$version, \$con);
+	
+	return \$this;
+}
+";
+	}
+
+	protected function addPopulateFromVersion(&$script)
+	{
+		$ARclassName = $this->getActiveRecordClassName();
+		$versionTable = $this->behavior->getVersionTable();
+		$versionARClassname = $this->builder->getNewStubObjectBuilder($versionTable)->getClassname();
+		$script .= "
+/**
+ * Sets the properties of the curent object to the value they had at a specific version
+ *
+ * @param   {$versionARClassname} \$version The version object to use
+ * @param   PropelPDO \$con the connection to use
+ *
+ * @return  {$ARclassName} The current object (for fluent API support)
+ */
+public function populateFromVersion(\$version, \$con = null)
+{";
 		foreach ($this->table->getColumns() as $col) {
 			$script .= "
 	\$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
 		}
-		$versionTable = $this->behavior->getVersionTable();
 		foreach ($this->behavior->getVersionableFks() as $fk) {
-			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
-			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-			$fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getPhpName();
+			$foreignTable = $fk->getForeignTable();
+			$foreignVersionTable = $fk->getForeignTable()->getBehavior('versionable')->getVersionTable();
+			$relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
+			$relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
+			$fkColumnName = $fk->getLocalColumnName();
+			$fkVersionColumnPhpName = $versionTable->getColumn($fkColumnName . '_version')->getPhpName();
+			$fkPhpname = $this->builder->getFKPhpNameAffix($fk, $plural = false);
 			$script .= "
 	// FIXME: breaks lazy-loading
-	if (\$related = \$this->get{$fkGetter}(\$con)) {
-		\$related->toVersion(\$version->get{$fkVersionColumnPhpName}(), \$con);
+	if (\$this->{$fkColumnName}) {
+		\$related = new {$relatedClassname}();
+		\$relatedVersion = {$relatedVersionQueryClassname}::create()
+			->filterBy{$fk->getForeignColumn()->getPhpName()}(\$this->{$fkColumnName})
+			->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
+			->findOne(\$con);
+		\$related->populateFromVersion(\$relatedVersion, \$con);
+		\$related->setNew(false);
+		\$this->set{$fkPhpname}(\$related);
 	}";
 		}
 
