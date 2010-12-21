@@ -186,7 +186,7 @@ protected function getSelectStatement(\$con = null)
 			}
 		}
 		\$stmt = \$con->prepare(\$sql);
-		BasePeer::populateStmtValues(\$stmt, \$params, \$dbMap, \$db);
+		\$db->bindValues(\$stmt, \$params, \$dbMap);
 		\$stmt->execute();
 		\$con->commit();
 	} catch (PropelException \$e) {
