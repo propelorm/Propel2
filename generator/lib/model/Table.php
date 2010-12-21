@@ -805,6 +805,81 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->referrers;
 	}
+	
+	/**
+	 * Browses the foreign keys and creates referrers for the foreign table.
+	 * This method can be called several times on the same table. It only
+	 * adds the missing referrers and is non-destructive.
+	 * Warning: only use when all the tables were created.
+	 */
+	public function setupReferrers($throwErrors = false)
+	{
+		foreach ($this->getForeignKeys() as $foreignKey) {
+			
+			// table referrers
+			$foreignTable = $this->getDatabase()->getTable($foreignKey->getForeignTableName());
+			if ($foreignTable !== null) {
+				$referrers = $foreignTable->getReferrers();
+				if ($referrers === null || !in_array($foreignKey, $referrers, true) ) {
+					$foreignTable->addReferrer($foreignKey);
+				}
+			} elseif ($throwErrors) {
+				throw new BuildException(sprintf(
+					'Table "%s" contains a foreign key to nonexistent table "%s"',
+					$this->getName(),
+					$foreignKey->getForeignTableName()
+				));
+			}
+
+			// foreign pk's
+			$localColumnNames = $foreignKey->getLocalColumns();
+			foreach ($localColumnNames as $localColumnName) {
+				$localColumn = $this->getColumn($localColumnName);
+				if ($localColumn !== null) {
+					if ($localColumn->isPrimaryKey() && !$this->getContainsForeignPK()) {
+						$this->setContainsForeignPK(true);
+					}
+				} elseif ($throwErrors) {
+					// give notice of a schema inconsistency.
+					// note we do not prevent the npe as there is nothing
+					// that we can do, if it is to occur.
+					throw new BuildException(sprintf(
+						'Table "%s" contains a foreign key with nonexistent local column "%s"',
+						$this->getName(),
+						$localColumnName
+					));
+				}
+			}
+
+			// foreign column references
+			$foreignColumnNames = $foreignKey->getForeignColumns();
+			foreach ($foreignColumnNames as $foreignColumnName) {
+				if ($foreignTable === null) {
+					continue;
+				}
+				$foreignColumn = $foreignTable->getColumn($foreignColumnName);
+				if ($foreignColumn !== null) {
+					if (!$foreignColumn->hasReferrer($foreignKey)) {
+						$foreignColumn->addReferrer($foreignKey);
+					}
+				} elseif ($throwErrors) {
+					// if the foreign column does not exist, we may have an
+					// external reference or a misspelling
+					throw new BuildException(sprintf(
+						'Table "%s" contains a foreign key to table "%s" with nonexistent column "%s"',
+						$this->getName(),
+						$foreignTable->getName(),
+						$foreignColumnName
+					));
+				}
+			}
+			
+			if ($this->getDatabase()->getPlatform() instanceof MysqlPLatform) {
+				$this->addExtraIndices();
+			}
+		} // foreach foreign keys
+
+	}
 
 	public function getCrossFks()
 	{

@@ -789,6 +789,21 @@ class Column extends XMLElement
 		return $this->referrers;
 	}
 
+	public function hasReferrers()
+	{
+		return $this->referrers !== null;
+	}
+
+	public function hasReferrer(ForeignKey $fk)
+	{
+		return $this->hasReferrers() && in_array($fk, $this->referrers);
+	}
+	
+	public function clearReferrers()
+	{
+		$this->referrers = null;
+	}
+
 	/**
 	 * Sets the domain up for specified Propel type.
 	 *

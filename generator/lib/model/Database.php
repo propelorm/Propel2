@@ -518,6 +518,10 @@ class Database extends ScopedElement
 
 	public function doFinalInitialization()
 	{
+		// add the referrers for the foreign keys
+		$this->setupTableReferrers();
+		
+		// execute default behaviors
 		if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
 			// add generic behaviors from build.properties 
 			$defaultBehaviors = explode(',', $defaultBehaviors);
@@ -542,71 +546,13 @@ class Database extends ScopedElement
 				}
 			}
 		}
-			
+		
+		// execute table behaviors and do naming
 		foreach ($tables as $table) {
-
 			$table->doFinalInitialization();
-
-			// setup reverse fk relations
-			$fks = $table->getForeignKeys();
-			foreach ($table->getForeignKeys() as $foreignKey) {
-				$foreignTable = $this->getTable($foreignKey->getForeignTableName());
-				if ($foreignTable === null) {
-					throw new BuildException(sprintf(
-						'Table "%s" contains a foreign key to nonexistent table "%s"',
-						$table->getName(),
-						$foreignKey->getForeignTableName()
-					));
-				}
-
-				$referrers = $foreignTable->getReferrers();
-				if ($referrers === null || !in_array($foreignKey, $referrers, true) ) {
-					$foreignTable->addReferrer($foreignKey);
-				}
-
-				// local column references
-				$localColumnNames = $foreignKey->getLocalColumns();
-				foreach ($localColumnNames as $localColumnName) {
-					$localColumn = $table->getColumn($localColumnName);
-					// give notice of a schema inconsistency.
-					// note we do not prevent the npe as there is nothing
-					// that we can do, if it is to occur.
-					if ($localColumn === null) {
-						throw new BuildException(sprintf(
-							'Table "%s" contains a foreign key with nonexistent local column "%s"',
-							$table->getName(),
-							$localColumnName
-						));
-					}
-					// check for foreign pk's
-					if ($localColumn->isPrimaryKey()) {
-						$table->setContainsForeignPK(true);
-					}
-				} // foreach localColumnNames
-
-				// foreign column references
-				$foreignColumnNames = $foreignKey->getForeignColumns();
-				foreach ($foreignColumnNames as $foreignColumnName) {
-					$foreignColumn = $foreignTable->getColumn($foreignColumnName);
-					// if the foreign column does not exist, we may have an
-					// external reference or a misspelling
-					if ($foreignColumn === null) {
-						throw new BuildException(sprintf(
-							'Table "%s" contains a foreign key to table "%s" with nonexistent column "%s"',
-							$table->getName(),
-							$foreignTable->getName(),
-							$foreignColumnName
-						));
-					} else {
-						$foreignColumn->addReferrer($foreignKey);
-					}
-				} // foreach foreignColumnNames
-				
-				if ($this->platform instanceof MysqlPLatform) {
-					$table->addExtraIndices();
-				}
-			} // foreach foreign keys
-		} // foreach tables
+			// setup referrers again, since final initialization may have added columns
+			$table->setupReferrers(true);
+		}
 		
 		// Behaviors may have added behaviors of their own
 		// These behaviors must launch their modifyTable() method,
@@ -623,6 +569,17 @@ class Database extends ScopedElement
 					}
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Can be called several times
+	 */
+	protected function setupTableReferrers()
+	{
+		foreach ($this->getTables() as $table) {
+			$table->doNaming();
+			$table->setupReferrers();
 		}
 	}
 
