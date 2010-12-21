@@ -173,7 +173,7 @@ public function getVersion()
  *
  * @return  boolean
  */
-public function isVersioningNecessary()
+public function isVersioningNecessary(\$con = null)
 {
 	if (\$this->alreadyInSave) {
 		return false;
@@ -184,8 +184,18 @@ public function isVersioningNecessary()
 		foreach ($this->behavior->getVersionableFks() as $fk) {
 			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
 			$script .= "
-	if (\$this->get{$fkGetter}()->isModified()) {
+	if (\$this->get{$fkGetter}(\$con)->isVersioningNecessary(\$con)) {
 		return true;
+	}
+";
+		}
+		foreach ($this->behavior->getVersionableReferrers() as $fk) {
+			$fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
+			$script .= "
+	foreach (\$this->get{$fkGetter}(null, \$con) as \$relatedObject) {
+		if (\$relatedObject->isVersioningNecessary(\$con)) {
+			return true;
+		}
 	}
 ";
 		}
@@ -297,8 +307,8 @@ public function populateFromVersion(\$version, \$con = null)
 			$fkColumnPhpName = $fk->getLocalColumn()->getPhpName();
 			$fkVersionColumnPhpName = $versionTable->getColumn($fkColumnName . '_version')->getPhpName();
 			$fkPhpname = $this->builder->getFKPhpNameAffix($fk, $plural = false);
+			// FIXME: breaks lazy-loading
 			$script .= "
-	// FIXME: breaks lazy-loading
 	if (\$fkValue = \$version->get{$fkColumnPhpName}()) {
 		\$related = new {$relatedClassname}();
 		\$relatedVersion = {$relatedVersionQueryClassname}::create()
@@ -310,7 +320,35 @@ public function populateFromVersion(\$version, \$con = null)
 		\$this->set{$fkPhpname}(\$related);
 	}";
 		}
-
+		foreach ($this->behavior->getVersionableReferrers() as $fk) {
+			$fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
+			$fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural = false);
+			$foreignTable = $fk->getTable();
+			$foreignBehavior = $foreignTable->getBehavior('versionable');
+			$foreignVersionTable = $foreignBehavior->getVersionTable();
+			$fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
+			$fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
+			$relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
+			$relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
+			$script .= "
+	if (\$fkValues = \$version->get{$fkColumnIds->getPhpName()}()) {
+		\$this->clear{$fkPhpNames}();
+		\$fkVersions = \$version->get{$fkColumnVersions->getPhpName()}();
+		\$query = {$relatedVersionQueryClassname}::create();
+		foreach (\$fkValues as \$key => \$value) {
+			\$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumnIds)}, \$value);
+			\$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumnVersions)}, \$fkVersions[\$key]);
+			\$c1->addAnd(\$c2);
+			\$query->addOr(\$c1);
+		}
+		foreach (\$query->find(\$con) as \$relatedVersion) {
+			\$related = new {$relatedClassname}();
+			\$related->populateFromVersion(\$relatedVersion, \$con);
+			\$related->setNew(false);
+			\$this->add{$fkPhpName}(\$related);
+		}
+	}";
+		}
 		$script .= "
 	return \$this;
 }
@@ -365,16 +403,16 @@ public function isLastVersion(\$con = null)
 /**
  * Retrieves a version object for this entity and a version number
  *
- * @param   integer \$version The version number to read
+ * @param   integer \$versionNumber The version number to read
  * @param   PropelPDO \$con the connection to use
  *
  * @return  {$versionARClassname} A version object
  */
-public function getOneVersion(\$version, \$con = null)
+public function getOneVersion(\$versionNumber, \$con = null)
 {
 	return {$this->getVersionQueryClassName()}::create()
 		->filterBy{$this->getActiveRecordClassName()}(\$this)
-		->filterBy{$this->getColumnPhpName()}(\$version)
+		->filterBy{$this->getColumnPhpName()}(\$versionNumber)
 		->findOne(\$con);
 }
 ";

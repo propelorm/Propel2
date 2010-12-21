@@ -293,7 +293,7 @@ EOF;
 		$o->toVersion(2);
 	}
 
-	public function testToVersionPreservesVersionedRelatedObjects()
+	public function testToVersionPreservesVersionedFkObjects()
 	{
 		$a = new VersionableBehaviorTest4();
 		$a->setBar(123); // a1
@@ -316,6 +316,39 @@ EOF;
 		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
 	}
 
+	public function testToVersionPreservesVersionedReferrerObjects()
+	{
+		$b1 = new VersionableBehaviorTest5();
+		$b1->setFoo('Hello');
+		$b2 = new VersionableBehaviorTest5();
+		$b2->setFoo('World');
+		$a = new VersionableBehaviorTest4();
+		$a->setBar(123); // a1
+		$a->addVersionableBehaviorTest5($b1);
+		$a->addVersionableBehaviorTest5($b2);
+		$a->save(); //b1
+		$this->assertEquals(1, $a->getVersion());
+		$bs = $a->getVersionableBehaviorTest5s();
+		$this->assertEquals(1, $bs[0]->getVersion());
+		$this->assertEquals(1, $bs[1]->getVersion());
+		$b1->setFoo('Heloo');
+		$a->save();
+		$this->assertEquals(2, $a->getVersion());
+		$bs = $a->getVersionableBehaviorTest5s();
+		$this->assertEquals(2, $bs[0]->getVersion());
+		$this->assertEquals(1, $bs[1]->getVersion());
+		$b3 = new VersionableBehaviorTest5();
+		$b3->setFoo('Yep');
+		$a->clearVersionableBehaviorTest5s();
+		$a->addVersionableBehaviorTest5($b3);
+		$a->save();
+		$a->clearVersionableBehaviorTest5s();
+		$this->assertEquals(3, $a->getVersion());
+		$bs = $a->getVersionableBehaviorTest5s();
+		$this->assertEquals(2, $bs[0]->getVersion());
+		$this->assertEquals(1, $bs[1]->getVersion());
+		$this->assertEquals(1, $bs[2]->getVersion());
+	}
 
 	public function testGetLastVersionNumber()
 	{
@@ -525,18 +558,27 @@ EOF;
 	public function testReferrerVersion()
 	{
 		$b1 = new VersionableBehaviorTest5();
-		$b1->setFoo('Hello'); 
+		$b1->setFoo('Hello');
 		$b2 = new VersionableBehaviorTest5();
-		$b2->setFoo('Hello'); 
+		$b2->setFoo('World');
 		$a = new VersionableBehaviorTest4();
 		$a->setBar(123); // a1
 		$a->addVersionableBehaviorTest5($b1);
 		$a->addVersionableBehaviorTest5($b2);
 		$a->save(); //b1
 		$this->assertEquals(1, $a->getVersion());
-		$lastVersion = VersionableBehaviorTest4VersionQuery::create()
-			->filterByVersionableBehaviorTest4($a)
-			->findOne();
-		$this->assertEquals(array(1, 1), $lastVersion->getVersionableBehaviorTest5Versions());
+		$this->assertEquals(array(1, 1), $a->getOneVersion(1)->getVersionableBehaviorTest5Versions());
+		$b1->setFoo('Heloo');
+		$a->save();
+		$this->assertEquals(2, $a->getVersion());
+		$this->assertEquals(array(2, 1), $a->getOneVersion(2)->getVersionableBehaviorTest5Versions());
+		$b3 = new VersionableBehaviorTest5();
+		$b3->setFoo('Yep');
+		$a->clearVersionableBehaviorTest5s();
+		$a->addVersionableBehaviorTest5($b3);
+		$a->save();
+		$a->clearVersionableBehaviorTest5s();
+		$this->assertEquals(3, $a->getVersion());
+		$this->assertEquals(array(2, 1, 1), $a->getOneVersion(3)->getVersionableBehaviorTest5Versions());
 	}
 }
