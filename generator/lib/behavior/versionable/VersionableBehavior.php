@@ -100,6 +100,9 @@ class VersionableBehavior extends Behavior
 			// copy all the columns
 			foreach ($table->getColumns() as $column) {
 				$columnInVersionTable = clone $column;
+				if ($columnInVersionTable->hasReferrers()) {
+					$columnInVersionTable->clearReferrers();
+				}
 				if ($columnInVersionTable->isAutoincrement()) {
 					$columnInVersionTable->setAutoIncrement(false);
 				}
@@ -163,6 +166,18 @@ class VersionableBehavior extends Behavior
 		return $versionableFKs;
 	}
 
+	public function getVersionableReferrers()
+	{
+		$versionableReferrers = array();
+		if ($fks = $this->getTable()->getReferrers()) {
+			foreach ($fks as $fk) {
+				if ($fk->getTable()->hasBehavior('versionable') && ! $fk->isComposite()) {
+					$versionableReferrers []= $fk;
+				}
+			}
+		}
+		return $versionableReferrers;
+	}
 
 	public function getObjectBuilderModifier()
 	{

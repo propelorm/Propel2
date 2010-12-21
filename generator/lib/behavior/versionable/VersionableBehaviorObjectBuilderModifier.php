@@ -284,14 +284,15 @@ public function populateFromVersion(\$version, \$con = null)
 			$relatedClassname = $this->builder->getNewStubObjectBuilder($foreignTable)->getClassname();
 			$relatedVersionQueryClassname = $this->builder->getNewStubQueryBuilder($foreignVersionTable)->getClassname();
 			$fkColumnName = $fk->getLocalColumnName();
+			$fkColumnPhpName = $fk->getLocalColumn()->getPhpName();
 			$fkVersionColumnPhpName = $versionTable->getColumn($fkColumnName . '_version')->getPhpName();
 			$fkPhpname = $this->builder->getFKPhpNameAffix($fk, $plural = false);
 			$script .= "
 	// FIXME: breaks lazy-loading
-	if (\$this->{$fkColumnName}) {
+	if (\$fkValue = \$version->get{$fkColumnPhpName}()) {
 		\$related = new {$relatedClassname}();
 		\$relatedVersion = {$relatedVersionQueryClassname}::create()
-			->filterBy{$fk->getForeignColumn()->getPhpName()}(\$this->{$fkColumnName})
+			->filterBy{$fk->getForeignColumn()->getPhpName()}(\$fkValue)
 			->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
 			->findOne(\$con);
 		\$related->populateFromVersion(\$relatedVersion, \$con);
