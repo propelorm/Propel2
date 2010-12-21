@@ -521,4 +521,22 @@ EOF;
 		$this->assertEquals($b->getVersion(), 3);
 		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
 	}
+	
+	public function testReferrerVersion()
+	{
+		$b1 = new VersionableBehaviorTest5();
+		$b1->setFoo('Hello'); 
+		$b2 = new VersionableBehaviorTest5();
+		$b2->setFoo('Hello'); 
+		$a = new VersionableBehaviorTest4();
+		$a->setBar(123); // a1
+		$a->addVersionableBehaviorTest5($b1);
+		$a->addVersionableBehaviorTest5($b2);
+		$a->save(); //b1
+		$this->assertEquals(1, $a->getVersion());
+		$lastVersion = VersionableBehaviorTest4VersionQuery::create()
+			->filterByVersionableBehaviorTest4($a)
+			->findOne();
+		$this->assertEquals(array(1, 1), $lastVersion->getVersionableBehaviorTest5Versions());
+	}
 }

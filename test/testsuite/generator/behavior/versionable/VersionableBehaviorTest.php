@@ -123,9 +123,9 @@ EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
 
-	public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned()
+	public function foreignTableSchemaDataProvider()
 	{
-			$schema = <<<EOF
+		$schema = <<<EOF
 <database name="versionable_behavior_test_0">
 	<table name="versionable_behavior_test_0">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -143,6 +143,14 @@ EOF;
 	</table>
 </database>
 EOF;
+		return array(array($schema));
+	}
+	
+	/**
+	 * @dataProvider foreignTableSchemaDataProvider
+	 */
+	public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
+	{
 		$builder = new PropelQuickBuilder();
 		$builder->setSchema($schema);
 		$expected = <<<EOF
@@ -185,6 +193,52 @@ EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
 
+	/**
+	 * @dataProvider foreignTableSchemaDataProvider
+	 */
+	public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
+	{
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$expected = <<<EOF
+-----------------------------------------------------------------------
+-- versionable_behavior_test_1
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_1];
+
+CREATE TABLE [versionable_behavior_test_1]
+(
+	[id] INTEGER NOT NULL PRIMARY KEY,
+	[bar] INTEGER,
+	[version] INTEGER DEFAULT 0
+);
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+		$expected = <<<EOF
+
+-----------------------------------------------------------------------
+-- versionable_behavior_test_1_version
+-----------------------------------------------------------------------
+
+DROP TABLE [versionable_behavior_test_1_version];
+
+CREATE TABLE [versionable_behavior_test_1_version]
+(
+	[id] INTEGER NOT NULL,
+	[bar] INTEGER,
+	[version] INTEGER DEFAULT 0,
+	[versionable_behavior_test_0_ids] MEDIUMTEXT,
+	[versionable_behavior_test_0_versions] MEDIUMTEXT,
+	PRIMARY KEY ([id],[version])
+);
+
+-- SQLite does not support foreign keys; this is just for reference
+-- FOREIGN KEY ([id]) REFERENCES versionable_behavior_test_1 ([id])
+EOF;
+		$this->assertContains($expected, $builder->getSQL());
+	}
+	
 	/**
 	 * @dataProvider basicSchemaDataProvider
 	 */

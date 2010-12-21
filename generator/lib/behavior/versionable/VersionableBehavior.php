@@ -131,13 +131,31 @@ class VersionableBehavior extends Behavior
 	public function addForeignKeyVersionColumns()
 	{
 		$table = $this->getTable();
+		$versionTable = $this->versionTable;
 		foreach ($this->getVersionableFks() as $fk) {
 			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-			if (!$this->versionTable->containsColumn($fkVersionColumnName)) {
-				$this->versionTable->addColumn(array(
+			if (!$versionTable->containsColumn($fkVersionColumnName)) {
+				$versionTable->addColumn(array(
 					'name'    => $fkVersionColumnName,
 					'type'    => 'INTEGER',
 					'default' => 0
+				));
+			}
+		}
+		foreach ($this->getVersionableReferrers() as $fk) {
+			$fkTableName = $fk->getTable()->getName();
+			$fkIdsColumnName = $fkTableName . '_ids';
+			if (!$versionTable->containsColumn($fkIdsColumnName)) {
+				$versionTable->addColumn(array(
+					'name'    => $fkIdsColumnName,
+					'type'    => 'ARRAY'
+				));
+			}
+			$fkVersionsColumnName = $fkTableName . '_versions';
+			if (!$versionTable->containsColumn($fkVersionsColumnName)) {
+				$versionTable->addColumn(array(
+					'name'    => $fkVersionsColumnName,
+					'type'    => 'ARRAY'
 				));
 			}
 		}
@@ -177,6 +195,20 @@ class VersionableBehavior extends Behavior
 			}
 		}
 		return $versionableReferrers;
+	}
+	
+	public function getReferrerIdsColumn(ForeignKey $fk)
+	{
+		$fkTableName = $fk->getTable()->getName();
+		$fkIdsColumnName = $fkTableName . '_ids';
+		return $this->versionTable->getColumn($fkIdsColumnName);
+	}
+	
+	public function getReferrerVersionsColumn(ForeignKey $fk)
+	{
+		$fkTableName = $fk->getTable()->getName();
+		$fkIdsColumnName = $fkTableName . '_versions';
+		return $this->versionTable->getColumn($fkIdsColumnName);
 	}
 
 	public function getObjectBuilderModifier()

@@ -515,7 +515,6 @@ class Database extends ScopedElement
     return $this->tablePrefix;
   }
 
-
 	public function doFinalInitialization()
 	{
 		// add the referrers for the foreign keys

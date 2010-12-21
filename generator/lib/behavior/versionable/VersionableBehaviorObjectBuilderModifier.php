@@ -225,6 +225,16 @@ public function addVersion(\$con = null)
 		\$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
 	}";
 		}
+		foreach ($this->behavior->getVersionableReferrers() as $fk) {
+			$fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
+			$idsColumn = $this->behavior->getReferrerIdsColumn($fk);
+			$versionsColumn = $this->behavior->getReferrerVersionsColumn($fk);
+			$script .= "
+	if (\$relateds = \$this->get{$fkGetter}(\$con)->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
+		\$version->set{$idsColumn->getPhpName()}(array_keys(\$relateds));
+		\$version->set{$versionsColumn->getPhpName()}(array_values(\$relateds));
+	}";
+		}
 			$script .= "
 	\$version->save(\$con);
 	
