@@ -145,6 +145,7 @@ Propel currently bundles several behaviors. Check the behavior documentation for
  * [wiki:Documentation/1.6/Behaviors/soft_delete soft_delete]
  * [wiki:Documentation/1.6/Behaviors/sortable sortable]
  * [wiki:Documentation/1.6/Behaviors/nested_set nested_set]
+ * [wiki:Documentation/1.6/Behaviors/versionable versionable]
  * [wiki:Documentation/1.6/Behaviors/query_cache query_cache]
  * And [wiki:Documentation/1.6/Inheritance#ConcreteTableInheritance concrete_inheritance], documented in the Inheritance Chapter even if it's a behavior
 
