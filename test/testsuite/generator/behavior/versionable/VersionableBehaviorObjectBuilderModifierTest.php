@@ -87,19 +87,18 @@ EOF;
 	
 	public function providerForNewActiveRecordTests()
 	{
-		// Damn you phpUnit, why do providers execute before setUp() ?
-		$this->setUp();
 		return array(
-			array(new VersionableBehaviorTest1()),
-			array(new VersionableBehaviorTest2()),
+			array('VersionableBehaviorTest1'),
+			array('VersionableBehaviorTest2'),
 		);
 	}
 
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionGetterAndSetter($o)
+	public function testVersionGetterAndSetter($class)
 	{
+		$o = new $class;
 		$o->setVersion(1234);
 		$this->assertEquals(1234, $o->getVersion());
 	}
@@ -107,16 +106,18 @@ EOF;
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionDefaultValue($o)
+	public function testVersionDefaultValue($class)
 	{
+		$o = new $class;
 		$this->assertEquals(0, $o->getVersion());
 	}
 
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionValueInitializesOnInsert($o)
+	public function testVersionValueInitializesOnInsert($class)
 	{
+		$o = new $class;
 		$o->save();
 		$this->assertEquals(1, $o->getVersion());
 	}
@@ -124,8 +125,9 @@ EOF;
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionValueIncrementsOnUpdate($o)
+	public function testVersionValueIncrementsOnUpdate($class)
 	{
+		$o = new $class;
 		$o->save();
 		$this->assertEquals(1, $o->getVersion());
 		$o->setBar(12);
@@ -142,8 +144,9 @@ EOF;
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionDoesNotIncrementOnUpdateWithNoChange($o)
+	public function testVersionDoesNotIncrementOnUpdateWithNoChange($class)
 	{
+		$o = new $class;
 		$o->setBar(12);
 		$o->save();
 		$this->assertEquals(1, $o->getVersion());
@@ -155,8 +158,9 @@ EOF;
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
-	public function testVersionDoesNotIncrementWhenVersioningIsDisabled($o)
+	public function testVersionDoesNotIncrementWhenVersioningIsDisabled($class)
 	{
+		$o = new $class;
 		VersionableBehaviorTest1Peer::disableVersioning();
 		VersionableBehaviorTest2Peer::disableVersioning();
 		$o->setBar(12);
