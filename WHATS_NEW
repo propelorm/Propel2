@@ -40,6 +40,117 @@ The Propel guide offers [wiki:Documentation/1.6/Migrations an entire chapter on 
 
 Migrations only work on MySQL and PostgreSQL for now. On other platforms, you should continue to use `sql` and `insert-sql`.
 
+== New Behaviors ==
+
+Propel 1.6 ships with more core behaviors than ever.
+
+=== Versionable behavior ===
+
+Once enabled on a table, the `versionable` behavior will store a copy of the !ActiveRecord object in a separate table each time it is saved. This allows to keep track of the changes made on an object, whether to review modifications, or revert to a previous state.
+
+The classic Wiki example is a good illustration of the utility of the `versionable` behavior:
+
+{{{
+#!xml
+<table name="wiki_page">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" />
+  <column name="body" type="LONGVARCHAR" />
+  <behavior name="versionable" />
+</table>
+}}}
+
+After rebuild, the `WikiPage` model has versioning abilities:
+
+{{{
+#!php
+<?php
+$page = new WikiPage();
+
+// automatic version increment
+$page->setTitle('Propel');
+$page->setBody('Propel is a CRM built in PHP');
+$page->save(); 
+echo $page->getVersion(); // 1
+$page->setBody('Propel is an ORM built in PHP5');
+$page->save();
+echo $page->getVersion(); // 2
+
+// reverting to a previous version
+$page->toVersion(1);
+echo $page->getBody(); // 'Propel is a CRM built in PHP'
+// saving a previous version creates a new one
+$page->save();
+echo $page->getVersion(); // 3
+
+// checking differences between versions
+print_r($page->compareVersions(1, 2));
+// array(
+//   'Body' => array(1 => 'Propel is a CRM built in PHP', 2 => 'Propel is an ORM built in PHP5'),
+// );
+
+// deleting an object also deletes all its versions
+$page->delete();
+}}}
+
+The `versionable` behavior offers audit log functionality, so you can track who made a modification, when, and why:
+
+{{{
+#!php
+<?php
+$page = new WikiPage();
+$page->setTitle('PEAR');
+$page->setBody('PEAR is a framework and distribution system for reusable PHP components');
+$page->setVersionCreatedBy('John Doe');
+$page->setVersionComment('First draft');
+$page->save();
+// do more modifications...
+
+// list all modifications
+foreach ($page->getAllVersions() as $pageVersion) {
+  echo sprintf("'%s', Version %d, updated by %s on %s (%s)\n",
+    $pageVersion->getTitle(),
+    $pageVersion->getVersion(),
+    $pageVersion->getVersionCreatedBy(),
+    $pageVersion->getVersionCreatedAt(),
+    $pageVersion->getVersionComment(),
+  );
+}
+// 'PEAR', Version 1, updated by John Doe on 2010-12-21 22:53:02 (First draft)
+// 'PEAR', Version 2, updated by ...
+}}}
+
+If it was just for that, the `versionable` behavior would already be awesome. Versioning is a very common feature, and there is no doubt that this behavior will replace lots of boilerplate code. Consider the fact that it's very configurable, [http://www.propelorm.org/wiki/Documentation/1.6/Behaviors/versionable fully documented], and unit tested, and there is no reason to develop your own versioning layer.
+
+But there is more. The `versionable` behavior also works on relationships. If the `WikiPage` has one `Category`, and if the `Category` model also uses the `versionable` behavior, then each time a `WikiPage` is saved, it saves the version of the related `Category` it is related to, and it is able to restore it:
+
+{{{
+#!php
+<?php
+$category = new Category();
+$category->setName('Libraries');
+$page = new WikiPage();
+$page->setTitle('PEAR');
+$page->setBody('PEAR is a framework and distribution system for reusable PHP components');
+$page->setCategory($category);
+$page->save(); // version 1
+
+$page->setTitle('PEAR - PHP Extension and Application Repository');
+$page->save(); // version 2
+
+$category->setName('PHP Libraries');
+$page->save(); // version 3
+
+$page->toVersion(1);
+echo $page->getTitle(); // 'PEAR'
+echo $page->getCategory()->getName(); // 'Libraries'
+$page->toVersion(3);
+echo $page->getTitle(); // 'PEAR - PHP Extension and Application Repository'
+echo $page->getCategory()->getName(); // 'PHP Libraries'
+}}}
+
+Now the versioning is not limited to a single class anymore. You can even design a fully versionable '''application''' - it all depends on your imagination.
+
 == XML/YAML/JSON/CSV Parsing and Dumping ==
 
 ActiveRecord and Collection objects now have the ability to be converted to and from a string, using any of the XML, YAML, JSON, and CSV formats.
