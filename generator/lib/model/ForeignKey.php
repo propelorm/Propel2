@@ -495,7 +495,7 @@ class ForeignKey extends XMLElement
 	}
 	
 	/**
-	 * Whether this foreign key uses a required column, or a list or required columns.
+	 * Whether this foreign key uses a required column, or a list of required columns.
 	 *
 	 * @return     boolean
 	 */

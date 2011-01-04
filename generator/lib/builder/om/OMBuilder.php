@@ -336,9 +336,13 @@ abstract class OMBuilder extends DataModelBuilder
 	 */
 	protected function getJoinType(ForeignKey $fk)
 	{
-		return $fk->getDefaultJoin() ? 
-      "'".$fk->getDefaultJoin()."'" :
-      ($fk->isLocalColumnsRequired() ? 'Criteria::INNER_JOIN' : 'Criteria::LEFT_JOIN');	  
+		if ($defaultJoin = $fk->getDefaultJoin()) {
+			return "'" . $defaultJoin . "'";
+		}
+		if ($fk->isLocalColumnsRequired()) {
+			return 'Criteria::INNER_JOIN';
+		}
+		return 'Criteria::LEFT_JOIN'; 
 	}
 
 	/**

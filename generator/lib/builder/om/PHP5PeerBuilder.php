@@ -233,7 +233,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 ";
 
 		// apply behaviors
-    $this->applyBehaviorModifier('staticAttributes', $script, "	");
+		$this->applyBehaviorModifier('staticConstants', $script, "	");
+		$this->applyBehaviorModifier('staticAttributes', $script, "	");
 		
 		$this->addFieldNamesAttribute($script);
 		$this->addFieldKeysAttribute($script);

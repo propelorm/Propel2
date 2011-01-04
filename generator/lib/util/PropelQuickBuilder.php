@@ -88,8 +88,10 @@ class PropelQuickBuilder
 		$this->buildSQL($con);
 		$this->buildClasses();
 		$name = $this->getDatabase()->getName();
+		Propel::setConfiguration(array());
 		Propel::setDB($name, $adapter);
-		Propel::setConnection($name, $con);
+		Propel::setConnection($name, $con, Propel::CONNECTION_READ);
+		Propel::setConnection($name, $con, Propel::CONNECTION_WRITE);
 		return $con;
 	}
 	

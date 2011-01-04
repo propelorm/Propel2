@@ -700,7 +700,37 @@ class Table extends ScopedElement implements IDMethod
 			return $this->addColumn($col); // call self w/ different param
 		}
 	}
-
+	
+	/**
+	 * Removed a column from the table
+	 * @param Column|string $col the column to remove
+	 */
+	public function removeColumn($col)
+	{
+		if (is_string($col)) {
+			$col = $this->getColumn($col);
+		}
+		$pos = array_search($col, $this->columnList);
+		if(false === $pos) {
+			throw new EngineException(sprintf('No column named %s found in table %s', $col->getName(), $table->getName()));
+		}
+		unset($this->columnList[$pos]);
+		unset($this->columnsByName[$col->getName()]);
+		unset($this->columnsByLowercaseName[strtolower($col->getName())]);
+		unset($this->columnsByPhpName[$col->getPhpName()]);
+		$this->adjustColumnPositions();
+		// FIXME: also remove indexes and validators on this column?
+	}
+	
+	public function adjustColumnPositions()
+	{
+		$columnCount = $this->getNumColumns();
+		$columnListKeys = array_keys($this->columnList);
+		for ($i=0; $i < $columnCount; $i++) {
+			$this->columnList[$columnListKeys[$i]]->setPosition($i + 1);
+		}
+	}
+	
 	/**
 	 * Add a validator to this table.
 	 *
@@ -1495,17 +1525,20 @@ class Table extends ScopedElement implements IDMethod
 	
 	/**
 	 * Check whether the table has a column.
-	 * @param      string $name the name of the column (e.g. 'my_column')
+	 * @param      Column|string $col the column object or name (e.g. 'my_column')
 	 * @param      boolean $caseInsensitive Whether the check is case insensitive. False by default.
 	 *
 	 * @return     boolean
 	 */
-	public function hasColumn($name, $caseInsensitive = false)
+	public function hasColumn($col, $caseInsensitive = false)
 	{
+		if ($col instanceof Column) {
+			$col = $col->getName();
+		}
 		if ($caseInsensitive) {
-			return array_key_exists(strtolower($name), $this->columnsByLowercaseName);
+			return array_key_exists(strtolower($col), $this->columnsByLowercaseName);
 		} else {
-			return array_key_exists($name, $this->columnsByName);
+			return array_key_exists($col, $this->columnsByName);
 		}
 	}
 
@@ -1574,16 +1607,14 @@ class Table extends ScopedElement implements IDMethod
 	}
 
 	/**
-	 * Returns true if the table contains a specified column
-	 * @param     mixed $col Column or column name.
+	 * Check whether the table has a column.
+	 * @param      Column|string $col the column object or name (e.g. 'my_column')
+	 * @deprecated use hasColumn() instead
+	 * @return boolean
 	 */
 	public function containsColumn($col)
 	{
-		if ($col instanceof Column) {
-			return in_array($col, $this->columnList);
-		} else {
-			return ($this->getColumn($col) !== null);
-		}
+		return $this->hasColumn($col);
 	}
 
 	/**

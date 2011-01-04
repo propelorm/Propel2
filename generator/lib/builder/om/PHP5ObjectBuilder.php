@@ -705,7 +705,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addTemporalAccessor
 	 **/
-	protected function addTemporalAccessorComment(&$script, Column $col) {
+	public function addTemporalAccessorComment(&$script, Column $col) {
 		$clo = strtolower($col->getName());
 		$useDateTime = $this->getBuildProperty('useDateTimeClass');
 
@@ -758,7 +758,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addTemporalAccessor
 	 **/
-	protected function addTemporalAccessorOpen(&$script, Column $col) {
+	public function addTemporalAccessorOpen(&$script, Column $col) {
 		$cfc = $col->getPhpName();
 
 		$defaultfmt = null;
@@ -1073,7 +1073,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addDefaultAccessor()
 	 **/
-	protected function addDefaultAccessorComment(&$script, Column $col) {
+	public function addDefaultAccessorComment(&$script, Column $col) {
 		$clo=strtolower($col->getName());
 
 		$script .= "
@@ -1095,7 +1095,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addDefaultAccessor()
 	 **/
-	protected function addDefaultAccessorOpen(&$script, Column $col) {
+	public function addDefaultAccessorOpen(&$script, Column $col) {
 		$cfc = $col->getPhpName();
 		$visibility = $col->getAccessorVisibility();
 
@@ -1286,7 +1286,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addMutatorOpen()
 	 **/
-	protected function addMutatorComment(&$script, Column $col) {
+	public function addMutatorComment(&$script, Column $col) {
 		$clo = strtolower($col->getName());
 		$script .= "
 	/**
@@ -1303,7 +1303,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addMutatorOpen()
 	 **/
-	protected function addMutatorOpenOpen(&$script, Column $col) {
+	public function addMutatorOpenOpen(&$script, Column $col) {
 		$cfc = $col->getPhpName();
 		$visibility = $col->getMutatorVisibility();
 
@@ -1467,16 +1467,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		$this->declareClasses($dateTimeClass, 'DateTimeZone');
 
-		$script .= "
-	/**
-	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
-	 * ".$col->getDescription()."
-	 * @param      mixed \$v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
-	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
-	 */
-	".$visibility." function set$cfc(\$v)
-	{";
+		$this->addTemporalMutatorComment($script, $col);
+		$this->addMutatorOpenOpen($script, $col);
 		if ($col->isLazyLoad()) {
 			$script .= "
 		// explicitly set the is-loaded flag to true for this lazy load col;
@@ -1536,6 +1528,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		} // if either are not null
 ";
 		$this->addMutatorClose($script, $col);
+	}
+
+	public function addTemporalMutatorComment(&$script, Column $col)
+	{
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+
+		$script .= "
+	/**
+	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
+	 * ".$col->getDescription()."
+	 * @param      mixed \$v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 */";
 	}
 
 	/**
@@ -2849,7 +2856,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      ForeignKey $fk
 	 * @return     string
 	 */
-	protected function getFKVarName(ForeignKey $fk)
+	public function getFKVarName(ForeignKey $fk)
 	{
 		return 'a' . $this->getFKPhpNameAffix($fk, $plural = false);
 	}
@@ -2859,7 +2866,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      ForeignKey $fk
 	 * @return     string
 	 */
-	protected function getRefFKCollVarName(ForeignKey $fk)
+	public function getRefFKCollVarName(ForeignKey $fk)
 	{
 		return 'coll' . $this->getRefFKPhpNameAffix($fk, $plural = true);
 	}
@@ -2870,7 +2877,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      ForeignKey $fk
 	 * @return     string
 	 */
-	protected function getPKRefFKVarName(ForeignKey $fk)
+	public function getPKRefFKVarName(ForeignKey $fk)
 	{
 		return 'single' . $this->getRefFKPhpNameAffix($fk, $plural = false);
 	}

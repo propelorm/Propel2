@@ -190,6 +190,24 @@ EOF;
 		$this->assertEquals($column, $table->getColumn('foo', true));
 		$this->assertEquals($column, $table->getColumn('FOO', true));
 	}
+	
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testRemoveColumnFromObject($table, $column)
+	{
+		$table->removeColumn($column);
+		$this->assertFalse($table->hasColumn('Foo'));
+	}
+
+	/**
+	 * @dataProvider providerForTestHasColumn
+	 */
+	public function testRemoveColumnFromNAme($table, $column)
+	{
+		$table->removeColumn($column->getName());
+		$this->assertFalse($table->hasColumn('Foo'));
+	}
 
 	public function testQualifiedName()
 	{
