@@ -51,7 +51,7 @@ class I18nBehaviorQueryBuilderModifierTest extends PHPUnit_Framework_TestCase
 	</table>
 </database>
 EOF;
-			PropelQuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
+			//PropelQuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_11');
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
