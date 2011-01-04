@@ -102,7 +102,6 @@ EOF;
 	
 	public function testJoinI18nCreatesACorrectQuery()
 	{
-		$this->markTestSkipped();
 		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
 		I18nBehaviorTest11Query::create()
@@ -143,7 +142,6 @@ EOF;
 
 	public function testUseI18nQueryCreatesACorrectQuery()
 	{
-		$this->markTestSkipped();
 		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
 		I18nBehaviorTest11Query::create()
@@ -195,7 +193,6 @@ EOF;
 
 	public function testJoinWithI18nHydratesRelatedObject()
 	{
-		$this->markTestSkipped();
 		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
 		I18nBehaviorTest11Query::create()->deleteAll();
