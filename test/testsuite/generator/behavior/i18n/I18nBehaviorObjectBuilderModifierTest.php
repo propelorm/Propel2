@@ -81,7 +81,7 @@ EOF;
 	{
 		$o = new I18nBehaviorTest1();
 		$translation = new I18nBehaviorTest1I18n();
-		$o->setTranslation($translation);
+		$o->addI18nBehaviorTest1I18n($translation);
 		$o->save();
 		$translation = $o->getTranslation();
 		$this->assertFalse($translation->isNew());
@@ -91,9 +91,11 @@ EOF;
 	{
 		$o = new I18nBehaviorTest1();
 		$translation1 = new I18nBehaviorTest1I18n();
-		$o->setTranslation($translation1, 'en_EN');
+		$translation1->setLocale('en_EN');
+		$o->addI18nBehaviorTest1I18n($translation1);
 		$translation2 = new I18nBehaviorTest1I18n();
-		$o->setTranslation($translation2, 'fr_FR');
+		$translation2->setLocale('fr_FR');
+		$o->addI18nBehaviorTest1I18n($translation2);
 		$o->save();
 		$this->assertEquals($translation1, $o->getTranslation('en_EN'));
 		$this->assertEquals($translation2, $o->getTranslation('fr_FR'));
@@ -122,6 +124,24 @@ EOF;
 		$o->addI18nBehaviorTest1I18n($translation2);
 		$translation = $o->getTranslation('en_EN');
 		$this->assertEquals($translation1, $translation);
+	}
+	
+	public function testRemoveTranslation()
+	{
+		$o = new I18nBehaviorTest1();
+		$translation1 = new I18nBehaviorTest1I18n();
+		$translation1->setLocale('en_EN');
+		$o->addI18nBehaviorTest1I18n($translation1);
+		$translation2 = new I18nBehaviorTest1I18n();
+		$translation2->setLocale('fr_FR');
+		$translation2->setBar('bonjour');
+		$o->addI18nBehaviorTest1I18n($translation2);
+		$o->save();
+		$this->assertEquals(2, $o->countI18nBehaviorTest1I18ns());
+		$o->removeTranslation('fr_FR');
+		$this->assertEquals(1, $o->countI18nBehaviorTest1I18ns());
+		$translation = $o->getTranslation('fr_FR');
+		$this->assertNotEquals($translation->getBar(), $translation2->getBar());
 	}
 
 	public function testLocaleSetterAndGetterExist()

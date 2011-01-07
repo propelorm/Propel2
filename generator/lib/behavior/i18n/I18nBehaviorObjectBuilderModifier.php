@@ -45,7 +45,7 @@ class I18nBehaviorObjectBuilderModifier
 			$script .= $this->addSetLocaleAlias($alias);
 		}
 		$script .= $this->addGetTranslation();
-		$script .= $this->addSetTranslation();
+		$script .= $this->addRemoveTranslation();
 		$script .= $this->addGetCurrentTranslation();
 		foreach ($this->behavior->getI18nColumns() as $column) {
 			$script .= $this->addTranslatedColumnGetter($column);
@@ -97,13 +97,15 @@ class I18nBehaviorObjectBuilderModifier
 		));
 	}
 
-	protected function addSetTranslation()
+	protected function addRemoveTranslation()
 	{
 		$i18nTable = $this->behavior->getI18nTable();
-		return $this->behavior->renderTemplate('objectSetTranslation', array(
-			'i18nTablePhpName' => $this->builder->getNewStubObjectBuilder($i18nTable)->getClassname(),
+		$fk = $this->behavior->getI18nForeignKey();
+		return $this->behavior->renderTemplate('objectRemoveTranslation', array(
 			'objectClassname' => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
 			'defaultLocale'    => $this->behavior->getDefaultLocale(),
+			'i18nQueryName'    => $this->builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
+			'i18nCollection'   => $this->builder->getRefFKCollVarName($fk),
 			'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
 		));
 	}
@@ -166,6 +168,21 @@ class I18nBehaviorObjectBuilderModifier
 			'columnPhpName'     => $column->getPhpName(),
 			'params'            => implode(', ', $params[0]),
 		));
+	}
+	
+	public function objectFilter(&$script, $builder)
+	{
+		$i18nTable = $this->behavior->getI18nTable();
+		$i18nTablePhpName = $this->builder->getNewStubObjectBuilder($i18nTable)->getClassname();
+		$localeColumnName = $this->behavior->getLocaleColumn()->getPhpName();
+		$pattern = '/public function add' . $i18nTablePhpName . '.*[\r\n]\s*\{/';
+		$addition = "
+		if (\$l && \$locale = \$l->get$localeColumnName()) {
+			\$this->set$localeColumnName(\$locale);
+			\$this->currentTranslations[\$locale] = \$l;
+		}";
+		$replacement = "\$0$addition";
+		$script = preg_replace($pattern, $replacement, $script);
 	}
 
 }

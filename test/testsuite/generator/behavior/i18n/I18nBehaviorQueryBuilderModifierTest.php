@@ -214,6 +214,27 @@ EOF;
 		$this->assertEquals($count, $con->getQueryCount());
 		$this->assertEquals('hello', $translation->getBar());
 	}
+	
+	public function testJoinWithI18nSetsTheLocaleOnResults()
+	{
+		I18nBehaviorTest11Query::create()->deleteAll();
+		I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		$o = new I18nBehaviorTest11();
+		$o->setFoo(123);
+		$o->setLocale('en_EN');
+		$o->setBar('hello');
+		$o->setLocale('fr_FR');
+		$o->setBar('bonjour');
+		$o->save();
+		$o1 = I18nBehaviorTest11Query::create()
+			->joinWithI18n('en_EN')
+			->findOne();
+		$this->assertEquals('en_EN', $o1->getLocale());
+		$o2 = I18nBehaviorTest11Query::create()
+			->joinWithI18n('fr_FR')
+			->findOne();
+		$this->assertEquals('fr_FR', $o2->getLocale());
+	}
 
 	// This is not a desired behavior, but there is no way to overcome it
 	// because if we don't issue a database query when the collection exists

@@ -20,12 +20,14 @@ public function getTranslation($locale = '<?php echo $defaultLocale ?>', PropelP
 		}
 		if ($this->isNew()) {
 			$translation = new <?php echo $i18nTablePhpName ?>();
+			$translation->set<?php echo $localeColumnName ?>($locale);
 		} else {
 			$translation = <?php echo $i18nQueryName ?>::create()
 				->filterByPrimaryKey(array($this->getPrimaryKey(), $locale))
 				->findOneOrCreate($con);
+			$this->currentTranslations[$locale] = $translation;
 		}
-		$this->setTranslation($translation, $locale);
+		$this->add<?php echo $i18nTablePhpName ?>($translation);
 	}
 
 	return $this->currentTranslations[$locale];
