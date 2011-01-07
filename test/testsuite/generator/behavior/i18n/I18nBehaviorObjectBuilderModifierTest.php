@@ -51,8 +51,26 @@ class I18nBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_TestCase
 	</table>
 </database>
 EOF;
+PropelQuickBuilder::debugClassesForTable($schema, 'i18n_behavior_test_1');
 			PropelQuickBuilder::buildSchema($schema);
 		}
+	}
+
+	public function testPostDeleteEmulatesOnDeleteCascade()
+	{
+		I18nBehaviorTest1Query::create()->deleteAll();
+		I18nBehaviorTest1I18nQuery::create()->deleteAll();
+		$o = new I18nBehaviorTest1();
+		$o->setFoo(123);
+		$o->setLocale('en_EN');
+		$o->setBar('hello');
+		$o->setLocale('fr_FR');
+		$o->setBar('bonjour');
+		$o->save();
+		$this->assertEquals(2, I18nBehaviorTest1I18nQuery::create()->count());
+		$o->clearI18nBehaviorTest1I18ns();
+		$o->delete();
+		$this->assertEquals(0, I18nBehaviorTest1I18nQuery::create()->count());
 	}
 
 	public function testGetTranslationReturnsTranslationObject()

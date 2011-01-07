@@ -26,6 +26,18 @@ class I18nBehaviorObjectBuilderModifier
 		$this->table = $behavior->getTable();
 	}
 
+	public function postDelete($builder)
+	{
+		$this->builder = $builder;
+		if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
+			$i18nTable = $this->behavior->getI18nTable();
+			return $this->behavior->renderTemplate('objectPostDelete', array(
+				'i18nQueryName'    => $builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
+				'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getTable())->getClassname(),
+			));
+		}
+	}
+
 	public function objectAttributes($builder)
 	{
 		return $this->behavior->renderTemplate('objectAttributes', array(
