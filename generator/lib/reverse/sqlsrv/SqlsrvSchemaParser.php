@@ -8,15 +8,15 @@
  * @license    MIT License
  */
 
-require_once 'builder/sql/DataSQLBuilder.php';
+require_once 'reverse/mssql/MssqlSchemaParser.php';
 
 /**
- * MS SQL Server using pdo_sqlsrv driver class for building data dump SQL.
+ * Microsoft SQL Server database schema parser.
  *
- * @author     Benjamin Runnels
+ * @author     Benjamin Runnels <kraven@kraven.org>
  * @version    $Revision$
- * @package    propel.generator.builder.sql.sqlsrv
+ * @package    propel.generator.reverse.sqlsrv
  */
-class SqlsrvDataSQLBuilder extends DataSQLBuilder
+class SqlsrvSchemaParser extends MssqlSchemaParser
 {
 }
