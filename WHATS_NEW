@@ -173,7 +173,7 @@ Starting with Propel 1.6, this is possible by adding a simple `<behavior>` tag t
 </table>
 }}}
 
-In this example, the `name` and `description` columns are moved to a new table, called `item_i18n`, which shares a many-to-one relationship with ìtem - one Item has many Item translations. But all this happens in the background; for the end user, everything happens as if there is only the main `Item` object:
+In this example, the `name` and `description` columns are moved to a new table, called `item_i18n`, which shares a many-to-one relationship with Item - one Item has many Item translations. But all this happens in the background; for the end user, everything happens as if there were only one main `Item` object:
 
 {{{
 #!php
