@@ -79,27 +79,61 @@ protected \$aNestedSetParent = null;
 
 ";
 	}
-	
+
 	public function preSave($builder)
 	{
-		return "\$this->processNestedSetQueries(\$con);";
+		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
+		$queryClassname = $builder->getStubQueryBuilder()->getClassname();
+
+		$script = "if (\$this->isNew() && \$this->isRoot()) {
+	// check if no other root exist in, the tree
+	\$nbRoots = $queryClassname::create()
+		->addUsingAlias($peerClassname::LEFT_COL, 1, Criteria::EQUAL)";
+
+		if ($this->behavior->useScope()) {
+			$script .= "
+		->addUsingAlias($peerClassname::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL)";
+		}
+
+		$script .= "
+		->count(\$con);
+	if (\$nbRoots > 0) {
+			throw new PropelException(";
+
+		if ($this->behavior->useScope()) {
+			$script .= "sprintf('A root node already exists in this tree with scope \"%s\".', \$this->getScopeValue())";
+		} else {
+			$script .= "'A root node already exists in this tree. To allow multiple root nodes, add the `use_scope` parameter in the nested_set behavior tag.'";
+		}
+
+		$script .= ");
 	}
-		
+}
+\$this->processNestedSetQueries(\$con);";
+
+		return $script;
+	}
+
 	public function preDelete($builder)
 	{
 		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
 		return "if (\$this->isRoot()) {
 	throw new PropelException('Deletion of a root node is disabled for nested sets. Use $peerClassname::deleteTree(" . ($this->behavior->useScope() ? '$scope' : '') . ") instead to delete an entire tree');
 }
-\$this->deleteDescendants(\$con);
+
+if (\$this->isInTree()) {
+	\$this->deleteDescendants(\$con);
+}
 ";
 	}
 
 	public function postDelete($builder)
 	{
 		$peerClassname = $builder->getStubPeerBuilder()->getClassname();
-		return "// fill up the room that was used by the node
-$peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->behavior->useScope() ? ", \$this->getScopeValue()" : "") . ", \$con);
+		return "if (\$this->isInTree()) {
+	// fill up the room that was used by the node
+	$peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->behavior->useScope() ? ", \$this->getScopeValue()" : "") . ", \$con);
+}
 ";
 	}
 	

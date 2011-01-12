@@ -27,6 +27,36 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		return Table10Peer::doSelectOne($c);
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testSaveRootInTreeWithExistingRootWithSameScope()
+	{
+		Table10Peer::doDeleteAll();
+		$t1 = new Table10();
+		$t1->setScopeValue(1);
+		$t1->makeRoot();
+		$t1->save();
+		$t2 = new Table10();
+		$t2->setScopeValue(1);
+		$t2->makeRoot();
+		$t2->save();
+	}
+
+	public function testSaveRootInTreeWithExistingRootWithDifferentScope()
+	{
+		Table10Peer::doDeleteAll();
+		$t1 = new Table10();
+		$t1->setScopeValue(1);
+		$t1->makeRoot();
+		$t1->save();
+		$t2 = new Table10();
+		$t2->setScopeValue(2);
+		$t2->makeRoot();
+		$t2->save();
+		$this->assertTrue(!$t2->isNew());
+	}
+
 	public function testDelete()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();

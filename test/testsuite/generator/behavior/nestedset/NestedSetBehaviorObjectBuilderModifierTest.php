@@ -87,6 +87,20 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		}
 	}
 	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testSaveRootInTreeWithExistingRoot()
+	{
+		Table9Peer::doDeleteAll();
+		$t1 = new Table9();
+		$t1->makeRoot();
+		$t1->save();
+		$t2 = new Table9();
+		$t2->makeRoot();
+		$t2->save();
+	}
+	
 	public function testPreUpdate()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
@@ -128,6 +142,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			$this->assertTrue(true, 'delete() throws an exception when called on a root node');
 		}
 		$this->assertNotEquals(array(), Table9Peer::doSelect(new Criteria()), 'delete() called on the root node does not delete the whole tree');
+	}
+	
+	public function testDeleteNotInTree()
+	{
+		$t1 = new Table9();
+		$t1->save();
+		$t1->delete();
+		$this->assertTrue($t1->isDeleted());
 	}
 	
 	public function testMakeRoot()
