@@ -946,7 +946,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	{
 		$table = $this->getTable();
 		$fkTable = $this->getForeignTable($fk);
-		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
+		$fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
+		$queryClass = $fkQueryBuilder->getClassname();
+		if ($namespace = $fkQueryBuilder->getNamespace()) {
+			$queryClass = '\\' . $namespace . '\\' . $queryClass;
+		}
 		$relationName = $this->getFKPhpNameAffix($fk);
 		$joinType = $this->getJoinType($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
@@ -960,7 +964,11 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	{
 		$table = $this->getTable();
 		$fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
-		$queryClass = $this->getNewStubQueryBuilder($fkTable)->getClassname();
+		$fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
+		$queryClass = $fkQueryBuilder->getClassname();
+		if ($namespace = $fkQueryBuilder->getNamespace()) {
+			$queryClass = '\\' . $namespace . '\\' . $queryClass;
+		}
 		$relationName = $this->getRefFKPhpNameAffix($fk);
 		$joinType = $this->getJoinType($fk);
 		$this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);

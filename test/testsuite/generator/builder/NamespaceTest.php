@@ -251,4 +251,14 @@ class NamespaceTest extends PHPUnit_Framework_TestCase
 			->find($con);
 	}
 	
+	public function testUseQuery()
+	{
+		$book = \Foo\Bar\NamespacedBookQuery::create()
+			->useNamespacedPublisherQuery()
+				->filterByName('foo')
+			->endUse()
+			->findOne();
+		$this->assertNull($book);
+	}
+	
 }
