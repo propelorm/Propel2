@@ -82,15 +82,23 @@ public function unDelete(PropelPDO \$con = null)
 
 	public function preDelete($builder)
 	{
-		return <<<EOT
-if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {
+		$script = "if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {";
+
+		// prevent updated_at from changing when using a timestampable behavior
+		if ($this->getTable()->hasBehavior('timestampable')) {
+			$script .= "
+	\$this->keepUpdateDateUnchanged();";
+		}
+
+		$script .= "
 	\$this->{$this->getColumnSetter()}(time());
 	\$this->save(\$con);
 	\$con->commit();
 	{$builder->getStubPeerBuilder()->getClassname()}::removeInstanceFromPool(\$this);
 	return;
 }
-EOT;
+";
+		return $script;
 	}
 
 	public function queryAttributes()
