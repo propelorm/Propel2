@@ -23,6 +23,7 @@ class ModelWith
 	protected $isAdd = false;
 	protected $relationName = '';
 	protected $relationMethod = '';
+	protected $initMethod = '';
 	protected $leftPhpName;
 	protected $rightPhpName;
 	
@@ -46,15 +47,17 @@ class ModelWith
 		$this->modelPeerName = $tableMap->getPeerClassname();
 		$this->isSingleTableInheritance = $tableMap->isSingleTableInheritance();
 		$relation = $join->getRelationMap();
+		$relationName = $relation->getName();
 		if ($relation->getType() == RelationMap::ONE_TO_MANY) {
 			$this->isAdd = true;
-			$this->relationName = $relation->getName() . 's';
-			$this->relationMethod = 'add' . $relation->getName();
+			$this->relationName = $relationName . 's';
+			$this->relationMethod = 'add' . $relationName;
+			$this->initMethod = 'init' . $relationName . 's';
 		} else {
-			$this->relationName = $relation->getName();
-			$this->relationMethod = 'set' . $relation->getName();
+			$this->relationName = $relationName;
+			$this->relationMethod = 'set' . $relationName;
 		}
-		$this->rightPhpName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relation->getName();
+		$this->rightPhpName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relationName;
 		if (!$join->isPrimary()) {
 			$this->leftPhpName = $join->hasLeftTableAlias() ? $join->getLeftTableAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
 		}
@@ -121,7 +124,17 @@ class ModelWith
 	{
 		return $this->relationMethod;
 	}
-		
+
+	public function setInitMethod($initMethod)
+	{
+		$this->initMethod = $initMethod;
+	}
+
+	public function getInitMethod()
+	{
+		return $this->initMethod;
+	}
+	
 	public function setLeftPhpName($leftPhpName)
 	{
 		$this->leftPhpName = $leftPhpName;

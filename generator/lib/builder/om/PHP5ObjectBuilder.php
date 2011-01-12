@@ -3316,10 +3316,16 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
+	 * @param      boolean \$overrideExisting If set to true, the method call initializes
+	 *                                        the collection even if it is not empty
+	 *
 	 * @return     void
 	 */
-	public function init$relCol()
+	public function init$relCol(\$overrideExisting = true)
 	{
+		if (null !== \$this->$collName && !\$overrideExisting) {
+			return;
+		}
 		\$this->$collName = new PropelObjectCollection();
 		\$this->{$collName}->setModel('" . $this->getNewStubObjectBuilder($refFK->getTable())->getClassname() . "');
 	}

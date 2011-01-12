@@ -623,4 +623,5 @@ There wasn't any one-stop place to read about the abilities of the generated Act
 
 == Miscellaneous ==
 
- * `ModelCriteria::keepQuery()` is now ON by default. This will remove bad surprises when doing a `count()` before a `find()`, and has a very limited impact on performance. You should not need to manually call `keepQuery()` anymore.  
+ * `ModelCriteria::keepQuery()` is now ON by default. This will remove bad surprises when doing a `count()` before a `find()`, and has a very limited impact on performance. You should not need to manually call `keepQuery()` anymore.
+ * `ModelCriteria::with()` is now a little smarter, and therefore reduces even more the query count when hydrating one-to-many relationships.

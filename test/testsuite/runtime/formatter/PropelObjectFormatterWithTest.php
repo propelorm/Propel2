@@ -116,8 +116,44 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$book = $c->findOne($con);
 		$count = $con->getQueryCount();
-		$author = $book->getAuthor();
+		$author = $book->getAuthor($con);
 		$this->assertNull($author, 'Related object is not hydrated if empty');
+		$this->assertEquals($count, $con->getQueryCount());
+	}
+
+	public function testFindOneWithEmptyLeftJoinOneToMany()
+	{
+		// non-empty relation
+		$a1 = new Author();
+		$a1->setFirstName('Foo');
+		$b1 = new Book();
+		$b1->setTitle('Foo1');
+		$a1->addBook($b1);
+		$b2 = new Book();
+		$b2->setTitle('Foo2');
+		$a1->addBook($b2);
+		$a1->save();
+		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
+		$author = AuthorQuery::create()
+			->filterByFirstName('Foo')
+			->leftJoinWith('Author.Book')
+			->findOne($con);
+		$count = $con->getQueryCount();
+		$books = $author->getBooks(null, $con);
+		$this->assertEquals(2, $books->count());
+		$this->assertEquals($count, $con->getQueryCount());
+		// empty relation
+		$a2 = new Author();
+		$a2->setFirstName('Bar');
+		$a2->save();
+		$author = AuthorQuery::create()
+			->filterByFirstName('Bar')
+			->leftJoinWith('Author.Book')
+			->findOne($con);
+		$count = $con->getQueryCount();
+		$books = $author->getBooks(null, $con);
+		$this->assertEquals(0, $books->count());
+		$this->assertEquals($count, $con->getQueryCount());
 	}
 
 	public function testFindOneWithRelationName()
