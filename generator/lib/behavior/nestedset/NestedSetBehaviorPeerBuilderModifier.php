@@ -423,6 +423,7 @@ public static function updateLoadedNodes(\$prune = null, PropelPDO \$con = null)
 				if (null !== (\$object = $peerClassname::getInstanceFromPool(\$key))) {";
 		$n = 0;
 		foreach ($this->table->getColumns() as $col) {
+			if ($col->isLazyLoad()) continue;
 			if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
 				$script .= "
 					\$object->setLeftValue(\$row[$n]);";
