@@ -1011,7 +1011,7 @@ public function insertAsFirstChildOf(\$parent)
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
-		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
 	);
 	return \$this;
 }
@@ -1056,7 +1056,7 @@ public function insertAsLastChildOf(\$parent)
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
-		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
 	);
 	return \$this;
 }
@@ -1098,7 +1098,7 @@ public function insertAsPrevSiblingOf(\$sibling)
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
-		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
 	);
 	return \$this;
 }
@@ -1140,7 +1140,7 @@ public function insertAsNextSiblingOf(\$sibling)
 	// Keep the tree modification query for the save() transaction
 	\$this->nestedSetQueries []= array(
 		'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
-		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ")
+		'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
 	);
 	return \$this;
 }
@@ -1352,7 +1352,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, PropelPDO \$con = nul
 		$peerClassname::shiftRLValues(-\$treeSize, \$right + 1, null" . ($useScope ? ", \$scope" : "") . ", \$con);
 		
 		// update all loaded nodes
-		$peerClassname::updateLoadedNodes(\$con);
+		$peerClassname::updateLoadedNodes(null, \$con);
 		
 		\$con->commit();
 	} catch (PropelException \$e) {

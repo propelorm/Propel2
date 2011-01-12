@@ -739,7 +739,31 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			$this->assertTrue(true, 'insertAsFirstChildOf() throws an exception when called on a saved object');
 		}
 	}
-	
+
+	public function testInsertAsFirstChildOfExistingObject()
+	{
+		Table9Query::create()->deleteAll();
+		$t = new Table9();
+		$t->makeRoot();
+		$t->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(2, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$t1 = new Table9();
+		$t1->save();
+		$t1->insertAsFirstChildOf($t);
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+	}
+
 	public function testInsertAsLastChildOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
@@ -780,7 +804,31 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			$this->assertTrue(true, 'insertAsLastChildOf() throws an exception when called on a saved object');
 		}
 	}
-	
+
+	public function testInsertAsLastChildOfExistingObject()
+	{
+		Table9Query::create()->deleteAll();
+		$t = new Table9();
+		$t->makeRoot();
+		$t->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(2, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$t1 = new Table9();
+		$t1->save();
+		$t1->insertAsLastChildOf($t);
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+	}
+
 	public function testInsertAsPrevSiblingOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
@@ -820,6 +868,39 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		} catch (PropelException $e) {
 			$this->assertTrue(true, 'insertAsPrevSiblingOf() throws an exception when called on a saved object');
 		}
+	}
+
+	public function testInsertAsPrevSiblingOfExistingObject()
+	{
+		Table9Query::create()->deleteAll();
+		$t = new Table9();
+		$t->makeRoot();
+		$t->save();
+		$t1 = new Table9();
+		$t1->insertAsFirstChildOf($t);
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t2 = new Table9();
+		$t2->save();
+		$t2->insertAsPrevSiblingOf($t1);
+		$this->assertEquals(2, $t2->getLeftValue());
+		$this->assertEquals(3, $t2->getRightValue());
+		$this->assertEquals(1, $t2->getLevel());
+		$t2->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(6, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(4, $t1->getLeftValue());
+		$this->assertEquals(5, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$this->assertEquals(2, $t2->getLeftValue());
+		$this->assertEquals(3, $t2->getRightValue());
+		$this->assertEquals(1, $t2->getLevel());
 	}
 
 	public function testInsertAsNextSiblingOf()
@@ -862,7 +943,40 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 			$this->assertTrue(true, 'insertAsNextSiblingOf() throws an exception when called on a saved object');
 		}
 	}
-	
+
+	public function testInsertAsNextSiblingOfExistingObject()
+	{
+		Table9Query::create()->deleteAll();
+		$t = new Table9();
+		$t->makeRoot();
+		$t->save();
+		$t1 = new Table9();
+		$t1->insertAsFirstChildOf($t);
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t2 = new Table9();
+		$t2->save();
+		$t2->insertAsNextSiblingOf($t1);
+		$this->assertEquals(4, $t2->getLeftValue());
+		$this->assertEquals(5, $t2->getRightValue());
+		$this->assertEquals(1, $t2->getLevel());
+		$t2->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(6, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$this->assertEquals(4, $t2->getLeftValue());
+		$this->assertEquals(5, $t2->getRightValue());
+		$this->assertEquals(1, $t2->getLevel());
+	}
+
 	public function testMoveToFirstChildOf()
 	{
 		$this->assertTrue(method_exists('Table9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
@@ -1381,4 +1495,5 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		);
 		$this->assertEquals($expected, $this->dumpNodes($path), 'getPath() returns path from the current scope only');
 	}
+
 }

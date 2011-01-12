@@ -243,6 +243,33 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsFirstChildOf() does not shift anything out of the scope');
 	}
 
+	public function testInsertAsFirstChildOfExistingObject()
+	{
+		Table10Query::create()->deleteAll();
+		$t = new Table10();
+		$t->setScopeValue(34);
+		$t->makeRoot();
+		$t->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(2, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$t1 = new Table10();
+		$t1->save();
+		$t1->insertAsFirstChildOf($t);
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+	}
+
 	public function testInsertAsLastChildOf()
 	{
 		$this->assertTrue(method_exists('Table10', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
@@ -283,6 +310,33 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			't10' => array(4, 5, 1),
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsLastChildOf() does not shift anything out of the scope');
+	}
+
+	public function testInsertAsLastChildOfExistingObject()
+	{
+		Table10Query::create()->deleteAll();
+		$t = new Table10();
+		$t->setScopeValue(34);
+		$t->makeRoot();
+		$t->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(2, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$t1 = new Table10();
+		$t1->save();
+		$t1->insertAsLastChildOf($t);
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
 	}
 
 	public function testInsertAsPrevSiblingOf()
@@ -327,6 +381,44 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsPrevSiblingOf() does not shift anything out of the scope');
 	}
 
+	public function testInsertAsPrevSiblingOfExistingObject()
+	{
+		Table10Query::create()->deleteAll();
+		$t = new Table10();
+		$t->setScopeValue(34);
+		$t->makeRoot();
+		$t->save();
+		$t1 = new Table10();
+		$t1->insertAsFirstChildOf($t);
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t2 = new Table10();
+		$t2->save();
+		$t2->insertAsPrevSiblingOf($t1);
+		$this->assertEquals(2, $t2->getLeftValue());
+		$this->assertEquals(3, $t2->getRightValue());
+		$this->assertEquals(34, $t2->getScopeValue());
+		$this->assertEquals(1, $t2->getLevel());
+		$t2->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(6, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(4, $t1->getLeftValue());
+		$this->assertEquals(5, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$this->assertEquals(2, $t2->getLeftValue());
+		$this->assertEquals(3, $t2->getRightValue());
+		$this->assertEquals(34, $t2->getScopeValue());
+		$this->assertEquals(1, $t2->getLevel());
+	}
+
 	public function testInsertAsNextSiblingOf()
 	{
 		$this->assertTrue(method_exists('Table10', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
@@ -368,7 +460,45 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
 	}
-	
+
+	public function testInsertAsNextSiblingOfExistingObject()
+	{
+		Table10Query::create()->deleteAll();
+		$t = new Table10();
+		$t->setScopeValue(34);
+		$t->makeRoot();
+		$t->save();
+		$t1 = new Table10();
+		$t1->insertAsFirstChildOf($t);
+		$t1->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(4, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$t2 = new Table10();
+		$t2->save();
+		$t2->insertAsNextSiblingOf($t1);
+		$this->assertEquals(4, $t2->getLeftValue());
+		$this->assertEquals(5, $t2->getRightValue());
+		$this->assertEquals(34, $t2->getScopeValue());
+		$this->assertEquals(1, $t2->getLevel());
+		$t2->save();
+		$this->assertEquals(1, $t->getLeftValue());
+		$this->assertEquals(6, $t->getRightValue());
+		$this->assertEquals(0, $t->getLevel());
+		$this->assertEquals(2, $t1->getLeftValue());
+		$this->assertEquals(3, $t1->getRightValue());
+		$this->assertEquals(34, $t1->getScopeValue());
+		$this->assertEquals(1, $t1->getLevel());
+		$this->assertEquals(4, $t2->getLeftValue());
+		$this->assertEquals(5, $t2->getRightValue());
+		$this->assertEquals(34, $t2->getScopeValue());
+		$this->assertEquals(1, $t2->getLevel());
+	}
+
 	public function testMoveToFirstChildOf()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();

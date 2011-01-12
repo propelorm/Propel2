@@ -362,18 +362,22 @@ public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 	protected function addUpdateLoadedNodes(&$script)
 	{
 		$peerClassname = $this->peerClassname;
+		$objectClassname = $this->objectClassname;
 		$script .= "
 /**
  * Reload all already loaded nodes to sync them with updated db
  *
+ * @param      $objectClassname \$prune		Object to prune from the update
  * @param      PropelPDO \$con		Connection to use.
  */
-public static function updateLoadedNodes(PropelPDO \$con = null)
+public static function updateLoadedNodes(\$prune = null, PropelPDO \$con = null)
 {
 	if (Propel::isInstancePoolingEnabled()) {
 		\$keys = array();
 		foreach ($peerClassname::\$instances as \$obj) {
-			\$keys[] = \$obj->getPrimaryKey();
+			if (!\$prune || !\$prune->equals(\$obj)) {
+				\$keys[] = \$obj->getPrimaryKey();
+			}
 		}
 
 		if (!empty(\$keys)) {
@@ -384,8 +388,7 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
 			$pkey = $this->table->getPrimaryKey();
 			$col = array_shift($pkey);
 			$script .= "
-			\$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);
-";
+			\$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);";
 		} else {
 			$fields = array();
 			foreach ($this->table->getPrimaryKey() as $k => $col) {
@@ -457,15 +460,16 @@ public static function updateLoadedNodes(PropelPDO \$con = null)
  * @param      integer \$scope	scope column value";
  		}
  		$script .= "
+ * @param      mixed \$prune	Object to prune from the shift
  * @param      PropelPDO \$con	Connection to use.
  */
-public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", PropelPDO \$con = null)
+public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, PropelPDO \$con = null)
 {	
 	// Update database nodes
 	$peerClassname::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
 
 	// Update all loaded nodes
-	$peerClassname::updateLoadedNodes(\$con);
+	$peerClassname::updateLoadedNodes(\$prune, \$con);
 }
 ";
 	}
