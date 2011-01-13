@@ -1031,7 +1031,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->assertEquals($expectedDiff, $diffKeys);
 	}
 	
-	public function testToArrayIncludeForeignObjects()
+	public function testToArrayIncludesForeignObjects()
 	{
 		BookstoreDataPopulator::populate();
 		BookPeer::clearInstancePool();
@@ -1043,7 +1043,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$books = BookPeer::doSelectJoinAuthor($c);
 		$book = $books[0];
 		
-		$arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, true);
+		$arr1 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
 		$expectedKeys = array(
 			'Id',
 			'Title',
@@ -1061,7 +1061,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$books = BookPeer::doSelectJoinAll($c);
 		$book = $books[0];
 
-		$arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, true);
+		$arr2 = $book->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
 		$expectedKeys = array(
 			'Id',
 			'Title',
@@ -1073,6 +1073,27 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 			'Author'
 		);
 		$this->assertEquals($expectedKeys, array_keys($arr2), 'toArray() can return sub arrays for hydrated related objects');
+	}
+	
+	public function testToArrayIncludesForeignReferrers()
+	{
+		$a1 = new Author();
+		$a1->setFirstName('Leo');
+		$a1->setLastName('Tolstoi');
+		$arr = $a1->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+		$this->assertFalse(array_key_exists('Books', $arr));
+		$b1 = new Book();
+		$b1->setTitle('War and Peace');
+		$b2 = new Book();
+		$b2->setTitle('Anna Karenina');
+		$a1->addBook($b1);
+		$a1->addBook($b2);
+		$arr = $a1->toArray(BasePeer::TYPE_PHPNAME, null, array(), true);
+		$this->assertTrue(array_key_exists('Books', $arr));
+		$this->assertEquals(2, count($arr['Books']));
+		$this->assertEquals('War and Peace', $arr['Books']['Book_0']['Title']);
+		$this->assertEquals('Anna Karenina', $arr['Books']['Book_1']['Title']);
+		$this->assertEquals('*RECURSION*', $arr['Books']['Book_0']['Author']);
 	}
 
 	/**

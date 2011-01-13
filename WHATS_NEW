@@ -627,3 +627,4 @@ There wasn't any one-stop place to read about the abilities of the generated Act
  * `ModelCriteria::with()` is now a little smarter, and therefore reduces even more the query count when hydrating one-to-many relationships.
  * Runtime Exceptions now look better in PHP 5.3, since Propel takes advantage of exception linking
  * Read queries (issued by Query termination methods `findPk()`, `find()`, `findOne()`, and `count()`) now don't create a transaction by default. Write queries still do.
+ * The generated `toArray()` method for !ActiveRecord objects can now include collections, without risk of infinite recursion. Therefore `$author->toArray()` also outputs the collection of Books by the author. The dumping abilities introduced in 1.6 take advantage of this feature.

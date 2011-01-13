@@ -118,14 +118,14 @@ class PropelObjectCollection extends PropelCollection
 	 * </code>
 	 * @return    array
 	 */
-	public function toArray($keyColumn = null, $usePrefix = false)
+	public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
 	{
 		$ret = array();
 		$keyGetterMethod = 'get' . $keyColumn;
 		foreach ($this as $key => $obj) {
 			$key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-			$ret[$key] = $obj->toArray(BasePeer::TYPE_PHPNAME, true, true);
+			$ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
 		}
 		
 		return $ret;

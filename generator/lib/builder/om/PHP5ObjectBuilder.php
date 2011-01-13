@@ -2089,7 +2089,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	protected function addToArray(&$script)
 	{
 		$fks = $this->getTable()->getForeignKeys();
-		$hasFks = count($fks) > 0;
+		$referrers = $this->getTable()->getReferrers();
+		$hasFks = count($fks) > 0 || count($referrers) > 0;
+		$objectClassName = $this->getObjectClassname();
+		$pkGetter = $this->getTable()->hasCompositePrimaryKey() ? 'serialize($this->getPrimaryKey())' : '$this->getPrimaryKey()';
 		$script .= "
 	/**
 	 * Exports the object as an array.
@@ -2100,7 +2103,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param     string  \$keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
 	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.";
+	 * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+	 * @param     array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
 		if ($hasFks) {
 			$script .= "
 	 * @param     boolean \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
@@ -2109,8 +2113,12 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+	public function toArray(\$keyType = BasePeer::TYPE_PHPNAME, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
 	{
+		if (isset(\$alreadyDumpedObjects['$objectClassName'][$pkGetter])) {
+			return '*RECURSION*';
+		}
+		\$alreadyDumpedObjects['$objectClassName'][$pkGetter] = true;
 		\$keys = ".$this->getPeerClassname()."::getFieldNames(\$keyType);
 		\$result = array(";
 		foreach ($this->getTable()->getColumns() as $num => $col) {
@@ -2130,8 +2138,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			foreach ($fks as $fk) {
 				$script .= "
 			if (null !== \$this->" . $this->getFKVarName($fk) . ") {
-				\$result['" . $this->getFKPhpNameAffix($fk, $plural = false) . "'] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, true);
+				\$result['" . $this->getFKPhpNameAffix($fk, $plural = false) . "'] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
 			}";
+			}
+			foreach ($referrers as $fk) {
+				if ($fk->isLocalPrimaryKey()) {
+					$script .= "
+			if (null !== \$this->" . $this->getPKRefFKVarName($fk) . ") {
+				\$result['" . $this->getRefFKPhpNameAffix($fk, $plural = false) . "'] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
+			}";
+				} else {
+					$script .= "
+			if (null !== \$this->" . $this->getRefFKCollVarName($fk) . ") {
+				\$result['" . $this->getRefFKPhpNameAffix($fk, $plural = true) . "'] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, true, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
+			}";
+				}
 			}
 			$script .= "
 		}";

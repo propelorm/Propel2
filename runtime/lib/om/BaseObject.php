@@ -353,7 +353,7 @@ abstract class BaseObject
 		if (!$parser instanceof PropelParser) {
 			$parser = PropelParser::getParser($parser);
 		}
-		return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, true, true));
+		return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, true, array(), true));
 	}
 	
 	/**

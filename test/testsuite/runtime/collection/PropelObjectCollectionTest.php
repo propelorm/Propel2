@@ -169,6 +169,9 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 				'LastName' => 'Byron',
 				'Email' => null,
 				'Age' => null,
+				'Books' => array(
+					'Book_0' => '*RECURSION*',
+				)
 			),
 		));
 		$this->assertEquals($expected, $coll->toArray());

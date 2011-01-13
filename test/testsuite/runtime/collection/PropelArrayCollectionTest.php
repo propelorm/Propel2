@@ -137,7 +137,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		
 		$coll = new PropelArrayCollection();
 		$coll->setModel('Book');
-		$coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, true);
+		$coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
 		$expected = array(array(
 			'Id' => 9012,
 			'Title' => 'Don Juan',
@@ -151,6 +151,9 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 				'LastName' => 'Byron',
 				'Email' => null,
 				'Age' => null,
+				'Books' => array(
+					'Book_0' => '*RECURSION*',
+				)
 			),
 		));
 		$this->assertEquals($expected, $coll->toArray());

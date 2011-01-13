@@ -102,7 +102,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 
 		$joinBooks = BookPeer::doSelectJoinAuthor($c);
 		$obj2 = $joinBooks[0];
-		$obj2Array = $obj2->toArray(BasePeer::TYPE_PHPNAME, true, true);
+		$obj2Array = $obj2->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
 		// $joinSize = strlen(serialize($obj2));
 
 		$this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");
