@@ -446,7 +446,7 @@ abstract class AbstractPropelDataModelTask extends Task
 				$xmlParser = new XmlToAppData($defaultPlatform, $this->getTargetPackage(), $this->dbEncoding);
 				$xmlParser->setGeneratorConfig($this->getGeneratorConfig());
 				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
-				$nbTables = $ad->getDatabase()->countTables();
+				$nbTables = $ad->getDatabase(null, false)->countTables();
 				$totalNbTables += $nbTables;
 				$this->log(sprintf('  %d tables processed successfully', $nbTables), Project::MSG_VERBOSE);
 				
