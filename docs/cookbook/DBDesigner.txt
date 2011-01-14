@@ -1,6 +1,6 @@
 = How to Create A Schema Based On A DBDesigner Model =
 
-If you use DBDesigner 4 to design your model, Propel can take the XML file used by DBDesigner as storage, and convert it to a Propel schema.
+If you use [http://www.fabforce.net/dbdesigner4/ DBDesigner 4] to design your model, Propel can take the XML file used by DBDesigner as storage, and convert it to a Propel schema.
 
 == Basic Usage ==
 
