@@ -22,6 +22,7 @@ Once the Propel XML schema is created, you can build the project, as described i
 You can customize the task by overriding any of the three following settings in your `build.properties`:
 
 {{{
+#!ini
 # -------------------------------------------------------------------
 #
 #  D B D E S I G N E R   2   P R O P E L   S E T T I N G S
