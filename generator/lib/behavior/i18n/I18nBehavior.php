@@ -105,6 +105,7 @@ class I18nBehavior extends Behavior
 			$fk->addReference($column->getName(), $column->getName());
 		}
 		$i18nTable->addForeignKey($fk);
+		$i18nTable->doNaming();
 		$table->addReferrer($fk);
 	}
 	
