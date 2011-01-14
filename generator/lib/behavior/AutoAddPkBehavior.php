@@ -17,7 +17,6 @@
  */
 class AutoAddPkBehavior extends Behavior
 {
-	protected $isEarly = true;
 	
 	// default parameters value
 	protected $parameters = array(

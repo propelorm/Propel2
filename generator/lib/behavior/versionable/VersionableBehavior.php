@@ -119,8 +119,7 @@ class VersionableBehavior extends Behavior
 				$fk->addReference($column, $tablePKs[$key]);
 			}
 			$versionTable->addForeignKey($fk);
-			$versionTable->doNaming();
-			$table->addReferrer($fk);
+
 			// add the version column to the primary key
 			$versionTable->getColumn($this->getParameter('version_column'))->setPrimaryKey(true);
 			$this->versionTable = $versionTable;

@@ -533,21 +533,14 @@ class Database extends ScopedElement
 		foreach ($this->getBehaviors() as $behavior) {
 			$behavior->modifyDatabase();
 		}
-
-		$tables = $this->getTables();
 		
-		// execute early table behaviors
-		foreach ($tables as $table) {
-			foreach ($table->getEarlyBehaviors() as $behavior) {
-				if (!$behavior->isTableModified()) {
-					$behavior->getTableModifier()->modifyTable();
-					$behavior->setTableModified(true);
-				}
-			}
+		// execute table behaviors (may add new tables)
+		foreach ($this->getTables() as $table) {
+			$table->applyBehaviors();
 		}
 		
-		// execute table behaviors and do naming
-		foreach ($tables as $table) {
+		// do naming and heavy indexing
+		foreach ($this->getTables() as $table) {
 			$table->doFinalInitialization();
 			// setup referrers again, since final initialization may have added columns
 			$table->setupReferrers(true);
@@ -559,7 +552,7 @@ class Database extends ScopedElement
 		$behaviorsLeft = true;
 		while ($behaviorsLeft) {
 			$behaviorsLeft = false;
-			foreach ($tables as $table) {
+			foreach ($this->getTables() as $table) {
 				foreach ($table->getBehaviors() as $behavior) {
 					if (!$behavior->isTableModified()) {
 						$behavior->getTableModifier()->modifyTable();

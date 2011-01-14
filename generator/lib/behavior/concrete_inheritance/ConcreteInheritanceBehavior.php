@@ -101,10 +101,6 @@ class ConcreteInheritanceBehavior extends Behavior
 			$copiedUnique->setName('');
 			$this->getTable()->addUnique($copiedUnique);
 		}
-		
-		// give name to newly added foreign keys and indices 
-		// (this is already done for other elements of the current table)
-		$table->doNaming(); 
 
 		// add the Behaviors of the parent table
 		foreach ($parentTable->getBehaviors() as $behavior) {

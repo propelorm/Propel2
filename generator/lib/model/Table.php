@@ -369,6 +369,19 @@ class Table extends ScopedElement implements IDMethod
 	}
 
 	/**
+	 * Execute behavior table modifiers
+	 */
+	public function applyBehaviors()
+	{
+		foreach ($this->getBehaviors() as $behavior) {
+			if (!$behavior->isTableModified()) {
+				$behavior->getTableModifier()->modifyTable();
+				$behavior->setTableModified(true);
+			}
+		}
+	}
+	
+	/**
 	 * <p>A hook for the SAX XML parser to call when this table has
 	 * been fully loaded from the XML, and all nested elements have
 	 * been processed.</p>
@@ -383,18 +396,10 @@ class Table extends ScopedElement implements IDMethod
 		if ($this->heavyIndexing) {
 			$this->doHeavyIndexing();
 		}
-
+		
 		// Name any indices which are missing a name using the
 		// appropriate algorithm.
 		$this->doNaming();
-
-		// execute behavior table modifiers
-		foreach ($this->getBehaviors() as $behavior) {
-			if (!$behavior->isTableModified()) {
-				$behavior->getTableModifier()->modifyTable();
-				$behavior->setTableModified(true);
-			}
-		}
 		
 		// if idMethod is "native" and in fact there are no autoIncrement
 		// columns in the table, then change it to "none"

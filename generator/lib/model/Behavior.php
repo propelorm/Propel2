@@ -26,7 +26,6 @@ class Behavior extends XMLElement
 	protected $name;
 	protected $parameters = array();
 	protected $isTableModified = false;
-	protected $isEarly = false;
 	protected $dirname;
 	protected $additionalBuilders = array();
 	
@@ -127,16 +126,6 @@ class Behavior extends XMLElement
 	public function isTableModified()
 	{
 		return $this->isTableModified;
-	}
-
-	public function setEarly($bool = true)
-	{
-		$this->isEarly = $bool;
-	}
-	
-	public function isEarly()
-	{
-		return $this->isEarly;
 	}
 	
 	/**
