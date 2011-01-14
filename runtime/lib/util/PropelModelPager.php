@@ -328,7 +328,62 @@ class PropelModelPager implements IteratorAggregate, Countable
 			}
 		}
 	}
+
+	/**
+	 * Check whether the internal pointer is at the beginning of the list
+	 * @see       PropelCollection
+	 *
+	 * @return    boolean
+	 */
+	public function isFirst()
+	{
+		return $this->getResults()->isFirst();
+	}
+
+	/**
+	 * Check whether the internal pointer is at the end of the list
+	 * @see       PropelCollection
+	 *
+	 * @return    boolean
+	 */
+	public function isLast()
+	{
+		return $this->getResults()->isLast();
+	}
+
+	/**
+	 * Check if the collection is empty
+	 * @see       PropelCollection
+	 *
+	 * @return    boolean
+	 */
+	public function isEmpty()
+	{
+		return $this->getResults()->isEmpty();
+	}
 	
+	/**
+	 * Check if the current index is an odd integer
+	 * @see       PropelCollection
+	 *
+	 * @return    boolean
+	 */
+	public function isOdd()
+	{
+		return $this->getResults()->isOdd();
+	}
+	
+	/**
+	 * Check if the current index is an even integer
+	 * @see       PropelCollection
+	 *
+	 * @return    boolean
+	 */
+	public function isEven()
+	{
+		return $this->getResults()->isEven();
+	}
+		
 	public function getIterator()
 	{
 		return $this->getResults()->getIterator();

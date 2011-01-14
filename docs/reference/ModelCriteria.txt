@@ -980,7 +980,7 @@ delete($con = null)
 update($values, $con = null, $forceIndividualSaves = false)
 }}}
 
-== Collections and Formatters ==
+== Collections, Pager, and Formatters ==
 
 === PropelCollection Methods ===
 
@@ -1061,19 +1061,56 @@ coll  populateRelation($name) // makes an additional query to populate the objec
 // Import/Export methods
 array toArray() // exports all the objects as array
 array toKeyValue($keyColumn, $valueColumn) // exports all the objects as a hash
-string toXML()
-string toYAML()
-string toJSON()
-string toCSV()
+string toXML() // exports all the objects as an XML string
+string toYAML() // exports all the objects as a YAML string
+string toJSON() // exports all the objects as a JSON string
+string toCSV() // exports all the objects as a CSV string
 string __toString() // exports to a string using the default string representation (YAML)
 void  fromArray($array) // imports a collection from an array
-void toXML($xml)
-void toYAML($yaml)
-void toJSON($json)
-void toCSV($csv)
+void toXML($xml) // imports a collection from an XML string
+void toYAML($yaml) // imports a collection from a YAML string
+void toJSON($json) // imports a collection from a JSON string
+void toCSV($csv) // imports a collection from a CSV string
 }}}
 
 '''Tip''': `PropelCollection` extends `ArrayObject`, so you can also call all the methods of this SPL class on a collection (including `count()`, `append()`, `ksort()`, etc.).
+
+=== Paginating Results ===
+
+{{{
+#!php
+<?php
+// use paginate() instead of find() as termination method to paginate results
+$bookPager = BookQuery::create()
+  ->paginate($page = 1, $maxPerPage = 10, $con);
+// paginate() returns a PropelModelPager object, which behaves just like a collection
+?>
+
+<?php if($bookPager->isEmpty()): ?>
+There are no books.
+<?php else: ?>
+There are <?php echo $bookPager->count() ?> books:
+<ul>
+  <?php foreach ($bookPager as $book): ?>
+  <li class="<?php echo $bookPager->isOdd() ? 'odd' : 'even' ?>">
+    <?php echo $book->getTitle() ?>
+  </li>
+  <?php if($bookPager->isLast()): ?>
+  <li>Do you want more books?</li>
+  <?php endif; ?>
+  <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
+<?php // PropelModelPager offers a convenient API to display pagination controls ?>
+<?php if($bookPager->haveToPaginate()): ?>
+  <p>Page <?php echo $bookPager->getPage() ?> of <?php echo $bookPager->getLastPage() ?></p>
+  <p>
+  	Displaying results <?php echo $bookPager->getFirstIndex() ?> to <?php echo $bookPager->getLastIndex() ?>
+  	on a total of <?php echo $bookPager->getNbResults() ?>
+	</p>
+<?php endif; ?>
+}}}
 
 === Using An Alternative Formatter ===
 
