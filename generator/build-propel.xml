@@ -578,6 +578,25 @@
   </target>
 
   <target
+    name="dbd2propel"
+    description="==> generates a Propel XML schema from a DBDesigner 4 XML schema">
+
+    <echo message="+------------------------------------------+"/>
+    <echo message="|                                          |"/>
+    <echo message="|      Generating Propel XML Schema        |"/>
+    <echo message="|      Based on DB4Designer export         |"/>
+    <echo message="|                                          |"/>
+    <echo message="+------------------------------------------+"/>
+
+    <xslt todir="${propel.schema.dir}" style="${propel.dbd2propel.xsl.file}" >
+      <fileset dir="${propel.dbd2propel.dir}">
+        <include name="${propel.dbd2propel.includes}" />
+      </fileset>
+      <mapper type="regexp" from="^(.*)\.xml$" to="\1.schema.xml"/>
+    </xslt>
+  </target>
+  
+  <target
     name="graphviz"
     depends="sql-check"
     description="==> generates Graphviz file for your project">

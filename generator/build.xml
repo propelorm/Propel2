@@ -206,6 +206,10 @@
 	<phing phingfile="build-propel.xml" target="old-sql"/>
 </target>
 
+<target name="dbd2propel" depends="configure">
+	<phing phingfile="build-propel.xml" target="dbd2propel"/>
+</target>
+
 <target name="graphviz" depends="configure">
 	<phing phingfile="build-propel.xml" target="graphviz"/>
 </target>
