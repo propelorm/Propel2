@@ -20,8 +20,7 @@
 
 	<!-- some default properties -->
 	<property name="notes"><![CDATA[
-		This is a release of the 1.5 branch of the Propel Generator. 
-		See http://bit.ly/dskpCk for CHANGELOG.
+		This is a release of the 1.6 branch of the Propel Generator.
 	]]></property>
 	<property name="state" value="stable"/>
 
