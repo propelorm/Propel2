@@ -22,7 +22,7 @@
 	<property name="notes"><![CDATA[
 		This is a release of the 1.6 branch of the Propel Generator.
 	]]></property>
-	<property name="state" value="stable"/>
+	<property name="state" value="beta"/>
 
 	<taskdef
     name="pear-package"
