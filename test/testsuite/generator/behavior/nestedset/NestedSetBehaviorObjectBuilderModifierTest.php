@@ -720,30 +720,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		);
 		$this->assertEquals($expected, $this->dumpTree(), 'addChild() adds the child and saves it');
 	}
-
-	public function testAddChildOfExistingObject()
-	{
-		Table9Query::create()->deleteAll();
-		$t = new Table9();
-		$t->makeRoot();
-		$t->save();
-		$this->assertEquals(1, $t->getLeftValue());
-		$this->assertEquals(2, $t->getRightValue());
-		$this->assertEquals(0, $t->getLevel());
-		$t1 = new Table9();
-		$t1->save();
-		$t->addChild($t1);
-		$this->assertEquals(2, $t1->getLeftValue());
-		$this->assertEquals(3, $t1->getRightValue());
-		$this->assertEquals(1, $t1->getLevel());
-		$t->save();
-		$this->assertEquals(1, $t->getLeftValue());
-		$this->assertEquals(4, $t->getRightValue());
-		$this->assertEquals(0, $t->getLevel());
-		$this->assertEquals(2, $t1->getLeftValue());
-		$this->assertEquals(3, $t1->getRightValue());
-		$this->assertEquals(1, $t1->getLevel());
-	}
 	
 	public function testInsertAsFirstChildOf()
 	{
