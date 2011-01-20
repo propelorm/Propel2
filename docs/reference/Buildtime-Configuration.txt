@@ -147,9 +147,11 @@ propel.samePhpName = true|{false}
 # affect the generation of the DDL from the schema.
 propel.addVendorInfo = true|{false}
 
-# Which Propel validators to add to the generated schema (based on the db
-# constraints).
+# Which Propel validators to add to the generated schema, 
+# based on the database constraints.
 propel.addValidators = {none}|maxvalue|type|required|unique|all
+# You can cherry-pick allowed validators by using a comma-separated value, e.g
+propel.addValidators = maxvalue,type,required
 }}}
 
 === Customizing Generated Object Model ===
