@@ -142,7 +142,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     foreach($pager as $book) {
       $books[] = $book;
     }
-    $this->assertEquals("Harry Potter and the Goblet of Fire", $books[2]->getTitle());        
+    $this->assertEquals("Harry Potter and the Goblet of Fire", $books[2]->getTitle());
   }
   
   public function testIterateTwice()

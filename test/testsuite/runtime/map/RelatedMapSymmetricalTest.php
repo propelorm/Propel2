@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @package    runtime.map
  */
 class RelatedMapSymmetricalTest extends BookstoreTestBase 
-{ 
+{
   protected $databaseMap;
 
   protected function setUp()

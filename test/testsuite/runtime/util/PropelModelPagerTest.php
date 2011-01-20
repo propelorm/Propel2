@@ -27,7 +27,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		BookQuery::create()->deleteAll($con);
 		$books = new PropelObjectCollection();
 		$books->setModel('Book');
-		for ($i=0; $i < $nb; $i++) { 
+		for ($i=0; $i < $nb; $i++) {
 			$b = new Book();
 			$b->setTitle('Book' . $i);
 			$books[]= $b;

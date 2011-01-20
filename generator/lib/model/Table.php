@@ -522,7 +522,7 @@ class Table extends ScopedElement implements IDMethod
 	 * @param array $collectedIndexes The collected indexes
 	 */
 	protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes)
-	{ 
+	{
 		/**
 		 * "If the table has a multiple-column index, any leftmost prefix of the
 		 * index can be used by the optimizer to find rows. For example, if you

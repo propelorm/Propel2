@@ -75,7 +75,7 @@ class Criterion
 			$this->table = null;
 			$this->column = $column;
 		} else {
-			$this->table = substr($column, 0, $dotPos); 
+			$this->table = substr($column, 0, $dotPos);
 			$this->column = substr($column, $dotPos + 1);
 		}
 		$this->comparison = ($comparison === null) ? Criteria::EQUAL : $comparison;
@@ -290,7 +290,7 @@ class Criterion
 			case Criteria::NOT_ILIKE:
 				// table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
 				$this->appendLikeToPs($sb, $params);
-				break;							
+				break;
 			default:
 				// table.column = ? or table.column >= ? etc. (traditional expressions, the default)
 				$this->appendBasicToPs($sb, $params);

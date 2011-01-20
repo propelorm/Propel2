@@ -264,14 +264,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testHasParent()
 	{
 		Table9Peer::doDeleteAll();
-		$t0 = new Table9();	
+		$t0 = new Table9();
 		$t1 = new Table9();
 		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->setLevel(0)->save();
 		$t2 = new Table9();
 		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->setLevel(1)->save();
 		$t3 = new Table9();
 		$t3->setTitle('t3')->setLeftValue(3)->setRightValue(4)->setLevel(2)->save();
-		$this->assertFalse($t0->hasParent(), 'empty node has no parent');	
+		$this->assertFalse($t0->hasParent(), 'empty node has no parent');
 		$this->assertFalse($t1->hasParent(), 'root node has no parent');
 		$this->assertTrue($t2->hasParent(), 'not root node has a parent');
 		$this->assertTrue($t3->hasParent(), 'leaf node has a parent');
@@ -281,7 +281,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	{
 		Table9Peer::doDeleteAll();
 		$t0 = new Table9();
-		$this->assertFalse($t0->hasParent(), 'empty node has no parent');		
+		$this->assertFalse($t0->hasParent(), 'empty node has no parent');
 		$t1 = new Table9();
 		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(8)->setLevel(0)->save();
 		$t2 = new Table9();
@@ -319,14 +319,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testHasPrevSibling()
 	{
 		Table9Peer::doDeleteAll();
-		$t0 = new Table9();	
+		$t0 = new Table9();
 		$t1 = new Table9();
 		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
 		$t2 = new Table9();
 		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(3)->save();
 		$t3 = new Table9();
 		$t3->setTitle('t3')->setLeftValue(4)->setRightValue(5)->save();
-		$this->assertFalse($t0->hasPrevSibling(), 'empty node has no previous sibling');	
+		$this->assertFalse($t0->hasPrevSibling(), 'empty node has no previous sibling');
 		$this->assertFalse($t1->hasPrevSibling(), 'root node has no previous sibling');
 		$this->assertFalse($t2->hasPrevSibling(), 'first sibling has no previous sibling');
 		$this->assertTrue($t3->hasPrevSibling(), 'not first sibling has a previous siblingt');
@@ -354,14 +354,14 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testHasNextSibling()
 	{
 		Table9Peer::doDeleteAll();
-		$t0 = new Table9();	
+		$t0 = new Table9();
 		$t1 = new Table9();
 		$t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->save();
 		$t2 = new Table9();
 		$t2->setTitle('t2')->setLeftValue(2)->setRightValue(3)->save();
 		$t3 = new Table9();
 		$t3->setTitle('t3')->setLeftValue(4)->setRightValue(5)->save();
-		$this->assertFalse($t0->hasNextSibling(), 'empty node has no next sibling');	
+		$this->assertFalse($t0->hasNextSibling(), 'empty node has no next sibling');
 		$this->assertFalse($t1->hasNextSibling(), 'root node has no next sibling');
 		$this->assertTrue($t2->hasNextSibling(), 'not last sibling has a next sibling');
 		$this->assertFalse($t3->hasNextSibling(), 'last sibling has no next sibling');
@@ -565,7 +565,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		$siblings = $t5->getSiblings(true);
 		$expected = array(
 			't4' => array(5, 6, 2),
-			't5' => array(7, 12, 2) 
+			't5' => array(7, 12, 2)
 		);
 		$this->assertEquals($expected, $this->dumpNodes($siblings), 'getSiblings(true) includes the current node');
 		$t5->moveToNextSiblingOf($t3);

@@ -109,9 +109,9 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		// add generator version
 		$phpconf['generator_version'] = $this->getGeneratorConfig()->getBuildProperty('version');
 		
-		if (!$this->outputClassmapFile) { 
+		if (!$this->outputClassmapFile) {
 			// We'll create a default one for BC 
-			$this->outputClassmapFile = 'classmap-' . $this->outputFile; 
+			$this->outputClassmapFile = 'classmap-' . $this->outputFile;
 		} 
 		
 		// Write resulting PHP data to output file

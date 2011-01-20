@@ -45,7 +45,7 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		Table4Peer::disableSoftDelete();
 		$this->assertFalse(Table4Peer::isSoftDeleteEnabled(), 'disableSoftDelete() disables the static soft delete');
 		Table4Peer::enableSoftDelete();
-		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'enableSoftDelete() enables the static soft delete');		
+		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'enableSoftDelete() enables the static soft delete');
 	}
 	
 	public function testInstancePoolingAndSoftDelete()
@@ -346,7 +346,7 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertNotNull($t->getDeletedOn(), 'deleted_column is not null after a soft delete');
 		$this->assertEquals(0, Table5Peer::doCount(new Criteria), 'soft deleted rows are hidden for select queries');
 		Table5Peer::disableSoftDelete();
-		$this->assertEquals(1, Table5Peer::doCount(new Criteria), 'soft deleted rows are still present in the database');		
+		$this->assertEquals(1, Table5Peer::doCount(new Criteria), 'soft deleted rows are still present in the database');
 	}
 }
 

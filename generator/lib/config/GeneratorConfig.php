@@ -227,7 +227,7 @@ class GeneratorConfig implements GeneratorConfigInterface
       // class path not configured
       $ret = false;
     }
-    return $ret;    
+    return $ret;
   }
 
 	public function setBuildConnections($buildConnections)

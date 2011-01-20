@@ -217,7 +217,7 @@ class BookstoreDataPopulator
 		
 		$rf = new ReaderFavorite();
 		$rf->setBookOpinion($bo);
-		$rf->save($con);		
+		$rf->save($con);
 		
 		$con->commit();
 	}

@@ -66,7 +66,7 @@ class DebugPDOStatement extends PDOStatement
 		$matches = array();
 		if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
 			$size = count($matches[1]);
-			for ($i = $size-1; $i >= 0; $i--) { 
+			for ($i = $size-1; $i >= 0; $i--) {
 				$pos = $matches[1][$i];
 				$sql = str_replace($pos, $this->boundValues[$pos], $sql);
 			}
@@ -89,7 +89,7 @@ class DebugPDOStatement extends PDOStatement
 		
 		$sql = $this->getExecutedQueryString();
 		$this->pdo->log($sql, null, __METHOD__, $debug);
-		$this->pdo->setLastExecutedQuery($sql); 
+		$this->pdo->setLastExecutedQuery($sql);
 		$this->pdo->incrementQueryCount();
 		
 		return $return;

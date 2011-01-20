@@ -135,16 +135,16 @@ class PropelQuickBuilder
 	}
 	
 	public function getClasses()
-	{	
+	{
 		$script = '';
 		foreach ($this->getDatabase()->getTables() as $table) {
-			$script .= $this->getClassesForTable($table);			
+			$script .= $this->getClassesForTable($table);
 		}
 		return $script;
 	}
 	
 	public function getClassesForTable(Table $table)
-	{	
+	{
 		$script = '';
 			
 		foreach (array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub') as $target) {

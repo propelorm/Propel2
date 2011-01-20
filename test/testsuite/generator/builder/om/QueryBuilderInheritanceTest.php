@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @package    generator.builder.om
  */
 class QueryBuilderInheritanceTest extends BookstoreTestBase 
-{ 
+{
   
 	public function testConstruct()
 	{

@@ -88,7 +88,7 @@ class StandardEnglishPluralizer implements Pluralizer
 		'rice',
 		'information',
 		'equipment'
-	);	
+	);
 	
 	/**
 	 * Generate a plural name based on the passed in root.
@@ -112,7 +112,7 @@ class StandardEnglishPluralizer implements Pluralizer
 				if (preg_match('/^[A-Z]/', $root)) {
 					$replacement = ucfirst($replacement);
 				}
-				return $replacement;				
+				return $replacement;
 			}
 		}
 

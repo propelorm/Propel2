@@ -73,7 +73,7 @@ class PropelXMLParser extends PropelParser
 				$child = $element->ownerDocument->createTextNode($value);
 				$element->appendChild($child);
 			}
-			$rootElement->appendChild($element);	
+			$rootElement->appendChild($element);
 		}
 
 		return $rootElement;

@@ -885,7 +885,7 @@ class CriteriaTest extends BookstoreTestBase
    */
   public function testAliasInCriterion()
   {
-    $c = new Criteria(); 
+    $c = new Criteria();
     $c->addAsColumn("column_alias", "tbl.COL1");
     $crit = $c->getNewCriterion("column_alias", "FOO");
     $this->assertNull($crit->getTable());

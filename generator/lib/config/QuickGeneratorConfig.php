@@ -60,10 +60,10 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
 				$pos = strpos($line, '=');
 				$property = trim(substr($line, 0, $pos));
 				$value = trim(substr($line, $pos + 1));
-				if ($value === "true") { 
+				if ($value === "true") {
 					$value = true;
-				} elseif ($value === "false") { 
-					$value = false; 
+				} elseif ($value === "false") {
+					$value = false;
 				}
 				$properties[$property] = $value;
 		}

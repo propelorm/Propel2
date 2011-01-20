@@ -136,7 +136,7 @@ class PublicTable9 extends Table9
 	public $hasPrevSibling = null;
 	public $prevSibling = null;
 	public $hasNextSibling = null;
-	public $nextSibling = null;	
+	public $nextSibling = null;
 }
 
 class PublicTable10 extends Table10

@@ -56,7 +56,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
   public function testRetrieveRoot()
 	{
 		$this->assertTrue(method_exists('Table10Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
-		Table10Peer::doDeleteAll();	
+		Table10Peer::doDeleteAll();
 		$t1 = new Table10();
 		$t1->setLeftValue(1);
 		$t1->setRightValue(2);

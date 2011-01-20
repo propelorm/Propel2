@@ -389,7 +389,7 @@ class Criteria implements IteratorAggregate
 	 * which can be either a table name or an alias name.
 	 *
 	 * @param      string $tableAliasOrName
-	 * @return     array($tableName, $tableAlias) 
+	 * @return     array($tableName, $tableAlias)
 	 */
 	public function getTableNameAndAlias($tableAliasOrName)
 	{
@@ -871,7 +871,7 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @return     Criteria A modified Criteria object.
 	 */
-	public function addMultipleJoin($conditions, $joinType = null) 
+	public function addMultipleJoin($conditions, $joinType = null)
 	{
 		$join = new Join();
 		$joinCondition = null;

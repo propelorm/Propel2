@@ -108,17 +108,17 @@ class PropelArrayCollection extends PropelCollection
 	 *              with the model class name ('Article_0', 'Article_1', etc).
 	 *
 	 * <code>
-	 * $bookCollection->toArray(); 
+	 * $bookCollection->toArray();
 	 * array(
 	 *  0 => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  1 => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
-	 * $bookCollection->toArray('Id'); 
+	 * $bookCollection->toArray('Id');
 	 * array(
 	 *  123 => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  456 => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
-	 * $bookCollection->toArray(null, true); 
+	 * $bookCollection->toArray(null, true);
 	 * array(
 	 *  'Book_0' => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),

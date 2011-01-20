@@ -42,7 +42,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$vintage = new Publisher();
 			$vintage->setName("Vintage");
 			$vintage->save();
-			$vintage_id = $vintage->getId();			
+			$vintage_id = $vintage->getId();
 			$this->assertTrue(true, 'Save Publisher records');
 		} catch (Exception $e) {
 			$this->fail('Save publisher records');
@@ -73,7 +73,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$grass->setFirstName("Gunter");
 			$grass->setLastName("Grass");
 			$grass->save();
-			$grass_id = $grass->getId();			
+			$grass_id = $grass->getId();
 			$this->assertTrue(true, 'Save Author records');
 		} catch (Exception $e) {
 			$this->fail('Save Author records');
@@ -116,7 +116,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$td->setPublisher($vintage);
 			$td->save();
 			$td_id = $td->getId();
-			$this->assertTrue(true, 'Save Book records');		
+			$this->assertTrue(true, 'Save Book records');
 		} catch (Exception $e) {
 			$this->fail('Save Author records');
 		}
@@ -140,9 +140,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$r2->setReviewDate(time());
 			$r2->save();
 			$r2_id = $r2->getId();
-			$this->assertTrue(true, 'Save Review records');		
+			$this->assertTrue(true, 'Save Review records');
 		} catch (Exception $e) {
-			$this->fail('Save Review records');		
+			$this->fail('Save Review records');
 		}
 		
 		// Perform a "complex" search
@@ -204,8 +204,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
 	
 		$r2 = ReviewPeer::retrieveByPk($r_id);
 	
-		$this->assertEquals(new Datetime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');	
-		$this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');	
+		$this->assertEquals(new Datetime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');
+		$this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');
 		$this->assertEquals('2-29-2004', $r2->getReviewDate('n-j-Y'), 'ability to use date() formatter');
 
 		// Handle BLOB/CLOB Columns
@@ -246,7 +246,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk1->setTitle("12345"); // min length is 10
 		$ret = $bk1->validate();
 	
-		$this->assertFalse($ret, 'validation failed');	
+		$this->assertFalse($ret, 'validation failed');
 		$failures = $bk1->getValidationFailures();
 		$this->assertEquals(1, count($failures), '1 validation message was returned');
 	
@@ -257,7 +257,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk2->setTitle("Don Juan");
 		$ret = $bk2->validate();
 	
-		$this->assertFalse($ret, 'validation failed');	
+		$this->assertFalse($ret, 'validation failed');
 	
 		$failures = $bk2->getValidationFailures();
 		$this->assertEquals(1, count($failures), '1 validation message was returned');
@@ -279,7 +279,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk1->addReview($rev1);
 	
 		$ret2 = $bk1->validate();
-		$this->assertFalse($ret2, 'validation failed');	
+		$this->assertFalse($ret2, 'validation failed');
 	
 		$failures2 = $bk1->getValidationFailures();
 	
@@ -308,7 +308,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 	
 		$ret3 = $bk2->validate();
 		
-		$this->assertTrue($ret3, 'complex validation can pass');	
+		$this->assertTrue($ret3, 'complex validation can pass');
 
 		// Testing doCount() functionality
 		// -------------------------------
@@ -388,7 +388,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// Removing books that were just created
 		// First finding book by PK (=$phoenix_id) ....
 		$hp = BookPeer::retrieveByPk($phoenix_id);
-		$this->assertNotNull($hp, 'Could find just-created book');	
+		$this->assertNotNull($hp, 'Could find just-created book');
 	
 		// Attempting to delete [multi-table] by found pk
 		$c = new Criteria();
@@ -431,7 +431,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// set to SETNULL in the foreign keys in book. Is this correct?
 		$rowling->delete();
 		$scholastic->delete();
-		$blc1->delete();	
+		$blc1->delete();
 		$blc2->delete();
 		
 		$this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');
@@ -467,7 +467,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$vintage = new Publisher();
 			$vintage->setName("Vintage");
 			$vintage->save();
-			$vintage_id = $vintage->getId();			
+			$vintage_id = $vintage->getId();
 			$this->assertTrue(true, 'Save Publisher records');
 		} catch (Exception $e) {
 			$this->fail('Save publisher records');
@@ -498,7 +498,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$grass->setFirstName("Gunter");
 			$grass->setLastName("Grass");
 			$grass->save();
-			$grass_id = $grass->getId();			
+			$grass_id = $grass->getId();
 			$this->assertTrue(true, 'Save Author records');
 		} catch (Exception $e) {
 			$this->fail('Save Author records');
@@ -541,7 +541,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$td->setPublisher($vintage);
 			$td->save();
 			$td_id = $td->getId();
-			$this->assertTrue(true, 'Save Book records');		
+			$this->assertTrue(true, 'Save Book records');
 		} catch (Exception $e) {
 			$this->fail('Save Author records');
 		}
@@ -565,9 +565,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 			$r2->setReviewDate(time());
 			$r2->save();
 			$r2_id = $r2->getId();
-			$this->assertTrue(true, 'Save Review records');		
+			$this->assertTrue(true, 'Save Review records');
 		} catch (Exception $e) {
-			$this->fail('Save Review records');		
+			$this->fail('Save Review records');
 		}
 		
 		// Perform a "complex" search
@@ -626,8 +626,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$r->save();
 	
 		$r2 = ReviewQuery::create()->findPk($r_id);
-		$this->assertEquals(new Datetime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');	
-		$this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');	
+		$this->assertEquals(new Datetime('2004-02-29 00:00:00'), $r2->getReviewDate(null), 'ability to fetch DateTime');
+		$this->assertEquals($control, $r2->getReviewDate('U'), 'ability to fetch native unix timestamp');
 		$this->assertEquals('2-29-2004', $r2->getReviewDate('n-j-Y'), 'ability to use date() formatter');
 
 		// Handle BLOB/CLOB Columns
@@ -668,7 +668,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk1->setTitle("12345"); // min length is 10
 		$ret = $bk1->validate();
 	
-		$this->assertFalse($ret, 'validation failed');	
+		$this->assertFalse($ret, 'validation failed');
 		$failures = $bk1->getValidationFailures();
 		$this->assertEquals(1, count($failures), '1 validation message was returned');
 	
@@ -679,7 +679,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk2->setTitle("Don Juan");
 		$ret = $bk2->validate();
 	
-		$this->assertFalse($ret, 'validation failed');	
+		$this->assertFalse($ret, 'validation failed');
 	
 		$failures = $bk2->getValidationFailures();
 		$this->assertEquals(1, count($failures), '1 validation message was returned');
@@ -701,7 +701,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		$bk1->addReview($rev1);
 	
 		$ret2 = $bk1->validate();
-		$this->assertFalse($ret2, 'validation failed');	
+		$this->assertFalse($ret2, 'validation failed');
 	
 		$failures2 = $bk1->getValidationFailures();
 	
@@ -730,7 +730,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 	
 		$ret3 = $bk2->validate();
 		
-		$this->assertTrue($ret3, 'complex validation can pass');	
+		$this->assertTrue($ret3, 'complex validation can pass');
 
 		// Testing doCount() functionality
 		// -------------------------------
@@ -814,7 +814,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// Removing books that were just created
 		// First finding book by PK (=$phoenix_id) ....
 		$hp = BookQuery::create()->findPk($phoenix_id);
-		$this->assertNotNull($hp, 'Could find just-created book');	
+		$this->assertNotNull($hp, 'Could find just-created book');
 	
 		// Attempting to delete [multi-table] by found pk
 		$c = new Criteria();
@@ -856,7 +856,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 		// set to SETNULL in the foreign keys in book. Is this correct?
 		$rowling->delete();
 		$scholastic->delete();
-		$blc1->delete();	
+		$blc1->delete();
 		$blc2->delete();
 		
 		$this->assertEquals(array(), AuthorPeer::doSelect(new Criteria()), 'no records in [author] table');

@@ -176,7 +176,7 @@ class Join
 	public function getConditions()
 	{
 	  $conditions = array();
-	  for ($i=0; $i < $this->count; $i++) { 
+	  for ($i=0; $i < $this->count; $i++) {
 	    $conditions[] = array(
 	      'left'     => $this->getLeftColumn($i), 
 	      'operator' => $this->getOperator($i),
@@ -283,7 +283,7 @@ class Join
 	 * Get the list of all the names of left columns of the join condition
 	 * @return     array
 	 */
-	public function getLeftColumns() 
+	public function getLeftColumns()
 	{
 		$columns = array();
 		foreach ($this->left as $index => $column) {
@@ -383,7 +383,7 @@ class Join
 	/**
 	 * @return     all right columns of the join condition
 	 */
-	public function getRightColumns() 
+	public function getRightColumns()
 	{
 		$columns = array();
 		foreach ($this->right as $index => $column) {

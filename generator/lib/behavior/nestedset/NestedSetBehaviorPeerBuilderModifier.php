@@ -465,7 +465,7 @@ public static function updateLoadedNodes(\$prune = null, PropelPDO \$con = null)
  * @param      PropelPDO \$con	Connection to use.
  */
 public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, PropelPDO \$con = null)
-{	
+{
 	// Update database nodes
 	$peerClassname::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
 

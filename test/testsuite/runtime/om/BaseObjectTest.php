@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/om/BaseObject.php';
  * @package    runtime.om
  */
 class BaseObjectTest extends PHPUnit_Framework_TestCase 
-{ 
+{
 	public function testGetVirtualColumns()
 	{
 		$b = new TestableBaseObject();

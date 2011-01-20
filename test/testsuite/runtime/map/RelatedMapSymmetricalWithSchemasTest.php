@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/schemas/SchemasTestBas
  * @package    runtime.map
  */
 class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase 
-{ 
+{
   protected $databaseMap;
 
 	protected function setUp()

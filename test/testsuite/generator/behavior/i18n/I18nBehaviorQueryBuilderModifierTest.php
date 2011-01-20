@@ -241,7 +241,7 @@ EOF;
 	// then there is no way to avoid duplicates when adding translations.
 	// use case:
 	// $o = new Object();
-	// $t1 = new Translation();	
+	// $t1 = new Translation();
 	// $o->setTranslation($t2, 'en_EN'); // this is what happens during joined hydration
 	// now the translation collection exists
 	// $t2 = $o->getTranslation('fr_FR'); // we MUST issue a query here

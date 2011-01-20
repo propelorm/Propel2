@@ -34,7 +34,7 @@ class FieldnameRelatedTest extends PHPUnit_Framework_TestCase
 	protected function setUp()
 	{
 		parent::setUp();
-		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");		
+		set_include_path(get_include_path() . PATH_SEPARATOR . "fixtures/bookstore/build/classes");
 		require_once 'bookstore/map/BookTableMap.php';
 		require_once 'bookstore/BookPeer.php';
 		require_once 'bookstore/Book.php';

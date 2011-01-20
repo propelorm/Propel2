@@ -1146,7 +1146,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	 * table with allowPkInsert=true set
 	 *
 	 * saves the object, gets it from data-source again and then compares
-	 * them for equality (thus the instance pool is also checked) 
+	 * them for equality (thus the instance pool is also checked)
 	 */
 	public function testAllowPkInsertOnIdMethodNativeTable()
 	{

@@ -89,7 +89,7 @@ class DBNone extends DBAdapter
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
-	{		
+	{
 	}
 
 	/**

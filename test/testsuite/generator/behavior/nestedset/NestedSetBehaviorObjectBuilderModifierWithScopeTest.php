@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  * @package		generator.behavior.nestedset
  */
 class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase 
-{	
+{
 	protected function getByTitle($title)
 	{
 		$c = new Criteria();

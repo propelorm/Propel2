@@ -53,7 +53,7 @@ class PropelStringReader extends Reader
 	{
 		if ($len === null) {
 			return $this->_string;
-		} else {            
+		} else {
 			if ($this->currPos >= strlen($this->_string)) {
 				return -1;
 			}            
@@ -79,12 +79,12 @@ class PropelStringReader extends Reader
 
 	public function ready() {}
 
-	public function markSupported() 
+	public function markSupported()
 	{
 		return true;
 	}
 	
-	public function getResource() 
+	public function getResource()
 	{
 		return '(string) "'.$this->_string . '"';
 	}

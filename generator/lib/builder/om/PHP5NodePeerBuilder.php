@@ -451,7 +451,7 @@ abstract class ".$this->getClassname()." {
 			\$stmt->bindValue(4, \$srcPath);// string
 			\$srcPathWC = \$srcPath . $nodePeerClassname::NPATH_SEP . '%';
 			\$stmt->bindValue(5, \$srcPathWC); // string
-			\$stmt->execute();			
+			\$stmt->execute();
 		// <hack>
 		}
 	}

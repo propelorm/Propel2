@@ -265,8 +265,8 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 
 		\$itclass = ucfirst(strtolower(\$type)) . 'OrderNodeIterator';
 
-    require_once('propel/om/' . \$itclass . '.php'); 
-		return new \$itclass(\$this, \$opts); 
+    require_once('propel/om/' . \$itclass . '.php');
+		return new \$itclass(\$this, \$opts);
 	}
 ";
 	}
@@ -654,7 +654,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
 		
 		if (!\$this->obj->isNew()) \$con->beginTransaction();
 		
-		try {	
+		try {
 			if (\$beforeNode)
 			{
 				// Inserting before a node.

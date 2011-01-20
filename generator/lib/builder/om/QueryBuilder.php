@@ -451,7 +451,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	 * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function findPks(\$keys, \$con = null)
-	{	
+	{
 		\$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
 		return \$this
 			->filterByPrimaryKeys(\$keys)

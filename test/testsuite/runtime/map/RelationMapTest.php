@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
  * @package    runtime.map
  */
 class RelationMapTest extends PHPUnit_Framework_TestCase 
-{ 
+{
   protected $databaseMap, $relationName, $rmap;
 
   protected function setUp()

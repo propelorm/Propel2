@@ -69,7 +69,7 @@ class TestAllHooksTableModifier
 }
 
 class TestAllHooksObjectBuilderModifier
-{ 
+{
   public function objectAttributes($builder)
   {
     return 'public $customAttribute = 1;';
@@ -132,7 +132,7 @@ class TestAllHooksObjectBuilderModifier
 }
 
 class TestAllHooksPeerBuilderModifier
-{ 
+{
   public function staticAttributes($builder)
   {
     return 'public static $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';

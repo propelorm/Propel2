@@ -39,10 +39,10 @@ class OraclePlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, "NUMBER"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, "NUMBER"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARCHAR, "NVARCHAR2"));
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "NVARCHAR2", "2000")); 
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATE")); 
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATE")); 
-		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP")); 
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "NVARCHAR2", "2000"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "DATE"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATE"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "TIMESTAMP"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "LONG RAW"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BLOB"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "LONG RAW"));

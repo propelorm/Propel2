@@ -177,7 +177,7 @@ abstract class OMBuilder extends DataModelBuilder
 	
 	public function declareClassNamespace($class, $namespace = '')
 	{
-		if (isset($this->declaredClasses[$namespace]) 
+		if (isset($this->declaredClasses[$namespace])
 		 && in_array($class, $this->declaredClasses[$namespace])) {
 			return;
 		}
@@ -342,7 +342,7 @@ abstract class OMBuilder extends DataModelBuilder
 		if ($fk->isLocalColumnsRequired()) {
 			return 'Criteria::INNER_JOIN';
 		}
-		return 'Criteria::LEFT_JOIN'; 
+		return 'Criteria::LEFT_JOIN';
 	}
 
 	/**
@@ -481,7 +481,7 @@ abstract class OMBuilder extends DataModelBuilder
   {
     $modifierGetter = 'get' . $modifier;
     foreach ($this->getTable()->getBehaviors() as $behavior) {
-      if(method_exists($behavior->$modifierGetter(), $hookName)) { 
+      if(method_exists($behavior->$modifierGetter(), $hookName)) {
         return true;
       }
     }
@@ -506,7 +506,7 @@ abstract class OMBuilder extends DataModelBuilder
         } else {
           // regular hook: the behavior returns a string to append to the script string
           $script .= "\n" . $tab . '// ' . $behavior->getName() . " behavior\n";
-          $script .= preg_replace('/^/m', $tab, $modifier->$hookName($this));           
+          $script .= preg_replace('/^/m', $tab, $modifier->$hookName($this));
          }
       }
     }

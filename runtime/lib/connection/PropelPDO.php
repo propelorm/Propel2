@@ -124,14 +124,14 @@ class PropelPDO extends PDO
 	 * @throws     PDOException if there is an error during connection initialization.
 	 */
 	public function __construct($dsn, $username = null, $password = null, $driver_options = array())
-	{	
+	{
 		if ($this->useDebug) {
 			$debug = $this->getDebugSnapshot();
 		}
 		
 		parent::__construct($dsn, $username, $password, $driver_options);
 		
-		if ($this->useDebug) {		
+		if ($this->useDebug) {
 			$this->configureStatementClass('DebugPDOStatement', $suppress = true);
 			$this->log('Opening connection', null, __METHOD__, $debug);
 		}
@@ -208,7 +208,7 @@ class PropelPDO extends PDO
 					throw new PropelException('Cannot commit because a nested transaction was rolled back');
 				} else {
 					$return = parent::commit();
-					if ($this->useDebug) {		
+					if ($this->useDebug) {
 				  	$this->log('Commit transaction', null, __METHOD__);
 					}
 				}
@@ -317,7 +317,7 @@ class PropelPDO extends PDO
 	 * @return     PDOStatement
 	 */
 	public function prepare($sql, $driver_options = array())
-	{	
+	{
 		if ($this->useDebug) {
 			$debug = $this->getDebugSnapshot();
 		}
@@ -455,9 +455,9 @@ class PropelPDO extends PDO
 	 * 
 	 * @return string Executable SQL code
 	 */
-	public function getLastExecutedQuery() 
-	{ 
-		return $this->lastExecutedQuery; 
+	public function getLastExecutedQuery()
+	{
+		return $this->lastExecutedQuery;
 	}
 	
 	/**
@@ -465,9 +465,9 @@ class PropelPDO extends PDO
 	 * 
 	 * @param string $query Executable SQL code
 	 */
-	public function setLastExecutedQuery($query) 
-	{ 
-		$this->lastExecutedQuery = $query; 
+	public function setLastExecutedQuery($query)
+	{
+		$this->lastExecutedQuery = $query;
 	}
 	
 	/**

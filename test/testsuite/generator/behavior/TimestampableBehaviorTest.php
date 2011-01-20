@@ -131,7 +131,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		Table2Query::create()->deleteAll();
 		$ts = new PropelObjectCollection();
 		$ts->setModel('Table2');
-		for ($i=0; $i < 10; $i++) { 
+		for ($i=0; $i < 10; $i++) {
 			$t = new Table2();
 			$t->setTitle('UpdatedAt' . $i);
 			/* additional -30 in case the check is done in the same second (which we can't guarantee, so no assert(8 ...) below).*/
@@ -146,7 +146,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		Table2Query::create()->deleteAll();
 		$ts = new PropelObjectCollection();
 		$ts->setModel('Table2');
-		for ($i=0; $i < 10; $i++) { 
+		for ($i=0; $i < 10; $i++) {
 			$t = new Table2();
 			$t->setTitle('CreatedAt' . $i);
 			$t->setCreatedAt(time() - $i * 24 * 60 * 60 - 30);

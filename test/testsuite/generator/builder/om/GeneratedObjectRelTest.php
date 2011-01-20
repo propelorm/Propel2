@@ -153,7 +153,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$query = BookQuery::create()
 			->filterByTitle('Harry Potter and the Order of the Phoenix');
 		$books = $blc1->getBooks($query);
-		$this->assertEquals(0, count($books), 'getCrossRefFK() accepts a query as first parameter');	
+		$this->assertEquals(0, count($books), 'getCrossRefFK() accepts a query as first parameter');
 	}
 	
 	public function testManyToManyGetter()
@@ -167,7 +167,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$query = BookQuery::create()
 			->filterByTitle('Harry Potter and the Order of the Phoenix');
 		$books = $blc1->getBooks($query);
-		$this->assertEquals(1, count($books), 'getCrossRefFK() accepts a query as first parameter');	
+		$this->assertEquals(1, count($books), 'getCrossRefFK() accepts a query as first parameter');
 	}
 
 	public function testManyToManyCounterExists()
@@ -184,7 +184,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$query = BookQuery::create()
 			->filterByTitle('Harry Potter and the Order of the Phoenix');
 		$nbBooks = $blc1->countBooks($query);
-		$this->assertEquals(0, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');	
+		$this->assertEquals(0, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
 	}
 	
 	public function testManyToManyCounter()
@@ -196,7 +196,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$query = BookQuery::create()
 			->filterByTitle('Harry Potter and the Order of the Phoenix');
 		$nbBooks = $blc1->countBooks($query);
-		$this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');	
+		$this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
 	}
 	
 	public function testManyToManyAdd()

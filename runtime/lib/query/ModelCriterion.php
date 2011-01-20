@@ -16,7 +16,7 @@
  * @package    propel.runtime.query
  */
 class ModelCriterion extends Criterion
-{		
+{
 	protected $clause = '';
 
 	/**
@@ -41,7 +41,7 @@ class ModelCriterion extends Criterion
 				$this->table = null;
 				$this->column = $column;
 			} else {
-				$this->table = substr($column, 0, $dotPos); 
+				$this->table = substr($column, 0, $dotPos);
 				$this->column = substr($column, $dotPos+1, strlen($column));
 			}
 		}
@@ -138,7 +138,7 @@ class ModelCriterion extends Criterion
 		// LIKE is case insensitive in mySQL and SQLite, but not in PostGres
 		// If the column is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE
 		if ($this->ignoreStringCase && $this->getDb() instanceof DBPostgres) {
-			$this->clause = preg_replace('/LIKE \?$/i', 'ILIKE ?', $this->clause); 
+			$this->clause = preg_replace('/LIKE \?$/i', 'ILIKE ?', $this->clause);
 		}
 		$this->appendModelClauseToPs($sb, $params);
 	}

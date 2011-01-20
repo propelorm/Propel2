@@ -28,7 +28,7 @@ class PropelCollection extends ArrayObject implements Serializable
 {
 	protected $model = '';
 	protected $iterator;
-	protected $formatter; 
+	protected $formatter;
 	
 
 	// Generic Collection methods
@@ -468,7 +468,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		if (preg_match('/^to(\w+)$/', $name, $matches)) {
 			return $this->exportTo($matches[1]);
 		}
-		throw new PropelException('Call to undefined method: ' . $name); 
+		throw new PropelException('Call to undefined method: ' . $name);
 	} 
 	
 	/** 

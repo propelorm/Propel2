@@ -15,7 +15,7 @@
  * @package    propel.runtime.collection
  */
 class PropelObjectCollection extends PropelCollection
-{	
+{
 	
 	/**
 	 * Save all the elements in the collection
@@ -106,17 +106,17 @@ class PropelObjectCollection extends PropelCollection
 	 * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
 	 *
 	 * <code>
-	 * $bookCollection->toArray(); 
+	 * $bookCollection->toArray();
 	 * array(
 	 *  0 => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  1 => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
-	 * $bookCollection->toArray('Id'); 
+	 * $bookCollection->toArray('Id');
 	 * array(
 	 *  123 => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  456 => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
-	 * $bookCollection->toArray(null, true); 
+	 * $bookCollection->toArray(null, true);
 	 * array(
 	 *  'Book_0' => array('Id' => 123, 'Title' => 'War And Peace'),
 	 *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
@@ -146,17 +146,17 @@ class PropelObjectCollection extends PropelCollection
 	 *              with the model class name ('Article_0', 'Article_1', etc).
 	 *
 	 * <code>
-	 * $bookCollection->getArrayCopy(); 
+	 * $bookCollection->getArrayCopy();
 	 * array(
 	 *  0 => $book0,
 	 *  1 => $book1,
 	 * )
-	 * $bookCollection->getArrayCopy('Id'); 
+	 * $bookCollection->getArrayCopy('Id');
 	 * array(
 	 *  123 => $book0,
 	 *  456 => $book1,
 	 * )
-	 * $bookCollection->getArrayCopy(null, true); 
+	 * $bookCollection->getArrayCopy(null, true);
 	 * array(
 	 *  'Book_0' => $book0,
 	 *  'Book_1' => $book1,
@@ -234,7 +234,7 @@ class PropelObjectCollection extends PropelCollection
 		$filterMethod = 'filterBy' . $symRelationMap->getName();
 		$relatedObjects = $query
 			->$filterMethod($this)
-			->find($con);	
+			->find($con);
 		if ($relationMap->getType() == RelationMap::ONE_TO_MANY) {
 			// associate the related objects to the main objects
 			$getMethod = 'get' . $symRelationMap->getName();

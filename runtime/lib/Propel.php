@@ -575,7 +575,7 @@ class Propel
 			self::$connectionMap[$name]['master'] = $con;
 		}
 
-		return self::$connectionMap[$name]['master'];		
+		return self::$connectionMap[$name]['master'];
 	}
 	
 	/**
@@ -594,13 +594,13 @@ class Propel
 
 			$slaveconfigs = isset(self::$configuration['datasources'][$name]['slaves']) ? self::$configuration['datasources'][$name]['slaves'] : null;
 
-			if (empty($slaveconfigs)) { 
+			if (empty($slaveconfigs)) {
 				// no slaves configured for this datasource
 				// fallback to the master connection
 				self::$connectionMap[$name]['slave'] = self::getMasterConnection($name);
-			} else { 
+			} else {
 				// Initialize a new slave
-				if (isset($slaveconfigs['connection']['dsn'])) { 
+				if (isset($slaveconfigs['connection']['dsn'])) {
 					// only one slave connection configured
 					$conparams = $slaveconfigs['connection'];
 				} else {

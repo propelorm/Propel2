@@ -28,7 +28,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 	}
 	
 	public function testPreSelect()
-	{	
+	{
 		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
 		$books = $c->find();
 		$this->assertEquals(1, count($books), 'preSelect() can modify the Criteria before find() fires the query');
@@ -140,7 +140,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 }
 
 class ModelCriteriaWithPreSelectHook extends ModelCriteria
-{	
+{
 	public function preSelect(PropelPDO $con)
 	{
 		$this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
@@ -148,7 +148,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
 }
 
 class ModelCriteriaWithPreDeleteHook extends ModelCriteria
-{	
+{
 	public function preDelete(PropelPDO $con)
 	{
 		return 12;
@@ -172,7 +172,7 @@ class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteH
 }
 
 class ModelCriteriaWithPreUpdateHook extends ModelCriteria
-{	
+{
 	public function preUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
 	{
 		$values['ISBN'] = '1234';

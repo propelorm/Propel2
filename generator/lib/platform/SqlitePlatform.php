@@ -114,7 +114,7 @@ class SqlitePlatform extends DefaultPlatform
 		$pattern = "
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (%s) REFERENCES %s (%s)
-"; 
+";
 		return sprintf($pattern, 
 			$this->getColumnListDDL($fk->getLocalColumns()),
 			$fk->getForeignTableName(),

@@ -302,7 +302,7 @@ EOF;
 		$a = new VersionableBehaviorTest4();
 		$a->setBar(123); // a1
 		$b = new VersionableBehaviorTest5();
-		$b->setFoo('Hello'); 
+		$b->setFoo('Hello');
 		$b->setVersionableBehaviorTest4($a);
 		$b->save(); //b1
 		$a->setBar(456); //a2
@@ -544,7 +544,7 @@ EOF;
 		$a = new VersionableBehaviorTest4();
 		$a->setBar(123); // a1
 		$b = new VersionableBehaviorTest5();
-		$b->setFoo('Hello'); 
+		$b->setFoo('Hello');
 		$b->setVersionableBehaviorTest4($a);
 		$b->save(); //b1
 		$this->assertEquals($b->getVersion(), 1);

@@ -182,10 +182,10 @@ class DatabaseMap
   /** 
    * Convenience method to get the DBAdapter registered with Propel for this database. 
    * @return  DBAdapter
-   * @see     Propel::getDB(string) 
+   * @see     Propel::getDB(string)
    */ 
-  public function getDBAdapter() 
-  { 
-    return Propel::getDB($this->name); 
+  public function getDBAdapter()
+  {
+    return Propel::getDB($this->name);
   }  
 }

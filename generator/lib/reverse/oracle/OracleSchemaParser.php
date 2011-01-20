@@ -34,7 +34,7 @@ class OracleSchemaParser extends BaseSchemaParser
 	 * 
 	 * Supported but non existant as a specific type in Oracle: 
 	 *   DECIMAL (NUMBER with scale), 
-	 *   DOUBLE (FLOAT with precision = 126) 
+	 *   DOUBLE (FLOAT with precision = 126)
 	 *
 	 * @var        array
 	 */
@@ -204,9 +204,9 @@ class OracleSchemaParser extends BaseSchemaParser
 	 * @param      Table $table The Table model class to add FKs to
 	 */
 	protected function addForeignKeys(Table $table)
-	{	
+	{
 		// local store to avoid duplicates
-		$foreignKeys = array(); 
+		$foreignKeys = array();
 		
 		$stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
 		/* @var stmt PDOStatement */

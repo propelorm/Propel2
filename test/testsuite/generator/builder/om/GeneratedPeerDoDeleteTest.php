@@ -486,7 +486,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$c->addAscendingOrderByColumn(BookPeer::ID);
 		
 		// None of these should not throw an exception!
-		BookPeer::doCountJoinAll($c); 
+		BookPeer::doCountJoinAll($c);
 		BookPeer::doCountJoinAllExceptAuthor($c);
 		BookPeer::doCountJoinAuthor($c);
 	}

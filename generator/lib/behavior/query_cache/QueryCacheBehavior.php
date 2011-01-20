@@ -222,10 +222,10 @@ protected function getCountStatement(\$con = null)
 				\$this->addSelfSelectColumns();
 			}
 			\$params = array();
-			\$needsComplexCount = \$this->getGroupByColumns() 
+			\$needsComplexCount = \$this->getGroupByColumns()
 				|| \$this->getOffset()
-				|| \$this->getLimit() 
-				|| \$this->getHaving() 
+				|| \$this->getLimit()
+				|| \$this->getHaving()
 				|| in_array(Criteria::DISTINCT, \$this->getSelectModifiers());
 			if (\$needsComplexCount) {
 				if (BasePeer::needsSelectAliases(\$this)) {

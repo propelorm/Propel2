@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @package    generator.builder.om
  */
 class QueryBuilderTest extends BookstoreTestBase 
-{ 
+{
   
 	public function testExtends()
 	{
@@ -515,7 +515,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue(method_exists('BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
 		
 		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
-		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');		
+		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
 	}
 	
 	public function testFilterByFkSimpleKey()
@@ -590,7 +590,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue(method_exists('BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
 		
 		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
-		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');				
+		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
 	}
 
 	public function testFilterByRefFkSimpleKey()
@@ -703,7 +703,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->joinAuthorRelatedBySecondAuthor();
 		$q1 = EssayQuery::create()
 			->join('Essay.AuthorRelatedBySecondAuthor', "INNER JOIN");
-		$this->assertTrue($q->equals($q1), 'joinFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');		
+		$this->assertTrue($q->equals($q1), 'joinFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
 	}
 	
 	public function testJoinFkAlias()
@@ -753,7 +753,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->joinEssayRelatedBySecondAuthor();
 		$q1 = AuthorQuery::create()
 			->join('Author.EssayRelatedBySecondAuthor', Criteria::INNER_JOIN);
-		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');		
+		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
 	}
 	
 	public function testUseFkQuerySimple()
@@ -930,7 +930,7 @@ class QueryBuilderTest extends BookstoreTestBase
 	}
 	
 	public function testPruneSimpleKey()
-	{	
+	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		
