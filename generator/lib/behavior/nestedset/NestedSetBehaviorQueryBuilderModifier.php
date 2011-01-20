@@ -74,7 +74,7 @@ class NestedSetBehaviorQueryBuilderModifier
 /**
  * Filter the query to restrict the result to root objects
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function treeRoots()
 {
@@ -91,7 +91,7 @@ public function treeRoots()
  *
  * @param     int \$scope		Scope to determine which objects node to return
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function inTree(\$scope = null)
 {
@@ -109,7 +109,7 @@ public function inTree(\$scope = null)
  *
  * @param     {$this->objectClassname} $objectName The object to use for descendant search
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function descendantsOf($objectName)
 {
@@ -135,7 +135,7 @@ public function descendantsOf($objectName)
  *
  * @param     {$this->objectClassname} $objectName The object to use for branch search
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function branchOf($objectName)
 {
@@ -160,7 +160,7 @@ public function branchOf($objectName)
  *
  * @param     {$this->objectClassname} $objectName The object to use for child search
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function childrenOf($objectName)
 {
@@ -182,7 +182,7 @@ public function childrenOf($objectName)
  * @param     {$this->objectClassname} $objectName The object to use for sibling search
  * @param      PropelPDO \$con Connection to use.
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function siblingsOf($objectName, PropelPDO \$con = null)
 {
@@ -207,7 +207,7 @@ public function siblingsOf($objectName, PropelPDO \$con = null)
  *
  * @param     {$this->objectClassname} $objectName The object to use for ancestors search
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function ancestorsOf($objectName)
 {
@@ -233,7 +233,7 @@ public function ancestorsOf($objectName)
  *
  * @param     {$this->objectClassname} $objectName The object to use for roots search
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function rootsOf($objectName)
 {
@@ -257,7 +257,7 @@ public function rootsOf($objectName)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function orderByBranch(\$reverse = false)
 {
@@ -280,7 +280,7 @@ public function orderByBranch(\$reverse = false)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function orderByLevel(\$reverse = false)
 {

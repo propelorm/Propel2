@@ -77,7 +77,7 @@ class SortableBehaviorQueryBuilderModifier
  *
  * @param     int \$scope		Scope to determine which objects node to return
  *
- * @return    {$this->queryClassname} The current query, for fuid interface
+ * @return    {$this->queryClassname} The current query, for fluid interface
  */
 public function inList(\$scope = null)
 {
