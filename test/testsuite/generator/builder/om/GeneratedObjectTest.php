@@ -669,12 +669,12 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		// reload and verify that the types are the same
 		$r2 = ReviewPeer::retrieveByPK($id);
 
-		$this->assertType('integer', $r2->getId(), "Expected getId() to return an integer.");
-		$this->assertType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
-		$this->assertType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
-		$this->assertType('Book', $r2->getBook(), "Expected getBook() to return a Book.");
-		$this->assertType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-		$this->assertType('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
+		$this->assertInternalType('integer', $r2->getId(), "Expected getId() to return an integer.");
+		$this->assertInternalType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
+		$this->assertInternalType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
+		$this->assertInstanceOf('Book', $r2->getBook(), "Expected getBook() to return a Book.");
+		$this->assertInternalType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
+		$this->assertInstanceOf('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
 	}
 
@@ -909,7 +909,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$reviews = $book->getReviews();
 
 		$b2 = $book->copy(true);
-		$this->assertType('Book', $b2);
+		$this->assertInstanceOf('Book', $b2);
 		$this->assertNull($b2->getId());
 
 		$r2 = $b2->getReviews();
@@ -920,7 +920,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
 		$e2 = $emp->copy(true);
 
-		$this->assertType('BookstoreEmployee', $e2);
+		$this->assertInstanceOf('BookstoreEmployee', $e2);
 		$this->assertNull($e2->getId());
 
 		$this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());
@@ -1018,7 +1018,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 
 		$arr1 = $m->toArray(BasePeer::TYPE_COLNAME);
 		$this->assertNotNull($arr1[MediaPeer::COVER_IMAGE]);
-		$this->assertType('resource', $arr1[MediaPeer::COVER_IMAGE]);
+		$this->assertInternalType('resource', $arr1[MediaPeer::COVER_IMAGE]);
 
 		$arr2 = $m->toArray(BasePeer::TYPE_COLNAME, false);
 		$this->assertNull($arr2[MediaPeer::COVER_IMAGE]);
@@ -1123,7 +1123,7 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 			$b->save();
 			$this->fail("Expected setting auto-increment primary key to result in Exception");
 		} catch (Exception $x) {
-			$this->assertType('PropelException', $x);
+			$this->assertInstanceOf('PropelException', $x);
 		}
 
 		// ... but we should silently ignore NULL values, since these are really

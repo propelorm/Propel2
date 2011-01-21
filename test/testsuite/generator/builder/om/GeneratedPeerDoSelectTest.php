@@ -140,7 +140,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$this->assertEquals(2, count($matches), "Expected 2 matches back from new books; got back " . count($matches));
 
 		$this->assertNull($matches[0]->getAuthor(), "Expected first book author to be null");
-		$this->assertType('Author', $matches[1]->getAuthor(), "Expected valid Author object for second book.");
+		$this->assertInstanceOf('Author', $matches[1]->getAuthor(), "Expected valid Author object for second book.");
 	}
 
 	public function testDoSelectJoinOneToOne()

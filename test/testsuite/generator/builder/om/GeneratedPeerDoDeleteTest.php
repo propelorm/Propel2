@@ -412,9 +412,9 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 	public function testDoCountType()
 	{
 		$c = new Criteria();
-		$this->assertType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
-		$this->assertType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
-		$this->assertType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
+		$this->assertInternalType('integer', BookPeer::doCount($c), "Expected doCount() to return an integer.");
+		$this->assertInternalType('integer', BookPeer::doCountJoinAll($c), "Expected doCountJoinAll() to return an integer.");
+		$this->assertInternalType('integer', BookPeer::doCountJoinAuthor($c), "Expected doCountJoinAuthor() to return an integer.");
 	}
 
 	/**

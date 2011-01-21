@@ -208,7 +208,7 @@ class ValidatorTest extends BookstoreEmptyTestBase
 		$this->assertEquals(array(BookPeer::ISBN), array_keys($failures), "Expected EMAIL to fail validation.");
 
 		$validator = $failures[BookPeer::ISBN]->getValidator();
-		$this->assertType('ISBNValidator', $validator, "Expected validator that failed to be ISBNValidator");
+		$this->assertInstanceOf('ISBNValidator', $validator, "Expected validator that failed to be ISBNValidator");
 	}
 
 	protected function assertSingleValidation($ret, $expectedMsg)
