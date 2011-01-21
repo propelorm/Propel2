@@ -218,11 +218,11 @@ abstract class AbstractPropelDataModelTask extends Task
 	/**
 	 * Set the packageObjectModel switch on/off
 	 *
-	 * @param      string $v The build.property packageObjectModel
+	 * @param      boolean $v The build.property packageObjectModel
 	 */
 	public function setPackageObjectModel($v)
 	{
-		$this->packageObjectModel = ($v === '1' ? true : false);
+		$this->packageObjectModel = (boolean) $v;
 	}
 
 	/**
@@ -231,7 +231,7 @@ abstract class AbstractPropelDataModelTask extends Task
 	 */
 	public function setValidate($v)
 	{
-		$this->validate = $v;
+		$this->validate = (boolean) $v;
 	}
 
 	/**

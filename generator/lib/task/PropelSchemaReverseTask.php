@@ -259,7 +259,7 @@ class PropelSchemaReverseTask extends PDOTask
 	 */
 	public function setSamePhpName($v)
 	{
-		$this->samePhpName = $v;
+		$this->samePhpName = (boolean) $v;
 	}
 
 	/**
