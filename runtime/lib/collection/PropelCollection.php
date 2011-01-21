@@ -354,6 +354,17 @@ class PropelCollection extends ArrayObject implements Serializable
 		return $this->iterator;
 	}
 	
+	/**
+	 * Clear the internal Iterator.
+	 * PHP 5.3 doesn't know how to free a PropelCollection object if it has an attached
+	 * Iterator, so this must be done manually to avoid memory leaks.
+	 * @see http://www.propelorm.org/ticket/1232
+	 */
+	public function clearIterator()
+	{
+		$this->iterator = null;
+	}
+	
 	// Propel collection methods
 	
 	/**

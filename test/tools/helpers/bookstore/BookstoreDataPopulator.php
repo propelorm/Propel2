@@ -224,29 +224,41 @@ class BookstoreDataPopulator
 
 	public static function depopulate($con = null)
 	{
+		$peerClasses = array(
+			'AuthorPeer',
+			'BookstorePeer',
+			'BookstoreContestPeer',
+			'BookstoreContestEntryPeer',
+			'BookstoreEmployeePeer',
+			'BookstoreEmployeeAccountPeer',
+			'BookstoreSalePeer',
+			'BookClubListPeer',
+			'BookOpinionPeer',
+			'BookReaderPeer',
+			'BookListRelPeer',
+			'BookPeer',
+			'ContestPeer',
+			'CustomerPeer',
+			'MediaPeer',
+			'PublisherPeer',
+			'ReaderFavoritePeer',
+			'ReviewPeer',
+			'BookSummaryPeer',
+		);
+		// free the memory from existing objects
+		foreach ($peerClasses as $peerClass) {
+			foreach ($peerClass::$instances as $o) {
+				$o->clearAllReferences();
+			}
+		}
+		// delete records from the database
 		if($con === null) {
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		}
 		$con->beginTransaction();
-		AuthorPeer::doDeleteAll($con);
-		BookstorePeer::doDeleteAll($con);
-		BookstoreContestPeer::doDeleteAll($con);
-		BookstoreContestEntryPeer::doDeleteAll($con);
-		BookstoreEmployeePeer::doDeleteAll($con);
-		BookstoreEmployeeAccountPeer::doDeleteAll($con);
-		BookstoreSalePeer::doDeleteAll($con);
-		BookClubListPeer::doDeleteAll($con);
-		BookOpinionPeer::doDeleteAll($con);
-		BookReaderPeer::doDeleteAll($con);
-		BookListRelPeer::doDeleteAll($con);
-		BookPeer::doDeleteAll($con);
-		ContestPeer::doDeleteAll($con);
-		CustomerPeer::doDeleteAll($con);
-		MediaPeer::doDeleteAll($con);
-		PublisherPeer::doDeleteAll($con);
-		ReaderFavoritePeer::doDeleteAll($con);
-		ReviewPeer::doDeleteAll($con);
-		BookSummaryPeer::doDeleteAll($con);
+		foreach ($peerClasses as $peerClass) {
+			$peerClass::doDeleteAll($con);
+		}
 		$con->commit();
 	}
 

@@ -4567,13 +4567,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$table = $this->getTable();
 		$script .= "
 	/**
-	 * Resets all collections of referencing foreign keys.
+	 * Resets all references to other model objects or collections of model objects.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect objects
-	 * with circular references.  This is currently necessary when using Propel in certain
-	 * daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect
+	 * objects with circular references (even in PHP 5.3). This is currently necessary
+	 * when using Propel in certain daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean \$deep Whether to also clear the references on all associated objects.
+	 * @param      boolean \$deep Whether to also clear the references on all referrer objects.
 	 */
 	public function clearAllReferences(\$deep = false)
 	{
@@ -4582,21 +4582,20 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($this->getTable()->getReferrers() as $refFK) {
 			if ($refFK->isLocalPrimaryKey()) {
 				$varName = $this->getPKRefFKVarName($refFK);
-				$vars[] = $varName;
 				$script .= "
 			if (\$this->$varName) {
 				\$this->{$varName}->clearAllReferences(\$deep);
 			}";
 			} else {
 				$varName = $this->getRefFKCollVarName($refFK);
-				$vars[] = $varName;
 				$script .= "
 			if (\$this->$varName) {
-				foreach ((array) \$this->$varName as \$o) {
+				foreach (\$this->$varName as \$o) {
 					\$o->clearAllReferences(\$deep);
 				}
 			}";
 			}
+			$vars[] = $varName;
 		}
 
 		$script .= "
@@ -4607,11 +4606,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		foreach ($vars as $varName) {
 			$script .= "
+		if (\$this->$varName instanceof PropelCollection) {
+			\$this->{$varName}->clearIterator();
+		}
 		\$this->$varName = null;";
 		}
 
 		foreach ($table->getForeignKeys() as $fk) {
-			$className = $this->getForeignTable($fk)->getPhpName();
 			$varName = $this->getFKVarName($fk);
 			$script .= "
 		\$this->$varName = null;";

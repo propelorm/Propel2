@@ -18,21 +18,12 @@ require_once 'BookstoreDataPopulator.php';
 abstract class BookstoreEmptyTestBase extends BookstoreTestBase
 {
 	/**
-	 * This is run before each unit test; it populates the database.
+	 * This is run before each unit test; it empties the database.
 	 */
 	protected function setUp()
 	{
 		parent::setUp();
 		BookstoreDataPopulator::depopulate($this->con);
-	}
-
-	/**
-	 * This is run after each unit test.  It empties the database.
-	 */
-	protected function tearDown()
-	{
-		BookstoreDataPopulator::depopulate($this->con);
-		parent::tearDown();
 	}
 
 }
