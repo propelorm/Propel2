@@ -515,6 +515,37 @@ class Database extends ScopedElement
     return $this->tablePrefix;
   }
 
+	/**
+	 * Get a list of all the behaviors of all the tables,
+	 * except the ones that were already executed,
+	 * and ordered by behavior priority.
+	 * 
+	 * @return array[Behavior]
+	 */
+	public function getTableBehaviors()
+	{
+		// order the behaviors according to Behavior::$tableModificationOrder
+		$behaviors = array();
+		foreach ($this->getTables() as $table) {
+			foreach ($table->getBehaviors() as $behavior) {
+				if (!$behavior->isTableModified()) {
+					$behaviors[$behavior->getTableModificationOrder()][] = $behavior;
+				}
+			}
+		}
+		ksort($behaviors);
+		
+		// flatten the list
+		$tableBehaviors = array();
+		foreach ($behaviors as $behaviorList) {
+			foreach ($behaviorList as $behavior) {
+				$tableBehaviors[] = $behavior;
+			}
+		}
+		
+		return $tableBehaviors;
+	}
+	
 	public function doFinalInitialization()
 	{
 		// add the referrers for the foreign keys
@@ -535,8 +566,9 @@ class Database extends ScopedElement
 		}
 		
 		// execute table behaviors (may add new tables)
-		foreach ($this->getTables() as $table) {
-			$table->applyBehaviors();
+		foreach ($this->getTableBehaviors() as $behavior) {
+			$behavior->getTableModifier()->modifyTable();
+			$behavior->setTableModified(true);
 		}
 		
 		// do naming and heavy indexing

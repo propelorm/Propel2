@@ -28,6 +28,7 @@ class Behavior extends XMLElement
 	protected $isTableModified = false;
 	protected $dirname;
 	protected $additionalBuilders = array();
+	protected $tableModificationOrder = 50;
 	
 	public function setName($name)
 	{
@@ -96,6 +97,28 @@ class Behavior extends XMLElement
 		return $this->parameters[$name];
 	}
 
+	/**
+	 * Define when this behavior must execute its modifyTable() relative to other behaviors.
+	 * The bigger the value, the later the behavior is executed. Default is 50.
+	 *
+	 * @param $tableModificationOrder integer 
+	 */
+	public function setTableModificationOrder($tableModificationOrder)
+	{
+		$this->tableModificationOrder = $tableModificationOrder;
+	}
+
+	/**
+	 * Get when this behavior must execute its modifyTable() relative to other behaviors.
+	 * The bigger the value, the later the behavior is executed. Default is 50.
+	 *
+	 * @return integer 
+	 */
+	public function getTableModificationOrder()
+	{
+		return $this->tableModificationOrder;
+	}
+	
 	/**
 	 * This method is automatically called on database behaviors when the database model is finished
 	 * Propagate the behavior to the tables of the database

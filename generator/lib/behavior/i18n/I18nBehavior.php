@@ -33,6 +33,8 @@ class I18nBehavior extends Behavior
 		'locale_alias'  => '',
 	);
 	
+	protected $tableModificationOrder = 70;
+	
 	protected 
 		$objectBuilderModifier,
 		$queryBuilderModifier,
