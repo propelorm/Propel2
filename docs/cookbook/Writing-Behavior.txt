@@ -414,7 +414,27 @@ protected function updateRelatedTotalNbVotes(PropelPDO $con)
   }
 }
 }}}
- 
+
+== Specifying a Priority For Behavior Execution ==
+
+Since behaviors can modify tables, and even add tables, you may encounter cases where two behaviors conflict with each other. The usual way to solve these conflicts is to force a particular execution order, i.e. behavior A must be executed before behavior B, no matter in what order they were specified in the schema.
+
+Propel Behavior classes support a `$tableModificationOrder` attribute just for that purpose. By default, it is set to 50; set it to a lower number to force an early execution, or to a greater number to force a late execution. For instance, in the following example, `BehaviorA` will be executed before `BehaviorB`:
+
+{{{
+#!php
+<?php
+class BehaviorA extends Behavior
+{
+  protected $tableModificationOrder = 40;
+}
+
+class BehaviorB extends Behavior
+{
+  protected $tableModificationOrder = 60;
+}
+}}}
+
 == What's Left ==
  
 These are the basics of behavior writing: implement one of the methods documented in the [wiki:Documentation/1.6/Behaviors#WritingaBehavior behaviors chapter] of the Propel guide, and return strings containing the code to be added to the ActiveRecord, Query, and Peer classes. In addition to the behavior code, you should always write unit tests - all the behaviors bundled with Propel have full unit test coverage. And to make your behavior usable by others, documentation is highly recommended. Once again, Propel core behaviors are fully documented, to let users understand the behavior usage without having to peek into the code.
