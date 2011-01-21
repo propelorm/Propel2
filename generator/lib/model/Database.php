@@ -516,13 +516,12 @@ class Database extends ScopedElement
   }
 
 	/**
-	 * Get a list of all the behaviors of all the tables,
-	 * except the ones that were already executed,
-	 * and ordered by behavior priority.
+	 * Get the next behavior on all tables, ordered by behavior priority,
+	 * and skipping the ones that were already executed,
 	 * 
-	 * @return array[Behavior]
+	 * @return Behavior
 	 */
-	public function getTableBehaviors()
+	public function getNextTableBehavior()
 	{
 		// order the behaviors according to Behavior::$tableModificationOrder
 		$behaviors = array();
@@ -534,16 +533,11 @@ class Database extends ScopedElement
 			}
 		}
 		ksort($behaviors);
-		
-		// flatten the list
-		$tableBehaviors = array();
 		foreach ($behaviors as $behaviorList) {
 			foreach ($behaviorList as $behavior) {
-				$tableBehaviors[] = $behavior;
+				return $behavior;
 			}
 		}
-		
-		return $tableBehaviors;
 	}
 	
 	public function doFinalInitialization()
@@ -551,7 +545,7 @@ class Database extends ScopedElement
 		// add the referrers for the foreign keys
 		$this->setupTableReferrers();
 		
-		// execute default behaviors
+		// add default behaviors to database
 		if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
 			// add generic behaviors from build.properties 
 			$defaultBehaviors = explode(',', $defaultBehaviors);
@@ -560,13 +554,13 @@ class Database extends ScopedElement
 			}
 		}
 		
-		// execute behavior database modifiers
+		// execute database behaviors
 		foreach ($this->getBehaviors() as $behavior) {
 			$behavior->modifyDatabase();
 		}
 		
-		// execute table behaviors (may add new tables)
-		foreach ($this->getTableBehaviors() as $behavior) {
+		// execute table behaviors (may add new tables and new behaviors)
+		while ($behavior = $this->getNextTableBehavior()) {
 			$behavior->getTableModifier()->modifyTable();
 			$behavior->setTableModified(true);
 		}
@@ -576,23 +570,6 @@ class Database extends ScopedElement
 			$table->doFinalInitialization();
 			// setup referrers again, since final initialization may have added columns
 			$table->setupReferrers(true);
-		}
-		
-		// Behaviors may have added behaviors of their own
-		// These behaviors must launch their modifyTable() method,
-		// Until there is no behavior left
-		$behaviorsLeft = true;
-		while ($behaviorsLeft) {
-			$behaviorsLeft = false;
-			foreach ($this->getTables() as $table) {
-				foreach ($table->getBehaviors() as $behavior) {
-					if (!$behavior->isTableModified()) {
-						$behavior->getTableModifier()->modifyTable();
-						$behavior->setTableModified(true);
-						$behaviorsLeft = true;
-					}
-				}
-			}
 		}
 	}
 	
