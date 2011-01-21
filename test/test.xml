@@ -63,14 +63,14 @@
 
 	<target name="reports" depends="configure">
 
-		<phpunit2 haltonerror="false" haltonfailure="false" printsummary="true">
-			<!--<formatter type="xml" usefile="true" todir="${tests.reports.dir}" outfile="test-results.xml" />-->
+		<phpunit haltonerror="false" haltonfailure="false" printsummary="true">
+			<formatter type="xml" usefile="true" todir="${tests.reports.dir}" outfile="test-results.xml" />
 			<formatter type="plain" usefile="false" />
 			<batchtest>
 				<fileset refid="relevant-tests" />
 			</batchtest>
-		</phpunit2>
-		<phpunit2report format="noframes" todir="${tests.reports.dir}" infile="${tests.reports.dir}/test-results.xml" styledir="${tests.phpunit.dir}/etc/xsl" />
+		</phpunit>
+		<phpunitreport format="noframes" todir="${tests.reports.dir}" infile="${tests.reports.dir}/test-results.xml" styledir="${tests.phpunit.dir}/etc/xsl" />
 	</target>
 
 	<!-- run the insert-sql target of the build.xml unless we are doing this for one specific test -->
