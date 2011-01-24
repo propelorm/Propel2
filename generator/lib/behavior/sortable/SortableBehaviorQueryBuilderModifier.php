@@ -57,7 +57,7 @@ class SortableBehaviorQueryBuilderModifier
 		}
 		
 		// select termination methods
-		if ($this->getParameter('rank_column') != 'rank') {
+		if ($this->getParameter('rank_column') != 'rank' || $this->behavior->useScope()) {
 			$this->addFindOneByRank($script);
 		}
 		$this->addFindList($script);
