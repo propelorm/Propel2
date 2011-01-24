@@ -121,33 +121,38 @@ class PHP5ObjectBuilder extends ObjectBuilder
 	 */
 	protected function getDefaultValueString(Column $col)
 	{
-		$defaultValue = var_export(null, true);
-		if (($val = $col->getPhpDefaultValue()) !== null) {
-			if ($col->isTemporalType()) {
-				$fmt = $this->getTemporalFormatter($col);
-				try {
-					if (!($this->getPlatform() instanceof MysqlPlatform &&
-					($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
-						// while technically this is not a default value of NULL,
-						// this seems to be closest in meaning.
-						$defDt = new DateTime($val);
-						$defaultValue = var_export($defDt->format($fmt), true);
-					}
-				} catch (Exception $x) {
-					// prevent endless loop when timezone is undefined
-					date_default_timezone_set('America/Los_Angeles');
-					throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $col->getDefaultValueString(), $col->getFullyQualifiedName()), $x);
+		$val = $col->getPhpDefaultValue();
+		if ($val === null) {
+			return var_export(null, true);
+		}
+		if ($col->isTemporalType()) {
+			$fmt = $this->getTemporalFormatter($col);
+			try {
+				if (!($this->getPlatform() instanceof MysqlPlatform &&
+				($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
+					// while technically this is not a default value of NULL,
+					// this seems to be closest in meaning.
+					$defDt = new DateTime($val);
+					$defaultValue = var_export($defDt->format($fmt), true);
 				}
-			} else {
-				if ($col->isPhpPrimitiveType()) {
-					settype($val, $col->getPhpType());
-					$defaultValue = var_export($val, true);
-				} elseif ($col->isPhpObjectType()) {
-					$defaultValue = 'new '.$col->getPhpType().'(' . var_export($val, true) . ')';
-				} else {
-					throw new EngineException("Cannot get default value string for " . $col->getFullyQualifiedName());
-				}
+			} catch (Exception $x) {
+				// prevent endless loop when timezone is undefined
+				date_default_timezone_set('America/Los_Angeles');
+				throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $col->getDefaultValueString(), $col->getFullyQualifiedName()), $x);
 			}
+		} elseif ($col->isEnumType()) {
+			$valueSet = $col->getValueSet();
+			if (!in_array($val, $valueSet)) {
+				throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
+			}
+			$defaultValue = array_search($val, $valueSet);
+		} else if ($col->isPhpPrimitiveType()) {
+			settype($val, $col->getPhpType());
+			$defaultValue = var_export($val, true);
+		} elseif ($col->isPhpObjectType()) {
+			$defaultValue = 'new '.$col->getPhpType().'(' . var_export($val, true) . ')';
+		} else {
+			throw new EngineException("Cannot get default value string for " . $col->getFullyQualifiedName());
 		}
 		return $defaultValue;
 	}
@@ -650,19 +655,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$colconsts = array();
 		foreach ($colsWithDefaults as $col) {
 			$clo = strtolower($col->getName());
-			if ($col->isEnumType()) {
-				$defaultValue = $col->getPhpDefaultValue();
-				$valueSet = $col->getValueSet();
-				if (!in_array($defaultValue, $valueSet)) {
-					throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $defaultValue));
-				}
-				$defaultValue = array_search($defaultValue, $valueSet);
-			} else {
-				$defaultValue = $this->getDefaultValueString($col);
-			}
+			$defaultValue = $this->getDefaultValueString($col);
 			$script .= "
 		\$this->".$clo." = $defaultValue;";
-
 		}
 	}
 

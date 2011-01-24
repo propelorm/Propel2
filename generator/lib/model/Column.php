@@ -909,6 +909,15 @@ class Column extends XMLElement
 	{
 		return $this->getType() == PropelTypes::ENUM;
 	}
+
+	/**
+	 * Sets the list of possible values for an ENUM column
+	 * @param array 
+	 */
+	public function setValueSet($valueSet)
+	{
+		$this->valueSet = $valueSet;
+	}
 	
 	/**
 	 * Returns the list of possible values for an ENUM column
@@ -1080,6 +1089,8 @@ class Column extends XMLElement
 			$def = new ColumnDefaultValue($def, ColumnDefaultValue::TYPE_VALUE);
 		}
 		$this->domain->setDefaultValue($def);
+		
+		return $this;
 	}
 
 	/**

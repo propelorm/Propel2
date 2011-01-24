@@ -33,7 +33,7 @@ class GeneratedObjectEnumColumnTypeTest extends PHPUnit_Framework_TestCase
 </database>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
-			// ok this is hackish but it makes testing of getter and sette rindependent of each other
+			// ok this is hackish but it makes testing of getter and setter independent of each other
 			$publicAccessorCode = <<<EOF
 class PublicComplexColumnTypeEntity3 extends ComplexColumnTypeEntity3
 {

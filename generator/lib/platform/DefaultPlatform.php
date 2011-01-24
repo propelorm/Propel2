@@ -363,11 +363,12 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 			if ($defaultValue->isExpression()) {
 				$default .= $defaultValue->getValue();
 			} else {
-				
 				if ($col->isTextType()) {
 					$default .= $this->quote($defaultValue->getValue());
 				} elseif ($col->getType() == PropelTypes::BOOLEAN || $col->getType() == PropelTypes::BOOLEAN_EMU) {
 					$default .= $this->getBooleanString($defaultValue->getValue());
+				} elseif ($col->getType() == PropelTypes::ENUM) {
+					$default .= array_search($defaultValue->getValue(), $col->getValueSet());
 				} else {
 					$default .= $defaultValue->getValue();
 				}
