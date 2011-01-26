@@ -4529,8 +4529,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	public function clear()
 	{";
 		foreach ($table->getColumns() as $col) {
+			$clo = strtolower($col->getName());
 			$script .= "
-		\$this->" . strtolower($col->getName()) . " = null;";
+		\$this->".$clo." = null;";
+			if($col->isLazyLoad()){
+				$script .= "
+		\$this->".$clo."_isLoaded = false;";
+			}
 		}
 
 		$script .= "
