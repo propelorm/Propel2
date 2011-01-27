@@ -138,6 +138,16 @@ class VendorInfo extends XMLElement
 	{
 		return $this->parameters;
 	}
+	
+	/**
+	 * Tests whether this vendor info is empty
+	 *
+	 * @return boolean
+	 */
+	public function isEmpty()
+	{
+	 return empty($this->parameters);
+	}
 
 	/**
 	 * Gets a new merged VendorInfo object.

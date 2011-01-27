@@ -62,7 +62,7 @@ EOF;
 		$d2 = $this->getDatabaseFromSchema($schema2);
 		return array(array(PropelDatabaseComparator::computeDiff($d1, $d2)));
 	}
-	
+
 	public function providerForTestGetRenameTableDDL()
 	{
 		return array(array('foo1', 'foo2'));
@@ -125,7 +125,7 @@ EOF;
 		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
 		return array(array(PropelTableComparator::computeDiff($t1,$t2)));
 	}
-	
+
 	public function providerForTestGetModifyTableColumnsDDL()
 	{
 		$schema1 = <<<EOF
@@ -172,7 +172,7 @@ EOF;
 	<table name="foo">
 		<column name="id" primaryKey="true" type="INTEGER" />
 		<column name="bar" type="INTEGER" primaryKey="true" />
-		<column name="baz" type="VARCHAR" size="12" required="false" />	
+		<column name="baz" type="VARCHAR" size="12" required="false" />
 	</table>
 </database>
 EOF;
@@ -184,7 +184,7 @@ EOF;
 		$tc->comparePrimaryKeys();
 		return array(array($tc->getTableDiff()));
 	}
-	
+
 	public function providerForTestGetModifyTableIndicesDDL()
 	{
 		$schema1 = <<<EOF
@@ -289,7 +289,7 @@ EOF;
 		$table->addColumn($column);
 		return array(array($column));
 	}
-	
+
 	public function providerForTestGetRenameColumnDDL()
 	{
 		$t1 = new Table('foo');
@@ -306,7 +306,7 @@ EOF;
 		$t2->addColumn($c2);
 		return array(array($c1, $c2));
 	}
-	
+
 	public function providerForTestGetModifyColumnDDL()
 	{
 		$t1 = new Table('foo');
@@ -344,11 +344,11 @@ EOF;
 		$c4->setNotNull(true);
 		$t2->addColumn($c4);
 		return array(array(array(
-			PropelColumnComparator::computeDiff($c1, $c3), 
+			PropelColumnComparator::computeDiff($c1, $c3),
 			PropelColumnComparator::computeDiff($c2, $c4)
 		)));
 	}
-	
+
 	public function providerForTestGetAddColumnDDL()
 	{
 		$schema = <<<EOF
@@ -377,4 +377,101 @@ EOF;
 		$table = $this->getDatabaseFromSchema($schema)->getTable('foo');
 		return array(array(array($table->getColumn('bar1'), $table->getColumn('bar2'))));
 	}
+
+	public function providerForTestGetModifyDatabaseWithOracleBlockStorageDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="blooopoo" type="INTEGER" />
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+	<table name="foo3">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="yipee" type="INTEGER" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar1" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="false" />
+		<column name="baz3" type="CLOB" />
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+	<table name="foo4">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="yipee" type="INTEGER" />
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+	<table name="foo5">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="lkdjfsh" type="INTEGER" />
+		<column name="dfgdsgf" type="CLOB" />
+		<index name="lkdjfsh_IDX">
+			<index-column name="lkdjfsh"/>
+			<vendor type="oracle">
+				<parameter name="PCTFree" value="20"/>
+				<parameter name="InitTrans" value="4"/>
+				<parameter name="MinExtents" value="1"/>
+				<parameter name="MaxExtents" value="99"/>
+				<parameter name="PCTIncrease" value="0"/>
+				<parameter name="Tablespace" value="L_128K"/>
+			</vendor>
+		</index>
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$d1 = $this->getDatabaseFromSchema($schema1);
+		$d2 = $this->getDatabaseFromSchema($schema2);
+		return array(array(PropelDatabaseComparator::computeDiff($d1, $d2)));
+	}
+
 }

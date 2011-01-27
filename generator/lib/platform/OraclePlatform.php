@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author     Denis Dalmais
  * @version    $Revision$
  * @package    propel.generator.platform
  */
@@ -49,7 +50,7 @@ class OraclePlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "NVARCHAR2", "2000"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "NVARCHAR2", "2000"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "NUMBER", "3", "0"));
-		
+
 	}
 
 	public function getMaxColumnNameLength()
@@ -121,27 +122,28 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 %sCREATE TABLE %s
 (
 	%s
-);
+)%s;
 ";
 		$ret = sprintf($pattern,
 			$tableDescription,
 			$this->quoteIdentifier($table->getName()),
-			implode($sep, $lines)
+			implode($sep, $lines),
+			$this->generateBlockStorage($table)
 		);
 
 		$ret .= $this->getAddPrimaryKeyDDL($table);
 		$ret .= $this->getAddSequencesDDL($table);
-		
+
 		return $ret;
 	}
-	
+
 	public function getAddPrimaryKeyDDL(Table $table)
 	{
 		if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
 			return parent::getAddPrimaryKeyDDL($table);
 		}
 	}
-	
+
 	public function getAddSequencesDDL(Table $table)
 	{
 		if ($table->getIdMethod() == "native") {
@@ -149,12 +151,12 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 CREATE SEQUENCE %s
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
-			return sprintf($pattern, 
+			return sprintf($pattern,
 				$this->quoteIdentifier($this->getSequenceName($table))
 			);
 		}
 	}
-	
+
 	public function getDropTableDDL(Table $table)
 	{
 		$ret = "
@@ -167,7 +169,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 		}
 		return $ret;
 	}
-	
+
 	public function getPrimaryKeyName(Table $table)
 	{
 		$tableName = $table->getName();
@@ -179,10 +181,11 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 	public function getPrimaryKeyDDL(Table $table)
 	{
 		if ($table->hasPrimaryKey()) {
-			$pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
+			$pattern = 'CONSTRAINT %s PRIMARY KEY (%s)%s';
 			return sprintf($pattern,
 				$this->quoteIdentifier($this->getPrimaryKeyName($table)),
-				$this->getColumnListDDL($table->getPrimaryKey())
+				$this->getColumnListDDL($table->getPrimaryKey()),
+				$this->generateBlockStorage($table, true)
 			);
 		}
 	}
@@ -209,11 +212,11 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 			$script .= "
 	ON DELETE " . $fk->getOnDelete();
 		}
-		
+
 		return $script;
 	}
 
-	
+
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean
@@ -222,7 +225,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 	{
 		return true;
 	}
-	
+
 	public function quoteIdentifier($text)
 	{
 		return $text;
@@ -242,5 +245,88 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 	public function supportsSchemas()
 	{
 		return false;
+	}
+
+	/**
+	 * Generate oracle block storage
+	 *
+	 * @param     Table|Index $object object with vendor parameters
+	 * @param     bool        $isPrimaryKey is a primary key vendor part
+	 *
+	 * @return    string      oracle vendor sql part
+	 */
+	public function generateBlockStorage($object, $isPrimaryKey = false)
+	{
+		$vendorSpecific = $object->getVendorInfoForType('oracle');
+		if ($vendorSpecific->isEmpty()) {
+			return '';
+		}
+
+		if ($isPrimaryKey) {
+			$physicalParameters = "
+USING INDEX
+";
+			$prefix = "PK";
+		} else {
+			$physicalParameters = "\n";
+			$prefix = "";
+		}
+
+		if ($vendorSpecific->hasParameter($prefix.'PCTFree')) {
+			$physicalParameters .= "PCTFREE " . $vendorSpecific->getParameter($prefix.'PCTFree') . "
+";
+		}
+		if ($vendorSpecific->hasParameter($prefix.'InitTrans')) {
+			$physicalParameters .= "INITRANS " . $vendorSpecific->getParameter($prefix.'InitTrans') . "
+";
+		}
+		if ($vendorSpecific->hasParameter($prefix.'MinExtents') || $vendorSpecific->hasParameter($prefix.'MaxExtents') || $vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
+			$physicalParameters .= "STORAGE
+(
+";
+			if ($vendorSpecific->hasParameter($prefix.'MinExtents')) {
+				$physicalParameters .= "MINEXTENTS " . $vendorSpecific->getParameter($prefix.'MinExtents') . "
+";
+			}
+			if ($vendorSpecific->hasParameter($prefix.'MaxExtents')) {
+				$physicalParameters .= "MAXEXTENTS " . $vendorSpecific->getParameter($prefix.'MaxExtents') . "
+";
+			}
+			if ($vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
+				$physicalParameters .= "PCTINCREASE " . $vendorSpecific->getParameter($prefix.'PCTIncrease') . "
+";
+			}
+			$physicalParameters .= ")
+";
+		}
+		if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
+			$physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
+		}
+		return $physicalParameters;
+	}
+
+	/**
+	 * Builds the DDL SQL to add an Index.
+	 *
+	 * @param      Index $index
+	 * @return     string
+	 */
+	public function getAddIndexDDL(Index $index)
+	{
+		// don't create index form primary key
+		if ($this->getPrimaryKeyName($index->getTable()) == $this->quoteIdentifier($index->getName())) {
+			return "";
+		}
+
+		$pattern = "
+CREATE %sINDEX %s ON %s (%s)%s;
+";
+		return sprintf($pattern,
+			$index->getIsUnique() ? 'UNIQUE ' : '',
+			$this->quoteIdentifier($index->getName()),
+			$this->quoteIdentifier($index->getTable()->getName()),
+			$this->getColumnListDDL($index->getColumns()),
+			$this->generateBlockStorage($index)
+		);
 	}
 }

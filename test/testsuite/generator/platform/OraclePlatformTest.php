@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class OraclePlatformTest extends PlatformTestProvider
 {
@@ -28,7 +28,7 @@ class OraclePlatformTest extends PlatformTestProvider
 	{
 		return new OraclePlatform();
 	}
-	
+
 	public function testGetSequenceNameDefault()
 	{
 		$table = new Table('foo');
@@ -212,7 +212,7 @@ DROP SEQUENCE foo_sequence;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -255,7 +255,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_PK;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -279,7 +279,7 @@ CREATE INDEX foo_index ON foo (bar1);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -301,7 +301,7 @@ DROP INDEX babar;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -336,7 +336,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -360,7 +360,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -381,5 +381,118 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
 	}
+
+	/**
+	 * @dataProvider providerForTestOracleBlockStorageDDLSchema
+	 */
+	public function testGetOracleBlockStorageDDL($schema)
+	{
+		$database = $this->getDatabaseFromSchema($schema);
+		$expected = <<<EOF
+
+ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
+ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
+
+-----------------------------------------------------------------------
+-- book
+-----------------------------------------------------------------------
+
+DROP TABLE book CASCADE CONSTRAINTS;
+
+DROP SEQUENCE book_SEQ;
+
+CREATE TABLE book
+(
+	id NUMBER NOT NULL,
+	title NVARCHAR2(255) NOT NULL,
+	author_id NUMBER
+)
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE L_128K;
+
+ALTER TABLE book ADD CONSTRAINT book_PK PRIMARY KEY (id)
+USING INDEX
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE IL_128K;
+
+CREATE SEQUENCE book_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+CREATE INDEX book_I_1 ON book (title)
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE IL_128K;
+
+-----------------------------------------------------------------------
+-- author
+-----------------------------------------------------------------------
+
+DROP TABLE author CASCADE CONSTRAINTS;
+
+DROP SEQUENCE author_SEQ;
+
+CREATE TABLE author
+(
+	id NUMBER NOT NULL,
+	first_name NVARCHAR2(100),
+	last_name NVARCHAR2(100)
+)
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE L_128K;
+
+ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id)
+USING INDEX
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE IL_128K;
+
+CREATE SEQUENCE author_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+-----------------------------------------------------------------------
+-- Foreign Keys
+-----------------------------------------------------------------------
+
+ALTER TABLE book ADD CONSTRAINT book_FK_1
+	FOREIGN KEY (author_id) REFERENCES author (id);
+
+EOF;
+
+		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+	}
+
 
 }

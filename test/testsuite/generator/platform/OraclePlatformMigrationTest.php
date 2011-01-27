@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class OraclePlatformMigrationTest extends PlatformMigrationTestProvider
 {
@@ -70,7 +70,7 @@ CREATE SEQUENCE foo5_SEQ
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetRenameTableDDL
 	 */
@@ -117,7 +117,7 @@ ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableColumnsDDL
 	 */
@@ -151,7 +151,7 @@ ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id,bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableIndicesDDL
 	 */
@@ -187,7 +187,7 @@ ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetRemoveColumnDDL
 	 */
@@ -209,7 +209,7 @@ ALTER TABLE foo RENAME COLUMN bar1 TO bar2;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyColumnDDL
 	 */
@@ -235,7 +235,7 @@ ALTER TABLE foo MODIFY
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddColumnDDL
 	 */
@@ -261,4 +261,77 @@ ALTER TABLE foo ADD
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetModifyDatabaseWithOracleBlockStorageDDL
+	 */
+	public function testGetModifyDatabaseWithBlockStorageDDL($databaseDiff)
+	{
+		$expected = "
+ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
+ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
+
+DROP TABLE foo1 CASCADE CONSTRAINTS;
+
+DROP SEQUENCE foo1_SEQ;
+
+ALTER TABLE foo3 RENAME TO foo4;
+
+ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
+
+ALTER TABLE foo2 MODIFY
+(
+	baz NVARCHAR2(12)
+);
+
+ALTER TABLE foo2 ADD
+(
+	baz3 CLOB
+);
+
+CREATE TABLE foo5
+(
+	id NUMBER NOT NULL,
+	lkdjfsh NUMBER,
+	dfgdsgf CLOB
+)
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE L_128K;
+
+ALTER TABLE foo5 ADD CONSTRAINT foo5_PK PRIMARY KEY (id)
+USING INDEX
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE IL_128K;
+
+CREATE SEQUENCE foo5_SEQ
+	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+CREATE INDEX lkdjfsh_IDX ON foo5 (lkdjfsh)
+PCTFREE 20
+INITRANS 4
+STORAGE
+(
+MINEXTENTS 1
+MAXEXTENTS 99
+PCTINCREASE 0
+)
+TABLESPACE L_128K;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
+	}
+
 }
