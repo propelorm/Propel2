@@ -377,6 +377,8 @@ CREATE TABLE book
   DEFAULT CHARACTER SET utf8;
 }}}
 
+==== MySQL Vendor Info ====
+
 Propel supports the following vendor parameters for MySQL:
 
 {{{
@@ -394,6 +396,35 @@ Charset          | utf8, latin1, etc.
 Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
 // in <index> element
 Index_type       | FULLTEXT
+}}}
+
+==== Oracle Vendor Info ====
+
+Propel supports the following vendor parameters for Oracle:
+
+{{{
+Name             | Example values
+-----------------|---------------
+// in <table> element
+PCTFree          | 20
+InitTrans        | 4
+MinExtents       | 1
+MaxExtents       | 99
+PCTIncrease      | 0
+Tablespace       | L_128K
+PKPCTFree        | 20
+PKInitTrans      | 4
+PKMinExtents     | 1
+PKMaxExtents     | 99
+PKPCTIncrease    | 0
+PKTablespace     | IL_128K
+// in <index> element
+PCTFree          | 20
+InitTrans        | 4
+MinExtents       | 1
+MaxExtents       | 99
+PCTIncrease      | 0
+Tablespace       | L_128K
 }}}
 
 === Using Custom Platform ===

@@ -120,7 +120,7 @@ foreach ($page->getAllVersions() as $pageVersion) {
 // 'PEAR', Version 2, updated by ...
 }}}
 
-If it was just for that, the `versionable` behavior would already be awesome. Versioning is a very common feature, and there is no doubt that this behavior will replace lots of boilerplate code. Consider the fact that it's very configurable, [http://www.propelorm.org/wiki/Documentation/1.6/Behaviors/versionable fully documented], and unit tested, and there is no reason to develop your own versioning layer.
+If it was just for that, the `versionable` behavior would already be awesome. Versioning is a very common feature, and there is no doubt that this behavior will replace lots of boilerplate code. Consider the fact that it's very configurable, [wiki:Documentation/1.6/Behaviors/versionable fully documented], and unit tested, and there is no reason to develop your own versioning layer.
 
 But there is more. The `versionable` behavior also works on relationships. If the `WikiPage` has one `Category`, and if the `Category` model also uses the `versionable` behavior, then each time a `WikiPage` is saved, it saves the version of the related `Category` it is related to, and it is able to restore it:
 
@@ -243,7 +243,7 @@ In addition to hydrating translations, `joinWithI18n()` sets the correct locale 
 
 Last but not least, Propel's `i18n` behavior is a drop-in replacement for symfony's `i18n` behavior. That means that with a couple more parameters, the locale can be accessed using `setCulture()`, and the `i18n_columns` parameter can be omitted if you explicit the `i18n` table.
 
-Just like the `versionable` behavior, the `i18n` behavior is thoroughly unit-tested and [http://www.propelorm.org/wiki/Documentation/1.6/Behaviors/i18n fully documented].
+Just like the `versionable` behavior, the `i18n` behavior is thoroughly unit-tested and [wiki:Documentation/1.6/Behaviors/i18n fully documented].
 
 == XML/YAML/JSON/CSV Parsing and Dumping ==
 
@@ -632,4 +632,5 @@ There wasn't any one-stop place to read about the abilities of the generated Act
  * The generated `toArray()` method for !ActiveRecord objects can now include collections, without risk of infinite recursion. Therefore `$author->toArray()` also outputs the collection of Books by the author. The dumping abilities introduced in 1.6 take advantage of this feature.
  * `PropelModelPager` now behaves more like a `PropelCollection`, thanks to the addition of `isFirst()`, `isLast()`, `isOdd()`, and `isEven()` methods. That means that it's easier to replace a `find()` by a `paginate()` as termination method for a query if there is a complex formatting.
  * Despite all that you may have read about PHP 5.3's garbage collector, memory leaks still exist on some particular circular references. Propel generates a `clearAllReferences()` method on all !ActiveRecord classes, and this method has been improved in Propel 1.6 to handle the existing leaks. Use it when you iterate on large collections of objects, or where the memory is limited.
- * For each database, Behaviors are now added to a priority queue. This allows to execute some behaviors before others, and to solve conflicts between behaviors. See [http://www.propelorm.org/wiki/Documentation/1.6/Writing-Behavior#SpecifyingaPriorityForBehaviorExecution Hpw to Write a Behavior].
+ * For each database, Behaviors are now added to a priority queue. This allows to execute some behaviors before others, and to solve conflicts between behaviors. See [wiki:Documentation/1.6/Writing-Behavior#SpecifyingaPriorityForBehaviorExecution Hpw to Write a Behavior].
+ * Propel now supports tablespace definition on Oracle tables using custom `<vendor>` tags. See the [wiki:Documentation/1.6/Schema#AddingVendorInfo Schema reference] for details.
