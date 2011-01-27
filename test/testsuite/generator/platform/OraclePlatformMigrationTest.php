@@ -262,11 +262,100 @@ ALTER TABLE foo ADD
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
 	}
 
-	/**
-	 * @dataProvider providerForTestGetModifyDatabaseWithOracleBlockStorageDDL
-	 */
-	public function testGetModifyDatabaseWithBlockStorageDDL($databaseDiff)
+	public function testGetModifyDatabaseWithBlockStorageDDL()
 	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="blooopoo" type="INTEGER" />
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="true" />
+	</table>
+	<table name="foo3">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="yipee" type="INTEGER" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar1" type="INTEGER" />
+		<column name="baz" type="VARCHAR" size="12" required="false" />
+		<column name="baz3" type="CLOB" />
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+	<table name="foo4">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="yipee" type="INTEGER" />
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+	<table name="foo5">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="lkdjfsh" type="INTEGER" />
+		<column name="dfgdsgf" type="CLOB" />
+		<index name="lkdjfsh_IDX">
+			<index-column name="lkdjfsh"/>
+			<vendor type="oracle">
+				<parameter name="PCTFree" value="20"/>
+				<parameter name="InitTrans" value="4"/>
+				<parameter name="MinExtents" value="1"/>
+				<parameter name="MaxExtents" value="99"/>
+				<parameter name="PCTIncrease" value="0"/>
+				<parameter name="Tablespace" value="L_128K"/>
+			</vendor>
+		</index>
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+</database>
+EOF;
+		$d1 = $this->getDatabaseFromSchema($schema1);
+		$d2 = $this->getDatabaseFromSchema($schema2);
+		$databaseDiff = PropelDatabaseComparator::computeDiff($d1, $d2);
 		$expected = "
 ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
 ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
@@ -299,9 +388,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -311,9 +400,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
@@ -325,9 +414,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE L_128K;
 ";

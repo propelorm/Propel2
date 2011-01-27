@@ -382,11 +382,64 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 		$this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
 	}
 
-	/**
-	 * @dataProvider providerForTestOracleBlockStorageDDLSchema
-	 */
-	public function testGetOracleBlockStorageDDL($schema)
+	public function testGetOracleBlockStorageDDL()
 	{
+		$schema = <<<EOF
+<database name="test" schema="x">
+	<table name="book">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="title" type="VARCHAR" size="255" required="true" />
+		<index>
+			<index-column name="title" />
+			<vendor type="oracle">
+				<parameter name="PCTFree" value="20"/>
+				<parameter name="InitTrans" value="4"/>
+				<parameter name="MinExtents" value="1"/>
+				<parameter name="MaxExtents" value="99"/>
+				<parameter name="PCTIncrease" value="0"/>
+				<parameter name="Tablespace" value="IL_128K"/>
+			</vendor>
+		</index>
+		<column name="author_id" type="INTEGER"/>
+		<foreign-key foreignTable="author" foreignSchema="y">
+			<reference local="author_id" foreign="id" />
+		</foreign-key>
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+	<table name="author" schema="y">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="first_name" type="VARCHAR" size="100" />
+		<column name="last_name" type="VARCHAR" size="100" />
+		<vendor type="oracle">
+			<parameter name="PCTFree" value="20"/>
+			<parameter name="InitTrans" value="4"/>
+			<parameter name="MinExtents" value="1"/>
+			<parameter name="MaxExtents" value="99"/>
+			<parameter name="PCTIncrease" value="0"/>
+			<parameter name="Tablespace" value="L_128K"/>
+			<parameter name="PKPCTFree" value="20"/>
+			<parameter name="PKInitTrans" value="4"/>
+			<parameter name="PKMinExtents" value="1"/>
+			<parameter name="PKMaxExtents" value="99"/>
+			<parameter name="PKPCTIncrease" value="0"/>
+			<parameter name="PKTablespace" value="IL_128K"/>
+		</vendor>
+	</table>
+</database>
+EOF;
 		$database = $this->getDatabaseFromSchema($schema);
 		$expected = <<<EOF
 
@@ -411,9 +464,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -423,9 +476,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
@@ -437,9 +490,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
@@ -461,9 +514,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -473,9 +526,9 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-MINEXTENTS 1
-MAXEXTENTS 99
-PCTINCREASE 0
+	MINEXTENTS 1
+	MAXEXTENTS 99
+	PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 

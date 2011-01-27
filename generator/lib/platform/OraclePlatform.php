@@ -285,15 +285,15 @@ USING INDEX
 (
 ";
 			if ($vendorSpecific->hasParameter($prefix.'MinExtents')) {
-				$physicalParameters .= "MINEXTENTS " . $vendorSpecific->getParameter($prefix.'MinExtents') . "
+				$physicalParameters .= "	MINEXTENTS " . $vendorSpecific->getParameter($prefix.'MinExtents') . "
 ";
 			}
 			if ($vendorSpecific->hasParameter($prefix.'MaxExtents')) {
-				$physicalParameters .= "MAXEXTENTS " . $vendorSpecific->getParameter($prefix.'MaxExtents') . "
+				$physicalParameters .= "	MAXEXTENTS " . $vendorSpecific->getParameter($prefix.'MaxExtents') . "
 ";
 			}
 			if ($vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
-				$physicalParameters .= "PCTINCREASE " . $vendorSpecific->getParameter($prefix.'PCTIncrease') . "
+				$physicalParameters .= "	PCTINCREASE " . $vendorSpecific->getParameter($prefix.'PCTIncrease') . "
 ";
 			}
 			$physicalParameters .= ")
