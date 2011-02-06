@@ -197,7 +197,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 	 */
 	protected function addIndexes(Table $table)
 	{
-		$stmt = $this->dbh->query("sp_indexes_rowset " . $table->getName());
+		$stmt = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
 
 		$indexes = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
