@@ -76,6 +76,10 @@ class I18nBehavior extends Behavior
 				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace(),
 			));
+			// every behavior adding a table should re-execute database behaviors
+			foreach ($database->getBehaviors() as $behavior) {
+				$behavior->modifyDatabase();
+			}
 		}
 	}
 	

@@ -97,6 +97,10 @@ class VersionableBehavior extends Behavior
 				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace(),
 			));
+			// every behavior adding a table should re-execute database behaviors
+			foreach ($database->getBehaviors() as $behavior) {
+				$behavior->modifyDatabase();
+			}
 			// copy all the columns
 			foreach ($table->getColumns() as $column) {
 				$columnInVersionTable = clone $column;
