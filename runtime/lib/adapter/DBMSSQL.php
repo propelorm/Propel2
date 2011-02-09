@@ -239,26 +239,22 @@ class DBMSSQL extends DBAdapter
 	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
 	{
 		$i = 1;
-		$qualCols = array();
+		$paramCols = array();
 		foreach ($params as $param) {
-			$tableName = $param['table'];
-			$columnName = $param['column'];
-			$value = $param['value'];
-			if (null !== $tableName) {
-				$cMap = $dbMap->getTable($tableName)->getColumn($columnName);
+			if (null !== $param['table']) {
+				$column = $dbMap->getTable($param['table'])->getColumn($param['column']);
 				/* MSSQL pdo_dblib and pdo_mssql blob values must be converted to hex and then the hex added
 				 * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
 				 * an error with the insert or update.
 				 */
-				if (is_resource($value) && $cMap->isLob()) {
+				if (is_resource($param['value']) && $column->isLob()) {
 					// we always need to make sure that the stream is rewound, otherwise nothing will
 					// get written to database.
-					rewind($value);
-					$binaryString  = stream_get_contents($value);
-					$arrData  = unpack("H*hex", $binaryString);
-					$hexString = '0x'.$arrData['hex'];
-					$sql = str_replace(":p$i", $hexString, $sql);
-
+					rewind($param['value']);
+					$hexArr = unpack('H*hex', stream_get_contents($param['value']));
+					$sql = str_replace(":p$i", '0x' . $hexArr['hex'], $sql);
+					unset($hexArr);
+					fclose($param['value']);
 				} else {
 					$paramCols[] = $param;
 				}
@@ -270,6 +266,7 @@ class DBMSSQL extends DBAdapter
 		if($params != $paramCols)
 		{
 			$params = $paramCols;
+			unset($paramCols);
 			preg_match_all('/:p\d/', $sql, $matches);
 			foreach($matches[0] as $key => $match)
 			{
