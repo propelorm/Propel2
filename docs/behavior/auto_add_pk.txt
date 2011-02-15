@@ -1,5 +1,7 @@
 = AutoAddPk Behavior =
 
+[[PageOutline]]
+
 The `auto_add_pk` behavior adds a primary key columns to the tables that don't have one. Using this behavior allows you to omit the declaration of primary keys in your tables.
 
 == Basic Usage ==

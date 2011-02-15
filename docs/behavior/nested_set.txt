@@ -1,5 +1,7 @@
 = NestedSet Behavior =
 
+[[PageOutline]]
+
 The `nested_set` behavior allows a model to become a tree structure, and provides numerous methods to traverse the tree in an efficient way. 
 
 Many applications need to store hierarchical data in the model. For instance, a forum stores a tree of messages for each discussion. A CMS sees sections and subsections as a navigation tree. In a business organization chart, each person is a leaf of the organization tree. [http://en.wikipedia.org/wiki/Nested_set_model Nested sets] are the best way to store such hierachical data in a relational database and manipulate it. The name "nested sets" describes the algorithm used to store the position of a model in the tree ; it is also known as "modified preorder tree traversal".

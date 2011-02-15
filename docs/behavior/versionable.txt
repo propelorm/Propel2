@@ -1,5 +1,7 @@
 = Versionable Behavior =
 
+[[PageOutline]]
+
 The `versionable` behavior provides versioning capabilities to any !ActiveRecord object. Using this behavior, you can:
 
  * Revert an object to previous versions easily

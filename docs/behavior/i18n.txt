@@ -1,5 +1,7 @@
 = I18n Behavior =
 
+[[PageOutline]]
+
 The `i18n` behavior provides internationalization to any !ActiveRecord object. Using this behavior, you can separate text data from the other data, and keep several translations of the text data for a single object. Applications supporting several languages always use the `i18n` behavior.
 
 == Basic Usage ==

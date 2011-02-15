@@ -1,5 +1,7 @@
 = SoftDelete Behavior =
 
+[[PageOutline]]
+
 The `soft_delete` behavior overrides the deletion methods of a model object to make them 'hide' the deleted rows but keep them in the database. Deleted objects still don't show up on select queries, but they can be retrieved or undeleted when necessary.
 
 == Basic Usage ==
