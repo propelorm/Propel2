@@ -235,6 +235,15 @@ EOF;
 			->findOne();
 		$this->assertEquals('fr_FR', $o2->getLocale());
 	}
+	
+	public function testJoinWithI18nAndLimitDoesNotThrowException()
+	{
+		$res = I18nBehaviorTest11Query::create()
+			->joinWithI18n('en_EN')
+			->limit(2)
+			->find();
+		$this->assertInstanceOf('PropelObjectCollection', $res);
+	}
 
 	// This is not a desired behavior, but there is no way to overcome it
 	// because if we don't issue a database query when the collection exists

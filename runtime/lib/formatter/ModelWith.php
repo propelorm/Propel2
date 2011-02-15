@@ -21,6 +21,7 @@ class ModelWith
 	protected $modelPeerName = '';
 	protected $isSingleTableInheritance = false;
 	protected $isAdd = false;
+	protected $isAddWithNoCheck = false;
 	protected $relationName = '';
 	protected $relationMethod = '';
 	protected $initMethod = '';
@@ -97,12 +98,22 @@ class ModelWith
 	
 	public function setIsAdd($isAdd)
 	{
-		$this->isAdd = $isAdd;;
+		$this->isAdd = $isAdd;
 	}
 	
 	public function isAdd()
 	{
 		return $this->isAdd;
+	}
+
+	public function setIsAddWithNoCheck($isAddWithNoCheck)
+	{
+		$this->isAddWithNoCheck = $isAddWithNoCheck;
+	}
+	
+	public function isAddWithNoCheck()
+	{
+		return $this->isAddWithNoCheck;
 	}
 	
 	public function setRelationName($relationName)

@@ -148,7 +148,7 @@ abstract class PropelFormatter
 	protected function isWithOneToMany()
 	{
 		foreach ($this->with as $modelWith) {
-			if ($modelWith->isAdd()) {
+			if ($modelWith->isAdd() && !$modelWith->isAddWithNoCheck()) {
 				return true;
 			}
 		}
