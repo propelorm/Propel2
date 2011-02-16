@@ -700,7 +700,7 @@
 		<xs:attribute name="skipSql" type="xs:boolean" default="false">
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
-					Instructs Propel not to generate DDL SQL for the specified table. This can be used together with readOnly for supperting VIEWS in Propel
+					Instructs Propel not to generate DDL SQL for the specified table. This can be used together with readOnly for supporting VIEWS in Propel
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>

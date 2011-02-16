@@ -143,7 +143,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
  * `package` specifies the "package" (or subdirectory) in which model classes get generated.
  * `schema` specifies the default SQL schema containing the table. Ignored on RDBMS not supporting database schemas. 
  * `namespace` specifies the namespace that the generated model classes will use (PHP 5.3 only). If the table namespace starts with a `\`, it overrides the namespace defined in the `<database>` tag; otherwise, the actual table namespace is the concatenation of the database namespace and the table namespace.
- * `skipSql` instructs Propel not to generate DDL SQL for the specified table.  This can be used together with `readOnly` for supperting VIEWS in Propel.
+ * `skipSql` instructs Propel not to generate DDL SQL for the specified table. This can be used together with `readOnly` for supporting VIEWS in Propel.
  * `abstract` Whether the generated ''stub'' class will be abstract (e.g. if you're using inheritance)
  * `phpNamingMethod` the naming method to use. Defaults to `underscore`, which transforms the table name into a CamelCase phpName.
  * `baseClass` allows you to specify a class that the generated Propel objects should extend ({{{in place of propel.om.BaseObject}}}).
@@ -211,6 +211,7 @@ To link a column to another table use the following syntax:
      [refPhpName = "/Name for this object in methods generated in the foreign class/"]
      [onDelete = "cascade|setnull|restrict|none"]
      [onUpdate = "cascade|setnull|restrict|none"]
+     [skipSql = "true|false"]
      [defaultJoin= "Criteria::INNER_JOIN|Criteria::LEFT_JOIN"]
   >
     <reference local="/LocalColumnName/" foreign="/ForeignColumnName/" />
@@ -219,6 +220,7 @@ To link a column to another table use the following syntax:
 
 ==== Foreign Key Attributes ====
 
+ * `skipSql` Instructs Propel not to generate DDL SQL for the specified foreign key. This can be used to support relationships in the model without an actual foreign key.
  * `defaultJoin` This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
 
 === <index> element ===

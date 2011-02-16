@@ -386,3 +386,35 @@ foreach ($authors as $author) {
   }
 }
 }}}
+
+== Model-Only Relationships ==
+
+Propel models can share relationships even though the underlying tables aren't linked by a foreign key. This ability may be of great use when using Propel on top of a legacy database.
+
+For example, a `review` table designed for a MyISAM database engine is linked to a `book` table by a simple `book_id` column:
+
+{{{
+#!xml
+<table name="review">
+  <column name="review_id" type="INTEGER" primaryKey="true" required="true"/>
+  <column name="reviewer" type="VARCHAR" size="50" required="true"/>
+  <column name="book_id" required="true" type="INTEGER"/>
+</table>
+}}}
+
+To enable a model-only relationship, add a `<foreign-key>` tag using the `skipSql` attribute, as follows:
+
+{{{
+#!xml
+<table name="review">
+  <column name="review_id" type="INTEGER" primaryKey="true" required="true"/>
+  <column name="reviewer" type="VARCHAR" size="50" required="true"/>
+  <column name="book_id" required="true" type="INTEGER"/>
+  <!-- Model-only relationship -->
+  <foreign-key foreignTable="book" onDelete="CASCADE" skipSql="true">
+    <reference local="book_id" foreign="id"/>
+  </foreign-key>
+</table>
+}}}
+
+Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters. 
