@@ -21,7 +21,7 @@ class ModelWith
 	protected $modelPeerName = '';
 	protected $isSingleTableInheritance = false;
 	protected $isAdd = false;
-	protected $isAddWithNoCheck = false;
+	protected $isWithOneToMany = false;
 	protected $relationName = '';
 	protected $relationMethod = '';
 	protected $initMethod = '';
@@ -50,7 +50,7 @@ class ModelWith
 		$relation = $join->getRelationMap();
 		$relationName = $relation->getName();
 		if ($relation->getType() == RelationMap::ONE_TO_MANY) {
-			$this->isAdd = true;
+			$this->isAdd = $this->isWithOneToMany = true;
 			$this->relationName = $relationName . 's';
 			$this->relationMethod = 'add' . $relationName;
 			$this->initMethod = 'init' . $relationName . 's';
@@ -106,14 +106,14 @@ class ModelWith
 		return $this->isAdd;
 	}
 
-	public function setIsAddWithNoCheck($isAddWithNoCheck)
+	public function setIsWithOneToMany($isWithOneToMany)
 	{
-		$this->isAddWithNoCheck = $isAddWithNoCheck;
+		$this->isWithOneToMany = $isWithOneToMany;
 	}
 	
-	public function isAddWithNoCheck()
+	public function isWithOneToMany()
 	{
-		return $this->isAddWithNoCheck;
+		return $this->isWithOneToMany;
 	}
 	
 	public function setRelationName($relationName)
