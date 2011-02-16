@@ -125,6 +125,7 @@ PHP class or method name.
   refPhpName CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
+  skipSql (true|false) "false"
 >
 
 <!ELEMENT reference EMPTY>

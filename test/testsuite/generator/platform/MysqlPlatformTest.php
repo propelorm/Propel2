@@ -299,6 +299,35 @@ CREATE TABLE `foo`
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
+	
+	public function testGetAddTableDDLForeignKeySkipSql()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar_id" type="INTEGER" />
+		<foreign-key foreignTable="bar" skipSql="true">
+			<reference local="bar_id" foreign="id" />
+		</foreign-key>
+	</table>
+	<table name="bar">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+	</table>
+</database>
+EOF;
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+CREATE TABLE `foo`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`bar_id` INTEGER,
+	PRIMARY KEY (`id`),
+	INDEX `foo_FI_1` (`bar_id`)
+) ENGINE=InnoDB;
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
 
 	public function testGetAddTableDDLEngine()
 	{
@@ -595,7 +624,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_baz_FK`
 	REFERENCES `baz` (`id`)
 	ON DELETE SET NULL;
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
+		$this->assertEquals($expected, $this->getPlatform()->getAddForeignKeysDDL($table));
 	}
 	
 	/**
@@ -609,9 +638,18 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
 	REFERENCES `bar` (`id`)
 	ON DELETE CASCADE;
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+		$this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
 	}
 
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetAddForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
+	}
+	
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -621,6 +659,15 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo_bar_FK`
 ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetDropForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
 	}
 	
 	/**
@@ -633,6 +680,15 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_FK`;
 	REFERENCES `bar` (`id`)
 	ON DELETE CASCADE";
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
 	}
 	
 	public function testGetCommentBlockDDL()

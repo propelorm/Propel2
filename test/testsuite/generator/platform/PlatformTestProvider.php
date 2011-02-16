@@ -248,6 +248,16 @@ EOF;
 		);
 	}
 
+	public function providerForTestGetForeignKeySkipSqlDDL()
+	{
+		$arr = self::providerForTestGetForeignKeyDDL();
+		$fk = $arr[0][0];
+		$fk->setSkipSql(true);
+		return array(
+			array($fk)
+		);
+	}
+
 	public function providerForTestGetForeignKeysDDL()
 	{
 		$table1 = new Table('foo');

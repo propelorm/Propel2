@@ -35,6 +35,13 @@ class ForeignKey extends XMLElement
 	protected $localColumns = array();
 	protected $foreignColumns = array();
 
+	/**
+	 * Whether to skip generation of SQL for this foreign key.
+	 *
+	 * @var       boolean
+	 */
+	protected $skipSql = false;
+
 	// the uppercase equivalent of the onDelete/onUpdate values in the dtd
 	const NONE     = "";            // No "ON [ DELETE | UPDATE]" behaviour specified.
 	const NOACTION  = "NO ACTION";
@@ -72,6 +79,7 @@ class ForeignKey extends XMLElement
 		$this->defaultJoin = $this->getAttribute('defaultJoin');
 		$this->onUpdate = $this->normalizeFKey($this->getAttribute("onUpdate"));
 		$this->onDelete = $this->normalizeFKey($this->getAttribute("onDelete"));
+		$this->skipSql = $this->booleanValue($this->getAttribute("skipSql"));
 	}
 
 	/**
@@ -561,6 +569,24 @@ class ForeignKey extends XMLElement
 
 		return ((count($localPKCols) === count($localCols)) &&
 			!array_diff($localPKCols, $localCols));
+	}
+
+	/**
+	 * Set whether this foreign key should have its creation sql generated.
+	 * @param     boolean $v Value to assign to skipSql.
+	 */
+	public function setSkipSql($v)
+	{
+		$this->skipSql = $v;
+	}
+	
+	/**
+	 * Skip generating sql for this foreign key.
+	 * @return    boolean Value of skipSql.
+	 */
+	public function isSkipSql()
+	{
+		return $this->skipSql;
 	}
 
 	/**

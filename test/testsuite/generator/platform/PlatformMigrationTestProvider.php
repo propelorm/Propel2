@@ -282,6 +282,47 @@ EOF;
 		return array(array($tc->getTableDiff()));
 	}
 
+	public function providerForTestGetModifyTableForeignKeysSkipSqlDDL()
+	{
+		$schema1 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<foreign-key name="foo1_FK_1" foreignTable="foo2">
+			<reference local="bar" foreign="bar" />
+		</foreign-key>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+	</table>
+</database>
+EOF;
+		$schema2 = <<<EOF
+<database name="test">
+	<table name="foo1">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+		<foreign-key name="foo1_FK_1" foreignTable="foo2" skipSql="true">
+			<reference local="bar" foreign="bar" />
+		</foreign-key>
+	</table>
+	<table name="foo2">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+	</table>
+</database>
+EOF;
+		$t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo1');
+		$t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo1');
+		$tc = new PropelTableComparator();
+		$tc->setFromTable($t1);
+		$tc->setToTable($t2);
+		$tc->compareForeignKeys();
+		return array(array($tc->getTableDiff()));
+	}
+
 	public function providerForTestGetRemoveColumnDDL()
 	{
 		$table = new Table('foo');

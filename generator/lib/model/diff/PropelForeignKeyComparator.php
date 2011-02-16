@@ -62,6 +62,11 @@ class PropelForeignKeyComparator
 			return true;
 		}
 		
+		// compare skipSql
+		if ($fromFk->isSkipSql() != $toFk->isSkipSql()) {
+			return true;
+		}
+		
 		return false;
 	}
 	

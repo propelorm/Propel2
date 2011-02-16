@@ -552,6 +552,13 @@
 		</xs:attribute>
 		<xs:attribute name="onDelete" type="delete" default="none"/>
 		<xs:attribute name="onUpdate" type="update" default="none"/>
+		<xs:attribute name="skipSql" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					Instructs Propel not to generate DDL SQL for the specified foreign key. This can be used to support relationships in the model without an actual foreign key.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 
 	<xs:complexType name="external-schema">

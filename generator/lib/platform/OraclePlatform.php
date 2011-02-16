@@ -200,6 +200,9 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
+		if ($fk->isSkipSql()) {
+			return;
+		}
 		$pattern = "CONSTRAINT %s
 	FOREIGN KEY (%s) REFERENCES %s (%s)";
 		$script = sprintf($pattern,

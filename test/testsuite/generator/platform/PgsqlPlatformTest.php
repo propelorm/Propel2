@@ -635,17 +635,6 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_baz_FK\"
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
-	public function testGetDropForeignKeyDDL($fk)
-	{
-		$expected = "
-ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_bar_FK\";
-";
-		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
-	}
-	
-	/**
-	 * @dataProvider providerForTestGetForeignKeyDDL
-	 */
 	public function testGetAddForeignKeyDDL($fk)
 	{
 		$expected = "
@@ -655,6 +644,35 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
 	ON DELETE CASCADE;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetAddForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+	}
+	
+	/**
+	 * @dataProvider providerForTestGetForeignKeyDDL
+	 */
+	public function testGetDropForeignKeyDDL($fk)
+	{
+		$expected = "
+ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_bar_FK\";
+";
+		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetDropForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
 	
 	/**
@@ -666,6 +684,15 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
 	FOREIGN KEY (\"bar_id\")
 	REFERENCES \"bar\" (\"id\")
 	ON DELETE CASCADE";
+		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 

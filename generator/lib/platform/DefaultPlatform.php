@@ -556,6 +556,9 @@ DROP INDEX %s;
 	 */
 	public function getAddForeignKeyDDL(ForeignKey $fk)
 	{
+		if ($fk->isSkipSql()) {
+			return;
+		}
 		$pattern = "
 ALTER TABLE %s ADD %s;
 ";
@@ -573,6 +576,9 @@ ALTER TABLE %s ADD %s;
 	 */
 	public function getDropForeignKeyDDL(ForeignKey $fk)
 	{
+		if ($fk->isSkipSql()) {
+			return;
+		}
 		$pattern = "
 ALTER TABLE %s DROP CONSTRAINT %s;
 ";
@@ -588,6 +594,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 	 */	
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
+		if ($fk->isSkipSql()) {
+			return;
+		}
 		$pattern = "CONSTRAINT %s
 	FOREIGN KEY (%s)
 	REFERENCES %s (%s)";

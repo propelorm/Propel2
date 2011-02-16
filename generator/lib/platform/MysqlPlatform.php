@@ -153,6 +153,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 		}
 
 		foreach ($table->getForeignKeys() as $foreignKey) {
+			if ($foreignKey->isSkipSql()) {
+				continue;
+			}
 			$lines[] = str_replace("
 	", "
 		", $this->getForeignKeyDDL($foreignKey));
@@ -397,6 +400,9 @@ DROP INDEX %s ON %s;
 
 	public function getDropForeignKeyDDL(ForeignKey $fk)
 	{
+		if ($fk->isSkipSql()) {
+			return;
+		}
 		$pattern = "
 ALTER TABLE %s DROP FOREIGN KEY %s;
 ";

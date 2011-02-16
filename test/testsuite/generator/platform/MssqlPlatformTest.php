@@ -365,7 +365,7 @@ CREATE TABLE [Woopah].[foo]
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}
+	}	
 
 	public function testGetDropTableDDL()
 	{
@@ -566,6 +566,15 @@ END
 	}
 
 	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetAddForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+	}
+
+	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
 	public function testGetDropForeignKeyDDL($fk)
@@ -575,6 +584,15 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetDropForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+	}
 	
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
@@ -582,6 +600,15 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
 	public function testGetForeignKeyDDL($fk)
 	{
 		$expected = 'CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE';
+		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+	}
+
+	/**
+	 * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+	 */
+	public function testGetForeignKeySkipSqlDDL($fk)
+	{
+		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 
