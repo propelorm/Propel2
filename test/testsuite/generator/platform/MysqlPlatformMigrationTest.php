@@ -198,6 +198,17 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
 	}
+
+	/**
+	 * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+	 */
+	public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
+	{
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
+		$expected = '';
+		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
+	}
 	
 	/**
 	 * @dataProvider providerForTestGetRemoveColumnDDL
