@@ -203,10 +203,29 @@ EOF;
 	/**
 	 * @dataProvider providerForTestHasColumn
 	 */
-	public function testRemoveColumnFromNAme($table, $column)
+	public function testRemoveColumnFromName($table, $column)
 	{
 		$table->removeColumn($column->getName());
 		$this->assertFalse($table->hasColumn('Foo'));
+	}
+	
+	public function testRemoveColumnFixesPositions()
+	{
+		$table = new Table();
+		$col1 = new Column('Foo1');
+		$table->addColumn($col1);
+		$col2 = new Column('Foo2');
+		$table->addColumn($col2);
+		$col3 = new Column('Foo3');
+		$table->addColumn($col3);
+		$this->assertEquals(1, $col1->getPosition());
+		$this->assertEquals(2, $col2->getPosition());
+		$this->assertEquals(3, $col3->getPosition());
+		$this->assertEquals(array(0, 1, 2), array_keys($table->getColumns()));
+		$table->removeColumn($col2);
+		$this->assertEquals(1, $col1->getPosition());
+		$this->assertEquals(2, $col3->getPosition());
+		$this->assertEquals(array(0, 1), array_keys($table->getColumns()));
 	}
 
 	public function testQualifiedName()

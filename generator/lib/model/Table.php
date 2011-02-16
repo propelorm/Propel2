@@ -729,10 +729,10 @@ class Table extends ScopedElement implements IDMethod
 	
 	public function adjustColumnPositions()
 	{
+		$this->columnList = array_values($this->columnList);
 		$columnCount = $this->getNumColumns();
-		$columnListKeys = array_keys($this->columnList);
 		for ($i=0; $i < $columnCount; $i++) {
-			$this->columnList[$columnListKeys[$i]]->setPosition($i + 1);
+			$this->columnList[$i]->setPosition($i + 1);
 		}
 	}
 	
