@@ -296,7 +296,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * first dimension keys are the type constants
 	 * e.g. self::\$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	private static \$fieldNames = array (
+	protected static \$fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array (";
 		foreach ($tableColumns as $col) {
 			$script .= "'".$col->getPhpName()."', ";
@@ -344,7 +344,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * first dimension keys are the type constants
 	 * e.g. self::\$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	private static \$fieldKeys = array (
+	protected static \$fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array (";
 		foreach ($tableColumns as $num => $col) {
 			$script .= "'".$col->getPhpName()."' => $num, ";
