@@ -206,9 +206,20 @@ class I18nBehavior extends Behavior
 	public function getI18nColumns()
 	{
 		$columns = array();
-		foreach ($this->getI18nTable()->getColumns() as $column) {
-			if (!$column->isPrimaryKey()) {
-				$columns []= $column;
+		$i18nTable = $this->getI18nTable();
+		if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
+			// Strategy 1: use the i18n_columns parameter
+			foreach ($columnNames as $columnName) {
+				$columns []= $i18nTable->getColumn($columnName);
+			}
+		} else {
+			// strategy 2: use the columns of the i18n table
+			// warning: does not work when database behaviors add columns to all tables
+			// (such as timestampable behavior)
+			foreach ($i18nTable->getColumns() as $column) {
+				if (!$column->isPrimaryKey()) {
+					$columns []= $column;
+				}
 			}
 		}
 		
