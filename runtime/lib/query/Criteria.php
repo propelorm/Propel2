@@ -229,6 +229,13 @@ class Criteria implements IteratorAggregate
 	protected $namedCriterions = array();
 	
 	/**
+	 * Default operator for combination of criterions
+	 * @see        addUsingOperator
+	 * @var        string Criteria::LOGICAL_AND or Criteria::LOGICAL_OR
+	 */
+	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
+	
+	/**
 	 * Creates a new instance with the default capacity which corresponds to
 	 * the specified database.
 	 *
@@ -1394,11 +1401,13 @@ class Criteria implements IteratorAggregate
 	 * 
 	 * @param     Criteria $criteria The criteria to read properties from
 	 * @param     string $operator The logical operator used to combine conditions
-	 *              Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
+	 *            Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
+	 *            This parameter is deprecated, use _or() instead
+
 	 *
 	 * @return    Criteria The current criteria object
 	 */
-	public function mergeWith(Criteria $criteria, $operator = Criteria::LOGICAL_AND)
+	public function mergeWith(Criteria $criteria, $operator = null)
 	{
 		// merge limit
 		$limit = $criteria->getLimit();
@@ -1437,20 +1446,21 @@ class Criteria implements IteratorAggregate
 		$this->groupByColumns = array_unique($groupByColumns);
 		
 		// merge where conditions
-		if ($operator == Criteria::LOGICAL_AND) {
-			foreach ($criteria->getMap() as $key => $criterion) {
-				if ($this->containsKey($key)) {
-					$this->addAnd($criterion);
-				} else {
-					$this->add($criterion);
-				}
-			}
-		} else {
-			foreach ($criteria->getMap() as $key => $criterion) {
-				$this->addOr($criterion);
-			}
+		if ($operator == Criteria::LOGICAL_OR) {
+			$this->_or();
 		}
-
+		$isFirstCondition = true;
+		foreach ($criteria->getMap() as $key => $criterion) {
+			if ($isFirstCondition && $this->defaultCombineOperator == Criteria::LOGICAL_OR) {
+				$this->addOr($criterion, null, null, false);
+				$this->defaultCombineOperator == Criteria::LOGICAL_AND;
+			} elseif ($this->containsKey($key)) {
+				$this->addAnd($criterion);
+			} else {
+				$this->add($criterion);
+			}
+			$isFirstCondition = false;
+		}
 		
 		// merge having
 		if ($having = $criteria->getHaving()) {
@@ -1563,6 +1573,45 @@ class Criteria implements IteratorAggregate
 			$this->add($rightCriterion);
 		}
 
+		return $this;
+	}
+
+	/**
+	 * Overrides Criteria::add() to use the default combine operator
+	 * @see        Criteria::add()
+	 *
+	 * @param      string|Criterion $p1 The column to run the comparison on (e.g. BookPeer::ID), or Criterion object
+	 * @param      mixed $value
+	 * @param      string $operator A String, like Criteria::EQUAL.
+	 * @param      boolean $preferColumnCondition If true, the condition is combined with an existing condition on the same column
+	*                      (necessary for Propel 1.4 compatibility). 
+	 *                     If false, the condition is combined with the last existing condition.
+	 *
+	 * @return     Criteria A modified Criteria object.
+	 */
+	public function addUsingOperator($p1, $value = null, $operator = null, $preferColumnCondition = true)
+	{
+		if ($this->defaultCombineOperator == Criteria::LOGICAL_OR) {
+			$this->defaultCombineOperator = Criteria::LOGICAL_AND;
+			return $this->addOr($p1, $value, $operator, $preferColumnCondition);
+		} else {
+			return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
+		}
+	}
+	
+	// Fluid operators
+	
+	public function _or()
+	{
+		$this->defaultCombineOperator = Criteria::LOGICAL_OR;
+		
+		return $this;
+	}
+
+	public function _and()
+	{
+		$this->defaultCombineOperator = Criteria::LOGICAL_AND;
+		
 		return $this;
 	}
 

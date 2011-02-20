@@ -360,6 +360,49 @@ echo $publisher;
 // </data>
 }}}
 
+== Easier OR in Queries ==
+
+Combining two generated filters with a logical `OR` used to be impossible in previous Propel versions - the alternative was to use `orWhere()` or `combine()`, but that meant losing all the smart defaults of generated filters.
+
+Propel 1.6 introduces a new method for Query objects: `_or()`. It just specifies that the next condition will be combined with a logical `OR` rather than an `AND`.
+
+{{{
+#!php
+<?php
+// Basic usage: _or() as a drop-in replacement for orWhere()
+$books = BookQuery::create()
+  ->where('Book.Title = ?', 'War And Peace')
+  ->_or()
+  ->where('Book.Title LIKE ?', 'War%')
+  ->find();
+// SELECT * FROM book WHERE book.TITLE = 'War And Peace' OR book.TITLE LIKE 'War%'
+
+// _or() also works on generated filters:
+$books = BookQuery::create()
+  ->filterByTitle('War And Peace')
+  ->_or()
+  ->filterByTitle(''War%')
+  ->find();
+// SELECT * FROM book WHERE book.TITLE = 'War And Peace' OR book.TITLE LIKE 'War%'
+
+// _or() also works on embedded queries
+$books = BookQuery::create()
+  ->filterByTitle('War and Peace')
+  ->_or()
+  ->useAuthorQuery()
+    ->filterByName('Leo Tolstoi')
+  ->endUse()
+  ->find();
+// SELECT book.* from book
+// INNER JOIN author ON book.AUTHOR_ID = author.ID
+// WHERE book.TITLE = 'War and Peace'
+//    OR author.NAME = 'Leo Tolstoi'
+}}}
+
+This new method is implemented in the `Criteria` class, so it also works for the old-style queries (using `add()` for conditions).
+
+'''Tip''': Since `ModelCriteria::orWhere()` is a synonym for `->_or()->where()`, it is now deprecated.
+
 == Multiple Buildtime Connections ==
 
 Propel 1.5 used the `build.properties` for buildtime connection settings. This had one major drawback: it used to be impossible to deal with several connections at buildtime, let alone several RDBMS.

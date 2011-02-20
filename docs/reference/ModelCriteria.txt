@@ -597,14 +597,15 @@ $books = BookQuery::create()
   ->where('Book.Title = ?', 'War And Peace')
   ->where('Book.PublishedAt > ?', $date)
   ->find();
-// For conditions chained with OR, use orWhere() instead of where()
+// For conditions chained with OR, use _or() before where()
 $books = BookQuery::create()
   ->where('Book.Title = ?', 'War And Peace')
-  ->orWhere('Book.Title LIKE ?', 'War%')
+  ->_or()
+  ->where('Book.Title LIKE ?', 'War%')
   ->find();
 }}}
 
-The use of `where()` and `orWhere()` doesn't allow logically complex conditions, that you would write in SQL with parenthesis. For such cases, create named conditions with `condition()`, and then combine them in an array that you can pass to `where()` instead of a single condition, as follows:
+`_or()` can only combine one condition, therefore it's not suitable for logically complex conditions, that you would write in SQL with parenthesis. In such cases, you must create named conditions with `condition()`, and then combine them in an array that you can pass to `where()` instead of a single condition, as follows:
 
 {{{
 #!php
@@ -633,6 +634,26 @@ $books = BookQuery::create()
   //  AND
   //  (book.PUBLISHED_AT <= $end AND book.PUBLISHED_AT >= $begin)
   // );
+}}}
+
+'''Tip''': `_or()` also works for embedded queries, called before a `useXXXQuery()`:
+
+{{{
+#!php
+<?php
+$books = BookQuery::create()
+  ->filterByTitle('War and Peace')
+  ->_or()
+  ->useAuthorQuery()
+    ->filterByName('Leo Tolstoi')
+  ->endUse()
+  ->find();
+
+// example Query generated for a MySQL database
+$query = 'SELECT book.* from book
+INNER JOIN author ON book.AUTHOR_ID = author.ID
+WHERE book.TITLE = :p1'   // :p1 => 'War and Peace'
+   OR author.NAME = :p2'; // :p2 => 'Leo Tolstoi'
 }}}
 
 === Joining Tables ===
@@ -950,9 +971,9 @@ limit($limit)
 offset($offset)
 where($clause, $value)
 where($conditions, $operator)
+_or()
 filterBy($column, $value, $comparison)
 filterByArray($conditions)
-orWhere($conditions, $operator)
 condition($name, $clause, $value)
 combine($conditions, $operator = 'and', $name)
 having($clause, $value)

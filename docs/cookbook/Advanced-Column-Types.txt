@@ -92,7 +92,7 @@ echo $book->getStyle(); // novel
 // Trying to set a value not in the valueSet throws an exception
 
 // ENUM columns are also searchable, using the generated filterByXXX() method
-// or other ModelCritera methods (like where(), orWhere(), condition())
+// or other ModelCritera methods (like where(), condition())
 $books = BookQuery::create()
   ->filterByStyle('novel')
   ->find();
@@ -198,4 +198,4 @@ $books = BookQuery::create()
 
 '''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
-'''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, `orWhere()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns. 
+'''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns. 

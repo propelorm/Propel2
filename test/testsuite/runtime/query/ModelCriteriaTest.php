@@ -215,6 +215,20 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a string clause');
 	}
 
+	public function testWhereUsesDefaultOperator()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->where('Book.Id = ?', 12);
+		$c->_or();
+		$c->where('Book.Title = ?', 'foo');
+		$sql = 'SELECT  FROM `book` WHERE (book.ID = :p1 OR book.TITLE = :p2)';
+		$params = array(
+			array('table' => 'book', 'column' => 'ID', 'value' => '12'),
+			array('table' => 'book', 'column' => 'TITLE', 'value' => 'foo'),
+		);
+		$this->assertCriteriaTranslation($c, $sql, $params, 'where() uses the default operator');
+	}
+
 	public function testWhereTwiceSameColumn()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');

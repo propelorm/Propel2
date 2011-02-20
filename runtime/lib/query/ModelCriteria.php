@@ -277,7 +277,7 @@ class ModelCriteria extends Criteria
 			// where('Book.AuthorId = ?', 12)
 			$criterion = $this->getCriterionForClause($clause, $value);
 		}
-		$this->addAnd($criterion, null, null);
+		$this->addUsingOperator($criterion, null, null);
 
 		return $this;
 	}
@@ -295,6 +295,7 @@ class ModelCriteria extends Criteria
 	 * </code>
 	 *
 	 * @see Criteria::addOr()
+	 * @deprecated Use _or()->where() instead
 	 *
 	 * @param      string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
 	 * @param      mixed  $value A value for the condition
@@ -303,16 +304,9 @@ class ModelCriteria extends Criteria
 	 */
 	public function orWhere($clause, $value = null)
 	{
-		if (is_array($clause)) {
-			// orWhere(array('cond1', 'cond2'), Criteria::LOGICAL_OR)
-			$criterion = $this->getCriterionForConditions($clause, $value);
-		} else {
-			// orWhere('Book.AuthorId = ?', 12)
-			$criterion = $this->getCriterionForClause($clause, $value);
-		}
-		$this->addOr($criterion, null, null);
-
-		return $this;
+		return $this
+			->_or()
+			->where($clause, $value);
 	}
 
 	/**
@@ -907,7 +901,7 @@ class ModelCriteria extends Criteria
 	 *
 	 * @return    ModelCriteria The primary criteria object
 	 */
-	public function mergeWith(Criteria $criteria, $operator = Criteria::LOGICAL_AND)
+	public function mergeWith(Criteria $criteria, $operator = null)
 	{
 		parent::mergeWith($criteria, $operator);
 
@@ -1933,8 +1927,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function addUsingAlias($p1, $value = null, $operator = null)
 	{
-		$key = $this->getAliasedColName($p1);
-		return $this->containsKey($key) ? $this->addAnd($key, $value, $operator) : $this->add($key, $value, $operator);
+		return $this->addUsingOperator($this->getAliasedColName($p1), $value, $operator);
 	}
 
 	/**
