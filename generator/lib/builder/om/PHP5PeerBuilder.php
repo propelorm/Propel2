@@ -821,7 +821,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 * @param      ".$this->getObjectClassname()." \$value A ".$this->getObjectClassname()." object.
 	 * @param      string \$key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(".$this->getObjectClassname()." \$obj, \$key = null)
+	public static function addInstanceToPool(\$obj, \$key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if (\$key === null) {";
@@ -1815,7 +1815,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(".$this->getObjectClassname()." \$obj, \$cols = null)
+	public static function doValidate(\$obj, \$cols = null)
 	{
 		\$columns = array();
 
