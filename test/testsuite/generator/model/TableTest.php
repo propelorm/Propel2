@@ -243,4 +243,26 @@ EOF;
 		$this->assertEquals($table->getName(), "foo.bar");
 	}
 
+	public function testRemoveValidatorForColumn()
+	{
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$schema = <<<EOF
+<database name="test">
+  <table name="table1">
+    <column name="id" primaryKey="true" />
+    <column name="title1" type="VARCHAR" />
+    <validator column="title1">
+      <rule name="minLength" value="4" message="Username must be at least 4 characters !" />
+    </validator>
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+		$table1 = $appData->getDatabase('test')->getTable('table1');
+		$title1Column = $table1->getColumn('title1');
+		$this->assertNotNull($title1Column->getValidator());
+		$table1->removeValidatorForColumn('title1');
+		$this->assertNull($title1Column->getValidator());
+	}
+
 }

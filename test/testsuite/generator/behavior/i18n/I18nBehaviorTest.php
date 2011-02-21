@@ -207,6 +207,56 @@ EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
 
+	public function testModiFyTableMovesValidatorsOnI18nColumns()
+	{
+		$schema = <<<EOF
+<database name="i18n_behavior_test_0">
+	<table name="i18n_behavior_test_0">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="title" type="VARCHAR" />
+		<validator column="title">
+			<rule name="minLength" value="4" message="title must be at least 4 characters !" />
+		</validator>
+		<behavior name="i18n">
+			<parameter name="i18n_columns" value="title" />
+		</behavior>
+	</table>
+</database>
+EOF;
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$table = $builder->getDatabase()->getTable('i18n_behavior_test_0');
+		$this->assertEquals(array(), $table->getValidators());
+		$i18nTable = $builder->getDatabase()->getTable('i18n_behavior_test_0_i18n');
+		$validators = $i18nTable->getValidators();
+		$this->assertEquals(1, count($validators));
+		$this->assertEquals('title', $validators[0]->getColumnName());
+	}
+
+	public function testModiFyTableDoesNotMoveValidatorsOnNonI18nColumns()
+	{
+		$schema = <<<EOF
+<database name="i18n_behavior_test_0">
+	<table name="i18n_behavior_test_0">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<validator column="id">
+			<rule name="minLength" value="4" message="title must be at least 4 characters !" />
+		</validator>
+		<column name="title" type="VARCHAR" />
+		<behavior name="i18n">
+			<parameter name="i18n_columns" value="title" />
+		</behavior>
+	</table>
+</database>
+EOF;
+		$builder = new PropelQuickBuilder();
+		$builder->setSchema($schema);
+		$table = $builder->getDatabase()->getTable('i18n_behavior_test_0');
+		$this->assertEquals(1, count($table->getValidators()));
+		$i18nTable = $builder->getDatabase()->getTable('i18n_behavior_test_0_i18n');
+		$this->assertEquals(array(), $i18nTable->getValidators());
+	}
+
 	public function testModiFyTableUsesCustomI18nTableName()
 	{
 		$schema = <<<EOF

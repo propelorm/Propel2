@@ -767,6 +767,20 @@ class Table extends ScopedElement implements IDMethod
 			return $this->addValidator($validator);
 		}
 	}
+	
+	/**
+	 * Removes validators based on a column name
+	 *
+	 * @param string the name of the column bearing a validator
+	 */
+	public function removeValidatorForColumn($columnName)
+	{
+		foreach ($this->validatorList as $key => $validator) {
+			if ($validator->getColumnName() == $columnName) {
+				unset($this->validatorList[$key]);
+			}
+		}
+	}
 
 	/**
 	 * A utility function to create a new foreign key

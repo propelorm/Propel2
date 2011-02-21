@@ -139,11 +139,18 @@ class I18nBehavior extends Behavior
 				if (!$table->hasColumn($columnName)) {
 					throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
 				}
-				$i18nTable->addColumn(clone $table->getColumn($columnName));
-				// FIXME: also move FKs, indices, and validators on this column
+				$column = $table->getColumn($columnName);
+				// add the column
+				$i18nColumn = $i18nTable->addColumn(clone $column);
+				// add related validators
+				if ($validator = $column->getValidator()) {
+					$i18nValidator = $i18nTable->addValidator(clone $validator);
+				}
+				// FIXME: also move FKs, and indices on this column
 			}
 			if ($table->hasColumn($columnName)) {
 				$table->removeColumn($columnName);
+				$table->removeValidatorForColumn($columnName);
 			}
 		}
 	}
