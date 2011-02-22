@@ -452,8 +452,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 				$this->quoteIdentifier($index->getTable()->getName()),
 				$this->quoteIdentifier($index->getName())
 			);
-		}
-		else {
+		} else {
 			return parent::getDropIndexDDL($index);
 		}
 	}
