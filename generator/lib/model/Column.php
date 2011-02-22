@@ -1246,7 +1246,12 @@ class Column extends XMLElement
 			}
 		}
 	}
-
+	
+	public function __clone()
+	{
+		$this->referrers = null;
+	}
+	
 	public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null) {
 		return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $phpNamingMethod, $namePrefix));
 	}
