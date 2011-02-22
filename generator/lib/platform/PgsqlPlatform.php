@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author     Niklas Närhinen <niklas@narhinen.net>
  * @version    $Revision$
  * @package    propel.generator.platform
  */
@@ -432,5 +433,28 @@ ALTER TABLE %s ALTER COLUMN %s;
 			$ret .= $this->getAddColumnDDL($column);
 		}
 		return $ret;
+	}
+	
+	/**
+	 * Overrides the implementation from DefaultPlatform
+	 * 
+	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 * @return     string
+	 * @see        DefaultPlatform::getDropIndexDDL
+	 */
+	public function getDropIndexDDL(Index $index)
+	{
+		if ($index instanceof Unique) {
+			$pattern = "
+	ALTER TABLE %s DROP CONSTRAINT %s;
+	";
+			return sprintf($pattern, 
+				$this->quoteIdentifier($index->getTable()->getName()),
+				$this->quoteIdentifier($index->getName())
+			);
+		}
+		else {
+			return parent::getDropIndexDDL($index);
+		}
 	}
 }
