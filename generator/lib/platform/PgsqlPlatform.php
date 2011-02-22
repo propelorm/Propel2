@@ -379,6 +379,8 @@ ALTER TABLE %s ALTER COLUMN %s;
 				case 'defaultValueType':
 					continue;
 				case 'size':
+				case 'type':
+				case 'scale':
 					$sqlType = $toColumn->getDomain()->getSqlType();
 					if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
 						$sqlType = $toColumn->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
