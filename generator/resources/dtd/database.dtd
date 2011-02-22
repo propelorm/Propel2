@@ -100,7 +100,6 @@ PHP class or method name.
   defaultExpr CDATA #IMPLIED
   autoIncrement (true|false) "false"
   inheritance (single|false) "false"
-  inputValidator CDATA #IMPLIED
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"

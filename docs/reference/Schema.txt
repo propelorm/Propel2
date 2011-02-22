@@ -179,7 +179,6 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
     [primaryString = "true|{false}"]
     [phpNamingMethod = "nochange|underscore|phpname"]
     [inheritance = "single|{false}"]
-    [inputValidator = "NameOfInputValidatorClass"]
    >
    [<inheritance key="/KeyName/" class="/ClassName/" [extends="/BaseClassName/"] />]
    </column>

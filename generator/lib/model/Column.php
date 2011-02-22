@@ -86,9 +86,6 @@ class Column extends XMLElement
 	private $isEnumeratedClasses;
 	private $inheritanceList;
 	private $needsTransactionInPostgres; //maybe this can be retrieved from vendorSpecificInfo
-
-	/** class name to do input validation on this column */
-	private $inputValidator = null;
 	
 	/**
 	 * @var stores the possible values of an ENUM column
@@ -242,7 +239,6 @@ class Column extends XMLElement
 			&& $this->inheritanceType !== "false"); // here we are only checking for 'false', so don't
 			// use boleanValue()
 
-			$this->inputValidator = $this->getAttribute("inputValidator");
 			$this->description = $this->getAttribute("description");
 		} catch (Exception $e) {
 			throw new EngineException("Error setting up column " . var_export($this->getAttribute("name"), true) . ": " . $e->getMessage());
@@ -1111,14 +1107,6 @@ class Column extends XMLElement
 	public function getPhpDefaultValue()
 	{
 		return $this->domain->getPhpDefaultValue();
-	}
-
-	/**
-	 * Returns the class name to do input validation
-	 */
-	public function getInputValidator()
-	{
-		return $this->inputValidator;
 	}
 
 	/**

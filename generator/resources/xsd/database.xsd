@@ -424,7 +424,6 @@
 		</xs:attribute>
 		<xs:attribute name="autoIncrement" type="xs:boolean" default="false"/>
 		<xs:attribute name="inheritance" type="inh_option" default="false"/>
-		<xs:attribute name="inputValidator" type="xs:string" use="optional"/>
 		<xs:attribute name="phpNamingMethod" type="phpnamingmethod" use="optional">
 			<xs:annotation>
 				<xs:documentation xml:lang="en">
