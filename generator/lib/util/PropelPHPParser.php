@@ -17,6 +17,14 @@ else {
 
 /**
  * Service class for parsing PHP code strings and editing them
+ * @example Basic usage:
+ * <code>
+ * $script = file_get_contents($fileName);
+ * $parser = new PropelPHPParser($script);
+ * $parser->removeMethod('foo');
+ * $parser->replaceMethod('bar', '// bar method was removed');
+ * file_put_contents($fileName, $parser->getCode());
+ * </code>
  *
  * @author     François Zaninotto
  * @version    $Revision$
