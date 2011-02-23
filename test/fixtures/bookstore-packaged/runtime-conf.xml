@@ -42,11 +42,7 @@
 				<adapter>sqlite</adapter>
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
-					<phptype>sqlite</phptype>
-					<hostspec>localhost</hostspec>
-					<database>./bookstore.db</database>
-					<username></username>
-					<password></password>
+					<dsn>sqlite:/var/tmp/test.db</dsn>
 				</connection>
 			</datasource>
 			<datasource id="bookstore-log">
@@ -54,11 +50,7 @@
 				<adapter>sqlite</adapter>
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
-					<phptype>sqlite</phptype>
-					<hostspec>localhost</hostspec>
-					<database>./bookstore-log.db</database>
-					<username></username>
-					<password></password>
+					<dsn>sqlite:/var/tmp/test.db</dsn>
 				</connection>
 			</datasource>
 		</datasources>
