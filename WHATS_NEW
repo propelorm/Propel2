@@ -698,6 +698,7 @@ There wasn't any one-stop place to read about the abilities of the generated Act
 
 == Miscellaneous ==
 
+ * The runtime performance was tweaked on various places. Small boosts may be visible when logging is enabled, and on large batch processes.
  * A new `dbd2propel` task allows to convert [http://www.fabforce.net/dbdesigner4/ DBDesigner 4] models to a Propel schema in an easier way than the previous PHP script located under the `contrib/` folder. See the new [wiki:Documentation/1.6/DBDesigner DBDesigner2Propel chapter] for details.
  * By the way, the `contrib/` directory was removed from the core - it was not maintained anymore. Previous versions can be found in the 1.5 branch.
  * `ModelCriteria::keepQuery()` is now ON by default. This will remove bad surprises when doing a `count()` before a `find()`, and has a very limited impact on performance. You should not need to manually call `keepQuery()` anymore.
