@@ -99,5 +99,3 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 	}
 
 }
-
-?>

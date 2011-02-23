@@ -100,6 +100,13 @@ class PropelPDO extends PDO
 	private $logLevel = Propel::LOG_DEBUG;
 	
 	/**
+	 * The runtime configuration
+	 *
+	 * @var PropelConfiguration
+	 */
+	protected $configuration;
+	
+	/**
 	 * The default value for runtime config item "debugpdo.logging.methods".
 	 *
 	 * @var        array
@@ -135,6 +142,29 @@ class PropelPDO extends PDO
 			$this->configureStatementClass('DebugPDOStatement', $suppress = true);
 			$this->log('Opening connection', null, __METHOD__, $debug);
 		}
+	}
+	
+	/**
+	 * Inject the runtime configuration
+   *
+	 * @param PropelConfiguration $configuration
+	 */
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+	}
+	
+	/**
+	 * Get the runtime configuration
+	 *
+	 * @return PropelConfiguration
+	 */
+	public function getConfiguration()
+	{
+		if (null === $this->configuration) {
+			$this->configuration = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
+		}
+		return $this->configuration;
 	}
 	
 	/**
@@ -602,7 +632,7 @@ class PropelPDO extends PDO
 	 */
 	protected function getLoggingConfig($key, $defaultValue)
 	{
-		return Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->getParameter("debugpdo.logging.$key", $defaultValue);
+		return $this->getConfiguration()->getParameter("debugpdo.logging.$key", $defaultValue);
 	}
 	
 	/**
@@ -629,44 +659,42 @@ class PropelPDO extends PDO
 		// Iterate through each detail that has been configured to be enabled
 		foreach ($logDetails as $detailName) {
 			
-			if (!$this->getLoggingConfig("details.$detailName.enabled", false))
+			if (!$this->getLoggingConfig('details.$detailName.enabled', false))
 				continue;
 			
 			switch ($detailName) {
 				
 				case 'slow';
-					$value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig("details.$detailName.threshold", self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
+					$value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig('details.slow.threshold', self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
 					break;
 				
 				case 'time':
-					$value = number_format($now['microtime'] - $debugSnapshot['microtime'], $this->getLoggingConfig("details.$detailName.precision", 3)) . ' sec';
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 10), ' ', STR_PAD_LEFT);
+					$value = number_format($now['microtime'] - $debugSnapshot['microtime'], $this->getLoggingConfig('details.time.precision', 3)) . ' sec';
+					$value = str_pad($value, $this->getLoggingConfig('details.time.pad', 10), ' ', STR_PAD_LEFT);
 					break;
 				
 				case 'mem':
-					$value = self::getReadableBytes($now['memory_get_usage'], $this->getLoggingConfig("details.$detailName.precision", 1));
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 9), ' ', STR_PAD_LEFT);
+					$value = self::getReadableBytes($now['memory_get_usage'], $this->getLoggingConfig('details.mem.precision', 1));
+					$value = str_pad($value, $this->getLoggingConfig('details.mem.pad', 9), ' ', STR_PAD_LEFT);
 					break;
 				
 				case 'memdelta':
 					$value = $now['memory_get_usage'] - $debugSnapshot['memory_get_usage'];
-					$value = ($value > 0 ? '+' : '') . self::getReadableBytes($value, $this->getLoggingConfig("details.$detailName.precision", 1));
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 10), ' ', STR_PAD_LEFT);
+					$value = ($value > 0 ? '+' : '') . self::getReadableBytes($value, $this->getLoggingConfig('details.memdelta.precision', 1));
+					$value = str_pad($value, $this->getLoggingConfig('details.memdelta.pad', 10), ' ', STR_PAD_LEFT);
 					break;
 				
 				case 'mempeak':
-					$value = self::getReadableBytes($now['memory_get_peak_usage'], $this->getLoggingConfig("details.$detailName.precision", 1));
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 9), ' ', STR_PAD_LEFT);
+					$value = self::getReadableBytes($now['memory_get_peak_usage'], $this->getLoggingConfig('details.mempeak.precision', 1));
+					$value = str_pad($value, $this->getLoggingConfig('details.mempeak.pad', 9), ' ', STR_PAD_LEFT);
 					break;
 				
 				case 'querycount':
-					$value = $this->getQueryCount();
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 2), ' ', STR_PAD_LEFT);
+					$value = str_pad($this->getQueryCount(), $this->getLoggingConfig('details.querycount.pad', 2), ' ', STR_PAD_LEFT);
 					break;
 				
 				case 'method':
-					$value = $methodName;
-					$value = str_pad($value, $this->getLoggingConfig("details.$detailName.pad", 28), ' ', STR_PAD_RIGHT);
+					$value = str_pad($methodName, $this->getLoggingConfig('details.method.pad', 28), ' ', STR_PAD_RIGHT);
 					break;
 				
 				default:
