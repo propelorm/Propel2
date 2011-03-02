@@ -259,7 +259,7 @@ class AppData
 					// join tables
 					foreach ($addDb->getTables() as $addTable) {
 						if ($db->getTable($addTable->getName())) {
-							throw new Exception(sprintf('Duplicate table found: %s.', $addDbName));
+							throw new Exception(sprintf('Duplicate table found: %s.', $addTable->getName()));
 						}
 						$db->addTable($addTable);
 					}
