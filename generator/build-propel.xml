@@ -557,9 +557,6 @@
     <echo message="| array dump for improved performance.     |"/>
     <echo message="|                                          |"/>
     <echo message="+------------------------------------------+"/>
-    
-    <echo>Output file: ${propel.runtime.phpconf.file}</echo>
-    <echo>XMLFile: ${propel.conf.dir}/${propel.runtime.conf.file}</echo>
 
     <propel-convert-conf
       targetDatabase="${propel.database}"
@@ -568,6 +565,7 @@
       xmlConfFile="${propel.conf.dir}/${propel.runtime.conf.file}"
       outputDirectory="${propel.phpconf.dir}"
       outputFile="${propel.runtime.phpconf.file}"
+      outputClassmapFile="${propel.runtime.phpconf-classmap.file}"
       packageObjectModel="${propel.packageObjectModel}">
       <schemafileset dir="${propel.schema.dir}"
         includes="${propel.schema.sql.includes}"

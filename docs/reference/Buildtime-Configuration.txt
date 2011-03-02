@@ -239,7 +239,7 @@ propel.defaultTimeFormat = {%X}|string
 propel.defaultDateFormat = {%x}|string
 }}}
 
-=== Directories ===
+=== Directories and Filenames ===
 
 {{{
 #!ini
@@ -249,22 +249,30 @@ propel.defaultDateFormat = {%x}|string
 # the path from which the script is called.
 propel.project.dir = {current_path}|string
 
-# The directory where Propel expects to find your `runtime-conf.xml` file.
+# The directory where Propel expects to find the XML configuration files.
 propel.conf.dir = ${propel.project.dir}
+# The XML configuration file names
+propel.runtime.conf.file = runtime-conf.xml
+propel.buildtime.conf.file = buildtime-conf.xml
 
 # The directory where Propel expects to find your `schema.xml` file.
 propel.schema.dir = ${propel.project.dir}
+# The schema base name
+propel.default.schema.basename = schema
 
-# The default top-level directory for output of classes, sql, config, etc.
+# The directory where Propel should output classes, sql, config, etc.
 propel.output.dir = ${propel.project.dir}/build
 
-# The directory where Propel will create generated object model classes.
+# The directory where Propel should output generated object model classes.
 propel.php.dir = ${propel.output.dir}/classes
 
-# The directory where Propel will create the php-ified version of your `runtime-conf.xml`.
+# The directory where Propel should output the compiled runtime configuration.
 propel.phpconf.dir = ${propel.output.dir}/conf
+# The name of the compiled configuration and classmap files
+propel.runtime.phpconf.file = ${propel.project}-conf.php
+propel.runtime.phpconf-classmap.file = ${propel.project}-classmap.php
 
-# The directory where Propel will place generated DDL (or data insert statements, etc.)
+# The directory where Propel should output the generated DDL (or data insert statements, etc.)
 propel.sql.dir = ${propel.output.dir}/sql
 }}}
 
