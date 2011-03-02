@@ -35,6 +35,8 @@ PHP class or method name.
   heavyIndexing (true|false) "false"
   tablePrefix CDATA #IMPLIED
   defaultStringFormat CDATA #IMPLIED
+  xmlns:xsi CDATA #IMPLIED
+  xsi:noNamespaceSchemaLocation CDATA #IMPLIED
 >
 
 <!ELEMENT external-schema EMPTY>
@@ -89,7 +91,7 @@ PHP class or method name.
         | DATE   | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
         | NULL   | OTHER   | PHP_OBJECT  | DISTINCT   | STRUCT    | ARRAY
         | BLOB   | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
-        | DOUBLE | BOOLEAN | OBJECT      | ARRAY      | ENUM
+        | DOUBLE | BOOLEAN | OBJECT      | ENUM
     ) "VARCHAR"
   phpType CDATA #IMPLIED
   sqlType CDATA #IMPLIED
