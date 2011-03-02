@@ -775,6 +775,23 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= ")
 	{";
 	}
+	
+	protected function getAccessorLazyLoadSnippet(Column $col)
+	{
+		if ($col->isLazyLoad()) {
+			$clo = strtolower($col->getName());
+			$defaultValueString = 'null';
+			$def = $col->getDefaultValue();
+			if ($def !== null && !$def->isExpression()) {
+				$defaultValueString = $this->getDefaultValueString($col);
+			}
+			return "
+		if (!\$this->{$clo}_isLoaded && \$this->{$clo} === {$defaultValueString} && !\$this->isNew()) {
+			\$this->load{$col->getPhpName()}(\$con);
+		}
+";
+		}
+	}
 
 	/**
 	 * Adds the body of the temporal accessor
@@ -818,11 +835,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		if ($col->isLazyLoad()) {
-			$script .= "
-		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
-			\$this->load$cfc(\$con);
-		}
-";
+			$script .= $this->getAccessorLazyLoadSnippet($col);
 		}
 		$script .= "
 		if (\$this->$clo === null) {
@@ -913,11 +926,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$clo = strtolower($col->getName());
 		$cloUnserialized = $clo.'_unserialized';
 		if ($col->isLazyLoad()) {
-			$script .= "
-		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
-			\$this->load$cfc(\$con);
-		}
-";
+			$script .= $this->getAccessorLazyLoadSnippet($col);
 		}
 
 		$script .= "
@@ -953,11 +962,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$clo = strtolower($col->getName());
 		$cloUnserialized = $clo.'_unserialized';
 		if ($col->isLazyLoad()) {
-			$script .= "
-		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
-			\$this->load$cfc(\$con);
-		}
-";
+			$script .= $this->getAccessorLazyLoadSnippet($col);
 		}
 
 		$script .= "
@@ -996,11 +1001,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$cfc = $col->getPhpName();
 		$clo = strtolower($col->getName());
 		if ($col->isLazyLoad()) {
-			$script .= "
-		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
-			\$this->load$cfc(\$con);
-		}
-";
+			$script .= $this->getAccessorLazyLoadSnippet($col);
 		}
 
 		$script .= "
@@ -1111,11 +1112,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$cfc = $col->getPhpName();
 		$clo = strtolower($col->getName());
 		if ($col->isLazyLoad()) {
-			$script .= "
-		if (!\$this->".$clo."_isLoaded && \$this->$clo === null && !\$this->isNew()) {
-			\$this->load$cfc(\$con);
-		}
-";
+			$script .= $this->getAccessorLazyLoadSnippet($col);
 		}
 
 		$script .= "
