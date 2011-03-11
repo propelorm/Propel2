@@ -146,13 +146,13 @@ abstract class XMLElement
         return $class;
       }
     }
-    // first fallback: maybe the behavior is loaded or autoloaded
+    // fallback: maybe the behavior is loaded or autoloaded
     $gen = new PhpNameGenerator();
     if(class_exists($class = $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME)) . 'Behavior')) {
       return $class;
     }
-    // second fallback: use parent behavior class (mostly for unit tests)
-    return 'Behavior';
+    
+    throw new InvalidArgumentException(sprintf('Unknown behavior "%s"; make sure you configured the propel.behavior.%s.class setting in your build.properties', $bname, $bname));
   }
 
 	/**

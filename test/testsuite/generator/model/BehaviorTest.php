@@ -96,6 +96,23 @@ EOF;
 		$this->assertEquals(array('create_column' => 'created_on', 'update_column' => 'updated_on'), $behavior->getParameters(), 'XmlToAppData sets the behavior parameters correctly');
 	}
 
+  /**
+   * @expectedException InvalidArgumentException
+   */
+	public function testUnkownBehavior()
+	{
+		$xmlToAppData = new XmlToAppData();
+		$schema = <<<EOF
+<database name="test1">
+  <table name="table1">
+    <column name="id" type="INTEGER" primaryKey="true" />
+    <behavior name="foo" />
+  </table>
+</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+	}
+
 	public function testModifyTable()
 	{
 		$xmlToAppData = new XmlToAppData();
@@ -118,7 +135,7 @@ EOF;
 		$xmlToAppData = new XmlToAppData();
 		$schema = <<<EOF
 <database name="test1">
-  <behavior name="foo" />
+  <behavior name="timestampable" />
   <table name="table1">
     <column name="id" type="INTEGER" primaryKey="true" />
   </table>
@@ -126,7 +143,7 @@ EOF;
 EOF;
 		$appData = $xmlToAppData->parseString($schema);
 		$table = $appData->getDatabase('test1')->getTable('table1');
-		$this->assertTrue(array_key_exists('foo', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
+		$this->assertTrue(array_key_exists('timestampable', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
 	}
   
   public function testGetColumnForParameter()
