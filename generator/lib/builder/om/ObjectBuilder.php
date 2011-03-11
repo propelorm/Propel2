@@ -100,6 +100,8 @@ abstract class ObjectBuilder extends OMBuilder
 				}
 			} else if ($col->isEnumType()) {
 				$this->addEnumMutator($script, $col);
+			} else if ($col->isBooleanType()) {
+				$this->addBooleanMutator($script, $col);
 			} else {
 				$this->addDefaultMutator($script, $col);
 			}

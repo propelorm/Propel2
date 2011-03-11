@@ -1701,6 +1701,41 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 		$this->addMutatorClose($script, $col);
 	}
+
+	/**
+	 * Adds setter method for boolean columns.
+	 * @param      string &$script The script will be modified in this method.
+	 * @param      Column $col The current column.
+	 * @see        parent::addColumnMutators()
+	 */
+	protected function addBooleanMutator(&$script, Column $col)
+	{
+		$clo = strtolower($col->getName());
+
+		$this->addMutatorOpen($script, $col);
+
+			$script .= "
+		if (\$v !== null) {
+			if (is_string(\$v)) {
+				\$v = in_array(strtolower(\$v), array('false', 'off', '-', 'no', 'n', '0')) ? false : true;
+			} else {
+				\$v = (boolean) \$v;
+			}
+		}
+";
+
+		$script .= "
+		if (\$this->$clo !== \$v";
+		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+			$script .= " || \$this->isNew()";
+		}
+		$script .= ") {
+			\$this->$clo = \$v;
+			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
+		}
+";
+		$this->addMutatorClose($script, $col);
+	}
 	
 	/**
 	 * Adds setter method for "normal" columns.
