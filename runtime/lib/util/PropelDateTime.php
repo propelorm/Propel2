@@ -34,21 +34,46 @@ class PropelDateTime extends DateTime
 	 * @var        string
 	 */
 	private $tzString;
-
+	
 	/**
-	 * Convenience method to enable a more fluent API.
-	 * @param      string $date Date/time value.
-	 * @param      DateTimeZone $tz (optional) timezone
+	 * Factory method to get a DateTime object from a temporal input
+	 *
+	 * @param mixed $value The value to convert (can be a string, a timestamp, or another DateTime)
+	 * @param DateTimeZone $timeZone (optional) timezone
+	 * @param string $dateTimeClass The class of the object to create, defaults to DateTime
+	 *
+	 * @return mixed null, or an instance of $dateTimeClass
 	 */
-	public static function newInstance($date, DateTimeZone $tz = null)
+	public static function newInstance($value, DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
 	{
-		if ($tz) {
-			return new DateTime($date, $tz);
-		} else {
-			return new DateTime($date);
+		if ($value instanceof DateTime) {
+			return $value;
 		}
+		if ($value === null || $value === '') {
+			// '' is seen as NULL for temporal objects
+			// because DateTime('') == DateTime('now') -- which is unexpected
+			return null;
+		}
+		try {
+			if (is_numeric($value)) { // if it's a unix timestamp
+				$dateTimeObject = new $dateTimeClass('@' . $value, new DateTimeZone('UTC'));
+				// timezone must be explicitly specified and then changed
+				// because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
+				$dateTimeObject->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+			} else {
+				if ($timeZone === null) {
+					// stupid DateTime constructor signature
+					$dateTimeObject = new $dateTimeClass($value);
+				} else {
+					$dateTimeObject = new $dateTimeClass($value, $timeZone);
+				}
+			}
+		} catch (Exception $e) {
+			throw new PropelException('Error parsing date/time value: ' . var_export($value, true), $e);
+		}
+		return $dateTimeObject;
 	}
-
+	
 	/**
 	 * PHP "magic" function called when object is serialized.
 	 * Sets an internal property with the date string and returns properties

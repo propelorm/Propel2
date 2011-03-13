@@ -1474,47 +1474,24 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$fmt = var_export($this->getTemporalFormatter($col), true);
 
 		$script .= "
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-		// -- which is unexpected, to say the least.
-		if (\$v === null || \$v === '') {
-			\$dt = null;
-		} elseif (\$v instanceof DateTime) {
-			\$dt = \$v;
-		} else {
-			// some string/numeric value passed; we normalize that so that we can
-			// validate it.
-			try {
-				if (is_numeric(\$v)) { // if it's a unix timestamp
-					\$dt = new $dateTimeClass('@'.\$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a
-					// DateTime bug: http://bugs.php.net/bug.php?id=43003
-					\$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-				} else {
-					\$dt = new $dateTimeClass(\$v);
-				}
-			} catch (Exception \$x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export(\$v, true), \$x);
-			}
-		}
-
-		if ( \$this->$clo !== null || \$dt !== null ) {
-			// (nested ifs are a little easier to read in this case)
-
-			\$currNorm = (\$this->$clo !== null && \$tmpDt = new $dateTimeClass(\$this->$clo)) ? \$tmpDt->format($fmt) : null;
-			\$newNorm = (\$dt !== null) ? \$dt->format($fmt) : null;
-
-			if ( (\$currNorm !== \$newNorm) // normalized values don't match ";
+		\$dt = PropelDateTime::newInstance(\$v, null, '$dateTimeClass');
+		if (\$this->$clo !== null || \$dt !== null) {
+			\$currentDateAsString = (\$this->$clo !== null && \$tmpDt = new $dateTimeClass(\$this->$clo)) ? \$tmpDt->format($fmt) : null;
+			\$newDateAsString = \$dt ? \$dt->format($fmt) : null;";
 
 		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
 			$defaultValue = $this->getDefaultValueString($col);
 			$script .= "
-					|| (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default";
+			if ( (\$currentDateAsString !== \$newDateAsString) // normalized values don't match 
+				|| (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
+				 ) {";
+		} else {
+			$script .= "
+			if (\$currentDateAsString !== \$newDateAsString) {";
 		}
 
 		$script .= "
-					)
-			{
-				\$this->$clo = (\$dt ? \$dt->format($fmt) : null);
+				\$this->$clo = \$newDateAsString;
 				\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 			}
 		} // if either are not null
