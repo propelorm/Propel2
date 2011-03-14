@@ -1310,9 +1310,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      Column $col The current column.
 	 * @see        addMutatorOpen()
 	 **/
-	protected function addMutatorOpenBody(&$script, Column $col) {
+	protected function addMutatorOpenBody(&$script, Column $col)
+	{
 		$clo = strtolower($col->getName());
-				$cfc = $col->getPhpName();
+		$cfc = $col->getPhpName();
 		if ($col->isLazyLoad()) {
 			$script .= "
 		// explicitly set the is-loaded flag to true for this lazy load col;
@@ -1461,15 +1462,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$this->addTemporalMutatorComment($script, $col);
 		$this->addMutatorOpenOpen($script, $col);
-		if ($col->isLazyLoad()) {
-			$script .= "
-		// explicitly set the is-loaded flag to true for this lazy load col;
-		// it doesn't matter if the value is actually set or not (logic below) as
-		// any attempt to set the value means that no db lookup should be performed
-		// when the get$cfc() method is called.
-		\$this->".$clo."_isLoaded = true;
-";
-		}
+		$this->addMutatorOpenBody($script, $col);
 
 		$fmt = var_export($this->getTemporalFormatter($col), true);
 
@@ -1508,8 +1501,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	/**
 	 * Sets the value of [$clo] column to a normalized version of the date/time value specified.
 	 * ".$col->getDescription()."
-	 * @param      mixed \$v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
+	 * @param      mixed \$v string, integer (timestamp), or DateTime value.
+	 *               Empty strings are treated as NULL.
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */";
 	}
@@ -1689,7 +1682,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		$clo = strtolower($col->getName());
 
-		$this->addMutatorOpen($script, $col);
+		$this->addBooleanMutatorComment($script, $col);
+		$this->addMutatorOpenOpen($script, $col);
+		$this->addMutatorOpenBody($script, $col);
 
 			$script .= "
 		if (\$v !== null) {
@@ -1713,7 +1708,25 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 		$this->addMutatorClose($script, $col);
 	}
-	
+
+	public function addBooleanMutatorComment(&$script, Column $col)
+	{
+		$cfc = $col->getPhpName();
+		$clo = strtolower($col->getName());
+
+		$script .= "
+	/**
+	 * Sets the value of the [$clo] column. 
+	 * Non-boolean arguments are converted using the following rules:
+	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * ".$col->getDescription()."
+	 * @param      boolean|integer|string \$v The new value
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
+	 */";
+	}
+		
 	/**
 	 * Adds setter method for "normal" columns.
 	 * @param      string &$script The script will be modified in this method.

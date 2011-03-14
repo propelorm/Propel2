@@ -570,21 +570,68 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 	/**
 	 * Filter the query on the $colName column
 	 * ";
-		if ($col->isNumericType() || $col->isTemporalType()) {
+		if ($col->isNumericType()) {
 			$script .= "
-	 * @param     " . $col->getPhpType() . "|array \$$variableName The value to use as filter.
-	 *            Accepts an associative array('min' => \$minValue, 'max' => \$maxValue)";
+	 * Example usage:
+	 * <code>
+	 * \$query->filterBy$colPhpName(1234); // WHERE $colName = 1234
+	 * \$query->filterBy$colPhpName(array(12, 34)); // WHERE $colName IN (12, 34)
+	 * \$query->filterBy$colPhpName(array('min' => 12)); // WHERE $colName > 12
+	 * </code>";
+			if ($col->isForeignKey()) {
+				foreach ($col->getForeignKeys() as $fk) {
+					$script .= "
+	 *
+	 * @see       filterBy" . $this->getFKPhpNameAffix($fk) . "()";
+					}
+				}
+			$script .= "
+	 *
+	 * @param     mixed \$$variableName The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => \$minValue, 'max' => \$maxValue) for intervals.";
+		} elseif ($col->isTemporalType()) {
+			$script .= "
+	 * Example usage:
+	 * <code>
+	 * \$query->filterBy$colPhpName('2011-03-14'); // WHERE $colName = '2011-03-14'
+	 * \$query->filterBy$colPhpName('now'); // WHERE $colName = '2011-03-14'
+	 * \$query->filterBy$colPhpName(array('max' => 'yesterday')); // WHERE $colName > '2011-03-13'
+	 * </code>
+	 *
+	 * @param     mixed \$$variableName The value to use as filter.
+	 *              Values can be integers (unix timestamps), DateTime objects, or strings.
+	 *              Empty strings are treated as NULL.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => \$minValue, 'max' => \$maxValue) for intervals.";
 		} elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
 			$script .= "
 	 * @param     array \$$variableName The values to use as filter.";
 		} elseif ($col->isTextType()) {
 			$script .= "
+	 * Example usage:
+	 * <code>
+	 * \$query->filterBy$colPhpName('fooValue');   // WHERE $colName = 'fooValue'
+	 * \$query->filterBy$colPhpName('%fooValue%'); // WHERE $colName LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string \$$variableName The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)";
+	 *              Accepts wildcards (* and % trigger a LIKE)";
 		} elseif ($col->isBooleanType()) {
 			$script .= "
+	 * Example usage:
+	 * <code>
+	 * \$query->filterBy$colPhpName(true); // WHERE $colName = true
+	 * \$query->filterBy$colPhpName('yes'); // WHERE $colName = true
+	 * </code>
+	 *
 	 * @param     boolean|string \$$variableName The value to use as filter.
-	 *            Accepts strings ('false', 'off', '-', 'no', 'n', and '0' are false, the rest is true)";
+	 *              Non-boolean arguments are converted using the following rules:
+	 *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+	 *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+	 *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').";
 		} else {
 			$script .= "
 	 * @param     mixed \$$variableName The value to use as filter";
