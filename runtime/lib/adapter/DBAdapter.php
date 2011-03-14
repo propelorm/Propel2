@@ -251,23 +251,20 @@ abstract class DBAdapter
 	 */
 	protected function formatTemporalValue($value, ColumnMap $cMap)
 	{
-		$type = $cMap->getType();
-		if (is_numeric($value) && $cMap->isEpochTemporal()) { // it's a timestamp that needs to be formatted
-			if ($type == PropelColumnTypes::TIMESTAMP) {
-				$value = date($this->getTimestampFormatter(), $value);
-			} elseif ($type == PropelColumnTypes::DATE) {
-				$value = date($this->getDateFormatter(), $value);
-			} elseif ($type == PropelColumnTypes::TIME) {
-				$value = date($this->getTimeFormatter(), $value);
-			}
-		} elseif ($value instanceof DateTime) { // it's a DateTime that needs to be formatted
-			if ($type == PropelColumnTypes::TIMESTAMP || $type == PropelColumnTypes::BU_TIMESTAMP) {
-				$value = $value->format($this->getTimestampFormatter());
-			} elseif ($type == PropelColumnTypes::DATE || $type == PropelColumnTypes::BU_DATE) {
-				$value = $value->format($this->getDateFormatter());
-			} elseif ($type == PropelColumnTypes::TIME) {
-				$value = $value->format($this->getTimeFormatter());
-			}
+		if($dt = PropelDateTime::newInstance($value)) {
+		  switch($cMap->getType()) {
+		    case PropelColumnTypes::TIMESTAMP:
+		    case PropelColumnTypes::BU_TIMESTAMP:
+		      $value = $dt->format($this->getTimestampFormatter());
+		      break;
+		    case PropelColumnTypes::DATE:
+		    case PropelColumnTypes::BU_DATE:
+		      $value = $dt->format($this->getDateFormatter());
+		      break;
+		    case PropelColumnTypes::TIME:
+		      $value = $dt->format($this->getTimeFormatter());
+		      break;
+		  } 
 		}
 		return $value;
 	}
