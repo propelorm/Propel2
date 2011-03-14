@@ -130,7 +130,7 @@ WHERE book.IS_PUBLISHED = :p1
   AND book.IS_SOLD_OUT = :p2'; // :p1 => true, :p2 => false
 }}}
 
- * for Temporal columns, `filterByXXX()` accepts a timestamp or a DateTime value:
+ * for Temporal columns, `filterByXXX()` accepts a string, a timestamp, or a DateTime value:
  
 {{{
 #!php

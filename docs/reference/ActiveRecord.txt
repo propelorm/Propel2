@@ -340,6 +340,21 @@ echo $book->getCreatedAt('U'); // 1291065396 (timestamp)
 echo $book->getCreatedAt('Y-m-d H:i:s'); // 2010-11-29 22:20:21
 }}}
 
+=== Boolean Columns ===
+
+{{{
+#!php
+<?php
+// The generated setter converts non-boolean values to boolean in a smart way.
+// The following statements are equivalent:
+$book->setIsPublished(true);
+$book->setIsPublished('true');
+$book->setIsPublished('1');
+$book->setIsPublished('yes');
+$book->setIsPublished('on');
+// Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+}}}
+
 === BLOB Columns ===
 
 {{{
@@ -450,7 +465,6 @@ print_r($book->getTags()); // array('novel', 'romantic')
 }}}
 
 '''Tip''': ARRAY columns are searchable, given an array or a scalar as the search value. See the [http://www.propelorm.org/wiki/Documentation/1.6/ModelCriteria#ColumnFilterMethods Query reference] for more details.
-
 
 == Generic Getters and Setters ==
 
