@@ -1704,7 +1704,11 @@ class Table extends ScopedElement implements IDMethod
 		$doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
 		$tableNode = $node->appendChild($doc->createElement('table'));
-		$tableNode->setAttribute('name', $this->getName());
+		$tableNode->setAttribute('name', $this->getCommonName());
+
+		if ($this->getSchema() !== null) {
+			$tableNode->setAttribute('schema', $this->getSchema());
+		}
 
 		if ($this->phpName !== null) {
 			$tableNode->setAttribute('phpName', $this->phpName);

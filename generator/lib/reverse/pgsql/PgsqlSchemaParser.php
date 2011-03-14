@@ -91,7 +91,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		$stmt = null;
 
 		$stmt = $this->dbh->query("SELECT c.oid,
-								    case when n.nspname='public' then c.relname else n.nspname||'.'||c.relname end as relname
+								    c.relname, n.nspname
 								    FROM pg_class c join pg_namespace n on (c.relnamespace=n.oid)
 								    WHERE c.relkind = 'r'
 								      AND n.nspname NOT IN ('information_schema','pg_catalog')
@@ -105,12 +105,16 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		if ($task) $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$name = $row['relname'];
+			$namespacename = $row['nspname'];
 			if ($name == $this->getMigrationTable()) {
 				continue;
 			}
-			if ($task) $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+			if ($task) $task->log("  Adding table '" . $name . "' in schema '" . $namespacename . "'", Project::MSG_VERBOSE);
 			$oid = $row['oid'];
 			$table = new Table($name);
+			if ($namespacename != 'public') {
+				$table->setSchema($namespacename);
+			}
 			$database->addTable($table);
 
 			// Create a wrapper to hold these tables and their associated OID
