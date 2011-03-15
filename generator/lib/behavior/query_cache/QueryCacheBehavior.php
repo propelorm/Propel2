@@ -167,9 +167,11 @@ protected function getSelectStatement(\$con = null)
 		\$con = Propel::getConnection(" . $this->peerClassname ."::DATABASE_NAME, Propel::CONNECTION_READ);
 	}
 	
-	if (!\$this->hasSelectClause()) {
+	if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
 		\$this->addSelfSelectColumns();
 	}
+	
+	\$this->configureSelectColumns();
 	
 	\$con->beginTransaction();
 	try {
