@@ -208,7 +208,7 @@ If you don't specify a locale when dealing with a translatable object, Propel us
 </table>
 }}}
 
-You can change the name of the locale column added by the behavior by setting the `locale_column` parameter. Also, you can change the table anme and the phpName of the i18n table by setting the `i18n_table` and `i18n_phpname` parameters:
+You can change the name of the locale column added by the behavior by setting the `locale_column` parameter. Also, you can change the table name and the phpName of the i18n table by setting the `i18n_table` and `i18n_phpname` parameters:
 
 {{{
 #!xml
