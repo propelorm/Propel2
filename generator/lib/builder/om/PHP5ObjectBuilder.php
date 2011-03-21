@@ -1948,7 +1948,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				\$this->ensureConsistency();
 			}
 
-			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS).
+			return \$startcol + $n; // $n = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS.
 
 		} catch (Exception \$e) {
 			throw new PropelException(\"Error populating ".$this->getStubObjectBuilder()->getClassname()." object\", \$e);

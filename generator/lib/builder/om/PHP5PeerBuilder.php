@@ -211,6 +211,9 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = ".$this->getTable()->getNumLazyLoadColumns().";
+
+	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+	const NUM_HYDRATE_COLUMNS = ". ($this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns()) .";
 ";
 		$this->addColumnNameConstants($script);
 		$this->addInheritanceColumnConstants($script);
@@ -1169,14 +1172,14 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://www.propelorm.org/ticket/509
 			// \$obj->hydrate(\$row, \$startcol, true); // rehydrate
-			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;";
+			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_HYDRATE_COLUMNS;";
 		if ($table->isAbstract()) {
 			$script .= "
 		} elseif (null == \$key) {
 			// empty resultset, probably from a left join
 			// since this table is abstract, we can't hydrate an empty object
 			\$obj = null;
-			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_COLUMNS;";
+			\$col = \$startcol + " . $this->getPeerClassname() . "::NUM_HYDRATE_COLUMNS;";
 		}
 		$script .= "
 		} else {";
@@ -2142,7 +2145,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-		\$startcol = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
+		\$startcol = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
 ";
 
@@ -2348,7 +2351,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
+		\$startcol2 = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
 ";
 		$index = 2;
 		foreach ($table->getForeignKeys() as $fk) {
@@ -2364,7 +2367,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 
 				$script .= "
 		".$joinedTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-		\$startcol$new_index = \$startcol$index + (".$joinedTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
+		\$startcol$new_index = \$startcol$index + ".$joinedTablePeerBuilder->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
 ";
 				$index = $new_index;
 
@@ -2614,7 +2617,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		}
 
 		".$this->getPeerClassname()."::addSelectColumns(\$criteria);
-		\$startcol2 = (".$this->getPeerClassname()."::NUM_COLUMNS - ".$this->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
+		\$startcol2 = ".$this->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
 ";
 			$index = 2;
 			foreach ($table->getForeignKeys() as $subfk) {
@@ -2629,7 +2632,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 						$new_index = $index + 1;
 						$script .= "
 		".$joinTablePeerBuilder->getPeerClassname()."::addSelectColumns(\$criteria);
-		\$startcol$new_index = \$startcol$index + (".$joinTablePeerBuilder->getPeerClassname()."::NUM_COLUMNS - ".$joinTablePeerBuilder->getPeerClassname()."::NUM_LAZY_LOAD_COLUMNS);
+		\$startcol$new_index = \$startcol$index + ".$joinTablePeerBuilder->getPeerClassname()."::NUM_HYDRATE_COLUMNS;
 ";
 						$index = $new_index;
 					} // if joinClassName not excludeClassName
