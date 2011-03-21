@@ -501,7 +501,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 		if (\$this->$varName === null && ($conditional)) {";
 		if ($useRetrieveByPk) {
 			$script .= "
-			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::retrieveByPk($localColumns);";
+			\$this->$varName = ".$fkPeerBuilder->getPeerClassname()."::retrieveByPk($localColumns, \$con);";
 		} else {
 			$script .= "
 			\$c = new Criteria(".$fkPeerBuilder->getPeerClassname()."::DATABASE_NAME);";
