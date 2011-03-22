@@ -1458,7 +1458,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (!$dateTimeClass) {
 			$dateTimeClass = 'DateTime';
 		}
-		$this->declareClasses($dateTimeClass, 'DateTimeZone');
+		$this->declareClasses($dateTimeClass, 'DateTimeZone', 'PropelDateTime');
 
 		$this->addTemporalMutatorComment($script, $col);
 		$this->addMutatorOpenOpen($script, $col);
