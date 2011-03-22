@@ -493,6 +493,7 @@ class Table extends ScopedElement implements IDMethod
 				$index = new Index();
 				$index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
 				$index->setColumns($referencedColumns);
+				$index->resetColumnSize();
 				$this->addIndex($index);
 				// Add this new index to our collection, otherwise we might add it again (bug #725)
 				$this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
@@ -508,6 +509,7 @@ class Table extends ScopedElement implements IDMethod
 				$index = new Index();
 				$index->setName(substr_replace($foreignKey->getName(), 'FI_',  strrpos($foreignKey->getName(), 'FK_'), 3));
 				$index->setColumns($localColumns);
+				$index->resetColumnSize();
 				$this->addIndex($index);
 				$this->collectIndexedColumns($index->getName(), $localColumns, $_indices);
 			}

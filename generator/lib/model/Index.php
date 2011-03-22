@@ -220,6 +220,14 @@ class Index extends XMLElement
 		}
 		return null; // just to be explicit
 	}
+	
+	/**
+	 * Reset the column sizes. Useful for generated indices for FKs
+	 */
+	public function resetColumnSize()
+	{
+		$this->indexColumnSizes = array();
+	}
 
 	/**
 	 * @see        #getColumnList()
