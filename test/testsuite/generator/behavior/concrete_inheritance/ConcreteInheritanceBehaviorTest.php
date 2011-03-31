@@ -121,6 +121,19 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertEquals('ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
 	}
 	
+	/**
+	 * @link http://www.propelorm.org/ticket/1262
+	 */
+	public function testParentPeerClass()
+	{
+		$q = new ConcreteArticlePeer(); // to autoload the BaseConcreteArticlePeer class
+		$r = new ReflectionClass('BaseConcreteArticlePeer');
+		$this->assertEquals('ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
+		$q = new ConcreteQuizzPeer(); // to autoload the BaseConcreteQuizzPeer class
+		$r = new ReflectionClass('BaseConcreteQuizzPeer');
+		$this->assertEquals('ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
+	}
+
 	public function testPreSaveCopyData()
 	{
 		ConcreteArticleQuery::create()->deleteAll();

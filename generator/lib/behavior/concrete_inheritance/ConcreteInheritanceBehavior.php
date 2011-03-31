@@ -138,6 +138,9 @@ class ConcreteInheritanceBehavior extends Behavior
 			case 'QueryBuilder':
 				return $builder->getNewStubQueryBuilder($this->getParentTable())->getClassname();
 				break;
+			case 'PHP5PeerBuilder':
+				return $builder->getNewStubPeerBuilder($this->getParentTable())->getClassname();
+				break;
 			default:
 				return null;
 				break;
