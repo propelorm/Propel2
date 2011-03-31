@@ -727,7 +727,6 @@ public function hasChildren()
 	protected function addGetChildren(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -762,7 +761,6 @@ public function getChildren(\$criteria = null, PropelPDO \$con = null)
 	protected function addCountChildren(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -792,7 +790,6 @@ public function countChildren(\$criteria = null, PropelPDO \$con = null)
 	protected function addGetFirstChild(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -819,7 +816,6 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
 	protected function addGetLastChild(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -846,7 +842,6 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
 	protected function addGetSiblings(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -878,7 +873,6 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
 	protected function addGetDescendants(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -905,7 +899,6 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
 	protected function addCountDescendants(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -932,7 +925,6 @@ public function countDescendants(\$query = null, PropelPDO \$con = null)
 	protected function addGetBranch(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -955,7 +947,6 @@ public function getBranch(\$query = null, PropelPDO \$con = null)
 	protected function addGetAncestors(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$queryClassname = $this->queryClassname;
 		$script .= "
 /**
@@ -984,7 +975,6 @@ public function getAncestors(\$query = null, PropelPDO \$con = null)
 	protected function addAddChild(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1007,10 +997,19 @@ public function addChild($objectClassname \$child)
 ";
 	}
 	
+	protected function getPeerClassNameWithNamespace()
+	{
+		$peerClassname = $this->peerClassname;
+		if ($namespace = $this->builder->getStubPeerBuilder()->getNamespace()) {
+			$peerClassname = '\\\\' . $namespace . '\\\\' . $peerClassname;
+		}
+		return $peerClassname;
+	}
+	
 	protected function addInsertAsFirstChildOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
+		$peerClassname = $this->getPeerClassNameWithNamespace();
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1055,7 +1054,7 @@ public function insertAsFirstChildOf(\$parent)
 	protected function addInsertAsLastChildOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
+		$peerClassname = $this->getPeerClassNameWithNamespace();
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1100,7 +1099,7 @@ public function insertAsLastChildOf(\$parent)
 	protected function addInsertAsPrevSiblingOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
+		$peerClassname = $this->getPeerClassNameWithNamespace();
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1142,7 +1141,7 @@ public function insertAsPrevSiblingOf(\$sibling)
 	protected function addInsertAsNextSiblingOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
+		$peerClassname = $this->getPeerClassNameWithNamespace();
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -1184,7 +1183,6 @@ public function insertAsNextSiblingOf(\$sibling)
 	protected function addMoveToFirstChildOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Moves current node and its subtree to be the first child of \$parent
@@ -1221,7 +1219,6 @@ public function moveToFirstChildOf(\$parent, PropelPDO \$con = null)
 	protected function addMoveToLastChildOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Moves current node and its subtree to be the last child of \$parent
@@ -1258,7 +1255,6 @@ public function moveToLastChildOf(\$parent, PropelPDO \$con = null)
 	protected function addMoveToPrevSiblingOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Moves current node and its subtree to be the previous sibling of \$sibling
@@ -1298,7 +1294,6 @@ public function moveToPrevSiblingOf(\$sibling, PropelPDO \$con = null)
 	protected function addMoveToNextSiblingOf(&$script)
 	{
 		$objectClassname = $this->objectClassname;
-		$peerClassname = $this->peerClassname;
 		$script .= "
 /**
  * Moves current node and its subtree to be the next sibling of \$sibling
