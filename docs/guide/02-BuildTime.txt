@@ -338,7 +338,7 @@ Here is a sample initialization file:
 #!php
 <?php
 // Include the main Propel script
-require_once 'propel/Propel.php';
+require_once '/path/to/propel/runtime/lib/Propel.php';
 
 // Initialize Propel with the runtime configuration
 Propel::init("/path/to/bookstore/build/conf/bookstore-conf.php");
@@ -348,3 +348,12 @@ set_include_path("/path/to/bookstore/build/classes" . PATH_SEPARATOR . get_inclu
 }}}
 
 Now you are ready to start using your model classes!
+
+'''Tip''': If you installed Propel using PEAR, you can replace the first line of this script with the more simple:
+
+{{{
+#!php
+<?php
+// Include the main Propel script
+require_once 'propel/Propel.php';
+}}}

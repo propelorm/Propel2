@@ -39,7 +39,7 @@
 <target name="check-buildprops" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 		<echo message="====================================================="/>
 		<echo message="Could not open ${build.properties} file:"/>
-		<echo message="		${propel.project.dir}/${build.properties}"/>
+		<echo message="		${propel.project.dir}${build.properties}"/>
 		<echo message=" "/>
 		<echo message="Make sure that '${propel.project.dir}' is a valid path"/>
 		<echo message="and that it contains a ${build.properties} file."/>
@@ -59,18 +59,38 @@
 
 <target name="check-buildprops-for-propel-gen" if="using.propel-gen" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
 	<echo message="=========================================================="/>
-	<echo message="Could not open ${build.properties} file:"/>
-	<echo message="		${propel.project.dir}/${build.properties}"/>
+	<echo message="                   Welcome to Propel!"/>
 	<echo message=" "/>
-	<echo message="Project directory not specified or invalid. You must "/>
-	<echo message="specify the path to your project directory and your "/>
-	<echo message="project directory must contain your ${build.properties} "/>
-	<echo message="and schema.xml files.                                "/>
+	<echo message="The propel-gen script requires a ${build.properties} file"/>
+	<echo message="to run. Either you didn't create one already, or this file"/>
+	<echo message="is not where the propel-gen script is looking for it."/>
 	<echo message=" "/>
-	<echo message="Usage: "/>
+	<echo message="Expected ${build.properties} file location is:"/>
+	<echo message="  ${propel.project.dir}${build.properties}"/>
 	<echo message=" "/>
-	<echo message="$&gt; propel-gen /path/to/projectdir [target]"/>
+	<echo message="The propel-gen script expects the name of a task to execute:"/>
 	<echo message=" "/>
+	<echo message="$&gt; propel-gen [taskname]"/>
+	<echo message=" "/>
+	<echo message="If you call the script from another directory than the one where"/>
+	<echo message="where the ${build.properties} file is, set the path to this"/>
+	<echo message="file as first argument of the script:"/>
+	<echo message=" "/>
+	<echo message="$&gt; propel-gen /path/to/projectdir [taskname]"/>
+	<echo message=" "/>
+	<echo message="Available tasknames are:"/>
+	<echo message="  om"/>
+	<echo message="  convert-conf"/>
+	<echo message="  sql"/>
+	<echo message="  insert-sql"/>
+	<echo message="  diff"/>
+	<echo message="  status"/>
+	<echo message="  migrate"/>
+	<echo message="  up"/>
+	<echo message="  down"/>
+	<echo message="  reverse"/>
+	<echo message="  ... and a few others."/>
+	<echo message="But you should start by creating a schema."/>
 	<echo message="=========================================================="/>	
 	<fail message="No project directory specified."/>
 </target>
