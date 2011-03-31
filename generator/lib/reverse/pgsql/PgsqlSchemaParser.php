@@ -45,7 +45,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 				'float' => PropelTypes::FLOAT,
 				'float4' => PropelTypes::FLOAT,
 				'decimal' => PropelTypes::DECIMAL,
-				'numeric' => PropelTypes::NUMERIC,
+				'numeric' => PropelTypes::DECIMAL,
 				'double' => PropelTypes::DOUBLE,
 				'float8' => PropelTypes::DOUBLE,
 				'char' => PropelTypes::CHAR,

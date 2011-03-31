@@ -72,11 +72,13 @@ class PropelColumnComparator
 			$changedProperties['defaultValueType'] = array(null, $toDefaultValue->getType());
 			$changedProperties['defaultValueValue'] = array(null, $toDefaultValue->getValue());
 		} elseif ($fromDefaultValue && $toDefaultValue) {
-			if ($fromDefaultValue->getType() != $toDefaultValue->getType()) {
-				$changedProperties['defaultValueType'] = array($fromDefaultValue->getType(), $toDefaultValue->getType());
-			}
-			if ($fromDefaultValue->getValue() != $toDefaultValue->getValue()) {
-				$changedProperties['defaultValueValue'] = array($fromDefaultValue->getValue(), $toDefaultValue->getValue());
+			if (!$fromDefaultValue->equals($toDefaultValue)) {
+				if ($fromDefaultValue->getType() != $toDefaultValue->getType()) {
+					$changedProperties['defaultValueType'] = array($fromDefaultValue->getType(), $toDefaultValue->getType());
+				}
+				if ($fromDefaultValue->getValue() != $toDefaultValue->getValue()) {
+					$changedProperties['defaultValueValue'] = array($fromDefaultValue->getValue(), $toDefaultValue->getValue());
+				}
 			}
 		}
 		

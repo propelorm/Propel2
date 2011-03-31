@@ -34,6 +34,7 @@ class PgsqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BIGINT, "INT8"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, "FLOAT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "DOUBLE PRECISION"));
+		$this->setSchemaDomainMapping(new Domain(PropelTypes::FLOAT, "DOUBLE PRECISION"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "TEXT"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BYTEA"));
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "BYTEA"));

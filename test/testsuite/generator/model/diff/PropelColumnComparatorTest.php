@@ -129,6 +129,18 @@ class PropelColumnComparatorTest extends PHPUnit_Framework_TestCase
 		);
 		$this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
 	}
+	
+	/**
+	 * @see http://www.propelorm.org/ticket/1141
+	 */
+	public function testCompareDefaultExrpCurrentTimestamp()
+	{
+		$c1 = new Column();
+		$c1->getDomain()->setDefaultValue(new ColumnDefaultValue("NOW()", ColumnDefaultValue::TYPE_EXPR));
+		$c2 = new Column();
+		$c2->getDomain()->setDefaultValue(new ColumnDefaultValue("CURRENT_TIMESTAMP", ColumnDefaultValue::TYPE_EXPR));
+		$this->assertEquals(array(), PropelColumnComparator::compareColumns($c1, $c2));
+	}
 
 	public function testCompareAutoincrement()
 	{
