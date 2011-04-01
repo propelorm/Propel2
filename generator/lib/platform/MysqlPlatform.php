@@ -21,8 +21,8 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
 class MysqlPlatform extends DefaultPlatform
 {
 	
-	protected $tableEngineKeyword = 'ENGINE';
-	protected $defaultTableEngine = 'InnoDB';
+	protected $tableEngineKeyword = 'ENGINE';  // overwritten in build.properties
+	protected $defaultTableEngine = 'MyISAM';  // overwritten in build.properties
 	
 	/**
 	 * Initializes db specific domain mapping.
@@ -81,6 +81,11 @@ class MysqlPlatform extends DefaultPlatform
 	 */
 	function getDefaultTableEngine()
 	{
+		if (class_exists('DataModelBuilder', false)) {
+			if ($defaultTableEngine = $this->getBuildProperty('mysqlTableType')) {
+				return $defaultTableEngine;
+			}
+		}
 		return $this->defaultTableEngine;
 	}
 
@@ -96,11 +101,7 @@ class MysqlPlatform extends DefaultPlatform
 
 	public function supportsNativeDeleteTrigger()
 	{
-		$usingInnoDB = false;
-		if (class_exists('DataModelBuilder', false)) {
-			$usingInnoDB = strtolower($this->getBuildProperty('mysqlTableType')) == 'innodb';
-		}
-		return $usingInnoDB || false;
+		return strtolower($this->getDefaultTableEngine()) == 'innodb';
 	}
 
 	public function getAddTablesDDL(Database $database)

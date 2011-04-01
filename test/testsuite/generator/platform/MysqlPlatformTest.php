@@ -78,7 +78,7 @@ CREATE TABLE `x`.`book`
 	CONSTRAINT `book_FK_1`
 		FOREIGN KEY (`author_id`)
 		REFERENCES `y`.`author` (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- y.author
@@ -92,7 +92,7 @@ CREATE TABLE `y`.`author`
 	`first_name` VARCHAR(100),
 	`last_name` VARCHAR(100),
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- x.book_summary
@@ -111,7 +111,7 @@ CREATE TABLE `x`.`book_summary`
 		FOREIGN KEY (`book_id`)
 		REFERENCES `x`.`book` (`id`)
 		ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -149,7 +149,7 @@ CREATE TABLE `book`
 	CONSTRAINT `book_FK_1`
 		FOREIGN KEY (`author_id`)
 		REFERENCES `author` (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- author
@@ -163,7 +163,7 @@ CREATE TABLE `author`
 	`first_name` VARCHAR(100),
 	`last_name` VARCHAR(100),
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
@@ -201,7 +201,7 @@ CREATE TABLE `foo`
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
 	`bar` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB COMMENT='This is foo table';
+) ENGINE=MyISAM COMMENT='This is foo table';
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -219,7 +219,7 @@ CREATE TABLE `foo`
 	`bar` INTEGER NOT NULL,
 	`baz` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`foo`,`bar`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -237,7 +237,7 @@ CREATE TABLE `foo`
 	`bar` INTEGER,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `foo_U_1` (`bar`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -263,7 +263,7 @@ CREATE TABLE `foo`
 	`bar` INTEGER,
 	PRIMARY KEY (`id`),
 	INDEX `foo_I_1` (`bar`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -295,7 +295,7 @@ CREATE TABLE `foo`
 	CONSTRAINT `foo_FK_1`
 		FOREIGN KEY (`bar_id`)
 		REFERENCES `bar` (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -324,7 +324,7 @@ CREATE TABLE `foo`
 	`bar_id` INTEGER,
 	PRIMARY KEY (`id`),
 	INDEX `foo_FI_1` (`bar_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -361,7 +361,7 @@ CREATE TABLE `foo`
 	<table name="foo">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<vendor type="mysql">
-			<parameter name="Engine" value="MyISAM"/>
+			<parameter name="Engine" value="InnoDB"/>
 			<parameter name="Charset" value="utf8"/>
 		</vendor>
 	</table>
@@ -373,7 +373,7 @@ CREATE TABLE `foo`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY (`id`)
-) ENGINE=MyISAM CHARACTER SET='utf8';
+) ENGINE=InnoDB CHARACTER SET='utf8';
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -390,7 +390,7 @@ CREATE TABLE `Woopah`.`foo`
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
 	`bar` INTEGER,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
