@@ -1106,7 +1106,7 @@ ALTER TABLE %s ADD
 	 */
 	public function getTimestampFormatter()
 	{
-		return DateTime::ISO8601;
+		return 'Y-m-d H:i:s';
 	}
 
 	/**

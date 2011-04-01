@@ -275,7 +275,7 @@ abstract class DBAdapter
 	 */
 	public function getTimestampFormatter()
 	{
-		return "Y-m-d H:i:s";
+		return 'Y-m-d H:i:s';
 	}
 
 	/**
