@@ -779,12 +779,31 @@ class BasePeer
 			$fromClause[] = $criteria->getPrimaryTableName();
 		}
 
+		// tables should not exist as alias of subQuery
+		if ($criteria->hasSelectQueries()) {
+			foreach ($fromClause as $key => $ftable) {
+				if (strpos($ftable, ' ') !== false) {
+					list($realtable, $tableName) = explode(' ', $ftable);
+				} else {
+					$tableName = $ftable;
+				}
+				if ($criteria->hasSelectQuery($tableName)) {
+					unset($fromClause[$key]);
+				}
+			}
+		}
+		
 		// from / join tables quoted if it is necessary
 		if ($db->useQuoteIdentifier()) {
 			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
 			$joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
 		}
-
+		
+		// add subQuery to From after adding quotes
+		foreach ($criteria->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
+			$fromClause[] = '(' . BasePeer::createSelectSql($subQueryCriteria, $params) . ') AS ' . $subQueryAlias;
+		}
+		
 		// build from-clause
 		$from = '';
 		if (!empty($joinClause) && count($fromClause) > 1) {

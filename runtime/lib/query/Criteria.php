@@ -182,6 +182,7 @@ class Criteria implements IteratorAggregate
 	 * @var        array
 	 */
 	protected $joins = array();
+	protected $selectQueries = array();
 
 	/**
 	 * The name of the database.
@@ -284,6 +285,7 @@ class Criteria implements IteratorAggregate
 		$this->having = null;
 		$this->asColumns = array();
 		$this->joins = array();
+		$this->selectQueries = array();
 		$this->dbName = $this->originalDbName;
 		$this->offset = 0;
 		$this->limit = -1;
@@ -947,6 +949,63 @@ class Criteria implements IteratorAggregate
 	public function getJoins()
 	{
 		return $this->joins;
+	}
+	
+	/**
+	 * Adds a Criteria as subQuery in the From Clause.
+	 *
+	 * @param Criteria $subQueryCriteria Criteria to build the subquery from  
+	 * @param string   $alias            alias for the subQuery
+	 *
+	 * @return Criteria this modified Criteria object (Fluid API)
+	 */
+	public function addSelectQuery(Criteria $subQueryCriteria, $alias)
+	{
+		$this->selectQueries[$alias] = $subQueryCriteria;
+		
+		return $this;
+	}
+
+	/**
+	 * Checks whether this Criteria has a subquery.
+	 * 
+	 * @return     Boolean
+	 */
+	public function hasSelectQueries()
+	{
+		return (bool) $this->selectQueries;
+	}
+
+	/**
+	 * Get the associative array of Criteria for the subQueries per alias.
+	 * 
+	 * @return     array Criteria[]
+	 */
+	public function getSelectQueries()
+	{
+		return $this->selectQueries;
+	}
+
+	/**
+	 * Get the Criteria for a specific subQuery.
+	 * 
+	 * @param string   $alias            alias for the subQuery
+	 * @return Criteria
+	 */
+	public function getSelectQuery($alias)
+	{
+		return $this->selectQueries[$alias];
+	}
+
+	/**
+	 * checks if the Criteria for a specific subQuery is set.
+	 * 
+	 * @param string   $alias            alias for the subQuery
+	 * @return boolean
+	 */
+	public function hasSelectQuery($alias)
+	{
+		return isset($this->selectQueries[$alias]);
 	}
 
 	/**
