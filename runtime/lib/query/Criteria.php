@@ -959,7 +959,7 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @return Criteria this modified Criteria object (Fluid API)
 	 */
-	public function addSelectQuery(Criteria $subQueryCriteria, $alias)
+	public function addSelectQuery(Criteria $subQueryCriteria, $alias = null)
 	{
 		if (null === $alias) {
 			$alias = 'alias_' . ($subQueryCriteria->forgeSelectQueryAlias() + count($this->selectQueries));

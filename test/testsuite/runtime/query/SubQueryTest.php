@@ -156,15 +156,8 @@ class SubQueryTest extends BookstoreTestBase
 		
 	public function testSubQueryParameters()
 	{
-		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
-		
-		$authorRowling = AuthorQuery::create()
-			->filterByLastName('Rowling')
-			->findOne();
-		
 		$subCriteria = new BookQuery();
-		$subCriteria->filterByAuthor($authorRowling);
+		$subCriteria->filterByAuthorId(123);
 		
 		$c = new BookQuery();
 		$c->addSelectQuery($subCriteria, 'subCriteriaAlias');
@@ -174,24 +167,17 @@ class SubQueryTest extends BookstoreTestBase
 		$sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
-			array('table' => 'book', 'column' => 'AUTHOR_ID', 'value' => $authorRowling->getId()),
+			array('table' => 'book', 'column' => 'AUTHOR_ID', 'value' => 123),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');    
+		$this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
 	}
 
 	public function testSubQueryRecursive()
 	{
-		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
-		
-		$publisher = PublisherQuery::create()
-			->filterByName('Scholastic')
-			->findOne();
-		
 		// sort the books (on date, if equal continue with id), filtered by a publisher
 		$sortedBookQuery = new BookQuery();
 		$sortedBookQuery->addSelfSelectColumns();
-		$sortedBookQuery->filterByPublisher($publisher);
+		$sortedBookQuery->filterByPublisherId(123);
 		$sortedBookQuery->orderByTitle(Criteria::DESC);
 		$sortedBookQuery->orderById(Criteria::DESC);
 
@@ -215,9 +201,9 @@ class SubQueryTest extends BookstoreTestBase
 		 "WHERE latestBookQuery.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 12),
-			array('table' => 'book', 'column' => 'PUBLISHER_ID', 'value' => $publisher->getId()),
+			array('table' => 'book', 'column' => 'PUBLISHER_ID', 'value' => 123),
 		);
-		$this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');    
+		$this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
 	}
 
 }
