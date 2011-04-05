@@ -964,31 +964,23 @@ class ModelCriteria extends Criteria
 	 */
 	public function addSelectQuery(Criteria $subQueryCriteria, $alias = null, $addAliasAndSelectColumns = true)
 	{
-		if (null === $alias) {
-			$alias = 'alias_' . ($subQueryCriteria->forgeSelectQueryAlias() + count($this->selectQueries));
-		}
 		if (!$subQueryCriteria->hasSelectClause()) {
 			$subQueryCriteria->addSelfSelectColumns();
 		}
+		parent::addSelectQuery($subQueryCriteria, $alias);
 		if ($addAliasAndSelectColumns) {
 			// give this query-model same alias as subquery
+			if (null === $alias) {
+				end($this->selectQueries);
+				$alias = key($this->selectQueries);
+			}
 			$this->setModelAlias($alias, true);
 			// so we can add selfSelectColumns
 			$this->addSelfSelectColumns();
 		}
-		
-		return parent::addSelectQuery($subQueryCriteria, $alias);
+		return $this;
 	}
 	
-	public function forgeSelectQueryAlias()
-	{
-		$aliasNumber = 0;
-		foreach ($this->getSelectQueries() as $c1) {
-			$aliasNumber += $c1->forgeSelectQueryAlias();
-		}
-		return ++$aliasNumber;
-	}
-
 	/**
 	 * Adds the select columns for a the current table
 	 *

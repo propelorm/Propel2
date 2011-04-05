@@ -961,6 +961,9 @@ class Criteria implements IteratorAggregate
 	 */
 	public function addSelectQuery(Criteria $subQueryCriteria, $alias)
 	{
+		if (null === $alias) {
+			$alias = 'alias_' . ($subQueryCriteria->forgeSelectQueryAlias() + count($this->selectQueries));
+		}
 		$this->selectQueries[$alias] = $subQueryCriteria;
 		
 		return $this;
@@ -1006,6 +1009,15 @@ class Criteria implements IteratorAggregate
 	public function hasSelectQuery($alias)
 	{
 		return isset($this->selectQueries[$alias]);
+	}
+
+	public function forgeSelectQueryAlias()
+	{
+		$aliasNumber = 0;
+		foreach ($this->getSelectQueries() as $c1) {
+			$aliasNumber += $c1->forgeSelectQueryAlias();
+		}
+		return ++$aliasNumber;
 	}
 
 	/**
