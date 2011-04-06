@@ -45,6 +45,13 @@ class I18nBehaviorObjectBuilderModifier
 			'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname(),
 		));
 	}
+	
+	public function objectClearReferences($builder)
+	{
+		return $this->behavior->renderTemplate('objectClearReferences', array(
+			'defaultLocale'   => $this->behavior->getDefaultLocale(),
+		));
+	}
 
 	public function objectMethods($builder)
 	{

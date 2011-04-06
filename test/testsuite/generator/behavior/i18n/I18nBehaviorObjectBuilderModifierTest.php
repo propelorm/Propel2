@@ -272,5 +272,18 @@ EOF;
 			->count();
 		$this->assertEquals(2, $count);
 	}
+	
+	public function testClearRemovesExistingTranlsations()
+	{
+		$o = new I18nBehaviorTest1();
+		$translation1 = new I18nBehaviorTest1I18n();
+		$translation1->setBar('baz');
+		$translation1->setLocale('fr_FR');
+		$o->addI18nBehaviorTest1I18n($translation1);
+		$o->clear();
+		$this->assertEquals('en_EN', $o->getLocale());
+		$t1 = $o->getTranslation('fr_FR');
+		$this->assertEquals('', $t1->getBar());
+	}
 
 }
