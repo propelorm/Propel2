@@ -249,22 +249,25 @@ For instance, to add a new column named 'foo' in the current table, add the foll
 {{{
 #!php
 <?php
-// default parameters value
-protected $parameters = array(
-  'column_name' => 'foo',
-);
-
-public function modifyTable()
+class MyBehavior extends Behavior
 {
-  $table = $this->getTable();
-  $columnName = $this->getParameter('column_name');
-  // add the column if not present
-  if(!$this->getTable()->containsColumn($columnName)) {
-    $column = $this->getTable()->addColumn(array(
-      'name'    => $columnName,
-      'type'    => 'INTEGER',
-    ));
-  }
+  // default parameters value
+  protected $parameters = array(
+    'column_name' => 'foo',
+  );
+  
+  public function modifyTable()
+  {
+    $table = $this->getTable();
+    $columnName = $this->getParameter('column_name');
+    // add the column if not present
+    if(!$this->getTable()->containsColumn($columnName)) {
+      $column = $this->getTable()->addColumn(array(
+        'name'    => $columnName,
+        'type'    => 'INTEGER',
+      ));
+    }
+  }	
 }
 }}}
 
@@ -373,3 +376,49 @@ class " . $this->getClassname() . " extends " . $this->getStubObjectBuilder() . 
 By default, classes added by a behavior are generated each time the model is rebuilt. To limit the generation to the first time (for instance for stub classes), add a public `$overwrite` attribute to the builder and set it to `false`.
 
 You can set the additional class to be generated in a subfolder by implementing the `getPackage()` method.
+
+=== Replacing or Removing Existing Methods ===
+
+Behaviors can modify existing methods even if no hook is called in the builders, thanks to a service class called `PropelPHPParser`. This class can remove a method, replace a method by another one, or add a new method before or after an existing one.
+
+The `PropelPHPParser` constructor takes a string as input, so it is best used inside "filter" hooks in behaviors. For instance, to replace the `findPk()` method in the generated query class by a custom one, use the following syntax:
+
+{{{
+#!php
+<?php
+class FastPkFindBehavior extends Behavior
+{
+	public function queryFilter(&$script)
+	{
+	  $newFindPkMethod = "
+public function findPk(\$key, \$con = null)
+{
+  \$query = 'SELECT * from `%s` WHERE id = ?';
+  if (null === \$con) {
+    \$con = Propel::getConnection(%sPeer::DATABASE_NAME);
+  }
+  \$stmt = \$con->prepare(\$query);
+  \$stmt->bindValue(1, \$key);
+  \$res = \$stmt->execute();
+  // hydrate ActiveRecord objects with the result
+  \$formatter = new PropelObjectFormatter();
+  \$formatter->setClass('%s');
+  return \$formatter->formatOne(\$res);
+}
+";
+    $table = $this->getTable();
+    $newFindPkMethod = sprintf($newFindPkMethod, $table->getName(), $table->getPhpName(), $table->getPhpName());
+    $parser = new PropelPHPParser($script); 
+    $parser->replaceMethod('findPk', $newFindPkMethod); 
+    $script = $parser->getCode();
+  }
+}
+}}} 
+
+The `PropelPHPParser` class provides the following utility methods:
+{{{
+removeMethod($methodName)
+replaceMethod($methodName, $newCode)
+addMethodAfter($methodName, $newCode)
+addMethodBefore($methodName, $newCode)
+}}}
