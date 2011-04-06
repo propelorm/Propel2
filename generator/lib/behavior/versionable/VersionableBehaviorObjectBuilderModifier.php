@@ -107,7 +107,7 @@ class VersionableBehaviorObjectBuilderModifier
 		if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
 			$script = "// emulate delete cascade
 {$this->getVersionQueryClassName()}::create()
-	->filterBy{$this->getActiveRecordClassName()}(\$this)
+	->filterBy{$this->table->getPhpName()}(\$this)
 	->delete(\$con);";
 			return $script;
 		}
@@ -225,7 +225,7 @@ public function addVersion(\$con = null)
 	\$version->set" . $col->getPhpName() . "(\$this->" . strtolower($col->getName()) . ");";
 		}
 		$script .= "
-	\$version->set{$this->getActiveRecordClassName()}(\$this);";
+	\$version->set{$this->table->getPhpName()}(\$this);";
 		foreach ($this->behavior->getVersionableFks() as $fk) {
 			$fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural = false);
 			$fkVersionColumnName = $fk->getLocalColumnName() . '_version';
@@ -368,7 +368,7 @@ public function populateFromVersion(\$version, \$con = null)
 public function getLastVersionNumber(\$con = null)
 {
 	\$v = {$this->getVersionQueryClassName()}::create()
-		->filterBy{$this->getActiveRecordClassName()}(\$this)
+		->filterBy{$this->table->getPhpName()}(\$this)
 		->orderBy{$this->getColumnPhpName()}('desc')
 		->findOne(\$con);
 	if (!\$v) {
@@ -411,7 +411,7 @@ public function isLastVersion(\$con = null)
 public function getOneVersion(\$versionNumber, \$con = null)
 {
 	return {$this->getVersionQueryClassName()}::create()
-		->filterBy{$this->getActiveRecordClassName()}(\$this)
+		->filterBy{$this->table->getPhpName()}(\$this)
 		->filterBy{$this->getColumnPhpName()}(\$versionNumber)
 		->findOne(\$con);
 }
