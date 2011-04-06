@@ -211,6 +211,35 @@ class TableMapTest extends PHPUnit_Framework_TestCase
     $this->assertEquals($expectedRelations, $this->tmap->getRelations(), 'getRelations() returns an associative array of all the relations');
   }
 
+  public function testPrimaryStringAddColumn()
+  {
+    $this->assertFalse($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns false while none set.');
+    $this->assertNull($this->tmap->getPrimaryStringColumn(), 'getPrimaryStringColumn() returns null while none set.');
+
+    $column = $this->tmap->addColumn('FOO', 'Foo', 'VARCHAR');
+    $this->assertFalse($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns false when no pkStr column is set.');
+    $this->assertNull($this->tmap->getPrimaryStringColumn(), 'getPrimaryStringColumn() returns null when no pkStr column is set.');
+    
+    $column = $this->tmap->addColumn('PKSTR', 'pkStr', 'VARCHAR');
+    $column->setPrimaryString(true);
+    $this->assertTrue($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns true after adding pkStr column.');
+    $this->assertEquals($column, $this->tmap->getPrimaryStringColumn(), 'getPrimaryStringColumn() returns correct column.');
+  }
+
+  public function testPrimaryStringAddConfiguredColumn()
+  {
+    $this->assertFalse($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns false while none set.');
+
+    $column = new ColumnMap('BAR', $this->tmap);
+    $column->setPhpName('Bar');
+    $column->setType('VARCHAR');
+    $column->setPrimaryString(true);
+    $this->tmap->addConfiguredColumn($column);
+    
+    $this->assertTrue($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns true after adding pkStr column.');
+    $this->assertEquals($column, $this->tmap->getPrimaryStringColumn(), 'getPrimaryStringColumn() returns correct column.');
+  }
+
   // deprecated method
   public function testNormalizeColName()
   {

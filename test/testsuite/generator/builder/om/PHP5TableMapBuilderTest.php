@@ -144,6 +144,12 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
 
 		$empTable = $this->databaseMap->getTableByPhpName('BookstoreEmployee');
 		$this->assertTrue($empTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns true for tables using single table inheritance');
+	}
 
+	public function testPrimaryString()
+	{
+		$bookTable = $this->databaseMap->getTableByPhpName('Book');
+		$this->assertTrue($bookTable->hasPrimaryStringColumn(), 'The map builder adds primaryString columns.');
+		$this->assertEquals($bookTable->getColumn('TITLE'), $bookTable->getPrimaryStringColumn(), 'The map builder maps the correct column as primaryString.');
 	}
 }

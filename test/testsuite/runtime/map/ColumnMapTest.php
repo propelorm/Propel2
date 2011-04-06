@@ -134,4 +134,21 @@ class ColumnMapTest extends BookstoreTestBase
     $this->assertEquals('BAR_BAZ', ColumnMap::normalizeName('foo.bar_baz'), 'normalizeColumnName() can do all the above at the same time');
   }
 
+  public function testIsPrimaryString()
+  {
+    $bookTable = BookPeer::getTableMap();
+    $idColumn = $bookTable->getColumn('ID');
+    $titleColumn = $bookTable->getColumn('TITLE');
+    $isbnColumn = $bookTable->getColumn('ISBN');
+
+    $this->assertFalse($idColumn->isPrimaryString(), 'isPrimaryString() returns false by default.');
+    $this->assertTrue($titleColumn->isPrimaryString(), 'isPrimaryString() returns true if set in schema.');
+    $this->assertFalse($isbnColumn->isPrimaryString(), 'isPrimaryString() returns false if not set in schema.');
+
+    $titleColumn->setPrimaryString(false);
+    $this->assertFalse($titleColumn->isPrimaryString(), 'isPrimaryString() returns false if unset.');
+
+    $titleColumn->setPrimaryString(true);
+    $this->assertTrue($titleColumn->isPrimaryString(), 'isPrimaryString() returns true if set.');
+  }
 }

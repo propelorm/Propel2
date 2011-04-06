@@ -84,6 +84,7 @@ $bookTitleColumn->isText();          // true
 $bookTitleColumn->isPrimaryKey();    // false
 $bookTitleColumn->isForeignKey();    // false
 $bookTitleColumn->hasValidators();   // false
+$bookTitleColumn->isPrimaryString(); // true
 }}}
 
 `ColumnMap` objects also keep a reference to their parent `TableMap` object:

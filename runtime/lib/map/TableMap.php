@@ -38,7 +38,7 @@ class TableMap
    * @var array TableMap[] 
    */
   protected $columnsByPhpName = array();
-  
+
   // The database this table belongs to
   protected $dbMap;
 
@@ -282,7 +282,7 @@ class TableMap
     $col->setPhpName($phpName);
     $col->setNotNull($isNotNull);
     $col->setDefaultValue($defaultValue);
-    
+
     if ($pk) {
       $col->setPrimaryKey(true);
       $this->primaryKeys[$name] = $col;
@@ -323,7 +323,7 @@ class TableMap
   {
     if ($name instanceof ColumnMap) {
       $name = $name->getColumnName();
-    } else if($normalize) {
+    } elseif ($normalize) {
       $name = ColumnMap::normalizeName($name);
     }
     return isset($this->columns[$name]);
@@ -579,6 +579,30 @@ class TableMap
   public function getBehaviors()
   {
     return array();
+  }
+
+  /**
+   * Does this table has a primaryString column?
+   *
+   * @return     boolean True if the table has a primaryString column.
+   */
+  public function hasPrimaryStringColumn()
+  {
+    return null !== $this->getPrimaryStringColumn();
+  }
+
+  /**
+   * Gets the ColumnMap for the primary string column.
+   *
+   * @return      ColumnMap
+   */
+  public function getPrimaryStringColumn()
+  {
+    foreach ($this->getColumns() as $column) {
+      if ($column->isPrimaryString()) {
+        return $column;
+      }
+    }
   }
 
   // Deprecated methods and attributres, to be removed

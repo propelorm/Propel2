@@ -224,6 +224,10 @@ class ".$this->getClassname()." extends TableMap {
 				$script .= "
 		\$this->getColumn('$cup', false)->setValueSet(" . var_export($col->getValueSet(), true). ");";
 			}
+			if ($col->isPrimaryString()) {
+				$script .= "
+		\$this->getColumn('$cup', false)->setPrimaryString(true);";
+			}
 		} // foreach
 
 		// validators
