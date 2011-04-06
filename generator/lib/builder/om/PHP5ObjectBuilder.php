@@ -4472,7 +4472,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($table->getColumns() as $col) {
 			if (!in_array($col, $autoIncCols, true)) {
 				$script .= "
-		\$copyObj->set".$col->getPhpName()."(\$this->".strtolower($col->getName()).");";
+		\$copyObj->set".$col->getPhpName()."(\$this->get".$col->getPhpName()."());";
 			}
 		} // foreach
 

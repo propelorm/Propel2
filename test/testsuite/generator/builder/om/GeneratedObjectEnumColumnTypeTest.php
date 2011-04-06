@@ -106,4 +106,13 @@ EOF;
 		$e = ComplexColumnTypeEntity3Query::create()->findOne();
 		$this->assertEquals('baz', $e->getBar());
 	}
+	
+	public function testValueIsCopied()
+	{
+	  $e1 = new ComplexColumnTypeEntity3();
+		$e1->setBar('baz');
+		$e2 = new ComplexColumnTypeEntity3();
+		$e1->copyInto($e2);
+		$this->assertEquals('baz', $e2->getBar());
+	}
 }
