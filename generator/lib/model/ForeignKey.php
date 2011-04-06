@@ -645,7 +645,9 @@ class ForeignKey extends XMLElement
 		$fkNode = $node->appendChild($doc->createElement('foreign-key'));
 
 		$fkNode->setAttribute('foreignTable', $this->getForeignTableCommonName());
-		$fkNode->setAttribute('foreignSchema', $this->getForeignSchemaName());
+		if ($schema = $this->getForeignSchemaName()) {
+			$fkNode->setAttribute('foreignSchema', $schema);
+		}
 		$fkNode->setAttribute('name', $this->getName());
 
 		if ($this->getPhpName()) {
