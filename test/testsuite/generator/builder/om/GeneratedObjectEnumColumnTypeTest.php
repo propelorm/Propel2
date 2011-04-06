@@ -109,7 +109,7 @@ EOF;
 	
 	public function testValueIsCopied()
 	{
-	  $e1 = new ComplexColumnTypeEntity3();
+		$e1 = new ComplexColumnTypeEntity3();
 		$e1->setBar('baz');
 		$e2 = new ComplexColumnTypeEntity3();
 		$e1->copyInto($e2);
