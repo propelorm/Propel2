@@ -37,6 +37,8 @@ class VersionableBehavior extends Behavior
 		$queryBuilderModifier,
 		$peerBuilderModifier;
 	
+	protected $tableModificationOrder = 80;
+	
 	public function modifyTable()
 	{
 		$this->addVersionColumn();
