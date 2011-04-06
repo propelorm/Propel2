@@ -679,6 +679,46 @@ $books = BookQuery::create()
 
 '''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, `orWhere()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns.
 
+== Table Subqueries (a.k.a "Inline Views") ==
+
+SQL supports table subqueries to solve complex cases that a single query can't solve, or to optimize slow queries with several joins. For instance, to find the latest book written by every author in SQL, it usually takes a query like the following:
+
+{{{
+#!sql
+SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
+FROM book 
+GROUP BY book.AUTHOR_ID
+}}}
+
+Now if you want only the cheapest latest books with a single query, you need a subquery:
+{{{
+#!sql
+SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT 
+FROM
+(
+  SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
+  FROM book 
+  GROUP BY book.AUTHOR_ID
+) AS lastBook 
+WHERE lastBook.PRICE < 20
+}}}
+
+To achieve this query using Propel, call the new `addSelectQuery()` method to use a first query as the source for the SELECT part of a second query:
+
+{{{
+$latestBooks = BookQuery::create()
+  ->withColumn('MAX(Book.CreatedAt)')
+  ->groupBy('Book.AuthorId');
+$latestCheapBooks = BookQuery::create()
+  ->useSelectQuery($latestBooks, 'lastBook')
+  ->where('lastBook.Price < ?', 20)
+  ->find();
+}}}
+
+You could use two queries or a WHERE IN to achieve the same result, but it wouldn't be as effective.
+
+Inline views are used a lot in Oracle, so this addition should make Propel even more Oracle-friendly.
+
 == Better Pluralizer ==
 
 Have you ever considered Propel as a lame English speaker? Due to its poor pluralizer, Propel used to be unable to create proper getter methods in one-to-many relationships when dealing with foreign objects named 'Child', 'Category', 'Wife', or 'Sheep'.
