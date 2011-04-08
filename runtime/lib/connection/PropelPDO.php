@@ -659,8 +659,9 @@ class PropelPDO extends PDO
 		// Iterate through each detail that has been configured to be enabled
 		foreach ($logDetails as $detailName) {
 			
-			if (!$this->getLoggingConfig('details.$detailName.enabled', false))
+			if (!$this->getLoggingConfig("details.$detailName.enabled", false)) {
 				continue;
+			}
 			
 			switch ($detailName) {
 				
