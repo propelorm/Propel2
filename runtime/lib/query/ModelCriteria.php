@@ -1881,7 +1881,7 @@ class ModelCriteria extends Criteria
 		} elseif ($failSilently) {
 			return array(null, null);
 		} else {
-			throw new PropelException(sprintf('Unknown model or alias "%"', $class));
+			throw new PropelException(sprintf('Unknown model or alias "%s"', $class));
 		}
 
 		if ($tableMap->hasColumnByPhpName($phpName)) {
