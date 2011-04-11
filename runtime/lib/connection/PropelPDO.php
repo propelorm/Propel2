@@ -650,14 +650,18 @@ class PropelPDO extends PDO
 	 */
 	protected function getLogPrefix($methodName, $debugSnapshot)
 	{
-		$prefix		  = '';
-		$now		    = $this->getDebugSnapshot();
-		$logDetails	= array_keys($this->getLoggingConfig('details', array()));
-		$innerGlue	= $this->getLoggingConfig('innerglue', ': ');
-		$outerGlue	= $this->getLoggingConfig('outerglue', ' | ');
+		$config = $this->getConfiguration()->getParameters();
+		if (!isset($config['debugpdo']['logging']['details'])) {
+			return '';
+		}
+		$prefix     = '';
+		$logDetails = $config['debugpdo']['logging']['details'];
+		$now        = $this->getDebugSnapshot();
+		$innerGlue  = $this->getLoggingConfig('innerglue', ': ');
+		$outerGlue  = $this->getLoggingConfig('outerglue', ' | ');
 		
 		// Iterate through each detail that has been configured to be enabled
-		foreach ($logDetails as $detailName) {
+		foreach ($logDetails as $detailName => $details) {
 			
 			if (!$this->getLoggingConfig("details.$detailName.enabled", false)) {
 				continue;

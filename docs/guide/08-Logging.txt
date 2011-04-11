@@ -31,7 +31,7 @@ The Propel log handler is configured in the `<log>` section of your project's `r
 </config>
 }}}
 
-Using these parameters, Propel creates a ''file'' Log handler in the background, and keeps it for later use:
+Using these parameters, Propel creates a `file` Log handler in the background, and keeps it for later use:
 
 {{{
 #!php
@@ -39,7 +39,7 @@ Using these parameters, Propel creates a ''file'' Log handler in the background,
 Propel::$logger = Log::singleton($type = 'file', $name = './propel.log', $ident = 'propel', $conf = array(), $level = PEAR_LOG_DEBUG);
 }}}
 
-The meaning of each of the `<log>` nested elements may vary, depending on which log handler you are using. Refer to the [http://www.indelible.org/php/Log/guide.html#standard-log-handlers PEAR::Log] documentation for more details on log handlers configuration and options.
+The meaning of each of the `<log>` nested elements may vary, depending on which log handler you are using. Most common accepted logger types are `file`, `console`, `syslog`, `display`, `error_log`, `firebug`, and `sqlite`. Refer to the [http://www.indelible.org/php/Log/guide.html#standard-log-handlers PEAR::Log] documentation for more details on log handlers configuration and options.
 
 Note that the `<level>` tag needs to correspond to the integer represented by one of the `PEAR_LOG_*` constants:
 
@@ -87,7 +87,7 @@ Tip: All serious errors coming from the Propel core do not only issue a log mess
 
 In many cases you may wish to integrate Propel's logging facility with the rest of your web application. In `runtime-conf.xml`, you can customize a different PEAR logger. Here are a few examples:
 
-'''Example 1:''' Using 'display' container (for output to HTML)
+'''Example 1:''' Using `display` handler (for output to HTML)
 {{{
 #!xml
  <log>
@@ -96,7 +96,7 @@ In many cases you may wish to integrate Propel's logging facility with the rest 
  </log>
 }}}
 
-'''Example 2:''' Using 'syslog' container
+'''Example 2:''' Using `syslog` handler
 {{{
 #!xml
  <log>

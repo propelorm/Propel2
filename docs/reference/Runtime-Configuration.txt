@@ -12,7 +12,7 @@ Here is a the sample runtime configuration file.
 <config>
   <log>
     <ident>propel-bookstore</ident>
-    <name>console</name>
+    <type>console</type>
     <level>7</level>
   </log>
   <propel>
