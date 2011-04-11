@@ -32,18 +32,30 @@ $books = BookQuery::create()->find(); // empty collection
 
 Behind the curtain, the behavior adds a condition to every SELECT query to return only records where the `deleted_at` column is null. That's why the deleted objects don't appear anymore upon selection.
 
-You can turn off the query alteration globally by calling the static method `disableSoftDelete()` on the related Query object:
+You can include deleted results in a query by calling the `includeDeleted()` filter:
+
+{{{
+#!php
+<?php
+$book = BookQuery::create()
+  ->includeDeleted()
+  ->findOne();
+echo $book->getTitle(); // 'War And Peace'
+}}}
+
+You can also turn off the query alteration for the next query by calling the static method `disableSoftDelete()` on the related Query object:
 
 {{{
 #!php
 <?php
 BookQuery::disableSoftDelete();
-$books = BookQuery::create()->find();
-$book = $books[0];
+$book = BookQuery::create()->findOne();
 echo $book->getTitle(); // 'War And Peace'
 }}}
 
-Note that `find()` and other selection methods automatically re-enable the `soft_delete` filter. You can also enable it manually by calling the `enableSoftDelete()` method on Peer objects.
+Note that `find()` and other selection methods automatically re-enable the `soft_delete` filter, so `disableSoftDelete()` is really a single shot method. You can also enable the query alteration manually by calling the `enableSoftDelete()` method on Query objects.
+
+'''Tip''': `ModelCriteria::paginate()` executes two queries, so `disableSoftDelete()` doesn't work in this case. Prefer `includeDeleted()` in queries using `paginate()`. 
 
 If you want to recover a deleted object, use the `unDelete()` method:
 
