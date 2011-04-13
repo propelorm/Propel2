@@ -29,6 +29,9 @@ class VersionableBehavior extends Behavior
 		'log_created_at' => 'false',
 		'log_created_by' => 'false',
 		'log_comment'    => 'false',
+		'version_created_at_column' => 'version_created_at',
+		'version_created_by_column' => 'version_created_by',
+		'version_comment_column' => 'version_comment'
 	);
 
 	protected 
@@ -63,22 +66,22 @@ class VersionableBehavior extends Behavior
 	protected function addLogColumns()
 	{
 		$table = $this->getTable();
-		if ($this->getParameter('log_created_at') == 'true' && !$table->containsColumn('version_created_at')) {
+		if ($this->getParameter('log_created_at') == 'true' && !$table->containsColumn($this->getParameter('version_created_at_column'))) {
 			$table->addColumn(array(
-				'name' => 'version_created_at',
+				'name' => $this->getParameter('version_created_at_column'),
 				'type' => 'TIMESTAMP'
 			));
 		}
-		if ($this->getParameter('log_created_by') == 'true' && !$table->containsColumn('version_created_by')) {
+		if ($this->getParameter('log_created_by') == 'true' && !$table->containsColumn($this->getParameter('version_created_by_column'))) {
 			$table->addColumn(array(
-				'name' => 'version_created_by',
+				'name' => $this->getParameter('version_created_by_column'),
 				'type' => 'VARCHAR',
 				'size' => 100
 			));
 		}
-		if ($this->getParameter('log_comment') == 'true'  && !$table->containsColumn('version_comment')) {
+		if ($this->getParameter('log_comment') == 'true'  && !$table->containsColumn($this->getParameter('version_comment_column'))) {
 			$table->addColumn(array(
-				'name' => 'version_comment',
+				'name' => $this->getParameter('version_comment_column'),
 				'type' => 'VARCHAR',
 				'size' => 255
 			));

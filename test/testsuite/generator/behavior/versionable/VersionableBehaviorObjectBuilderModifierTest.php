@@ -71,6 +71,35 @@ class VersionableBehaviorObjectBuilderModifierTest extends PHPUnit_Framework_Tes
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
+		if (!class_exists('VersionableBehaviorTest6')) {
+			$schema2 = <<<EOF
+<database name="versionable_behavior_test_2" defaultPhpNamingMethod="nochange">
+	<table name="VersionableBehaviorTest6">
+		<column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="FooBar" type="VARCHAR" size="100" />
+		<behavior name="versionable">
+			<parameter name="log_created_at" value="true" />
+			<parameter name="log_created_by" value="true" />
+			<parameter name="log_comment" value="true" />
+		</behavior>
+	</table>
+	
+	<table name="VersionableBehaviorTest7">
+		<column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="FooBar" type="VARCHAR" size="100" />
+		<behavior name="versionable">
+			<parameter name="log_created_at" value="true" />
+			<parameter name="log_created_by" value="true" />
+			<parameter name="log_comment" value="true" />
+			
+			<parameter name="version_created_by_column" value="VersionCreatedBy" />
+			<parameter name="version_created_at_column" value="VersionCreatedAt" />
+			<parameter name="version_comment_column" value="MyComment" />
+		</behavior>
+	</table>
+EOF;
+			PropelQuickBuilder::buildSchema($schema2);
+		}
 	}
 
 	public function testGetVersionExists()
@@ -83,6 +112,20 @@ EOF;
 	{
 		$this->assertTrue(method_exists('VersionableBehaviorTest1', 'setVersion'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest2', 'setVersion'));
+	}
+	
+	public function testMethodsExistsNoChangeNaming()
+	{
+		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setFooBar'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_created_at'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_created_by'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_comment'));
+		
+		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setFooBar'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setVersionCreatedAt'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setVersionCreatedBy'));
+		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setMyComment'));
+		
 	}
 	
 	public function providerForNewActiveRecordTests()
@@ -452,6 +495,25 @@ EOF;
 			->filterByVersionableBehaviorTest4($o)
 			->findOne();
 		$this->assertEquals('me me me', $version->getVersionCreatedBy());
+	}
+	
+	public function testSaveAndModifyWithNoChangeSchema()
+	{
+		$o = new VersionableBehaviorTest7();
+		//$o->setVersionCreatedBy('You and I');
+		$o->save();
+		$this->assertEquals(1, $o->getVersion());
+		$o->setFooBar('Something');
+		$o->save();
+		$this->assertEquals(2, $o->getVersion());
+		
+		$o = new VersionableBehaviorTest6();
+		//$o->setVersionCreatedBy('You and I');
+		$o->save();
+		$this->assertEquals(1, $o->getVersion());
+		$o->setFooBar('Something');
+		$o->save();
+		$this->assertEquals(2, $o->getVersion());
 	}
 
 	public function testVersionComment()
