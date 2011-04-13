@@ -28,14 +28,36 @@ class PropelXMLParser extends PropelParser
 	 */
 	public function fromArray($array, $rootElementName = 'data', $charset = null)
 	{
+		$rootNode = $this->getRootNode($rootElementName);
+		$this->arrayToDOM($array, $rootNode, $charset, false);
+		
+		return $rootNode->ownerDocument->saveXML();
+	}
+
+	public function listFromArray($array, $rootElementName = 'data', $charset = null)
+	{
+		$rootNode = $this->getRootNode($rootElementName);
+		$this->arrayToDOM($array, $rootNode, $charset, true);
+		
+		return $rootNode->ownerDocument->saveXML();
+	}
+	
+	/**
+	 * Create a DOMDocument and get the root DOMNode using a root element name
+	 *
+	 * @param  string $rootElementName The Root Element Name
+	 *
+	 * @return DOMNode The root DOMNode
+	 */
+	protected function getRootNode($rootElementName = 'data')
+	{
 		$xml = new DOMDocument('1.0', 'UTF-8');
 		$xml->preserveWhiteSpace = false;
 		$xml->formatOutput = true;
 		$rootElement = $xml->createElement($rootElementName);
 		$xml->appendChild($rootElement);
-		$this->arrayToDOM($array, $rootElement, $charset);
 		
-		return $xml->saveXML();
+		return $rootElement;
 	}
 
 	/**
@@ -52,10 +74,26 @@ class PropelXMLParser extends PropelParser
 		return $this->fromArray($array, $rootElementName, $charset);
 	}
 
-	protected function arrayToDOM($array, $rootElement, $charset = null)
+	/**
+	 * Alias for PropelXMLParser::listFromArray()
+	 *
+	 * @param  array   $array Source data to convert
+	 * @param  string  $rootElementName Name of the root element of the XML document
+	 * @param  string  $charset Character set of the input data. Defaults to UTF-8.
+	 *
+	 * @return string Converted data, as an XML string
+	 */
+	public function listToXML($array, $rootElementName = 'data', $charset = null)
+	{
+		return $this->listFromArray($array, $rootElementName, $charset);
+	}
+
+	protected function arrayToDOM($array, $rootElement, $charset = null, $removeNumbersFromKeys = false)
 	{
 		foreach ($array as $key => $value) {
-			$key = preg_replace('/[^a-z]/i', '', $key);
+			if ($removeNumbersFromKeys) {
+				$key = preg_replace('/[^a-z]/i', '', $key);
+			}
 			$element = $rootElement->ownerDocument->createElement($key);
 			if (is_array($value)) {
 				if (!empty($value)) {

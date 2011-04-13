@@ -30,6 +30,7 @@ class PropelCSVParserTest extends PHPUnit_Framework_TestCase
 			array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'), "a\r\n\"<html><body><p style=\\\"width:30px;\\\">Hello, World!</p></body></html>\"\r\n", 'associative array with code'),
 			array(array('a' => 1, 'b' => array('foo' => 2)), "a,b\r\n1,\"a:1:{s:3:\\\"foo\\\";i:2;}\"\r\n", 'nested associative arrays'),
 			array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')), "Id,Title,AuthorId,ISBN,Author\r\n123,Pride and Prejudice,456,0553213105,\"a:3:{s:2:\\\"Id\\\";i:456;s:9:\\\"FirstName\\\";s:4:\\\"Jane\\\";s:8:\\\"LastName\\\";s:6:\\\"Austen\\\";}\"\r\n", 'array resulting from an object conversion'),
+			array(array('a1' => 1, 'b2' => 2), "a1,b2\r\n1,2\r\n", 'keys with numbers'),
 		);
 	}
 	

@@ -54,7 +54,7 @@ class BaseObjectConvertTest extends BookstoreTestBase
     <Id>1234</Id>
     <Name><![CDATA[Penguin]]></Name>
     <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
+      <Book_0><![CDATA[*RECURSION*]]></Book_0>
     </Books>
   </Publisher>
   <Author>
@@ -64,7 +64,7 @@ class BaseObjectConvertTest extends BookstoreTestBase
     <Email></Email>
     <Age></Age>
     <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
+      <Book_0><![CDATA[*RECURSION*]]></Book_0>
     </Books>
   </Author>
 </data>

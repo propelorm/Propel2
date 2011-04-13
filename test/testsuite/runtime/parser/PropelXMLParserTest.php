@@ -72,6 +72,12 @@ class PropelXMLParserTest extends PHPUnit_Framework_TestCase
   </Author>
 </data>
 ", 'array resulting from an object conversion'),
+			array(array('a1' => 1, 'b2' => 2), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<data>
+  <a1>1</a1>
+  <b2>2</b2>
+</data>
+", 'keys with numbers'),
 		);
 	}
 	
@@ -179,7 +185,7 @@ EOF;
 	public function testListToXML($list, $xml)
 	{
 		$parser = new PropelXMLParser();
-		$this->assertEquals($xml, $parser->toXML($list));
+		$this->assertEquals($xml, $parser->listToXML($list));
 	}
 
 	/**

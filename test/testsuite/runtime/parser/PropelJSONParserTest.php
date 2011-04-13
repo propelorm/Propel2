@@ -34,6 +34,7 @@ class PropelJSONParserTest extends PHPUnit_Framework_TestCase
 			array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'), '{"a":"<html><body><p style=\"width:30px;\">Hello, World!<\/p><\/body><\/html>"}', 'associative array with code'),
 			array(array('a' => 1, 'b' => array('foo' => 2)), '{"a":1,"b":{"foo":2}}', 'nested associative arrays'),
 			array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')), '{"Id":123,"Title":"Pride and Prejudice","AuthorId":456,"ISBN":"0553213105","Author":{"Id":456,"FirstName":"Jane","LastName":"Austen"}}', 'array resulting from an object conversion'),
+			array(array('a1' => 1, 'b2' => 2), '{"a1":1,"b2":2}', 'keys with numbers'),
 		);
 	}
 	

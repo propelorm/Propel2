@@ -72,6 +72,9 @@ Author:
   FirstName: Jane
   LastName: Austen
 ", 'array resulting from an object conversion'),
+			array(array('a1' => 1, 'b2' => 2), "a1: 1
+b2: 2
+", 'keys with numbers'),
 		);
 	}
 	
