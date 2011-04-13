@@ -115,6 +115,10 @@ class PropelOMTask extends AbstractPropelDataModelTask
 
 			foreach ($dataModel->getDatabases() as $database) {
 
+				if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
+					$database->getPlatform()->setIdentifierQuoting(false);
+				}
+
 				$this->log(" - Database: " . $database->getName(), Project::MSG_VERBOSE);
 
 				foreach ($database->getTables() as $table) {
