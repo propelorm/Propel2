@@ -87,4 +87,45 @@ class DatabaseTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($table, $database->getTable('foo', true));
 		$this->assertEquals($table, $database->getTable('FOO', true));
 	}
+
+	public function testAddTableDoesNotModifyTableNamespaceWhenDatabaseHasNoNamespace()
+	{
+		$db = new Database();
+		
+		$t1 = new Table('t1');
+		$db->addTable($t1);
+		$this->assertEquals('', $t1->getNamespace());
+		
+		$t2 = new Table('t2');
+		$t2->setNamespace('Bar');
+		$db->addTable($t2);
+		$this->assertEquals('Bar', $t2->getNamespace());
+	}
+
+	public function testAddTableAddsDatabaseNamespaceToTheTable()
+	{
+		$db = new Database();
+		$db->setNamespace('Foo');
+		
+		$t1 = new Table('t1');
+		$db->addTable($t1);
+		$this->assertEquals('Foo', $t1->getNamespace());
+		
+		$t2 = new Table('t2');
+		$t2->setNamespace('Bar');
+		$db->addTable($t2);
+		$this->assertEquals('Foo\\Bar', $t2->getNamespace());
+	}
+
+	public function testAddTableSkipsDatabaseNamespaceWhenTableNamespaceIsAbsolute()
+	{
+		$db = new Database();
+		$db->setNamespace('Foo');
+		
+		$t1 = new Table('t1');
+		$t1->setNamespace('\\Bar');
+		$db->addTable($t1);
+		$this->assertEquals('Bar', $t1->getNamespace());
+	}
+
 }

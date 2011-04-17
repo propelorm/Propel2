@@ -100,7 +100,7 @@ class VersionableBehavior extends Behavior
 				'phpName'   => $this->getVersionTablePhpName(),
 				'package'   => $table->getPackage(),
 				'schema'    => $table->getSchema(),
-				'namespace' => $table->getNamespace(false),
+				'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
 			));
 			// every behavior adding a table should re-execute database behaviors
 			foreach ($database->getBehaviors() as $behavior) {

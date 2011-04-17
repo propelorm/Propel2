@@ -256,6 +256,9 @@ class AppData
 				$addDbName = $addDb->getName();
 				if ($this->hasDatabase($addDbName)) {
 					$db = $this->getDatabase($addDbName, false);
+					// temporarily reset database namespace to avoid double namespace decoration (see ticket #1355)
+					$namespace = $db->getNamespace();
+					$db->setNamespace(null);
 					// join tables
 					foreach ($addDb->getTables() as $addTable) {
 						if ($db->getTable($addTable->getName())) {
@@ -269,6 +272,8 @@ class AppData
 							$db->addBehavior($addBehavior);
 						}
 					}
+					// restore the database namespace
+					$db->setNamespace($namespace);
 				} else {
 					$this->addDatabase($addDb);
 				}

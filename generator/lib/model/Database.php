@@ -381,6 +381,15 @@ class Database extends ScopedElement
 			if ($tbl->getPackage() === null) {
 				$tbl->setPackage($this->getPackage());
 			}
+			if (strpos($tbl->getNamespace(), '\\') === 0) {
+				$tbl->setNamespace(substr($tbl->getNamespace(), 1));
+			} elseif ($namespace = $this->getNamespace()) {
+				if ($tbl->getNamespace() === null) {
+					$tbl->setNamespace($namespace);
+				} else {
+					$tbl->setNamespace($namespace . '\\' . $tbl->getNamespace());
+				}
+			}
 			return $tbl;
 		} else {
 			$tbl = new Table();

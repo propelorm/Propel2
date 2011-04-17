@@ -1253,32 +1253,6 @@ class Table extends ScopedElement implements IDMethod
 	}
 
 	/**
-	 * Get the value of the namespace.
-	 *
-	 * @param     boolean $includeDatabaseNamespace Whether to complement the table namespace with the database namespace.
-	 *                                              Defaults to True.
-	 * @return    value of namespace.
-	 */
-	public function getNamespace($includeDatabaseNamespace = true)
-	{
-		if (!$includeDatabaseNamespace) {
-			return $this->namespace;
-		}
-		if ($this->namespace && strpos($this->namespace, '\\') === 0) {
-			// absolute table namespace
-			return substr($this->namespace, 1);
-		} elseif ($this->getDatabase() && $this->getDatabase()->getNamespace()) {
-			if ($this->namespace) {
-				return $this->getDatabase()->getNamespace() . '\\' . $this->namespace;
-			} else {
-				return $this->getDatabase()->getNamespace();
-			}
-		} else {
-			return $this->namespace;
-		}
-	}
-
-	/**
 	 * Set the default string format for ActiveRecord objects in this Table.
 	 *
 	 * @param      string $defaultStringFormat Any of 'XML', 'YAML', 'JSON', or 'CSV'
