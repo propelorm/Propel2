@@ -59,7 +59,7 @@ $b->save();
 echo $b->getCreatedAt(); // 2009-10-02 18:14:23
 }}}
 
-If you implement `preInsert()`, `preUpdate()`, `preSave()` or `preDelete()`, these methods must return a boolean value. This determines whether the action (save or delete) may proceed.
+'''Warning''': If you implement `preInsert()`, `preUpdate()`, `preSave()` or `preDelete()`, these methods **must return a boolean value**. Any return value other than `true` stops the action (save or delete). This is a neat way to bypass persistence on some cases, but can also create unexpected problems if you forget to return `true`.
 
 '''Tip''': Since this feature adds a small overhead to write operations, you can deactivate it completely in your build properties by setting `propel.addHooks` to `false`.
 
