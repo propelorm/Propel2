@@ -25,6 +25,12 @@ abstract class ScopedElement extends XMLElement
 	 * @var       string
 	 */
 	protected $pkg;
+	
+	/**
+	 * Whether the package was automatically overridden.
+	 * If propel.schema.autoPackage or propel.namespace.AutoPackage is true.
+	 */
+	protected $pkgOverridden = false;
 
 	/**
 	 * Namespace for the generated OM.
@@ -53,20 +59,9 @@ abstract class ScopedElement extends XMLElement
 	 */
 	protected function setupObject()
 	{
-		$this->schema = $this->getAttribute("schema", $this->schema);
-
-		$this->namespace = $this->getAttribute("namespace", $this->namespace);
-		$this->pkg = $this->getAttribute("package", $this->pkg);
-
-		if ($this->schema && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {
-			$this->namespace = $this->schema;
-		}
-		/* namespace.autoPackage overrides schema.autoPackage */
-		if ($this->namespace && !$this->pkg && $this->getBuildProperty('namespaceAutoPackage')) {
-			$this->pkg = str_replace('\\', '.', $this->namespace);
-		} else if ($this->schema && !$this->pkg && $this->getBuildProperty('schemaAutoPackage')) {
-			$this->pkg = $this->schema;
-		}
+		$this->setPackage($this->getAttribute("package", $this->pkg));
+		$this->setSchema($this->getAttribute("schema", $this->schema));
+		$this->setNamespace($this->getAttribute("namespace", $this->namespace));
 	}
 
 	/**
@@ -84,7 +79,14 @@ abstract class ScopedElement extends XMLElement
 	 */
 	public function setNamespace($v)
 	{
+		if ($v == $this->namespace) {
+			return;
+		}
 		$this->namespace = $v;
+		if ($v && (!$this->pkg || $this->pkgOverridden) && $this->getBuildProperty('namespaceAutoPackage')) {
+			$this->pkg = str_replace('\\', '.', $v);
+			$this->pkgOverridden = true;
+		}
 	}
 
 	/**
@@ -102,7 +104,11 @@ abstract class ScopedElement extends XMLElement
 	 */
 	public function setPackage($v)
 	{
+		if ($v == $this->pkg) {
+			return;
+		}
 		$this->pkg = $v;
+		$this->pkgOverridden = false;
 	}
 
 	/**
@@ -120,6 +126,16 @@ abstract class ScopedElement extends XMLElement
 	 */
 	public function setSchema($v)
 	{
+		if ($v == $this->schema) {
+			return;
+		}
 		$this->schema = $v;
+		if ($v && !$this->pkg && $this->getBuildProperty('schemaAutoPackage')) {
+			$this->pkg = $v;
+			$this->pkgOverridden = true;
+		}
+		if ($v && !$this->namespace && $this->getBuildProperty('schemaAutoNamespace')) {
+			$this->namespace = $v;
+		}
 	}
 }

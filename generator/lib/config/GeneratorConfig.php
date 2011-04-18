@@ -152,9 +152,11 @@ class GeneratorConfig implements GeneratorConfigInterface
 		$buildConnection = $this->getBuildConnection($database);
 		if (null !== $buildConnection['adapter']) {
 			$clazz = Phing::import('platform.' . ucfirst($buildConnection['adapter']) . 'Platform');
-		} else {
+		} elseif ($this->getBuildProperty('platformClass')) {
 			// propel.platform.class = platform.${propel.database}Platform by default
-			$clazz = $this->getClassname("platformClass");
+			$clazz = $this->getClassname('platformClass');
+		} else {
+			return null;
 		}
 		$platform = new $clazz();
 

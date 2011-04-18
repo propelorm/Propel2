@@ -292,4 +292,57 @@ EOF;
 		$this->assertEquals('NS2', $appData1->getDatabase('DB1')->getTable('table2')->getNamespace());
 	}
 	
+	public function testSetNamespaceSetsPackageWhenBuildPropertySet()
+	{
+		$schema = <<<EOF
+<database name="DB">
+  <table name="table" namespace="NS">
+    <column name="id" primaryKey="true" />
+    <column name="title1" type="VARCHAR" />
+  </table>
+</database>
+EOF;
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData->setGeneratorConfig($config);
+		$table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+		$this->assertEquals('NS', $table->getPackage());
+	}
+
+	public function testSetNamespaceSetsCompletePackageWhenBuildPropertySet()
+	{
+		$schema = <<<EOF
+<database name="DB" namespace="NS1">
+  <table name="table" namespace="NS2">
+    <column name="id" primaryKey="true" />
+    <column name="title1" type="VARCHAR" />
+  </table>
+</database>
+EOF;
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData->setGeneratorConfig($config);
+		$table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+		$this->assertEquals('NS1.NS2', $table->getPackage());
+	}
+
+	public function testSetPackageOverridesNamespaceAutoPackage()
+	{
+		$schema = <<<EOF
+<database name="DB" namespace="NS1">
+  <table name="table" namespace="NS2" package="foo">
+    <column name="id" primaryKey="true" />
+    <column name="title1" type="VARCHAR" />
+  </table>
+</database>
+EOF;
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
+		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
+		$xmlToAppData->setGeneratorConfig($config);
+		$table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
+		$this->assertEquals('foo', $table->getPackage());
+	}
 }

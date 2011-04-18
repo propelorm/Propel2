@@ -378,9 +378,6 @@ class Database extends ScopedElement
 			$this->tablesByName[$tbl->getName()] = $tbl;
 			$this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
 			$this->tablesByPhpName[ $tbl->getPhpName() ] = $tbl;
-			if ($tbl->getPackage() === null) {
-				$tbl->setPackage($this->getPackage());
-			}
 			if (strpos($tbl->getNamespace(), '\\') === 0) {
 				$tbl->setNamespace(substr($tbl->getNamespace(), 1));
 			} elseif ($namespace = $this->getNamespace()) {
@@ -389,6 +386,9 @@ class Database extends ScopedElement
 				} else {
 					$tbl->setNamespace($namespace . '\\' . $tbl->getNamespace());
 				}
+			}
+			if ($tbl->getPackage() === null) {
+				$tbl->setPackage($this->getPackage());
 			}
 			return $tbl;
 		} else {
