@@ -203,6 +203,7 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 			
 	protected function addGetMaxRank(&$script)
 	{
+		$this->builder->declareClasses('Propel');
 		$useScope = $this->behavior->useScope();
 		$script .= "
 /**
@@ -238,6 +239,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPD
 
 	protected function addReorder(&$script)
 	{
+		$this->builder->declareClasses('Propel');
 		$peerClassname = $this->peerClassname;
 		$columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
 		$columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
