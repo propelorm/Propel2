@@ -14,5 +14,5 @@ public function useI18nQuery($locale = '<?php echo $defaultLocale ?>', $relation
 {
 	return $this
 		->joinI18n($locale, $relationAlias, $joinType)
-		->useQuery($relationAlias ? $relationAlias : '<?php echo $i18nRelationName ?>', '<?php echo $queryClass ?>');
+		->useQuery($relationAlias ? $relationAlias : '<?php echo $i18nRelationName ?>', '<?php echo $namespacedQueryClass ?>');
 }
