@@ -27,7 +27,7 @@ public function getTranslation($locale = '<?php echo $defaultLocale ?>', PropelP
 				->findOneOrCreate($con);
 			$this->currentTranslations[$locale] = $translation;
 		}
-		$this->add<?php echo $i18nTablePhpName ?>($translation);
+		$this->add<?php echo $i18nSetterMethod ?>($translation);
 	}
 
 	return $this->currentTranslations[$locale];

@@ -113,6 +113,7 @@ class I18nBehaviorObjectBuilderModifier
 			'i18nListVariable' => $this->builder->getRefFKCollVarName($fk),
 			'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
 			'i18nQueryName'    => $this->builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
+			'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk, $plural = false),
 		));
 	}
 
