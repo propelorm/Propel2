@@ -118,6 +118,41 @@ class PropelDatabaseTableComparatorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(array('Bar' => $t4), $databaseDiff->getAddedTables());
 	}
 
+	public function testCompareAddedTableSkipSql()
+	{
+		$d1 = new Database();
+		$t1 = new Table('Foo_Table');
+		$c1 = new Column('Foo');
+		$c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c1->getDomain()->replaceScale(2);
+		$c1->getDomain()->replaceSize(3);
+		$c1->setNotNull(true);
+		$c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t1->addColumn($c1);
+		$d1->addTable($t1);
+
+		$d2 = new Database();
+		$t3 = new Table('Foo_Table');
+		$c3 = new Column('Foo');
+		$c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c3->getDomain()->replaceScale(2);
+		$c3->getDomain()->replaceSize(3);
+		$c3->setNotNull(true);
+		$c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t3->addColumn($c3);
+		$d2->addTable($t3);
+		$t4 = new Table('Bar');
+		$t4->setSkipSql(true);
+		$d2->addTable($t4);
+		
+		$dc = new PropelDatabaseComparator();
+		$dc->setFromDatabase($d1);
+		$dc->setToDatabase($d2);
+		$nbDiffs = $dc->compareTables();
+		$databaseDiff = $dc->getDatabaseDiff();
+		$this->assertEquals(0, $nbDiffs);
+	}
+
 	public function testCompareRemovedTable()
 	{
 		$d1 = new Database();
@@ -152,6 +187,41 @@ class PropelDatabaseTableComparatorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $nbDiffs);
 		$this->assertEquals(1, count($databaseDiff->getRemovedTables()));
 		$this->assertEquals(array('Bar' => $t2), $databaseDiff->getRemovedTables());
+	}
+
+	public function testCompareRemovedTableSkipSql()
+	{
+		$d1 = new Database();
+		$t1 = new Table('Foo_Table');
+		$c1 = new Column('Foo');
+		$c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c1->getDomain()->replaceScale(2);
+		$c1->getDomain()->replaceSize(3);
+		$c1->setNotNull(true);
+		$c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t1->addColumn($c1);
+		$d1->addTable($t1);
+		$t2 = new Table('Bar');
+		$t2->setSkipSql(true);
+		$d1->addTable($t2);
+		
+		$d2 = new Database();
+		$t3 = new Table('Foo_Table');
+		$c3 = new Column('Foo');
+		$c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+		$c3->getDomain()->replaceScale(2);
+		$c3->getDomain()->replaceSize(3);
+		$c3->setNotNull(true);
+		$c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$t3->addColumn($c3);
+		$d2->addTable($t3);
+		
+		$dc = new PropelDatabaseComparator();
+		$dc->setFromDatabase($d1);
+		$dc->setToDatabase($d2);
+		$nbDiffs = $dc->compareTables();
+		$databaseDiff = $dc->getDatabaseDiff();
+		$this->assertEquals(0, $nbDiffs);
 	}
 
 	public function testCompareModifiedTable()

@@ -114,7 +114,7 @@ class PropelDatabaseComparator
 		
 		// check for new tables in $toDatabase
 		foreach ($toDatabaseTables as $table) {
-			if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive)) {
+			if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
 				$this->databaseDiff->addAddedTable($table->getName(), $table);
 				$databaseDifferences++;
 			}
@@ -122,7 +122,7 @@ class PropelDatabaseComparator
 		
 		// check for removed tables in $toDatabase
 		foreach ($fromDatabaseTables as $table) {
-			if (!$this->toDatabase->hasTable($table->getName(), $caseInsensitive)) {
+			if (!$this->toDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
 				$this->databaseDiff->addRemovedTable($table->getName(), $table);
 				$databaseDifferences++;
 			}
