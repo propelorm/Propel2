@@ -267,7 +267,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
 	/**
 	 * Test the clearing of related object collection.
-	 * @link       http://propel.phpdb.org/trac/ticket/529
+	 * @link       http://www.propelorm.org/ticket/529
 	 */
 	public function testClearRefFk()
 	{
@@ -289,6 +289,20 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(1, count($book->getReviews()) );
 		$book->clearReviews();
 		$this->assertEquals(0, count($book->getReviews()));
+	}
+	
+	/**
+	 * Test the clearing of related object collection via a many-to-many association.
+	 * @link       http://www.propelorm.org/ticket/1374
+	 */
+	public function testClearCrossFk()
+	{
+		$book = new Book();
+		$bookClub = new BookClubList();
+		$book->addBookClubList($bookClub);
+		$this->assertEquals(1, count($book->getBookClubLists()));
+		$book->clear();
+		$this->assertEquals(0, count($book->getBookClubLists()));
 	}
 
 	/**
