@@ -381,7 +381,7 @@ $books = BookQuery::create()
 $books = BookQuery::create()
   ->filterByTitle('War And Peace')
   ->_or()
-  ->filterByTitle(''War%')
+  ->filterByTitle('War%')
   ->find();
 // SELECT * FROM book WHERE book.TITLE = 'War And Peace' OR book.TITLE LIKE 'War%'
 
