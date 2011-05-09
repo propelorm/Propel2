@@ -32,13 +32,6 @@ class DefaultPlatform implements PropelPlatformInterface
 	protected $schemaDomainMap;
 
 	/**
-	 * GeneratorConfig object holding build properties.
-	 *
-	 * @var        GeneratorConfig
-	 */
-	protected $generatorConfig;
-
-	/**
 	 * @var        PDO Database connection.
 	 */
 	protected $con;
@@ -83,17 +76,7 @@ class DefaultPlatform implements PropelPlatformInterface
 	 */
 	public function setGeneratorConfig(GeneratorConfig $config)
 	{
-		$this->generatorConfig = $config;
-	}
-
-	/**
-	 * Gets the GeneratorConfig option.
-	 *
-	 * @return     GeneratorConfig
-	 */
-	public function getGeneratorConfig()
-	{
-		return $this->generatorConfig;
+		// do nothing by default
 	}
 
 	/**

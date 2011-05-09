@@ -44,6 +44,16 @@ class MysqlPlatform extends DefaultPlatform
 		$this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
 	}
 
+	public function setGeneratorConfig(GeneratorConfig $generatorConfig)
+	{
+		if ($defaultTableEngine = $generatorConfig->getBuildProperty('mysqlTableType')) {
+			$this->defaultTableEngine = $defaultTableEngine;
+		}
+		if ($tableEngineKeyword = $generatorConfig->getBuildProperty('mysqlTableEngineKeyword')) {
+			$this->tableEngineKeyword = $tableEngineKeyword;
+		}
+	}
+	
 	/**
 	 * Setter for the tableEngineKeyword property
 	 *
@@ -81,11 +91,6 @@ class MysqlPlatform extends DefaultPlatform
 	 */
 	function getDefaultTableEngine()
 	{
-		if (class_exists('DataModelBuilder', false)) {
-			if ($defaultTableEngine = $this->getBuildProperty('mysqlTableType')) {
-				return $defaultTableEngine;
-			}
-		}
 		return $this->defaultTableEngine;
 	}
 
