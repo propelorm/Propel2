@@ -121,9 +121,10 @@ class PHP5ObjectBuilder extends ObjectBuilder
 	 */
 	protected function getDefaultValueString(Column $col)
 	{
+		$defaultValue = var_export(null, true);
 		$val = $col->getPhpDefaultValue();
 		if ($val === null) {
-			return var_export(null, true);
+			return $defaultValue;
 		}
 		if ($col->isTemporalType()) {
 			$fmt = $this->getTemporalFormatter($col);
