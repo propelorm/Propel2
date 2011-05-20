@@ -724,6 +724,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 				\$convertedValues []= array_search(\$value, \$valueSet);
 			}
 			\$$variableName = \$convertedValues;
+			if (null === \$comparison) {
+				\$comparison = Criteria::IN;
+			}
 		}";
 		} elseif ($col->isTextType()) {
 			$script .= "

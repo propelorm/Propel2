@@ -85,5 +85,9 @@ EOF;
 			->filterByBar(array('baz', '4'), Criteria::IN)
 			->count();
 		$this->assertEquals(2, $nb, 'enum columns are searchable by enumerated value');
+		$nb = ComplexColumnTypeEntity13Query::create()
+			->filterByBar(array('baz', '4'))
+			->count();
+		$this->assertEquals(2, $nb, 'enum columns filters default to Criteria IN when passed an array');
 	}
 }
