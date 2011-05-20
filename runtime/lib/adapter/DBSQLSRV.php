@@ -70,7 +70,7 @@ class DBSQLSRV extends DBMSSQL
 	/**
 	 * @see        DBAdapter::bindValue()
 	 */
-	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap)
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
 		if ($cMap->isTemporal()) {
 			$value = $this->formatTemporalValue($value, $cMap);

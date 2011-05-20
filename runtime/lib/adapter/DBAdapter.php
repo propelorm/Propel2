@@ -489,9 +489,10 @@ abstract class DBAdapter
 	 */
 	public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap)
 	{
-		$position = 1;
+		$position = 0;
 		foreach ($params as $param) {
-			$parameter = ':p' . $position++;
+			$position++;
+			$parameter = ':p' . $position;
 			$value = $param['value'];
 			if (null === $value) {
 				$stmt->bindValue($parameter, null, PDO::PARAM_NULL);
@@ -503,7 +504,7 @@ abstract class DBAdapter
 				continue;
 			}
 			$cMap = $dbMap->getTable($tableName)->getColumn($param['column']);
-			$this->bindValue($stmt, $parameter, $value, $cMap);
+			$this->bindValue($stmt, $parameter, $value, $cMap, $position);
 		}
 	}
 	
@@ -515,10 +516,11 @@ abstract class DBAdapter
 	 * @param  string       $parameter Parameter identifier
 	 * @param  mixed        $value     The value to bind
 	 * @param  ColumnMap    $cMap      The ColumnMap of the column to bind 
+	 * @param  integer      $position  The position of the parameter to bind
 	 *
 	 * @return Boolean                 TRUE on success or FALSE on failure.
 	 */
-	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap)
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
 		if ($cMap->isTemporal()) {
 			$value = $this->formatTemporalValue($value, $cMap);

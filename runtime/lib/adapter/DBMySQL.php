@@ -154,7 +154,7 @@ class DBMySQL extends DBAdapter
 	/**
 	 * @see        DBAdapter::bindValue()
 	 */
-	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap)
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
 		$pdoType = $cMap->getPdoType();
 		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
