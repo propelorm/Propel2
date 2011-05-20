@@ -347,6 +347,7 @@ query rootsOf($node)
 // only for behavior with use_scope
 query treeRoots()
 query inTree($scope = null)
+coll  findRoots()
 // order methods
 query orderByBranch($reverse = false)
 query orderByLevel($reverse = false)

@@ -63,6 +63,9 @@ class NestedSetBehaviorQueryBuilderModifier
 		$this->addOrderByLevel($script);
 		// select termination methods
 		$this->addFindRoot($script);
+		if ($this->behavior->useScope()) {
+			$this->addFindRoots($script);
+		}
 		$this->addFindTree($script);
 		
 		return $script;
@@ -321,6 +324,25 @@ public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 		}
 		$script .= "
 		->findOne(\$con);
+}
+";
+	}
+
+	protected function addFindRoots(&$script)
+	{
+		$script .= "
+/**
+ * Returns the root objects for all trees.
+ *
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return    mixed the list of results, formatted by the current formatter
+ */
+public function findRoots(\$con = null)
+{
+	return \$this
+		->treeRoots()
+		->find(\$con);
 }
 ";
 	}
