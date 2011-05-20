@@ -1196,7 +1196,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 			" . $this->getPeerClassname() . "::addInstanceToPool(\$obj, \$key);
 		}
 		return array(\$obj, \$col);
-	}";
+	}
+";
 	}
 
 	/**
