@@ -52,14 +52,20 @@ class SoftDeleteBehavior extends Behavior
 	
 	public function addObjectForceDelete(&$script)
 	{
+		$peerClassName = $this->getTable()->getPhpName() . 'Peer';
 		$script .= "
 /**
  * Bypass the soft_delete behavior and force a hard delete of the current object
  */
 public function forceDelete(PropelPDO \$con = null)
 {
-	{$this->getTable()->getPhpName()}Peer::disableSoftDelete();
+	if(\$isSoftDeleteEnabled = {$peerClassName}::isSoftDeleteEnabled()) {
+		{$peerClassName}::disableSoftDelete();
+	}
 	\$this->delete(\$con);
+	if (\$isSoftDeleteEnabled) {
+		{$peerClassName}::enableSoftDelete();
+	}
 }
 ";
 	}

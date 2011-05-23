@@ -220,6 +220,37 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(0, Table4Peer::doCount(new Criteria), 'forced deleted rows are not present in the database');
 	}
 	
+	public function testForceDeleteDoesNotDisableSoftDelete()
+	{
+		$t1 = new Table4();
+		$t1->save();
+		$t2 = new Table4();
+		$t2->save();
+		$t1->forceDelete();
+		$t2->delete();
+		$this->assertTrue($t1->isDeleted(), 'forceDelete() actually deletes a row');
+		$this->assertFalse($t2->isDeleted(), 'forceDelete() does not affect further delete() calls');
+		Table4Peer::disableSoftDelete();
+		$this->assertEquals(1, Table4Peer::doCount(new Criteria), 'forced deleted rows are not present in the database');
+	}
+
+	public function testForceDeleteReEnablesSoftDelete()
+	{
+		$t = new Table4();
+		$t->save();
+		$t->forceDelete();
+		$this->assertTrue(Table4Peer::isSoftDeleteEnabled(), 'forceDelete() reenables soft delete');
+	}
+
+	public function testForceDeleteDoesNotReEnableSoftDeleteIfDisabled()
+	{
+		Table4Peer::disableSoftDelete();
+		$t = new Table4();
+		$t->save();
+		$t->forceDelete();
+		$this->assertFalse(Table4Peer::isSoftDeleteEnabled(), 'forceDelete() does not reenable soft delete if previously disabled');
+	}
+	
 	public function testQueryIncludeDeleted()
 	{
 		$t = new Table4();
