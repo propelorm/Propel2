@@ -247,7 +247,10 @@ class BookstoreDataPopulator
 		);
 		// free the memory from existing objects
 		foreach ($peerClasses as $peerClass) {
-			foreach ($peerClass::$instances as $o) {
+			// $peerClass::$instances crashes on PHP 5.2, see http://www.propelorm.org/ticket/1388
+			$r = new ReflectionClass($peerClass);
+			$p = $r->getProperty('instances');
+			foreach ($p->getValue() as $o) {
 				$o->clearAllReferences();
 			}
 		}
@@ -257,7 +260,8 @@ class BookstoreDataPopulator
 		}
 		$con->beginTransaction();
 		foreach ($peerClasses as $peerClass) {
-			$peerClass::doDeleteAll($con);
+			// $peerClass::doDeleteAll() crashes on PHP 5.2, see http://www.propelorm.org/ticket/1388
+			call_user_func(array($peerClass, 'doDeleteAll'), $con);
 		}
 		$con->commit();
 	}
