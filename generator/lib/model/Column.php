@@ -792,7 +792,7 @@ class Column extends XMLElement
 
 	public function hasReferrer(ForeignKey $fk)
 	{
-		return $this->hasReferrers() && in_array($fk, $this->referrers);
+		return $this->hasReferrers() && in_array($fk, $this->referrers, true);
 	}
 	
 	public function clearReferrers()
