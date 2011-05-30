@@ -265,8 +265,7 @@ abstract class DBAdapter
 	{
 		/** @var $dt PropelDateTime */
 		if ($dt = PropelDateTime::newInstance($value)) {
-			switch($cMap->getType())
-			{
+			switch($cMap->getType()) {
 				case PropelColumnTypes::TIMESTAMP:
 				case PropelColumnTypes::BU_TIMESTAMP:
 					$value = $dt->format($this->getTimestampFormatter());
