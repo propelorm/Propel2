@@ -22,6 +22,9 @@ class DBNone extends DBAdapter
 
 	/**
 	 * @see        DBAdapter::initConnection()
+	 *
+	 * @param     PDO    $con
+	 * @param     array  $settings
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
@@ -30,8 +33,8 @@ class DBNone extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string to transform to upper case.
-	 * @return     The upper case string.
+	 * @param     string  $in  The string to transform to upper case.
+	 * @return    string  The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -41,8 +44,8 @@ class DBNone extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string whose case to ignore.
-	 * @return     The string in a case that can be ignored.
+	 * @param     string  $in  The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -52,9 +55,10 @@ class DBNone extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -64,10 +68,11 @@ class DBNone extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -77,16 +82,20 @@ class DBNone extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public function strLength($s)
 	{
 		return strlen($s);
 	}
-	
+
 	/**
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{
@@ -95,10 +104,9 @@ class DBNone extends DBAdapter
 	/**
 	 * Gets the SQL string that this adapter uses for getting a random number.
 	 *
-	 * @param      mixed $seed (optional) seed value for databases that support this
+	 * @param     string  $seed (optional) seed value for databases that support this
 	 */
 	public function random($seed = null)
 	{
 	}
-	
 }

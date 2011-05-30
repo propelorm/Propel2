@@ -18,17 +18,26 @@
 class DBSQLSRV extends DBMSSQL
 {
 	/**
-	 * @see        parent::initConnection()
+	 * @see       parent::initConnection()
+	 *
+	 * @param     PDO    $con
+	 * @param     array  $settings
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
 		$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+
 		parent::initConnection($con, $settings);
 	}
 
 	/**
-	 * @see        parent::setCharset()
+	 * @see       parent::setCharset()
+	 *
+	 * @param     PDO     $con
+	 * @param     string  $charset
+	 *
+	 * @throws    PropelException
 	 */
 	public function setCharset(PDO $con, $charset)
 	{
@@ -45,7 +54,12 @@ class DBSQLSRV extends DBMSSQL
 	}
 
 	/**
-	 * @see        parent::cleanupSQL()
+	 * @see       parent::cleanupSQL()
+	 *
+	 * @param     string       $sql
+	 * @param     array        $params
+	 * @param     Criteria     $values
+	 * @param     DatabaseMap  $dbMap
 	 */
 	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
 	{
@@ -66,9 +80,17 @@ class DBSQLSRV extends DBMSSQL
 			$i++;
 		}
 	}
-	
+
 	/**
-	 * @see        DBAdapter::bindValue()
+	 * @see       DBAdapter::bindValue()
+	 *
+	 * @param     PDOStatement  $stmt
+	 * @param     string        $parameter
+	 * @param     mixed         $value
+	 * @param     ColumnMap     $cMap
+	 * @param     null|integer  $position
+	 *
+	 * @return    boolean
 	 */
 	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
@@ -84,6 +106,7 @@ class DBSQLSRV extends DBMSSQL
 			// would change on the next loop
 			$blob = "blob".$position;
 			$$blob = $value;
+
 			return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
 		}
 

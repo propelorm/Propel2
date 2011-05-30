@@ -24,8 +24,8 @@ class DBPostgres extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      string $in The string to transform to upper case.
-	 * @return     string The upper case string.
+	 * @param     string  $in  The string to transform to upper case.
+	 * @return    string  The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -35,8 +35,8 @@ class DBPostgres extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string whose case to ignore.
-	 * @return     The string in a case that can be ignored.
+	 * @param     string  $in  The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -46,9 +46,10 @@ class DBPostgres extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -58,10 +59,11 @@ class DBPostgres extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -71,8 +73,8 @@ class DBPostgres extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public function strLength($s)
 	{
@@ -80,7 +82,9 @@ class DBPostgres extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::getIdMethod()
+	 * @see       DBAdapter::getIdMethod()
+	 *
+	 * @return    integer
 	 */
 	protected function getIdMethod()
 	{
@@ -89,6 +93,11 @@ class DBPostgres extends DBAdapter
 
 	/**
 	 * Gets ID for specified sequence name.
+	 *
+	 * @param     PDO     $con
+	 * @param     string  $name
+	 *
+	 * @return    integer
 	 */
 	public function getId(PDO $con, $name = null)
 	{
@@ -97,12 +106,13 @@ class DBPostgres extends DBAdapter
 		}
 		$stmt = $con->query("SELECT nextval(".$con->quote($name).")");
 		$row = $stmt->fetch(PDO::FETCH_NUM);
+
 		return $row[0];
 	}
 
 	/**
 	 * Returns timestamp formatter string for use in date() function.
-	 * @return     string
+	 * @return    string
 	 */
 	public function getTimestampFormatter()
 	{
@@ -111,7 +121,8 @@ class DBPostgres extends DBAdapter
 
 	/**
 	 * Returns timestamp formatter string for use in date() function.
-	 * @return     string
+	 *
+	 * @return    string
 	 */
 	public function getTimeFormatter()
 	{
@@ -119,7 +130,11 @@ class DBPostgres extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::applyLimit()
+	 * @see       DBAdapter::applyLimit()
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{
@@ -130,17 +145,25 @@ class DBPostgres extends DBAdapter
 			$sql .= " OFFSET ".$offset;
 		}
 	}
-	
+
 	/**
-	 * @see        DBAdapter::random()
+	 * @see       DBAdapter::random()
+	 *
+	 * @param     string  $seed
+	 * @return    string
 	 */
 	public function random($seed=NULL)
 	{
 		return 'random()';
 	}
-	
+
 	/**
 	 * @see        DBAdapter::getDeleteFromClause()
+
+	 * @param     Criteria  $criteria
+	 * @param     string    $tableName
+	 *
+	 * @return    string
 	 */
 	public function getDeleteFromClause($criteria, $tableName)
 	{
@@ -159,11 +182,15 @@ class DBPostgres extends DBAdapter
 			}
 			$sql .= 'FROM ' . $tableName;
 		}
+
 		return $sql;
 	}
 
 	/**
 	 * @see        DBAdapter::quoteIdentifierTable()
+	 *
+	 * @param     string  $table
+	 * @return    string
 	 */
 	public function quoteIdentifierTable($table)
 	{

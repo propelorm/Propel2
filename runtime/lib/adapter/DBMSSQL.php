@@ -19,7 +19,11 @@ class DBMSSQL extends DBAdapter
 {
 	/**
 	 * MS SQL Server does not support SET NAMES
-	 * @see        DBAdapter::setCharset()
+	 *
+	 * @see       DBAdapter::setCharset()
+	 *
+	 * @param     PDO     $con
+	 * @param     string  $charset
 	 */
 	public function setCharset(PDO $con, $charset)
 	{
@@ -28,8 +32,8 @@ class DBMSSQL extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string to transform to upper case.
-	 * @return     The upper case string.
+	 * @param     string $in The string to transform to upper case.
+	 * @return    string The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -39,8 +43,8 @@ class DBMSSQL extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string whose case to ignore.
-	 * @return     The string in a case that can be ignored.
+	 * @param     string $in The string whose case to ignore.
+	 * @return    string The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -50,9 +54,10 @@ class DBMSSQL extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -62,10 +67,11 @@ class DBMSSQL extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -75,8 +81,8 @@ class DBMSSQL extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public function strLength($s)
 	{
@@ -84,7 +90,10 @@ class DBMSSQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::quoteIdentifier()
+	 * @see       DBAdapter::quoteIdentifier()
+	 *
+	 * @param     string  $text
+	 * @return    string
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -92,7 +101,10 @@ class DBMSSQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::quoteIdentifierTable()
+	 * @see       DBAdapter::quoteIdentifierTable()
+	 *
+	 * @param     string  $table
+	 * @return    string
 	 */
 	public function quoteIdentifierTable($table)
 	{
@@ -101,7 +113,10 @@ class DBMSSQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::random()
+	 * @see       DBAdapter::random()
+	 *
+	 * @param     string  $seed
+	 * @return    string
 	 */
 	public function random($seed = null)
 	{
@@ -110,10 +125,18 @@ class DBMSSQL extends DBAdapter
 
 	/**
 	 * Simulated Limit/Offset
+	 *
 	 * This rewrites the $sql query to apply the offset and limit.
 	 * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
-	 * @see        DBAdapter::applyLimit()
-	 * @author     Benjamin Runnels <kraven@kraven.org>
+	 *
+	 * @see       DBAdapter::applyLimit()
+	 * @author    Benjamin Runnels <kraven@kraven.org>
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
+	 *
+	 * @return    void
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{
@@ -231,11 +254,15 @@ class DBMSSQL extends DBAdapter
 
 		//ROW_NUMBER() starts at 1 not 0
 		$sql = $outerSelect . ' (' . $innerSelect . ' ' . $fromStatement . ') AS derivedb WHERE RowNumber BETWEEN ' . ($offset + 1) . ' AND ' . ($limit + $offset);
-		return;
 	}
 
 	/**
-	 * @see        parent::cleanupSQL()
+	 * @see       parent::cleanupSQL()
+	 *
+	 * @param     string       $sql
+	 * @param     array        $params
+	 * @param     Criteria     $values
+	 * @param     DatabaseMap  $dbMap
 	 */
 	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
 	{

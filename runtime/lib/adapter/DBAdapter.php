@@ -32,14 +32,13 @@
  */
 abstract class DBAdapter
 {
-
 	const ID_METHOD_NONE = 0;
 	const ID_METHOD_AUTOINCREMENT = 1;
 	const ID_METHOD_SEQUENCE = 2;
 
 	/**
 	 * Propel driver to Propel adapter map.
-	 * @var        array
+	 * @var array
 	 */
 	private static $adapters = array(
 		'mysql'  => 'DBMySQL',
@@ -57,10 +56,11 @@ abstract class DBAdapter
 	 * Creates a new instance of the database adapter associated
 	 * with the specified Propel driver.
 	 *
-	 * @param      string $driver The name of the Propel driver to
-	 * create a new adapter instance for or a shorter form adapter key.
-	 * @return     DBAdapter An instance of a Propel database adapter.
-	 * @throws     PropelException if the adapter could not be instantiated.
+	 * @param     string  $driver The name of the Propel driver to create a new adapter instance
+	 *                            for or a shorter form adapter key.
+	 *
+	 * @throws    PropelException  If the adapter could not be instantiated.
+	 * @return    DBAdapter        An instance of a Propel database adapter.
 	 */
 	public static function factory($driver) {
 		$adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
@@ -81,9 +81,10 @@ abstract class DBAdapter
 	 *
 	 * This base method runs queries specified using the "query" setting.
 	 *
-	 * @param      PDO   A PDO connection instance.
-	 * @param      array An array of settings.
-	 * @see        setCharset()
+	 * @see       setCharset()
+	 *
+	 * @param     PDO    $con  A PDO connection instance.
+	 * @param     array  $settings  An array of settings.
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
@@ -105,9 +106,10 @@ abstract class DBAdapter
 	 * This method is invoked from the default initConnection() method and must
 	 * be overridden for an RDMBS which does _not_ support this SQL standard.
 	 *
-	 * @param      PDO   A PDO connection instance.
-	 * @param      string The charset encoding.
-	 * @see        initConnection()
+	 * @see       initConnection()
+	 *
+	 * @param     PDO     $con  A $PDO PDO connection instance.
+	 * @param     string  $charset  The $string charset encoding.
 	 */
 	public function setCharset(PDO $con, $charset)
 	{
@@ -117,8 +119,8 @@ abstract class DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      string The string to transform to upper case.
-	 * @return     string The upper case string.
+	 * @param     string  $in The string to transform to upper case.
+	 * @return    string  The upper case string.
 	 */
 	public abstract function toUpperCase($in);
 
@@ -127,7 +129,7 @@ abstract class DBAdapter
 	 * a piece of text used in a SQL statement (generally a single
 	 * quote).
 	 *
-	 * @return     string The text delimeter.
+	 * @return    string  The text delimeter.
 	 */
 	public function getStringDelimiter()
 	{
@@ -137,8 +139,8 @@ abstract class DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      string $in The string whose case to ignore.
-	 * @return     string The string in a case that can be ignored.
+	 * @param     string  $in The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public abstract function ignoreCase($in);
 
@@ -148,8 +150,8 @@ abstract class DBAdapter
 	 * (Interbase for example) does not use the same SQL in ORDER BY
 	 * and other clauses.
 	 *
-	 * @param      string $in The string whose case to ignore.
-	 * @return     string The string in a case that can be ignored.
+	 * @param     string  $in  The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public function ignoreCaseInOrderBy($in)
 	{
@@ -159,35 +161,37 @@ abstract class DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public abstract function concatString($s1, $s2);
 
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public abstract function subString($s, $pos, $len);
 
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public abstract function strLength($s);
 
 
 	/**
 	 * Quotes database objec identifiers (table names, col names, sequences, etc.).
-	 * @param      string $text The identifier to quote.
-	 * @return     string The quoted identifier.
+	 * @param     string  $text  The identifier to quote.
+	 * @return    string  The quoted identifier.
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -199,8 +203,8 @@ abstract class DBAdapter
 	 * This doesn't take care of dots which separate schema names from table names. Adapters for RDBMs which support
 	 * schemas have to implement that in the platform-specific way.
 	 *
-	 * @param      string $table The table name to quo
-	 * @return     string The quoted table name
+	 * @param     string  $table  The table name to quo
+	 * @return    string  The quoted table name
 	 **/
 	public function quoteIdentifierTable($table) {
 		return implode(" ", array_map(array($this, "quoteIdentifier"), explode(" ", $table) ) );
@@ -208,7 +212,8 @@ abstract class DBAdapter
 
 	/**
 	 * Returns the native ID method for this RDBMS.
-	 * @return     int one of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
+	 *
+	 * @return    integer  One of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
 	 */
 	protected function getIdMethod()
 	{
@@ -217,7 +222,8 @@ abstract class DBAdapter
 
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
-	 * @return     boolean
+	 *
+	 * @return    boolean
 	 */
 	public function isGetIdBeforeInsert()
 	{
@@ -226,7 +232,8 @@ abstract class DBAdapter
 
 	/**
 	 * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
-	 * @return     boolean
+	 *
+	 * @return    boolean
 	 */
 	public function isGetIdAfterInsert()
 	{
@@ -235,7 +242,11 @@ abstract class DBAdapter
 
 	/**
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
-	 * @return     mixed
+
+	 * @param     PDO     $con
+	 * @param     string  $name
+	 *
+	 * @return    mixed
 	 */
 	public function getId(PDO $con, $name = null)
 	{
@@ -244,34 +255,38 @@ abstract class DBAdapter
 
 	/**
 	 * Formats a temporal value brefore binding, given a ColumnMap object
-	 * @param  mixed      $value The temporal value
-	 * @param  ColumnMap  $cMap
 	 *
-	 * @return string            The formatted temporal value
+	 * @param     mixed      $value  The temporal value
+	 * @param     ColumnMap  $cMap
+	 *
+	 * @return    string  The formatted temporal value
 	 */
 	protected function formatTemporalValue($value, ColumnMap $cMap)
 	{
-		if($dt = PropelDateTime::newInstance($value)) {
-		  switch($cMap->getType()) {
-		    case PropelColumnTypes::TIMESTAMP:
-		    case PropelColumnTypes::BU_TIMESTAMP:
-		      $value = $dt->format($this->getTimestampFormatter());
-		      break;
-		    case PropelColumnTypes::DATE:
-		    case PropelColumnTypes::BU_DATE:
-		      $value = $dt->format($this->getDateFormatter());
-		      break;
-		    case PropelColumnTypes::TIME:
-		      $value = $dt->format($this->getTimeFormatter());
-		      break;
-		  } 
+		/** @var $dt PropelDateTime */
+		if ($dt = PropelDateTime::newInstance($value)) {
+			switch($cMap->getType())
+			{
+				case PropelColumnTypes::TIMESTAMP:
+				case PropelColumnTypes::BU_TIMESTAMP:
+					$value = $dt->format($this->getTimestampFormatter());
+					break;
+				case PropelColumnTypes::DATE:
+				case PropelColumnTypes::BU_DATE:
+					$value = $dt->format($this->getDateFormatter());
+					break;
+				case PropelColumnTypes::TIME:
+					$value = $dt->format($this->getTimeFormatter());
+					break;
+			}
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Returns timestamp formatter string for use in date() function.
-	 * @return     string
+	 *
+	 * @return    string
 	 */
 	public function getTimestampFormatter()
 	{
@@ -280,7 +295,8 @@ abstract class DBAdapter
 
 	/**
 	 * Returns date formatter string for use in date() function.
-	 * @return     string
+	 *
+	 * @return    string
 	 */
 	public function getDateFormatter()
 	{
@@ -289,7 +305,8 @@ abstract class DBAdapter
 
 	/**
 	 * Returns time formatter string for use in date() function.
-	 * @return     string
+	 *
+	 * @return    string
 	 */
 	public function getTimeFormatter()
 	{
@@ -303,8 +320,9 @@ abstract class DBAdapter
 	 * it`s a workaround...!!!
 	 *
 	 * @todo       should be abstract
-	 * @return     boolean
 	 * @deprecated
+	 *
+	 * @return    boolean
 	 */
 	public function useQuoteIdentifier()
 	{
@@ -314,10 +332,10 @@ abstract class DBAdapter
 	/**
 	 * Allows manipulation of the query string before PDOStatement is instantiated.
 	 *
-	 * @param      string $sql The sql statement
-	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
-	 * @param      Criteria $values
-	 * @param      DatabaseMap $dbMap
+	 * @param     string       $sql  The sql statement
+	 * @param     array        $params  array('column' => ..., 'table' => ..., 'value' => ...)
+	 * @param     Criteria     $values
+	 * @param     DatabaseMap  $dbMap
 	 */
 	public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
 	{
@@ -325,20 +343,27 @@ abstract class DBAdapter
 
 	/**
 	 * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
 	 */
 	public abstract function applyLimit(&$sql, $offset, $limit);
 
 	/**
 	 * Gets the SQL string that this adapter uses for getting a random number.
 	 *
-	 * @param      mixed $seed (optional) seed value for databases that support this
+	 * @param     mixed $seed (optional) seed value for databases that support this
 	 */
 	public abstract function random($seed = null);
 
 	/**
 	 * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-	 * @return     string
-	 * @author     Niklas Närhinen <niklas@narhinen.net>
+	 *
+	 * @param     Criteria  $criteria
+	 * @param     string    $tableName
+	 *
+	 * @return    string
 	 */
 	public function getDeleteFromClause($criteria, $tableName)
 	{
@@ -364,6 +389,12 @@ abstract class DBAdapter
 	 * Builds the SELECT part of a SQL statement based on a Criteria
 	 * taking into account select columns and 'as' columns (i.e. columns aliases)
 	 * Move from BasePeer to DBAdapter and turn from static to non static
+	 *
+	 * @param     Criteria  $criteria
+	 * @param     array     $fromClause
+	 * @param     boolean   $aliasAll
+	 *
+	 * @return    string
 	 */
 	public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
 	{
@@ -430,12 +461,12 @@ abstract class DBAdapter
 	/**
 	 * Ensures uniqueness of select column names by turning them all into aliases
 	 * This is necessary for queries on more than one table when the tables share a column name
+	 * Moved from BasePeer to DBAdapter and turned from static to non static
+	 *
 	 * @see http://propel.phpdb.org/trac/ticket/795
-	 * Move from BasePeer to DBAdapter and turn from static to non static
 	 *
-	 * @param Criteria $criteria
-	 *
-	 * @return Criteria The input, with Select columns replaced by aliases
+	 * @param     Criteria  $criteria
+	 * @return    Criteria  The input, with Select columns replaced by aliases
 	 */
 	public function turnSelectColumnsToAliases(Criteria $criteria)
 	{
@@ -483,9 +514,9 @@ abstract class DBAdapter
 	 * $stmt->execute();
 	 * </code>
 	 *
-	 * @param      PDOStatement $stmt
-	 * @param      array $params array('column' => ..., 'table' => ..., 'value' => ...)
-	 * @param      DatabaseMap $dbMap
+	 * @param     PDOStatement  $stmt
+	 * @param     array         $params  array('column' => ..., 'table' => ..., 'value' => ...)
+	 * @param     DatabaseMap   $dbMap
 	 */
 	public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap)
 	{
@@ -507,18 +538,18 @@ abstract class DBAdapter
 			$this->bindValue($stmt, $parameter, $value, $cMap, $position);
 		}
 	}
-	
+
 	/**
 	 * Binds a value to a positioned parameted in a statement,
 	 * given a ColumnMap object to infer the binding type.
 	 *
-	 * @param  PDOStatement $stmt      The statement to bind
-	 * @param  string       $parameter Parameter identifier
-	 * @param  mixed        $value     The value to bind
-	 * @param  ColumnMap    $cMap      The ColumnMap of the column to bind 
-	 * @param  integer      $position  The position of the parameter to bind
+	 * @param     PDOStatement  $stmt  The statement to bind
+	 * @param     string        $parameter  Parameter identifier
+	 * @param     mixed         $value  The value to bind
+	 * @param     ColumnMap     $cMap  The ColumnMap of the column to bind
+	 * @param     null|integer  $position  The position of the parameter to bind
 	 *
-	 * @return Boolean                 TRUE on success or FALSE on failure.
+	 * @return    boolean
 	 */
 	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
@@ -532,5 +563,4 @@ abstract class DBAdapter
 
 		return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
 	}
-	
 }

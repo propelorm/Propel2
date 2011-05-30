@@ -27,8 +27,10 @@ class DBOracle extends DBAdapter
 	 * post-initialization queries or code.
 	 * Removes the charset query and adds the date queries
 	 *
-	 * @param      PDO   A PDO connection instance.
-	 * @see        parent::initConnection()
+	 * @see       parent::initConnection()
+	 *
+	 * @param     PDO    $con
+	 * @param     array  $settings  A $PDO PDO connection instance
 	 */
 	public function initConnection(PDO $con, array $settings)
 	{
@@ -42,12 +44,12 @@ class DBOracle extends DBAdapter
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      string $in The string to transform to upper case.
-	 * @return     string The upper case string.
+	 * @param     string  $in  The string to transform to upper case.
+	 * @return    string  The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -57,8 +59,8 @@ class DBOracle extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      string $in The string whose case to ignore.
-	 * @return     string The string in a case that can be ignored.
+	 * @param     string  $in  The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -68,9 +70,10 @@ class DBOracle extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -80,10 +83,11 @@ class DBOracle extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -93,8 +97,8 @@ class DBOracle extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public function strLength($s)
 	{
@@ -102,7 +106,12 @@ class DBOracle extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::applyLimit()
+	 * @see       DBAdapter::applyLimit()
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
+	 * @param     null|Criteria  $criteria
 	 */
 	public function applyLimit(&$sql, $offset, $limit, $criteria = null)
 	{
@@ -125,11 +134,21 @@ class DBOracle extends DBAdapter
 		}
 	}
 
+	/**
+	 * @return int
+	 */
 	protected function getIdMethod()
 	{
 		return DBAdapter::ID_METHOD_SEQUENCE;
 	}
 
+	/**
+	 * @param     PDO     $con
+	 * @param     string  $name
+	 *
+	 * @throws    PropelException
+	 * @return    integer
+	 */
 	public function getId(PDO $con, $name = null)
 	{
 		if ($name === null) {
@@ -142,6 +161,10 @@ class DBOracle extends DBAdapter
 		return $row[0];
 	}
 
+	/**
+	 * @param     string  $seed
+	 * @return    string
+	 */
 	public function random($seed=NULL)
 	{
 		return 'dbms_random.value';
@@ -150,11 +173,11 @@ class DBOracle extends DBAdapter
 	/**
 	 * Ensures uniqueness of select column names by turning them all into aliases
 	 * This is necessary for queries on more than one table when the tables share a column name
+	 *
 	 * @see http://propel.phpdb.org/trac/ticket/795
 	 *
-	 * @param Criteria $criteria
-	 *
-	 * @return Criteria The input, with Select columns replaced by aliases
+	 * @param     Criteria  $criteria
+	 * @return    Criteria  The input, with Select columns replaced by aliases
 	 */
 	public function turnSelectColumnsToAliases(Criteria $criteria)
 	{
@@ -185,5 +208,4 @@ class DBOracle extends DBAdapter
 
 		return $criteria;
 	}
-
 }

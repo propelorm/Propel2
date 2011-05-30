@@ -18,14 +18,13 @@
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBMySQL extends DBAdapter 
+class DBMySQL extends DBAdapter
 {
-
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string to transform to upper case.
-	 * @return     The upper case string.
+	 * @param     string  $in  The string to transform to upper case.
+	 * @return    string  The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -35,8 +34,8 @@ class DBMySQL extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param      in The string whose case to ignore.
-	 * @return     The string in a case that can be ignored.
+	 * @param     string  $in  The string whose case to ignore.
+	 * @return    string  The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -46,9 +45,10 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param      string String to concatenate.
-	 * @param      string String to append.
-	 * @return     string
+	 * @param     string  $s1  String to concatenate.
+	 * @param     string  $s2  String to append.
+	 *
+	 * @return    string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -58,10 +58,11 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param      string String to extract from.
-	 * @param      int Offset to start from.
-	 * @param      int Number of characters to extract.
-	 * @return     string
+	 * @param     string   $s  String to extract from.
+	 * @param     integer  $pos  Offset to start from.
+	 * @param     integer  $len  Number of characters to extract.
+	 *
+	 * @return    string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -71,8 +72,8 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param      string String to calculate length of.
-	 * @return     string
+	 * @param     string  $s  String to calculate length of.
+	 * @return    string
 	 */
 	public function strLength($s)
 	{
@@ -83,10 +84,10 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Locks the specified table.
 	 *
-	 * @param      Connection $con The Propel connection to use.
-	 * @param      string $table The name of the table to lock.
-	 * @throws     PDOException No Statement could be created or
-	 * executed.
+	 * @param     PDO     $con  The Propel connection to use.
+	 * @param     string  $table  The name of the table to lock.
+	 *
+	 * @throws    PDOException  No Statement could be created or executed.
 	 */
 	public function lockTable(PDO $con, $table)
 	{
@@ -96,10 +97,10 @@ class DBMySQL extends DBAdapter
 	/**
 	 * Unlocks the specified table.
 	 *
-	 * @param      PDO $con The PDO connection to use.
-	 * @param      string $table The name of the table to unlock.
-	 * @throws     PDOException No Statement could be created or
-	 * executed.
+	 * @param     PDO     $con  The PDO connection to use.
+	 * @param     string  $table  The name of the table to unlock.
+	 *
+	 * @throws    PDOException  No Statement could be created or executed.
 	 */
 	public function unlockTable(PDO $con, $table)
 	{
@@ -107,7 +108,10 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::quoteIdentifier()
+	 * @see       DBAdapter::quoteIdentifier()
+	 *
+	 * @param     string  $text
+	 * @return    string
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -115,7 +119,10 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::quoteIdentifierTable()
+	 * @see       DBAdapter::quoteIdentifierTable()
+	 *
+	 * @param     string  $table
+	 * @return    string
 	 */
 	public function quoteIdentifierTable($table)
 	{
@@ -124,7 +131,9 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::useQuoteIdentifier()
+	 * @see       DBAdapter::useQuoteIdentifier()
+	 *
+	 * @return    boolean
 	 */
 	public function useQuoteIdentifier()
 	{
@@ -132,7 +141,11 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::applyLimit()
+	 * @see       DBAdapter::applyLimit()
+	 *
+	 * @param     string   $sql
+	 * @param     integer  $offset
+	 * @param     integer  $limit
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{
@@ -144,15 +157,26 @@ class DBMySQL extends DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::random()
+	 * @see       DBAdapter::random()
+	 *
+	 * @param     string  $seed
+	 * @return    string
 	 */
 	public function random($seed = null)
 	{
 		return 'rand('.((int) $seed).')';
 	}
-	
+
 	/**
-	 * @see        DBAdapter::bindValue()
+	 * @see       DBAdapter::bindValue()
+	 *
+	 * @param     PDOStatement  $stmt
+	 * @param     string        $parameter
+	 * @param     mixed         $value
+	 * @param     ColumnMap     $cMap
+	 * @param     null|integer  $position
+	 *
+	 * @return    boolean
 	 */
 	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
 	{
@@ -173,5 +197,4 @@ class DBMySQL extends DBAdapter
 
 		return $stmt->bindValue($parameter, $value, $pdoType);
 	}
-
 }
