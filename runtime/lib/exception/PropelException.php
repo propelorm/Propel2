@@ -16,11 +16,20 @@
  */
 class PropelException extends Exception
 {
-	/** The nested "cause" exception. */
+	/**
+	 * The nested "cause" exception.
+	 *
+	 * @var       Exception
+	 */
 	protected $cause;
-	
+
 	/**
 	 * Emulates wrapped exceptions for PHP < 5.3
+	 *
+	 * @param     string     $message
+	 * @param     Exception  $previous
+	 *
+	 * @return    PropelException
 	 */
 	public function __construct($message = null, Exception $previous = null)
 	{
@@ -45,8 +54,8 @@ class PropelException extends Exception
 	/**
 	 * Get the previous Exception
 	 * We can't override getPrevious() since it's final
-	 * 
-	 * @return Exception The previous exception
+	 *
+	 * @return    Exception  The previous exception
 	 */
 	public function getCause()
 	{
@@ -56,5 +65,4 @@ class PropelException extends Exception
 			return $this->cause;
 		}
 	}
-
 }
