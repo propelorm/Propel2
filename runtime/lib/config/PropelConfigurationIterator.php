@@ -31,21 +31,21 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 	/**
 	 * Namespace stack when recursively iterating the configuration tree
 	 *
-	 * @var        array
+	 * @var       array
 	 */
 	protected $namespaceStack = array();
 
 	/**
 	 * Current node type. Possible values: null (undefined), self::NODE_PARENT or self::NODE_ITEM
 	 *
-	 * @var        int
+	 * @var       integer
 	 */
 	protected $nodeType = null;
 
 	/**
 	 * Get current namespace
 	 *
-	 * @return     string
+	 * @return    string
 	 */
 	public function getNamespace()
 	{
@@ -55,8 +55,8 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 	/**
 	 * Get current node type.
 	 *
-	 * @see        http://www.php.net/RecursiveIteratorIterator
-	 * @return     int
+	 * @see       http://www.php.net/RecursiveIteratorIterator
+	 * @return    integer
 	 *             - null (undefined)
 	 *             - self::NODE_PARENT
 	 *             - self::NODE_ITEM
@@ -69,8 +69,8 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 	/**
 	 * Get the current element
 	 *
-	 * @see        http://www.php.net/RecursiveIteratorIterator
-	 * @return     mixed
+	 * @see       http://www.php.net/RecursiveIteratorIterator
+	 * @return    mixed
 	 */
 	public function current()
 	{
@@ -89,7 +89,7 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 	/**
 	 * Called after current child iterator is invalid and right before it gets destructed.
 	 *
-	 * @see        http://www.php.net/RecursiveIteratorIterator
+	 * @see       http://www.php.net/RecursiveIteratorIterator
 	 */
 	public function endChildren()
 	{
@@ -97,5 +97,4 @@ class PropelConfigurationIterator extends RecursiveIteratorIterator
 			array_pop($this->namespaceStack);
 		}
 	}
-
 }
