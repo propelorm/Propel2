@@ -79,5 +79,19 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
 	{
 		$this->books->offsetUnset(2);
 	}
+	
+	public function testToArray()
+	{
+		$this->assertNotEquals(array(), $this->books->toArray());
+		// since the code from toArray comes frmo PropelObjectCollection, we'll assume it's good
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testFromArray()
+	{
+		$this->books->fromArray(array());
+	}
 
 }
