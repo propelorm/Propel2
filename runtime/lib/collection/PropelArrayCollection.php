@@ -20,6 +20,8 @@ class PropelArrayCollection extends PropelCollection
 
 	/**
 	 * Save all the elements in the collection
+	 *
+	 * @param     PropelPDO  $con
 	 */
 	public function save($con = null)
 	{
@@ -40,9 +42,11 @@ class PropelArrayCollection extends PropelCollection
 			$con->rollback();
 		}
 	}
-	
+
 	/**
 	 * Delete all the elements in the collection
+	 *
+	 * @param     PropelPDO  $con
 	 */
 	public function delete($con = null)
 	{
@@ -67,7 +71,8 @@ class PropelArrayCollection extends PropelCollection
 	/**
 	 * Get an array of the primary keys of all the objects in the collection
 	 *
-	 * @return    array The list of the primary keys of the collection
+	 * @param     boolean  $usePrefix
+	 * @return    array  The list of the primary keys of the collection
 	 */
 	public function getPrimaryKeys($usePrefix = true)
 	{
@@ -77,7 +82,7 @@ class PropelArrayCollection extends PropelCollection
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key]= call_user_func($callable, array_values($element));
 		}
-		
+
 		return $ret;
 	}
 
@@ -86,7 +91,7 @@ class PropelArrayCollection extends PropelCollection
 	 * Uses the object model to force the column types
 	 * Does not empty the collection before adding the data from the array
 	 *
-	 * @param    array $arr
+	 * @param     array  $arr
 	 */
 	public function fromArray($arr)
 	{
@@ -97,15 +102,15 @@ class PropelArrayCollection extends PropelCollection
 			$this->append($obj->toArray());
 		}
 	}
-	
+
 	/**
 	 * Get an array representation of the collection
 	 * This is not an alias for getData(), since it returns a copy of the data
 	 *
-	 * @param     string $keyColumn If null, the returned array uses an incremental index.
-	 *              Otherwise, the array is indexed using the specified column
-	 * @param     boolean $usePrefix If true, the returned array prefixes keys 
-	 *              with the model class name ('Article_0', 'Article_1', etc).
+	 * @param     string   $keyColumn  If null, the returned array uses an incremental index.
+	 *                                 Otherwise, the array is indexed using the specified column
+	 * @param     boolean  $usePrefix  If true, the returned array prefixes keys
+	 *                                 with the model class name ('Article_0', 'Article_1', etc).
 	 *
 	 * <code>
 	 * $bookCollection->toArray();
@@ -124,6 +129,7 @@ class PropelArrayCollection extends PropelCollection
 	 *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
 	 * </code>
+	 *
 	 * @return    array
 	 */
 	public function toArray($keyColumn = null, $usePrefix = false)
@@ -137,9 +143,14 @@ class PropelArrayCollection extends PropelCollection
 
 		return $ret;
 	}
-	
+
 	/**
 	 * Synonym for toArray(), to provide a similar interface to PopelObjectCollection
+	 *
+	 * @param     string   $keyColumn
+	 * @param     boolean  $usePrefix
+	 *
+	 * @return    array
 	 */
 	public function getArrayCopy($keyColumn = null, $usePrefix = false)
 	{
@@ -149,7 +160,7 @@ class PropelArrayCollection extends PropelCollection
 			return $this->toArray($keyColumn, $usePrefix);
 		}
 	}
-	
+
 	/**
 	 * Get an associative array representation of the collection
 	 * The first parameter specifies the column to be used for the key,
@@ -157,6 +168,9 @@ class PropelArrayCollection extends PropelCollection
 	 * <code>
 	 * $res = $coll->toKeyValue('Id', 'Name');
 	 * </code>
+	 *
+	 * @param     string  $keyColumn
+	 * @param     string  $valueColumn
 	 *
 	 * @return    array
 	 */
@@ -166,10 +180,14 @@ class PropelArrayCollection extends PropelCollection
 		foreach ($this as $obj) {
 			$ret[$obj[$keyColumn]] = $obj[$valueColumn];
 		}
-		
+
 		return $ret;
 	}
 
+	/**
+	 * @throws    PropelException
+	 * @return    BaseObject
+	 */
 	protected function getWorkerObject()
 	{
 		if (null === $this->workerObject) {
@@ -179,10 +197,7 @@ class PropelArrayCollection extends PropelCollection
 			$class = $this->getModel();
 			$this->workerObject = new $class();
 		}
-		
+
 		return $this->workerObject;
 	}
-
 }
-
-?>

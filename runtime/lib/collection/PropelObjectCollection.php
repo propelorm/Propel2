@@ -16,9 +16,11 @@
  */
 class PropelObjectCollection extends PropelCollection
 {
-	
+
 	/**
 	 * Save all the elements in the collection
+	 *
+	 * @param     PropelPDO  $con
 	 */
 	public function save($con = null)
 	{
@@ -27,6 +29,7 @@ class PropelObjectCollection extends PropelCollection
 		}
 		$con->beginTransaction();
 		try {
+			/** @var $element BaseObject */
 			foreach ($this as $element) {
 				$element->save($con);
 			}
@@ -36,9 +39,11 @@ class PropelObjectCollection extends PropelCollection
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * Delete all the elements in the collection
+	 *
+	 * @param     PropelPDO  $con
 	 */
 	public function delete($con = null)
 	{
@@ -47,6 +52,7 @@ class PropelObjectCollection extends PropelCollection
 		}
 		$con->beginTransaction();
 		try {
+			/** @var $element BaseObject */
 			foreach ($this as $element) {
 				$element->delete($con);
 			}
@@ -60,16 +66,19 @@ class PropelObjectCollection extends PropelCollection
 	/**
 	 * Get an array of the primary keys of all the objects in the collection
 	 *
-	 * @return    array The list of the primary keys of the collection
+	 * @param     boolean  $usePrefix
+	 * @return    array  The list of the primary keys of the collection
 	 */
 	public function getPrimaryKeys($usePrefix = true)
 	{
 		$ret = array();
+
+		/** @var $obj BaseObject */
 		foreach ($this as $key => $obj) {
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key]= $obj->getPrimaryKey();
 		}
-		
+
 		return $ret;
 	}
 
@@ -78,31 +87,31 @@ class PropelObjectCollection extends PropelCollection
 	 * Each object is populated from an array and the result is stored
 	 * Does not empty the collection before adding the data from the array
 	 *
-	 * @param    array $arr
+	 * @param    array  $arr
 	 */
 	public function fromArray($arr)
 	{
 		$class = $this->getModel();
 		foreach ($arr as $element) {
+			/** @var $obj BaseObject */
 			$obj = new $class();
 			$obj->fromArray($element);
 			$this->append($obj);
 		}
 	}
-	
+
 	/**
 	 * Get an array representation of the collection
 	 * Each object is turned into an array and the result is returned
 	 *
 	 * @param     string  $keyColumn If null, the returned array uses an incremental index.
-	 *                    Otherwise, the array is indexed using the specified column
-	 * @param     boolean $usePrefix If true, the returned array prefixes keys 
-	 *                    with the model class name ('Article_0', 'Article_1', etc).
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, 
-	 *                    BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
-	 *                    BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.
-	 *                    Defaults to TRUE.
+	 *                               Otherwise, the array is indexed using the specified column
+	 * @param     boolean $usePrefix If true, the returned array prefixes keys
+	 *                               with the model class name ('Article_0', 'Article_1', etc).
+	 * @param     string  $keyType   (optional) One of the class type constants BasePeer::TYPE_PHPNAME,
+	 *                               BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME,
+	 *                               BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
 	 * @param     array   $alreadyDumpedObjects List of objects to skip to avoid recursion
 	 *
 	 * <code>
@@ -122,46 +131,50 @@ class PropelObjectCollection extends PropelCollection
 	 *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
 	 * )
 	 * </code>
+	 *
 	 * @return    array
 	 */
 	public function toArray($keyColumn = null, $usePrefix = false, $keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
 	{
 		$ret = array();
 		$keyGetterMethod = 'get' . $keyColumn;
+
+		/** @var $obj BaseObject */
 		foreach ($this as $key => $obj) {
 			$key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
 		}
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * Get an array representation of the collection
 	 *
-	 * @param     string $keyColumn If null, the returned array uses an incremental index.
-	 *              Otherwise, the array is indexed using the specified column
-	 * @param     boolean $usePrefix If true, the returned array prefixes keys 
-	 *              with the model class name ('Article_0', 'Article_1', etc).
+	 * @param     string   $keyColumn  If null, the returned array uses an incremental index.
+	 *                                 Otherwise, the array is indexed using the specified column
+	 * @param     boolean  $usePrefix  If true, the returned array prefixes keys
+	 *                                 with the model class name ('Article_0', 'Article_1', etc).
 	 *
 	 * <code>
-	 * $bookCollection->getArrayCopy();
-	 * array(
-	 *  0 => $book0,
-	 *  1 => $book1,
-	 * )
-	 * $bookCollection->getArrayCopy('Id');
-	 * array(
-	 *  123 => $book0,
-	 *  456 => $book1,
-	 * )
-	 * $bookCollection->getArrayCopy(null, true);
-	 * array(
-	 *  'Book_0' => $book0,
-	 *  'Book_1' => $book1,
-	 * )
+	 *   $bookCollection->getArrayCopy();
+	 *   array(
+	 *    0 => $book0,
+	 *    1 => $book1,
+	 *   )
+	 *   $bookCollection->getArrayCopy('Id');
+	 *   array(
+	 *    123 => $book0,
+	 *    456 => $book1,
+	 *   )
+	 *   $bookCollection->getArrayCopy(null, true);
+	 *   array(
+	 *    'Book_0' => $book0,
+	 *    'Book_1' => $book1,
+	 *   )
 	 * </code>
+	 *
 	 * @return    array
 	 */
 	public function getArrayCopy($keyColumn = null, $usePrefix = false)
@@ -176,17 +189,21 @@ class PropelObjectCollection extends PropelCollection
 			$key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
 			$ret[$key] = $obj;
 		}
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * Get an associative array representation of the collection
 	 * The first parameter specifies the column to be used for the key,
 	 * And the seconf for the value.
+	 *
 	 * <code>
-	 * $res = $coll->toKeyValue('Id', 'Name');
+	 *   $res = $coll->toKeyValue('Id', 'Name');
 	 * </code>
+	 *
+	 * @param     string  $keyColumn
+	 * @param     string  $valueColumn
 	 *
 	 * @return    array
 	 */
@@ -198,19 +215,19 @@ class PropelObjectCollection extends PropelCollection
 		foreach ($this as $obj) {
 			$ret[$obj->$keyGetterMethod()] = $obj->$valueGetterMethod();
 		}
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * Makes an additional query to populate the objects related to the collection objects
 	 * by a certain relation
 	 *
-	 * @param     string    $relation Relation name (e.g. 'Book')
-	 * @param     Criteria  $criteria Optional Criteria object to filter the related object collection
-	 * @param     PropelPDO $con      Optional connection object
+	 * @param     string     $relation  Relation name (e.g. 'Book')
+	 * @param     Criteria   $criteria  Optional Criteria object to filter the related object collection
+	 * @param     PropelPDO  $con       Optional connection object
 	 *
-	 * @return    PropelObjectCollection the list of related objects
+	 * @return    PropelObjectCollection  The list of related objects
 	 */
 	public function populateRelation($relation, $criteria = null, $con = null)
 	{
@@ -225,7 +242,7 @@ class PropelObjectCollection extends PropelCollection
 			return $coll;
 		}
 		$symRelationMap = $relationMap->getSymmetricalRelation();
-		
+
 		$query = PropelQuery::from($relationMap->getRightTable()->getPhpName());
 		if (null !== $criteria) {
 			$query->mergeWith($criteria);
@@ -249,10 +266,7 @@ class PropelObjectCollection extends PropelCollection
 		} else {
 			throw new PropelException('populateRelation() does not support this relation type');
 		}
-		
+
 		return $relatedObjects;
 	}
-
 }
-
-?>

@@ -16,26 +16,43 @@
  */
 class PropelOnDemandCollection extends PropelCollection
 {
+	/**
+	 * @var       PropelOnDemandIterator
+	 */
+	protected $iterator;
+
 	protected
-		$iterator,
-		$currentRow, 
+		$currentRow,
 		$currentKey = -1,
 		$isValid = null;
-	
+
+	/**
+	 * @param     PropelFormatter $formatter
+	 * @param     PDOStatement $stmt
+	 */
 	public function initIterator(PropelFormatter $formatter, PDOStatement $stmt)
 	{
 		$this->iterator = new PropelOnDemandIterator($formatter, $stmt);
 	}
-	
+
 	// IteratorAggregate Interface
-	
+
+	/**
+	 * @return    PropelOnDemandIterator
+	 */
 	public function getIterator()
 	{
 		return $this->iterator;
 	}
 
 	// ArrayAccess Interface
-	
+
+	/**
+	 * @throws    PropelException
+	 * @param     integer  $offset
+	 *
+	 * @return    boolean
+	 */
 	public function offsetExists($offset)
 	{
 		if ($offset == $this->currentKey) {
@@ -44,6 +61,12 @@ class PropelOnDemandCollection extends PropelCollection
 		throw new PropelException('The On Demand Collection does not allow acces by offset');
 	}
 
+	/**
+	 * @throws    PropelException
+	 * @param     integer  $offset
+	 *
+	 * @return    mixed
+	 */
 	public function offsetGet($offset)
 	{
 		if ($offset == $this->currentKey) {
@@ -51,49 +74,66 @@ class PropelOnDemandCollection extends PropelCollection
 		}
 		throw new PropelException('The On Demand Collection does not allow acces by offset');
 	}
-	
+
+	/**
+	 * @throws    PropelException
+	 *
+	 * @param     integer  $offset
+	 * @param     mixed    $value
+	 */
 	public function offsetSet($offset, $value)
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
 
+	/**
+	 * @throws    PropelException
+	 * @param     integer  $offset
+	 */
 	public function offsetUnset($offset)
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	// Serializable Interface
-	
+
+	/**
+	 * @throws    PropelException
+	 */
 	public function serialize()
 	{
 		throw new PropelException('The On Demand Collection cannot be serialized');
 	}
 
+	/**
+	 * @throws    PropelException
+	 * @param     string  $data
+	 */
 	public function unserialize($data)
 	{
 		throw new PropelException('The On Demand Collection cannot be serialized');
 	}
-	
+
 	// Countable Interface
-	
+
 	/**
 	 * Returns the number of rows in the resultset
 	 * Warning: this number is inaccurate for most databases. Do not rely on it for a portable application.
-	 * 
-	 * @return    int number of results
+	 *
+	 * @return    integer  Number of results
 	 */
 	public function count()
 	{
 		return $this->iterator->count();
 	}
-	
+
 	// ArrayObject methods
-	
+
 	public function append($value)
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function prepend($value)
 	{
 		throw new PropelException('The On Demand Collection is read only');
@@ -103,47 +143,47 @@ class PropelOnDemandCollection extends PropelCollection
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function exchangeArray($input)
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function getArrayCopy()
 	{
 		throw new PropelException('The On Demand Collection does not allow acces by offset');
 	}
-	
+
 	public function getFlags()
 	{
 		throw new PropelException('The On Demand Collection does not allow acces by offset');
 	}
-	
+
 	public function ksort()
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function natcasesort()
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function natsort()
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function setFlags($flags)
 	{
 		throw new PropelException('The On Demand Collection does not allow acces by offset');
 	}
-	
+
 	public function uasort($cmp_function)
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
-	
+
 	public function uksort($cmp_function)
 	{
 		throw new PropelException('The On Demand Collection is read only');

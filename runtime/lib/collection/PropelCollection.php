@@ -16,6 +16,7 @@
  * @method     PropelCollection fromYAML(string $data) Populate the collection from a YAML string
  * @method     PropelCollection fromJSON(string $data) Populate the collection from a JSON string
  * @method     PropelCollection fromCSV(string $data) Populate the collection from a CSV string
+ *
  * @method     string toXML() Export the collection to an XML string
  * @method     string toYAML() Export the collection to a YAML string
  * @method     string toJSON() Export the collection to a JSON string
@@ -26,13 +27,23 @@
  */
 class PropelCollection extends ArrayObject implements Serializable
 {
+	/**
+	 * @var       string
+	 */
 	protected $model = '';
+
+	/**
+	 * @var       ArrayIterator
+	 */
 	protected $iterator;
+
+	/**
+	 * @var       PropelFormatter
+	 */
 	protected $formatter;
-	
 
 	// Generic Collection methods
-	
+
 	/**
 	 * Get the data in the collection
 	 *
@@ -57,7 +68,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	 * Gets the position of the internal pointer
 	 * This position can be later used in seek()
 	 *
-	 * @return    int
+	 * @return    integer
 	 */
 	public function getPosition()
 	{
@@ -75,11 +86,11 @@ class PropelCollection extends ArrayObject implements Serializable
 		$this->getInternalIterator()->rewind();
 		return $this->getCurrent();
 	}
-	
+
 	/**
 	 * Check whether the internal pointer is at the beginning of the list
 	 *
-	 * @return boolean
+	 * @return    boolean
 	 */
 	public function isFirst()
 	{
@@ -160,14 +171,14 @@ class PropelCollection extends ArrayObject implements Serializable
 
 	/**
 	 * Check if the collection is empty
-	 * 
+	 *
 	 * @return    boolean
 	 */
 	public function isEmpty()
 	{
 		return $this->count() == 0;
 	}
-	
+
 	/**
 	 * Check if the current index is an odd integer
 	 *
@@ -192,9 +203,8 @@ class PropelCollection extends ArrayObject implements Serializable
 	 * Get an element from its key
 	 * Alias for ArrayObject::offsetGet()
 	 *
-	 * @param     mixed $key
-	 *
-	 * @return    mixed The element
+	 * @param     mixed  $key
+	 * @return    mixed  The element
 	 */
 	public function get($key)
 	{
@@ -203,17 +213,17 @@ class PropelCollection extends ArrayObject implements Serializable
 		}
 		return $this->offsetGet($key);
 	}
-	
+
 	/**
 	 * Pops an element off the end of the collection
 	 *
-	 * @return    mixed The popped element
+	 * @return    mixed  The popped element
 	 */
 	public function pop()
 	{
-	  if ($this->count() == 0) {
-	    return null;
-	  }
+		if ($this->count() == 0) {
+			return null;
+		}
 		$ret = $this->getLast();
 		$lastKey = $this->getInternalIterator()->key();
 		$this->offsetUnset((string) $lastKey);
@@ -223,7 +233,7 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Pops an element off the beginning of the collection
 	 *
-	 * @return    mixed The popped element
+	 * @return    mixed  The popped element
 	 */
 	public function shift()
 	{
@@ -232,16 +242,15 @@ class PropelCollection extends ArrayObject implements Serializable
 		$arr = $this->getArrayCopy();
 		$ret = array_shift($arr);
 		$this->exchangeArray($arr);
-		
+
 		return $ret;
 	}
 
 	/**
 	 * Prepend one or more elements to the beginning of the collection
 	 *
-	 * @param     mixed $value the element to prepend
-	 *
-	 * @return    int The number of new elements in the array
+	 * @param     mixed  $value the element to prepend
+	 * @return    integer  The number of new elements in the array
 	 */
 	public function prepend($value)
 	{
@@ -258,21 +267,20 @@ class PropelCollection extends ArrayObject implements Serializable
 	 * Add an element to the collection with the given key
 	 * Alias for ArrayObject::offsetSet()
 	 *
-	 * @param     mixed $key
-	 * @param     mixed $value
+	 * @param     mixed  $key
+	 * @param     mixed  $value
 	 */
 	public function set($key, $value)
 	{
-		return $this->offsetSet($key, $value);
+		$this->offsetSet($key, $value);
 	}
-	
+
 	/**
 	 * Removes a specified collection element
 	 * Alias for ArrayObject::offsetUnset()
 	 *
-	 * @param     mixed $key
-	 *
-	 * @return    mixed The removed element
+	 * @param     mixed  $key
+	 * @return    mixed  The removed element
 	 */
 	public function remove($key)
 	{
@@ -281,11 +289,11 @@ class PropelCollection extends ArrayObject implements Serializable
 		}
 		return $this->offsetUnset($key);
 	}
-	
+
 	/**
 	 * Clears the collection
-	 * 
-	 * @return    array The previous collection
+	 *
+	 * @return    array  The previous collection
 	 */
 	public function clear()
 	{
@@ -295,9 +303,8 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Whether or not this collection contains a specified element
 	 *
-	 * @param      mixed $element the element
-	 *
-	 * @return     boolean
+	 * @param     mixed  $element
+	 * @return    boolean
 	 */
 	public function contains($element)
 	{
@@ -307,17 +314,19 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Search an element in the collection
 	 *
-	 * @param     mixed $element 
-	 *
-	 * @return    mixed Returns the key for the element if it is found in the collection, FALSE otherwise
+	 * @param     mixed  $element
+	 * @return    mixed  Returns the key for the element if it is found in the collection, FALSE otherwise
 	 */
 	public function search($element)
 	{
 		return array_search($element, $this->getArrayCopy(), true);
-	}	
-	
+	}
+
 	// Serializable interface
-	
+
+	/**
+	 * @return string
+	 */
 	public function serialize()
 	{
 		$repr = array(
@@ -326,26 +335,34 @@ class PropelCollection extends ArrayObject implements Serializable
 		);
 		return serialize($repr);
 	}
-	
+
+	/**
+	 * @param     string  $data
+	 */
 	public function unserialize($data)
 	{
 		$repr = unserialize($data);
 		$this->exchangeArray($repr['data']);
 		$this->model = $repr['model'];
 	}
-	
+
 	// IteratorAggregate method
-	
+
 	/**
 	 * Overrides ArrayObject::getIterator() to save the iterator object
 	 * for internal use e.g. getNext(), isOdd(), etc.
+	 *
+	 * @return    ArrayIterator
 	 */
 	public function getIterator()
 	{
 		$this->iterator = new ArrayIterator($this);
 		return $this->iterator;
 	}
-	
+
+	/**
+	 * @return    ArrayIterator
+	 */
 	public function getInternalIterator()
 	{
 		if (null === $this->iterator) {
@@ -353,7 +370,7 @@ class PropelCollection extends ArrayObject implements Serializable
 		}
 		return $this->iterator;
 	}
-	
+
 	/**
 	 * Clear the internal Iterator.
 	 * PHP 5.3 doesn't know how to free a PropelCollection object if it has an attached
@@ -364,13 +381,13 @@ class PropelCollection extends ArrayObject implements Serializable
 	{
 		$this->iterator = null;
 	}
-	
+
 	// Propel collection methods
-	
+
 	/**
 	 * Set the model of the elements in the collection
 	 *
-	 * @param     string $model Name of the Propel object classes stored in the collection
+	 * @param     string  $model  Name of the Propel object classes stored in the collection
 	 */
 	public function setModel($model)
 	{
@@ -380,17 +397,17 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Get the model of the elements in the collection
 	 *
-	 * @return    string Name of the Propel object class stored in the collection
+	 * @return    string  Name of the Propel object class stored in the collection
 	 */
 	public function getModel()
 	{
 		return $this->model;
 	}
-	
+
 	/**
 	 * Get the peer class of the elements in the collection
 	 *
-	 * @return    string Name of the Propel peer class stored in the collection
+	 * @return    string  Name of the Propel peer class stored in the collection
 	 */
 	public function getPeerClass()
 	{
@@ -399,12 +416,18 @@ class PropelCollection extends ArrayObject implements Serializable
 		}
 		return constant($this->getModel() . '::PEER');
 	}
-	
+
+	/**
+	 * @param     PropelFormatter  $formatter
+	 */
 	public function setFormatter(PropelFormatter $formatter)
 	{
 		$this->formatter = $formatter;
 	}
-	
+
+	/**
+	 * @return    PropelFormatter
+	 */
 	public function getFormatter()
 	{
 		return $this->formatter;
@@ -413,14 +436,13 @@ class PropelCollection extends ArrayObject implements Serializable
 	/**
 	 * Get a connection object for the database containing the elements of the collection
 	 *
-	 * @param     string $type The connection type (Propel::CONNECTION_READ by default; can be Propel::connection_WRITE)
-	 *
-	 * @return    PropelPDO a connection object
+	 * @param     string  $type  The connection type (Propel::CONNECTION_READ by default; can be Propel::connection_WRITE)
+	 * @return    PropelPDO  A PropelPDO connection object
 	 */
-	public function getConnection($type =  Propel::CONNECTION_READ)
+	public function getConnection($type = Propel::CONNECTION_READ)
 	{
 		$databaseName = constant($this->getPeerClass() . '::DATABASE_NAME');
-		
+
 		return Propel::getConnection($databaseName, $type);
 	}
 
@@ -432,11 +454,10 @@ class PropelCollection extends ArrayObject implements Serializable
 	 * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
 	 * </code>
 	 *
-	 * @param mixed  $parser A PropelParser instance,
-	 *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
-	 * @param string $data   The source data to import from
+	 * @param     mixed   $parser  A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+	 * @param     string  $data    The source data to import from
 	 *
-	 * @return BaseObject    The current object, for fluid interface
+	 * @return    BaseObject  The current object, for fluid interface
 	 */
 	public function importFrom($parser, $data)
 	{
@@ -454,9 +475,8 @@ class PropelCollection extends ArrayObject implements Serializable
 	 *  => {{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
 	 * </code>
 	 *
-	 * @param  mixed  $parser A PropelParser instance,
-	 *                        or a format name ('XML', 'YAML', 'JSON', 'CSV')
-	 * @return string The exported data
+	 * @param     mixed  $parser  A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+	 * @return    string  The exported data
 	 */
 	public function exportTo($parser)
 	{
@@ -466,11 +486,17 @@ class PropelCollection extends ArrayObject implements Serializable
 		return $parser->listFromArray($this->toArray(null, true));
 	}
 
-	/** 
+	/**
 	 * Catches calls to undefined methods.
+	 *
 	 * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
 	 * Allows to define default __call() behavior if you use a custom BaseObject
-	 */ 
+	 *
+	 * @param     string  $name
+	 * @param     mixed   $params
+	 *
+	 * @return    array|string
+	 */
 	public function __call($name, $params)
 	{
 		if (preg_match('/^from(\w+)$/', $name, $matches)) {
@@ -480,16 +506,17 @@ class PropelCollection extends ArrayObject implements Serializable
 			return $this->exportTo($matches[1]);
 		}
 		throw new PropelException('Call to undefined method: ' . $name);
-	} 
-	
-	/** 
+	}
+
+	/**
 	 * Returns a string representation of the current collection.
-	 * Based on the string representation of the underlying objects, defined in 
+	 * Based on the string representation of the underlying objects, defined in
 	 * the Peer::DEFAULT_STRING_FORMAT constant
-	 */ 
+	 *
+	 * @return    string
+	 */
 	public function __toString()
 	{
 		return (string) $this->exportTo(constant($this->getPeerClass() . '::DEFAULT_STRING_FORMAT'));
 	}
-
 }
