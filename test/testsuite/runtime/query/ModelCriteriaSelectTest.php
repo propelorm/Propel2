@@ -345,5 +345,39 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		);
 		$this->assertEquals(serialize($rows->getData()), serialize($expectedRows), 'find() called after select(array) can cope with a column added with withColumn()');
 	}
+	
+	public function testGetSelectReturnsNullByDefault()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$this->assertNull($c->getSelect());
+	}
+	
+	public function testGetSelectReturnsStringWhenSelectingASingleColumn()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->select('Title');
+		$this->assertEquals('Title', $c->getSelect());
+	}
+
+	public function testGetSelectReturnsArrayWhenSelectingSeveralColumns()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->select(array('Id', 'Title'));
+		$this->assertEquals(array('Id', 'Title'), $c->getSelect());
+	}
+
+	public function testGetSelectReturnsArrayWhenSelectingASingleColumnAsArray()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->select(array('Title'));
+		$this->assertEquals(array('Title'), $c->getSelect());
+	}
+
+	public function testGetSelectReturnsArrayWhenSelectingAllColumns()
+	{
+		$c = new ModelCriteria('bookstore', 'Book');
+		$c->select('*');
+		$this->assertEquals(array('Book.Id', 'Book.Title', 'Book.ISBN', 'Book.Price', 'Book.PublisherId', 'Book.AuthorId'), $c->getSelect());
+	}
 }
 

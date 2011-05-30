@@ -475,27 +475,27 @@ class ModelCriteria extends Criteria
 	}
 
 	/**
-	* Makes the ModelCriteria return a string, array, or PropelArrayCollection
-	* Examples:
-	*   ArticleQuery::create()->select('Name')->find();
-	*   => PropelArrayCollection Object ('Foo', 'Bar')
-	*
-	*   ArticleQuery::create()->select('Name')->findOne();
-	*   => string 'Foo'
-	*
-	*   ArticleQuery::create()->select(array('Id', 'Name'))->find();
-	*   => PropelArrayCollection Object (
-	*        array('Id' => 1, 'Name' => 'Foo'),
-	*        array('Id' => 2, 'Name' => 'Bar')
-	*      )
-	*
-	*   ArticleQuery::create()->select(array('Id', 'Name'))->findOne();
-	*   => array('Id' => 1, 'Name' => 'Foo')
-	*
-	* @param       mixed $columnArray A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
-	*
-	* @return     ModelCriteria The current object, for fluid interface
-	*/
+	 * Makes the ModelCriteria return a string, array, or PropelArrayCollection
+	 * Examples:
+	 *   ArticleQuery::create()->select('Name')->find();
+	 *   => PropelArrayCollection Object ('Foo', 'Bar')
+	 *
+	 *   ArticleQuery::create()->select('Name')->findOne();
+	 *   => string 'Foo'
+	 *
+	 *   ArticleQuery::create()->select(array('Id', 'Name'))->find();
+	 *   => PropelArrayCollection Object (
+	 *        array('Id' => 1, 'Name' => 'Foo'),
+	 *        array('Id' => 2, 'Name' => 'Bar')
+	 *      )
+	 *
+	 *   ArticleQuery::create()->select(array('Id', 'Name'))->findOne();
+	 *   => array('Id' => 1, 'Name' => 'Foo')
+	 *
+	 * @param     mixed $columnArray A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
+	 *
+	 * @return    ModelCriteria The current object, for fluid interface
+	 */
 	public function select($columnArray)
 	{
 		if (!count($columnArray) || $columnArray == '') {
@@ -512,6 +512,17 @@ class ModelCriteria extends Criteria
 		$this->select = $columnArray;
 
 		return $this;
+	}
+	
+	/**
+	 * Retrieves the columns defined by a previous call to select().
+	 * @see       select() 
+	 *
+	 * @return    array|string A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
+	 */
+	public function getSelect()
+	{
+		return $this->select;
 	}
 
 	protected function configureSelectColumns()
