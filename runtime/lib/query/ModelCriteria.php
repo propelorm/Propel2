@@ -530,14 +530,16 @@ class ModelCriteria extends Criteria
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$this->setPrimaryTableName(constant($this->modelPeerName . '::TABLE_NAME'));
-
+		if (!$this->selectQueries) {
+			$this->setPrimaryTableName(constant($this->modelPeerName . '::TABLE_NAME'));
+		}
+		
 		// Add requested columns which are not withColumns
 		$columnNames = is_array($this->select) ? $this->select : array($this->select);
 		foreach ($columnNames as $columnName) {
 			// check if the column was added by a withColumn, if not add it
 			if (!array_key_exists($columnName, $this->getAsColumns())) {
-				$column = $this->getColumnFromName ($columnName);
+				$column = $this->getColumnFromName($columnName);
 				// always put quotes around the columnName to be safe, we strip them in the formatter
 				$this->addAsColumn('"' . $columnName . '"', $column[1]);
 			}

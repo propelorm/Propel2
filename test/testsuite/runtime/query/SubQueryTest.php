@@ -208,19 +208,15 @@ class SubQueryTest extends BookstoreTestBase
 
 	public function testSubQueryWithSelectColumns()
 	{
-		$this->markTestSkipped();
 		$subCriteria = new BookQuery();
 		
 		$c = new TestableBookQuery();
 		$c->addSelectQuery($subCriteria, 'alias1', false);
 		$c->select(array('alias1.Id'));
-		$c->filterByPrice(20, Criteria::LESS_THAN);
 		$c->configureSelectColumns();
 		
-		$sql = "SELECT alias1.ID as \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias1 WHERE alias1.PRICE<:p1";
-		$params = array(
-			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
-		);
+		$sql = "SELECT alias1.ID AS \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias1";
+		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() forges a unique alias and adds select columns by default');
 	}
 }
