@@ -40,6 +40,18 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		}
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testSaveOnReadOnlyEntityThrowsException()
+	{
+		$col = new PropelArrayCollection();
+		$col->setModel('ContestView');
+		$cv = new ContestView();
+		$col []= $cv;
+		$col->save();
+	}
+	
 	public function testDelete()
 	{
 		$books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -48,6 +60,19 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		$books = PropelQuery::from('Book')->find();
 		$this->assertEquals(0, count($books));
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testDeleteOnReadOnlyEntityThrowsException()
+	{
+		$col = new PropelArrayCollection();
+		$col->setModel('ContestView');
+		$cv = new ContestView();
+		$cv->setNew(false);
+		$col []= $cv;
+		$col->delete();
 	}
 	
 	public function testGetPrimaryKeys()

@@ -24,6 +24,9 @@ class PropelObjectCollection extends PropelCollection
 	 */
 	public function save($con = null)
 	{
+		if (!method_exists($this->getModel(), 'save')) {
+			throw new PropelException('Cannot save objects on a read-only model');
+		}
 		if (null === $con) {
 			$con = $this->getConnection(Propel::CONNECTION_WRITE);
 		}
@@ -47,6 +50,9 @@ class PropelObjectCollection extends PropelCollection
 	 */
 	public function delete($con = null)
 	{
+		if (!method_exists($this->getModel(), 'delete')) {
+			throw new PropelException('Cannot delete objects on a read-only model');
+		}
 		if (null === $con) {
 			$con = $this->getConnection(Propel::CONNECTION_WRITE);
 		}

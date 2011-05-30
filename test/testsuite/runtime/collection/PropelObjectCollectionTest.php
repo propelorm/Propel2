@@ -54,6 +54,18 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 			$this->assertEquals('foo', $book->getTitle('foo'));
 		}
 	}
+	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testSaveOnReadOnlyEntityThrowsException()
+	{
+		$col = new PropelObjectCollection();
+		$col->setModel('ContestView');
+		$cv = new ContestView();
+		$col []= $cv;
+		$col->save();
+	}
 
 	public function testDelete()
 	{
@@ -67,6 +79,19 @@ class PropelObjectCollectionTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		$books = PropelQuery::from('Book')->find();
 		$this->assertEquals(0, count($books));
+	}
+	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testDeleteOnReadOnlyEntityThrowsException()
+	{
+		$col = new PropelObjectCollection();
+		$col->setModel('ContestView');
+		$cv = new ContestView();
+		$cv->setNew(false);
+		$col []= $cv;
+		$col->delete();
 	}
 	
 	public function testGetPrimaryKeys()
