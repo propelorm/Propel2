@@ -741,7 +741,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 		} elseif ($col->isBooleanType()) {
 			$script .= "
 		if (is_string(\$$variableName)) {
-			\$$colName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0')) ? false : true;
+			\$$colName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
 		}";
 		}
 		$script .= "

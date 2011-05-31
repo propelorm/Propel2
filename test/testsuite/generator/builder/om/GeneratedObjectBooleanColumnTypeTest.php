@@ -58,6 +58,7 @@ EOF;
 			array('N', false),
 			array('+', true),
 			array('-', false),
+			array('', false),
 		);
 	}
 	

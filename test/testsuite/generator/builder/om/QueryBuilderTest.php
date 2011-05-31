@@ -507,6 +507,11 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = ReviewQuery::create()->filterByRecommended('0');
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
+
+		$q = ReviewQuery::create()->filterByRecommended('');
+		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
+		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed an empty string');
+
 	}
 		
 	public function testFilterByFk()
