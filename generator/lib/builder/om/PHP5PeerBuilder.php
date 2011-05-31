@@ -2077,7 +2077,8 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		  // simple foreign key
 		  $lftCol = $lftCols[0];
 		  $script .= sprintf("
-		\$criteria->addJoin(%s, %s, \$join_behavior);\n",
+		\$criteria->addJoin(%s, %s, \$join_behavior);
+",
         $this->getColumnConstant($table->getColumn($lftCol) ),
         $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$lftCol] ) ));
 		}
@@ -2085,14 +2086,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
 		{
 		  // composite foreign key
 		  $script .= "
-		\$criteria->addMultipleJoin(array(\n";
+		\$criteria->addMultipleJoin(array(
+";
 		  foreach ($lftCols as $columnName ) {
-		    $script .= sprintf("        array(%s, %s),\n", 
+		    $script .= sprintf("        array(%s, %s),
+", 
 				  $this->getColumnConstant($table->getColumn($columnName) ),
 				  $joinedTablePeerBuilder->getColumnConstant($joinTable->getColumn( $lfMap[$columnName] ) )
 				);
 			}
-			$script .= "      ), \$join_behavior);\n";
+			$script .= "      ), \$join_behavior);
+";
 		}
 		return $script;
   }
