@@ -44,18 +44,6 @@ DROP SEQUENCE foo1_SEQ;
 
 ALTER TABLE foo3 RENAME TO foo4;
 
-ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
-
-ALTER TABLE foo2 MODIFY
-(
-	baz NVARCHAR2(12)
-);
-
-ALTER TABLE foo2 ADD
-(
-	baz3 NVARCHAR2(2000)
-);
-
 CREATE TABLE foo5
 (
 	id NUMBER NOT NULL,
@@ -67,6 +55,18 @@ ALTER TABLE foo5 ADD CONSTRAINT foo5_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo5_SEQ
 	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+
+ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
+
+ALTER TABLE foo2 MODIFY
+(
+	baz NVARCHAR2(12)
+);
+
+ALTER TABLE foo2 ADD
+(
+	baz3 NVARCHAR2(2000)
+);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}
@@ -393,18 +393,6 @@ DROP SEQUENCE foo1_SEQ;
 
 ALTER TABLE foo3 RENAME TO foo4;
 
-ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
-
-ALTER TABLE foo2 MODIFY
-(
-	baz NVARCHAR2(12)
-);
-
-ALTER TABLE foo2 ADD
-(
-	baz3 CLOB
-);
-
 CREATE TABLE foo5
 (
 	id NUMBER NOT NULL,
@@ -446,6 +434,18 @@ STORAGE
 	PCTINCREASE 0
 )
 TABLESPACE L_128K;
+
+ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
+
+ALTER TABLE foo2 MODIFY
+(
+	baz NVARCHAR2(12)
+);
+
+ALTER TABLE foo2 ADD
+(
+	baz3 CLOB
+);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}

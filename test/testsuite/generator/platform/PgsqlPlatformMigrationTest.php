@@ -40,12 +40,6 @@ DROP TABLE "foo1" CASCADE;
 
 ALTER TABLE "foo3" RENAME TO "foo4";
 
-ALTER TABLE "foo2" RENAME COLUMN "bar" TO "bar1";
-
-ALTER TABLE "foo2" ALTER COLUMN "baz" DROP NOT NULL;
-
-ALTER TABLE "foo2" ADD "baz3" TEXT;
-
 CREATE TABLE "foo5"
 (
 	"id" serial NOT NULL,
@@ -53,6 +47,12 @@ CREATE TABLE "foo5"
 	"dfgdsgf" TEXT,
 	PRIMARY KEY ("id")
 );
+
+ALTER TABLE "foo2" RENAME COLUMN "bar" TO "bar1";
+
+ALTER TABLE "foo2" ALTER COLUMN "baz" DROP NOT NULL;
+
+ALTER TABLE "foo2" ADD "baz3" TEXT;
 
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
