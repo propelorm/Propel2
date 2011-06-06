@@ -108,6 +108,11 @@ class PropelAutoloader
 			require $this->classes[$class];
 			return true;
 		}
+		// fallback for classes defined with leading backslash
+		if (strpos($class, '\\') === 0) {
+			$class = substr($class, 1);
+			return $this->autoload($class);
+		}
 		return false;
 	}
 }
