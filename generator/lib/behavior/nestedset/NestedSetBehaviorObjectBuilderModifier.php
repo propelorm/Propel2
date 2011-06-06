@@ -255,9 +255,10 @@ protected function processNestedSetQueries(\$con)
 	{
 		$script .= "
 /**
- * Wraps the getter for the nested set left value
+ * Proxy getter method for the left value of the nested set model.
+ * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int
+ * @return     int The nested set left value
  */
 public function getLeftValue()
 {
@@ -270,9 +271,10 @@ public function getLeftValue()
 	{
 		$script .= "
 /**
- * Wraps the getter for the nested set right value
+ * Proxy getter method for the right value of the nested set model.
+ * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int
+ * @return     int The nested set right value
  */
 public function getRightValue()
 {
@@ -285,9 +287,10 @@ public function getRightValue()
 	{
 		$script .= "
 /**
- * Wraps the getter for the nested set level
+ * Proxy getter method for the level value of the nested set model.
+ * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int
+ * @return     int The nested set level value
  */
 public function getLevel()
 {
@@ -300,9 +303,10 @@ public function getLevel()
 	{
 		$script .= "
 /**
- * Wraps the getter for the scope value
+ * Proxy getter method for the scope value of the nested set model. 
+ * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int or null if scope is disabled
+ * @return     int The nested set scope value
  */
 public function getScopeValue()
 {
@@ -315,9 +319,10 @@ public function getScopeValue()
 	{
 		$script .= "
 /**
- * Set the value left column
+ * Proxy setter method for the left value of the nested set model.
+ * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v new value
+ * @param      int \$v The nested set left value
  * @return     {$this->objectClassname} The current object (for fluent API support)
  */
 public function setLeftValue(\$v)
@@ -331,9 +336,10 @@ public function setLeftValue(\$v)
 	{
 		$script .= "
 /**
- * Set the value of right column
+ * Proxy setter method for the right value of the nested set model.
+ * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v new value
+ * @param      int \$v The nested set right value
  * @return     {$this->objectClassname} The current object (for fluent API support)
  */
 public function setRightValue(\$v)
@@ -347,9 +353,10 @@ public function setRightValue(\$v)
 	{
 		$script .= "
 /**
- * Set the value of level column
+ * Proxy setter method for the level value of the nested set model.
+ * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v new value
+ * @param      int \$v The nested set level value
  * @return     {$this->objectClassname} The current object (for fluent API support)
  */
 public function setLevel(\$v)
@@ -363,9 +370,10 @@ public function setLevel(\$v)
 	{
 		$script .= "
 /**
- * Set the value of scope column
+ * Proxy setter method for the scope value of the nested set model.
+ * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v new value
+ * @param      int \$v The nested set scope value
  * @return     {$this->objectClassname} The current object (for fluent API support)
  */
 public function setScopeValue(\$v)
