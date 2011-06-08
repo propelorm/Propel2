@@ -3182,7 +3182,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 ";
 	} // addFKByKeyMutator()
-
+	
 	/**
 	 * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
 	 * @param      string &$script The script will be modified in this method.
@@ -3295,7 +3295,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	protected function addRefFKMethods(&$script)
 	{
-		foreach ($this->getTable()->getReferrers() as $refFK) {
+		if (!$referrers = $this->getTable()->getReferrers()) {
+			return;
+		}
+		$this->addInitRelations($script, $referrers);
+		foreach ($referrers as $refFK) {
 			$this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()));
 			$this->declareClassFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
 			if ($refFK->isLocalPrimaryKey()) {
@@ -3312,6 +3316,35 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 	}
 
+	protected function addInitRelations(&$script, $referrers)
+	{
+		$script .= "
+
+	/**
+	 * Initializes a collection based on the name of a relation.
+	 * Avoids crafting an 'init[\$relationName]s' method name 
+	 * that wouldn't work when StandardEnglishPluralizer is used.
+	 *
+	 * @param      string \$relationName The name of the relation to initialize
+	 * @return     void
+	 */
+	public function initRelation(\$relationName)
+	{";
+		foreach ($referrers as $refFK) {
+			if (!$refFK->isLocalPrimaryKey()) {
+				$relationName = $this->getRefFKPhpNameAffix($refFK);
+				$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+				$script .= "
+		if ('$relationName' == \$relationName) {
+			return \$this->init$relCol();
+		}";
+			}
+		}
+		$script .= "
+	}
+";
+	}
+	
 	/**
 	 * Adds the method that clears the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
