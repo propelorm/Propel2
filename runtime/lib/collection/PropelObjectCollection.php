@@ -244,12 +244,12 @@ class PropelObjectCollection extends PropelCollection
 		if ($this->isEmpty()) {
 			// save a useless query and return an empty collection
 			$coll = new PropelObjectCollection();
-			$coll->setModel($relationMap->getRightTable()->getPhpName());
+			$coll->setModel($relationMap->getRightTable()->getClassname());
 			return $coll;
 		}
 		$symRelationMap = $relationMap->getSymmetricalRelation();
 
-		$query = PropelQuery::from($relationMap->getRightTable()->getPhpName());
+		$query = PropelQuery::from($relationMap->getRightTable()->getClassname());
 		if (null !== $criteria) {
 			$query->mergeWith($criteria);
 		}
