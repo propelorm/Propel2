@@ -328,7 +328,7 @@ class PropelSchemaReverseTask extends PDOTask
 	public function main()
 	{
 		if (!$this->getDatabaseName()) {
-			throw new BuildException("databaseName attribute is required for schema reverse engineering", $this->getLocation());
+			throw new BuildException("The databaseName attribute (defined in propel.project property) is required for schema reverse engineering", $this->getLocation());
 		}
 
 		//(not yet supported) $this->log("schema : " . $this->dbSchema);
@@ -358,6 +358,7 @@ class PropelSchemaReverseTask extends PDOTask
 
 		} catch (Exception $e) {
 			$this->log("There was an error building XML from metadata: " . $e->getMessage(), Project::MSG_ERR);
+			return false;
 		}
 
 		$this->log("Schema reverse engineering finished");

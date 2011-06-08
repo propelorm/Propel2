@@ -136,80 +136,105 @@ class MysqlSchemaParser extends BaseSchemaParser
 		$stmt = $this->dbh->query("SHOW COLUMNS FROM `" . $table->getName() . "`");
 
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-			$name = $row['Field'];
-			$is_nullable = ($row['Null'] == 'YES');
-			$autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
-			$size = null;
-			$precision = null;
-			$scale = null;
-
-			if (preg_match('/^(\w+)[\(]?([\d,]*)[\)]?( |$)/', $row['Type'], $matches)) {
-				//            colname[1]   size/precision[2]
-				$nativeType = $matches[1];
-				if ($matches[2]) {
-					if ( ($cpos = strpos($matches[2], ',')) !== false) {
-						$size = (int) substr($matches[2], 0, $cpos);
-						$precision = $size;
-						$scale = (int) substr($matches[2], $cpos + 1);
-					} else {
-						$size = (int) $matches[2];
-					}
-				}
-				foreach (self::$defaultTypeSizes as $type => $defaultSize) {
-					if ($nativeType == $type && $size == $defaultSize) {
-						$size = null;
-						continue;
-					}
-				}
-			} elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
-				$nativeType = $matches[1];
-			} else {
-				$nativeType = $row['Type'];
-			}
-
-			//BLOBs can't have any default values in MySQL
-			$default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
-
-			$propelType = $this->getMappedPropelType($nativeType);
-			if (!$propelType) {
-				$propelType = Column::DEFAULT_TYPE;
-				$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
-			}
-
-			$column = new Column($name);
-			$column->setTable($table);
-			$column->setDomainForType($propelType);
-			// We may want to provide an option to include this:
-			// $column->getDomain()->replaceSqlType($type);
-			$column->getDomain()->replaceSize($size);
-			$column->getDomain()->replaceScale($scale);
-			if ($default !== null) {
-				if ($propelType == PropelTypes::BOOLEAN) {
-					if ($default == '1') $default = 'true';
-					if ($default == '0') $default = 'false';
-				}
-				if (in_array($default, array('CURRENT_TIMESTAMP'))) {
-					$type = ColumnDefaultValue::TYPE_EXPR;
-				} else {
-					$type = ColumnDefaultValue::TYPE_VALUE;
-				}
-				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
-			}
-			$column->setAutoIncrement($autoincrement);
-			$column->setNotNull(!$is_nullable);
-
-			if ($this->addVendorInfo) {
-				$vi = $this->getNewVendorInfoObject($row);
-				$column->addVendorInfo($vi);
-			}
-
+			$column = $this->getColumnFromRow($row, $table);
 			$table->addColumn($column);
 		}
 
 
 	} // addColumn()
 
+	/**
+	 * Factory method creating a Column object 
+	 * based on a row from the 'show columns from ' MySQL query result.
+	 * 
+	 * @param     array $row An associative array with the following keys:
+	 *                       Field, Type, Null, Key, Default, Extra.
+	 * @return    Column
+	 */
+	public function getColumnFromRow($row, Table $table)
+	{
+		$name = $row['Field'];
+		$is_nullable = ($row['Null'] == 'YES');
+		$autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
+		$size = null;
+		$precision = null;
+		$scale = null;
+		$sqlType = false;
+
+		$regexp = '/^
+			(\w+)        # colname [1]
+			[\(]         # (
+				?([\d,]*)  # size or size, precision [2]
+			[\)]         # )
+			?\s*         # whitespace
+			(\w*)        # extra description (UNSIGNED, CHARACTER SET, ...) [3]
+		$/x';
+		if (preg_match($regexp, $row['Type'], $matches)) {
+			$nativeType = $matches[1];
+			if ($matches[2]) {
+				if (($cpos = strpos($matches[2], ',')) !== false) {
+					$size = (int) substr($matches[2], 0, $cpos);
+					$precision = $size;
+					$scale = (int) substr($matches[2], $cpos + 1);
+				} else {
+					$size = (int) $matches[2];
+				}
+			}
+			if ($matches[3]) {
+				$sqlType = $row['Type']; 
+			}
+			foreach (self::$defaultTypeSizes as $type => $defaultSize) {
+				if ($nativeType == $type && $size == $defaultSize) {
+					$size = null;
+					continue;
+				}
+			}
+		} elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
+			$nativeType = $matches[1];
+		} else {
+			$nativeType = $row['Type'];
+		}
+
+		//BLOBs can't have any default values in MySQL
+		$default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
+
+		$propelType = $this->getMappedPropelType($nativeType);
+		if (!$propelType) {
+			$propelType = Column::DEFAULT_TYPE;
+			$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+		}
+
+		$column = new Column($name);
+		$column->setTable($table);
+		$column->setDomainForType($propelType);
+		if ($sqlType) {
+			$column->getDomain()->replaceSqlType($sqlType);
+		}
+		$column->getDomain()->replaceSize($size);
+		$column->getDomain()->replaceScale($scale);
+		if ($default !== null) {
+			if ($propelType == PropelTypes::BOOLEAN) {
+				if ($default == '1') $default = 'true';
+				if ($default == '0') $default = 'false';
+			}
+			if (in_array($default, array('CURRENT_TIMESTAMP'))) {
+				$type = ColumnDefaultValue::TYPE_EXPR;
+			} else {
+				$type = ColumnDefaultValue::TYPE_VALUE;
+			}
+			$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
+		}
+		$column->setAutoIncrement($autoincrement);
+		$column->setNotNull(!$is_nullable);
+
+		if ($this->addVendorInfo) {
+			$vi = $this->getNewVendorInfoObject($row);
+			$column->addVendorInfo($vi);
+		}
+		
+		return $column;
+	}
+	
 	/**
 	 * Load foreign keys for this table.
 	 */

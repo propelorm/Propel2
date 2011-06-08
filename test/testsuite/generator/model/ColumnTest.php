@@ -185,5 +185,20 @@ EOF;
 		$this->assertInstanceOf('Validator', $title2Validator);
 		$this->assertEquals(2, count($title2Validator->getRules()));
 	}
+	
+	public function testHasPlatform()
+	{
+		$column = new Column();
+		$this->assertFalse($column->hasPlatform());
+		$table = new Table();
+		$table->addColumn($column);
+		$this->assertFalse($column->hasPlatform());
+		$database = new Database();
+		$database->addTable($table);
+		$this->assertFalse($column->hasPlatform());
+		$platform = new DefaultPlatform();
+		$database->setPlatform($platform);
+		$this->assertTrue($column->hasPlatform());
+	}
 
 }

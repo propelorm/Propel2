@@ -310,7 +310,7 @@ DROP TABLE %s CASCADE;
 		if ($col->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
 			$sqlType = $col->getType() === PropelTypes::BIGINT ? 'bigserial' : 'serial';
 		}
-		if ($this->hasSize($sqlType)) {
+		if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
 			$ddl []= $sqlType . $domain->printSize();
 		} else {
 			$ddl []= $sqlType;

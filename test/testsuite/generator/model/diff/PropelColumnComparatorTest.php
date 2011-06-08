@@ -48,7 +48,10 @@ class PropelColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
 		$c2 = new Column();
 		$c2->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
-		$expectedChangedProperties = array('type' => array('VARCHAR', 'TEXT'));
+		$expectedChangedProperties = array(
+			'type'    => array('VARCHAR', 'LONGVARCHAR'),
+			'sqlType' => array('VARCHAR', 'TEXT'),
+		);
 		$this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
 	}
 
@@ -69,6 +72,17 @@ class PropelColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$c2 = new Column();
 		$c2->getDomain()->replaceSize(3);
 		$expectedChangedProperties = array('size' => array(2, 3));
+		$this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
+	}
+
+	public function testCompareSqlType()
+	{
+		$c1 = new Column();
+		$c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
+		$c2 = new Column();
+		$c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
+		$c2->getDomain()->setSqlType('INTEGER(10) UNSIGNED');
+		$expectedChangedProperties = array('sqlType' => array('INTEGER', 'INTEGER(10) UNSIGNED'));
 		$this->assertEquals($expectedChangedProperties, PropelColumnComparator::compareColumns($c1, $c2));
 	}
 
@@ -165,6 +179,7 @@ class PropelColumnComparatorTest extends PHPUnit_Framework_TestCase
 		$c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
 		$expectedChangedProperties = array(
 			'type' => array('INTEGER', 'DOUBLE'),
+			'sqlType' => array('INTEGER', 'DOUBLE'),
 			'scale' => array(NULL, 2),
 			'size' => array(NULL, 3),
 			'notNull' => array(false, true),

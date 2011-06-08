@@ -213,6 +213,19 @@ DROP SEQUENCE foo_sequence;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
 
+	public function testGetColumnDDLCustomSqlType()
+	{
+		$column = new Column('foo');
+		$column->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
+		$column->getDomain()->replaceScale(2);
+		$column->getDomain()->replaceSize(3);
+		$column->setNotNull(true);
+		$column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+		$column->getDomain()->replaceSqlType('DECIMAL(5,6)');
+		$expected = 'foo DECIMAL(5,6) DEFAULT 123 NOT NULL';
+		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+	}
+	
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */

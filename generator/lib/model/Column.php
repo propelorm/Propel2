@@ -852,6 +852,18 @@ class Column extends XMLElement
 	{
 		return $this->getType();
 	}
+	
+	public function isDefaultSqlType(PropelPlatformInterface $platform = null)
+	{
+		if (null === $this->domain || null === $this->domain->getSqlType() || null === $platform) {
+			return true;
+		}
+		$defaultSqlType = $platform->getDomainForType($this->getType())->getSqlType();
+		if ($defaultSqlType == $this->getDomain()->getSqlType()) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Utility method to know whether column needs Blob/Lob handling.
@@ -948,6 +960,10 @@ class Column extends XMLElement
 
 		if ($domain->getScale() !== null) {
 			$colNode->setAttribute('scale', $domain->getScale());
+		}
+		
+		if ($this->hasPlatform() && !$this->isDefaultSqlType($this->getPlatform())) {
+			$colNode->setAttribute('sqlType', $domain->getSqlType());
 		}
 
 		if ($this->description !== null) {
@@ -1236,6 +1252,11 @@ class Column extends XMLElement
 	public function getPlatform()
 	{
 		return $this->getTable()->getDatabase()->getPlatform();
+	}
+	
+	public function hasPlatform()
+	{
+		return null !== $this->getTable() && null !== $this->getTable()->getDatabase() && null !== $this->getTable()->getDatabase()->getPlatform();
 	}
 	
 	public function getValidator()

@@ -315,7 +315,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 		
 		$ddl = array($this->quoteIdentifier($col->getName()));
 		$sqlType = $domain->getSqlType();
-		if ($this->hasSize($sqlType)) {
+		if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
 			$ddl []= $sqlType . $domain->printSize();
 		} else {
 			$ddl []= $sqlType;
