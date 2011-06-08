@@ -386,12 +386,23 @@ Propel supports the following vendor parameters for MySQL:
 Name             | Example values
 -----------------|---------------
 // in <table> element
-Engine           | MYISAM (default), BDB, HEAP, ISAM, InnoDB, MERGE, MRG_MYISAM
+Engine           | MYISAM (default), InnoDB, BDB, MEMORY, ISAM, MERGE, MRG_MYISAM, etc.
+AutoIncrement    | 1234, N, etc
+AvgRowLength     |
 Charset          | utf8, latin1, etc.
-Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
 Checksum         | 0, 1
-Pack_Keys        | 0, 1, DEFAULT
-Delay_key_write  | 0, 1
+Collate          | utf8_unicode_ci, latin1_german1_ci, etc.
+Connection       | mysql://fed_user@remote_host:9306/federated/test_table (for FEDERATED storage engine)
+DataDirectory    | /var/db/foo (for MyISAM storage engine)
+DelayKeyWrite    | 0, 1
+IndexDirectory   | /var/db/foo (for MyISAM storage engine)
+InsertMethod     | FIRST, LAST (for MERGE storage Engine)
+KeyBlockSize     | 0 (default), 1024, etc
+MaxRows          | 1000, 4294967295, etc
+MinRows          | 1000 (for MEMORY storage engine)
+PackKeys         | 0, 1, DEFAULT
+RowFormat        | FIXED, DYNAMIC, COMPRESSED, COMPACT, REDUNDANT
+Union            | (t1,t2)  (for MERGE storage Engine)
 // in <column> element
 Charset          | utf8, latin1, etc.
 Collate          | utf8_unicode_ci, latin1_german1_ci, etc.

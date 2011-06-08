@@ -207,18 +207,38 @@ CREATE TABLE %s
 		$tableVI = $table->getVendorInfoForType('mysql');
 		$vi = $dbVI->getMergedVendorInfo($tableVI);
 		$tableOptions = array();
+		// List of supported table options
+		// see http://dev.mysql.com/doc/refman/5.5/en/create-table.html
 		$supportedOptions = array(
+			'AutoIncrement'   => 'AUTO_INCREMENT',
+			'AvgRowLength'    => 'AVG_ROW_LENGTH',
 			'Charset'         => 'CHARACTER SET',
-			'Collate'         => 'COLLATE',
 			'Checksum'        => 'CHECKSUM',
-			'Pack_Keys'       => 'PACK_KEYS',
+			'Collate'         => 'COLLATE',
+			'Connection'      => 'CONNECTION',
+			'DataDirectory'   => 'DATA DIRECTORY',
 			'Delay_key_write' => 'DELAY_KEY_WRITE',
+			'DelayKeyWrite'   => 'DELAY_KEY_WRITE',
+			'IndexDirectory'  => 'INDEX DIRECTORY',
+			'InsertMethod'    => 'INSERT_METHOD',
+			'KeyBlockSize'    => 'KEY_BLOCK_SIZE',
+			'MaxRows'         => 'MAX_ROWS',
+			'MinRows'         => 'MIN_ROWS',
+			'Pack_Keys'       => 'PACK_KEYS',
+			'PackKeys'        => 'PACK_KEYS',
+			'RowFormat'       => 'ROW_FORMAT',
+			'Union'           => 'UNION',
 		);
 		foreach ($supportedOptions as $name => $sqlName) {
 			if ($vi->hasParameter($name)) {
 				$tableOptions []= sprintf('%s=%s', 
 					$sqlName, 
 					$this->quote($vi->getParameter($name))
+				);
+			} elseif ($vi->hasParameter($sqlName)) {
+				$tableOptions []= sprintf('%s=%s', 
+					$sqlName, 
+					$this->quote($vi->getParameter($sqlName))
 				);
 			}
 		}
