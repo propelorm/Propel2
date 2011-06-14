@@ -30,7 +30,7 @@ class Propel
 	/**
 	 * The Propel version.
 	 */
-	const VERSION = '1.6.1';
+	const VERSION = '1.6.2-dev';
 	
 	/**
 	 * A constant for <code>default</code>.
