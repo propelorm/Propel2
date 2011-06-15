@@ -86,6 +86,7 @@ class OracleSchemaParser extends BaseSchemaParser
 				continue;
 			}
 			$table = new Table($row['OBJECT_NAME']);
+			$table->setIdMethod($database->getDefaultIdMethod());
 			if ($task) $task->log("Adding table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$database->addTable($table);
 			// Add columns, primary keys and indexes.

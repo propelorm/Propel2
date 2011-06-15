@@ -174,6 +174,12 @@ interface PropelPlatformInterface
 	public function supportsSchemas();
 
 	/**
+	 * Whether RDBMS supports migrations.
+	 * @return boolean
+	 */
+	public function supportsMigrations();
+
+	/**
 	 * Returns the boolean value for the RDBMS.
 	 *
 	 * This value should match the boolean value that is set

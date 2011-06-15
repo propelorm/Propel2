@@ -111,18 +111,22 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 			$pdo = $generatorConfig->getBuildPDO($name);
 			$database = new Database($name);
 			$platform = $generatorConfig->getConfiguredPlatform($pdo);
+			if (!$platform->supportsMigrations()) {
+				$this->log(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
+				continue;
+			}
 			$database->setPlatform($platform);
 			$database->setDefaultIdMethod(IDMethod::NATIVE);
 			$parser = $generatorConfig->getConfiguredSchemaParser($pdo);
 			$nbTables = $parser->parse($database, $this);
 			$ad->addDatabase($database);
 			$totalNbTables += $nbTables;
-			$this->log(sprintf('%d tables imported from database "%s"', $nbTables, $name), Project::MSG_VERBOSE);
+			$this->log(sprintf('%d tables found in database "%s"', $nbTables, $name), Project::MSG_VERBOSE);
 		}
 		if ($totalNbTables) {
-			$this->log(sprintf('%d tables imported from databases.', $totalNbTables));
+			$this->log(sprintf('%d tables found in all databases.', $totalNbTables));
 		} else {
-			$this->log('Database is empty');
+			$this->log('No table found in all databases');
 		}
 
 		// loading model from XML

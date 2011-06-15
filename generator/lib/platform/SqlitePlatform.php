@@ -146,4 +146,13 @@ class SqlitePlatform extends DefaultPlatform
 	{
 		return $this->isIdentifierQuotingEnabled ? '[' . $text . ']' : $text;
 	}
+	
+	/**
+	 * @see        Platform::supportsMigrations()
+	 */
+	public function supportsMigrations()
+	{
+		return false;
+	}
+
 }

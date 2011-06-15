@@ -137,8 +137,8 @@ class PropelMigrationManager
 		foreach ($connections as $name => $params) {
 			$pdo = $this->getPdoConnection($name);
 			$sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-			$stmt = $pdo->prepare($sql);
 			try {
+				$stmt = $pdo->prepare($sql);
 				$stmt->execute();
 				if ($migrationTimestamp = $stmt->fetchColumn()) {
 					$migrationTimestamps[$name] = $migrationTimestamp;

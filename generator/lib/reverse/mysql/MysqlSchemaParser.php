@@ -99,6 +99,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 			}
 			if ($task) $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
 			$table = new Table($name);
+			$table->setIdMethod($database->getDefaultIdMethod());
 			$database->addTable($table);
 			$tables[] = $table;
 		}

@@ -1067,6 +1067,14 @@ ALTER TABLE %s ADD
 	{
 		return false;
 	}
+	
+	/**
+	 * @see        Platform::supportsMigrations()
+	 */
+	public function supportsMigrations()
+	{
+		return true;
+	}
 
 	/**
 	 * Returns the boolean value for the RDBMS.

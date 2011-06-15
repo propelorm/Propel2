@@ -115,6 +115,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 			if ($namespacename != 'public') {
 				$table->setSchema($namespacename);
 			}
+			$table->setIdMethod($database->getDefaultIdMethod());
 			$database->addTable($table);
 
 			// Create a wrapper to hold these tables and their associated OID

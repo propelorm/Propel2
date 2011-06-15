@@ -87,6 +87,7 @@ class MssqlSchemaParser extends BaseSchemaParser
 				continue;
 			}
 			$table = new Table($name);
+			$table->setIdMethod($database->getDefaultIdMethod());
 			$database->addTable($table);
 			$tables[] = $table;
 		}
