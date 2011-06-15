@@ -31,6 +31,12 @@ class PropelColumnComparator
 	static public function computeDiff(Column $fromColumn, Column $toColumn)
 	{
 		if ($changedProperties = self::compareColumns($fromColumn, $toColumn)) {
+			if ($fromColumn->hasPlatform() || $toColumn->hasPlatform()) {
+				$platform = $fromColumn->hasPlatform() ? $fromColumn->getPlatform() : $toColumn->getPlatform();
+				if ($platform->getColumnDDL($fromColumn) == $platform->getColumnDDl($toColumn)) {
+					return false;
+				}
+			}
 			$columnDiff = new PropelColumnDiff();
 			$columnDiff->setFromColumn($fromColumn);
 			$columnDiff->setToColumn($toColumn);

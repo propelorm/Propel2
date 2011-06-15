@@ -163,7 +163,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 		$sqlType = false;
 
 		$regexp = '/^
-			(\w+)        # colname [1]
+			(\w+)        # column type [1]
 			[\(]         # (
 				?([\d,]*)  # size or size, precision [2]
 			[\)]         # )
@@ -182,7 +182,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 				}
 			}
 			if ($matches[3]) {
-				$sqlType = $row['Type']; 
+				$sqlType = $row['Type'];
 			}
 			foreach (self::$defaultTypeSizes as $type => $defaultSize) {
 				if ($nativeType == $type && $size == $defaultSize) {
@@ -192,6 +192,9 @@ class MysqlSchemaParser extends BaseSchemaParser
 			}
 		} elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
 			$nativeType = $matches[1];
+			if ($nativeType == 'enum') {
+				$sqlType = $row['Type'];
+			}
 		} else {
 			$nativeType = $row['Type'];
 		}
@@ -202,6 +205,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 		$propelType = $this->getMappedPropelType($nativeType);
 		if (!$propelType) {
 			$propelType = Column::DEFAULT_TYPE;
+			$sqlType = $row['Type'];
 			$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
 		}
 
