@@ -1280,7 +1280,7 @@ class Criteria implements IteratorAggregate
 	/**
 	 * Add order by column name, explicitly specifying ascending.
 	 *
-	 * @param      name The name of the column to order by.
+	 * @param      string $name The name of the column to order by.
 	 * @return     A modified Criteria object.
 	 */
 	public function addAscendingOrderByColumn($name)
