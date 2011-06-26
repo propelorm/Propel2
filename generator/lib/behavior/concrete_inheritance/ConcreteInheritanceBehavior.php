@@ -131,15 +131,22 @@ class ConcreteInheritanceBehavior extends Behavior
 	
 	public function parentClass($builder)
 	{
+		$parentTable = $this->getParentTable();
 		switch (get_class($builder)) {
 			case 'PHP5ObjectBuilder':
-				return $builder->getNewStubObjectBuilder($this->getParentTable())->getClassname();
+				$objectBuilder = $builder->getNewStubObjectBuilder($parentTable);
+				$builder->declareClass($objectBuilder->getFullyQualifiedClassname());
+				return $objectBuilder->getClassname();
 				break;
 			case 'QueryBuilder':
-				return $builder->getNewStubQueryBuilder($this->getParentTable())->getClassname();
+				$queryBuilder = $builder->getNewStubQueryBuilder($parentTable);
+				$builder->declareClass($queryBuilder->getFullyQualifiedClassname());
+				return $queryBuilder->getClassname();
 				break;
 			case 'PHP5PeerBuilder':
-				return $builder->getNewStubPeerBuilder($this->getParentTable())->getClassname();
+				$peerBuilder = $builder->getNewStubPeerBuilder($parentTable);
+				$builder->declareClass($peerBuilder->getFullyQualifiedClassname());
+				return $peerBuilder->getClassname();
 				break;
 			default:
 				return null;
