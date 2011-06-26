@@ -393,7 +393,6 @@ The order in which the logging details are enabled is significant, since it dete
 The following settings can be customized at runtime or in the configuration file:
 
 ||'''Parameter'''||'''Default'''||'''Meaning'''||
-||`debugpdo.logging.enabled`||`true`||Should any logging take place||
 ||`debugpdo.logging.innerglue`||`": "`||String to use for combining the title of a detail and its value||
 ||`debugpdo.logging.outerglue`||`" | "`||String to use for combining details together on a log line||
 ||`debugpdo.logging.realmemoryusage`||`false`||Parameter to [http://www.php.net/manual/en/function.memory-get-usage.php memory_get_usage()] and [http://www.php.net/manual/en/function.memory-get-peak-usage.php memory_get_peak_usage()] calls||

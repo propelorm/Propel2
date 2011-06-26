@@ -16,9 +16,6 @@
  *
  * The following runtime configuration items affect the behaviour of this class:
  *
- * - debugpdo.logging.enabled (default: true)
- *   Should any logging take place
- *
  * - debugpdo.logging.innerglue (default: ": ")
  *   String to use for combining the title of a detail and its value
  *
