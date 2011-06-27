@@ -66,7 +66,7 @@
 		<column name="review_date" required="true" type="DATE" default="2001-01-01" description="Date of Review" />
 		<column name="recommended" required="true" type="BOOLEAN" description="Does reviewer recommend book?" />
 		<column name="status" type="VARCHAR" size="8" description="The status of this review." />
-		<column name="book_id" required="true" type="INTEGER" description="Book ID for this review" />
+		<column name="book_id" required="false" type="INTEGER" description="Book ID for this review" />
 		<foreign-key foreignTable="book" onDelete="cascade">
 			<reference local="book_id" foreign="id" />
 		</foreign-key>

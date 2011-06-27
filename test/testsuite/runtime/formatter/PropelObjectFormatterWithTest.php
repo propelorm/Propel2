@@ -342,6 +342,39 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
 	}
+
+	public function testFindWithLeftJoinWithOneToManyAndNullObject()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$freud = new Author();
+		$freud->setFirstName("Sigmund");
+		$freud->setLastName("Freud");
+		$freud->save($this->con);
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->add(AuthorPeer::LAST_NAME, 'Freud');
+		$c->leftJoinWith('Author.Book');
+		$c->leftJoinWith('Book.Review');
+		// should not raise a notice
+		$authors = $c->find($this->con);
+		$this->assertTrue(true);
+	}
+
+	public function testFindWithLeftJoinWithManyToOneAndNullObject()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$review = new Review();
+		$review->save($this->con);
+		$c = new ModelCriteria('bookstore', 'Review');
+		$c->leftJoinWith('Review.Book');
+		$c->leftJoinWith('Book.Author');
+		// should not raise a notice
+		$reviews = $c->find($this->con);
+		$this->assertTrue(true);
+	}
 	
 	public function testFindOneWithOneToManyThenManyToOneUsingJoinRelated()
 	{

@@ -342,6 +342,41 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$reviews = $book['Reviews'];
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
 	}
+
+	public function testFindWithLeftJoinWithOneToManyAndNullObject()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$freud = new Author();
+		$freud->setFirstName("Sigmund");
+		$freud->setLastName("Freud");
+		$freud->save($this->con);
+		$c = new ModelCriteria('bookstore', 'Author');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->add(AuthorPeer::LAST_NAME, 'Freud');
+		$c->leftJoinWith('Author.Book');
+		$c->leftJoinWith('Book.Review');
+		// should not raise a notice
+		$authors = $c->find($this->con);
+		$this->assertTrue(true);
+	}
+
+	public function testFindWithLeftJoinWithManyToOneAndNullObject()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$review = new Review();
+		$review->save($this->con);
+		$c = new ModelCriteria('bookstore', 'Review');
+		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
+		$c->leftJoinWith('Review.Book');
+		$c->leftJoinWith('Book.Author');
+		// should not raise a notice
+		$reviews = $c->find($this->con);
+		$this->assertTrue(true);
+	}
 	
 	public function testFindOneWithColumn()
 	{

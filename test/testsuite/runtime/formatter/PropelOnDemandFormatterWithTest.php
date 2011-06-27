@@ -246,6 +246,22 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$books = $c->find();
 	}
 
+	public function testFindWithLeftJoinWithManyToOneAndNullObject()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		ReviewPeer::clearInstancePool();
+		$review = new Review();
+		$review->save($this->con);
+		$c = new ModelCriteria('bookstore', 'Review');
+		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+		$c->leftJoinWith('Review.Book');
+		$c->leftJoinWith('Book.Author');
+		// should not raise a notice
+		$reviews = $c->find($this->con);
+		$this->assertTrue(true);
+	}
+
 	public function testFindOneWithColumn()
 	{
 		BookstoreDataPopulator::populate();

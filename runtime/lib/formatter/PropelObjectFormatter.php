@@ -89,7 +89,13 @@ class PropelObjectFormatter extends PropelFormatter
 		// related objects added using with()
 		foreach ($this->getWith() as $modelWith) {
 			list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
-			$startObject = $modelWith->isPrimary() ? $obj : $hydrationChain[$modelWith->getLeftPhpName()];
+			if ($modelWith->isPrimary()) {
+				$startObject = $obj;
+			} elseif (isset($hydrationChain)) {
+				$startObject = $hydrationChain[$modelWith->getLeftPhpName()];
+			} else {
+				continue;
+			}
 			// as we may be in a left join, the endObject may be empty
 			// in which case it should not be related to the previous object
 			if (null === $endObject || $endObject->isPrimaryKeyNull()) {
