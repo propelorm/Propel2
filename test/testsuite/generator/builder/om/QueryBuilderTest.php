@@ -686,10 +686,10 @@ class QueryBuilderTest extends BookstoreTestBase
 			->join('Book.Author', Criteria::LEFT_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinFk() translates to a left join on non-required columns');
 
-		$q = ReviewQuery::create()
-			->joinBook();
-		$q1 = ReviewQuery::create()
-			->join('Review.Book', Criteria::INNER_JOIN);
+		$q = BookSummaryQuery::create()
+			->joinSummarizedBook();
+		$q1 = BookSummaryQuery::create()
+			->join('BookSummary.SummarizedBook', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinFk() translates to an inner join on required columns');
 
 		$q = BookQuery::create()
@@ -737,9 +737,9 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a left join on non-required columns');
 
 		$q = BookQuery::create()
-			->joinreview();
+			->joinBookSummary();
 		$q1 = BookQuery::create()
-			->join('Book.Review', Criteria::INNER_JOIN);
+			->join('Book.BookSummary', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to an inner join on required columns');
 
 		$q = AuthorQuery::create()
@@ -772,14 +772,14 @@ class QueryBuilderTest extends BookstoreTestBase
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
 
-		$q = ReviewQuery::create()
-			->useBookQuery()
+		$q = BookSummaryQuery::create()
+			->useSummarizedBookQuery()
 				->filterByTitle('War And Peace')
 			->endUse();
-		$q1 = ReviewQuery::create()
-			->join('Review.Book', Criteria::INNER_JOIN)
+		$q1 = BookSummaryQuery::create()
+			->join('BookSummary.SummarizedBook', Criteria::INNER_JOIN)
 			->add(BookPeer::TITLE, 'War And Peace', Criteria::EQUAL);
-		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on aninner join on required columns');
+		$this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on an inner join on required columns');
 	}
 
 	public function testUseFkQueryJoinType()
@@ -880,7 +880,7 @@ class QueryBuilderTest extends BookstoreTestBase
 				->endUse()
 			->endUse();
 		$q1 = ReviewQuery::create()
-			->join('Review.Book', Criteria::INNER_JOIN)
+			->join('Review.Book', Criteria::LEFT_JOIN)
 			->join('Book.Author', Criteria::LEFT_JOIN)
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
 		// embedded queries create joins that keep a relation to the parent
