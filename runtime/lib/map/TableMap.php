@@ -495,9 +495,12 @@ class TableMap
    * @param      string $tablePhpName The related table name
    * @param      integer $type The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY, or RelationMAp::ONE_TO_ONE)
    * @param      array $columnMapping An associative array mapping column names (local => foreign)
+   * @param      string $onDelete SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
+   * @param      string $onUpdate SQL behavior upon update ('SET NULL', 'CASCADE', ...)
+   * @param      string $pluralName Optional plural name for *_TO_MANY relationships
    * @return     RelationMap the built RelationMap object
    */
-  public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null)
+  public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null, $pluralName = null)
   {
     // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
     // and this method autoloads the TableMap if the table isn't loaded yet
@@ -505,6 +508,9 @@ class TableMap
     $relation->setType($type);
     $relation->setOnUpdate($onUpdate);
     $relation->setOnDelete($onDelete);
+    if (null !== $pluralName) {
+      $relation->setPluralName($pluralName);
+    }
     // set tables
     if ($type == RelationMap::MANY_TO_ONE) {
       $relation->setLocalTable($this);

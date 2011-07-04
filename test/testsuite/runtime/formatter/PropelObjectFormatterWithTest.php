@@ -204,7 +204,29 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$secondAuthor = $essay->getAuthorRelatedBySecondAuthor();
 		$this->assertEquals($count + 1, $con->getQueryCount(), 'with() does not hydrate objects not in with');
 	}
-	
+
+	public function testFindOneWithEmptyDuplicateRelation()
+	{
+		EssayPeer::doDeleteAll();
+
+		$author = new Author();
+		$author->setFirstName('Piet');
+		$author->setLastName('Sous');
+		$author->save();
+
+		AuthorPeer::clearInstancePool();
+		EssayPeer::clearInstancePool();
+
+		$query = AuthorQuery::create()
+		->useEssayRelatedByFirstAuthorQuery()
+			->orderByTitle()
+		->endUse()
+		->with('EssayRelatedByFirstAuthor');
+
+		$author = $query->findOne(); // should not throw a notice
+		$this->assertTrue(true);
+	}
+
 	public function testFindOneWithDistantClass()
 	{
 		BookstoreDataPopulator::populate();

@@ -51,9 +51,9 @@ class ModelWith
 		$relationName = $relation->getName();
 		if ($relation->getType() == RelationMap::ONE_TO_MANY) {
 			$this->isAdd = $this->isWithOneToMany = true;
-			$this->relationName = $relationName . 's';
+			$this->relationName = $relation->getPluralName();
 			$this->relationMethod = 'add' . $relationName;
-			$this->initMethod = 'init' . $relationName . 's';
+			$this->initMethod = 'init' . $this->relationName;
 		} else {
 			$this->relationName = $relationName;
 			$this->relationMethod = 'set' . $relationName;

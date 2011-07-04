@@ -278,6 +278,7 @@ class ".$this->getClassname()." extends TableMap
 		\$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
 		}
 		foreach ($this->getTable()->getReferrers() as $fkey) {
+			$relationName = $this->getRefFKPhpNameAffix($fkey);
 			$columnMapping = 'array(';
 			foreach ($fkey->getForeignLocalMapping() as $key => $value) {
 				$columnMapping .= "'$key' => '$value', ";
@@ -286,14 +287,21 @@ class ".$this->getClassname()." extends TableMap
 			$onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
 			$onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
 			$script .= "
-		\$this->addRelation('" . $this->getRefFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassname()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate);";
+		\$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassname()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate";
+			if ($fkey->isLocalPrimaryKey()) {
+			 	$script .= ");";
+			} else {
+				$script .= ", '" . $this->getRefFKPhpNameAffix($fkey, true) . "');";
+			}
 		}
 		foreach ($this->getTable()->getCrossFks() as $fkList) {
 			list($refFK, $crossFK) = $fkList;
+			$relationName = $this->getFKPhpNameAffix($crossFK);
+			$pluralName = "'" . $this->getFKPhpNameAffix($crossFK, true) . "'";
 			$onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
 			$onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
 			$script .= "
-		\$this->addRelation('" . $this->getFKPhpNameAffix($crossFK) . "', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate);";
+		\$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($crossFK->getForeignTable())->getFullyQualifiedClassname()) . "', RelationMap::MANY_TO_MANY, array(), $onDelete, $onUpdate, $pluralName);";
 		}
 		$script .= "
 	} // buildRelations()
