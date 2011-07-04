@@ -60,6 +60,7 @@ class PropelConfiguration implements ArrayAccess
 	public function offsetSet($offset, $value)
 	{
 		$this->parameters[$offset] = $value;
+		$this->isFlattened = false;
 	}
 
 	/**
@@ -81,11 +82,21 @@ class PropelConfiguration implements ArrayAccess
 	public function offsetUnset($offset)
 	{
 		unset($this->parameters[$offset]);
+		$this->isFlattened = false;
 	}
 
 	/**
-	 * Get parameter value from the container
-	 *
+	 * Get a value from the container, using a namespaced key.
+	 * If the specified value is supposed to be an array, the actual return value will be null.
+	 * Examples:
+	 * <code>
+	 *   $c['foo'] = 'bar';
+	 *   echo $c->getParameter('foo'); => 'bar'
+	 *   $c['foo1'] = array('foo2' => 'bar');
+	 *   echo $c->getParameter('foo1'); => null
+	 *   echo $c->getParameter('foo1.foo2'); => 'bar'
+	 * </code>
+   *
 	 * @param     string  $name  Parameter name
 	 * @param     mixed   $default  Default value to be used if the requested value is not found
 	 *
@@ -101,7 +112,14 @@ class PropelConfiguration implements ArrayAccess
 	}
 
 	/**
-	 * Store a value to the container
+	 * Store a value to the container. Accept scalar and array values.
+	 * Examples:
+	 * <code>
+	 *   $c->setParameter('foo', 'bar');
+	 *   echo $c['foo']; => 'bar'
+	 *   $c->setParameter('foo1.foo2', 'bar');
+	 *   print_r($c['foo1']); => array('foo2' => 'bar')
+	 * </code>
 	 *
 	 * @param     string  $name  Configuration item name (name.space.name)
 	 * @param     mixed   $value  Value to be stored
@@ -110,11 +128,16 @@ class PropelConfiguration implements ArrayAccess
 	{
 		$param = &$this->parameters;
 		$parts = explode('.', $name); //name.space.name
-		while ($part = array_shift($parts)) {
+		foreach ($parts as $part) {
 			$param = &$param[$part];
 		}
 		$param = $value;
-		$this->flattenedParameters[$name] = $value;
+		if (is_array($value)) {
+			// The list will need to be re-flattened.
+			$this->isFlattened = false;
+		} else {
+			$this->flattenedParameters[$name] = $value;
+		}
 	}
 
 	/**
