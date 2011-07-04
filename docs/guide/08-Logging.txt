@@ -361,7 +361,7 @@ $allMethods = array(
   'DebugPDOStatement::bindValue'  // logs the value and type for each bind
 );
 $config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
-$config->setParameter('debugpdo.logging.methods', $allMethods);
+$config->setParameter('debugpdo.logging.methods', $allMethods, false);
 }}}
 
 By default, only the messages coming from `PropelPDO::exec`, `PropelPDO::query`, and `DebugPDOStatement::execute` are logged.

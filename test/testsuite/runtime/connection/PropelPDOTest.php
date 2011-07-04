@@ -408,7 +408,7 @@ class PropelPDOTest extends PHPUnit_Framework_TestCase
 		$con->setLogger($testLog);
 
 		$logEverything = array('PropelPDO::exec', 'PropelPDO::query', 'PropelPDO::beginTransaction', 'PropelPDO::commit', 'PropelPDO::rollBack', 'DebugPDOStatement::execute');
-		Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything);
+		Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
 		$con->useDebug(true);
 
 		// test transaction log

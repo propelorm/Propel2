@@ -124,7 +124,7 @@ class PropelConfiguration implements ArrayAccess
 	 * @param     string  $name  Configuration item name (name.space.name)
 	 * @param     mixed   $value  Value to be stored
 	 */
-	public function setParameter($name, $value)
+	public function setParameter($name, $value, $autoFlattenArrays = true)
 	{
 		$param = &$this->parameters;
 		$parts = explode('.', $name); //name.space.name
@@ -132,7 +132,7 @@ class PropelConfiguration implements ArrayAccess
 			$param = &$param[$part];
 		}
 		$param = $value;
-		if (is_array($value)) {
+		if (is_array($value) && $autoFlattenArrays) {
 			// The list will need to be re-flattened.
 			$this->isFlattened = false;
 		} else {
