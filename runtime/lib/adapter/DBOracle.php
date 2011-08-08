@@ -225,9 +225,6 @@ class DBOracle extends DBAdapter
 		if ($cMap->isTemporal()) {
 			$value = $this->formatTemporalValue($value, $cMap);
 		} elseif ($cMap->getType() == PropelColumnTypes::CLOB_EMU) {
-			// we always need to make sure that the stream is rewound, otherwise nothing will
-			// get written to database.
-			rewind($value);
 			return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
 		} elseif (is_resource($value) && $cMap->isLob()) {
 			// we always need to make sure that the stream is rewound, otherwise nothing will
