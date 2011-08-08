@@ -208,4 +208,30 @@ class DBOracle extends DBAdapter
 
 		return $criteria;
 	}
+	
+	/**
+	 * @see       DBAdapter::bindValue()
+	 *
+	 * @param     PDOStatement  $stmt
+	 * @param     string        $parameter
+	 * @param     mixed         $value
+	 * @param     ColumnMap     $cMap
+	 * @param     null|integer  $position
+	 *
+	 * @return    boolean
+	 */
+	public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+	{
+		if ($cMap->isTemporal()) {
+			$value = $this->formatTemporalValue($value, $cMap);
+		} elseif ($cMap->getType() == PropelColumnTypes::CLOB_EMU) {
+			return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
+		} elseif (is_resource($value) && $cMap->isLob()) {
+			// we always need to make sure that the stream is rewound, otherwise nothing will
+			// get written to database.
+			rewind($value);
+		}
+
+		return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
+	}
 }
