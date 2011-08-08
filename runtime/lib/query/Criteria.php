@@ -236,6 +236,10 @@ class Criteria implements IteratorAggregate
 	 */
 	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 	
+	// flags for boolean functions
+	protected $isInIf = false;
+	protected $wasTrue = false;
+
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
 	 * the specified database.
@@ -292,6 +296,8 @@ class Criteria implements IteratorAggregate
 		$this->blobFlag = null;
 		$this->aliases = array();
 		$this->useTransaction = false;
+		$this->isInIf = false;
+		$this->wasTrue = false;
 	}
 
 	/**
@@ -1699,7 +1705,13 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _if($cond)
 	{
-		if($cond) {
+		if ($this->isInIf) {
+			throw new PropelException('_if() statements cannot be nested');
+		}
+		$this->isInIf = true;
+		$this->wasTrue = false;
+		if ($cond) {
+			$this->wasTrue = true;
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1716,7 +1728,15 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _elseif($cond)
 	{
-		return new PropelConditionalProxy($this);
+		if (!$this->isInIf) {
+			throw new PropelException('_elseif() must be called after _if()');
+		}
+		if ($cond && !$this->wasTrue) {
+			$this->wasTrue = true;
+			return $this;
+		} else {
+			return new PropelConditionalProxy($this);
+		}
 	}
 
 	/**
@@ -1727,7 +1747,15 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _else()
 	{
-		return new PropelConditionalProxy($this);
+		if (!$this->isInIf) {
+			throw new PropelException('_else() must be called after _if()');
+		}
+		if (!$this->wasTrue) {
+			$this->wasTrue = true;
+			return $this;
+		} else {
+			return new PropelConditionalProxy($this);
+		}
 	}
 
 	/**
@@ -1738,6 +1766,10 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _endif()
 	{
+		if (!$this->isInIf) {
+			throw new PropelException('_endif() must be called after _if()');
+		}
+		$this->isInIf = false;
 		return $this;
 	}
 	

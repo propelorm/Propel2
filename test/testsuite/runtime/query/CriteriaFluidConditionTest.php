@@ -64,6 +64,19 @@ class CriteriaFluidConditionTest extends BaseTestCase
 			_endif();
 	}
 
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testNestedIf2()
+	{
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+			_if(true)->
+				test()->
+			_endif();
+	}
+
 	public function testElseIf()
 	{
 		$f = new TestableCriteria();
@@ -77,6 +90,14 @@ class CriteriaFluidConditionTest extends BaseTestCase
 		$f->
 			_if(true)->
 			_elseif(false)->
+				test()->
+			_endif();
+		$this->assertFalse($f->getTest(), '_elseif() does not execute the next method if the main test is true');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+			_elseif(false)->
+			_elseif(true)->
 				test()->
 			_endif();
 		$this->assertFalse($f->getTest(), '_elseif() does not execute the next method if the main test is true');
@@ -120,6 +141,16 @@ class CriteriaFluidConditionTest extends BaseTestCase
 				test()->
 			_endif();
 		$this->assertFalse($f->getTest(), '_else() does not execute the next method if the previous test is true');
+		$f = new TestableCriteria();
+		$f->
+			_if(false)->
+			_elseif(true)->
+			_elseif(true)->
+			_else()->
+				test()->
+			_endif();
+		$this->assertFalse($f->getTest(), '_else() does not execute the next method if the previous test is true');
+		$f = new TestableCriteria();
 		$f->
 			_if(false)->
 			_elseif(false)->

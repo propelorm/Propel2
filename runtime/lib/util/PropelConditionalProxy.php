@@ -40,28 +40,24 @@ class PropelConditionalProxy
 		$this->mainObject = $mainObject;
 	}
 	
-	public function _if()
+	public function _if($cond)
 	{
-		throw new PropelException('_if() statements cannot be nested');
+		return $this->mainObject->_if($cond);
 	}
 	
 	public function _elseif($cond)
 	{
-		if($cond) {
-			return $this->mainObject;
-		} else {
-			return $this;
-		}
+		return $this->mainObject->_elseif($cond);
 	}
 	
 	public function _else()
 	{
-		return $this->mainObject;
+		return $this->mainObject->_else();
 	}
 	
 	public function _endif()
 	{
-		return $this->mainObject;
+		return $this->mainObject->_endif();
 	}
 	
 	public function __call($name, $arguments)
