@@ -62,17 +62,17 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 	 */
 	public function testDefaultValueSetTwice()
 	{
-    $pub = new Publisher();
-    $pub->setName('Penguin');
-    $pub->save();
-  
-    $pubId = $pub->getId();
-    
-    PublisherPeer::clearInstancePool();
-    
-    $pub2 = PublisherPeer::retrieveByPK($pubId);
-    $pub2->setName('Penguin');
-    $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
+		$pub = new Publisher();
+		$pub->setName('Penguin');
+		$pub->save();
+		
+		$pubId = $pub->getId();
+		
+		PublisherPeer::clearInstancePool();
+		
+		$pub2 = PublisherPeer::retrieveByPK($pubId);
+		$pub2->setName('Penguin');
+		$this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
 	}
 
   public function testHasApplyDefaultValues()
@@ -614,65 +614,107 @@ class GeneratedObjectTest extends BookstoreEmptyTestBase
 		$this->con->beginTransaction();
 	}
 
-	/**
-	 * Test for correct reporting of isModified().
-	 */
-	public function testIsModified()
+	public function testIsModifiedIsFalseForNewObjects()
 	{
-		// 1) Basic test
-
 		$a = new Author();
-		$a->setFirstName("John");
-		$a->setLastName("Doe");
+		$this->assertFalse($a->isModified());
+	}
+
+	public function testIsModifiedIsTrueForNewObjectsWithModifications()
+	{
+		$a = new Author();
+		$a->setFirstName('Foo');
+		$this->assertTrue($a->isModified());
+	}
+
+	public function testIsModifiedIsFalseForNewObjectsWithNullModifications()
+	{
+		$a = new Author();
+		$a->setFirstName(null);
+		$this->assertFalse($a->isModified());
+	}
+
+	public function testIsModifiedIsFalseForObjectsAfterResetModified()
+	{
+		$a = new Author();
+		$a->setFirstName('Foo');
+		$a->resetModified();
+		$this->assertFalse($a->isModified());
+	}
+
+	public function testIsModifiedIsFalseForSavedObjects()
+	{
+		$a = new Author();
+		$a->setFirstName('Foo');
+		$a->save();
+		$this->assertFalse($a->isModified());
+	}
+
+	public function testIsModifiedIsTrueForSavedObjectsWithModifications()
+	{
+		$a = new Author();
+		$a->save();
+		$a->setFirstName('Foo');
+		$this->assertTrue($a->isModified());
+	}
+		
+	public function testIsModifiedIsFalseAfterSetToDefaultValueOnNewObject()
+	{
+		$p = new Publisher();
+		$p->setName('Penguin'); // default column value
+		$this->assertFalse($p->isModified());
+	}
+
+	public function testIsModifiedIsTrueAfterModifyingOnNonDefaultValueOnNewObject()
+	{
+		$p = new Publisher();
+		$p->setName('Puffin Books');
+		$this->assertTrue($p->isModified());
+	}
+
+	public function testIsModifiedIsTrueAfterSetToDefaultValueOnModifiedObject()
+	{
+		$p = new Publisher();
+		$p->setName('Puffin Books');
+		$p->resetModified();
+		$p->setName('Penguin'); // default column value
+		$this->assertTrue($p->isModified());
+	}
+
+	public function testIsModifiedIsFalseAfterChangingColumnTypeButNotValue()
+	{
+		$a = new Author();
+		$a->setFirstName('1');
 		$a->setAge(25);
+		$a->resetModified();
 
-		$this->assertTrue($a->isModified(), "Expected Author to be modified after setting values.");
-
-		$a->save();
-
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
-
-		// 2) Test behavior with setting vars of different types
-
-		// checking setting int col to string val
 		$a->setAge('25');
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting int column to string-cast of same value.");
-
-		$a->setFirstName("John2");
-		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing string column value.");
-
-		// checking setting string col to int val
-		$a->setFirstName("1");
-		$a->save();
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+		$this->assertFalse($a->isModified());
 
 		$a->setFirstName(1);
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after setting string column to int-cast of same value.");
+		$this->assertFalse($a->isModified());
+	}
 
-		// 3) Test for appropriate behavior of NULL
-
-		// checking "" -> NULL
+	public function testIsModifiedAndNullValues()
+	{
+		$a = new Author();
 		$a->setFirstName("");
+		$a->setAge(0);
 		$a->save();
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
 
 		$a->setFirstName(null);
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing empty string column value to NULL.");
-
-		$a->setFirstName("John");
-		$a->setAge(0);
-		$a->save();
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
 
 		$a->setAge(null);
 		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
 
 		$a->save();
-		$this->assertFalse($a->isModified(), "Expected Author to be unmodified after saving set values.");
+
+		$a->setFirstName('');
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column value to empty string.");
 
 		$a->setAge(0);
-		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL-value int column to 0.");
-
+		$this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column to 0-value int.");
 	}
 
 	/**

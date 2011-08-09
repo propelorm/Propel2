@@ -1751,11 +1751,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-		if (\$this->$clo !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$clo !== \$v) {
 			\$this->$clo = \$v;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
