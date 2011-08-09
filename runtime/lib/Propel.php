@@ -248,6 +248,7 @@ class Propel
 		'MinValueValidator'   => 'validator/MinValueValidator.php',
 		'NotMatchValidator'   => 'validator/NotMatchValidator.php',
 		'RequiredValidator'   => 'validator/RequiredValidator.php',
+		'TypeValidator'       => 'validator/TypeValidator.php',
 		'UniqueValidator'     => 'validator/UniqueValidator.php',
 		'ValidValuesValidator' => 'validator/ValidValuesValidator.php',
 		'ValidationFailed'    => 'validator/ValidationFailed.php',
