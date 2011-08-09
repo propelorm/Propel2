@@ -47,10 +47,18 @@ class PropelForeignKeyComparator
 		}
 		
 		// compare columns
-		if (array_map('strtolower', $fromFk->getLocalColumns()) != array_map('strtolower', $toFk->getLocalColumns())) {
+		$fromFkLocalColumns = $fromFk->getLocalColumns();
+		sort($fromFkLocalColumns);
+		$toFkLocalColumns = $toFk->getLocalColumns();
+		sort($toFkLocalColumns);
+		if (array_map('strtolower', $fromFkLocalColumns) != array_map('strtolower', $toFkLocalColumns)) {
 			return true;
 		}
-		if (array_map('strtolower', $fromFk->getForeignColumns()) != array_map('strtolower', $toFk->getForeignColumns())) {
+		$fromFkForeignColumns = $fromFk->getForeignColumns();
+		sort($fromFkForeignColumns);
+		$toFkForeignColumns = $toFk->getForeignColumns();
+		sort($toFkForeignColumns);
+		if (array_map('strtolower', $fromFkForeignColumns) != array_map('strtolower', $toFkForeignColumns)) {
 			return true;
 		}
 		
