@@ -1521,11 +1521,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addMutatorOpen($script, $col);
 
 		$script .= "
-		if (\$this->$cloUnserialized !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$cloUnserialized !== \$v) {
 			\$this->$cloUnserialized = \$v;
 			\$this->$clo = serialize(\$v);
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
@@ -1547,11 +1543,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addMutatorOpen($script, $col);
 
 		$script .= "
-		if (\$this->$cloUnserialized !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$cloUnserialized !== \$v) {
 			\$this->$cloUnserialized = \$v;
 			\$this->$clo = '| ' . implode(' | ', \$v) . ' |';
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
@@ -1661,11 +1653,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			\$v = array_search(\$v, \$valueSet);
 		}
 
-		if (\$this->$clo !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$clo !== \$v) {
 			\$this->$clo = \$v;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
@@ -1698,11 +1686,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 
 		$script .= "
-		if (\$this->$clo !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$clo !== \$v) {
 			\$this->$clo = \$v;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
@@ -1751,11 +1735,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-		if (\$this->$clo !== \$v";
-		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
-			$script .= " || \$this->isNew()";
-		}
-		$script .= ") {
+		if (\$this->$clo !== \$v) {
 			\$this->$clo = \$v;
 			\$this->modifiedColumns[] = ".$this->getColumnConstant($col).";
 		}
