@@ -144,4 +144,23 @@ class PropelForeignComparatorTest extends PHPUnit_Framework_TestCase
 		$t2->addForeignKey($fk2);
 		$this->assertTrue(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
 	}
+
+	public function testCompareSort()
+	{
+		$c1 = new Column('Foo');
+		$c2 = new Column('Bar');
+		$c3 = new Column('Baz');
+		$c4 = new Column('Faz');
+		$fk1 = new ForeignKey();
+		$fk1->addReference($c1, $c3);
+		$fk1->addReference($c2, $c4);
+		$t1 = new Table('Baz');
+		$t1->addForeignKey($fk1);
+		$fk2 = new ForeignKey();
+		$fk2->addReference($c2, $c4);
+		$fk2->addReference($c1, $c3);
+		$t2 = new Table('Baz');
+		$t2->addForeignKey($fk2);
+		$this->assertFalse(PropelForeignKeyComparator::computeDiff($fk1, $fk2));
+	}
 }
