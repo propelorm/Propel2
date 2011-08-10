@@ -8,8 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelDateTime.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/exception/PropelException.php';
 
 /**
  * Test for DateTime subclass to support serialization.
@@ -135,5 +135,58 @@ class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 		$this->assertDatesNotEqual($dt, $pdt);
 	}
 
+	/**
+	 * @dataProvider provideValidNewInstanceValues
+	 */
+	public function testNewInstance($value, $expected)
+	{
+        date_default_timezone_set('UTC');
 
+		$dt = PropelDateTime::newInstance($value);
+		$this->assertEquals($expected, $dt->format('Y-m-d H:i:s'));
+	}
+
+	/**
+	 * @dataProvider provideValidNewInstanceValuesGmt1
+	 */
+	public function testNewInstanceGmt1($value, $expected)
+	{
+        date_default_timezone_set('Europe/Paris');
+
+		$dt = PropelDateTime::newInstance($value);
+		$this->assertEquals($expected, $dt->format('Y-m-d H:i:s'));
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testNewInstanceInvalidValue()
+	{
+		$dt = PropelDateTime::newInstance('some string');
+	}
+
+	public function provideValidNewInstanceValues()
+	{
+		return array(
+			'Y-m-d'           => array('2011-08-10', '2011-08-10 00:00:00'),
+			// 1312960848 : Wed, 10 Aug 2011 07:20:48 GMT
+			'unix_timestamp'  => array('1312960848', '2011-08-10 07:20:48'),
+			'Y-m-d H:is'      => array('2011-08-10 10:22:15', '2011-08-10 10:22:15'),
+			'Ymd'             => array('20110810', '2011-08-10 00:00:00'),
+			'Ymd'             => array('201107201343', '2011-07-20 13:43:00'),
+			'datetime_object' => array(new DateTime('2011-08-10 10:23:10'), '2011-08-10 10:23:10')
+		);
+	}
+
+	public function provideValidNewInstanceValuesGmt1()
+	{
+		return array(
+			// "1312960848" : Wed, 10 Aug 2011 07:20:48 GMT
+			// "2011-08-10 09:20:48" : GMT+1 DST (= GMT +2)
+			'unix_timestamp'  => array('1312960848', '2011-08-10 09:20:48'),
+			// "1323517115" : Sat, 10 Dec 2011 11:38:35 GMT
+			// "2011-12-10 12:38:35" : GMT +1
+			'unix_timestamp'  => array('1323517115', '2011-12-10 12:38:35'),
+		);
+	}
 }
