@@ -140,10 +140,13 @@ class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testNewInstance($value, $expected)
 	{
-        date_default_timezone_set('UTC');
+		$originalTimezone = date_default_timezone_get();
+		date_default_timezone_set('UTC');
 
 		$dt = PropelDateTime::newInstance($value);
 		$this->assertEquals($expected, $dt->format('Y-m-d H:i:s'));
+
+		date_default_timezone_set($originalTimezone);
 	}
 
 	/**
@@ -151,10 +154,13 @@ class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testNewInstanceGmt1($value, $expected)
 	{
-        date_default_timezone_set('Europe/Paris');
+		$originalTimezone = date_default_timezone_get();
+		date_default_timezone_set('Europe/Paris');
 
 		$dt = PropelDateTime::newInstance($value);
 		$this->assertEquals($expected, $dt->format('Y-m-d H:i:s'));
+
+		date_default_timezone_set($originalTimezone);
 	}
 
 	/**
@@ -173,7 +179,7 @@ class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 			'unix_timestamp'  => array('1312960848', '2011-08-10 07:20:48'),
 			'Y-m-d H:is'      => array('2011-08-10 10:22:15', '2011-08-10 10:22:15'),
 			'Ymd'             => array('20110810', '2011-08-10 00:00:00'),
-			'Ymd'             => array('201107201343', '2011-07-20 13:43:00'),
+			'Ymd'             => array('20110720', '2011-07-20 00:00:00'),
 			'datetime_object' => array(new DateTime('2011-08-10 10:23:10'), '2011-08-10 10:23:10')
 		);
 	}
