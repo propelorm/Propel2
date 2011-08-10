@@ -73,6 +73,14 @@ abstract class DBAdapter
 	}
 
 	/**
+	 * @see        DBAdapter::initConnection()
+	 */
+	public function prepareParams(array $settings)
+	{
+		return $settings;
+	}
+
+	/**
 	 * This method is called after a connection was created to run necessary
 	 * post-initialization queries or code.
 	 *
@@ -266,17 +274,17 @@ abstract class DBAdapter
 		/** @var $dt PropelDateTime */
 		if ($dt = PropelDateTime::newInstance($value)) {
 			switch($cMap->getType()) {
-				case PropelColumnTypes::TIMESTAMP:
-				case PropelColumnTypes::BU_TIMESTAMP:
-					$value = $dt->format($this->getTimestampFormatter());
-					break;
-				case PropelColumnTypes::DATE:
-				case PropelColumnTypes::BU_DATE:
-					$value = $dt->format($this->getDateFormatter());
-					break;
-				case PropelColumnTypes::TIME:
-					$value = $dt->format($this->getTimeFormatter());
-					break;
+			case PropelColumnTypes::TIMESTAMP:
+			case PropelColumnTypes::BU_TIMESTAMP:
+				$value = $dt->format($this->getTimestampFormatter());
+				break;
+			case PropelColumnTypes::DATE:
+			case PropelColumnTypes::BU_DATE:
+				$value = $dt->format($this->getDateFormatter());
+				break;
+			case PropelColumnTypes::TIME:
+				$value = $dt->format($this->getTimeFormatter());
+				break;
 			}
 		}
 		return $value;
@@ -450,9 +458,9 @@ abstract class DBAdapter
 
 		// Build the SQL from the arrays we compiled
 		$sql =  "SELECT "
-		. ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
-		. ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
-		. implode(", ", $selectClause);
+			. ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
+			. ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
+			. implode(", ", $selectClause);
 
 		return $sql;
 	}
