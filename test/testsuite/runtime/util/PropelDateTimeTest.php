@@ -8,8 +8,8 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/util/PropelDateTime.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/exception/PropelException.php';
 
 /**
  * Test for DateTime subclass to support serialization.
@@ -133,6 +133,34 @@ class PropelDateTimeTest extends PHPUnit_Framework_TestCase
 
 		$pdt = unserialize($ser);
 		$this->assertDatesNotEqual($dt, $pdt);
+	}
+	
+	/**
+	 * @dataProvider provideValidNewInstanceValues
+	 */
+	public function testNewInstance($value, $expected)
+	{
+		$dt = PropelDateTime::newInstance($value);
+		$this->assertEquals($expected, $dt->format('Y-m-d H:i:s'));
+	}
+	
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testNewInstanceInvalidValue()
+	{
+		$dt = PropelDateTime::newInstance('some string');
+	}
+	
+	public function provideValidNewInstanceValues()
+	{
+		return array(
+			'Y-m-d' => array('2011-08-10', '2011-08-10 00:00:00'),
+			'unix_timestamp' => array('1312960848', '2011-08-10 10:20:48'),
+			'Y-m-d H:is' => array('2011-08-10 10:22:15', '2011-08-10 10:22:15'),
+			'Ymd' => array('20110810', '2011-08-10 00:00:00'),
+			'datetime_object' => array(new DateTime('2011-08-10 10:23:10'), '2011-08-10 10:23:10')
+		);
 	}
 
 
