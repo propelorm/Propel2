@@ -73,9 +73,12 @@ abstract class DBAdapter
 	}
 
 	/**
-	 * @see        DBAdapter::initConnection()
+	 * Prepare connection parameters.
+	 *
+	 * @param array	$params
+	 * @return array
 	 */
-	public function prepareParams(array $settings)
+	public function prepareParams($settings)
 	{
 		return $settings;
 	}

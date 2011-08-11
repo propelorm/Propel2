@@ -198,7 +198,14 @@ class DBMySQL extends DBAdapter
 		return $stmt->bindValue($parameter, $value, $pdoType);
 	}
 
-	public function prepareParams(array $params)
+	/**
+	 * Prepare connection parameters.
+	 * See: http://www.propelorm.org/ticket/1360
+	 *
+	 * @param array	$params
+	 * @return array
+	 */
+	public function prepareParams($params)
 	{
 		$params = parent::prepareParams($params);
 
@@ -209,10 +216,11 @@ Connection option "charset" cannot be used for MySQL connections in PHP versions
 Please refer to http://www.propelorm.org/ticket/1360 for instructions and details about the implications of
 using a SET NAMES statement in the "queries" setting.
 EXCEPTION
-				);
+			);
 			} else {
 				if(strpos($params['dsn'], ';charset=') === false) {
 					$params['dsn'] .= ';charset=' . $params['settings']['charset']['value'];
+					unset($params['settings']['charset']);
 				}
 			}
 		}
