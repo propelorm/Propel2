@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  * @version		$Revision$
  * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBase 
+class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBase
 {
 	public function testDescendantsOf()
 	{
@@ -199,7 +199,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 		$coll = $this->buildCollection(array($t1, $t3, $t5, $t7));
 		$this->assertEquals($coll, $objs, 'rootsOf() filters by ancestors  and includes the node passed as parameter');
 	}
-	
+
 	public function testOrderByBranch()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
@@ -245,7 +245,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 			->find();
 		$coll = $this->buildCollection(array($t7, $t6, $t4, $t5, $t2, $t1), 'orderByLevel(true) orders by level, from the leaf to the root');
 	}
-	
+
 	public function testFindRoot()
 	{
 		$this->assertTrue(method_exists('Table9Query', 'findRoot'), 'nested_set adds a findRoot() method');
@@ -262,7 +262,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 		$t2->save();
 		$this->assertEquals(Table9Query::create()->findRoot(), $t2, 'findRoot() retrieves the root node');
 	}
-	
+
 	public function testfindTree()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
@@ -270,14 +270,14 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 		$coll = $this->buildCollection(array($t1, $t2, $t3, $t4, $t5, $t6, $t7));
 		$this->assertEquals($coll, $tree, 'findTree() retrieves the whole tree, ordered by branch');
 	}
-	
+
 	protected function buildCollection($arr)
 	{
 		$coll = new PropelObjectCollection();
 		$coll->setData($arr);
 		$coll->setModel('Table9');
-		
+
 		return $coll;
 	}
-	
+
 }

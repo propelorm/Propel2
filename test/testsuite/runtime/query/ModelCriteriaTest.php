@@ -519,12 +519,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->groupByClass('Author');
 	}
-	
+
 	public function testGroupByClass()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->groupByClass('Book');
-		
+
 		$sql = 'SELECT  FROM  GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class name and adds a GROUP BY clause for all columns of the class');
@@ -534,7 +534,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 	{
 		$c = new ModelCriteria('bookstore', 'Book', 'b');
 		$c->groupByClass('b');
-		
+
 		$sql = 'SELECT  FROM  GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class alias and adds a GROUP BY clause for all columns of the class');
@@ -545,7 +545,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->setModelAlias('b', true);
 		$c->groupByClass('b');
-		
+
 		$sql = 'SELECT  FROM  GROUP BY b.ID,b.TITLE,b.ISBN,b.PRICE,b.PUBLISHER_ID,b.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a true class alias and adds a GROUP BY clause for all columns of the class');
@@ -556,7 +556,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Author');
 		$c->join('Author.Book');
 		$c->groupByClass('Book');
-		
+
 		$sql = 'SELECT  FROM `author` INNER JOIN `book` ON (author.ID=book.AUTHOR_ID) GROUP BY book.ID,book.TITLE,book.ISBN,book.PRICE,book.PUBLISHER_ID,book.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the class name of a joined model');
@@ -567,7 +567,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Author');
 		$c->join('Author.Book b');
 		$c->groupByClass('b');
-		
+
 		$sql = 'SELECT  FROM `author` INNER JOIN `book` `b` ON (author.ID=b.AUTHOR_ID) GROUP BY b.ID,b.TITLE,b.ISBN,b.PRICE,b.PUBLISHER_ID,b.AUTHOR_ID';
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the alias of a joined model');
@@ -601,7 +601,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
 	}
 
-		
+
 
 
 	public function testAddJoin()
@@ -861,7 +861,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID AND book.TITLE IS NOT NULL)";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions');
 	}
-	
+
 	public function testAddJoinConditionBinding()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
@@ -918,7 +918,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID OR book.TITLE IS NOT NULL)";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with a custom operator');
 	}
-	
+
 	public function testSetJoinConditionCriterion()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
@@ -1236,7 +1236,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column to the select clause');
 	}
-	
+
 	public static function conditionsForTestWithColumnAndQuotes()
 	{
 		return array(
@@ -1313,7 +1313,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->filterByTitle('foo');
 		$c->find();
 		$this->assertEquals(array(), $c->getSelectColumns(), 'find() clones the query by default');
-		
+
 		$c = BookQuery::create();
 		$c->filterByTitle('foo');
 		$c->keepQuery(false);
@@ -1457,7 +1457,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$this->assertEquals('foo', $book->getTitle(), 'findOneOrCreate() returns a populated objects based on the conditions');
 		$this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
 	}
-	
+
 	public function testFindOneOrCreateMakesOneQueryWhenRecordNotExists()
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);

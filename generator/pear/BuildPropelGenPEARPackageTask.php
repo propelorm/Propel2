@@ -96,9 +96,9 @@ class BuildPropelGenPEARPackageTask extends MatchingTask
 			'lib' => 'data',
 			'resources' => 'data'
 		);
-		
+
 		$options['exceptions'] = array(
-			'pear-propel-gen.bat' => 'script', 
+			'pear-propel-gen.bat' => 'script',
 			'pear-propel-gen' => 'script',
 		);
 

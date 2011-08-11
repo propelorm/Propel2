@@ -28,7 +28,7 @@ class BookstoreDataPopulator
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		}
 		$con->beginTransaction();
-		
+
 		// Add publisher records
 		// ---------------------
 
@@ -154,7 +154,7 @@ class BookstoreDataPopulator
 
 		$blc1->addBookListRel($brel1);
 		$blc1->addBookListRel($brel2);
-		
+
 		$blc1->save();
 
 		$bemp1 = new BookstoreEmployee();
@@ -190,35 +190,35 @@ class BookstoreDataPopulator
 		$store->setPopulationServed(20);
 		$store->setTotalBooks(500000);
 		$store->save($con);
-		
+
 		$summary = new BookSummary();
 		$summary->setSummarizedBook($phoenix);
 		$summary->setSummary("Harry Potter does some amazing magic!");
 		$summary->save();
-		
+
 		$con->commit();
 	}
-	
+
 	public static function populateOpinionFavorite($con = null)
 	{
 		if($con === null) {
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		}
 		$con->beginTransaction();
-		
+
 		$book1 = BookPeer::doSelectOne(new Criteria(), $con);
 		$reader1 = new BookReader();
 		$reader1->save($con);
-		
+
 		$bo = new BookOpinion();
 		$bo->setBook($book1);
 		$bo->setBookReader($reader1);
 		$bo->save($con);
-		
+
 		$rf = new ReaderFavorite();
 		$rf->setBookOpinion($bo);
 		$rf->save($con);
-		
+
 		$con->commit();
 	}
 

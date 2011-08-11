@@ -14,7 +14,7 @@ The workflow of Propel migrations is very simple:
  1. Call the `diff` task to create a migration class containing the SQL statements altering the database structure
  1. Review the migration class Propel just generated, and add data migration code if necessary
  1. Execute the migration using the `migrate` task.
- 
+
 Here is a concrete example. On a new bookstore project, a developer creates an XML schema with a single `book` table:
 
 {{{
@@ -55,7 +55,7 @@ It is recommended to review the generated migration class to check the generated
  */
 class PropelMigration_1286483354
 {
-	
+
 	public function getUpSQL()
 	{
 		return array('bookstore' => '
@@ -220,7 +220,7 @@ For these situations, Propel provides the `status` task. It simply lists the mig
 [propel-migration-status] Checking Database Versions...
 [propel-migration-status] Listing Migration files...
 [propel-migration-status] 1 migration needs to be executed:
-[propel-migration-status]    PropelMigration_1286484196 
+[propel-migration-status]    PropelMigration_1286484196
 [propel-migration-status] Call the "migrate" task to execute it
 }}}
 
@@ -235,7 +235,7 @@ For these situations, Propel provides the `status` task. It simply lists the mig
 [propel-migration-status] 2 valid migration classes found in "/Users/francois/propel/1.6/test/fixtures/migration/build/migrations"
 [propel-migration-status] 1 migration needs to be executed:
 [propel-migration-status]  > PropelMigration_1286483354 (executed)
-[propel-migration-status]    PropelMigration_1286484196 
+[propel-migration-status]    PropelMigration_1286484196
 [propel-migration-status] Call the "migrate" task to execute it
 }}}
 
@@ -316,7 +316,7 @@ ALTER TABLE `book` ADD
 
 	public function postUp($manager)
 	{
-		// post-migration code 
+		// post-migration code
 		$sql = "INSERT INTO author (first_name,last_name) values('Leo','Tolstoi')";
 		$pdo = $manager->getPdoConnection('bookstore');
 		$stmt = $pdo->prepare($sql);
@@ -340,7 +340,7 @@ Propel::init('/path/to/build/conf/bookstore-conf.php');
 
 class PropelMigration_1286483354
 {
-	
+
 	public function postUp($manager)
 	{
 		// add the post-migration code here
@@ -350,7 +350,7 @@ class PropelMigration_1286483354
 		$author->setLastname('Tolstoi');
 		$author->save($pdo);
 	}
-	
+
 	public function getUpSQL()
 	{
 		// ...

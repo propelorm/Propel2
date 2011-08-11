@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Class that implements SPL Iterator interface.  This allows foreach () to
  * be used w/ Criteria objects.  Probably there is no performance advantage

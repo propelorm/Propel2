@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
@@ -17,23 +17,23 @@
 class NestedSetBehaviorQueryBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumn($name)
 	{
 		return $this->behavior->getColumnForParameter($name);
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -41,12 +41,12 @@ class NestedSetBehaviorQueryBuilderModifier
 		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
-	
+
 	public function queryMethods($builder)
 	{
 		$this->setBuilder($builder);
 		$script = '';
-		
+
 		// select filters
 		if ($this->behavior->useScope()) {
 			$this->addTreeRoots($script);
@@ -67,7 +67,7 @@ class NestedSetBehaviorQueryBuilderModifier
 			$this->addFindRoots($script);
 		}
 		$this->addFindTree($script);
-		
+
 		return $script;
 	}
 
@@ -173,7 +173,7 @@ public function childrenOf($objectName)
 }
 ";
 	}
-		
+
 	protected function addSiblingsOf(&$script)
 	{
 		$objectName = '$' . $this->table->getStudlyPhpName();
@@ -297,7 +297,7 @@ public function orderByLevel(\$reverse = false)
 }
 ";
 	}
-	
+
 	protected function addFindRoot(&$script)
 	{
 		$useScope = $this->behavior->useScope();

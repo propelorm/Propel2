@@ -38,7 +38,7 @@ class BaseObjectConvertTest extends BookstoreTestBase
 		$book->setPublisher($publisher);
 		$this->book = $book;
 	}
-	
+
 	public function toXmlDataProvider()
 	{
 		$expected = <<<EOF
@@ -72,7 +72,7 @@ class BaseObjectConvertTest extends BookstoreTestBase
 EOF;
 		return array(array($expected));
 	}
-	
+
 	/**
 	 * @dataProvider toXmlDataProvider
 	 */
@@ -97,7 +97,7 @@ EOF;
 		$this->book->setPublisher(null);
 		$this->book->setPublisherId($publisher->getId());
 		$this->book->resetModified();
-		
+
 		$this->assertEquals($this->book, $book);
 	}
 
@@ -127,7 +127,7 @@ Author:
 EOF;
 		return array(array($expected));
 	}
-	
+
 	/**
 	 * @dataProvider toYamlDataProvider
 	 */
@@ -152,7 +152,7 @@ EOF;
 		$this->book->setPublisher(null);
 		$this->book->setPublisherId($publisher->getId());
 		$this->book->resetModified();
-		
+
 		$this->assertEquals($this->book, $book);
 	}
 
@@ -163,7 +163,7 @@ EOF;
 EOF;
 		return array(array($expected));
 	}
-	
+
 	/**
 	 * @dataProvider toJsonDataProvider
 	 */
@@ -188,14 +188,14 @@ EOF;
 		$this->book->setPublisher(null);
 		$this->book->setPublisherId($publisher->getId());
 		$this->book->resetModified();
-		
+
 		$this->assertEquals($this->book, $book);
 	}
 
 	public function toCsvDataProvider()
 	{
 		$expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{s:6:\\\"Book_0\\\";s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{s:6:\\\"Book_0\\\";s:11:\\\"*RECURSION*\\\";}}\"\r\n";
-		
+
 		return array(array($expected));
 	}
 
@@ -223,7 +223,7 @@ EOF;
 		$this->book->setPublisher(null);
 		$this->book->setPublisherId($publisher->getId());
 		$this->book->resetModified();
-		
+
 		$this->assertEquals($this->book, $book);
 	}
 

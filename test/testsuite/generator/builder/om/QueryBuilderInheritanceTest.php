@@ -18,15 +18,15 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @version    $Id: QueryBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class QueryBuilderInheritanceTest extends BookstoreTestBase 
+class QueryBuilderInheritanceTest extends BookstoreTestBase
 {
-  
+
 	public function testConstruct()
 	{
 		$query = BookstoreCashierQuery::create();
 		$this->assertTrue($query instanceof BookstoreCashierQuery, 'the create() factory returns an instance of the correct class');
 	}
-	
+
 	public function testFindFilter()
 	{
 		BookstoreDataPopulator::depopulate($this->con);
@@ -77,7 +77,7 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
 		$nbCash = BookstoreEmployeeQuery::create()->count();
 		$this->assertEquals(2, $nbCash, 'Delete in sub query affects only child results');
 	}
-	
+
 	public function testDeleteAllFilter()
 	{
 		BookstoreDataPopulator::depopulate($this->con);

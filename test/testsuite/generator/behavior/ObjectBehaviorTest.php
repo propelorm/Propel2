@@ -23,7 +23,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $t = new Table3();
     $this->assertEquals($t->customAttribute, 1, 'objectAttributes hook is called when adding attributes');
   }
-  
+
   public function testPreSave()
   {
     $t = new Table3();
@@ -37,7 +37,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $t->save();
     $this->assertEquals($t->preSave, 1, 'preSave hook is called on object modification');
   }
-  
+
   public function testPostSave()
   {
     $t = new Table3();
@@ -51,7 +51,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $t->save();
     $this->assertEquals($t->postSave, 1, 'postSave hook is called on object modification');
   }
-  
+
   public function testPreInsert()
   {
     $t = new Table3();
@@ -65,7 +65,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $t->save();
     $this->assertEquals($t->preInsert, 0, 'preInsert hook is not called on object modification');
   }
-  
+
   public function testPostInsert()
   {
     $t = new Table3();
@@ -79,7 +79,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $t->save();
     $this->assertEquals($t->postInsert, 0, 'postInsert hook is not called on object modification');
   }
-  
+
   public function testPreUpdate()
   {
     $t = new Table3();
@@ -93,7 +93,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $this->assertEquals($t->preUpdateBuilder, 'PHP5ObjectBuilder', 'preUpdate hook is called with the object builder as parameter');
     $this->assertFalse($t->preUpdateIsAfterSave, 'preUpdate hook is called before save');
   }
-  
+
   public function testPostUpdate()
   {
     $t = new Table3();
@@ -107,7 +107,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $this->assertEquals($t->postUpdateBuilder, 'PHP5ObjectBuilder', 'postUpdate hook is called with the object builder as parameter');
     $this->assertTrue($t->postUpdateIsAfterSave, 'postUpdate hook is called after save');
   }
-  
+
   public function testPreDelete()
   {
     $t = new Table3();
@@ -118,7 +118,7 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $this->assertEquals($t->preDeleteBuilder, 'PHP5ObjectBuilder', 'preDelete hook is called with the object builder as parameter');
     $this->assertTrue($t->preDeleteIsBeforeDelete, 'preDelete hook is called before deletion');
   }
-  
+
   public function testPostDelete()
   {
     $t = new Table3();
@@ -129,20 +129,20 @@ class ObjectBehaviorTest extends BookstoreTestBase
     $this->assertEquals($t->postDeleteBuilder, 'PHP5ObjectBuilder', 'postDelete hook is called with the object builder as parameter');
     $this->assertFalse($t->postDeleteIsBeforeDelete, 'postDelete hook is called before deletion');
   }
-  
+
   public function testObjectMethods()
   {
     $t = new Table3();
     $this->assertTrue(method_exists($t, 'hello'), 'objectMethods hook is called when adding methods');
     $this->assertEquals($t->hello(), 'PHP5ObjectBuilder', 'objectMethods hook is called with the object builder as parameter');
   }
-  
+
   public function testObjectCall()
   {
   	$t = new Table3();
   	$this->assertEquals('bar', $t->foo(), 'objectCall hook is called when building the magic __call()');
   }
-  
+
   public function testObjectFilter()
   {
     $t = new Table3();

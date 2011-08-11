@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add sortable columns and abilities
  *
@@ -18,18 +18,18 @@
 class SortableBehaviorObjectBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumnAttribute($name)
 	{
 		return strtolower($this->behavior->getColumnForParameter($name)->getName());
@@ -39,7 +39,7 @@ class SortableBehaviorObjectBuilderModifier
 	{
 		return $this->behavior->getColumnForParameter($name)->getPhpName();
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -47,7 +47,7 @@ class SortableBehaviorObjectBuilderModifier
 		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Get the getter of the column of the behavior
 	 *
@@ -82,7 +82,7 @@ class SortableBehaviorObjectBuilderModifier
 }
 ";
 	}
-	
+
 	public function preDelete($builder)
 	{
 		$useScope = $this->behavior->useScope();
@@ -103,7 +103,7 @@ class SortableBehaviorObjectBuilderModifier
 protected \$sortableQueries = array();
 ";
 	}
-	
+
 	public function objectMethods($builder)
 	{
 		$this->setBuilder($builder);
@@ -111,7 +111,7 @@ protected \$sortableQueries = array();
 		if ($this->getParameter('rank_column') != 'rank') {
 			$this->addRankAccessors($script);
 		}
-		if ($this->behavior->useScope() && 
+		if ($this->behavior->useScope() &&
 				$this->getParameter('scope_column') != 'scope_value') {
 			$this->addScopeAccessors($script);
 		}
@@ -130,7 +130,7 @@ protected \$sortableQueries = array();
 		$this->addMoveToBottom($script);
 		$this->addRemoveFromList($script);
 		$this->addProcessSortableQueries($script);
-		
+
 		return $script;
 	}
 
@@ -164,7 +164,7 @@ public function setRank(\$v)
 }
 ";
 	}
-	
+
 	/**
 	 * Get the wraps for getter/setter, if the scope column has not the default name
 	 *
@@ -324,7 +324,7 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
 			'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}()" : '') . ")
 		);
 	}
-	
+
 	return \$this;
 }
 ";
@@ -354,7 +354,7 @@ public function insertAtBottom(PropelPDO \$con = null)
 		}
 		$script .= "
 	\$this->{$this->getColumnSetter()}({$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con) + 1);
-	
+
 	return \$this;
 }
 ";
@@ -408,17 +408,17 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
 	if (\$oldRank == \$newRank) {
 		return \$this;
 	}
-	
+
 	\$con->beginTransaction();
 	try {
 		// shift the objects between the old and the new rank
 		\$delta = (\$oldRank < \$newRank) ? -1 : 1;
 		$peerClassname::shiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
-			
+
 		// move the object to its new rank
 		\$this->{$this->getColumnSetter()}(\$newRank);
 		\$this->save(\$con);
-		
+
 		\$con->commit();
 		return \$this;
 	} catch (Exception \$e) {
@@ -456,7 +456,7 @@ public function swapWith(\$object, PropelPDO \$con = null)
 		\$object->{$this->getColumnSetter()}(\$oldRank);
 		\$object->save(\$con);
 		\$con->commit();
-		
+
 		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
@@ -489,7 +489,7 @@ public function moveUp(PropelPDO \$con = null)
 		\$prev = \$this->getPrevious(\$con);
 		\$this->swapWith(\$prev, \$con);
 		\$con->commit();
-		
+
 		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
@@ -522,7 +522,7 @@ public function moveDown(PropelPDO \$con = null)
 		\$next = \$this->getNext(\$con);
 		\$this->swapWith(\$next, \$con);
 		\$con->commit();
-		
+
 		return \$this;
 	} catch (Exception \$e) {
 		\$con->rollback();
@@ -576,7 +576,7 @@ public function moveToBottom(PropelPDO \$con = null)
 		\$bottom = {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 		\$res = \$this->moveToRank(\$bottom, \$con);
 		\$con->commit();
-		
+
 		return \$res;
 	} catch (Exception \$e) {
 		\$con->rollback();
@@ -611,12 +611,12 @@ public function removeFromList()
 	\$this->{$this->getColumnSetter('scope_column')}(null);";
 		}
 		$script .= "
-	
+
 	return \$this;
 }
 ";
 	}
-	
+
 	protected function addProcessSortableQueries(&$script)
 	{
 		$script .= "

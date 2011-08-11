@@ -38,7 +38,7 @@ class PHP5TableMapBuilder extends OMBuilder
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the name of the current class being built.
 	 * @return     string
@@ -182,7 +182,7 @@ class ".$this->getClassname()." extends TableMap
 			$script .= "
 		\$this->setPrimaryKeyMethodInfo('".$platform->getSequenceName($table)."');";
 		}
-		
+
 		if ($this->getTable()->getChildrenColumn()) {
 			$script .= "
 		\$this->setSingleTableInheritance(true);";
@@ -318,9 +318,9 @@ class ".$this->getClassname()." extends TableMap
 	  {
   		$script .= "
 	/**
-	 * 
+	 *
 	 * Gets the list of behaviors registered for this table
-	 * 
+	 *
 	 * @return array Associative array (name => parameters) of behaviors
 	 */
 	public function getBehaviors()

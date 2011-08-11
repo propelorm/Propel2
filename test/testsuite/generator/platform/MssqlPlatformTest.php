@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class MssqlPlatformTest extends PlatformTestProvider
 {
@@ -365,7 +365,7 @@ CREATE TABLE [Woopah].[foo]
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}	
+	}
 
 	public function testGetDropTableDDL()
 	{
@@ -446,7 +446,7 @@ END
 		$expected = '[foo] DECIMAL(5,6) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
-	
+
 	public function testGetPrimaryKeyDDLSimpleKey()
 	{
 		$table = new Table('foo');
@@ -469,7 +469,7 @@ END
 		$expected = 'CONSTRAINT [foo_PK] PRIMARY KEY ([bar1],[bar2])';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -480,7 +480,7 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_PK];
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -491,7 +491,7 @@ ALTER TABLE [foo] ADD CONSTRAINT [foo_PK] PRIMARY KEY ([bar]);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndicesDDL
 	 */
@@ -504,7 +504,7 @@ CREATE INDEX [foo_index] ON [foo] ([bar1]);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -526,7 +526,7 @@ DROP INDEX [babar];
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -563,7 +563,7 @@ END
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -606,7 +606,7 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
 		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */

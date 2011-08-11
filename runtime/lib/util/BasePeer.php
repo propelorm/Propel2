@@ -655,7 +655,7 @@ class BasePeer
 		// joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
 		// joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
 		foreach ($criteria->getJoins() as $join) {
-			
+
 			$join->setDB($db);
 
 			// add 'em to the queues..
@@ -665,7 +665,7 @@ class BasePeer
 			$joinTables[] = $join->getRightTableWithAlias();
 			$joinClause[] = $join->getClause($params);
 		}
-		
+
 		// add the criteria to WHERE clause
 		// this will also add the table names to the FROM clause if they are not already
 		// included via a LEFT JOIN
@@ -792,18 +792,18 @@ class BasePeer
 				}
 			}
 		}
-		
+
 		// from / join tables quoted if it is necessary
 		if ($db->useQuoteIdentifier()) {
 			$fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
 			$joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
 		}
-		
+
 		// add subQuery to From after adding quotes
 		foreach ($criteria->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
 			$fromClause[] = '(' . BasePeer::createSelectSql($subQueryCriteria, $params) . ') AS ' . $subQueryAlias;
 		}
-		
+
 		// build from-clause
 		$from = '';
 		if (!empty($joinClause) && count($fromClause) > 1) {

@@ -416,10 +416,10 @@ abstract class AbstractPropelDataModelTask extends Task
 
 				$dom = new DomDocument('1.0', 'UTF-8');
 				$dom->load($xmlFile->getAbsolutePath());
-				
+
 				// modify schema to include any external schemas (and remove the external-schema nodes)
 				$this->includeExternalSchemas($dom, $srcDir);
-					
+
 				// normalize (or transform) the XML document using XSLT
 				if ($this->getGeneratorConfig()->getBuildProperty('schemaTransform') && $this->xslFile) {
 					$this->log("Transforming " . $dmFilename . " using stylesheet " . $this->xslFile->getPath(), Project::MSG_VERBOSE);
@@ -442,14 +442,14 @@ abstract class AbstractPropelDataModelTask extends Task
 						throw new EngineException("XML schema file (".$xmlFile->getPath().") does not validate. See warnings above for reasons validation failed (make sure error_reporting is set to show E_WARNING if you don't see any).", $this->getLocation());
 					}
 				}
-				
+
 				$xmlParser = new XmlToAppData($defaultPlatform, $this->getTargetPackage(), $this->dbEncoding);
 				$xmlParser->setGeneratorConfig($this->getGeneratorConfig());
 				$ad = $xmlParser->parseString($dom->saveXML(), $xmlFile->getAbsolutePath());
 				$nbTables = $ad->getDatabase(null, false)->countTables();
 				$totalNbTables += $nbTables;
 				$this->log(sprintf('  %d tables processed successfully', $nbTables), Project::MSG_VERBOSE);
-				
+
 				$ad->setName($dmFilename);
 				$ads[] = $ad;
 			}
@@ -464,18 +464,18 @@ abstract class AbstractPropelDataModelTask extends Task
 			// map schema filename with database name
 			$this->dataModelDbMap[$ad->getName()] = $ad->getDatabase(null, false)->getName();
 		}
-		
+
 		if (count($ads)>1 && $this->packageObjectModel) {
 			$ad = $this->joinDataModels($ads);
 			$this->dataModels = array($ad);
 		} else {
 			$this->dataModels = $ads;
 		}
-		
+
 		foreach ($this->dataModels as &$ad) {
 			$ad->doFinalInitialization();
 		}
-			
+
 		$this->dataModelsLoaded = true;
 	}
 
@@ -515,10 +515,10 @@ abstract class AbstractPropelDataModelTask extends Task
 		}
 		return $nbIncludedSchemas;
 	}
-	
+
 	/**
 	 * Joins the datamodels collected from schema.xml files into one big datamodel.
-	 *  We need to join the datamodels in this case to allow for foreign keys 
+	 *  We need to join the datamodels in this case to allow for foreign keys
 	 * that point to tables in different packages.
 	 *
 	 * @param      array[AppData] $ads The datamodels to join
@@ -528,7 +528,7 @@ abstract class AbstractPropelDataModelTask extends Task
 	{
 		$mainAppData = array_shift($ads);
 		$mainAppData->joinAppDatas($ads);
-		
+
 		return $mainAppData;
 	}
 

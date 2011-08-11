@@ -55,7 +55,7 @@ EOF;
 		$table2 = $db->getTable("table_none");
 		$this->assertEquals(IDMethod::NO_ID_METHOD, $table2->getIdMethod());
 	}
-	
+
 	public function testGeneratorConfig()
 	{
 		$xmlToAppData = new XmlToAppData();
@@ -74,7 +74,7 @@ EOF;
 		$this->assertThat($table->getGeneratorConfig(), $this->isInstanceOf('GeneratorConfig'), 'getGeneratorConfig() returns an instance of the generator configuration');
 		$this->assertEquals($table->getGeneratorConfig()->getBuildProperty('fooBarClass'), 'bazz', 'getGeneratorConfig() returns the instance of the generator configuration used in the platform');
 	}
-	
+
 	public function testAddBehavior()
 	{
 		$include_path = get_include_path();
@@ -99,7 +99,7 @@ EOF;
 		$table = $appData->getDatabase('test1')->getTable('table1');
 		$this->assertThat($table->getBehavior('timestampable'), $this->isInstanceOf('TimestampableBehavior'), 'addBehavior() uses the behavior class defined in build.properties');
 	}
-	
+
 	/**
 	 * @expectedException EngineException
 	 */
@@ -118,7 +118,7 @@ EOF;
 		// Parsing file with duplicate column names in one table throws exception
 		$appData = $xmlToAppData->parseString($schema);
 	}
-	
+
 	/**
 	 * @expectedException EngineException
 	 */
@@ -150,7 +150,7 @@ EOF;
 			array($table, $column)
 		);
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestHasColumn
 	 */
@@ -190,7 +190,7 @@ EOF;
 		$this->assertEquals($column, $table->getColumn('foo', true));
 		$this->assertEquals($column, $table->getColumn('FOO', true));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestHasColumn
 	 */
@@ -208,7 +208,7 @@ EOF;
 		$table->removeColumn($column->getName());
 		$this->assertFalse($table->hasColumn('Foo'));
 	}
-	
+
 	public function testRemoveColumnFixesPositions()
 	{
 		$table = new Table();
@@ -264,7 +264,7 @@ EOF;
 		$table1->removeValidatorForColumn('title1');
 		$this->assertNull($title1Column->getValidator());
 	}
-	
+
 	public function testTableNamespaceAcrossDatabase()
 	{
 		$schema1 = <<<EOF
@@ -291,7 +291,7 @@ EOF;
 		$this->assertEquals('NS1', $appData1->getDatabase('DB1')->getTable('table1')->getNamespace());
 		$this->assertEquals('NS2', $appData1->getDatabase('DB1')->getTable('table2')->getNamespace());
 	}
-	
+
 	public function testSetNamespaceSetsPackageWhenBuildPropertySet()
 	{
 		$schema = <<<EOF

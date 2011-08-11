@@ -24,22 +24,22 @@ class SubQueryTest extends BookstoreTestBase
 	{
 		$params = array();
 		$result = BasePeer::createSelectSql($criteria, $params);
-		
+
 		$this->assertEquals($expectedSql, $result, $message);
 		$this->assertEquals($expectedParams, $params, $message);
 	}
-		
+
 	public function testSubQueryExplicit()
 	{
 		$subCriteria = new BookQuery();
 		BookPeer::addSelectColumns($subCriteria);
 		$subCriteria->orderByTitle(Criteria::ASC);
-		
+
 		$c = new BookQuery();
 		BookPeer::addSelectColumns($c, 'subCriteriaAlias');
 		$c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
 		$c->groupBy('subCriteriaAlias.AuthorId');
-		
+
 		$sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` ORDER BY book.TITLE ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.AUTHOR_ID";
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries succesfully');
@@ -49,27 +49,27 @@ class SubQueryTest extends BookstoreTestBase
 	{
 		$subCriteria = new BookQuery();
 		// no addSelectColumns()
-		
+
 		$c = new BookQuery();
 		$c->addSelectQuery($subCriteria, 'subCriteriaAlias');
 		$c->filterByPrice(20, Criteria::LESS_THAN);
-		
+
 		$sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
 		);
 		$this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() adds select columns if none given');
 	}
-	
+
 	public function testSubQueryWithoutAlias()
 	{
 		$subCriteria = new BookQuery();
 		$subCriteria->addSelfSelectColumns();
-		
+
 		$c = new BookQuery();
 		$c->addSelectQuery($subCriteria); // no alias
 		$c->filterByPrice(20, Criteria::LESS_THAN);
-		
+
 		$sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
@@ -81,11 +81,11 @@ class SubQueryTest extends BookstoreTestBase
 	{
 		$subCriteria = new BookQuery();
 		// no select
-		
+
 		$c = new BookQuery();
 		$c->addSelectQuery($subCriteria); // no alias
 		$c->filterByPrice(20, Criteria::LESS_THAN);
-		
+
 		$sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
@@ -97,7 +97,7 @@ class SubQueryTest extends BookstoreTestBase
 	{
 		$c1 = new BookQuery();
 		$c1->filterByPrice(10, Criteria::GREATER_THAN);
-		
+
 		$c2 = new BookQuery();
 		$c2->filterByPrice(20, Criteria::LESS_THAN);
 
@@ -105,7 +105,7 @@ class SubQueryTest extends BookstoreTestBase
 		$c3->addSelectQuery($c1); // no alias
 		$c3->addSelectQuery($c2); // no alias
 		$c3->filterByTitle('War%');
-				
+
 		$sql = "SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID, alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE>:p2) AS alias_1, (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE<:p3) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'War%'),
@@ -114,11 +114,11 @@ class SubQueryTest extends BookstoreTestBase
 		);
 		$this->assertCriteriaTranslation($c3, $sql, $params, 'addSelectQuery() forges a unique alias if none is given');
 	}
-	
+
 	public function testSubQueryWithoutAliasRecursive()
 	{
 		$c1 = new BookQuery();
-		
+
 		$c2 = new BookQuery();
 		$c2->addSelectQuery($c1); // no alias
 		$c2->filterByPrice(20, Criteria::LESS_THAN);
@@ -126,7 +126,7 @@ class SubQueryTest extends BookstoreTestBase
 		$c3 = new BookQuery();
 		$c3->addSelectQuery($c2); // no alias
 		$c3->filterByTitle('War%');
-				
+
 		$sql = "SELECT alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p2) AS alias_2 WHERE alias_2.TITLE LIKE :p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'TITLE', 'value' => 'War%'),
@@ -141,11 +141,11 @@ class SubQueryTest extends BookstoreTestBase
 			->useAuthorQuery()
 				->filterByLastName('Rowling')
 			->endUse();
-		
+
 		$c2 = new BookQuery();
 		$c2->addSelectQuery($c1, 'subQuery');
 		$c2->filterByPrice(20, Criteria::LESS_THAN);
-				
+
 		$sql = "SELECT subQuery.ID, subQuery.TITLE, subQuery.ISBN, subQuery.PRICE, subQuery.PUBLISHER_ID, subQuery.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE author.LAST_NAME=:p2) AS subQuery WHERE subQuery.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
@@ -153,17 +153,17 @@ class SubQueryTest extends BookstoreTestBase
 		);
 		$this->assertCriteriaTranslation($c2, $sql, $params, 'addSelectQuery() can add a select query with a join');
 	}
-		
+
 	public function testSubQueryParameters()
 	{
 		$subCriteria = new BookQuery();
 		$subCriteria->filterByAuthorId(123);
-		
+
 		$c = new BookQuery();
 		$c->addSelectQuery($subCriteria, 'subCriteriaAlias');
 		// and use filterByPrice method!
 		$c->filterByPrice(20, Criteria::LESS_THAN);
-		
+
 		$sql = "SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1";
 		$params = array(
 			array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
@@ -190,7 +190,7 @@ class SubQueryTest extends BookstoreTestBase
 		$c = new BookQuery();
 		$c->addSelectQuery($latestBookQuery, 'latestBookQuery');
 		$c->filterByPrice(12, Criteria::LESS_THAN);
-		
+
 		$sql = "SELECT latestBookQuery.ID, latestBookQuery.TITLE, latestBookQuery.ISBN, latestBookQuery.PRICE, latestBookQuery.PUBLISHER_ID, latestBookQuery.AUTHOR_ID ".
 		 "FROM (SELECT sortedBookQuery.ID, sortedBookQuery.TITLE, sortedBookQuery.ISBN, sortedBookQuery.PRICE, sortedBookQuery.PUBLISHER_ID, sortedBookQuery.AUTHOR_ID ".
 		 "FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID ".
@@ -209,12 +209,12 @@ class SubQueryTest extends BookstoreTestBase
 	public function testSubQueryWithSelectColumns()
 	{
 		$subCriteria = new BookQuery();
-		
+
 		$c = new TestableBookQuery();
 		$c->addSelectQuery($subCriteria, 'alias1', false);
 		$c->select(array('alias1.Id'));
 		$c->configureSelectColumns();
-		
+
 		$sql = "SELECT alias1.ID AS \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias1";
 		$params = array();
 		$this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() forges a unique alias and adds select columns by default');

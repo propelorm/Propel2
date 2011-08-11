@@ -78,7 +78,7 @@ class Ticket520Test extends BookstoreTestBase
 		$c->add(BookPeer::TITLE, "%Hitchhiker%", Criteria::LIKE);
 
 		$guides = $a->getBooks($c);
-		
+
 		$books = $a->getBooks();
 		$this->assertEquals(2, count($books), 'A previous query with a Criteria does not erase the internal collection');
 	}
@@ -184,7 +184,7 @@ class Ticket520Test extends BookstoreTestBase
 	public function testDeletedBookDisappears()
 	{
 		$this->markTestSkipped();
-		
+
 		$a = new Author();
 		$a->setFirstName("Douglas");
 		$a->setLastName("Adams");
@@ -219,7 +219,7 @@ class Ticket520Test extends BookstoreTestBase
 		the current object is new, it will always consult the DB and lose the
 		new objects entirely. Thus the test fails. (At least for Propel 1.2 ?!?) */
 		$this->markTestSkipped();
-		
+
 		$a = new Author();
 		$a->setFirstName("Douglas");
 		$a->setLastName("Adams");

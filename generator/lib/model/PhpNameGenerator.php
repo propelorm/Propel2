@@ -101,13 +101,13 @@ class PhpNameGenerator implements NameGenerator
 		}
 		return $name;
 	}
-	
+
 	/**
 	 * Converts a database schema name to php object name.  Removes
-	 * any character that is not a letter or a number and capitilizes 
-	 * first letter of the name, the first letter of each alphanumeric 
+	 * any character that is not a letter or a number and capitilizes
+	 * first letter of the name, the first letter of each alphanumeric
 	 * block and converts the rest of the letters to lowercase.
-	 * 
+	 *
 	 * T$NAMA$RFO_max => TNamaRfoMax
 	 *
 	 * @param      string $schemaName name to be converted.

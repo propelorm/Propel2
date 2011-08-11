@@ -22,7 +22,7 @@ class PropelColumnDiff
 	protected $changedProperties = array();
 	protected $fromColumn;
 	protected $toColumn;
-	
+
 	/**
 	 * Setter for the changedProperties property
 	 *
@@ -42,7 +42,7 @@ class PropelColumnDiff
 	{
 		return $this->changedProperties;
 	}
-	
+
 	/**
 	 * Setter for the fromColumn property
 	 *
@@ -52,7 +52,7 @@ class PropelColumnDiff
 	{
 		$this->fromColumn = $fromColumn;
 	}
-	
+
 	/**
 	 * Getter for the fromColumn property
 	 *
@@ -62,7 +62,7 @@ class PropelColumnDiff
 	{
 		return $this->fromColumn;
 	}
-	
+
 	/**
 	 * Setter for the toColumn property
 	 *
@@ -72,7 +72,7 @@ class PropelColumnDiff
 	{
 		$this->toColumn = $toColumn;
 	}
-	
+
 	/**
 	 * Getter for the toColumn property
 	 *
@@ -82,7 +82,7 @@ class PropelColumnDiff
 	{
 		return $this->toColumn;
 	}
-	
+
 	/**
 	 * Get the reverse diff for this diff
 	 *
@@ -91,21 +91,21 @@ class PropelColumnDiff
 	public function getReverseDiff()
 	{
 		$diff = new self();
-		
+
 		// columns
 		$diff->setFromColumn($this->getToColumn());
 		$diff->setToColumn($this->getFromColumn());
-		
+
 		// properties
 		$changedProperties = array();
 		foreach ($this->getChangedProperties() as $name => $propertyChange) {
 			$changedProperties[$name] = array_reverse($propertyChange);
 		}
 		$diff->setChangedProperties($changedProperties);
-		
+
 		return $diff;
 	}
-	
+
 	public function __toString()
 	{
 		$ret = '';
@@ -114,8 +114,8 @@ class PropelColumnDiff
 		foreach ($this->getChangedProperties() as $key => $value) {
 			$ret .= sprintf("          %s: %s\n", $key, json_encode($value));
 		}
-		
+
 		return $ret;
 	}
-	
+
 }

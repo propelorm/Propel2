@@ -34,32 +34,32 @@
 class PropelConditionalProxy
 {
 	protected $mainObject;
-	
+
 	public function __construct($mainObject)
 	{
 		$this->mainObject = $mainObject;
 	}
-	
+
 	public function _if($cond)
 	{
 		return $this->mainObject->_if($cond);
 	}
-	
+
 	public function _elseif($cond)
 	{
 		return $this->mainObject->_elseif($cond);
 	}
-	
+
 	public function _else()
 	{
 		return $this->mainObject->_else();
 	}
-	
+
 	public function _endif()
 	{
 		return $this->mainObject->_endif();
 	}
-	
+
 	public function __call($name, $arguments)
 	{
 		return $this;

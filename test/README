@@ -56,7 +56,7 @@ propel.database.password = p@ssw0rd
 }}}
 
 **Tip**: To run the unit tests for the namespace support in PHP 5.3, you must also configure the `fixtures/namespaced` project.
-**Tip**: To run the unit tests for the database schema support, you must also configure the `fixtures/schemas` project. This projects requires that your database supports schemas, and already contains the following schemas: `bookstore_schemas`, `contest`, and `second_hand_books`. Note that the user defined in `build.properties` and `runtime-conf.xml` must have access to these schemas. 
+**Tip**: To run the unit tests for the database schema support, you must also configure the `fixtures/schemas` project. This projects requires that your database supports schemas, and already contains the following schemas: `bookstore_schemas`, `contest`, and `second_hand_books`. Note that the user defined in `build.properties` and `runtime-conf.xml` must have access to these schemas.
 
 == Build the Propel Model and Initialize the Database ==
 

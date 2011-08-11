@@ -11,7 +11,7 @@ DB Designer XML to Propel Schema XML
 ==== Description:
 This XSL will transform a DB Designer 4 database model XML file into a
 Propel database schema file.  This allows you to design your database
-model using DB Designer 4 (models are saved in XML format) and then 
+model using DB Designer 4 (models are saved in XML format) and then
 easily create the Propel database schema file.
 
 The PROPEL properties that this XSL will translate are listed below.
@@ -55,7 +55,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 	<database defaultIdMethod="native">
 		<xsl:attribute name="name">
 			<xsl:value-of select="/DBMODEL/SETTINGS/GLOBALSETTINGS/@ModelName"/>
-		</xsl:attribute>		
+		</xsl:attribute>
 		<xsl:apply-templates />
 	</database>
 </xsl:template>
@@ -85,7 +85,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 				<xsl:with-param name="id"><xsl:value-of select="@idDatatype"/></xsl:with-param>
 			</xsl:call-template>
 		</xsl:variable>
-		
+
 		<!-- remove parens from datatypeparams -->
 		<xsl:variable name="dtpclean">
 			<xsl:call-template name="clean_dataparams">
@@ -97,7 +97,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		<xsl:attribute name="name">
 			<xsl:value-of select="@ColName"/>
 		</xsl:attribute>
-		
+
 		<!-- ==== type ==== -->
 		<xsl:attribute name="type">
 			<xsl:choose>
@@ -111,7 +111,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		</xsl:attribute>
 
 		<xsl:if test="$dtpclean != ''">
-			<!-- ==== size ==== --> 
+			<!-- ==== size ==== -->
 			<xsl:attribute name="size">
 				<xsl:call-template name="get_datasize">
 					<xsl:with-param name="dtpc"><xsl:value-of select="$dtpclean"/></xsl:with-param>
@@ -120,19 +120,19 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 			</xsl:attribute>
 
 			<xsl:if test="contains('FLOAT,DOUBLE,DECIMAL',$datatype)">
-				<!-- ==== scale ==== --> 
+				<!-- ==== scale ==== -->
 				<xsl:attribute name="scale">
 					<xsl:value-of select="substring-after($dtpclean,',')"/>
 				</xsl:attribute>
 			</xsl:if>
-			
+
 		</xsl:if>
-				
+
 		<!-- ==== primaryKey ==== -->
 		<xsl:if test="@PrimaryKey = '1'">
 			<xsl:attribute name="primaryKey">true</xsl:attribute>
 		</xsl:if>
-		
+
 		<!-- ==== required ==== -->
 		<xsl:if test="@NotNull = '1'">
 			<xsl:attribute name="required">true</xsl:attribute>
@@ -144,7 +144,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 				<xsl:value-of select="@DefaultValue"/>
 			</xsl:attribute>
 		</xsl:if>
-		
+
 		<!-- ==== autoIncrement ==== -->
 		<xsl:if test="@AutoInc = '1'">
 			<xsl:attribute name="autoIncrement">true</xsl:attribute>
@@ -162,13 +162,13 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 
 <!-- ============================================================ RELATIONS template -->
 <xsl:template match="RELATIONS_END/RELATION_END">
-	
+
 	<xsl:variable name="id"><xsl:value-of select="@ID"/></xsl:variable>
-	
+
 	<xsl:call-template name="show_ForeignKey">
 		<xsl:with-param name="relation" select="/DBMODEL/METADATA/RELATIONS/RELATION[@ID=$id]"/>
 	</xsl:call-template>
-	
+
 </xsl:template>
 
 <!-- ============================================================ INDEX template -->
@@ -219,7 +219,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 <xsl:template name="show_ForeignKey">
 	<xsl:param name="relation"/>
 	<foreign-key>
-	
+
 		<!-- foreignTable -->
 		<xsl:attribute name="foreignTable">
 			<xsl:value-of select="/DBMODEL/METADATA/TABLES/TABLE[@ID=$relation/@SrcTable]/@Tablename"/>
@@ -269,16 +269,16 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		<xsl:value-of select="/DBMODEL/SETTINGS/DATATYPES/DATATYPE[@ID=$id]/@TypeName"/>
 	</xsl:variable>
 
-	<xsl:choose> 
-		<xsl:when test="$type = 'DATETIME'" >TIMESTAMP</xsl:when> 
-		<xsl:when test="$type = 'TEXT'" >LONGVARCHAR</xsl:when> 
-		<xsl:when test="$type = 'BOOL'" >BOOLEAN</xsl:when> 
-		<xsl:when test="$type = 'GEOMETRY'" >BLOB</xsl:when> 
-		<xsl:otherwise> 
+	<xsl:choose>
+		<xsl:when test="$type = 'DATETIME'" >TIMESTAMP</xsl:when>
+		<xsl:when test="$type = 'TEXT'" >LONGVARCHAR</xsl:when>
+		<xsl:when test="$type = 'BOOL'" >BOOLEAN</xsl:when>
+		<xsl:when test="$type = 'GEOMETRY'" >BLOB</xsl:when>
+		<xsl:otherwise>
 			<xsl:value-of select="$type"/>
-		</xsl:otherwise> 
-	</xsl:choose> 
-	
+		</xsl:otherwise>
+	</xsl:choose>
+
 </xsl:template>
 
 
@@ -287,18 +287,18 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 	<xsl:param name="dtpc"/>
 	<xsl:param name="dtype"/>
 
-	<xsl:choose> 
-		<xsl:when test="contains('FLOAT,DOUBLE,DECIMAL',$dtype)" > 
+	<xsl:choose>
+		<xsl:when test="contains('FLOAT,DOUBLE,DECIMAL',$dtype)" >
 			<xsl:value-of select="substring-before($dtpc,',')"/>
 		</xsl:when>
 		<xsl:when test="$dtype = 'ENUM'">
 			<xsl:value-of select="''" />
-		</xsl:when>	
-		<xsl:otherwise> 
+		</xsl:when>
+		<xsl:otherwise>
 			<xsl:value-of select="$dtpc"/>
-		</xsl:otherwise> 
-	</xsl:choose> 
-	
+		</xsl:otherwise>
+	</xsl:choose>
+
 </xsl:template>
 
 
@@ -319,7 +319,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		<xsl:with-param name="charsIn" select="')'"/>
 		<xsl:with-param name="charsOut" select="''"/>
 	</xsl:call-template>
-	
+
 </xsl:template>
 
 

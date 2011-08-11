@@ -52,7 +52,7 @@
 			<reference local="second_contest" foreign="id"/>
 		</foreign-key>
 	</table>
-	
+
 	<!-- Test one-to-one (1:1) relationship -->
 	<table name="customer_account" reloadOnInsert="true" reloadOnUpdate="true" description="A table that represents a bookstore customer's account.">
 		<column name="customer_id" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />

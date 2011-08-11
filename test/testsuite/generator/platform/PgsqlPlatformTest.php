@@ -16,7 +16,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class PgsqlPlatformTest extends PlatformTestProvider
 {
@@ -29,7 +29,7 @@ class PgsqlPlatformTest extends PlatformTestProvider
 	{
 		return new PgsqlPlatform();
 	}
-	
+
 	public function testGetSequenceNameDefault()
 	{
 		$table = new Table('foo');
@@ -352,7 +352,7 @@ SET search_path TO public;
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddTableDDLSchema
 	 */
@@ -499,7 +499,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$expected = '"foo" DOUBLE PRECISION DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
 	}
-	
+
 	public function testGetColumnDDLAutoIncrement()
 	{
 		$database = new Database();
@@ -527,7 +527,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$expected = '"foo" DECIMAL(5,6) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
-	
+
 	public function testGetPrimaryKeyDDLSimpleKey()
 	{
 		$table = new Table('foo');
@@ -561,7 +561,7 @@ ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_pkey\";
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -572,7 +572,7 @@ ALTER TABLE \"foo\" ADD PRIMARY KEY (\"bar\");
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -596,7 +596,7 @@ CREATE INDEX \"foo_index\" ON \"foo\" (\"bar1\");
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -607,7 +607,7 @@ DROP INDEX \"babar\";
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -667,7 +667,7 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
 		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -687,7 +687,7 @@ ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_bar_FK\";
 		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */

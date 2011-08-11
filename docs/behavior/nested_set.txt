@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-The `nested_set` behavior allows a model to become a tree structure, and provides numerous methods to traverse the tree in an efficient way. 
+The `nested_set` behavior allows a model to become a tree structure, and provides numerous methods to traverse the tree in an efficient way.
 
 Many applications need to store hierarchical data in the model. For instance, a forum stores a tree of messages for each discussion. A CMS sees sections and subsections as a navigation tree. In a business organization chart, each person is a leaf of the organization tree. [http://en.wikipedia.org/wiki/Nested_set_model Nested sets] are the best way to store such hierachical data in a relational database and manipulate it. The name "nested sets" describes the algorithm used to store the position of a model in the tree ; it is also known as "modified preorder tree traversal".
 
@@ -18,7 +18,7 @@ In the `schema.xml`, use the `<behavior>` tag to add the `nested_set` behavior t
 </table>
 }}}
 
-Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has the ability to be inserted into a tree structure, as follows: 
+Rebuild your model, insert the table creation sql again, and you're ready to go. The model now has the ability to be inserted into a tree structure, as follows:
 
 {{{
 #!php
@@ -105,12 +105,12 @@ $s2->moveToFirstChildOf($s4);
     |        \
 $s4:Business $s3:Europe
     |
-$s2:World  
+$s2:World
 */
 }}}
 
 You can delete the descendants of a node using `deleteDescendants()`:
-	
+
 {{{
 #!php
 <?php
@@ -193,7 +193,7 @@ foreach ($root->getIterator() as $node) {
 }
 }}}
 
-The iterator parses the tree in a recursive way by retrieving the children of every node. This can be quite effective on very large trees, since the iterator hydrates only a few objects at a time. 
+The iterator parses the tree in a recursive way by retrieving the children of every node. This can be quite effective on very large trees, since the iterator hydrates only a few objects at a time.
 
 Beware, though, that the iterator executes many queries to parse a tree. On smaller trees, prefer the `getBranch()` method to execute only one query, and hydrate all records at once:
 

@@ -26,14 +26,14 @@ class OracleSchemaParser extends BaseSchemaParser
 	 *
 	 * There really aren't any Oracle native types, so we're just
 	 * using the MySQL ones here.
-	 * 
-	 * Left as unsupported: 
-	 *   BFILE, 
-	 *   RAW, 
+	 *
+	 * Left as unsupported:
+	 *   BFILE,
+	 *   RAW,
 	 *   ROWID
-	 * 
-	 * Supported but non existant as a specific type in Oracle: 
-	 *   DECIMAL (NUMBER with scale), 
+	 *
+	 * Supported but non existant as a specific type in Oracle:
+	 *   DECIMAL (NUMBER with scale),
 	 *   DOUBLE (FLOAT with precision = 126)
 	 *
 	 * @var        array
@@ -74,7 +74,7 @@ class OracleSchemaParser extends BaseSchemaParser
 	{
 		$tables = array();
 		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
-		
+
 		if ($task) $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -97,12 +97,12 @@ class OracleSchemaParser extends BaseSchemaParser
 		}
 
 		if ($task) $task->log("Reverse Engineering Foreign Keys", Project::MSG_VERBOSE);
-		
+
 		foreach ($tables as $table) {
 			if ($task) $task->log("Adding foreign keys for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
 			$this->addForeignKeys($table);
 		}
-		
+
 		return count($tables);
 	}
 
@@ -145,7 +145,7 @@ class OracleSchemaParser extends BaseSchemaParser
 				$size = null;
 				$scale = null;
 			}
-				
+
 			$propelType = $this->getMappedPropelType($type);
 			if (!$propelType) {
 				$propelType = Column::DEFAULT_TYPE;
@@ -165,7 +165,7 @@ class OracleSchemaParser extends BaseSchemaParser
 			$column->setNotNull(!$isNullable);
 			$table->addColumn($column);
 		}
-		
+
 	} // addColumn()
 
 	/**
@@ -177,16 +177,16 @@ class OracleSchemaParser extends BaseSchemaParser
 	{
 		$stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
+
 		$indices = array();
 		foreach ($rows as $row) {
 			$indices[$row['INDEX_NAME']][]= $row['COLUMN_NAME'];
 		}
-		
+
 		foreach ($indices as $indexName => $columnNames) {
 			$index = new Index($indexName);
 			foreach($columnNames AS $columnName) {
-				// Oracle deals with complex indices using an internal reference, so... 
+				// Oracle deals with complex indices using an internal reference, so...
 				// let's ignore this kind of index
 				if ($table->hasColumn($columnName)) {
 					$index->addColumn($table->getColumn($columnName));
@@ -198,17 +198,17 @@ class OracleSchemaParser extends BaseSchemaParser
 			}
 		}
 	}
-	
+
 	/**
 	 * Load foreign keys for this table.
-	 * 
+	 *
 	 * @param      Table $table The Table model class to add FKs to
 	 */
 	protected function addForeignKeys(Table $table)
 	{
 		// local store to avoid duplicates
 		$foreignKeys = array();
-		
+
 		$stmt = $this->dbh->query("SELECT CONSTRAINT_NAME, DELETE_RULE, R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'R' AND TABLE_NAME = '" . $table->getName(). "'");
 		/* @var stmt PDOStatement */
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -216,11 +216,11 @@ class OracleSchemaParser extends BaseSchemaParser
 			$stmt2 = $this->dbh->query("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['CONSTRAINT_NAME']."' AND TABLE_NAME = '" . $table->getName(). "'");
 			/* @var stmt2 PDOStatement */
 			$localReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
-			
+
 			// Foreign reference
 			$stmt2 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
 			$foreignReferenceInfo = $stmt2->fetch(PDO::FETCH_ASSOC);
-						
+
 			if (!isset($foreignKeys[$row["CONSTRAINT_NAME"]])) {
 				$fk = new ForeignKey($row["CONSTRAINT_NAME"]);
 				$fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
@@ -236,8 +236,8 @@ class OracleSchemaParser extends BaseSchemaParser
 
 	/**
 	 * Loads the primary key for this table.
-	 * 
-	 * @param      Table $table The Table model class to add PK to. 
+	 *
+	 * @param      Table $table The Table model class to add PK to.
 	 */
 	protected function addPrimaryKey(Table $table)
 	{
@@ -250,7 +250,7 @@ class OracleSchemaParser extends BaseSchemaParser
 				$row = $row[0];
 			}
 			$table->getColumn($row['COLUMN_NAME'])->setPrimaryKey(true);
-		}	
+		}
 	}
 
 }

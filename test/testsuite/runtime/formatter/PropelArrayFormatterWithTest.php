@@ -30,7 +30,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$publisher = $book['Publisher'];
 		$this->assertEquals($publisher['Name'], 'Penguin', 'Related object is correctly hydrated ' . $msg);
 	}
-	
+
 	public function testFindOneWith()
 	{
 		BookstoreDataPopulator::populate();
@@ -76,7 +76,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$c->with('p');
 		$this->assertCorrectHydration1($c, 'with main alias');
 	}
-	
+
 	public function testFindOneWithUsingInstancePool()
 	{
 		BookstoreDataPopulator::populate();
@@ -123,7 +123,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$sup = $emp['Supervisor'];
 		$this->assertEquals($sup['Name'], 'John', 'Related object is correctly hydrated');
 	}
-	
+
 	/**
 	 * @see http://www.propelorm.org/ticket/959
 	 */
@@ -144,20 +144,20 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$book2->save();
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
-		
+
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->join('Book.Author');
 		$c->with('Author');
 		$books = $c->find();
-		
+
 		$this->assertEquals(2, count($books));
 		$firstBook = $books[0];
 		$this->assertTrue(isset($firstBook['Author']));
 		$secondBook = $books[1];
 		$this->assertTrue(isset($secondBook['Author']));
 	}
-	
+
 	public function testFindOneWithDuplicateRelation()
 	{
 		EssayPeer::doDeleteAll();
@@ -174,7 +174,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$essay->save();
 		AuthorPeer::clearInstancePool();
 		EssayPeer::clearInstancePool();
-		
+
 		$c = new ModelCriteria('bookstore', 'Essay');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->join('Essay.AuthorRelatedByFirstAuthor');
@@ -186,7 +186,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals($firstAuthor['FirstName'], 'John', 'Related object is correctly hydrated');
 		$this->assertFalse(array_key_exists('AuthorRelatedBySecondAuthor', $essay), 'Only related object specified in with() is hydrated');
 	}
-	
+
 	public function testFindOneWithDistantClass()
 	{
 		BookstoreDataPopulator::populate();
@@ -207,7 +207,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$author = $book['Author'];
 		$this->assertEquals('J.K.', $author['FirstName'], 'Related object is correctly hydrated');
 	}
-	
+
 	public function testFindOneWithDistantClassRenamedRelation()
 	{
 		BookstoreDataPopulator::populate();
@@ -244,7 +244,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$c->limit(5);
 		$books = $c->find();
 	}
-	
+
 	public function testFindOneWithOneToMany()
 	{
 		BookstoreDataPopulator::populate();
@@ -294,7 +294,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 			->find();
 		$this->assertEquals(2, count($authors), 'with() used on a many-to-many doesn\'t change the main object count');
 	}
-	
+
 	public function testFindOneWithOneToManyThenManyToOne()
 	{
 		BookstoreDataPopulator::populate();
@@ -377,7 +377,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$reviews = $c->find($this->con);
 		$this->assertTrue(true);
 	}
-	
+
 	public function testFindOneWithColumn()
 	{
 		BookstoreDataPopulator::populate();
@@ -397,7 +397,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
 		$this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
 	}
-	
+
 	public function testFindOneWithClassAndColumn()
 	{
 		BookstoreDataPopulator::populate();

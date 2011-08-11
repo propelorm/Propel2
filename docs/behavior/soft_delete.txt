@@ -55,7 +55,7 @@ echo $book->getTitle(); // 'War And Peace'
 
 Note that `find()` and other selection methods automatically re-enable the `soft_delete` filter, so `disableSoftDelete()` is really a single shot method. You can also enable the query alteration manually by calling the `enableSoftDelete()` method on Query objects.
 
-'''Tip''': `ModelCriteria::paginate()` executes two queries, so `disableSoftDelete()` doesn't work in this case. Prefer `includeDeleted()` in queries using `paginate()`. 
+'''Tip''': `ModelCriteria::paginate()` executes two queries, so `disableSoftDelete()` doesn't work in this case. Prefer `includeDeleted()` in queries using `paginate()`.
 
 If you want to recover a deleted object, use the `unDelete()` method:
 

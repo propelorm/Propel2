@@ -1,30 +1,30 @@
 <!--
     Use this file to faciliate easy per-project building.
-    
+
     Simply create a build.properties file in this directory,
     that contains any needed (i.e. to override) values for this project.
-    
+
     Call this build script and specify the name of the project and
     (optionally) the name of the target you wish to execute (default is
     'main' target) of build-propel.xml.
 
     Normal use:
     $> phing
-    
-    Specific target: 
+
+    Specific target:
     $> phing -Dtarget=insert-sql
 
 -->
 <project name="propel-project-builder" default="main">
 
-<!-- set to this dir -->    
+<!-- set to this dir -->
 <property name="project.dir" value="."/>
 
 <!-- set a default target if none provided -->
 <property name="target" value="main"/>
 
 <target name="buildpropescheck">
-  <available file="./build.properties" property="projBuildPopertiesExists"/>  
+  <available file="./build.properties" property="projBuildPopertiesExists"/>
 </target>
 
 <target name="init">
@@ -51,21 +51,21 @@
     <property name="project" value="{$propel.project}"/>
 </target>
 
-<target name="main" depends="configure" 
-  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
+<target name="main" depends="configure"
+  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
 
  <phing phingfile="${propel.home}/build-propel.xml" target="${target}"/>
- 
+
 </target>
 
-<!-- 
- Convenience mappings to build-propel.xml main targets 
- 
+<!--
+ Convenience mappings to build-propel.xml main targets
+
  This makes it possible to use this buildfile w/o needing to specify
  target as a property, e.g.:
- 
+
  $> phing -Dproject=bookstore insert-sql
- 
+
  The main reason for this is just consistency w/ old build-propel.xml file
  (primarily for documentation & user confusion avoidance reasons).  There are relatively
  few & infrequently changing main targets of build-propel.xml, so it's a non-

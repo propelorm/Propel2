@@ -86,14 +86,14 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		}
 
 		$this->log('Loading XML configuration file...');
-		
+
 		// Create a PHP array from the runtime-conf.xml file
 		$xmlDom = new DOMDocument();
 		$xmlDom->load($this->xmlConfFile->getAbsolutePath());
 		$xml = simplexml_load_string($xmlDom->saveXML());
 		$phpconf = self::simpleXmlToArray($xml);
 		$this->log(sprintf('Loaded "%s" successfully', $this->xmlConfFile->getAbsolutePath()), Project::MSG_VERBOSE);
-		
+
 		/* For some reason the array generated from runtime-conf.xml has separate
 		 * 'log' section and 'propel' sections. To maintain backward compatibility
 		 * we need to put 'log' back into the 'propel' section.
@@ -107,15 +107,15 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		if(isset($phpconf['propel'])) {
 			$phpconf = $phpconf['propel'];
 		}
-			
+
 		// add generator version
 		$phpconf['generator_version'] = $this->getGeneratorConfig()->getBuildProperty('version');
-		
+
 		if (!$this->outputClassmapFile) {
-			// We'll create a default one for BC 
+			// We'll create a default one for BC
 			$this->outputClassmapFile = 'classmap-' . $this->outputFile;
-		} 
-		
+		}
+
 		// Write resulting PHP data to output file
 		$outfile = new PhingFile($this->outputDirectory, $this->outputFile);
 		$output = "<?php\n";
@@ -142,7 +142,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		if ($mustWriteRuntimeConf && !file_put_contents($outfile->getAbsolutePath(), $output)) {
 			throw new BuildException("Error writing output file: " . $outfile->getAbsolutePath(), $this->getLocation());
 		}
-		
+
 		// add classmap
 		$phpconfClassmap = $this->getClassMap();
 		$outfile = new PhingFile($this->outputDirectory, $this->outputClassmapFile);
@@ -151,7 +151,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		$output .= "return ";
 		$output .= var_export($phpconfClassmap, true);
 		$output .= ";";
-		
+
 		$mustWriteClassMap = true;
 		if (file_exists($outfile->getAbsolutePath())) {
 			$currentClassmap = file_get_contents($outfile->getAbsolutePath());
@@ -177,7 +177,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		if ($mustWriteClassMap && !file_put_contents($outfile->getAbsolutePath(), $output)) {
 			throw new BuildException("Error writing output file: " . $outfile->getAbsolutePath(), $this->getLocation());
 		}
-		
+
 		if (!$mustWriteRuntimeConf && !$mustWriteClassMap) {
 			$this->log('No change in compiled configuration files');
 		}
@@ -269,7 +269,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Lists data model classes and builds an associative array className => classPath
 	 * To be used for autoloading
@@ -320,11 +320,11 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 								}
 							}
 						}
-						
+
 						// -----------------------------------------------------
 						// Add base classes for alias tables (undocumented)
 						// -----------------------------------------------------
-						
+
 						$baseClass = $table->getBaseClass();
 						if ( $baseClass !== null ) {
 							$className = ClassTools::classname($baseClass);
@@ -342,16 +342,16 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 								$classMap[$className] = $classPath;
 							}
 						}
-						
+
 						// ----------------------------------------------
 						// Add classes for interface
 						// ----------------------------------------------
-						
+
 						if ($table->getInterface()) {
 							$builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
 							$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 						}
-						
+
 						// ----------------------------------------------
 						// Add classes from old treeMode implementations
 						// ----------------------------------------------
@@ -368,7 +368,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 								$classMap[$builder->getFullyQualifiedClassname()] = $builder->getClassFilePath();
 							}
 						}
-						
+
 						// ----------------------------------
 						// Add classes added by behaviors
 						// ----------------------------------
@@ -386,10 +386,10 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 				$phpconfClassmap = array_merge($phpconfClassmap, $classMap);
 			}
 		}
-		
+
 		// sort the classmap by class name, to avoid discrepancies between OS
 		ksort($phpconfClassmap);
-		
+
 		return $phpconfClassmap;
 	}
 }

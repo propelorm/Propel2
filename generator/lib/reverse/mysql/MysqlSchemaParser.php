@@ -60,7 +60,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 		'enum' => PropelTypes::CHAR,
 		'set' => PropelTypes::CHAR,
 	);
-	
+
 	protected static $defaultTypeSizes = array(
 		'char'     => 1,
 		'tinyint'  => 4,
@@ -103,7 +103,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 			$database->addTable($table);
 			$tables[] = $table;
 		}
-		
+
 		// Now populate only columns.
 		if ($task) $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
 		foreach ($tables as $table) {
@@ -122,7 +122,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 				$this->addTableVendorInfo($table);
 			}
 		}
-		
+
 		return count($tables);
 	}
 
@@ -145,9 +145,9 @@ class MysqlSchemaParser extends BaseSchemaParser
 	} // addColumn()
 
 	/**
-	 * Factory method creating a Column object 
+	 * Factory method creating a Column object
 	 * based on a row from the 'show columns from ' MySQL query result.
-	 * 
+	 *
 	 * @param     array $row An associative array with the following keys:
 	 *                       Field, Type, Null, Key, Default, Extra.
 	 * @return    Column
@@ -236,10 +236,10 @@ class MysqlSchemaParser extends BaseSchemaParser
 			$vi = $this->getNewVendorInfoObject($row);
 			$column->addVendorInfo($vi);
 		}
-		
+
 		return $column;
 	}
-	
+
 	/**
 	 * Load foreign keys for this table.
 	 */
@@ -262,17 +262,17 @@ class MysqlSchemaParser extends BaseSchemaParser
 				$ftbl = $matches[3][$curKey];
 				$rawfcol = $matches[4][$curKey];
 				$fkey = $matches[5][$curKey];
-				
+
 				$lcols = array();
 				foreach(preg_split('/`, `/', $rawlcol) as $piece) {
 					$lcols[] = trim($piece, '` ');
 				}
-				
+
 				$fcols = array();
 				foreach(preg_split('/`, `/', $rawfcol) as $piece) {
 					$fcols[] = trim($piece, '` ');
 				}
-				
+
 				//typical for mysql is RESTRICT
 				$fkactions = array(
 					'ON DELETE'	=> ForeignKey::RESTRICT,
@@ -289,19 +289,19 @@ class MysqlSchemaParser extends BaseSchemaParser
 						}
 					}
 				}
-				
+
 				// restrict is the default
 				foreach ($fkactions as $key => $action) {
 					if ($action == ForeignKey::RESTRICT) {
 						$fkactions[$key] = null;
 					}
 				}
-				
+
 				$localColumns = array();
 				$foreignColumns = array();
 				;
 				$foreignTable = $database->getTable($ftbl, true);
-				
+
 				foreach($fcols as $fcol) {
 					$foreignColumns[] = $foreignTable->getColumn($fcol);
 				}
@@ -318,11 +318,11 @@ class MysqlSchemaParser extends BaseSchemaParser
 					$table->addForeignKey($fk);
 					$foreignKeys[$name] = $fk;
 				}
-				
+
 				for($i=0; $i < count($localColumns); $i++) {
 					$foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
 				}
-				
+
 			}
 
 		}

@@ -201,7 +201,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     $builder->setGeneratorConfig($this);
     return $builder;
   }
-  
+
   /**
    * Gets a configured Pluralizer class.
    *
@@ -213,7 +213,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     $pluralizer = new $classname();
     return $pluralizer;
   }
-  
+
   /**
    * Gets a configured behavior class
    *
@@ -236,7 +236,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 	{
 		$this->buildConnections = $buildConnections;
 	}
-	
+
 	public function getBuildConnections()
 	{
 		if (null === $this->buildConnections) {
@@ -255,7 +255,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 		}
 		return $this->buildConnections;
 	}
-	
+
 	protected function parseBuildConnections($xmlString)
 	{
 		$conf = simplexml_load_string($xmlString);
@@ -271,7 +271,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 		}
 		$this->buildConnections = $buildConnections;
 	}
-	
+
 	public function getBuildConnection($databaseName = null)
 	{
 		$connections = $this->getBuildConnections();
@@ -290,7 +290,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 			);
 		}
 	}
-	
+
 	public function getBuildPDO($database)
 	{
 		$buildConnection = $this->getBuildConnection($database);
@@ -302,7 +302,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 
 		$pdo = new PDO($dsn, $username, $password);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		
+
 		return $pdo;
 	}
 }

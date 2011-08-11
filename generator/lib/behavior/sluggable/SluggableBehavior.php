@@ -89,7 +89,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
 	\$this->{$this->getColumnSetter()}(\$this->createSlug());
 }";
 		}
-		
+
 		return $script;
 	}
 
@@ -106,7 +106,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
 		$this->addCleanupSlugPart($script);
 		$this->addLimitSlugSize($script);
 		$this->addMakeSlugUnique($script);
-		
+
 		return $script;
 	}
 
@@ -132,7 +132,7 @@ public function setSlug(\$v)
 /**
  * Wrap the getter for slug value
  *
- * @return  string 
+ * @return  string
  */
 public function getSlug()
 {
@@ -154,7 +154,7 @@ protected function createSlug()
 	\$slug = \$this->createRawSlug();
 	\$slug = \$this->limitSlugSize(\$slug);
 	\$slug = \$this->makeSlugUnique(\$slug);
-	
+
 	return \$slug;
 }
 ";
@@ -200,20 +200,20 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 	if (function_exists('iconv')) {
 		\$slug = iconv('utf-8', 'us-ascii//TRANSLIT', \$slug);
 	}
-	
+
 	// lowercase
 	if (function_exists('mb_strtolower')) {
 		\$slug = mb_strtolower(\$slug);
 	} else {
 		\$slug = strtolower(\$slug);
 	}
-	
+
 	// remove accents resulting from OSX's iconv
 	\$slug = str_replace(array('\'', '`', '^'), '', \$slug);
-	
+
 	// replace non letter or digits with separator
 	\$slug = preg_replace('" . $this->getParameter('replace_pattern') . "', \$replacement, \$slug);
-	
+
 	// trim
 	\$slug = trim(\$slug, \$replacement);
 
@@ -225,7 +225,7 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 }
 ";
 	}
-	
+
 	public function addLimitSlugSize(&$script)
 	{
 		$size = $this->getColumnForParameter('slug_column')->getSize();
@@ -248,7 +248,7 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
 }
 ";
 	}
-	
+
 	public function addMakeSlugUnique(&$script)
 	{
 		$script .= "
@@ -290,16 +290,16 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
 			$this->addFilterBySlug($script);
 		}
 		$this->addFindOneBySlug($script);
-		
+
 		return $script;
 	}
-	
+
 	protected function addFilterBySlug(&$script)
 	{
 		$script .= "
 /**
  * Filter the query on the slug column
- * 
+ *
  * @param     string \$slug The value to use as filter.
  *
  * @return    " . $this->builder->getStubQueryBuilder()->getClassname() . " The current query, for fluid interface
@@ -316,7 +316,7 @@ public function filterBySlug(\$slug)
 		$script .= "
 /**
  * Find one object based on its slug
- * 
+ *
  * @param     string \$slug The value to use as filter.
  * @param     PropelPDO \$con The optional connection object
  *
@@ -328,5 +328,5 @@ public function findOneBySlug(\$slug, \$con = null)
 }
 ";
 	}
-	
+
 }

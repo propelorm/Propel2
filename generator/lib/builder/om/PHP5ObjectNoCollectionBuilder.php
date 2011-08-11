@@ -18,10 +18,10 @@ require_once dirname(__FILE__) . '/PHP5ObjectBuilder.php';
  *
  * This class overrides PHP5BaseObject to use Peer methods and Criteria
  * instead of Query objects for fetching foreign keys. This can be useful if
- * some legacy Propel 1.4 code assumes that the getters returns arrays 
- * instead of collections. 
+ * some legacy Propel 1.4 code assumes that the getters returns arrays
+ * instead of collections.
  *
- * This class is not used by default. You must override 
+ * This class is not used by default. You must override
  * the propel.builder.object.class setting in build.properties to use it:
  * <code>
  * propel.builder.object.class = builder.om.PHP5ObjectNoCollectionBuilder
@@ -293,7 +293,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 		if (\$con === null) {
 			\$con = Propel::getConnection(".$this->getPeerClassname()."::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		
+
 		\$con->beginTransaction();
 		try {";
 		if($this->getGeneratorConfig()->getBuildProperty('addHooks')) {
@@ -439,11 +439,11 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 		$table = $this->getTable();
 
 		$varName = $this->getFKVarName($fk);
-		
+
 		$fkPeerBuilder = $this->getNewPeerBuilder($this->getForeignTable($fk));
 		$fkObjectBuilder = $this->getNewObjectBuilder($this->getForeignTable($fk))->getStubObjectBuilder();
 		$className = $fkObjectBuilder->getClassname(); // get the Classname that has maybe a prefix
-		
+
 		$and = "";
 		$conditional = "";
 		$localColumns = array(); // foreign key local attributes names
@@ -455,17 +455,17 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 		$useRetrieveByPk = $fk->isForeignPrimaryKey();
 
 		foreach ($fk->getLocalColumns() as $columnName) {
-			
+
 			$lfmap = $fk->getLocalForeignMapping();
-			
+
 			$localColumn = $table->getColumn($columnName);
 			$foreignColumn = $fk->getForeignTable()->getColumn($lfmap[$columnName]);
-			
+
 			$column = $table->getColumn($columnName);
 			$cptype = $column->getPhpType();
 			$clo = strtolower($column->getName());
 			$localColumns[$foreignColumn->getPosition()] = '$this->'.$clo;
-			
+
 			if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
 				$conditional .= $and . "\$this->". $clo ." != 0";
 			} elseif ($cptype == "string") {
@@ -473,7 +473,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 			} else {
 				$conditional .= $and . "\$this->" . $clo ." !== null";
 			}
-			
+
 			$argmap[] = array('foreign' => $foreignColumn, 'local' => $localColumn);
 			$and = " && ";
 		}
@@ -481,7 +481,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 		ksort($localColumns); // restoring the order of the foreign PK
 		$localColumns = count($localColumns) > 1 ?
 				('array('.implode(', ', $localColumns).')') : reset($localColumns);
-		
+
 		// If the related column is a primary kay and if it's a simple association,
 		// The use retrieveByPk() instead of doSelect() to take advantage of instance pooling
 		$useRetrieveByPk = count($argmap) == 1 && $argmap[0]['foreign']->isPrimaryKey();

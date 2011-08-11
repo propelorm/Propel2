@@ -99,7 +99,7 @@ class SqliteSchemaParser extends BaseSchemaParser
 		foreach ($tables as $table) {
 			$this->addIndexes($table);
 		}
-		
+
 		return count($tables);
 
 	}

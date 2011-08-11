@@ -8,7 +8,7 @@
 	-->
 
 	<!--
-	Output indented UTF 8 XML 
+	Output indented UTF 8 XML
 	-->
 	<xsl:output method="xml" indent="yes" encoding="UTF-8" />
 
@@ -37,14 +37,14 @@
 
 	<!--
 	Normalizes any defaultPhpNamingMethod attribute by making it lowercase
-	-->	
+	-->
 	<xsl:template match='@defaultPhPNamingMethod'>
 		<xsl:attribute name='defaultPhPNamingMethod'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
 	</xsl:template>
 
 	<!--
 	Normalizes any onDelete attribute by making it lowercase, or none if it is empty (makes onDelete='' act the same as onDelete='none')
-	-->	
+	-->
 	<xsl:template match='@onDelete' name='onDelete'>
 		<xsl:choose>
 			<xsl:when test='.=""'>
@@ -65,7 +65,7 @@
 
 	<!--
 	Normalizes any onUpdate attribute by making it lowercase, or none if it is empty (similar to onDelete)
-	-->	
+	-->
 	<xsl:template match='@onUpdate' name='onUpdate'>
 		<xsl:choose>
 			<xsl:when test='.=""'>

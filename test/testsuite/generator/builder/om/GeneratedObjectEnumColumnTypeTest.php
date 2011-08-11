@@ -43,7 +43,7 @@ EOF;
 			eval($publicAccessorCode);
 		}
 	}
-	
+
 	public function testGetter()
 	{
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'getBar'));
@@ -67,7 +67,7 @@ EOF;
 		$e->bar = 156;
 		$e->getBar();
 	}
-	
+
 	public function testGetterDefaultValue()
 	{
 		$e = new PublicComplexColumnTypeEntity3();
@@ -87,7 +87,7 @@ EOF;
 		$e->setBar('foo bar');
 		$this->assertEquals(6, $e->bar);
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -96,7 +96,7 @@ EOF;
 		$e = new ComplexColumnTypeEntity3();
 		$e->setBar('bazz');
 	}
-	
+
 	public function testValueIsPersisted()
 	{
 		$e = new ComplexColumnTypeEntity3();
@@ -106,7 +106,7 @@ EOF;
 		$e = ComplexColumnTypeEntity3Query::create()->findOne();
 		$this->assertEquals('baz', $e->getBar());
 	}
-	
+
 	public function testValueIsCopied()
 	{
 		$e1 = new ComplexColumnTypeEntity3();

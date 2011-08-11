@@ -85,7 +85,7 @@ abstract class DataModelBuilder
 	 * @var        DataModelBuilder
 	 */
 	protected $tablemapBuilder;
-	
+
 	/**
 	 * Stub Interface builder class for current table.
 	 * @var        DataModelBuilder
@@ -151,7 +151,7 @@ abstract class DataModelBuilder
 	 * @var 			PropelPlatformInterface
 	 */
 	protected $platform;
-	
+
 	/**
 	 * Creates new instance of DataModelBuilder subclass.
 	 * @param      Table $table The Table which we are using to build [OM, DDL, etc.].
@@ -244,7 +244,7 @@ abstract class DataModelBuilder
 		}
 		return $this->stubQueryBuilder;
 	}
-	
+
 	/**
 	 * Returns new or existing Object builder class for this table.
 	 * @return     ObjectBuilder
@@ -256,7 +256,7 @@ abstract class DataModelBuilder
 		}
 		return $this->tablemapBuilder;
 	}
-	
+
 	/**
 	 * Returns new or existing stub Interface builder class for this table.
 	 * @return     ObjectBuilder
@@ -364,7 +364,7 @@ abstract class DataModelBuilder
 		}
 		return $this->dataSqlBuilder;
 	}
-	
+
  /**
 	* Gets a new data model builder class for specified table and classname.
 	*
@@ -378,10 +378,10 @@ abstract class DataModelBuilder
 		$builder->setGeneratorConfig($this);
 		return $builder;
 	}
-	
+
 	/**
 	 * Convenience method to return a NEW Peer class builder instance.
-   * 
+   *
 	 * This is used very frequently from the peer and object builders to get
 	 * a peer builder for a RELATED table.
 	 *
@@ -392,10 +392,10 @@ abstract class DataModelBuilder
 	{
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'peer');
 	}
-	
+
 	/**
 	 * Convenience method to return a NEW Peer stub class builder instance.
-	 * 
+	 *
 	 * This is used from the peer and object builders to get
 	 * a peer builder for a RELATED table.
 	 *
@@ -448,7 +448,7 @@ abstract class DataModelBuilder
 	{
 		return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
 	}
-	
+
 	/**
 	 * Convenience method to return a NEW query stub class builder instance.
 	 *
@@ -484,7 +484,7 @@ abstract class DataModelBuilder
 		$stubQueryInheritanceBuilder->setChild($child);
 		return $stubQueryInheritanceBuilder;
 	}
-	
+
 	/**
 	 * Gets the GeneratorConfig object.
 	 *
@@ -551,10 +551,10 @@ abstract class DataModelBuilder
 		}
 		return $this->platform;
 	}
-	
+
 	/**
 	 * Platform setter
-	 * 
+	 *
 	 * @param PropelPlatformInterface $platform
 	 */
 	public function setPlatform(PropelPlatformInterface $platform)

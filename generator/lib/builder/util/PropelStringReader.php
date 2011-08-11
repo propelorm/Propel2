@@ -23,12 +23,12 @@ class PropelStringReader extends Reader
 	 * @var string
 	 */
 	protected $_string;
-	
+
 	/**
 	* @var int
 	*/
 	protected $mark = 0;
-    
+
 	/**
 	 * @var int
 	 */
@@ -43,7 +43,7 @@ class PropelStringReader extends Reader
 	{
 		$this->currPos = $this->currPos + $n;
 	}
-	 
+
 	public function eof()
 	{
 		return $this->currPos == strlen($this->_string);
@@ -56,7 +56,7 @@ class PropelStringReader extends Reader
 		} else {
 			if ($this->currPos >= strlen($this->_string)) {
 				return -1;
-			}            
+			}
 			$out = substr($this->_string, $this->currPos, $len);
 			$this->currPos += $len;
 			return $out;
@@ -83,7 +83,7 @@ class PropelStringReader extends Reader
 	{
 		return true;
 	}
-	
+
 	public function getResource()
 	{
 		return '(string) "'.$this->_string . '"';

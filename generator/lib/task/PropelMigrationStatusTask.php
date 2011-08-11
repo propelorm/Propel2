@@ -25,10 +25,10 @@ class PropelMigrationStatusTask extends BasePropelMigrationTask
 		$manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
 		$manager->setMigrationTable($this->getMigrationTable());
 		$manager->setMigrationDir($this->getOutputDirectory());
-		
+
 		// the following is a verbose version of PropelMigrationManager::getValidMigrationTimestamps()
 		// mostly for explicit output
-		
+
 		$this->log('Checking Database Versions...');
 		foreach ($manager->getConnections() as $datasource => $params) {
 			$this->log(sprintf(
@@ -38,16 +38,16 @@ class PropelMigrationStatusTask extends BasePropelMigrationTask
 			), Project::MSG_VERBOSE);
 			if (!$manager->migrationTableExists($datasource)) {
 				$this->log(sprintf(
-					'Migration table does not exist in datasource "%s"; creating it.', 
+					'Migration table does not exist in datasource "%s"; creating it.',
 					$datasource
 				), Project::MSG_VERBOSE);
 				$manager->createMigrationTable($datasource);
 			}
 		}
-		
+
 		if ($oldestMigrationTimestamp = $manager->getOldestDatabaseVersion()) {
 			$this->log(sprintf(
-				'Latest migration was executed on %s (timestamp %d)', 
+				'Latest migration was executed on %s (timestamp %d)',
 				date('Y-m-d H:i:s', $oldestMigrationTimestamp),
 				$oldestMigrationTimestamp
 			), Project::MSG_VERBOSE);

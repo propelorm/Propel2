@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  * @version		$Revision$
  * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase 
+class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase
 {
 	public function testTreeRoots()
 	{
@@ -74,7 +74,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNested
 		$coll = $this->buildCollection(array($t8, $t9, $t10));
 		$this->assertEquals($coll, $tree, 'inTree() filters by node');
 	}
-	
+
 	public function testDescendantsOf()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -223,7 +223,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNested
 			->find();
 		$coll = $this->buildCollection(array($t1, $t3, $t5), 'rootsOf() filters by ancestors of the same scope');
 	}
-	
+
 	public function testFindRoot()
 	{
 		$this->assertTrue(method_exists('Table10Query', 'findRoot'), 'nested_set adds a findRoot() method');
@@ -295,14 +295,14 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNested
 		$coll = $this->buildCollection(array($t8, $t9, $t10));
 		$this->assertEquals($coll, $tree, 'findTree() retrieves the tree of a scope, ordered by branch');
 	}
-	
+
 	protected function buildCollection($arr)
 	{
 		$coll = new PropelObjectCollection();
 		$coll->setData($arr);
 		$coll->setModel('Table10');
-		
+
 		return $coll;
 	}
-	
+
 }

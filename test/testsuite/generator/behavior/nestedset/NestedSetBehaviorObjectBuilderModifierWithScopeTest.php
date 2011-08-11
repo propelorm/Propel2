@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/behavior/
  * @version		$Revision$
  * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase 
+class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNestedSetTestBase
 {
 	protected function getByTitle($title)
 	{
@@ -89,7 +89,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'delete() does not delete anything out of the scope');
 	}
-	
+
 	public function testIsDescendantOf()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -116,7 +116,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 			$this->assertTrue(true, 'isDescendantOf() throws an exception when comparing two nodes of different trees');
 		}
 	}
-	
+
 	public function testGetParent()
 	{
 		$this->initTreeWithScope();
@@ -129,7 +129,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$t4 = $this->getByTitle('t4');
 		$this->assertEquals($t4->getParent($this->con), $t3, 'getParent() retrieves the same parent for nodes');
 	}
-	
+
 	public function testGetPrevSibling()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -153,7 +153,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertNull($t6->getPrevSibling($this->con), 'getPrevSibling() returns null for first siblings');
 		$this->assertEquals($t7->getPrevSibling($this->con), $t6, 'getPrevSibling() correctly retrieves prev sibling');
 	}
-	
+
 	public function testGetNextSibling()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -177,7 +177,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		$this->assertEquals($t6->getNextSibling($this->con), $t7, 'getNextSibling() correctly retrieves next sibling');
 		$this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
 	}
-	
+
 	public function testGetDescendants()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -197,14 +197,14 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		*/
 		$descendants = $t3->getDescendants();
 		$expected = array(
-			't4' => array(5, 6, 2), 
-			't5' => array(7, 12, 2), 
-			't6' => array(8, 9, 3), 
+			't4' => array(5, 6, 2),
+			't5' => array(7, 12, 2),
+			't6' => array(8, 9, 3),
 			't7' => array(10, 11, 3),
 		);
 		$this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns descendants from the current scope only');
 	}
-	
+
 	public function testGetAncestors()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
@@ -230,7 +230,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		);
 		$this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns ancestors from the current scope only');
 	}
-	
+
 	public function testInsertAsFirstChildOf()
 	{
 		$this->assertTrue(method_exists('Table10', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
@@ -565,7 +565,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 		);
 		$this->assertEquals($expected, $this->dumpTreeWithScope(2), 'moveToFirstChildOf() does not shift anything out of the scope');
 	}
-	
+
 	public function testMoveToLastChildOf()
 	{
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();

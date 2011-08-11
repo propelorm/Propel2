@@ -23,13 +23,13 @@ class PeerBehaviorTest extends BookstoreTestBase
     $this->assertEquals(Table3Peer::$customStaticAttribute, 1, 'staticAttributes hook is called when adding attributes');
     $this->assertEquals(Table3Peer::$staticAttributeBuilder, 'PHP5PeerBuilder', 'staticAttributes hook is called with the peer builder as parameter');
   }
-  
+
   public function testStaticMethods()
   {
     $this->assertTrue(method_exists('Table3Peer', 'hello'), 'staticMethods hook is called when adding methods');
     $this->assertEquals(Table3Peer::hello(), 'PHP5PeerBuilder', 'staticMethods hook is called with the peer builder as parameter');
   }
-  
+
   public function testPreSelect()
   {
     $con = Propel::getConnection(Table3Peer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -51,7 +51,7 @@ class PeerBehaviorTest extends BookstoreTestBase
     Table3Peer::doSelect(new Criteria, $con);
     $this->assertEquals($con->preSelect, 'PHP5PeerBuilder', 'preSelect hook is called with the peer builder as parameter');
   }
-  
+
   public function testPeerFilter()
   {
     Table3Peer::TABLE_NAME;

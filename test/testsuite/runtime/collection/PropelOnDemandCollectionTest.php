@@ -26,13 +26,13 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
 		Propel::disableInstancePooling();
 		$this->books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)->find();
 	}
-	
+
 	protected function tearDown()
 	{
 		parent::tearDown();
 		Propel::enableInstancePooling();
 	}
-	
+
 	public function testSetFormatter()
 	{
 		$this->assertTrue($this->books instanceof PropelOnDemandCollection);
@@ -55,7 +55,7 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
 	{
 		$this->books->offsetExists(2);
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -79,7 +79,7 @@ class PropelOnDemandCollectionTest extends BookstoreEmptyTestBase
 	{
 		$this->books->offsetUnset(2);
 	}
-	
+
 	public function testToArray()
 	{
 		$this->assertNotEquals(array(), $this->books->toArray());

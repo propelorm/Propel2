@@ -23,7 +23,7 @@ class TimestampableBehavior extends Behavior
 		'create_column' => 'created_at',
 		'update_column' => 'updated_at'
 	);
-	
+
 	/**
 	 * Add the create_column and update_columns to the current table
 	 */
@@ -42,10 +42,10 @@ class TimestampableBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	/**
 	 * Get the setter of one of the columns of the behavior
-	 * 
+	 *
 	 * @param     string $column One of the behavior colums, 'create_column' or 'update_column'
 	 * @return    string The related setter, 'setCreatedOn' or 'setUpdatedOn'
 	 */
@@ -53,12 +53,12 @@ class TimestampableBehavior extends Behavior
 	{
 		return 'set' . $this->getColumnForParameter($column)->getPhpName();
 	}
-	
+
 	protected function getColumnConstant($columnName, $builder)
 	{
 		return $builder->getColumnConstant($this->getColumnForParameter($columnName));
 	}
-	
+
 	/**
 	 * Add code in ObjectBuilder::preUpdate
 	 *
@@ -70,7 +70,7 @@ class TimestampableBehavior extends Behavior
 	\$this->" . $this->getColumnSetter('update_column') . "(time());
 }";
 	}
-	
+
 	/**
 	 * Add code in ObjectBuilder::preInsert
 	 *
@@ -101,7 +101,7 @@ public function keepUpdateDateUnchanged()
 }
 ";
 	}
-	
+
 	public function queryMethods($builder)
 	{
 		$queryClassName = $builder->getStubQueryBuilder()->getClassname();

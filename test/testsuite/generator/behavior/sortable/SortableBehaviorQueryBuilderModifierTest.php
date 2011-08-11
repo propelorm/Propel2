@@ -25,7 +25,7 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
 		parent::setUp();
 		$this->populateTable11();
 	}
-	
+
 	public function testFilterByRank()
 	{
 		$this->assertTrue(Table11Query::create()->filterByRank(1) instanceof Table11Query, 'filterByRank() returns the current query object');
@@ -58,7 +58,7 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
 	{
 		Table11Query::create()->orderByRank('foo');
 	}
-	
+
 	public function testFindList()
 	{
 		$ts = Table11Query::create()->findList();
@@ -77,7 +77,7 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
 		$this->assertEquals('row4', Table11Query::create()->findOneByRank(4)->getTitle(), 'findOneByRank() returns a single item based on the rank');
 		$this->assertNull(Table11Query::create()->findOneByRank(5), 'findOneByRank() returns no result on a non-existent rank');
 	}
-		
+
 	public function testGetMaxRank()
 	{
 		$this->assertEquals(4, Table11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');

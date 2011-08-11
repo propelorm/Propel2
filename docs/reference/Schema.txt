@@ -33,7 +33,7 @@ The hierarchical tree relationship for the elements is:
 You can find example schemas in the [source:branches/1.6/test/fixtures/ test fixtures] that the Propel development team uses for unit testing. For instance, the [source:branches/1.6/test/fixtures/bookstore/schema.xml bookstore schema] describes the model of a Bookstore application.
 
 **Tip**: If you use an IDE supporting autocompletion in XML documents, you can take advantage of the XSD describing the `schema.xml` syntax to suggest elements and attributes as you type. To enable it, add a `xmlns:xsi` and a `xsi:noNamespaceSchemaLocation` attribute to the leading `<database>` tag:
-	
+
 {{{
 #!xml
 <database name="my_connection_name" defaultIdMethod="native"
@@ -86,7 +86,7 @@ A Database element may include an `<external-schema>` element, or multiple `<tab
 
  * `defaultIdMethod` sets the default id method to use for auto-increment columns.
  * `package` specifies the "package" for the generated classes. Classes are created in subdirectories according to the `package` value.
- * `schema` specifies the default SQL schema containing the tables. Ignored on RDBMS not supporting database schemas. 
+ * `schema` specifies the default SQL schema containing the tables. Ignored on RDBMS not supporting database schemas.
  * `namespace` specifies the default namespace that generated model classes will use (PHP 5.3 only). This attribute can be completed or overridden at the table level.
  * `baseClass` allows you to specify a default base class that all generated Propel objects should extend (in place of `propel.om.BaseObject`).
  * `basePeer` instructs Propel to use a different SQL-generating `BasePeer` class (or sub-class of `BasePeer`) for all generated objects.
@@ -141,7 +141,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
  * `idMethod` sets the id method to use for auto-increment columns.
  * `phpName` specifies object model class name. By default, Propel uses a CamelCase version of the table name as phpName.
  * `package` specifies the "package" (or subdirectory) in which model classes get generated.
- * `schema` specifies the default SQL schema containing the table. Ignored on RDBMS not supporting database schemas. 
+ * `schema` specifies the default SQL schema containing the table. Ignored on RDBMS not supporting database schemas.
  * `namespace` specifies the namespace that the generated model classes will use (PHP 5.3 only). If the table namespace starts with a `\`, it overrides the namespace defined in the `<database>` tag; otherwise, the actual table namespace is the concatenation of the database namespace and the table namespace.
  * `skipSql` instructs Propel not to generate DDL SQL for the specified table. This can be used together with `readOnly` for supporting VIEWS in Propel.
  * `abstract` Whether the generated ''stub'' class will be abstract (e.g. if you're using inheritance)
@@ -186,7 +186,7 @@ According to the schema, `name` is the only required attribute.  Also, the `idMe
 
 ==== Column Attributes ====
 
- * `type` The database-agnostic column type. Propel maps native SQL types to these types depending on the RDBMS. Using Propel types guarantees that a column definition is portable. 
+ * `type` The database-agnostic column type. Propel maps native SQL types to these types depending on the RDBMS. Using Propel types guarantees that a column definition is portable.
  * `sqlType` The SQL type to be used in CREATE and ALTER statements (overriding the mapping between Propel types and RMDBS type)
  * `defaultValue` The default value that the object will have for this column in the PHP instance after creating a "new Object". This value is always interpreted as a string.
  * `defaultExpr` The default value for this column as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the column.
@@ -374,7 +374,7 @@ This will change the generated SQL table creation to look like:
 #!sql
 CREATE TABLE book
   ()
-  ENGINE = InnoDB 
+  ENGINE = InnoDB
   DEFAULT CHARACTER SET utf8;
 }}}
 

@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @version    $Revision$
  * @package    generator.behavior
  */
-class TimestampableBehaviorTest extends BookstoreTestBase 
+class TimestampableBehaviorTest extends BookstoreTestBase
 {
 	public function testParameters()
 	{
@@ -31,7 +31,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$this->assertTrue(method_exists('Table1', 'getCreatedOn'), 'Timestamplable allows customization of create_column name');
 		$this->assertTrue(method_exists('Table1', 'getUpdatedOn'), 'Timestamplable allows customization of update_column name');
 	}
-	
+
 	public function testPreSave()
 	{
 		$t1 = new Table2();
@@ -66,7 +66,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$tsave = time();
 		$t1->save();
 		$this->assertNotEquals($t1->getUpdatedAt('U'), $tsave, 'Timestampable does not set updated_column to time() on creation when it is set by the user');
-		// tip: if I set it to time()-10 a second time, the object sees that I want to change it to the same value 
+		// tip: if I set it to time()-10 a second time, the object sees that I want to change it to the same value
 		// and skips the update, therefore the updated_at is not in the list of modified columns,
 		// and the behavior changes it to the current date... let's say it's an edge case
 		$t1->setUpdatedAt(time() - 15);
@@ -97,7 +97,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$t1->save();
 		$this->assertNotEquals($t1->getCreatedAt('U'), $tsave, 'Timestampable does not set created_column to time() on creation when it is set by the user');
 	}
-	
+
 	public function testObjectKeepUpdateDateUnchanged()
 	{
 		$t1 = new Table2();
@@ -110,7 +110,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$tsave = time();
 		$t1->save();
 		$this->assertEquals($t1->getUpdatedAt('U'), $tsave);
-		
+
 		// now let's do this a second time
 		$t1 = new Table2();
 		$t1->setUpdatedAt(time() - 10);
@@ -123,7 +123,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$tsave = time();
 		$t1->save();
 		$this->assertNotEquals($t1->getUpdatedAt('U'), $tsave, 'keepUpdateDateUnchanged() prevents the behavior from updating the update date');
-		
+
 	}
 
 	protected function populateUpdatedAt()
@@ -165,7 +165,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$ts = Table2Query::create()->recentlyUpdated(5)->count();
 		$this->assertEquals(5, $ts, 'recentlyUpdated() accepts a number of days as parameter');
 	}
-	
+
 	public function testQueryRecentlyCreated()
 	{
 		$q = Table2Query::create()->recentlyCreated();
@@ -176,7 +176,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$ts = Table2Query::create()->recentlyCreated(5)->count();
 		$this->assertEquals(5, $ts, 'recentlyCreated() accepts a number of days as parameter');
 	}
-	
+
 	public function testQueryLastUpdatedFirst()
 	{
 		$q = Table2Query::create()->lastUpdatedFirst();

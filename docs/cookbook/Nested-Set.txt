@@ -164,7 +164,7 @@ foreach($it as $m) {
 }}}
 === Tree traversal ===
 
-!NestetSet implementation use the [http://somabo.de/talks/200504_php_quebec_spl_for_the_masses.pdf SPL RecursiveIterator] as suggested by soenke 
+!NestetSet implementation use the [http://somabo.de/talks/200504_php_quebec_spl_for_the_masses.pdf SPL RecursiveIterator] as suggested by soenke
 
 == !NestedSet known broken behaviour ==
 

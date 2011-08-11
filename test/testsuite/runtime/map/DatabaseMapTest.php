@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @version    $Id$
  * @package    runtime.map
  */
-class DatabaseMapTest extends BookstoreTestBase 
+class DatabaseMapTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
@@ -53,7 +53,7 @@ class DatabaseMapTest extends BookstoreTestBase
     $this->assertTrue($this->databaseMap->hasTable('foo'), 'hasTable() returns true when the table was added by way of addTable()');
     $this->assertEquals($tmap, $this->databaseMap->getTable('foo'), 'getTable() returns a table by name when the table was added by way of addTable()');
   }
-  
+
   public function testAddTableObject()
   {
     $this->assertFalse($this->databaseMap->hasTable('foo2'), 'tables are empty by default');
@@ -102,7 +102,7 @@ class DatabaseMapTest extends BookstoreTestBase
     $column = $tmap->addColumn('BAR', 'Bar', 'INTEGER');
     $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
   }
-  
+
   public function testGetTableByPhpName()
   {
     try
@@ -125,12 +125,12 @@ class DatabaseMapTest extends BookstoreTestBase
     $this->databaseMap->addTableObject($tmap2);
     $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
   }
-    
+
   public function testGetTableByPhpNameNotLoaded()
   {
 		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
   }
-  
+
 }
 
 class TestDatabaseBuilder
@@ -151,7 +151,7 @@ class TestDatabaseBuilder
   public static function getTmap()
   {
     return self::$tmap;
-  }    
+  }
 }
 
 class BazTableMap extends TableMap

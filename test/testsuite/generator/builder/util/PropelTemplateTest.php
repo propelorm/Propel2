@@ -26,7 +26,7 @@ class PropelTemplateTest extends PHPUnit_Framework_TestCase
 		$res = $t->render();
 		$this->assertEquals('Hello, 3', $res);
 	}
-	
+
 	public function testRenderStringOneParam()
 	{
 		$t = new PropelTemplate();
@@ -43,7 +43,7 @@ class PropelTemplateTest extends PHPUnit_Framework_TestCase
 		$res = $t->render(array('name' => 'John', 'time' => $time));
 		$this->assertEquals('Hello, John, it is ' . $time . ' to go!', $res);
 	}
-	
+
 	public function testRenderFile()
 	{
 		$t = new PropelTemplate();

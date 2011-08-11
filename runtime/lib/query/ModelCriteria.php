@@ -427,10 +427,10 @@ class ModelCriteria extends Criteria
 				$this->addGroupByColumn($column->getFullyQualifiedName());
 			}
 		}
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Adds a DISTINCT clause to the query
 	 * Alias for Criteria::setDistinct()
@@ -513,10 +513,10 @@ class ModelCriteria extends Criteria
 
 		return $this;
 	}
-	
+
 	/**
 	 * Retrieves the columns defined by a previous call to select().
-	 * @see       select() 
+	 * @see       select()
 	 *
 	 * @return    array|string A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
 	 */
@@ -544,7 +544,7 @@ class ModelCriteria extends Criteria
 		if (!$this->selectQueries) {
 			$this->setPrimaryTableName(constant($this->modelPeerName . '::TABLE_NAME'));
 		}
-		
+
 		// Add requested columns which are not withColumns
 		$columnNames = is_array($this->select) ? $this->select : array($this->select);
 		foreach ($columnNames as $columnName) {
@@ -661,7 +661,7 @@ class ModelCriteria extends Criteria
 
 		return $this;
 	}
-	
+
 	/**
 	 * Add another condition to an already added join
 	 * @example
@@ -689,10 +689,10 @@ class ModelCriteria extends Criteria
 		$criterion = $this->getCriterionForClause($clause, $value);
 		$method = $operator === Criteria::LOGICAL_OR ? 'addOr' : 'addAnd';
 		$join->getJoinCondition()->$method($criterion);
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Replace the condition of an already added join
 	 * @example
@@ -963,15 +963,15 @@ class ModelCriteria extends Criteria
 	{
 		return $this->primaryCriteria;
 	}
-	
+
 	/**
 	 * Adds a Criteria as subQuery in the From Clause.
-	 * 
+	 *
 	 * @see Criteria::addSelectQuery()
 	 *
-	 * @param     Criteria $subQueryCriteria Criteria to build the subquery from  
+	 * @param     Criteria $subQueryCriteria Criteria to build the subquery from
 	 * @param     string   $alias            alias for the subQuery
-	 * @param     boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns 
+	 * @param     boolean  $addAliasAndSelectColumns Set to false if you want to manually add the aliased select columns
 	 *
 	 * @return ModelCriteria The current object, for fluid interface
 	 */
@@ -993,7 +993,7 @@ class ModelCriteria extends Criteria
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Adds the select columns for a the current table
 	 *
@@ -1746,7 +1746,7 @@ class ModelCriteria extends Criteria
 		}
 		return $criterion;
 	}
-	
+
 	/**
 	 * Converts value for some column types
 	 *
@@ -1771,7 +1771,7 @@ class ModelCriteria extends Criteria
 				$value = $colMap->getValueSetKey($value);
 			}
 		}
-		
+
 		return $value;
 	}
 
@@ -1832,7 +1832,7 @@ class ModelCriteria extends Criteria
 		if ($stringToTransform) {
 			$parsedString .= preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
 		}
-		
+
 		$clause = $parsedString;
 		return $this->foundMatch;
 	}
@@ -1938,7 +1938,7 @@ class ModelCriteria extends Criteria
 			throw new PropelException(sprintf('Unknown column "%s" in the subQuery with alias "%s"', $phpName, $class));
 		}
 	}
-	
+
 	/**
 	 * Return a fully qualified column name corresponding to a simple column phpName
 	 * Uses model alias if it exists

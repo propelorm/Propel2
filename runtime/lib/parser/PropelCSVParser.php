@@ -22,15 +22,15 @@ class PropelCSVParser extends PropelParser
 	const QUOTE_ALL = 1;
 	const QUOTE_NONNUMERIC = 2;
 	const QUOTE_MINIMAL = 3;
-	
+
 	// these settings are predefined for Excel CSV format
-	
+
 	public $delimiter = ',';
 	public $lineTerminator = "\r\n";
 	public $quotechar = '"';
 	public $escapechar = "\\";
 	public $quoting = self::QUOTE_MINIMAL;
-	
+
 	/**
 	 * Converts data from an associative array to CSV.
 	 *
@@ -56,18 +56,18 @@ class PropelCSVParser extends PropelParser
 			}
 			$rows[] = implode($this->formatRow($array), $this->delimiter);
 		}
-		
+
 		return implode($rows, $this->lineTerminator) . $this->lineTerminator;
 	}
-	
+
 	public function listFromArray($array)
 	{
 		return $this->fromArray($array, true);
 	}
-	
+
 	/**
 	 * Accepts a row of data and returns it formatted
-	 * 
+	 *
 	 * @param array An array of data to be formatted for output to the file
 	 * @return array The formatted array
 	 */
@@ -151,7 +151,7 @@ class PropelCSVParser extends PropelParser
 	{
 		return serialize($input);
 	}
-	
+
 	/**
 	 * Alias for PropelCSVParser::fromArray()
 	 *
@@ -204,7 +204,7 @@ class PropelCSVParser extends PropelParser
 				$array = array_combine($keys, $values);
 			}
 		}
-		
+
 		return $array;
 	}
 
@@ -219,10 +219,10 @@ class PropelCSVParser extends PropelParser
 		preg_match_all('/(".+?"|[^' . $delim . ']+)(' . $delim . '|$)/', $row, $matches);
 		return $matches[1];
 	}
-	
+
 	/**
 	 * Accepts a formatted row of data and returns it raw
-	 * 
+	 *
 	 * @param array An array of data from a CSV output
 	 * @return array The cleaned up array
 	 */
@@ -242,13 +242,13 @@ class PropelCSVParser extends PropelParser
 		}
 		return $row;
 	}
-	
+
 	protected function isQuoted($input)
 	{
 		$quote = preg_quote($this->quotechar, '/');
 		return preg_match('/^' . $quote . '.*' . $quote . '$/', $input);
 	}
-	
+
 	protected function unescape($input)
 	{
 		return str_replace(
@@ -257,12 +257,12 @@ class PropelCSVParser extends PropelParser
 			$input
 		);
 	}
-	
+
 	protected function unquote($input)
 	{
 		return trim($input, $this->quotechar);
 	}
-	
+
 	/**
 	 * Checks whether a value from CSV output is serialized
 	 */
@@ -278,7 +278,7 @@ class PropelCSVParser extends PropelParser
 	{
 		return unserialize($input);
 	}
-	
+
 	/**
 	 * Alias for PropelCSVParser::toArray()
 	 *
@@ -292,5 +292,5 @@ class PropelCSVParser extends PropelParser
 	{
 		return $this->toArray($data, $isList, $includeHeading);
 	}
-	
+
 }

@@ -24,7 +24,7 @@ Rebuild your model, and you're ready to go. The code of the model classes now us
 // in om/BaseBook.php
   /**
    * Set the value of [title] column.
-   * 
+   *
    * @param      string $v new value
    * @return     Table4 The current object (for fluent API support)
    */
@@ -34,21 +34,21 @@ Rebuild your model, and you're ready to go. The code of the model classes now us
   	{
   		$v = (string) $v;
   	}
-  
+
   	if ($this->title !== $v)
   	{
   		$this->title = $v;
   		$this->modifiedColumns[] = BookPeer::TITLE;
   	}
-  
+
   	return $this;
   }
-  
-// instead of 
+
+// instead of
 
 	/**
 	 * Set the value of [title] column.
-	 * 
+	 *
 	 * @param      string $v new value
 	 * @return     Table4 The current object (for fluent API support)
 	 */

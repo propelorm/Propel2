@@ -39,7 +39,7 @@ class FieldnameRelatedTest extends PHPUnit_Framework_TestCase
 		require_once 'bookstore/BookPeer.php';
 		require_once 'bookstore/Book.php';
 	}
-	
+
 	/**
 	 * Tests if fieldname type constants are defined
 	 */

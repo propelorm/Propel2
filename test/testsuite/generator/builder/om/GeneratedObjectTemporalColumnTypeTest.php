@@ -37,7 +37,7 @@ EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
-	
+
 	public function testNullValue()
 	{
 		$r = new ComplexColumnTypeEntity5();
@@ -57,7 +57,7 @@ EOF;
 		$r->setBar1('');
 		$this->assertNull($r->getBar1());
 	}
-	
+
 	public function testPreEpochValue()
 	{
 		$r = new ComplexColumnTypeEntity5();

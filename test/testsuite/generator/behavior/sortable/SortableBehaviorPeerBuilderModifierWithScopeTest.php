@@ -25,13 +25,13 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends BookstoreSortable
 		parent::setUp();
 		$this->populateTable12();
 	}
-	
+
 	public function testStaticAttributes()
 	{
 		$this->assertEquals(Table12Peer::RANK_COL, 'table12.POSITION');
 		$this->assertEquals(Table12Peer::SCOPE_COL, 'table12.MY_SCOPE_COLUMN');
 	}
-	
+
 	public function testGetMaxRank()
 	{
 		$this->assertEquals(4, Table12Peer::getMaxRank(1), 'getMaxRank() returns the maximum rank of the suite');
@@ -53,7 +53,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends BookstoreSortable
 		$this->assertEquals(2, $t6->getRank(), 'retrieveByRank() returns the object with the required rank in the required suite');
 		$this->assertEquals('row6', $t6->getTitle(), 'retrieveByRank() returns the object with the required rank in the required suite');
 	}
-	
+
 	public function testReorder()
 	{
 		$c = new Criteria();
@@ -71,7 +71,7 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends BookstoreSortable
 		$expected = array(1 => 'row5', 2 => 'row6');
 		$this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'reorder() leaves other suites unchanged');
 	}
-	
+
 	public function testDoSelectOrderByRank()
 	{
 		$c = new Criteria();
@@ -91,13 +91,13 @@ class SortableBehaviorPeerBuilderModifierWithScopeTest extends BookstoreSortable
 			$oldRank = $object->getRank();
 		}
 	}
-	
+
 	public function testRetrieveList()
 	{
 	  $this->assertEquals(4, count(Table12Peer::retrieveList(1)), 'retrieveList() returns the list of objects in the scope');
 	  $this->assertEquals(2, count(Table12Peer::retrieveList(2)), 'retrieveList() returns the list of objects in the scope');
 	}
-	
+
 	public function testCountList()
 	{
 	  $this->assertEquals(4, Table12Peer::countList(1), 'countList() returns the list of objects in the scope');

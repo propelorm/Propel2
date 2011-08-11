@@ -4,7 +4,7 @@
   <behavior name="do_nothing">
     <parameter name="foo" value="bar" />
   </behavior>
-  
+
 	<table name="table3">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />

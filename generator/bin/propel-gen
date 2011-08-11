@@ -11,22 +11,22 @@
 if [ -z "$PROPEL_GEN_HOME" ] ; then
 
   # try to find Propel
-  if [ -d /opt/propel/generator ] ; then 
+  if [ -d /opt/propel/generator ] ; then
     PROPEL_GEN_HOME=/opt/propel/generator
   fi
 
-  if [ -d "${HOME}/opt/propel/generator" ] ; then 
+  if [ -d "${HOME}/opt/propel/generator" ] ; then
     PROPEL_GEN_HOME="${HOME}/opt/propel/generator"
   fi
 
-  if [ -d "/usr/local/propel/generator" ] ; then 
+  if [ -d "/usr/local/propel/generator" ] ; then
     PROPEL_GEN_HOME="/usr/local/propel/generator"
   fi
 
-  if [ -d "${HOME}/usr/propel/generator" ] ; then 
+  if [ -d "${HOME}/usr/propel/generator" ] ; then
     PROPEL_GEN_HOME="${HOME}/usr/propel/generator"
   fi
-  
+
   ## resolve links - the script name may be a link to phing's home
   PRG="$0"
   progname=`basename "$0"`
@@ -35,7 +35,7 @@ if [ -z "$PROPEL_GEN_HOME" ] ; then
   # need this for relative symlinks
   dirname_prg=`dirname "$PRG"`
   cd "$dirname_prg"
-  
+
   while [ -h "$PRG" ] ; do
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`
@@ -47,15 +47,15 @@ if [ -z "$PROPEL_GEN_HOME" ] ; then
   done
 
   cd "$saveddir"
-  
+
   PROPEL_GEN_HOME=`dirname "$PRG"`/..
 
   # make it fully qualified
   PROPEL_GEN_HOME=`cd "$PROPEL_GEN_HOME" && pwd`
-  
+
   # make it available in PHP via getenv("PROPEL_GEN_HOME")
   export PROPEL_GEN_HOME
-  
+
 fi
 
 if [ -z "$PHING_COMMAND" ] ; then

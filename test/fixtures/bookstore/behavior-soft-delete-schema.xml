@@ -15,5 +15,5 @@
 			<parameter name="deleted_column" value="deleted_on" />
 		</behavior>
 	</table>
-	
+
 </database>

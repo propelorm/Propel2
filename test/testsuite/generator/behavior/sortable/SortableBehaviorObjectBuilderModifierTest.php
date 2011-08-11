@@ -25,7 +25,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		parent::setUp();
 		$this->populateTable11();
 	}
-	
+
 	public function testPreInsert()
 	{
 		Table11Peer::doDeleteAll();
@@ -37,7 +37,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t2->save();
 		$this->assertEquals($t2->getRank(), 2, 'Sortable inserts new line in last position');
 	}
-	
+
 	public function testPreDelete()
 	{
 		$max = Table11Peer::getMaxRank();
@@ -49,7 +49,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t4 = Table11Peer::doSelectOne($c);
 		$this->assertEquals(3, $t4->getRank(), 'Sortable rearrange subsequent rows on delete');
 	}
-	
+
 	public function testIsFirst()
 	{
 		$first = Table11Peer::retrieveByRank(1);
@@ -74,7 +74,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 	{
 		$t = Table11Peer::retrieveByRank(3);
 		$this->assertEquals(4, $t->getNext()->getRank(), 'getNext() returns the next object in rank');
-		
+
 		$t = Table11Peer::retrieveByRank(4);
 		$this->assertNull($t->getNext(), 'getNext() returns null for the last object');
 	}
@@ -87,7 +87,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$t = Table11Peer::retrieveByRank(1);
 		$this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
 	}
-	
+
 	public function testInsertAtRank()
 	{
 		$t = new Table11();
@@ -99,7 +99,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$expected = array(1 => 'row1', 2 => 'new', 3 => 'row2', 4 => 'row3', 5 => 'row4');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'insertAtRank() shifts the entire suite');
 	}
-	
+
 	public function testInsertAtMaxRankPlusOne()
 	{
 		$t = new Table11();
@@ -260,7 +260,7 @@ class SortableBehaviorObjectBuilderModifierTest extends BookstoreSortableTestBas
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'moveToBottom() changes nothing when called on the bottom node');
 	}
-	
+
 	public function testRemoveFromList()
 	{
 		$t2 = Table11Peer::retrieveByRank(2);

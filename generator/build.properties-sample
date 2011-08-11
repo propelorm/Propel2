@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------
 # This file contains some example properties.  Ideally properties
 # should be specified in the project-specific build.properties file;
-# however, this file can be used to specify non-default properties 
+# however, this file can be used to specify non-default properties
 # that you would like to use accross all of your Propel projects.
 # -------------------------------------------------------------------
 #
@@ -20,14 +20,14 @@ propel.home = .
 # This is the name of your Propel project. The name of your Propel
 # project is used (by default) to determine where the generator will
 # find needed configuration files and will place resuilting build
-# files. E.g. if your project is named 'killerapp', Propel will 
+# files. E.g. if your project is named 'killerapp', Propel will
 # look here for schema.xml and runtime-conf.xml files:
-# 
+#
 #   projects/killerapp/
 #
 # -------------------------------------------------------------------
 
-# You can set this here, but it's preferrable to set this in a 
+# You can set this here, but it's preferrable to set this in a
 # project-specific build.properties file.
 #
 # propel.project = bookstore
@@ -43,7 +43,7 @@ propel.home = .
 #   mssql, mysql, oracle, pgsql, sqlite
 # -------------------------------------------------------------------
 
-# You can set this here, but it's preferrable to set this in a 
+# You can set this here, but it's preferrable to set this in a
 # project-specific build.properties file.
 #
 # propel.database = mysql
@@ -72,19 +72,19 @@ propel.home = .
 #   A string to pre-pend to the file names of base data and peer objects.
 #
 # complexObjectModel
-#   If true, Propel generates data objects with collection support and 
+#   If true, Propel generates data objects with collection support and
 #   methods to easily retreive foreign key relationships.
 #
 # targetPackage
-#   Sets the PHP "package" the om files will generated to, e.g. 
+#   Sets the PHP "package" the om files will generated to, e.g.
 #   "com.company.project.om".
 #
 # targetPlatform
-#   Sets whether Propel is building classes for php5 (default) 
+#   Sets whether Propel is building classes for php5 (default)
 #   or php4 (experimental).
 #
 # packageObjectModel
-#   Sets whether Propel is packaging ObjectModel fro several 
+#   Sets whether Propel is packaging ObjectModel fro several
 #   [package].schema.xml files. The <database package="packageName">
 #   attribute has to be set then. (warning: this is experimental!)
 #
@@ -129,7 +129,7 @@ propel.packageObjectModel = false
 #
 # propel.database.url = mysql:host=$host;dbname=$database
 
-# For MySQL or Oracle, you also need to specify username & password 
+# For MySQL or Oracle, you also need to specify username & password
 # propel.database.user = [db username]
 # propel.database.password = [db password]
 
@@ -148,18 +148,18 @@ propel.packageObjectModel = false
 #
 # -------------------------------------------------------------------
 #
-# samePhpName 
-#   If true, the reverse task will set the phpName attribute for the 
+# samePhpName
+#   If true, the reverse task will set the phpName attribute for the
 #   tables and columns to be the same as SQL name.
 #
-# addVendorInfo 
-#   If true, the reverse task will add vendor specific information 
+# addVendorInfo
+#   If true, the reverse task will add vendor specific information
 #   to the database schema
 #
-# addValidators 
+# addValidators
 #   List of Validators that the reverse task may add to the schema
 #   based on database constraints.
-#   Allowed tokens are: 
+#   Allowed tokens are:
 #      none       add no validators
 #      all        add all validators
 #      maxlength  add maxlengths for string type columns
@@ -183,7 +183,7 @@ propel.packageObjectModel = false
 #
 # -------------------------------------------------------------------
 # Some databases provide some configuration options that can be set
-# in this script.  
+# in this script.
 #
 # === MySQL
 # propel.mysql.tableType

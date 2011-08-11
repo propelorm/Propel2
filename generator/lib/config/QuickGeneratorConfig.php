@@ -18,32 +18,32 @@ require_once dirname(__FILE__) . '/GeneratorConfigInterface.php';
 class QuickGeneratorConfig implements GeneratorConfigInterface
 {
 	protected $builders = array(
-		'peer'					=> 'PHP5PeerBuilder', 
-		'object'				=> 'PHP5ObjectBuilder', 
-		'objectstub'		=> 'PHP5ExtensionObjectBuilder', 
-		'peerstub'			=> 'PHP5ExtensionPeerBuilder', 
-		'objectmultiextend' => 'PHP5MultiExtendObjectBuilder', 
-		'tablemap'			=> 'PHP5TableMapBuilder', 
-		'query'					=> 'QueryBuilder', 
-		'querystub'			=> 'ExtensionQueryBuilder', 
-		'queryinheritance' => 'QueryInheritanceBuilder', 
-		'queryinheritancestub' => 'ExtensionQueryInheritanceBuilder', 
-		'interface'			=> 'PHP5InterfaceBuilder', 
-		'node'					=> 'PHP5NodeBuilder', 
-		'nodepeer'			=> 'PHP5NodePeerBuilder', 
-		'nodestub'			=> 'PHP5ExtensionNodeBuilder', 
-		'nodepeerstub'	=> 'PHP5ExtensionNodePeerBuilder', 
-		'nestedset'			=> 'PHP5NestedSetBuilder', 
+		'peer'					=> 'PHP5PeerBuilder',
+		'object'				=> 'PHP5ObjectBuilder',
+		'objectstub'		=> 'PHP5ExtensionObjectBuilder',
+		'peerstub'			=> 'PHP5ExtensionPeerBuilder',
+		'objectmultiextend' => 'PHP5MultiExtendObjectBuilder',
+		'tablemap'			=> 'PHP5TableMapBuilder',
+		'query'					=> 'QueryBuilder',
+		'querystub'			=> 'ExtensionQueryBuilder',
+		'queryinheritance' => 'QueryInheritanceBuilder',
+		'queryinheritancestub' => 'ExtensionQueryInheritanceBuilder',
+		'interface'			=> 'PHP5InterfaceBuilder',
+		'node'					=> 'PHP5NodeBuilder',
+		'nodepeer'			=> 'PHP5NodePeerBuilder',
+		'nodestub'			=> 'PHP5ExtensionNodeBuilder',
+		'nodepeerstub'	=> 'PHP5ExtensionNodePeerBuilder',
+		'nestedset'			=> 'PHP5NestedSetBuilder',
 		'nestedsetpeer' => 'PHP5NestedSetPeerBuilder',
 	);
-	
+
 	protected $buildProperties = array();
-	
+
 	public function __construct()
 	{
 		$this->setBuildProperties($this->parsePseudoIniFile(dirname(__FILE__) . '/../../default.properties'));
 	}
-	
+
 	/**
 	 * Why would Phing use ini while it so fun to invent a new format? (sic)
 	 * parse_ini_file() doesn't work for Phing property files
@@ -69,7 +69,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
 		}
 		return $properties;
 	}
-	
+
 	/**
 	 * Gets a configured data model builder class for specified table and based on type.
 	 *
@@ -96,7 +96,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
 		require_once dirname(__FILE__) . '/../builder/util/DefaultEnglishPluralizer.php';
 		return new DefaultEnglishPluralizer();
 	}
-  
+
 	/**
 	 * Parses the passed-in properties, renaming and saving eligible properties in this object.
 	 *

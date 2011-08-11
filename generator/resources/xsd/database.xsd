@@ -141,13 +141,13 @@
 			<xs:enumeration value="false"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="sql_type">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[\w\s\[\]\(\),\.']+"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="php_type">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[\w_]+"/>
@@ -573,7 +573,7 @@
 	<xs:complexType name="table">
 
 		<xs:choice maxOccurs="unbounded">
-		
+
 			<xs:element name="column" type="column" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -581,7 +581,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="foreign-key" type="foreign-key" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -589,7 +589,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="index" type="index" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -597,7 +597,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="unique" type="unique" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -605,7 +605,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="id-method-parameter" type="id-method-parameter" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -613,7 +613,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -621,7 +621,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element name="behavior" type="behavior" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -629,7 +629,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 			<xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -637,7 +637,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			
+
 		</xs:choice>
 		<xs:attribute name="name" type="table_name" use="required">
 			<xs:annotation>

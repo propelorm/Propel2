@@ -90,7 +90,7 @@ class XmlToAppData
 		if ($this->isAlreadyParsed($xmlFile)) {
 			return;
 		}
-		
+
 		return $this->parseString(file_get_contents($xmlFile), $xmlFile);
 	}
 
@@ -123,12 +123,12 @@ class XmlToAppData
 			);
 		}
 		xml_parser_free($parser);
-		
+
 		array_pop($this->schemasTagsStack);
 
 		return $this->app;
 	}
-	
+
 	/**
 	 * Handles opening elements of the xml file.
 	 *
@@ -239,11 +239,11 @@ class XmlToAppData
 	  		case "id-method-parameter":
 					$this->currTable->addIdMethodParameter($attributes);
 				break;
-        
+
 				case "behavior":
 				  $this->currBehavior = $this->currTable->addBehavior($attributes);
 				break;
-				
+
 				default:
 					$this->_throwInvalidTagException($parser, $name);
 			}
@@ -373,7 +373,7 @@ class XmlToAppData
 
 		$this->popCurrentSchemaTag();
 	}
-	
+
 	protected function peekCurrentSchemaTag()
 	{
 		$keys = array_keys($this->schemasTagsStack);

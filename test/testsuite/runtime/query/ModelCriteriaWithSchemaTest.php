@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/schemas/SchemasTestBas
  */
 class ModelCriteriaWithSchemaTest extends SchemasTestBase
 {
-	
+
 	protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
 	{
 		$params = array();

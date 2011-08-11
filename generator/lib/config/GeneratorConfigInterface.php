@@ -29,7 +29,7 @@ interface GeneratorConfigInterface
 	* @return     Pluralizer
 	*/
 	public function getConfiguredPluralizer();
-	
+
 	/**
 	 * Gets a specific propel (renamed) property from the build.
 	 *

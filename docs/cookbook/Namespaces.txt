@@ -49,8 +49,8 @@ Here is an example schema using namespaces:
 </database>
 }}}
 
-The `<database>` element defines a `namespace` attribute. The `book` and `author` tables inherit their namespace from the database, therefore the generated classes for these tables will be `\Bookstore\Book` and `\Bookstore\Author`. 
-  
+The `<database>` element defines a `namespace` attribute. The `book` and `author` tables inherit their namespace from the database, therefore the generated classes for these tables will be `\Bookstore\Book` and `\Bookstore\Author`.
+
 The `publisher` table defines a `namespace` attribute on ots own, which ''extends'' the database namespace. That means that the generated class will be `\Bookstore\Book\Publisher`.
 
 As for the `user` table, it defines an absolute namespace (starting with a backslash), which ''overrides'' the database namespace. The generated class for the `user` table will be `Admin\User`.
@@ -111,10 +111,10 @@ echo get_class($book->getPublisher());
 == Using Namespaces As A Directory Structure ==
 
 In a schema, you can define a `package` attribute on a `<database>` or a `<table>` tag to generate model classes in a subdirectory (see [wiki:Documentation/1.6/Multi-Component]). If you use namespaces to autoload your classes based on a SplClassAutoloader (see http://groups.google.com/group/php-standards), then you may find yourself repeating the `namespace` data in the `package` attribute:
-    
+
 {{{
 #!xml
-<database name="bookstore" defaultIdMethod="native" 
+<database name="bookstore" defaultIdMethod="native"
   namespace="Foo/Bar" package="Foo.Bar">
 }}}
 

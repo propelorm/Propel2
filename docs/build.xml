@@ -7,7 +7,7 @@
 		<phingcall target="phpdoc-runtime"/>
 		<phingcall target="phpdoc-generator"/>
 	</target>
-	
+
 	<target name="phpdoc-runtime" description="build runtime docs">
 		<phpdoc title="Propel Runtime" destdir="api/runtime" sourcecode="yes" output="HTML:Smarty:PHP">
 			<fileset dir="${runtime.dir}/lib">

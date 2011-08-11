@@ -69,17 +69,17 @@ class BookQuery extends BaseBookQuery
   {
     return $this->getCacheBackend()->test($key);
   }
-  
+
   public function cacheFetch($key)
   {
     return $this->getCacheBackend()->load($key);
   }
-  
+
   public function cacheStore($key, $value)
   {
     return $this->getCacheBackend()->save($key, $value);
   }
-  
+
   protected function getCacheBackend()
   {
     if (self::$cacheBackend === null) {
@@ -98,7 +98,7 @@ class BookQuery extends BaseBookQuery
       );
       self::$cacheBackend = Zend_Cache::factory('Core', 'Memcached', $frontendOptions, $backendOptions);
     }
-  
+
     return self::$cacheBackend;
   }
 }

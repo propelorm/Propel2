@@ -40,7 +40,7 @@ EOF;
 	{
 		$this->assertEquals(3, LazyLoadActiveRecord2Peer::NUM_HYDRATE_COLUMNS);
 	}
-	
+
 	public function testPopulateObjectNotInPool()
 	{
 		LazyLoadActiveRecord2Peer::clearInstancePool();
@@ -104,5 +104,5 @@ EOF;
 		$this->assertNull($obj->getBar());
 		$this->assertEquals('bazValue', $obj->getBaz());
 	}
-	
+
 }

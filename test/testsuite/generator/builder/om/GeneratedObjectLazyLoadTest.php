@@ -50,7 +50,7 @@ EOF;
 		$this->assertEquals('hello', $obj2->getFoo());
 		$this->assertEquals($count, $con->getQueryCount());
 	}
-	
+
 	public function testLazyLoadedColumnsRequireAnAdditionalQueryOnGetter()
 	{
 		$con = Propel::getconnection(LazyLoadActiveRecordPeer::DATABASE_NAME);

@@ -29,17 +29,17 @@ class Behavior extends XMLElement
 	protected $dirname;
 	protected $additionalBuilders = array();
 	protected $tableModificationOrder = 50;
-	
+
 	public function setName($name)
 	{
 		$this->name = $name;
-	}	 
-	
+	}
+
 	public function getName()
 	{
 		return $this->name;
 	}
-	
+
 	public function setTable(Table $table)
 	{
 		$this->table = $table;
@@ -59,7 +59,7 @@ class Behavior extends XMLElement
 	{
 		return $this->database;
 	}
-	
+
 	/**
 	 * Add a parameter
 	 * Expects an associative array looking like array('name' => 'foo', 'value' => bar)
@@ -71,7 +71,7 @@ class Behavior extends XMLElement
 		$attribute = array_change_key_case($attribute, CASE_LOWER);
 		$this->parameters[$attribute['name']] = $attribute['value'];
 	}
-	
+
 	/**
 	 * Overrides the behavior parameters
 	 * Expects an associative array looking like array('foo' => 'bar')
@@ -82,10 +82,10 @@ class Behavior extends XMLElement
 	{
 		$this->parameters = $parameters;
 	}
-	
+
 	/**
 	 * Get the associative array of parameters
-	 * @return    array 
+	 * @return    array
 	 */
 	public function getParameters()
 	{
@@ -101,7 +101,7 @@ class Behavior extends XMLElement
 	 * Define when this behavior must execute its modifyTable() relative to other behaviors.
 	 * The bigger the value, the later the behavior is executed. Default is 50.
 	 *
-	 * @param $tableModificationOrder integer 
+	 * @param $tableModificationOrder integer
 	 */
 	public function setTableModificationOrder($tableModificationOrder)
 	{
@@ -112,13 +112,13 @@ class Behavior extends XMLElement
 	 * Get when this behavior must execute its modifyTable() relative to other behaviors.
 	 * The bigger the value, the later the behavior is executed. Default is 50.
 	 *
-	 * @return integer 
+	 * @return integer
 	 */
 	public function getTableModificationOrder()
 	{
 		return $this->tableModificationOrder;
 	}
-	
+
 	/**
 	 * This method is automatically called on database behaviors when the database model is finished
 	 * Propagate the behavior to the tables of the database
@@ -132,7 +132,7 @@ class Behavior extends XMLElement
 			$table->addBehavior($b);
 		}
 	}
-	
+
 	/**
 	 * This method is automatically called on table behaviors when the database model is finished
 	 * Override it to add columns to the current table
@@ -150,7 +150,7 @@ class Behavior extends XMLElement
 	{
 		return $this->isTableModified;
 	}
-	
+
 	/**
 	 * Use Propel's simple templating system to render a PHP file
 	 * using variables passed as arguments.
@@ -177,10 +177,10 @@ class Behavior extends XMLElement
 		$template = new PropelTemplate();
 		$template->setTemplateFile($filePath);
 		$vars = array_merge($vars, array('behavior' => $this));
-		
+
 		return $template->render($vars);
 	}
-	
+
 	/**
 	 * Returns the current dirname of this behavior (also works for descendants)
 	 *
@@ -194,11 +194,11 @@ class Behavior extends XMLElement
 		}
 		return $this->dirname;
 	}
-	
+
 	/**
 	 * Retrieve a column object using a name stored in the behavior parameters
 	 * Useful for table behaviors
-	 * 
+	 *
 	 * @param     string    $param Name of the parameter storing the column name
 	 * @return    ColumnMap The column of the table supporting the behavior
 	 */
@@ -206,7 +206,7 @@ class Behavior extends XMLElement
 	{
 		return $this->getTable()->getColumn($this->getParameter($param));
 	}
-	
+
 	/**
 	 * Sets up the Behavior object based on the attributes that were passed to loadFromXML().
 	 * @see       parent::loadFromXML()
@@ -215,7 +215,7 @@ class Behavior extends XMLElement
 	{
 		$this->name = $this->getAttribute("name");
 	}
-		
+
 	/**
 	 * @see       parent::appendXml(DOMNode)
 	 */
@@ -232,12 +232,12 @@ class Behavior extends XMLElement
 			$parameterNode->setAttribute('value', $value);
 		}
 	}
-	
+
 	public function getTableModifier()
 	{
 		return $this;
-	}	 
-	
+	}
+
 	public function getObjectBuilderModifier()
 	{
 		return $this;
@@ -252,7 +252,7 @@ class Behavior extends XMLElement
 	{
 		return $this;
 	}
-	
+
 	public function getTableMapBuilderModifier()
 	{
 		return $this;
@@ -262,7 +262,7 @@ class Behavior extends XMLElement
 	{
 		return !empty($this->additionalBuilders);
 	}
-	
+
 	public function getAdditionalBuilders()
 	{
 		return $this->additionalBuilders;

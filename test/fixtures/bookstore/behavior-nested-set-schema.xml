@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.nested_set">
-	
+
 	<table name="table9">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />

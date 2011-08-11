@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/schemas/SchemasTestBas
  * @version    $Id$
  * @package    runtime.map
  */
-class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase 
+class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
 {
   protected $databaseMap;
 
@@ -48,7 +48,7 @@ class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
 		$this->assertEquals($accountToCustomer, $customerToAccount->getSymmetricalRelation());
 		$this->assertEquals($customerToAccount, $accountToCustomer->getSymmetricalRelation());
 	}
-	
+
 	public function testSeveralRelationsOnSameTable()
 	{
 		$contestTable = $this->databaseMap->getTableByPhpName('ContestBookstoreContest');
@@ -58,7 +58,7 @@ class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
 		$this->assertEquals($contestToCustomer, $customerToContest->getSymmetricalRelation());
 		$this->assertEquals($customerToContest, $contestToCustomer->getSymmetricalRelation());
 	}
-	
+
 	public function testCompositeForeignKey()
 	{
 		$entryTable = $this->databaseMap->getTableByPhpName('ContestBookstoreContestEntry');
@@ -68,5 +68,5 @@ class RelatedMapSymmetricalWithSchemasTest extends SchemasTestBase
 		$this->assertEquals($entryToContest, $contestToEntry->getSymmetricalRelation());
 		$this->assertEquals($contestToEntry, $entryToContest->getSymmetricalRelation());
 	}
-	
+
 }

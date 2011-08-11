@@ -121,7 +121,7 @@ class PgsqlPlatform extends DefaultPlatform
 
 	protected function getAddSequenceDDL(Table $table)
 	{
-		if ($table->getIdMethod() == IDMethod::NATIVE 
+		if ($table->getIdMethod() == IDMethod::NATIVE
 		 && $table->getIdMethodParameters() != null) {
 			$pattern = "
 CREATE SEQUENCE %s;
@@ -134,7 +134,7 @@ CREATE SEQUENCE %s;
 
 	protected function getDropSequenceDDL(Table $table)
 	{
-		if ($table->getIdMethod() == IDMethod::NATIVE 
+		if ($table->getIdMethod() == IDMethod::NATIVE
 		 && $table->getIdMethodParameters() != null) {
 			$pattern = "
 DROP SEQUENCE %s;
@@ -191,7 +191,7 @@ SET search_path TO public;
 ";
 		}
 	}
-	
+
 	public function getAddTablesDDL(Database $database)
 	{
 		$ret = $this->getBeginDDL();
@@ -208,7 +208,7 @@ SET search_path TO public;
 		$ret .= $this->getEndDDL();
 		return $ret;
 	}
-	
+
 	public function getAddTableDDL(Table $table)
 	{
 		$ret = '';
@@ -241,7 +241,7 @@ CREATE TABLE %s
 			$this->quoteIdentifier($table->getName()),
 			implode($sep, $lines)
 		);
-		
+
 		if ($table->hasDescription()) {
 			$pattern = "
 COMMENT ON TABLE %s IS %s;
@@ -251,13 +251,13 @@ COMMENT ON TABLE %s IS %s;
 				$this->quote($table->getDescription())
 			);
 		}
-		
+
 		$ret .= $this->getAddColumnsComments($table);
 		$ret .= $this->getResetSchemaDDL($table);
-		
+
 		return $ret;
 	}
-	
+
 	protected function getAddColumnsComments(Table $table)
 	{
 		$ret = '';
@@ -299,11 +299,11 @@ DROP TABLE %s CASCADE;
 		$tableName = $table->getName();
 		return $tableName . '_pkey';
 	}
-		
+
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();
-		
+
 		$ddl = array($this->quoteIdentifier($col->getName()));
 		$sqlType = $domain->getSqlType();
 		$table = $col->getTable();
@@ -335,7 +335,7 @@ DROP TABLE %s CASCADE;
 			$this->getColumnListDDL($unique->getColumns())
 		);
 	}
-	
+
 	/**
 	 * @see        Platform::supportsSchemas()
 	 */
@@ -353,7 +353,7 @@ DROP TABLE %s CASCADE;
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Overrides the implementation from DefaultPlatform
 	 *
@@ -365,13 +365,13 @@ DROP TABLE %s CASCADE;
 	{
 		$ret = '';
 		$changedProperties = $columnDiff->getChangedProperties();
-		
+
 		$toColumn = $columnDiff->getToColumn();
-		
+
 		$table = $toColumn->getTable();
-		
+
 		$colName = $this->quoteIdentifier($toColumn->getName());
-		
+
 		$pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
 ";
@@ -405,7 +405,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * Overrides the implementation from DefaultPlatform
 	 *
@@ -421,7 +421,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * Overrides the implementation from DefaultPlatform
 	 *
@@ -437,10 +437,10 @@ ALTER TABLE %s ALTER COLUMN %s;
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * Overrides the implementation from DefaultPlatform
-	 * 
+	 *
 	 * @author     Niklas Närhinen <niklas@narhinen.net>
 	 * @return     string
 	 * @see        DefaultPlatform::getDropIndexDDL
@@ -451,7 +451,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 			$pattern = "
 	ALTER TABLE %s DROP CONSTRAINT %s;
 	";
-			return sprintf($pattern, 
+			return sprintf($pattern,
 				$this->quoteIdentifier($index->getTable()->getName()),
 				$this->quoteIdentifier($index->getName())
 			);

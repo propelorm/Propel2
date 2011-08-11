@@ -208,7 +208,7 @@ class DBOracle extends DBAdapter
 
 		return $criteria;
 	}
-	
+
 	/**
 	 * @see       DBAdapter::bindValue()
 	 *

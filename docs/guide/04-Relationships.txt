@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-The definition of foreign keys in your schema allows Propel to add smart methods to the generated model and query objects. In practice, these generated methods mean that you will never actually have to deal with primary and foreign keys yourself. It makes the task of dealing with relations extremely straightforward. 
+The definition of foreign keys in your schema allows Propel to add smart methods to the generated model and query objects. In practice, these generated methods mean that you will never actually have to deal with primary and foreign keys yourself. It makes the task of dealing with relations extremely straightforward.
 
 == Inserting A Related Row ==
 
@@ -44,7 +44,7 @@ $author->addBook($book);
 $author->save();
 }}}
 
-The result is the same in the database - the `author_id` column of the `book` row is correctly set to the `id` of the `author` row. 
+The result is the same in the database - the `author_id` column of the `book` row is correctly set to the `id` of the `author` row.
 
 == Save Cascade ==
 
@@ -84,7 +84,7 @@ Just like the related object setters, Propel generates a getter for every relati
 #!php
 <?php
 $book = BookQuery()::create()->findPk(1);
-$author = $book->getAuthor(); 
+$author = $book->getAuthor();
 echo $author->getFirstName(); // 'Leo'
 }}}
 
@@ -93,7 +93,7 @@ Since a relationship can also be seen from the other end, Propel allows the fore
 {{{
 #!php
 <?php
-$author = AuthorQuery::create()->findPk(1); 
+$author = AuthorQuery::create()->findPk(1);
 $books = $author->getBooks();
 foreach ($books as $book) {
   echo $book->getTitle();
@@ -124,7 +124,7 @@ If you need to find objects related to a model object that you already have, you
 {{{
 #!php
 <?php
-$author = AuthorQuery::create()->findPk(1); 
+$author = AuthorQuery::create()->findPk(1);
 $books = BookQuery::create()
   ->filterByAuthor($author)
   ->orderByTitle()
@@ -143,8 +143,8 @@ To illustrate this, let's see how to write the following SQL query with the Prop
 
 {{{
 #!sql
-SELECT book.* 
-FROM book INNER JOIN author ON book.AUTHOR_ID = author.ID 
+SELECT book.*
+FROM book INNER JOIN author ON book.AUTHOR_ID = author.ID
 WHERE book.ISBN = '0140444173' AND author.FIRST_NAME = 'Leo'
 ORDER BY book.TITLE ASC
 LIMIT 10;
@@ -165,7 +165,7 @@ $books = BookQuery::create()
   ->find();
 }}}
 
-Propel knows the columns to use in the `ON` clause from the definition of foreign keys in the schema. The ability to use methods of a related Query object allows you to keep your model logic where it belongs. 
+Propel knows the columns to use in the `ON` clause from the definition of foreign keys in the schema. The ability to use methods of a related Query object allows you to keep your model logic where it belongs.
 
 Of course, you can embed several queries to issue a query of any complexity level:
 
@@ -417,4 +417,4 @@ To enable a model-only relationship, add a `<foreign-key>` tag using the `skipSq
 </table>
 }}}
 
-Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters. 
+Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters.

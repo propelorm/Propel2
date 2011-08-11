@@ -5,7 +5,7 @@
  * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
  * @param     PropelPDO $con an optional connection object
  *
- * @return <?php echo $i18nTablePhpName ?> 
+ * @return <?php echo $i18nTablePhpName ?>
  */
 public function getTranslation($locale = '<?php echo $defaultLocale ?>', PropelPDO $con = null)
 {

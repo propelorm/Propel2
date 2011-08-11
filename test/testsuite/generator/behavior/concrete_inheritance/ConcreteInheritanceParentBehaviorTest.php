@@ -28,13 +28,13 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 		$content = new ConcreteContent();
 		$content->save();
 		$this->assertFalse($content->hasChildObject());
-		
+
 		$article = new ConcreteArticle();
 		$article->save();
 		$content = $article->getConcreteContent();
 		$this->assertTrue($content->hasChildObject());
 	}
-	
+
 	public function testGetChildObject()
 	{
 		ConcreteArticleQuery::create()->deleteAll();
@@ -43,11 +43,11 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 		$content = new ConcreteContent();
 		$content->save();
 		$this->assertNull($content->getChildObject());
-		
+
 		$article = new ConcreteArticle();
 		$article->save();
 		$content = $article->getConcreteContent();
 		$this->assertEquals($article, $content->getChildObject());
 	}
-	
+
 }

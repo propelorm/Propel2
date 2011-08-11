@@ -22,7 +22,7 @@ class QueryCacheBehavior extends Behavior
 		'backend'     => 'apc',
 		'lifetime'    => 3600,
 	);
-	
+
 	public function queryAttributes($builder)
 	{
 		$script = "protected \$queryKey = '';
@@ -40,10 +40,10 @@ class QueryCacheBehavior extends Behavior
 			";
 				break;
 		}
-		
+
 		return $script;
 	}
-	
+
 	public function queryMethods($builder)
 	{
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
@@ -55,7 +55,7 @@ class QueryCacheBehavior extends Behavior
 		$this->addCacheStore($script);
 		$this->addGetSelectStatement($script);
 		$this->addGetCountStatement($script);
-		
+
 		return $script;
 	}
 
@@ -69,7 +69,7 @@ public function setQueryKey(\$key)
 }
 ";
 	}
-	
+
 	protected function addGetQueryKey(&$script)
 	{
 		$script .= "
@@ -79,7 +79,7 @@ public function getQueryKey()
 }
 ";
 	}
-	
+
 	protected function addCacheContains(&$script)
 	{
 		$script .= "
@@ -105,7 +105,7 @@ public function cacheContains(\$key)
 }
 ";
 	}
-	
+
 	protected function addCacheStore(&$script)
 	{
 		$script .= "
@@ -130,7 +130,7 @@ public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('
 }
 ";
 	}
-	
+
 	protected function addCacheFetch(&$script)
 	{
 		$script .= "
@@ -155,7 +155,7 @@ public function cacheFetch(\$key)
 }
 ";
 	}
-	
+
 	protected function addGetSelectStatement(&$script)
 	{
 		$script .= "
@@ -166,13 +166,13 @@ protected function getSelectStatement(\$con = null)
   if (\$con === null) {
 		\$con = Propel::getConnection(" . $this->peerClassname ."::DATABASE_NAME, Propel::CONNECTION_READ);
 	}
-	
+
 	if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
 		\$this->addSelfSelectColumns();
 	}
-	
+
 	\$this->configureSelectColumns();
-	
+
 	\$con->beginTransaction();
 	try {
 		\$this->basePreSelect(\$con);
@@ -195,12 +195,12 @@ protected function getSelectStatement(\$con = null)
 		\$con->rollback();
 		throw \$e;
 	}
-	
+
 	return \$stmt;
 }
 ";
 	}
-	
+
 	protected function addGetCountStatement(&$script)
 	{
 		$script .= "

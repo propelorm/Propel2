@@ -50,7 +50,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->setData($data);
 		$this->assertEquals($data, $col->getArrayCopy(), 'setData() sets the collection data');
 	}
-	
+
 	public function testGetPosition()
 	{
 		$col = new PropelCollection();
@@ -63,7 +63,7 @@ class PropelCollectionTest extends BookstoreTestBase
 			$this->assertEquals($element, $col->getCurrent(), 'getPosition() does not change the current position');
 		}
 	}
-	
+
 	public function testGetFirst()
 	{
 		$col = new PropelCollection();
@@ -85,7 +85,7 @@ class PropelCollectionTest extends BookstoreTestBase
 			$this->assertEquals($element, $col->getCurrent(), 'isFirst() does not change the current position');
 		}
 	}
-	
+
 	public function testGetPrevious()
 	{
 		$col = new PropelCollection();
@@ -109,7 +109,7 @@ class PropelCollectionTest extends BookstoreTestBase
 			$this->assertEquals($value, $col->getCurrent(), 'getCurrent() returns the value of the current element in the collection');
 		}
 	}
-		
+
 	public function testGetNext()
 	{
 		$col = new PropelCollection();
@@ -177,7 +177,7 @@ class PropelCollectionTest extends BookstoreTestBase
 			$this->assertEquals(!(boolean) ($key % 2), $col->isEven(), 'isEven() returns true only when the key is even');
 		}
 	}
-	
+
 	public function testGet()
 	{
 		$col = new PropelCollection(array('foo', 'bar'));
@@ -234,7 +234,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->set(null, 'bar');
 		$this->assertEquals(array('foo', 'bar'), $col->getData(), 'set() adds an element to the collection without a key');
 	}
-	
+
 	public function testRemove()
 	{
 		$col = new PropelCollection();
@@ -243,7 +243,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->remove(1);
 		$this->assertEquals(array('bar'), $col->getData(), 'remove() removes an element from its key');
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -263,7 +263,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->clear();
 		$this->assertEquals(array(), $col->getData(), 'clear() empties the collection');
 	}
-	
+
 	public function testContains()
 	{
 		$col = new PropelCollection();
@@ -283,18 +283,18 @@ class PropelCollectionTest extends BookstoreTestBase
 		$this->assertEquals(1, $col->search('bar2'), 'search() returns the key when the element exists');
 		$this->assertFalse($col->search('bar4'), 'search() returns false when the element does not exist');
 	}
-	
+
 	public function testSerializable()
 	{
 		$data = array('bar1', 'bar2', 'bar3');
 		$col = new PropelCollection($data);
 		$col->setModel('Foo');
 		$serializedCol = serialize($col);
-		
+
 		$col2 = unserialize($serializedCol);
 		$this->assertEquals($col, $col2, 'PropelCollection is serializable');
 	}
-	
+
 	public function testGetIterator()
 	{
 		$data = array('bar1', 'bar2', 'bar3');
@@ -330,7 +330,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col = new PropelCollection();
 		$col->getPeerClass();
 	}
-	
+
 	public function testGetConnection()
 	{
 		$col = new PropelCollection();

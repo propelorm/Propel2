@@ -25,7 +25,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		parent::setUp();
 		$this->populateTable12();
 	}
-	
+
 	public function testPreInsert()
 	{
 		Table12Peer::doDeleteAll();
@@ -42,7 +42,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$t2->save();
 		$this->assertEquals($t2->getRank(), 1, 'Sortable inserts new line in last position');
 	}
-	
+
 	public function testPreDelete()
 	{
 		$max = Table12Peer::getMaxRank(1);
@@ -56,7 +56,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$expected = array(1 => 'row5', 2 => 'row6');
 		$this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'delete() leaves other suites unchanged');
 	}
-	
+
 	public function testIsFirst()
 	{
 		$first = Table12Peer::retrieveByRank(1, 1);
@@ -91,10 +91,10 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$this->assertEquals('row2', $t->getNext()->getTitle(), 'getNext() returns the next object in rank in the same suite');
 		$t = Table12Peer::retrieveByRank(1, 2);
 		$this->assertEquals('row6', $t->getNext()->getTitle(), 'getNext() returns the next object in rank in the same suite');
-				
+
 		$t = Table12Peer::retrieveByRank(3, 1);
 		$this->assertEquals(4, $t->getNext()->getRank(), 'getNext() returns the next object in rank');
-		
+
 		$t = Table12Peer::retrieveByRank(4, 1);
 		$this->assertNull($t->getNext(), 'getNext() returns null for the last object');
 	}
@@ -105,14 +105,14 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$this->assertEquals('row1', $t->getPrevious()->getTitle(), 'getPrevious() returns the previous object in rank in the same suite');
 		$t = Table12Peer::retrieveByRank(2, 2);
 		$this->assertEquals('row5', $t->getPrevious()->getTitle(), 'getPrevious() returns the previous object in rank in the same suite');
-		
+
 		$t = Table12Peer::retrieveByRank(3, 1);
 		$this->assertEquals(2, $t->getPrevious()->getRank(), 'getPrevious() returns the previous object in rank');
 
 		$t = Table12Peer::retrieveByRank(1, 1);
 		$this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
 	}
-	
+
 	public function testInsertAtRank()
 	{
 		$t = new Table12();
@@ -147,7 +147,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$t->setScopeValue(1);
 		$t->insertAtRank(6);
 	}
-	
+
   /**
 	 * @expectedException PropelException
 	 */
@@ -171,7 +171,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$expected = array(1 => 'row5', 2 => 'row6');
 		$this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtBottom() leaves other suites unchanged');
 	}
-	
+
   /**
 	 * @expectedException PropelException
 	 */
@@ -314,7 +314,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 		$expected = array(1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2');
 		$this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToBottom() changes nothing when called on the bottom node');
 	}
-	
+
 	public function testRemoveFromList()
 	{
 		$t2 = Table12Peer::retrieveByRank(2, 1);

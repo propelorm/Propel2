@@ -28,12 +28,12 @@ class PropelMigrationTask extends BasePropelMigrationTask
 		$manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
 		$manager->setMigrationTable($this->getMigrationTable());
 		$manager->setMigrationDir($this->getOutputDirectory());
-		
+
 		if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
 			$this->log('All migrations were already executed - nothing to migrate.');
 			return false;
 		}
-		
+
 		$timestamps = $manager->getValidMigrationTimestamps();
 		if (count($timestamps) > 1) {
 			$this->log(sprintf('%d migrations to execute', count($timestamps)));
@@ -72,7 +72,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
 				if (!$res) {
 					$this->log('No statement was executed. The version was not updated.');
 					$this->log(sprintf(
-						'Please review the code in "%s"', 
+						'Please review the code in "%s"',
 						$manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
 					));
 					$this->log('Migration aborted', Project::MSG_ERR);
@@ -93,7 +93,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
 			}
 			$migration->postUp($manager);
 		}
-		
+
 		$this->log('Migration complete. No further migration to execute.');
 	}
 }

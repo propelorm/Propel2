@@ -30,7 +30,7 @@ class ColumnDefaultValueTest extends PHPUnit_Framework_TestCase
 			array(new ColumnDefaultValue('current_timestamp', 'bar'), new ColumnDefaultValue('now()', 'bar1'), false),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider equalsProvider
 	 */

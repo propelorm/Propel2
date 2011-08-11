@@ -22,7 +22,7 @@ class PropelStatementFormatter extends PropelFormatter
 	{
 		return $stmt;
 	}
-	
+
 	public function formatOne(PDOStatement $stmt)
 	{
 		if ($stmt->rowCount() == 0) {
@@ -31,7 +31,7 @@ class PropelStatementFormatter extends PropelFormatter
 			return $stmt;
 		}
 	}
-	
+
 	public function formatRecord($record = null)
 	{
 		throw new PropelException('The Statement formatter cannot transform a record into a statement');

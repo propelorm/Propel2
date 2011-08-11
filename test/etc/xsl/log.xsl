@@ -2,29 +2,29 @@
 <xsl:output method="html" indent="yes" encoding="US-ASCII"/>
 <!--
     Copyright  2000-2004 The Apache Software Foundation
-   
+
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-   
+
          http://www.apache.org/licenses/LICENSE-2.0
-   
+
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
-   
+
 -->
- 
+
 <!--
 
   The purpose have this XSL is to provide a nice way to look at the output
   from the Ant XmlLogger (ie: ant -listener org.apache.tools.ant.XmlLogger )
-  
+
   @author <a href="mailto:michiel@trendserver.nl>Michiel Rook</a>
   @author <a href="mailto:sbailliez@apache.org">Stephane Bailliez</a>
-  
+
 -->
 <xsl:decimal-format decimal-separator="." grouping-separator="," />
 
@@ -75,10 +75,10 @@
       color:#FFFFFF;
       font-weight: bold
     }
-    .a td { 
+    .a td {
       background: #efefef;
     }
-    .b td { 
+    .b td {
       background: #fff;
     }
     th, td {
@@ -124,7 +124,7 @@
       </td>
     </tr>
     </table>
-      
+
     <table border="0" width="100%">
     <tr><td><hr noshade="yes" size="1"/></td></tr>
     </table>
@@ -153,7 +153,7 @@
     </xsl:attribute>
     <tr>
       <xsl:if test="@error">
-        <td nowrap="yes">Build Failed</td> 
+        <td nowrap="yes">Build Failed</td>
       </xsl:if>
       <xsl:if test="not(@error)">
         <td nowrap="yes">Build Complete</td>

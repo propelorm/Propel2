@@ -18,11 +18,11 @@
 class PropelSQLParser
 {
 	protected $delimiter = ';';
-	
+
 	protected $sql = '';
 	protected $len = 0;
 	protected $pos = 0;
-	
+
 	/**
 	 * Sets the inner SQL string for this object.
 	 * Also resets the parsing cursor (see getNextStatement)
@@ -35,7 +35,7 @@ class PropelSQLParser
 		$this->pos = 0;
 		$this->len = strlen($sql);
 	}
-	
+
 	/**
 	 * Gets the inner SQL string for this object.
 	 *
@@ -52,7 +52,7 @@ class PropelSQLParser
 	 *
 	 * @param string $input The SQL statements
 	 * @param PDO $connection a connection object
-	 * 
+	 *
 	 * @return integer the number of executed statements
 	 */
 	public static function executeString($input, $connection)
@@ -66,21 +66,21 @@ class PropelSQLParser
 	 *
 	 * @param string $file the path to the SQL file
 	 * @param PDO $connection a connection object
-	 * 
+	 *
 	 * @return integer the number of executed statements
 	 */
 	public static function executeFile($file, $connection)
 	{
 		return self::executeStatements(self::parseFile($file), $connection);
 	}
-	
+
 	/**
 	 * Execute a list of DDL statements based on an array
 	 * Does not use transactions since they are not supported in DDL statements
 	 *
 	 * @param array $statements a list of SQL statements
 	 * @param PDO $connection a connection object
-	 * 
+	 *
 	 * @return integer the number of executed statements
 	 */
 	protected static function executeStatements($statements, $connection)
@@ -94,7 +94,7 @@ class PropelSQLParser
 		}
 		return count($statements);
 	}
-	
+
 	/**
 	 * Explodes a SQL string into an array of SQL statements.
 	 * @example
@@ -126,10 +126,10 @@ class PropelSQLParser
 		$parser->setSQL($input);
 		$parser->convertLineFeedsToUnixStyle();
 		$parser->stripSQLCommentLines();
-		
+
 		return $parser->explodeIntoStatements();
 	}
-	
+
 	/**
 	 * Explodes a SQL file into an array of SQL statements.
 	 * @example
@@ -156,12 +156,12 @@ class PropelSQLParser
 		}
 		return self::parseString(file_get_contents($file));
 	}
-	
+
 	public function convertLineFeedsToUnixStyle()
 	{
 		$this->setSQL(str_replace(array("\r\n", "\r"), "\n", $this->sql));
 	}
-	
+
 	public function stripSQLCommentLines()
 	{
 		$this->setSQL(preg_replace(array(
@@ -182,10 +182,10 @@ class PropelSQLParser
 		while ($sqlStatement = $this->getNextStatement()) {
 			$sqlStatements[] = $sqlStatement;
 		}
-		
+
 		return $sqlStatements;
 	}
-	
+
 	/**
 	 * Gets the next SQL statement in the inner SQL string,
 	 * and advances the cursor to the end of this statement.
@@ -200,7 +200,7 @@ class PropelSQLParser
 		$parsedString = '';
 		while ($this->pos < $this->len) {
 			$char = $this->sql[$this->pos];
-			
+
 			// check flags for strings or escaper
 			switch ($char) {
 				case "\\":
@@ -220,7 +220,7 @@ class PropelSQLParser
 			}
 
 			$this->pos++;
-			
+
 			if ($char !== "\\") {
 				$isAfterBackslash = false;
 			}
@@ -229,11 +229,11 @@ class PropelSQLParser
 			if (!$isInString && $char == $this->delimiter) {
 				return trim($parsedString);
 			}
-			
+
 			$parsedString .= $char;
 		}
-		
+
 		return trim($parsedString);
 	}
-	
+
 }

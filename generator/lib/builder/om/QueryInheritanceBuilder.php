@@ -98,7 +98,7 @@ class QueryInheritanceBuilder extends OMBuilder
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds the include() statements for files that this class depends on or utilizes.
 	 * @param      string &$script The script will be modified in this method.
@@ -204,12 +204,12 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	}
 ";
 	}
-	
+
 	protected function addPreSelect(&$script)
 	{
 		$child = $this->getChild();
 		$col = $child->getColumn();
-		
+
 		$script .= "
 	/**
 	 * Filters the query to target only " . $child->getClassname() . " objects.
@@ -225,7 +225,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	{
 		$child = $this->getChild();
 		$col = $child->getColumn();
-		
+
 		$script .= "
 	/**
 	 * Filters the query to target only " . $child->getClassname() . " objects.
@@ -241,7 +241,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	{
 		$child = $this->getChild();
 		$col = $child->getColumn();
-		
+
 		$script .= "
 	/**
 	 * Filters the query to target only " . $child->getClassname() . " objects.
@@ -252,24 +252,24 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	}
 ";
 	}
-	
+
 	protected function getClassKeyCondition()
 	{
 		$child = $this->getChild();
 		$col = $child->getColumn();
 		return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");";
 	}
-	
+
 	protected function addDoDeleteAll(&$script)
 	{
 		$child = $this->getChild();
-		
+
 		$script .= "
 	/**
 	 * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
 	 * Having the " . $child->getClassname() . " class.
 	 * This method is called by ModelCriteria::deleteAll() inside a transaction
-	 * 
+	 *
 	 * @param PropelPDO \$con a connection object
 	 *
 	 * @return integer the number of deleted rows
@@ -281,7 +281,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	}
 ";
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param      string &$script The script will be modified in this method.

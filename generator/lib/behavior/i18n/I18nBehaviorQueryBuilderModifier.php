@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Allows translation of text columns through transparent one-to-many relationship.
  * Modifier for the query builder.
@@ -19,7 +19,7 @@
 class I18nBehaviorQueryBuilderModifier
 {
 	protected $behavior, $table, $builder;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
@@ -33,10 +33,10 @@ class I18nBehaviorQueryBuilderModifier
 		$script .= $this->addJoinI18n();
 		$script .= $this->addJoinWithI18n();
 		$script .= $this->addUseI18nQuery();
-		
+
 		return $script;
 	}
-	
+
 	protected function addJoinI18n()
 	{
 		$fk = $this->behavior->getI18nForeignKey();

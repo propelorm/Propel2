@@ -36,7 +36,7 @@ EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
-	
+
 	public function providerForSetter()
 	{
 		return array(
@@ -61,7 +61,7 @@ EOF;
 			array('', false),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider providerForSetter
 	 */
@@ -75,7 +75,7 @@ EOF;
 			$this->assertFalse($e->getBar());
 		}
 	}
-	
+
 	public function testDefaultValue()
 	{
 		$e = new ComplexColumnTypeEntity4();

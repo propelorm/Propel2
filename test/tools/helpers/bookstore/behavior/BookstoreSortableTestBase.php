@@ -32,7 +32,7 @@ abstract class BookstoreSortableTestBase extends BookstoreTestBase
 		$t4->setTitle('row3');
 		$t4->save();
 	}
-	
+
 	protected function populateTable12()
 	{
 		/* List used for tests
@@ -74,7 +74,7 @@ abstract class BookstoreSortableTestBase extends BookstoreTestBase
 		$t6->setTitle('row6');
 		$t6->save();
 	}
-	
+
 	protected function getFixturesArray()
 	{
 		$c = new Criteria();
@@ -86,7 +86,7 @@ abstract class BookstoreSortableTestBase extends BookstoreTestBase
 		}
 		return $ret;
 	}
-	
+
 	protected function getFixturesArrayWithScope($scope = null)
 	{
 		$c = new Criteria();

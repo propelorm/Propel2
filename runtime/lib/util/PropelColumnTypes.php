@@ -20,7 +20,7 @@
 class PropelColumnTypes
 {
 
-	const 
+	const
 		CHAR = "CHAR",
 		VARCHAR = "VARCHAR",
 		LONGVARCHAR = "LONGVARCHAR",

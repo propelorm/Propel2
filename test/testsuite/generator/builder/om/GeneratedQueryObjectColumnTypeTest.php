@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
 class GeneratedQueryObjectColumnTest extends PHPUnit_Framework_TestCase
 {
 	protected $c1, $c2;
-	
+
 	public function setUp()
 	{
 		$this->c1 = new FooColumnValue2();
@@ -59,7 +59,7 @@ EOF;
 			->findOne();
 		$this->assertEquals($this->c1, $e->getBar(), 'object columns are correctly hydrated');
 	}
-	
+
 	public function testWhere()
 	{
 		$nb = ComplexColumnTypeEntity10Query::create()
@@ -71,7 +71,7 @@ EOF;
 			->findOne();
 		$this->assertEquals($this->c1, $e->getBar(), 'object columns are searchable by object using where()');
 	}
-	
+
 	public function testFilterByColumn()
 	{
 		$e = ComplexColumnTypeEntity10Query::create()

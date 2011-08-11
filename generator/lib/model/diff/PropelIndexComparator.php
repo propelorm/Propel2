@@ -48,13 +48,13 @@ class PropelIndexComparator
 				return true;
 			}
 		}
-		
+
 		// Check for difference in unicity
 		if ($fromIndex->isUnique() != $toIndex->isUnique()) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 }

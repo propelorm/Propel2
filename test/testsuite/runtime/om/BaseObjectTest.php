@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/om/BaseObject.php';
  * @version    $Id: BaseObjectTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    runtime.om
  */
-class BaseObjectTest extends PHPUnit_Framework_TestCase 
+class BaseObjectTest extends PHPUnit_Framework_TestCase
 {
 	public function testGetVirtualColumns()
 	{
@@ -35,7 +35,7 @@ class BaseObjectTest extends PHPUnit_Framework_TestCase
 		$b->virtualColumns = array('foo' => 'bar');
 		$this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set');
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -51,7 +51,7 @@ class BaseObjectTest extends PHPUnit_Framework_TestCase
 		$b->virtualColumns = array('foo' => 'bar');
 		$this->assertEquals('bar', $b->getVirtualColumn('foo'), 'getVirtualColumn() returns a virtual column value based on its key');
 	}
-	
+
 	public function testSetVirtualColumn()
 	{
 		$b = new TestableBaseObject();

@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/ConstraintNameGenerator.php';
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class NameFactory 
+class NameFactory
 {
 
 	/**

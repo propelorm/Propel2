@@ -102,7 +102,7 @@ class PropelPager implements Countable, Iterator
 	private $countCriteria;
 	private $page;
 	private $rs = null;
-	
+
 	//Iterator vars
 	private $currentKey = 0;
 
@@ -533,7 +533,7 @@ class PropelPager implements Countable, Iterator
 	{
 		$this->max = $v;
 	}
-	
+
 	/**
 	 * Returns the count of the current page's records
 	 * @return 	int
@@ -542,7 +542,7 @@ class PropelPager implements Countable, Iterator
 	{
 		return count($this->getResult());
 	}
-	
+
 	/**
 	 * Returns the current element of the iterator
 	 * @return mixed
@@ -554,7 +554,7 @@ class PropelPager implements Countable, Iterator
 		}
 		return $this->rs[$this->currentKey];
 	}
-	
+
 	/**
 	 * Returns the current key of the iterator
 	 * @return int
@@ -563,7 +563,7 @@ class PropelPager implements Countable, Iterator
 	{
 		return $this->currentKey;
 	}
-	
+
 	/**
 	 * Advances the iterator to the next element
 	 * @return void
@@ -572,7 +572,7 @@ class PropelPager implements Countable, Iterator
 	{
 		$this->currentKey++;
 	}
-	
+
 	/**
 	 * Resets the iterator to the first element
 	 * @return void
@@ -581,7 +581,7 @@ class PropelPager implements Countable, Iterator
 	{
 		$this->currentKey = 0;
 	}
-	
+
 	/**
 	 * Checks if the current key exists in the container
 	 * @return boolean

@@ -18,22 +18,22 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @version    $Id: QueryBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class QueryBuilderTest extends BookstoreTestBase 
+class QueryBuilderTest extends BookstoreTestBase
 {
-  
+
 	public function testExtends()
 	{
 		$q = new BookQuery();
 		$this->assertTrue($q instanceof ModelCriteria, 'Model query extends ModelCriteria');
 	}
-	
+
 	public function testConstructor()
 	{
 		$query = new BookQuery();
 		$this->assertEquals($query->getDbName(), 'bookstore', 'Constructor sets dabatase name');
 		$this->assertEquals($query->getModelName(), 'Book', 'Constructor sets model name');
 	}
-	
+
 	public function testCreate()
 	{
 		$query = BookQuery::create();
@@ -46,7 +46,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
 		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
 	}
-	
+
 	public function testCreateCustom()
 	{
 		// see the myBookQuery class definition at the end of this file
@@ -61,12 +61,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
 		$this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
 	}
-	
+
 	public function testBasePreSelect()
 	{
 		$method = new ReflectionMethod('Table2Query', 'basePreSelect');
 		$this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreSelect() by default');
-		
+
 		$method = new ReflectionMethod('Table3Query', 'basePreSelect');
 		$this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreSelect() when a behavior is registered');
 	}
@@ -75,7 +75,7 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		$method = new ReflectionMethod('Table2Query', 'basePreDelete');
 		$this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreDelete() by default');
-		
+
 		$method = new ReflectionMethod('Table3Query', 'basePreDelete');
 		$this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreDelete() when a behavior is registered');
 	}
@@ -88,7 +88,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$method = new ReflectionMethod('Table3Query', 'basePostDelete');
 		$this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostDelete() when a behavior is registered');
 	}
-	
+
 	public function testBasePreUpdate()
 	{
 		$method = new ReflectionMethod('Table2Query', 'basePreUpdate');
@@ -106,12 +106,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$method = new ReflectionMethod('Table3Query', 'basePostUpdate');
 		$this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostUpdate() when a behavior is registered');
 	}
-	
+
 	public function testQuery()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		$q = new BookQuery();
 		$book = $q
 			->setModelAlias('b')
@@ -121,21 +121,21 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertTrue($book instanceof Book);
 		$this->assertEquals('Don Juan', $book->getTitle());
 	}
-	
+
 	public function testFindPk()
 	{
 		$method = new ReflectionMethod('Table4Query', 'findPk');
 		$this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
 	}
-	
+
 	public function testFindPkSimpleKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		BookPeer::clearInstancePool();
 		$con = Propel::getConnection('bookstore');
-		
+
 		// prepare the test data
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->orderBy('Book.Id', 'desc');
@@ -143,7 +143,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$count = $con->getQueryCount();
 
 		BookPeer::clearInstancePool();
-		
+
 		$q = new BookQuery();
 		$book = $q->findPk($testBook->getId());
 		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
@@ -154,12 +154,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
 		$this->assertEquals($count+1, $con->getQueryCount(), 'findPk() does not issue a database query when instance is in pool');
 	}
-	
+
 	public function testFindPkCompositeKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
@@ -168,12 +168,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		}
 
 		BookPeer::clearInstancePool();
-		
+
 		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->findOne();
 		$pk = $bookListRelTest->getPrimaryKey();
-		
+
 		$q = new BookListRelQuery();
 		$bookListRel = $q->findPk($pk);
 		$this->assertEquals($bookListRelTest, $bookListRel, 'BaseQuery overrides findPk() for composite primary keysto make it faster');
@@ -189,9 +189,9 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		BookPeer::clearInstancePool();
-		
+
 		// prepare the test data
 		$c = new ModelCriteria('bookstore', 'Book');
 		$c->orderBy('Book.Id', 'desc');
@@ -203,12 +203,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		$books = $q->findPks(array($testBook1->getId(), $testBook2->getId()));
 		$this->assertEquals(array($testBook1, $testBook2), $books->getData(), 'BaseQuery overrides findPks() to make it faster');
 	}
-	
+
 	public function testFindPksCompositeKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
@@ -217,7 +217,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		}
 
 		BookPeer::clearInstancePool();
-		
+
 		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->find();
@@ -225,12 +225,12 @@ class QueryBuilderTest extends BookstoreTestBase
 		foreach ($bookListRelTest as $obj) {
 			$search[]= $obj->getPrimaryKey();
 		}
-		
+
 		$q = new BookListRelQuery();
 		$objs = $q->findPks($search);
 		$this->assertEquals($bookListRelTest, $objs, 'BaseQuery overrides findPks() for composite primary keys to make it work');
 	}
-	
+
 	public function testFilterBy()
 	{
 		foreach (BookPeer::getFieldNames(BasePeer::TYPE_PHPNAME) as $colName) {
@@ -256,7 +256,7 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
@@ -265,21 +265,21 @@ class QueryBuilderTest extends BookstoreTestBase
 		}
 
 		BookPeer::clearInstancePool();
-		
+
 		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->findOne();
 		$pk = $bookListRelTest->getPrimaryKey();
-		
+
 		$q = new BookListRelQuery();
 		$q->filterByPrimaryKey($pk);
-		
+
 		$q1 = BookListRelQuery::create()
 			->add(BookListRelPeer::BOOK_ID, $pk[0], Criteria::EQUAL)
 			->add(BookListRelPeer::BOOK_CLUB_LIST_ID, $pk[1], Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByPrimaryKey() translates to a Criteria::EQUAL in the PK columns');
 	}
-		
+
 	public function testFilterByPrimaryKeysSimpleKey()
 	{
 		$q = BookQuery::create()->filterByPrimaryKeys(array(10, 11, 12));
@@ -295,7 +295,7 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
@@ -304,7 +304,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		}
 
 		BookPeer::clearInstancePool();
-		
+
 		// retrieve the test data
 		$c = new ModelCriteria('bookstore', 'BookListRel');
 		$bookListRelTest = $c->find();
@@ -312,10 +312,10 @@ class QueryBuilderTest extends BookstoreTestBase
 		foreach ($bookListRelTest as $obj) {
 			$search[]= $obj->getPrimaryKey();
 		}
-		
+
 		$q = new BookListRelQuery();
 		$q->filterByPrimaryKeys($search);
-		
+
 		$q1 = BookListRelQuery::create();
 		foreach ($search as $key) {
 			$cton0 = $q1->getNewCriterion(BookListRelPeer::BOOK_ID, $key[0], Criteria::EQUAL);
@@ -327,13 +327,13 @@ class QueryBuilderTest extends BookstoreTestBase
 
 		$q = new BookListRelQuery();
 		$q->filterByPrimaryKeys(array());
-		
+
 		$q1 = BookListRelQuery::create();
 		$q1->add(null, '1<>1', Criteria::CUSTOM);
 		$this->assertEquals($q1, $q, 'filterByPrimaryKeys() translates to an always failing test on empty arrays');
 
 	}
-	
+
 	public function testFilterByIntegerPk()
 	{
 		$q = BookQuery::create()->filterById(12);
@@ -343,7 +343,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterById(12, Criteria::NOT_EQUAL);
 		$q1 = BookQuery::create()->add(BookPeer::ID, 12, Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() accepts an optional comparison operator');
-		
+
 		$q = BookQuery::create()->setModelAlias('b', true)->filterById(12);
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.ID', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() uses true table alias if set');
@@ -356,7 +356,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = BookQuery::create()->add(BookPeer::ID, array(10, 11, 12), Criteria::NOT_IN);
 		$this->assertEquals($q1, $q, 'filterByPkColumn() accepts a comparison when passed a simple array key');
 	}
-	
+
 	public function testFilterByNumber()
 	{
 		$q = BookQuery::create()->filterByPrice(12);
@@ -366,7 +366,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByPrice(12, Criteria::NOT_EQUAL);
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, 12, Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() accepts an optional comparison operator');
-		
+
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByPrice(12);
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.PRICE', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() uses true table alias if set');
@@ -378,7 +378,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByPrice(array(10, 11, 12), Criteria::NOT_IN);
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, array(10, 11, 12), Criteria::NOT_IN);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() accepts a comparison when passed a simple array key');
-		
+
 		$q = BookQuery::create()->filterByPrice(array('min' => 10));
 		$q1 = BookQuery::create()->add(BookPeer::PRICE, 10, Criteria::GREATER_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByNumColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
@@ -403,11 +403,11 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(12, Criteria::NOT_EQUAL);
 		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 12, Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() accepts an optional comparison operator');
-		
+
 		$q = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->filterByCreated(12);
 		$q1 = BookstoreEmployeeAccountQuery::create()->setModelAlias('b', true)->add('b.CREATED', 12, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() uses true table alias if set');
-		
+
 		$q = BookstoreEmployeeAccountQuery::create()->filterByCreated(array('min' => 10));
 		$q1 = BookstoreEmployeeAccountQuery::create()->add(BookstoreEmployeeAccountPeer::CREATED, 10, Criteria::GREATER_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByDateColumn() translates to a Criteria::GREATER_EQUAL when passed a \'min\' key');
@@ -428,15 +428,15 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByTitle('foo');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::EQUAL by default');
-		
+
 		$q = BookQuery::create()->filterByTitle('foo', Criteria::NOT_EQUAL);
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo', Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts an optional comparison operator');
-		
+
 		$q = BookQuery::create()->setModelAlias('b', true)->filterByTitle('foo');
 		$q1 = BookQuery::create()->setModelAlias('b', true)->add('b.TITLE', 'foo', Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() uses true table alias if set');
-		
+
 		$q = BookQuery::create()->filterByTitle(array('foo', 'bar'));
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::IN);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::IN when passed an array');
@@ -444,7 +444,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByTitle(array('foo', 'bar'), Criteria::NOT_IN);
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, array('foo', 'bar'), Criteria::NOT_IN);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed an array');
-		
+
 		$q = BookQuery::create()->filterByTitle('foo%');
 		$q1 = BookQuery::create()->add(BookPeer::TITLE, 'foo%', Criteria::LIKE);
 		$this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a % wildcard');
@@ -479,11 +479,11 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = ReviewQuery::create()->filterByRecommended(false);
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a Criteria::EQUAL by default');
-		
+
 		$q = ReviewQuery::create()->setModelAlias('b', true)->filterByRecommended(true);
 		$q1 = ReviewQuery::create()->setModelAlias('b', true)->add('b.RECOMMENDED', true, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() uses true table alias if set');
-		
+
 		$q = ReviewQuery::create()->filterByRecommended('true');
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
@@ -495,7 +495,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = ReviewQuery::create()->filterByRecommended('1');
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, true, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = true when passed a true string');
-		
+
 		$q = ReviewQuery::create()->filterByRecommended('false');
 		$q1 = ReviewQuery::create()->add(ReviewPeer::RECOMMENDED, false, Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed a false string');
@@ -513,27 +513,27 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($q1, $q, 'filterByBooleanColumn() translates to a = false when passed an empty string');
 
 	}
-		
+
 	public function testFilterByFk()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
 		$this->assertTrue(method_exists('BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
-		
+
 		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
 		$this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
 	}
-	
+
 	public function testFilterByFkSimpleKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// prepare the test data
 		$testBook = BookQuery::create()
 			->innerJoin('Book.Author') // just in case there are books with no author
 			->findOne();
 		$testAuthor = $testBook->getAuthor();
-		
+
 		$book = BookQuery::create()
 			->filterByAuthor($testAuthor)
 			->findOne();
@@ -542,7 +542,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = BookQuery::create()->filterByAuthor($testAuthor);
 		$q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::EQUAL);
 		$this->assertEquals($q1, $q, 'filterByFk() translates to a Criteria::EQUAL by default');
-		
+
 		$q = BookQuery::create()->filterByAuthor($testAuthor, Criteria::NOT_EQUAL);
 		$q1 = BookQuery::create()->add(BookPeer::AUTHOR_ID, $testAuthor->getId(), Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByFk() accepts an optional comparison operator');
@@ -553,7 +553,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		BookstoreDataPopulator::populateOpinionFavorite();
-		
+
 		// prepare the test data
 		$testOpinion = BookOpinionQuery::create()
 			->innerJoin('BookOpinion.ReaderFavorite') // just in case there are books with no author
@@ -565,35 +565,35 @@ class QueryBuilderTest extends BookstoreTestBase
 			->findOne();
 		$this->assertEquals($testFavorite, $favorite, 'Generated query handles filterByFk() methods correctly for composite fkeys');
 	}
-	
+
 	public function testFilterByFkObjectCollection()
 	{
 		BookstoreDataPopulator::depopulate($this->con);
 		BookstoreDataPopulator::populate($this->con);
-		
+
 		$authors = AuthorQuery::create()
 			->orderByFirstName()
 			->limit(2)
 			->find($this->con);
-		
+
 		$books = BookQuery::create()
 			->filterByAuthor($authors)
 			->find($this->con);
 		$q1 = $this->con->getLastExecutedQuery();
-		
+
 		$books = BookQuery::create()
 			->add(BookPeer::AUTHOR_ID, $authors->getPrimaryKeys(), Criteria::IN)
 			->find($this->con);
 		$q2 = $this->con->getLastExecutedQuery();
-		
+
 		$this->assertEquals($q2, $q1, 'filterByFk() accepts a collection and results to an IN query');
 	}
-	
+
 		public function testFilterByRefFk()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
 		$this->assertTrue(method_exists('BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
-		
+
 		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
 		$this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
 	}
@@ -602,7 +602,7 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// prepare the test data
 		$testBook = BookQuery::create()
 			->innerJoin('Book.Author') // just in case there are books with no author
@@ -622,13 +622,13 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q1 = AuthorQuery::create()->add(AuthorPeer::ID, $testBook->getAuthorId(), Criteria::NOT_EQUAL);
 		$this->assertEquals($q1, $q, 'filterByRefFk() accepts an optional comparison operator');
 	}
-	
+
 	public function testFilterByRefFkCompositeKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 		BookstoreDataPopulator::populateOpinionFavorite();
-		
+
 		// prepare the test data
 		$testOpinion = BookOpinionQuery::create()
 			->innerJoin('BookOpinion.ReaderFavorite') // just in case there are books with no author
@@ -645,26 +645,26 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate($this->con);
 		BookstoreDataPopulator::populate($this->con);
-		
+
 		$books = BookQuery::create()
 			->orderByTitle()
 			->limit(2)
 			->find($this->con);
-		
+
 		$authors = AuthorQuery::create()
 			->filterByBook($books)
 			->find($this->con);
 		$q1 = $this->con->getLastExecutedQuery();
-		
+
 		$authors = AuthorQuery::create()
 			->addJoin(AuthorPeer::ID, BookPeer::AUTHOR_ID, Criteria::LEFT_JOIN)
 			->add(BookPeer::ID, $books->getPrimaryKeys(), Criteria::IN)
 			->find($this->con);
 		$q2 = $this->con->getLastExecutedQuery();
-		
+
 		$this->assertEquals($q2, $q1, 'filterByRefFk() accepts a collection and results to an IN query in the joined table');
 	}
-		
+
 	public function testFilterByCrossFK()
 	{
 		$this->assertTrue(method_exists('BookQuery', 'filterByBookClubList'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
@@ -677,7 +677,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->count();
 		$this->assertEquals(2, $nbBooks, 'Generated query handles filterByCrossRefFK() methods correctly');
 	}
-	
+
 	public function testJoinFk()
 	{
 		$q = BookQuery::create()
@@ -710,7 +710,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->join('Essay.AuthorRelatedBySecondAuthor', "INNER JOIN");
 		$this->assertTrue($q->equals($q1), 'joinFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
 	}
-	
+
 	public function testJoinFkAlias()
 	{
 		$q = BookQuery::create('b')
@@ -760,7 +760,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->join('Author.EssayRelatedBySecondAuthor', Criteria::INNER_JOIN);
 		$this->assertTrue($q->equals($q1), 'joinRefFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
 	}
-	
+
 	public function testUseFkQuerySimple()
 	{
 		$q = BookQuery::create()
@@ -793,7 +793,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() accepts a join type as second parameter');
 	}
-	
+
 	public function testUseFkQueryAlias()
 	{
 		$q = BookQuery::create()
@@ -892,7 +892,7 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals($expectedParams, $params, 'useFkQuery() called nested creates two joins');
 		$this->assertEquals($expectedResult, $result, 'useFkQuery() called nested creates two joins');
 	}
-	
+
 	public function testUseFkQueryTwoRelations()
 	{
 		$q = BookQuery::create()
@@ -909,7 +909,7 @@ class QueryBuilderTest extends BookstoreTestBase
 			->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
 		$this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
 	}
-	
+
 	public function testUseFkQueryNoAliasThenWith()
 	{
 		$con = Propel::getConnection();
@@ -927,21 +927,21 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q2 = $con->getLastExecutedQuery();
 		$this->assertEquals($q1, $q2, 'with() can be used after a call to useFkQuery() with no alias');
 	}
-	
+
 	public function testPrune()
 	{
 		$q = BookQuery::create()->prune();
 		$this->assertTrue($q instanceof BookQuery, 'prune() returns the current Query object');
 	}
-	
+
 	public function testPruneSimpleKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		$nbBooks = BookQuery::create()->prune()->count();
 		$this->assertEquals(4, $nbBooks, 'prune() does nothing when passed a null object');
-		
+
 		$testBook = BookQuery::create()->findOne();
 		$nbBooks = BookQuery::create()->prune($testBook)->count();
 		$this->assertEquals(3, $nbBooks, 'prune() removes an object from the result');
@@ -951,19 +951,19 @@ class QueryBuilderTest extends BookstoreTestBase
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
-		
+
 		// save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		foreach ($books as $book) {
 			$book->save();
 		}
-		
+
 		BookPeer::clearInstancePool();
-		
+
 		$nbBookListRel = BookListRelQuery::create()->prune()->count();
 		$this->assertEquals(2, $nbBookListRel, 'prune() does nothing when passed a null object');
-		
+
 		$testBookListRel = BookListRelQuery::create()->findOne();
 		$nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
 		$this->assertEquals(1, $nbBookListRel, 'prune() removes an object from the result');
@@ -986,5 +986,5 @@ class myCustomBookQuery extends BookQuery
 		}
 		return $query;
 	}
-	
+
 }

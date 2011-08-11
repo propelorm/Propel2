@@ -1,7 +1,7 @@
 
 /**
  * Use the I18n relation query object
- * 
+ *
  * @see       useQuery()
  *
  * @param     string $locale Locale to use for the join condition, e.g. 'fr_FR'

@@ -32,7 +32,7 @@ class AggregateColumnBehaviorWithSchemaTest extends SchemasTestBase
 		$this->con->commit();
 		parent::tearDown();
 	}
-	
+
 	public function testParametersWithSchema()
 	{
 		$storeTable = BookstoreSchemasBookstorePeer::getTableMap();

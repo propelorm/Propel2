@@ -18,9 +18,9 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreDat
  * @version    $Id: ModelJoinTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    runtime.query
  */
-class ModelWithTest extends BookstoreTestBase 
+class ModelWithTest extends BookstoreTestBase
 {
-	
+
 	public function testModelNameManyToOne()
 	{
 		$q = BookQuery::create()
@@ -42,7 +42,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals($with->getModelName(), 'Book', 'A ModelWith computes the model peer name from the join');
 		$this->assertEquals($with->getModelPeerName(), 'BookPeer', 'A ModelWith computes the model peer name from the join');
 	}
-	
+
 	public function testModelNameAlias()
 	{
 		$q = BookQuery::create()
@@ -89,7 +89,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals($with->getRelationName(), 'BookstoreEmployeeAccount', 'A ModelWith computes the relation name from the join');
 		$this->assertFalse($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
 	}
-	
+
 	public function testIsPrimary()
 	{
 		$q = AuthorQuery::create()
@@ -106,7 +106,7 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['Review'];
 		$with = new ModelWith($join);
 		$this->assertTrue($with->isPrimary(), 'A ModelWith initialized from a primary join is primary');
-		
+
 		$q = AuthorQuery::create()
 		 ->join('Author.Book')
 		 ->join('Book.Publisher');
@@ -115,7 +115,7 @@ class ModelWithTest extends BookstoreTestBase
 		$with = new ModelWith($join);
 		$this->assertFalse($with->isPrimary(), 'A ModelWith initialized from a non-primary join is not primary');
 	}
-	
+
 	public function testGetLeftPhpName()
 	{
 		$q = AuthorQuery::create()
@@ -138,7 +138,7 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['b'];
 		$with = new ModelWith($join);
 		$this->assertNull($with->getLeftPhpName(), 'A ModelWith initialized from a primary join with alias has a null left phpName');
-		
+
 		$q = AuthorQuery::create()
 		 ->join('Author.Book')
 		 ->join('Book.Publisher');
@@ -179,7 +179,7 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['Author'];
 		$with = new ModelWith($join);
 		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
-		
+
 		$q = BookSummaryQuery::create()
 		 ->join('BookSummary.SummarizedBook')
 		 ->join('SummarizedBook.Author');
@@ -211,7 +211,7 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['b'];
 		$with = new ModelWith($join);
 		$this->assertEquals('b', $with->getRightPhpName(), 'A ModelWith initialized from a primary join with alias uses the alias as right phpName');
-		
+
 		$q = AuthorQuery::create()
 		 ->join('Author.Book')
 		 ->join('Book.Publisher');
@@ -226,7 +226,7 @@ class ModelWithTest extends BookstoreTestBase
 		$join = $joins['SummarizedBook'];
 		$with = new ModelWith($join);
 		$this->assertEquals('SummarizedBook', $with->getRightPhpName(), 'A ModelWith uses the relation name rather than the class phpName when it exists');
-		
+
 		$q = BookSummaryQuery::create()
 		 ->join('BookSummary.SummarizedBook')
 		 ->join('SummarizedBook.Author');

@@ -49,14 +49,14 @@ class ModelCriterion extends Criterion
 		$this->clause = $clause;
 		$this->init($outer);
 	}
-	
+
 	public function getClause()
 	{
 		return $this->clause;
 	}
-	
+
 	/**
-	 * Figure out which MocelCriterion method to use 
+	 * Figure out which MocelCriterion method to use
 	 * to build the prepared statement and parameters using to the Criterion comparison
 	 * and call it to append the prepared statement and the parameters of the current clause.
 	 * For performance reasons, this method tests the cases of parent::dispatchPsHandling()
@@ -142,7 +142,7 @@ class ModelCriterion extends Criterion
 		}
 		$this->appendModelClauseToPs($sb, $params);
 	}
-	
+
 	/**
 	 * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
 	 * For ternary model clauses, e.G 'book.ID BETWEEN ? AND ?'
@@ -190,7 +190,7 @@ class ModelCriterion extends Criterion
 		}
 		unset ( $value, $valuesLength );
 	}
-	
+
 	/**
 	 * This method checks another Criteria to see if they contain
 	 * the same attributes and hashtable entries.
@@ -263,7 +263,7 @@ class ModelCriterion extends Criterion
 
 		return $h;
 	}
-	
+
 	/**
 	 * Replace only once
 	 * taken from http://www.php.net/manual/en/function.str-replace.php
@@ -279,5 +279,5 @@ class ModelCriterion extends Criterion
     } else {
         return $subject;
     }
-	}	
+	}
 }

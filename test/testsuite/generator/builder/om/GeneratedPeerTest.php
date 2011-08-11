@@ -34,7 +34,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 		$this->assertEquals('foo.COVER_IMAGE', MediaPeer::alias('foo', MediaPeer::COVER_IMAGE), 'alias() also works for lazy-loaded columns');
 		$this->assertEquals('foo.SUBTITLE', EssayPeer::alias('foo', EssayPeer::SUBTITLE), 'alias() also works for columns with custom phpName');
 	}
-	
+
 	public function testAddSelectColumns()
 	{
 		$c = new Criteria();
@@ -49,7 +49,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 		);
 		$this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() adds the columns of the model to the criteria');
 	}
-	
+
 	public function testAddSelectColumnsLazyLoad()
 	{
 		$c = new Criteria();
@@ -60,7 +60,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 		);
 		$this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns');
 	}
-	
+
 	public function testAddSelectColumnsAlias()
 	{
 		$c = new Criteria();
@@ -75,7 +75,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 		);
 		$this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() uses the second parameter as a table alias');
 	}
-	
+
 	public function testAddSelectColumnsAliasLazyLoad()
 	{
 		$c = new Criteria();
@@ -86,7 +86,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 		);
 		$this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns but uses the second parameter as an alias');
 	}
-	
+
 	public function testDefaultStringFormatConstant()
 	{
 		$this->assertTrue(defined('BookPeer::DEFAULT_STRING_FORMAT'), 'every Peer class has the DEFAULT_STRING_FORMAT constant');

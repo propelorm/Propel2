@@ -26,38 +26,38 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
 	}
-	
+
 	public function testPreSelect()
 	{
 		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
 		$books = $c->find();
 		$this->assertEquals(1, count($books), 'preSelect() can modify the Criteria before find() fires the query');
-		
+
 		$c = new ModelCriteriaWithPreSelectHook('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals(1, $nbBooks, 'preSelect() can modify the Criteria before count() fires the query');
 	}
-	
+
 	public function testPreDelete()
 	{
 		$c = new ModelCriteria('bookstore', 'Book');
 		$books = $c->find();
 		$count = count($books);
 		$book = $books->shift();
-		
+
 		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book', 'b');
 		$c->where('b.Id = ?', $book->getId());
 		$nbBooks = $c->delete();
 		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of delete()');
-		
+
 		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
-		
+
 		$c = new ModelCriteriaWithPreDeleteHook('bookstore', 'Book');
 		$nbBooks = $c->deleteAll();
 		$this->assertEquals(12, $nbBooks, 'preDelete() can change the return value of deleteAll()');
-		
+
 		$c = new ModelCriteria('bookstore', 'Book');
 		$nbBooks = $c->count();
 		$this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
@@ -69,16 +69,16 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 		$books = $c->find();
 		$count = count($books);
 		$book = $books->shift();
-		
+
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPostDeleteHook('bookstore', 'Book', 'b');
 		$c->where('b.Id = ?', $book->getId());
 		$nbBooks = $c->delete($this->con);
 		$this->assertEquals(1, $this->con->lastAffectedRows, 'postDelete() is called after delete()');
-		
+
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPostDeleteHook('bookstore', 'Book');
 		$nbBooks = $c->deleteAll($this->con);
 		$this->assertEquals(3, $this->con->lastAffectedRows, 'postDelete() is called after deleteAll()');
@@ -90,38 +90,38 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 		$books = $c->find();
 		$count = count($books);
 		$book = $books->shift();
-		
+
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPreAndPostDeleteHook('bookstore', 'Book', 'b');
 		$c->where('b.Id = ?', $book->getId());
 		$nbBooks = $c->delete($this->con);
 		$this->assertEquals(12, $this->con->lastAffectedRows, 'postDelete() is called after delete() even if preDelete() returns not null');
-		
+
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPreAndPostDeleteHook('bookstore', 'Book');
 		$nbBooks = $c->deleteAll($this->con);
 		$this->assertEquals(12, $this->con->lastAffectedRows, 'postDelete() is called after deleteAll() even if preDelete() returns not null');
 	}
-		
+
 	public function testPreUpdate()
 	{
 		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('Title' => 'foo'));
-		
+
 		$c = new ModelCriteriaWithPreUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'foo');
 		$book = $c->findOne();
-		
+
 		$this->assertEquals('1234', $book->getISBN(), 'preUpdate() can modify the values');
 	}
 
 	public function testPostUpdate()
 	{
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPostUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('Title' => 'foo'), $this->con);
@@ -131,7 +131,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 	public function testPreAndPostUpdate()
 	{
 		$this->con->lastAffectedRows = 0;
-		
+
 		$c = new ModelCriteriaWithPreAndPostUpdateHook('bookstore', 'Book', 'b');
 		$c->where('b.Title = ?', 'Don Juan');
 		$nbBooks = $c->update(array('Title' => 'foo'), $this->con);

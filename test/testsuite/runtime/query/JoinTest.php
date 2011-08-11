@@ -47,7 +47,7 @@ class JoinTest extends BaseTestCase
     $j = new Join();
     $this->assertEquals(array(), $j->getConditions());
   }
-  
+
   public function testAddCondition()
   {
     $j = new Join();
@@ -56,7 +56,7 @@ class JoinTest extends BaseTestCase
     $this->assertEquals('foo', $j->getLeftColumn());
     $this->assertEquals('bar', $j->getRightColumn());
   }
-  
+
   public function testGetConditions()
   {
     $j = new Join();
@@ -64,7 +64,7 @@ class JoinTest extends BaseTestCase
     $expect = array(array('left' => 'foo', 'operator' => '=', 'right' => 'bar'));
     $this->assertEquals($expect, $j->getConditions());
   }
-  
+
   public function testAddConditionWithOperator()
   {
     $j = new Join();
@@ -72,7 +72,7 @@ class JoinTest extends BaseTestCase
     $expect = array(array('left' => 'foo', 'operator' => '>=', 'right' => 'bar'));
     $this->assertEquals($expect, $j->getConditions());
   }
-  
+
   public function testAddConditions()
   {
     $j = new Join();
@@ -110,7 +110,7 @@ class JoinTest extends BaseTestCase
 		$params = array();
 		$this->assertEquals($j->getClause($params), 'LEFT JOIN author a ON (book.AUTHOR_ID=a.ID)');
   }
-  
+
   public function testAddExplicitConditionWithAlias()
   {
     $j = new Join();
@@ -132,20 +132,20 @@ class JoinTest extends BaseTestCase
     $this->assertEquals('a.foo', $j->getLeftColumn());
     $this->assertEquals('b.bar', $j->getRightColumn());
   }
-  
+
   public function testEmptyJoinType()
   {
     $j = new Join();
     $this->assertEquals(Join::INNER_JOIN, $j->getJoinType());
   }
-  
+
   public function testSetJoinType()
   {
     $j = new Join();
     $j->setJoinType('foo');
     $this->assertEquals('foo', $j->getJoinType());
   }
-  
+
   public function testSimpleConstructor()
   {
     $j = new Join('foo', 'bar', 'LEFT JOIN');
@@ -153,7 +153,7 @@ class JoinTest extends BaseTestCase
     $this->assertEquals($expect, $j->getConditions());
     $this->assertEquals('LEFT JOIN', $j->getJoinType());
   }
-  
+
   public function testCompositeeConstructor()
   {
     $j = new Join(array('foo1', 'foo2'), array('bar1', 'bar2'), 'LEFT JOIN');
@@ -164,7 +164,7 @@ class JoinTest extends BaseTestCase
     $this->assertEquals($expect, $j->getConditions());
     $this->assertEquals('LEFT JOIN', $j->getJoinType());
   }
-  
+
   public function testCountConditions()
   {
     $j = new Join();

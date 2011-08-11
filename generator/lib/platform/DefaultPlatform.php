@@ -253,7 +253,7 @@ class DefaultPlatform implements PropelPlatformInterface
 	public function getEndDDL()
 	{
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to drop a table
 	 * @return     string
@@ -264,7 +264,7 @@ class DefaultPlatform implements PropelPlatformInterface
 DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 ";
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to add a table
 	 * without index and foreign keys
@@ -304,7 +304,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 			implode($sep, $lines)
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL for a Column object.
 	 * @return     string
@@ -312,7 +312,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();
-		
+
 		$ddl = array($this->quoteIdentifier($col->getName()));
 		$sqlType = $domain->getSqlType();
 		if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
@@ -332,7 +332,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 
 		return implode(' ', $ddl);
 	}
-	
+
 	/**
 	 * Returns the SQL for the default value of a Column object
 	 * @return     string
@@ -357,7 +357,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 				}
 			}
 		}
-		
+
 		return $default;
 	}
 
@@ -394,7 +394,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
 		$tableName = $table->getCommonName();
 		return $tableName . '_PK';
 	}
-	
+
 	/**
 	 * Returns the SQL for the primary key of a Table object
 	 * @return     string
@@ -422,7 +422,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 			$this->quoteIdentifier($this->getPrimaryKeyName($table))
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to add the primary key of a table.
 	 *
@@ -439,7 +439,7 @@ ALTER TABLE %s ADD %s;
 			$this->getPrimaryKeyDDL($table)
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to add the indices of a table.
 	 *
@@ -454,7 +454,7 @@ ALTER TABLE %s ADD %s;
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to add an Index.
 	 *
@@ -466,7 +466,7 @@ ALTER TABLE %s ADD %s;
 		$pattern = "
 CREATE %sINDEX %s ON %s (%s);
 ";
-		return sprintf($pattern, 
+		return sprintf($pattern,
 			$index->getIsUnique() ? 'UNIQUE ' : '',
 			$this->quoteIdentifier($index->getName()),
 			$this->quoteIdentifier($index->getTable()->getName()),
@@ -485,11 +485,11 @@ CREATE %sINDEX %s ON %s (%s);
 		$pattern = "
 DROP INDEX %s;
 ";
-		return sprintf($pattern, 
+		return sprintf($pattern,
 			$this->quoteIdentifier($index->getName())
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL for an Index object.
 	 *
@@ -498,13 +498,13 @@ DROP INDEX %s;
 	 */
 	public function getIndexDDL(Index $index)
 	{
-		return sprintf('%sINDEX %s (%s)', 
+		return sprintf('%sINDEX %s (%s)',
 			$index->getIsUnique() ? 'UNIQUE ' : '',
 			$this->quoteIdentifier($index->getName()),
 			$this->getColumnListDDL($index->getColumns())
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL for a Unique constraint object.
 	 *
@@ -570,11 +570,11 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 			$this->quoteIdentifier($fk->getName())
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL for a ForeignKey object.
 	 * @return     string
-	 */	
+	 */
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
 		if ($fk->isSkipSql()) {
@@ -597,10 +597,10 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 			$script .= "
 	ON DELETE " . $fk->getOnDelete();
 		}
-		
+
 		return $script;
 	}
-	
+
 	public function getCommentLineDDL($comment)
 	{
 		$pattern = "-- %s
@@ -627,30 +627,30 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 	public function getModifyDatabaseDDL(PropelDatabaseDiff $databaseDiff)
 	{
 		$ret = $this->getBeginDDL();
-		
+
 		foreach ($databaseDiff->getRemovedTables() as $table) {
 			$ret .= $this->getDropTableDDL($table);
 		}
-		
+
 		foreach ($databaseDiff->getRenamedTables() as $fromTableName => $toTableName) {
 			$ret .= $this->getRenameTableDDL($fromTableName, $toTableName);
 		}
-		
+
 		foreach ($databaseDiff->getAddedTables() as $table) {
 			$ret .= $this->getAddTableDDL($table);
 			$ret .= $this->getAddIndicesDDL($table);
 		}
-		
+
 		foreach ($databaseDiff->getModifiedTables() as $tableDiff) {
 			$ret .= $this->getModifyTableDDL($tableDiff);
 		}
-		
+
 		foreach ($databaseDiff->getAddedTables() as $table) {
 			$ret .= $this->getAddForeignKeysDDL($table);
 		}
-		
+
 		$ret .= $this->getEndDDL();
-		
+
 		return $ret;
 	}
 
@@ -678,7 +678,7 @@ ALTER TABLE %s RENAME TO %s;
 	public function getModifyTableDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
-		
+
 		// drop indices, foreign keys
 		if ($tableDiff->hasModifiedPk()) {
 			$ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
@@ -697,7 +697,7 @@ ALTER TABLE %s RENAME TO %s;
 			list($fromIndex, $toIndex) = $indexModification;
 			$ret .= $this->getDropIndexDDL($fromIndex);
 		}
-		
+
 		// alter table structure
 		foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
 			$ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
@@ -711,7 +711,7 @@ ALTER TABLE %s RENAME TO %s;
 		foreach ($tableDiff->getRemovedColumns() as $column) {
 			$ret .= $this->getRemoveColumnDDL($column);
 		}
-		
+
 		// add new indices and foreign keys
 		if ($tableDiff->hasModifiedPk()) {
 			$ret .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
@@ -733,7 +733,7 @@ ALTER TABLE %s RENAME TO %s;
 
 		return $ret;
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to alter a table
 	 * based on a PropelTableDiff instance
@@ -743,7 +743,7 @@ ALTER TABLE %s RENAME TO %s;
 	public function getModifyTableColumnsDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
-		
+
 		foreach ($tableDiff->getRemovedColumns() as $column) {
 			$ret .= $this->getRemoveColumnDDL($column);
 		}
@@ -772,7 +772,7 @@ ALTER TABLE %s RENAME TO %s;
 	public function getModifyTablePrimaryKeyDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
-		
+
 		if ($tableDiff->hasModifiedPk()) {
 			$ret .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
 			$ret .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
@@ -780,7 +780,7 @@ ALTER TABLE %s RENAME TO %s;
 
 		return $ret;
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to alter a table's indices
 	 * based on a PropelTableDiff instance
@@ -790,7 +790,7 @@ ALTER TABLE %s RENAME TO %s;
 	public function getModifyTableIndicesDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
-		
+
 		foreach ($tableDiff->getRemovedIndices() as $index) {
 			$ret .= $this->getDropIndexDDL($index);
 		}
@@ -817,7 +817,7 @@ ALTER TABLE %s RENAME TO %s;
 	public function getModifyTableForeignKeysDDL(PropelTableDiff $tableDiff)
 	{
 		$ret = '';
-		
+
 		foreach ($tableDiff->getRemovedFks() as $fk) {
 			$ret .= $this->getDropForeignKeyDDL($fk);
 		}
@@ -947,10 +947,10 @@ ALTER TABLE %s ADD %s;
 			}
 			$lines []= $this->getColumnDDL($column);
 		}
-		
+
 		$sep = ",
 	";
-		
+
 		$pattern = "
 ALTER TABLE %s ADD
 (
@@ -962,7 +962,7 @@ ALTER TABLE %s ADD
 			implode($sep, $lines)
 		);
 	}
-	
+
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
@@ -1022,7 +1022,7 @@ ALTER TABLE %s ADD
 	{
 		return $this->isIdentifierQuotingEnabled ? '"' . strtr($text, array('.' => '"."')) . '"' : $text;
 	}
-	
+
 	public function setIdentifierQuoting($enabled = true)
 	{
 		$this->isIdentifierQuotingEnabled = $enabled;
@@ -1050,7 +1050,7 @@ ALTER TABLE %s ADD
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
 	 * @return     boolean
@@ -1067,7 +1067,7 @@ ALTER TABLE %s ADD
 	{
 		return false;
 	}
-	
+
 	/**
 	 * @see        Platform::supportsMigrations()
 	 */

@@ -38,24 +38,24 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$books = BookPeer::doSelect(new Criteria());
 		$this->assertEquals(4, count($books), 'doSelect() with an empty Criteria returns all results');
 		$book1 = $books[0];
-		
+
 		$c = new Criteria();
 		$c->add(BookPeer::ID, $book1->getId());
 		$res = BookPeer::doSelect($c);
 		$this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with a condition');
-		
+
 		$c = new Criteria();
 		$c->add(BookPeer::ID, $book1->getId());
 		$c->add(BookPeer::TITLE, $book1->getTitle());
 		$res = BookPeer::doSelect($c);
 		$this->assertEquals(array($book1), $res, 'doSelect() accepts a Criteria object with several condition');
-		
+
 		$c = new Criteria();
 		$c->add(BookPeer::ID, 'foo');
 		$res = BookPeer::doSelect($c);
 		$this->assertEquals(array(), $res, 'doSelect() accepts an incorrect Criteria');
 	}
-	
+
 	/**
 	 * Tests performing doSelect() and doSelectJoin() using LIMITs.
 	 */
@@ -97,7 +97,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$books = BookPeer::doSelect($c);
 		$obj = $books[0];
 		// $size = strlen(serialize($obj));
-		
+
 		BookPeer::clearInstancePool();
 
 		$joinBooks = BookPeer::doSelectJoinAuthor($c);
@@ -106,9 +106,9 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		// $joinSize = strlen(serialize($obj2));
 
 		$this->assertEquals(count($books), count($joinBooks), "Expected to find same number of rows in doSelectJoin*() call as doSelect() call.");
-		
+
 		// $this->assertTrue($joinSize > $size, "Expected a serialized join object to be larger than a non-join object.");
-		
+
 		$this->assertTrue(array_key_exists('Author', $obj2Array));
 	}
 
@@ -153,23 +153,23 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		Propel::enableInstancePooling();
 		$this->assertEquals(1, $con->getQueryCount() - $count, 'doSelectJoin() makes only one query in a one-to-one relationship');
 	}
-	
+
 	public function testDoSelectOne()
 	{
 		$books = BookPeer::doSelect(new Criteria());
 		$book1 = $books[0];
-		
+
 		$c = new Criteria();
 		$c->add(BookPeer::ID, $book1->getId());
 		$res = BookPeer::doSelectOne($c);
 		$this->assertEquals($book1, $res, 'doSelectOne() returns a single object');
-		
+
 		$c = new Criteria();
 		$c->add(BookPeer::ID, 'foo');
 		$res = BookPeer::doSelectOne($c);
 		$this->assertNull($res, 'doSelectOne() returns null if the Criteria matches no record');
 	}
-	
+
 	public function testObjectInstances()
 	{
 
@@ -318,36 +318,36 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
 		ReaderFavoritePeer::doDeleteAll();
-		
+
 		$b1 = new Book();
 		$b1->setTitle("Book1");
 		$b1->setISBN("ISBN-1");
 		$b1->save();
-		
+
 		$r1 = new BookReader();
 		$r1-> setName("Me");
 		$r1->save();
-		
+
 		$bo1 = new BookOpinion();
 		$bo1->setBookId($b1->getId());
 		$bo1->setReaderId($r1->getId());
 		$bo1->setRating(9);
 		$bo1->setRecommendToFriend(true);
 		$bo1->save();
-		
+
 		$rf1 = new ReaderFavorite();
 		$rf1->setReaderId($r1->getId());
 		$rf1->setBookId($b1->getId());
 		$rf1->save();
-		
+
 		$c = new Criteria(ReaderFavoritePeer::DATABASE_NAME);
 		$c->add(ReaderFavoritePeer::BOOK_ID, $b1->getId());
 		$c->add(ReaderFavoritePeer::READER_ID, $r1->getId());
-		
+
 		$results = ReaderFavoritePeer::doSelectJoinBookOpinion($c);
 		$this->assertEquals(1, count($results), "Expected 1 result");
 	}
-	
+
 	/**
 	 * Testing foreign keys with multiple referrer columns.
 	 * @link       http://propel.phpdb.org/trac/ticket/606
@@ -356,29 +356,29 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 	{
 		BookstoreContestPeer::doDeleteAll();
 		BookstoreContestEntryPeer::doDeleteAll();
-		
+
 		$bs = new Bookstore();
 		$bs->setStoreName("Test1");
 		$bs->setPopulationServed(5);
 		$bs->save();
 		$bs1Id = $bs->getId();
-		
+
 		$bs2 = new Bookstore();
 		$bs2->setStoreName("Test2");
 		$bs2->setPopulationServed(5);
 		$bs2->save();
 		$bs2Id = $bs2->getId();
-		
+
 		$ct1 = new Contest();
 		$ct1->setName("Contest1!");
 		$ct1->save();
 		$ct1Id = $ct1->getId();
-		
+
 		$ct2 = new Contest();
 		$ct2->setName("Contest2!");
 		$ct2->save();
 		$ct2Id = $ct2->getId();
-		
+
 		$cmr = new Customer();
 		$cmr->setName("Customer1");
 		$cmr->save();
@@ -388,34 +388,34 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$cmr2->setName("Customer2");
 		$cmr2->save();
 		$cmr2Id = $cmr2->getId();
-		
+
 		$contest = new BookstoreContest();
 		$contest->setBookstoreId($bs1Id);
 		$contest->setContestId($ct1Id);
 		$contest->save();
-		
+
 		$contest = new BookstoreContest();
 		$contest->setBookstoreId($bs2Id);
 		$contest->setContestId($ct1Id);
 		$contest->save();
-	
+
 		$entry = new BookstoreContestEntry();
 		$entry->setBookstoreId($bs1Id);
 		$entry->setContestId($ct1Id);
 		$entry->setCustomerId($cmr1Id);
 		$entry->save();
-		
+
 		$entry = new BookstoreContestEntry();
 		$entry->setBookstoreId($bs1Id);
 		$entry->setContestId($ct1Id);
 		$entry->setCustomerId($cmr2Id);
 		$entry->save();
-		
+
 		// Note: this test isn't really working very well.  We setup fkeys that
 		// require that the BookstoreContest rows exist and then try to violate
 		// the rules ... :-/  This may work in some lenient databases, but an error
-		// is expected here. 
-		
+		// is expected here.
+
 		/*
 		 * Commented out for now ... though without it, this test may not really be testing anything
 		$entry = new BookstoreContestEntry();
@@ -424,8 +424,8 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
 		$entry->setCustomerId($cmr2Id);
 		$entry->save();
 		*/
-		
-	
+
+
 		$c = new Criteria();
 		$c->addJoin(array(BookstoreContestEntryPeer::BOOKSTORE_ID, BookstoreContestEntryPeer::CONTEST_ID), array(BookstoreContestPeer::BOOKSTORE_ID, BookstoreContestPeer::CONTEST_ID) );
 

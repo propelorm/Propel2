@@ -19,7 +19,7 @@
 class PropelObjectFormatter extends PropelFormatter
 {
 	protected $collectionName = 'PropelObjectCollection';
-	
+
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkInit();
@@ -50,10 +50,10 @@ class PropelObjectFormatter extends PropelFormatter
 			}
 		}
 		$stmt->closeCursor();
-		
+
 		return $collection;
 	}
-	
+
 	public function formatOne(PDOStatement $stmt)
 	{
 		$this->checkInit();
@@ -62,10 +62,10 @@ class PropelObjectFormatter extends PropelFormatter
 			$result = $this->getAllObjectsFromRow($row);
 		}
 		$stmt->closeCursor();
-		
+
 		return $result;
 	}
-	
+
 	public function isObjectFormatter()
 	{
 		return true;
@@ -85,7 +85,7 @@ class PropelObjectFormatter extends PropelFormatter
 	{
 		// main object
 		list($obj, $col) = call_user_func(array($this->peer, 'populateObject'), $row);
-		
+
 		// related objects added using with()
 		foreach ($this->getWith() as $modelWith) {
 			list($endObject, $col) = call_user_func(array($modelWith->getModelPeerName(), 'populateObject'), $row, $col);
@@ -109,10 +109,10 @@ class PropelObjectFormatter extends PropelFormatter
 			} else {
 				$hydrationChain = array($modelWith->getRightPhpName() => $endObject);
 			}
-			
+
 			call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
 		}
-		
+
 		// columns added using withColumn()
 		foreach ($this->getAsColumns() as $alias => $clause) {
 			$obj->setVirtualColumn($alias, $row[$col]);

@@ -117,7 +117,7 @@ EOF;
 		$this->assertEquals($translation1, $o->getTranslation('en_EN'));
 		$this->assertEquals($translation2, $o->getTranslation('fr_FR'));
 	}
-	
+
 	public function testGetTranslationSetsTheLocaleOnTheTranslation()
 	{
 		$o = new I18nBehaviorTest1();
@@ -142,7 +142,7 @@ EOF;
 		$translation = $o->getTranslation('en_EN');
 		$this->assertEquals($translation1, $translation);
 	}
-	
+
 	public function testRemoveTranslation()
 	{
 		$o = new I18nBehaviorTest1();
@@ -227,7 +227,7 @@ EOF;
 		$o->setLocale('pt_PT');
 		$this->assertEquals('pt_PT', $o->getCurrentTranslation()->getLocale());
 	}
-	
+
 	public function testI18nColumnGetterUsesCurrentTranslation()
 	{
 		$o = new I18nBehaviorTest1();
@@ -254,7 +254,7 @@ EOF;
 		$o->setLocale('fr_FR');
 		$this->assertEquals('bonjour', $o->getBar());
 	}
-	
+
 	public function testTranslationsArePersisted()
 	{
 		$o = new I18nBehaviorTest1();
@@ -272,7 +272,7 @@ EOF;
 			->count();
 		$this->assertEquals(2, $count);
 	}
-	
+
 	public function testClearRemovesExistingTranlsations()
 	{
 		$o = new I18nBehaviorTest1();

@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/I18nBehaviorPeerBuilderModifier.php';
 class I18nBehavior extends Behavior
 {
 	const DEFAULT_LOCALE = 'en_EN';
-	
+
 	// default parameters value
 	protected $parameters = array(
 		'i18n_table'    => '%TABLE%_i18n',
@@ -32,10 +32,10 @@ class I18nBehavior extends Behavior
 		'default_locale' => null,
 		'locale_alias'  => '',
 	);
-	
+
 	protected $tableModificationOrder = 70;
-	
-	protected 
+
+	protected
 		$objectBuilderModifier,
 		$queryBuilderModifier,
 		$peerBuilderModifier,
@@ -46,7 +46,7 @@ class I18nBehavior extends Behavior
 		foreach ($this->getDatabase()->getTables() as $table) {
 			if ($table->hasBehavior('i18n') && !$table->getBehavior('i18n')->getParameter('default_locale')) {
 				$table->getBehavior('i18n')->addParameter(array(
-					'name' => 'default_locale', 
+					'name' => 'default_locale',
 					'value' => $this->getParameter('default_locale')
 				));
 			}
@@ -60,7 +60,7 @@ class I18nBehavior extends Behavior
 		$this->addLocaleColumnToI18n();
 		$this->moveI18nColumns();
 	}
-	
+
 	protected function addI18nTable()
 	{
 		$table = $this->getTable();
@@ -82,7 +82,7 @@ class I18nBehavior extends Behavior
 			}
 		}
 	}
-	
+
 	protected function relateI18nTableToMainTable()
 	{
 		$table = $this->getTable();
@@ -112,7 +112,7 @@ class I18nBehavior extends Behavior
 		}
 		$i18nTable->addForeignKey($fk);
 	}
-	
+
 	protected function addLocaleColumnToI18n()
 	{
 		$localeColumnName = $this->getLocaleColumnName();
@@ -126,7 +126,7 @@ class I18nBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	/**
 	 * Moves i18n columns from the main table to the i18n table
 	 */
@@ -154,7 +154,7 @@ class I18nBehavior extends Behavior
 			}
 		}
 	}
-	
+
 	protected function getI18nTableName()
 	{
 		return $this->replaceTokens($this->getParameter('i18n_table'));
@@ -182,7 +182,7 @@ class I18nBehavior extends Behavior
 		}
 		return $columnNames;
 	}
-	
+
 	public function getDefaultLocale()
 	{
 		if (!$defaultLocale = $this->getParameter('default_locale')) {
@@ -195,7 +195,7 @@ class I18nBehavior extends Behavior
 	{
 		return $this->i18nTable;
 	}
-	
+
 	public function getI18nForeignKey()
 	{
 		foreach ($this->i18nTable->getForeignKeys() as $fk) {
@@ -204,12 +204,12 @@ class I18nBehavior extends Behavior
 			}
 		}
 	}
-	
+
 	public function getLocaleColumn()
 	{
 		return $this->getI18nTable()->getColumn($this->getLocaleColumnName());
 	}
-	
+
 	public function getI18nColumns()
 	{
 		$columns = array();
@@ -229,10 +229,10 @@ class I18nBehavior extends Behavior
 				}
 			}
 		}
-		
+
 		return $columns;
 	}
-	
+
 	public function replaceTokens($string)
 	{
 		$table = $this->getTable();
@@ -257,7 +257,7 @@ class I18nBehavior extends Behavior
 		}
 		return $this->queryBuilderModifier;
 	}
-	
+
 	public function getPeerBuilderModifier()
 	{
 		if (is_null($this->peerBuilderModifier)) {

@@ -66,7 +66,7 @@ class CriteriaTest extends BookstoreTestBase
     // Verify that what we get out is what we put in
     $this->assertTrue($this->c->getValue($table . '.' . $column) === $value);
   }
-  
+
   /**
    * Test basic adding of strings for table with explicit schema.
    */
@@ -92,12 +92,12 @@ class CriteriaTest extends BookstoreTestBase
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable1";
     $column2 = "myColumn1";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
@@ -114,24 +114,24 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addAnd() called on an existing column creates a combined criterion');
     $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
   }
-  
+
   public function testAddAndSameColumnsPropel14Compatibility()
   {
     $table1 = "myTable1";
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable1";
     $column2 = "myColumn1";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $table3 = "myTable3";
     $column3 = "myColumn3";
     $value3 = "myValue3";
     $key3 = "$table3.$column3";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->add($key3, $value3, Criteria::EQUAL);
     $this->c->addAnd($key2, $value2, Criteria::EQUAL);
@@ -150,19 +150,19 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addAnd() called on an existing column creates a combined criterion');
     $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
   }
-    
+
   public function testAddAndDistinctColumns()
   {
     $table1 = "myTable1";
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable2";
     $column2 = "myColumn2";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
@@ -186,12 +186,12 @@ class CriteriaTest extends BookstoreTestBase
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable1";
     $column2 = "myColumn1";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
@@ -208,24 +208,24 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
     $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
   }
-  
+
   public function testAddAndOrColumnsPropel14Compatibility()
   {
     $table1 = "myTable1";
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable1";
     $column2 = "myColumn1";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $table3 = "myTable3";
     $column3 = "myColumn3";
     $value3 = "myValue3";
     $key3 = "$table3.$column3";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->add($key3, $value3, Criteria::EQUAL);
     $this->c->addOr($key2, $value2, Criteria::EQUAL);
@@ -244,19 +244,19 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
     $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
   }
-    
+
   public function testAddOrDistinctColumns()
   {
     $table1 = "myTable1";
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
   	$table2 = "myTable2";
     $column2 = "myColumn2";
     $value2 = "myValue2";
     $key2 = "$table2.$column2";
-    
+
     $this->c->add($key1, $value1, Criteria::EQUAL);
     $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
@@ -273,14 +273,14 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addOr() called on a distinct column adds a criterion to the latest criterion');
     $this->assertEquals($expect_params, $params, 'addOr() called on a distinct column adds a criterion to the latest criterion');
   }
-  
+
   public function testAddOrEmptyCriteria()
   {
     $table1 = "myTable1";
     $column1 = "myColumn1";
     $value1 = "myValue1";
     $key1 = "$table1.$column1";
-    
+
     $this->c->addOr($key1, $value1, Criteria::EQUAL);
 
     $expect = "SELECT  FROM myTable1 WHERE myTable1.myColumn1=:p1";
@@ -295,7 +295,7 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals($expect, $result, 'addOr() called on an empty Criteria adds a criterion to the criteria');
     $this->assertEquals($expect_params, $params, 'addOr() called on an empty Criteria adds a criterion to the criteria');
   }
-  
+
   /**
    * Test Criterion.setIgnoreCase().
    * As the output is db specific the test just prints the result to
@@ -333,12 +333,12 @@ class CriteriaTest extends BookstoreTestBase
     }
     Propel::setDB(null, $originalDB);
   }
-  
+
 	public function testOrderByIgnoreCase()
 	{
 		$originalDB = Propel::getDB();
 		Propel::setDB(null, new DBMySQL());
-		
+
 		$criteria = new Criteria();
 		$criteria->setIgnoreCase(true);
 		$criteria->addAscendingOrderByColumn(BookPeer::TITLE);
@@ -347,7 +347,7 @@ class CriteriaTest extends BookstoreTestBase
 		$sql = BasePeer::createSelectSql($criteria, $params);
 		$expectedSQL = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID, UPPER(book.TITLE) FROM `book` ORDER BY UPPER(book.TITLE) ASC';
 		$this->assertEquals($expectedSQL, $sql);
-		
+
 		Propel::setDB(null, $originalDB);
 	}
 
@@ -452,7 +452,7 @@ class CriteriaTest extends BookstoreTestBase
     }
     $this->assertEquals($expect, $result);
 	}
-	
+
 	public function testInNested()
 	{
 		// now do a nested logic test, just for sanity (not that this should be any surprise)
@@ -700,8 +700,8 @@ class CriteriaTest extends BookstoreTestBase
     $c = new Criteria();
     $c->clearSelectColumns()->
       addJoin(
-        array('TABLE_A.FOO_ID', 'TABLE_A.BAR'), 
-        array('TABLE_B.ID', 'TABLE_B.BAZ'), 
+        array('TABLE_A.FOO_ID', 'TABLE_A.BAR'),
+        array('TABLE_B.ID', 'TABLE_B.BAZ'),
         Criteria::LEFT_JOIN)->
       addSelectColumn("TABLE_A.ID");
 
@@ -710,7 +710,7 @@ class CriteriaTest extends BookstoreTestBase
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
-  
+
   /**
    * Test the Criteria::addJoinMultiple() method with an implicit join
    *
@@ -722,17 +722,17 @@ class CriteriaTest extends BookstoreTestBase
     $c->
       clearSelectColumns()->
       addMultipleJoin(array(
-          array('TABLE_A.FOO_ID', 'TABLE_B.ID'), 
+          array('TABLE_A.FOO_ID', 'TABLE_B.ID'),
           array('TABLE_A.BAR', 'TABLE_B.BAZ')))->
       addSelectColumn("TABLE_A.ID");
-        
+
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
-  
+
   /**
    * Test the Criteria::addJoinMultiple() method with a value as second argument
    *
@@ -744,17 +744,17 @@ class CriteriaTest extends BookstoreTestBase
     $c->
       clearSelectColumns()->
       addMultipleJoin(array(
-          array('TABLE_A.FOO_ID', 'TABLE_B.ID'), 
+          array('TABLE_A.FOO_ID', 'TABLE_B.ID'),
           array('TABLE_A.BAR', 3)))->
       addSelectColumn("TABLE_A.ID");
-        
+
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=3)';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
-  
+
   /**
    * Test the Criteria::addJoinMultiple() method with a joinType
    *
@@ -766,11 +766,11 @@ class CriteriaTest extends BookstoreTestBase
     $c->
       clearSelectColumns()->
       addMultipleJoin(array(
-          array('TABLE_A.FOO_ID', 'TABLE_B.ID'), 
-          array('TABLE_A.BAR', 'TABLE_B.BAZ')), 
+          array('TABLE_A.FOO_ID', 'TABLE_B.ID'),
+          array('TABLE_A.BAR', 'TABLE_B.BAZ')),
         Criteria::LEFT_JOIN)->
       addSelectColumn("TABLE_A.ID");
-        
+
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.ID AND TABLE_A.BAR=TABLE_B.BAZ)';
     $params = array();
@@ -789,17 +789,17 @@ class CriteriaTest extends BookstoreTestBase
     $c->
       clearSelectColumns()->
       addMultipleJoin(array(
-          array('TABLE_A.FOO_ID', 'TABLE_B.ID', Criteria::GREATER_EQUAL), 
+          array('TABLE_A.FOO_ID', 'TABLE_B.ID', Criteria::GREATER_EQUAL),
           array('TABLE_A.BAR', 'TABLE_B.BAZ', Criteria::LESS_THAN)))->
       addSelectColumn("TABLE_A.ID");
-        
+
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ)';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
-    
+
   /**
    * Test the Criteria::addJoinMultiple() method with join type and operator
    *
@@ -811,18 +811,18 @@ class CriteriaTest extends BookstoreTestBase
     $c->
       clearSelectColumns()->
       addMultipleJoin(array(
-          array('TABLE_A.FOO_ID', 'TABLE_B.ID', Criteria::GREATER_EQUAL), 
-          array('TABLE_A.BAR', 'TABLE_B.BAZ', Criteria::LESS_THAN)), 
+          array('TABLE_A.FOO_ID', 'TABLE_B.ID', Criteria::GREATER_EQUAL),
+          array('TABLE_A.BAR', 'TABLE_B.BAZ', Criteria::LESS_THAN)),
         Criteria::LEFT_JOIN)->
       addSelectColumn("TABLE_A.ID");
-        
+
     $expect = 'SELECT TABLE_A.ID FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID>=TABLE_B.ID AND TABLE_A.BAR<TABLE_B.BAZ)';
     $params = array();
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expect, $result);
   }
-  
+
   /**
    * Test the Criteria::CUSTOM behavior.
    */
@@ -837,7 +837,7 @@ class CriteriaTest extends BookstoreTestBase
     $result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals($expected, $result);
   }
-  
+
   /**
    * Tests adding duplicate joins.
    * @link       http://propel.phpdb.org/trac/ticket/613
@@ -845,24 +845,24 @@ class CriteriaTest extends BookstoreTestBase
   public function testAddJoin_Duplicate()
   {
     $c = new Criteria();
-    
+
     $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
     $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
     $this->assertEquals(1, count($c->getJoins()), "Expected not to have duplciate LJOIN added.");
-    
+
     $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);
     $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);
     $this->assertEquals(2, count($c->getJoins()), "Expected 1 new right join to be added.");
-    
+
     $c->addJoin("tbl.COL1", "tbl.COL2");
     $c->addJoin("tbl.COL1", "tbl.COL2");
     $this->assertEquals(3, count($c->getJoins()), "Expected 1 new implicit join to be added.");
-    
+
     $c->addJoin("tbl.COL3", "tbl.COL4");
     $this->assertEquals(4, count($c->getJoins()), "Expected new col join to be added.");
-    
+
   }
-  
+
   /**
    * @link       http://propel.phpdb.org/trac/ticket/634
    */
@@ -870,15 +870,15 @@ class CriteriaTest extends BookstoreTestBase
   {
     $c = new Criteria();
     $c->addSelectColumn("foo");
-    
+
     $this->assertTrue($c->hasSelectClause());
-    
+
     $c = new Criteria();
     $c->addAsColumn("foo", "bar");
-    
+
     $this->assertTrue($c->hasSelectClause());
   }
-  
+
   /**
    * Tests including aliases in criterion objects.
    * @link       http://propel.phpdb.org/trac/ticket/636
@@ -892,7 +892,7 @@ class CriteriaTest extends BookstoreTestBase
     $this->assertEquals("column_alias", $crit->getColumn());
     $c->addHaving($crit); // produces invalid SQL referring to '.olumn_alias'
   }
-  
+
   /**
    * Test whether GROUP BY is being respected in equals() check.
    * @link       http://propel.phpdb.org/trac/ticket/674
@@ -901,12 +901,12 @@ class CriteriaTest extends BookstoreTestBase
   {
     $c1 = new Criteria();
     $c1->addGroupByColumn('GBY1');
-    
+
     $c2 = new Criteria();
     $c2->addGroupByColumn('GBY2');
-    
+
     $this->assertFalse($c2->equals($c1), "Expected Criteria NOT to be the same with different GROUP BY columns");
-    
+
     $c3 = new Criteria();
     $c3->addGroupByColumn('GBY1');
     $c4 = new Criteria();
@@ -931,7 +931,7 @@ class CriteriaTest extends BookstoreTestBase
 		$this->assertEquals(array(Criteria::ALL), $c->getSelectModifiers(), 'Calling setAll leaves a single all');
 		$c->setDistinct();
 		$this->assertEquals(array(Criteria::DISTINCT), $c->getSelectModifiers(), 'All back to distinct works');
-		
+
 		$c2 = new Criteria();
 		$c2->setAll();
 		$this->assertEquals(array(Criteria::ALL), $c2->getSelectModifiers(), 'Initial setAll works');
@@ -949,7 +949,7 @@ class CriteriaTest extends BookstoreTestBase
 		$result = BasePeer::createSelectSql($c, $params);
     $this->assertEquals('SELECT DISTINCT SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
 	}
-	
+
 	public function testClone()
 	{
 		$c1 = new Criteria();
@@ -964,7 +964,7 @@ class CriteriaTest extends BookstoreTestBase
 		}
 		$this->assertEquals(1, $nbCrit, 'cloning a Criteria clones its Criterions');
 	}
-	
+
 	public function testComment()
 	{
 		$c = new Criteria();

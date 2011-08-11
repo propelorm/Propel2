@@ -50,7 +50,7 @@ class ColumnTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $list, sprintf("Expected '%s' match, got '%s' ", var_export($expected, true), var_export($list,true)));
 
 	}
-	
+
 	public function testPhpNamingMethod()
 	{
 		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
@@ -70,7 +70,7 @@ EOF;
 		$column = $appData->getDatabase('test1')->getTable('table1')->getColumn('editor_id');
 	  $this->assertEquals('editor_id', $column->getPhpName(), 'setPhpName() uses the column phpNamingMethod if given');
   }
-  
+
 	public function testDefaultPhpNamingMethod()
 	{
 		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
@@ -87,7 +87,7 @@ EOF;
 		$column = $appData->getDatabase('test2')->getTable('table1')->getColumn('author_id');
 	  $this->assertEquals('author_id', $column->getPhpName(), 'setPhpName() uses the database defaultPhpNamingMethod if given');
 	}
-	
+
 	public function testGetConstantName()
 	{
 		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
@@ -103,7 +103,7 @@ EOF;
     $column = $appData->getDatabase('test')->getTable('table1')->getColumn('title');
     $this->assertEquals('Table1Peer::TITLE', $column->getConstantName(), 'getConstantName() returns the complete constant name by default');
 	}
-	
+
 	public function testIsLocalColumnsRequired()
 	{
 		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
@@ -133,7 +133,7 @@ EOF;
 		$fk = $appData->getDatabase('test')->getTable('table1')->getColumnForeignKeys('table2_bar');
 		$this->assertTrue($fk[0]->isLocalColumnsRequired());
 	}
-	
+
 	public function testIsNamePlural()
 	{
 		$column = new Column('foo');
@@ -153,7 +153,7 @@ EOF;
 		$column = new Column('foso');
 		$this->assertEquals('foso', $column->getSingularName());
 	}
-	
+
 	public function testGetValidator()
 	{
 		$xmlToAppData = new XmlToAppData(new DefaultPlatform());
@@ -185,7 +185,7 @@ EOF;
 		$this->assertInstanceOf('Validator', $title2Validator);
 		$this->assertEquals(2, count($title2Validator->getRules()));
 	}
-	
+
 	public function testHasPlatform()
 	{
 		$column = new Column();

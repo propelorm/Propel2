@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/MysqlPl
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase 
+class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 {
 	public function testNoNamespace()
 	{
@@ -30,7 +30,7 @@ class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 		$builder = new TestableOMBuilder2($t);
 		$this->assertNull($builder->getNamespace(), 'Builder namespace is null when neither the db nor the table have namespace');
 	}
-	
+
 	public function testDbNamespace()
 	{
 		$d = new Database('fooDb');
@@ -50,7 +50,7 @@ class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 		$builder = new TestableOMBuilder2($t);
 		$this->assertEquals('Foo\\Bar', $builder->getNamespace(), 'Builder namespace is the table namespace when no database namespace is set');
 	}
-	
+
 	public function testAbsoluteTableNamespace()
 	{
 		$d = new Database('fooDb');
@@ -82,7 +82,7 @@ class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 		$builder = new TestableOMBuilder2($t);
 		$this->assertEquals('Baz\\Foo\\Bar', $builder->getNamespace(), 'Builder namespace is composed from the database and table namespaces when both are set');
 	}
-	
+
 	public function testDeclareClassNamespace()
 	{
 		$builder = new TestableOMBuilder2(new Table('fooTable'));
@@ -102,7 +102,7 @@ class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 		$builder->declareClassNamespace('Bar', 'Bar');
 		$this->assertEquals(array('Foo' => array('Foo', 'Bar'), 'Bar' => array('Bar')), $builder->getDeclaredClasses());
 	}
-	
+
 	public function testGetDeclareClass()
 	{
 		$builder = new TestableOMBuilder2(new Table('fooTable'));
@@ -119,7 +119,7 @@ class OMBuilderNamespaceTest extends PHPUnit_Framework_TestCase
 		$builder->declareClass('\\Hello\\World');
 		$this->assertEquals(array('World'), $builder->getDeclaredClasses('Hello'));
 	}
-	
+
 	public function testDeclareClasses()
 	{
 		$builder = new TestableOMBuilder2(new Table('fooTable'));
@@ -139,11 +139,11 @@ class TestableOMBuilder2 extends OMBuilder
 	{
 		return parent::getRelatedBySuffix($fk);
 	}
-	
+
 	public static function getRefRelatedBySuffix(ForeignKey $fk)
 	{
 		return parent::getRefRelatedBySuffix($fk);
 	}
-	
+
 	public function getUnprefixedClassname() {}
 }

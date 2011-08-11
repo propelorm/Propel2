@@ -35,4 +35,4 @@ propel.dbd2propel.dir = ${propel.project.dir}/dbd
 propel.dbd2propel.includes = *.xml
 # XSLT used to transform DBDesigner files to Propel schemas
 propel.dbd2propel.xsl.file = ${propel.home}/resources/xsl/dbd2propel.xsl
-}}} 
+}}}

@@ -95,7 +95,7 @@ class PropelTypes
 	const OBJECT_NATIVE_TYPE = "";
 	const PHP_ARRAY_NATIVE_TYPE = "array";
 	const ENUM_NATIVE_TYPE = "string";
-	
+
 	/**
 	 * Mapping between Propel types and PHP native types.
 	 *
@@ -300,7 +300,7 @@ class PropelTypes
 	{
 		return in_array($type, self::$NUMERIC_TYPES);
 	}
-	
+
 	/**
 	 * Returns true if values for the type are boolean.
 	 *

@@ -25,17 +25,17 @@ require_once dirname(__FILE__) . '/PropelForeignKeyComparator.php';
 class PropelTableComparator
 {
 	protected $tableDiff;
-	
+
 	public function __construct($tableDiff = null)
 	{
 		$this->tableDiff = (null === $tableDiff) ? new PropelTableDiff() : $tableDiff;
 	}
-	
+
 	public function getTableDiff()
 	{
 		return $this->tableDiff;
 	}
-	
+
 	/**
 	 * Set the table the comparator starts from
 	 *
@@ -96,10 +96,10 @@ class PropelTableComparator
 		$differences += $tc->comparePrimaryKeys($caseInsensitive);
 		$differences += $tc->compareIndices($caseInsensitive);
 		$differences += $tc->compareForeignKeys($caseInsensitive);
-		
+
 		return ($differences > 0) ? $tc->getTableDiff() : false;
 	}
-	
+
 	/**
 	 * Compare the columns of the fromTable and the toTable,
 	 * and modifies the inner tableDiff if necessary.
@@ -115,7 +115,7 @@ class PropelTableComparator
 		$fromTableColumns = $this->getFromTable()->getColumns();
 		$toTableColumns = $this->getToTable()->getColumns();
 		$columnDifferences = 0;
-		
+
 		// check for new columns in $toTable
 		foreach ($toTableColumns as $column) {
 			if (!$this->getFromTable()->hasColumn($column->getName(), $caseInsensitive)) {
@@ -123,7 +123,7 @@ class PropelTableComparator
 				$columnDifferences++;
 			}
 		}
-		
+
 		// check for removed columns in $toTable
 		foreach ($fromTableColumns as $column) {
 			if (!$this->getToTable()->hasColumn($column->getName(), $caseInsensitive)) {
@@ -131,7 +131,7 @@ class PropelTableComparator
 				$columnDifferences++;
 			}
 		}
-		
+
 		// check for column differences
 		foreach ($fromTableColumns as $fromColumn) {
 			if ($this->getToTable()->hasColumn($fromColumn->getName(), $caseInsensitive)) {
@@ -143,7 +143,7 @@ class PropelTableComparator
 				}
 			}
 		}
-		
+
 		// check for column renamings
 		foreach ($this->tableDiff->getAddedColumns() as $addedColumnName => $addedColumn) {
 			foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
@@ -156,10 +156,10 @@ class PropelTableComparator
 				}
 			}
 		}
-		
+
 		return $columnDifferences;
 	}
-	
+
 	/**
 	 * Compare the primary keys of the fromTable and the toTable,
 	 * and modifies the inner tableDiff if necessary.
@@ -175,7 +175,7 @@ class PropelTableComparator
 		$pkDifferences = 0;
 		$fromTablePk = $this->getFromTable()->getPrimaryKey();
 		$toTablePk = $this->getToTable()->getPrimaryKey();
-		
+
 		// check for new pk columns in $toTable
 		foreach ($toTablePk as $column) {
 			if (!$this->getFromTable()->hasColumn($column->getName(), $caseInsensitive) ||
@@ -184,7 +184,7 @@ class PropelTableComparator
 				$pkDifferences++;
 			}
 		}
-		
+
 		// check for removed pk columns in $toTable
 		foreach ($fromTablePk as $column) {
 			if (!$this->getToTable()->hasColumn($column->getName(), $caseInsensitive) ||
@@ -193,7 +193,7 @@ class PropelTableComparator
 				$pkDifferences++;
 			}
 		}
-		
+
 		// check for column renamings
 		foreach ($this->tableDiff->getAddedPkColumns() as $addedColumnName => $addedColumn) {
 			foreach ($this->tableDiff->getRemovedPkColumns() as $removedColumnName => $removedColumn) {
@@ -206,7 +206,7 @@ class PropelTableComparator
 				}
 			}
 		}
-		
+
 		return $pkDifferences;
 	}
 
@@ -233,7 +233,7 @@ class PropelTableComparator
 					unset($toTableIndices[$toTableIndexPos]);
 				} else {
 					$test = $caseInsensitive ?
-						strtolower($fromTableIndex->getName()) == strtolower($toTableIndex->getName()) : 
+						strtolower($fromTableIndex->getName()) == strtolower($toTableIndex->getName()) :
 						$fromTableIndex->getName() == $toTableIndex->getName();
 					if ($test) {
 						// same name, but different columns
@@ -255,10 +255,10 @@ class PropelTableComparator
 			$this->tableDiff->addAddedIndex($toTableIndex->getName(), $toTableIndex);
 			$indexDifferences++;
 		}
-		
+
 		return $indexDifferences;
 	}
-	
+
 	/**
 	 * Compare the foreign keys of the fromTable and the toTable,
 	 * and modifies the inner tableDiff if necessary.
@@ -281,7 +281,7 @@ class PropelTableComparator
 					unset($fromTableFks[$fromTableFkPos]);
 					unset($toTableFks[$toTableFkPos]);
 				} else {
-					$test = $caseInsensitive ? 
+					$test = $caseInsensitive ?
 						strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
 						$fromTableFk->getName() == $toTableFk->getName();
 					if ($test) {
@@ -304,7 +304,7 @@ class PropelTableComparator
 			$this->tableDiff->addAddedFk($toTableFk->getName(), $toTableFk);
 			$fkDifferences++;
 		}
-		
+
 		return $fkDifferences;
 	}
 

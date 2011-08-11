@@ -1,6 +1,6 @@
 
 /**
- * Computes the value of the aggregate column <?php echo $column->getName() ?> 
+ * Computes the value of the aggregate column <?php echo $column->getName() ?>
  *
  * @param PropelPDO $con A connection object
  *

@@ -51,7 +51,7 @@ The best way to learn what a generated Active Record class can do is to inspect 
 <table name="books">
 <!-- generates the following Active Record class: Books (not good) !-->
 
-<!-- You can customize the name of an Active Record class in PHP 
+<!-- You can customize the name of an Active Record class in PHP
      by setting the phpName attribute in the <table> tag !-->
 <table name="foo_books" phpName="Book" />
 <!-- generates the following Active Record class: Book !-->
@@ -151,7 +151,7 @@ To use a custom name for these methods, set the `phpName` attribute in the `<col
 <!-- getTitle(), setTitle() !-->
 }}}
 
-'''Tip''': Calling the setter on an autoincremented PK will throw an exception as soon as you try to save the object. You can allow PK inserts on such columns by setting the `allowPkInsert` attribute to `true` in the `<table>` tag of the XML schema. 
+'''Tip''': Calling the setter on an autoincremented PK will throw an exception as soon as you try to save the object. You can allow PK inserts on such columns by setting the `allowPkInsert` attribute to `true` in the `<table>` tag of the XML schema.
 
 '''Tip''': Calling a getter doesn't issue any database query, except for lazy-loaded columns.
 
@@ -195,7 +195,7 @@ $book->delete();
 // All persistence methods accept a connection object
 $con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 $book->delete($con);
-}}} 
+}}}
 
 == Relationship Getters and Setters ==
 
@@ -423,13 +423,13 @@ echo $house->getCoordinates()->isInNorthernHemisphere(); // true
 class GeographicCoordinates
 {
   public $latitude, $longitude;
-  
+
   public function __construct($latitude, $longitude)
   {
     $this->latitude = $latitude;
     $this->longitude = $longitude;
   }
-  
+
   public function isInNorthernHemisphere()
   {
     return $this->latitude > 0;
@@ -748,6 +748,6 @@ $book2 = book1->copy(); // creates a copy of an Active Record instance
 echo $book1->equals($book2); // compares two ActiveRecord instances
 }}}
 
-== Conclusion == 
+== Conclusion ==
 
 Active Record classes are not only an object-oriented tool to execute SQL queries in a database-independent way. They provide a lot of features to streamline day-to-day work with persisted objects. They can also be seen as a persistence ability that can be added to any PHP object.

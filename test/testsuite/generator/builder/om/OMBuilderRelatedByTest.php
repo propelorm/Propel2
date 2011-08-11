@@ -20,10 +20,10 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/platform/Default
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderRelatedByTest extends PHPUnit_Framework_TestCase 
+class OMBuilderRelatedByTest extends PHPUnit_Framework_TestCase
 {
 	static $database;
-	
+
 	public function setUp()
 	{
 		// run only once to save execution time
@@ -33,13 +33,13 @@ class OMBuilderRelatedByTest extends PHPUnit_Framework_TestCase
 			self::$database = $appData->getDatabase("bookstore");
 		}
 	}
-	
+
 	protected function getForeignKey($tableName, $index)
 	{
 		$fks = self::$database->getTable($tableName)->getForeignKeys();
 		return $fks[$index];
 	}
-	
+
 	public static function getRelatedBySuffixDataProvider()
 	{
 		return array(
@@ -54,7 +54,7 @@ class OMBuilderRelatedByTest extends PHPUnit_Framework_TestCase
 			array('woman', 0, 'RelatedByHusbandId', 'RelatedByHusbandId'),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider getRelatedBySuffixDataProvider
 	 */
@@ -72,11 +72,11 @@ class TestableOMBuilder extends OMBuilder
 	{
 		return parent::getRelatedBySuffix($fk);
 	}
-	
+
 	public static function getRefRelatedBySuffix(ForeignKey $fk)
 	{
 		return parent::getRefRelatedBySuffix($fk);
 	}
-	
+
 	public function getUnprefixedClassname() {}
 }

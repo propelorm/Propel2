@@ -37,7 +37,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 	{
 		$this->databaseName = $v;
 	}
-	
+
 	/**
 	 * Gets the datasource name.
 	 *
@@ -87,7 +87,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 	{
 		return $this->isCaseInsensitive;
 	}
-	
+
 	/**
 	 * Main method builds all the targets for a typical propel project.
 	 */
@@ -95,9 +95,9 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 	{
 		// check to make sure task received all correct params
 		$this->validate();
-		
+
 		$generatorConfig = $this->getGeneratorConfig();
-		
+
 		// loading model from database
 		$this->log('Reading databases structure...');
 		$connections = $generatorConfig->getBuildConnections();
@@ -133,7 +133,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 		$this->packageObjectModel = true;
 		$appDatasFromXml = $this->getDataModels();
 		$appDataFromXml = array_pop($appDatasFromXml);
-		
+
 		// comparing models
 		$this->log('Comparing models...');
 		$manager = new PropelMigrationManager();
@@ -149,23 +149,23 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 				continue;
 			}
 			$databaseDiff = PropelDatabaseComparator::computeDiff($database, $appDataFromXml->getDatabase($name), $this->isCaseInsensitive());
-			
+
 			if (!$databaseDiff) {
 				$this->log(sprintf('Same XML and database structures for datasource "%s" - no diff to generate', $name), Project::MSG_VERBOSE);
 				continue;
 			}
-		
+
 			$this->log(sprintf('Structure of database was modified in datasource "%s": %s', $name, $databaseDiff->getDescription()));
 			$platform = $generatorConfig->getConfiguredPlatform(null, $name);
 			$migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
 			$migrationsDown[$name] = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
 		}
-		
+
 		if (!$migrationsUp) {
 			$this->log('Same XML and database structures for all datasource - no diff to generate');
 			return;
 		}
-		
+
 		$timestamp = time();
 		$migrationFileName = $manager->getMigrationFileName($timestamp);
 		$migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp);

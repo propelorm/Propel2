@@ -42,49 +42,49 @@ class ColumnMapTest extends BookstoreTestBase
     $this->assertEquals($this->tmap, $this->cmap->getTable(), 'Constructor sets the table map');
     $this->assertNull($this->cmap->getType(), 'A new column map has no type');
   }
-  
+
   public function testPhpName()
   {
     $this->assertNull($this->cmap->getPhpName(), 'phpName is empty until set');
     $this->cmap->setPhpName('FooBar');
     $this->assertEquals('FooBar', $this->cmap->getPhpName(), 'phpName is set by setPhpName()');
   }
-  
+
   public function testType()
   {
     $this->assertNull($this->cmap->getType(), 'type is empty until set');
     $this->cmap->setType('FooBar');
     $this->assertEquals('FooBar', $this->cmap->getType(), 'type is set by setType()');
   }
-  
+
   public function tesSize()
   {
     $this->assertEquals(0, $this->cmap->getSize(), 'size is empty until set');
     $this->cmap->setSize(123);
     $this->assertEquals(123, $this->cmap->getSize(), 'size is set by setSize()');
   }
-  
+
   public function testPrimaryKey()
   {
     $this->assertFalse($this->cmap->isPrimaryKey(), 'primaryKey is false by default');
     $this->cmap->setPrimaryKey(true);
     $this->assertTrue($this->cmap->isPrimaryKey(), 'primaryKey is set by setPrimaryKey()');
   }
-  
+
   public function testNotNull()
   {
     $this->assertFalse($this->cmap->isNotNull(), 'notNull is false by default');
     $this->cmap->setNotNull(true);
     $this->assertTrue($this->cmap->isNotNull(), 'notNull is set by setPrimaryKey()');
   }
-  
+
   public function testDefaultValue()
   {
     $this->assertNull($this->cmap->getDefaultValue(), 'defaultValue is empty until set');
     $this->cmap->setDefaultValue('FooBar');
     $this->assertEquals('FooBar', $this->cmap->getDefaultValue(), 'defaultValue is set by setDefaultValue()');
   }
-  
+
   public function testGetForeignKey()
   {
     $this->assertFalse($this->cmap->isForeignKey(), 'foreignKey is false by default');
@@ -110,7 +110,7 @@ class ColumnMapTest extends BookstoreTestBase
     $this->assertEquals($relatedTmap, $this->cmap->getRelatedTable(), 'getRelatedTable returns the related TableMap object');
     $this->assertEquals($relatedCmap, $this->cmap->getRelatedColumn(), 'getRelatedColumn returns the related ColumnMap object');
   }
-  
+
   public function testGetRelation()
   {
     $bookTable = BookPeer::getTableMap();
@@ -121,9 +121,9 @@ class ColumnMapTest extends BookstoreTestBase
     $bookstoreTable = BookstoreEmployeePeer::getTableMap();
     $supervisorColumn = $bookstoreTable->getColumn('SUPERVISOR_ID');
     $this->assertEquals($supervisorColumn->getRelation(), $supervisorColumn->getRelation('Supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
-    
+
   }
-  
+
   public function testNormalizeName()
   {
     $this->assertEquals('', ColumnMap::normalizeName(''), 'normalizeColumnName() returns an empty string when passed an empty string');

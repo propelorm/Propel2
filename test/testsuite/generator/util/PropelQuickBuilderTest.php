@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
 
 /**
  *
- * @package    generator.util 
+ * @package    generator.util
  */
 class PropelQuickBuilderTest extends PHPUnit_Framework_TestCase
 {
@@ -42,7 +42,7 @@ EOF;
 		$builder->setSchema($schema);
 		return array(array($builder));
 	}
-	
+
 	/**
 	 * @dataProvider simpleSchemaProvider
 	 */
@@ -76,7 +76,7 @@ CREATE TABLE [quick_build_foo_1]
 EOF;
 		$this->assertEquals($expected, $builder->getSQL());
 	}
-	
+
 	/**
 	 * @dataProvider simpleSchemaProvider
 	 */

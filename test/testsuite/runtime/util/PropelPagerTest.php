@@ -21,12 +21,12 @@ class PropelPagerTest extends BookstoreEmptyTestBase
 {
   private $authorId;
   private $books;
-  
+
   protected function setUp()
   {
     parent::setUp();
 		BookstoreDataPopulator::populate();
-		
+
     $cr = new Criteria();
     $cr->add(AuthorPeer::LAST_NAME, "Rowling");
     $cr->add(AuthorPeer::FIRST_NAME, "J.K.");
@@ -91,7 +91,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     $pager = new PropelPager($cr, "BookPeer", "doSelect");
     $this->assertEquals(7, count($pager));
   }
-  
+
   public function testCountFirstPageWithLimits()
   {
     $cr = new Criteria();
@@ -99,7 +99,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     $pager = new PropelPager($cr, "BookPeer", "doSelect", 1, 5);
     $this->assertEquals(5, count($pager));
   }
-  
+
   public function testCountLastPageWithLimits()
   {
     $cr = new Criteria();
@@ -107,7 +107,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     $pager = new PropelPager($cr, "BookPeer", "doSelect", 2, 5);
     $this->assertEquals(2, count($pager));
   }
-  
+
   public function testIterateAll()
   {
     $cr = new Criteria();
@@ -119,7 +119,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     }
     $this->assertEquals(7, $i);
   }
-  
+
   public function testIterateWithLimits()
   {
     $cr = new Criteria();
@@ -131,7 +131,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     }
     $this->assertEquals(2, $i);
   }
-  
+
   public function testIterateCheckSecond()
   {
     $cr = new Criteria();
@@ -144,7 +144,7 @@ class PropelPagerTest extends BookstoreEmptyTestBase
     }
     $this->assertEquals("Harry Potter and the Goblet of Fire", $books[2]->getTitle());
   }
-  
+
   public function testIterateTwice()
   {
     $cr = new Criteria();

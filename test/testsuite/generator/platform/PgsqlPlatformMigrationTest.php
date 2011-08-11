@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
@@ -57,7 +57,7 @@ ALTER TABLE "foo2" ADD "baz3" TEXT;
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetRenameTableDDL
 	 */
@@ -101,7 +101,7 @@ ALTER TABLE "foo" ADD CONSTRAINT "foo1_FK_1"
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableColumnsDDL
 	 */
@@ -133,7 +133,7 @@ ALTER TABLE "foo" ADD PRIMARY KEY ("id","bar");
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableIndicesDDL
 	 */
@@ -152,7 +152,7 @@ CREATE INDEX "bar_baz_FK" ON "foo" ("id","bar","baz");
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableForeignKeysDDL
 	 */
@@ -229,7 +229,7 @@ ALTER TABLE \"foo\" RENAME COLUMN \"bar1\" TO \"bar2\";
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyColumnDDL
 	 */
@@ -240,7 +240,7 @@ ALTER TABLE \"foo\" ALTER COLUMN \"bar\" TYPE DOUBLE PRECISION;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
 	}
-	
+
 	public function testGetModifyColumnDDLWithChangedTypeAndDefault()
 	{
 		$t1 = new Table('foo');
@@ -279,7 +279,7 @@ ALTER TABLE "foo" ALTER COLUMN "bar2" SET NOT NULL;
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddColumnDDL
 	 */

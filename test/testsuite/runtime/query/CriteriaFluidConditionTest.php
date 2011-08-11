@@ -50,7 +50,7 @@ class CriteriaFluidConditionTest extends BaseTestCase
 			_endif();
 		$this->assertFalse($f->getTest(), '_if() does not execute the next methods until _endif() if the test is false');
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -116,7 +116,7 @@ class CriteriaFluidConditionTest extends BaseTestCase
 			_endif();
 		$this->assertFalse($f->getTest(), '_elseif() does not execute the next method if the main test is false and the elseif test is false');
 	}
-	
+
 	public function testElse()
 	{
 		$f = new TestableCriteria();
@@ -159,7 +159,7 @@ class CriteriaFluidConditionTest extends BaseTestCase
 			_endif();
 		$this->assertTrue($f->getTest(), '_else() executes the next method if all the previous tests are false');
 	}
-	
+
 	public function testEndif()
 	{
 		$f = new TestableCriteria();
@@ -196,7 +196,7 @@ class TestableCriteria extends Criteria
 	public function test()
 	{
 		$this->test = true;
-		
+
 		return $this;
 	}
 

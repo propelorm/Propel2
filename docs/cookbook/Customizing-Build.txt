@@ -83,7 +83,7 @@ Or, for maximum re-usability, you can create a ''<path>'' object, and then refer
   <path id="propelclasses">
       <pathelement dir="/path/to/propel-generator/classes"/>
   </path>
-  
+
   <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask"
@@ -112,7 +112,7 @@ Now that we've seen the essential elements of our custom build file, it's time t
 {{{
 <?xml version="1.0">
 <project name="propel" default="om">
- 
+
  <!-- set properties we use later -->
  <property name="propelgen.home" value="/path/to/propel-generator"/>
  <property name="out.dir" value="/var/www/bookstore"/>
@@ -121,13 +121,13 @@ Now that we've seen the essential elements of our custom build file, it's time t
   <path id="propelclasses">
       <pathelement dir="${propelgen.home}/classes"/>
   </path>
-  
+
   <taskdef
     name="propel-om"
     classname="propel.phing.PropelOMTask"
     classpathRef="propelclasses"/>
 
- 
+
  <!-- this [default] target performs the work -->
  <target name="om" description="build propel om">
   <propel-om

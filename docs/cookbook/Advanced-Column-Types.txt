@@ -110,13 +110,13 @@ Propel offers an `OBJECT` column type to store PHP objects in the database. The 
 class GeographicCoordinates
 {
   public $latitude, $longitude;
-  
+
   public function __construct($latitude, $longitude)
   {
     $this->latitude = $latitude;
     $this->longitude = $longitude;
   }
-  
+
   public function isInNorthernHemisphere()
   {
     return $this->latitude > 0;
@@ -198,4 +198,4 @@ $books = BookQuery::create()
 
 '''Tip''': Filters on array columns translate to SQL as LIKE conditions. That means that the resulting query often requires a full table scan, and is not suited for large tables.
 
-'''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns. 
+'''Warning''': Only generated Query classes (through generated `filterByXXX()` methods) and `ModelCriteria` (through `where()`, and `condition()`) allow conditions on `ENUM`, `OBJECT`, and `ARRAY` columns. `Criteria` alone (through `add()`, `addAnd()`, and `addOr()`) does not support conditions on such columns.

@@ -53,7 +53,7 @@ EOF;
 			->findOne();
 		$this->assertEquals('baz', $e->getBar(), 'enum columns are correctly hydrated');
 	}
-	
+
 	public function testWhere()
 	{
 		$e = ComplexColumnTypeEntity13Query::create()
@@ -66,7 +66,7 @@ EOF;
 			->find();
 		$this->assertEquals(2, $e->count(), 'object columns are searchable by enumerated value using where()');
 	}
-	
+
 	public function testFilterByColumn()
 	{
 		$e = ComplexColumnTypeEntity13Query::create()

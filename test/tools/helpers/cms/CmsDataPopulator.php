@@ -124,7 +124,7 @@ class CmsDataPopulator {
 		$con->exec("INSERT INTO Category (LeftChild, RightChild, Title) VALUES (2, 7, 'Cat_1_1')");
 		$con->exec("INSERT INTO Category (LeftChild, RightChild, Title) VALUES (3, 6, 'Cat_1_1_1')");
 		$con->exec("INSERT INTO Category (LeftChild, RightChild, Title) VALUES (4, 5, 'Cat_1_1_1_1')");
-		
+
 		$con->commit();
 	}
 
@@ -137,7 +137,7 @@ class CmsDataPopulator {
 		$con->beginTransaction();
 		$con->exec("DELETE FROM Page");
 		$con->exec("DELETE FROM Category");
-		
+
 		$con->commit();
 	}
 }

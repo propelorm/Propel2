@@ -34,7 +34,7 @@ class PropelParserTest extends PHPUnit_Framework_TestCase
 	{
 		$parser = PropelParser::getParser('Foo');
 	}
-	
+
 	public function testLoad()
 	{
 		$fixtureFile = dirname(__FILE__) . '/fixtures/test_data.xml';
@@ -49,7 +49,7 @@ class PropelParserTest extends PHPUnit_Framework_TestCase
 EOF;
 		$this->assertEquals($expectedContent, $content, 'PropelParser::load() executes PHP code in files');
 	}
-	
+
 	public function testDump()
 	{
 		$testContent = "Foo Content";

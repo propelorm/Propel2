@@ -276,11 +276,11 @@ $fromAccount->setValue($fromAccount->getValue() - $amount);
 $fromAccount->save();
 }}}
 
-However, it's a good practice to pass the connection explicitely, and for three reasons: 
+However, it's a good practice to pass the connection explicitely, and for three reasons:
 
  * Propel doesn't need to look for a connection object, and this results in a tiny boost in performance.
  * You can use a specific connection, which is required in distributed (master/slave) environments, in order to distinguish read and write operations.
- * Most importantly, transactions are tied to a single connection. You can't enclose two queries using different connections in a single transaction. So it's very useful to identify the connection you want to use for every query, as Propel will throw an exception if you use the wrong connection. 
+ * Most importantly, transactions are tied to a single connection. You can't enclose two queries using different connections in a single transaction. So it's very useful to identify the connection you want to use for every query, as Propel will throw an exception if you use the wrong connection.
 
 == Limitations ==
 

@@ -172,7 +172,7 @@
 			</then>
 		</if>
 	  </target>
-	
+
   <target
     name="sql"
     depends="sql-check,pgsql-quoting-check,mysqli-check"
@@ -261,7 +261,7 @@
       password="${propel.database.password}"
     />
   </target>
-  
+
   <!-- ================================================================ -->
   <!-- N E W   R E V E R S E   T O   X M L                              -->
   <!-- ================================================================ -->
@@ -294,7 +294,7 @@
   <!-- ================================================================ -->
   <!-- M I G R A T I O N   T A S K S                                    -->
   <!-- ================================================================ -->
-  
+
   <target
     name="sql-diff"
     depends="sql-check,pgsql-quoting-check,mysqli-check"
@@ -424,7 +424,7 @@
       outputDirectory="${propel.migration.dir}">
     </propel-migration>
   </target>
-  
+
   <!-- ================================================================ -->
   <!-- Generate SQL from XML data file                                  -->
   <!-- ================================================================ -->
@@ -593,7 +593,7 @@
       <mapper type="regexp" from="^(.*)\.xml$" to="\1.schema.xml"/>
     </xslt>
   </target>
-  
+
   <target
     name="graphviz"
     depends="sql-check"

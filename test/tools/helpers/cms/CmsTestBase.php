@@ -20,7 +20,7 @@ include_once dirname(__FILE__) . '/CmsDataPopulator.php';
 abstract class CmsTestBase extends PHPUnit_Framework_TestCase
 {
 	protected $con;
-	
+
 	/**
 	 * This is run before each unit test; it populates the database.
 	 */

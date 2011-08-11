@@ -48,7 +48,7 @@
 			<rule name="maxValue" value="100" message="Impressive age! Just kidding, hm?" />
 		</validator>
 	</table>
-	
+
 	<!-- This table exists to test multi-level JOINS with renamed relations -->
 	<table name="book_summary">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -77,7 +77,7 @@
 			<rule name="validValues" value="new|reviewed|archived" message="Invalid status. (new, reviewed, archived)" />
 		</validator>
 	</table>
-	
+
 	<!-- This table exists to test the related setters on identical table ("relatedByXXX" issues) and column phpNames -->
 	<table name="essay" package="relation">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -127,7 +127,7 @@
       <reference local="husband_id" foreign="id"/>
     </foreign-key>
   </table>
-  
+
 	<!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
 	<table name="media">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Media Id" />
@@ -198,7 +198,7 @@
 			<unique-column name="login" />
 		</unique>
 	</table>
-	
+
 	<table name="acct_audit_log">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
 		<column name="uid" type="VARCHAR" size="32" required="true" />
@@ -215,13 +215,13 @@
 			<unique-column name="message" />
 		</unique>
 	</table>
-	
+
 	<table name="acct_access_role">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Role ID number" />
 		<column name="name" type="VARCHAR" size="25" required="true" />
 	</table>
 
-	<!--  book_reader, book_opinion, and reader_favorite test some foreign key issues  
+	<!--  book_reader, book_opinion, and reader_favorite test some foreign key issues
 		(see: http://propel.phpdb.org/trac/ticket/228) -->
 	<table name="book_reader">
 		<column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" description="Book reader ID number" />
@@ -241,7 +241,7 @@
 			<reference local="reader_id" foreign="id" />
 		</foreign-key>
 	</table>
-	
+
 	<!--  Test multiple foreign keys for a single column -->
 	<table name="reader_favorite">
 		<column name="book_id" type="INTEGER" primaryKey="true" />
@@ -252,12 +252,12 @@
 		<foreign-key foreignTable="book_reader" onDelete="cascade">
 			<reference local="reader_id" foreign="id" />
 		</foreign-key>
-		
+
 		<foreign-key foreignTable="book_opinion" onDelete="cascade">
 			<reference local="book_id" foreign="book_id"/>
 			<reference local="reader_id" foreign="reader_id"/>
 		</foreign-key>
-		
+
 	</table>
 
 	<!--  Test some custom php column types. -->

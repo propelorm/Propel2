@@ -24,25 +24,25 @@ class PropelYAMLParserTest extends PHPUnit_Framework_TestCase
 	public static function arrayYAMLConversionDataProvider()
 	{
 		return array(
-			array(array(), '{  }', 'empty array'), 
-			array(array(1, 2, 3), 
+			array(array(), '{  }', 'empty array'),
+			array(array(1, 2, 3),
 "- 1
 - 2
 - 3
 ", 'regular array'),
-			array(array(1, '2', 3), 
+			array(array(1, '2', 3),
 "- 1
 - '2'
 - 3
 ", 'array with strings'),
-			array(array(1, 2, array(3, 4)), 
+			array(array(1, 2, array(3, 4)),
 "- 1
 - 2
 -
   - 3
   - 4
-", 'nested arrays'), 
-			array(array('a' => 1, 'b' => 2), 
+", 'nested arrays'),
+			array(array('a' => 1, 'b' => 2),
 "a: 1
 b: 2
 ", 'associative array'),
@@ -50,19 +50,19 @@ b: 2
 b: null
 c: ''
 ", 'associative array with empty values'),
-			array(array('a' => 1, 'b' => 'bar'), 
+			array(array('a' => 1, 'b' => 'bar'),
 "a: 1
 b: bar
 ", 'associative array with strings'),
-			array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'), 
+			array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'),
 "a: '<html><body><p style=\"width:30px;\">Hello, World!</p></body></html>'
 ", 'associative array with code'),
-			array(array('a' => 1, 'b' => array('foo' => 2)), 
+			array(array('a' => 1, 'b' => array('foo' => 2)),
 "a: 1
 b:
   foo: 2
 ", 'nested associative arrays'),
-			array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')), 
+			array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),
 "Id: 123
 Title: 'Pride and Prejudice'
 AuthorId: 456
@@ -77,7 +77,7 @@ b2: 2
 ", 'keys with numbers'),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider arrayYAMLConversionDataProvider
 	 */

@@ -57,7 +57,7 @@ So Propel queries are a very powerful tool to write your queries in an object-or
 
 == Generated Query Methods ==
 
-For each object, Propel creates a few methods in the generated query object. 
+For each object, Propel creates a few methods in the generated query object.
 
 === Column Filter Methods ===
 
@@ -77,7 +77,7 @@ WHERE book.TITLE = :p1'; // :p1 => 'War And Peace'
 }}}
 
  * For string columns, `filterByXXX()` translates to a SQL `WHERE ... LIKE` if the value contains wildcards:
- 
+
 {{{
 #!php
 <?php
@@ -90,7 +90,7 @@ WHERE book.TITLE LIKE :p1'; // :p1 => 'War%'
 }}}
 
  * For numeric and temporal columns, `filterByXXX()` translates into an interval condition if the value is an associative array using 'min' and/or 'max' as keys:
- 
+
 {{{
 #!php
 <?php
@@ -103,7 +103,7 @@ WHERE book.ID >= :p1 AND book.ID <= :p2)'; // :p1 => 123, :p2 => 456
 }}}
 
  * For integer columns, `filterByXXX()` translates into a SQL `WHERE ... IN` if the value is an array:
- 
+
 {{{
 #!php
 <?php
@@ -116,7 +116,7 @@ WHERE book.AUTHOR_ID IN (:p1, :p2)'; // :p1 => 123, :p2 => 456
 }}}
 
  * For Boolean columns, `filterByXXX()` translates the value to a boolean using smart casting:
- 
+
 {{{
 #!php
 <?php
@@ -131,7 +131,7 @@ WHERE book.IS_PUBLISHED = :p1
 }}}
 
  * for Temporal columns, `filterByXXX()` accepts a string, a timestamp, or a DateTime value:
- 
+
 {{{
 #!php
 <?php
@@ -157,7 +157,7 @@ $books = BookQuery::create()
 $query = 'SELECT book.* from `book`
 WHERE book.STYLE = :p1; // :p1 => 0
 }}}
- 
+
  * for Object columns, `filterByXXX()` accepts a PHP object
 
 {{{
@@ -235,7 +235,7 @@ $books = BookQuery::create()
     ->filterByName('Leo Tolstoi')
   ->endUse()
   ->find();
-}}} 
+}}}
 
 `useAuthorQuery()` returns a new instance of `AuthorQuery` already joined with the current `BookQuery` instance. The next method is therefore called on a different object - that's why the `filterByName()` call is further indented in the code example. Finally, `endUse()` merges the conditions applied on the `AuthorQuery` to the `BookQuery`, and returns the original `BookQuery` object.
 
@@ -264,13 +264,13 @@ $books = BookQuery::create()
 $query = 'SELECT book.* from book
 LEFT JOIN author a ON book.AUTHOR_ID = a.ID
 WHERE a.NAME = :p1'; // :p1 => 'Leo Tolstoi'
-}}} 
+}}}
 
 The `useXXXQuery()` methods allow for very complex queries. You can mix them, nest them, and reopen them to add more conditions.
 
 == Inherited Methods ==
 
-The generated Query classes extend a core Propel class named `ModelCriteria`, which provides even more methods for building your queries. 
+The generated Query classes extend a core Propel class named `ModelCriteria`, which provides even more methods for building your queries.
 
 === Finding An Object From Its Primary Key ===
 
@@ -307,7 +307,7 @@ $article = BookQuery::create()
 {{{
 #!php
 <?php
-// The query recognizes method calls composed of `findOneBy` or `findBy`, and a column name. 
+// The query recognizes method calls composed of `findOneBy` or `findBy`, and a column name.
 $book = BookQuery::create()->findOneByTitle('War And Peace');
 // same as
 $book = BookQuery::create()
@@ -381,7 +381,7 @@ $nbDeletedBooks = BookQuery::create()
 // Deleting a selection of Books
 $nbDeletedBooks = BookQuery::create()
   ->filterByTitle('Pride And Prejudice')
-  ->delete($con); 
+  ->delete($con);
 }}}
 
 === Updating Objects ===
@@ -520,7 +520,7 @@ echo $q->count(); // 1
 
 == Relational API ==
 
-For more complex queries, you can use an alternative set of methods, closer to the relational logic of SQL, to make sure that Propel issues exactly the SQL query you need. 
+For more complex queries, you can use an alternative set of methods, closer to the relational logic of SQL, to make sure that Propel issues exactly the SQL query you need.
 
 This alternative API uses methods like `where()`, `join()` and `orderBy()` that translate directly to their SQL equivalent - `WHERE`, `JOIN`, etc. Here is an example:
 
@@ -677,7 +677,7 @@ $book = BookQuery::create()
   ->join('Book.Author')
   ->where('Author.Name = ?', 'Jane Austen')
   ->findOne();
-  // SELECT book.* FROM book 
+  // SELECT book.* FROM book
   // INNER JOIN author ON book.AUTHOR_ID = author.ID
   // WHERE author.NAME = 'Jane Austin'
   // LIMIT 1;
@@ -713,13 +713,13 @@ $book = BookQuery::create()
 // You can override the default join type for a given relationship
 // By setting the joinType attribute of the foreign key element in the schema.xml
 
-// Add more conditions to an existing join 
+// Add more conditions to an existing join
 // by calling addJoinCondition($joinName, $clause, $value)
 $book = BookQuery::create()
   ->joinAuthor()
   ->addJoinCondition('Author', 'Author.LastName <> ?', 'Austen')
   ->findOne();
-  // SELECT book.* FROM book 
+  // SELECT book.* FROM book
   // INNER JOIN author ON (book.AUTHOR_ID = author.ID AND author.LAST_NAME <> 'Austen')
   // LIMIT 1;
 }}}
@@ -747,7 +747,7 @@ $books = BookQuery::create('b')
   ->orderBy('b.Title')
   ->find();
 
-// Table aliases are mostly useful to join the current table, 
+// Table aliases are mostly useful to join the current table,
 // or to handle multiple foreign keys on the same column
 $employee = EmployeeQuery::create('e')
   ->innerJoin('e.Supervisor s')
@@ -928,21 +928,21 @@ SQL supports table subqueries (a.k.a "inline view" in Oracle) to solve complex c
 
 {{{
 #!sql
-SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
-FROM book 
+SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT)
+FROM book
 GROUP BY book.AUTHOR_ID
 }}}
 
 Now if you want only the cheapest latest books with a single query, you need a subquery:
 {{{
 #!sql
-SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT 
+SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT
 FROM
 (
-  SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
-  FROM book 
+  SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT)
+  FROM book
   GROUP BY book.AUTHOR_ID
-) AS lastBook 
+) AS lastBook
 WHERE lastBook.PRICE < 20
 }}}
 
@@ -969,7 +969,7 @@ But when you need to call a method on a Query object only if a certain condition
 {{{
 #!php
 <?php
-// find all the published books, except if the user is an editor, 
+// find all the published books, except if the user is an editor,
 // in which case also include non-published books
 $query = BookQuery::create();
 if (!$user->isEditor()) {
@@ -1206,7 +1206,7 @@ print_r($book);
          'Id'          => 456,
          'FirstName'   => 'Leo',
          'LastName'    => 'Tolstoi'
-       ), 
+       ),
        'Publisher'   => array(
          'Id'          => 567,
          'Name'        => 'Penguin'
@@ -1238,7 +1238,7 @@ class BookQuery extends BaseBookQuery
 	{
 		return $this->filterByPublishedAt(array('min' => time() - $nbDays * 24 * 60 * 60));
 	}
-	
+
 	public function mostRecentFirst()
 	{
 		return $this->orderByPublishedAt('desc');
@@ -1266,10 +1266,10 @@ class BookQuery extends BaseBookQuery
 		// filter out the rows with a deletion date
 		$this->filterByDeletedAt(null);
 	}
-	
+
 	public function preDelete($con)
 	{
-		// mark the records as deleted instead of deleting them 
+		// mark the records as deleted instead of deleting them
 		return $this->update(array('DeletedAt' => time()));
 	}
 }

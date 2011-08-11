@@ -1,6 +1,6 @@
 
 /**
- * Updates the aggregate column <?php echo $column->getName() ?> 
+ * Updates the aggregate column <?php echo $column->getName() ?>
  *
  * @param PropelPDO $con A connection object
  */

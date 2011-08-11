@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/PropelSQLParser.php';
 class PropelQuickBuilder
 {
 	protected $schema, $platform, $config, $database;
-	
+
 	public function setSchema($schema)
 	{
 		$this->schema = $schema;
@@ -29,7 +29,7 @@ class PropelQuickBuilder
 	{
 		$this->platform = $platform;
 	}
-	
+
 	/**
 	 * Getter for the platform property
 	 *
@@ -43,7 +43,7 @@ class PropelQuickBuilder
 		}
 		return $this->platform;
 	}
-	
+
 	/**
 	 * Setter for the config property
 	 *
@@ -67,14 +67,14 @@ class PropelQuickBuilder
 		}
 		return $this->config;
 	}
-	
+
 	public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
 	{
 		$builder = new self;
 		$builder->setSchema($schema);
 		return $builder->build($dsn, $user, $pass, $adapter);
 	}
-	
+
 	public function build($dsn = null, $user = null, $pass = null, $adapter = null)
 	{
 		if (null === $dsn) {
@@ -96,7 +96,7 @@ class PropelQuickBuilder
 		Propel::setConnection($name, $con, Propel::CONNECTION_WRITE);
 		return $con;
 	}
-	
+
 	public function getDatabase()
 	{
 		if (null === $this->database) {
@@ -106,7 +106,7 @@ class PropelQuickBuilder
 		}
 		return $this->database;
 	}
-	
+
 	public function buildSQL(PDO $con)
 	{
 		$statements = PropelSQLParser::parseString($this->getSQL());
@@ -123,17 +123,17 @@ class PropelQuickBuilder
 		}
 		return count($statements);
 	}
-	
+
 	public function getSQL()
 	{
 		return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
 	}
-	
+
 	public function buildClasses()
 	{
 		eval($this->getClasses());
 	}
-	
+
 	public function getClasses()
 	{
 		$script = '';
@@ -142,15 +142,15 @@ class PropelQuickBuilder
 		}
 		return $script;
 	}
-	
+
 	public function getClassesForTable(Table $table)
 	{
 		$script = '';
-			
+
 		foreach (array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub') as $target) {
 			$script .= $this->getConfig()->getConfiguredBuilder($table, $target)->build();
 		}
-		
+
 		if ($col = $table->getChildrenColumn()) {
 			if ($col->isEnumeratedClasses()) {
 				foreach ($col->getChildren() as $child) {
@@ -167,7 +167,7 @@ class PropelQuickBuilder
 				}
 			}
 		}
-		
+
 		if ($table->getInterface()) {
 			$script .= $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
 		}
@@ -193,19 +193,19 @@ class PropelQuickBuilder
 				break;
 			}
 		}
-		
+
 		if ($table->hasAdditionalBuilders()) {
 			foreach ($table->getAdditionalBuilders() as $builderClass) {
 				$builder = new $builderClass($table);
 				$script .= $builder->build();
 			}
 		}
-		
+
 		// remove extra <?php
 		$script = str_replace('<?php', '', $script);
 		return $script;
 	}
-	
+
 	public static function debugClassesForTable($schema, $tableName)
 	{
 		$builder = new self;

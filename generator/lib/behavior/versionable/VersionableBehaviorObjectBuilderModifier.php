@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add versionable columns and abilities
  *
@@ -17,18 +17,18 @@
 class VersionableBehaviorObjectBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumnAttribute($name = 'version_column')
 	{
 		return strtolower($this->behavior->getColumnForParameter($name)->getName());
@@ -38,17 +38,17 @@ class VersionableBehaviorObjectBuilderModifier
 	{
 		return $this->behavior->getColumnForParameter($name)->getPhpName();
 	}
-	
+
 	protected function getVersionQueryClassName()
 	{
 		return $this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
 	}
-	
+
 	protected function getActiveRecordClassName()
 	{
 		return $this->builder->getStubObjectBuilder()->getClassname();
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -56,7 +56,7 @@ class VersionableBehaviorObjectBuilderModifier
 		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Get the getter of the column of the behavior
 	 *
@@ -76,7 +76,7 @@ class VersionableBehaviorObjectBuilderModifier
 	{
 		return 'set' . $this->getColumnPhpName($name);
 	}
-	
+
 	public function preSave($builder)
 	{
 		$script = "if (\$this->isVersioningNecessary()) {
@@ -112,7 +112,7 @@ class VersionableBehaviorObjectBuilderModifier
 			return $script;
 		}
 	}
-	
+
 	public function objectMethods($builder)
 	{
 		$this->setBuilder($builder);
@@ -132,7 +132,7 @@ class VersionableBehaviorObjectBuilderModifier
 		$this->addCompareVersions($script);
 		return $script;
 	}
-	
+
 	protected function addVersionSetter(&$script)
 	{
 		$script .= "
@@ -155,7 +155,7 @@ public function setVersion(\$v)
 /**
  * Wrap the getter for version value
  *
- * @return  string 
+ * @return  string
  */
 public function getVersion()
 {
@@ -247,7 +247,7 @@ public function addVersion(\$con = null)
 		}
 			$script .= "
 	\$version->save(\$con);
-	
+
 	return \$version;
 }
 ";
@@ -272,7 +272,7 @@ public function toVersion(\$versionNumber, \$con = null)
 		throw new PropelException(sprintf('No {$ARclassName} object found with version %d', \$version));
 	}
 	\$this->populateFromVersion(\$version, \$con);
-	
+
 	return \$this;
 }
 ";
@@ -354,7 +354,7 @@ public function populateFromVersion(\$version, \$con = null)
 }
 ";
 	}
-	
+
 	protected function addGetLastVersionNumber(&$script)
 	{
 		$script .= "

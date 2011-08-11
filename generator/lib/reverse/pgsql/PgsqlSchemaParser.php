@@ -142,7 +142,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 		}
 
 		// TODO - Handle Sequences ...
-		
+
 		return count($tableWraps);
 
 	}
@@ -425,7 +425,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
 				$table->addForeignKey($fk);
 				$foreignKeys[$name] = $fk;
 			}
-			
+
 			for ($i = 0; $i < count($local_columns); $i++) {
 				$foreignKeys[$name]->addReference(
 					$localTable->getColumn($local_columns[$i]),

@@ -86,11 +86,11 @@ class ColumnDefaultValue
 	{
 		$this->value = $value;
 	}
-	
+
 	/**
 	 * A method to compare if two Default values match
 	 *
-	 * @param      ColumnDefaultValue $other The value to compare to 
+	 * @param      ColumnDefaultValue $other The value to compare to
 	 * @return     boolean Wheter this object represents same default value as $other
 	 * @author     Niklas Närhinen <niklas@narhinen.net>
 	 */

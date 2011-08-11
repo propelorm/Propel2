@@ -18,7 +18,7 @@
 class PropelTemplate
 {
 	protected $template, $templateFile;
-	
+
 	/**
 	 * Set a string as a template.
 	 * The string doesn't need closing php tags.
@@ -26,17 +26,17 @@ class PropelTemplate
 	 * <code>
 	 * $template->setTemplate('This is <?php echo $name ?>');
 	 * </code>
-	 * 
+	 *
 	 * @param string $template the template string
 	 */
 	public function setTemplate($template)
 	{
 		$this->template = $template;
 	}
-	
+
 	/**
 	 * Set a file as a template. The file can be any regular PHP file.
-	 * 
+	 *
 	 * <code>
 	 * $template->setTemplateFile(dirname(__FILE__) . '/template/foo.php');
 	 * </code>
@@ -47,7 +47,7 @@ class PropelTemplate
 	{
 		$this->templateFile = $filePath;
 	}
-	
+
 	/**
 	 * Render the template using the variable provided as arguments.
 	 *
@@ -67,11 +67,11 @@ class PropelTemplate
 	  if (null === $this->templateFile && null === $this->template) {
 			throw new InvalidArgumentException('You must set a template or a template file before rendering');
 		}
-		
+
 		extract($vars);
 		ob_start();
 		ob_implicit_flush(0);
-			
+
 		try
 		{
 			if (null !== $this->templateFile) {

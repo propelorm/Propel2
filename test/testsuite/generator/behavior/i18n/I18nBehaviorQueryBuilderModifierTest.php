@@ -99,7 +99,7 @@ EOF;
 		$this->assertEquals($expectedSQL, $sql);
 		$this->assertEquals('en_EN', $params[0]['value']);
 	}
-	
+
 	public function testJoinI18nCreatesACorrectQuery()
 	{
 		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
@@ -111,7 +111,7 @@ EOF;
 		$this->assertEquals($expected, $con->getLastExecutedQuery());
 		$con->useDebug(false);
 	}
-	
+
 	public function testUseI18nQueryAddsTheProperJoin()
 	{
 		$q = I18nBehaviorTest11Query::create()
@@ -153,7 +153,7 @@ EOF;
 		$this->assertEquals($expected, $con->getLastExecutedQuery());
 		$con->useDebug(false);
 	}
-	
+
 	public function testJoinWithI18nAddsTheI18nColumns()
 	{
 		$q = I18nBehaviorTest11Query::create()
@@ -164,7 +164,7 @@ EOF;
 		$this->assertEquals($expectedSQL, $sql);
 		$this->assertEquals('en_EN', $params[0]['value']);
 	}
-	
+
 	public function testJoinWithI18nDoesNotPruneResultsWithoutTranslation()
 	{
 		I18nBehaviorTest11Query::create()->deleteAll();
@@ -214,7 +214,7 @@ EOF;
 		$this->assertEquals($count, $con->getQueryCount());
 		$this->assertEquals('hello', $translation->getBar());
 	}
-	
+
 	public function testJoinWithI18nSetsTheLocaleOnResults()
 	{
 		I18nBehaviorTest11Query::create()->deleteAll();
@@ -235,7 +235,7 @@ EOF;
 			->findOne();
 		$this->assertEquals('fr_FR', $o2->getLocale());
 	}
-	
+
 	public function testJoinWithI18nAndLimitDoesNotThrowException()
 	{
 		$res = I18nBehaviorTest11Query::create()

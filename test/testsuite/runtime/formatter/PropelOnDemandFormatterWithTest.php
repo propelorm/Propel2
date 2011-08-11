@@ -36,7 +36,7 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ' . $msg);
 		$this->assertEquals($publisher->getName(), 'Penguin', 'Related object is correctly hydrated ' . $msg);
 	}
-	
+
 	public function testFindOneWith()
 	{
 		BookstoreDataPopulator::populate();
@@ -82,7 +82,7 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$c->with('p');
 		$this->assertCorrectHydration1($c, 'with main alias');
 	}
-	
+
 	public function testFindOneWithUsingInstancePool()
 	{
 		BookstoreDataPopulator::populate();
@@ -156,7 +156,7 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$essay->save();
 		AuthorPeer::clearInstancePool();
 		EssayPeer::clearInstancePool();
-		
+
 		$c = new ModelCriteria('bookstore', 'Essay');
 		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 		$c->join('Essay.AuthorRelatedByFirstAuthor');
@@ -176,7 +176,7 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$secondAuthor = $essay->getAuthorRelatedBySecondAuthor();
 		$this->assertEquals($count + 1, $con->getQueryCount(), 'with() does not hydrate objects not in with');
 	}
-	
+
 	public function testFindOneWithDistantClass()
 	{
 		BookstoreDataPopulator::populate();
@@ -205,7 +205,7 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query');
 		$this->assertEquals('J.K.', $author->getFirstName(), 'Related object is correctly hydrated');
 	}
-	
+
 	public function testFindOneWithDistantClassRenamedRelation()
 	{
 		BookstoreDataPopulator::populate();

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  *
  * @license    MIT License
- */ 
+ */
 
 class TestAuthor extends Author {
 	public function preInsert(PropelPDO $con = null)
@@ -79,5 +79,5 @@ class TestAuthorSaveFalse extends TestAuthor
 		$this->setEmail("pre@save.com");
 		return false;
 	}
-	
+
 }

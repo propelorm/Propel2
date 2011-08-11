@@ -322,7 +322,7 @@ class ForeignKey extends XMLElement
 			$this->foreignColumns[] = $p2;
 		}
 	}
-	
+
 	/**
 	 * Clear the references of this foreign key
 	 */
@@ -501,7 +501,7 @@ class ForeignKey extends XMLElement
 	{
 		return $this->getForeignTable()->getColumn($this->getForeignColumnName($index));
 	}
-	
+
 	/**
 	 * Whether this foreign key uses a required column, or a list of required columns.
 	 *
@@ -516,7 +516,7 @@ class ForeignKey extends XMLElement
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Whether this foreign key is also the primary key of the foreign table.
 	 *
@@ -526,7 +526,7 @@ class ForeignKey extends XMLElement
 	{
 		$lfmap = $this->getLocalForeignMapping();
 		$foreignTable = $this->getForeignTable();
-		
+
 		$foreignPKCols = array();
 		foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
 			$foreignPKCols[] = $fPKCol->getName();
@@ -579,7 +579,7 @@ class ForeignKey extends XMLElement
 	{
 		$this->skipSql = $v;
 	}
-	
+
 	/**
 	 * Skip generating sql for this foreign key.
 	 * @return    boolean Value of skipSql.
@@ -604,7 +604,7 @@ class ForeignKey extends XMLElement
 	{
 		return (bool) $this->getInverseFK();
 	}
-	
+
 	public function getInverseFK()
 	{
 		$foreignTable = $this->getForeignTable();
@@ -617,7 +617,7 @@ class ForeignKey extends XMLElement
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the other foreign keys starting on the same table
 	 * Used in many-to-many relationships
@@ -634,7 +634,7 @@ class ForeignKey extends XMLElement
 		}
 		return $fks;
 	}
-	
+
 	/**
 	 * @see        XMLElement::appendXml(DOMNode)
 	 */
@@ -669,7 +669,7 @@ class ForeignKey extends XMLElement
 		if ($this->getOnUpdate()) {
 			$fkNode->setAttribute('onUpdate', $this->getOnUpdate());
 		}
-		
+
 		for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
 			$refNode = $fkNode->appendChild($doc->createElement('reference'));
 			$refNode->setAttribute('local', $this->localColumns[$i]);

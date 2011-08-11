@@ -135,7 +135,7 @@ abstract class XMLElement
    * Looks in build.properties for path like propel.behavior.[bname].class
    * If not found, tries to autoload [Bname]Behavior
    * If no success, returns 'Behavior'
-   * 
+   *
    * @param  string $bname behavior name, e.g. 'timestampable'
    * @return string        behavior class name, e.g. 'TimestampableBehavior'
    */
@@ -151,7 +151,7 @@ abstract class XMLElement
     if(class_exists($class = $gen->generateName(array($bname, PhpNameGenerator::CONV_METHOD_PHPNAME)) . 'Behavior')) {
       return $class;
     }
-    
+
     throw new InvalidArgumentException(sprintf('Unknown behavior "%s"; make sure you configured the propel.behavior.%s.class setting in your build.properties', $bname, $bname));
   }
 
@@ -170,7 +170,7 @@ abstract class XMLElement
 		$xmlstr = $doc->saveXML();
 		return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
 	}
-	
+
 	/**
 	 * Magic string method
 	 * @see toString()

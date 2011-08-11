@@ -20,10 +20,10 @@ require_once dirname(__FILE__) . '/DefaultPlatform.php';
  */
 class MysqlPlatform extends DefaultPlatform
 {
-	
+
 	protected $tableEngineKeyword = 'ENGINE';  // overwritten in build.properties
 	protected $defaultTableEngine = 'MyISAM';  // overwritten in build.properties
-	
+
 	/**
 	 * Initializes db specific domain mapping.
 	 */
@@ -53,7 +53,7 @@ class MysqlPlatform extends DefaultPlatform
 			$this->tableEngineKeyword = $tableEngineKeyword;
 		}
 	}
-	
+
 	/**
 	 * Setter for the tableEngineKeyword property
 	 *
@@ -200,7 +200,7 @@ CREATE TABLE %s
 			$tableOptions
 		);
 	}
-	
+
 	protected function getTableOptions(Table $table)
 	{
 		$dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
@@ -231,13 +231,13 @@ CREATE TABLE %s
 		);
 		foreach ($supportedOptions as $name => $sqlName) {
 			if ($vi->hasParameter($name)) {
-				$tableOptions []= sprintf('%s=%s', 
-					$sqlName, 
+				$tableOptions []= sprintf('%s=%s',
+					$sqlName,
 					$this->quote($vi->getParameter($name))
 				);
 			} elseif ($vi->hasParameter($sqlName)) {
-				$tableOptions []= sprintf('%s=%s', 
-					$sqlName, 
+				$tableOptions []= sprintf('%s=%s',
+					$sqlName,
 					$this->quote($vi->getParameter($sqlName))
 				);
 			}
@@ -251,7 +251,7 @@ CREATE TABLE %s
 DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 ";
 	}
-	
+
 	public function getColumnDDL(Column $col)
 	{
 		$domain = $col->getDomain();
@@ -354,7 +354,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
 			$this->quoteIdentifier($table->getName())
 		);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to add an Index.
 	 *
@@ -366,7 +366,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
 		$pattern = "
 CREATE %sINDEX %s ON %s (%s);
 ";
-		return sprintf($pattern, 
+		return sprintf($pattern,
 			$this->getIndexType($index),
 			$this->quoteIdentifier($index->getName()),
 			$this->quoteIdentifier($index->getTable()->getName()),
@@ -390,7 +390,7 @@ DROP INDEX %s ON %s;
 			$this->quoteIdentifier($index->getTable()->getName())
 		);
 	}
-		
+
 	/**
 	 * Builds the DDL SQL for an Index object.
 	 * @return     string
@@ -403,7 +403,7 @@ DROP INDEX %s ON %s;
 			$this->getIndexColumnListDDL($index)
 		);
 	}
-	
+
 	protected function getIndexType(Index $index)
 	{
 		$type = '';
@@ -447,7 +447,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 ";
 		return sprintf($pattern, $comment);
 	}
-	
+
 	/**
 	 * Builds the DDL SQL to modify a database
 	 * based on a PropelDatabaseDiff instance
@@ -473,9 +473,9 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 		foreach ($databaseDiff->getAddedTables() as $table) {
 			$ret .= $this->getAddTableDDL($table);
 		}
-		
+
 		$ret .= $this->getEndDDL();
-		
+
 		return $ret;
 	}
 

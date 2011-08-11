@@ -11,7 +11,7 @@
 require_once dirname(__FILE__) . '/NestedSetBehaviorObjectBuilderModifier.php';
 require_once dirname(__FILE__) . '/NestedSetBehaviorQueryBuilderModifier.php';
 require_once dirname(__FILE__) . '/NestedSetBehaviorPeerBuilderModifier.php';
- 
+
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
@@ -31,7 +31,7 @@ class NestedSetBehavior extends Behavior
 	);
 
 	protected $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
-			
+
 	/**
 	 * Add the left, right and scope to the current table
 	 */
@@ -63,7 +63,7 @@ class NestedSetBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	public function getObjectBuilderModifier()
 	{
 		if (is_null($this->objectBuilderModifier))
@@ -81,7 +81,7 @@ class NestedSetBehavior extends Behavior
 		}
 		return $this->queryBuilderModifier;
 	}
-		
+
 	public function getPeerBuilderModifier()
 	{
 		if (is_null($this->peerBuilderModifier))
@@ -90,7 +90,7 @@ class NestedSetBehavior extends Behavior
 		}
 		return $this->peerBuilderModifier;
 	}
-	
+
 	public function useScope()
 	{
 		return $this->getParameter('use_scope') == 'true';

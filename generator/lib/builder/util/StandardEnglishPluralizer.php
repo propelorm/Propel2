@@ -26,14 +26,14 @@ class StandardEnglishPluralizer implements Pluralizer
 		'ch' => 'ches',
 		'sh' => 'shes',
 		'ss' => 'sses',
-		
+
 		'ay' => 'ays',
 		'ey' => 'eys',
 		'iy' => 'iys',
 		'oy' => 'oys',
 		'uy' => 'uys',
 		'y'  => 'ies',
-		
+
 		'ao' => 'aos',
 		'eo' => 'eos',
 		'io' => 'ios',
@@ -44,18 +44,18 @@ class StandardEnglishPluralizer implements Pluralizer
 		'cis' => 'ces',
 		'sis' => 'ses',
 		'xis' => 'xes',
-		
+
 		'zoon' => 'zoa',
 
 		'itis' => 'itis',
 		'ois'  => 'ois',
 		'pox'  => 'pox',
 		'ox'   => 'oxes',
-		
+
 		'foot'  => 'feet',
 		'goose' => 'geese',
 		'tooth' => 'teeth',
-		
+
 		'alf'  => 'alves',
 		'elf'  => 'elves',
 		'olf'  => 'olves',
@@ -89,7 +89,7 @@ class StandardEnglishPluralizer implements Pluralizer
 		'information',
 		'equipment'
 	);
-	
+
 	/**
 	 * Generate a plural name based on the passed in root.
 	 * @param	  string $root The root that needs to be pluralized (e.g. Author)
@@ -123,7 +123,7 @@ class StandardEnglishPluralizer implements Pluralizer
 				return preg_replace($searchPattern, $result, $root);
 			}
 		}
-		
+
 		// fallback to naive pluralization
 		return $root . 's';
 	}

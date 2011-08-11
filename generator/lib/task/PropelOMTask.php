@@ -71,24 +71,24 @@ class PropelOMTask extends AbstractPropelDataModelTask
 		$this->ensureDirExists(dirname($path));
 
 		$_f = new PhingFile($this->getOutputDirectory(), $path);
-		
+
 		// skip files already created once
 		if ($_f->exists() && !$overwrite) {
 			$this->log("\t-> (exists) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
 			return 0;
 		}
-		
+
 		$script = $builder->build();
 		foreach ($builder->getWarnings() as $warning) {
 			$this->log($warning, Project::MSG_WARN);
 		}
-		
+
 		// skip unchanged files
 		if ($_f->exists() && $script == $_f->contents()) {
 			$this->log("\t-> (unchanged) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
 			return 0;
 		}
-		
+
 		// write / overwrite new / changed files
 		$action = $_f->exists() ? 'Updating' : 'Creating';
 		$this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
@@ -106,10 +106,10 @@ class PropelOMTask extends AbstractPropelDataModelTask
 
 		$generatorConfig = $this->getGeneratorConfig();
 		$totalNbFiles = 0;
-		
+
 		$dataModels = $this->getDataModels();
 		$this->log('Generating PHP files...');
-		
+
 		foreach ($dataModels as $dataModel) {
 			$this->log("Datamodel: " . $dataModel->getName(), Project::MSG_VERBOSE);
 
@@ -124,7 +124,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 				foreach ($database->getTables() as $table) {
 
 					if (!$table->isForReferenceOnly()) {
-						
+
 						$nbWrittenFiles = 0;
 
 						$this->log("  + Table: " . $table->getName(), Project::MSG_VERBOSE);
@@ -228,7 +228,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
 								$nbWrittenFiles += $this->build($builder, isset($builder->overwrite) ? $builder->overwrite : true);
 							}
 						}
-						
+
 						$totalNbFiles += $nbWrittenFiles;
 						if ($nbWrittenFiles == 0) {
 							$this->log("\t\t(no change)", Project::MSG_VERBOSE);

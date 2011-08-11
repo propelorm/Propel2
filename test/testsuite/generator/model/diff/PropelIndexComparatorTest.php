@@ -52,7 +52,7 @@ class PropelIndexComparatorTest extends PHPUnit_Framework_TestCase
 		$i2->addColumn($c2);
 		$this->assertFalse(PropelIndexComparator::computeDiff($i1, $i2, true));
 	}
-	
+
 	public function testCompareType()
 	{
 		$c1 = new Column('Foo');

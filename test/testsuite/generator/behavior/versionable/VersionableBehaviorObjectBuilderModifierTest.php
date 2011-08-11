@@ -83,7 +83,7 @@ EOF;
 			<parameter name="log_comment" value="true" />
 		</behavior>
 	</table>
-	
+
 	<table name="VersionableBehaviorTest7">
 		<column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="FooBar" type="VARCHAR" size="100" />
@@ -91,7 +91,7 @@ EOF;
 			<parameter name="log_created_at" value="true" />
 			<parameter name="log_created_by" value="true" />
 			<parameter name="log_comment" value="true" />
-			
+
 			<parameter name="version_created_by_column" value="VersionCreatedBy" />
 			<parameter name="version_created_at_column" value="VersionCreatedAt" />
 			<parameter name="version_comment_column" value="MyComment" />
@@ -113,21 +113,21 @@ EOF;
 		$this->assertTrue(method_exists('VersionableBehaviorTest1', 'setVersion'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest2', 'setVersion'));
 	}
-	
+
 	public function testMethodsExistsNoChangeNaming()
 	{
 		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setFooBar'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_created_at'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_created_by'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest6', 'setversion_comment'));
-		
+
 		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setFooBar'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setVersionCreatedAt'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setVersionCreatedBy'));
 		$this->assertTrue(method_exists('VersionableBehaviorTest7', 'setMyComment'));
-		
+
 	}
-	
+
 	public function providerForNewActiveRecordTests()
 	{
 		return array(
@@ -145,7 +145,7 @@ EOF;
 		$o->setVersion(1234);
 		$this->assertEquals(1234, $o->getVersion());
 	}
-	
+
 	/**
 	 * @dataProvider providerForNewActiveRecordTests
 	 */
@@ -216,7 +216,7 @@ EOF;
 		VersionableBehaviorTest2Peer::enableVersioning();
 
 	}
-	
+
 	public function testNewVersionCreatesRecordInVersionTable()
 	{
 		VersionableBehaviorTest1Query::create()->deleteAll();
@@ -238,7 +238,7 @@ EOF;
 		$this->assertEquals($o->getId(), $versions[1]->getId());
 		$this->assertEquals(123, $versions[1]->getBar());
 	}
-	
+
 	public function testNewVersionCreatesRecordInVersionTableWithCustomName()
 	{
 		VersionableBehaviorTest3Query::create()->deleteAll();
@@ -302,7 +302,7 @@ EOF;
 		$nbVersions = VersionableBehaviorTest3VersionQuery::create()->count();
 		$this->assertEquals(0, $nbVersions);
 	}
-	
+
 	public function testToVersion()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -315,7 +315,7 @@ EOF;
 		$o->toVersion(2);
 		$this->assertEquals(456, $o->getBar());
 	}
-	
+
 	public function testToVersionAllowsFurtherSave()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -411,7 +411,7 @@ EOF;
 		$o->save();
 		$this->assertEquals(3, $o->getLastVersionNumber());
 	}
-	
+
 	public function testIsLastVersion()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -427,7 +427,7 @@ EOF;
 		$o->save();
 		$this->assertTrue($o->isLastVersion());
 	}
-	
+
 	public function testIsVersioningNecessary()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -450,7 +450,7 @@ EOF;
 		$this->assertFalse($o->isVersioningNecessary());
 		VersionableBehaviorTest1Peer::enableVersioning();
 	}
-	
+
 	public function testAddVersionNewObject()
 	{
 		VersionableBehaviorTest1Peer::disableVersioning();
@@ -474,7 +474,7 @@ EOF;
 			->filterByVersionableBehaviorTest4($o)
 			->findOne();
 		$this->assertEquals($t, $version->getVersionCreatedAt('U'));
-		
+
 		$o = new VersionableBehaviorTest4();
 		$inThePast = time() - 123456;
 		$o->setVersionCreatedAt($inThePast);
@@ -496,7 +496,7 @@ EOF;
 			->findOne();
 		$this->assertEquals('me me me', $version->getVersionCreatedBy());
 	}
-	
+
 	public function testSaveAndModifyWithNoChangeSchema()
 	{
 		$o = new VersionableBehaviorTest7();
@@ -506,7 +506,7 @@ EOF;
 		$o->setFooBar('Something');
 		$o->save();
 		$this->assertEquals(2, $o->getVersion());
-		
+
 		$o = new VersionableBehaviorTest6();
 		//$o->setVersionCreatedBy('You and I');
 		$o->save();
@@ -557,7 +557,7 @@ EOF;
 		$this->assertEquals(2, $version->getVersion());
 		$this->assertEquals(456, $version->getBar());
 	}
-		
+
 	public function testGetAllVersions()
 	{
 		$o = new VersionableBehaviorTest1();
@@ -575,7 +575,7 @@ EOF;
 		$this->assertEquals(2, $versions[1]->getVersion());
 		$this->assertEquals(456, $versions[1]->getBar());
 	}
-	
+
 	public function testCompareVersions()
 	{
 		$o = new VersionableBehaviorTest4();
@@ -600,7 +600,7 @@ EOF;
 		);
 		$this->assertEquals($expected, $diff);
 	}
-	
+
 	public function testForeignKeyVersion()
 	{
 		$a = new VersionableBehaviorTest4();
@@ -620,7 +620,7 @@ EOF;
 		$this->assertEquals($b->getVersion(), 3);
 		$this->assertEquals($b->getVersionableBehaviorTest4()->getVersion(), 2);
 	}
-	
+
 	public function testReferrerVersion()
 	{
 		$b1 = new VersionableBehaviorTest5();

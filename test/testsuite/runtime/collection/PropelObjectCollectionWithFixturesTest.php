@@ -24,7 +24,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		parent::setUp();
 		BookstoreDataPopulator::populate($this->con);
 	}
-	
+
 	public function testSave()
 	{
 		$books = PropelQuery::from('Book')->find();
@@ -72,32 +72,32 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		$col->setModel('Book');
 		$col->fromArray($books);
 		$col->save();
-		
+
 		$nbBooks = PropelQuery::from('Book')->count();
 		$this->assertEquals(6, $nbBooks);
-		
+
 		$booksByJane = PropelQuery::from('Book b')
 			->join('b.Author a')
 			->where('a.LastName = ?', 'Austen')
 			->count();
 		$this->assertEquals(2, $booksByJane);
 	}
-	
+
 	public function testToArray()
 	{
 		BookPeer::clearInstancePool();
 		$books = PropelQuery::from('Book')->find();
 		$booksArray = $books->toArray();
 		$this->assertEquals(4, count($booksArray));
-		
+
 		foreach ($booksArray as $key => $book) {
 			$this->assertEquals($books[$key]->toArray(), $book);
 		}
-		
+
 		$booksArray = $books->toArray();
 		$keys = array(0, 1, 2, 3);
 		$this->assertEquals($keys, array_keys($booksArray));
-		
+
 		$booksArray = $books->toArray(null, true);
 		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
 		$this->assertEquals($keys, array_keys($booksArray));
@@ -116,15 +116,15 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		$books = PropelQuery::from('Book')->find();
 		$booksArray = $books->getArrayCopy();
 		$this->assertEquals(4, count($booksArray));
-		
+
 		foreach ($booksArray as $key => $book) {
 			$this->assertEquals($books[$key], $book);
 		}
-		
+
 		$booksArray = $books->getArrayCopy();
 		$keys = array(0, 1, 2, 3);
 		$this->assertEquals($keys, array_keys($booksArray));
-		
+
 		$booksArray = $books->getArrayCopy(null, true);
 		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
 		$this->assertEquals($keys, array_keys($booksArray));
@@ -141,7 +141,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 	public function testToKeyValue()
 	{
 		$books = PropelQuery::from('Book')->find();
-		
+
 		$expected = array();
 		foreach ($books as $book) {
 			$expected[$book->getTitle()] = $book->getISBN();
@@ -156,7 +156,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		}
 		$booksArray = $books->toKeyValue('ISBN');
 		$this->assertEquals($expected, $booksArray, 'toKeyValue() uses __toString() for the value if no second field name is passed');
-		
+
 		$expected = array();
 		foreach ($books as $book) {
 			$expected[$book->getId()] = $book->getTitle();
@@ -201,7 +201,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		$this->assertEquals(0, count($books), 'populateRelation() the list of related objects');
 		$this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empy collections');
 	}
-	
+
 	public function testPopulateRelationOneToMany()
 	{
 		AuthorPeer::clearInstancePool();
@@ -216,7 +216,7 @@ class PropelObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 		}
 		$this->assertEquals($count + 1, $this->con->getQueryCount(), 'populateRelation() populates a one-to-many relationship with a single supplementary query');
 	}
-	
+
 	public function testPopulateRelationManyToOne()
 	{
 		$con = Propel::getConnection();

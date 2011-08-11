@@ -202,7 +202,7 @@ Tip: There is also a bundled `MojaviLogAdapter` class which allows you to use a 
 == Debugging Database Activity ==
 
 By default, Propel uses `PropelPDO` for database connections. This class, which extends PHP's `PDO`, offers a debug mode to keep track of all the database activity, including all the executed queries.
- 
+
 === Enabling The Debug Mode ===
 
 The debug mode is disabled by default, but you can enable it at runtime as follows:

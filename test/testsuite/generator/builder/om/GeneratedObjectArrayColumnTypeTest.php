@@ -35,7 +35,7 @@ EOF;
 			PropelQuickBuilder::buildSchema($schema);
 		}
 	}
-	
+
 	public function testActiveRecordMethods()
 	{
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity2', 'getTags'));
@@ -50,13 +50,13 @@ EOF;
 		$this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'addValueSet'));
 		$this->assertFalse(method_exists('ComplexColumnTypeEntity2', 'removeValueSet'));
 	}
-	
+
 	public function testGetterDefaultValue()
 	{
 		$e = new ComplexColumnTypeEntity2();
 		$this->assertEquals(array(), $e->getTags(), 'array columns return an empty array by default');
 	}
-	
+
 	public function testSetterArrayValue()
 	{
 		$e = new ComplexColumnTypeEntity2();
@@ -64,7 +64,7 @@ EOF;
 		$e->setTags($value);
 		$this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
 	}
-	
+
 	public function testSetterResetValue()
 	{
 		$e = new ComplexColumnTypeEntity2();
@@ -73,7 +73,7 @@ EOF;
 		$e->setTags(array());
 		$this->assertEquals(array(), $e->getTags(), 'object columns can be reset');
 	}
-	
+
 	public function testTester()
 	{
 		$e = new ComplexColumnTypeEntity2();
@@ -86,7 +86,7 @@ EOF;
 		$this->assertFalse($e->hasTag('bar'));
 		$this->assertFalse($e->hasTag(12));
 	}
-	
+
 	public function testAdder()
 	{
 		$e = new ComplexColumnTypeEntity2();
@@ -117,7 +117,7 @@ EOF;
 		$e->removeTag('1234');
 		$this->assertEquals(array(12, 34), $e->getTags());
 	}
-	
+
 	public function testValueIsPersisted()
 	{
 		$e = new ComplexColumnTypeEntity2();

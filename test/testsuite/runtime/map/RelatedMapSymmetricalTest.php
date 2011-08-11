@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @version    $Id: GeneratedRelationMapTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    runtime.map
  */
-class RelatedMapSymmetricalTest extends BookstoreTestBase 
+class RelatedMapSymmetricalTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
@@ -46,7 +46,7 @@ class RelatedMapSymmetricalTest extends BookstoreTestBase
 		$this->assertEquals($accountToEmployee, $employeeToAccount->getSymmetricalRelation());
 		$this->assertEquals($employeeToAccount, $accountToEmployee->getSymmetricalRelation());
 	}
-	
+
 	public function testSeveralRelationsOnSameTable()
 	{
 		$authorTable = $this->databaseMap->getTableByPhpName('Author');
@@ -56,7 +56,7 @@ class RelatedMapSymmetricalTest extends BookstoreTestBase
 		$this->assertEquals($authorToEssay, $essayToAuthor->getSymmetricalRelation());
 		$this->assertEquals($essayToAuthor, $authorToEssay->getSymmetricalRelation());
 	}
-	
+
 	public function testCompositeForeignKey()
 	{
 		$favoriteTable = $this->databaseMap->getTableByPhpName('ReaderFavorite');
@@ -66,5 +66,5 @@ class RelatedMapSymmetricalTest extends BookstoreTestBase
 		$this->assertEquals($favoriteToOpinion, $opinionToFavorite->getSymmetricalRelation());
 		$this->assertEquals($opinionToFavorite, $favoriteToOpinion->getSymmetricalRelation());
 	}
-	
+
 }

@@ -24,7 +24,7 @@ class PropelOnDemandIteratorTest extends BookstoreEmptyTestBase
 		parent::setUp();
 		BookstoreDataPopulator::populate($this->con);
 	}
-	
+
 	public function testInstancePoolingDisabled()
 	{
 		Propel::enableInstancePooling();
@@ -45,7 +45,7 @@ class PropelOnDemandIteratorTest extends BookstoreEmptyTestBase
 		foreach ($books as $book) {
 		}
 		$this->assertTrue(Propel::isInstancePoolingEnabled());
-		
+
 		Propel::disableInstancePooling();
 		$books = PropelQuery::from('Book')
 			->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)

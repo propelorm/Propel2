@@ -52,7 +52,7 @@
 			<parameter name="copy_data_to_parent" value="false" />
 		</behavior>
 	</table>
-	
+
 	<table name="concrete_quizz_question">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="question" type="VARCHAR" size="100" primaryString="true" />
@@ -65,5 +65,5 @@
 		</foreign-key>
 
 	</table>
-	
+
 </database>

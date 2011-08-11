@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add versionable columns and abilities
  *
@@ -25,7 +25,7 @@ class VersionableBehaviorPeerBuilderModifier
 static \$isVersioningEnabled = true;
 ";
 	}
-	
+
 	public function staticMethods()
 	{
 		$script = '';
@@ -50,7 +50,7 @@ public static function isVersioningEnabled()
 }
 ";
 	}
-	
+
 	public function addEnableVersioning(&$script)
 	{
 		$script .= "
@@ -63,7 +63,7 @@ public static function enableVersioning()
 }
 ";
 	}
-	
+
 	public function addDisableVersioning(&$script)
 	{
 		$script .= "

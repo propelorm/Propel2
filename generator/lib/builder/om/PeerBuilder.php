@@ -65,7 +65,7 @@ abstract class PeerBuilder extends OMBuilder
 		$this->addGetPrimaryKeyFromRow($script);
 		$this->addPopulateObjects($script); // <-- there's PDO code in here
 		$this->addPopulateObject($script);
-		
+
 	}
 
 	/**
@@ -141,7 +141,7 @@ abstract class PeerBuilder extends OMBuilder
 
 		$this->addTranslateFieldName($script);
 		$this->addGetFieldNames($script);
-		
+
 		if ($table->hasEnumColumns()) {
 			$this->addGetValueSets($script);
 			$this->addGetValueSet($script);
@@ -152,7 +152,7 @@ abstract class PeerBuilder extends OMBuilder
 			$this->addSelectMethods($script);
 			$this->addGetTableMap($script);
 		}
-		
+
 		$this->addBuildTableMap($script);
 
 		$this->addGetOMClassMethod($script);
@@ -268,7 +268,7 @@ abstract class PeerBuilder extends OMBuilder
 			return $const;
 		}
 	}
-	
+
 	/**
    * Checks whether any registered behavior on that table has a modifier for a hook
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
@@ -297,10 +297,10 @@ abstract class PeerBuilder extends OMBuilder
 	{
 		return $this->getBehaviorContentBase($contentName, 'PeerBuilderModifier');
 	}
-  
+
   /**
    * Get the BasePeer class name for the current table (e.g. 'BasePeer')
-   * 
+   *
    * @return string The Base Peer Class name
    */
   public function getBasePeerClassname()

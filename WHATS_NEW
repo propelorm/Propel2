@@ -70,7 +70,7 @@ $page = new WikiPage();
 // automatic version increment
 $page->setTitle('Propel');
 $page->setBody('Propel is a CRM built in PHP');
-$page->save(); 
+$page->save();
 echo $page->getVersion(); // 1
 $page->setBody('Propel is an ORM built in PHP5');
 $page->save();
@@ -338,7 +338,7 @@ echo $authors;
 }}}
 
 If you want to use another format for the default string representation instead of YAML, you can set the `defaultStringFormat` attribute to any of the supported formats in either the `<database>` or the `<table>` elements in the XML schema:
-	
+
 {{{
 #!xml
 <table name="publisher" defaultStringFormat="XML">
@@ -543,7 +543,7 @@ To enable a model-only relationship, add a `<foreign-key>` tag using the `skipSq
 </table>
 }}}
 
-Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters. 
+Such a foreign key is not translated into SQL when Propel builds the table creation or table migration code. It can be seen as a "virtual foreign key". However, on the PHP side, the `Book` model actually has a one-to-many relationship with the `Review` model. The generated !ActiveRecord and !ActiveQuery classes take advantage of this relationship to offer smart getters and filters.
 
 == Advanced Column Types ==
 
@@ -595,13 +595,13 @@ An `OBJECT` column can store PHP objects (mostly Value Objects) in the database.
 class GeographicCoordinates
 {
   public $latitude, $longitude;
-  
+
   public function __construct($latitude, $longitude)
   {
     $this->latitude = $latitude;
     $this->longitude = $longitude;
   }
-  
+
   public function isInNorthernHemisphere()
   {
     return $this->latitude > 0;
@@ -685,21 +685,21 @@ SQL supports table subqueries to solve complex cases that a single query can't s
 
 {{{
 #!sql
-SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
-FROM book 
+SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT)
+FROM book
 GROUP BY book.AUTHOR_ID
 }}}
 
 Now if you want only the cheapest latest books with a single query, you need a subquery:
 {{{
 #!sql
-SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT 
+SELECT lastBook.ID, lastBook.TITLE, lastBook.AUTHOR_ID, lastBook.PRICE, lastBook.CREATED_AT
 FROM
 (
-  SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT) 
-  FROM book 
+  SELECT book.ID, book.TITLE, book.AUTHOR_ID, book.PRICE, book.CREATED_AT, MAX(book.CREATED_AT)
+  FROM book
   GROUP BY book.AUTHOR_ID
-) AS lastBook 
+) AS lastBook
 WHERE lastBook.PRICE < 20
 }}}
 

@@ -12,7 +12,7 @@ To retrieve a table map for a table, use the `getTableMap()` static method of th
 
 {{{
 #!php
-<?php 
+<?php
 $bookTable = BookPeer::getTableMap();
 }}}
 
@@ -22,7 +22,7 @@ A `TableMap` object carries the same information as the schema. Check the follow
 
 {{{
 #!php
-<?php 
+<?php
 echo $bookTable->getName();          // 'table'
 echo $bookTable->getPhpName();       // 'Table'
 echo $bookTable->getPackage();       // 'bookstore'
@@ -32,7 +32,7 @@ echo $bookTable->isUseIdGenerator(); // true
 Tip: A TableMap object also references the `DatabaseMap` that contains it. From the database map, you can also retrieve other table maps using the table name or the table phpName:
 {{{
 #!php
-<?php 
+<?php
 $dbMap = $bookTable->getDatabaseMap();
 $authorTable = $dbMap->getTable('author');
 $authorTable = $dbMap->getTablebyPhpName('Author');
@@ -42,7 +42,7 @@ To introspect the columns of a table, use any of the `getColumns()`, `getPrimary
 
 {{{
 #!php
-<?php 
+<?php
 $bookColumns = $bookTable->getColumns();
 foreach ($bookColumns as $column) {
   echo $column->getName();
@@ -53,14 +53,14 @@ Alternatively, if you know a column name, you can retrieve the corresponding Col
 
 {{{
 #!php
-<?php 
+<?php
 $bookTitleColumn = $bookTable->getColumn('title');
 }}}
 
 The `DatabaseMap` object offers a shortcut to every `ColumnMap` object if you know the fully qualified column name:
 {{{
 #!php
-<?php 
+<?php
 $bookTitleColumn = $dbMap->getColumn('book.TITLE');
 }}}
 

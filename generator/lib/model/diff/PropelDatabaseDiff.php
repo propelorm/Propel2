@@ -24,7 +24,7 @@ class PropelDatabaseDiff
 	protected $removedTables = array();
 	protected $modifiedTables = array();
 	protected $renamedTables = array();
-	
+
 	/**
 	 * Setter for the addedTables property
 	 *
@@ -181,7 +181,7 @@ class PropelDatabaseDiff
 	{
 		return count($this->modifiedTables);
 	}
-	
+
 	/**
 	 * Getter for the modifiedTables property
 	 *
@@ -232,7 +232,7 @@ class PropelDatabaseDiff
 	{
 		return count($this->renamedTables);
 	}
-	
+
 	/**
 	 * Get the reverse diff for this diff
 	 *
@@ -256,10 +256,10 @@ class PropelDatabaseDiff
 			$tableDiffs[$name] = $tableDiff->getReverseDiff();
 		}
 		$diff->setModifiedTables($tableDiffs);
-		
+
 		return $diff;
 	}
-	
+
 	/**
 	 * Get a description of the database modifications
 	 *
@@ -280,10 +280,10 @@ class PropelDatabaseDiff
 		if ($count = $this->countRenamedTables()) {
 			$changes []= sprintf('%d renamed tables', $count);
 		}
-		
+
 		return implode(', ', $changes);
 	}
-	
+
 	public function __toString()
 	{
 		$ret = '';
@@ -311,7 +311,7 @@ class PropelDatabaseDiff
 				$ret .= sprintf("  %s: %s\n", $fromName, $toName);
 			}
 		}
-		
+
 		return $ret;
 	}
 

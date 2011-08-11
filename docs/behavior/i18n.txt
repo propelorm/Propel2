@@ -166,7 +166,7 @@ $items = ItemQuery::create()
 
 == Symfony Compatibility ==
 
-This behavior is entirely compatible with the i18n behavior for symfony. That means that it can generate `setCulture()` and `getCulture()` methods as aliases to `setLocale()` and `getLocale()`, provided that you add a `locale_alias` parameter. That also means that if you add the behavior to a table without translated columns, and that the translation table is present in the schema, the behavior recognizes them. 
+This behavior is entirely compatible with the i18n behavior for symfony. That means that it can generate `setCulture()` and `getCulture()` methods as aliases to `setLocale()` and `getLocale()`, provided that you add a `locale_alias` parameter. That also means that if you add the behavior to a table without translated columns, and that the translation table is present in the schema, the behavior recognizes them.
 
 So the following schema is exactly equivalent to the first one in this tutorial:
 

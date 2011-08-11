@@ -34,14 +34,14 @@ class VersionableBehavior extends Behavior
 		'version_comment_column' => 'version_comment'
 	);
 
-	protected 
+	protected
 		$versionTable,
 		$objectBuilderModifier,
 		$queryBuilderModifier,
 		$peerBuilderModifier;
-	
+
 	protected $tableModificationOrder = 80;
-	
+
 	public function modifyTable()
 	{
 		$this->addVersionColumn();
@@ -49,7 +49,7 @@ class VersionableBehavior extends Behavior
 		$this->addVersionTable();
 		$this->addForeignKeyVersionColumns();
 	}
-	
+
 	protected function addVersionColumn()
 	{
 		$table = $this->getTable();
@@ -62,7 +62,7 @@ class VersionableBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	protected function addLogColumns()
 	{
 		$table = $this->getTable();
@@ -87,7 +87,7 @@ class VersionableBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	protected function addVersionTable()
 	{
 		$table = $this->getTable();
@@ -169,17 +169,17 @@ class VersionableBehavior extends Behavior
 			}
 		}
 	}
-	
+
 	public function getVersionTable()
 	{
 		return $this->versionTable;
 	}
-	
+
 	public function getVersionTablePhpName()
 	{
 		return $this->getTable()->getPhpName() . 'Version';
 	}
-	
+
 	public function getVersionableFks()
 	{
 		$versionableFKs = array();
@@ -205,14 +205,14 @@ class VersionableBehavior extends Behavior
 		}
 		return $versionableReferrers;
 	}
-	
+
 	public function getReferrerIdsColumn(ForeignKey $fk)
 	{
 		$fkTableName = $fk->getTable()->getName();
 		$fkIdsColumnName = $fkTableName . '_ids';
 		return $this->versionTable->getColumn($fkIdsColumnName);
 	}
-	
+
 	public function getReferrerVersionsColumn(ForeignKey $fk)
 	{
 		$fkTableName = $fk->getTable()->getName();
@@ -246,5 +246,5 @@ class VersionableBehavior extends Behavior
 		}
 		return $this->peerBuilderModifier;
 	}
-	
+
 }

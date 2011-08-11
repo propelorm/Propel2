@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @version		$Revision$
  * @package		generator.behavior.nestedset
  */
-class NestedSetBehaviorTest extends BookstoreTestBase 
+class NestedSetBehaviorTest extends BookstoreTestBase
 {
 	public function testDefault()
 	{
@@ -34,7 +34,7 @@ class NestedSetBehaviorTest extends BookstoreTestBase
 		$this->assertFalse(method_exists('Table9', 'getScopeValue'), 'nested_set does not map the scope_value getter with the tree_scope column by default');
 
 	}
-	
+
 	public function testParameters()
 	{
 		$table10 = Table10Peer::getTableMap();

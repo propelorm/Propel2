@@ -26,10 +26,10 @@ abstract class PlatformTestBase extends PHPUnit_Framework_TestCase
 		$appData = $xtad->parseString($schema);
 		return $appData->getDatabase();
 	}
-	
+
 	protected function getTableFromSchema($schema, $tableName = 'foo')
 	{
 		return $this->getDatabaseFromSchema($schema)->getTable($tableName);
 	}
-	
+
 }

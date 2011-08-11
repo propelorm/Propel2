@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @version		$Revision$
  * @package		generator.behavior
  */
-class AutoAddPkBehaviorTest extends BookstoreTestBase 
+class AutoAddPkBehaviorTest extends BookstoreTestBase
 {
 	public function testDefault()
 	{

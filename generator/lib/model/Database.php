@@ -58,7 +58,7 @@ class Database extends ScopedElement
 
 	/**
 	 * List of behaviors registered for this table
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $behaviors = array();
@@ -238,7 +238,7 @@ class Database extends ScopedElement
 	{
 		$this->defaultTranslateMethod = $v;
 	}
-	
+
 	/**
 	 * Get the value of heavyIndexing.
 	 *
@@ -279,7 +279,7 @@ class Database extends ScopedElement
 	{
 		return $this->tableList;
 	}
-	
+
 	/**
 	 * Return the number of tables in the database
 	 * @return integer
@@ -348,7 +348,7 @@ class Database extends ScopedElement
 	{
 		return array_key_exists($phpName, $this->tablesByPhpName);
 	}
-	
+
 	/**
 	 * Return the table with the specified phpName.
 	 * @param      string $phpName the PHP Name of the table (e.g. 'MyTable')
@@ -455,7 +455,7 @@ class Database extends ScopedElement
   		return null;
   	}
   }
-  
+
   public function getBuildProperty($key)
   {
   	if($config = $this->getGeneratorConfig()) {
@@ -464,7 +464,7 @@ class Database extends ScopedElement
   		return '';
   	}
   }
-  
+
   /**
    * Adds a new Behavior to the database
    * @return Behavior A behavior instance
@@ -483,7 +483,7 @@ class Database extends ScopedElement
       return $this->addBehavior($behavior);
     }
   }
-  
+
   /**
    * Get the database behaviors
    * @return Array of Behavior objects
@@ -492,7 +492,7 @@ class Database extends ScopedElement
   {
     return $this->behaviors;
   }
-  
+
   /**
 	 * check if the database has a behavior by name
 	 *
@@ -503,7 +503,7 @@ class Database extends ScopedElement
 	{
 		return array_key_exists($name, $this->behaviors);
 	}
-	
+
   /**
    * Get one database behavior by name
    * @param string $name the behavior name
@@ -527,7 +527,7 @@ class Database extends ScopedElement
 	/**
 	 * Get the next behavior on all tables, ordered by behavior priority,
 	 * and skipping the ones that were already executed,
-	 * 
+	 *
 	 * @return Behavior
 	 */
 	public function getNextTableBehavior()
@@ -548,32 +548,32 @@ class Database extends ScopedElement
 			}
 		}
 	}
-	
+
 	public function doFinalInitialization()
 	{
 		// add the referrers for the foreign keys
 		$this->setupTableReferrers();
-		
+
 		// add default behaviors to database
 		if($defaultBehaviors = $this->getBuildProperty('behaviorDefault')) {
-			// add generic behaviors from build.properties 
+			// add generic behaviors from build.properties
 			$defaultBehaviors = explode(',', $defaultBehaviors);
 			foreach ($defaultBehaviors as $behavior) {
 				$this->addBehavior(array('name' => trim($behavior)));
 			}
 		}
-		
+
 		// execute database behaviors
 		foreach ($this->getBehaviors() as $behavior) {
 			$behavior->modifyDatabase();
 		}
-		
+
 		// execute table behaviors (may add new tables and new behaviors)
 		while ($behavior = $this->getNextTableBehavior()) {
 			$behavior->getTableModifier()->modifyTable();
 			$behavior->setTableModified(true);
 		}
-		
+
 		// do naming and heavy indexing
 		foreach ($this->getTables() as $table) {
 			$table->doFinalInitialization();
@@ -581,7 +581,7 @@ class Database extends ScopedElement
 			$table->setupReferrers(true);
 		}
 	}
-	
+
 	/**
 	 * Can be called several times
 	 */

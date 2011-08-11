@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @version    $Id$
  * @package    generator.builder.om
  */
-class PHP5TableMapBuilderTest extends BookstoreTestBase 
+class PHP5TableMapBuilderTest extends BookstoreTestBase
 {
   protected $databaseMap;
 
@@ -26,7 +26,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
   	parent::setUp();
     $this->databaseMap = Propel::getDatabaseMap('bookstore');
   }
-  
+
   public function testColumnDefaultValue()
   {
     $table = $this->databaseMap->getTableByPhpName('BookstoreEmployeeAccount');
@@ -43,7 +43,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals(10, count($bookTable->getRelations()), 'The map builder creates relations for both incoming and outgoing keys');
   }
-  
+
   public function testSimpleRelationName()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
@@ -64,7 +64,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertTrue($essayTable->hasRelation('AuthorRelatedByFirstAuthor'), 'The map builder creates relations based on the foreign table name and the foreign key');
     $this->assertTrue($essayTable->hasRelation('AuthorRelatedBySecondAuthor'), 'The map builder creates relations based on the foreign table name and the foreign key');
   }
-  
+
   public function testRelationDirectionManyToOne()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
@@ -94,7 +94,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals(RelationMap::MANY_TO_MANY, $bookTable->getRelation('BookClubList')->getType(), 'The map builder creates MANY_TO_MANY relations for every cross key');
   }
-  
+
   public function testRelationsColumns()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
@@ -114,13 +114,13 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $expectedMapping = array();
     $this->assertEquals($expectedMapping, $bookTable->getRelation('BookClubList')->getColumnMappings(), 'The map builder provides no column mapping for many-to-many relationships');
   }
-  
+
   public function testRelationOnDelete()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');
     $this->assertEquals('SET NULL', $bookTable->getRelation('Publisher')->getOnDelete(), 'The map builder adds columns with the correct onDelete');
   }
-  
+
   public function testRelationOnUpdate()
   {
     $bookTable = $this->databaseMap->getTableByPhpName('Book');

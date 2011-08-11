@@ -35,7 +35,7 @@ class ValidatorTest extends BookstoreEmptyTestBase
 		BookstoreDataPopulator::populate();
 		require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/validator/ISBNValidator.php';
 	}
-	
+
 	/**
 	 * Test minLength validator.
 	 * This also tests the ${value} substitution.

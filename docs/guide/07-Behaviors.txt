@@ -4,7 +4,7 @@
 
 Behaviors are a great way to package model extensions for reusability. They are the powerful, versatile, fast, and help you organize your code in a better way.
 
-== Pre and Post Hooks For `save()` And `delete()` Methods == 
+== Pre and Post Hooks For `save()` And `delete()` Methods ==
 
 The `save()` and `delete()` methods of your generated objects are easy to override. In fact, Propel looks for one of the following methods in your objects and executes them when needed:
 
@@ -255,7 +255,7 @@ class MyBehavior extends Behavior
   protected $parameters = array(
     'column_name' => 'foo',
   );
-  
+
   public function modifyTable()
   {
     $table = $this->getTable();
@@ -267,7 +267,7 @@ class MyBehavior extends Behavior
         'type'    => 'INTEGER',
       ));
     }
-  }	
+  }
 }
 }}}
 
@@ -318,7 +318,7 @@ peerFilter(&$script) // do whatever you want with the generated code, passed as 
 
 === Adding New Classes ===
 
-Behaviors can add entirely new classes based on the data model. To build a new class, a behavior must provide an array of builder class names (in return to `getAdditionalBuilders()`) and the builder classes themselves. 
+Behaviors can add entirely new classes based on the data model. To build a new class, a behavior must provide an array of builder class names (in return to `getAdditionalBuilders()`) and the builder classes themselves.
 
 For instance, to add an empty child class for the ActiveRecord class, create the following behavior:
 
@@ -345,7 +345,7 @@ class AddChildBehaviorBuilder extends OMBuilder
 	{
 		return $this->getStubObjectBuilder()->getUnprefixedClassname() . 'Child';
 	}
-	
+
 	protected function addClassOpen(&$script)
 	{
 		$table = $this->getTable();
@@ -408,12 +408,12 @@ public function findPk(\$key, \$con = null)
 ";
     $table = $this->getTable();
     $newFindPkMethod = sprintf($newFindPkMethod, $table->getName(), $table->getPhpName(), $table->getPhpName());
-    $parser = new PropelPHPParser($script); 
-    $parser->replaceMethod('findPk', $newFindPkMethod); 
+    $parser = new PropelPHPParser($script);
+    $parser->replaceMethod('findPk', $newFindPkMethod);
     $script = $parser->getCode();
   }
 }
-}}} 
+}}}
 
 The `PropelPHPParser` class provides the following utility methods:
 {{{

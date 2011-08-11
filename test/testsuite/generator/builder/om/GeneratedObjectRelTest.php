@@ -136,13 +136,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(1, count(BookListRelPeer::doSelect(new Criteria())) );
 
 	}
-	
+
 	public function testManyToManyGetterExists()
 	{
 		$this->assertTrue(method_exists('BookClubList', 'getBooks'), 'Object generator correcly adds getter for the crossRefFk');
 		$this->assertFalse(method_exists('BookClubList', 'getBookClubLists'), 'Object generator correcly adds getter for the crossRefFk');
 	}
-	
+
 	public function testManyToManyGetterNewObject()
 	{
 		$blc1 = new BookClubList();
@@ -155,7 +155,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$books = $blc1->getBooks($query);
 		$this->assertEquals(0, count($books), 'getCrossRefFK() accepts a query as first parameter');
 	}
-	
+
 	public function testManyToManyGetter()
 	{
 		BookstoreDataPopulator::populate();
@@ -175,7 +175,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertTrue(method_exists('BookClubList', 'countBooks'), 'Object generator correcly adds counter for the crossRefFk');
 		$this->assertFalse(method_exists('BookClubList', 'countBookClubLists'), 'Object generator correcly adds counter for the crossRefFk');
 	}
-	
+
 	public function testManyToManyCounterNewObject()
 	{
 		$blc1 = new BookClubList();
@@ -186,7 +186,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$nbBooks = $blc1->countBooks($query);
 		$this->assertEquals(0, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
 	}
-	
+
 	public function testManyToManyCounter()
 	{
 		BookstoreDataPopulator::populate();
@@ -198,7 +198,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$nbBooks = $blc1->countBooks($query);
 		$this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
 	}
-	
+
 	public function testManyToManyAdd()
 	{
 		$list = new BookClubList();
@@ -207,17 +207,17 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$book = new Book();
 		$book->setTitle( "Jungle Expedition Handbook" );
 		$book->setISBN('TEST');
-		
+
 		$list->addBook($book);
 		$this->assertEquals(1, $list->countBooks(), 'addCrossFk() sets the internal collection properly');
 		$this->assertEquals(1, $list->countBookListRels(), 'addCrossFk() sets the internal cross reference collection properly');
-		
+
 		$list->save();
 		$this->assertFalse($book->isNew(), 'related object is saved if added');
 		$rels = $list->getBookListRels();
 		$rel = $rels[0];
 		$this->assertFalse($rel->isNew(), 'cross object is saved if added');
-		
+
 		$list->clearBookListRels();
 		$list->clearBooks();
 		$books = $list->getBooks();
@@ -227,7 +227,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(1, $list->countBookListRels());
 	}
 
-	
+
 	/**
 	 * Test behavior of columns that are implicated in multiple foreign keys.
 	 * @link       http://propel.phpdb.org/trac/ticket/228
@@ -290,7 +290,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$book->clearReviews();
 		$this->assertEquals(0, count($book->getReviews()));
 	}
-	
+
 	/**
 	 * Test the clearing of related object collection via a many-to-many association.
 	 * @link       http://www.propelorm.org/ticket/1374
@@ -348,7 +348,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$author = $books[0]->getAuthor($con);
 		$this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
 	}
-	
+
 	public function testRefFKGetJoin()
 	{
 		BookstoreDataPopulator::populate();

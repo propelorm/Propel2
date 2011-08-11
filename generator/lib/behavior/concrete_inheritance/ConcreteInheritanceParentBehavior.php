@@ -7,10 +7,10 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Symmetrical behavior of the concrete_inheritance. When model A extends model B,
- * model A gets the concrete_inheritance behavior, and model B gets the 
+ * model A gets the concrete_inheritance behavior, and model B gets the
  * concrete_inheritance_parent
  *
  * @author     François Zaninotto
@@ -23,7 +23,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
 	protected $parameters = array(
 		'descendant_column' => 'descendant_class'
 	);
-	
+
 	public function modifyTable()
 	{
 		$table = $this->getTable();
@@ -35,22 +35,22 @@ class ConcreteInheritanceParentBehavior extends Behavior
 			));
 		}
 	}
-	
+
 	protected function getColumnGetter()
 	{
 		return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
 	}
-	
+
 	public function objectMethods($builder)
 	{
 		$this->builder = $builder;
 		$script = '';
 		$this->addHasChildObject($script);
 		$this->addGetChildObject($script);
-		
+
 		return $script;
 	}
-	
+
 	protected function addHasChildObject(&$script)
 	{
 		$script .= "

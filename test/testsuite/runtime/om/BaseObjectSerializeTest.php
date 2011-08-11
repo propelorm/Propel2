@@ -26,7 +26,7 @@ class BaseObjectSerializeTest extends BookstoreTestBase
 		$sb = serialize($book);
 		$this->assertEquals($book, unserialize($sb));
 	}
-	
+
 	public function testSerializePopulatedObject()
 	{
 		$book = new Book();
@@ -35,7 +35,7 @@ class BaseObjectSerializeTest extends BookstoreTestBase
 		$sb = serialize($book);
 		$this->assertEquals($book, unserialize($sb));
 	}
-	
+
 	public function testSerializePersistedObject()
 	{
 		$book = new Book();
@@ -45,7 +45,7 @@ class BaseObjectSerializeTest extends BookstoreTestBase
 		$sb = serialize($book);
 		$this->assertEquals($book, unserialize($sb));
 	}
-	
+
 	public function testSerializeHydratedObject()
 	{
 		$book = new Book();
@@ -53,12 +53,12 @@ class BaseObjectSerializeTest extends BookstoreTestBase
 		$book->setISBN('1234');
 		$book->save();
 		BookPeer::clearInstancePool();
-		
+
 		$book = BookQuery::create()->findOneByTitle('Foo3');
 		$sb = serialize($book);
 		$this->assertEquals($book, unserialize($sb));
 	}
-	
+
 	public function testSerializeObjectWithRelations()
 	{
 		$author = new Author();
@@ -73,7 +73,7 @@ class BaseObjectSerializeTest extends BookstoreTestBase
 		$book->clearAllReferences();
 		$this->assertEquals($book, unserialize($sb));
 	}
-	
+
 	public function testSerializeObjectWithCollections()
 	{
 		$book1 = new Book();

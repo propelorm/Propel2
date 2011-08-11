@@ -22,19 +22,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
- 
+
 <!--
- 
+
  Sample stylesheet to be used with Phing/PHPUnit2 output.
  Based on JUnit stylesheets from Apache Ant.
- 
+
  It creates a non-framed report that can be useful to send via
  e-mail or such.
- 
+
  @author Michiel Rook <a href="mailto:michiel@trendserver.nl"/>
  @author Stephane Bailliez <a href="mailto:sbailliez@apache.org"/>
  @author Erik Hatcher <a href="mailto:ehatcher@apache.org"/>
- 
+
 -->
 <xsl:template match="testsuites">
     <html>
@@ -108,36 +108,36 @@
         </head>
         <body>
             <a name="top"></a>
-            <xsl:call-template name="pageHeader"/>  
-            
+            <xsl:call-template name="pageHeader"/>
+
             <!-- Summary part -->
             <xsl:call-template name="summary"/>
-            
+
             <!-- Package List part -->
             <xsl:call-template name="packagelist"/>
 
             <hr size="1" width="95%" align="left"/>
-            
+
             <!-- For each package create its part -->
             <xsl:call-template name="packages"/>
 
             <hr size="1" width="95%" align="left"/>
-            
+
             <!-- For each class create the  part -->
             <xsl:call-template name="classes"/>
-            
-            <xsl:call-template name="pageFooter"/>  
+
+            <xsl:call-template name="pageFooter"/>
         </body>
     </html>
 </xsl:template>
-    
-    
-    
+
+
+
     <!-- ================================================================== -->
     <!-- Write a list of all packages with an hyperlink to the anchor of    -->
     <!-- of the package name.                                               -->
     <!-- ================================================================== -->
-    <xsl:template name="packagelist">   
+    <xsl:template name="packagelist">
         <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
             <xsl:call-template name="testsuite.test.header"/>
             <!-- list all packages recursively -->
@@ -149,7 +149,7 @@
                 <xsl:variable name="errorCount" select="sum($testsuites-in-package/@errors)"/>
                 <xsl:variable name="failureCount" select="sum($testsuites-in-package/@failures)"/>
                 <xsl:variable name="timeCount" select="sum($testsuites-in-package/@time)"/>
-                
+
                 <!-- write a summary for the package -->
                 <tr valign="top">
                     <!-- set a nice color depending if there is an error/failure -->
@@ -171,10 +171,10 @@
                     </td>
                 </tr>
             </xsl:for-each>
-        </table>        
+        </table>
     </xsl:template>
-    
-    
+
+
     <!-- ================================================================== -->
     <!-- Write a package level report                                       -->
     <!-- It creates a table with values from the document:                  -->
@@ -187,25 +187,25 @@
             <xsl:sort select="@package"/>
                 <a name="{@package}"></a>
                 <h3>Package <xsl:value-of select="@package"/></h3>
-                
+
                 <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
                     <xsl:call-template name="testsuite.test.header"/>
-            
+
                     <!-- match the testsuites of this package -->
                     <xsl:apply-templates select="/testsuites/testsuite[./@package = current()/@package]" mode="print.test"/>
                 </table>
                 <p/>
         </xsl:for-each>
     </xsl:template>
-    
-    <xsl:template name="classes">        
+
+    <xsl:template name="classes">
         <h2>Test Cases</h2>
         <xsl:for-each select="testsuite">
             <xsl:sort select="@name"/>
             <!-- create an anchor to this class name -->
             <a name="{@name}"></a>
             <h3>TestCase <xsl:value-of select="@name"/></h3>
-            
+
             <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
               <xsl:call-template name="testcase.test.header"/>
               <!--
@@ -222,7 +222,7 @@
             <p/>
         </xsl:for-each>
     </xsl:template>
-    
+
     <xsl:template name="summary">
         <h2>Summary</h2>
         <xsl:variable name="assertionCount" select="sum(testsuite/@assertions)"/>
@@ -272,7 +272,7 @@
         </tr>
         </table>
     </xsl:template>
-      
+
 <!-- Page HEADER -->
 <xsl:template name="pageHeader">
     <h1>Unit Test Results</h1>
@@ -338,7 +338,7 @@
                 <xsl:when test="@errors[.&gt; 0]">Error</xsl:when>
             </xsl:choose>
         </xsl:attribute>
-    
+
         <!-- print testsuite information -->
         <td><a href="#{@name}"><xsl:value-of select="@name"/></a></td>
         <td><xsl:value-of select="@assertions"/></td>

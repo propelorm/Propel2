@@ -19,7 +19,7 @@ class ModelJoin extends Join
 	protected $relationMap;
 	protected $tableMap;
 	protected $previousJoin;
-	
+
 	public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
 	{
 		$leftCols = $relationMap->getLeftColumns();
@@ -32,10 +32,10 @@ class ModelJoin extends Join
 				Criteria::EQUAL);
 		}
 		$this->relationMap = $relationMap;
-		
+
 		return $this;
 	}
-	
+
 	public function getRelationMap()
 	{
 		return $this->relationMap;
@@ -43,21 +43,21 @@ class ModelJoin extends Join
 
 	/**
 	 * Sets the right tableMap for this join
-	 * 
+	 *
 	 * @param TableMap $tableMap The table map to use
-	 * 
+	 *
 	 * @return ModelJoin The current join object, for fluid interface
 	 */
 	public function setTableMap(TableMap $tableMap)
 	{
 		$this->tableMap = $tableMap;
-		
+
 		return $this;
 	}
 
 	/**
 	 * Gets the right tableMap for this join
-	 * 
+	 *
 	 * @return TableMap The table map
 	 */
 	public function getTableMap()
@@ -68,19 +68,19 @@ class ModelJoin extends Join
 		}
 		return $this->tableMap;
 	}
-		
+
 	public function setPreviousJoin(ModelJoin $join)
 	{
 		$this->previousJoin = $join;
-		
+
 		return $this;
 	}
-	
+
 	public function getPreviousJoin()
 	{
 		return $this->previousJoin;
 	}
-	
+
 	public function isPrimary()
 	{
 		return null === $this->previousJoin;
@@ -90,24 +90,24 @@ class ModelJoin extends Join
 	{
 		return $this->setRightTableAlias($relationAlias);
 	}
-	
+
 	public function getRelationAlias()
 	{
 		return $this->getRightTableAlias();
 	}
-	
+
 	public function hasRelationAlias()
 	{
 		return $this->hasRightTableAlias();
 	}
 	/**
 	 * This method returns the last related, but already hydrated object up until this join
-	 * Starting from $startObject and continuously calling the getters to get 
+	 * Starting from $startObject and continuously calling the getters to get
 	 * to the base object for the current join.
-	 * 
+	 *
 	 * This method only works if PreviousJoin has been defined,
 	 * which only happens when you provide dotted relations when calling join
-	 * 
+	 *
 	 * @param Object $startObject the start object all joins originate from and which has already hydrated
 	 * @return Object the base Object of this join
 	 */
@@ -130,7 +130,7 @@ class ModelJoin extends Join
 			&& $this->previousJoin == $join->getPreviousJoin()
 			&& $this->rightTableAlias == $join->getRightTableAlias();
 	}
-	
+
 	public function __toString()
 	{
 		return parent::toString()
@@ -140,4 +140,3 @@ class ModelJoin extends Join
 			. ' relationAlias: ' . $this->rightTableAlias;
 	}
 }
- 

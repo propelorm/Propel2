@@ -20,7 +20,7 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		}
 		return $tree;
 	}
-	
+
 	/**
 	 * Tree used for tests
 	 * t1
@@ -37,22 +37,22 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		$ret = array();
 		// shuffling the results so the db order is not the natural one
 		$fixtures = array(
-			't2' => array(2, 3, 1), 
-			't5' => array(7, 12, 2), 
-			't4' => array(5, 6, 2), 
+			't2' => array(2, 3, 1),
+			't5' => array(7, 12, 2),
+			't4' => array(5, 6, 2),
 			't7' => array(10, 11, 3),
 			't1' => array(1, 14, 0),
-			't6' => array(8, 9, 3), 
-			't3' => array(4, 13, 1), 
+			't6' => array(8, 9, 3),
+			't3' => array(4, 13, 1),
 		);
 		/* in correct order, this is:
 			't1' => array(1, 14, 0),
-			't2' => array(2, 3, 1), 
-			't3' => array(4, 13, 1), 
-			't4' => array(5, 6, 2), 
-			't5' => array(7, 12, 2), 
-			't6' => array(8, 9, 3), 
-			't7' => array(10, 11, 3),		
+			't2' => array(2, 3, 1),
+			't3' => array(4, 13, 1),
+			't4' => array(5, 6, 2),
+			't5' => array(7, 12, 2),
+			't6' => array(8, 9, 3),
+			't7' => array(10, 11, 3),
 		*/
 		foreach ($fixtures as $key => $data) {
 			$t = new PublicTable9();
@@ -67,14 +67,14 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		ksort($ret);
 		return array_values($ret);
 	}
-	
+
 	protected function dumpTree()
 	{
 		$c = new Criteria();
 		$c->addAscendingOrderBycolumn(Table9Peer::TITLE);
 		return $this->dumpNodes(Table9Peer::doSelect($c));
 	}
-	
+
 	/**
 	 * Tree used for tests
 	 * Scope 1
@@ -96,15 +96,15 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		$ret = array();
 		$fixtures = array(
 			't1' => array(1, 14, 0, 1),
-			't2' => array(2, 3, 1, 1), 
-			't3' => array(4, 13, 1, 1), 
-			't4' => array(5, 6, 2, 1), 
-			't5' => array(7, 12, 2, 1), 
-			't6' => array(8, 9, 3, 1), 
+			't2' => array(2, 3, 1, 1),
+			't3' => array(4, 13, 1, 1),
+			't4' => array(5, 6, 2, 1),
+			't5' => array(7, 12, 2, 1),
+			't6' => array(8, 9, 3, 1),
 			't7' => array(10, 11, 3, 1),
 			't8' => array(1, 6, 0, 2),
-			't9' => array(2, 3, 1, 2), 
-			't10' => array(4, 5, 1, 2), 
+			't9' => array(2, 3, 1, 2),
+			't10' => array(4, 5, 1, 2),
 		);
 		foreach ($fixtures as $key => $data) {
 			$t = new PublicTable10();
@@ -118,7 +118,7 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		}
 		return $ret;
 	}
-	
+
 	protected function dumpTreeWithScope($scope)
 	{
 		$c = new Criteria();

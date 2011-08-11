@@ -46,11 +46,11 @@ class PropelColumnComparator
 			return false;
 		}
 	}
-	
+
 	static function compareColumns(Column $fromColumn, Column $toColumn)
 	{
 		$changedProperties = array();
-		
+
 		// compare column types
 		$fromDomain = $fromColumn->getDomain();
 		$toDomain = $toColumn->getDomain();
@@ -69,7 +69,7 @@ class PropelColumnComparator
 		if ($fromColumn->isNotNull() != $toColumn->isNotNull()) {
 			$changedProperties['notNull'] = array($fromColumn->isNotNull(), $toColumn->isNotNull());
 		}
-		
+
 		// compare column default value
 		$fromDefaultValue = $fromColumn->getDefaultValue();
 		$toDefaultValue = $toColumn->getDefaultValue();
@@ -89,11 +89,11 @@ class PropelColumnComparator
 				}
 			}
 		}
-		
+
 		if ($fromColumn->isAutoIncrement() != $toColumn->isAutoIncrement()) {
 			$changedProperties['autoIncrement'] = array($fromColumn->isAutoIncrement(), $toColumn->isAutoIncrement());
 		}
-		
+
 		return $changedProperties;
 	}
 }

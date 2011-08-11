@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/model/ColumnDefa
  * @version    $Id$
  * @package    generator.builder.om
  */
-class PHP5ObjectBuilderTest extends PHPUnit_Framework_TestCase 
+class PHP5ObjectBuilderTest extends PHPUnit_Framework_TestCase
 {
 	protected $builder;
 
@@ -32,7 +32,7 @@ class PHP5ObjectBuilderTest extends PHPUnit_Framework_TestCase
 		$builder->setPlatform(new MysqlPlatform());
 		$this->builder = $builder;
 	}
-	
+
 	public static function getDefaultValueStringProvider()
 	{
 		$col1 = new Column('Bar');
@@ -53,7 +53,7 @@ class PHP5ObjectBuilderTest extends PHPUnit_Framework_TestCase
 			array($col3, $val3),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider getDefaultValueStringProvider
 	 */

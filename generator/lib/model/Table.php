@@ -221,7 +221,7 @@ class Table extends ScopedElement implements IDMethod
 	 * @var       array
 	 */
 	private $columnsByLowercaseName = array();
-	
+
 	/**
 	 * Map of columns by phpName.
 	 *
@@ -274,7 +274,7 @@ class Table extends ScopedElement implements IDMethod
 
 	/**
 	 * List of behaviors registered for this table
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $behaviors = array();
@@ -293,7 +293,7 @@ class Table extends ScopedElement implements IDMethod
 	 * @var       string
 	 */
 	protected $defaultStringFormat;
-	
+
 	/**
 	 * Constructs a table object with a name
 	 *
@@ -380,7 +380,7 @@ class Table extends ScopedElement implements IDMethod
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>A hook for the SAX XML parser to call when this table has
 	 * been fully loaded from the XML, and all nested elements have
@@ -396,11 +396,11 @@ class Table extends ScopedElement implements IDMethod
 		if ($this->heavyIndexing) {
 			$this->doHeavyIndexing();
 		}
-		
+
 		// Name any indices which are missing a name using the
 		// appropriate algorithm.
 		$this->doNaming();
-		
+
 		// if idMethod is "native" and in fact there are no autoIncrement
 		// columns in the table, then change it to "none"
 		$anyAutoInc = false;
@@ -412,7 +412,7 @@ class Table extends ScopedElement implements IDMethod
 		if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
 			$this->setIdMethod(IDMethod::NO_ID_METHOD);
 		}
-		
+
 		// If there is no PK, then throw an error. Propel requires primary keys.
 		if (!$this->hasPrimaryKey()) {
 			throw new EngineException(sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $this->getName()));
@@ -434,7 +434,7 @@ class Table extends ScopedElement implements IDMethod
 	 * might cause too many indices to be created).
 	 *
 	 * See the mysqm manual http://www.mysql.com/doc/E/X/EXPLAIN.html
-	 * for a better description of why heavy indexing is useful for 
+	 * for a better description of why heavy indexing is useful for
 	 * quickly searchable database tables.
 	 */
 	private function doHeavyIndexing()
@@ -458,7 +458,7 @@ class Table extends ScopedElement implements IDMethod
 
 	/**
 	 * Adds extra indices for reverse foreign keys
-	 * This is required for MySQL databases, 
+	 * This is required for MySQL databases,
 	 * and is called from Database::doFinalInitialization()
 	 */
 	public function addExtraIndices()
@@ -473,15 +473,15 @@ class Table extends ScopedElement implements IDMethod
 		 * @var array
 		 */
 		$_indices = array();
-		
+
 		$this->collectIndexedColumns('PRIMARY', $this->getPrimaryKey(), $_indices);
-		
+
 		$_tableIndices = array_merge($this->getIndices(), $this->getUnices());
 		foreach ($_tableIndices as $_index) {
 		  $this->collectIndexedColumns($_index->getName(), $_index->getColumns(), $_indices);
 		}
 
-		// we're determining which tables have foreign keys that point to this table, 
+		// we're determining which tables have foreign keys that point to this table,
 		// since MySQL needs an index on any column that is referenced by another table
 		// (yep, MySQL _is_ a PITA)
 		$counter = 0;
@@ -499,7 +499,7 @@ class Table extends ScopedElement implements IDMethod
 				$this->collectIndexedColumns($index->getName(), $referencedColumns, $_indices);
 			}
 		}
-		
+
 		// we're adding indices for this table foreign keys
 		foreach ($this->getForeignKeys() as $foreignKey) {
 			$localColumns = $foreignKey->getLocalColumnObjects();
@@ -707,7 +707,7 @@ class Table extends ScopedElement implements IDMethod
 			return $this->addColumn($col); // call self w/ different param
 		}
 	}
-	
+
 	/**
 	 * Removed a column from the table
 	 * @param Column|string $col the column to remove
@@ -728,7 +728,7 @@ class Table extends ScopedElement implements IDMethod
 		$this->adjustColumnPositions();
 		// FIXME: also remove indexes and validators on this column?
 	}
-	
+
 	public function adjustColumnPositions()
 	{
 		$this->columnList = array_values($this->columnList);
@@ -737,7 +737,7 @@ class Table extends ScopedElement implements IDMethod
 			$this->columnList[$i]->setPosition($i + 1);
 		}
 	}
-	
+
 	/**
 	 * Add a validator to this table.
 	 *
@@ -769,7 +769,7 @@ class Table extends ScopedElement implements IDMethod
 			return $this->addValidator($validator);
 		}
 	}
-	
+
 	/**
 	 * Removes validators based on a column name
 	 *
@@ -856,7 +856,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->referrers;
 	}
-	
+
 	/**
 	 * Browses the foreign keys and creates referrers for the foreign table.
 	 * This method can be called several times on the same table. It only
@@ -866,7 +866,7 @@ class Table extends ScopedElement implements IDMethod
 	public function setupReferrers($throwErrors = false)
 	{
 		foreach ($this->getForeignKeys() as $foreignKey) {
-			
+
 			// table referrers
 			$foreignTable = $this->getDatabase()->getTable($foreignKey->getForeignTableName());
 			if ($foreignTable !== null) {
@@ -924,7 +924,7 @@ class Table extends ScopedElement implements IDMethod
 					));
 				}
 			}
-			
+
 			if ($this->getDatabase()->getPlatform() instanceof MysqlPLatform) {
 				$this->addExtraIndices();
 			}
@@ -1048,7 +1048,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->getDatabase()->getAppData()->getGeneratorConfig();
 	}
-	
+
 	/**
 	 * Adds a new Behavior to the table
 	 * @return    Behavior A behavior instance
@@ -1067,7 +1067,7 @@ class Table extends ScopedElement implements IDMethod
 			return $this->addBehavior($behavior);
 		}
 	}
-	
+
 	/**
 	 * Get the table behaviors
 	 * @return    Array of Behavior objects
@@ -1076,7 +1076,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->behaviors;
 	}
-	
+
 	/**
 	 * Get the early table behaviors
 	 * @return    Array of Behavior objects
@@ -1102,7 +1102,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return array_key_exists($name, $this->behaviors);
 	}
-		
+
 	/**
 	 * Get one table behavior by name
 	 *
@@ -1113,11 +1113,11 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->behaviors[$name];
 	}
-	
+
 	/**
 	 * Check whether one of the table behaviors offer an additional builder
 	 *
-	 * @return boolean true in the table has at least one behavior 
+	 * @return boolean true in the table has at least one behavior
 	 *                with an additional builder, false otherwise
 	 */
 	public function hasAdditionalBuilders()
@@ -1127,7 +1127,7 @@ class Table extends ScopedElement implements IDMethod
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -1142,7 +1142,7 @@ class Table extends ScopedElement implements IDMethod
 		foreach ($this->getBehaviors() as $behavior) {
 			$additionalBuilders = array_merge($additionalBuilders, $behavior->getAdditionalBuilders());
 		}
-		
+
 		return $additionalBuilders;
 	}
 
@@ -1213,7 +1213,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		$this->phpName = $phpName;
 	}
-	
+
 	public function buildPhpName($name)
 	{
 		return NameFactory::generateName(NameFactory::PHP_GENERATOR, array($name, $this->phpNamingMethod));
@@ -1275,10 +1275,10 @@ class Table extends ScopedElement implements IDMethod
 		}
 		return $this->defaultStringFormat;
 	}
-	
+
 	/**
 	 * Get the method for generating pk's
-	 * [HL] changing behavior so that Database default method is returned 
+	 * [HL] changing behavior so that Database default method is returned
 	 * if no method has been specified for the table.
 	 *
 	 * @return    string
@@ -1464,7 +1464,7 @@ class Table extends ScopedElement implements IDMethod
 		}
 		return $count;
 	}
-	
+
 	/**
 	 * Checks whether one of the columns is of type ENUM
 	 * @return boolean
@@ -1523,7 +1523,7 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return $this->unices;
 	}
-	
+
 	/**
 	 * Check whether the table has a column.
 	 * @param      Column|string $col the column object or name (e.g. 'my_column')

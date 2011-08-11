@@ -91,13 +91,13 @@ class SqlitePlatform extends DefaultPlatform
 		// FIXME: not supported by SQLite
 		return '';
 	}
-	
+
 	public function getAddPrimaryKeyDDL(Table $table)
 	{
 		// FIXME: not supported by SQLite
 		return '';
 	}
-	
+
 	public function getAddForeignKeyDDL(ForeignKey $fk)
 	{
 		// no need for an alter table to return comments
@@ -108,14 +108,14 @@ class SqlitePlatform extends DefaultPlatform
 	{
 		return '';
 	}
-	
+
 	public function getForeignKeyDDL(ForeignKey $fk)
 	{
 		$pattern = "
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (%s) REFERENCES %s (%s)
 ";
-		return sprintf($pattern, 
+		return sprintf($pattern,
 			$this->getColumnListDDL($fk->getLocalColumns()),
 			$fk->getForeignTableName(),
 			$this->getColumnListDDL($fk->getForeignColumns())
@@ -146,7 +146,7 @@ class SqlitePlatform extends DefaultPlatform
 	{
 		return $this->isIdentifierQuotingEnabled ? '[' . $text . ']' : $text;
 	}
-	
+
 	/**
 	 * @see        Platform::supportsMigrations()
 	 */

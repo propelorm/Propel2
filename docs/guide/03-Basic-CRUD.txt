@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-In this chapter, you will learn how to perform basic C.R.U.D. (Create, Retrieve, Update, Delete) operations on your database using Propel. 
+In this chapter, you will learn how to perform basic C.R.U.D. (Create, Retrieve, Update, Delete) operations on your database using Propel.
 
 == Creating Rows ==
 
@@ -80,7 +80,7 @@ This issues a simple SELECT SQL query. For instance, for MySQL:
 
 {{{
 #!sql
-SELECT author.id, author.first_name, author.last_name 
+SELECT author.id, author.first_name, author.last_name
 FROM `author`
 WHERE author.id = 1
 LIMIT 1;
@@ -283,7 +283,7 @@ $links = $pager->getLinks(5);  // array of page numbers around the current page;
 == Collections And On-Demand Hydration ==
 
 The `find()` method of generated Model Query objects returns a `PropelCollection` object. You can use this object just like an array of model objects, iterate over it using `foreach`, access the objects by key, etc.
-  
+
 {{{
 #!php
 <?php

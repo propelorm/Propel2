@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Allows translation of text columns through transparent one-to-many relationship.
  * Modifier for the object builder.
@@ -19,7 +19,7 @@
 class I18nBehaviorObjectBuilderModifier
 {
 	protected $behavior, $table, $builder;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
@@ -45,7 +45,7 @@ class I18nBehaviorObjectBuilderModifier
 			'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname(),
 		));
 	}
-	
+
 	public function objectClearReferences($builder)
 	{
 		return $this->behavior->renderTemplate('objectClearReferences', array(
@@ -70,7 +70,7 @@ class I18nBehaviorObjectBuilderModifier
 			$script .= $this->addTranslatedColumnGetter($column);
 			$script .= $this->addTranslatedColumnSetter($column);
 		}
-		
+
 		return $script;
 	}
 
@@ -86,7 +86,7 @@ class I18nBehaviorObjectBuilderModifier
 	{
 		return $this->behavior->renderTemplate('objectGetLocale');
 	}
-	
+
 	protected function addSetLocaleAlias($alias)
 	{
 		return $this->behavior->renderTemplate('objectSetLocaleAlias', array(
@@ -102,7 +102,7 @@ class I18nBehaviorObjectBuilderModifier
 			'alias' => ucfirst($alias),
 		));
 	}
-	
+
 	protected function addGetTranslation()
 	{
 		$i18nTable = $this->behavior->getI18nTable();
@@ -129,14 +129,14 @@ class I18nBehaviorObjectBuilderModifier
 			'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
 		));
 	}
-	
+
 	protected function addGetCurrentTranslation()
 	{
 		return $this->behavior->renderTemplate('objectGetCurrentTranslation', array(
 			'i18nTablePhpName' => $this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())->getClassname(),
 		));
 	}
-	
+
 	// FIXME: the connection used by getCurrentTranslation in the generated code
 	// cannot be specified by the user
 	protected function addTranslatedColumnGetter(Column $column)
@@ -189,7 +189,7 @@ class I18nBehaviorObjectBuilderModifier
 			'params'            => implode(', ', $params[0]),
 		));
 	}
-	
+
 	public function objectFilter(&$script, $builder)
 	{
 		$i18nTable = $this->behavior->getI18nTable();

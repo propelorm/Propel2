@@ -33,7 +33,7 @@ class PhpNameGeneratorTest extends PHPUnit_Framework_TestCase
 			array('my_CLASS_name', 'MyCLASSName'),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider testPhpnameMethodDataProvider
 	 */

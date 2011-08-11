@@ -18,16 +18,16 @@ require_once dirname(__FILE__) . '/../../../../tools/helpers/bookstore/Bookstore
  * @version		$Revision$
  * @package		generator.behavior.aggregate_column
  */
-class AggregateColumnBehaviorTest extends BookstoreTestBase 
+class AggregateColumnBehaviorTest extends BookstoreTestBase
 {
-	
+
 	public function testParameters()
 	{
 		$postTable = AggregatePostPeer::getTableMap();
 		$this->assertEquals(count($postTable->getColumns()), 2, 'AggregateColumn adds one column by default');
 		$this->assertTrue(method_exists('AggregatePost', 'getNbComments'));
 	}
-	
+
 	public function testCompute()
 	{
 		AggregateCommentQuery::create()->deleteAll($this->con);
@@ -64,7 +64,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 		$post->updateNbComments($this->con);
 		$this->assertEquals(0, $post->getNbComments(), 'The update method updates the aggregate column');
 	}
-	
+
 	public function testCreateRelated()
 	{
 		AggregateCommentQuery::create()->deleteAll($this->con);
@@ -83,7 +83,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 		$comment3->save($this->con);
 		$this->assertEquals(2, $post->getNbComments(), 'Adding a new related object updates the aggregate column');
 	}
-	
+
 	public function testUpdateRelated()
 	{
 		list($poll, $item1, $item2) = $this->populatePoll();
@@ -102,7 +102,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 		$item2->delete($this->con);
 		$this->assertNull($poll->getTotalScore(), 'Deleting a related object updates the aggregate column');
 	}
-	
+
 	public function testUpdateRelatedWithQuery()
 	{
 		list($poll, $item1, $item2) = $this->populatePoll();
@@ -141,7 +141,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 			->delete($this->con);
 		$this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
 	}
-	
+
 	public function testRemoveRelation()
 	{
 		AggregateCommentQuery::create()->deleteAll($this->con);
@@ -159,7 +159,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 		$comment2->save($this->con);
 		$this->assertEquals(1, $post->getNbComments(), 'Removing a relation changes the related object aggregate column');
 	}
-	
+
 	public function testReplaceRelation()
 	{
 		AggregateCommentQuery::create()->deleteAll($this->con);
@@ -178,7 +178,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 		$this->assertEquals(0, $post1->getNbComments(), 'Replacing a relation changes the related object aggregate column');
 		$this->assertEquals(1, $post2->getNbComments(), 'Replacing a relation changes the related object aggregate column');
 	}
-	
+
 	protected function populatePoll()
 	{
 		AggregateItemQuery::create()->deleteAll($this->con);
@@ -214,7 +214,7 @@ class TestableComment extends AggregateComment
 			throw $e;
 		}
 	}
-	
+
 	// overrides the parent delete() to bypass behavior hooks
 	public function delete(PropelPDO $con = null)
 	{
@@ -230,7 +230,7 @@ class TestableComment extends AggregateComment
 			throw $e;
 		}
 	}
-	
+
 }
 
 class TestableAggregateCommentQuery extends AggregateCommentQuery
@@ -239,7 +239,7 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
 	{
 		return new TestableAggregateCommentQuery();
 	}
-	
+
 	// overrides the parent basePreDelete() to bypass behavior hooks
 	protected function basePreDelete(PropelPDO $con)
 	{
@@ -251,5 +251,5 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
 	{
 		return $this->postDelete($affectedRows, $con);
 	}
-	
+
 }

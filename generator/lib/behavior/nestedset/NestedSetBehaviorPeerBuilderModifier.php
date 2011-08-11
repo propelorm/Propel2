@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
@@ -18,28 +18,28 @@
 class NestedSetBehaviorPeerBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumn($name)
 	{
 		return $this->behavior->getColumnForParameter($name);
 	}
-	
+
 	protected function getColumnAttribute($name)
 	{
 		return strtolower($this->getColumn($name)->getName());
 	}
-	
+
 	protected function getColumnConstant($name)
 	{
 		return strtoupper($this->getColumn($name)->getName());
@@ -49,14 +49,14 @@ class NestedSetBehaviorPeerBuilderModifier
 	{
 		return $this->getColumn($name)->getPhpName();
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
 		$this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
-	
+
 	public function staticAttributes($builder)
 	{
 		$tableName = $this->table->getName();
@@ -77,7 +77,7 @@ const RIGHT_COL = '" . $tableName . '.' . $this->getColumnConstant('right_column
  */
 const LEVEL_COL = '" . $tableName . '.' . $this->getColumnConstant('level_column') . "';
 ";
-	
+
 		if ($this->behavior->useScope()) {
 			$script .= 	"
 /**
@@ -86,15 +86,15 @@ const LEVEL_COL = '" . $tableName . '.' . $this->getColumnConstant('level_column
 const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column') . "';
 ";
 		}
-		
+
 		return $script;
 	}
-	
+
 	public function staticMethods($builder)
 	{
 		$this->setBuilder($builder);
 		$script = '';
-		
+
 		if ($this->getParameter('use_scope') == 'true')
 		{
 			$this->addRetrieveRoots($script);
@@ -108,7 +108,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 		$this->addUpdateLoadedNodes($script);
 		$this->addMakeRoomForLeaf($script);
 		$this->addFixLevels($script);
-		
+
 		return $script;
 	}
 
@@ -193,12 +193,12 @@ public static function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
 	\$criteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	
+
 	return $peerClassname::doSelect(\$criteria, \$con);
 }
 ";
 	}
-	
+
 	protected function addIsValid(&$script)
 	{
 		$objectClassname = $this->objectClassname;
@@ -219,7 +219,7 @@ public static function isValid($objectClassname \$node = null)
 }
 ";
 	}
-	
+
 	protected function addDeleteTree(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -290,7 +290,7 @@ public static function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	
+
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add($peerClassname::LEFT_COL, array('raw' => $peerClassname::LEFT_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
@@ -350,7 +350,7 @@ public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 	\$whereCriteria->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	
+
 	\$valuesCriteria = new Criteria($peerClassname::DATABASE_NAME);
 	\$valuesCriteria->add($peerClassname::LEVEL_COL, array('raw' => $peerClassname::LEVEL_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
@@ -358,7 +358,7 @@ public static function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 }
 ";
 	}
-	
+
 	protected function addUpdateLoadedNodes(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -474,7 +474,7 @@ public static function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 }
 ";
 	}
-	
+
 	protected function addFixLevels(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -531,7 +531,7 @@ public static function fixLevels(" . ($useScope ? "\$scope, " : ""). "PropelPDO 
 		}
 		$script .= "
 		}
-		
+
 		// compute level
 		// Algorithm shamelessly stolen from sfPropelActAsNestedSetBehaviorPlugin
 		// Probably authored by Tristan Rivoallan
@@ -546,7 +546,7 @@ public static function fixLevels(" . ($useScope ? "\$scope, " : ""). "PropelPDO 
 			\$level = ++\$i;
 			\$prev[\$i] = \$obj->getRightValue();
 		}
-		
+
 		// update level in node if necessary
 		if (\$obj->getLevel() !== \$level) {
 			\$obj->setLevel(\$level);

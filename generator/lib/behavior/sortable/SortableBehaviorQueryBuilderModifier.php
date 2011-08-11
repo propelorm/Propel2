@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add sortable query methods
  *
@@ -17,23 +17,23 @@
 class SortableBehaviorQueryBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumn($name)
 	{
 		return $this->behavior->getColumnForParameter($name);
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -46,7 +46,7 @@ class SortableBehaviorQueryBuilderModifier
 	{
 		$this->setBuilder($builder);
 		$script = '';
-		
+
 		// select filters
 		if ($this->behavior->useScope()) {
 			$this->addInList($script);
@@ -55,17 +55,17 @@ class SortableBehaviorQueryBuilderModifier
 			$this->addFilterByRank($script);
 			$this->addOrderByRank($script);
 		}
-		
+
 		// select termination methods
 		if ($this->getParameter('rank_column') != 'rank' || $this->behavior->useScope()) {
 			$this->addFindOneByRank($script);
 		}
 		$this->addFindList($script);
-		
+
 		// utilities
 		$this->addGetMaxRank($script);
 		$this->addReorder($script);
-		
+
 		return $script;
 	}
 
@@ -85,7 +85,7 @@ public function inList(\$scope = null)
 }
 ";
 	}
-	
+
 	protected function addFilterByRank(&$script)
 	{
 		$useScope = $this->behavior->useScope();
@@ -143,7 +143,7 @@ public function orderByRank(\$order = Criteria::ASC)
 }
 ";
 	}
-	
+
 	protected function addFindOneByRank(&$script)
 	{
 		$useScope = $this->behavior->useScope();
@@ -200,7 +200,7 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 }
 ";
 	}
-			
+
 	protected function addGetMaxRank(&$script)
 	{
 		$this->builder->declareClasses('Propel');
@@ -231,7 +231,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPD
 		}
 		$script .= "
 	\$stmt = \$this->getSelectStatement(\$con);
-	
+
 	return \$stmt->fetchColumn();
 }
 ";
@@ -259,7 +259,7 @@ public function reorder(array \$order, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-	
+
 	\$con->beginTransaction();
 	try {
 		\$ids = array_keys(\$order);

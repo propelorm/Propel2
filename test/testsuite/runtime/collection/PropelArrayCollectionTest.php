@@ -24,7 +24,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		parent::setUp();
 		BookstoreDataPopulator::populate($this->con);
 	}
-	
+
 	public function testSave()
 	{
 		$books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -51,7 +51,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$col []= $cv;
 		$col->save();
 	}
-	
+
 	public function testDelete()
 	{
 		$books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -74,20 +74,20 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$col []= $cv;
 		$col->delete();
 	}
-	
+
 	public function testGetPrimaryKeys()
 	{
 		$books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
 		$pks = $books->getPrimaryKeys();
 		$this->assertEquals(4, count($pks));
-		
+
 		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
 		$this->assertEquals($keys, array_keys($pks));
-		
+
 		$pks = $books->getPrimaryKeys(false);
 		$keys = array(0, 1, 2, 3);
 		$this->assertEquals($keys, array_keys($pks));
-		
+
 		$bookObjects = PropelQuery::from('Book')->find();
 		foreach ($pks as $key => $value) {
 			$this->assertEquals($bookObjects[$key]->getPrimaryKey(), $value);
@@ -108,10 +108,10 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$col->setModel('Book');
 		$col->fromArray($books);
 		$col->save();
-		
+
 		$nbBooks = PropelQuery::from('Book')->count();
 		$this->assertEquals(6, $nbBooks);
-		
+
 		$booksByJane = PropelQuery::from('Book b')
 			->join('b.Author a')
 			->where('a.LastName = ?', 'Austen')
@@ -124,16 +124,16 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$books = PropelQuery::from('Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
 		$booksArray = $books->toArray();
 		$this->assertEquals(4, count($booksArray));
-		
+
 		$bookObjects = PropelQuery::from('Book')->find();
 		foreach ($booksArray as $key => $book) {
 			$this->assertEquals($bookObjects[$key]->toArray(), $book);
 		}
-		
+
 		$booksArray = $books->toArray();
 		$keys = array(0, 1, 2, 3);
 		$this->assertEquals($keys, array_keys($booksArray));
-		
+
 		$booksArray = $books->toArray(null, true);
 		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
 		$this->assertEquals($keys, array_keys($booksArray));
@@ -159,7 +159,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$book->setISBN('0140422161');
 		$book->setPrice(12.99);
 		$book->setAuthor($author);
-		
+
 		$coll = new PropelArrayCollection();
 		$coll->setModel('Book');
 		$coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);

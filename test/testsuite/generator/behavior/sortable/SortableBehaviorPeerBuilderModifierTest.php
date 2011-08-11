@@ -25,12 +25,12 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 		parent::setUp();
 		$this->populateTable11();
 	}
-	
+
 	public function testStaticAttributes()
 	{
 		$this->assertEquals(Table11Peer::RANK_COL, 'table11.SORTABLE_RANK');
 	}
-	
+
 	public function testGetMaxRank()
 	{
 		$this->assertEquals(4, Table11Peer::getMaxRank(), 'getMaxRank() returns the maximum rank');
@@ -48,7 +48,7 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 		$this->assertEquals(3, $t3->getRank(), 'retrieveByRank() returns the object with the required rank');
 		$this->assertEquals('row3', $t3->getTitle(), 'retrieveByRank() returns the object with the required rank');
 	}
-	
+
 	public function testReorder()
 	{
 		$objects = Table11Peer::doSelect(new Criteria());
@@ -62,7 +62,7 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 		$expected = array(1 => 'row3', 2 => 'row2', 3 => 'row4', 4 => 'row1');
 		$this->assertEquals($expected, $this->getFixturesArray(), 'reorder() reorders the suite');
 	}
-	
+
 	public function testDoSelectOrderByRank()
 	{
 		$objects = Table11Peer::doSelectOrderByRank();
@@ -78,6 +78,6 @@ class SortableBehaviorPeerBuilderModifierTest extends BookstoreSortableTestBase
 			$oldRank = $object->getRank();
 		}
 	}
-	
+
 
 }

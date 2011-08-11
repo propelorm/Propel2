@@ -124,7 +124,7 @@ interface PropelPlatformInterface
 	 * @return     string
 	 */
 	public function getPrimaryKeyDDL(Table $table);
-	
+
 	/**
 	 * Returns if the RDBMS-specific SQL type has a size attribute.
 	 *
@@ -160,13 +160,13 @@ interface PropelPlatformInterface
 	 * @return     boolean
 	 */
 	public function supportsNativeDeleteTrigger();
-  
+
 	/**
 	 * Whether RDBMS supports INSERT null values in autoincremented primary keys
 	 * @return     boolean
 	 */
 	public function supportsInsertNullPk();
-	
+
 	/**
 	 * Whether RDBMS supports native schemas for table layout.
 	 * @return boolean

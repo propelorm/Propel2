@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/om/OMBui
  * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    generator.builder.om
  */
-class OMBuilderTest extends PHPUnit_Framework_TestCase 
+class OMBuilderTest extends PHPUnit_Framework_TestCase
 {
 
 	public function testClear()
@@ -32,7 +32,7 @@ class OMBuilderTest extends PHPUnit_Framework_TestCase
 		$b->clear();
 		$this->assertFalse($b->isDeleted(), 'clear() sets the object to not deleted');
 	}
-	
+
 	public function testToStringUsesDefaultStringFormat()
 	{
 		$author = new Author();
@@ -47,7 +47,7 @@ Age: null
 
 EOF;
 		$this->assertEquals($expected, (string) $author, 'generated __toString() uses default string format and exportTo()');
-		
+
 		$publisher = new Publisher();
 		$publisher->setId(345345);
 		$publisher->setName('Peguinoo');

@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add versionable columns and abilities
  *
@@ -17,18 +17,18 @@
 class VersionableBehaviorQueryBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumnAttribute($name = 'version_column')
 	{
 		return strtolower($this->behavior->getColumnForParameter($name)->getName());
@@ -38,12 +38,12 @@ class VersionableBehaviorQueryBuilderModifier
 	{
 		return $this->behavior->getColumnForParameter($name)->getPhpName();
 	}
-	
+
 	protected function getVersionQueryClassName()
 	{
 		return $this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable())->getClassname();
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -51,7 +51,7 @@ class VersionableBehaviorQueryBuilderModifier
 		$this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		$this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Get the getter of the column of the behavior
 	 *
@@ -71,7 +71,7 @@ class VersionableBehaviorQueryBuilderModifier
 	{
 		return 'set' . $this->getColumnPhpName($name);
 	}
-	
+
 	public function queryMethods($builder)
 	{
 		$this->setBuilder($builder);
@@ -80,7 +80,7 @@ class VersionableBehaviorQueryBuilderModifier
 			$this->addFilterByVersion($script);
 			$this->addOrderByVersion($script);
 		}
-		
+
 		return $script;
 	}
 

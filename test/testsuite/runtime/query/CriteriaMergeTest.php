@@ -22,14 +22,14 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/util/BasePeer.php';
  */
 class CriteriaMergeTest extends BookstoreTestBase
 {
-	
+
 	protected function assertCriteriaTranslation($criteria, $expectedSql, $message = '')
 	{
 		$params = array();
 		$result = BasePeer::createSelectSql($criteria, $params);
 		$this->assertEquals($expectedSql, $result, $message);
 	}
-  
+
 	public function testMergeWithLimit()
 	{
 		$c1 = new Criteria();
@@ -69,7 +69,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$this->assertEquals(456, $c1->getOffset(), 'mergeWith() does not merge the offset in case of conflict');
 	}
-	
+
 	public function testMergeWithSelectModifiers()
 	{
 		$c1 = new Criteria();
@@ -145,7 +145,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$this->assertEquals(array('foo' => BookPeer::TITLE, 'bar' => BookPeer::ID), $c1->getAsColumns(), 'mergeWith() merges the select columns after the existing as columns');
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -219,7 +219,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$this->assertEquals(array(BookPeer::TITLE), $c1->getGroupByColumns(), 'mergeWith() does not merge duplicated groupby columns');
 	}
-	
+
 	public function testMergeWithWhereConditions()
 	{
 		$c1 = new Criteria();
@@ -337,7 +337,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$c1->mergeWith($c2);
 		$sql = 'SELECT  FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE (book.TITLE=:p1 OR author.FIRST_NAME=:p2)';
 		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
-	}	
+	}
 	public function testMergeWithHavingConditions()
 	{
 		$c1 = new Criteria();
@@ -364,7 +364,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$sql = 'SELECT  FROM  HAVING (book.TITLE=:p1 AND book.TITLE=:p2)';
 		$this->assertCriteriaTranslation($c1, $sql, 'mergeWith() combines having with AND');
 	}
-	
+
 	public function testMergeWithAliases()
 	{
 		$c1 = new Criteria();
@@ -396,7 +396,7 @@ class CriteriaMergeTest extends BookstoreTestBase
 		$c2->addAlias('b', AuthorPeer::TABLE_NAME);
 		$c1->mergeWith($c2);
 	}
-	
+
 	public function testMergeWithJoins()
 	{
 		$c1 = new Criteria();

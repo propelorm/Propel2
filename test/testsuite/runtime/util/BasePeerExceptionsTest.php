@@ -55,7 +55,7 @@ class BasePeerExceptionsTest extends BookstoreTestBase
 			$this->assertContains('[DELETE FROM `book` WHERE book.ID BAD SQL:p1]', $e->getMessage(), 'SQL query is written in the exception message');
 		}
 	}
-	
+
 	public function testDoDeleteAll()
 	{
 		try {
@@ -64,7 +64,7 @@ class BasePeerExceptionsTest extends BookstoreTestBase
 			$this->assertContains('[DELETE FROM `BAD` `TABLE`]', $e->getMessage(), 'SQL query is written in the exception message');
 		}
 	}
-	
+
 	public function testDoUpdate()
 	{
 		try {
@@ -78,7 +78,7 @@ class BasePeerExceptionsTest extends BookstoreTestBase
 			$this->assertContains('[UPDATE `book` SET `TITLE`=:p1 WHERE book.ID BAD SQL:p2]', $e->getMessage(), 'SQL query is written in the exception message');
 		}
 	}
-	
+
 	public function testDoInsert()
 	{
 		try {
@@ -90,5 +90,5 @@ class BasePeerExceptionsTest extends BookstoreTestBase
 			$this->assertContains('[INSERT INTO `book` (`AUTHOR_ID`) VALUES (:p1)]', $e->getMessage(), 'SQL query is written in the exception message');
 		}
 	}
-	
+
 }

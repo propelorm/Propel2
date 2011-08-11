@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/PlatformTestProvider.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/platform/SqlitePlatform.php';
 
 /**
- * 
+ *
  * @package    generator.platform
  */
 class SqlitePlatformTest extends PlatformTestProvider
@@ -111,7 +111,7 @@ EOF;
 		$expected = '';
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddTableDDLSimplePK
 	 */
@@ -163,7 +163,7 @@ CREATE TABLE [foo]
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
-	
+
 	public function testGetDropTableDDL()
 	{
 		$table = new Table('foo');
@@ -197,7 +197,7 @@ DROP TABLE [foo];
 		$expected = '[foo] DECIMAL(5,6) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
-	
+
 	public function testGetPrimaryKeyDDLSimpleKey()
 	{
 		$table = new Table('foo');
@@ -230,7 +230,7 @@ DROP TABLE [foo];
 		$expected = '';
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestPrimaryKeyDDL
 	 */
@@ -240,7 +240,7 @@ DROP TABLE [foo];
 		$expected = '';
 		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndicesDDL
 	 */
@@ -253,7 +253,7 @@ CREATE INDEX [foo_index] ON [foo] ([bar1]);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -275,7 +275,7 @@ DROP INDEX [babar];
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
-		
+
 	/**
 	 * @dataProvider providerForTestGetIndexDDL
 	 */
@@ -308,7 +308,7 @@ DROP INDEX [babar];
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */
@@ -329,7 +329,7 @@ DROP INDEX [babar];
 		$expected = '';
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetForeignKeyDDL
 	 */

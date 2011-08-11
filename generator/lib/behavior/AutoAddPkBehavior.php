@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Adds a primary key to models defined without one
  *
@@ -17,7 +17,7 @@
  */
 class AutoAddPkBehavior extends Behavior
 {
-	
+
 	// default parameters value
 	protected $parameters = array(
 		'name'					=> 'id',
@@ -38,7 +38,7 @@ class AutoAddPkBehavior extends Behavior
 			}
 		}
 	}
-	
+
 	/**
 	 * Add the primary key to the current table
 	 */

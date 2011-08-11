@@ -42,7 +42,7 @@ class SortableBehavior extends Behavior
 				'type' => 'INTEGER'
 			));
 		}
-		if ($this->getParameter('use_scope') == 'true' && 
+		if ($this->getParameter('use_scope') == 'true' &&
 			 !$this->getTable()->containsColumn($this->getParameter('scope_column'))) {
 			$this->getTable()->addColumn(array(
 				'name' => $this->getParameter('scope_column'),
@@ -66,7 +66,7 @@ class SortableBehavior extends Behavior
 		}
 		return $this->queryBuilderModifier;
 	}
-	
+
 	public function getPeerBuilderModifier()
 	{
 		if (is_null($this->peerBuilderModifier)) {
@@ -74,7 +74,7 @@ class SortableBehavior extends Behavior
 		}
 		return $this->peerBuilderModifier;
 	}
-	
+
 	public function useScope()
 	{
 		return $this->getParameter('use_scope') == 'true';

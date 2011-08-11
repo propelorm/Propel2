@@ -71,7 +71,7 @@ class PropelAutoloader
 	{
 		$this->classes = array_merge($this->classes, $classMap);
 	}
-	
+
 	/**
 	 * Sets the path for a particular class.
 	 *

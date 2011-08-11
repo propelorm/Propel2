@@ -62,7 +62,7 @@ class Criteria implements IteratorAggregate
 
 	/** Comparison for array column types */
 	const CONTAINS_NONE = "CONTAINS_NONE";
-	
+
 	/** PostgreSQL comparison type */
 	const ILIKE = " ILIKE ";
 
@@ -128,55 +128,55 @@ class Criteria implements IteratorAggregate
 
 	/** logical OR operator */
 	const LOGICAL_OR = "OR";
-	
+
 	/** logical AND operator */
 	const LOGICAL_AND = "AND";
-	
+
 	protected $ignoreCase = false;
 	protected $singleRecord = false;
-	
+
 	/**
 	 * Storage of select data. Collection of column names.
 	 * @var        array
 	 */
 	protected $selectColumns = array();
-	
+
 	/**
 	 * Storage of aliased select data. Collection of column names.
 	 * @var        array
 	 */
 	protected $asColumns = array();
-	
+
 	/**
 	 * Storage of select modifiers data. Collection of modifier names.
 	 * @var        array
 	 */
 	protected $selectModifiers = array();
-		
+
 	/**
 	 * Storage of conditions data. Collection of Criterion objects.
 	 * @var        array
 	 */
 	protected $map = array();
-	
+
 	/**
 	 * Storage of ordering data. Collection of column names.
 	 * @var        array
 	 */
 	protected $orderByColumns = array();
-	
+
 	/**
 	 * Storage of grouping data. Collection of column names.
 	 * @var        array
 	 */
 	protected $groupByColumns = array();
-	
+
 	/**
 	 * Storage of having data.
 	 * @var        Criterion
 	 */
 	protected $having = null;
-	
+
 	/**
 	 * Storage of join data. colleciton of Join objects.
 	 * @var        array
@@ -215,27 +215,27 @@ class Criteria implements IteratorAggregate
 	 * @var        string
 	 */
 	protected $queryComment;
-	
+
 	// flag to note that the criteria involves a blob.
 	protected $blobFlag = null;
 
 	protected $aliases = array();
 
 	protected $useTransaction = false;
-	
+
 	/**
 	 * Storage for Criterions expected to be combined
 	 * @var        array
 	 */
 	protected $namedCriterions = array();
-	
+
 	/**
 	 * Default operator for combination of criterions
 	 * @see        addUsingOperator
 	 * @var        string Criteria::LOGICAL_AND or Criteria::LOGICAL_OR
 	 */
 	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
-	
+
 	// flags for boolean functions
 	protected $isInIf = false;
 	protected $wasTrue = false;
@@ -357,7 +357,7 @@ class Criteria implements IteratorAggregate
 	public function addAlias($alias, $table)
 	{
 		$this->aliases[$alias] = $table;
-		
+
 		return $this;
 	}
 
@@ -371,10 +371,10 @@ class Criteria implements IteratorAggregate
 	public function removeAlias($alias)
 	{
 		unset($this->aliases[$alias]);
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Returns the aliases for this Criteria
 	 *
@@ -414,7 +414,7 @@ class Criteria implements IteratorAggregate
 			return array($tableAliasOrName, null);
 		}
 	}
-	
+
 	/**
 	 * Get the keys of the criteria map, i.e. the list of columns bearing a condition
 	 * <code>
@@ -443,7 +443,7 @@ class Criteria implements IteratorAggregate
 	}
 
 	/**
-	 * Does this Criteria object contain the specified key and does it have a value set for the key 
+	 * Does this Criteria object contain the specified key and does it have a value set for the key
 	 *
 	 * @param      string $column [table.]column
 	 * @return     boolean True if this Criteria object contain the specified key and a value for that key
@@ -454,10 +454,10 @@ class Criteria implements IteratorAggregate
 		// exist but have a NULL value (that'd be valid).
 		return (array_key_exists($column, $this->map) && ($this->map[$column]->getValue() !== null) );
 	}
-	
+
 	/**
 	 * Whether this Criteria has any where columns.
-	 * 
+	 *
 	 * This counts conditions added with the add() method.
 	 *
 	 * @return     boolean
@@ -504,7 +504,7 @@ class Criteria implements IteratorAggregate
 	{
 		return $this->map[$column];
 	}
-	
+
 	/**
 	 * Method to return the latest Criterion in a table.
 	 *
@@ -553,7 +553,7 @@ class Criteria implements IteratorAggregate
 	 * <code>
 	 * print_r($c->getTablesColumns());
 	 *  => array(
-	 *       'book'   => array('book.price', 'book.title'), 
+	 *       'book'   => array('book.price', 'book.title'),
 	 *       'author' => array('author.first_name')
 	 *     )
 	 * </code>
@@ -748,7 +748,7 @@ class Criteria implements IteratorAggregate
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * This method creates a new criterion but keeps it for later use with combine()
 	 * Until combine() is called, the condition is not added to the query
@@ -782,10 +782,10 @@ class Criteria implements IteratorAggregate
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * Combine several named criterions with a logical operator
-	 * 
+	 *
 	 * @param      array $criterions array of the name of the criterions to combine
 	 * @param      string $operator logical operator, either Criteria::LOGICAL_AND, or Criteria::LOGICAL_OR
 	 * @param      string $name optional name to combine the criterion later
@@ -811,12 +811,12 @@ class Criteria implements IteratorAggregate
 		} else {
 			$this->addCond($name, $firstCriterion, null, null);
 		}
-		
+
 		return $this;
 	}
 
 	/**
-	 * This is the way that you should add a join of two tables. 
+	 * This is the way that you should add a join of two tables.
 	 * Example usage:
 	 * <code>
 	 * $c->addJoin(ProjectPeer::ID, FooPeer::PROJECT_ID, Criteria::LEFT_JOIN);
@@ -841,9 +841,9 @@ class Criteria implements IteratorAggregate
 			}
 			return $this->addMultipleJoin($conditions, $joinType);
 		}
-		
+
 		$join = new Join();
-		
+
 		// is the left table an alias ?
 		$dotpos = strrpos($left, '.');
 		$leftTableAlias = substr($left, 0, $dotpos);
@@ -855,14 +855,14 @@ class Criteria implements IteratorAggregate
 		$rightTableAlias = substr($right, 0, $dotpos);
 		$rightColumnName = substr($right, $dotpos + 1);
 		list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
-		
+
 		$join->addExplicitCondition(
 			$leftTableName, $leftColumnName, $leftTableAlias,
 			$rightTableName, $rightColumnName, $rightTableAlias,
 			Join::EQUAL);
-		
+
 		$join->setJoinType($joinType);
-		
+
 		return $this->addJoinObject($join);
 	}
 
@@ -871,7 +871,7 @@ class Criteria implements IteratorAggregate
 	 * @deprecated use Join::setJoinCondition($criterion) instead
 	 *
 	 * @see http://propel.phpdb.org/trac/ticket/167, http://propel.phpdb.org/trac/ticket/606
-	 * 
+	 *
 	 * Example usage:
 	 * $c->addMultipleJoin(array(
 	 *     array(LeftPeer::LEFT_COLUMN, RightPeer::RIGHT_COLUMN),  // if no third argument, defaults to Criteria::EQUAL
@@ -879,7 +879,7 @@ class Criteria implements IteratorAggregate
 	 *   ),
 	 *   Criteria::LEFT_JOIN
  	 * );
-	 * 
+	 *
 	 * @see        addJoin()
 	 * @param      array $conditions An array of conditions, each condition being an array (left, right, operator)
 	 * @param      string $joinType  A String with the join operator. Defaults to an implicit join.
@@ -931,7 +931,7 @@ class Criteria implements IteratorAggregate
 		$join->setJoinCondition($joinCondition);
 		return $this->addJoinObject($join);
 	}
-	
+
 	/**
 	 * Add a join object to the Criteria
 	 *
@@ -956,11 +956,11 @@ class Criteria implements IteratorAggregate
 	{
 		return $this->joins;
 	}
-	
+
 	/**
 	 * Adds a Criteria as subQuery in the From Clause.
 	 *
-	 * @param Criteria $subQueryCriteria Criteria to build the subquery from  
+	 * @param Criteria $subQueryCriteria Criteria to build the subquery from
 	 * @param string   $alias            alias for the subQuery
 	 *
 	 * @return Criteria this modified Criteria object (Fluid API)
@@ -971,13 +971,13 @@ class Criteria implements IteratorAggregate
 			$alias = 'alias_' . ($subQueryCriteria->forgeSelectQueryAlias() + count($this->selectQueries));
 		}
 		$this->selectQueries[$alias] = $subQueryCriteria;
-		
+
 		return $this;
 	}
 
 	/**
 	 * Checks whether this Criteria has a subquery.
-	 * 
+	 *
 	 * @return     Boolean
 	 */
 	public function hasSelectQueries()
@@ -987,7 +987,7 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * Get the associative array of Criteria for the subQueries per alias.
-	 * 
+	 *
 	 * @return     array Criteria[]
 	 */
 	public function getSelectQueries()
@@ -997,7 +997,7 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * Get the Criteria for a specific subQuery.
-	 * 
+	 *
 	 * @param string   $alias            alias for the subQuery
 	 * @return Criteria
 	 */
@@ -1008,7 +1008,7 @@ class Criteria implements IteratorAggregate
 
 	/**
 	 * checks if the Criteria for a specific subQuery is set.
-	 * 
+	 *
 	 * @param string   $alias            alias for the subQuery
 	 * @return boolean
 	 */
@@ -1034,7 +1034,7 @@ class Criteria implements IteratorAggregate
 	{
 		$this->removeSelectModifier(self::DISTINCT);
 		$this->addSelectModifier(self::ALL);
-		
+
 		return $this;
 	}
 
@@ -1046,15 +1046,15 @@ class Criteria implements IteratorAggregate
 	{
 		$this->removeSelectModifier(self::ALL);
 		$this->addSelectModifier(self::DISTINCT);
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Adds a modifier to the SQL statement.
 	 * e.g. self::ALL, self::DISTINCT, 'SQL_CALC_FOUND_ROWS', 'HIGH_PRIORITY', etc.
 	 *
-	 * @param      string $modifier The modifier to add 
+	 * @param      string $modifier The modifier to add
 	 *
 	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
@@ -1064,29 +1064,29 @@ class Criteria implements IteratorAggregate
 		if (!$this->hasSelectModifier($modifier)) {
 			$this->selectModifiers[] = $modifier;
 		}
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Removes a modifier to the SQL statement.
 	 * Checks for existence before removal
 	 *
-	 * @param      string $modifier The modifier to add 
+	 * @param      string $modifier The modifier to add
 	 *
 	 * @return     Criteria Modified Criteria object (for fluent API)
 	 */
 	public function removeSelectModifier($modifier)
 	{
 		$this->selectModifiers = array_values(array_diff($this->selectModifiers, array($modifier)));
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Checks the existence of a SQL select modifier
 	 *
-	 * @param      string $modifier The modifier to add 
+	 * @param      string $modifier The modifier to add
 	 *
 	 * @return     bool
 	 */
@@ -1094,7 +1094,7 @@ class Criteria implements IteratorAggregate
 	{
 		return in_array($modifier, $this->selectModifiers);
 	}
-	
+
 	/**
 	 * Sets ignore case.
 	 *
@@ -1202,7 +1202,7 @@ class Criteria implements IteratorAggregate
 		$this->selectColumns[] = $name;
 		return $this;
 	}
-	
+
 	/**
 	 * Set the query comment, that appears after the first verb in the SQL query
 	 *
@@ -1212,10 +1212,10 @@ class Criteria implements IteratorAggregate
 	public function setComment($comment = null)
 	{
 		$this->queryComment = $comment;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Get the query comment, that appears after the first verb in the SQL query
 	 *
@@ -1225,10 +1225,10 @@ class Criteria implements IteratorAggregate
 	{
 		return $this->queryComment;
 	}
-	
+
 	/**
 	 * Whether this Criteria has any select columns.
-	 * 
+	 *
 	 * This will include columns added with addAsColumn() method.
 	 *
 	 * @return     boolean
@@ -1239,7 +1239,7 @@ class Criteria implements IteratorAggregate
 	{
 		return (!empty($this->selectColumns) || !empty($this->asColumns));
 	}
-	
+
 	/**
 	 * Get select columns.
 	 *
@@ -1358,7 +1358,7 @@ class Criteria implements IteratorAggregate
 	{
 		return $this->having;
 	}
-	
+
 	/**
 	 * Remove an object from the criteria.
 	 *
@@ -1471,11 +1471,11 @@ class Criteria implements IteratorAggregate
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Add the content of a Criteria to the current Criteria
 	 * In case of conflict, the current Criteria keeps its properties
-	 * 
+	 *
 	 * @param     Criteria $criteria The criteria to read properties from
 	 * @param     string $operator The logical operator used to combine conditions
 	 *            Defaults to Criteria::LOGICAL_AND, also accapts Criteria::LOGICAL_OR
@@ -1491,29 +1491,29 @@ class Criteria implements IteratorAggregate
 		if($limit != 0 && $this->getLimit() == 0) {
 			$this->limit = $limit;
 		}
-		
+
 		// merge offset
 		$offset = $criteria->getOffset();
 		if($offset != 0 && $this->getOffset() == 0) {
 			$this->offset = $offset;
 		}
-		
+
 		// merge select modifiers
 		$selectModifiers = $criteria->getSelectModifiers();
 		if ($selectModifiers && ! $this->selectModifiers){
 			$this->selectModifiers = $selectModifiers;
 		}
-		
+
 		// merge select columns
 		$this->selectColumns = array_merge($this->getSelectColumns(), $criteria->getSelectColumns());
-		
+
 		// merge as columns
 		$commonAsColumns = array_intersect_key($this->getAsColumns(), $criteria->getAsColumns());
 		if (!empty($commonAsColumns)) {
 			throw new PropelException('The given criteria contains an AsColumn with an alias already existing in the current object');
 		}
 		$this->asColumns = array_merge($this->getAsColumns(), $criteria->getAsColumns());
-		
+
 		// merge orderByColumns
 		$orderByColumns = array_merge($this->getOrderByColumns(), $criteria->getOrderByColumns());
 		$this->orderByColumns = array_unique($orderByColumns);
@@ -1521,7 +1521,7 @@ class Criteria implements IteratorAggregate
 		// merge groupByColumns
 		$groupByColumns = array_merge($this->getGroupByColumns(), $criteria->getGroupByColumns());
 		$this->groupByColumns = array_unique($groupByColumns);
-		
+
 		// merge where conditions
 		if ($operator == Criteria::LOGICAL_OR) {
 			$this->_or();
@@ -1538,7 +1538,7 @@ class Criteria implements IteratorAggregate
 			}
 			$isFirstCondition = false;
 		}
-		
+
 		// merge having
 		if ($having = $criteria->getHaving()) {
 			if ($this->getHaving()) {
@@ -1547,17 +1547,17 @@ class Criteria implements IteratorAggregate
 				$this->addHaving($having);
 			}
 		}
-		
+
 		// merge alias
 		$commonAliases = array_intersect_key($this->getAliases(), $criteria->getAliases());
 		if (!empty($commonAliases)) {
 			throw new PropelException('The given criteria contains an alias already existing in the current object');
 		}
 		$this->aliases = array_merge($this->getAliases(), $criteria->getAliases());
-		
+
 		// merge join
 		$this->joins = array_merge($this->getJoins(), $criteria->getJoins());
-		
+
 		return $this;
 	}
 
@@ -1613,7 +1613,7 @@ class Criteria implements IteratorAggregate
 
 		return $this;
 	}
-	
+
 	/**
 	 * If a criterion for the requested column already exists, the condition is "OR"ed to the existing criterion (necessary for Propel 1.4 compatibility).
 	 * If no criterion for the requested column already exists, the condition is "OR"ed to the latest criterion.
@@ -1631,7 +1631,7 @@ class Criteria implements IteratorAggregate
 	public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
 	{
 		$rightCriterion = ($p1 instanceof Criterion) ? $p1 : new Criterion($this, $p1, $p2, $p3);
-		
+
 		$key = $rightCriterion->getTable() . '.' . $rightCriterion->getColumn();
 		if ($preferColumnCondition && $this->containsKey($key)) {
 			// FIXME: addOr() operates preferably on existing conditions on the same column
@@ -1661,7 +1661,7 @@ class Criteria implements IteratorAggregate
 	 * @param      mixed $value
 	 * @param      string $operator A String, like Criteria::EQUAL.
 	 * @param      boolean $preferColumnCondition If true, the condition is combined with an existing condition on the same column
-	*                      (necessary for Propel 1.4 compatibility). 
+	*                      (necessary for Propel 1.4 compatibility).
 	 *                     If false, the condition is combined with the last existing condition.
 	 *
 	 * @return     Criteria A modified Criteria object.
@@ -1675,20 +1675,20 @@ class Criteria implements IteratorAggregate
 			return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
 		}
 	}
-	
+
 	// Fluid operators
-	
+
 	public function _or()
 	{
 		$this->defaultCombineOperator = Criteria::LOGICAL_OR;
-		
+
 		return $this;
 	}
 
 	public function _and()
 	{
 		$this->defaultCombineOperator = Criteria::LOGICAL_AND;
-		
+
 		return $this;
 	}
 
@@ -1701,7 +1701,7 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @param      bool $cond
 	 *
-	 * @return     PropelConditionalProxy|Criteria 
+	 * @return     PropelConditionalProxy|Criteria
 	 */
 	public function _if($cond)
 	{
@@ -1772,7 +1772,7 @@ class Criteria implements IteratorAggregate
 		$this->isInIf = false;
 		return $this;
 	}
-	
+
 	/**
 	 * Ensures deep cloning of attached objects
 	 */
@@ -1788,5 +1788,5 @@ class Criteria implements IteratorAggregate
 			$this->having = clone $this->having;
 		}
 	}
-	
+
 }

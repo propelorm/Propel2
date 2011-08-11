@@ -25,7 +25,7 @@ propel.database = mysql
 # This must be a PDO DSN
 propel.database.url = mysql:dbname=legacyapp
 propel.database.user = root
-# propel.database.password = 
+# propel.database.password =
 }}}
  1. Run the `reverse` task to generate the `schema.xml`:
 {{{

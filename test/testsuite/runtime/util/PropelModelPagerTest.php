@@ -21,7 +21,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 {
 	private $authorId;
 	private $books;
-	
+
 	protected function createBooks($nb = 15, $con = null)
 	{
 		BookQuery::create()->deleteAll($con);
@@ -34,7 +34,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		}
 		$books->save($con);
 	}
-	
+
 	protected function getPager($maxPerPage, $page = 1)
 	{
 		$pager = new PropelModelPager(BookQuery::create(), $maxPerPage);
@@ -42,7 +42,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		$pager->init();
 		return $pager;
 	}
-	
+
 	public function testHaveToPaginate()
 	{
 		BookQuery::create()->deleteAll();
@@ -71,7 +71,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		$pager = $this->getPager(0, 0);
 		$this->assertEquals(5, $pager->getNbResults(), 'getNbResults() returns the total number of results');
 	}
-	
+
 	public function testGetResults()
 	{
 		$this->createBooks(5);
@@ -83,7 +83,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		$pager = $this->getPager(4, 3);
 		$this->assertEquals(1, count($pager->getResults()), 'getResults() returns the results of the last page when called on nonexistent pages');
 	}
-	
+
 	public function testGetResultsRespectsFormatter()
 	{
 		$this->createBooks(5);
@@ -112,14 +112,14 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 	{
 		$this->createBooks(5);
 		$pager = $this->getPager(4, 1);
-		
+
 		$i = 0;
 		foreach ($pager as $book) {
 			$this->assertEquals('Book' . $i, $book->getTitle(), 'getIterator() returns an iterator');
 			$i++;
 		}
 		$this->assertEquals(4, $i, 'getIterator() uses the results collection');
-		
+
 		$i = 0;
 		foreach ($pager as $book) {
 			$this->assertEquals('Book' . $i, $book->getTitle());
@@ -127,7 +127,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		}
 		$this->assertEquals(4, $i, 'getIterator() can be called several times');
 	}
-	
+
 	public function testSetPage()
 	{
 		$this->createBooks(5);
@@ -139,7 +139,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		}
 		$this->assertEquals(4, $i, 'setPage() doesn\'t change the page count');
 	}
-	
+
 	public function testIsFirstPage()
 	{
 		$this->createBooks(5);
@@ -157,7 +157,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 		$pager = $this->getPager(4, 2);
 		$this->assertTrue($pager->isLastPage(), 'isLastPage() returns true on the last page');
 	}
-	
+
 	public function testIsFirstOnFirstPage()
 	{
 		$this->createBooks(5);
@@ -209,20 +209,20 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
 			}
 		}
 	}
-	
+
 	public function testIsEmptyIsTrueOnEmptyPagers()
 	{
 		$pager = $this->getPager(4, 1);
 		$this->assertTrue($pager->isEmpty());
 	}
-	
+
 	public function testIsEmptyIsFalseOnNonEmptyPagers()
 	{
 		$this->createBooks(1);
 		$pager = $this->getPager(4, 1);
 		$this->assertFalse($pager->isEmpty());
 	}
-	
+
 	public function testIsOddAndIsEven()
 	{
 		$this->createBooks(5);

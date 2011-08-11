@@ -138,7 +138,7 @@ class VendorInfo extends XMLElement
 	{
 		return $this->parameters;
 	}
-	
+
 	/**
 	 * Tests whether this vendor info is empty
 	 *

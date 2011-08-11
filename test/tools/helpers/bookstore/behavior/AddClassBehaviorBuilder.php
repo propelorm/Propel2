@@ -3,7 +3,7 @@
 class AddClassBehaviorBuilder extends OMBuilder
 {
 	public $overwrite = true;
-	
+
 	public function getPackage()
 	{
 		return parent::getPackage();
@@ -17,7 +17,7 @@ class AddClassBehaviorBuilder extends OMBuilder
 	{
 		return $this->getStubObjectBuilder()->getUnprefixedClassname() . 'FooClass';
 	}
-	
+
 	/**
 	 * Adds class phpdoc comment and openning of class.
 	 * @param      string &$script The script will be modified in this method.

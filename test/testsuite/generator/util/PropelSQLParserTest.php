@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/util/PropelSQLParse
 
 /**
  *
- * @package    generator.util 
+ * @package    generator.util
  */
 class PropelSQLParserTest extends PHPUnit_Framework_TestCase
 {
@@ -33,7 +33,7 @@ class PropelSQLParserTest extends PHPUnit_Framework_TestCase
 			array("// comments with\nfoo with\n// comments\nwith foo", "foo with\nwith foo"),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider stripSqlCommentsDataProvider
 	 */
@@ -56,7 +56,7 @@ class PropelSQLParserTest extends PHPUnit_Framework_TestCase
 			array("foo\r\nbar\rbaz\nbiz\r\n", "foo\nbar\nbaz\nbiz\n"),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider convertLineFeedsToUnixStyleDataProvider
 	 */
@@ -67,7 +67,7 @@ class PropelSQLParserTest extends PHPUnit_Framework_TestCase
 		$parser->convertLineFeedsToUnixStyle();
 		$this->assertEquals($output, $parser->getSQL());
 	}
-	
+
 	public function explodeIntoStatementsDataProvider()
 	{
 		return array(

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- This new XML configuration format is the default format for properties 
-	files.  You can also used the old INI-based .properties format, but 
+<!-- This new XML configuration format is the default format for properties
+	files.  You can also used the old INI-based .properties format, but
 	support for this will be removed in next major Propel version. -->
-		
+
 <config>
 	<!--
 	#
 	#  L O G G I N G
 	#
-	# We use PEAR-compatible Log for all Propel logging and we embed the 
+	# We use PEAR-compatible Log for all Propel logging and we embed the
 	# log conf properties within our application configuration.
 	#
 	#   type    - the type of log (default 'file')
@@ -39,15 +39,15 @@
 		<datasources default="nestedset">
 			<datasource id="nestedset">
 				<!-- the Propel adapter (usually same as phptype of connection DSN) -->
-				<adapter>sqlite</adapter>				
+				<adapter>sqlite</adapter>
 				<!-- Connection DSN.  See PEAR DSN format for other supported parameters. -->
 				<connection>
 					<phptype>sqlite</phptype>
 					<dsn>sqlite:/var/tmp/nestedset.db</dsn>
 					<username></username>
 					<password></password>
-				</connection>				
-			</datasource>			
-		</datasources>	
+				</connection>
+			</datasource>
+		</datasources>
 	</propel>
 </config>

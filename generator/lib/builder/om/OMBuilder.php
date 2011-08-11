@@ -28,7 +28,7 @@ abstract class OMBuilder extends DataModelBuilder
    * @var array
 	 */
 	protected $declaredClasses = array();
-	
+
 	/**
 	 * Builds the PHP source for current class and returns it as a string.
 	 *
@@ -50,7 +50,7 @@ abstract class OMBuilder extends DataModelBuilder
 		$this->addClassOpen($script);
 		$this->addClassBody($script);
 		$this->addClassClose($script);
-		
+
 		if($useStatements = $this->getUseStatements($ignoredNamespace = $this->getNamespace())) {
 			$script = $useStatements . $script;
 		}
@@ -58,7 +58,7 @@ abstract class OMBuilder extends DataModelBuilder
 			$script = $namespaceStatement . $script;
 		}
 		//if($this->getTable()->getName() == 'book_club_list') die($ignoredNamespace);
-		
+
 		return "<" . "?php
 
 " . $script;
@@ -104,7 +104,7 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		return $this->prefixClassname($this->getUnprefixedClassname());
 	}
-	
+
 	/**
 	 * Returns the namespaced classname if there is a namespace, and the raw classname otherwise
 	 * @return     string
@@ -117,7 +117,7 @@ abstract class OMBuilder extends DataModelBuilder
 			return $this->getClassname();
 		}
 	}
-	
+
 	/**
 	 * Gets the dot-path representation of current class being built.
 	 * @return     string
@@ -165,7 +165,7 @@ abstract class OMBuilder extends DataModelBuilder
 	}
 
 	/**
-	 * Return the user-defined namespace for this table, 
+	 * Return the user-defined namespace for this table,
 	 * or the database namespace otherwise.
 	 *
 	 * @return    string
@@ -174,7 +174,7 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		return $this->getTable()->getNamespace();
 	}
-	
+
 	public function declareClassNamespace($class, $namespace = '')
 	{
 		if (isset($this->declaredClasses[$namespace])
@@ -183,7 +183,7 @@ abstract class OMBuilder extends DataModelBuilder
 		}
 		$this->declaredClasses[$namespace][] = $class;
 	}
-	
+
 	public function declareClass($fullyQualifiedClassName)
 	{
 		$fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
@@ -192,14 +192,14 @@ abstract class OMBuilder extends DataModelBuilder
 		} else {
 			// root namespace
 			$this->declareClassNamespace($fullyQualifiedClassName);
-		} 
+		}
 	}
-	
+
 	public function declareClassFromBuilder($builder)
 	{
 		$this->declareClassNamespace($builder->getClassname(), $builder->getNamespace());
 	}
-	
+
 	public function declareClasses()
 	{
 		$args = func_get_args();
@@ -207,7 +207,7 @@ abstract class OMBuilder extends DataModelBuilder
 			$this->declareClass($class);
 		}
 	}
-	
+
 	public function getDeclaredClasses($namespace = null)
 	{
 		if (null !== $namespace && isset($this->declaredClasses[$namespace])) {
@@ -226,7 +226,7 @@ abstract class OMBuilder extends DataModelBuilder
 ", $namespace);
 		}
 	}
-	
+
 	public function getUseStatements($ignoredNamespace = null)
 	{
 		$script = '';
@@ -242,7 +242,7 @@ abstract class OMBuilder extends DataModelBuilder
 		}
 		return $script;
 	}
-	
+
 	/**
 	 * Shortcut method to return the [stub] peer classname for current table.
 	 * This is the classname that is used whenever object or peer classes want
@@ -264,7 +264,7 @@ abstract class OMBuilder extends DataModelBuilder
 	public function getQueryClassname() {
 		return $this->getStubQueryBuilder()->getClassname();
 	}
-	
+
 	/**
 	 * Returns the object classname for current table.
 	 * This is the classname that is used whenever object or peer classes want
@@ -330,7 +330,7 @@ abstract class OMBuilder extends DataModelBuilder
 	 * Convenience method to get the default Join Type for a relation.
 	 * If the key is required, an INNER JOIN will be returned, else a LEFT JOIN will be suggested,
 	 * unless the schema is provided with the DefaultJoin attribute, which overrules the default Join Type
-	 * 
+	 *
 	 * @param ForeignKey $fk
 	 * @return     string
 	 */
@@ -390,7 +390,7 @@ abstract class OMBuilder extends DataModelBuilder
 			if (!$localColumn) {
 				throw new Exception("Could not fetch column: $columnName in table " . $localTable->getName());
 			}
-			if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1 
+			if (count($localTable->getForeignKeysReferencingTable($fk->getForeignTableName())) > 1
 			 || count($fk->getForeignTable()->getForeignKeysReferencingTable($fk->getTableName())) > 0
 			 || $fk->getForeignTableName() == $fk->getTableName()) {
 				// self referential foreign key, or several foreign keys to the same table, or cross-reference fkey
@@ -404,7 +404,7 @@ abstract class OMBuilder extends DataModelBuilder
 
 		return $relCol;
 	}
-	
+
 	/**
 	 * Gets the PHP method name affix to be used for referencing foreign key methods and variable names (e.g. set????(), $coll???).
 	 *
@@ -431,7 +431,7 @@ abstract class OMBuilder extends DataModelBuilder
 			return $className . $this->getRefRelatedBySuffix($fk);
 		}
 	}
-	
+
 	protected static function getRefRelatedBySuffix(ForeignKey $fk)
 	{
 		$relCol = '';
@@ -461,7 +461,7 @@ abstract class OMBuilder extends DataModelBuilder
 
 		return $relCol;
 	}
-	
+
 	/**
 	 * Whether to add the include statements.
 	 * This is based on the build property propel.addIncludes
@@ -470,7 +470,7 @@ abstract class OMBuilder extends DataModelBuilder
 	{
 		return $this->getBuildProperty('addIncludes');
 	}
-	
+
 	/**
    * Checks whether any registered behavior on that table has a modifier for a hook
    * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"

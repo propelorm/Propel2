@@ -39,7 +39,7 @@ class PropelExceptionTest extends PHPUnit_Framework_TestCase
 		$e = new PropelException('this is an error', $e1);
 		$this->assertEquals('this is an error [wrapped: real cause]', $e->getMessage());
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -48,7 +48,7 @@ class PropelExceptionTest extends PHPUnit_Framework_TestCase
 		$e = new PropelException('this is an error');
 		throw $e;
 	}
-	
+
 	public function testGetCause()
 	{
 		$e1 = new FooException('real cause');

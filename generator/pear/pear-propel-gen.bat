@@ -8,7 +8,7 @@
 ::----------------------------------------------------------------------------------
 :: Please set following to the "phing" script.  By default this is expected to be
 :: on your path.  (You don't need to modify this file if that is the case.)
-  
+
 SET phingScript=phing
 
 ::---------------------------------------------------------------------------------

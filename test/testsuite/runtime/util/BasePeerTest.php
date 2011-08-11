@@ -49,7 +49,7 @@ class BasePeerTest extends BookstoreTestBase
 		$c->addSelectColumn(BookPeer::ID);
 		$c->addSelectColumn(BookPeer::TITLE);
 		$this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with distinct column names dont need aliases');
-		
+
 		$c = new Criteria();
 		BookPeer::addSelectColumns($c);
 		$this->assertFalse(BasePeer::needsSelectAliases($c), 'Criterias with only the columns of a model dont need aliases');
@@ -59,7 +59,7 @@ class BasePeerTest extends BookstoreTestBase
 		$c->addSelectColumn(AuthorPeer::ID);
 		$this->assertTrue(BasePeer::needsSelectAliases($c), 'Criterias with common column names do need aliases');
 	}
-	
+
 	public function testDoCountDuplicateColumnName()
 	{
 		$con = Propel::getConnection();
@@ -74,7 +74,7 @@ class BasePeerTest extends BookstoreTestBase
 			$this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
 		}
 	}
-	
+
 	public function testBigIntIgnoreCaseOrderBy()
 	{
 		BookstorePeer::doDeleteAll();
@@ -123,7 +123,7 @@ class BasePeerTest extends BookstoreTestBase
 		$expectedSql = "SELECT book.ID, book.TITLE FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.ID), author WHERE book.AUTHOR_ID=author.ID";
 		$this->assertEquals($expectedSql, $sql);
 	}
-	
+
 	public function testMssqlApplyLimitNoOffset()
 	{
 		$db = Propel::getDB(BookPeer::DATABASE_NAME);
@@ -224,7 +224,7 @@ class BasePeerTest extends BookstoreTestBase
 		$sql = BasePeer::createSelectSql($c, $params);
 		$this->assertEquals($expectedSql, $sql);
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -246,7 +246,7 @@ class BasePeerTest extends BookstoreTestBase
 		$c->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID);
 		BasePeer::doDelete($c, $con);
 	}
-	
+
 	public function testDoDeleteSimpleCondition()
 	{
 		$con = Propel::getConnection();
@@ -294,7 +294,7 @@ class BasePeerTest extends BookstoreTestBase
 		$expectedSQL = "DELETE FROM `author` WHERE author.FIRST_NAME='Leo'";
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 		$this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
-		
+
 		$c = new Criteria(BookPeer::DATABASE_NAME);
 		$c->add(AuthorPeer::FIRST_NAME, 'Leo');
 		$c->add(BookPeer::TITLE, 'War And Peace');
@@ -303,7 +303,7 @@ class BasePeerTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 		$this->assertEquals($count + 4, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 	}
-	
+
 	public function testCommentDoSelect()
 	{
 		$c = new Criteria();
@@ -313,7 +313,7 @@ class BasePeerTest extends BookstoreTestBase
 		$params = array();
 		$this->assertEquals($expected, BasePeer::createSelectSQL($c, $params), 'Criteria::setComment() adds a comment to select queries');
 	}
-	
+
 	public function testCommentDoUpdate()
 	{
 		$c1 = new Criteria();
@@ -326,7 +326,7 @@ class BasePeerTest extends BookstoreTestBase
 		$expected = 'UPDATE /* Foo */ `book` SET `TITLE`=\'Updated Title\'';
 		$this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to update queries');
 	}
-	
+
 	public function testCommentDoDelete()
 	{
 		$c = new Criteria();
@@ -337,5 +337,5 @@ class BasePeerTest extends BookstoreTestBase
 		$expected = 'DELETE /* Foo */ FROM `book` WHERE book.TITLE=\'War And Peace\'';
 		$this->assertEquals($expected, $con->getLastExecutedQuery(), 'Criteria::setComment() adds a comment to delete queries');
 	}
-	
+
 }

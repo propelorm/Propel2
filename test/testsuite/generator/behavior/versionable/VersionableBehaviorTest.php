@@ -36,7 +36,7 @@ class VersionableBehaviorTest extends PHPUnit_Framework_TestCase
 EOF;
 		return array(array($schema));
 	}
-	
+
 	/**
 	 * @dataProvider basicSchemaDataProvider
 	 */
@@ -145,7 +145,7 @@ EOF;
 EOF;
 		return array(array($schema));
 	}
-	
+
 	/**
 	 * @dataProvider foreignTableSchemaDataProvider
 	 */
@@ -238,7 +238,7 @@ CREATE TABLE [versionable_behavior_test_1_version]
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
-	
+
 	/**
 	 * @dataProvider basicSchemaDataProvider
 	 */
@@ -368,7 +368,7 @@ EOF;
 EOF;
 		return array(array($schema));
 	}
-	
+
 	/**
 	 * @dataProvider logSchemaDataProvider
 	 */
@@ -395,7 +395,7 @@ CREATE TABLE [versionable_behavior_test_0]
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
-	
+
 	/**
 	 * @dataProvider logSchemaDataProvider
 	 */

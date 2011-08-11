@@ -29,7 +29,7 @@ $book = new Book();
 
 // automatic version increment
 $book->setTitle('War and Peas');
-$book->save(); 
+$book->save();
 echo $book->getVersion(); // 1
 $book->setTitle('War and Peace');
 $book->save();

@@ -57,7 +57,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
 
 		$this->assertEquals($expected, $result);
 	}
-	
+
 	public function testOrWithNoExistingCriterionIsAnd()
 	{
 		$c = new Criteria();

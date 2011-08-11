@@ -36,12 +36,12 @@ You can also specify properties on the command line when you invoke Propel. The 
 
 {{{
 #!ini
-# The name of your project. 
+# The name of your project.
 # This affects names of generated files, etc.
 propel.project = /Your-Project-Name/
 
 # The package to use for the generated classes.
-# This affects the value of the @package phpdoc tag, and it also affects 
+# This affects the value of the @package phpdoc tag, and it also affects
 # the directory that the classes are placed in. By default this will be
 # the same as the project. Note that the target package (and thus the target
 # directory for generated classes) can be overridden in each `<database>` and
@@ -70,7 +70,7 @@ propel.schema.autoPrefix = true|{false}
 
 # Whether to validate the XML schema using the XSD file.
 # The default XSD file is located under `generator/resources/xsd/database.xsd`
-# and you can use a custom XSD file by changing the `propel.schema.xsd.file` 
+# and you can use a custom XSD file by changing the `propel.schema.xsd.file`
 # property.
 propel.schema.validate = {true}|false
 
@@ -107,14 +107,14 @@ propel.database.user = {empty}|string
 propel.database.password = {empty}|string
 
 # The database PDO connection settings at builtime for reverse engineer
-# or data dump. The default is to use the database connection defined by the 
+# or data dump. The default is to use the database connection defined by the
 # `propel.database.url` property.
 propel.database.buildUrl = {propel.database.url}/string
 
 # The database PDO connection settings at builtime for creating a database.
-# The default is to use the database connection defined by the 
+# The default is to use the database connection defined by the
 # `propel.database.url` property.
-# Propel is unable to create databases for some vendors because they do not 
+# Propel is unable to create databases for some vendors because they do not
 # provide a SQL method for creation; therefore, it is usually recommended that
 # you actually create your database by hand.
 propel.database.createUrl = {propel.database.url}/string
@@ -127,7 +127,7 @@ propel.database.schema = {empty}|string
 # This can affect things such as transforming charsets when exporting to XML, etc.
 propel.database.encoding = {empty}|string
 
-# Add a prefix to all the table names in the database. 
+# Add a prefix to all the table names in the database.
 # This does not affect the tables phpName.
 # This setting can be overridden on a per-database basis in the schema.
 propel.tablePrefix = {empty}|string
@@ -143,11 +143,11 @@ propel.tablePrefix = {empty}|string
 propel.samePhpName = true|{false}
 
 # Whether to add the vendor info. This is currently only used for MySQL, but
-# does provide additional information (such as full-text indexes) which can 
+# does provide additional information (such as full-text indexes) which can
 # affect the generation of the DDL from the schema.
 propel.addVendorInfo = true|{false}
 
-# Which Propel validators to add to the generated schema, 
+# Which Propel validators to add to the generated schema,
 # based on the database constraints.
 propel.addValidators = {none}|maxvalue|type|required|unique|all
 # You can cherry-pick allowed validators by using a comma-separated value, e.g
@@ -158,7 +158,7 @@ propel.addValidators = maxvalue,type,required
 
 {{{
 #!ini
-# Whether to add generic getter/setter methods. 
+# Whether to add generic getter/setter methods.
 # Generic accessors are `getByName()`, `getByPosition(), ` and `toArray()`.
 propel.addGenericAccessors = {true}|false
 # Generic mutators are `setByName()`, `setByPosition()`, and `fromArray()`.
@@ -169,11 +169,11 @@ propel.addGenericMutators = {true}|false
 # will be committed too often with just a date change.
 propel.addTimeStamp = true|{false}
 
-# Whether to add `validate()` method to your classes. 
+# Whether to add `validate()` method to your classes.
 # Set to false if you don't use Propel validation.
 propel.addValidateMethod = {true}|false
 
-# Whether to add `require` statements on the generated stub classes. 
+# Whether to add `require` statements on the generated stub classes.
 # Propel uses autoloading for OM classes, and doesn't insert require statements
 # by default. If you don't want to use autoloading, set this to true.
 propel.addIncludes = true|{false}
@@ -182,7 +182,7 @@ propel.addIncludes = true|{false}
 # Set to false if you never use these hooks for a small speed boost.
 propel.addHooks = {true}|false
 
-# The prefix to use for the base (super) classes that are generated. 
+# The prefix to use for the base (super) classes that are generated.
 propel.basePrefix = {Base}|string
 
 # Some sort of "namespacing": All Propel classes with get the Prefix
@@ -203,14 +203,14 @@ propel.useLeftJoinsInDoJoinMethods = {true}|false
 
 {{{
 #!ini
-# Default table type. 
+# Default table type.
 # You can override this setting if you wish to default to another engine for
 # all tables (for instance InnoDB, or HEAP). This setting can also be
 # overridden on a per-table basis using the `<vendor>` element in the schema
 # (see [wiki:Documentation/1.6/Schema#AddingVendorInfo]).
 propel.mysql.tableType = {MyISAM}|string
 
-# Keyword used to specify the table engine in the CREATE SQL statement. 
+# Keyword used to specify the table engine in the CREATE SQL statement.
 # Defaults to 'ENGINE', users of MYSQL < 5 should use 'TYPE' instead.
 propel.mysql.tableEngineKeyword = {ENGINE}|TYPE
 }}}
@@ -230,7 +230,7 @@ propel.dateTimeClass = {DateTime}|string
 
 # These are the default formats that will be used when fetching values from
 # temporal columns in Propel. You can always specify these when calling the
-# methods directly, but for methods like getByName() it is nice to change 
+# methods directly, but for methods like getByName() it is nice to change
 # the defaults.
 # To have these methods return DateTime objects instead, you should set these
 # to empty values

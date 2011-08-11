@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../../generator/lib/builder/util/Sta
  * Tests for the StandardEnglishPluralizer class
  *
  * @version    $Revision$
- * @package    generator.builder.util 
+ * @package    generator.builder.util
  */
 class StandardEnglishPluralizerTest extends PHPUnit_Framework_TestCase
 {

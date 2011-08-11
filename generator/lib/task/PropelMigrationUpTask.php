@@ -28,7 +28,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 		$manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
 		$manager->setMigrationTable($this->getMigrationTable());
 		$manager->setMigrationDir($this->getOutputDirectory());
-		
+
 		if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
 			$this->log('All migrations were already executed - nothing to migrate.');
 			return false;
@@ -37,13 +37,13 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 			'Executing migration %s up',
 			$manager->getMigrationClassName($nextMigrationTimestamp)
 		));
-		
+
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
 		if (false === $migration->preUp($manager)) {
 			$this->log('preUp() returned false. Aborting migration.', Project::MSG_ERR);
 			return false;
 		}
-		
+
 		foreach ($migration->getUpSQL() as $datasource => $sql) {
 			$connection = $manager->getConnection($datasource);
 			$this->log(sprintf(
@@ -69,7 +69,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 			if (!$res) {
 				$this->log('No statement was executed. The version was not updated.');
 				$this->log(sprintf(
-					'Please review the code in "%s"', 
+					'Please review the code in "%s"',
 					$manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
 				));
 				$this->log('Migration aborted', Project::MSG_ERR);
@@ -88,9 +88,9 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 				$datasource
 			), Project::MSG_VERBOSE);
 		}
-		
+
 		$migration->postUp($manager);
-		
+
 		if ($timestamps = $manager->getValidMigrationTimestamps()) {
 			$this->log(sprintf(
 				'Migration complete. %d migrations left to execute.',

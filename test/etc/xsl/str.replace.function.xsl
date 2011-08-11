@@ -84,7 +84,7 @@
           <xsl:call-template name="str:_replace">
             <xsl:with-param name="string" select="substring-before($string, $search)" />
             <xsl:with-param name="replacements" select="$replacements[position() > 1]" />
-          </xsl:call-template>      
+          </xsl:call-template>
           <xsl:copy-of select="$replacement/node()" />
           <xsl:call-template name="str:_replace">
             <xsl:with-param name="string" select="substring-after($string, $search)" />

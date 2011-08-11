@@ -36,7 +36,7 @@ class PropelCollectionConvertTest extends BookstoreTestBase
 		$book2->setISBN('043935806X');
 		$book2->setPrice(10.99);
 		$book2->resetModified();
-		
+
 		$this->coll = new PropelObjectCollection();
 		$this->coll->setModel('Book');
 		$this->coll[]= $book1;
@@ -90,7 +90,7 @@ EOF;
 		foreach ($coll as $book) {
 			$book->resetModified();
 		}
-		
+
 		$this->assertEquals($this->coll, $coll);
 	}
 
@@ -136,7 +136,7 @@ EOF;
 		foreach ($coll as $book) {
 			$book->resetModified();
 		}
-		
+
 		$this->assertEquals($this->coll, $coll);
 	}
 
@@ -168,7 +168,7 @@ EOF;
 		foreach ($coll as $book) {
 			$book->resetModified();
 		}
-		
+
 		$this->assertEquals($this->coll, $coll);
 	}
 
@@ -198,10 +198,10 @@ EOF;
 		foreach ($coll as $book) {
 			$book->resetModified();
 		}
-		
+
 		$this->assertEquals($this->coll, $coll);
 	}
-	
+
 	/**
 	 * @dataProvider toYamlDataProvider
 	 */
@@ -209,7 +209,7 @@ EOF;
 	{
 		$this->assertEquals($expected, (string) $this->coll, 'PropelCollection::__toString() uses the YAML representation by default');
 	}
-	
+
 	public function testToStringUsesCustomStringFormat()
 	{
 		$coll = new PropelObjectCollection();

@@ -144,7 +144,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 		foreach ($dataModels as $package => $dataModel) {
 
 			foreach ($dataModel->getDatabases() as $database) {
-				
+
 				$platform = $database->getPlatform();
 				if (!$this->packageObjectModel) {
 					$name = $dataModel->getName();
@@ -175,7 +175,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 	{
 		foreach ($database->getTablesForSql() as $table) {
 			foreach ($table->getForeignKeys() as $fk) {
-				
+
 				if ($platform instanceof MssqlPlatform && $fk->hasOnUpdate() && $fk->getOnUpdate() == ForeignKey::SETNULL) {
 					// there may be others that also won't work
 					// we have to skip this because it's unsupported.
@@ -185,7 +185,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 							$table->getName()
 						), Project::MSG_WARN);
 				}
-				
+
 				if ($platform instanceof MssqlPlatform && $fk->hasOnDelete() && $fk->getOnDelete() == ForeignKey::SETNULL) {
 					// there may be others that also won't work
 					// we have to skip this because it's unsupported.
@@ -195,7 +195,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 						$table->getName()
 					), Project::MSG_WARN);
 				}
-				
+
 				if ($platform instanceof OraclePlatform && $fk->hasOnUpdate()) {
 					// there may be others that also won't work
 					// we have to skip this because it's unsupported.
@@ -208,7 +208,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 			}
 		}
 	}
-	
+
 	/**
 	 * Packages the datamodels to one datamodel per package
 	 *

@@ -1,18 +1,18 @@
 <!--
     Use this file to faciliate easy per-project building.
-    
+
     Simply create a build.properties file in your project directory,
     for example ./projects/bookstore/build.properties, that contains
     any needed (i.e. to override) values for that project.
-    
+
     Call this build script and specify the name of the project and
     (optionally) the name of the target you wish to execute (default is
     'main' target) of build-propel.xml.
 
     Normal use:
     $> phing   -Dproject=bookstore
-    
-    Specific target: 
+
+    Specific target:
     $> phing -Dproject=bookstore -Dtarget=insert-sql
 
 -->
@@ -20,7 +20,7 @@
 
 <!-- in case ${project.dir} was specified on command line, we set the project.dir
      property here.  If it wasn't set, then this will be bogus, but it will
-     be overridden by the "set-project-dir" target. -->    
+     be overridden by the "set-project-dir" target. -->
 <resolvepath propertyName="propel.project.dir" file="${project.dir}" dir="${application.startdir}"/>
 
 <!-- set a default target if none provided -->
@@ -31,9 +31,9 @@
 		Propel still expects to find the file in the ${propel.project.dir}.
  -->
 <property name="build.properties" value="build.properties"/>
-	
+
 <target name="check-buildprops-exists">
-  <available file="${propel.project.dir}/${build.properties}" property="projBuildPopertiesExists"/>  
+  <available file="${propel.project.dir}/${build.properties}" property="projBuildPopertiesExists"/>
 </target>
 
 <target name="check-buildprops" unless="projBuildPopertiesExists" depends="check-buildprops-exists">
@@ -43,8 +43,8 @@
 		<echo message=" "/>
 		<echo message="Make sure that '${propel.project.dir}' is a valid path"/>
 		<echo message="and that it contains a ${build.properties} file."/>
-		<echo message="====================================================="/>	
-		
+		<echo message="====================================================="/>
+
 		<fail message="Missing configuration file (see description above)."/>
 </target>
 
@@ -91,7 +91,7 @@
 	<echo message="  reverse"/>
 	<echo message="  ... and a few others."/>
 	<echo message="But you should start by creating a schema."/>
-	<echo message="=========================================================="/>	
+	<echo message="=========================================================="/>
 	<fail message="No project directory specified."/>
 </target>
 
@@ -109,7 +109,7 @@
 		<echo message="directory, using the project.dir property:"/>
 		<echo message=" "/>
 		<echo message="-Dproject.dir=/path/to/bookstore"/>
-		<echo message="====================================================="/>	
+		<echo message="====================================================="/>
 		<input propertyname="project" promptChar=":">Project name</input>
 		<property name="propel.project" value="${project}" override="true"/>
 </target>
@@ -135,17 +135,17 @@
 <target name="main" depends="configure" description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
 
  <phing phingfile="./build-propel.xml" target="${target}"/>
- 
+
 </target>
 
-<!-- 
- Convenience mappings to build-propel.xml main targets 
- 
+<!--
+ Convenience mappings to build-propel.xml main targets
+
  This makes it possible to use this buildfile w/o needing to specify
  target as a property, e.g.:
- 
+
  $> phing -Dproject=bookstore insert-sql
- 
+
  The main reason for this is just consistency w/ old build-propel.xml file
  (primarily for documentation & user confusion avoidance reasons).  There are relatively
  few & infrequently changing main targets of build-propel.xml, so it's a non-

@@ -33,7 +33,7 @@ class PropelCSVParserTest extends PHPUnit_Framework_TestCase
 			array(array('a1' => 1, 'b2' => 2), "a1,b2\r\n1,2\r\n", 'keys with numbers'),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider arrayCsvConversionDataProvider
 	 */
@@ -69,7 +69,7 @@ class PropelCSVParserTest extends PHPUnit_Framework_TestCase
 		$parser = new PropelCSVParser();
 		$this->assertEquals($arrayData, $parser->fromCSV($csvData), 'PropelCSVParser::fromCSV() converts to ' . $type . ' correctly');
 	}
-	
+
 	public static function listToCSVDataProvider()
 	{
 		$list = array(

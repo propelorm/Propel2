@@ -21,7 +21,7 @@ class PropelArrayFormatter extends PropelFormatter
 	protected $collectionName = 'PropelArrayCollection';
 	protected $alreadyHydratedObjects = array();
 	protected $emptyVariable;
-	
+
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkInit();
@@ -43,7 +43,7 @@ class PropelArrayFormatter extends PropelFormatter
 		$this->currentObjects = array();
 		$this->alreadyHydratedObjects = array();
 		$stmt->closeCursor();
-		
+
 		return $collection;
 	}
 
@@ -73,12 +73,12 @@ class PropelArrayFormatter extends PropelFormatter
 	{
 		return $record ? $record->toArray() : array();
 	}
-	
+
 	public function isObjectFormatter()
 	{
 		return false;
 	}
-	
+
 
 	/**
 	 * Hydrates a series of objects from a result row
@@ -93,7 +93,7 @@ class PropelArrayFormatter extends PropelFormatter
 	public function &getStructuredArrayFromRow($row)
 	{
 		$col = 0;
-		
+
 		// hydrate main object or take it from registry
 		$mainObjectIsNew = false;
 		$mainKey = call_user_func(array($this->peer, 'getPrimaryKeyHashFromRow'), $row);
@@ -104,12 +104,12 @@ class PropelArrayFormatter extends PropelFormatter
 			$this->alreadyHydratedObjects[$this->class][$mainKey] = $obj->toArray();
 			$mainObjectIsNew = true;
 		}
-		
+
 		$hydrationChain = array();
-		
+
 		// related objects added using with()
 		foreach ($this->getWith() as $relAlias => $modelWith) {
-			
+
 			// determine class to use
 			if ($modelWith->isSingleTableInheritance()) {
 				$class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
@@ -117,31 +117,31 @@ class PropelArrayFormatter extends PropelFormatter
 				if ($refl->isAbstract()) {
 					$col += constant($class . 'Peer::NUM_COLUMNS');
 					continue;
-				} 
+				}
 			} else {
 				$class = $modelWith->getModelName();
 			}
-			
+
 			// hydrate related object or take it from registry
 			$key = call_user_func(array($modelWith->getModelPeerName(), 'getPrimaryKeyHashFromRow'), $row, $col);
 			// we hydrate the main object even in case of a one-to-many relationship
 			// in order to get the $col variable increased anyway
 			$secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
 			if (!isset($this->alreadyHydratedObjects[$relAlias][$key])) {
-				
+
 				if ($secondaryObject->isPrimaryKeyNull()) {
 					$this->alreadyHydratedObjects[$relAlias][$key] = array();
 				} else {
 					$this->alreadyHydratedObjects[$relAlias][$key] = $secondaryObject->toArray();
 				}
 			}
-				
+
 			if ($modelWith->isPrimary()) {
 				$arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
 			} else {
 				$arrayToAugment = &$hydrationChain[$modelWith->getLeftPhpName()];
 			}
-			
+
 			if ($modelWith->isAdd()) {
 				if (!isset($arrayToAugment[$modelWith->getRelationName()]) || !in_array($this->alreadyHydratedObjects[$relAlias][$key], $arrayToAugment[$modelWith->getRelationName()])) {
 					$arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
@@ -149,16 +149,16 @@ class PropelArrayFormatter extends PropelFormatter
 			} else {
 				$arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
 			}
-				
+
 			$hydrationChain[$modelWith->getRightPhpName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
 		}
-		
+
 		// columns added using withColumn()
 		foreach ($this->getAsColumns() as $alias => $clause) {
 			$this->alreadyHydratedObjects[$this->class][$mainKey][$alias] = $row[$col];
 			$col++;
 		}
-		
+
 		if ($mainObjectIsNew) {
 			return $this->alreadyHydratedObjects[$this->class][$mainKey];
 		} else {

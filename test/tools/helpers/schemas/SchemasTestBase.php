@@ -17,7 +17,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__
  */
 abstract class SchemasTestBase extends PHPUnit_Framework_TestCase
 {
-	
+
 	protected function setUp()
 	{
 		parent::setUp();

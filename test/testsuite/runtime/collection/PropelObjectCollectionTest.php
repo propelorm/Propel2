@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  */
 class PropelObjectCollectionTest extends BookstoreTestBase
 {
-	
+
 	public function testContains()
 	{
 		$col = new PropelObjectCollection();
@@ -46,7 +46,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 		$col []= $cv;
 		$col->save();
 	}
-	
+
 	/**
 	 * @expectedException PropelException
 	 */
@@ -59,12 +59,12 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 		$col []= $cv;
 		$col->delete();
 	}
-	
+
 	public function testGetPrimaryKeys()
 	{
 		$books = new PropelObjectCollection();
 		$books->setModel('Book');
-		for ($i=0; $i < 4; $i++) { 
+		for ($i=0; $i < 4; $i++) {
 			$book = new Book();
 			$book->setTitle('Title' . $i);
 			$book->save($this->con);
@@ -73,14 +73,14 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 
 		$pks = $books->getPrimaryKeys();
 		$this->assertEquals(4, count($pks));
-		
+
 		$keys = array('Book_0', 'Book_1', 'Book_2', 'Book_3');
 		$this->assertEquals($keys, array_keys($pks));
-		
+
 		$pks = $books->getPrimaryKeys(false);
 		$keys = array(0, 1, 2, 3);
 		$this->assertEquals($keys, array_keys($pks));
-		
+
 		foreach ($pks as $key => $value) {
 			$this->assertEquals($books[$key]->getPrimaryKey(), $value);
 		}
@@ -98,7 +98,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 		$book->setISBN('0140422161');
 		$book->setPrice(12.99);
 		$book->setAuthor($author);
-		
+
 		$coll = new PropelObjectCollection();
 		$coll->setModel('Book');
 		$coll[]= $book;
@@ -122,7 +122,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 		));
 		$this->assertEquals($expected, $coll->toArray());
 	}
-	
+
 	public function testPopulateRelationOneToManyWithEmptyCollection()
 	{
 		$author = new Author();

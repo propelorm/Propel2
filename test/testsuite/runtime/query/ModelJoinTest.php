@@ -18,16 +18,16 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreDat
  * @version    $Id: ModelJoinTest.php 1347 2009-12-03 21:06:36Z francois $
  * @package    runtime.query
  */
-class ModelJoinTest extends BookstoreTestBase 
+class ModelJoinTest extends BookstoreTestBase
 {
 	public function testTableMap()
 	{
 		$join = new ModelJoin();
 		$this->assertNull($join->getTableMap(), 'getTableMap() returns null as long as no table map is set');
-		
+
 		$tmap = new TableMap();
 		$tmap->foo = 'bar';
-		
+
 		$join->setTableMap($tmap);
 		$this->assertEquals($tmap, $join->getTableMap(), 'getTableMap() returns the TableMap previously set by setTableMap()');
 	}
@@ -41,7 +41,7 @@ class ModelJoinTest extends BookstoreTestBase
 		$join->setRelationMap($relationMap);
 		$this->assertEquals($relationMap, $join->getRelationMap(), 'getRelationMap() returns the RelationMap previously set by setRelationMap()');
 	}
-	
+
 	public function testSetRelationMapDefinesJoinColumns()
 	{
 		$bookTable = BookPeer::getTableMap();

@@ -25,14 +25,14 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
 
   private $xmlToAppData;
   private $appData;
-  
+
   public function testSetupObject()
   {
     $b = new Behavior();
     $b->loadFromXML(array('name' => 'foo'));
     $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
   }
-  
+
   public function testName()
   {
     $b = new Behavior();
@@ -40,7 +40,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $b->setName('foo');
     $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
   }
-  
+
   public function testTable()
   {
     $b = new Behavior();
@@ -50,7 +50,7 @@ class BehaviorTest extends PHPUnit_Framework_TestCase {
     $b->setTable($t);
     $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
   }
-  
+
   public function testParameters()
   {
     $b = new Behavior();
@@ -145,7 +145,7 @@ EOF;
 		$table = $appData->getDatabase('test1')->getTable('table1');
 		$this->assertTrue(array_key_exists('timestampable', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
 	}
-  
+
   public function testGetColumnForParameter()
   {
 		$xmlToAppData = new XmlToAppData();

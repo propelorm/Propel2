@@ -37,7 +37,7 @@ class ExtensionQueryInheritanceBuilder extends OMBuilder
 		return $this->getChild()->getClassName() . 'Query';
 	}
 
-	/** 
+	/**
 	 * Gets the package for the [base] object classes.
 	 * @return     string
 	 */
@@ -132,7 +132,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
 	protected function addClassBody(&$script)
 	{
 	}
-	
+
 	/**
 	 * Closes class.
 	 * @param      string &$script The script will be modified in this method.

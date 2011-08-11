@@ -805,7 +805,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$root->setLevel(0);
 			$peerClassname::hydrateDescendants(\$root, \$stmt);
 			$peerClassname::addInstanceToPool(\$root);
-			
+
 			\$stmt->closeCursor();
 			return \$root;
 		}
@@ -1408,7 +1408,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		while (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 			\$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
 			if (null === (\$child = ".$peerClassname."::getInstanceFromPool(\$key))) {";
-			
+
 		if ($table->getChildrenColumn()) {
 			$script .= "
 				// class must be set each time from the record row

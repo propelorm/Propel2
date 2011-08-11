@@ -43,7 +43,7 @@ EOF;
 		$this->assertEquals('en_EN', I18nBehaviorTest01Peer::DEFAULT_LOCALE);
 		$this->assertEquals('fr_FR', I18nBehaviorTest02Peer::DEFAULT_LOCALE);
 	}
-	
+
 	public function testFieldKeys()
 	{
 		$schema = <<<EOF

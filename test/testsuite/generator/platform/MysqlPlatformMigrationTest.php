@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
 
 /**
  *
- * @package    generator.platform 
+ * @package    generator.platform
  */
 class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
@@ -65,7 +65,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetRenameTableDDL
 	 */
@@ -112,7 +112,7 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableColumnsDDL
 	 */
@@ -143,7 +143,7 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyTableIndicesDDL
 	 */
@@ -209,7 +209,7 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
 		$expected = '';
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetRemoveColumnDDL
 	 */
@@ -231,7 +231,7 @@ ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetModifyColumnDDL
 	 */
@@ -255,7 +255,7 @@ ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddColumnDDL
 	 */

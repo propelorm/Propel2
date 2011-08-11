@@ -24,18 +24,18 @@ class PropelYAMLParser extends PropelParser
 	/**
 	 * Converts data from an associative array to YAML.
 	 *
-	 * @param  array $array Source data to convert 
+	 * @param  array $array Source data to convert
 	 * @return string Converted data, as a YAML string
 	 */
 	public function fromArray($array)
 	{
 		return sfYaml::dump($array, 3);
 	}
-	
+
 	/**
 	 * Alias for PropelYAMLParser::fromArray()
 	 *
-	 * @param  array $array Source data to convert 
+	 * @param  array $array Source data to convert
 	 * @return string Converted data, as a YAML string
 	 */
 	public function toYAML($array)
@@ -53,7 +53,7 @@ class PropelYAMLParser extends PropelParser
 	{
 		return sfYaml::load($data);
 	}
-	
+
 	/**
 	 * Alias for PropelYAMLParser::toArray()
 	 *
@@ -64,5 +64,5 @@ class PropelYAMLParser extends PropelParser
 	{
 		return $this->toArray($data);
 	}
-	
+
 }

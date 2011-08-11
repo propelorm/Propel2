@@ -193,9 +193,9 @@ abstract class ".$this->getClassname()." {
 	{
 		if (\$con === null)
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
-		
+
 		\$con->beginTransaction();
-		
+
 		try {
 			self::deleteNodeSubTree('1', \$con);
 
@@ -238,7 +238,7 @@ abstract class ".$this->getClassname()." {
 	{
 		if (\$con === null)
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
-		
+
 		\$con->beginTransaction();
 		try {
 			// Move root tree to an invalid node path.

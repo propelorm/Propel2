@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../../runtime/lib/map/TableMap.php';
  * @version    $Id$
  * @package    runtime.map
  */
-class RelationMapTest extends PHPUnit_Framework_TestCase 
+class RelationMapTest extends PHPUnit_Framework_TestCase
 {
   protected $databaseMap, $relationName, $rmap;
 
@@ -37,7 +37,7 @@ class RelationMapTest extends PHPUnit_Framework_TestCase
   {
     $this->assertEquals($this->relationName, $this->rmap->getName(), 'constructor sets the relation name');
   }
-  
+
   public function testLocalTable()
   {
     $this->assertNull($this->rmap->getLocalTable(), 'A new relation has no local table');
@@ -53,7 +53,7 @@ class RelationMapTest extends PHPUnit_Framework_TestCase
     $this->rmap->setForeignTable($tmap2);
     $this->assertEquals($tmap2, $this->rmap->getForeignTable(), 'The foreign table is set by setForeignTable()');
   }
-  
+
   public function testProperties()
   {
     $properties = array('type', 'onUpdate', 'onDelete');
@@ -66,7 +66,7 @@ class RelationMapTest extends PHPUnit_Framework_TestCase
       $this->assertEquals('foo_value', $this->rmap->$getter(), "The $property is set by setType()");
     }
   }
-  
+
   public function testColumns()
   {
     $this->assertEquals(array(), $this->rmap->getLocalColumns(), 'A new relation has no local columns');

@@ -44,7 +44,7 @@ else
 }"),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider convertBracketsNewlineDataProvider
 	 */

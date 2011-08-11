@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  *
  * @license    MIT License
- */ 
+ */
 
 class DonothingBehavior extends Behavior
 {

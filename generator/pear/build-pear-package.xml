@@ -101,7 +101,7 @@
 		<copy todir="${build.src.dir}/lib">
 			<fileset refid="lib"/>
 		</copy>
-	
+
 		<copy todir="${build.src.dir}/resources">
 			<fileset refid="resources"/>
 		</copy>
@@ -113,7 +113,7 @@
 		<move file="${build.src.dir}/pear/pear-propel-gen" todir="${build.src.dir}"/>
 		<move file="${build.src.dir}/pear/pear-propel-gen.bat" todir="${build.src.dir}"/>
     <delete dir="${build.src.dir}/pear/"/>
-    
+
 		<chmod file="${build.src.dir}/pear-propel-gen" mode="755"/>
 
 	</target>

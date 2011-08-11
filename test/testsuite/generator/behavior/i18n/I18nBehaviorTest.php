@@ -54,7 +54,7 @@ CREATE TABLE [i18n_behavior_test_0_i18n]
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
-	
+
 	public function testModifyDatabaseDoesNotOverrideTableLocale()
 	{
 		$schema = <<<EOF
@@ -88,7 +88,7 @@ CREATE TABLE [i18n_behavior_test_0_i18n]
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
-	
+
 	public function schemaDataProvider()
 	{
 		$schema1 = <<<EOF
@@ -287,7 +287,7 @@ CREATE TABLE [foo_table]
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
-	
+
 	public function testModiFyTableUsesCustomLocaleColumnName()
 	{
 		$schema = <<<EOF

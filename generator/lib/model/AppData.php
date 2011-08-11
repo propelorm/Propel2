@@ -35,13 +35,13 @@ class AppData
 	 * @var        string
 	 */
 	private $platform;
-	
+
 	/**
 	 * The generator configuration
 	 * @var        GeneratorConfig
 	 */
 	protected $generatorConfig;
-	
+
 	/**
 	 * Name of the database. Only one database definition
 	 * is allowed in one XML descriptor.
@@ -67,25 +67,25 @@ class AppData
 	}
 
 	/**
-	 * Sets the platform object to use for any databases added to this application model. 
+	 * Sets the platform object to use for any databases added to this application model.
 	 *
 	 * @param PropelPlatformInterface $defaultPlatform
 	 */
 	public function setPlatform(PropelPlatformInterface $defaultPlatform)
 	{
-	  $this->platform = $defaultPlatform;
+		$this->platform = $defaultPlatform;
 	}
-	  
+
 	/**
-	 * Gets the platform object to use for any databases added to this application model. 
+	 * Gets the platform object to use for any databases added to this application model.
 	 *
 	 * @return Platform
 	 */
 	public function getPlatform()
 	{
-	  return $this->platform;
+		return $this->platform;
 	}
-	
+
 	/**
 	 * Set the generator configuration
 	 *
@@ -105,7 +105,7 @@ class AppData
 	{
 		return $this->generatorConfig;
 	}
-	
+
 	/**
 	 * Set the name of the database.
 	 *
@@ -187,7 +187,7 @@ class AppData
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Checks whether a database with the specified nam exists in this AppData
 	 *
@@ -247,7 +247,7 @@ class AppData
 	/**
 	 * Merge other appData objects into this object
 	 *
-	 * @param array[AppData] $ads 
+	 * @param array[AppData] $ads
 	 */
 	public function joinAppDatas($ads)
 	{
@@ -280,7 +280,7 @@ class AppData
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the number of tables in all the databases of this AppData object
 	 *
@@ -311,7 +311,7 @@ class AppData
 			$result .= "\n";
 		}
 		$result .= "</app-data>";
-		
+
 		return $result;
 	}
 
@@ -321,6 +321,6 @@ class AppData
 	 */
 	public function __toString()
 	{
-	  return $this->toString();
+		return $this->toString();
 	}
 }

@@ -44,7 +44,7 @@ class CharacterEncodingTest extends BookstoreTestBase
 	public function testUtf8()
 	{
 		$this->markTestSkipped();
-		
+
 		$db = Propel::getDB(BookPeer::DATABASE_NAME);
 
 		$title = "Смерть на брудершафт. Младенец и черт";
@@ -75,7 +75,7 @@ class CharacterEncodingTest extends BookstoreTestBase
 	public function testInvalidCharset()
 	{
 		$this->markTestSkipped();
-		
+
 		$db = Propel::getDB(BookPeer::DATABASE_NAME);
 		if ($db instanceof DBSQLite) {
 			$this->markTestSkipped();

@@ -10,7 +10,7 @@
 
 if (!defined('T_ML_COMMENT')) {
 	define('T_ML_COMMENT', T_COMMENT);
-} 
+}
 else {
 	define('T_DOC_COMMENT', T_ML_COMMENT);
 }
@@ -34,20 +34,20 @@ class PropelPHPParser
 {
 	protected $code;
 	protected $isAddPhp = false;
-	
+
 	/**
 	 * Parser constructor
-	 * 
+	 *
 	 * @param string  $code     PHP code to parse
 	 * @param boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
-	 *                          to be seen as code by the tokenizer. 
+	 *                          to be seen as code by the tokenizer.
 	 */
 	public function __construct($code, $isAddPhp = false)
 	{
 		$this->code = $isAddPhp ? $this->addPhp($code) : $code;
 		$this->isAddPhp = $isAddPhp;
 	}
-	
+
 	/**
 	 * Get the modified code
 	 *
@@ -57,17 +57,17 @@ class PropelPHPParser
 	{
 		return $this->isAddPhp ? $this->removePhp($this->code) : $this->code;
 	}
-	
+
 	protected function addPhp($code)
 	{
 	  return '<?php '. $code;
 	}
-	
+
 	protected function removePhp($code)
 	{
 	  return substr($code, 6);
 	}
-	
+
 	/**
 	 * Parse the code looking for a method definition, and returns the code if found
 	 *
@@ -80,12 +80,12 @@ class PropelPHPParser
 		// Tokenize the source
 		$tokens = token_get_all($this->code);
 		$methodCode = '';
-		
+
 		// Some flags and counters
 		$isInFunction = false;
 		$functionBracketBalance = 0;
 		$buffer = '';
-		
+
 		// Iterate over all tokens
 		foreach ($tokens as $token) {
 			// Single-character tokens.
@@ -124,8 +124,8 @@ class PropelPHPParser
 				list($id, $text) = $token;
 				switch ($id) {
 					case T_FUNCTION:
-						// If we encounter the keyword 'function', flip the `isInFunction` flag to 
-						// true and reset the `buffer` 
+						// If we encounter the keyword 'function', flip the `isInFunction` flag to
+						// true and reset the `buffer`
 						$isInFunction = true;
 						$methodCode .= $buffer . $text;
 						$buffer = '';
@@ -140,7 +140,7 @@ class PropelPHPParser
 				}
 			}
 		}
-    
+
 		// method not found
 		return false;
 	}
@@ -151,7 +151,7 @@ class PropelPHPParser
 	 * @param string $methodName The name of the method to find, e.g. 'getAuthor'
 	 *
 	 * @return mixed false if not found, or the method code string if found
-	 */	
+	 */
 	public function removeMethod($methodName)
 	{
 		if ($methodCode = $this->findMethod($methodName)) {
@@ -168,7 +168,7 @@ class PropelPHPParser
 	 * @param string $newCode    The code to use in place of the old method definition
 	 *
 	 * @return mixed false if not found, or the method code string if found
-	 */	
+	 */
 	public function replaceMethod($methodName, $newCode)
 	{
 		if ($methodCode = $this->findMethod($methodName)) {
@@ -177,7 +177,7 @@ class PropelPHPParser
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Parse the code looking for a method definition, and adds the code after if found
 	 *
@@ -185,7 +185,7 @@ class PropelPHPParser
 	 * @param string $newCode    The code to add to the class
 	 *
 	 * @return mixed false if not found, or the method code string if found
-	 */	
+	 */
 	public function addMethodAfter($methodName, $newCode)
 	{
 		if ($methodCode = $this->findMethod($methodName)) {
@@ -202,7 +202,7 @@ class PropelPHPParser
 	 * @param string $newCode    The code to add to the class
 	 *
 	 * @return mixed false if not found, or the method code string if found
-	 */	
+	 */
 	public function addMethodBefore($methodName, $newCode)
 	{
 		if ($methodCode = $this->findMethod($methodName)) {

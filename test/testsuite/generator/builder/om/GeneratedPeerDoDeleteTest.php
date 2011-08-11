@@ -32,7 +32,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		parent::setUp();
 		BookstoreDataPopulator::populate();
 	}
-		
+
 	/**
 	 * Test ability to delete multiple rows via single Criteria object.
 	 */
@@ -217,24 +217,24 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$this->assertNull($obj, "Expect NULL when retrieving on no matching Book.");
 
 	}
-	
+
 	public function testDoDelete_ByPks() {
 		// 1) get all of the books
-	  $books = BookPeer::doSelect(new Criteria());
-	  $bookCount = count($books);
-	  
-	  // 2) we have enough books to do this test
-	  $this->assertGreaterThan(1, $bookCount, 'There are at least two books');
-	  
-	  // 3) select two random books
-	  $book1 = $books[0];
-	  $book2 = $books[1];
-	  
-	  // 4) delete the books
-	  BookPeer::doDelete(array($book1->getId(), $book2->getId()));
-	  
-	  // 5) we should have two less books than before
-	  $this->assertEquals($bookCount-2, BookPeer::doCount(new Criteria()), 'Two books deleted successfully.');
+		$books = BookPeer::doSelect(new Criteria());
+		$bookCount = count($books);
+
+		// 2) we have enough books to do this test
+		$this->assertGreaterThan(1, $bookCount, 'There are at least two books');
+
+		// 3) select two random books
+		$book1 = $books[0];
+		$book2 = $books[1];
+
+		// 4) delete the books
+		BookPeer::doDelete(array($book1->getId(), $book2->getId()));
+
+		// 5) we should have two less books than before
+		$this->assertEquals($bookCount-2, BookPeer::doCount(new Criteria()), 'Two books deleted successfully.');
 	}
 
 	/**
@@ -328,7 +328,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 				$bo->setBookId($i);
 				$bo->setReaderId($j);
 				$bo->save();
-				
+
 				$rf = new ReaderFavorite();
 				$rf->setBookId($i);
 				$rf->setReaderId($j);
@@ -342,7 +342,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		// being deleted, as well as the number of things in the primary key)
 		ReaderFavoritePeer::doDelete(array(array(1,1), array(2,2)));
 		$this->assertEquals(4, ReaderFavoritePeer::doCount(new Criteria()));
-		
+
 		//Note: these composite PK's are pairs of (BookId, ReaderId)
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(1,2));
@@ -351,7 +351,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
 
-		//test deletion of a single composite PK		
+		//test deletion of a single composite PK
 		ReaderFavoritePeer::doDelete(array(3,1));
 		$this->assertEquals(3, ReaderFavoritePeer::doCount(new Criteria()));
 		$this->assertNotNull(ReaderFavoritePeer::retrieveByPK(2,1));
@@ -360,12 +360,12 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(1,1));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPK(2,2));
 		$this->assertNull(ReaderFavoritePeer::retrieveByPk(3,1));
-		
+
 		//test deleting the last three
 		ReaderFavoritePeer::doDelete(array(array(2,1), array(1,2), array(3,2)));
 		$this->assertEquals(0, ReaderFavoritePeer::doCount(new Criteria()));
 	}
-	
+
 	/**
 	 * Test the doInsert() method when passed a Criteria object.
 	 */
@@ -475,7 +475,7 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 		$this->assertEquals($totalCount, BookPeer::doCountJoinAuthor($c));
 		$this->assertEquals($totalCount, BookPeer::doCountJoinPublisher($c));
 	}
-	
+
 	/**
 	 * Test doCountJoin*() methods with ORDER BY columns in Criteria.
 	 * @link http://propel.phpdb.org/trac/ticket/627
@@ -484,13 +484,13 @@ class GeneratedPeerDoDeleteTest extends BookstoreEmptyTestBase
 	{
 		$c = new Criteria(BookPeer::DATABASE_NAME);
 		$c->addAscendingOrderByColumn(BookPeer::ID);
-		
+
 		// None of these should not throw an exception!
 		BookPeer::doCountJoinAll($c);
 		BookPeer::doCountJoinAllExceptAuthor($c);
 		BookPeer::doCountJoinAuthor($c);
 	}
-	
+
 	/**
 	 * Test passing null values to removeInstanceFromPool().
 	 */

@@ -29,7 +29,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 		$manager->setConnections($this->getGeneratorConfig()->getBuildConnections());
 		$manager->setMigrationTable($this->getMigrationTable());
 		$manager->setMigrationDir($this->getOutputDirectory());
-		
+
 		$previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
 		if (!$nextMigrationTimestamp = array_pop($previousTimestamps)) {
 			$this->log('No migration were ever executed on this database - nothing to reverse.');
@@ -39,19 +39,19 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 			'Executing migration %s down',
 			$manager->getMigrationClassName($nextMigrationTimestamp)
 		));
-		
+
 		if ($nbPreviousTimestamps = count($previousTimestamps)) {
 			$previousTimestamp = array_pop($previousTimestamps);
 		} else {
 			$previousTimestamp = 0;
 		}
-		
+
 		$migration = $manager->getMigrationObject($nextMigrationTimestamp);
 		if (false === $migration->preDown($manager)) {
 			$this->log('preDown() returned false. Aborting migration.', Project::MSG_ERR);
 			return false;
 		}
-		
+
 		foreach ($migration->getDownSQL() as $datasource => $sql) {
 			$connection = $manager->getConnection($datasource);
 			$this->log(sprintf(
@@ -76,7 +76,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 			if (!$res) {
 				$this->log('No statement was executed. The version was not updated.');
 				$this->log(sprintf(
-					'Please review the code in "%s"', 
+					'Please review the code in "%s"',
 					$manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
 				));
 				$this->log('Migration aborted', Project::MSG_ERR);
@@ -88,7 +88,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 				count($statements),
 				$datasource
 			));
-			
+
 			$manager->updateLatestMigrationTimestamp($datasource, $previousTimestamp);
 			$this->log(sprintf(
 				'Downgraded migration date to %d for datasource "%s"',
@@ -96,9 +96,9 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
 				$datasource
 			), Project::MSG_VERBOSE);
 		}
-		
+
 		$migration->postDown($manager);
-		
+
 		if ($nbPreviousTimestamps) {
 			$this->log(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
 		} else {

@@ -37,7 +37,7 @@ class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 	{
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		BookstoreEmployeePeer::clearInstancePool();
-		
+
 		$stmt = $con->query('SELECT * FROM bookstore_employee');
 		$formatter = new PropelObjectFormatter();
 		$formatter->init(new ModelCriteria('bookstore', 'BookstoreEmployee'));
@@ -51,5 +51,5 @@ class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 			$this->assertEquals($expectedClass[$emp->getName()], get_class($emp), 'format() creates objects of the correct class when using inheritance');
 		}
 	}
-	
+
 }

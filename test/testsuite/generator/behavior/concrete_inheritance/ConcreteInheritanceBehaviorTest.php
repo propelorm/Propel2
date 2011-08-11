@@ -26,7 +26,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyTable() gives the parent table the concrete_inheritance_parent behavior');
 		$this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendent_column parameter to the parent behavior');
 	}
-	
+
 	public function testModifyTableAddsParentColumn()
 	{
 		$contentColumns = array('id', 'title', 'category_id');
@@ -37,7 +37,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$quizz = ConcreteQuizzPeer::getTableMap();
 		$this->assertEquals(3, count($quizz->getColumns()), 'modifyTable() does not add a column of the parent table if a similar column exists');
 	}
-	
+
 	public function testModifyTableCopyDataAddsOneToOneRelationships()
 	{
 		$article = ConcreteArticlePeer::getTableMap();
@@ -54,7 +54,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$quizz = ConcreteQuizzPeer::getTableMap();
 		$this->assertFalse($quizz->hasRelation('ConcreteContent'), 'modifyTable() does not add a relationship to the parent when copy_data is false');
 	}
-	
+
 	public function testModifyTableCopyDataRemovesAutoIncrement()
 	{
 		$content = new ConcreteContent();
@@ -80,7 +80,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$c->add(ConcreteQuizzPeer::ID, $content->getId());
 		ConcreteQuizzPeer::doInsert($c);
 	}
-	
+
 	public function testModifyTableAddsForeignKeys()
 	{
 		$article = ConcreteArticlePeer::getTableMap();
@@ -98,9 +98,9 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$article = ConcreteArticlePeer::getTableMap();
 		$this->assertTrue($article->getColumn('title')->hasValidators(), 'modifyTable() copies validators from parent table');
 	}
-	
+
 	// no way to test copying of indices and uniques, except by reverse engineering the db...
-	
+
 	public function testParentObjectClass()
 	{
 		$article = new ConcreteArticle(); // to autoload the BaseConcreteArticle class
@@ -110,7 +110,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$r = new ReflectionClass('BaseConcreteQuizz');
 		$this->assertEquals('ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
 	}
-	
+
 	public function testParentQueryClass()
 	{
 		$q = new ConcreteArticleQuery(); // to autoload the BaseConcreteArticleQuery class
@@ -120,7 +120,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$r = new ReflectionClass('BaseConcreteQuizzQuery');
 		$this->assertEquals('ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
 	}
-	
+
 	/**
 	 * @link http://www.propelorm.org/ticket/1262
 	 */
@@ -163,7 +163,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$content = ConcreteContentQuery::create()->findPk($quizz->getId());
 		$this->assertNull($content);
 	}
-	
+
 	public function testGetParentOrCreateNew()
 	{
 		$article = new ConcreteArticle();
@@ -183,7 +183,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertFalse($content->isNew(), 'getParentOrCreate() returns an existing instance of the parent class if the object is persisted');
 		$this->assertEquals($article->getId(), $content->getId(), 'getParentOrCreate() returns the parent object related to the current object');
 	}
-	
+
 	public function testGetParentOrCreateExistingParent()
 	{
 		ConcreteContentQuery::create()->deleteAll();
@@ -198,7 +198,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertEquals($id, $article->getId(), 'getParentOrCreate() keeps manually set pk');
 		$this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
 	}
-	
+
 	public function testGetSyncParent()
 	{
 		$category = new ConcreteCategory();
@@ -210,7 +210,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$this->assertEquals('FooBar', $content->getTitle(), 'getSyncParent() returns a synchronized parent object');
 		$this->assertEquals($category, $content->getConcreteCategory(), 'getSyncParent() returns a synchronized parent object');
 	}
-	
+
 	public function testPostDeleteCopyData()
 	{
 	  ConcreteArticleQuery::create()->deleteAll();
@@ -226,5 +226,5 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
     $article->delete();
     $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
 	}
-	
+
 }

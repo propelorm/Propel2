@@ -24,17 +24,17 @@ class PropelDatabaseComparator
 	protected $databaseDiff;
 	protected $fromDatabase;
 	protected $toDatabase;
-	
+
 	public function __construct($databaseDiff = null)
 	{
 		$this->databaseDiff = (null === $databaseDiff) ? new PropelDatabaseDiff() : $databaseDiff;
 	}
-	
+
 	public function getDatabaseDiff()
 	{
 		return $this->databaseDiff;
 	}
-	
+
 	/**
 	 * Setter for the fromDatabase property
 	 *
@@ -92,10 +92,10 @@ class PropelDatabaseComparator
 		$dc->setToDatabase($toDatabase);
 		$differences = 0;
 		$differences += $dc->compareTables($caseInsensitive);
-		
+
 		return ($differences > 0) ? $dc->getDatabaseDiff() : false;
 	}
-	
+
 	/**
 	 * Compare the tables of the fromDatabase and the toDatabase,
 	 * and modifies the inner databaseDiff if necessary.
@@ -111,7 +111,7 @@ class PropelDatabaseComparator
 		$fromDatabaseTables = $this->fromDatabase->getTables();
 		$toDatabaseTables = $this->toDatabase->getTables();
 		$databaseDifferences = 0;
-		
+
 		// check for new tables in $toDatabase
 		foreach ($toDatabaseTables as $table) {
 			if (!$this->fromDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
@@ -119,7 +119,7 @@ class PropelDatabaseComparator
 				$databaseDifferences++;
 			}
 		}
-		
+
 		// check for removed tables in $toDatabase
 		foreach ($fromDatabaseTables as $table) {
 			if (!$this->toDatabase->hasTable($table->getName(), $caseInsensitive) && !$table->isSkipSql()) {
@@ -127,7 +127,7 @@ class PropelDatabaseComparator
 				$databaseDifferences++;
 			}
 		}
-		
+
 		// check for table differences
 		foreach ($fromDatabaseTables as $fromTable) {
 			if ($this->toDatabase->hasTable($fromTable->getName(), $caseInsensitive)) {
@@ -139,7 +139,7 @@ class PropelDatabaseComparator
 				}
 			}
 		}
-		
+
 		// check for table renamings
 		foreach ($this->databaseDiff->getAddedTables() as $addedTableName => $addedTable) {
 			foreach ($this->databaseDiff->getRemovedTables() as $removedTableName => $removedTable) {
@@ -152,7 +152,7 @@ class PropelDatabaseComparator
 				}
 			}
 		}
-		
+
 		return $databaseDifferences;
 	}
 

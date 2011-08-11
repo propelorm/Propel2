@@ -22,7 +22,7 @@ abstract class PropelParser
 	 *
 	 * Override in the parser driver.
 	 *
-	 * @param  array $array Source data to convert 
+	 * @param  array $array Source data to convert
 	 * @return mixed Converted data, depending on the parser format
 	 */
 	abstract public function fromArray($array);
@@ -41,7 +41,7 @@ abstract class PropelParser
 	{
 		return $this->fromArray($data);
 	}
-	
+
 	public function listToArray($data)
 	{
 		return $this->toArray($data);
@@ -52,7 +52,7 @@ abstract class PropelParser
 	 *
 	 * @param string $path Path to the file to load
 	 *
-	 * @return string The file content processed by PHP 
+	 * @return string The file content processed by PHP
 	 */
 	public function load($path)
 	{
@@ -62,10 +62,10 @@ abstract class PropelParser
 		ob_start();
 		include($path);
 		$contents = ob_get_clean();
-		
+
 		return $contents;
 	}
-	
+
 	/**
 	 * Dumps data to a file, or to STDOUT if no filename is given
 	 *
@@ -94,7 +94,7 @@ abstract class PropelParser
 		if (!class_exists($class)) {
 			throw new PropelException(sprintf('Unknown parser class "%s"', $class));
 		}
-		
+
 		return new $class;
 	}
 }

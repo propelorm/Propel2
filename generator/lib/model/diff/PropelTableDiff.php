@@ -22,7 +22,7 @@ class PropelTableDiff
 {
 	protected $fromTable;
 	protected $toTable;
-	
+
 	protected $addedColumns = array();
 	protected $removedColumns = array();
 	protected $modifiedColumns = array();
@@ -79,7 +79,7 @@ class PropelTableDiff
 	{
 		return $this->toTable;
 	}
-		
+
 	/**
 	 * Setter for the addedColumns property
 	 *
@@ -360,7 +360,7 @@ class PropelTableDiff
 	{
 		return $this->renamedPkColumns;
 	}
-	
+
 	/**
 	 * Whether the primary key was modified
 	 *
@@ -458,7 +458,7 @@ class PropelTableDiff
 	/**
 	 * Getter for the modifiedIndices property
 	 *
-	 * @return 
+	 * @return
 	 */
 	public function getModifiedIndices()
 	{
@@ -587,11 +587,11 @@ class PropelTableDiff
 	public function getReverseDiff()
 	{
 		$diff = new self();
-		
+
 		// tables
 		$diff->setFromTable($this->getToTable());
 		$diff->setToTable($this->getFromTable());
-		
+
 		// columns
 		$diff->setAddedColumns($this->getRemovedColumns());
 		$diff->setRemovedColumns($this->getAddedColumns());
@@ -605,7 +605,7 @@ class PropelTableDiff
 			$columnDiffs[$name] = $columnDiff->getReverseDiff();
 		}
 		$diff->setModifiedColumns($columnDiffs);
-		
+
 		// pks
 		$diff->setAddedPkColumns($this->getRemovedPkColumns());
 		$diff->setRemovedPkColumns($this->getAddedPkColumns());
@@ -614,7 +614,7 @@ class PropelTableDiff
 			$renamedPkColumns[]= array_reverse($columnRenaming);
 		}
 		$diff->setRenamedPkColumns($renamedPkColumns);
-		
+
 		// indices
 		$diff->setAddedIndices($this->getRemovedIndices());
 		$diff->setRemovedIndices($this->getAddedIndices());
@@ -623,7 +623,7 @@ class PropelTableDiff
 			$indexDiffs[$name] = array_reverse($indexDiff);
 		}
 		$diff->setModifiedIndices($indexDiffs);
-		
+
 		// fks
 		$diff->setAddedFks($this->getRemovedFks());
 		$diff->setRemovedFks($this->getAddedFks());
@@ -632,10 +632,10 @@ class PropelTableDiff
 			$fkDiffs[$name] = array_reverse($fkDiff);
 		}
 		$diff->setModifiedFks($fkDiffs);
-		
+
 		return $diff;
 	}
-	
+
 	public function __toString()
 	{
 		$ret = '';
@@ -718,8 +718,8 @@ class PropelTableDiff
 				}
 			}
 		}
-		
+
 		return $ret;
 	}
-	
+
 }

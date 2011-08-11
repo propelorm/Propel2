@@ -21,7 +21,7 @@ In a XML schema, you can assign all the tables included into a `<database>` tag 
 '''Tip''': On RDBMS that do not support SQL schemas (Oracle, SQLite), the `schema` attribute is ignored.
 
 You can also assign a table to a given schema individually ; this overrides the `schema` of the parent `<database>`:
-  
+
 {{{
 #!xml
 <table name="book" schema="bookstore1">

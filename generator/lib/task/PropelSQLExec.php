@@ -65,7 +65,7 @@ class PropelSQLExec extends Task
 	 * @var        Array
 	 */
 	protected $buildConnections = array();
-	
+
 	/**
 	 * Set the sqldbmap properties file.
 	 *
@@ -105,7 +105,7 @@ class PropelSQLExec extends Task
 	{
 		return $this->buildConnections;
 	}
-	
+
 	/**
 	 * Get the buildtime connection settings for a given database name.
 	 *
@@ -219,7 +219,7 @@ class PropelSQLExec extends Task
 
 		// get an ordered list of SQL files to execute
 		$databases = $this->getFilesToExecute();
-		
+
 		$this->log(sprintf('Reading SQL files...'));
 		foreach ($databases as $database => $files) {
 			$statements[$database] = array();
@@ -235,13 +235,13 @@ class PropelSQLExec extends Task
 				}
 			}
 		}
-		
+
 		$successfullStatements = 0;
 		$this->log(sprintf('Executing SQL statements...'));
 		foreach ($statements as $database => $statementList) {
 			$successfullStatements += $this->insertDatabaseSqlFiles($database, $statementList);
 		}
-		
+
 		$this->log(sprintf('SQL execution complete. %d statements successfully executed.', $successfullStatements));
 	}
 
@@ -270,10 +270,10 @@ class PropelSQLExec extends Task
 				array_push($databases[$database], $sqlfile);
 			}
 		}
-		
+
 		return $databases;
 	}
-	
+
 	/**
 	 * Executes a set of SQL statements into the target database.
 	 *
@@ -296,7 +296,7 @@ class PropelSQLExec extends Task
 
 			$this->conn = new PDO($dsn, $username, $password);
 			$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			
+
 			// Process all statements
 			foreach ($statements as $statement) {
 				$this->execSQL($statement);
@@ -329,7 +329,7 @@ class PropelSQLExec extends Task
 		}
 
 		$this->log(sprintf('  %d of %d SQL statements executed successfully', $this->goodSql, $this->totalSql));
-		
+
 		return $this->goodSql;
 	}
 

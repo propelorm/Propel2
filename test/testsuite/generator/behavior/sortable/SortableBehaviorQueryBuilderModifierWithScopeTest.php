@@ -44,7 +44,7 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
 		$this->assertEquals($expectedQuery, $query, 'inList() filters the query by scope');
 		$this->assertEquals(2, $query->count(), 'inList() filters the query by scope');
 	}
-		
+
 	public function testFilterByRank()
 	{
 		/* List used for tests
@@ -76,7 +76,7 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
 		$expectedQuery = Table12Query::create()->addDescendingOrderByColumn(Table12Peer::POSITION);
 		$this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
 	}
-	
+
 	public function testFindList()
 	{
 		$ts = Table12Query::create()->findList(1);
@@ -100,7 +100,7 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends BookstoreSortabl
 		$this->assertEquals('row4', Table12Query::create()->findOneByRank(4, 1)->getTitle(), 'findOneByRank() returns a single item based on the rank a,d the scope');
 		$this->assertNull(Table12Query::create()->findOneByRank(4, 2), 'findOneByRank() returns no result on a non-existent rank and scope');
 	}
-		
+
 	public function testGetMaxRank()
 	{
 		$this->assertEquals(4, Table12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank in the scope');

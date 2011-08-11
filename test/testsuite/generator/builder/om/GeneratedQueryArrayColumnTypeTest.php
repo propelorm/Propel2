@@ -46,7 +46,7 @@ EOF;
 			$e3->save();
 		}
 	}
-	
+
 	public function testActiveQueryMethods()
 	{
 		$this->assertTrue(method_exists('ComplexColumnTypeEntity11Query', 'filterByTags'));
@@ -187,7 +187,7 @@ EOF;
 		$this->assertEquals(array(), $e[0]->getTags());
 		$this->assertEquals(array('bar'), $e[1]->getTags());
 	}
-	
+
 	public function testFilterBySingularColumn()
 	{
 		$e = ComplexColumnTypeEntity11Query::create()
@@ -202,7 +202,7 @@ EOF;
 			->findOne();
 		$this->assertEquals(array('bar23'), $e->getTags(), 'array columns are searchable by element');
 	}
-	
+
 	public function testFilterBySingularColumnUsingContainsAll()
 	{
 		$e = ComplexColumnTypeEntity11Query::create()
@@ -213,7 +213,7 @@ EOF;
 		$this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
 		$this->assertEquals(array('bar'), $e[1]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
 	}
-	
+
 	public function testFilterBySingularColumnUsingContainsNone()
 	{
 		$e = ComplexColumnTypeEntity11Query::create()

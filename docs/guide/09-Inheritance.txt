@@ -31,7 +31,7 @@ Once you rebuild your model, Propel generated all three model classes (`Book`, `
 
 '''Tip''': An inherited class can extend another inherited class. That mean that you can add a `Manga` kind of book that extends `Comic` instead of `Book`.
 
-'''Tip''': If you define an `<inheritance>` tag with no `extends` attribute, as in the example above, it must use the table `phpName` as its `class` attribute.  
+'''Tip''': If you define an `<inheritance>` tag with no `extends` attribute, as in the example above, it must use the table `phpName` as its `class` attribute.
 
 === Using Inherited Objects ===
 
@@ -195,7 +195,7 @@ Since the columns of the main table are copied to the child tables, this schema 
   </behavior>
   <column name="resource_link" type="VARCHAR" size="100"/>
 </table>
-}}} 
+}}}
 
 '''Tip''': The `concrete_inheritance` behavior copies columns, foreign keys, indices and validators.
 
@@ -264,7 +264,7 @@ By default, every time you save an `Article` or a `Video` object, Propel saves a
 
 {{{
 #!php
-<?php 
+<?php
 $conts = ContentQuery::create()->find();
 foreach ($conts as $content) {
   echo $content->getTitle() . "(". $content->getCategoryName() ")/n";
@@ -318,7 +318,7 @@ The `hasChildObject()` and `getChildObject()` methods are automatically added by
   </behavior>
   <column name="body" type="VARCHAR" size="100"/>
 </table>
-// results in 
+// results in
 <table name="article">
   <column name="body" type="VARCHAR" size="100"/>
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>

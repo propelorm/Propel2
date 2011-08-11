@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * This file is part of the Propel package.
@@ -25,14 +25,14 @@ abstract class PropelFormatter
 		$asColumns = array(),
 		$hasLimit = false,
 		$currentObjects = array();
-	
+
 	public function __construct(ModelCriteria $criteria = null)
 	{
 		if (null !== $criteria) {
 			$this->init($criteria);
 		}
 	}
-	
+
 	/**
 	 * Define the hydration schema based on a query object.
 	 * Fills the Formatter's properties using a Criteria as source
@@ -48,48 +48,48 @@ abstract class PropelFormatter
 		$this->setWith($criteria->getWith());
 		$this->asColumns = $criteria->getAsColumns();
 		$this->hasLimit = $criteria->getLimit() != 0;
-		
+
 		return $this;
 	}
-	
+
 	// DataObject getters & setters
 
 	public function setDbName($dbName)
 	{
 		$this->dbName = $dbName;
 	}
-	
+
 	public function getDbName()
 	{
 		return $this->dbName;
 	}
-		
+
 	public function setClass($class)
 	{
 		$this->class = $class;
 		$this->peer = constant($this->class . '::PEER');
 	}
-	
+
 	public function getClass()
 	{
 		return $this->class;
 	}
-	
+
 	public function setPeer($peer)
 	{
 		$this->peer = $peer;
 	}
-	
+
 	public function getPeer()
 	{
 		return $this->peer;
 	}
-	
+
 	public function setWith($withs = array())
 	{
 		$this->with = $withs;
 	}
-	
+
 	public function getWith()
 	{
 		return $this->with;
@@ -99,7 +99,7 @@ abstract class PropelFormatter
 	{
 		$this->asColumns = $asColumns;
 	}
-		
+
 	public function getAsColumns()
 	{
 		return $this->asColumns;
@@ -109,12 +109,12 @@ abstract class PropelFormatter
 	{
 		$this->hasLimit = $hasLimit;
 	}
-		
+
 	public function hasLimit()
 	{
 		return $this->hasLimit;
 	}
-	
+
 	/**
 	 * Formats an ActiveRecord object
 	 *
@@ -126,25 +126,25 @@ abstract class PropelFormatter
 	{
 		return $record;
 	}
-	
+
 	abstract public function format(PDOStatement $stmt);
 
 	abstract public function formatOne(PDOStatement $stmt);
-	
+
 	abstract public function isObjectFormatter();
-	
+
 	public function checkInit()
 	{
 		if (null === $this->peer) {
 			throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
 		}
 	}
-	
+
 	public function getTableMap()
 	{
 		return Propel::getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
 	}
-	
+
 	protected function isWithOneToMany()
 	{
 		foreach ($this->with as $modelWith) {
@@ -154,17 +154,17 @@ abstract class PropelFormatter
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets the worker object for the class.
 	 * To save memory, we don't create a new object for each row,
 	 * But we keep hydrating a single object per class.
 	 * The column offset in the row is used to index the array of classes
 	 * As there may be more than one object of the same class in the chain
-	 * 
+	 *
 	 * @param     int    $col    Offset of the object in the list of objects to hydrate
 	 * @param     string $class  Propel model object class
-	 * 
+	 *
 	 * @return    BaseObject
 	 */
 	protected function getWorkerObject($col, $class)
@@ -176,7 +176,7 @@ abstract class PropelFormatter
 		}
 		return $this->currentObjects[$col];
 	}
-	
+
 	/**
 	 * Gets a Propel object hydrated from a selection of columns in statement row
 	 *
@@ -191,9 +191,9 @@ abstract class PropelFormatter
 	{
 		$obj = $this->getWorkerObject($col, $class);
 		$col = $obj->hydrate($row, $col);
-		
+
 		return $obj;
 	}
-	
-	
+
+
 }

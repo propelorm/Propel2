@@ -1,15 +1,15 @@
 <!--
-    Use this file to faciliate easy per-project building using 
+    Use this file to faciliate easy per-project building using
 	PEAR-installed Propel-generator.
 
 	This Phing script is invoked via the shell script propel-gen (.bat
 	for Windows).  Normally you should not need to edit this script or
 	be aware of it in any way.
-	
+
     Normal use:
     $> propel-gen insert-sql
-    
-    Specific target: 
+
+    Specific target:
     $> propel-gen /path/to/my/project insert-sql
 
 -->
@@ -42,7 +42,7 @@
 	<echo message=" "/>
 	<echo message="$&gt; propel-gen /path/to/projectdir [target]"/>
 	<echo message=" "/>
-	<echo message="====================================================="/>	
+	<echo message="====================================================="/>
 	<fail message="No project directory specified."/>
 </target>
 
@@ -59,23 +59,23 @@
 	<property file="${propel.project.dir}/build.properties"/>
 </target>
 
-<target name="main" depends="configure" 
-  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">	
+<target name="main" depends="configure"
+  description="The main target. Includes project-specific build.properties and calls the build-propel.xml script">
 
  <!--<property file="${project.dir}/build.properties"/>-->
  <phing phingfile="build-propel.xml" target="${target}"/>
- 
+
 </target>
 
 
-<!-- 
- Convenience mappings to build-propel.xml main targets 
- 
+<!--
+ Convenience mappings to build-propel.xml main targets
+
  This makes it possible to use this buildfile w/o needing to specify
  target as a property, e.g.:
- 
+
  $> phing -Dproject=bookstore insert-sql
- 
+
  The main reason for this is just consistency w/ old build-propel.xml file
  (primarily for documentation & user confusion avoidance reasons).  There are relatively
  few & infrequently changing main targets of build-propel.xml, so it's a non-

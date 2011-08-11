@@ -220,7 +220,7 @@ class Index extends XMLElement
 		}
 		return null; // just to be explicit
 	}
-	
+
 	/**
 	 * Reset the column sizes. Useful for generated indices for FKs
 	 */
@@ -283,7 +283,7 @@ class Index extends XMLElement
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Check whether the index has columns.
 	 * @return     boolean
@@ -292,7 +292,7 @@ class Index extends XMLElement
 	{
 		return count($this->indexColumns) > 0;
 	}
-	
+
 	/**
 	 * Return the list of local columns. You should not edit this list.
 	 * @return     array string[]

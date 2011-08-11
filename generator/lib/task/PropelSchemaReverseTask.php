@@ -385,15 +385,15 @@ class PropelSchemaReverseTask extends PDOTask
 	{
 		$config = $this->getGeneratorConfig();
 		$con = $this->getConnection();
-		
+
 		$this->log('Reading database structure...');
-		
+
 		$database = new Database($this->getDatabaseName());
 		$database->setPlatform($config->getConfiguredPlatform($con));
 		$database->setDefaultIdMethod(IDMethod::NATIVE);
 		$parser = $config->getConfiguredSchemaParser($con);
 		$nbTables = $parser->parse($database, $this);
-		
+
 		$this->log(sprintf('Successfully reverse engineered %d tables', $nbTables));
 
 		return $database;

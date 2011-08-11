@@ -165,7 +165,7 @@ abstract class ObjectBuilder extends OMBuilder
 	{
 		return $this->getBuildProperty('addValidateMethod');
 	}
-	
+
 	protected function hasDefaultValues()
 	{
 		foreach ($this->getTable()->getColumns() as $col) {

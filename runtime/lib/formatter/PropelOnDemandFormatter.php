@@ -21,15 +21,15 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 {
 	protected $collectionName = 'PropelOnDemandCollection';
 	protected $isSingleTableInheritance = false;
-	
+
 	public function init(ModelCriteria $criteria)
 	{
 		parent::init($criteria);
 		$this->isSingleTableInheritance = $criteria->getTableMap()->isSingleTableInheritance();
-		
+
 		return $this;
 	}
-	
+
 	public function format(PDOStatement $stmt)
 	{
 		$this->checkInit();
@@ -40,10 +40,10 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 		$collection = new $class();
 		$collection->setModel($this->class);
 		$collection->initIterator($this, $stmt);
-		
+
 		return $collection;
 	}
-	
+
 	/**
 	 * Hydrates a series of objects from a result row
 	 * The first object to hydrate is the model of the Criteria
@@ -68,7 +68,7 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 				if ($refl->isAbstract()) {
 					$col += constant($class . 'Peer::NUM_COLUMNS');
 					continue;
-				} 
+				}
 			} else {
 				$class = $modelWith->getModelName();
 			}
@@ -101,5 +101,5 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
 		}
 		return $obj;
 	}
-	
+
 }

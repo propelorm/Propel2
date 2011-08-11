@@ -12,7 +12,7 @@ To illustrate Propel's build abilities, this chapter uses the data structure of 
 
 == Describing Your Database as XML Schema ==
 
-Propel generates PHP classes based on a ''relational'' description of your data model. This "schema" uses XML to describe tables, columns and relationships. The schema syntax closely follows the actual structure of the database.  
+Propel generates PHP classes based on a ''relational'' description of your data model. This "schema" uses XML to describe tables, columns and relationships. The schema syntax closely follows the actual structure of the database.
 
 Create a `bookstore` directory. This will be the root of the bookstore project.
 
@@ -274,7 +274,7 @@ The database and PHP classes are now ready to be used. But they don't know yet h
 
 === Writing The XML Runtime Configuration ===
 
-Create a file called `runtime-conf.xml` at the root of the `bookstore` project, using the following content: 
+Create a file called `runtime-conf.xml` at the root of the `bookstore` project, using the following content:
 {{{
 #!xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -305,7 +305,7 @@ Create a file called `runtime-conf.xml` at the root of the `bookstore` project, 
 Notice how the `id` attribute of the `<datasource>` tag matches the connection name defined in the `<database>` tag of the `schema.xml`. This is how Propel maps a database description to a connection.
 
 Replace the `<adapter>` and the `<connection>` settings wit hthe ones of your database.
-  
+
 See the [wiki:Documentation/1.6/RuntimeConfiguration runtime configuration reference] for a more detailed explanation of this file.
 
 '''Tip''': If you uncomment the `<log>` section, Propel will attempt to instantiate the `Log` class (from the [http://pear.php.net/package/Log/ PEAR Log] package) with the specified parameters and use that to log queries. Propel's statement logging happens at the DEBUG level (7); errors and warnings are logged at the appropriate (non-debug) level.
@@ -325,7 +325,7 @@ The resulting file can be found under `build/conf/bookstore-conf.php`, where "bo
 
 {{{
 > cd /path/to/bookstore
-> propel-gen 
+> propel-gen
 }}}
 
 == Setting Up Propel ==

@@ -29,7 +29,7 @@ Here is a the sample runtime configuration file.
           </options>
           <attributes>
             <option id="ATTR_EMULATE_PREPARES">true</option>
-          </attributes>          
+          </attributes>
           <settings>
             <setting id="charset">utf8</setting>
             <setting id="queries">
@@ -260,7 +260,7 @@ In addition to the standard attributes that can be set on the PDO object, there 
 Settings are Propel-specific options used to further configure the connection -- or perform other user-defined initialization tasks.
 
 Currently supported settings are:
- * charset 
+ * charset
  * queries
 
 ===== charset =====

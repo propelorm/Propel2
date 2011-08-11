@@ -7,7 +7,7 @@
  *
  * @license    MIT License
  */
- 
+
 /**
  * Behavior to add sortable peer methods
  *
@@ -18,23 +18,23 @@
 class SortableBehaviorPeerBuilderModifier
 {
 	protected $behavior, $table, $builder, $objectClassname, $peerClassname;
-	
+
 	public function __construct($behavior)
 	{
 		$this->behavior = $behavior;
 		$this->table = $behavior->getTable();
 	}
-	
+
 	protected function getParameter($key)
 	{
 		return $this->behavior->getParameter($key);
 	}
-	
+
 	protected function getColumnAttribute($name)
 	{
 		return strtolower($this->behavior->getColumnForParameter($name)->getName());
 	}
-	
+
 		protected function getColumnConstant($name)
 	{
 		return strtoupper($this->behavior->getColumnForParameter($name)->getName());
@@ -44,7 +44,7 @@ class SortableBehaviorPeerBuilderModifier
 	{
 		return $this->behavior->getColumnForParameter($name)->getPhpName();
 	}
-	
+
 	protected function setBuilder($builder)
 	{
 		$this->builder = $builder;
@@ -70,7 +70,7 @@ const RANK_COL = '" . $tableName . '.' . $this->getColumnConstant('rank_column')
 const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column') . "';
 ";
 		}
-		
+
 		return $script;
 	}
 
@@ -83,7 +83,7 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 	{
 		$this->setBuilder($builder);
 		$script = '';
-		
+
 		$this->addGetMaxRank($script);
 		$this->addRetrieveByRank($script);
 		$this->addReorder($script);
@@ -94,10 +94,10 @@ const SCOPE_COL = '" . $tableName . '.' . $this->getColumnConstant('scope_column
 			$this->addDeleteList($script);
 		}
 		$this->addShiftRank($script);
-		
+
 		return $script;
 	}
-	
+
 	protected function addGetMaxRank(&$script)
 	{
 		$useScope = $this->behavior->useScope();
@@ -128,12 +128,12 @@ public static function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "P
 		}
 		$script .= "
 	\$stmt = {$this->peerClassname}::doSelectStmt(\$c, \$con);
-	
+
 	return \$stmt->fetchColumn();
 }
 ";
 	}
-	
+
 	protected function addRetrieveByRank(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -165,7 +165,7 @@ public static function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 	\$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	
+
 	return $peerClassname::doSelectOne(\$c, \$con);
 }
 ";
@@ -192,7 +192,7 @@ public static function reorder(array \$order, PropelPDO \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection($peerClassname::DATABASE_NAME);
 	}
-	
+
 	\$con->beginTransaction();
 	try {
 		\$ids = array_keys(\$order);
@@ -214,7 +214,7 @@ public static function reorder(array \$order, PropelPDO \$con = null)
 }
 ";
 	}
-	
+
 	protected function addDoSelectOrderByRank(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -252,7 +252,7 @@ public static function doSelectOrderByRank(Criteria \$criteria = null, \$order =
 }
 ";
 	}
-	
+
 	protected function addRetrieveList(&$script)
 	{
 		$peerClassname = $this->peerClassname;
@@ -270,7 +270,7 @@ public static function retrieveList(\$scope, \$order = Criteria::ASC, PropelPDO 
 {
 	\$c = new Criteria();
 	\$c->add($peerClassname::SCOPE_COL, \$scope);
-	
+
 	return $peerClassname::doSelectOrderByRank(\$c, \$order, \$con);
 }
 ";
@@ -292,7 +292,7 @@ public static function countList(\$scope, PropelPDO \$con = null)
 {
 	\$c = new Criteria();
 	\$c->add($peerClassname::SCOPE_COL, \$scope);
-	
+
 	return $peerClassname::doCount(\$c, \$con);
 }
 ";
@@ -314,11 +314,11 @@ public static function deleteList(\$scope, PropelPDO \$con = null)
 {
 	\$c = new Criteria();
 	\$c->add($peerClassname::SCOPE_COL, \$scope);
-	
+
 	return $peerClassname::doDelete(\$c, \$con);
 }
 ";
-	}	
+	}
 	protected function addShiftRank(&$script)
 	{
 		$useScope = $this->behavior->useScope();

@@ -450,7 +450,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 
 	/**
-	 * Adds the comment about the serialized attribute 
+	 * Adds the comment about the serialized attribute
 	 * @param      string &$script The script will be modified in this method.
 	 * @param      Column $col
 	 **/
@@ -776,7 +776,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= ")
 	{";
 	}
-	
+
 	protected function getAccessorLazyLoadSnippet(Column $col)
 	{
 		if ($col->isLazyLoad()) {
@@ -976,7 +976,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		return \$this->$cloUnserialized;";
 	}
-	
+
 	/**
 	 * Adds an enum getter method.
 	 * @param      string &$script The script will be modified in this method.
@@ -1015,7 +1015,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		return \$valueSet[\$this->$clo];";
 	}
-	
+
 	/**
 	 * Adds a tester method for an array column.
 	 * @param      string &$script The script will be modified in this method.
@@ -1049,7 +1049,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	} // has$singularPhpName()
 ";
 	}
-	
+
 	/**
 	 * Adds a normal (non-temporal) getter method.
 	 * @param      string &$script The script will be modified in this method.
@@ -1476,7 +1476,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
 			$defaultValue = $this->getDefaultValueString($col);
 			$script .= "
-			if ( (\$currentDateAsString !== \$newDateAsString) // normalized values don't match 
+			if ( (\$currentDateAsString !== \$newDateAsString) // normalized values don't match
 				|| (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
 				 ) {";
 		} else {
@@ -1584,7 +1584,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= ");
 		\$currentArray []= \$value;
 		\$this->set$cfc(\$currentArray);
-		
+
 		return \$this;
 	} // add$singularPhpName()
 ";
@@ -1701,7 +1701,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$script .= "
 	/**
-	 * Sets the value of the [$clo] column. 
+	 * Sets the value of the [$clo] column.
 	 * Non-boolean arguments are converted using the following rules:
 	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
 	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -1711,7 +1711,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */";
 	}
-		
+
 	/**
 	 * Adds setter method for "normal" columns.
 	 * @param      string &$script The script will be modified in this method.
@@ -3162,7 +3162,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 ";
 	} // addFKByKeyMutator()
-	
+
 	/**
 	 * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
 	 * @param      string &$script The script will be modified in this method.
@@ -3302,7 +3302,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 	/**
 	 * Initializes a collection based on the name of a relation.
-	 * Avoids crafting an 'init[\$relationName]s' method name 
+	 * Avoids crafting an 'init[\$relationName]s' method name
 	 * that wouldn't work when StandardEnglishPluralizer is used.
 	 *
 	 * @param      string \$relationName The name of the relation to initialize
@@ -3324,7 +3324,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	}
 ";
 	}
-	
+
 	/**
 	 * Adds the method that clears the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.

@@ -1,6 +1,6 @@
 = Replication =
 
-Propel can be used in a master-slave replication environment. These environments are set up to improve the performance of web applications by dispatching the database-load to multiple database-servers. While a single master database is responsible for all write-queries, multiple slave-databases handle the read-queries. The slaves are synchronised with the master by a fast binary log (depending on the database). 
+Propel can be used in a master-slave replication environment. These environments are set up to improve the performance of web applications by dispatching the database-load to multiple database-servers. While a single master database is responsible for all write-queries, multiple slave-databases handle the read-queries. The slaves are synchronised with the master by a fast binary log (depending on the database).
 
 == Configuring Propel for Replication ==
 

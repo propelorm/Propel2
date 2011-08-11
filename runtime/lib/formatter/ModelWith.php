@@ -27,14 +27,14 @@ class ModelWith
 	protected $initMethod = '';
 	protected $leftPhpName;
 	protected $rightPhpName;
-	
+
 	public function __construct(ModelJoin $join = null)
 	{
 		if (null !== $join) {
 			$this->init($join);
 		}
 	}
-	
+
 	/**
 	 * Define the joined hydration schema based on a join object.
 	 * Fills the ModelWith properties using a ModelJoin as source
@@ -63,44 +63,44 @@ class ModelWith
 			$this->leftPhpName = $join->hasLeftTableAlias() ? $join->getLeftTableAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
 		}
 	}
-	
+
 	// DataObject getters & setters
-	
+
 	public function setModelName($modelName)
 	{
 		$this->modelName = $modelName;
 	}
-	
+
 	public function getModelName()
 	{
 		return $this->modelName;
 	}
-	
+
 	public function setModelPeerName($modelPeerName)
 	{
 		$this->modelPeerName = $modelPeerName;
 	}
-	
+
 	public function getModelPeerName()
 	{
 		return $this->modelPeerName;
 	}
-	
+
 	public function setIsSingleTableInheritance($isSingleTableInheritance)
 	{
 		$this->isSingleTableInheritance = $isSingleTableInheritance;
 	}
-	
+
 	public function isSingleTableInheritance()
 	{
 		return $this->isSingleTableInheritance;
 	}
-	
+
 	public function setIsAdd($isAdd)
 	{
 		$this->isAdd = $isAdd;
 	}
-	
+
 	public function isAdd()
 	{
 		return $this->isAdd;
@@ -110,22 +110,22 @@ class ModelWith
 	{
 		$this->isWithOneToMany = $isWithOneToMany;
 	}
-	
+
 	public function isWithOneToMany()
 	{
 		return $this->isWithOneToMany;
 	}
-	
+
 	public function setRelationName($relationName)
 	{
 		$this->relationName = $relationName;
 	}
-	
+
 	public function getRelationName()
 	{
 		return $this->relationName;
 	}
-	
+
 	public function setRelationMethod($relationMethod)
 	{
 		$this->relationMethod = $relationMethod;
@@ -145,12 +145,12 @@ class ModelWith
 	{
 		return $this->initMethod;
 	}
-	
+
 	public function setLeftPhpName($leftPhpName)
 	{
 		$this->leftPhpName = $leftPhpName;
 	}
-	
+
 	public function getLeftPhpName()
 	{
 		return $this->leftPhpName;
@@ -160,19 +160,19 @@ class ModelWith
 	{
 		$this->rightPhpName = $rightPhpName;
 	}
-	
+
 	public function getRightPhpName()
 	{
 		return $this->rightPhpName;
 	}
-	
+
 	// Utility methods
-	
+
 	public function isPrimary()
 	{
 		return null === $this->leftPhpName;
 	}
-	
+
 	public function __toString()
 	{
 		return sprintf("modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s", $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
