@@ -292,7 +292,7 @@ class Criteria implements IteratorAggregate
 		$this->selectQueries = array();
 		$this->dbName = $this->originalDbName;
 		$this->offset = 0;
-		$this->limit = -1;
+		$this->limit = 0;
 		$this->blobFlag = null;
 		$this->aliases = array();
 		$this->useTransaction = false;
