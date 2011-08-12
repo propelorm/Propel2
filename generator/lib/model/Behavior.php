@@ -33,7 +33,7 @@ class Behavior extends XMLElement
 	/**
 	 * Sets the name of the Behavior
 	 *
-	 * @parem $name string the name of the behavior
+	 * @param $name string the name of the behavior
 	 * @return void
 	 */
 	public function setName($name)
