@@ -33,8 +33,7 @@ class Behavior extends XMLElement
 	/**
 	 * Sets the name of the Behavior
 	 *
-	 * @param $name string the name of the behavior
-	 * @return void
+	 * @param string $name the name of the behavior
 	 */
 	public function setName($name)
 	{
@@ -54,8 +53,7 @@ class Behavior extends XMLElement
 	/**
 	 * Sets the table this behavior is applied to 
 	 *
-	 * @param $table Table the table this behavior is applied to
-	 * @return void
+	 * @param Table $table the table this behavior is applied to
 	 */
 	public function setTable(Table $table)
 	{
@@ -75,8 +73,7 @@ class Behavior extends XMLElement
 	/**
 	 * Sets the database this behavior is applied to
 	 * 
-	 * @param $database Database the database this behavior is applied to
-	 * @return void
+	 * @param Database $database the database this behavior is applied to
 	 */
 	public function setDatabase(Database $database)
 	{
