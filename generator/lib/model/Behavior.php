@@ -30,31 +30,64 @@ class Behavior extends XMLElement
 	protected $additionalBuilders = array();
 	protected $tableModificationOrder = 50;
 
+	/**
+	 * Sets the name of the Behavior
+	 *
+	 * @parem $name string the name of the behavior
+	 * @return void
+	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 	}
 
+	/**
+	 * Returns the name of the Behavior
+	 *
+	 * @return string
+	 */
 	public function getName()
 	{
 		return $this->name;
 	}
 
+	/**
+	 * Sets the table this behavior is applied to 
+	 *
+	 * @param $table Table the table this behavior is applied to
+	 * @return void
+	 */
 	public function setTable(Table $table)
 	{
 		$this->table = $table;
 	}
 
+	/**
+	 * Returns the table this behavior is applied to
+	 *
+	 * @return Table
+	 */
 	public function getTable()
 	{
 		return $this->table;
 	}
 
+	/**
+	 * Sets the database this behavior is applied to
+	 * 
+	 * @param $database Database the database this behavior is applied to
+	 * @return void
+	 */
 	public function setDatabase(Database $database)
 	{
 		$this->database = $database;
 	}
 
+	/**
+	 * Returns the table this behavior is applied to if behavior is applied to <database> element.
+	 *
+	 * @return Database
+	 */
 	public function getDatabase()
 	{
 		return $this->database;
