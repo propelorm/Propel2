@@ -369,7 +369,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$author = new Author();
 		$author->setFirstName('Leo');
 		$ret = $author->addBook(new Book());
-		$this->assertEquals($author, $ret);
+		$this->assertSame($author, $ret);
 	}
 
 }
