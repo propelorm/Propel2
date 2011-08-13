@@ -3403,8 +3403,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * through the $className foreign key attribute.
 	 *
 	 * @param      $className \$l $className
-	 * @return     void
-	 * @throws     PropelException
+	 * @return     ".$this->getObjectClassname()." The current object (for fluent API support)
 	 */
 	public function add".$this->getRefFKPhpNameAffix($refFK, $plural = false)."($className \$l)
 	{
@@ -3415,6 +3414,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			\$this->{$collName}[]= \$l;
 			\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
+		
+		return \$this;
 	}
 ";
 	} // addRefererAdd
