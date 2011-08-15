@@ -9,7 +9,6 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/util/PropelQuickBuilder.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/behavior/versionable/VersionableBehavior.php';
 require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
@@ -87,6 +86,9 @@ EOF;
 	<table name="VersionableBehaviorTest7">
 		<column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="FooBar" type="VARCHAR" size="100" />
+
+		<column name="Style" type="ENUM" valueSet="novel, essay, poetry" />
+
 		<behavior name="versionable">
 			<parameter name="log_created_at" value="true" />
 			<parameter name="log_created_by" value="true" />
@@ -646,5 +648,24 @@ EOF;
 		$a->clearVersionableBehaviorTest5s();
 		$this->assertEquals(3, $a->getVersion());
 		$this->assertEquals(array(2, 1, 1), $a->getOneVersion(3)->getVersionableBehaviorTest5Versions());
+	}
+
+	public function testEnumField()
+	{
+		$o = new VersionableBehaviorTest7();
+		$o->setStyle('novel');
+		$o->save();
+
+		$this->assertEquals('novel', $o->getStyle(), 'Set style to novel');
+		$this->assertEquals(1, $o->getVersion(), '');
+
+		$o->setStyle('essay');
+		$o->save();
+
+		$this->assertEquals('essay', $o->getStyle(), 'Set style to essay');
+		$this->assertEquals(2, $o->getVersion(), '');
+
+		$this->assertEquals('novel', $o->getOneVersion(1)->getStyle(), 'First version is a novel');
+		$this->assertEquals('essay', $o->getOneVersion(2)->getStyle(), 'Second version is an essay');
 	}
 }
