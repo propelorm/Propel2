@@ -17,10 +17,10 @@
  * @method     PropelCollection fromJSON(string $data) Populate the collection from a JSON string
  * @method     PropelCollection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method     string toXML() Export the collection to an XML string
- * @method     string toYAML() Export the collection to a YAML string
- * @method     string toJSON() Export the collection to a JSON string
- * @method     string toCSV() Export the collection to a CSV string
+ * @method     string toXML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to an XML string
+ * @method     string toYAML(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a YAML string
+ * @method     string toJSON(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a JSON string
+ * @method     string toCSV(boolean $usePrefix, boolean $includeLazyLoadColumns) Export the collection to a CSV string
  *
  * @author     Francois Zaninotto
  * @package    propel.runtime.collection
@@ -475,15 +475,27 @@ class PropelCollection extends ArrayObject implements Serializable
 	 *  => {{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
 	 * </code>
 	 *
-	 * @param     mixed  $parser  A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-	 * @return    string  The exported data
+	 * A PropelOnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
+	 *
+	 * @param     mixed   $parser                 A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+	 * @param     boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
+	 *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
+	 *                                            Not supported by PropelArrayCollection, as PropelArrayFormatter has
+	 *                                            already created the array used here with integers as keys.
+	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+	 *                                            Not supported by PropelArrayCollection, as PropelArrayFormatter has
+	 *                                            already included lazy-load columns in the array used here.
+	 * @return    string                          The exported data
 	 */
-	public function exportTo($parser)
+	public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
 	{
+		if ($this instanceof PropelOnDemandCollection) {
+			throw new PropelException('A PropelOnDemandCollection cannot be exported.');
+		}
 		if (!$parser instanceof PropelParser) {
 			$parser = PropelParser::getParser($parser);
 		}
-		return $parser->listFromArray($this->toArray(null, true));
+		return $parser->listFromArray($this->toArray(null, $usePrefix, BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns));
 	}
 
 	/**
@@ -503,7 +515,10 @@ class PropelCollection extends ArrayObject implements Serializable
 			return $this->importFrom($matches[1], reset($params));
 		}
 		if (preg_match('/^to(\w+)$/', $name, $matches)) {
-			return $this->exportTo($matches[1]);
+			$usePrefix = isset($params[0]) && is_bool($params[0]) ? $params[0] : true;
+			$includeLazyLoadColumns = isset($params[1]) && is_bool($params[1]) ? $params[1] : true;
+
+			return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
 		}
 		throw new PropelException('Call to undefined method: ' . $name);
 	}
