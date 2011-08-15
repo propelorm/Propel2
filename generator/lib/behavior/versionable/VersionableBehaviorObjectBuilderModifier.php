@@ -222,7 +222,7 @@ public function addVersion(\$con = null)
 	\$version = new {$versionARClassname}();";
 		foreach ($this->table->getColumns() as $col) {
 			$script .= "
-	\$version->set" . $col->getPhpName() . "(\$this->" . strtolower($col->getName()) . ");";
+	\$version->set" . $col->getPhpName() . "(\$this->get" . $col->getPhpName() . "());";
 		}
 		$script .= "
 	\$version->set{$this->table->getPhpName()}(\$this);";
