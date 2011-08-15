@@ -68,8 +68,8 @@ class PropelCSVParser extends PropelParser
 	/**
 	 * Accepts a row of data and returns it formatted
 	 *
-	 * @param array An array of data to be formatted for output to the file
-	 * @return array The formatted array
+	 * @param array	$row	An array of data to be formatted for output to the file
+	 * @return array	The formatted array
 	 */
 	protected function formatRow($row)
 	{
@@ -103,8 +103,8 @@ class PropelCSVParser extends PropelParser
 	/**
 	* Escapes a column (escapes quotechar with escapechar)
 	*
-	* @param string A single value to be escaped for output
-	* @return string Escaped input value
+	* @param string $input	A single value to be escaped for output
+	* @return string	Escaped input value
 	*/
 	protected function escape($input)
 	{
@@ -118,8 +118,8 @@ class PropelCSVParser extends PropelParser
 	/**
 	 * Quotes a column with quotechar
 	 *
-	 * @param string A single value to be quoted for output
-	 * @return string Quoted input value
+	 * @param string $input	A single value to be quoted for output
+	 * @return string	Quoted input value
 	 */
 	protected function quote($input)
 	{
@@ -129,8 +129,8 @@ class PropelCSVParser extends PropelParser
 	/**
 	 * Returns true if input contains quotechar, delimiter or any of the characters in lineTerminator
 	 *
-	 * @param string A single value to be checked for special characters
-	 * @return boolean True if contains any special characters
+	 * @param string $input	A single value to be checked for special characters
+	 * @return boolean	True if contains any special characters
 	 */
 	protected function containsSpecialChars($input)
 	{
@@ -146,6 +146,9 @@ class PropelCSVParser extends PropelParser
 
 	/**
 	 * Serializes a value to place it into a CSV output
+	 *
+	 * @param  mixed $input
+	 * @return string
 	 */
 	protected function serialize($input)
 	{
@@ -273,6 +276,9 @@ class PropelCSVParser extends PropelParser
 
 	/**
 	 * Unserializes a value from CSV output
+	 *
+	 * @param  string $input
+	 * @return mixed
 	 */
 	protected function unserialize($input)
 	{

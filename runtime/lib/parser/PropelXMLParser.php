@@ -88,6 +88,15 @@ class PropelXMLParser extends PropelParser
 		return $this->listFromArray($array, $rootElementName, $charset);
 	}
 
+
+	/**
+ 	 * @param  array $array
+	 * @param  DOMElement $rootElement
+	 * @param  string $charset
+	 * @param  boolean $removeNumbersFromKeys
+	 *
+	 * @return DOMElement
+	 */
 	protected function arrayToDOM($array, $rootElement, $charset = null, $removeNumbersFromKeys = false)
 	{
 		foreach ($array as $key => $value) {
@@ -142,6 +151,10 @@ class PropelXMLParser extends PropelParser
 		return $this->toArray($data);
 	}
 
+	/**
+	 * @param  DOMNode $data
+	 * @return array
+	 */
 	protected function convertDOMElementToArray(DOMNode $data)
 	{
 		$array = array();
@@ -176,6 +189,10 @@ class PropelXMLParser extends PropelParser
 		return $array;
 	}
 
+	/**
+	 * @param  DomNode $node
+	 * @return boolean
+	 */
 	protected function hasOnlyTextNodes(DomNode $node)
 	{
 		foreach ($node->childNodes as $childNode) {
