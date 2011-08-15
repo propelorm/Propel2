@@ -218,10 +218,10 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		EssayPeer::clearInstancePool();
 
 		$query = AuthorQuery::create()
-		->useEssayRelatedByFirstAuthorQuery()
+			->useEssayRelatedByFirstAuthorQuery()
 			->orderByTitle()
-		->endUse()
-		->with('EssayRelatedByFirstAuthor');
+			->endUse()
+			->with('EssayRelatedByFirstAuthor');
 
 		$author = $query->findOne(); // should not throw a notice
 		$this->assertTrue(true);
@@ -411,8 +411,8 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 			->joinBook('book')
 			->with('book')
 			->useQuery('book')
-				->joinReview('review')
-				->with('review')
+			->joinReview('review')
+			->with('review')
 			->endUse()
 			->find($con);
 		$this->assertEquals(1, count($authors), 'with() does not duplicate the main object');
@@ -539,5 +539,43 @@ class PropelObjectFormatterWithTest extends BookstoreEmptyTestBase
 		$reviews = $book->getReviews();
 		$this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query ');
 		$this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
+	}
+
+	public function testFindOneWithLeftJoinWithOneToManyAndNullObjectsAndWithAdditionalJoins()
+	{
+		BookPeer::clearInstancePool();
+		AuthorPeer::clearInstancePool();
+		BookOpinionPeer::clearInstancePool();
+		BookReaderPeer::clearInstancePool();
+
+		$freud = new Author();
+		$freud->setFirstName("Sigmund");
+		$freud->setLastName("Freud");
+		$freud->save($this->con);
+
+		$publisher = new Publisher();
+		$publisher->setName('Psycho Books');
+		$publisher->save();
+
+		$book = new Book();
+		$book->setAuthor($freud);
+		$book->setTitle('Weirdness');
+		$book->setIsbn('abc123456');
+		$book->setPrice('14.99');
+		$book->setPublisher($publisher);
+		$book->save();
+
+		$query = BookQuery::create()
+			->filterByTitle('Weirdness')
+			->innerJoinAuthor()
+			->useBookOpinionQuery(null, Criteria::LEFT_JOIN)
+			->leftJoinBookReader()
+			->endUse()
+			->with('Author')
+			->with('BookOpinion')
+			->with('BookReader');
+
+		$books = $query->findOne($this->con);
+		$this->assertEquals(0, count($books->getBookOpinions()));
 	}
 }
