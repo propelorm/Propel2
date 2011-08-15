@@ -42,8 +42,9 @@ class MatchValidator implements BasicValidator
 	/**
 	 * Prepares the regular expression entered in the XML
 	 * for use with preg_match().
-	 * @param      string $exp
-	 * @return     string Prepared regular expession.
+	 *
+	 * @param     string $exp
+	 * @return    string Prepared regular expession.
 	 */
 	private function prepareRegexp($exp)
 	{
@@ -60,6 +61,11 @@ class MatchValidator implements BasicValidator
 
 	/**
 	 * Whether the passed string matches regular expression.
+	 *
+	 * @param     ValidatorMap  $map
+	 * @param     string        $str
+	 *
+	 * @return    boolean
 	 */
 	public function isValid (ValidatorMap $map, $str)
 	{

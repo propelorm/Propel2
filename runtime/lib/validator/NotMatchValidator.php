@@ -40,8 +40,9 @@ class NotMatchValidator implements BasicValidator
 	/**
 	 * Prepares the regular expression entered in the XML
 	 * for use with preg_match().
-	 * @param      string $exp
-	 * @return     string Prepared regular expession.
+	 *
+	 * @param      string  $exp
+	 * @return     string
 	 */
 	private function prepareRegexp($exp)
 	{
@@ -57,9 +58,14 @@ class NotMatchValidator implements BasicValidator
 	}
 
 	/**
-	 * Whether the passed string matches regular expression.
+	 * @see       BasicValidator::isValid()
+	 *
+	 * @param     ValidatorMap  $map
+	 * @param     string        $str
+	 *
+	 * @return    boolean
 	 */
-	public function isValid (ValidatorMap $map, $str)
+	public function isValid(ValidatorMap $map, $str)
 	{
 		return (preg_match($this->prepareRegexp($map->getValue()), $str) == 0);
 	}

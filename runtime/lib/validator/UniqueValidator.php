@@ -25,11 +25,15 @@
  */
 class UniqueValidator implements BasicValidator
 {
-
 	/**
-	 * @see        BasicValidator::isValid()
+	 * @see       BasicValidator::isValid()
+	 *
+	 * @param     ValidatorMap  $map
+	 * @param     string        $str
+	 *
+	 * @return    boolean
 	 */
-	public function isValid (ValidatorMap $map, $str)
+	public function isValid(ValidatorMap $map, $str)
 	{
 		$column = $map->getColumn();
 
