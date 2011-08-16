@@ -91,13 +91,22 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
-		if ($task) $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+
+		if ($task) {
+			$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+		}
+
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+
 			if ($name == $this->getMigrationTable()) {
 				continue;
 			}
-			if ($task) $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+
+			if ($task) {
+				$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+			}
+
 			$table = new Table($name);
 			$table->setIdMethod($database->getDefaultIdMethod());
 			$database->addTable($table);
@@ -105,19 +114,31 @@ class MysqlSchemaParser extends BaseSchemaParser
 		}
 
 		// Now populate only columns.
-		if ($task) $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+		if ($task) {
+			$task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+		}
+
 		foreach ($tables as $table) {
-			if ($task) $task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) {
+				$task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			}
 			$this->addColumns($table);
 		}
 
 		// Now add indices and constraints.
-		if ($task) $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+		if ($task) {
+			$task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+		}
+
 		foreach ($tables as $table) {
-			if ($task) $task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) {
+				$task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			}
+
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
+
 			if ($this->addVendorInfo) {
 				$this->addTableVendorInfo($table);
 			}
