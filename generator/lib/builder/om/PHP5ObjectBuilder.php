@@ -2341,8 +2341,27 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($table->getColumns() as $col) {
 			$cfc = $col->getPhpName();
 			$cptype = $col->getPhpType();
+
 			$script .= "
-			case $i:
+			case $i:";
+
+			if (PropelTypes::ENUM === $col->getType()) {
+				$script .= "
+				\$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+				if (isset(\$valueSet[\$value])) {
+					\$value = \$valueSet[\$value];
+				} else {
+					\$value = null;
+				}";
+			} elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+				$script .= "
+				if (!is_array(\$value)) {
+					\$v = trim(substr(\$value, 2, -2));
+					\$value = \$v ? explode(' | ', \$v) : array();
+				}";
+			}
+
+			$script .= "
 				\$this->set$cfc(\$value);
 				break;";
 			$i++;
@@ -3414,7 +3433,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			\$this->{$collName}[]= \$l;
 			\$l->set".$this->getFKPhpNameAffix($refFK, $plural = false)."(\$this);
 		}
-		
+
 		return \$this;
 	}
 ";
