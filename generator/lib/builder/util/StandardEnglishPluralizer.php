@@ -23,6 +23,11 @@ require_once dirname(__FILE__) . '/Pluralizer.php';
 class StandardEnglishPluralizer implements Pluralizer
 {
 	protected $_plural = array(
+		'(matr|vert|ind)(ix|ex)' => '\1ices',
+		'(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us' => '\1i',
+		'(buffal|tomat)o' => '\1oes',
+
+		'x'  => 'xes',
 		'ch' => 'ches',
 		'sh' => 'shes',
 		'ss' => 'sses',
@@ -39,8 +44,7 @@ class StandardEnglishPluralizer implements Pluralizer
 		'io' => 'ios',
 		'oo' => 'oos',
 		'uo' => 'uos',
-		'(buffal|tomat)o' => '\1\2oes',
-		'o' => 'os',
+		'o'  => 'os',
 
 		'us' => 'uses',
 
@@ -58,6 +62,8 @@ class StandardEnglishPluralizer implements Pluralizer
 		'foot'  => 'feet',
 		'goose' => 'geese',
 		'tooth' => 'teeth',
+		'quiz' => 'quizzes',
+		'alias' => 'aliases',
 
 		'alf'  => 'alves',
 		'elf'  => 'elves',
@@ -84,6 +90,8 @@ class StandardEnglishPluralizer implements Pluralizer
 		'mythos' => 'mythoi',
 		'testis' => 'testes',
 		'numen'  => 'numina',
+		'quiz' => 'quizzes',
+		'alias' => 'aliases',
 	);
 
 	private $_uncountable = array(
@@ -95,7 +103,9 @@ class StandardEnglishPluralizer implements Pluralizer
 		'money',
 		'rice',
 		'information',
-		'equipment'
+		'equipment',
+		'news',
+		'people',
 	);
 
 	/**
