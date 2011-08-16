@@ -30,7 +30,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	 * @var        array
 	 */
 	private static $mysqlTypeMap = array(
-		'tinyint' => PropelTypes::BOOLEAN,
+		'tinyint' => PropelTypes::TINYINT,
 		'smallint' => PropelTypes::SMALLINT,
 		'mediumint' => PropelTypes::SMALLINT,
 		'int' => PropelTypes::INTEGER,
@@ -63,7 +63,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 	protected static $defaultTypeSizes = array(
 		'char'     => 1,
-		'tinyint'  => 4,
+		'tinyint'  => 2,
 		'smallint' => 6,
 		'int'      => 11,
 		'bigint'   => 20,
@@ -207,6 +207,11 @@ class MysqlSchemaParser extends BaseSchemaParser
 			$propelType = Column::DEFAULT_TYPE;
 			$sqlType = $row['Type'];
 			$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+		}
+
+		// Special case for TINYINT(1) which is a BOOLEAN
+		if (PropelTypes::TINYINT === $propelType && 1 === $size) {
+			$propelType = PropelTypes::BOOLEAN;
 		}
 
 		$column = new Column($name);
