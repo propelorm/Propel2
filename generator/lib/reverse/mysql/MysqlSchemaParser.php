@@ -63,7 +63,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 	protected static $defaultTypeSizes = array(
 		'char'     => 1,
-		'tinyint'  => 2,
+		'tinyint'  => 4,
 		'smallint' => 6,
 		'int'      => 11,
 		'bigint'   => 20,
