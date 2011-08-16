@@ -32,6 +32,21 @@ class StandardEnglishPluralizerTest extends PHPUnit_Framework_TestCase
 			array('Wife', 'Wives'),
 			array('country', 'countries'),
 			array('Country', 'Countries'),
+			array('Video', 'Videos'),
+			array('video', 'videos'),
+			array('Photo', 'Photos'),
+			array('photo', 'photos'),
+			array('Tomato', 'Tomatoes'),
+			array('tomato', 'tomatoes'),
+			array('Buffalo', 'Buffaloes'),
+			array('buffalo', 'buffaloes'),
+			array('typo', 'typos'),
+			array('Typo', 'Typos'),
+			array('apple', 'apples'),
+			array('Man', 'Men'),
+			array('man', 'men'),
+			array('numen', 'numina'),
+			array('Numen', 'Numina'),
 		);
 	}
 

@@ -39,7 +39,10 @@ class StandardEnglishPluralizer implements Pluralizer
 		'io' => 'ios',
 		'oo' => 'oos',
 		'uo' => 'uos',
-		'o'	 => 'oes',
+		'(buffal|tomat)o' => '\1\2oes',
+		'o' => 'os',
+
+		'us' => 'uses',
 
 		'cis' => 'ces',
 		'sis' => 'ses',
@@ -66,16 +69,21 @@ class StandardEnglishPluralizer implements Pluralizer
 
 	protected $_irregular = array(
 		'leaf'   => 'leaves',
+		'loaf'   => 'loaves',
 		'move'   => 'moves',
 		'foot'   => 'feet',
 		'goose'  => 'geese',
+		'genus'  => 'genera',
 		'sex'    => 'sexes',
 		'ox'     => 'oxen',
 		'child'  => 'children',
 		'man'    => 'men',
 		'tooth'  => 'teeth',
 		'person' => 'people',
-		'wife'   => 'wives'
+		'wife'   => 'wives',
+		'mythos' => 'mythoi',
+		'testis' => 'testes',
+		'numen'  => 'numina',
 	);
 
 	private $_uncountable = array(
