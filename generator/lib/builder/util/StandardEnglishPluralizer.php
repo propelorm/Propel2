@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/Pluralizer.php';
  *
  * @link http://kuwamoto.org/2007/12/17/improved-pluralizing-in-php-actionscript-and-ror/
  * @link http://blogs.msdn.com/dmitryr/archive/2007/01/11/simple-english-noun-pluralizer-in-c.aspx
+ * @link http://api.cakephp.org/view_source/inflector/
  *
  * @author     paul.hanssen
  * @version    $Revision$
