@@ -4732,27 +4732,19 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 */
 	protected function addMagicCall(&$script)
 	{
-		$script .= "
+		$behaviorCallScript = '';
+		$this->applyBehaviorModifier('objectCall', $behaviorCallScript, "		");
+		if ($behaviorCallScript) {
+			$script .= "
 	/**
 	 * Catches calls to virtual methods
 	 */
 	public function __call(\$name, \$params)
-	{";
-		$this->applyBehaviorModifier('objectCall', $script, "		");
-		$script .= "
-		if (preg_match('/get(\w+)/', \$name, \$matches)) {
-			\$virtualColumn = \$matches[1];
-			if (\$this->hasVirtualColumn(\$virtualColumn)) {
-				return \$this->getVirtualColumn(\$virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			\$virtualColumn[0] = strtolower(\$virtualColumn[0]);
-			if (\$this->hasVirtualColumn(\$virtualColumn)) {
-				return \$this->getVirtualColumn(\$virtualColumn);
-			}
-		}
+	{
+		$behaviorCallScript
 		return parent::__call(\$name, \$params);
 	}
 ";
+		}
 	}
 } // PHP5ObjectBuilder

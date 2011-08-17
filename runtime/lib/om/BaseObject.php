@@ -368,11 +368,23 @@ abstract class BaseObject
 
 	/**
 	 * Catches calls to undefined methods.
+	 * Provides magic getter for virtual columns.
 	 * Provides magic import/export method support (fromXML()/toXML(), fromYAML()/toYAML(), etc.).
 	 * Allows to define default __call() behavior if you use a custom BaseObject
 	 */
 	public function __call($name, $params)
 	{
+		if (preg_match('/get(\w+)/', $name, $matches)) {
+			$virtualColumn = $matches[1];
+			if ($this->hasVirtualColumn($virtualColumn)) {
+				return $this->getVirtualColumn($virtualColumn);
+			}
+			// no lcfirst in php<5.3...
+			$virtualColumn[0] = strtolower($virtualColumn[0]);
+			if ($this->hasVirtualColumn($virtualColumn)) {
+				return $this->getVirtualColumn($virtualColumn);
+			}
+		}
 		if (preg_match('/^from(\w+)$/', $name, $matches)) {
 			return $this->importFrom($matches[1], reset($params));
 		}
