@@ -111,17 +111,16 @@ class GeneratorConfig implements GeneratorConfigInterface
 			throw new BuildException("Unable to find class path for '$propname' property.");
 		}
 
-		// Allows to configure full classname instead of a dot-path notation
-		if (class_exists($classpath)) {
-			return $classpath;
-		}
-
 		// This is a slight hack to workaround camel case inconsistencies for the DataSQL classes.
 		// Basically, we want to turn ?.?.?.sqliteDataSQLBuilder into ?.?.?.SqliteDataSQLBuilder
 		$lastdotpos = strrpos($classpath, '.');
-		if ($lastdotpos !== null) {
+		if ($lastdotpos !== false) {
 			$classpath{$lastdotpos+1} = strtoupper($classpath{$lastdotpos+1});
 		} else {
+			// Allows to configure full classname instead of a dot-path notation
+			if (class_exists($classpath)) {
+				return $classpath;
+			}
 			$classpath = ucfirst($classpath);
 		}
 
