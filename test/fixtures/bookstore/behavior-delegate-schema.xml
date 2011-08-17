@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.delegate">
+
+	<table name="delegate_main">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="delegate">
+			<parameter name="to" value="delegate_delegate" />
+		</behavior>
+	</table>
+
+	<table name="delegate_delegate">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+</database>
