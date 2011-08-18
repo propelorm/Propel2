@@ -23,6 +23,9 @@ class DelegateBehavior extends Behavior
 	
 	protected $delegates = array();
 
+	const ONE_TO_ONE = 1;
+	const MANY_TO_ONE = 2;
+
 	/**
 	 * Lists the delegates and checks that the behavior can use them,
 	 * And adds a fk from the delegate to the main table if not already set
@@ -41,17 +44,27 @@ class DelegateBehavior extends Behavior
 					$table->getName()
 				));
 			}
-			$this->relateDelegateToMainTable($this->getDelegateTable($delegate), $table);
-			$this->delegates []= $delegate;
+			if (in_array($delegate, $table->getForeignTableNames())) {
+				// existing many-to-one relationship
+				$type = self::MANY_TO_ONE;
+			} else {
+				// one_to_one relationship
+				$delegateTable = $this->getDelegateTable($delegate);
+				if (in_array($table->getName(), $delegateTable->getForeignTableNames())) {
+					// existing one-to-one relationship
+					// FIXME: check that it's a one-to-one relationship and not a one_to_many relationship
+				} else {
+					// no relationship yet: must be created
+					$this->relateDelegateToMainTable($this->getDelegateTable($delegate), $table);
+				}
+				$type = self::ONE_TO_ONE;
+			}
+			$this->delegates[$delegate] = $type;
 		}
 	}
 
 	protected function relateDelegateToMainTable($delegateTable, $mainTable)
 	{
-		if (in_array($mainTable->getName(), $delegateTable->getForeignTableNames())) {
-			// FIXME: check that it's a one-to-one relationship
-			return;
-		}
 		$pks = $mainTable->getPrimaryKey();
 		foreach ($pks as $column) {
 			$mainColumnName = $column->getName();
@@ -82,13 +95,20 @@ class DelegateBehavior extends Behavior
 	public function objectCall($builder)
 	{
 		$script = '';
-		foreach ($this->delegates as $delegate) {
+		foreach ($this->delegates as $delegate => $type) {
 			$delegateTable = $this->getDelegateTable($delegate);
-			foreach ($delegateTable->getForeignKeys() as $fk) {
-				if ($fk->getForeignTableName() == $this->getTable()->getName()) {
-					$ARClassName = $builder->getNewStubObjectBuilder($fk->getTable())->getClassname();
-					$relationName = $builder->getRefFKPhpNameAffix($fk, $plural = false);
-					$script .= "
+			if ($type == self::ONE_TO_ONE) {
+				$fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
+				$fk = $fks[0];
+				$ARClassName = $builder->getNewStubObjectBuilder($fk->getTable())->getClassname();
+				$relationName = $builder->getRefFKPhpNameAffix($fk, $plural = false);
+			} else {
+				$fks = $this->getTable()->getForeignKeysReferencingTable($delegate);
+				$fk = $fks[0];
+				$ARClassName = $builder->getNewStubObjectBuilder($delegateTable)->getClassname();
+				$relationName = $builder->getFKPhpNameAffix($fk);
+			}
+				$script .= "
 if (is_callable(array('$ARClassName', \$name))) {
 	if (!\$delegate = \$this->get$relationName()) {
 		\$delegate = new $ARClassName();
@@ -96,8 +116,6 @@ if (is_callable(array('$ARClassName', \$name))) {
 	}
 	return call_user_func_array(array(\$delegate, \$name), \$params);
 }";
-				}
-			}
 		}
 		return $script;
 	}

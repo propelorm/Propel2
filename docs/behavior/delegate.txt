@@ -89,6 +89,56 @@ $account = new Account();
 $account->setFakeEmail(); // delegates to Profile::setFakeEmail()
 }}}
 
+== Delegating Using a Many-To-One Relationship ==
+
+Instead of adding a one-to-one relationship, the `delegate` behavior can take advantage of an existing many-to-one relationship. For instance:
+
+{{{
+#!xml
+<table name="book">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="title" type="VARCHAR" required="true" />
+  <column name="author_id" type="INTEGER" />
+  <foreign-key foreignTable="author">
+      <reference local="author_id" foreign="id" />
+    </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="author" />
+  </behavior>
+</table>
+<table name="author">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="first_name" type="VARCHAR" />
+  <column name="last_name" type="VARCHAR" />
+</table>
+}}}
+
+In that case, the behavior doesn't modify the foreign keys, it just proxies method called on `Book` to the related `Author`, or creates one if it doesn't exist:
+
+{{{
+#!php
+<?php
+$book = new Book();
+$book->setTitle('War and Peace');
+
+// Fill the author via delegation
+$book->setFirstName('Leo');
+$book->setLastName('Tolstoi');
+// same as
+$author = new Author();
+$author->setFirstName('Leo');
+$author->setLastName('Tolstoi');
+$book->setAuthor($author);
+
+// save the book and its author
+$account->save();
+
+// retrieve delegated data directly from the main object
+echo $book->getFirstName(); // Leo
+}}}
+
+This feature is provided mainly for legacy schemas.
+
 == Delegating To Several Tables ==
 
 Contrary to class table inheritance, delegation allows to delegate to several tables. Just separate the name of the delegate tables by commas in the `to` parameter of the `delegate` behavior tag in your schema to delegate to several tables:
