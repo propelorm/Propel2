@@ -178,11 +178,32 @@ $basketballer->setThreePointsFieldGoals(7);
 $basketballer->save();
 }}}
 
-The `Player` object delegates `Basketballer` methods to its related basketballer object. If such object doesn't exist, Propel creates one that can be persisted together wit hthe main object.
+The `Player` object delegates `Basketballer` methods to its related basketballer object. If such object doesn't exist, Propel creates one that can be persisted together with the main object.
 
 This is not really class table inheritance because you manipulate `Player` objects rather than `Basketballer` objects. However, it allows an object to have several active delegates - in that case, a player who can play both soccer and basketball.
 
-The `delegate` behavior is thoroughly documented in the [wiki:Documentation/1.6/Behaviors/delegate behaviors section].
+Since the `Player` and `Basketballer` models share a one-to-one relationship, you can also do the same by using relationships:
+
+{{{
+#!php
+<?php
+// create a Basketballer
+$basketballer = new Basketballer()
+// set basketball stats
+$basketballer->setPoints(101);
+$basketballer->setFieldGoals(47);
+$basketballer->setThreePointsFieldGoals(7);
+// create a Player
+$player = new Player();
+$player->setFirstName('Michael');
+$player->setLastName('Giordano');
+// relate player and basketballer
+$basketballer->setPlayer($player);
+// save basketballer and player
+$basketballer->save();
+}}}
+
+The `delegate` behavior offers much more than just simulating Class Table Inheritance. Discover other use cases and complete reference in the [wiki:Documentation/1.6/Behaviors/delegate delegate behavior documentation].
 
 == Concrete Table Inheritance ==
 

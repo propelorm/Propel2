@@ -9,7 +9,9 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTestBase.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/util/PropelQuickBuilder.php';
+require_once dirname(__FILE__) . '/../../../../generator/lib/behavior/DelegateBehavior.php';
+require_once dirname(__FILE__) . '/../../../../runtime/lib/Propel.php';
 
 /**
  * Tests for DelegateBehavior class
@@ -18,8 +20,44 @@ require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/BookstoreTes
  * @version    $Revision$
  * @package    generator.behavior
  */
-class TimestampableBehaviorTest extends BookstoreTestBase
+class DelegateBehaviorTest extends PHPUnit_Framework_TestCase
 {
+
+	public function setUp()
+	{
+		if (!class_exists('DelegateDelegate')) {
+			$schema = <<<EOF
+<database name="delegate_behavior_test_1">
+
+	<table name="delegate_main">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="delegate">
+			<parameter name="to" value="delegate_delegate, second_delegate_delegate" />
+		</behavior>
+	</table>
+
+	<table name="delegate_delegate">
+		<column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+	<table name="second_delegate_delegate">
+		<column name="summary" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="delegate">
+			<parameter name="to" value="third_delegate_delegate" />
+		</behavior>
+	</table>
+
+	<table name="third_delegate_delegate">
+		<column name="body" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+</database>
+EOF;
+			PropelQuickBuilder::buildSchema($schema);
+		}
+	}
+
 	public function testModifyTableRelatesDelegate()
 	{
 		$delegateTable = DelegateDelegatePeer::getTableMap();
@@ -74,6 +112,16 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$main = new DelegateMain();
 		$main->setSummary('bar');
 		$main->setBody('baz');
+	}
+
+	public function testDelegatesCanBePersisted()
+	{
+		$main = new DelegateMain();
+		$main->setSubtitle('foo');
+		$main->save();
+		$this->assertFalse($main->isNew());
+		$this->assertFalse($main->getDelegateDelegate()->isNew());
+		$this->assertNull($main->getSecondDelegateDelegate());
 	}
 	
 }

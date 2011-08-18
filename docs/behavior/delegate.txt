@@ -135,6 +135,8 @@ $account->save();
 
 On the other hand, it is not possible to cascade delegation to yet another model. So even if the `profile` table delegates to another `detail` table, the methods of the `Detail` model won't be accessibe to the `Profile` objects.
 
+**Tip**: Table delegation can be used to mimic [http://martinfowler.com/eaaCatalog/classTableInheritance.html Class Table Inheritance]. See how in the [wiki:Documentation/1.6/Inheritance inheritance chapter].
+
 == Parameters ==
 
 the behavior tales only one parameter, the list of delegate tables:
@@ -151,4 +153,4 @@ the behavior tales only one parameter, the list of delegate tables:
 </table>
 }}}
 
-Note that the delegate tables must exist, but they don't need to share a relationship with the main table (in which case the behavior creates that relationship). 
+Note that the delegate tables must exist, but they don't need to share a relationship with the main table (in which case the behavior creates that relationship).
