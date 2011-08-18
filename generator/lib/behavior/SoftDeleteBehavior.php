@@ -99,6 +99,7 @@ public function unDelete(PropelPDO \$con = null)
 
 		$script .= "
 	\$this->{$this->getColumnSetter()}(time());
+	\$this->postDelete(\$con);
 	\$this->save(\$con);
 	\$con->commit();
 	{$builder->getStubPeerBuilder()->getClassname()}::removeInstanceFromPool(\$this);
