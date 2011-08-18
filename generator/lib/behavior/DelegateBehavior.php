@@ -89,7 +89,7 @@ class DelegateBehavior extends Behavior
 					$ARClassName = $builder->getNewStubObjectBuilder($fk->getTable())->getClassname();
 					$relationName = $builder->getRefFKPhpNameAffix($fk, $plural = false);
 					$script .= "
-if (method_exists('$ARClassName', \$name)) {
+if (is_callable(array('$ARClassName', \$name))) {
 	if (!\$delegate = \$this->get$relationName()) {
 		\$delegate = new $ARClassName();
 		\$this->set$relationName(\$delegate);

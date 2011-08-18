@@ -5,13 +5,23 @@
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 		<behavior name="delegate">
-			<parameter name="to" value="delegate_delegate" />
+			<parameter name="to" value="delegate_delegate, second_delegate_delegate" />
 		</behavior>
 	</table>
 
 	<table name="delegate_delegate">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+	<table name="second_delegate_delegate">
+		<column name="summary" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="delegate">
+			<parameter name="to" value="third_delegate_delegate" />
+		</behavior>
+	</table>
+
+	<table name="third_delegate_delegate">
+		<column name="body" type="VARCHAR" size="100" primaryString="true" />
 	</table>
 
 </database>

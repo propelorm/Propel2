@@ -48,5 +48,32 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 		$main->setDelegateDelegate($delegate);
 		$this->assertEquals('bar', $main->getSubtitle());
 	}
+
+	public function testAModelCanHaveSeveralDelegates()
+	{
+		$main = new DelegateMain();
+		$main->setSubtitle('foo');
+		$main->setSummary('bar');
+		$delegate = $main->getDelegateDelegate();
+		$this->assertInstanceOf('DelegateDelegate', $delegate);
+		$this->assertTrue($delegate->isNew());
+		$this->assertEquals('foo', $delegate->getSubtitle());
+		$this->assertEquals('foo', $main->getSubtitle());
+		$delegate = $main->getSecondDelegateDelegate();
+		$this->assertInstanceOf('SecondDelegateDelegate', $delegate);
+		$this->assertTrue($delegate->isNew());
+		$this->assertEquals('bar', $delegate->getSummary());
+		$this->assertEquals('bar', $main->getSummary());
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testAModelCannotHaveCascadingDelegates()
+	{
+		$main = new DelegateMain();
+		$main->setSummary('bar');
+		$main->setBody('baz');
+	}
 	
 }

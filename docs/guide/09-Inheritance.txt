@@ -2,7 +2,7 @@
 
 [[PageOutline]]
 
-Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers two types of table inheritance: [http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html Single Table Inheritance], which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields ; and [http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html Concrete Table Inheritance], which provides the most features but adds a small overhead on write queries.
+Developers often need one model table to extend another model table. Inheritance being an object-oriented notion, it doesn't have a true equivalent in the database world, so this is something an ORM must emulate. Propel offers three types of table inheritance: [http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html Single Table Inheritance], which is the most efficient implementations from a SQL and query performance perspective, but is limited to a small number of inherited fields ; [http://martinfowler.com/eaaCatalog/classTableInheritance.html Class Table Inheritance], which separates data into several tables and uses joins to fetch complete children entities, and [http://www.martinfowler.com/eaaCatalog/concreteTableInheritance.html Concrete Table Inheritance], which provides the most features but adds a small overhead on write queries.
 
 == Single Table Inheritance ==
 
@@ -122,6 +122,67 @@ If you wish to enforce using subclasses of an entity, you may declare a table "a
 }}}
 
 That way users will only be able to instanciate `Essay` or `Comic` books, but not `Book`.
+
+== Class Table Inheritance ==
+
+Class Table Inheritance uses one table per class in the inheritance structure ; each table stores only the columns it doesn't inherits from its parent.
+Propel doesn't offer class table inheritance per se, however it provides a behavior called `delegate`, which offers the same functionality.
+
+=== Schema Definition ===
+
+A sports news website displays stats about various sports player. The object oriented design therefore produces a `Player` model with an identity, and two children classes, `Footballer` and `Basketballer`, with distinct stats columns.
+
+Instead of having the children table inherit from the parent table, Propel lets you *delegate* column handling from the parent to the children tables. Here is how it looks like:
+
+{{{
+#!xml
+<table name="player">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="first_name" type="VARCHAR" size="100"/>
+  <column name="last_name" type="VARCHAR" size="100"/>
+  <behavior name="delegate">
+    <parameter name="to" value="footballer, basketballer" />
+  </behavior>
+</table>
+<table name="footballer">
+  <column name="goals_scored" type="INTEGER" />
+  <column name="fouls_committed" type="INTEGER" />
+  <column name="yellow_cards" type="INTEGER" />
+  <column name="red_cards" type="INTEGER" />
+</table>
+<table name="basketballer">
+  <column name="points" type="INTEGER" />
+  <column name="field_goals" type="INTEGER" />
+  <column name="three_points_field_goals" type="INTEGER" />
+</table>
+}}}
+
+The Player doesn't own the columns of the two other table, however it can *delegate* these columns to them. Notice how the `footballer` and `basketballer` tables don't (yet) have a primary key. Actually, the `delegate` behavior will create one for them, and relate it to the `player` primary key - this is a one-to-one relationship in Propel.
+
+=== Delegation in Practice ===
+
+Using the previous schema, here is how you create a Basketballer and add stats to him:
+
+{{{
+#!php
+<?php
+// create a new Player
+$basketballer = new Player();
+$basketballer->setFirstName('Michael');
+$basketballer->setLastName('Giordano');
+// set basketball stats
+$basketballer->setPoints(101);
+$basketballer->setFieldGoals(47);
+$basketballer->setThreePointsFieldGoals(7);
+// save player and stats
+$basketballer->save();
+}}}
+
+The `Player` object delegates `Basketballer` methods to its related basketballer object. If such object doesn't exist, Propel creates one that can be persisted together wit hthe main object.
+
+This is not really class table inheritance because you manipulate `Player` objects rather than `Basketballer` objects. However, it allows an object to have several active delegates - in that case, a player who can play both soccer and basketball.
+
+The `delegate` behavior is thoroughly documented in the [wiki:Documentation/1.6/Behaviors/delegate behaviors section].
 
 == Concrete Table Inheritance ==
 
