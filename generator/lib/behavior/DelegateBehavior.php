@@ -52,7 +52,15 @@ class DelegateBehavior extends Behavior
 				$delegateTable = $this->getDelegateTable($delegate);
 				if (in_array($table->getName(), $delegateTable->getForeignTableNames())) {
 					// existing one-to-one relationship
-					// FIXME: check that it's a one-to-one relationship and not a one_to_many relationship
+					$fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
+					$fk = $fks[0];
+					if (!$fk->isLocalPrimaryKey()) {
+						throw new InvalidArgumentException(sprintf(
+							'Delegate table "%s" has a relationship with table "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
+							$delegate,
+							$table->getName()
+						));
+					}
 				} else {
 					// no relationship yet: must be created
 					$this->relateDelegateToMainTable($this->getDelegateTable($delegate), $table);
