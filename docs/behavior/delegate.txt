@@ -131,7 +131,7 @@ $author->setLastName('Tolstoi');
 $book->setAuthor($author);
 
 // save the book and its author
-$account->save();
+$book->save();
 
 // retrieve delegated data directly from the main object
 echo $book->getFirstName(); // Leo
