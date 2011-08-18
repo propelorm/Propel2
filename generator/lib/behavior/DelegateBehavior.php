@@ -16,15 +16,15 @@
  */
 class DelegateBehavior extends Behavior
 {
+	const ONE_TO_ONE = 1;
+	const MANY_TO_ONE = 2;
+
 	// default parameters value
 	protected $parameters = array(
 		'to' => ''
 	);
 	
 	protected $delegates = array();
-
-	const ONE_TO_ONE = 1;
-	const MANY_TO_ONE = 2;
 
 	/**
 	 * Lists the delegates and checks that the behavior can use them,
