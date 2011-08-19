@@ -30,7 +30,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	 * @var        array
 	 */
 	private static $mysqlTypeMap = array(
-		'tinyint' => PropelTypes::BOOLEAN,
+		'tinyint' => PropelTypes::TINYINT,
 		'smallint' => PropelTypes::SMALLINT,
 		'mediumint' => PropelTypes::SMALLINT,
 		'int' => PropelTypes::INTEGER,
@@ -91,13 +91,22 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
-		if ($task) $task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+
+		if ($task) {
+			$task->log("Reverse Engineering Tables", Project::MSG_VERBOSE);
+		}
+
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+
 			if ($name == $this->getMigrationTable()) {
 				continue;
 			}
-			if ($task) $task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+
+			if ($task) {
+				$task->log("  Adding table '" . $name . "'", Project::MSG_VERBOSE);
+			}
+
 			$table = new Table($name);
 			$table->setIdMethod($database->getDefaultIdMethod());
 			$database->addTable($table);
@@ -105,19 +114,31 @@ class MysqlSchemaParser extends BaseSchemaParser
 		}
 
 		// Now populate only columns.
-		if ($task) $task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+		if ($task) {
+			$task->log("Reverse Engineering Columns", Project::MSG_VERBOSE);
+		}
+
 		foreach ($tables as $table) {
-			if ($task) $task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) {
+				$task->log("  Adding columns for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			}
 			$this->addColumns($table);
 		}
 
 		// Now add indices and constraints.
-		if ($task) $task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+		if ($task) {
+			$task->log("Reverse Engineering Indices And Constraints", Project::MSG_VERBOSE);
+		}
+
 		foreach ($tables as $table) {
-			if ($task) $task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			if ($task) {
+				$task->log("  Adding indices and constraints for table '" . $table->getName() . "'", Project::MSG_VERBOSE);
+			}
+
 			$this->addForeignKeys($table);
 			$this->addIndexes($table);
 			$this->addPrimaryKey($table);
+
 			if ($this->addVendorInfo) {
 				$this->addTableVendorInfo($table);
 			}
@@ -207,6 +228,11 @@ class MysqlSchemaParser extends BaseSchemaParser
 			$propelType = Column::DEFAULT_TYPE;
 			$sqlType = $row['Type'];
 			$this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+		}
+
+		// Special case for TINYINT(1) which is a BOOLEAN
+		if (PropelTypes::TINYINT === $propelType && 1 === $size) {
+			$propelType = PropelTypes::BOOLEAN;
 		}
 
 		$column = new Column($name);
