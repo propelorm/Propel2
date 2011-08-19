@@ -132,7 +132,7 @@ Propel doesn't offer class table inheritance per se, however it provides a behav
 
 A sports news website displays stats about various sports player. The object oriented design therefore produces a `Player` model with an identity, and two children classes, `Footballer` and `Basketballer`, with distinct stats columns.
 
-Instead of having the children table inherit from the parent table, Propel lets you *delegate* column handling from the child to the parent table. Here is how it looks like:
+Instead of having the children table inherit from the parent table, Propel lets you ''delegate'' column handling from the child to the parent table. Here is how it looks like:
 
 {{{
 #!xml
@@ -168,9 +168,9 @@ Instead of having the children table inherit from the parent table, Propel lets 
 </table>
 }}}
 
-The `footballer` table doesn't own the identity columns, which are in the `player` table. However, the `Footballer` class can *delegate* these columns to the `Player` class. In this case, the `delegate` behavior doesn't alter the schema, it just allows the `Footballer` and `Basketballer` classes to proxy method calls to their "parent" `Player` class.
+The `footballer` table doesn't own the identity columns, which are in the `player` table. However, the `Footballer` class can ''delegate'' these columns to the `Player` class. In this case, the `delegate` behavior doesn't alter the schema, it just allows the `Footballer` and `Basketballer` classes to proxy method calls to their "parent" `Player` class.
 
-**Tip**: Delegation can only simulate inheritance for a single level. You can create a `professional_footballer` table that delegates to `footballer`, but then the `ProfessionalFootballer` class won't have a direct access to the `Player` columns. 
+'''Tip''': Delegation only works for a single level. If you have a deep inheritance hierarchy, you will need to delegate to each ancestors in the hierarchy by simulating multiple inheritance (see below).
 
 === Delegation in Practice ===
 
@@ -203,7 +203,7 @@ The `Basketballer` object delegates `Player` methods to its related `Player` obj
 
 The same happens for `Footballer` class, which also delegates to `Player`. And since a `Basketballer` and a `Footballer` instance can delegate to the same `Player` instance, a player can play both soccer and basketball.
 
-**Tip**: Again, delegation isn't really inheritance. The `Basketballer` class doesn't inherit from `Player`, but **proxies** method calls to `Player`. And since Propel uses `__call()` magic to achieve this proxying, an IDE won't see the `Player` methods accessible to a `Basketballer` instance.
+'''Tip''': Again, delegation isn't really inheritance. The `Basketballer` class doesn't inherit from `Player`, but ''proxies'' method calls to `Player`. And since Propel uses `__call()` magic to achieve this proxying, an IDE won't see the `Player` methods accessible to a `Basketballer` instance.
 
 === Multiple Inheritance ===
 
@@ -259,6 +259,47 @@ $footballer->save();
 // retrieve delegated data directly from the main object
 echo $footballer->getFirstName(); // Michael
 }}}
+
+Multiple delegation also allows to implement a deep inheritance hirerarchy. For instance, if your object model contains a `ProBasketballer` inheriting from `Basketballer` inheriting from `Player`, the  `ProBasketballer` should delegate to both `Basketballer` and `Player`; delegating to `Basketballer` only isn't enough.
+
+{{{
+#!xml
+<table name="player">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="first_name" type="VARCHAR" size="100"/>
+  <column name="last_name" type="VARCHAR" size="100"/>
+</table>
+<table name="basketballer">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="points" type="INTEGER" />
+  <column name="field_goals" type="INTEGER" />
+  <column name="three_points_field_goals" type="INTEGER" />
+  <column name="player_id" type="INTEGER" />
+  <foreign-key foreignTable="player">
+    <reference local="player_id" foreign="id" />
+  </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="player" />
+  </behavior>
+</table>
+<table name="pro_basketballer">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="salary" type="INTEGER" />
+  <column name="basketballer_id" type="INTEGER" />
+  <foreign-key foreignTable="basketballer">
+    <reference local="basketballer_id" foreign="id" />
+  </foreign-key>
+  <column name="player_id" type="INTEGER" />
+  <foreign-key foreignTable="player">
+    <reference local="player_id" foreign="id" />
+  </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="basketballer, player" />
+  </behavior>
+</table>
+}}}
+
+That way, you can call `setPoints()` as well as `setFirstName()` directly on `ProBasketballer`.
 
 The `delegate` behavior offers much more than just simulating Class Table Inheritance. Discover other use cases and complete reference in the [wiki:Documentation/1.6/Behaviors/delegate delegate behavior documentation].
 
