@@ -57,6 +57,47 @@ class DelegateBehaviorTest extends PHPUnit_Framework_TestCase
 		<column name="body" type="VARCHAR" size="100" primaryString="true" />
 	</table>
 
+	<table name="delegate_player">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="first_name" type="VARCHAR" size="100" primaryString="true" />
+		<column name="last_name" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+	<table name="delegate_basketballer">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="points" type="INTEGER" />
+		<column name="field_goals" type="INTEGER" />
+		<column name="player_id" type="INTEGER" />
+		<foreign-key foreignTable="delegate_player">
+			<reference local="player_id" foreign="id" />
+		</foreign-key>
+		<behavior name="delegate">
+			<parameter name="to" value="delegate_player" />
+		</behavior>
+	</table>
+
+	<table name="delegate_team">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="name" type="VARCHAR" size="100" primaryString="true" />
+	</table>
+
+	<table name="delegate_footballer">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="goals_scored" type="INTEGER" />
+		<column name="fouls_committed" type="INTEGER" />
+		<column name="player_id" type="INTEGER" />
+		<foreign-key foreignTable="delegate_player">
+			<reference local="player_id" foreign="id" />
+		</foreign-key>
+		<column name="team_id" type="INTEGER" />
+		<foreign-key foreignTable="delegate_team">
+			<reference local="team_id" foreign="id" />
+		</foreign-key>
+		<behavior name="delegate">
+			<parameter name="to" value="delegate_player, delegate_team" />
+		</behavior>
+	</table>
+
 </database>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
@@ -157,6 +198,39 @@ EOF;
 		$this->assertFalse($main->isNew());
 		$this->assertFalse($main->getSecondDelegateDelegate()->isNew());
 		$this->assertNull($main->getDelegateDelegate());
+	}
+
+	public function testDelegateSimulatesClassTableInheritance()
+	{
+		$basketballer = new DelegateBasketballer();
+		$basketballer->setPoints(101);
+		$basketballer->setFieldGoals(47);
+		$this->assertNull($basketballer->getDelegatePlayer());
+		$basketballer->setFirstName('Michael');
+		$basketballer->setLastName('Giordano');
+		$this->assertNotNull($basketballer->getDelegatePlayer());
+		$this->assertEquals('Michael', $basketballer->getDelegatePlayer()->getFirstName());
+		$this->assertEquals('Michael', $basketballer->getFirstName());
+		$basketballer->save(); // should not throw exception
+	}
+
+	public function testDelegateSimulatesMultipleClassTableInheritance()
+	{
+		$footballer = new DelegateFootballer();
+		$footballer->setGoalsScored(43);
+		$footballer->setFoulsCommitted(4);
+		$this->assertNull($footballer->getDelegatePlayer());
+		$this->assertNull($footballer->getDelegateTeam());
+		$footballer->setFirstName('Michael');
+		$footballer->setLastName('Giordano');
+		$this->assertNotNull($footballer->getDelegatePlayer());
+		$this->assertEquals('Michael', $footballer->getDelegatePlayer()->getFirstName());
+		$this->assertEquals('Michael', $footballer->getFirstName());
+		$footballer->setName('Saint Etienne');
+		$this->assertNotNull($footballer->getDelegateTeam());
+		$this->assertEquals('Saint Etienne', $footballer->getDelegateTeam()->getName());
+		$this->assertEquals('Saint Etienne', $footballer->getName());
+		$footballer->save(); // should not throw exception
 	}
 	
 }

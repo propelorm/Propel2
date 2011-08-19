@@ -132,7 +132,7 @@ Propel doesn't offer class table inheritance per se, however it provides a behav
 
 A sports news website displays stats about various sports player. The object oriented design therefore produces a `Player` model with an identity, and two children classes, `Footballer` and `Basketballer`, with distinct stats columns.
 
-Instead of having the children table inherit from the parent table, Propel lets you *delegate* column handling from the parent to the children tables. Here is how it looks like:
+Instead of having the children table inherit from the parent table, Propel lets you *delegate* column handling from the child to the parent table. Here is how it looks like:
 
 {{{
 #!xml
@@ -140,67 +140,124 @@ Instead of having the children table inherit from the parent table, Propel lets 
   <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
   <column name="first_name" type="VARCHAR" size="100"/>
   <column name="last_name" type="VARCHAR" size="100"/>
-  <behavior name="delegate">
-    <parameter name="to" value="footballer, basketballer" />
-  </behavior>
 </table>
 <table name="footballer">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="goals_scored" type="INTEGER" />
   <column name="fouls_committed" type="INTEGER" />
-  <column name="yellow_cards" type="INTEGER" />
-  <column name="red_cards" type="INTEGER" />
+  <column name="player_id" type="INTEGER" />
+  <foreign-key foreignTable="player">
+    <reference local="player_id" foreign="id" />
+  </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="player" />
+  </behavior>
 </table>
 <table name="basketballer">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
   <column name="points" type="INTEGER" />
   <column name="field_goals" type="INTEGER" />
   <column name="three_points_field_goals" type="INTEGER" />
+  <column name="player_id" type="INTEGER" />
+  <foreign-key foreignTable="player">
+    <reference local="player_id" foreign="id" />
+  </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="player" />
+  </behavior>
 </table>
 }}}
 
-The Player doesn't own the columns of the two other table, however it can *delegate* these columns to them. Notice how the `footballer` and `basketballer` tables don't (yet) have a primary key. Actually, the `delegate` behavior will create one for them, and relate it to the `player` primary key - this is a one-to-one relationship in Propel.
+The `footballer` table doesn't own the identity columns, which are in the `player` table. However, the `Footballer` class can *delegate* these columns to the `Player` class. In this case, the `delegate` behavior doesn't alter the schema, it just allows the `Footballer` and `Basketballer` classes to proxy method calls to their "parent" `Player` class.
+
+**Tip**: Delegation can only simulate inheritance for a single level. You can create a `professional_footballer` table that delegates to `footballer`, but then the `ProfessionalFootballer` class won't have a direct access to the `Player` columns. 
 
 === Delegation in Practice ===
 
-Using the previous schema, here is how you create a Basketballer and add stats to him:
+Using the previous schema, here is how you create a `Basketballer` and set his stats and identity:
 
 {{{
 #!php
 <?php
-// create a new Player
-$basketballer = new Player();
+basketballer = new Basketballer();
+$basketballer->setPoints(101);
+$basketballer->setFieldGoals(47);
+$basketballer->setThreePointsFieldGoals(7);
+// set player identity via delegation
 $basketballer->setFirstName('Michael');
 $basketballer->setLastName('Giordano');
-// set basketball stats
-$basketballer->setPoints(101);
-$basketballer->setFieldGoals(47);
-$basketballer->setThreePointsFieldGoals(7);
-// save player and stats
-$basketballer->save();
-}}}
-
-The `Player` object delegates `Basketballer` methods to its related basketballer object. If such object doesn't exist, Propel creates one that can be persisted together with the main object.
-
-This is not really class table inheritance because you manipulate `Player` objects rather than `Basketballer` objects. However, it allows an object to have several active delegates - in that case, a player who can play both soccer and basketball.
-
-Since the `Player` and `Basketballer` models share a one-to-one relationship, you can also do the same by using relationships:
-
-{{{
-#!php
-<?php
-// create a Basketballer
-$basketballer = new Basketballer()
-// set basketball stats
-$basketballer->setPoints(101);
-$basketballer->setFieldGoals(47);
-$basketballer->setThreePointsFieldGoals(7);
-// create a Player
+// same as
 $player = new Player();
 $player->setFirstName('Michael');
 $player->setLastName('Giordano');
-// relate player and basketballer
 $basketballer->setPlayer($player);
+
 // save basketballer and player
 $basketballer->save();
+
+// retrieve delegated data directly from the main object
+echo $basketballer->getFirstName(); // Michael
+}}}
+
+The `Basketballer` object delegates `Player` methods to its related `Player` object. If no `Player` object exists, the `delegate` behavior creates one and relates it to the current `basketballer`, so that both objects can be persisted together.
+
+The same happens for `Footballer` class, which also delegates to `Player`. And since a `Basketballer` and a `Footballer` instance can delegate to the same `Player` instance, a player can play both soccer and basketball.
+
+**Tip**: Again, delegation isn't really inheritance. The `Basketballer` class doesn't inherit from `Player`, but **proxies** method calls to `Player`. And since Propel uses `__call()` magic to achieve this proxying, an IDE won't see the `Player` methods accessible to a `Basketballer` instance.
+
+=== Multiple Inheritance ===
+
+The `delegate` behavior allows to delegate to more than one class, effectively simulating multiple inheritance. Here is an example:
+
+{{{
+#!xml
+<table name="person">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="first_name" type="VARCHAR" size="100"/>
+  <column name="last_name" type="VARCHAR" size="100"/>
+</table>
+<table name="team">
+  <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="100"/>
+</table>
+<table name="footballer">
+  <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+  <column name="goals_scored" type="INTEGER" />
+  <column name="fouls_committed" type="INTEGER" />
+  <column name="person_id" type="INTEGER" />
+  <foreign-key foreignTable="person">
+    <reference local="person_id" foreign="id" />
+  </foreign-key>
+  <column name="team_id" type="INTEGER" />
+  <foreign-key foreignTable="team">
+    <reference local="team_id" foreign="id" />
+  </foreign-key>
+  <behavior name="delegate">
+    <parameter name="to" value="person, team" />
+  </behavior>
+</table>
+}}}
+
+Now you can access the `Person` and `Team` properties directly from the `Footballer` class:
+
+{{{
+#!php
+<?php
+$footballer = new Footballer();
+$footballer->setGoalsScored(43);
+$footballer->setFoulsCommitted(4);
+$footballer->setThreePointsFieldGoals(7);
+// set player identity via delegation
+$footballer->setFirstName('Michael');
+$footballer->setLastName('Platino');
+// set team name via delegation
+$footballer->setName('Saint Etienne');
+
+// save footballer and player and team
+$footballer->save();
+
+// retrieve delegated data directly from the main object
+echo $footballer->getFirstName(); // Michael
 }}}
 
 The `delegate` behavior offers much more than just simulating Class Table Inheritance. Discover other use cases and complete reference in the [wiki:Documentation/1.6/Behaviors/delegate delegate behavior documentation].
