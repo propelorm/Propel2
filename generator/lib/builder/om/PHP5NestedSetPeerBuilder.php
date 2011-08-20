@@ -960,7 +960,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 			\$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		\$sql = \"SELECT COUNT(*) AS level FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < :left AND \" . self::RIGHT_COL . \" > :right\";
+		\$sql = \"SELECT COUNT(*) AS lvl FROM \" . self::TABLE_NAME . \" WHERE \" . self::LEFT_COL . \" < :left AND \" . self::RIGHT_COL . \" > :right\";
 
 		if (self::SCOPE_COL) {
 			\$sql .= ' AND ' . self::SCOPE_COL . ' = :scope';
@@ -974,7 +974,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 		}
 		\$stmt->execute();
 		\$row = \$stmt->fetch();
-		return \$row['level'];
+		return \$row['lvl'];
 	}
 ";
 	}
