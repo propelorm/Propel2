@@ -36,15 +36,15 @@ class ArchivableBehaviorObjectBuilderModifier
 	{
 		$this->builder = $builder;
 		$script = '';
-		$script .= $this->addObjectArchive($builder);
-		$script .= $this->addObjectPopulateFromArchive($builder);
+		$script .= $this->addArchive($builder);
+		$script .= $this->addPopulateFromArchive($builder);
 		return $script;
 	}
 
 	/**
 	 * @return string the PHP code to be added to the builder
 	 */
-	public function addObjectArchive($builder)
+	public function addArchive($builder)
 	{
 		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
 		$archiveTableQueryName = $this->behavior->getArchiveTableQueryName($builder);
@@ -85,7 +85,7 @@ public function archive(PropelPDO \$con = null)
 	 *
 	 * @return string the PHP code to be added to the builder
 	 */
-	public function addObjectPopulateFromArchive($builder)
+	public function addPopulateFromArchive($builder)
 	{
 		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
 		$usesAutoIncrement = $this->table->hasAutoIncrementPrimaryKey();

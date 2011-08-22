@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/ArchivableBehaviorObjectBuilderModifier.php';
+require_once dirname(__FILE__) . '/ArchivableBehaviorQueryBuilderModifier.php';
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -31,7 +32,8 @@ class ArchivableBehavior extends Behavior
 	);
 
 	protected $archiveTable,
-		$objectBuilderModifier;
+		$objectBuilderModifier,
+		$queryBuilderModifier;
 
 	public function modifyTable()
 	{
@@ -139,6 +141,14 @@ class ArchivableBehavior extends Behavior
 			$this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
 		}
 		return $this->objectBuilderModifier;
+	}
+
+	public function getQueryBuilderModifier()
+	{
+		if (is_null($this->queryBuilderModifier)) {
+			$this->queryBuilderModifier = new ArchivableBehaviorQueryBuilderModifier($this);
+		}
+		return $this->queryBuilderModifier;
 	}
 
 

@@ -824,6 +824,21 @@ class ModelCriteria extends Criteria
 		return $this->with;
 	}
 
+	/**
+	 * Sets the array of ModelWith specifying which objects must be hydrated
+	 * together with the main object.
+	 *
+	 * @param    array
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function setWith($with)
+	{
+		$this->with = $with;
+		
+		return $this;
+	}
+
 	public function isWithOneToMany()
 	{
 		return $this->isWithOneToMany;
