@@ -24,6 +24,37 @@ class ArchivableBehaviorQueryBuilderModifier
 		$this->table = $behavior->getTable();
 	}
 
+	protected function getParameter($key)
+	{
+		return $this->behavior->getParameter($key);
+	}
+
+	public function queryAttributes($builder)
+	{
+		return "
+protected \$archiveOnDelete = " . ($this->getParameter('archive_on_delete') == 'true' ? 'true' : 'false'). ";
+protected \$archiveOnUpdate = " . ($this->getParameter('archive_on_update') == 'true' ? 'true' : 'false'). ";
+";
+	}
+
+	public function preDeleteQuery($builder)
+	{
+		return "
+if (\$this->archiveOnDelete) {
+	\$this->archive(\$con);
+}
+";
+	}
+
+	public function postUpdateQuery($builder)
+	{
+		return "
+if (\$this->archiveOnUpdate) {
+	\$this->archive(\$con);
+}
+";
+	}
+
 	/**
 	 * @return string the PHP code to be added to the builder
 	 */
@@ -31,6 +62,10 @@ class ArchivableBehaviorQueryBuilderModifier
 	{
 		$script = '';
 		$script .= $this->addArchive($builder);
+		$script .= $this->addDeleteAndArchive($builder);
+		$script .= $this->addDeleteWithoutArchive($builder);
+		$script .= $this->addUpdateAndArchive($builder);
+		$script .= $this->addUpdateWithoutArchive($builder);
 		return $script;
 	}
 
@@ -71,6 +106,118 @@ public function archive(\$con = null, \$useLittleMemory = true)
 	}
 	
 	return \$totalArchivedObjects;
+}
+";
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addDeleteAndArchive($builder)
+	{
+		return "
+/**
+ * Archive and delete records mathing the current query.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteAndArchive(\$con = null)
+{
+	\$this->archiveOnDelete = true;
+
+	return \$this->delete(\$con);
+}
+
+/**
+ * Archive and delete all records.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteAllAndArchive(\$con = null)
+{
+	\$this->archiveOnDelete = true;
+
+	return \$this->deleteAll(\$con);
+}
+";
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addDeleteWithoutArchive($builder)
+	{
+		return "
+/**
+ * Delete records matching the current query without archiving them.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteWithoutArchive(\$con = null)
+{
+	\$this->archiveOnDelete = false;
+
+	return \$this->delete(\$con);
+}
+
+/**
+ * Delete all records without archiving them.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteAllWithoutArchive(\$con = null)
+{
+	\$this->archiveOnDelete = false;
+
+	return \$this->deleteAll(\$con);
+}
+";
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addUpdateAndArchive($builder)
+	{
+		return "
+/**
+ * Update and archive records mathing the current query.
+ *
+ * @param      array \$values Associative array of keys and values to replace
+ * @param      PropelPDO \$con an optional connection object
+ * @param      boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+ *
+ * @return integer the number of deleted rows
+ */
+public function updateAndArchive(\$values, \$con = null, \$forceIndividualSaves = false)
+{
+	\$this->archiveOnUpdate = true;
+
+	return \$this->update(\$values, \$con, \$forceIndividualSaves);
+}
+";
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addUpdateWithoutArchive($builder)
+	{
+		return "
+/**
+ * Delete records matching the current query without archiving them.
+ *
+ * @param      array \$values Associative array of keys and values to replace
+ * @param      PropelPDO \$con an optional connection object
+ * @param      boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+ *
+ * @return integer the number of deleted rows
+ */
+public function updateWithoutArchive(\$values, \$con = null, \$forceIndividualSaves = false)
+{
+	\$this->archiveOnUpdate = false;
+
+	return \$this->update(\$values, \$con, \$forceIndividualSaves);
 }
 ";
 	}

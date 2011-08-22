@@ -240,7 +240,7 @@ EOF;
 	public function testPopulateFromArchive()
 	{
 		ArchivableTest10ArchiveQuery::create()->deleteAll();
-		ArchivableTest10Query::create()->deleteAll();
+		ArchivableTest10Query::create()->deleteAllWithoutArchive();
 		$archive = new ArchivableTest10Archive();
 		$archive->setId(123); // not autoincremented
 		$archive->setTitle('foo');
