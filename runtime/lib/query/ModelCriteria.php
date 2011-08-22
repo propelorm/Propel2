@@ -1691,7 +1691,7 @@ class ModelCriteria extends Criteria
 		} else {
 
 			// update rows in a single query
-			$set = new Criteria();
+			$set = new Criteria($this->getDbName());
 			foreach ($values as $columnName => $value) {
 				$realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
 				$set->add($realColumnName, $value);
