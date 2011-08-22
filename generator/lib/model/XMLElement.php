@@ -126,7 +126,7 @@ abstract class XMLElement
 			return $this->vendorInfos[$type];
 		} else {
 			// return an empty object
-			return new VendorInfo();
+			return new VendorInfo($type);
 		}
 	}
 
