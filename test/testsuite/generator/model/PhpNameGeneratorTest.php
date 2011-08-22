@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/PhpNameGenera
  */
 class PhpNameGeneratorTest extends PHPUnit_Framework_TestCase
 {
-	public static function testPhpnameMethodDataProvider()
+	public static function phpnameMethodDataProvider()
 	{
 		return array(
 			array('foo', 'Foo'),
@@ -35,7 +35,7 @@ class PhpNameGeneratorTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider testPhpnameMethodDataProvider
+	 * @dataProvider phpnameMethodDataProvider
 	 */
 	public function testPhpnameMethod($input, $output)
 	{
@@ -43,7 +43,7 @@ class PhpNameGeneratorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($output, $generator->phpnameMethod($input));
 	}
 
-	public static function testUnderscoreMethodDataProvider()
+	public static function underscoreMethodDataProvider()
 	{
 		return array(
 			array('foo', 'Foo'),
@@ -58,7 +58,7 @@ class PhpNameGeneratorTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider testUnderscoreMethodDataProvider
+	 * @dataProvider underscoreMethodDataProvider
 	 */
 	public function testUnderscoreMethod($input, $output)
 	{
@@ -75,7 +75,7 @@ class TestablePhpNameGenerator extends PhpNameGenerator
 		return parent::phpnameMethod($schemaName);
 	}
 
-	public function underscoreMethod($schemaName='')
+	public function underscoreMethod($schemaName)
 	{
 		return parent::underscoreMethod($schemaName);
 	}
