@@ -157,6 +157,13 @@ EOF;
 		$this->assertEquals('foo', $b->getTitle());
 	}
 
+	public function testActiveRecordArchiveReturnsCurrentObject()
+	{
+		$a = new ArchivableTest1();
+		$ret = $a->archive();
+		$this->assertSame($ret, $a);
+	}
+
 	public function testActiveRecordInsertDoesNotCreateArchiveByDefault()
 	{
 		$a = new ArchivableTest1();
@@ -239,6 +246,38 @@ EOF;
 		MyOldArchivableTest3Query::create()->deleteAll();
 		$a->delete();
 		$this->assertEquals(0, MyOldArchivableTest3Query::create()->count());
+	}
+
+	public function testActiveRecordHasPopulateFromArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest1', 'populateFromArchive'));
+	}
+
+	public function testActiveRecordPopulateFromArchiveReturnsCurrentObject()
+	{
+		$archive = new ArchivableTest1Archive();
+		$a = new ArchivableTest1();
+		$ret = $a->populateFromArchive($archive);
+		$this->assertSame($ret, $a);
+	}
+
+	public function testActiveRecordPopulateFromArchive()
+	{
+		ArchivableTest1ArchiveQuery::create()->deleteAll();
+		ArchivableTest1Query::create()->deleteAll();
+		$archive = new ArchivableTest1Archive();
+		$archive->setId(123); // not autoincremented
+		$archive->setTitle('foo');
+		$archive->setAge(12);
+		$archive->save();
+		$a = new ArchivableTest1();
+		$a->populateFromArchive($archive);
+		$this->assertNotEquals(123, $a->getId());
+		$this->assertEquals('foo', $a->getTitle());
+		$this->assertEquals(12, $a->getAge());
+		$b = new ArchivableTest1();
+		$b->populateFromArchive($archive, true);
+		$this->assertEquals(123, $b->getId());
 	}
 
 }

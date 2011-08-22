@@ -123,6 +123,7 @@ class ArchivableBehavior extends Behavior
 		$this->builder = $builder;
 		$script = '';
 		$script .= $this->addObjectArchive($builder);
+		$script .= $this->addObjectPopulateFromArchive($builder);
 		return $script;
 	}
 
@@ -155,6 +156,62 @@ public function archive(PropelPDO \$con = null)
 		}
 		$script .= "
 	\$archive->save(\$con);
+
+	return \$this;
+}
+";
+		return $script;
+	}
+
+	/**
+	 * Generates a method to populate the current AR object based on an archive object.
+	 * This method is necessary because the archive's copyInto() may include the archived_at column
+	 * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
+	 *
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addObjectPopulateFromArchive($builder)
+	{
+		$archiveTablePhpName = $builder->getNewStubObjectBuilder($this->getArchiveTable())->getClassname();
+		$usesAutoIncrement = $this->getTable()->hasAutoIncrementPrimaryKey();
+		$script = "
+/**
+ * Populates the the current object based on an archive from the '" . $this->getArchiveTable()->getName() . "' table.
+ *
+ * @param      " . $archiveTablePhpName . " \$archive An archived object based on the same class";
+ 		if ($usesAutoIncrement) {
+ 			$script .= "
+ * @param      Boolean \$populateAutoIncrementPrimaryKeys 
+ *               If true, autoincrement columns are copied from the archive object.
+ *               If false, autoincrement columns are left intact.";
+ 		}
+ 		$script .= "
+ *
+ * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
+ */
+public function populateFromArchive(\$archive" . ($usesAutoIncrement ? ", \$populateAutoIncrementPrimaryKeys = false" : '') . ")
+{";
+		if ($usesAutoIncrement) {
+			$script .= "
+	if (\$populateAutoIncrementPrimaryKeys) {";
+			foreach ($this->getTable()->getColumns() as $col) {
+				$snippet = "";
+				if ($col->isAutoIncrement()) {
+					$script .= "
+		\$this->set" . $col->getPhpName() . "(\$archive->get" . $col->getPhpName() . "());";
+				}
+			}
+			$script .= "
+	}";
+		}
+		foreach ($this->getTable()->getColumns() as $col) {
+			if ($col->isAutoIncrement()) {
+				continue;
+			}
+			$script .= "
+	\$this->set" . $col->getPhpName() . "(\$archive->get" . $col->getPhpName() . "());";
+		}
+		$script .= "
 
 	return \$this;
 }
