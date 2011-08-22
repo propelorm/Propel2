@@ -21,6 +21,7 @@ class ArchivableBehavior extends Behavior
 	// default parameters value
 	protected $parameters = array(
 		'archive_table'       => '',
+		'archive_class'       => '',
 		'log_archived_at'     => 'true',
 		'archived_at_column'  => 'archived_at',
 		'archive_on_insert'   => 'false',
@@ -32,18 +33,23 @@ class ArchivableBehavior extends Behavior
 
 	public function modifyTable()
 	{
-		$this->addArchiveTable();
+		if ($this->getParameter('archive_class') && $this->getParameter('archive_table')) {
+			throw new InvalidArgumentException('Please set only one of the two parameters "archive_class" and "archive_table".');
+		}
+		if (!$this->getParameter('archive_class')) {
+			$this->addArchiveTable();
+		}
 	}
 
 	protected function addArchiveTable()
 	{
 		$table = $this->getTable();
 		$database = $table->getDatabase();
-		$archiveTableName = $this->getArchiveTableName();
+		$archiveTableName = $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getName() . '_archive');;
 		if (!$database->hasTable($archiveTableName)) {
 			// create the version table
 			$archiveTable = $database->addTable(array(
-				'name'      => $this->getArchiveTableName(),
+				'name'      => $archiveTableName,
 				'package'   => $table->getPackage(),
 				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
@@ -90,19 +96,29 @@ class ArchivableBehavior extends Behavior
 	}
 
 	/**
-	 * @return string
-	 */
-	public function getArchiveTableName()
-	{
-		return $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getName() . '_archive');
-	}
-
-	/**
 	 * @return Table
 	 */
 	public function getArchiveTable()
 	{
 		return $this->archiveTable;
+	}
+
+	public function getArchiveTablePhpName($builder)
+	{
+		if ($this->getParameter('archive_class') == '') {
+			return $builder->getNewStubObjectBuilder($this->getArchiveTable())->getClassname();
+		} else {
+			return $this->getParameter('archive_class');
+		}
+	}
+
+	public function getArchiveTableQueryName($builder)
+	{
+		if ($this->getParameter('archive_class') == '') {
+			return $builder->getNewStubQueryBuilder($this->getArchiveTable())->getClassname();
+		} else {
+			return $this->getParameter('archive_class') . 'Query';
+		}
 	}
 
 	/**
@@ -132,11 +148,12 @@ class ArchivableBehavior extends Behavior
 	 */
 	public function addObjectArchive($builder)
 	{
-		$archiveTablePhpName = $builder->getNewStubObjectBuilder($this->getArchiveTable())->getClassname();
-		$archiveTableQueryName = $builder->getNewStubQueryBuilder($this->getArchiveTable())->getClassname();
+		$archiveTablePhpName = $this->getArchiveTablePhpName($builder);
+		$archiveTableQueryName = $this->getArchiveTableQueryName($builder);
 		$script = "
 /**
- * Save a copy of the current object in the '" . $this->getArchiveTable()->getName() . "' archive table.
+ * Copy the data of the current object into a $archiveTablePhpName archive object.
+ * The archived object is then saved.
  * If the current object has already been archived, the archived object
  * is updated and not duplicated.
  *
@@ -172,11 +189,11 @@ public function archive(PropelPDO \$con = null)
 	 */
 	public function addObjectPopulateFromArchive($builder)
 	{
-		$archiveTablePhpName = $builder->getNewStubObjectBuilder($this->getArchiveTable())->getClassname();
+		$archiveTablePhpName = $this->getArchiveTablePhpName($builder);
 		$usesAutoIncrement = $this->getTable()->hasAutoIncrementPrimaryKey();
 		$script = "
 /**
- * Populates the the current object based on an archive from the '" . $this->getArchiveTable()->getName() . "' table.
+ * Populates the the current object based on a $archiveTablePhpName archive object.
  *
  * @param      " . $archiveTablePhpName . " \$archive An archived object based on the same class";
  		if ($usesAutoIncrement) {

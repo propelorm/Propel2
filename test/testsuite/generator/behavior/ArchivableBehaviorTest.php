@@ -48,6 +48,12 @@ class ArchivableBehaviorTest extends PHPUnit_Framework_TestCase
 	<table name="archivable_test_2">
 		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="archivable" />
+	</table>
+
+	<table name="archivable_test_2_archive">
+		<column name="id" required="true" primaryKey="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 	</table>
 
 	<table name="archivable_test_3">
@@ -61,6 +67,15 @@ class ArchivableBehaviorTest extends PHPUnit_Framework_TestCase
 			<parameter name="archive_on_insert" value="true" />
 			<parameter name="archive_on_update" value="true" />
 			<parameter name="archive_on_delete" value="false" />
+		</behavior>
+	</table>
+
+	<table name="archivable_test_4">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<column name="age" type="INTEGER" />
+		<behavior name="archivable">
+			<parameter name="archive_class" value="FooArchive" />
 		</behavior>
 	</table>
 
@@ -79,10 +94,22 @@ EOF;
 		$this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_1_archive'));
 	}
 
+	public function testModifyTableDoesNotCreateCustomArchiveTableIfExists()
+	{
+		$table = ArchivableTest2Peer::getTableMap();
+		$this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_2_archive'));
+	}
+
 	public function testModifyTableCanCreateCustomArchiveTableName()
 	{
 		$table = ArchivableTest3Peer::getTableMap();
 		$this->assertTrue($table->getDatabaseMap()->hasTable('my_old_archivable_test_3'));
+	}
+
+	public function testModifyTableDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
+	{
+		$table = ArchivableTest4Peer::getTableMap();
+		$this->assertFalse($table->getDatabaseMap()->hasTable('archivable_test_4_archive'));
 	}
 
 	public function testModifyTableCopiesColumnsToArchiveTable()
@@ -155,6 +182,19 @@ EOF;
 		$a->archive();
 		$this->assertEquals(1, ArchivableTest1ArchiveQuery::create()->count());
 		$this->assertEquals('foo', $b->getTitle());
+	}
+
+	public function testActiveRecordArchiveUsesArchiveClassIfSpecified()
+	{
+		$a = new ArchivableTest4();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$a->archive();
+		$archive = FooArchiveCollection::getArchiveSingleton();
+		$this->assertEquals($a->getId(), $archive->id);
+		$this->assertEquals('foo', $archive->title);
+		$this->assertEquals(12, $archive->age);
 	}
 
 	public function testActiveRecordArchiveReturnsCurrentObject()
@@ -280,4 +320,66 @@ EOF;
 		$this->assertEquals(123, $b->getId());
 	}
 
+}
+
+
+class FooArchiveQuery
+{
+	protected $pk;
+
+	public static function create()
+	{
+		return new self();
+	}
+
+	public function filterByPrimaryKey($pk)
+	{
+		$this->pk = $pk;
+		return $this;
+	}
+
+	public function findOneOrCreate()
+	{
+		$archive = FooArchiveCollection::getArchiveSingleton();
+		$archive->setId($this->pk);
+		return $archive;
+	}
+}
+
+class FooArchive
+{
+	public $id, $title, $age;
+
+	public function setId($value)
+	{
+		$this->id = $value;
+	}
+
+	public function setTitle($value)
+	{
+		$this->title = $value;
+	}
+
+	public function setAge($value)
+	{
+		$this->age = $value;
+	}
+
+	public function save()
+	{
+		return $this;
+	}
+}
+
+class FooArchiveCollection
+{
+	protected static $instance;
+
+	public static function getArchiveSingleton()
+	{
+		if (null === self::$instance) {
+			self::$instance = new FooArchive();
+		}
+		return self::$instance;
+	}
 }
