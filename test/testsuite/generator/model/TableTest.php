@@ -360,7 +360,7 @@ EOF;
 		$table->appendXml($doc);
 
 		$xmlstr = trim($doc->saveXML());
-		$this->assertEquals($schema, $xmlstr);
+		$this->assertSame($schema, $xmlstr);
 	}
 
 	public function testAppendXmlNamespace() {
@@ -377,7 +377,7 @@ EOF;
 		$table->appendXml($doc);
 
 		$xmlstr = trim($doc->saveXML());
-		$this->assertEquals($schema, $xmlstr);
+		$this->assertSame($schema, $xmlstr);
 
 		$schema = <<<EOF
 <?xml version="1.0"?>
@@ -390,7 +390,7 @@ EOF;
 		$table->appendXml($doc);
 
 		$xmlstr = trim($doc->saveXML());
-		$this->assertEquals($schema, $xmlstr);
+		$this->assertSame($schema, $xmlstr);
 	}
 
 	public function testAppendXmlNamespaceWithAutoPackage() {
@@ -417,7 +417,7 @@ EOF;
 		$table->appendXml($doc);
 
 		$xmlstr = trim($doc->saveXML());
-		$this->assertEquals($schema, $xmlstr);
+		$this->assertSame($schema, $xmlstr);
 
 		$schema = <<<EOF
 <?xml version="1.0"?>
@@ -430,6 +430,6 @@ EOF;
 		$table->appendXml($doc);
 
 		$xmlstr = trim($doc->saveXML());
-		$this->assertEquals($schema, $xmlstr);
+		$this->assertSame($schema, $xmlstr);
 	}
 }
