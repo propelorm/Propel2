@@ -87,7 +87,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	{
 		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
-		$stmt = $this->dbh->query("SHOW TABLES");
+		$stmt = $this->dbh->query("SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_TYPE LIKE 'BASE TABLE'");
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
