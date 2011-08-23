@@ -1736,6 +1736,14 @@ class Table extends ScopedElement implements IDMethod
 			$tableNode->setAttribute('description', $this->description);
 		}
 
+		if ($this->namespace !== null) {
+			$tableNode->setAttribute('namespace', $this->namespace);
+		}
+
+		if ($this->pkg !== null && !$this->pkgOverridden) {
+			$tableNode->setAttribute('package', $this->pkg);
+		}
+
 		if ($this->baseClass !== null) {
 			$tableNode->setAttribute('baseClass', $this->baseClass);
 		}
