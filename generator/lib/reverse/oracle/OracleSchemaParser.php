@@ -75,6 +75,10 @@ class OracleSchemaParser extends BaseSchemaParser
 		$tables = array();
 		$stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 
+		$seqPattern = $this->getGeneratorConfig()->getBuildProperty(
+			'oracleAutoincrementSequencePattern'
+		);
+
 		if ($task) $task->log("Reverse Engineering Table Structures", Project::MSG_VERBOSE);
 		// First load the tables (important that this happen before filling out details of tables)
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -95,14 +99,17 @@ class OracleSchemaParser extends BaseSchemaParser
 			$this->addIndexes($table);
 
 			$pkColumns = $table->getPrimaryKey();
-			if (count($pkColumns) == 1) {
-				$stmt2 = $this->dbh->query("SELECT * FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '" . $table->getName() . "_SEQ'");
+			if (count($pkColumns) == 1 && $seqPattern) {
+				$seqName = str_replace('${table}', $tableName, $seqPattern);
+				$seqName = strtoupper($seqName);
+
+				$stmt2 = $this->dbh->query("SELECT * FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '" . $seqName . "'");
 				$hasSeq = $stmt2->fetch(PDO::FETCH_ASSOC);
 
 				if ($hasSeq) {
 					$pkColumns[0]->setAutoIncrement(true);
 					$idMethodParameter = new IdMethodParameter();
-					$idMethodParameter->setValue($table->getName() . '_SEQ');
+					$idMethodParameter->setValue($seqName);
 					$table->addIdMethodParameter($idMethodParameter);
 				}
 			}
@@ -175,7 +182,7 @@ class OracleSchemaParser extends BaseSchemaParser
 			if ($default !== null) {
 				$column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
 			}
-			$column->setAutoIncrement(false); // This flag sets in self::parse() 
+			$column->setAutoIncrement(false); // This flag sets in self::parse()
 			$column->setNotNull(!$isNullable);
 			$table->addColumn($column);
 		}
