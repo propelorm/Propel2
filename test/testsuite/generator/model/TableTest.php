@@ -345,4 +345,91 @@ EOF;
 		$table = $xmlToAppData->parseString($schema)->getDatabase('DB')->getTable('table');
 		$this->assertEquals('foo', $table->getPackage());
 	}
+
+	public function testAppendXmlPackage() {
+		$schema = <<<EOF
+<?xml version="1.0"?>
+<table name="test" package="test/package"/>
+EOF;
+
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+
+		$table = new Table('test');
+		$table->setPackage('test/package');
+		$table->appendXml($doc);
+
+		$xmlstr = trim($doc->saveXML());
+		$this->assertEquals($schema, $xmlstr);
+	}
+
+	public function testAppendXmlNamespace() {
+		$schema = <<<EOF
+<?xml version="1.0"?>
+<table name="test" namespace="\\testNs"/>
+EOF;
+
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+
+		$table = new Table('test');
+		$table->setNamespace('\testNs');
+		$table->appendXml($doc);
+
+		$xmlstr = trim($doc->saveXML());
+		$this->assertEquals($schema, $xmlstr);
+
+		$schema = <<<EOF
+<?xml version="1.0"?>
+<table name="test" namespace="\\testNs" package="testPkg"/>
+EOF;
+
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+		$table->setPackage('testPkg');
+		$table->appendXml($doc);
+
+		$xmlstr = trim($doc->saveXML());
+		$this->assertEquals($schema, $xmlstr);
+	}
+
+	public function testAppendXmlNamespaceWithAutoPackage() {
+		$schema = <<<EOF
+<?xml version="1.0"?>
+<table name="test" namespace="\\testNs"/>
+EOF;
+
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+
+		$config = new GeneratorConfig();
+		$config->setBuildProperties(array('propel.namespace.autoPackage' => 'true'));
+
+		$appData = new AppData();
+		$appData->setGeneratorConfig($config);
+
+		$db = new Database('testDb');
+		$db->setAppData($appData);
+
+		$table = new Table('test');
+		$table->setDatabase($db);
+		$table->setNamespace('\testNs');
+		$table->appendXml($doc);
+
+		$xmlstr = trim($doc->saveXML());
+		$this->assertEquals($schema, $xmlstr);
+
+		$schema = <<<EOF
+<?xml version="1.0"?>
+<table name="test" namespace="\\testNs" package="testPkg"/>
+EOF;
+
+		$doc = new DOMDocument('1.0');
+		$doc->formatOutput = true;
+		$table->setPackage('testPkg');
+		$table->appendXml($doc);
+
+		$xmlstr = trim($doc->saveXML());
+		$this->assertEquals($schema, $xmlstr);
+	}
 }
