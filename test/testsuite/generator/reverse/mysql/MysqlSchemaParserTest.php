@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/../../../../../runtime/lib/Propel.php';
+
 require_once dirname(__FILE__) . '/../../../../../generator/lib/reverse/mysql/MysqlSchemaParser.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/config/QuickGeneratorConfig.php';
 require_once dirname(__FILE__) . '/../../../../../generator/lib/model/PropelTypes.php';
@@ -48,7 +49,7 @@ class MysqlSchemaParserTest extends PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $parser = new MysqlSchemaParser(Propel::getConnection());
+        $parser = new MysqlSchemaParser(Propel::getConnection('reverse-bookstore'));
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();
