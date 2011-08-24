@@ -379,6 +379,17 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 		Table5Peer::disableSoftDelete();
 		$this->assertEquals(1, Table5Peer::doCount(new Criteria), 'soft deleted rows are still present in the database');
 	}
+
+	public function testPostDelete()
+	{
+		$t = new PostdeletehookedTable4();
+		$t->setTitle('not post-deleted');
+		$t->save();
+		$this->assertNull($t->getDeletedAt(), 'deleted_column is null before a soft delete');
+		$t->delete();
+		$this->assertNotNull($t->getDeletedAt(), 'deleted_column is not null after a soft delete');
+		$this->assertEquals('post-deleted', $t->getTitle(), 'postDelete hook did not set new title as expected');
+	}
 }
 
 class UndeletableTable4 extends Table4
@@ -388,5 +399,15 @@ class UndeletableTable4 extends Table4
 		parent::preDelete($con);
 		$this->setTitle('foo');
 		return false;
+	}
+}
+
+class PostdeletehookedTable4 extends Table4
+{
+	public function postDelete(PropelPDO $con = null)
+	{
+		parent::postDelete($con);
+		$this->setTitle('post-deleted');
+		$this->save($con);
 	}
 }
