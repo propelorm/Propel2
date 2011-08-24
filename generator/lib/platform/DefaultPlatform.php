@@ -1076,6 +1076,11 @@ ALTER TABLE %s ADD
 		return true;
 	}
 
+	
+	public function supportsVarcharWithoutSize()
+	{
+		return false;
+	}
 	/**
 	 * Returns the boolean value for the RDBMS.
 	 *
