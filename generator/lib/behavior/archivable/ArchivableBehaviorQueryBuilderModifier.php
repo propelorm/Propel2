@@ -33,11 +33,11 @@ class ArchivableBehaviorQueryBuilderModifier
 	{
 		$script = '';
 		if ($this->behavior->isArchiveOnUpdate()) {
-			$script .= "protected static \$archiveOnUpdate = true;
+			$script .= "protected \$archiveOnUpdate = true;
 ";
 		}
 		if ($this->behavior->isArchiveOnDelete()) {
-			$script .= "protected static \$archiveOnDelete = true;
+			$script .= "protected \$archiveOnDelete = true;
 ";
 		}
 		return $script;
@@ -47,10 +47,10 @@ class ArchivableBehaviorQueryBuilderModifier
 	{
 		if ($this->behavior->isArchiveOnDelete()) {
 			return "
-if (self::\$archiveOnDelete) {
+if (\$this->archiveOnDelete) {
 	\$this->archive(\$con);
 } else {
-	self::\$archiveOnDelete = true;
+	\$this->archiveOnDelete = true;
 }
 ";
 		}
@@ -60,10 +60,10 @@ if (self::\$archiveOnDelete) {
 	{
 		if ($this->behavior->isArchiveOnUpdate()) {
 			return "
-if (self::\$archiveOnUpdate) {
+if (\$this->archiveOnUpdate) {
 	\$this->archive(\$con);
 } else {
-	self::\$archiveOnUpdate = true;
+	\$this->archiveOnUpdate = true;
 }
 ";
 		}
@@ -149,9 +149,9 @@ public function archive(\$con = null, \$useLittleMemory = true)
  *
  * @param Boolean True if the query must archive updated objects, false otherwise.
  */
-public static function setArchiveOnUpdate(\$archiveOnUpdate)
+public function setArchiveOnUpdate(\$archiveOnUpdate)
 {
-	self::\$archiveOnUpdate = \$archiveOnUpdate;
+	\$this->archiveOnUpdate = \$archiveOnUpdate;
 }
 ";
 	}
@@ -173,7 +173,7 @@ public static function setArchiveOnUpdate(\$archiveOnUpdate)
  */
 public function updateWithoutArchive(\$values, \$con = null, \$forceIndividualSaves = false)
 {
-	self::\$archiveOnUpdate = false;
+	\$this->archiveOnUpdate = false;
 
 	return \$this->update(\$values, \$con, \$forceIndividualSaves);
 }
@@ -191,9 +191,9 @@ public function updateWithoutArchive(\$values, \$con = null, \$forceIndividualSa
  *
  * @param Boolean True if the query must archive deleted objects, false otherwise.
  */
-public static function setArchiveOnDelete(\$archiveOnDelete)
+public function setArchiveOnDelete(\$archiveOnDelete)
 {
-	self::\$archiveOnDelete = \$archiveOnDelete;
+	\$this->archiveOnDelete = \$archiveOnDelete;
 }
 ";
 	}
@@ -213,7 +213,7 @@ public static function setArchiveOnDelete(\$archiveOnDelete)
  */
 public function deleteWithoutArchive(\$con = null)
 {
-	self::\$archiveOnDelete = false;
+	\$this->archiveOnDelete = false;
 
 	return \$this->delete(\$con);
 }
@@ -227,7 +227,7 @@ public function deleteWithoutArchive(\$con = null)
  */
 public function deleteAllWithoutArchive(\$con = null)
 {
-	self::\$archiveOnDelete = false;
+	\$this->archiveOnDelete = false;
 
 	return \$this->deleteAll(\$con);
 }
