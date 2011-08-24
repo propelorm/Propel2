@@ -87,7 +87,7 @@ class MysqlSchemaParser extends BaseSchemaParser
 	{
 		$this->addVendorInfo = $this->getGeneratorConfig()->getBuildProperty('addVendorInfo');
 
-		$stmt = $this->dbh->query("SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_TYPE LIKE 'BASE TABLE'");
+		$stmt = $this->dbh->query("SHOW FULL TABLES");
 
 		// First load the tables (important that this happen before filling out details of tables)
 		$tables = array();
@@ -98,8 +98,9 @@ class MysqlSchemaParser extends BaseSchemaParser
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$name = $row[0];
+			$type = $row[1];
 
-			if ($name == $this->getMigrationTable()) {
+			if ($name == $this->getMigrationTable() || $type != "BASE TABLE") {
 				continue;
 			}
 
