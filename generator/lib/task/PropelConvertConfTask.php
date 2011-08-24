@@ -196,7 +196,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
 	 * @param      object SimpleXML object.
 	 * @return     array Array representation of SimpleXML object.
 	 */
-	private static function simpleXmlToArray($xml)
+	public static function simpleXmlToArray($xml)
 	{
 		$ar = array();
 
