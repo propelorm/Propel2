@@ -286,7 +286,13 @@ class Database extends ScopedElement
 	 */
 	public function countTables()
 	{
-		return count($this->tableList);
+		$count = 0;
+		foreach ($this->tableList as $table) {
+			if (!$table->isReadOnly()) {
+				$count++;
+			}
+		}
+		return $count;
 	}
 
 	/**
