@@ -91,11 +91,13 @@ class ArchivableBehaviorObjectBuilderModifier
 	{
 		$queryClassname = $builder->getStubqueryBuilder()->getClassname();
 		if ($this->behavior->isArchiveOnDelete()) {
-			return "if (\$this->archiveOnDelete) {
-	// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
-} else {
-	\$deleteQuery->setArchiveOnDelete(false);
-	\$this->archiveOnDelete = true;
+			return "if (\$ret) {
+	if (\$this->archiveOnDelete) {
+		// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
+	} else {
+		\$deleteQuery->setArchiveOnDelete(false);
+		\$this->archiveOnDelete = true;
+	}
 }";
 		}
 	}
