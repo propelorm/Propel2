@@ -4,7 +4,7 @@
 
 The `soft_delete` behavior overrides the deletion methods of a model object to make them 'hide' the deleted rows but keep them in the database. Deleted objects still don't show up on select queries, but they can be retrieved or undeleted when necessary.
 
-'''Warning''': This behavior is deprecated due to limoitations that can't be fixed. Use the [wiki:Documentation/1.6/Behaviors/archivable `archivable`] behavior instead.
+'''Warning''': This behavior is deprecated due to limitations that can't be fixed. Use the [wiki:Documentation/1.6/Behaviors/archivable `archivable`] behavior instead.
 
 == Basic Usage ==
 

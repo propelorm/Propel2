@@ -2,11 +2,12 @@
 
 [[PageOutline]]
 
-The `archivable` behavior gives model objects the ability to be copied to an archive table. By default, the behavior archives objects on deletion, acting as a replacement of the [wiki:Documentation/1.6/Behaviors/soft_delete `soft_delete`] behavior, which is deprecatd.
+The `archivable` behavior gives model objects the ability to be copied to an archive table. By default, the behavior archives objects on deletion, acting as a replacement of the [wiki:Documentation/1.6/Behaviors/soft_delete `soft_delete`] behavior, which is deprecated.
 
 == Basic Usage ==
 
 In the `schema.xml`, use the `<behavior>` tag to add the `archivable` behavior to a table:
+
 {{{
 #!xml
 <table name="book">
@@ -53,7 +54,8 @@ $book->save();
 $book->delete();
 echo BookQuery::create()->count(); // 0
 // find the archived book
-$archivedBook = BookArchiveQuery::create()->findOneByTitle('Sense and Sensibility');
+$archivedBook = BookArchiveQuery::create()
+  ->findOneByTitle('Sense and Sensibility');
 }}}
 
 You can use this feature to recover deleted objects, by taking advantage of the `populateFromArchive()` method generated in ActiveRecord classes:
@@ -75,13 +77,13 @@ If you want to delete an `archivable` object without archiving it, use the `dele
 {{{
 #!php
 <?php
-// delete the book but doesn't archive it
+// delete the book but don't archive it
 $book->deleteWithoutArchive();
 }}}
 
 == Archiving A Set Of Objects ==
 
-The `archivable` behavior also generates an `archive()` method on the generated ActiveQuery class. That means you can easily archive a set of objects, just the same way you archive a single object:
+The `archivable` behavior also generates an `archive()` method on the generated ActiveQuery class. That means you can easily archive a set of objects, in the same way you archive a single object:
 
 {{{
 #!php
@@ -121,7 +123,7 @@ $nbDeletedObjects = BookQuery::create()
 
 == Archiving on Insert, Update, or Delete ==
 
-As explained earlier, the `archivable` behavior archives objects on deletion by default, but insertions and updates don't trigger the `archive()` method. You can customize this behavior for deletion, as well as for insertion and update. Customize these settings in the behavior parameters. Here is the default configuration:
+As explained earlier, the `archivable` behavior archives objects on deletion by default, but insertions and updates don't trigger the `archive()` method. You can disable the auto archiving on deletion, as well as enable it for insertion and update, in the behavior `<parameter>` tags. Here is the default configuration:
 
 {{{
 #!xml
@@ -138,7 +140,7 @@ As explained earlier, the `archivable` behavior archives objects on deletion by 
 
 If you turn on `archive_on_insert`, a call to `save()` on a new ActiveRecord object archives it - unless you call `saveWithoutArchive()`.
 
-If you turn on `archive_on_update`, a call to `save()` on an existing ActiveRecord object archives it, and a call to `update()` on an ActiveQuery object archives the results as well. You can still use `saveWithoutArchive()` on the ActiveRecord class and `updateWithoutArchive()` on the ActiveQuery class to kip archiving on updates.
+If you turn on `archive_on_update`, a call to `save()` on an existing ActiveRecord object archives it, and a call to `update()` on an ActiveQuery object archives the results as well. You can still use `saveWithoutArchive()` on the ActiveRecord class and `updateWithoutArchive()` on the ActiveQuery class to skip archiving on updates.
 
 Of course, even if `archive_on_insert` or any of the similar parameters isn't turned on, you can always archive manually an object after persisting it by simply calling `archive()`:
 
@@ -242,6 +244,6 @@ Alternatively, you can disable the addition of an archive date column altogether
 {{{
 #!xml
 <behavior name="archivable">
-  <parameter name="log_archived_at_column" value="false" />
+  <parameter name="log_archived_at" value="false" />
 </behavior>
 }}}
