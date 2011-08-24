@@ -408,5 +408,6 @@ class PostdeletehookedTable4 extends Table4
 	{
 		parent::postDelete($con);
 		$this->setTitle('post-deleted');
+		$this->save($con);
 	}
 }
