@@ -7,6 +7,7 @@
  *
  * @license    MIT License
  */
+
 require_once dirname(__FILE__) . '/PlatformMigrationTestProvider.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/platform/PgsqlPlatform.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Column.php';
@@ -329,7 +330,7 @@ EOF;
 		$c2 = $table->getColumn('bar');
 		$columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
 		$expected = false;
-		$this->assertEquals($expected, $columnDiff);
+		$this->assertSame($expected, $columnDiff);
 	}
 
 public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
@@ -358,8 +359,7 @@ EOF;
 		$c2 = $table->getColumn('bar');
 		$columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
 		$expected = false;
-		$this->assertEquals($expected, $columnDiff);
+		$this->assertSame($expected, $columnDiff);
 	}
-	
 	
 }
