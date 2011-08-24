@@ -332,4 +332,34 @@ EOF;
 		$this->assertEquals($expected, $columnDiff);
 	}
 
+public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
+	{
+		$t1 = new Table('foo');
+		$c1 = new Column('bar');
+		$c1->setTable($t1);
+		$c1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
+		$c1->getDomain()->replaceSize(null);
+		$c1->getDomain()->replaceScale(null);
+		$t1->addColumn($c1);
+
+		$schema = <<<EOF
+<database name="test" platform="lol">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar"/>
+	</table>
+</database>
+EOF;
+
+		$xtad = new XmlToAppData(null);
+		$appData = $xtad->parseString($schema);
+		$db = $appData->getDatabase();
+		$table = $db->getTable('foo');
+		$c2 = $table->getColumn('bar');
+		$columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+		$expected = false;
+		$this->assertEquals($expected, $columnDiff);
+	}
+	
+	
 }
