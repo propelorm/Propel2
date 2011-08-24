@@ -135,12 +135,6 @@ EOF;
 		$this->assertEquals(1, ArchivableTest100Query::create()->archive());
 	}
 
-	public function testHasUpdateMethods()
-	{
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'updateAndArchive'));
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'updateWithoutArchive'));
-	}
-
 	public function testUpdateDoesNotCreateArchivesByDefault()
 	{
 		ArchivableTest100Query::create()->deleteAllWithoutArchive();
@@ -158,7 +152,7 @@ EOF;
 
 	public function testUpdateCreatesArchivesIfSpecified()
 	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
+		ArchivableTest300Query::create()->deleteAll();
 		$a = new ArchivableTest300();
 		$a->setTitle('foo');
 		$a->setAge(12);
@@ -169,75 +163,6 @@ EOF;
 			->update(array('Title' => 'bar'));
 		$this->assertEquals(1, ArchivableTest300Query::create()->filterByTitle('bar')->count());
 		$this->assertEquals(1, MyOldArchivableTest300Query::create()->count());
-	}
-
-	public function testUpdateAndArchiveCreatesArchives()
-	{
-		ArchivableTest100Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest100();
-		$a->setTitle('foo');
-		$a->setAge(12);
-		$a->save();
-		ArchivableTest100ArchiveQuery::create()->deleteAll();
-		ArchivableTest100Query::create()
-			->filterById($a->getId())
-			->updateAndArchive(array('Title' => 'bar'));
-		$this->assertEquals(1, ArchivableTest100Query::create()->filterByTitle('bar')->count());
-		$this->assertEquals(1, ArchivableTest100ArchiveQuery::create()->count());
-	}
-
-	public function testUpdateAndArchiveCreatesArchivesIfSpecified()
-	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest300();
-		$a->setTitle('foo');
-		$a->setAge(12);
-		$a->save();
-		MyOldArchivableTest300Query::create()->deleteAll();
-		ArchivableTest300Query::create()
-			->filterById($a->getId())
-			->updateAndArchive(array('Title' => 'bar'));
-		$this->assertEquals(1, ArchivableTest300Query::create()->filterByTitle('bar')->count());
-		$this->assertEquals(1, MyOldArchivableTest300Query::create()->count());
-	}
-
-	public function testUpdateWithoutArchiveDoesNotCreateArchives()
-	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest300();
-		$a->setTitle('foo');
-		$a->setAge(12);
-		$a->save();
-		MyOldArchivableTest300Query::create()->deleteAll();
-		ArchivableTest300Query::create()
-			->filterById($a->getId())
-			->updateWithoutArchive(array('Title' => 'bar'));
-		$this->assertEquals(1, ArchivableTest300Query::create()->filterByTitle('bar')->count());
-		$this->assertEquals(0, MyOldArchivableTest300Query::create()->count());
-	}
-
-	public function testUpdateWithoutarchiveDoesNotCreateArchivesByDefault()
-	{
-		ArchivableTest100Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest100();
-		$a->setTitle('foo');
-		$a->setAge(12);
-		$a->save();
-		ArchivableTest100ArchiveQuery::create()->deleteAll();
-		ArchivableTest100Query::create()
-			->filterById($a->getId())
-			->updateWithoutarchive(array('Title' => 'bar'));
-		$this->assertEquals(1, ArchivableTest100Query::create()->filterByTitle('bar')->count());
-		$this->assertEquals(0, ArchivableTest100ArchiveQuery::create()->count());
-	}
-
-
-	public function testHasDeleteMethods()
-	{
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteAndArchive'));
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteAllAndArchive'));
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteWithoutArchive'));
-		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteAllWithoutArchive'));
 	}
 
 	public function testDeleteCreatesArchivesByDefault()
@@ -255,9 +180,23 @@ EOF;
 		$this->assertEquals(1, ArchivableTest100ArchiveQuery::create()->count());
 	}
 
+	public function testDeleteAllCreatesArchivesByDefault()
+	{
+		ArchivableTest100Query::create()->deleteAllWithoutArchive();
+		$a = new ArchivableTest100();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		ArchivableTest100ArchiveQuery::create()->deleteAll();
+		ArchivableTest100Query::create()
+			->deleteAll();
+		$this->assertEquals(0, ArchivableTest100Query::create()->count());
+		$this->assertEquals(1, ArchivableTest100ArchiveQuery::create()->count());
+	}
+
 	public function testDeleteDoesNotCreateArchivesIfSpecified()
 	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
+		ArchivableTest300Query::create()->deleteAll();
 		$a = new ArchivableTest300();
 		$a->setTitle('foo');
 		$a->setAge(12);
@@ -270,24 +209,28 @@ EOF;
 		$this->assertEquals(0, MyOldArchivableTest300Query::create()->count());
 	}
 
-	public function testDeleteAndArchiveCreatesArchivesByDefault()
+	public function testDeleteAllDoesNotCreateArchivesIfSpecified()
 	{
-		ArchivableTest100Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest100();
+		ArchivableTest300Query::create()->deleteAll();
+		$a = new ArchivableTest300();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		ArchivableTest100ArchiveQuery::create()->deleteAll();
-		ArchivableTest100Query::create()
-			->filterById($a->getId())
-			->deleteAndArchive();
-		$this->assertEquals(0, ArchivableTest100Query::create()->count());
-		$this->assertEquals(1, ArchivableTest100ArchiveQuery::create()->count());
+		MyOldArchivableTest300Query::create()->deleteAll();
+		ArchivableTest300Query::create()
+			->deleteAll();
+		$this->assertEquals(0, ArchivableTest300Query::create()->count());
+		$this->assertEquals(0, MyOldArchivableTest300Query::create()->count());
 	}
 
-	public function testDeleteAndArchiveCreatesArchivesIfSpecified()
+	public function testHasUpdateWithoutArchiveMethod()
 	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
+		$this->assertTrue(method_exists('ArchivableTest300Query', 'updateWithoutArchive'));
+	}
+
+	public function testUpdateWithoutArchiveDoesNotCreateArchives()
+	{
+		ArchivableTest300Query::create()->deleteAll();
 		$a = new ArchivableTest300();
 		$a->setTitle('foo');
 		$a->setAge(12);
@@ -295,9 +238,15 @@ EOF;
 		MyOldArchivableTest300Query::create()->deleteAll();
 		ArchivableTest300Query::create()
 			->filterById($a->getId())
-			->deleteAndArchive();
-		$this->assertEquals(0, ArchivableTest300Query::create()->count());
-		$this->assertEquals(1, MyOldArchivableTest300Query::create()->count());
+			->updateWithoutArchive(array('Title' => 'bar'));
+		$this->assertEquals(1, ArchivableTest300Query::create()->filterByTitle('bar')->count());
+		$this->assertEquals(0, MyOldArchivableTest300Query::create()->count());
+	}
+
+	public function testHasDeleteWithoutArchiveMethods()
+	{
+		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteWithoutArchive'));
+		$this->assertTrue(method_exists('ArchivableTest100Query', 'deleteAllWithoutArchive'));
 	}
 
 	public function testDeleteWithoutArchiveDoesNotCreateArchivesByDefault()
@@ -315,20 +264,18 @@ EOF;
 		$this->assertEquals(0, ArchivableTest100ArchiveQuery::create()->count());
 	}
 
-	public function testDeleteWithoutArchiveDoesNotCreateArchivesIfSpecified()
+	public function testDeleteAllWithoutArchiveDoesNotCreateArchivesByDefault()
 	{
-		ArchivableTest300Query::create()->deleteAllWithoutArchive();
-		$a = new ArchivableTest300();
+		ArchivableTest100Query::create()->deleteAllWithoutArchive();
+		$a = new ArchivableTest100();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		MyOldArchivableTest300Query::create()->deleteAll();
-		ArchivableTest300Query::create()
-			->filterById($a->getId())
-			->deleteWithoutArchive();
-		$this->assertEquals(0, ArchivableTest300Query::create()->count());
-		$this->assertEquals(0, MyOldArchivableTest300Query::create()->count());
+		ArchivableTest100ArchiveQuery::create()->deleteAll();
+		ArchivableTest100Query::create()
+			->deleteAllWithoutArchive();
+		$this->assertEquals(0, ArchivableTest100Query::create()->count());
+		$this->assertEquals(0, ArchivableTest100ArchiveQuery::create()->count());
 	}
-
 
 }

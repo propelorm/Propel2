@@ -31,28 +31,42 @@ class ArchivableBehaviorQueryBuilderModifier
 
 	public function queryAttributes($builder)
 	{
-		return "
-protected \$archiveOnDelete = " . ($this->getParameter('archive_on_delete') == 'true' ? 'true' : 'false'). ";
-protected \$archiveOnUpdate = " . ($this->getParameter('archive_on_update') == 'true' ? 'true' : 'false'). ";
+		$script = '';
+		if ($this->behavior->isArchiveOnUpdate()) {
+			$script .= "protected static \$archiveOnUpdate = true;
 ";
+		}
+		if ($this->behavior->isArchiveOnDelete()) {
+			$script .= "protected static \$archiveOnDelete = true;
+";
+		}
+		return $script;
 	}
 
 	public function preDeleteQuery($builder)
 	{
-		return "
-if (\$this->archiveOnDelete) {
+		if ($this->behavior->isArchiveOnDelete()) {
+			return "
+if (self::\$archiveOnDelete) {
 	\$this->archive(\$con);
+} else {
+	self::\$archiveOnDelete = true;
 }
 ";
+		}
 	}
 
 	public function postUpdateQuery($builder)
 	{
-		return "
-if (\$this->archiveOnUpdate) {
+		if ($this->behavior->isArchiveOnUpdate()) {
+			return "
+if (self::\$archiveOnUpdate) {
 	\$this->archive(\$con);
+} else {
+	self::\$archiveOnUpdate = true;
 }
 ";
+		}
 	}
 
 	/**
@@ -62,10 +76,14 @@ if (\$this->archiveOnUpdate) {
 	{
 		$script = '';
 		$script .= $this->addArchive($builder);
-		$script .= $this->addDeleteAndArchive($builder);
-		$script .= $this->addDeleteWithoutArchive($builder);
-		$script .= $this->addUpdateAndArchive($builder);
-		$script .= $this->addUpdateWithoutArchive($builder);
+		if ($this->behavior->isArchiveOnUpdate()) {
+			$script .= $this->addSetArchiveOnUpdate($builder);
+			$script .= $this->addUpdateWithoutArchive($builder);
+		}
+		if ($this->behavior->isArchiveOnDelete()) {
+			$script .= $this->addSetArchiveOnDelete($builder);
+			$script .= $this->addDeleteWithoutArchive($builder);
+		}
 		return $script;
 	}
 
@@ -99,10 +117,20 @@ public function archive(\$con = null, \$useLittleMemory = true)
 	if (\$useLittleMemory) {
 		\$criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
 	}
-	// archive all results one by one
-	foreach (\$criteria->find(\$con) as \$object) {
-		\$object->archive(\$con);
-		\$totalArchivedObjects++;
+	if (\$con === null) {
+		\$con = Propel::getConnection(" . $builder->getPeerClassname() . "::DATABASE_NAME, Propel::CONNECTION_WRITE);
+	}
+	\$con->beginTransaction();
+	try {
+		// archive all results one by one
+		foreach (\$criteria->find(\$con) as \$object) {
+			\$object->archive(\$con);
+			\$totalArchivedObjects++;
+		}
+		\$con->commit();
+	} catch (PropelException \$e) {
+		\$con->rollBack();
+		throw \$e;
 	}
 	
 	return \$totalArchivedObjects;
@@ -113,87 +141,17 @@ public function archive(\$con = null, \$useLittleMemory = true)
 	/**
 	 * @return string the PHP code to be added to the builder
 	 */
-	public function addDeleteAndArchive($builder)
+	public function addSetArchiveOnUpdate($builder)
 	{
 		return "
 /**
- * Archive and delete records mathing the current query.
+ * Enable/disable auto-archiving on update for the next query.
  *
- * @return integer the number of deleted rows
+ * @param Boolean True if the query must archive updated objects, false otherwise.
  */
-public function deleteAndArchive(\$con = null)
+public static function setArchiveOnUpdate(\$archiveOnUpdate)
 {
-	\$this->archiveOnDelete = true;
-
-	return \$this->delete(\$con);
-}
-
-/**
- * Archive and delete all records.
- *
- * @return integer the number of deleted rows
- */
-public function deleteAllAndArchive(\$con = null)
-{
-	\$this->archiveOnDelete = true;
-
-	return \$this->deleteAll(\$con);
-}
-";
-	}
-
-	/**
-	 * @return string the PHP code to be added to the builder
-	 */
-	public function addDeleteWithoutArchive($builder)
-	{
-		return "
-/**
- * Delete records matching the current query without archiving them.
- *
- * @return integer the number of deleted rows
- */
-public function deleteWithoutArchive(\$con = null)
-{
-	\$this->archiveOnDelete = false;
-
-	return \$this->delete(\$con);
-}
-
-/**
- * Delete all records without archiving them.
- *
- * @return integer the number of deleted rows
- */
-public function deleteAllWithoutArchive(\$con = null)
-{
-	\$this->archiveOnDelete = false;
-
-	return \$this->deleteAll(\$con);
-}
-";
-	}
-
-	/**
-	 * @return string the PHP code to be added to the builder
-	 */
-	public function addUpdateAndArchive($builder)
-	{
-		return "
-/**
- * Update and archive records mathing the current query.
- *
- * @param      array \$values Associative array of keys and values to replace
- * @param      PropelPDO \$con an optional connection object
- * @param      boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
- *
- * @return integer the number of deleted rows
- */
-public function updateAndArchive(\$values, \$con = null, \$forceIndividualSaves = false)
-{
-	\$this->archiveOnUpdate = true;
-
-	return \$this->update(\$values, \$con, \$forceIndividualSaves);
+	self::\$archiveOnUpdate = \$archiveOnUpdate;
 }
 ";
 	}
@@ -215,11 +173,64 @@ public function updateAndArchive(\$values, \$con = null, \$forceIndividualSaves 
  */
 public function updateWithoutArchive(\$values, \$con = null, \$forceIndividualSaves = false)
 {
-	\$this->archiveOnUpdate = false;
+	self::\$archiveOnUpdate = false;
 
 	return \$this->update(\$values, \$con, \$forceIndividualSaves);
 }
 ";
 	}
 
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addSetArchiveOnDelete($builder)
+	{
+		return "
+/**
+ * Enable/disable auto-archiving on delete for the next query.
+ *
+ * @param Boolean True if the query must archive deleted objects, false otherwise.
+ */
+public static function setArchiveOnDelete(\$archiveOnDelete)
+{
+	self::\$archiveOnDelete = \$archiveOnDelete;
+}
+";
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addDeleteWithoutArchive($builder)
+	{
+		return "
+/**
+ * Delete records matching the current query without archiving them.
+ *
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteWithoutArchive(\$con = null)
+{
+	self::\$archiveOnDelete = false;
+
+	return \$this->delete(\$con);
+}
+
+/**
+ * Delete all records without archiving them.
+ *
+ * @param      PropelPDO \$con	Connection to use.
+ *
+ * @return integer the number of deleted rows
+ */
+public function deleteAllWithoutArchive(\$con = null)
+{
+	self::\$archiveOnDelete = false;
+
+	return \$this->deleteAll(\$con);
+}
+";
+	}
 }

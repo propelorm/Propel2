@@ -31,9 +31,9 @@ class ArchivableBehavior extends Behavior
 		'archive_on_delete'   => 'true',
 	);
 
-	protected $archiveTable,
-		$objectBuilderModifier,
-		$queryBuilderModifier;
+	protected $archiveTable;
+	protected $objectBuilderModifier;
+	protected $queryBuilderModifier;
 
 	public function modifyTable()
 	{
@@ -133,6 +133,21 @@ class ArchivableBehavior extends Behavior
 		if ($this->getParameter('log_archived_at') == 'true') {
 			return $this->getTable()->getColumn($this->getParameter('archived_at_column'));
 		}
+	}
+
+	public function isArchiveOnInsert()
+	{
+		return $this->getParameter('archive_on_insert') == 'true';
+	}
+
+	public function isArchiveOnUpdate()
+	{
+		return $this->getParameter('archive_on_update') == 'true';
+	}
+
+	public function isArchiveOnDelete()
+	{
+		return $this->getParameter('archive_on_delete') == 'true';
 	}
 
 	public function getObjectBuilderModifier()

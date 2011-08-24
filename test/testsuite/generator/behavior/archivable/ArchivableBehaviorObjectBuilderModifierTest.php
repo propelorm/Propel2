@@ -256,6 +256,49 @@ EOF;
 		$this->assertEquals(123, $b->getId());
 	}
 
+	public function testHasSaveWithoutArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest30', 'saveWithoutArchive'));
+	}
+
+	public function testSaveWithoutArchiveDoesNotCreateArchiveOnInsert()
+	{
+		$a = new ArchivableTest30();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		MyOldArchivableTest30Query::create()->deleteAll();
+		$a->saveWithoutArchive();
+		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
+	}
+
+	public function testSaveWithoutArchiveDoesNotCreateArchiveOnUpdate()
+	{
+		$a = new ArchivableTest30();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$a->setTitle('bar');
+		MyOldArchivableTest30Query::create()->deleteAll();
+		$a->saveWithoutArchive();
+		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
+	}
+
+	public function testHasDeleteWithoutArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest10', 'deleteWithoutArchive'));
+	}
+
+	public function testDeleteWithoutArchiveDoesNotCreateArchive()
+	{
+		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		$a->deleteWithoutArchive();
+		$this->assertEquals(0, ArchivableTest10ArchiveQuery::create()->count());
+	}
+
 }
 
 
