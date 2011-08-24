@@ -37,3 +37,13 @@ DIRS=`ls $FIXTURES_DIR`
 for dir in $DIRS ; do
     rebuild $dir
 done
+
+# Special case for reverse fixtures
+
+REVERSE_DIRS=`ls $FIXTURES_DIR/reverse`
+
+for dir in $REVERSE_DIRS ; do
+    echo "[ $dir ]"
+
+    $ROOT/generator/bin/propel-gen $FIXTURES_DIR/reverse/$dir insert-sql
+done
