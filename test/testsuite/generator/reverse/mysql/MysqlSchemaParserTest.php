@@ -35,7 +35,7 @@ class MysqlSchemaParserTest extends PHPUnit_Framework_TestCase
 		$xmlDom = new DOMDocument();
 		$xmlDom->load(dirname(__FILE__) . '/../../../../fixtures/reverse/mysql/runtime-conf.xml');
 		$xml = simplexml_load_string($xmlDom->saveXML());
-		$phpconf = PropelConvertConfTask::simpleXmlToArray($xml);
+		$phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
 
 		Propel::setConfiguration($phpconf);
         Propel::initialize();
@@ -57,4 +57,12 @@ class MysqlSchemaParserTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $parser->parse($database));
     }
+}
+
+class OpenedPropelConvertConfTask extends PropelConvertConfTask
+{
+	public static function simpleXmlToArray($xml)
+	{
+		return parent::simpleXmlToArray($xml);
+	}
 }
