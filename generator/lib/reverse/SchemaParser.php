@@ -34,9 +34,9 @@ interface SchemaParser
 	/**
 	 * Sets the GeneratorConfig to use in the parsing.
 	 *
-	 * @param      GeneratorConfig $config
+	 * @param      GeneratorConfigInterface $config
 	 */
-	public function setGeneratorConfig(GeneratorConfig $config);
+	public function setGeneratorConfig(GeneratorConfigInterface $config);
 
 	/**
 	 * Gets a specific propel (renamed) property from the build.
