@@ -19,6 +19,7 @@ require_once dirname(__FILE__) . '/../../../../generator/lib/model/VendorInfo.ph
  */
 class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
+
 	/**
 	 * Get the Platform object for this class
 	 *
@@ -305,4 +306,60 @@ ALTER TABLE "foo" ADD "bar2" DOUBLE PRECISION DEFAULT -1 NOT NULL;
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
 	}
+
+	public function testGetModifyColumnDDLWithVarcharWithoutSize()
+	{
+		$t1 = new Table('foo');
+		$c1 = new Column('bar');
+		$c1->setTable($t1);
+		$c1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
+		$c1->getDomain()->replaceSize(null);
+		$c1->getDomain()->replaceScale(null);
+		$t1->addColumn($c1);
+
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="VARCHAR" />
+	</table>
+</database>
+EOF;
+
+		$table = $this->getDatabaseFromSchema($schema)->getTable('foo');
+		$c2 = $table->getColumn('bar');
+		$columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+		$expected = false;
+		$this->assertSame($expected, $columnDiff);
+	}
+
+public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
+	{
+		$t1 = new Table('foo');
+		$c1 = new Column('bar');
+		$c1->setTable($t1);
+		$c1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
+		$c1->getDomain()->replaceSize(null);
+		$c1->getDomain()->replaceScale(null);
+		$t1->addColumn($c1);
+
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar"/>
+	</table>
+</database>
+EOF;
+
+		$xtad = new XmlToAppData(null);
+		$appData = $xtad->parseString($schema);
+		$db = $appData->getDatabase();
+		$table = $db->getTable('foo');
+		$c2 = $table->getColumn('bar');
+		$columnDiff = PropelColumnComparator::computeDiff($c1, $c2);
+		$expected = false;
+		$this->assertSame($expected, $columnDiff);
+	}
+	
 }

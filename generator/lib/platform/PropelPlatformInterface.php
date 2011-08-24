@@ -180,6 +180,12 @@ interface PropelPlatformInterface
 	public function supportsMigrations();
 
 	/**
+	 * Wether RDBMS supports VARCHAR without explicit size
+	 * @return boolean
+	 */
+	public function supportsVarcharWithoutSize();
+	
+	/**
 	 * Returns the boolean value for the RDBMS.
 	 *
 	 * This value should match the boolean value that is set

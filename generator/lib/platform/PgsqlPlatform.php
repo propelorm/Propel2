@@ -353,6 +353,11 @@ DROP TABLE %s CASCADE;
 	{
 		return true;
 	}
+	
+	public function supportsVarcharWithoutSize()
+	{
+		return true;
+	}
 
 	/**
 	 * Overrides the implementation from DefaultPlatform
