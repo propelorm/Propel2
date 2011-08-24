@@ -55,7 +55,14 @@ class MysqlSchemaParserTest extends PHPUnit_Framework_TestCase
         $database = new Database();
         $database->setPlatform(new DefaultPlatform());
 
-        $this->assertEquals(1, $parser->parse($database));
+        $this->assertEquals(1, $parser->parse($database), 'One table and one view defined should return one as we exclude views');
+
+		$tables = $database->getTables();
+		$this->assertEquals(1, count($tables));
+
+		$table = $tables[0];
+		$this->assertEquals('Book', $table->getPhpName());
+		$this->assertEquals(4, count($table->getColumns()));
     }
 }
 
