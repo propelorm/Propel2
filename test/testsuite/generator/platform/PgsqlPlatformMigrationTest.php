@@ -343,7 +343,7 @@ public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
 		$t1->addColumn($c1);
 
 		$schema = <<<EOF
-<database name="test" platform="lol">
+<database name="test">
 	<table name="foo">
 		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
 		<column name="bar"/>
