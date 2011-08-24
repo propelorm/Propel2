@@ -89,9 +89,10 @@ class ArchivableBehaviorObjectBuilderModifier
 	 */
 	public function preDelete($builder)
 	{
-		$queryClassname = $builder->getStubqueryBuilder()->getClassname();
+		$queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		if ($this->behavior->isArchiveOnDelete()) {
-			return "if (\$ret) {
+			if ($builder->getGeneratorConfig()->getBuildProperty('addHooks')) {
+				return "if (\$ret) {
 	if (\$this->archiveOnDelete) {
 		// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
 	} else {
@@ -99,6 +100,14 @@ class ArchivableBehaviorObjectBuilderModifier
 		\$this->archiveOnDelete = true;
 	}
 }";
+			} else {
+				return "if (\$this->archiveOnDelete) {
+	// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
+} else {
+	\$deleteQuery->setArchiveOnDelete(false);
+	\$this->archiveOnDelete = true;
+}";
+			}
 		}
 	}
 
