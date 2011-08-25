@@ -1,3 +1,4 @@
+
 /**
  * Populates the the current object based on a $archiveTablePhpName archive object.
  *
@@ -23,7 +24,7 @@ public function populateFromArchive($archive<?php if ($usesAutoIncrement): ?>, $
 <?php endif; ?>
 <?php foreach ($columns as $col): ?>
 <?php if (!$col->isAutoIncrement()): ?>
-		$this->set<?php echo $col->getPhpName() ?>($archive->get<?php echo $col->getPhpName() ?>());
+	$this->set<?php echo $col->getPhpName() ?>($archive->get<?php echo $col->getPhpName() ?>());
 <?php endif; ?>
 <?php endforeach; ?>
 

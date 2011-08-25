@@ -1,3 +1,4 @@
+
 /**
  * Copy the data of the objects satisfying the query into <?php echo $archiveTablePhpName ?> archive objects.
  * The archived objects are then saved.

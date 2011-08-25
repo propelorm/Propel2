@@ -1,3 +1,4 @@
+
 /**
  * Delete records matching the current query without archiving them.
  *

@@ -1,3 +1,4 @@
+
 /**
  * Removes the object from the database without archiving it.
  *

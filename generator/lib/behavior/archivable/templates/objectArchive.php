@@ -1,3 +1,4 @@
+
 /**
  * Copy the data of the current object into a $archiveTablePhpName archive object.
  * The archived object is then saved.
