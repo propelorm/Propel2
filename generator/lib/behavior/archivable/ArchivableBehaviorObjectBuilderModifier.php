@@ -118,7 +118,9 @@ class ArchivableBehaviorObjectBuilderModifier
 	{
 		$this->builder = $builder;
 		$script = '';
+		$script .= $this->addGetArchive($builder);
 		$script .= $this->addArchive($builder);
+		$script .= $this->addRestoreFromArchive($builder);
 		$script .= $this->addPopulateFromArchive($builder);
 		if ($this->behavior->isArchiveOnInsert() || $this->behavior->isArchiveOnUpdate()) {
 			$script .= $this->addSaveWithoutArchive($builder);
@@ -126,6 +128,36 @@ class ArchivableBehaviorObjectBuilderModifier
 		if ($this->behavior->isArchiveOnDelete()) {
 			$script .= $this->addDeleteWithoutArchive($builder);
 		}
+		return $script;
+	}
+
+	/**
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addGetArchive($builder)
+	{
+		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
+		$archiveTableQueryName = $this->behavior->getArchiveTableQueryName($builder);
+		$script = "
+/**
+ * Get an archived version of the current object.
+ *
+ * @param PropelPDO \$con Optional connection object
+ *
+ * @return     " . $archiveTablePhpName . " An archive object, or null if the current object was never archived
+ */
+public function getArchive(PropelPDO \$con = null)
+{
+	if (\$this->isNew()) {
+		return null;
+	}
+	\$archive = " . $archiveTableQueryName . "::create()
+		->filterByPrimaryKey(\$this->getPrimaryKey())
+		->findOne(\$con);
+
+	return \$archive;
+}
+";
 		return $script;
 	}
 
@@ -145,13 +177,19 @@ class ArchivableBehaviorObjectBuilderModifier
  *
  * @param PropelPDO \$con Optional connection object
  *
- * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
+ * @throws PropelException If the object is new
+ *
+ * @return     " . $archiveTablePhpName . " The archive object based on this object
  */
 public function archive(PropelPDO \$con = null)
 {
-	\$archive = " . $archiveTableQueryName . "::create()
-		->filterByPrimaryKey(\$this->getPrimaryKey())
-		->findOneOrCreate(\$con);
+	if (\$this->isNew()) {
+		throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+	}
+	if (!\$archive = \$this->getArchive(\$con)) {
+		\$archive = new $archiveTablePhpName();
+		\$archive->setPrimaryKey(\$this->getPrimaryKey());
+	}
 	\$this->copyInto(\$archive, \$deepCopy = false, \$makeNew = false);";
 		if ($archivedAtColumn = $this->behavior->getArchivedAtColumn()) {
 			$script .= "
@@ -159,6 +197,38 @@ public function archive(PropelPDO \$con = null)
 		}
 		$script .= "
 	\$archive->save(\$con);
+
+	return \$archive;
+}
+";
+		return $script;
+	}
+
+	/**
+	 *
+	 * @return string the PHP code to be added to the builder
+	 */
+	public function addRestoreFromArchive($builder)
+	{
+		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
+		$usesAutoIncrement = $this->table->hasAutoIncrementPrimaryKey();
+		$script = "
+/**
+ * Revert the the current object to the state it had when it was last archived.
+ * The object must be saved afterwards if the changes must persist.
+ *
+ * @param PropelPDO \$con Optional connection object
+ *
+ * @throws PropelException If the object has no corresponding archive.
+ *
+ * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
+ */
+public function restoreFromArchive(PropelPDO \$con = null)
+{
+	if (!\$archive = \$this->getArchive(\$con)) {
+		throw new PropelException('The current object has never been archived and cannot be restored');
+	}
+	\$this->populateFromArchive(\$archive);
 
 	return \$this;
 }

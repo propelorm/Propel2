@@ -133,11 +133,24 @@ EOF;
 		$this->assertEquals(12, $archive->age);
 	}
 
-	public function testArchiveReturnsCurrentObject()
+	public function testArchiveReturnsArchivedObject()
 	{
 		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->save();
 		$ret = $a->archive();
-		$this->assertSame($ret, $a);
+		$this->assertInstanceOf('ArchivableTest10Archive', $ret);
+		$this->assertEquals($a->getPrimaryKey(), $ret->getPrimaryKey());
+		$this->assertEquals($a->getTitle(), $ret->getTitle());
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testArchiveThrowsExceptionOnNewObjects()
+	{
+		$a = new ArchivableTest10();
+		$a->archive();
 	}
 
 	public function testInsertDoesNotCreateArchiveByDefault()
@@ -317,7 +330,7 @@ class FooArchiveQuery
 		return $this;
 	}
 
-	public function findOneOrCreate()
+	public function findOne()
 	{
 		$archive = FooArchiveCollection::getArchiveSingleton();
 		$archive->setId($this->pk);
