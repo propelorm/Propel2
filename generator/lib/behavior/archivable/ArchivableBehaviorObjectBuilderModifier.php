@@ -89,25 +89,11 @@ class ArchivableBehaviorObjectBuilderModifier
 	 */
 	public function preDelete($builder)
 	{
-		$queryClassname = $builder->getStubQueryBuilder()->getClassname();
 		if ($this->behavior->isArchiveOnDelete()) {
-			if ($builder->getGeneratorConfig()->getBuildProperty('addHooks')) {
-				return "if (\$ret) {
-	if (\$this->archiveOnDelete) {
-		// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
-	} else {
-		\$deleteQuery->setArchiveOnDelete(false);
-		\$this->archiveOnDelete = true;
-	}
-}";
-			} else {
-				return "if (\$this->archiveOnDelete) {
-	// do nothing yet. The object will be archived later when calling " . $queryClassname . "::delete().
-} else {
-	\$deleteQuery->setArchiveOnDelete(false);
-	\$this->archiveOnDelete = true;
-}";
-			}
+			return $this->behavior->renderTemplate('objectPreDelete', array(
+				'queryClassname' => $builder->getStubQueryBuilder()->getClassname(),
+				'isAddHooks'     => $builder->getGeneratorConfig()->getBuildProperty('addHooks'),
+			));
 		}
 	}
 
@@ -136,29 +122,10 @@ class ArchivableBehaviorObjectBuilderModifier
 	 */
 	public function addGetArchive($builder)
 	{
-		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
-		$archiveTableQueryName = $this->behavior->getArchiveTableQueryName($builder);
-		$script = "
-/**
- * Get an archived version of the current object.
- *
- * @param PropelPDO \$con Optional connection object
- *
- * @return     " . $archiveTablePhpName . " An archive object, or null if the current object was never archived
- */
-public function getArchive(PropelPDO \$con = null)
-{
-	if (\$this->isNew()) {
-		return null;
-	}
-	\$archive = " . $archiveTableQueryName . "::create()
-		->filterByPrimaryKey(\$this->getPrimaryKey())
-		->findOne(\$con);
-
-	return \$archive;
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectGetArchive', array(
+			'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
+			'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
+		));
 	}
 
 	/**
@@ -166,42 +133,11 @@ public function getArchive(PropelPDO \$con = null)
 	 */
 	public function addArchive($builder)
 	{
-		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
-		$archiveTableQueryName = $this->behavior->getArchiveTableQueryName($builder);
-		$script = "
-/**
- * Copy the data of the current object into a $archiveTablePhpName archive object.
- * The archived object is then saved.
- * If the current object has already been archived, the archived object
- * is updated and not duplicated.
- *
- * @param PropelPDO \$con Optional connection object
- *
- * @throws PropelException If the object is new
- *
- * @return     " . $archiveTablePhpName . " The archive object based on this object
- */
-public function archive(PropelPDO \$con = null)
-{
-	if (\$this->isNew()) {
-		throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
-	}
-	if (!\$archive = \$this->getArchive(\$con)) {
-		\$archive = new $archiveTablePhpName();
-		\$archive->setPrimaryKey(\$this->getPrimaryKey());
-	}
-	\$this->copyInto(\$archive, \$deepCopy = false, \$makeNew = false);";
-		if ($archivedAtColumn = $this->behavior->getArchivedAtColumn()) {
-			$script .= "
-	\$archive->set" . $archivedAtColumn->getPhpName()."(time());";
-		}
-		$script .= "
-	\$archive->save(\$con);
-
-	return \$archive;
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectArchive', array(
+			'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
+			'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
+			'archivedAtColumn'      => $this->behavior->getArchivedAtColumn(),
+		));
 	}
 
 	/**
@@ -210,30 +146,9 @@ public function archive(PropelPDO \$con = null)
 	 */
 	public function addRestoreFromArchive($builder)
 	{
-		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
-		$usesAutoIncrement = $this->table->hasAutoIncrementPrimaryKey();
-		$script = "
-/**
- * Revert the the current object to the state it had when it was last archived.
- * The object must be saved afterwards if the changes must persist.
- *
- * @param PropelPDO \$con Optional connection object
- *
- * @throws PropelException If the object has no corresponding archive.
- *
- * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
- */
-public function restoreFromArchive(PropelPDO \$con = null)
-{
-	if (!\$archive = \$this->getArchive(\$con)) {
-		throw new PropelException('The current object has never been archived and cannot be restored');
-	}
-	\$this->populateFromArchive(\$archive);
-
-	return \$this;
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectRestoreFromArchive', array(
+			'objectClassname'   => $this->builder->getObjectClassname(),
+		));
 	}
 
 	/**
@@ -245,51 +160,12 @@ public function restoreFromArchive(PropelPDO \$con = null)
 	 */
 	public function addPopulateFromArchive($builder)
 	{
-		$archiveTablePhpName = $this->behavior->getArchiveTablePhpName($builder);
-		$usesAutoIncrement = $this->table->hasAutoIncrementPrimaryKey();
-		$script = "
-/**
- * Populates the the current object based on a $archiveTablePhpName archive object.
- *
- * @param      " . $archiveTablePhpName . " \$archive An archived object based on the same class";
- 		if ($usesAutoIncrement) {
- 			$script .= "
- * @param      Boolean \$populateAutoIncrementPrimaryKeys 
- *               If true, autoincrement columns are copied from the archive object.
- *               If false, autoincrement columns are left intact.";
- 		}
- 		$script .= "
- *
- * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
- */
-public function populateFromArchive(\$archive" . ($usesAutoIncrement ? ", \$populateAutoIncrementPrimaryKeys = false" : '') . ")
-{";
-		if ($usesAutoIncrement) {
-			$script .= "
-	if (\$populateAutoIncrementPrimaryKeys) {";
-			foreach ($this->table->getColumns() as $col) {
-				$snippet = "";
-				if ($col->isAutoIncrement()) {
-					$script .= "
-		\$this->set" . $col->getPhpName() . "(\$archive->get" . $col->getPhpName() . "());";
-				}
-			}
-			$script .= "
-	}";
-		}
-		foreach ($this->table->getColumns() as $col) {
-			if ($col->isAutoIncrement()) {
-				continue;
-			}
-			$script .= "
-	\$this->set" . $col->getPhpName() . "(\$archive->get" . $col->getPhpName() . "());";
-		}
-		$script .= "
-
-	return \$this;
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectPopulateFromArchive', array(
+			'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
+			'usesAutoIncrement' => $this->table->hasAutoIncrementPrimaryKey(),
+			'objectClassname'   => $this->builder->getObjectClassname(),
+			'columns'           => $this->table->getColumns(),
+		));
 	}
 
 	/**
@@ -297,39 +173,11 @@ public function populateFromArchive(\$archive" . ($usesAutoIncrement ? ", \$popu
 	 */
 	public function addSaveWithoutArchive($builder)
 	{
-		$script = "
-/**
- * Persists the object to the database without archiving it.
- *
- * @param PropelPDO \$con Optional connection object
- *
- * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
- */
-public function saveWithoutArchive(PropelPDO \$con = null)
-{";
-	if (!$this->behavior->isArchiveOnInsert()) {
-		$script .= "
-	if (!\$this->isNew()) {
-		\$this->archiveOnUpdate = false;
-	}";
-	}	elseif (!$this->behavior->isArchiveOnUpdate()) {
-		$script .= "
-	if (\$this->isNew()) {
-		\$this->archiveOnInsert = false;
-	}";
-	} else {
-		$script .= "
-	if (\$this->isNew()) {
-		\$this->archiveOnInsert = false;
-	} else {
-		\$this->archiveOnUpdate = false;
-	}";		
-	}
-	$script .= "
-	return \$this->save(\$con);
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectSaveWithoutArchive', array(
+			'objectClassname'   => $this->builder->getObjectClassname(),
+			'isArchiveOnInsert' => $this->behavior->isArchiveOnInsert(),
+			'isArchiveOnUpdate' => $this->behavior->isArchiveOnUpdate(),
+		));
 	}
 
 	/**
@@ -337,21 +185,9 @@ public function saveWithoutArchive(PropelPDO \$con = null)
 	 */
 	public function addDeleteWithoutArchive($builder)
 	{
-		$script = "
-/**
- * Removes the object from the database without archiving it.
- *
- * @param PropelPDO \$con Optional connection object
- *
- * @return     " . $this->builder->getObjectClassname() . " The current object (for fluent API support)
- */
-public function deleteWithoutArchive(PropelPDO \$con = null)
-{
-	\$this->archiveOnDelete = false;
-	return \$this->delete(\$con);
-}
-";
-		return $script;
+		return $this->behavior->renderTemplate('objectDeleteWithoutArchive', array(
+			'objectClassname'   => $this->builder->getObjectClassname(),
+		));
 	}
 
 }
