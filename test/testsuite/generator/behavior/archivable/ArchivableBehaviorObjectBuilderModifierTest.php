@@ -83,6 +83,39 @@ EOF;
 		}
 	}
 
+	public function testHasGetArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest10', 'getArchive'));
+	}
+
+	public function testGetArchiveReturnsNullOnNewObjects()
+	{
+		$a = new ArchivableTest10();
+		$this->assertNull($a->getArchive());
+	}
+
+	public function testGetArchiveReturnsNullWhenNoArchiveIsFound()
+	{
+		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$this->assertNull($a->getArchive());
+	}
+
+	public function testGetArchiveReturnsExistingArchive()
+	{
+		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$archive = new ArchivableTest10Archive();
+		$archive->setId($a->getId());
+		$archive->setTitle('bar');
+		$archive->save();
+		$this->assertSame($archive, $a->getArchive());
+	}
+
 	public function testHasArchiveMethod()
 	{
 		$this->assertTrue(method_exists('ArchivableTest10', 'archive'));
@@ -151,6 +184,71 @@ EOF;
 	{
 		$a = new ArchivableTest10();
 		$a->archive();
+	}
+
+	public function testHasRestoreFromArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest10', 'restoreFromArchive'));
+	}
+
+	/**
+	 * @expectedException PropelException
+	 */
+	public function testRestoreFromArchiveThrowsExceptionOnUnarchivedObjects()
+	{
+		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$a->restoreFromArchive();
+	}
+
+	public function testRestoreFromArchiveChangesStateToTheArchiveState()
+	{
+		$a = new ArchivableTest10();
+		$a->setTitle('foo');
+		$a->setAge(12);
+		$a->save();
+		$archive = new ArchivableTest10Archive();
+		$archive->setId($a->getId());
+		$archive->setTitle('bar');
+		$archive->setAge(15);
+		$archive->save();
+		$a->restoreFromArchive();
+		$this->assertEquals('bar', $a->getTitle());
+		$this->assertEquals(15, $a->getAge());
+	}
+
+	public function testHasPopulateFromArchiveMethod()
+	{
+		$this->assertTrue(method_exists('ArchivableTest10', 'populateFromArchive'));
+	}
+
+	public function testPopulateFromArchiveReturnsCurrentObject()
+	{
+		$archive = new ArchivableTest10Archive();
+		$a = new ArchivableTest10();
+		$ret = $a->populateFromArchive($archive);
+		$this->assertSame($ret, $a);
+	}
+
+	public function testPopulateFromArchive()
+	{
+		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		ArchivableTest10Query::create()->deleteAllWithoutArchive();
+		$archive = new ArchivableTest10Archive();
+		$archive->setId(123); // not autoincremented
+		$archive->setTitle('foo');
+		$archive->setAge(12);
+		$archive->save();
+		$a = new ArchivableTest10();
+		$a->populateFromArchive($archive);
+		$this->assertNotEquals(123, $a->getId());
+		$this->assertEquals('foo', $a->getTitle());
+		$this->assertEquals(12, $a->getAge());
+		$b = new ArchivableTest10();
+		$b->populateFromArchive($archive, true);
+		$this->assertEquals(123, $b->getId());
 	}
 
 	public function testInsertDoesNotCreateArchiveByDefault()
@@ -235,38 +333,6 @@ EOF;
 		MyOldArchivableTest30Query::create()->deleteAll();
 		$a->delete();
 		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
-	}
-
-	public function testHasPopulateFromArchiveMethod()
-	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'populateFromArchive'));
-	}
-
-	public function testPopulateFromArchiveReturnsCurrentObject()
-	{
-		$archive = new ArchivableTest10Archive();
-		$a = new ArchivableTest10();
-		$ret = $a->populateFromArchive($archive);
-		$this->assertSame($ret, $a);
-	}
-
-	public function testPopulateFromArchive()
-	{
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
-		ArchivableTest10Query::create()->deleteAllWithoutArchive();
-		$archive = new ArchivableTest10Archive();
-		$archive->setId(123); // not autoincremented
-		$archive->setTitle('foo');
-		$archive->setAge(12);
-		$archive->save();
-		$a = new ArchivableTest10();
-		$a->populateFromArchive($archive);
-		$this->assertNotEquals(123, $a->getId());
-		$this->assertEquals('foo', $a->getTitle());
-		$this->assertEquals(12, $a->getAge());
-		$b = new ArchivableTest10();
-		$b->populateFromArchive($archive, true);
-		$this->assertEquals(123, $b->getId());
 	}
 
 	public function testHasSaveWithoutArchiveMethod()
