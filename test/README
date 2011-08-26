@@ -144,4 +144,4 @@ Run the test again using the command line to check that it passes:
 > phpunit GeneratedObjectTest
 }}}
 
-You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The ``phpunit command will find these files automatically and run them.
+You can also write additional unit test classes to any of the directories in `test/testsuite/` (or add new directories if needed). The `phpunit` command will find these files automatically and run them.
