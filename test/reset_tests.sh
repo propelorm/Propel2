@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Reset Propel tests fixtures
 # 2011 - William Durand <william.durand1@gmail.com>
 
