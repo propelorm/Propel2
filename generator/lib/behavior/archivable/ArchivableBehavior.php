@@ -49,7 +49,7 @@ class ArchivableBehavior extends Behavior
 	{
 		$table = $this->getTable();
 		$database = $table->getDatabase();
-		$archiveTableName = $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getName() . '_archive');;
+		$archiveTableName = $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getName() . '_archive');
 		if (!$database->hasTable($archiveTableName)) {
 			// create the version table
 			$archiveTable = $database->addTable(array(

@@ -147,7 +147,7 @@ class ArchivableBehaviorObjectBuilderModifier
 	public function addRestoreFromArchive($builder)
 	{
 		return $this->behavior->renderTemplate('objectRestoreFromArchive', array(
-			'objectClassname'   => $this->builder->getObjectClassname(),
+			'objectClassname' => $this->builder->getObjectClassname(),
 		));
 	}
 
@@ -161,10 +161,10 @@ class ArchivableBehaviorObjectBuilderModifier
 	public function addPopulateFromArchive($builder)
 	{
 		return $this->behavior->renderTemplate('objectPopulateFromArchive', array(
-			'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
-			'usesAutoIncrement' => $this->table->hasAutoIncrementPrimaryKey(),
-			'objectClassname'   => $this->builder->getObjectClassname(),
-			'columns'           => $this->table->getColumns(),
+			'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
+			'usesAutoIncrement'   => $this->table->hasAutoIncrementPrimaryKey(),
+			'objectClassname'     => $this->builder->getObjectClassname(),
+			'columns'             => $this->table->getColumns(),
 		));
 	}
 
@@ -186,7 +186,7 @@ class ArchivableBehaviorObjectBuilderModifier
 	public function addDeleteWithoutArchive($builder)
 	{
 		return $this->behavior->renderTemplate('objectDeleteWithoutArchive', array(
-			'objectClassname'   => $this->builder->getObjectClassname(),
+			'objectClassname' => $this->builder->getObjectClassname(),
 		));
 	}
 
