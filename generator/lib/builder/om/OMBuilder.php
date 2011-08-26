@@ -505,10 +505,13 @@ abstract class OMBuilder extends DataModelBuilder
           $modifier->$hookName($script, $this);
         } else {
           // regular hook: the behavior returns a string to append to the script string
+          if (!$addedScript = $modifier->$hookName($this)) {
+          	continue;
+          }
           $script .= "
 " . $tab . '// ' . $behavior->getName() . " behavior
 ";
-          $script .= preg_replace('/^/m', $tab, $modifier->$hookName($this));
+          $script .= preg_replace('/^/m', $tab, $addedScript);
          }
       }
     }

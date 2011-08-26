@@ -824,6 +824,21 @@ class ModelCriteria extends Criteria
 		return $this->with;
 	}
 
+	/**
+	 * Sets the array of ModelWith specifying which objects must be hydrated
+	 * together with the main object.
+	 *
+	 * @param    array
+	 *
+	 * @return     ModelCriteria The current object, for fluid interface
+	 */
+	public function setWith($with)
+	{
+		$this->with = $with;
+		
+		return $this;
+	}
+
 	public function isWithOneToMany()
 	{
 		return $this->isWithOneToMany;
@@ -1676,7 +1691,7 @@ class ModelCriteria extends Criteria
 		} else {
 
 			// update rows in a single query
-			$set = new Criteria();
+			$set = new Criteria($this->getDbName());
 			foreach ($values as $columnName => $value) {
 				$realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
 				$set->add($realColumnName, $value);

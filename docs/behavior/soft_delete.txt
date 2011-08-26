@@ -4,6 +4,8 @@
 
 The `soft_delete` behavior overrides the deletion methods of a model object to make them 'hide' the deleted rows but keep them in the database. Deleted objects still don't show up on select queries, but they can be retrieved or undeleted when necessary.
 
+'''Warning''': This behavior is deprecated due to limitations that can't be fixed. Use the [wiki:Documentation/1.6/Behaviors/archivable `archivable`] behavior instead.
+
 == Basic Usage ==
 
 In the `schema.xml`, use the `<behavior>` tag to add the `soft_delete` behavior to a table:
@@ -31,6 +33,8 @@ $books = BookQuery::create()->find(); // empty collection
 }}}
 
 Behind the curtain, the behavior adds a condition to every SELECT query to return only records where the `deleted_at` column is null. That's why the deleted objects don't appear anymore upon selection.
+
+'''Warning''': Deleted results may show up in related results (i.e. when you use `joinWith()` on a query and point to a `soft_delete` model). This is something that can't be fixed, and a good reason to use the `archivable` behavior instead.
 
 You can include deleted results in a query by calling the `includeDeleted()` filter:
 

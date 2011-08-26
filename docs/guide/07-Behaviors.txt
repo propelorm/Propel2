@@ -139,11 +139,11 @@ Propel currently bundles several behaviors. Check the behavior documentation for
 
  * [wiki:Documentation/1.6/Behaviors/aggregate_column aggregate_column]
  * [wiki:Documentation/1.6/Behaviors/alternative_coding_standards alternative_coding_standards]
+ * [wiki:Documentation/1.6/Behaviors/archivable archivable] (replaces [wiki:Documentation/1.6/Behaviors/soft_delete soft_delete], which is deprecated)
  * [wiki:Documentation/1.6/Behaviors/auto_add_pk auto_add_pk]
  * [wiki:Documentation/1.6/Behaviors/delegate delegate]
  * [wiki:Documentation/1.6/Behaviors/timestampable timestampable]
  * [wiki:Documentation/1.6/Behaviors/sluggable sluggable]
- * [wiki:Documentation/1.6/Behaviors/soft_delete soft_delete]
  * [wiki:Documentation/1.6/Behaviors/sortable sortable]
  * [wiki:Documentation/1.6/Behaviors/nested_set nested_set]
  * [wiki:Documentation/1.6/Behaviors/versionable versionable]
