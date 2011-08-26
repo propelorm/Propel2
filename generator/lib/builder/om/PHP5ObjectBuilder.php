@@ -2350,8 +2350,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				\$valueSet = " . $this->getPeerClassname() . "::getValueSet(" . $this->getColumnConstant($col) . ");
 				if (isset(\$valueSet[\$value])) {
 					\$value = \$valueSet[\$value];
-				} else {
-					\$value = null;
 				}";
 			} elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
 				$script .= "
