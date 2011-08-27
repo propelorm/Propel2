@@ -138,7 +138,7 @@ abstract class OMBuilder extends DataModelBuilder
 	 */
 	public function getClassFilePath()
 	{
-		return ClassTools::getFilePath($this->getPackage(), $this->getClassname());
+		return ClassTools::createFilePath($this->getPackagePath(), $this->getClassname());
 	}
 
 	/**
@@ -161,7 +161,13 @@ abstract class OMBuilder extends DataModelBuilder
 	 */
 	public function getPackagePath()
 	{
-		return strtr($this->getPackage(), '.', '/');
+		$pkg = $this->getPackage();
+
+		if (strpos($pkg, '/') !== false) {
+			return preg_replace('#\.(map|om)$#', '/\1', $pkg);
+		}
+
+		return strtr($pkg, '.', '/');
 	}
 
 	/**

@@ -61,4 +61,62 @@ EOF;
 EOF;
 		$this->assertEquals($expected, (string) $publisher, 'generated __toString() uses default string format and exportTo()');
 	}
+
+	/**
+	 * @dataProvider dataGetPackagePath
+	 */
+	public function testGetPackagePath($package, $expectedPath)
+	{
+		$builder = new OMBuilderMock();
+		$builder->setPackage($package);
+
+		$this->assertEquals($expectedPath, $builder->getPackagePath());
+	}
+
+	public function dataGetPackagePath()
+	{
+		return array(
+			array('', ''),
+			array('foo.bar', 'foo/bar'),
+			array('foo/bar', 'foo/bar'),
+			array('foo.bar.map', 'foo/bar/map'),
+			array('foo.bar.om', 'foo/bar/om'),
+			array('foo.bar.baz', 'foo/bar/baz'),
+			array('foo.bar.baz.om', 'foo/bar/baz/om'),
+			array('foo.bar.baz.map', 'foo/bar/baz/map'),
+			array('foo/bar/baz', 'foo/bar/baz'),
+			array('foo/bar/baz/map', 'foo/bar/baz/map'),
+			array('foo/bar/baz/om', 'foo/bar/baz/om'),
+			array('foo/bar.baz', 'foo/bar.baz'),
+			array('foo/bar.baz.map', 'foo/bar.baz/map'),
+			array('foo/bar.baz.om', 'foo/bar.baz/om'),
+			array('foo.bar/baz', 'foo.bar/baz'),
+			array('foo.bar/baz.om', 'foo.bar/baz/om'),
+			array('foo.bar/baz.map', 'foo.bar/baz/map'),
+		);
+	}
+
+}
+
+class OMBuilderMock extends OMBuilder
+{
+	protected $pkg;
+
+	public function __construct()
+	{
+	}
+
+	public function setPackage($pkg)
+	{
+		$this->pkg = $pkg;
+	}
+
+	public function getPackage()
+	{
+		return $this->pkg;
+	}
+
+	public function getUnprefixedClassname()
+	{
+	}
 }
