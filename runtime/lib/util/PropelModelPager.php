@@ -20,18 +20,19 @@
 class PropelModelPager implements IteratorAggregate, Countable
 {
 	protected
-		$query					 = null,
-		$page						 = 1,
-		$maxPerPage			 = 10,
-		$lastPage				 = 1,
-		$nbResults			 = 0,
-		$objects				 = null,
-		$parameters			 = array(),
-		$currentMaxLink	 = 1,
+		$query = null,
+		$page = 1,
+		$maxPerPage = 10,
+		$lastPage = 1,
+		$nbResults = 0,
+		$objects = null,
+		$parameters = array(),
+		$currentMaxLink = 1,
 		$parameterHolder = null,
 		$maxRecordLimit = false,
-		$results         = null,
-		$resultsCounter  = 0;
+		$results = null,
+		$resultsCounter	= 0,
+		$con = null;
 
 	public function __construct(ModelCriteria $query, $maxPerPage = 10)
 	{
@@ -49,8 +50,9 @@ class PropelModelPager implements IteratorAggregate, Countable
 		return $this->query;
 	}
 
-	public function init()
+	public function init($con = null)
 	{
+		$this->con = $con;
 		$hasMaxRecordLimit = ($this->getMaxRecordLimit() !== false);
 		$maxRecordLimit = $this->getMaxRecordLimit();
 
@@ -58,7 +60,7 @@ class PropelModelPager implements IteratorAggregate, Countable
 		$count = $qForCount
 			->offset(0)
 			->limit(0)
-			->count();
+			->count($this->con);
 
 		$this->setNbResults($hasMaxRecordLimit ? min($count, $maxRecordLimit) : $count);
 
@@ -96,7 +98,7 @@ class PropelModelPager implements IteratorAggregate, Countable
 	{
 		if (null === $this->results) {
 			$this->results = $this->getQuery()
-				->find();
+				->find($this->con);
 		}
 		return $this->results;
 	}

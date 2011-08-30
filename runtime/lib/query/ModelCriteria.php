@@ -835,7 +835,7 @@ class ModelCriteria extends Criteria
 	public function setWith($with)
 	{
 		$this->with = $with;
-		
+
 		return $this;
 	}
 
@@ -1459,7 +1459,7 @@ class ModelCriteria extends Criteria
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$pager = new PropelModelPager($criteria, $maxPerPage);
 		$pager->setPage($page);
-		$pager->init();
+		$pager->init($con);
 
 		return $pager;
 	}
