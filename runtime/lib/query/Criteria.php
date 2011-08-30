@@ -237,8 +237,8 @@ class Criteria implements IteratorAggregate
 	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 
 	// flags for boolean functions
-	protected $isInIf = false;
-	protected $wasTrue = false;
+	protected $ifLvlCount = 0;
+	protected $wasTrue = array();
 
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -296,7 +296,7 @@ class Criteria implements IteratorAggregate
 		$this->blobFlag = null;
 		$this->aliases = array();
 		$this->useTransaction = false;
-		$this->isInIf = false;
+		$this->ifLvlCount = false;
 		$this->wasTrue = false;
 	}
 
@@ -1705,13 +1705,18 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _if($cond)
 	{
-		if ($this->isInIf) {
-			throw new PropelException('_if() statements cannot be nested');
+		if (!isset($this->ifLvlCount)) {
+      $this->ifLvlCount = 0;
 		}
-		$this->isInIf = true;
-		$this->wasTrue = false;
-		if ($cond) {
-			$this->wasTrue = true;
+    if (!is_array($this->wasTrue))
+    {
+      $this->wasTrue = array();
+    }
+
+		$this->ifLvlCount++;
+    $this->_setCurrentBooleanStatus(false);
+		if ($cond && $this->_getParentBooleanStatus()) {
+      $this->_setCurrentBooleanStatus(true);
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1728,11 +1733,11 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _elseif($cond)
 	{
-		if (!$this->isInIf) {
+		if (!$this->ifLvlCount) {
 			throw new PropelException('_elseif() must be called after _if()');
 		}
-		if ($cond && !$this->wasTrue) {
-			$this->wasTrue = true;
+		if ($cond && !$this->_getCurrentBooleanStatus()) {
+      $this->_setCurrentBooleanStatus($this->_getParentBooleanStatus());
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1747,11 +1752,11 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _else()
 	{
-		if (!$this->isInIf) {
+		if (!$this->ifLvlCount) {
 			throw new PropelException('_else() must be called after _if()');
 		}
-		if (!$this->wasTrue) {
-			$this->wasTrue = true;
+		if (!$this->_getCurrentBooleanStatus()) {
+			$this->_setCurrentBooleanStatus($this->_getParentBooleanStatus());
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1766,12 +1771,52 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _endif()
 	{
-		if (!$this->isInIf) {
+		if (!$this->ifLvlCount) {
 			throw new PropelException('_endif() must be called after _if()');
 		}
-		$this->isInIf = false;
+		$this->ifLvlCount--;
+    array_pop($this->wasTrue);
 		return $this;
 	}
+
+  /**
+   * Returns the current conditionnal status value
+   *
+   * @return Boolean
+   **/
+  protected function _getCurrentBooleanStatus()
+  {
+		if (!$this->ifLvlCount) {
+			throw new PropelException('_getCurrentBooleanStatus() must be called after _if()');
+		}
+    return $this->wasTrue[$this->ifLvlCount - 1];
+  }
+
+  /**
+   * Returns the current conditionnal status value
+   *
+   * @return Boolean
+   **/
+  protected function _setCurrentBooleanStatus($bool)
+  {
+		if (!$this->ifLvlCount) {
+			throw new PropelException('_setCurrentBooleanStatus() must be called after _if()');
+		}
+    return $this->wasTrue[$this->ifLvlCount - 1] = $bool;
+  }
+
+  /**
+   * return parent conditionnal status if any
+   *
+   * @return Boolean
+   **/
+  protected function _getParentBooleanStatus()
+  {
+		if (!$this->ifLvlCount) {
+			throw new PropelException('_getParentBooleanStatus() must be called after _if()');
+		}
+    return ($this->ifLvlCount < 2 || $this->wasTrue[$this->ifLvlCount - 2]);
+  }
 
 	/**
 	 * Ensures deep cloning of attached objects

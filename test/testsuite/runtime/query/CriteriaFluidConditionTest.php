@@ -51,30 +51,78 @@ class CriteriaFluidConditionTest extends BaseTestCase
 		$this->assertFalse($f->getTest(), '_if() does not execute the next methods until _endif() if the test is false');
 	}
 
-	/**
-	 * @expectedException PropelException
-	 */
 	public function testNestedIf()
 	{
 		$f = new TestableCriteria();
 		$f->
 			_if(false)->
-			_if(true)->
-				test()->
+        _if(true)->
+          test()->
+        _endif()->
 			_endif();
-	}
-
-	/**
-	 * @expectedException PropelException
-	 */
-	public function testNestedIf2()
-	{
+		$this->assertFalse($f->getTest(), 'nested _if() is not executed if first condition is false');
 		$f = new TestableCriteria();
 		$f->
 			_if(true)->
-			_if(true)->
-				test()->
+        _if(true)->
+          test()->
+        _endif()->
 			_endif();
+		$this->assertTrue($f->getTest(), 'nested _if() is executed if first condition is true');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(false)->
+          test()->
+        _endif()->
+			_endif();
+		$this->assertFalse($f->getTest(), 'nested _if() is not executed if second condition is false');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(false)->
+        _else()->
+          test()->
+        _endif()->
+			_endif();
+		$this->assertTrue($f->getTest(), 'nested _else() is executed if second condition is false');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(true)->
+        _else()->
+          test()->
+        _endif()->
+			_endif();
+		$this->assertFalse($f->getTest(), 'nested _else() is not executed if second condition is true');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(false)->
+        _endif()->
+      _else()->
+        test()->
+			_endif();
+		$this->assertFalse($f->getTest(), 'first level _else() is not executed if first condition is true');
+		$f = new TestableCriteria();
+		$f->
+			_if(false)->
+        _if(true)->
+        _endif()->
+      _else()->
+        test()->
+			_endif();
+		$this->assertTrue($f->getTest(), 'first level _else() is executed if first condition is false');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(true)->
+          _if(true)->
+            test()->
+          _endif()->
+        _endif()->
+			_endif();
+		$this->assertTrue($f->getTest(), '_if() can be nested on 3 levels');
 	}
 
 	public function testElseIf()

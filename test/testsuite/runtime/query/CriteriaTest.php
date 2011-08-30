@@ -1022,7 +1022,7 @@ class CriteriaTest extends BookstoreTestBase
 
 		$this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
 
-		$this->assertFalse($c->getIsInIf(), 'isInIf is false by default');
+		$this->assertFalse($c->getIfLvlCount(), 'ifLvlCount is false by default');
 
 		$this->assertFalse($c->getWasTrue(), 'wasTrue is false by default');
 	}
@@ -1070,8 +1070,8 @@ class CriteriaForClearTest extends Criteria
 		return $this->blobFlag;
 	}
 
-	public function getIsInIf()
+	public function getIfLvlCount()
 	{
-		return $this->isInIf;
+		return $this->ifLvlCount;
 	}
 }
