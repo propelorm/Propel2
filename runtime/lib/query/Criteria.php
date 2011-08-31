@@ -1708,8 +1708,7 @@ class Criteria implements IteratorAggregate
 		if (!isset($this->ifLvlCount)) {
       $this->ifLvlCount = 0;
 		}
-    if (!is_array($this->wasTrue))
-    {
+    if (!is_array($this->wasTrue)) {
       $this->wasTrue = array();
     }
 
@@ -1783,7 +1782,7 @@ class Criteria implements IteratorAggregate
    * Returns the current conditionnal status value
    *
    * @return Boolean
-   **/
+   */
   protected function _getCurrentBooleanStatus()
   {
 		if (!$this->ifLvlCount) {
@@ -1796,7 +1795,7 @@ class Criteria implements IteratorAggregate
    * Returns the current conditionnal status value
    *
    * @return Boolean
-   **/
+   */
   protected function _setCurrentBooleanStatus($bool)
   {
 		if (!$this->ifLvlCount) {
@@ -1809,7 +1808,7 @@ class Criteria implements IteratorAggregate
    * return parent conditionnal status if any
    *
    * @return Boolean
-   **/
+   */
   protected function _getParentBooleanStatus()
   {
 		if (!$this->ifLvlCount) {
