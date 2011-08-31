@@ -489,9 +489,6 @@ class PropelCollection extends ArrayObject implements Serializable
 	 */
 	public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
 	{
-		if ($this instanceof PropelOnDemandCollection) {
-			throw new PropelException('A PropelOnDemandCollection cannot be exported.');
-		}
 		if (!$parser instanceof PropelParser) {
 			$parser = PropelParser::getParser($parser);
 		}
@@ -515,8 +512,8 @@ class PropelCollection extends ArrayObject implements Serializable
 			return $this->importFrom($matches[1], reset($params));
 		}
 		if (preg_match('/^to(\w+)$/', $name, $matches)) {
-			$usePrefix = isset($params[0]) && is_bool($params[0]) ? $params[0] : true;
-			$includeLazyLoadColumns = isset($params[1]) && is_bool($params[1]) ? $params[1] : true;
+			$usePrefix = isset($params[0]) ? $params[0] : true;
+			$includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
 
 			return $this->exportTo($matches[1], $usePrefix, $includeLazyLoadColumns);
 		}

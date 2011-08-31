@@ -249,4 +249,12 @@ class PropelOnDemandCollection extends PropelCollection
 	{
 		throw new PropelException('The On Demand Collection is read only');
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+	{
+		throw new PropelException('A PropelOnDemandCollection cannot be exported.');
+	}
 }

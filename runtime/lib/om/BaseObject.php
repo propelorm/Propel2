@@ -394,8 +394,8 @@ abstract class BaseObject
 			return $this->importFrom($matches[1], reset($params));
 		}
 		if (preg_match('/^to(\w+)$/', $name, $matches)) {
- 			$includeLazyLoadColumns = isset($params[0]) && is_bool($params[0]) ? $params[0] : true;
- 			return $this->exportTo($matches[1], $includeLazyLoadColumns);
+			$includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
+			return $this->exportTo($matches[1], $includeLazyLoadColumns);
 		}
 		throw new PropelException('Call to undefined method: ' . $name);
 	}
