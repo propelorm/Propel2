@@ -1714,7 +1714,7 @@ class Criteria implements IteratorAggregate
 
 		$this->ifLvlCount++;
     $this->_setCurrentBooleanStatus(false);
-		if ($cond && $this->_getParentBooleanStatus()) {
+		if ($cond && $this->getParentBooleanStatus()) {
       $this->_setCurrentBooleanStatus(true);
 			return $this;
 		} else {
@@ -1736,7 +1736,7 @@ class Criteria implements IteratorAggregate
 			throw new PropelException('_elseif() must be called after _if()');
 		}
 		if ($cond && !$this->_getCurrentBooleanStatus()) {
-      $this->_setCurrentBooleanStatus($this->_getParentBooleanStatus());
+      $this->_setCurrentBooleanStatus($this->getParentBooleanStatus());
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1755,7 +1755,7 @@ class Criteria implements IteratorAggregate
 			throw new PropelException('_else() must be called after _if()');
 		}
 		if (!$this->_getCurrentBooleanStatus()) {
-			$this->_setCurrentBooleanStatus($this->_getParentBooleanStatus());
+			$this->_setCurrentBooleanStatus($this->getParentBooleanStatus());
 			return $this;
 		} else {
 			return new PropelConditionalProxy($this);
@@ -1809,10 +1809,10 @@ class Criteria implements IteratorAggregate
    *
    * @return Boolean
    */
-  protected function _getParentBooleanStatus()
+  protected function getParentBooleanStatus()
   {
 		if (!$this->ifLvlCount) {
-			throw new PropelException('_getParentBooleanStatus() must be called after _if()');
+			throw new PropelException('getParentBooleanStatus() must be called after _if()');
 		}
     return ($this->ifLvlCount < 2 || $this->wasTrue[$this->ifLvlCount - 2]);
   }
