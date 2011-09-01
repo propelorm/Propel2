@@ -457,4 +457,20 @@ EOF;
 		return array(array(array($table->getColumn('bar1'), $table->getColumn('bar2'))));
 	}
 
+	public function providerForTestGetModifyColumnRemoveDefaultValueDDL()
+	{
+	    $t1 = new Table('test');
+	    $c1 = new Column();
+	    $c1->setName('test');
+	    $c1->getDomain()->setType('INTEGER');
+	    $c1->setDefaultValue(0);
+	    $t1->addColumn($c1);
+	    $t2 = new Table('test');
+	    $c2 = new Column();
+	    $c2->setName('test');
+	    $c2->getDomain()->setType('INTEGER');
+	    $t2->addColumn($c2);
+	    return array(array(PropelColumnComparator::computeDiff($c1, $c2)));
+	}
+
 }
