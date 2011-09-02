@@ -149,8 +149,14 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 				if (!$this->packageObjectModel) {
 					$name = $dataModel->getName();
 				} else {
-					$name = ($package ? $package . '.' : '') . 'schema.xml';
+					if (false !== strpos($package, '/')) {
+						$pkg = substr($package, strrpos($package, '/'));
+					} else {
+						$pkg = $package;
+					}
+					$name = ($pkg ? $pkg . '.' : '') . 'schema.xml';
 				}
+
 				$outFile = $this->getMappedFile($name);
 				$absPath = $outFile->getAbsolutePath();
 				if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
