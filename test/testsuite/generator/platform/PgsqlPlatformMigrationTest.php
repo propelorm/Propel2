@@ -374,5 +374,21 @@ ALTER TABLE "test" ALTER COLUMN "test" DROP DEFAULT;
 EOF;
 	    $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiffs));
 	}
-	
+
+	/**
+	 * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql3DDL
+	 */
+	public function testGetModifyTableForeignKeysSkipSql3DDL($databaseDiff)
+	{
+		$this->assertFalse($databaseDiff);
+	}
+
+	/**
+	 * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql4DDL
+	 */
+	public function testGetModifyTableForeignKeysSkipSql4DDL($databaseDiff)
+	{
+		$this->assertFalse($databaseDiff);
+	}
+
 }

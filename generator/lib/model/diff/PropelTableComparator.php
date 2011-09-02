@@ -296,13 +296,17 @@ class PropelTableComparator
 		}
 
 		foreach ($fromTableFks as $fromTableFkPos => $fromTableFk) {
-			$this->tableDiff->addRemovedFk($fromTableFk->getName(), $fromTableFk);
-			$fkDifferences++;
+			if (!$fromTableFk->isSkipSql() && !in_array($fromTableFk, $toTableFks)) {
+				$this->tableDiff->addRemovedFk($fromTableFk->getName(), $fromTableFk);
+				$fkDifferences++;
+			}
 		}
 
 		foreach ($toTableFks as $toTableFkPos => $toTableFk) {
-			$this->tableDiff->addAddedFk($toTableFk->getName(), $toTableFk);
-			$fkDifferences++;
+			if (!$toTableFk->isSkipSql() && !in_array($toTableFk, $fromTableFks)) {
+				$this->tableDiff->addAddedFk($toTableFk->getName(), $toTableFk);
+				$fkDifferences++;
+			}
 		}
 
 		return $fkDifferences;
