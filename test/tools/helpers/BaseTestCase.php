@@ -9,7 +9,6 @@
  */
 
 require_once dirname(__FILE__) . '/../../../runtime/lib/Propel.php';
-require_once 'PHPUnit/Framework.php';
 
 /**
  * Base functionality to be extended by all Propel test cases.  Test

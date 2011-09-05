@@ -9,7 +9,6 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Database.php';
 require_once dirname(__FILE__) . '/../../../tools/helpers/DummyPlatforms.php';
 

@@ -9,7 +9,6 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/model/Behavior.php';
 require_once dirname(__FILE__) . '/../../../../generator/lib/behavior/AlternativeCodingStandardsBehavior.php';
 

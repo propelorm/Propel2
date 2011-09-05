@@ -8,7 +8,6 @@
  * @license    MIT License
  */
 
-require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/map/DatabaseMap.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/map/RelationMap.php';
 require_once dirname(__FILE__) . '/../../../../runtime/lib/map/ColumnMap.php';
