@@ -123,6 +123,16 @@ class CriteriaFluidConditionTest extends BaseTestCase
         _endif()->
 			_endif();
 		$this->assertTrue($f->getTest(), '_if() can be nested on 3 levels');
+		$f = new TestableCriteria();
+		$f->
+			_if(true)->
+        _if(false)->
+          _if(false)->
+            test()->
+          _endif()->
+        _endif()->
+			_endif();
+		$this->assertFalse($f->getTest(), '_if() can be nested on 3 levels');
 	}
 
 	public function testElseIf()
@@ -163,6 +173,14 @@ class CriteriaFluidConditionTest extends BaseTestCase
 				test()->
 			_endif();
 		$this->assertFalse($f->getTest(), '_elseif() does not execute the next method if the main test is false and the elseif test is false');
+		$f = new TestableCriteria();
+		$f->
+			_if(false)->
+			_elseif(true)->
+			_elseif(true)->
+				test()->
+			_endif();
+		$this->assertFalse($f->getTest(), '_elseif() does not executes the next method if the main test is true and the elseif test is true');
 	}
 
 	public function testElse()
@@ -235,6 +253,62 @@ class CriteriaFluidConditionTest extends BaseTestCase
 			test();
 		$this->assertTrue($f->getTest(), '_endif() stops the condition check');
 	}
+
+  public function testHierarchy()
+  {
+		$f = new TestableCriteria();
+		$f2 = $f->
+			_if(true)->
+			_else()->
+			_endif();
+    $this->assertEquals($f2, $f, '_endif returns criteria');
+		$f = new TestableCriteria();
+		$f2 = $f->
+			_if(false)->
+			_elseif(false)->
+			_elseif(true)->
+			_elseif(true)->
+			_else()->
+			_endif();
+    $this->assertEquals($f2, $f, '_endif returns criteria');
+		$f = new TestableCriteria();
+		$f2 = $f->
+			_if(true)->
+			_else()->
+      _endif()->
+			_if(true)->
+			_else()->
+      _endif()->
+			_if(false)->
+			_else()->
+			_endif();
+    $this->assertEquals($f2, $f, '_endif can be chained');
+		$f = new TestableCriteria();
+		$f2 = $f->
+			_if(false)->
+			_else()->
+			_endif();
+    $this->assertEquals($f2, $f, '_endif returns criteria');
+		$f = new TestableCriteria();
+		$f2 = $f->
+			_if(false)->
+        _if(false)->
+        _endif()->
+			_elseif(false)->
+        _if(false)->
+        _endif()->
+			_elseif(true)->
+        _if(true)->
+          _if(true)->
+          _endif()->
+        _endif()->
+			_elseif(true)->
+        _if(false)->
+        _endif()->
+			_else()->
+			_endif();
+    $this->assertEquals($f2, $f, '_endif returns criteria when nested');
+  }
 }
 
 class TestableCriteria extends Criteria

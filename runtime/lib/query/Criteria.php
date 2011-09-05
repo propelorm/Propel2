@@ -237,8 +237,7 @@ class Criteria implements IteratorAggregate
 	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 
 	// flags for boolean functions
-	protected $ifLvlCount = 0;
-	protected $wasTrue = array();
+	protected $conditionalProxy = null;
 
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -1705,21 +1704,8 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _if($cond)
 	{
-		if (!isset($this->ifLvlCount)) {
-      $this->ifLvlCount = 0;
-		}
-    if (!is_array($this->wasTrue)) {
-      $this->wasTrue = array();
-    }
-
-		$this->ifLvlCount++;
-    $this->_setCurrentBooleanStatus(false);
-		if ($cond && $this->getParentBooleanStatus()) {
-      $this->_setCurrentBooleanStatus(true);
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+		$this->conditionalProxy = new PropelConditionalProxy($this, $cond, $this->conditionalProxy);
+    return $this->conditionalProxy->getCriteriaOrProxy();
 	}
 
 	/**
@@ -1728,38 +1714,30 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @param      bool $cond ignored
 	 *
-	 * @return     PropelConditionalProxy
+	 * @return     PropelConditionalProxy|Criteria
 	 */
 	public function _elseif($cond)
 	{
-		if (!$this->ifLvlCount) {
-			throw new PropelException('_elseif() must be called after _if()');
-		}
-		if ($cond && !$this->_getCurrentBooleanStatus()) {
-      $this->_setCurrentBooleanStatus($this->getParentBooleanStatus());
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_elseif() must be called after _if()');
+    }
+
+    return $this->conditionalProxy->_elseif($cond);
 	}
 
 	/**
 	 * Returns a PropelConditionalProxy instance.
 	 * Allows for conditional statements in a fluid interface.
 	 *
-	 * @return     PropelConditionalProxy
+	 * @return     PropelConditionalProxy|Criteria
 	 */
 	public function _else()
 	{
-		if (!$this->ifLvlCount) {
-			throw new PropelException('_else() must be called after _if()');
-		}
-		if (!$this->_getCurrentBooleanStatus()) {
-			$this->_setCurrentBooleanStatus($this->getParentBooleanStatus());
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_else() must be called after _if()');
+    }
+
+    return $this->conditionalProxy->_else();
 	}
 
 	/**
@@ -1770,52 +1748,19 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _endif()
 	{
-		if (!$this->ifLvlCount) {
-			throw new PropelException('_endif() must be called after _if()');
-		}
-		$this->ifLvlCount--;
-    array_pop($this->wasTrue);
-		return $this;
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_endif() must be called after _if()');
+    }
+
+    $this->conditionalProxy = $this->conditionalProxy->getParentProxy();
+
+    if ($this->conditionalProxy) {
+      return $this->conditionalProxy->getCriteriaOrProxy();
+    }
+
+    // reached last level
+    return $this;
 	}
-
-  /**
-   * Returns the current conditionnal status value
-   *
-   * @return Boolean
-   */
-  protected function _getCurrentBooleanStatus()
-  {
-		if (!$this->ifLvlCount) {
-			throw new PropelException('_getCurrentBooleanStatus() must be called after _if()');
-		}
-    return $this->wasTrue[$this->ifLvlCount - 1];
-  }
-
-  /**
-   * Returns the current conditionnal status value
-   *
-   * @return Boolean
-   */
-  protected function _setCurrentBooleanStatus($bool)
-  {
-		if (!$this->ifLvlCount) {
-			throw new PropelException('_setCurrentBooleanStatus() must be called after _if()');
-		}
-    return $this->wasTrue[$this->ifLvlCount - 1] = $bool;
-  }
-
-  /**
-   * return parent conditionnal status if any
-   *
-   * @return Boolean
-   */
-  protected function getParentBooleanStatus()
-  {
-		if (!$this->ifLvlCount) {
-			throw new PropelException('getParentBooleanStatus() must be called after _if()');
-		}
-    return ($this->ifLvlCount < 2 || $this->wasTrue[$this->ifLvlCount - 2]);
-  }
 
 	/**
 	 * Ensures deep cloning of attached objects
