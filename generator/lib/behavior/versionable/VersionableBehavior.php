@@ -130,7 +130,9 @@ class VersionableBehavior extends Behavior
 			$versionTable->addForeignKey($fk);
 
 			// add the version column to the primary key
-			$versionTable->getColumn($this->getParameter('version_column'))->setPrimaryKey(true);
+			$versionColumn = $versionTable->getColumn($this->getParameter('version_column'));
+			$versionColumn->setNotNull(true);
+			$versionColumn->setPrimaryKey(true);
 			$this->versionTable = $versionTable;
 		} else {
 			$this->versionTable = $database->getTable($versionTableName);
