@@ -154,7 +154,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 					} else {
 						$pkg = $package;
 					}
-					$name = ($pkg ? $pkg . '.' : '') . 'schema.xml';
+					$name = ($pkg ? $pkg . '-' : '') . uniqid() . '.schema.xml';
 				}
 
 				$outFile = $this->getMappedFile($name);
