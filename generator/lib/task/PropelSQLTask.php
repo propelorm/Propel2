@@ -92,7 +92,11 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 			$dataModels = $this->packageDataModels();
 			foreach ($dataModels as $package => $dataModel) {
 				foreach ($dataModel->getDatabases() as $database) {
-					$name = ($package ? $package . '.' : '') . 'schema.xml';
+					if (false !== strpos($package, '/')) {
+						$name = $database->getName() . '.' . $dataModel->getName();
+					} else {
+						$name = ($package ? $package . '.' : '') . '.schema.xml';
+					}
 					$sqlFile = $this->getMappedFile($name);
 					$sqldbmap->setProperty($sqlFile->getName(), $database->getName());
 				}
@@ -150,11 +154,10 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 					$name = $dataModel->getName();
 				} else {
 					if (false !== strpos($package, '/')) {
-						$pkg = substr($package, strrpos($package, '/'));
+						$name = $database->getName() . '.' . $dataModel->getName();
 					} else {
-						$pkg = $package;
+						$name = ($package ? $package . '.' : '') . '.schema.xml';
 					}
-					$name = ($pkg ? $pkg . '.' : '') . 'schema.xml';
 				}
 
 				$outFile = $this->getMappedFile($name);
