@@ -1021,10 +1021,6 @@ class CriteriaTest extends BookstoreTestBase
 		$this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
 
 		$this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
-
-		$this->assertFalse($c->getIsInIf(), 'isInIf is false by default');
-
-		$this->assertFalse($c->getWasTrue(), 'wasTrue is false by default');
 	}
 
 	public function testLimit()
@@ -1055,23 +1051,13 @@ class CriteriaForClearTest extends Criteria
 		return $this->singleRecord;
 	}
 
-    public function getUseTransaction()
-    {
-        return $this->useTransaction;
-    }
-
-	public function getWasTrue()
-	{
-		return $this->wasTrue;
-	}
+  public function getUseTransaction()
+  {
+      return $this->useTransaction;
+  }
 
 	public function getBlobFlag()
 	{
 		return $this->blobFlag;
-	}
-
-	public function getIsInIf()
-	{
-		return $this->isInIf;
 	}
 }

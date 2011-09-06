@@ -237,8 +237,7 @@ class Criteria implements IteratorAggregate
 	protected $defaultCombineOperator = Criteria::LOGICAL_AND;
 
 	// flags for boolean functions
-	protected $isInIf = false;
-	protected $wasTrue = false;
+	protected $conditionalProxy = null;
 
 	/**
 	 * Creates a new instance with the default capacity which corresponds to
@@ -296,7 +295,7 @@ class Criteria implements IteratorAggregate
 		$this->blobFlag = null;
 		$this->aliases = array();
 		$this->useTransaction = false;
-		$this->isInIf = false;
+		$this->ifLvlCount = false;
 		$this->wasTrue = false;
 	}
 
@@ -1705,17 +1704,8 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _if($cond)
 	{
-		if ($this->isInIf) {
-			throw new PropelException('_if() statements cannot be nested');
-		}
-		$this->isInIf = true;
-		$this->wasTrue = false;
-		if ($cond) {
-			$this->wasTrue = true;
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+		$this->conditionalProxy = new PropelConditionalProxy($this, $cond, $this->conditionalProxy);
+    return $this->conditionalProxy->getCriteriaOrProxy();
 	}
 
 	/**
@@ -1724,38 +1714,30 @@ class Criteria implements IteratorAggregate
 	 *
 	 * @param      bool $cond ignored
 	 *
-	 * @return     PropelConditionalProxy
+	 * @return     PropelConditionalProxy|Criteria
 	 */
 	public function _elseif($cond)
 	{
-		if (!$this->isInIf) {
-			throw new PropelException('_elseif() must be called after _if()');
-		}
-		if ($cond && !$this->wasTrue) {
-			$this->wasTrue = true;
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_elseif() must be called after _if()');
+    }
+
+    return $this->conditionalProxy->_elseif($cond);
 	}
 
 	/**
 	 * Returns a PropelConditionalProxy instance.
 	 * Allows for conditional statements in a fluid interface.
 	 *
-	 * @return     PropelConditionalProxy
+	 * @return     PropelConditionalProxy|Criteria
 	 */
 	public function _else()
 	{
-		if (!$this->isInIf) {
-			throw new PropelException('_else() must be called after _if()');
-		}
-		if (!$this->wasTrue) {
-			$this->wasTrue = true;
-			return $this;
-		} else {
-			return new PropelConditionalProxy($this);
-		}
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_else() must be called after _if()');
+    }
+
+    return $this->conditionalProxy->_else();
 	}
 
 	/**
@@ -1766,11 +1748,18 @@ class Criteria implements IteratorAggregate
 	 */
 	public function _endif()
 	{
-		if (!$this->isInIf) {
-			throw new PropelException('_endif() must be called after _if()');
-		}
-		$this->isInIf = false;
-		return $this;
+    if (!$this->conditionalProxy) {
+      throw new PropelException('_endif() must be called after _if()');
+    }
+
+    $this->conditionalProxy = $this->conditionalProxy->getParentProxy();
+
+    if ($this->conditionalProxy) {
+      return $this->conditionalProxy->getCriteriaOrProxy();
+    }
+
+    // reached last level
+    return $this;
 	}
 
 	/**
