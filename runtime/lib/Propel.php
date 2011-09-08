@@ -640,8 +640,7 @@ class Propel
 	{
 		$adapter = self::getDB($name);
 
-		$dsn = $conparams['dsn'];
-		if ($dsn === null) {
+		if (null === $conparams['dsn']) {
 			throw new PropelException('No dsn specified in your connection parameters for datasource ['.$name.']');
 		}
 
@@ -656,7 +655,8 @@ class Propel
 			$classname = $defaultClass;
 		}
 
-		$user = isset($conparams['user']) ? $conparams['user'] : null;
+		$dsn	  = $conparams['dsn'];
+		$user	  = isset($conparams['user']) ? $conparams['user'] : null;
 		$password = isset($conparams['password']) ? $conparams['password'] : null;
 
 		// load any driver options from the config file
