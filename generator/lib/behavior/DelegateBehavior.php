@@ -36,7 +36,7 @@ class DelegateBehavior extends Behavior
 		$database = $table->getDatabase();
 		$delegates = explode(',', $this->parameters['to']);
 		foreach ($delegates as $delegate) {
-			$delegate = trim($delegate);
+			$delegate = $database->getTablePrefix() . trim($delegate);
 			if (!$database->hasTable($delegate)) {
 				throw new InvalidArgumentException(sprintf(
 					'No delegate table "%s" found for table "%s"',
