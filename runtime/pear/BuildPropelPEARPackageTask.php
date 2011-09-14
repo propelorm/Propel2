@@ -110,6 +110,7 @@ class BuildPropelPEARPackageTask extends MatchingTask
 		$package->addMaintainer('lead', 'hans', 'Hans Lellelid', 'hans@xmpl.org');
 		$package->addMaintainer('lead', 'david', 'David Zuelke', 'dz@bitxtender.com');
 		$package->addMaintainer('lead', 'francois', 'Francois Zaninotto', 'fzaninotto@[gmail].com');
+		$package->addMaintainer('lead', 'couac', 'William Durand', 'william.durand1@[gmail].com');
 
 		// "core" dependencies
 		$package->setPhpDep('5.2.0');
