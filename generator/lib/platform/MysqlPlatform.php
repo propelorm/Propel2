@@ -582,8 +582,8 @@ ALTER TABLE %s CHANGE %s %s;
 	 */
 	public function disconnectedEscapeText($text)
 	{
-		if (function_exists('mysql_escape_string')) {
-			return mysql_escape_string($text);
+		if (function_exists('mysql_real_escape_string')) {
+			return mysql_real_escape_string($text);
 		} else {
 			return addslashes($text);
 		}
