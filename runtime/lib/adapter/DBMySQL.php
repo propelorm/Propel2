@@ -208,15 +208,38 @@ class DBMySQL extends DBAdapter
 	public function prepareParams($params)
 	{
 		$params = parent::prepareParams($params);
+		// Whitelist based on https://bugs.php.net/bug.php?id=47802
+		// And https://bugs.php.net/bug.php?id=47802
+		$whitelist = array(
+			'ASCII',
+			'CP1250',
+			'CP1251',
+			'CP1252',
+			'CP1256',
+			'CP1257',
+			'GREEK',
+			'HEBREW',
+			'LATIN1',
+			'LATIN2',
+			'LATIN5',
+			'LATIN7',
+			'SWE7',
+			'UTF8',
+			'UTF-8',
+		);
 
 		if(isset($params['settings']['charset']['value'])) {
 			if(version_compare(PHP_VERSION, '5.3.6', '<')) {
-				throw new PropelException(<<<EXCEPTION
+				$charset = strtoupper($params['settings']['charset']['value']);
+
+				if (!in_array($charset, $whitelist)) {
+					throw new PropelException(<<<EXCEPTION
 Connection option "charset" cannot be used for MySQL connections in PHP versions older than 5.3.6.
-Please refer to http://www.propelorm.org/ticket/1360 for instructions and details about the implications of
-using a SET NAMES statement in the "queries" setting.
+	Please refer to http://www.propelorm.org/ticket/1360 for instructions and details about the implications of
+	using a SET NAMES statement in the "queries" setting.
 EXCEPTION
-			);
+				);
+				}
 			} else {
 				if(strpos($params['dsn'], ';charset=') === false) {
 					$params['dsn'] .= ';charset=' . $params['settings']['charset']['value'];
