@@ -3782,14 +3782,15 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
 	 * and new objects from the given Propel collection.
 	 *
-	 * @param PropelObjectCollection	A Propel collection.
+	 * @param      PropelObjectCollection \$collection A Propel collection.
+	 * @param      PropelPDO \$con Optional connection object
 	 */
-	public function set{$relatedName}(\$collection)
+	public function set{$relatedName}(\$collection, \PropelPDO \$con = null)
 	{
 		\${$varClassName}s = {$crossRefQueryClassName}Query::create()
 			->filterBy{$relatedObjectClassName}(\$collection)
 			->filterBy{$selfRelationName}(\$this)
-			->find();
+			->find(\$con);
 
 		\$this->scheduledForDeletion = \$this->computeDiffForDeletion(\$this->get{$relCol}(), \${$varClassName}s);
 		\$this->collBookListRels     = \${$varClassName}s;
