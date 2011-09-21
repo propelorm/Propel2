@@ -229,13 +229,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		if ($table->hasCrossForeignKeys()) {
-			$script .= "
-	/**
-	 * An array of objects scheduled for deletion.
-	 * @var		array
-	 */
-	protected \$scheduledForDeletion = null;
-";
+			foreach ($this->getTable()->getCrossFks() as $fkList) {
+				list($refFK, $crossFK) = $fkList;
+				$this->addScheduledForDeletionAttribute($script, $refFK, $crossFK);
+			}
 		}
 
 		if ($this->hasDefaultValues()) {
@@ -361,7 +358,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				$crossFK = $fkList[1];
 				$this->addCrossFKAttributes($script, $crossFK);
 		}
-
 
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
@@ -3639,14 +3635,40 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @var        array {$className}[] Collection to store aggregation of $className objects.
 	 */
 	protected $" . $this->getCrossFKVarName($crossFK) . ";
+";
+	}
 
+	protected function addScheduledForDeletionAttribute(&$script, $refFK, $crossFK)
+	{
+		$relatedName = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = true));
+		$script .= "
 	/**
-	 * Set to false if you don't want to automatically save related $className objects
-	 * once you set a collection by using set{$relatedName}() (default is true).
-	 *
-	 * @var Boolean
+	 * An array of objects scheduled for deletion.
+	 * @var		array
 	 */
-	protected \$autoSave" . $relatedName . " = true;
+	protected \${$relatedName}ScheduledForDeletion = null;
+";
+	}
+
+	protected function addScheduledForDeletionCode(&$script, $refFK, $crossFK)
+	{
+		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$lowerRelatedName = lcfirst($relatedName);
+		$lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = false));
+		$script .= "
+			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
+				foreach (\$this->{$lowerRelatedName}ScheduledForDeletion as \${$lowerSingleRelatedName}) {
+					\${$lowerSingleRelatedName}->delete(\$con);
+				}
+				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
+
+				foreach (\$this->get{$relatedName}() as \${$lowerSingleRelatedName}) {
+					if (\${$lowerSingleRelatedName}->isModified()) {
+						\${$lowerSingleRelatedName}->save(\$con);
+					}
+				}
+			}
 ";
 	}
 
@@ -3666,7 +3688,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);
 			$this->addCrossFKSet($script, $refFK, $crossFK);
-			$this->addCrossFKSetAutoSave($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
 			$this->addCrossFKAdd($script, $refFK, $crossFK);
 		}
@@ -3782,7 +3803,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$collName = $this->getCrossFKVarName($crossFK);
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
-		$varClassName = lcfirst($className);
+		$crossRefObjectClassName = '$' . lcfirst($className);
+		$inputCollection = lcfirst($relatedName);
+		$inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = false));
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$script .= "
@@ -3792,62 +3815,31 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
 	 * and new objects from the given Propel collection.
 	 *
-	 * @param      PropelObjectCollection \$collection A Propel collection.
+	 * @param      PropelObjectCollection \${$inputCollection} A Propel collection.
 	 * @param      PropelPDO \$con Optional connection object
 	 */
-	public function set{$relatedName}(\$collection, \PropelPDO \$con = null)
+	public function set{$relatedName}(\${$inputCollection}, \PropelPDO \$con = null)
 	{
-		\${$varClassName}s = {$crossRefQueryClassName}Query::create()
-			->filterBy{$relatedObjectClassName}(\$collection)
+		{$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
+			->filterBy{$relatedObjectClassName}(\${$inputCollection})
 			->filterBy{$selfRelationName}(\$this)
 			->find(\$con);
 
-		\$this->scheduledForDeletion = \$this->computeDiffForDeletion(\$this->get{$relCol}(), \${$varClassName}s);
-		\$this->collBookListRels     = \${$varClassName}s;
+		\$this->{$inputCollection}ScheduledForDeletion = \$this->computeDiffForDeletion(\$this->get{$relCol}(), {$crossRefObjectClassName}s);
+		\$this->collBookListRels = {$crossRefObjectClassName}s;
 
-		foreach (\$collection as \$c) {
+		foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
 			// Fix issue with collection modified by reference
-			if (\$c->isNew()) {
-				\${$varClassName} = new {$className}();
-				\${$varClassName}->set{$relatedObjectClassName}(\$c);
-				\$this->add{$className}(\${$varClassName});
+			if (\${$inputCollectionEntry}->isNew()) {
+				{$crossRefObjectClassName} = new {$className}();
+				{$crossRefObjectClassName}->set{$relatedObjectClassName}(\${$inputCollectionEntry});
+				\$this->add{$className}({$crossRefObjectClassName});
 			} else {
-				\$this->add{$relatedObjectClassName}(\$c);
+				\$this->add{$relatedObjectClassName}(\${$inputCollectionEntry});
 			}
 		}
 
-		\$this->$collName = \$collection;
-	}
-";
-	}
-
-	protected function addAutoSaveMethods(&$script, $refFK, $crossFK)
-	{
-		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-		$script .= "
-			if (null !== \$this->scheduledForDeletion && \$this->autoSave{$relatedName}) {
-				foreach (\$this->get{$relatedName}() as \$c) {
-					if (\$c->isModified()) {
-						\$c->save(\$con);
-					}
-				}
-			}
-";
-	}
-
-	protected function addCrossFKSetAutoSave(&$script, $refFK, $crossFK)
-	{
-		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-		$script .= "
-	/**
-	 * Sets whether to automatically save the related {$relatedName} objects
-	 * or not once you set them by using set{$relatedName}().
-	 *
-	 * @param Boolean \$autoSaveValue
-	 */
-	public function setAutoSave{$relatedName}(\$autoSaveValue = true)
-	{
-		\$this->autoSave{$relatedName} = \$autoSaveValue;
+		\$this->$collName = \${$inputCollection};
 	}
 ";
 	}
@@ -4106,17 +4098,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if ($table->hasCrossForeignKeys()) {
 			foreach ($this->getTable()->getCrossFks() as $fkList) {
 				list($refFK, $crossFK) = $fkList;
-				$this->addAutoSaveMethods($script, $refFK, $crossFK);
+				$this->addScheduledForDeletionCode($script, $refFK, $crossFK);
 			}
-
-			$script .= "
-			if (\$this->scheduledForDeletion !== null) {
-				foreach (\$this->scheduledForDeletion as \$o) {
-					\$o->delete(\$con);
-				}
-				\$this->scheduledForDeletion = null;
-			}
-";
 		}
 
 		foreach ($table->getReferrers() as $refFK) {
