@@ -487,4 +487,78 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(0, BookQuery::create()->count());
 		$this->assertEquals(0, BookListRelQuery::create()->count());
 	}
+
+	public function testAutoSaveRelations()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$book = new Book();
+		$book->setTitle('My Book');
+		$book->save();
+
+		// Modify it but don't save it
+		$book->setTitle('My Title');
+
+		$coll = new PropelObjectCollection();
+		$coll[] = $book;
+
+		BookPeer::clearInstancePool();
+		$book = BookQuery::create()->findPk($book->getPrimaryKey());
+
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setBooks($coll);
+		$bookClubList1->save();
+
+		$this->assertEquals(1, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(1, BookQuery::create()->count());
+		$this->assertEquals(1, BookListRelQuery::create()->count());
+
+		$result = BookQuery::create()
+			->filterById($book->getId())
+			->select('Title')
+			->findOne();
+		$this->assertSame('My Title', $result);
+
+	}
+
+	public function testAutoSaveRelationsTurnedOff()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		// Save a book
+		$book = new Book();
+		$book->setTitle('My Book');
+		$book->save();
+
+		$coll	= new PropelObjectCollection();
+		$coll[] = $book;
+
+		BookPeer::clearInstancePool();
+		$book = BookQuery::create()->findPk($book->getPrimaryKey());
+		// Modify it but don't save it
+		$book->setTitle('My Title');
+
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setAutoSaveBooks(false);
+		$bookClubList1->setBooks($coll);
+		$bookClubList1->save();
+
+		$this->assertEquals(1, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(1, BookQuery::create()->count());
+		$this->assertEquals(1, BookListRelQuery::create()->count());
+
+		$result = BookQuery::create()
+			->filterById($book->getId())
+			->select('Title')
+			->findOne();
+		$this->assertSame('My Book', $result);
+	}
 }
