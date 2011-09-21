@@ -465,4 +465,26 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertEquals(11, BookListRelQuery::create()->count());
 		$this->assertEquals(12, BookQuery::create()->count());
 	}
+
+	public function testSetterCollectionWithNoData()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$books = new PropelObjectCollection();
+		$this->assertEquals(0, $books->count());
+
+		// Basic usage
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setGroupLeader('BookClubList1 Leader');
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(0, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(0, BookQuery::create()->count());
+		$this->assertEquals(0, BookListRelQuery::create()->count());
+	}
 }
