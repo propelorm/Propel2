@@ -1906,4 +1906,22 @@ class Table extends ScopedElement implements IDMethod
 		}
 		return $result;
 	}
+
+	/**
+	 * Returns whether the table has foreign keys or not.
+	 * @return Boolean
+	 */
+	public function hasForeignKeys()
+	{
+		return (count($this->getForeignKeys()) !== 0);
+	}
+
+	/**
+	 * Returns whether the table has cross foreign keys or not.
+	 * @return Boolean
+	 */
+	public function hasCrossForeignKeys()
+	{
+		return (count($this->getCrossFks()) !== 0);
+	}
 }
