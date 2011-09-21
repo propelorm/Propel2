@@ -145,38 +145,42 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 
 		$generatorConfig = $this->getGeneratorConfig();
 
+		$databases = array();
 		foreach ($dataModels as $package => $dataModel) {
-
 			foreach ($dataModel->getDatabases() as $database) {
-
-				$platform = $database->getPlatform();
-				if (!$this->packageObjectModel) {
-					$name = $dataModel->getName();
+				if (!isset($databases[$database->getName()])) {
+					$databases[$database->getName()] = $database;
 				} else {
-					if (false !== strpos($package, '/')) {
-						$name = $database->getName() . '.' . $dataModel->getName();
-					} else {
-						$name = ($package ? $package . '.' : '') . '.schema.xml';
+					$tables = $database->getTables();
+					//merge tables from different schema.xml to the same database
+					foreach ($tables as $table) {
+						if (!$databases[$database->getName()]->hasTable($table->getName(), true)) {
+							$databases[$database->getName()]->addTable($table);
+						}
 					}
 				}
+			}
+		}
 
-				$outFile = $this->getMappedFile($name);
-				$absPath = $outFile->getAbsolutePath();
-				if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
-					$platform->setIdentifierQuoting(false);
-				}
-				$this->log('Using ' . get_class($platform), Project::MSG_VERBOSE);
-				$ddl = $platform->getAddTablesDDL($database);
-				if (file_exists($absPath) && $ddl == file_get_contents($absPath)) {
-					$this->log('[Unchanged] ' . $outFile->getName());
-				} else {
-					$this->getWarnings($database, $platform);
-					$this->log('Writing to SQL file: ' . $outFile->getPath());
-					file_put_contents($absPath, $ddl);
-				}
+		foreach ($databases as $databaseName => $database) {
+			$platform = $database->getPlatform();
+			$name = $database->getName() . '.xml';
+			$outFile = $this->getMappedFile($name);
+			$absPath = $outFile->getAbsolutePath();
+			if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
+				$platform->setIdentifierQuoting(false);
+			}
+			$this->log('Using ' . get_class($platform), Project::MSG_VERBOSE);
+			$ddl = $platform->getAddTablesDDL($database);
 
-			} // foreach database
-		} //foreach datamodels
+			if (file_exists($absPath) && $ddl == file_get_contents($absPath)) {
+				$this->log('[Unchanged] ' . $outFile->getName());
+			} else {
+				$this->getWarnings($database, $platform);
+				$this->log('Writing to SQL file: ' . $outFile->getPath());
+				file_put_contents($absPath, $ddl, FILE_APPEND);
+			}
+		} //foreach database
 
 	} // main()
 
