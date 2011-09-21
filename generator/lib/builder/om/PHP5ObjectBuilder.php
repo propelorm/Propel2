@@ -228,6 +228,16 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addAttributes($script);
 		}
 
+		if ($table->hasCrossForeignKeys()) {
+			$script .= "
+	/**
+	 * An array of objects scheduled for deletion.
+	 * @var		array
+	 */
+	protected \$scheduledForDeletion = null;
+";
+		}
+
 		if ($this->hasDefaultValues()) {
 			$this->addApplyDefaultValues($script);
 			$this->addConstructor($script);
@@ -278,6 +288,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addCrossFKMethods($script);
 		$this->addClear($script);
 		$this->addClearAllReferences($script);
+
+		if ($table->hasCrossForeignKeys()) {
+			$this->addComputeDiffForDeletion($script);
+		}
 
 		$this->addPrimaryString($script);
 
@@ -3642,12 +3656,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addCrossFKClear($script, $crossFK);
 			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);
+			$this->addCrossFKSet($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
 			$this->addCrossFKAdd($script, $refFK, $crossFK);
 		}
 	}
 
-		/**
+	/**
 	 * Adds the method that clears the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
 	 */
@@ -3742,6 +3757,55 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			}
 		}
 		return \$this->$collName;
+	}
+";
+	}
+
+	protected function addCrossFKSet(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
+		$selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$crossRefQueryClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+		$crossRefTableName = $crossFK->getTableName();
+		$collName = $this->getCrossFKVarName($crossFK);
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+		$varClassName = lcfirst($className);
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+
+		$script .= "
+	/**
+	 * Sets a collection of $relatedObjectClassName objects related by a many-to-many relationship
+	 * to the current object by way of the $crossRefTableName cross-reference table.
+	 * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+	 * and new objects from the given Propel collection.
+	 *
+	 * @param PropelObjectCollection	A Propel collection.
+	 */
+	public function set{$relatedName}(\$collection)
+	{
+		\${$varClassName}s = {$crossRefQueryClassName}Query::create()
+			->filterBy{$relatedObjectClassName}(\$collection)
+			->filterBy{$selfRelationName}(\$this)
+			->find();
+
+		\$this->scheduledForDeletion = \$this->computeDiffForDeletion(\$this->get{$relCol}(), \${$varClassName}s);
+		\$this->collBookListRels     = \${$varClassName}s;
+
+		foreach (\$collection as \$c) {
+			// Fix issue with collection modified by reference
+			if (\$c->isNew()) {
+				\${$varClassName} = new {$className}();
+				\${$varClassName}->set{$relatedObjectClassName}(\$c);
+				\$this->add{$className}(\${$varClassName});
+			} else {
+				\$this->add{$relatedObjectClassName}(\$c);
+			}
+		}
+
+		\$this->$collName = \$collection;
 	}
 ";
 	}
@@ -3996,6 +4060,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 ";
+
+		if ($table->hasCrossForeignKeys()) {
+			$script .= "
+			if (\$this->scheduledForDeletion !== null) {
+				foreach (\$this->scheduledForDeletion as \$o) {
+					\$o->delete(\$con);
+				}
+				\$this->scheduledForDeletion = null;
+			}
+";
+		}
 
 		foreach ($table->getReferrers() as $refFK) {
 
@@ -4684,6 +4759,33 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
+	}
+";
+	}
+
+	/**
+	 * Adds a method to compute diff between two PropelObjectCollection.
+	 */
+	protected function addComputeDiffForDeletion(&$script)
+	{
+		$script .= "
+	/**
+	 * Returns an array of objects present in the first collection and that
+	 * are not present in the second collection.
+	 *
+	 * @param PropelObjectCollection \$oldCollection	A Propel collection.
+	 * @param PropelObjectCollection \$newCollection	A Propel collection.
+	 * @return array	An array of Propel objects.
+	 */
+	protected function computeDiffForDeletion(PropelObjectCollection \$oldCollection, PropelObjectCollection \$newCollection)
+	{
+		\$scheduledForDeletion = array();
+		foreach (\$oldCollection as \$object) {
+			if (!\$newCollection->contains(\$object)) {
+				\$scheduledForDeletion[] = \$object;
+			}
+		}
+		return \$scheduledForDeletion;
 	}
 ";
 	}
