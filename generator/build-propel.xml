@@ -619,5 +619,21 @@
     </propel-graphviz>
   </target>
 
+  <taskdef
+    name="propel-build-sql"
+    classname="task.PropelSqlBuildTask" classpathRef="propelclasses" />
+
+  <target name="build-sql">
+    <propel-build-sql outputDirectory="${propel.sql.dir}"
+      validate="${propel.schema.validate}"
+      xsd="${propel.schema.xsd.file}"
+      xsl="${propel.schema.xsl.file}"
+	>
+      <schemafileset dir="${propel.schema.dir}"
+        includes="${propel.schema.sql.includes}"
+        excludes="${propel.schema.sql.excludes}"
+      />
+    </propel-build-sql>
+  </target>
 
 </project>

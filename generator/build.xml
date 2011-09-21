@@ -234,5 +234,8 @@
 	<phing phingfile="build-propel.xml" target="graphviz"/>
 </target>
 
+<target name="build-sql" depends="configure">
+	<phing phingfile="build-propel.xml" target="build-sql"/>
+</target>
 
 </project>
