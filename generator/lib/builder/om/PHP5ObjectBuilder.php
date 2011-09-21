@@ -3633,11 +3633,20 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($crossFK->getForeignTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
 		$script .= "
 	/**
 	 * @var        array {$className}[] Collection to store aggregation of $className objects.
 	 */
 	protected $" . $this->getCrossFKVarName($crossFK) . ";
+
+	/**
+	 * Set to false if you don't want to automatically save related $className objects
+	 * once you set a collection by using set{$relatedName}() (default is true).
+	 *
+	 * @var Boolean
+	 */
+	protected \$autoSave" . $relatedName . " = true;
 ";
 	}
 
@@ -3657,6 +3666,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);
 			$this->addCrossFKSet($script, $refFK, $crossFK);
+			$this->addCrossFKSetAutoSave($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
 			$this->addCrossFKAdd($script, $refFK, $crossFK);
 		}
@@ -3807,6 +3817,37 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		\$this->$collName = \$collection;
+	}
+";
+	}
+
+	protected function addAutoSaveMethods(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$script .= "
+			if (null !== \$this->scheduledForDeletion && \$this->autoSave{$relatedName}) {
+				foreach (\$this->get{$relatedName}() as \$c) {
+					if (\$c->isModified()) {
+						\$c->save(\$con);
+					}
+				}
+			}
+";
+	}
+
+	protected function addCrossFKSetAutoSave(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$script .= "
+	/**
+	 * Sets whether to automatically save the related {$relatedName} objects
+	 * or not once you set them by using set{$relatedName}().
+	 *
+	 * @param Boolean \$autoSaveValue
+	 */
+	public function setAutoSave{$relatedName}(\$autoSaveValue = true)
+	{
+		\$this->autoSave{$relatedName} = \$autoSaveValue;
 	}
 ";
 	}
@@ -4063,6 +4104,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 
 		if ($table->hasCrossForeignKeys()) {
+			foreach ($this->getTable()->getCrossFks() as $fkList) {
+				list($refFK, $crossFK) = $fkList;
+				$this->addAutoSaveMethods($script, $refFK, $crossFK);
+			}
+
 			$script .= "
 			if (\$this->scheduledForDeletion !== null) {
 				foreach (\$this->scheduledForDeletion as \$o) {
