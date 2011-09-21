@@ -3818,7 +3818,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      PropelObjectCollection \${$inputCollection} A Propel collection.
 	 * @param      PropelPDO \$con Optional connection object
 	 */
-	public function set{$relatedName}(\${$inputCollection}, \PropelPDO \$con = null)
+	public function set{$relatedName}(PropelObjectCollection \${$inputCollection}, PropelPDO \$con = null)
 	{
 		{$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
 			->filterBy{$relatedObjectClassName}(\${$inputCollection})
