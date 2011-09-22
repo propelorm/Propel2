@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/../config/GeneratorConfigInterface.php';
+require_once dirname(__FILE__) . '/../util/PropelSQLParser.php';
 
 /**
  * Service class for managing SQL.
@@ -19,6 +20,10 @@ require_once dirname(__FILE__) . '/../config/GeneratorConfigInterface.php';
  */
 class PropelSqlManager
 {
+	/**
+	 * @var array
+	 */
+	protected $connections;
 	/**
 	 * @var GeneratorConfigInterface
 	 */
@@ -34,7 +39,40 @@ class PropelSqlManager
 	/**
 	 * @var string
 	 */
-	protected $outputDir;
+	protected $workingDirectory;
+
+	/**
+	 * Set the database connection settings
+	 *
+	 * @param array $connections
+	 */
+	public function setConnections($connections)
+	{
+		$this->connections = $connections;
+	}
+
+	/**
+	 * Get the database connection settings
+	 *
+	 * @return array
+	 */
+	public function getConnections()
+	{
+		return $this->connections;
+	}
+
+	public function hasConnection($connection)
+	{
+		return isset($this->connections[$connection]);
+	}
+
+	public function getConnection($datasource)
+	{
+		if (!$this->hasConnection($datasource)) {
+			throw new InvalidArgumentException(sprintf('Unkown datasource "%s"', $datasource));
+		}
+		return $this->connections[$datasource];
+	}
 
 	/**
 	 * @param GeneratorConfigInterface $generatorConfig
@@ -69,19 +107,19 @@ class PropelSqlManager
 	}
 
 	/**
-	 * @param string $outputDir
+	 * @param string $workingDirectory
 	 */
-	public function setOutputDir($outputDir)
+	public function setWorkingDirectory($workingDirectory)
 	{
-		$this->outputDir = $outputDir;
+		$this->workingDirectory = $workingDirectory;
 	}
 
 	/**
 	 * return string
 	 */
-	public function getOutputDir()
+	public function getWorkingDirectory()
 	{
-		return $this->outputDir;
+		return $this->workingDirectory;
 	}
 
 	/**
@@ -112,12 +150,20 @@ class PropelSqlManager
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getSqlDbMapFilename()
+	{
+		return $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . 'sqldb.map';
+	}
+
+	/**
 	 * Build SQL files.
 	 */
 	public function buildSql()
 	{
 		$sqlDbMapContent = "# Sqlfile -> Database map\n";
-		foreach ($this->getDatabases() as $databaseName => $database) {
+		foreach ($this->getDatabases() as $datasource => $database) {
 			$platform = $database->getPlatform();
 			$filename = $database->getName() . '.sql';
 
@@ -127,16 +173,111 @@ class PropelSqlManager
 
 			$ddl = $platform->getAddTablesDDL($database);
 
-			$file = $this->getOutputDir() . DIRECTORY_SEPARATOR . $filename;
+			$file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $filename;
 			if (file_exists($file) && $ddl == file_get_contents($file)) {
 				// Unchanged
 			} else {
 				file_put_contents($file, $ddl);
 			}
 
-			$sqlDbMapContent .= sprintf("%s=%s\n", $filename, $databaseName);
+			$sqlDbMapContent .= sprintf("%s=%s\n", $filename, $datasource);
 		}
 
-		file_put_contents ($this->getOutputDir() . DIRECTORY_SEPARATOR . 'sqldb.map', $sqlDbMapContent);
+		file_put_contents ($this->getSqlDbMapFilename(), $sqlDbMapContent);
+	}
+
+	/**
+	 * @param string $datasource	A datasource name.
+	 */
+	public function insertSql($datasource = null)
+	{
+		$statementsToInsert = array();
+		foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
+			if (null !== $datasource && $database !== $datasource) {
+				// skip
+				break;
+			}
+
+			if (!isset($statementsToInsert[$database])) {
+				$statementsToInsert[$database] = '';
+			}
+			if (null === $database || (null !== $database && $database === $datasource)) {
+				$filename = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $sqlFile;
+
+				if (file_exists($filename)) {
+					foreach (PropelSQLParser::parseFile($filename) as $sql) {
+						$statementsToInsert[$database] .= $sql;
+					}
+				}
+			}
+		}
+
+		foreach ($statementsToInsert as $database => $sql) {
+			if (!$this->hasConnection($database)) {
+				continue;
+			}
+
+			$pdo = $this->getPdoConnection($database);
+			$pdo->beginTransaction();
+
+			try {
+				$stmt = $pdo->prepare($sql);
+				$stmt->execute();
+				$pdo->commit();
+			} catch (PDOException $e) {
+				$pdo->rollback();
+				throw $e;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Gets a PDO connection for a given datasource.
+	 *
+	 * @return PDO
+	 */
+	protected function getPdoConnection($datasource)
+	{
+		$buildConnection = $this->getConnection($datasource);
+		$dsn = str_replace("@DB@", $datasource, $buildConnection['dsn']);
+
+		// Set user + password to null if they are empty strings or missing
+		$username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;
+		$password = isset($buildConnection['password']) && $buildConnection['password'] ? $buildConnection['password'] : null;
+
+		$pdo = new PDO($dsn, $username, $password);
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		return $pdo;
+	}
+
+	/**
+	 * Returns an array of properties as key/value pairs from an input file.
+	 *
+	 * @param string $file  A file properties.
+	 * @return array        An array of properties as key/value pairs.
+	 */
+	protected function getProperties($file)
+	{
+		$properties = array();
+
+		if (false === $lines = @file($file)) {
+			throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
+		}
+
+		foreach ($lines as $line) {
+			$line = trim($line);
+
+			if ('' == $line || in_array($line[0], array('#', ';'))) {
+				continue;
+			}
+
+			$pos = strpos($line, '=');
+			$properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+		}
+
+		return $properties;
 	}
 }
