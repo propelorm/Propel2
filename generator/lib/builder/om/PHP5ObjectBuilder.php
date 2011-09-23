@@ -3636,7 +3636,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 	protected function addScheduledForDeletionAttribute(&$script, $refFK, $crossFK)
 	{
-		$relatedName = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = true));
+		// No lcfirst() in PHP < 5.3
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedName[0] = strtolower($relatedName[0]);
+
 		$script .= "
 	/**
 	 * An array of objects scheduled for deletion.
@@ -3650,8 +3653,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
 		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
-		$lowerRelatedName = lcfirst($relatedName);
-		$lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = false));
+		// No lcfirst() in PHP < 5.3
+		$lowerRelatedName = $relatedName;
+		$lowerRelatedName[0] = strtolower($lowerRelatedName[0]);
+		// No lcfirst() in PHP < 5.3
+		$lowerSingleRelatedName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+		$lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
+
 		$script .= "
 			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
 				foreach (\$this->{$lowerRelatedName}ScheduledForDeletion as \${$lowerSingleRelatedName}) {
@@ -3799,9 +3807,21 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$collName = $this->getCrossFKVarName($crossFK);
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
-		$crossRefObjectClassName = '$' . lcfirst($className);
-		$inputCollection = lcfirst($relatedName);
-		$inputCollectionEntry = lcfirst($this->getFKPhpNameAffix($crossFK, $plural = false));
+
+		// No lcfirst() in PHP < 5.3
+		$lowerClassName = $className;
+		$lowerClassName[0] = strtolower($lowerClassName[0]);
+
+		$crossRefObjectClassName = '$' . $lowerClassName;
+
+		// No lcfirst() in PHP < 5.3
+		$inputCollection = $relatedName;
+		$inputCollection[0] = strtolower($inputCollection[0]);
+
+		// No lcfirst() in PHP < 5.3
+		$inputCollectionEntry = $this->getFKPhpNameAffix($crossFK, $plural = false);
+		$inputCollectionEntry[0] = strtolower($inputCollectionEntry[0]);
+
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
 
 		$script .= "
