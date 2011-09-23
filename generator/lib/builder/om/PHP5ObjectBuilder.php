@@ -2613,6 +2613,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addDelete($script);
 		$this->addSave($script);
 		$this->addDoSave($script);
+		$script .= $this->addDoInsert();
 	}
 
 	/**
@@ -4038,6 +4039,99 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	} // doSave()
 ";
 
+	}
+
+	/**
+	 * get the doInsert() method code
+	 *
+	 * @return string the doInsert() method code
+	 */
+	protected function addDoInsert()
+	{
+		$script = "
+	/**
+	 * Insert the row in the database.
+	 *
+	 * @param      PropelPDO \$con
+	 *
+	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
+	 * @throws     PropelException
+	 * @see        doSave()
+	 */
+	protected function doInsert(PropelPDO \$con)
+	{
+		\$criteria = \$this->buildCriteria();";
+
+		if ($this->getTable()->getIdMethod() != IDMethod::NO_ID_METHOD) {
+			$script .= $this->addDoInsertBodyWithIdMethod();
+		} else {
+			$script .= $this->addDoInsertBodyStandard();
+		}
+
+		$script .= "
+		\$this->setNew(false);
+
+		return 1;
+	}
+";
+		
+		return $script;
+	}
+
+	protected function addDoInsertBodyStandard()
+	{
+		return "
+		\$pk = " . $this->getNewPeerBuilder($this->getTable())->getBasePeerClassname() . "::doInsert(\$criteria, \$con);";
+	}
+
+	protected function addDoInsertBodyWithIdMethod()
+	{
+		$table = $this->getTable();
+		$reloadOnInsert = $table->isReloadOnInsert();
+		$basePeerClassname = $this->getNewPeerBuilder($table)->getBasePeerClassname();
+		$script = '';
+		foreach ($table->getPrimaryKey() as $col) {
+			if (!$col->isAutoIncrement()) {
+				continue;
+			}
+			$colConst = $this->getColumnConstant($col);
+			if (!$table->isAllowPkInsert()) {
+				$script .= "
+		if (\$criteria->keyContainsValue($colConst) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key (' . $colConst . ')');
+		}";
+				if (!$this->getPlatform()->supportsInsertNullPk()) {
+					$script .= "
+		// remove pkey col since this table uses auto-increment and passing a null value for it is not valid
+		\$criteria->remove($colConst);";
+				}
+			} else if (!$this->getPlatform()->supportsInsertNullPk()) {
+				$script .= "
+		// remove pkey col if it is null since this table does not accept that
+		if (\$criteria->containsKey($colConst) && !\$criteria->keyContainsValue($colConst) ) {
+			\$criteria->remove($colConst);
+		}";
+			}
+		}
+
+		$script .= $this->addDoInsertBodyStandard();
+
+		foreach ($table->getPrimaryKey() as $col) {
+			if (!$col->isAutoIncrement()) {
+				continue;
+			}
+			if ($table->isAllowPkInsert()) {
+				$script .= "
+		if (\$pk !== null) {
+			\$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
+		}";
+			} else {
+				$script .= "
+		\$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
+			}
+		}
+		
+		return $script;
 	}
 
 	/**
