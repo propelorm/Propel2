@@ -212,6 +212,14 @@ class PropelTypes
 			self::BU_TIMESTAMP => PDO::PARAM_STR,
 	);
 
+	private static $pdoTypeNames = array(
+		PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
+		PDO::PARAM_NULL => 'PDO::PARAM_NULL',
+		PDO::PARAM_INT  => 'PDO::PARAM_INT',
+		PDO::PARAM_STR  => 'PDO::PARAM_STR',
+		PDO::PARAM_LOB  => 'PDO::PARAM_LOB',
+	);
+
 	/**
 	 * Return native PHP type which corresponds to the
 	 * Creole type provided. Use in the base object class generation.
@@ -242,6 +250,15 @@ class PropelTypes
 	public static function getPDOType($type)
 	{
 		return self::$propelTypeToPDOTypeMap[$type];
+	}
+
+	/**
+	 * Resturns the PDO type ('PDO::PARAM_*' constant) name.
+	 * @return     string
+	 */
+	public static function getPdoTypeString($type)
+	{
+		return self::$pdoTypeNames[self::$propelTypeToPDOTypeMap[$type]];
 	}
 
 	/**

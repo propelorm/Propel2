@@ -8,8 +8,11 @@
  * @license    MIT License
  */
 
+require_once dirname(__FILE__) . '/../model/PropelTypes.php';
+
 /**
- * Boosts basic CRUD operations at runtime.
+ * Boosts basic CRUD operations at runtime by pregenerating the query and hydration code.
+ * Warning: Not compatible with models using a preSelect() hook (or a behavior using it, like soft_delete).
  *
  * @author     François Zaninotto
  * @package    propel.generator.behavior
@@ -19,8 +22,15 @@ class TurboBehavior extends Behavior
   
   protected $builder;
   
+  /**
+   * Replace the generated findPk() method by one that takes a shortcut if the query is untouched.
+   */
 	public function queryMethods($builder)
 	{
+		if ($this->getTable()->hasBehavior('soft_delete')) {
+			// soft_delete uses a preSelect hook, and the findPkTurbo method cannot work with that
+			return;
+		}
 		$script = '';
 		$script .= $this->addFindPkSimple($builder);
 		$script .= $this->addFindPkTurbo($builder);
@@ -46,8 +56,8 @@ class TurboBehavior extends Behavior
 			}
 		}
 		$conditions = array();
-		foreach ($table->getPrimaryKey() as $column) {
-			$conditions []= sprintf('%s = ?', $this->getColumnIdentifier($column, $platform));
+		foreach ($table->getPrimaryKey() as $index => $column) {
+			$conditions []= sprintf('%s = :p%d', $this->getColumnIdentifier($column, $platform), $index);
 		}
 		$query = sprintf(
 			'SELECT %s FROM %s WHERE %s',
@@ -55,7 +65,6 @@ class TurboBehavior extends Behavior
 			$platform->quoteIdentifier($table->getName()),
 			implode(' AND ', $conditions)
 		);
-		$binding = $table->hasCompositePrimaryKey() ? '$key' : 'array($key)';
 		if ($table->hasCompositePrimaryKey()) {
 			$pks = array();
 			foreach ($table->getPrimaryKey() as $index => $column) {
@@ -71,7 +80,7 @@ class TurboBehavior extends Behavior
 		}
 		$pkHashFromRow = $builder->getPeerBuilder()->getInstancePoolKeySnippet($pks);
 		$docBlock = $this->getFindPkDocBlock('findPkSimple');
-		return "
+		$script = "
 /**
  * Find object by primary key using raw SQL to go fast.
 $docBlock
@@ -87,18 +96,33 @@ public function findPkSimple(\$key, \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection({$peerClassname}::DATABASE_NAME, Propel::CONNECTION_READ);
 	}
-	\$stmt = \$con->prepare('$query');
-	\$stmt->execute($binding);
+	\$stmt = \$con->prepare('$query');";
+		if ($table->hasCompositePrimaryKey()) {
+			foreach ($table->getPrimaryKey() as $index => $column) {
+				$type = PropelTypes::getPdoTypeString($column->getType());
+				$script .= "
+	\$stmt->bindValue(':p$index', \$key[$index], $type);";
+			}
+		} else {
+				$pk = $table->getPrimaryKey();
+				$column = $pk[0];
+				$type = PropelTypes::getPdoTypeString($column->getType());
+				$script .= "
+	\$stmt->bindValue(':p0', \$key, $type);";
+		}
+		$script .= "
+	\$stmt->execute();
 	if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 		\$obj = new $ARClassname();
 		\$obj->hydrate(\$row);
-		BookPeer::addInstanceToPool(\$obj, $pkHashFromRow);
+		{$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
 	}
 	\$stmt->closeCursor();
 	
 	return \$obj;
 }
 ";
+		return $script;
 	}
 	
 	protected function addFindPkTurbo($builder)
