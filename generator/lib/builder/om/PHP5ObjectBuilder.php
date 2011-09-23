@@ -2614,6 +2614,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addSave($script);
 		$this->addDoSave($script);
 		$script .= $this->addDoInsert();
+		$script .= $this->addDoUpdate();
 	}
 
 	/**
@@ -3909,76 +3910,26 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			// If this object has been modified, then save it to the database.
 			if (\$this->isModified()) {
 				if (\$this->isNew()) {
-					\$criteria = \$this->buildCriteria();";
-
-
-		foreach ($table->getColumns() as $col) {
-			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && !$table->isAllowPkInsert()) {
-				$colConst = $this->getColumnConstant($col);
-				$script .= "
-					if (\$criteria->keyContainsValue(" . $colConst . ") ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('." . $colConst . ".')');
-					}
-";
-				if (!$this->getPlatform()->supportsInsertNullPk()) {
-					$script .= "
-					// remove pkey col since this table uses auto-increment and passing a null value for it is not valid
-					\$criteria->remove(" . $colConst . ");
-";
-				}
-			} elseif ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && $table->isAllowPkInsert() && !$this->getPlatform()->supportsInsertNullPk()) {
-					$script .= "
-					// remove pkey col if it is null since this table does not accept that
-				if (\$criteria->containsKey(" . $colConst . ") && !\$criteria->keyContainsValue(" . $colConst . ") ) {
-					\$criteria->remove(" . $colConst . ");
-				}";
-			}
-		}
-
-		$script .= "
-					\$pk = " . $this->getNewPeerBuilder($table)->getBasePeerClassname() . "::doInsert(\$criteria, \$con);";
+					\$this->doInsert(\$con);";
 		if ($reloadOnInsert) {
 			$script .= "
 					if (!\$skipReload) {
 						\$reloadObject = true;
 					}";
 		}
-		$operator = count($table->getForeignKeys()) ? '+=' : '=';
 		$script .= "
-					\$affectedRows " . $operator . " 1;";
-		if ($table->getIdMethod() != IDMethod::NO_ID_METHOD) {
-
-			if (count($pks = $table->getPrimaryKey())) {
-				foreach ($pks as $pk) {
-					if ($pk->isAutoIncrement()) {
-						if ($table->isAllowPkInsert()) {
-								$script .= "
-					if (\$pk !== null) {
-						\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
-					}";
-						} else {
-								$script .= "
-					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
-						}
-					}
-				}
-			}
-		} // if (id method != "none")
-
-		$script .= "
-					\$this->setNew(false);
-				} else {";
+				} else {
+					\$this->doUpdate(\$con);";
 		if ($reloadOnUpdate) {
 			$script .= "
 					if (!\$skipReload) {
 						\$reloadObject = true;
 					}";
 		}
-		$operator = count($table->getForeignKeys()) ? '+=' : '=';
+		
 		$script .= "
-					\$affectedRows " . $operator . " ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
-";
+				\$affectedRows += 1;";
 
 		// We need to rewind any LOB columns
 		foreach ($table->getColumns() as $col) {
@@ -3994,7 +3945,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+				\$this->resetModified();
 			}
 ";
 
@@ -4023,6 +3974,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} // if refFK->isLocalPrimaryKey()
 
 		} /* foreach getReferrers() */
+		
 		$script .= "
 			\$this->alreadyInSave = false;
 ";
@@ -4054,7 +4006,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 *
 	 * @param      PropelPDO \$con
 	 *
-	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
@@ -4070,8 +4021,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$script .= "
 		\$this->setNew(false);
-
-		return 1;
 	}
 ";
 		
@@ -4133,6 +4082,32 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		
 		return $script;
 	}
+
+	/**
+	 * get the doUpdate() method code
+	 *
+	 * @return string the doUpdate() method code
+	 */
+	protected function addDoUpdate()
+	{
+		$basePeerClassname = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassname();
+		return "
+	/**
+	 * Update the row in the database.
+	 *
+	 * @param      PropelPDO \$con
+	 *
+	 * @see        doSave()
+	 */
+	protected function doUpdate(PropelPDO \$con)
+	{
+		\$selectCriteria = \$this->buildPkeyCriteria();
+		\$valuesCriteria = \$this->buildCriteria();
+		{$basePeerClassname}::doUpdate(\$selectCriteria, \$valuesCriteria, \$con);
+	}
+";
+	}
+
 
 	/**
 	 * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.
