@@ -322,6 +322,26 @@ class PropelCollection extends ArrayObject implements Serializable
 		return array_search($element, $this->getArrayCopy(), true);
 	}
 
+	/**
+	 * Returns an array of objects present in the collection that
+	 * are not presents in the given collection.
+	 *
+	 * @param PropelCollection $collection	A Propel collection.
+	 * @return PropelCollection				An array of Propel objects from the collection that are not presents in the given collection.
+	 */
+	public function diff(PropelCollection $collection)
+	{
+		$diff = clone $this;
+		$diff->clear();
+
+		foreach ($this as $object) {
+			if (!$collection->contains($object)) {
+				$diff[] = $object;
+			}
+		}
+		return $diff;
+	}
+
 	// Serializable interface
 
 	/**

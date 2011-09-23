@@ -372,4 +372,280 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 		$this->assertSame($author, $ret);
 	}
 
+	public function testSetterCollection()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$books = new PropelObjectCollection();
+		for ($i = 0; $i < 10; $i++) {
+			$b = new Book();
+			$b->setTitle('My Book ' . $i);
+			$b->setIsbn($i);
+
+			$books[] = $b;
+		}
+		$this->assertEquals(10, $books->count());
+
+		// Basic usage
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setGroupLeader('BookClubList1 Leader');
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(10, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1,  BookClubListQuery::create()->count());
+		$this->assertEquals(10, BookQuery::create()->count());
+		$this->assertEquals(10, BookListRelQuery::create()->count());
+
+		$i = 0;
+		foreach ($bookClubList1->getBooks() as $book) {
+			$this->assertEquals('My Book ' . $i, $book->getTitle());
+			$this->assertEquals($i++, $book->getIsbn());
+		}
+
+		// Remove an element
+		$books->shift();
+		$this->assertEquals(9, $books->count());
+
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(9, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(9, BookListRelQuery::create()->count());
+		$this->assertEquals(10, BookQuery::create()->count());
+
+		// Add a new object
+		$newBook = new Book();
+		$newBook->setTitle('My New Book');
+		$newBook->setIsbn(1234);
+
+		// Kind of new collection
+		$books   = clone $books;
+		$books[] = $newBook;
+
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(10, $books->count());
+		$this->assertEquals(10, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1,  BookClubListQuery::create()->count());
+		$this->assertEquals(10, BookListRelQuery::create()->count());
+		$this->assertEquals(11, BookQuery::create()->count());
+
+		// Add a new object
+		$newBook1 = new Book();
+		$newBook1->setTitle('My New Book1');
+		$newBook1->setIsbn(1256);
+
+		// Existing collection - The fix around reference is tested here.
+		// Ths `$books` collection has ever been setted to the `$bookClubList1` object.
+		// Here we are adding a new object into the collection but, in this process, it
+		// added the new object in the internal `collBooks` of the `$bookClubList1`
+		// object too.
+		// That's why the new object is not tracked and the cross object is not created,
+		// in `addBook()` we consider the `collBooks` ever contains this new object. It's
+		// not true but this is the "reference" process.
+		// By saying "all new objects have to be added", we solve this issue. To know if
+		// it's the best solution is the question.
+		$books[] = $newBook1;
+
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(11, $books->count());
+		$this->assertEquals(11, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1,  BookClubListQuery::create()->count());
+		$this->assertEquals(11, BookListRelQuery::create()->count());
+		$this->assertEquals(12, BookQuery::create()->count());
+
+		// Add the same collection
+		$books = $bookClubList1->getBooks();
+
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(11, $books->count());
+		$this->assertEquals(11, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1,  BookClubListQuery::create()->count());
+		$this->assertEquals(11, BookListRelQuery::create()->count());
+		$this->assertEquals(12, BookQuery::create()->count());
+	}
+
+	public function testSetterCollectionWithNoData()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$books = new PropelObjectCollection();
+		$this->assertEquals(0, $books->count());
+
+		// Basic usage
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setGroupLeader('BookClubList1 Leader');
+		$bookClubList1->setBooks($books);
+		$bookClubList1->save();
+
+		$this->assertEquals(0, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(0, BookQuery::create()->count());
+		$this->assertEquals(0, BookListRelQuery::create()->count());
+	}
+
+	public function testSetterCollectionSavesForeignObjects()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$book = new Book();
+		$book->setTitle('My Book');
+		$book->save();
+
+		// Modify it but don't save it
+		$book->setTitle('My Title');
+
+		$coll = new PropelObjectCollection();
+		$coll[] = $book;
+
+		BookPeer::clearInstancePool();
+		$book = BookQuery::create()->findPk($book->getPrimaryKey());
+
+		$bookClubList1 = new BookClubList();
+		$bookClubList1->setBooks($coll);
+		$bookClubList1->save();
+
+		$this->assertEquals(1, $bookClubList1->getBooks()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(1, BookQuery::create()->count());
+		$this->assertEquals(1, BookListRelQuery::create()->count());
+
+		$result = BookQuery::create()
+			->filterById($book->getId())
+			->select('Title')
+			->findOne();
+		$this->assertSame('My Title', $result);
+	}
+
+	public function testSetterCollectionWithNewObjects()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$coll = new PropelObjectCollection();
+		$coll->setModel('Book');
+
+		$coll[] = new Book();
+		$coll[] = new Book();
+		$coll[] = new Book();
+
+		$bookClubList = new BookClubList();
+		$bookClubList->setBooks($coll);
+		$bookClubList->save();
+
+		$this->assertEquals(3, $coll->count());
+		$this->assertEquals(3, count($bookClubList->getBooks()));
+		$this->assertSame($coll, $bookClubList->getBooks());
+		$this->assertEquals(3, BookQuery::create()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(3, BookListRelQuery::create()->count());
+	}
+
+	public function testSetterCollectionWithExistingObjects()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		for ($i = 0; $i < 3; $i++) {
+			$b = new Book();
+			$b->setTitle('Book ' . $i);
+			$b->save();
+		}
+
+		BookPeer::clearInstancePool();
+		$books = BookQuery::create()->find();
+
+		$bookClubList = new BookClubList();
+		$bookClubList->setBooks($books);
+		$bookClubList->save();
+
+		$this->assertEquals(3, count($bookClubList->getBooks()));
+		$this->assertEquals(3, BookQuery::create()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(3, BookListRelQuery::create()->count());
+
+		$i = 0;
+		foreach ($bookClubList->getBooks() as $book) {
+			$this->assertEquals('Book ' . $i++, $book->getTitle());
+		}
+	}
+
+	public function testSetterCollectionWithEmptyCollection()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$bookClubList = new BookClubList();
+		$bookClubList->setBooks(new PropelObjectCollection());
+		$bookClubList->save();
+
+		$this->assertEquals(0, count($bookClubList->getBooks()));
+
+		$this->assertEquals(0, BookQuery::create()->count());
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(0, BookListRelQuery::create()->count());
+	}
+
+	public function testSetterCollectionReplacesOldObjectsByNewObjects()
+	{
+		// Ensure no data
+		BookQuery::create()->deleteAll();
+		BookClubListQuery::create()->deleteAll();
+		BookListRelQuery::create()->deleteAll();
+
+		$books = new PropelObjectCollection();
+		foreach (array('foo', 'bar') as $title) {
+			$b = new Book();
+			$b->setTitle($title);
+			$books[] = $b;
+		}
+
+		$bookClubList = new BookClubList();
+		$bookClubList->setBooks($books);
+		$bookClubList->save();
+
+		$books = $bookClubList->getBooks();
+		$this->assertEquals('foo', $books[0]->getTitle());
+		$this->assertEquals('bar', $books[1]->getTitle());
+
+		$books = new PropelObjectCollection();
+		foreach (array('bam', 'bom') as $title) {
+			$b = new Book();
+			$b->setTitle($title);
+			$books[] = $b;
+		}
+
+		$bookClubList->setBooks($books);
+		$bookClubList->save();
+
+		$books = $bookClubList->getBooks();
+		$this->assertEquals('bam', $books[0]->getTitle());
+		$this->assertEquals('bom', $books[1]->getTitle());
+
+		$this->assertEquals(1, BookClubListQuery::create()->count());
+		$this->assertEquals(2, BookListRelQuery::create()->count());
+		$this->assertEquals(4, BookQuery::create()->count());
+	}
 }

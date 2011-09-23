@@ -345,8 +345,8 @@ class Table extends ScopedElement implements IDMethod
 		$this->alias = $this->getAttribute("alias");
 
 		$this->heavyIndexing = ( $this->booleanValue($this->getAttribute("heavyIndexing"))
-		|| ("false" !== $this->getAttribute("heavyIndexing")
-		&& $this->getDatabase()->isHeavyIndexing() ) );
+			|| ("false" !== $this->getAttribute("heavyIndexing")
+			&& $this->getDatabase()->isHeavyIndexing() ) );
 		$this->description = $this->getAttribute("description");
 		$this->enterface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
 		$this->treeMode = $this->getAttribute("treeMode");
@@ -478,7 +478,7 @@ class Table extends ScopedElement implements IDMethod
 
 		$_tableIndices = array_merge($this->getIndices(), $this->getUnices());
 		foreach ($_tableIndices as $_index) {
-		  $this->collectIndexedColumns($_index->getName(), $_index->getColumns(), $_indices);
+			$this->collectIndexedColumns($_index->getName(), $_index->getColumns(), $_indices);
 		}
 
 		// we're determining which tables have foreign keys that point to this table,
@@ -488,7 +488,7 @@ class Table extends ScopedElement implements IDMethod
 		foreach ($this->getReferrers() as $foreignKey) {
 			$referencedColumns = $foreignKey->getForeignColumnObjects();
 			$referencedColumnsHash = $this->getColumnList($referencedColumns);
-		  if (!array_key_exists($referencedColumnsHash, $_indices)) {
+			if (!array_key_exists($referencedColumnsHash, $_indices)) {
 				// no matching index defined in the schema, so we have to create one
 				$index = new Index();
 				$index->setName(sprintf('I_referenced_%s_%s', $foreignKey->getName(), ++$counter));
@@ -531,7 +531,7 @@ class Table extends ScopedElement implements IDMethod
 		 * have a three-column index on (col1, col2, col3), you have indexed search
 		 * capabilities on (col1), (col1, col2), and (col1, col2, col3)."
 		 * @link http://dev.mysql.com/doc/refman/5.5/en/mysql-indexes.html
-		*/
+		 */
 		$indexedColumns = array();
 		foreach ($columns as $column) {
 			$indexedColumns[] = $column;
@@ -756,7 +756,7 @@ class Table extends ScopedElement implements IDMethod
 			$col = $this->getColumn($validator->getColumnName());
 			if ($col == null) {
 				throw new EngineException("Failed adding validator to table '" . $this->getName() .
-				"': column '" . $validator->getColumnName() . "' does not exist !");
+					"': column '" . $validator->getColumnName() . "' does not exist !");
 			}
 			$validator->setColumn($col);
 			$validator->setTable($this);
@@ -827,9 +827,9 @@ class Table extends ScopedElement implements IDMethod
 	public function getChildrenNames()
 	{
 		if ($this->inheritanceColumn === null
-		|| !$this->inheritanceColumn->isEnumeratedClasses()) {
-			return null;
-		}
+			|| !$this->inheritanceColumn->isEnumeratedClasses()) {
+				return null;
+			}
 		$children = $this->inheritanceColumn->getChildren();
 		$names = array();
 		for ($i = 0, $size=count($children); $i < $size; $i++) {
@@ -1152,11 +1152,11 @@ class Table extends ScopedElement implements IDMethod
 	public function getName()
 	{
 		if ($this->schema && $this->getDatabase() && $this->getDatabase()->getPlatform() &&
-				$this->getDatabase()->getPlatform()->supportsSchemas()) {
-			return $this->schema . '.' . $this->commonName;
-		} else {
-			return $this->commonName;
-		}
+			$this->getDatabase()->getPlatform()->supportsSchemas()) {
+				return $this->schema . '.' . $this->commonName;
+			} else {
+				return $this->commonName;
+			}
 	}
 
 	/**
@@ -1905,5 +1905,23 @@ class Table extends ScopedElement implements IDMethod
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Returns whether the table has foreign keys or not.
+	 * @return Boolean
+	 */
+	public function hasForeignKeys()
+	{
+		return (count($this->getForeignKeys()) !== 0);
+	}
+
+	/**
+	 * Returns whether the table has cross foreign keys or not.
+	 * @return Boolean
+	 */
+	public function hasCrossForeignKeys()
+	{
+		return (count($this->getCrossFks()) !== 0);
 	}
 }

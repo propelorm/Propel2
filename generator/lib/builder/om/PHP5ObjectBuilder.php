@@ -228,6 +228,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addAttributes($script);
 		}
 
+		if ($table->hasCrossForeignKeys()) {
+			foreach ($this->getTable()->getCrossFks() as $fkList) {
+				list($refFK, $crossFK) = $fkList;
+				$this->addScheduledForDeletionAttribute($script, $refFK, $crossFK);
+			}
+		}
+
 		if ($this->hasDefaultValues()) {
 			$this->addApplyDefaultValues($script);
 			$this->addConstructor($script);
@@ -347,7 +354,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				$crossFK = $fkList[1];
 				$this->addCrossFKAttributes($script, $crossFK);
 		}
-
 
 		$this->addAlreadyInSaveAttribute($script);
 		$this->addAlreadyInValidationAttribute($script);
@@ -3619,11 +3625,54 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($crossFK->getForeignTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
 		$script .= "
 	/**
 	 * @var        array {$className}[] Collection to store aggregation of $className objects.
 	 */
 	protected $" . $this->getCrossFKVarName($crossFK) . ";
+";
+	}
+
+	protected function addScheduledForDeletionAttribute(&$script, $refFK, $crossFK)
+	{
+		// No lcfirst() in PHP < 5.3
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedName[0] = strtolower($relatedName[0]);
+
+		$script .= "
+	/**
+	 * An array of objects scheduled for deletion.
+	 * @var		array
+	 */
+	protected \${$relatedName}ScheduledForDeletion = null;
+";
+	}
+
+	protected function addScheduledForDeletionCode(&$script, $refFK, $crossFK)
+	{
+		$queryClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false) . 'Query';
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		// No lcfirst() in PHP < 5.3
+		$lowerRelatedName = $relatedName;
+		$lowerRelatedName[0] = strtolower($lowerRelatedName[0]);
+		// No lcfirst() in PHP < 5.3
+		$lowerSingleRelatedName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+		$lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
+
+		$script .= "
+			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null && !\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
+				$queryClassName::create()
+					->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
+					->delete(\$con);
+				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
+
+				foreach (\$this->get{$relatedName}() as \${$lowerSingleRelatedName}) {
+					if (\${$lowerSingleRelatedName}->isModified()) {
+						\${$lowerSingleRelatedName}->save(\$con);
+					}
+				}
+			}
 ";
 	}
 
@@ -3642,12 +3691,14 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addCrossFKClear($script, $crossFK);
 			$this->addCrossFKInit($script, $crossFK);
 			$this->addCrossFKGet($script, $refFK, $crossFK);
+			$this->addCrossFKSet($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
 			$this->addCrossFKAdd($script, $refFK, $crossFK);
+			$this->addCrossFKDoAdd($script, $refFK, $crossFK);
 		}
 	}
 
-		/**
+	/**
 	 * Adds the method that clears the referrer fkey collection.
 	 * @param      string &$script The script will be modified in this method.
 	 */
@@ -3746,6 +3797,68 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 	}
 
+	protected function addCrossFKSet(&$script, $refFK, $crossFK)
+	{
+		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
+		$relatedObjectClassName = $this->getNewStubObjectBuilder($crossFK->getForeignTable())->getClassname();
+		$selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$crossRefQueryClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false);
+		$crossRefTableName = $crossFK->getTableName();
+		$collName = $this->getCrossFKVarName($crossFK);
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+
+		// No lcfirst() in PHP < 5.3
+		$lowerClassName = $className;
+		$lowerClassName[0] = strtolower($lowerClassName[0]);
+
+		$crossRefObjectClassName = '$' . $lowerClassName;
+
+		// No lcfirst() in PHP < 5.3
+		$inputCollection = $relatedName;
+		$inputCollection[0] = strtolower($inputCollection[0]);
+
+		// No lcfirst() in PHP < 5.3
+		$inputCollectionEntry = $this->getFKPhpNameAffix($crossFK, $plural = false);
+		$inputCollectionEntry[0] = strtolower($inputCollectionEntry[0]);
+
+		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+
+		$script .= "
+	/**
+	 * Sets a collection of $relatedObjectClassName objects related by a many-to-many relationship
+	 * to the current object by way of the $crossRefTableName cross-reference table.
+	 * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+	 * and new objects from the given Propel collection.
+	 *
+	 * @param      PropelCollection \${$inputCollection} A Propel collection.
+	 * @param      PropelPDO \$con Optional connection object
+	 */
+	public function set{$relatedName}(PropelCollection \${$inputCollection}, PropelPDO \$con = null)
+	{
+		{$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
+			->filterBy{$relatedObjectClassName}(\${$inputCollection})
+			->filterBy{$selfRelationName}(\$this)
+			->find(\$con);
+
+		\$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relCol}()->diff({$crossRefObjectClassName}s);
+		\$this->collBookListRels = {$crossRefObjectClassName}s;
+
+		foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
+			// Fix issue with collection modified by reference
+			if (\${$inputCollectionEntry}->isNew()) {
+				\$this->doAdd{$relatedObjectClassName}(\${$inputCollectionEntry});
+			} else {
+				\$this->add{$relatedObjectClassName}(\${$inputCollectionEntry});
+			}
+		}
+
+		\$this->$collName = \${$inputCollection};
+	}
+";
+	}
+
 	protected function addCrossFKCount(&$script, $refFK, $crossFK)
 	{
 		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
@@ -3800,9 +3913,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
-		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
 		$crossObjectName = '$' . $crossFK->getForeignTable()->getStudlyPhpName();
 		$crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassname();
+
+		$relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
 
 		$script .= "
 	/**
@@ -3812,18 +3926,48 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
 	 * @return     void
 	 */
-	public function add" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName. ")
+	public function add{$relatedObjectClassName}($crossObjectName)
 	{
 		if (\$this->" . $collName . " === null) {
 			\$this->init" . $relCol . "();
 		}
 		if (!\$this->" . $collName . "->contains(" . $crossObjectName . ")) { // only add it if the **same** object is not already associated
-			" . $foreignObjectName . " = new " . $className . "();
-			" . $foreignObjectName . "->set" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName . ");
-			\$this->add" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(" . $foreignObjectName . ");
+			\$this->doAdd{$relatedObjectClassName}($crossObjectName);
 
 			\$this->" . $collName . "[]= " . $crossObjectName . ";
 		}
+	}
+";
+	}
+
+	/**
+	 * @param		string &$script The script will be modified in this method.
+	 * @param		ForeignKey $refFK
+	 * @param		ForeignKey $crossFK
+	 */
+	protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+	{
+		$relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+
+		// lcfirst() doesn't exist in PHP < 5.3
+		$lowerRelatedObjectClassName = $relatedObjectClassName;
+		$lowerRelatedObjectClassName[0] = strtolower($lowerRelatedObjectClassName[0]);
+
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+
+		$tblFK = $refFK->getTable();
+		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
+
+		$script .= "
+	/**
+	 * @param	{$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
+	 */
+	protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
+	{
+		{$foreignObjectName} = new {$className}();
+		{$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});
+		\$this->add{$className}({$foreignObjectName});
 	}
 ";
 	}
@@ -3996,6 +4140,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 ";
+
+		if ($table->hasCrossForeignKeys()) {
+			foreach ($this->getTable()->getCrossFks() as $fkList) {
+				list($refFK, $crossFK) = $fkList;
+				$this->addScheduledForDeletionCode($script, $refFK, $crossFK);
+			}
+		}
 
 		foreach ($table->getReferrers() as $refFK) {
 
