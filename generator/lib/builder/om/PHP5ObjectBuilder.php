@@ -3662,9 +3662,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 		$script .= "
 			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
-				foreach (\$this->{$lowerRelatedName}ScheduledForDeletion as \${$lowerSingleRelatedName}) {
-					\${$lowerSingleRelatedName}->delete(\$con);
-				}
+				\$this->{$lowerRelatedName}ScheduledForDeletion->delete();
 				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
 
 				foreach (\$this->get{$relatedName}() as \${$lowerSingleRelatedName}) {
