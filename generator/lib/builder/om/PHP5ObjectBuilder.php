@@ -3661,11 +3661,13 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
 
 		$script .= "
-			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null && !\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
-				$queryClassName::create()
-					->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
-					->delete(\$con);
-				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
+			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
+				if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
+					$queryClassName::create()
+						->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
+						->delete(\$con);
+					\$this->{$lowerRelatedName}ScheduledForDeletion = null;
+				}
 
 				foreach (\$this->get{$relatedName}() as \${$lowerSingleRelatedName}) {
 					if (\${$lowerSingleRelatedName}->isModified()) {
