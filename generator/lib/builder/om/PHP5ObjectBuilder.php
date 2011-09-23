@@ -3694,6 +3694,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$this->addCrossFKSet($script, $refFK, $crossFK);
 			$this->addCrossFKCount($script, $refFK, $crossFK);
 			$this->addCrossFKAdd($script, $refFK, $crossFK);
+			$this->addCrossFKDoAdd($script, $refFK, $crossFK);
 		}
 	}
 
@@ -3847,9 +3848,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
 			// Fix issue with collection modified by reference
 			if (\${$inputCollectionEntry}->isNew()) {
-				{$crossRefObjectClassName} = new {$className}();
-				{$crossRefObjectClassName}->set{$relatedObjectClassName}(\${$inputCollectionEntry});
-				\$this->add{$className}({$crossRefObjectClassName});
+				\$this->doAdd{$relatedObjectClassName}(\${$inputCollectionEntry});
 			} else {
 				\$this->add{$relatedObjectClassName}(\${$inputCollectionEntry});
 			}
@@ -3914,9 +3913,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
 		$className = $joinedTableObjectBuilder->getObjectClassname();
 
-		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
 		$crossObjectName = '$' . $crossFK->getForeignTable()->getStudlyPhpName();
 		$crossObjectClassName = $this->getNewObjectBuilder($crossFK->getForeignTable())->getObjectClassname();
+
+		$relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
 
 		$script .= "
 	/**
@@ -3926,18 +3926,48 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @param      " . $crossObjectClassName . " " . $crossObjectName . " The $className object to relate
 	 * @return     void
 	 */
-	public function add" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName. ")
+	public function add{$relatedObjectClassName}($crossObjectName)
 	{
 		if (\$this->" . $collName . " === null) {
 			\$this->init" . $relCol . "();
 		}
 		if (!\$this->" . $collName . "->contains(" . $crossObjectName . ")) { // only add it if the **same** object is not already associated
-			" . $foreignObjectName . " = new " . $className . "();
-			" . $foreignObjectName . "->set" . $this->getFKPhpNameAffix($crossFK, $plural = false) . "(" . $crossObjectName . ");
-			\$this->add" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(" . $foreignObjectName . ");
+			\$this->doAdd{$relatedObjectClassName}($crossObjectName);
 
 			\$this->" . $collName . "[]= " . $crossObjectName . ";
 		}
+	}
+";
+	}
+
+	/**
+	 * @param		string &$script The script will be modified in this method.
+	 * @param		ForeignKey $refFK
+	 * @param		ForeignKey $crossFK
+	 */
+	protected function addCrossFKDoAdd(&$script, ForeignKey $refFK, ForeignKey $crossFK)
+	{
+		$relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+
+		// lcfirst() doesn't exist in PHP < 5.3
+		$lowerRelatedObjectClassName = $relatedObjectClassName;
+		$lowerRelatedObjectClassName[0] = strtolower($lowerRelatedObjectClassName[0]);
+
+		$joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
+		$className = $joinedTableObjectBuilder->getObjectClassname();
+
+		$tblFK = $refFK->getTable();
+		$foreignObjectName = '$' . $tblFK->getStudlyPhpName();
+
+		$script .= "
+	/**
+	 * @param	{$relatedObjectClassName} \${$lowerRelatedObjectClassName} The $lowerRelatedObjectClassName object to add.
+	 */
+	protected function doAdd{$relatedObjectClassName}(\${$lowerRelatedObjectClassName})
+	{
+		{$foreignObjectName} = new {$className}();
+		{$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});
+		\$this->add{$className}({$foreignObjectName});
 	}
 ";
 	}
