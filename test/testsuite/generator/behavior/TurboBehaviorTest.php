@@ -64,6 +64,34 @@ EOF;
 		}
 	}
 
+	public function testActiveRecordAsDoInsertUsingBasePeerMethod()
+	{
+		$this->assertTrue(method_exists('TurboMain', 'doInsertUsingBasePeer'));
+	}
+	
+	public function testActiveRecordDoInsertTurboInsertsARecord()
+	{
+		$t = new TurboMain();
+		$t->setTitle('foo');
+		$t->save();
+		$this->assertFalse($t->isNew());
+		$this->assertNotNull($t->getPrimaryKey());
+		$t2 = TurboMainQuery::create()->findPk($t->getPrimaryKey());
+		$this->assertSame($t, $t2);
+	}
+
+	public function testActiveRecordDoInsertTurboMakesFastQuery()
+	{
+		$con = Propel::getConnection(TurboMainPeer::DATABASE_NAME);
+		$con->useDebug(true);
+		$t = new TurboMain();
+		$t->setTitle('foo');
+		$t->save($con);
+		$expected = 'INSERT INTO [turbo_main] ([TITLE]) VALUES (\'foo\')';
+		$this->assertEquals($expected, $con->getLastExecutedQuery());
+		$con->useDebug(false);
+	}
+	
 	public function testQueryHasFindPkComplexAndFindPkSimpleMethods()
 	{
 		$this->assertTrue(method_exists('TurboMainQuery', 'findPkComplex'));

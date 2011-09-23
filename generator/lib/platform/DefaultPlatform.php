@@ -150,6 +150,11 @@ class DefaultPlatform implements PropelPlatformInterface
 	{
 		return PropelPlatformInterface::IDENTITY;
 	}
+	
+	public function isNativeIdMethodAutoIncrement()
+	{
+		return $this->getNativeIdMethod() == PropelPlatformInterface::IDENTITY;
+	}
 
 	/**
 	 * Returns the db specific domain for a propelType.
