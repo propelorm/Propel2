@@ -3663,7 +3663,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$script .= "
 			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null && !\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
 				$queryClassName::create()
-					->filterByPrimaryKeys(array_values(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false)))
+					->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
 					->delete(\$con);
 				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
 
