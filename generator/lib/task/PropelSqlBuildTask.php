@@ -26,7 +26,7 @@ class PropelSqlBuildTask extends AbstractPropelDataModelTask
 		$manager = new PropelSqlManager();
 		$manager->setGeneratorConfig($this->getGeneratorConfig());
 		$manager->setDataModels($this->getDataModels());
-		$manager->setOutputDir($this->getOutputDirectory());
+		$manager->setWorkingDirectory($this->getOutputDirectory());
 
 		$manager->buildSql();
 	}
