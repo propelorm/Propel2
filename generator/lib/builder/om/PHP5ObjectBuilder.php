@@ -3651,7 +3651,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
 	protected function addScheduledForDeletionCode(&$script, $refFK, $crossFK)
 	{
-		$relatedQueryClassName = $this->getNewStubQueryBuilder($crossFK->getForeignTable())->getClassname();
+		$queryClassName = $this->getRefFKPhpNameAffix($refFK, $plural = false) . 'Query';
 		$relatedName = $this->getFKPhpNameAffix($crossFK, $plural = true);
 		// No lcfirst() in PHP < 5.3
 		$lowerRelatedName = $relatedName;
@@ -3661,8 +3661,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$lowerSingleRelatedName[0] = strtolower($lowerSingleRelatedName[0]);
 
 		$script .= "
-			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
-				\$this->{$lowerRelatedName}ScheduledForDeletion->delete();
+			if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null && !\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {
+				$queryClassName::create()
+					->filterByPrimaryKeys(array_values(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false)))
+					->delete(\$con);
 				\$this->{$lowerRelatedName}ScheduledForDeletion = null;
 
 				foreach (\$this->get{$relatedName}() as \${$lowerSingleRelatedName}) {
