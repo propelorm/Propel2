@@ -350,7 +350,7 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->getConnection();
 	}
 
-	public function testDiff()
+	public function testDiffWithEmptyCollectionReturnsCurrentCollection()
 	{
 		$col1 = new PropelCollection();
 		$col2 = new PropelCollection();
@@ -376,13 +376,45 @@ class PropelCollectionTest extends BookstoreTestBase
 		$this->assertEquals(0, count($result));
 	}
 
-	public function testDiffWithNoDiff()
+	public function testDiffWithASimilarCollectionReturnsAnEmptyCollection()
 	{
 		$col1 = new PropelCollection();
 		$col2 = new PropelCollection();
 
 		$b = new Book();
 		$col1[] = $b;
+		$col2[] = $b;
+
+		$result = $col1->diff($col2);
+
+		$this->assertInstanceOf('PropelCollection', $result);
+		$this->assertEquals(0, count($result));
+	}
+
+	public function testDiffWithNonEmptyCollectionReturnsObjectsInTheFirstCollectionWhichAreNotInTheSecondCollection()
+	{
+		$col1 = new PropelCollection();
+		$col2 = new PropelCollection();
+
+		$b  = new Book();
+		$b1 = new Book();
+		$col1[] = $b;
+		$col1[] = $b1;
+		$col2[] = $b;
+
+		$result = $col1->diff($col2);
+
+		$this->assertInstanceOf('PropelCollection', $result);
+		$this->assertEquals(1, count($result));
+		$this->assertSame($b1, $result[0]);
+	}
+
+	public function testDiffWithACollectionHavingObjectsNotPresentInTheFirstCollection()
+	{
+		$col1 = new PropelCollection();
+		$col2 = new PropelCollection();
+
+		$b = new Book();
 		$col2[] = $b;
 
 		$result = $col1->diff($col2);
