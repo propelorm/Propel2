@@ -350,4 +350,44 @@ class PropelCollectionTest extends BookstoreTestBase
 		$col->getConnection();
 	}
 
+	public function testDiff()
+	{
+		$col1 = new PropelCollection();
+		$col2 = new PropelCollection();
+
+		$b = new Book();
+		$col1[] = $b;
+
+		$result = $col1->diff($col2);
+
+		$this->assertInstanceOf('PropelCollection', $result);
+		$this->assertEquals(1, count($result));
+		$this->assertSame($b, $result[0]);
+	}
+
+	public function testDiffWithEmptyCollections()
+	{
+		$col1 = new PropelCollection();
+		$col2 = new PropelCollection();
+
+		$result = $col1->diff($col2);
+
+		$this->assertInstanceOf('PropelCollection', $result);
+		$this->assertEquals(0, count($result));
+	}
+
+	public function testDiffWithNoDiff()
+	{
+		$col1 = new PropelCollection();
+		$col2 = new PropelCollection();
+
+		$b = new Book();
+		$col1[] = $b;
+		$col2[] = $b;
+
+		$result = $col1->diff($col2);
+
+		$this->assertInstanceOf('PropelCollection', $result);
+		$this->assertEquals(0, count($result));
+	}
 }

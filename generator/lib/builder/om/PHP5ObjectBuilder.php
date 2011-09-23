@@ -286,10 +286,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addClear($script);
 		$this->addClearAllReferences($script);
 
-		if ($table->hasCrossForeignKeys()) {
-			$this->addComputeDiffForDeletion($script);
-		}
-
 		$this->addPrimaryString($script);
 
 		// apply behaviors
@@ -3815,17 +3811,17 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
 	 * and new objects from the given Propel collection.
 	 *
-	 * @param      PropelObjectCollection \${$inputCollection} A Propel collection.
+	 * @param      PropelCollection \${$inputCollection} A Propel collection.
 	 * @param      PropelPDO \$con Optional connection object
 	 */
-	public function set{$relatedName}(PropelObjectCollection \${$inputCollection}, PropelPDO \$con = null)
+	public function set{$relatedName}(PropelCollection \${$inputCollection}, PropelPDO \$con = null)
 	{
 		{$crossRefObjectClassName}s = {$crossRefQueryClassName}Query::create()
 			->filterBy{$relatedObjectClassName}(\${$inputCollection})
 			->filterBy{$selfRelationName}(\$this)
 			->find(\$con);
 
-		\$this->{$inputCollection}ScheduledForDeletion = \$this->computeDiffForDeletion(\$this->get{$relCol}(), {$crossRefObjectClassName}s);
+		\$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relCol}()->diff({$crossRefObjectClassName}s);
 		\$this->collBookListRels = {$crossRefObjectClassName}s;
 
 		foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
@@ -4789,33 +4785,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-	}
-";
-	}
-
-	/**
-	 * Adds a method to compute diff between two PropelObjectCollection.
-	 */
-	protected function addComputeDiffForDeletion(&$script)
-	{
-		$script .= "
-	/**
-	 * Returns an array of objects present in the first collection and that
-	 * are not present in the second collection.
-	 *
-	 * @param PropelObjectCollection \$oldCollection	A Propel collection.
-	 * @param PropelObjectCollection \$newCollection	A Propel collection.
-	 * @return array	An array of Propel objects.
-	 */
-	protected function computeDiffForDeletion(PropelObjectCollection \$oldCollection, PropelObjectCollection \$newCollection)
-	{
-		\$scheduledForDeletion = array();
-		foreach (\$oldCollection as \$object) {
-			if (!\$newCollection->contains(\$object)) {
-				\$scheduledForDeletion[] = \$object;
-			}
-		}
-		return \$scheduledForDeletion;
 	}
 ";
 	}
