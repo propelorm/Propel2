@@ -582,8 +582,9 @@ ALTER TABLE %s CHANGE %s %s;
 	 */
 	public function disconnectedEscapeText($text)
 	{
-		if (function_exists('mysql_real_escape_string')) {
-			return mysql_real_escape_string($text);
+		// mysql_escape_string doesn't work in PHP >= 5.4
+		if (version_compare(PHP_VERSION, '5.4.0', '<') && function_exists('mysql_escape_string')) {
+			return mysql_escape_string($text);
 		} else {
 			return addslashes($text);
 		}
