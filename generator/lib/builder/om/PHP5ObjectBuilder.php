@@ -220,7 +220,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	{
 		$this->declareClassFromBuilder($this->getStubPeerBuilder());
 		$this->declareClassFromBuilder($this->getStubQueryBuilder());
-		$this->declareClasses('Propel', 'PropelException', 'PDO', 'PropelPDO', 'Criteria', 'BaseObject', 'Persistent', 'BasePeer', 'PropelObjectCollection');
+		$this->declareClasses('Propel', 'PropelException', 'PDO', 'PropelPDO', 'Criteria', 'BaseObject', 'Persistent', 'BasePeer', 'PropelCollection', 'PropelObjectCollection');
 
 		$table = $this->getTable();
 		if (!$table->isAlias()) {
