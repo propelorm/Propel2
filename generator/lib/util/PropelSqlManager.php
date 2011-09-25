@@ -221,8 +221,7 @@ class PropelSqlManager
 			$pdo->beginTransaction();
 
 			try {
-				foreach ($sqls as $sql)
-				{
+				foreach ($sqls as $sql) {
 					$stmt = $pdo->prepare($sql);
 					$stmt->execute();	
 				}
