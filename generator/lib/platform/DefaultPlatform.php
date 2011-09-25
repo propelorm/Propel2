@@ -1130,5 +1130,22 @@ ALTER TABLE %s ADD
 	{
 		return 'Y-m-d';
 	}
+	
+	public function getBindValueParameters($column, $columnValueAccessor)
+	{
+		$valuePreparation = '';
+		if ($column->isTemporalType()) {
+			$valuePreparation = "\$value = \$adapter->formatTemporalValue($columnValueAccessor, PropelColumnTypes::{$column->getType()});";
+		} elseif ($column->isLobType()) {
+			// we always need to make sure that the stream is rewound, otherwise nothing will
+			// get written to database.
+			$valuePreparation = "if (is_resource($columnValueAccessor)) {
+						rewind($columnValueAccessor);
+					}
+					\$value = $columnValueAccessor;";
+		}
+
+		return array($valuePreparation, PropelTypes::getPdoTypeString($column->getType()));
+	}
 
 }

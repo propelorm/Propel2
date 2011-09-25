@@ -332,4 +332,15 @@ CREATE %sINDEX %s ON %s (%s)%s;
 			$this->generateBlockStorage($index)
 		);
 	}
+
+	public function getBindValueParameters($column, $columnValueAccessor)
+	{
+		if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
+			$type = PropelTypes::getPdoTypeString($column->getType());
+			return "\$stmt->bindParam(\$identifier, $columnValueAccessor, $type, strlen($columnValueAccessor));";
+		}
+		
+		return parent::getBindValueParameters($column, $columnValueAccessor);
+	}
+
 }

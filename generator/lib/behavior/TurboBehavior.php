@@ -69,8 +69,9 @@ class TurboBehavior extends Behavior
 protected function doInsertTurbo(PropelPDO \$con)
 {
 	\$adapter = Propel::getDB({$peerClassname}::DATABASE_NAME);
-	\$modifiedColumnNames = \$modifiedColumnValues = \$modifiedColumnTypes = \$parameters = array();
-	\$index = 0;";
+	\$modifiedColumns = array();
+	\$index = 0;
+	";
 	
 		// if non auto-increment but using sequence, get the id first
 		if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
@@ -80,14 +81,11 @@ protected function doInsertTurbo(PropelPDO \$con)
 			$script .= "
 	if (null === \$this->{$columnProperty}) {
 		try {
-			\$pk = \$adapter->getId(\$con{$primaryKeyMethodInfo});
+			\$this->{$columnProperty} = \$adapter->getId(\$con{$primaryKeyMethodInfo});
 		} catch (Exception \$e) {
 			throw new PropelException('Unable to get sequence id.', \$e);
 		}
-		\$modifiedColumnNames[]  = '$identifier';
-		\$modifiedColumnValues[] = \$pk;
-		\$modifiedColumnTypes[]  = " . PropelTypes::getPdoTypeString($column->getType()) . ";
-		\$parameters[] = ':p' . \$index++;
+		\$modifiedColumns[':p' . \$index++]  = '$identifier';
 	}";
 		}
 		
@@ -106,29 +104,52 @@ protected function doInsertTurbo(PropelPDO \$con)
 				}
 			} elseif (!$platform->supportsInsertNullPk()) {
 				$script .= "
-		if (null === \$this->$columnProperty) {
+		if (null === \$this->{$columnProperty}) {
 			continue;
 		}";
 			}
 			$script .= "
-		\$modifiedColumnNames[]  = '$identifier';
-		\$modifiedColumnValues[] = \$this->$columnProperty;
-		\$modifiedColumnTypes[]  = " . PropelTypes::getPdoTypeString($column->getType()) . ";
-		\$parameters[] = ':p' . \$index++;
+		\$modifiedColumns[':p' . \$index++]  = '$identifier';
 	}";
 		}
 
 		$script .= "
+	
 	\$query = sprintf(
 		'$query',
-		implode(', ', \$modifiedColumnNames),
-		implode(', ', \$parameters)
+		implode(', ', \$modifiedColumns),
+		implode(', ', array_keys(\$modifiedColumns))
 	);
 	
 	try {
 		\$stmt = \$con->prepare(\$query);
-		foreach (\$parameters as \$index => \$name) {
-			\$stmt->bindValue(\$name, \$modifiedColumnValues[\$index], \$modifiedColumnTypes[\$index]);
+		foreach (\$modifiedColumns as \$identifier => \$columnName) {
+			switch (\$columnName) {";
+
+		foreach ($table->getColumns() as $column) {
+			$columnNameCase = $this->getColumnIdentifier($column, $platform);
+			$script .= "
+				case '$columnNameCase':";
+			$columnProperty = '$this->' . strtolower($column->getName());
+			$bindValueParameters = $platform->getBindValueParameters($column, $columnProperty);
+			if (is_array($bindValueParameters)) {
+				list($valuePreparation, $type) = $bindValueParameters;
+				if ($valuePreparation) {
+					$script .= "
+					$valuePreparation";
+				}
+				$script .= "
+					\$stmt->bindValue(\$identifier, " . ($valuePreparation ? '$value' : $columnProperty ) . ", $type);";
+			} else {
+				// fallback for platforms with exotic binding on certain columns: let them do what they want
+				$script .= "
+					$bindValueParameters";
+			}
+			$script .= "
+					break;";
+		}
+		$script .= "
+			}
 		}
 		\$stmt->execute();
 	} catch (Exception \$e) {

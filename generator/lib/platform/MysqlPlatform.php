@@ -606,4 +606,16 @@ ALTER TABLE %s CHANGE %s %s;
 	{
 		return 'Y-m-d H:i:s';
 	}
+
+	public function getBindValueParameters($column, $columnValueAccessor)
+	{
+		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
+		// See http://pecl.php.net/bugs/bug.php?id=9919
+		if ($column->getPDOType() == PDO::PARAM_BOOL) {
+			return array("\$value = (int) $columnValueAccessor;", 'PDO::PARAM_INT');
+		}
+		
+		return parent::getBindValueParameters($column, $columnValueAccessor);
+	}
+
 }

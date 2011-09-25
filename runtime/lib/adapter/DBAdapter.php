@@ -253,7 +253,7 @@ abstract class DBAdapter
 
 	/**
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
-
+	 *
 	 * @param     PDO     $con
 	 * @param     string  $name
 	 *
@@ -267,27 +267,30 @@ abstract class DBAdapter
 	/**
 	 * Formats a temporal value brefore binding, given a ColumnMap object
 	 *
-	 * @param     mixed      $value  The temporal value
-	 * @param     ColumnMap  $cMap
+	 * @param     mixed    $value  The temporal value
+	 * @param     mixed    $type PropelColumnTypes constant, or ColumnMap object
 	 *
 	 * @return    string  The formatted temporal value
 	 */
-	protected function formatTemporalValue($value, ColumnMap $cMap)
+	public function formatTemporalValue($value, $type)
 	{
 		/** @var $dt PropelDateTime */
 		if ($dt = PropelDateTime::newInstance($value)) {
-			switch($cMap->getType()) {
-			case PropelColumnTypes::TIMESTAMP:
-			case PropelColumnTypes::BU_TIMESTAMP:
-				$value = $dt->format($this->getTimestampFormatter());
-				break;
-			case PropelColumnTypes::DATE:
-			case PropelColumnTypes::BU_DATE:
-				$value = $dt->format($this->getDateFormatter());
-				break;
-			case PropelColumnTypes::TIME:
-				$value = $dt->format($this->getTimeFormatter());
-				break;
+			if ($type instanceof ColumnMap) {
+				$type = $type->getType();
+			}
+			switch($type) {
+				case PropelColumnTypes::TIMESTAMP:
+				case PropelColumnTypes::BU_TIMESTAMP:
+					$value = $dt->format($this->getTimestampFormatter());
+					break;
+				case PropelColumnTypes::DATE:
+				case PropelColumnTypes::BU_DATE:
+					$value = $dt->format($this->getDateFormatter());
+					break;
+				case PropelColumnTypes::TIME:
+					$value = $dt->format($this->getTimeFormatter());
+					break;
 			}
 		}
 		return $value;
