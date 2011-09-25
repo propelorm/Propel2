@@ -1131,7 +1131,7 @@ ALTER TABLE %s ADD
 		return 'Y-m-d';
 	}
 	
-	public function getBindValueParameters($column, $columnValueAccessor)
+	public function getValuePreparationPHP($column, $columnValueAccessor)
 	{
 		$valuePreparation = '';
 		if ($column->isTemporalType()) {
@@ -1145,7 +1145,12 @@ ALTER TABLE %s ADD
 					\$value = $columnValueAccessor;";
 		}
 
-		return array($valuePreparation, PropelTypes::getPdoTypeString($column->getType()));
+		return $valuePreparation;
+	}
+
+	public function getBindingTypePHP($column)
+	{
+		return PropelTypes::getPdoTypeString($column->getType());
 	}
 
 }

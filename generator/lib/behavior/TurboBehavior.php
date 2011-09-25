@@ -131,21 +131,13 @@ protected function doInsertTurbo(PropelPDO \$con)
 			$script .= "
 				case '$columnNameCase':";
 			$columnProperty = '$this->' . strtolower($column->getName());
-			$bindValueParameters = $platform->getBindValueParameters($column, $columnProperty);
-			if (is_array($bindValueParameters)) {
-				list($valuePreparation, $type) = $bindValueParameters;
-				if ($valuePreparation) {
-					$script .= "
-					$valuePreparation";
-				}
+			if ($valuePreparation = $platform->getValuePreparationPHP($column, $columnProperty)) {
 				$script .= "
-					\$stmt->bindValue(\$identifier, " . ($valuePreparation ? '$value' : $columnProperty ) . ", $type);";
-			} else {
-				// fallback for platforms with exotic binding on certain columns: let them do what they want
-				$script .= "
-					$bindValueParameters";
+					" . $valuePreparation;
 			}
+			$type = $platform->getBindingTypePHP($column);
 			$script .= "
+					\$stmt->bindValue(\$identifier, " . ($valuePreparation ? '$value' : $columnProperty ) . ", $type);
 					break;";
 		}
 		$script .= "

@@ -607,15 +607,26 @@ ALTER TABLE %s CHANGE %s %s;
 		return 'Y-m-d H:i:s';
 	}
 
-	public function getBindValueParameters($column, $columnValueAccessor)
+	public function getValuePreparationPHP($column, $columnValueAccessor)
 	{
 		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
 		// See http://pecl.php.net/bugs/bug.php?id=9919
 		if ($column->getPDOType() == PDO::PARAM_BOOL) {
-			return array("\$value = (int) $columnValueAccessor;", 'PDO::PARAM_INT');
+			return "\$value = (int) $columnValueAccessor;";
 		}
 		
-		return parent::getBindValueParameters($column, $columnValueAccessor);
+		return parent::getValuePreparationPHP($column, $columnValueAccessor);
+	}
+
+	public function getBindingTypePHP($column)
+	{
+		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
+		// See http://pecl.php.net/bugs/bug.php?id=9919
+		if ($column->getPDOType() == PDO::PARAM_BOOL) {
+			return 'PDO::PARAM_INT';
+		}
+		
+		return parent::getBindingTypePHP($column);
 	}
 
 }
