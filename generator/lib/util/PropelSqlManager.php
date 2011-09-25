@@ -199,7 +199,7 @@ class PropelSqlManager
 			}
 
 			if (!isset($statementsToInsert[$database])) {
-				$statementsToInsert[$database] = '';
+				$statementsToInsert[$database] = array();
 			}
 			if (null === $database || (null !== $database && $database === $datasource)) {
 				$filename = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $sqlFile;
@@ -223,9 +223,9 @@ class PropelSqlManager
 			try {
 				foreach ($sqls as $sql) {
 					$stmt = $pdo->prepare($sql);
-					$stmt->execute();	
+					$stmt->execute();
 				}
-				
+
 				$pdo->commit();
 			} catch (PDOException $e) {
 				$pdo->rollback();
