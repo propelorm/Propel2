@@ -206,13 +206,13 @@ class PropelSqlManager
 
 				if (file_exists($filename)) {
 					foreach (PropelSQLParser::parseFile($filename) as $sql) {
-						$statementsToInsert[$database] .= $sql;
+						$statementsToInsert[$database][] = $sql;
 					}
 				}
 			}
 		}
 
-		foreach ($statementsToInsert as $database => $sql) {
+		foreach ($statementsToInsert as $database => $sqls) {
 			if (!$this->hasConnection($database)) {
 				continue;
 			}
@@ -221,8 +221,11 @@ class PropelSqlManager
 			$pdo->beginTransaction();
 
 			try {
-				$stmt = $pdo->prepare($sql);
-				$stmt->execute();
+				foreach ($sqls as $sql) {
+					$stmt = $pdo->prepare($sql);
+					$stmt->execute();	
+				}
+				
 				$pdo->commit();
 			} catch (PDOException $e) {
 				$pdo->rollback();
