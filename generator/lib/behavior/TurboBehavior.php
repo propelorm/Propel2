@@ -11,19 +11,31 @@
 require_once dirname(__FILE__) . '/../model/PropelTypes.php';
 
 /**
- * Boosts basic CRUD operations at runtime by pregenerating the query and hydration code.
- * Warning: Not compatible with models using a preSelect() hook (or a behavior using it, like soft_delete).
+ * Boosts some basic CRUD operations at runtime by pregenerating the query 
+ * and hydration code.
+ * Warning: 
+ *  - The doInsert acceleration is not compatible with models using
+ *    a preSelect() hook (or a behavior using it, like soft_delete).
+ *  - The findPk acceleration is not compatible with models using BLOBs
+ *    on the MSSQL platform (because of cleanupSQL magic).
  *
  * @author     François Zaninotto
  * @package    propel.generator.behavior
  */
 class TurboBehavior extends Behavior
 {
-	
+	// default parameters value
+	protected $parameters = array(
+		'accelerate_doInsert' => 'true',
+		'accelerate_findPk'   => 'true'
+	);
+
 	public function objectMethods($builder)
 	{
 		$script = '';
-		$script .= $this->addDoInsertTurbo($builder);
+		if ($this->getParameter('accelerate_doInsert') == 'true') {
+			$script .= $this->addDoInsertTurbo($builder);
+		}
 
 		return $script;
 	}
@@ -157,8 +169,10 @@ protected function doInsertTurbo(PropelPDO \$con)
 	
 	public function objectFilter(&$script)
 	{
-		$script = str_replace('protected function doInsert(', 'protected function doInsertUsingBasePeer(', $script);
-		$script = str_replace('protected function doInsertTurbo(', 'protected function doInsert(', $script);
+		if ($this->getParameter('accelerate_doInsert') == 'true') {
+			$script = str_replace('protected function doInsert(', 'protected function doInsertUsingBasePeer(', $script);
+			$script = str_replace('protected function doInsertTurbo(', 'protected function doInsert(', $script);
+		}
 	}
 
 
@@ -172,8 +186,10 @@ protected function doInsertTurbo(PropelPDO \$con)
 			return;
 		}
 		$script = '';
-		$script .= $this->addFindPkSimple($builder);
-		$script .= $this->addFindPkTurbo($builder);
+		if ($this->getParameter('accelerate_findPk') == 'true') {
+			$script .= $this->addFindPkSimple($builder);
+			$script .= $this->addFindPkTurbo($builder);
+		}
 
 		return $script;
 	}
@@ -325,8 +341,10 @@ public function findPkTurbo(\$key, \$con = null)
 
 	public function queryFilter(&$script)
 	{
-		$script = str_replace('public function findPk(', 'public function findPkComplex(', $script);
-		$script = str_replace('public function findPkTurbo(', 'public function findPk(', $script);
+		if ($this->getParameter('accelerate_findPk') == 'true') {
+			$script = str_replace('public function findPk(', 'public function findPkComplex(', $script);
+			$script = str_replace('public function findPkTurbo(', 'public function findPk(', $script);
+		}
 	}
 
 }
