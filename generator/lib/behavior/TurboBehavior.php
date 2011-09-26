@@ -23,8 +23,7 @@ class TurboBehavior extends Behavior
 {
 	// default parameters value
 	protected $parameters = array(
-		'accelerate_doInsert' => 'true',
-		'accelerate_findPk'   => 'true'
+		'accelerate_doInsert' => 'true'
 	);
 
 	public function objectMethods($builder)
@@ -178,176 +177,14 @@ protected function doInsertTurbo(PropelPDO \$con)
 		}
 	}
 
-
-	/**
-	 * Replace the generated findPk() method by one that takes a shortcut if the query is untouched.
-	 */
-	public function queryMethods($builder)
-	{
-		$script = '';
-		if ($this->getParameter('accelerate_findPk') == 'true') {
-			$script .= $this->addFindPkSimple($builder);
-			$script .= $this->addFindPkTurbo($builder);
-		}
-
-		return $script;
-	}
-	
 	protected static function getColumnIdentifier($column, $platform)
 	{
 		return $platform->quoteIdentifier(strtoupper($column->getName()));
 	}
 
-	protected function addFindPkSimple($builder)
-	{
-		$table = $this->getTable();
-		$platform = $builder->getPlatform();
-		$peerClassname = $builder->getPeerClassname();
-		$ARClassname = $builder->getObjectClassname();
-		$selectColumns = array();
-		foreach ($table->getColumns() as $column) {
-			if (!$column->isLazyLoad()) {
-				$selectColumns []= $this->getColumnIdentifier($column, $platform);
-			}
-		}
-		$conditions = array();
-		foreach ($table->getPrimaryKey() as $index => $column) {
-			$conditions []= sprintf('%s = :p%d', $this->getColumnIdentifier($column, $platform), $index);
-		}
-		$query = sprintf(
-			'SELECT %s FROM %s WHERE %s',
-			implode(', ', $selectColumns),
-			$platform->quoteIdentifier($table->getName()),
-			implode(' AND ', $conditions)
-		);
-		if ($table->hasCompositePrimaryKey()) {
-			$pks = array();
-			foreach ($table->getPrimaryKey() as $index => $column) {
-				$pks []= "\$key[$index]";
-			}
-		} else {
-			$pks = '$key';
-		}
-		$pkHash = $builder->getPeerBuilder()->getInstancePoolKeySnippet($pks);
-		$pks = array();
-		foreach ($table->getPrimaryKey() as $index => $column) {
-			$pks []= '(' . $column->getPhpType() . ") \$row[$index]";
-		}
-		$pkHashFromRow = $builder->getPeerBuilder()->getInstancePoolKeySnippet($pks);
-		$docBlock = $this->getFindPkDocBlock('findPkSimple');
-		$script = "
-/**
- * Find object by primary key using raw SQL to go fast.
- * Bypass doSelect() and the object formatter by using generated code.
-$docBlock
- *
- * @return    $ARClassname A model object, or null if the key is not found
- */
-public function findPkSimple(\$key, \$con = null)
-{
-	if ((null !== (\$obj = {$peerClassname}::getInstanceFromPool($pkHash)))) {
-		// the object is already in the instance pool
-		return \$obj;
-	}
-	if (\$con === null) {
-		\$con = Propel::getConnection({$peerClassname}::DATABASE_NAME, Propel::CONNECTION_READ);
-	}
-	\$this->basePreSelect(\$con);
-	\$sql = '$query';
-	try {
-		\$stmt = \$con->prepare(\$sql);";
-		if ($table->hasCompositePrimaryKey()) {
-			foreach ($table->getPrimaryKey() as $index => $column) {
-				$script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", "		");
-			}
-		} else {
-			$pk = $table->getPrimaryKey();
-			$column = $pk[0];
-			$script .= $platform->getColumnBindingPHP($column, "':p0'", "\$key", "		");
-		}
-		$script .= "
-		\$stmt->execute();
-	} catch (Exception \$e) {
-		Propel::log(\$e->getMessage(), Propel::LOG_ERR);
-		throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
-	}
-	if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-		\$obj = new $ARClassname();
-		\$obj->hydrate(\$row);
-		{$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
-	}
-	\$stmt->closeCursor();
-	
-	return \$obj;
-}
-";
-		return $script;
-	}
-	
-	protected function addFindPkTurbo($builder)
-	{
-		$class = $builder->getObjectClassname();
-		$docBlock = $this->getFindPkDocBlock('findPk');
-		
-		return "
-/**
- * Find object by primary key.
- * Go fast if the query is untouched.
-$docBlock
- *
- * @return    $class|array|mixed the result, formatted by the current formatter
- */
-public function findPkTurbo(\$key, \$con = null)
-{
-	if (\$key === null) {
-		return null;
-	}
-	
-	if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
-	 || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers 
-	 || \$this->map || \$this->having || \$this->joins) {
-		return \$this->findPkComplex(\$key, \$con);
-	} else {
-		return \$this->findPkSimple(\$key, \$con);
-	}
-}
-";
-	}
 
-	protected function getFindPkDocBlock($methodName)
-	{
-		$pks = $this->getTable()->getPrimaryKey();
-		$script = ' * Propel uses the instance pool to skip the database if the object exists.';
-		if (count($pks) === 1) {
-			$pkType = 'mixed';
-			$script .= "
- * <code>
- * \$obj  = \$c->$methodName(12, \$con);";
-		} else {
-			$examplePk = array_slice(array(12, 34, 56, 78, 91), 0, count($pks));
-			$colNames = array();
-			foreach ($pks as $col) {
-				$colNames[]= '$' . $col->getName();
-			}
-			$pkType = 'array['. join($colNames, ', ') . ']';
-			$script .= "
- * <code>
- * \$obj = \$c->$methodName(array(" . join($examplePk, ', ') . "), \$con);";
-		}
-		$script .= "
- * </code>
- * @param     " . $pkType . " \$key Primary key to use for the query
- * @param     PropelPDO \$con an optional connection object";
-		
-		return $script;
-	}
+	
 
-	public function queryFilter(&$script)
-	{
-		if ($this->getParameter('accelerate_findPk') == 'true') {
-			$script = str_replace('public function findPk(', 'public function findPkComplex(', $script);
-			$script = str_replace('public function findPkTurbo(', 'public function findPk(', $script);
-		}
-	}
+
 
 }

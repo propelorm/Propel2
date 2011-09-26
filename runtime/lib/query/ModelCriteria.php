@@ -1133,9 +1133,10 @@ class ModelCriteria extends Criteria
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
 		$this->basePreSelect($con);
-		$stmt = $this->doSelect($con);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
+		$stmt = $criteria->doSelect($con);
 
-		return $this->getFormatter()->init($this)->format($stmt);
+		return $criteria->getFormatter()->init($criteria)->format($stmt);
 	}
 
 	/**

@@ -1342,7 +1342,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 		$c->findPk(1);
 		$this->assertEquals(array(), $c->getSelectColumns(), 'findPk() clones the query by default');
 
-		$c = BookQuery::create();
+		$c = BookQuery::create('b');
 		$c->keepQuery(false);
 		$c->findPk(1);
 		$expected = array('book.ID', 'book.TITLE', 'book.ISBN', 'book.PRICE', 'book.PUBLISHER_ID', 'book.AUTHOR_ID');

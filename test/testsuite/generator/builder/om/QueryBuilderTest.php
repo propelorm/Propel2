@@ -128,34 +128,33 @@ class QueryBuilderTest extends BookstoreTestBase
 		$this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
 	}
 
-	public function testFindPkSimpleKey()
+	public function testFindPkReturnsCorrectObjectForSimplePrimaryKey()
 	{
-		BookstoreDataPopulator::depopulate();
-		BookstoreDataPopulator::populate();
-
-		BookPeer::clearInstancePool();
-		$con = Propel::getConnection('bookstore');
-
-		// prepare the test data
-		$c = new ModelCriteria('bookstore', 'Book');
-		$c->orderBy('Book.Id', 'desc');
-		$testBook = $c->findOne();
-		$count = $con->getQueryCount();
+		$b = new Book();
+		$b->setTitle('bar');
+		$b->save($this->con);
+		$count = $this->con->getQueryCount();
 
 		BookPeer::clearInstancePool();
 
-		$q = new BookQuery();
-		$book = $q->findPk($testBook->getId());
-		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
-		$this->assertEquals($count+1, $con->getQueryCount(), 'findPk() issues a database query when instance pool is empty');
-
-		$q = new BookQuery();
-		$book = $q->findPk($testBook->getId());
-		$this->assertEquals($testBook, $book, 'BaseQuery overrides findPk() to make it faster');
-		$this->assertEquals($count+1, $con->getQueryCount(), 'findPk() does not issue a database query when instance is in pool');
+		$book = BookQuery::create()->findPk($b->getId(), $this->con);
+		$this->assertEquals($b, $book);
+		$this->assertEquals($count+1, $this->con->getQueryCount(), 'findPk() issues a database query when instance is not in pool');
 	}
 
-	public function testFindPkCompositeKey()
+	public function testFindPkUsesInstancePoolingForSimplePrimaryKey()
+	{
+		$b = new Book();
+		$b->setTitle('foo');
+		$b->save($this->con);
+		$count = $this->con->getQueryCount();
+
+		$book = BookQuery::create()->findPk($b->getId(), $this->con);
+		$this->assertSame($b, $book);
+		$this->assertEquals($count, $this->con->getQueryCount(), 'findPk() does not issue a database query when instance is in pool');
+	}
+
+	public function testFindPkReturnsCorrectObjectForCompositePrimaryKey()
 	{
 		BookstoreDataPopulator::depopulate();
 		BookstoreDataPopulator::populate();
@@ -177,6 +176,70 @@ class QueryBuilderTest extends BookstoreTestBase
 		$q = new BookListRelQuery();
 		$bookListRel = $q->findPk($pk);
 		$this->assertEquals($bookListRelTest, $bookListRel, 'BaseQuery overrides findPk() for composite primary keysto make it faster');
+	}
+
+	public function testFindPkUsesFindPkSimpleOnEmptyQueries()
+	{
+		BookQuery::create()->findPk(123, $this->con);
+		$expected = 'SELECT ID, TITLE, ISBN, PRICE, PUBLISHER_ID, AUTHOR_ID FROM book WHERE ID = 123';
+		$this->assertEquals($expected, $this->con->getLastExecutedQuery());
+	}
+
+	public function testFindPkSimpleAddsObjectToInstancePool()
+	{
+		$b = new Book();
+		$b->setTitle('foo');
+		$b->save($this->con);
+		BookPeer::clearInstancePool();
+
+		BookQuery::create()->findPk($b->getId(), $this->con);
+		$count = $this->con->getQueryCount();
+
+		$book = BookQuery::create()->findPk($b->getId(), $this->con);
+		$this->assertEquals($b, $book);
+		$this->assertEquals($count, $this->con->getQueryCount());
+	}
+
+	public function testFindPkUsesFindPkComplexOnNonEmptyQueries()
+	{
+		BookQuery::create('b')->findPk(123, $this->con);
+		$expected = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.ID=123';
+		$this->assertEquals($expected, $this->con->getLastExecutedQuery());
+	}
+
+	public function testFindPkComplexAddsObjectToInstancePool()
+	{
+		$b = new Book();
+		$b->setTitle('foo');
+		$b->save($this->con);
+		BookPeer::clearInstancePool();
+
+		BookQuery::create('b')->findPk($b->getId(), $this->con);
+		$count = $this->con->getQueryCount();
+
+		$book = BookQuery::create()->findPk($b->getId(), $this->con);
+		$this->assertEquals($b, $book);
+		$this->assertEquals($count, $this->con->getQueryCount());
+	}
+
+	public function testFindPkCallsPreSelect()
+	{
+		$q = new mySecondBookQuery();
+		$this->assertFalse($q::$preSelectWasCalled);
+		$q->findPk(123);
+		$this->assertTrue($q::$preSelectWasCalled);
+	}
+
+	public function testFindPkDoesNotCallPreSelectWhenUsingInstancePool()
+	{
+		$b = new Book();
+		$b->setTitle('foo');
+		$b->save();
+
+		$q = new mySecondBookQuery();
+		$this->assertFalse($q::$preSelectWasCalled);
+		$q->findPk($b->getId());
+		$this->assertFalse($q::$preSelectWasCalled);
 	}
 
 	public function testFindPks()
@@ -987,4 +1050,20 @@ class myCustomBookQuery extends BookQuery
 		return $query;
 	}
 
+}
+
+class mySecondBookQuery extends BookQuery
+{
+	public static $preSelectWasCalled = false;
+
+	public function __construct($dbName = 'bookstore', $modelName = 'Book', $modelAlias = null)
+	{
+		self::$preSelectWasCalled = false;
+		parent::__construct($dbName, $modelName, $modelAlias);
+	}
+
+	public function preSelect(PropelPDO $con)
+	{
+		self::$preSelectWasCalled = true;
+	}
 }
