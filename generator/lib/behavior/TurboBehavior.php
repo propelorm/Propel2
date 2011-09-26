@@ -122,19 +122,12 @@ protected function doInsertTurbo(PropelPDO \$con)
 		\$stmt = \$con->prepare(\$query);
 		foreach (\$modifiedColumns as \$identifier => \$columnName) {
 			switch (\$columnName) {";
-
 		foreach ($table->getColumns() as $column) {
 			$columnNameCase = $this->getColumnIdentifier($column, $platform);
 			$script .= "
 				case '$columnNameCase':";
-			$columnProperty = '$this->' . strtolower($column->getName());
-			if ($valuePreparation = $platform->getValuePreparationPHP($column, $columnProperty)) {
-				$script .= "
-					" . $valuePreparation;
-			}
-			$type = $platform->getBindingTypePHP($column);
+			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '					');
 			$script .= "
-					\$stmt->bindValue(\$identifier, " . ($valuePreparation ? '$value' : $columnProperty ) . ", $type);
 					break;";
 		}
 		$script .= "
@@ -265,16 +258,12 @@ public function findPkSimple(\$key, \$con = null)
 		\$stmt = \$con->prepare(\$sql);";
 		if ($table->hasCompositePrimaryKey()) {
 			foreach ($table->getPrimaryKey() as $index => $column) {
-				$type = PropelTypes::getPdoTypeString($column->getType());
-				$script .= "
-		\$stmt->bindValue(':p$index', \$key[$index], $type);";
+				$script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", "		");
 			}
 		} else {
-				$pk = $table->getPrimaryKey();
-				$column = $pk[0];
-				$type = PropelTypes::getPdoTypeString($column->getType());
-				$script .= "
-		\$stmt->bindValue(':p0', \$key, $type);";
+			$pk = $table->getPrimaryKey();
+			$column = $pk[0];
+			$script .= $platform->getColumnBindingPHP($column, "':p0'", "\$key", "		");
 		}
 		$script .= "
 		\$stmt->execute();

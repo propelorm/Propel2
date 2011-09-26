@@ -1131,26 +1131,33 @@ ALTER TABLE %s ADD
 		return 'Y-m-d';
 	}
 	
-	public function getValuePreparationPHP($column, $columnValueAccessor)
+	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
 	{
-		$valuePreparation = '';
+		$script = '';
+		$hasValuePreparation = false;
 		if ($column->isTemporalType()) {
-			$valuePreparation = "\$value = \$adapter->formatTemporalValue($columnValueAccessor, PropelColumnTypes::{$column->getType()});";
+			$columnValueAccessor = sprintf(
+				'$adapter->formatTemporalValue(%s, %s)', 
+				$columnValueAccessor, 
+				PropelTypes::getPdoTypeString($column->getType())
+			);
 		} elseif ($column->isLobType()) {
 			// we always need to make sure that the stream is rewound, otherwise nothing will
 			// get written to database.
-			$valuePreparation = "if (is_resource($columnValueAccessor)) {
-						rewind($columnValueAccessor);
-					}
-					\$value = $columnValueAccessor;";
+			$script .= "
+if (is_resource($columnValueAccessor)) {
+	rewind($columnValueAccessor);
+}";
 		}
 
-		return $valuePreparation;
-	}
+		$script .= sprintf(
+			"
+\$stmt->bindValue(%s, %s, %s);",
+			$identifier,
+			$columnValueAccessor ,
+			PropelTypes::getPdoTypeString($column->getType())
+		);
 
-	public function getBindingTypePHP($column)
-	{
-		return PropelTypes::getPdoTypeString($column->getType());
+		return preg_replace('/^/m', $tab, $script);;
 	}
-
 }

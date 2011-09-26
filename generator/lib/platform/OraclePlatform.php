@@ -333,15 +333,21 @@ CREATE %sINDEX %s ON %s (%s)%s;
 		);
 	}
 
-	public function getValuePreparationPHP($column, $columnValueAccessor)
+	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
 	{
 		if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
-			$type = PropelTypes::getPdoTypeString($column->getType());
-			return "\$stmt->bindParam(\$identifier, $columnValueAccessor, $type, strlen($columnValueAccessor));
-					break;";
+			return sprintf(
+				"
+%s\$stmt->bindParam(%s, %s, %s, strlen(%s));",
+				$tab,
+				$identifier,
+				$columnValueAccessor,
+				PropelTypes::getPdoTypeString($column->getType()),
+				$columnValueAccessor
+			);
 		}
 		
-		return parent::getValuePreparationPHP($column, $columnValueAccessor);
+		return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
 	}
 
 }
