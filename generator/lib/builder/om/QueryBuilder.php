@@ -471,15 +471,16 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         \$sql = '$query';
         try {
-            \$stmt = \$con->prepare(\$sql);";
+            \$stmt = \$con->prepare(\$sql);
+";
         if ($table->hasCompositePrimaryKey()) {
             foreach ($table->getPrimaryKey() as $index => $column) {
-                $script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]");
+                $script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", '            ');
             }
         } else {
             $pk = $table->getPrimaryKey();
             $column = $pk[0];
-            $script .= $platform->getColumnBindingPHP($column, "':p0'", "\$key");
+            $script .= $platform->getColumnBindingPHP($column, "':p0'", "\$key", '            ');
         }
         $script .= "
             \$stmt->execute();

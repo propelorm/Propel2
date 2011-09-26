@@ -337,8 +337,8 @@ CREATE %sINDEX %s ON %s (%s)%s;
 	{
 		if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
 			return sprintf(
-				"
-%s\$stmt->bindParam(%s, %s, %s, strlen(%s));",
+				"%s\$stmt->bindParam(%s, %s, %s, strlen(%s));
+",
 				$tab,
 				$identifier,
 				$columnValueAccessor,

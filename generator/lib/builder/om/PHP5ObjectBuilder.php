@@ -4010,16 +4010,19 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	 * @see        doSave()
 	 */
 	protected function doInsert(PropelPDO \$con)
-	{
+	{";
+		if ($this->getPlatform() instanceof MssqlPlatform) {
+			$script .= "
 		\$criteria = \$this->buildCriteria();";
-
-		if ($this->getTable()->getIdMethod() != IDMethod::NO_ID_METHOD) {
-			$script .= $this->addDoInsertBodyWithIdMethod();
+			if ($this->getTable()->getIdMethod() != IDMethod::NO_ID_METHOD) {
+				$script .= $this->addDoInsertBodyWithIdMethod();
+			} else {
+				$script .= $this->addDoInsertBodyStandard();
+			}
 		} else {
-			$script .= $this->addDoInsertBodyStandard();
+			$script .= $this->addDoInsertBodyRaw();
 		}
-
-		$script .= "
+			$script .= "
 		\$this->setNew(false);
 	}
 ";
@@ -4080,6 +4083,134 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			}
 		}
 		
+		return $script;
+	}
+
+	/**
+	 * Boosts ActiveRecord::doInsert() by doing more calculations at buildtime.
+	 */
+	protected function addDoInsertBodyRaw()
+	{
+		$this->declareClasses('Propel', 'PDO');
+		$table = $this->getTable();
+		$peerClassname = $this->getPeerClassname();
+		$platform = $this->getPlatform();
+		$primaryKeyMethodInfo = '';
+		if ($table->getIdMethodParameters()) {
+			$params = $table->getIdMethodParameters();
+			$imp = $params[0];
+			$primaryKeyMethodInfo = ", '" . $imp->getValue() . "'";
+		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
+			$primaryKeyMethodInfo = ", '" . $platform->getSequenceName($table) . "'";
+		}
+		$query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
+		$script = "
+		\$adapter = Propel::getDB({$peerClassname}::DATABASE_NAME);
+		\$modifiedColumns = array();
+		\$index = 0;
+";
+	
+		foreach ($table->getColumns() as $column) {
+			$constantName = $this->getPeerBuilder()->getColumnConstant($column);
+			$columnProperty = strtolower($column->getName());
+			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			if ($column->isPrimaryKey() && $column->isAutoIncrement()) {
+				$script .= "
+		if (\$this->isColumnModified($constantName)) {";
+				if (!$table->isAllowPkInsert()) {
+					$script .= "
+			if (null !== \$this->{$columnProperty}) {
+				throw new PropelException('Cannot insert a value for auto-increment primary key ($columnProperty)');
+			}";
+					if (!$platform->supportsInsertNullPk()) {
+						$script .= "
+			continue;";
+					}
+				} elseif (!$platform->supportsInsertNullPk()) {
+					$script .= "
+			if (null === \$this->{$columnProperty}) {
+				continue;
+			}";
+				}
+			} else {
+				$script .= "
+		if (\$this->isColumnModified($constantName) && null !== \$this->{$columnProperty}) {";
+			}
+			$script .= "
+			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
+		}";
+		}
+
+		// if non auto-increment but using sequence, get the id first
+		if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+			$column = $table->getFirstPrimaryKeyColumn();
+			$columnProperty = strtolower($column->getName());
+			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+		if (null === \$this->{$columnProperty}) {
+			try {
+				\$this->{$columnProperty} = \$adapter->getId(\$con{$primaryKeyMethodInfo});
+			} catch (Exception \$e) {
+				throw new PropelException('Unable to get sequence id.', \$e);
+			}
+			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
+		}";
+		}
+
+		$script .= "
+
+		\$sql = sprintf(
+			'$query',
+			implode(', ', \$modifiedColumns),
+			implode(', ', array_keys(\$modifiedColumns))
+		);
+
+		try {
+			\$stmt = \$con->prepare(\$sql);
+			foreach (\$modifiedColumns as \$identifier => \$columnName) {
+				switch (\$columnName) {";
+		foreach ($table->getColumns() as $column) {
+			$columnNameCase = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+					case '$columnNameCase':
+";
+			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '						');
+			$script .= "
+						break;";
+		}
+		$script .= "
+				}
+			}
+			\$stmt->execute();
+		} catch (Exception \$e) {
+			Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', \$sql), \$e);
+		}
+";
+
+		// if auto-increment, get the id after
+		if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+			$column = $table->getFirstPrimaryKeyColumn();
+			$columnProperty = strtolower($column->getName());
+			$script .= "
+		try {
+			\$pk = \$adapter->getId(\$con{$primaryKeyMethodInfo});
+		} catch (Exception \$e) {
+			throw new PropelException('Unable to get autoincrement id.', \$e);
+		}";
+			if ($table->isAllowPkInsert()) {
+				$script .= "
+		if (\$pk !== null) {
+			\$this->set".$column->getPhpName()."(\$pk);
+		}";
+			} else {
+				$script .= "
+		\$this->set".$column->getPhpName()."(\$pk);";
+			}
+			$script .= "
+";
+		}
+
 		return $script;
 	}
 
