@@ -100,11 +100,11 @@ EOF;
 		$this->assertFalse(method_exists('TurboOffMainQuery', 'findPkSimple'));
 	}
 
-	public function testQueryFindPkSimpleSkipsPreSelect()
+	public function testQueryFindPkSimpleDoesNotSkipPreSelect()
 	{
 		$q = new TestableTurboMainQuery();
 		$q->findPkSimple(123);
-		$this->assertFalse($q::$preSelectWasCalled);
+		$this->assertTrue($q::$preSelectWasCalled);
 	}
 
 	public function testQueryFindPkSimpleMakesFastQuery()

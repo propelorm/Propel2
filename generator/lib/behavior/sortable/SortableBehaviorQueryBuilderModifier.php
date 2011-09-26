@@ -230,7 +230,7 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPD
 	\$this->add({$this->peerClassname}::SCOPE_COL, \$scope, Criteria::EQUAL);";
 		}
 		$script .= "
-	\$stmt = \$this->getSelectStatement(\$con);
+	\$stmt = \$this->doSelect(\$con);
 
 	return \$stmt->fetchColumn();
 }

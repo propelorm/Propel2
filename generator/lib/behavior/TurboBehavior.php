@@ -13,11 +13,8 @@ require_once dirname(__FILE__) . '/../model/PropelTypes.php';
 /**
  * Boosts some basic CRUD operations at runtime by pregenerating the query 
  * and hydration code.
- * Warning: 
- *  - The doInsert acceleration is not compatible with models using
- *    a preSelect() hook (or a behavior using it, like soft_delete).
- *  - The findPk acceleration is not compatible with models using BLOBs
- *    on the MSSQL platform (because of cleanupSQL magic).
+ * Warning: The doInsert acceleration is not compatible with models using BLOBs
+ * on the MSSQL platform (because of cleanupSQL magic).
  *
  * @author     François Zaninotto
  * @package    propel.generator.behavior
@@ -194,10 +191,6 @@ protected function doInsertTurbo(PropelPDO \$con)
 	 */
 	public function queryMethods($builder)
 	{
-		if ($this->getTable()->hasBehavior('soft_delete')) {
-			// soft_delete uses a preSelect hook, and the findPkTurbo method cannot work with that
-			return;
-		}
 		$script = '';
 		if ($this->getParameter('accelerate_findPk') == 'true') {
 			$script .= $this->addFindPkSimple($builder);
@@ -252,6 +245,7 @@ protected function doInsertTurbo(PropelPDO \$con)
 		$script = "
 /**
  * Find object by primary key using raw SQL to go fast.
+ * Bypass doSelect() and the object formatter by using generated code.
 $docBlock
  *
  * @return    $ARClassname A model object, or null if the key is not found
@@ -265,22 +259,29 @@ public function findPkSimple(\$key, \$con = null)
 	if (\$con === null) {
 		\$con = Propel::getConnection({$peerClassname}::DATABASE_NAME, Propel::CONNECTION_READ);
 	}
-	\$stmt = \$con->prepare('$query');";
+	\$this->basePreSelect(\$con);
+	\$sql = '$query';
+	try {
+		\$stmt = \$con->prepare(\$sql);";
 		if ($table->hasCompositePrimaryKey()) {
 			foreach ($table->getPrimaryKey() as $index => $column) {
 				$type = PropelTypes::getPdoTypeString($column->getType());
 				$script .= "
-	\$stmt->bindValue(':p$index', \$key[$index], $type);";
+		\$stmt->bindValue(':p$index', \$key[$index], $type);";
 			}
 		} else {
 				$pk = $table->getPrimaryKey();
 				$column = $pk[0];
 				$type = PropelTypes::getPdoTypeString($column->getType());
 				$script .= "
-	\$stmt->bindValue(':p0', \$key, $type);";
+		\$stmt->bindValue(':p0', \$key, $type);";
 		}
 		$script .= "
-	\$stmt->execute();
+		\$stmt->execute();
+	} catch (Exception \$e) {
+		Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+		throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
+	}
 	if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
 		\$obj = new $ARClassname();
 		\$obj->hydrate(\$row);

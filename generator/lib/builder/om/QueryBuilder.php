@@ -365,7 +365,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
         $class = $class = $this->getStubObjectBuilder()->getClassname();
-        $this->declareClasses('PropelPDO');
+        $this->declareClasses('PropelPDO', 'Propel');
         $script .= "
     /**
      * Find object by primary key";
@@ -409,14 +409,18 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         if ((null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams)."))) && \$this->getFormatter()->isObjectFormatter()) {
             // the object is alredy in the instance pool
             return \$obj;
-        } else {
-            // the object has not been requested yet, or the formatter is not an object formatter
-            \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-            \$stmt = \$criteria
-                ->filterByPrimaryKey(\$key)
-                ->getSelectStatement(\$con);
-            return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
         }
+        // the object has not been requested yet, or the formatter is not an object formatter
+        if (\$con === null) {
+            \$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+        }
+        // As the query uses a PK condition, no limit(1) is necessary. 
+        \$this->basePreSelect(\$con);
+        \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
+        \$stmt = \$criteria
+            ->filterByPrimaryKey(\$key)
+            ->doSelect(\$con);
+        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
     }
 ";
     }
@@ -427,7 +431,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addFindPks(&$script)
     {
-        $this->declareClasses('PropelPDO');
+        $this->declareClasses('PropelPDO', 'Propel');
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
         $count = count($pks);
@@ -451,10 +455,15 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     public function findPks(\$keys, \$con = null)
     {
+        if (\$con === null) {
+            \$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+        }
+        \$this->basePreSelect(\$con);
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        return \$this
+        \$stmt = \$criteria
             ->filterByPrimaryKeys(\$keys)
-            ->find(\$con);
+            ->doSelect(\$con);
+        return \$criteria->getFormatter()->init(\$criteria)->format(\$stmt);
     }
 ";
     }
