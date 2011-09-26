@@ -92,11 +92,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 			$dataModels = $this->packageDataModels();
 			foreach ($dataModels as $package => $dataModel) {
 				foreach ($dataModel->getDatabases() as $database) {
-					if (false !== strpos($package, '/')) {
-						$name = $database->getName() . '.' . $dataModel->getName();
-					} else {
-						$name = ($package ? $package . '.' : '') . '.schema.xml';
-					}
+					$name = ($package ? $package . '.' : '') . 'schema.xml';
 					$sqlFile = $this->getMappedFile($name);
 					$sqldbmap->setProperty($sqlFile->getName(), $database->getName());
 				}
@@ -153,13 +149,8 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 				if (!$this->packageObjectModel) {
 					$name = $dataModel->getName();
 				} else {
-					if (false !== strpos($package, '/')) {
-						$name = $database->getName() . '.' . $dataModel->getName();
-					} else {
-						$name = ($package ? $package . '.' : '') . '.schema.xml';
-					}
+					$name = ($package ? $package . '.' : '') . 'schema.xml';
 				}
-
 				$outFile = $this->getMappedFile($name);
 				$absPath = $outFile->getAbsolutePath();
 				if ($this->getGeneratorConfig()->getBuildProperty('disableIdentifierQuoting')) {
