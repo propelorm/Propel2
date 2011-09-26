@@ -434,6 +434,8 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $platform = $this->getPlatform();
         $peerClassname = $this->getPeerClassname();
         $ARClassname = $this->getObjectClassname();
+        $this->declareClassFromBuilder($this->getStubObjectBuilder());
+        $this->declareClasses('PDO');
         $selectColumns = array();
         foreach ($table->getColumns() as $column) {
             if (!$column->isLazyLoad()) {

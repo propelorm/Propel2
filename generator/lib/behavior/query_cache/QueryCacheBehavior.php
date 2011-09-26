@@ -214,7 +214,7 @@ protected function doCount(\$con)
 			\$this->addSelfSelectColumns();
 		}
 
-		$this->configureSelectColumns();
+		\$this->configureSelectColumns();
 
 		\$needsComplexCount = \$this->getGroupByColumns()
 			|| \$this->getOffset()
