@@ -3826,6 +3826,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$inputCollectionEntry[0] = strtolower($inputCollectionEntry[0]);
 
 		$relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+		$relColVarName = $this->getRefFKCollVarName($crossFK);
 
 		$script .= "
 	/**
@@ -3845,7 +3846,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			->find(\$con);
 
 		\$this->{$inputCollection}ScheduledForDeletion = \$this->get{$relCol}()->diff({$crossRefObjectClassName}s);
-		\$this->collBookListRels = {$crossRefObjectClassName}s;
+		\$this->{$relColVarName} = {$crossRefObjectClassName}s;
 
 		foreach (\${$inputCollection} as \${$inputCollectionEntry}) {
 			// Fix issue with collection modified by reference
