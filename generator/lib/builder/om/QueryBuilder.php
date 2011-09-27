@@ -175,9 +175,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $this->applyBehaviorModifier('queryAttributes', $script, "	");
         $this->addConstructor($script);
         $this->addFactory($script);
-        $script .= $this->addFindPk();
-        $script .= $this->addFindPkSimple();
-        $script .= $this->addFindPkComplex();
+        $this->addFindPk($script);
+        $this->addFindPkSimple($script);
+        $this->addFindPkComplex($script);
         $this->addFindPks($script);
         $this->addFilterByPrimaryKey($script);
         $this->addFilterByPrimaryKeys($script);
@@ -357,12 +357,12 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 ";
     }
 
-    protected function addFindPk()
+    protected function addFindPk(&$script)
     {
         $class = $this->getObjectClassname();
         $peerClassname = $this->getPeerClassname();
         $table = $this->getTable();
-        $script = "
+        $script .= "
     /**
      * Find object by primary key.
      * Propel uses the instance pool to skip the database if the object exists.
@@ -425,10 +425,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }
     }
 ";
-        return $script;
     }
 
-    protected function addFindPkSimple()
+    protected function addFindPkSimple(&$script)
     {
         $table = $this->getTable();
         $platform = $this->getPlatform();
@@ -457,7 +456,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $pks []= "\$row[$index]";
         }
         $pkHashFromRow = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
-        $script = "
+        $script .= "
     /**
      * Find object by primary key using raw SQL to go fast.
      * Bypass doSelect() and the object formatter by using generated code.
@@ -499,16 +498,14 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         return \$obj;
     }
 ";
-        return $script;
     }
 
     /**
      * Adds the findPk method for this object.
      * @param      string &$script The script will be modified in this method.
      */
-    protected function addFindPkComplex()
+    protected function addFindPkComplex(&$script)
     {
-        $script = '';
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
         $class = $class = $this->getStubObjectBuilder()->getClassname();
@@ -532,7 +529,6 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
     }
 ";
-        return $script;
     }
 
     /**
