@@ -4099,9 +4099,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if ($table->getIdMethodParameters()) {
 			$params = $table->getIdMethodParameters();
 			$imp = $params[0];
-			$primaryKeyMethodInfo = ", '" . $imp->getValue() . "'";
+			$primaryKeyMethodInfo = $imp->getValue();
 		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
-			$primaryKeyMethodInfo = ", '" . $platform->getSequenceName($table) . "'";
+			$primaryKeyMethodInfo = $platform->getSequenceName($table);
 		}
 		$query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
 		$script = "
@@ -4147,9 +4147,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$columnProperty = strtolower($column->getName());
 			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
 			$script .= "
+
 		if (null === \$this->{$columnProperty}) {
-			try {
-				\$this->{$columnProperty} = \$adapter->getId(\$con{$primaryKeyMethodInfo});
+			try {";
+			$script .= $platform->getIdentifierPhp('$this->'. $columnProperty, '$con', $primaryKeyMethodInfo, '				');
+			$script .= "
 			} catch (Exception \$e) {
 				throw new PropelException('Unable to get sequence id.', \$e);
 			}
@@ -4193,8 +4195,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$column = $table->getFirstPrimaryKeyColumn();
 			$columnProperty = strtolower($column->getName());
 			$script .= "
-		try {
-			\$pk = \$adapter->getId(\$con{$primaryKeyMethodInfo});
+		try {";
+			$script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);
+			$script .= "
 		} catch (Exception \$e) {
 			throw new PropelException('Unable to get autoincrement id.', \$e);
 		}";

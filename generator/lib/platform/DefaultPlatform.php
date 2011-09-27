@@ -1131,6 +1131,11 @@ ALTER TABLE %s ADD
 		return 'Y-m-d';
 	}
 	
+	/**
+	 * Get the PHP snippet for binding a value to a column.
+	 * Warning: duplicates logic from DBAdapter::bindValue(). 
+	 * Any code modification here must be ported there.
+	 */
 	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
 	{
 		$script = '';
@@ -1157,6 +1162,28 @@ ALTER TABLE %s ADD
 			PropelTypes::getPdoTypeString($column->getType())
 		);
 
-		return preg_replace('/^/m', $tab, $script);;
+		return preg_replace('/^/m', $tab, $script);
+	}
+
+	/**
+	 * Get the PHP snippet for getting a Pk from the database.
+	 * Warning: duplicates logic from DBAdapter::getId(). 
+	 * Any code modification here must be ported there.
+	 *
+	 * Typical output:
+	 * <code>
+	 * $this->id = $con->lastInsertId();
+	 * </code>
+	 */
+	public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "			")
+	{
+		return sprintf(
+			"
+%s%s = %s->lastInsertId(%s);",
+			$tab,
+			$columnValueMutator,
+			$connectionVariableName,
+			$sequenceName ? ("'" . $sequenceName . "'") : ''
+		);
 	}
 }

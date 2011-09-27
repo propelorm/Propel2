@@ -253,6 +253,8 @@ abstract class DBAdapter
 
 	/**
 	 * Gets the generated ID (either last ID for autoincrement or next sequence ID).
+	 * Warning: duplicates logic from DefaultPlatform::getIdentifierPhp().
+	 * Any code modification here must be ported there.
 	 *
 	 * @param     PDO     $con
 	 * @param     string  $name
@@ -265,7 +267,7 @@ abstract class DBAdapter
 	}
 
 	/**
-	 * Formats a temporal value brefore binding, given a ColumnMap object
+	 * Formats a temporal value brefore binding, given a ColumnMap object.
 	 *
 	 * @param     mixed    $value  The temporal value
 	 * @param     mixed    $type PropelColumnTypes constant, or ColumnMap object
@@ -555,6 +557,8 @@ abstract class DBAdapter
 	/**
 	 * Binds a value to a positioned parameted in a statement,
 	 * given a ColumnMap object to infer the binding type.
+	 * Warning: duplicates logic from DefaultPlatform::getColumnBindingPHP(). 
+	 * Any code modification here must be ported there.
 	 *
 	 * @param     PDOStatement  $stmt  The statement to bind
 	 * @param     string        $parameter  Parameter identifier
