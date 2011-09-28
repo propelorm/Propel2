@@ -2508,7 +2508,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-		} catch (PropelException \$e) {
+		} catch (Exception \$e) {
 			\$con->rollBack();
 			throw \$e;
 		}";
@@ -4686,7 +4686,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-		} catch (PropelException \$e) {
+		} catch (Exception \$e) {
 			\$con->rollBack();
 			throw \$e;
 		}";
