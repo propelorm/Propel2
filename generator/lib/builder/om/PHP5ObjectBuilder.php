@@ -2619,6 +2619,8 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		$this->addDelete($script);
 		$this->addSave($script);
 		$this->addDoSave($script);
+		$script .= $this->addDoInsert();
+		$script .= $this->addDoUpdate();
 	}
 
 	/**
@@ -4043,88 +4045,29 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} // foreach foreign k
 		} // if (count(foreign keys))
 
-		if ($table->hasAutoIncrementPrimaryKey() ) {
 		$script .= "
-			if (\$this->isNew() ) {
-				\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";
-			}";
-		}
-
-		$script .= "
-
-			// If this object has been modified, then save it to the database.
-			if (\$this->isModified()) {
+			if (\$this->isNew() || \$this->isModified()) {
+				// persist changes
 				if (\$this->isNew()) {
-					\$criteria = \$this->buildCriteria();";
-
-
-		foreach ($table->getColumns() as $col) {
-			if ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && !$table->isAllowPkInsert()) {
-				$colConst = $this->getColumnConstant($col);
-				$script .= "
-					if (\$criteria->keyContainsValue(" . $colConst . ") ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('." . $colConst . ".')');
-					}
-";
-				if (!$this->getPlatform()->supportsInsertNullPk()) {
-					$script .= "
-					// remove pkey col since this table uses auto-increment and passing a null value for it is not valid
-					\$criteria->remove(" . $colConst . ");
-";
-				}
-			} elseif ($col->isPrimaryKey() && $col->isAutoIncrement() && $table->getIdMethod() != "none" && $table->isAllowPkInsert() && !$this->getPlatform()->supportsInsertNullPk()) {
-					$script .= "
-					// remove pkey col if it is null since this table does not accept that
-				if (\$criteria->containsKey(" . $colConst . ") && !\$criteria->keyContainsValue(" . $colConst . ") ) {
-					\$criteria->remove(" . $colConst . ");
-				}";
-			}
-		}
-
-		$script .= "
-					\$pk = " . $this->getNewPeerBuilder($table)->getBasePeerClassname() . "::doInsert(\$criteria, \$con);";
+					\$this->doInsert(\$con);";
 		if ($reloadOnInsert) {
 			$script .= "
 					if (!\$skipReload) {
 						\$reloadObject = true;
 					}";
 		}
-		$operator = count($table->getForeignKeys()) ? '+=' : '=';
 		$script .= "
-					\$affectedRows " . $operator . " 1;";
-		if ($table->getIdMethod() != IDMethod::NO_ID_METHOD) {
-
-			if (count($pks = $table->getPrimaryKey())) {
-				foreach ($pks as $pk) {
-					if ($pk->isAutoIncrement()) {
-						if ($table->isAllowPkInsert()) {
-								$script .= "
-					if (\$pk !== null) {
-						\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
-					}";
-						} else {
-								$script .= "
-					\$this->set".$pk->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
-						}
-					}
-				}
-			}
-		} // if (id method != "none")
-
-		$script .= "
-					\$this->setNew(false);
-				} else {";
+				} else {
+					\$this->doUpdate(\$con);";
 		if ($reloadOnUpdate) {
 			$script .= "
 					if (!\$skipReload) {
 						\$reloadObject = true;
 					}";
 		}
-		$operator = count($table->getForeignKeys()) ? '+=' : '=';
 		$script .= "
-					\$affectedRows " . $operator . " ".$this->getPeerClassname()."::doUpdate(\$this, \$con);
 				}
-";
+				\$affectedRows += 1;";
 
 		// We need to rewind any LOB columns
 		foreach ($table->getColumns() as $col) {
@@ -4140,7 +4083,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 
 		$script .= "
-				\$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+				\$this->resetModified();
 			}
 ";
 
@@ -4176,6 +4119,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} // if refFK->isLocalPrimaryKey()
 
 		} /* foreach getReferrers() */
+		
 		$script .= "
 			\$this->alreadyInSave = false;
 ";
@@ -4193,6 +4137,262 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
 
 	}
+
+	/**
+	 * get the doInsert() method code
+	 *
+	 * @return string the doInsert() method code
+	 */
+	protected function addDoInsert()
+	{
+		$script = "
+	/**
+	 * Insert the row in the database.
+	 *
+	 * @param      PropelPDO \$con
+	 *
+	 * @throws     PropelException
+	 * @see        doSave()
+	 */
+	protected function doInsert(PropelPDO \$con)
+	{";
+		if ($this->getPlatform() instanceof MssqlPlatform) {
+			if ($table->hasAutoIncrementPrimaryKey() ) {
+				$script .= "
+		\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";";
+			}
+			$script .= "
+		\$criteria = \$this->buildCriteria();";
+			if ($this->getTable()->getIdMethod() != IDMethod::NO_ID_METHOD) {
+				$script .= $this->addDoInsertBodyWithIdMethod();
+			} else {
+				$script .= $this->addDoInsertBodyStandard();
+			}
+		} else {
+			$script .= $this->addDoInsertBodyRaw();
+		}
+			$script .= "
+		\$this->setNew(false);
+	}
+";
+		
+		return $script;
+	}
+
+	protected function addDoInsertBodyStandard()
+	{
+		return "
+		\$pk = " . $this->getNewPeerBuilder($this->getTable())->getBasePeerClassname() . "::doInsert(\$criteria, \$con);";
+	}
+
+	protected function addDoInsertBodyWithIdMethod()
+	{
+		$table = $this->getTable();
+		$reloadOnInsert = $table->isReloadOnInsert();
+		$basePeerClassname = $this->getNewPeerBuilder($table)->getBasePeerClassname();
+		$script = '';
+		foreach ($table->getPrimaryKey() as $col) {
+			if (!$col->isAutoIncrement()) {
+				continue;
+			}
+			$colConst = $this->getColumnConstant($col);
+			if (!$table->isAllowPkInsert()) {
+				$script .= "
+		if (\$criteria->keyContainsValue($colConst) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key (' . $colConst . ')');
+		}";
+				if (!$this->getPlatform()->supportsInsertNullPk()) {
+					$script .= "
+		// remove pkey col since this table uses auto-increment and passing a null value for it is not valid
+		\$criteria->remove($colConst);";
+				}
+			} else if (!$this->getPlatform()->supportsInsertNullPk()) {
+				$script .= "
+		// remove pkey col if it is null since this table does not accept that
+		if (\$criteria->containsKey($colConst) && !\$criteria->keyContainsValue($colConst) ) {
+			\$criteria->remove($colConst);
+		}";
+			}
+		}
+
+		$script .= $this->addDoInsertBodyStandard();
+
+		foreach ($table->getPrimaryKey() as $col) {
+			if (!$col->isAutoIncrement()) {
+				continue;
+			}
+			if ($table->isAllowPkInsert()) {
+				$script .= "
+		if (\$pk !== null) {
+			\$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
+		}";
+			} else {
+				$script .= "
+		\$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
+			}
+		}
+		
+		return $script;
+	}
+
+	/**
+	 * Boosts ActiveRecord::doInsert() by doing more calculations at buildtime.
+	 */
+	protected function addDoInsertBodyRaw()
+	{
+		$this->declareClasses('Propel', 'PDO');
+		$table = $this->getTable();
+		$peerClassname = $this->getPeerClassname();
+		$platform = $this->getPlatform();
+		$primaryKeyMethodInfo = '';
+		if ($table->getIdMethodParameters()) {
+			$params = $table->getIdMethodParameters();
+			$imp = $params[0];
+			$primaryKeyMethodInfo = $imp->getValue();
+		} elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
+			$primaryKeyMethodInfo = $platform->getSequenceName($table);
+		}
+		$query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
+		$script = "
+		\$modifiedColumns = array();
+		\$index = 0;
+";
+
+		foreach ($table->getPrimaryKey() as $column) {
+			if (!$column->isAutoIncrement()) {
+				continue;
+			}
+			$constantName = $this->getColumnConstant($column);
+			if ($platform->supportsInsertNullPk()) {
+				$script .= "
+		\$this->modifiedColumns[] = $constantName;";					
+			}
+			$columnProperty = strtolower($column->getName());
+			if (!$table->isAllowPkInsert()) {
+				$script .= "
+		if (null !== \$this->{$columnProperty}) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key (' . $constantName . ')');
+		}";
+			} elseif (!$platform->supportsInsertNullPk()) {
+				$script .= "
+		// add primary key column only if it is not null since this database does not accept that
+		if (null !== \$this->{$columnProperty}) {
+			\$this->modifiedColumns[] = $constantName;
+		}";
+			}
+		}
+
+		// if non auto-increment but using sequence, get the id first
+		if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+			$column = $table->getFirstPrimaryKeyColumn();
+			$columnProperty = strtolower($column->getName());
+			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+		if (null === \$this->{$columnProperty}) {
+			try {";
+			$script .= $platform->getIdentifierPhp('$this->'. $columnProperty, '$con', $primaryKeyMethodInfo, '				');
+			$script .= "
+			} catch (Exception \$e) {
+				throw new PropelException('Unable to get sequence id.', \$e);
+			}
+		}
+";
+		}
+
+		$script .= "
+
+		 // check the columns in natural order for more readable SQL queries";
+		foreach ($table->getColumns() as $column) {
+			$constantName = $this->getColumnConstant($column);
+			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+		if (\$this->isColumnModified($constantName)) {
+			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
+		}";
+		}
+
+		$script .= "
+
+		\$sql = sprintf(
+			'$query',
+			implode(', ', \$modifiedColumns),
+			implode(', ', array_keys(\$modifiedColumns))
+		);
+
+		try {
+			\$stmt = \$con->prepare(\$sql);
+			foreach (\$modifiedColumns as \$identifier => \$columnName) {
+				switch (\$columnName) {";
+		foreach ($table->getColumns() as $column) {
+			$columnNameCase = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+					case '$columnNameCase':";
+			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '						');
+			$script .= "
+						break;";
+		}
+		$script .= "
+				}
+			}
+			\$stmt->execute();
+		} catch (Exception \$e) {
+			Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', \$sql), \$e);
+		}
+";
+
+		// if auto-increment, get the id after
+		if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+			$column = $table->getFirstPrimaryKeyColumn();
+			$columnProperty = strtolower($column->getName());
+			$script .= "
+		try {";
+			$script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);
+			$script .= "
+		} catch (Exception \$e) {
+			throw new PropelException('Unable to get autoincrement id.', \$e);
+		}";
+			if ($table->isAllowPkInsert()) {
+				$script .= "
+		if (\$pk !== null) {
+			\$this->set".$column->getPhpName()."(\$pk);
+		}";
+			} else {
+				$script .= "
+		\$this->set".$column->getPhpName()."(\$pk);";
+			}
+			$script .= "
+";
+		}
+
+		return $script;
+	}
+
+	/**
+	 * get the doUpdate() method code
+	 *
+	 * @return string the doUpdate() method code
+	 */
+	protected function addDoUpdate()
+	{
+		$basePeerClassname = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassname();
+		return "
+	/**
+	 * Update the row in the database.
+	 *
+	 * @param      PropelPDO \$con
+	 *
+	 * @see        doSave()
+	 */
+	protected function doUpdate(PropelPDO \$con)
+	{
+		\$selectCriteria = \$this->buildPkeyCriteria();
+		\$valuesCriteria = \$this->buildCriteria();
+		{$basePeerClassname}::doUpdate(\$selectCriteria, \$valuesCriteria, \$con);
+	}
+";
+	}
+
 
 	/**
 	 * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.

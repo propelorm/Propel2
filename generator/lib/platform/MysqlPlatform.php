@@ -607,4 +607,22 @@ ALTER TABLE %s CHANGE %s %s;
 	{
 		return 'Y-m-d H:i:s';
 	}
+
+	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
+	{
+		// FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
+		// See http://pecl.php.net/bugs/bug.php?id=9919
+		if ($column->getPDOType() == PDO::PARAM_BOOL) {
+			return sprintf(
+				"
+%s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
+				$tab,
+				$identifier,
+				$columnValueAccessor
+			);
+		}
+
+		return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
+	}
+
 }

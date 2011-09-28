@@ -150,6 +150,11 @@ class DefaultPlatform implements PropelPlatformInterface
 	{
 		return PropelPlatformInterface::IDENTITY;
 	}
+	
+	public function isNativeIdMethodAutoIncrement()
+	{
+		return $this->getNativeIdMethod() == PropelPlatformInterface::IDENTITY;
+	}
 
 	/**
 	 * Returns the db specific domain for a propelType.
@@ -1125,5 +1130,57 @@ ALTER TABLE %s ADD
 	{
 		return 'Y-m-d';
 	}
+	
+	/**
+	 * Get the PHP snippet for binding a value to a column.
+	 * Warning: duplicates logic from DBAdapter::bindValue(). 
+	 * Any code modification here must be ported there.
+	 */
+	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
+	{
+		$script = '';
+		$hasValuePreparation = false;
+		if ($column->isTemporalType()) {
+			// nothing special, the internal value was already properly formatted by the setter
+		} elseif ($column->isLobType()) {
+			// we always need to make sure that the stream is rewound, otherwise nothing will
+			// get written to database.
+			$script .= "
+if (is_resource($columnValueAccessor)) {
+	rewind($columnValueAccessor);
+}";
+		}
 
+		$script .= sprintf(
+			"
+\$stmt->bindValue(%s, %s, %s);",
+			$identifier,
+			$columnValueAccessor ,
+			PropelTypes::getPdoTypeString($column->getType())
+		);
+
+		return preg_replace('/^/m', $tab, $script);
+	}
+
+	/**
+	 * Get the PHP snippet for getting a Pk from the database.
+	 * Warning: duplicates logic from DBAdapter::getId(). 
+	 * Any code modification here must be ported there.
+	 *
+	 * Typical output:
+	 * <code>
+	 * $this->id = $con->lastInsertId();
+	 * </code>
+	 */
+	public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "			")
+	{
+		return sprintf(
+			"
+%s%s = %s->lastInsertId(%s);",
+			$tab,
+			$columnValueMutator,
+			$connectionVariableName,
+			$sequenceName ? ("'" . $sequenceName . "'") : ''
+		);
+	}
 }

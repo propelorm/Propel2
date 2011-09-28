@@ -1129,8 +1129,12 @@ class ModelCriteria extends Criteria
 	 */
 	public function find($con = null)
 	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
-		$stmt = $criteria->getSelectStatement($con);
+		$stmt = $criteria->doSelect($con);
 
 		return $criteria->getFormatter()->init($criteria)->format($stmt);
 	}
@@ -1146,9 +1150,13 @@ class ModelCriteria extends Criteria
 	 */
 	public function findOne($con = null)
 	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->limit(1);
-		$stmt = $criteria->getSelectStatement($con);
+		$stmt = $criteria->doSelect($con);
 
 		return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 	}
@@ -1164,9 +1172,7 @@ class ModelCriteria extends Criteria
 	 */
 	public function findOneOrCreate($con = null)
 	{
-		$criteria = $this->isKeepQuery() ? clone $this : $this;
-		$criteria->limit(1);
-		if (!$ret = $criteria->findOne($con)) {
+		if (!$ret = $this->findOne($con)) {
 			$class = $this->getModelName();
 			$obj = new $class();
 			foreach ($this->keys() as $key) {
@@ -1193,20 +1199,27 @@ class ModelCriteria extends Criteria
 	 */
 	public function findPk($key, $con = null)
 	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		// As the query uses a PK condition, no limit(1) is necessary. 
+		$this->basePreSelect($con);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
 		if (count($pkCols) == 1) {
 			// simple primary key
 			$pkCol = $pkCols[0];
-			$this->add($pkCol->getFullyQualifiedName(), $key);
-			return $this->findOne($con);
+			$criteria->add($pkCol->getFullyQualifiedName(), $key);
 		} else {
 			// composite primary key
 			foreach ($pkCols as $pkCol) {
 				$keyPart = array_shift($key);
-				$this->add($pkCol->getFullyQualifiedName(), $keyPart);
+				$criteria->add($pkCol->getFullyQualifiedName(), $keyPart);
 			}
-			return $this->findOne($con);
 		}
+		$stmt = $criteria->doSelect($con);
+
+		return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 	}
 
 	/**
@@ -1225,44 +1238,51 @@ class ModelCriteria extends Criteria
 	 */
 	public function findPks($keys, $con = null)
 	{
+		if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+		// As the query uses a PK condition, no limit(1) is necessary. 
+		$this->basePreSelect($con);
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
 		if (count($pkCols) == 1) {
 			// simple primary key
 			$pkCol = array_shift($pkCols);
-			$this->add($pkCol->getFullyQualifiedName(), $keys, Criteria::IN);
+			$criteria->add($pkCol->getFullyQualifiedName(), $keys, Criteria::IN);
 		} else {
 			// composite primary key
 			throw new PropelException('Multiple object retrieval is not implemented for composite primary keys');
 		}
-		return $this->find($con);
+		$stmt = $criteria->doSelect($con);
+
+		return $criteria->getFormatter()->init($criteria)->format($stmt);
 	}
 
-	protected function getSelectStatement($con = null)
+	/**
+	 * Builds, binds and executes a SELECT query based on the current object.
+	 * 
+	 * @param  PropelPDO $con A connection object
+	 *
+	 * @return PDOStatement A PDO statement executed using the connection, ready to be fetched
+	 */
+	protected function doSelect($con)
 	{
-		$dbMap = Propel::getDatabaseMap($this->getDbName());
-		$db = Propel::getDB($this->getDbName());
-		if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
-		}
-
 		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
 		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
 			$this->addSelfSelectColumns();
 		}
-
 		$this->configureSelectColumns();
 
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+		$db = Propel::getDB($this->getDbName());
+
+		$params = array();
+		$sql = BasePeer::createSelectSql($this, $params);
 		try {
-			$this->basePreSelect($con);
-			$params = array();
-			$sql = BasePeer::createSelectSql($this, $params);
 			$stmt = $con->prepare($sql);
 			$db->bindValues($stmt, $params, $dbMap);
 			$stmt->execute();
 		} catch (Exception $e) {
-			if (isset($stmt)) {
-				$stmt = null; // close
-			}
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
 		}
@@ -1370,7 +1390,7 @@ class ModelCriteria extends Criteria
 		if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
-
+		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$criteria->setDbName($this->getDbName()); // Set the correct dbName
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -1380,7 +1400,7 @@ class ModelCriteria extends Criteria
 		// tables go into the FROM clause.
 		$criteria->setPrimaryTableName(constant($this->modelPeerName.'::TABLE_NAME'));
 
-		$stmt = $criteria->getCountStatement($con);
+		$stmt = $criteria->doCount($con);
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
@@ -1391,13 +1411,10 @@ class ModelCriteria extends Criteria
 		return $count;
 	}
 
-	protected function getCountStatement($con = null)
+	protected function doCount($con)
 	{
 		$dbMap = Propel::getDatabaseMap($this->getDbName());
 		$db = Propel::getDB($this->getDbName());
-		if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
-		}
 
 		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
 		if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
@@ -1412,30 +1429,26 @@ class ModelCriteria extends Criteria
 			|| $this->getHaving()
 			|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
 
-		try {
-			$this->basePreSelect($con);
-			$params = array();
-			if ($needsComplexCount) {
-				if (BasePeer::needsSelectAliases($this)) {
-					if ($this->getHaving()) {
-						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
-					}
-					$db->turnSelectColumnsToAliases($this);
+		$params = array();
+		if ($needsComplexCount) {
+			if (BasePeer::needsSelectAliases($this)) {
+				if ($this->getHaving()) {
+					throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
 				}
-				$selectSql = BasePeer::createSelectSql($this, $params);
-				$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
-			} else {
-				// Replace SELECT columns with COUNT(*)
-				$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
-				$sql = BasePeer::createSelectSql($this, $params);
+				$db->turnSelectColumnsToAliases($this);
 			}
+			$selectSql = BasePeer::createSelectSql($this, $params);
+			$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+		} else {
+			// Replace SELECT columns with COUNT(*)
+			$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+			$sql = BasePeer::createSelectSql($this, $params);
+		}
+		try {
 			$stmt = $con->prepare($sql);
 			$db->bindValues($stmt, $params, $dbMap);
 			$stmt->execute();
-		} catch (PropelException $e) {
-			if ($stmt) {
-				$stmt = null; // close
-			}
+		} catch (Exception $e) {
 			Propel::log($e->getMessage(), Propel::LOG_ERR);
 			throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), $e);
 		}

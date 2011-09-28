@@ -176,6 +176,8 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $this->addConstructor($script);
         $this->addFactory($script);
         $this->addFindPk($script);
+        $this->addFindPkSimple($script);
+        $this->addFindPkComplex($script);
         $this->addFindPks($script);
         $this->addFilterByPrimaryKey($script);
         $this->addFilterByPrimaryKeys($script);
@@ -355,27 +357,19 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
 ";
     }
 
-
-    /**
-     * Adds the findPk method for this object.
-     * @param      string &$script The script will be modified in this method.
-     */
     protected function addFindPk(&$script)
     {
+        $class = $this->getObjectClassname();
+        $peerClassname = $this->getPeerClassname();
         $table = $this->getTable();
-        $pks = $table->getPrimaryKey();
-        $class = $class = $this->getStubObjectBuilder()->getClassname();
-        $this->declareClasses('PropelPDO');
         $script .= "
     /**
-     * Find object by primary key";
-        if (count($pks) === 1) {
-            $pkType = 'mixed';
-            $script .= "
-     * Use instance pooling to avoid a database query if the object exists
-     * <code>
-     * \$obj  = \$c->findPk(12, \$con);";
-        } else {
+     * Find object by primary key.
+     * Propel uses the instance pool to skip the database if the object exists.
+     * Go fast if the query is untouched.
+     *";
+        if ($table->hasCompositePrimaryKey()) {
+            $pks = $table->getPrimaryKey();
             $examplePk = array_slice(array(12, 34, 56, 78, 91), 0, count($pks));
             $colNames = array();
             foreach ($pks as $col) {
@@ -385,38 +379,153 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $script .= "
      * <code>
      * \$obj = \$c->findPk(array(" . join($examplePk, ', ') . "), \$con);";
+        } else {
+            $pkType = 'mixed';
+            $script .= "
+     * <code>
+     * \$obj  = \$c->findPk(12, \$con);";
         }
         $script .= "
      * </code>
+     *
      * @param     " . $pkType . " \$key Primary key to use for the query
      * @param     PropelPDO \$con an optional connection object
      *
-     * @return    " . $class . "|array|mixed the result, formatted by the current formatter
+     * @return    $class|array|mixed the result, formatted by the current formatter
      */
     public function findPk(\$key, \$con = null)
-    {";
-        if (count($pks) === 1) {
-            $poolKeyHashParams = '$key';
-        } else {
-            $poolKeyHashParams = array();
-            for ($i = 0, $count = count($pks); $i < $count; $i++) {
-                $poolKeyHashParams[]= '$key[' . $i . ']';
+    {
+        if (\$key === null) {
+            return null;
+        }";
+        if ($table->hasCompositePrimaryKey()) {
+            $pks = array();
+            foreach ($table->getPrimaryKey() as $index => $column) {
+                $pks []= "\$key[$index]";
             }
+        } else {
+            $pks = '$key';
         }
-        // tip: we don't use findOne() to avoid putting an unecessary LIMIT 1 statement,
-        // which may be costly on platforms not natively supporting LIMIT (like Oracle)
+        $pkHash = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = ".$this->getPeerClassname()."::getInstanceFromPool(".$this->getPeerBuilder()->getInstancePoolKeySnippet($poolKeyHashParams)."))) && \$this->getFormatter()->isObjectFormatter()) {
+        if ((null !== (\$obj = {$peerClassname}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
             // the object is alredy in the instance pool
             return \$obj;
-        } else {
-            // the object has not been requested yet, or the formatter is not an object formatter
-            \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-            \$stmt = \$criteria
-                ->filterByPrimaryKey(\$key)
-                ->getSelectStatement(\$con);
-            return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
         }
+        if (\$con === null) {
+            \$con = Propel::getConnection({$peerClassname}::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+        \$this->basePreSelect(\$con);
+        if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
+         || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers 
+         || \$this->map || \$this->having || \$this->joins) {
+            return \$this->findPkComplex(\$key, \$con);
+        } else {
+            return \$this->findPkSimple(\$key, \$con);
+        }
+    }
+";
+    }
+
+    protected function addFindPkSimple(&$script)
+    {
+        $table = $this->getTable();
+        $platform = $this->getPlatform();
+        $peerClassname = $this->getPeerClassname();
+        $ARClassname = $this->getObjectClassname();
+        $this->declareClassFromBuilder($this->getStubObjectBuilder());
+        $this->declareClasses('PDO');
+        $selectColumns = array();
+        foreach ($table->getColumns() as $column) {
+            if (!$column->isLazyLoad()) {
+                $selectColumns []= $platform->quoteIdentifier(strtoupper($column->getName()));
+            }
+        }
+        $conditions = array();
+        foreach ($table->getPrimaryKey() as $index => $column) {
+            $conditions []= sprintf('%s = :p%d', $platform->quoteIdentifier(strtoupper($column->getName())), $index);
+        }
+        $query = sprintf(
+            'SELECT %s FROM %s WHERE %s',
+            implode(', ', $selectColumns),
+            $platform->quoteIdentifier($table->getName()),
+            implode(' AND ', $conditions)
+        );
+        $pks = array();
+        foreach ($table->getPrimaryKey() as $index => $column) {
+            $pks []= "\$row[$index]";
+        }
+        $pkHashFromRow = $this->getPeerBuilder()->getInstancePoolKeySnippet($pks);
+        $script .= "
+    /**
+     * Find object by primary key using raw SQL to go fast.
+     * Bypass doSelect() and the object formatter by using generated code.
+     *
+     * @param     mixed \$key Primary key to use for the query
+     * @param     PropelPDO \$con A connection object
+     *
+     * @return    $ARClassname A model object, or null if the key is not found
+     */
+    protected function findPkSimple(\$key, \$con)
+    {
+        \$sql = '$query';
+        try {
+            \$stmt = \$con->prepare(\$sql);";
+        if ($table->hasCompositePrimaryKey()) {
+            foreach ($table->getPrimaryKey() as $index => $column) {
+                $script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", '            ');
+            }
+        } else {
+            $pk = $table->getPrimaryKey();
+            $column = $pk[0];
+            $script .= $platform->getColumnBindingPHP($column, "':p0'", "\$key", '            ');
+        }
+        $script .= "
+            \$stmt->execute();
+        } catch (Exception \$e) {
+            Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
+        }
+        \$obj = null;
+        if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
+            \$obj = new $ARClassname();
+            \$obj->hydrate(\$row);
+            {$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
+        }
+        \$stmt->closeCursor();
+    
+        return \$obj;
+    }
+";
+    }
+
+    /**
+     * Adds the findPk method for this object.
+     * @param      string &$script The script will be modified in this method.
+     */
+    protected function addFindPkComplex(&$script)
+    {
+        $table = $this->getTable();
+        $pks = $table->getPrimaryKey();
+        $class = $class = $this->getStubObjectBuilder()->getClassname();
+        $this->declareClasses('PropelPDO');
+        $script .= "
+    /**
+     * Find object by primary key.
+     *
+     * @param     mixed \$key Primary key to use for the query
+     * @param     PropelPDO \$con A connection object
+     *
+     * @return    " . $class . "|array|mixed the result, formatted by the current formatter
+     */
+    protected function findPkComplex(\$key, \$con)
+    {
+        // As the query uses a PK condition, no limit(1) is necessary. 
+        \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
+        \$stmt = \$criteria
+            ->filterByPrimaryKey(\$key)
+            ->doSelect(\$con);
+        return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
     }
 ";
     }
@@ -427,7 +536,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function addFindPks(&$script)
     {
-        $this->declareClasses('PropelPDO');
+        $this->declareClasses('PropelPDO', 'Propel');
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
         $count = count($pks);
@@ -451,10 +560,15 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     public function findPks(\$keys, \$con = null)
     {
+        if (\$con === null) {
+            \$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+        }
+        \$this->basePreSelect(\$con);
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
-        return \$this
+        \$stmt = \$criteria
             ->filterByPrimaryKeys(\$keys)
-            ->find(\$con);
+            ->doSelect(\$con);
+        return \$criteria->getFormatter()->init(\$criteria)->format(\$stmt);
     }
 ";
     }

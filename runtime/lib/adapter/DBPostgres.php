@@ -93,6 +93,8 @@ class DBPostgres extends DBAdapter
 
 	/**
 	 * Gets ID for specified sequence name.
+	 * Warning: duplicates logic from PgsqlPlatform::getIdentifierPhp().
+	 * Any code modification here must be ported there.
 	 *
 	 * @param     PDO     $con
 	 * @param     string  $name
@@ -159,7 +161,7 @@ class DBPostgres extends DBAdapter
 
 	/**
 	 * @see        DBAdapter::getDeleteFromClause()
-
+	 *
 	 * @param     Criteria  $criteria
 	 * @param     string    $tableName
 	 *

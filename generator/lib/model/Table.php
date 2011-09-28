@@ -1823,6 +1823,19 @@ class Table extends ScopedElement implements IDMethod
 	{
 		return (count($this->getPrimaryKey()) > 1);
 	}
+	
+	/**
+	 * Get the first column of the primary key.
+	 * Useful for tables with a PK using a single column.
+	 */
+	public function getFirstPrimaryKeyColumn()
+	{
+		foreach ($this->columnList as $col) {
+			if ($col->isPrimaryKey()) {
+				return $col;
+			}
+		}
+	}
 
 	/**
 	 * Determine whether this table has any auto-increment primary key(s).

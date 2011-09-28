@@ -53,8 +53,8 @@ class QueryCacheBehavior extends Behavior
 		$this->addCacheContains($script);
 		$this->addCacheFetch($script);
 		$this->addCacheStore($script);
-		$this->addGetSelectStatement($script);
-		$this->addGetCountStatement($script);
+		$this->addDoSelect($script);
+		$this->addDoCount($script);
 
 		return $script;
 	}
@@ -156,104 +156,100 @@ public function cacheFetch(\$key)
 ";
 	}
 
-	protected function addGetSelectStatement(&$script)
+	protected function addDoSelect(&$script)
 	{
 		$script .= "
-protected function getSelectStatement(\$con = null)
+protected function doSelect(\$con)
 {
-	\$dbMap = Propel::getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
-	\$db = Propel::getDB(" . $this->peerClassname ."::DATABASE_NAME);
-  if (\$con === null) {
-		\$con = Propel::getConnection(" . $this->peerClassname ."::DATABASE_NAME, Propel::CONNECTION_READ);
-	}
-
+	// check that the columns of the main class are already added (if this is the primary ModelCriteria)
 	if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
 		\$this->addSelfSelectColumns();
 	}
-
 	\$this->configureSelectColumns();
 
-	\$con->beginTransaction();
-	try {
-		\$this->basePreSelect(\$con);
-		\$key = \$this->getQueryKey();
-		if (\$key && \$this->cacheContains(\$key)) {
-			\$params = \$this->getParams();
-			\$sql = \$this->cacheFetch(\$key);
-		} else {
-			\$params = array();
-			\$sql = BasePeer::createSelectSql(\$this, \$params);
-			if (\$key) {
-				\$this->cacheStore(\$key, \$sql);
-			}
+	\$dbMap = Propel::getDatabaseMap(" . $this->peerClassname ."::DATABASE_NAME);
+	\$db = Propel::getDB(" . $this->peerClassname ."::DATABASE_NAME);
+
+	\$key = \$this->getQueryKey();
+	if (\$key && \$this->cacheContains(\$key)) {
+		\$params = \$this->getParams();
+		\$sql = \$this->cacheFetch(\$key);
+	} else {
+		\$params = array();
+		\$sql = BasePeer::createSelectSql(\$this, \$params);
+		if (\$key) {
+			\$this->cacheStore(\$key, \$sql);
 		}
+	}
+
+	try {
 		\$stmt = \$con->prepare(\$sql);
 		\$db->bindValues(\$stmt, \$params, \$dbMap);
 		\$stmt->execute();
-		\$con->commit();
-	} catch (PropelException \$e) {
-		\$con->rollback();
-		throw \$e;
-	}
+		} catch (Exception \$e) {
+			Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+			throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
+		}
 
 	return \$stmt;
 }
 ";
 	}
 
-	protected function addGetCountStatement(&$script)
+	protected function addDoCount(&$script)
 	{
 		$script .= "
-protected function getCountStatement(\$con = null)
+protected function doCount(\$con)
 {
 	\$dbMap = Propel::getDatabaseMap(\$this->getDbName());
 	\$db = Propel::getDB(\$this->getDbName());
-  if (\$con === null) {
-		\$con = Propel::getConnection(\$this->getDbName(), Propel::CONNECTION_READ);
+
+	\$key = \$this->getQueryKey();
+	if (\$key && \$this->cacheContains(\$key)) {
+		\$params = \$this->getParams();
+		\$sql = \$this->cacheFetch(\$key);
+	} else {
+		// check that the columns of the main class are already added (if this is the primary ModelCriteria)
+		if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
+			\$this->addSelfSelectColumns();
+		}
+
+		\$this->configureSelectColumns();
+
+		\$needsComplexCount = \$this->getGroupByColumns()
+			|| \$this->getOffset()
+			|| \$this->getLimit()
+			|| \$this->getHaving()
+			|| in_array(Criteria::DISTINCT, \$this->getSelectModifiers());
+
+		\$params = array();
+		if (\$needsComplexCount) {
+			if (BasePeer::needsSelectAliases(\$this)) {
+				if (\$this->getHaving()) {
+					throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+				}
+				\$db->turnSelectColumnsToAliases(\$this);
+			}
+			\$selectSql = BasePeer::createSelectSql(\$this, \$params);
+			\$sql = 'SELECT COUNT(*) FROM (' . \$selectSql . ') propelmatch4cnt';
+		} else {
+			// Replace SELECT columns with COUNT(*)
+			\$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+			\$sql = BasePeer::createSelectSql(\$this, \$params);
+		}
+
+		if (\$key) {
+			\$this->cacheStore(\$key, \$sql);
+		}
 	}
 
-	\$con->beginTransaction();
 	try {
-		\$this->basePreSelect(\$con);
-		\$key = \$this->getQueryKey();
-		if (\$key && \$this->cacheContains(\$key)) {
-			\$params = \$this->getParams();
-			\$sql = \$this->cacheFetch(\$key);
-		} else {
-			if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
-				\$this->addSelfSelectColumns();
-			}
-			\$params = array();
-			\$needsComplexCount = \$this->getGroupByColumns()
-				|| \$this->getOffset()
-				|| \$this->getLimit()
-				|| \$this->getHaving()
-				|| in_array(Criteria::DISTINCT, \$this->getSelectModifiers());
-			if (\$needsComplexCount) {
-				if (BasePeer::needsSelectAliases(\$this)) {
-					if (\$this->getHaving()) {
-						throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
-					}
-					\$db->turnSelectColumnsToAliases(\$this);
-				}
-				\$selectSql = BasePeer::createSelectSql(\$this, \$params);
-				\$sql = 'SELECT COUNT(*) FROM (' . \$selectSql . ') propelmatch4cnt';
-			} else {
-				// Replace SELECT columns with COUNT(*)
-				\$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
-				\$sql = BasePeer::createSelectSql(\$this, \$params);
-			}
-			if (\$key) {
-				\$this->cacheStore(\$key, \$sql);
-			}
-		}
 		\$stmt = \$con->prepare(\$sql);
 		\$db->bindValues(\$stmt, \$params, \$dbMap);
 		\$stmt->execute();
-		\$con->commit();
-	} catch (PropelException \$e) {
-		\$con->rollback();
-		throw \$e;
+	} catch (Exception \$e) {
+		Propel::log(\$e->getMessage(), Propel::LOG_ERR);
+		throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', \$sql), \$e);
 	}
 
 	return \$stmt;
