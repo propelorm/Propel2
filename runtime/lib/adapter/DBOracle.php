@@ -211,7 +211,7 @@ class DBOracle extends DBAdapter
 
 	/**
 	 * @see       DBAdapter::bindValue()
-	 * Warning: duplicates logic from OraclePlatform::getColumnBindingPHP(). 
+	 * Warning: duplicates logic from OraclePlatform::getColumnBindingPHP().
 	 * Any code modification here must be ported there.
 	 *
 	 * @param     PDOStatement  $stmt

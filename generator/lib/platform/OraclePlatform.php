@@ -335,7 +335,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
 
 	/**
 	 * Get the PHP snippet for binding a value to a column.
-	 * Warning: duplicates logic from DBOracle::bindValue(). 
+	 * Warning: duplicates logic from DBOracle::bindValue().
 	 * Any code modification here must be ported there.
 	 */
 	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
@@ -351,13 +351,13 @@ CREATE %sINDEX %s ON %s (%s)%s;
 				$columnValueAccessor
 			);
 		}
-		
+
 		return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
 	}
 
 	/**
 	 * Get the PHP snippet for getting a Pk from the database.
-	 * Warning: duplicates logic from DBOracle::getId(). 
+	 * Warning: duplicates logic from DBOracle::getId().
 	 * Any code modification here must be ported there.
 	 */
 	public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "			")

@@ -417,7 +417,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }
         \$this->basePreSelect(\$con);
         if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
-         || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers 
+         || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers
          || \$this->map || \$this->having || \$this->joins) {
             return \$this->findPkComplex(\$key, \$con);
         } else {
@@ -493,7 +493,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             {$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
         \$stmt->closeCursor();
-    
+
         return \$obj;
     }
 ";
@@ -520,7 +520,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     protected function findPkComplex(\$key, \$con)
     {
-        // As the query uses a PK condition, no limit(1) is necessary. 
+        // As the query uses a PK condition, no limit(1) is necessary.
         \$criteria = \$this->isKeepQuery() ? clone \$this : \$this;
         \$stmt = \$criteria
             ->filterByPrimaryKey(\$key)

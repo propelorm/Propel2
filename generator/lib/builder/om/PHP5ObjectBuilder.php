@@ -4220,7 +4220,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} // if refFK->isLocalPrimaryKey()
 
 		} /* foreach getReferrers() */
-		
+
 		$script .= "
 			\$this->alreadyInSave = false;
 ";
@@ -4276,7 +4276,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		\$this->setNew(false);
 	}
 ";
-		
+
 		return $script;
 	}
 
@@ -4332,7 +4332,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		\$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
 			}
 		}
-		
+
 		return $script;
 	}
 
@@ -4366,7 +4366,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$constantName = $this->getColumnConstant($column);
 			if ($platform->supportsInsertNullPk()) {
 				$script .= "
-		\$this->modifiedColumns[] = $constantName;";					
+		\$this->modifiedColumns[] = $constantName;";
 			}
 			$columnProperty = strtolower($column->getName());
 			if (!$table->isAllowPkInsert()) {

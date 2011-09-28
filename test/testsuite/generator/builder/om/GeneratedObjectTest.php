@@ -440,7 +440,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 			$this->assertFalse($b->isNew());
 			$this->assertNotNull($b->getId());
 		}
-		
+
     /**
      *
      */

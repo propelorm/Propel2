@@ -150,7 +150,7 @@ class DefaultPlatform implements PropelPlatformInterface
 	{
 		return PropelPlatformInterface::IDENTITY;
 	}
-	
+
 	public function isNativeIdMethodAutoIncrement()
 	{
 		return $this->getNativeIdMethod() == PropelPlatformInterface::IDENTITY;
@@ -1081,7 +1081,7 @@ ALTER TABLE %s ADD
 		return true;
 	}
 
-	
+
 	public function supportsVarcharWithoutSize()
 	{
 		return false;
@@ -1130,10 +1130,10 @@ ALTER TABLE %s ADD
 	{
 		return 'Y-m-d';
 	}
-	
+
 	/**
 	 * Get the PHP snippet for binding a value to a column.
-	 * Warning: duplicates logic from DBAdapter::bindValue(). 
+	 * Warning: duplicates logic from DBAdapter::bindValue().
 	 * Any code modification here must be ported there.
 	 */
 	public function getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab = "			")
@@ -1164,7 +1164,7 @@ if (is_resource($columnValueAccessor)) {
 
 	/**
 	 * Get the PHP snippet for getting a Pk from the database.
-	 * Warning: duplicates logic from DBAdapter::getId(). 
+	 * Warning: duplicates logic from DBAdapter::getId().
 	 * Any code modification here must be ported there.
 	 *
 	 * Typical output:

@@ -1202,7 +1202,7 @@ class ModelCriteria extends Criteria
 		if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
-		// As the query uses a PK condition, no limit(1) is necessary. 
+		// As the query uses a PK condition, no limit(1) is necessary.
 		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
@@ -1241,7 +1241,7 @@ class ModelCriteria extends Criteria
 		if ($con === null) {
 			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
 		}
-		// As the query uses a PK condition, no limit(1) is necessary. 
+		// As the query uses a PK condition, no limit(1) is necessary.
 		$this->basePreSelect($con);
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		$pkCols = $this->getTableMap()->getPrimaryKeyColumns();
@@ -1260,7 +1260,7 @@ class ModelCriteria extends Criteria
 
 	/**
 	 * Builds, binds and executes a SELECT query based on the current object.
-	 * 
+	 *
 	 * @param  PropelPDO $con A connection object
 	 *
 	 * @return PDOStatement A PDO statement executed using the connection, ready to be fetched

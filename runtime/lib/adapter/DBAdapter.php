@@ -557,7 +557,7 @@ abstract class DBAdapter
 	/**
 	 * Binds a value to a positioned parameted in a statement,
 	 * given a ColumnMap object to infer the binding type.
-	 * Warning: duplicates logic from DefaultPlatform::getColumnBindingPHP(). 
+	 * Warning: duplicates logic from DefaultPlatform::getColumnBindingPHP().
 	 * Any code modification here must be ported there.
 	 *
 	 * @param     PDOStatement  $stmt  The statement to bind
