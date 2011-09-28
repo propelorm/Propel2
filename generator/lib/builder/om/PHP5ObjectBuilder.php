@@ -3898,17 +3898,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} // foreach foreign k
 		} // if (count(foreign keys))
 
-		if ($table->hasAutoIncrementPrimaryKey() ) {
 		$script .= "
-			if (\$this->isNew() ) {
-				\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";
-			}";
-		}
-
-		$script .= "
-
-			// If this object has been modified, then save it to the database.
-			if (\$this->isModified()) {
+			if (\$this->isNew() || \$this->isModified()) {
+				// persist changes
 				if (\$this->isNew()) {
 					\$this->doInsert(\$con);";
 		if ($reloadOnInsert) {
@@ -3926,7 +3918,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 						\$reloadObject = true;
 					}";
 		}
-		
 		$script .= "
 				}
 				\$affectedRows += 1;";
@@ -4012,6 +4003,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 	protected function doInsert(PropelPDO \$con)
 	{";
 		if ($this->getPlatform() instanceof MssqlPlatform) {
+			if ($table->hasAutoIncrementPrimaryKey() ) {
+				$script .= "
+		\$this->modifiedColumns[] = " . $this->getColumnConstant($table->getAutoIncrementPrimaryKey() ) . ";";
+			}
 			$script .= "
 		\$criteria = \$this->buildCriteria();";
 			if ($this->getTable()->getIdMethod() != IDMethod::NO_ID_METHOD) {
@@ -4109,36 +4104,29 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		\$modifiedColumns = array();
 		\$index = 0;
 ";
-	
-		foreach ($table->getColumns() as $column) {
-			$constantName = $this->getPeerBuilder()->getColumnConstant($column);
-			$columnProperty = strtolower($column->getName());
-			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
-			if ($column->isPrimaryKey() && $column->isAutoIncrement()) {
-				$script .= "
-		if (\$this->isColumnModified($constantName)) {";
-				if (!$table->isAllowPkInsert()) {
-					$script .= "
-			if (null !== \$this->{$columnProperty}) {
-				throw new PropelException('Cannot insert a value for auto-increment primary key ($columnProperty)');
-			}";
-					if (!$platform->supportsInsertNullPk()) {
-						$script .= "
-			continue;";
-					}
-				} elseif (!$platform->supportsInsertNullPk()) {
-					$script .= "
-			if (null === \$this->{$columnProperty}) {
+
+		foreach ($table->getPrimaryKey() as $column) {
+			if (!$column->isAutoIncrement()) {
 				continue;
-			}";
-				}
-			} else {
-				$script .= "
-		if (\$this->isColumnModified($constantName) && null !== \$this->{$columnProperty}) {";
 			}
-			$script .= "
-			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
+			$constantName = $this->getColumnConstant($column);
+			if ($platform->supportsInsertNullPk()) {
+				$script .= "
+		\$this->modifiedColumns[] = $constantName;";					
+			}
+			$columnProperty = strtolower($column->getName());
+			if (!$table->isAllowPkInsert()) {
+				$script .= "
+		if (null !== \$this->{$columnProperty}) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ($constantName)');
 		}";
+			} elseif (!$platform->supportsInsertNullPk()) {
+				$script .= "
+		// add pkey col only if it is not null since this table does not accept that
+		if (null !== \$this->{$columnProperty}) {
+			\$this->modifiedColumns[] = $constantName;
+		}";
+			}
 		}
 
 		// if non auto-increment but using sequence, get the id first
@@ -4147,7 +4135,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			$columnProperty = strtolower($column->getName());
 			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
 			$script .= "
-
 		if (null === \$this->{$columnProperty}) {
 			try {";
 			$script .= $platform->getIdentifierPhp('$this->'. $columnProperty, '$con', $primaryKeyMethodInfo, '				');
@@ -4155,6 +4142,15 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			} catch (Exception \$e) {
 				throw new PropelException('Unable to get sequence id.', \$e);
 			}
+		}
+";
+		}
+	
+		foreach ($table->getColumns() as $column) {
+			$constantName = $this->getColumnConstant($column);
+			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$script .= "
+		if (\$this->isColumnModified($constantName)) {
 			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
 		}";
 		}
