@@ -4100,7 +4100,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 		$query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
 		$script = "
-		\$adapter = Propel::getDB({$peerClassname}::DATABASE_NAME);
 		\$modifiedColumns = array();
 		\$index = 0;
 ";
@@ -4118,11 +4117,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			if (!$table->isAllowPkInsert()) {
 				$script .= "
 		if (null !== \$this->{$columnProperty}) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ($constantName)');
+			throw new PropelException('Cannot insert a value for auto-increment primary key (' . $constantName . ')');
 		}";
 			} elseif (!$platform->supportsInsertNullPk()) {
 				$script .= "
-		// add pkey col only if it is not null since this table does not accept that
+		// add primary key column only if it is not null since this database does not accept that
 		if (null !== \$this->{$columnProperty}) {
 			\$this->modifiedColumns[] = $constantName;
 		}";
@@ -4170,8 +4169,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($table->getColumns() as $column) {
 			$columnNameCase = $platform->quoteIdentifier(strtoupper($column->getName()));
 			$script .= "
-					case '$columnNameCase':
-";
+					case '$columnNameCase':";
 			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '						');
 			$script .= "
 						break;";

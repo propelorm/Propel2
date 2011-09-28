@@ -470,8 +470,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     {
         \$sql = '$query';
         try {
-            \$stmt = \$con->prepare(\$sql);
-";
+            \$stmt = \$con->prepare(\$sql);";
         if ($table->hasCompositePrimaryKey()) {
             foreach ($table->getPrimaryKey() as $index => $column) {
                 $script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", '            ');

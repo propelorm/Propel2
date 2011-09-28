@@ -613,8 +613,8 @@ ALTER TABLE %s CHANGE %s %s;
 		// See http://pecl.php.net/bugs/bug.php?id=9919
 		if ($column->getPDOType() == PDO::PARAM_BOOL) {
 			return sprintf(
-				"%s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);
-",
+				"
+%s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
 				$tab,
 				$identifier,
 				$columnValueAccessor

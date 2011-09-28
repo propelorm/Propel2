@@ -1141,22 +1141,19 @@ ALTER TABLE %s ADD
 		$script = '';
 		$hasValuePreparation = false;
 		if ($column->isTemporalType()) {
-			$columnValueAccessor = sprintf(
-				'$adapter->formatTemporalValue(%s, %s)', 
-				$columnValueAccessor, 
-				PropelTypes::getPdoTypeString($column->getType())
-			);
+			// nothing special, the internal value was already properly formatted by the setter
 		} elseif ($column->isLobType()) {
 			// we always need to make sure that the stream is rewound, otherwise nothing will
 			// get written to database.
-			$script .= "if (is_resource($columnValueAccessor)) {
+			$script .= "
+if (is_resource($columnValueAccessor)) {
 	rewind($columnValueAccessor);
-}
-";
+}";
 		}
 
 		$script .= sprintf(
-			"\$stmt->bindValue(%s, %s, %s);",
+			"
+\$stmt->bindValue(%s, %s, %s);",
 			$identifier,
 			$columnValueAccessor ,
 			PropelTypes::getPdoTypeString($column->getType())
