@@ -4144,7 +4144,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		}
 ";
 		}
-	
+
+		$script .= "
+
+		 // check the columns in natural order for more readable SQL queries";
 		foreach ($table->getColumns() as $column) {
 			$constantName = $this->getColumnConstant($column);
 			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
