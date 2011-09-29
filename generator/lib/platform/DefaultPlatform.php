@@ -1159,7 +1159,7 @@ if (is_resource($columnValueAccessor)) {
 			PropelTypes::getPdoTypeString($column->getType())
 		);
 
-		return preg_replace('/^/m', $tab, $script);
+		return preg_replace('/^(.+)/m', $tab . '$1', $script);
 	}
 
 	/**

@@ -4426,7 +4426,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		foreach ($table->getColumns() as $column) {
 			$columnNameCase = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
 			$script .= "
-					case $columnNameCase:\n";
+					case $columnNameCase:";
 			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '						');
 			$script .= "
 						break;";
