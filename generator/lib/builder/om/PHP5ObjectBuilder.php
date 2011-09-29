@@ -4387,7 +4387,6 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
 			$column = $table->getFirstPrimaryKeyColumn();
 			$columnProperty = strtolower($column->getName());
-			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
 			$script .= "
 		if (null === \$this->{$columnProperty}) {
 			try {";
@@ -4405,10 +4404,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 		 // check the columns in natural order for more readable SQL queries";
 		foreach ($table->getColumns() as $column) {
 			$constantName = $this->getColumnConstant($column);
-			$identifier = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$identifier = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
 			$script .= "
 		if (\$this->isColumnModified($constantName)) {
-			\$modifiedColumns[':p' . \$index++]  = \"$identifier\";
+			\$modifiedColumns[':p' . \$index++]  = $identifier;
 		}";
 		}
 
@@ -4425,9 +4424,9 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 			foreach (\$modifiedColumns as \$identifier => \$columnName) {
 				switch (\$columnName) {";
 		foreach ($table->getColumns() as $column) {
-			$columnNameCase = $platform->quoteIdentifier(strtoupper($column->getName()));
+			$columnNameCase = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
 			$script .= "
-					case '$columnNameCase':";
+					case $columnNameCase:\n";
 			$script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . strtolower($column->getName()), '						');
 			$script .= "
 						break;";

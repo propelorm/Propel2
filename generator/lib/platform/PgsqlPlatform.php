@@ -477,15 +477,15 @@ ALTER TABLE %s ALTER COLUMN %s;
 	public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "			")
 	{
 		if (!$sequenceName) {
-			throw new EngineException('Oracle needs a sequence name to fetch primary keys');
+			throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
 		}
 		$snippet = "
 \$stmt = %s->query('SELECT nextval(%s)');
 \$row = \$stmt->fetch(PDO::FETCH_NUM);
 %s = \$row[0];";
 		$script = sprintf($snippet,
-			$this->quoteIdentifier($connectionVariableName),
-			$sequenceName,
+			$connectionVariableName,
+			$this->quoteIdentifier($sequenceName),
 			$columnValueMutator
 		);
 
