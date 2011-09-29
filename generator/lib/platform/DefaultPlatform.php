@@ -39,7 +39,7 @@ class DefaultPlatform implements PropelPlatformInterface
 	/**
 	 * @var        boolean whether the identifier quoting is enabled
 	 */
-	protected $isIdentifierQuotingEnabled = true;
+	protected $isIdentifierQuotingEnabled = false;
 
 	/**
 	 * Default constructor.

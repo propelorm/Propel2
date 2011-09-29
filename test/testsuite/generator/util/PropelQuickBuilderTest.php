@@ -64,12 +64,12 @@ EOF;
 -- quick_build_foo_1
 -----------------------------------------------------------------------
 
-DROP TABLE [quick_build_foo_1];
+DROP TABLE quick_build_foo_1;
 
-CREATE TABLE [quick_build_foo_1]
+CREATE TABLE quick_build_foo_1
 (
-	[id] INTEGER NOT NULL PRIMARY KEY,
-	[bar] INTEGER
+	id INTEGER NOT NULL PRIMARY KEY,
+	bar INTEGER
 );
 
 EOF;

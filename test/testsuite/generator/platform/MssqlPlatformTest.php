@@ -62,7 +62,7 @@ class MssqlPlatformTest extends PlatformTestProvider
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_FK_1')
-	ALTER TABLE [book] DROP CONSTRAINT [book_FK_1];
+	ALTER TABLE book DROP CONSTRAINT book_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'book')
 BEGIN
@@ -86,21 +86,21 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [book]
+	DROP TABLE book
 END
 
-CREATE TABLE [book]
+CREATE TABLE book
 (
-	[id] INT NOT NULL IDENTITY,
-	[title] VARCHAR(255) NOT NULL,
-	[author_id] INT NULL,
-	CONSTRAINT [book_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	title VARCHAR(255) NOT NULL,
+	author_id INT NULL,
+	CONSTRAINT book_PK PRIMARY KEY (id)
 );
 
-CREATE INDEX [book_I_1] ON [book] ([title]);
+CREATE INDEX book_I_1 ON book (title);
 
 BEGIN
-ALTER TABLE [book] ADD CONSTRAINT [book_FK_1] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
+ALTER TABLE book ADD CONSTRAINT book_FK_1 FOREIGN KEY (author_id) REFERENCES author (id)
 END
 ;
 
@@ -130,15 +130,15 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [author]
+	DROP TABLE author
 END
 
-CREATE TABLE [author]
+CREATE TABLE author
 (
-	[id] INT NOT NULL IDENTITY,
-	[first_name] VARCHAR(100) NULL,
-	[last_name] VARCHAR(100) NULL,
-	CONSTRAINT [author_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	first_name VARCHAR(100) NULL,
+	last_name VARCHAR(100) NULL,
+	CONSTRAINT author_PK PRIMARY KEY (id)
 );
 
 EOF;
@@ -158,7 +158,7 @@ EOF;
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_FK_1')
-	ALTER TABLE [x].[book] DROP CONSTRAINT [book_FK_1];
+	ALTER TABLE x.book DROP CONSTRAINT book_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book')
 BEGIN
@@ -182,21 +182,21 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [x].[book]
+	DROP TABLE x.book
 END
 
-CREATE TABLE [x].[book]
+CREATE TABLE x.book
 (
-	[id] INT NOT NULL IDENTITY,
-	[title] VARCHAR(255) NOT NULL,
-	[author_id] INT NULL,
-	CONSTRAINT [book_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	title VARCHAR(255) NOT NULL,
+	author_id INT NULL,
+	CONSTRAINT book_PK PRIMARY KEY (id)
 );
 
-CREATE INDEX [book_I_1] ON [x].[book] ([title]);
+CREATE INDEX book_I_1 ON x.book (title);
 
 BEGIN
-ALTER TABLE [x].[book] ADD CONSTRAINT [book_FK_1] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
+ALTER TABLE x.book ADD CONSTRAINT book_FK_1 FOREIGN KEY (author_id) REFERENCES y.author (id)
 END
 ;
 
@@ -226,15 +226,15 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [y].[author]
+	DROP TABLE y.author
 END
 
-CREATE TABLE [y].[author]
+CREATE TABLE y.author
 (
-	[id] INT NOT NULL IDENTITY,
-	[first_name] VARCHAR(100) NULL,
-	[last_name] VARCHAR(100) NULL,
-	CONSTRAINT [author_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	first_name VARCHAR(100) NULL,
+	last_name VARCHAR(100) NULL,
+	CONSTRAINT author_PK PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
@@ -242,7 +242,7 @@ CREATE TABLE [y].[author]
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_FK_1')
-	ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_FK_1];
+	ALTER TABLE x.book_summary DROP CONSTRAINT book_summary_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book_summary')
 BEGIN
@@ -266,19 +266,19 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [x].[book_summary]
+	DROP TABLE x.book_summary
 END
 
-CREATE TABLE [x].[book_summary]
+CREATE TABLE x.book_summary
 (
-	[id] INT NOT NULL IDENTITY,
-	[book_id] INT NOT NULL,
-	[summary] VARCHAR(MAX) NOT NULL,
-	CONSTRAINT [book_summary_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	book_id INT NOT NULL,
+	summary VARCHAR(MAX) NOT NULL,
+	CONSTRAINT book_summary_PK PRIMARY KEY (id)
 );
 
 BEGIN
-ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_FK_1] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
+ALTER TABLE x.book_summary ADD CONSTRAINT book_summary_FK_1 FOREIGN KEY (book_id) REFERENCES x.book (id) ON DELETE CASCADE
 END
 ;
 
@@ -304,11 +304,11 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = "
 -- This is foo table
-CREATE TABLE [foo]
+CREATE TABLE foo
 (
-	[id] INT NOT NULL IDENTITY,
-	[bar] VARCHAR(255) NOT NULL,
-	CONSTRAINT [foo_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	bar VARCHAR(255) NOT NULL,
+	CONSTRAINT foo_PK PRIMARY KEY (id)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -321,12 +321,12 @@ CREATE TABLE [foo]
 	{
 		$table = $this->getTableFromSchema($schema);
 		$expected = "
-CREATE TABLE [foo]
+CREATE TABLE foo
 (
-	[foo] INT NOT NULL,
-	[bar] INT NOT NULL,
-	[baz] VARCHAR(255) NOT NULL,
-	CONSTRAINT [foo_PK] PRIMARY KEY ([foo],[bar])
+	foo INT NOT NULL,
+	bar INT NOT NULL,
+	baz VARCHAR(255) NOT NULL,
+	CONSTRAINT foo_PK PRIMARY KEY (foo,bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -339,12 +339,12 @@ CREATE TABLE [foo]
 	{
 		$table = $this->getTableFromSchema($schema);
 		$expected = "
-CREATE TABLE [foo]
+CREATE TABLE foo
 (
-	[id] INT NOT NULL IDENTITY,
-	[bar] INT NULL,
-	CONSTRAINT [foo_PK] PRIMARY KEY ([id]),
-	UNIQUE ([bar])
+	id INT NOT NULL IDENTITY,
+	bar INT NULL,
+	CONSTRAINT foo_PK PRIMARY KEY (id),
+	UNIQUE (bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -357,11 +357,11 @@ CREATE TABLE [foo]
 	{
 		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
 		$expected = "
-CREATE TABLE [Woopah].[foo]
+CREATE TABLE Woopah.foo
 (
-	[id] INT NOT NULL IDENTITY,
-	[bar] INT NULL,
-	CONSTRAINT [foo_PK] PRIMARY KEY ([id])
+	id INT NOT NULL IDENTITY,
+	bar INT NULL,
+	CONSTRAINT foo_PK PRIMARY KEY (id)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -393,7 +393,7 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [foo]
+	DROP TABLE foo
 END
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
@@ -428,7 +428,7 @@ BEGIN
 	END
 	CLOSE refcursor
 	DEALLOCATE refcursor
-	DROP TABLE [Woopah].[foo]
+	DROP TABLE Woopah.foo
 END
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
@@ -443,7 +443,7 @@ END
 		$column->setNotNull(true);
 		$column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
 		$column->getDomain()->replaceSqlType('DECIMAL(5,6)');
-		$expected = '[foo] DECIMAL(5,6) DEFAULT 123 NOT NULL';
+		$expected = 'foo DECIMAL(5,6) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
 
@@ -453,7 +453,7 @@ END
 		$column = new Column('bar');
 		$column->setPrimaryKey(true);
 		$table->addColumn($column);
-		$expected = 'CONSTRAINT [foo_PK] PRIMARY KEY ([bar])';
+		$expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -466,7 +466,7 @@ END
 		$column2 = new Column('bar2');
 		$column2->setPrimaryKey(true);
 		$table->addColumn($column2);
-		$expected = 'CONSTRAINT [foo_PK] PRIMARY KEY ([bar1],[bar2])';
+		$expected = 'CONSTRAINT foo_PK PRIMARY KEY (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -476,7 +476,7 @@ END
 	public function testGetDropPrimaryKeyDDL($table)
 	{
 		$expected = "
-ALTER TABLE [foo] DROP CONSTRAINT [foo_PK];
+ALTER TABLE foo DROP CONSTRAINT foo_PK;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
@@ -487,7 +487,7 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_PK];
 	public function testGetAddPrimaryKeyDDL($table)
 	{
 		$expected = "
-ALTER TABLE [foo] ADD CONSTRAINT [foo_PK] PRIMARY KEY ([bar]);
+ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
@@ -498,9 +498,9 @@ ALTER TABLE [foo] ADD CONSTRAINT [foo_PK] PRIMARY KEY ([bar]);
 	public function testAddIndicesDDL($table)
 	{
 		$expected = "
-CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
+CREATE INDEX babar ON foo (bar1,bar2);
 
-CREATE INDEX [foo_index] ON [foo] ([bar1]);
+CREATE INDEX foo_index ON foo (bar1);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
@@ -511,7 +511,7 @@ CREATE INDEX [foo_index] ON [foo] ([bar1]);
 	public function testAddIndexDDL($index)
 	{
 		$expected = "
-CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
+CREATE INDEX babar ON foo (bar1,bar2);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
 	}
@@ -522,7 +522,7 @@ CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
 	public function testDropIndexDDL($index)
 	{
 		$expected = "
-DROP INDEX [babar];
+DROP INDEX babar;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
@@ -532,7 +532,7 @@ DROP INDEX [babar];
 	 */
 	public function testGetIndexDDL($index)
 	{
-		$expected = 'INDEX [babar] ([bar1],[bar2])';
+		$expected = 'INDEX babar (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 
@@ -541,7 +541,7 @@ DROP INDEX [babar];
 	 */
 	public function testGetUniqueDDL($index)
 	{
-		$expected = 'UNIQUE ([bar1],[bar2])';
+		$expected = 'UNIQUE (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPLatform()->getUniqueDDL($index));
 	}
 
@@ -552,12 +552,12 @@ DROP INDEX [babar];
 	{
 		$expected = "
 BEGIN
-ALTER TABLE [foo] ADD CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE
+ALTER TABLE foo ADD CONSTRAINT foo_bar_FK FOREIGN KEY (bar_id) REFERENCES bar (id) ON DELETE CASCADE
 END
 ;
 
 BEGIN
-ALTER TABLE [foo] ADD CONSTRAINT [foo_baz_FK] FOREIGN KEY ([baz_id]) REFERENCES [baz] ([id])
+ALTER TABLE foo ADD CONSTRAINT foo_baz_FK FOREIGN KEY (baz_id) REFERENCES baz (id)
 END
 ;
 ";
@@ -571,7 +571,7 @@ END
 	{
 		$expected = "
 BEGIN
-ALTER TABLE [foo] ADD CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE
+ALTER TABLE foo ADD CONSTRAINT foo_bar_FK FOREIGN KEY (bar_id) REFERENCES bar (id) ON DELETE CASCADE
 END
 ;
 ";
@@ -593,7 +593,7 @@ END
 	public function testGetDropForeignKeyDDL($fk)
 	{
 		$expected = "
-ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
+ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
@@ -612,7 +612,7 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_FK];
 	 */
 	public function testGetForeignKeyDDL($fk)
 	{
-		$expected = 'CONSTRAINT [foo_bar_FK] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE';
+		$expected = 'CONSTRAINT foo_bar_FK FOREIGN KEY (bar_id) REFERENCES bar (id) ON DELETE CASCADE';
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 

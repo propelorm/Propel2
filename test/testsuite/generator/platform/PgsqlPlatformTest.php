@@ -70,35 +70,35 @@ class PgsqlPlatformTest extends PlatformTestProvider
 -- book
 -----------------------------------------------------------------------
 
-DROP TABLE "book" CASCADE;
+DROP TABLE book CASCADE;
 
-CREATE TABLE "book"
+CREATE TABLE book
 (
-	"id" serial NOT NULL,
-	"title" VARCHAR(255) NOT NULL,
-	"author_id" INTEGER,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	title VARCHAR(255) NOT NULL,
+	author_id INTEGER,
+	PRIMARY KEY (id)
 );
 
-CREATE INDEX "book_I_1" ON "book" ("title");
+CREATE INDEX book_I_1 ON book (title);
 
 -----------------------------------------------------------------------
 -- author
 -----------------------------------------------------------------------
 
-DROP TABLE "author" CASCADE;
+DROP TABLE author CASCADE;
 
-CREATE TABLE "author"
+CREATE TABLE author
 (
-	"id" serial NOT NULL,
-	"first_name" VARCHAR(100),
-	"last_name" VARCHAR(100),
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	first_name VARCHAR(100),
+	last_name VARCHAR(100),
+	PRIMARY KEY (id)
 );
 
-ALTER TABLE "book" ADD CONSTRAINT "book_FK_1"
-	FOREIGN KEY ("author_id")
-	REFERENCES "author" ("id");
+ALTER TABLE book ADD CONSTRAINT book_FK_1
+	FOREIGN KEY (author_id)
+	REFERENCES author (id);
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -138,26 +138,26 @@ EOF;
 		$database = $this->getDatabaseFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE SCHEMA "Woopah";
+CREATE SCHEMA Woopah;
 
-CREATE SCHEMA "Yipee";
+CREATE SCHEMA Yipee;
 
 -----------------------------------------------------------------------
 -- table1
 -----------------------------------------------------------------------
 
-SET search_path TO "Woopah";
+SET search_path TO Woopah;
 
-DROP TABLE "table1" CASCADE;
+DROP TABLE table1 CASCADE;
 
 SET search_path TO public;
 
-SET search_path TO "Woopah";
+SET search_path TO Woopah;
 
-CREATE TABLE "table1"
+CREATE TABLE table1
 (
-	"id" serial NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -166,30 +166,30 @@ SET search_path TO public;
 -- table2
 -----------------------------------------------------------------------
 
-DROP TABLE "table2" CASCADE;
+DROP TABLE table2 CASCADE;
 
-CREATE TABLE "table2"
+CREATE TABLE table2
 (
-	"id" serial NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
 -- table3
 -----------------------------------------------------------------------
 
-SET search_path TO "Yipee";
+SET search_path TO Yipee;
 
-DROP TABLE "table3" CASCADE;
+DROP TABLE table3 CASCADE;
 
 SET search_path TO public;
 
-SET search_path TO "Yipee";
+SET search_path TO Yipee;
 
-CREATE TABLE "table3"
+CREATE TABLE table3
 (
-	"id" serial NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -210,53 +210,53 @@ EOF;
 -- x.book
 -----------------------------------------------------------------------
 
-DROP TABLE "x"."book" CASCADE;
+DROP TABLE x.book CASCADE;
 
-CREATE TABLE "x"."book"
+CREATE TABLE x.book
 (
-	"id" serial NOT NULL,
-	"title" VARCHAR(255) NOT NULL,
-	"author_id" INTEGER,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	title VARCHAR(255) NOT NULL,
+	author_id INTEGER,
+	PRIMARY KEY (id)
 );
 
-CREATE INDEX "book_I_1" ON "x"."book" ("title");
+CREATE INDEX book_I_1 ON x.book (title);
 
 -----------------------------------------------------------------------
 -- y.author
 -----------------------------------------------------------------------
 
-DROP TABLE "y"."author" CASCADE;
+DROP TABLE y.author CASCADE;
 
-CREATE TABLE "y"."author"
+CREATE TABLE y.author
 (
-	"id" serial NOT NULL,
-	"first_name" VARCHAR(100),
-	"last_name" VARCHAR(100),
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	first_name VARCHAR(100),
+	last_name VARCHAR(100),
+	PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
 -- x.book_summary
 -----------------------------------------------------------------------
 
-DROP TABLE "x"."book_summary" CASCADE;
+DROP TABLE x.book_summary CASCADE;
 
-CREATE TABLE "x"."book_summary"
+CREATE TABLE x.book_summary
 (
-	"id" serial NOT NULL,
-	"book_id" INTEGER NOT NULL,
-	"summary" TEXT NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	book_id INTEGER NOT NULL,
+	summary TEXT NOT NULL,
+	PRIMARY KEY (id)
 );
 
-ALTER TABLE "x"."book" ADD CONSTRAINT "book_FK_1"
-	FOREIGN KEY ("author_id")
-	REFERENCES "y"."author" ("id");
+ALTER TABLE x.book ADD CONSTRAINT book_FK_1
+	FOREIGN KEY (author_id)
+	REFERENCES y.author (id);
 
-ALTER TABLE "x"."book_summary" ADD CONSTRAINT "book_summary_FK_1"
-	FOREIGN KEY ("book_id")
-	REFERENCES "x"."book" ("id")
+ALTER TABLE x.book_summary ADD CONSTRAINT book_summary_FK_1
+	FOREIGN KEY (book_id)
+	REFERENCES x.book (id)
 	ON DELETE CASCADE;
 
 EOF;
@@ -271,14 +271,14 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"id" serial NOT NULL,
-	"bar" VARCHAR(255) NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	bar VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id)
 );
 
-COMMENT ON TABLE "foo" IS 'This is foo table';
+COMMENT ON TABLE foo IS 'This is foo table';
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -292,12 +292,12 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"foo" INTEGER NOT NULL,
-	"bar" INTEGER NOT NULL,
-	"baz" VARCHAR(255) NOT NULL,
-	PRIMARY KEY ("foo","bar")
+	foo INTEGER NOT NULL,
+	bar INTEGER NOT NULL,
+	baz VARCHAR(255) NOT NULL,
+	PRIMARY KEY (foo,bar)
 );
 
 EOF;
@@ -312,12 +312,12 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"id" serial NOT NULL,
-	"bar" INTEGER,
-	PRIMARY KEY ("id"),
-	CONSTRAINT "foo_U_1" UNIQUE ("bar")
+	id serial NOT NULL,
+	bar INTEGER,
+	PRIMARY KEY (id),
+	CONSTRAINT foo_U_1 UNIQUE (bar)
 );
 
 EOF;
@@ -339,12 +339,12 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-SET search_path TO "Woopah";
+SET search_path TO Woopah;
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"id" serial NOT NULL,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -361,11 +361,11 @@ EOF;
 		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
 		$expected = <<<EOF
 
-CREATE TABLE "Woopah"."foo"
+CREATE TABLE Woopah.foo
 (
-	"id" serial NOT NULL,
-	"bar" INTEGER,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	bar INTEGER,
+	PRIMARY KEY (id)
 );
 
 EOF;
@@ -385,12 +385,12 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE SEQUENCE "my_custom_sequence_name";
+CREATE SEQUENCE my_custom_sequence_name;
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"id" INTEGER NOT NULL,
-	PRIMARY KEY ("id")
+	id INTEGER NOT NULL,
+	PRIMARY KEY (id)
 );
 
 EOF;
@@ -410,16 +410,16 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-CREATE TABLE "foo"
+CREATE TABLE foo
 (
-	"id" serial NOT NULL,
-	"bar" INTEGER,
-	PRIMARY KEY ("id")
+	id serial NOT NULL,
+	bar INTEGER,
+	PRIMARY KEY (id)
 );
 
-COMMENT ON COLUMN "foo"."id" IS 'identifier column';
+COMMENT ON COLUMN foo.id IS 'identifier column';
 
-COMMENT ON COLUMN "foo"."bar" IS 'your name here';
+COMMENT ON COLUMN foo.bar IS 'your name here';
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -429,7 +429,7 @@ EOF;
 	{
 		$table = new Table('foo');
 		$expected = "
-DROP TABLE \"foo\" CASCADE;
+DROP TABLE foo CASCADE;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
@@ -449,9 +449,9 @@ EOF;
 		$table = $this->getTableFromSchema($schema);
 		$expected = <<<EOF
 
-SET search_path TO "Woopah";
+SET search_path TO Woopah;
 
-DROP TABLE "foo" CASCADE;
+DROP TABLE foo CASCADE;
 
 SET search_path TO public;
 
@@ -467,7 +467,7 @@ EOF;
 		$table = $this->getTableFromSchema($schema, 'Woopah.foo');
 		$expected = <<<EOF
 
-DROP TABLE "Woopah"."foo" CASCADE;
+DROP TABLE Woopah.foo CASCADE;
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
@@ -481,9 +481,9 @@ EOF;
 		$table->addIdMethodParameter($idMethodParameter);
 		$table->setIdMethod(IDMethod::NATIVE);
 		$expected = "
-DROP TABLE \"foo\" CASCADE;
+DROP TABLE foo CASCADE;
 
-DROP SEQUENCE \"foo_sequence\";
+DROP SEQUENCE foo_sequence;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
 	}
@@ -496,7 +496,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$c->getDomain()->replaceSize(3);
 		$c->setNotNull(true);
 		$c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-		$expected = '"foo" DOUBLE PRECISION DEFAULT 123 NOT NULL';
+		$expected = 'foo DOUBLE PRECISION DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
 	}
 
@@ -511,7 +511,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$column->getDomain()->copy($this->getPlatform()->getDomainForType(PropelTypes::BIGINT));
 		$column->setAutoIncrement(true);
 		$table->addColumn($column);
-		$expected = '"foo" bigserial';
+		$expected = 'foo bigserial';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
 
@@ -524,7 +524,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$column->setNotNull(true);
 		$column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
 		$column->getDomain()->replaceSqlType('DECIMAL(5,6)');
-		$expected = '"foo" DECIMAL(5,6) DEFAULT 123 NOT NULL';
+		$expected = 'foo DECIMAL(5,6) DEFAULT 123 NOT NULL';
 		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
 	}
 
@@ -534,7 +534,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$column = new Column('bar');
 		$column->setPrimaryKey(true);
 		$table->addColumn($column);
-		$expected = 'PRIMARY KEY ("bar")';
+		$expected = 'PRIMARY KEY (bar)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -547,7 +547,7 @@ DROP SEQUENCE \"foo_sequence\";
 		$column2 = new Column('bar2');
 		$column2->setPrimaryKey(true);
 		$table->addColumn($column2);
-		$expected = 'PRIMARY KEY ("bar1","bar2")';
+		$expected = 'PRIMARY KEY (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
 	}
 
@@ -557,7 +557,7 @@ DROP SEQUENCE \"foo_sequence\";
 	public function testGetDropPrimaryKeyDDL($table)
 	{
 		$expected = "
-ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_pkey\";
+ALTER TABLE foo DROP CONSTRAINT foo_pkey;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
 	}
@@ -568,7 +568,7 @@ ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_pkey\";
 	public function testGetAddPrimaryKeyDDL($table)
 	{
 		$expected = "
-ALTER TABLE \"foo\" ADD PRIMARY KEY (\"bar\");
+ALTER TABLE foo ADD PRIMARY KEY (bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
 	}
@@ -579,7 +579,7 @@ ALTER TABLE \"foo\" ADD PRIMARY KEY (\"bar\");
 	public function testAddIndexDDL($index)
 	{
 		$expected = "
-CREATE INDEX \"babar\" ON \"foo\" (\"bar1\",\"bar2\");
+CREATE INDEX babar ON foo (bar1,bar2);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
 	}
@@ -590,9 +590,9 @@ CREATE INDEX \"babar\" ON \"foo\" (\"bar1\",\"bar2\");
 	public function testAddIndicesDDL($table)
 	{
 		$expected = "
-CREATE INDEX \"babar\" ON \"foo\" (\"bar1\",\"bar2\");
+CREATE INDEX babar ON foo (bar1,bar2);
 
-CREATE INDEX \"foo_index\" ON \"foo\" (\"bar1\");
+CREATE INDEX foo_index ON foo (bar1);
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
 	}
@@ -603,7 +603,7 @@ CREATE INDEX \"foo_index\" ON \"foo\" (\"bar1\");
 	public function testDropIndexDDL($index)
 	{
 		$expected = "
-DROP INDEX \"babar\";
+DROP INDEX babar;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
 	}
@@ -613,7 +613,7 @@ DROP INDEX \"babar\";
 	 */
 	public function testGetIndexDDL($index)
 	{
-		$expected = 'INDEX "babar" ("bar1","bar2")';
+		$expected = 'INDEX babar (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
 	}
 
@@ -622,7 +622,7 @@ DROP INDEX \"babar\";
 	 */
 	public function testGetUniqueDDL($index)
 	{
-		$expected = 'CONSTRAINT "babar" UNIQUE ("bar1","bar2")';
+		$expected = 'CONSTRAINT babar UNIQUE (bar1,bar2)';
 		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
 	}
 
@@ -632,14 +632,14 @@ DROP INDEX \"babar\";
 	public function testGetAddForeignKeysDDL($table)
 	{
 		$expected = "
-ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
-	FOREIGN KEY (\"bar_id\")
-	REFERENCES \"bar\" (\"id\")
+ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+	FOREIGN KEY (bar_id)
+	REFERENCES bar (id)
 	ON DELETE CASCADE;
 
-ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_baz_FK\"
-	FOREIGN KEY (\"baz_id\")
-	REFERENCES \"baz\" (\"id\")
+ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
+	FOREIGN KEY (baz_id)
+	REFERENCES baz (id)
 	ON DELETE SET NULL;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
@@ -651,9 +651,9 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_baz_FK\"
 	public function testGetAddForeignKeyDDL($fk)
 	{
 		$expected = "
-ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
-	FOREIGN KEY (\"bar_id\")
-	REFERENCES \"bar\" (\"id\")
+ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
+	FOREIGN KEY (bar_id)
+	REFERENCES bar (id)
 	ON DELETE CASCADE;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
@@ -674,7 +674,7 @@ ALTER TABLE \"foo\" ADD CONSTRAINT \"foo_bar_FK\"
 	public function testGetDropForeignKeyDDL($fk)
 	{
 		$expected = "
-ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_bar_FK\";
+ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
 	}
@@ -693,9 +693,9 @@ ALTER TABLE \"foo\" DROP CONSTRAINT \"foo_bar_FK\";
 	 */
 	public function testGetForeignKeyDDL($fk)
 	{
-		$expected = "CONSTRAINT \"foo_bar_FK\"
-	FOREIGN KEY (\"bar_id\")
-	REFERENCES \"bar\" (\"id\")
+		$expected = "CONSTRAINT foo_bar_FK
+	FOREIGN KEY (bar_id)
+	REFERENCES bar (id)
 	ON DELETE CASCADE";
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}

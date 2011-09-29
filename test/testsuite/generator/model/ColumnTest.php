@@ -29,7 +29,7 @@ class ColumnTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testMakeList()
 	{
-		$expected = '"Column0", "Column1", "Column2", "Column3", "Column4"';
+		$expected = 'Column0, Column1, Column2, Column3, Column4';
 		$objArray = array();
 		for ($i=0; $i<5; $i++) {
 			$c = new Column();

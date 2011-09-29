@@ -42,13 +42,13 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE [i18n_behavior_test_0_i18n];
+DROP TABLE i18n_behavior_test_0_i18n;
 
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-	PRIMARY KEY ([id],[locale])
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
+	PRIMARY KEY (id,locale)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -76,13 +76,13 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE [i18n_behavior_test_0_i18n];
+DROP TABLE i18n_behavior_test_0_i18n;
 
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'pt_PT' NOT NULL,
-	PRIMARY KEY ([id],[locale])
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'pt_PT' NOT NULL,
+	PRIMARY KEY (id,locale)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -134,9 +134,9 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE [i18n_behavior_test_0_i18n];
+DROP TABLE i18n_behavior_test_0_i18n;
 
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
@@ -149,7 +149,7 @@ EOF;
 		$builder = new PropelQuickBuilder();
 		$builder->setSchema($schema);
 		$expected = <<<EOF
--- FOREIGN KEY ([id]) REFERENCES i18n_behavior_test_0 ([id])
+-- FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
@@ -162,10 +162,10 @@ EOF;
 		$builder = new PropelQuickBuilder();
 		$builder->setSchema($schema);
 		$expected = <<<EOF
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
@@ -178,12 +178,12 @@ EOF;
 		$builder = new PropelQuickBuilder();
 		$builder->setSchema($schema);
 		$expected = <<<EOF
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
-	[bar] VARCHAR(100),
-	PRIMARY KEY ([id],[locale])
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+	bar VARCHAR(100),
+	PRIMARY KEY (id,locale)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -197,10 +197,10 @@ EOF;
 		$builder = new PropelQuickBuilder();
 		$builder->setSchema($schema);
 		$expected = <<<EOF
-CREATE TABLE [i18n_behavior_test_0]
+CREATE TABLE i18n_behavior_test_0
 (
-	[id] INTEGER NOT NULL PRIMARY KEY,
-	[foo] INTEGER
+	id INTEGER NOT NULL PRIMARY KEY,
+	foo INTEGER
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -275,13 +275,13 @@ EOF;
 -- foo_table
 -----------------------------------------------------------------------
 
-DROP TABLE [foo_table];
+DROP TABLE foo_table;
 
-CREATE TABLE [foo_table]
+CREATE TABLE foo_table
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
-	PRIMARY KEY ([id],[locale])
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+	PRIMARY KEY (id,locale)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -306,13 +306,13 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE [i18n_behavior_test_0_i18n];
+DROP TABLE i18n_behavior_test_0_i18n;
 
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[culture] VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
-	PRIMARY KEY ([id],[culture])
+	id INTEGER NOT NULL,
+	culture VARCHAR(5) DEFAULT 'en_EN' NOT NULL,
+	PRIMARY KEY (id,culture)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
@@ -337,13 +337,13 @@ EOF;
 -- i18n_behavior_test_0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE [i18n_behavior_test_0_i18n];
+DROP TABLE i18n_behavior_test_0_i18n;
 
-CREATE TABLE [i18n_behavior_test_0_i18n]
+CREATE TABLE i18n_behavior_test_0_i18n
 (
-	[id] INTEGER NOT NULL,
-	[locale] VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
-	PRIMARY KEY ([id],[locale])
+	id INTEGER NOT NULL,
+	locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
+	PRIMARY KEY (id,locale)
 );
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
