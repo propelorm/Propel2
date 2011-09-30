@@ -1,4 +1,3 @@
-
 /**
  * Copy the data of the current object into a $archiveTablePhpName archive object.
  * The archived object is then saved.
@@ -21,7 +20,7 @@ public function archive(PropelPDO $con = null)
 		$archive->setPrimaryKey($this->getPrimaryKey());
 	}
 	$this->copyInto($archive, $deepCopy = false, $makeNew = false);
-<?php if ($archivedAtColumn): ?>";
+<?php if ($archivedAtColumn): ?>
 	$archive->set<?php echo $archivedAtColumn->getPhpName() ?>(time());
 <?php endif; ?>
 	$archive->save($con);
