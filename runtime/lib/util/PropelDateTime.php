@@ -51,9 +51,9 @@ class PropelDateTime extends DateTime
 			return true;
 		}
 
-		$month = date('m', $stamp);
-		$day   = date('d', $stamp);
-		$year  = date('Y', $stamp);
+		$month = date('m', $value);
+		$day   = date('d', $value);
+		$year  = date('Y', $value);
 
 		return checkdate($month, $day, $year);
 	}
