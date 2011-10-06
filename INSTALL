@@ -1,4 +1,22 @@
-I N S T A L L I N G    P R O P E L
-==================================
+# Propel2 #
 
-See: http://www.propelorm.org/documentation/01-installation.html
+## Installation ##
+
+...
+
+
+## Running unit tests ##
+
+To run unit tests, you'll have to install vendors:
+
+    ./bin/install_vendors.sh
+
+Once done, build fixtures:
+
+    ./tests/reset_tests.sh
+
+Now you can run unit tests for both `Generator/` and `Runtime/`:
+
+    phpunit -c phpunit.xml.dist tests/Propel/Tests/Generator/
+
+    phpunit -c phpunit.xml.dist tests/Propel/Tests/Runtime/

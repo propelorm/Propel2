@@ -1,0 +1,20 @@
+<?php
+
+if (!class_exists('\Symfony\Component\ClassLoader\UniversalClassLoader')) {
+    require_once __DIR__ . '/vendor/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+}
+
+$loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'Foo'               => __DIR__ . '/tests/Fixtures/namespaced/build/classes',
+    'Baz'               => __DIR__ . '/tests/Fixtures/namespaced/build/classes',
+    'Propel\Tests'	    => array(
+        __DIR__ . '/tests',
+        __DIR__ . '/tests/Fixtures/bookstore/build/classes',
+        __DIR__ . '/tests/Fixtures/schemas/build/classes',
+    ),
+	'Propel\Runtime'	=> __DIR__ . '/src',
+	'Propel\Generator'	=> __DIR__ . '/src',
+	'Symfony\Component' => __DIR__ . '/vendor',
+));
+$loader->register();
