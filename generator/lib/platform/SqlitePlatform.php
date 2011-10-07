@@ -62,8 +62,11 @@ class SqlitePlatform extends DefaultPlatform
 			$lines[] = $this->getColumnDDL($column);
 		}
 
-		if ($table->hasPrimaryKey() && count($table->getPrimaryKey()) > 1) {
-			$lines[] = $this->getPrimaryKeyDDL($table);
+		if ($table->hasPrimaryKey()) {
+		  $pk = $table->getPrimaryKey();
+		  if (count($pk) > 1 || !$pk[0]->isAutoIncrement()) {
+		    $lines[] = $this->getPrimaryKeyDDL($table);
+		  }
 		}
 
 		foreach ($table->getUnices() as $unique) {

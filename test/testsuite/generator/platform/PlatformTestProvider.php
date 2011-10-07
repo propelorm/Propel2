@@ -112,6 +112,19 @@ EOF;
 EOF;
 		return array(array($schema));
 	}
+	
+	public function providerForTestGetAddTableDDLNonIntegerPK()
+	{
+		$schema = <<<EOF
+<database name="test">
+	<table name="foo" description="This is foo table">
+		<column name="foo" primaryKey="true" type="VARCHAR" />
+		<column name="bar" type="VARCHAR" size="255" required="true" />
+	</table>
+</database>
+EOF;
+		return array(array($schema));
+	}
 
 	public function providerForTestGetAddTableDDLCompositePK()
 	{
