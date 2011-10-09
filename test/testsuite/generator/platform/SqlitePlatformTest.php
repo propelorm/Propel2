@@ -128,6 +128,24 @@ CREATE TABLE foo
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
+	
+	/**
+	 * @dataProvider providerForTestGetAddTableDDLNonIntegerPK
+	 */
+	public function testGetAddTableDDLNonIntegerPK($schema)
+	{
+		$table = $this->getTableFromSchema($schema);
+		$expected = "
+-- This is foo table
+CREATE TABLE foo
+(
+	foo VARCHAR(255) NOT NULL,
+	bar VARCHAR(255) NOT NULL,
+	PRIMARY KEY (foo)
+);
+";
+		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+	}
 
 	/**
 	 * @dataProvider providerForTestGetAddTableDDLCompositePK
