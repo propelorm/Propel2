@@ -114,4 +114,31 @@ EOF;
 		$e1->copyInto($e2);
 		$this->assertEquals('baz', $e2->getBar());
 	}
+
+	/**
+	 * @see https://github.com/propelorm/Propel/issues/139
+	 */
+	public function testSetterWithSameValueDoesNotUpdateObject()
+	{
+		$e = new ComplexColumnTypeEntity3();
+		$e->setBar('baz');
+		$e->resetModified();
+		$e->setBar('baz');
+		$this->assertFalse($e->isModified());
+	}
+
+	/**
+	 * @see https://github.com/propelorm/Propel/issues/139
+	 */
+	public function testSetterWithSameValueDoesNotUpdateHydratedObject()
+	{
+		$e = new ComplexColumnTypeEntity3();
+		$e->setBar('baz');
+		$e->save();
+		// force hydration
+		ComplexColumnTypeEntity3Peer::clearInstancePool();
+		$e = ComplexColumnTypeEntity3Query::create()->findPk($e->getPrimaryKey());
+		$e->setBar('baz');
+		$this->assertFalse($e->isModified());
+	}
 }

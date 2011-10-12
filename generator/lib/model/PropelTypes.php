@@ -94,7 +94,7 @@ class PropelTypes
 	const BOOLEAN_EMU_NATIVE_TYPE = "boolean";
 	const OBJECT_NATIVE_TYPE = "";
 	const PHP_ARRAY_NATIVE_TYPE = "array";
-	const ENUM_NATIVE_TYPE = "string";
+	const ENUM_NATIVE_TYPE = "int";
 
 	/**
 	 * Mapping between Propel types and PHP native types.
