@@ -425,4 +425,21 @@ CREATE TABLE versionable_behavior_test_0_version
 EOF;
 		$this->assertContains($expected, $builder->getSQL());
 	}
+
+	public function testDatabaseLevelBehavior()
+	{
+			$schema = <<<EOF
+<database name="versionable_behavior_test_0">
+	<behavior name="versionable" />
+	<table name="versionable_behavior_test_0">
+		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+		<column name="bar" type="INTEGER" />
+	</table>
+</database>
+EOF;
+			$builder = new PropelQuickBuilder();
+			$builder->setSchema($schema);
+			$builder->getSQL();
+	}
+
 }
