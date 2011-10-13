@@ -1,5 +1,82 @@
 # Changelog Of The Propel 1.6 Branch #
 
+## 2011-10-13: Version 1.6.3 ##
+
+* [54b1941] [generator] Fix typos in new buildtime validation service
+* [8663103] [generator] Introducing buildtime schema validation. All schema validation cannot be done in XSD. For more complex validations, some PHP processing is required. This patch moves validation logic into a simple and independent validation service. It processes the whole schema in order to output all error messages at once. Closes #3. Closes #96.
+* [a20ad17] Added a unit test to cover changes in commit e47f63b8f224b0b85b91f86f414f223e023ff73c
+* [275174c] Fix Behaviors adding a table when they are added as database behavior. Closes #136.
+* [dbb0d4a] [enum type] Fix isModified() returns true when setting the existing value on a just hydrated object. Closes #139.
+* [e47f63b] Fixed ModelCriteria::replaceNames() to handle namespaced model classes
+* [83f8c5f] Properly define non-integer single PKs when using SQLite.
+* [7a715cd] unit testing fo isTimestamp
+* [4b330e8] fix isTimestamp.
+* [31850e6] Bugfix: Syntaxerror if $archivedAtColumn==true
+* [7b8f7b0] Fix indentation in generated Query classes. The QueryBuilder was using spaces instead of tabs to indent code. This is now fixed.
+* [20fc5ac] Fix getId() in generated doInsert() for Postgresql
+* [8c5d966] Fixed CS
+* [cd0f9e2] Switched identifier escaping at buildtime to off by default. This harmonizes the buildtime and runtime settings, and removes the need to set disableidentifierquoting to true in build.properties for Postgresql. Make sure to rebuild your model and SQL after the update
+* [59a8828] adjust AR generated code formatting
+* [7a2a059] Fixed #118, #119
+* [faf7305] Fixed trailing whitespaces due to PR #116
+* [53a9ed2] [turbo] Add explicit comment to generated code
+* [5ecdda8] [turbo] Final code formatting glitches
+* [ed60055] [turbo] Fix doInsert for PKs using sequences
+* [36c78f6] Implemented One-To-Many setters.
+* [3dc5e3f] Fixed commit 5b1d911fee5ae0ef6321880bc7861dc5227cea45
+* [59a2abd] [turbo] Move logic for pk retrieval after insertion to buildtime
+* [39e0456] Fix bug that would cause a transaction to leak if an Exception that isn't PropelException is thrown during preSave, preInsert, preUpdate, doSave, postInsert, postUpdate, postSave.
+* [9732e08] Fixed builder (setter collection)
+* [bd41e0d] [turbo] Align the syntax of recent additions to ObjectBuilder. Passing the script by reference is a bad habit, but not doing so for only a few methods is confusing. In the future, if a refactoring of the builders occurs, let us not reproduce that mistake
+* [3437149] [turbo behavior] Move the doInsert() acceleration to the core. And now that there is nothing in the turbo behavior, it is removed. doInsert() acceleration is disabled on Mssql platforms, due to very exotic bindings in adapter classes
+* [14bcdaf] [turbo behavior] Bugfix for namespaced classes and query_cache behavior
+* [5bd66f6] [turbo behavior] Move the findPk() acceleration to the core. The behavior now only accelerates doInsert() (until we find a way to marge this into the core, too).
+* [d231655] Revert "Fixed the name of generated SQL files if package contains slashes"
+* [01b03f7] [turbo behavior] Use the correct binding code in accelerated findPk(). This is to accomodate cases where PK columns have special bindings (like timestamps... ot blobs, who knows). I took advantage of this to refactor the custom binding code in the adapters.
+* [977dcd0] [turbo behavior] Refactor ModelCriteria::find(), findOne(), and findPk() to allow preSelect() hook to be called just like the other model hooks. This refactoring allows the turbo behavior to accelerate findPk() on every model, even those using a preSelect() hook. It also harmonizes the AR and Query apis: just like ActiveRecord::save() calls doInsert() or doUpdate(), ActiveQuery::find() calls doSelect(), and ActiveQuery::count() calls doCount().
+* [a9a2f0e] [turbo behavior] slightly better way to have binding type and value preparation depending on the platform
+* [9b0690f] [turbo behavior] Change insert acceleration strategy to allow exotic bindings. This is necessary to let Oracle, for instance, use bindParam() instead of bindValue() for CLOBs.
+* [2339b9d] Fixed commit 46d928f0a8f8e92484d9a031d986d0cc05c100a6
+* [e94b626] fix coding standard
+* [25b86b1] [turbo behavior] Make each acceleration optional
+* [46d928f] the semicolons are missing between sql request in $statementsToInsert
+* [f38f6d0] [turbo behavior] Accelerate save() queries
+* [489353b] [turbo behavior] refactored generated ActiveRecord::doSave() to make it easier to extend (end)
+* [2ce3ef7] [turbo behavior] refactor generated ActiveRecord::doSave() to make it easier to extend (WIP)
+* [970cf4a] Fixed logical error on save() for setter collections.
+* [5b1d911] Fixed the behavior of 'disconnectedEscapeText()' for MySQL platform. Fixes #108
+* [77a166c] Added missing declared class. Refs #103.
+* [d22d141] Removed useless function (setter collection)
+* [b447f15] Added a new protected method 'doAdd*()'
+* [9b44292] Fixed commit f267fdff5979a04b0a43466bc2dc89935831210d
+* [abe38f2] [turbo behavior] Use correct binding for PK search. Backed by unit tests.
+* [f72df02] Added more unit tests for the 'diff' method
+* [f267fdf] Avoid too many deletes for scheduled for deletion objects (collection setter)
+* [3e08824] Kept BC with PHP version under 5.3 (lcfirst() hack)
+* [f442b35] Moved the diff logic to a better place (in PropelCollection)
+* [fca956c] Added insert SQL ability to the PropelSqlManager
+* [e4c37ca] Added more unit tests for the collection setter
+* [9e6ad1d] Fixed setter signature
+* [5eda115] Refactored collection setters thanks to fzaninotto
+* [51729f7] Added more unit tests for the collection setter
+* [594708e] Added auto save for related objects after using the collection setter (N-N)
+* [9efdf58] Passed the connection to the setter
+* [8e657e0] Added more tests for collection setter
+* [c6db541] Added a workaround for collection setters
+* [293a8b8] Added unit tests to bootstrap the work around collection setters
+* [02f87a1] Fixed indentation
+* [398c030] Added convenient methods to the Table class
+* [6a7c4d1] [turbo behavior] Accelerate simple findPk() queries
+* [9d9b246] Moved logic for the new build SQL task in a dedicated class.
+* [31c5462] fix generate sql file when there is multiple schema.xml for the same connection
+* [b5e5602] Make XSD validation for sqlType less restrictive. Fixes #97.
+* [8dc4be5] Added a whitelist for charsets in MySQL adapter and PHP < 5.3.6.
+* [5a40249] Fixed deprecated method since 5.3.0
+* [fd80913] Removed WHATS_NEW file
+* [abd6c76] Fixed INSTALL
+* [4ca8cd6] Fixed maintainer for PEAR package task
+* [c1febde] Bumped version to 1.6.3-dev
+
 ## 2011-09-14: Version 1.6.2 ##
 
 * [cb2009a] [delegate behavior] Fix incorrect handling of tablePrefix Refs #63.
