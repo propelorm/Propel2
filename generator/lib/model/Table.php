@@ -412,12 +412,6 @@ class Table extends ScopedElement implements IDMethod
 		if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
 			$this->setIdMethod(IDMethod::NO_ID_METHOD);
 		}
-
-		// If there is no PK, then throw an error. Propel requires primary keys.
-		if (!$this->hasPrimaryKey()) {
-			throw new EngineException(sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $this->getName()));
-		}
-
 	}
 
 	/**
@@ -686,6 +680,9 @@ class Table extends ScopedElement implements IDMethod
 	{
 		if ($data instanceof Column) {
 			$col = $data;
+			if (isset($this->columnsByName[$col->getName()])) {
+				throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
+			}
 			$col->setTable($this);
 			if ($col->isInheritance()) {
 				$this->inheritanceColumn = $col;
