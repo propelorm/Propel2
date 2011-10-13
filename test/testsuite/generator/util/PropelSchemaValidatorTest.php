@@ -39,7 +39,7 @@ class SchemaValidatorTest extends PHPUnit_Framework_TestCase
 		$schema = <<<EOF
 <database name="bookstore">
 	<table name="book">
-		
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 	</table>
 </database>

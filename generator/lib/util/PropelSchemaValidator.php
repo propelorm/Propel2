@@ -10,7 +10,7 @@
 
 /**
  * Service class for validating XML schemas.
- * Only impleme,ts validation rules that cannot be implemented in XSD.
+ * Only implements validation rules that cannot be implemented in XSD.
  *
  * @example Basic usage:
  * <code>
@@ -20,6 +20,7 @@
  * }
  * </code>
  *
+ * @package    propel.generator.util
  * @author     François Zaninotto
  */
 class PropelSchemaValidator
@@ -33,8 +34,6 @@ class PropelSchemaValidator
 	}
 
 	/**
-	 * Validate the database schema
-	 *
 	 * @return boolean true if valid, false otherwise
 	 */
 	public function validate()
@@ -45,7 +44,7 @@ class PropelSchemaValidator
 		return count($this->errors) == 0;
 	}
 
-	protected function validateDatabaseTables($database)
+	protected function validateDatabaseTables(Database $database)
 	{
 		$phpNames = array();
 		foreach ($database->getTables() as $table) {
@@ -81,10 +80,12 @@ class PropelSchemaValidator
 		}
 	}
 
+	/**
+	 * @return array A list of error messages
+	 */
 	public function getErrors()
 	{
 		return $this->errors;
 	}
-
 
 }
