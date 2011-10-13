@@ -1840,7 +1840,7 @@ class ModelCriteria extends Criteria
 							$isInString = false;
 						}
 					} elseif (!$isInString) {
-						$parsedString .= preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
+						$parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
 						$stringToTransform = '';
 						$stringQuotes = $char;
 						$isInString = true;
@@ -1858,7 +1858,7 @@ class ModelCriteria extends Criteria
 			$pos++;
 		}
 		if ($stringToTransform) {
-			$parsedString .= preg_replace_callback('/\w+\.\w+/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
+			$parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
 		}
 
 		$clause = $parsedString;
