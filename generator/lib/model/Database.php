@@ -375,15 +375,17 @@ class Database extends ScopedElement
 	{
 		if ($data instanceof Table) {
 			$tbl = $data; // alias
-			$tbl->setDatabase($this);
-			if ($tbl->getSchema() === null) $tbl->setSchema($this->getSchema());
 			if (isset($this->tablesByName[$tbl->getName()])) {
-				throw new EngineException("Duplicate table declared: " . $tbl->getName());
+				throw new EngineException(sprintf('Table "%s" declared twice', $tbl->getName()));
+			}
+			$tbl->setDatabase($this);
+			if ($tbl->getSchema() === null) {
+				$tbl->setSchema($this->getSchema());
 			}
 			$this->tableList[] = $tbl;
 			$this->tablesByName[$tbl->getName()] = $tbl;
 			$this->tablesByLowercaseName[strtolower($tbl->getName())] = $tbl;
-			$this->tablesByPhpName[ $tbl->getPhpName() ] = $tbl;
+			$this->tablesByPhpName[$tbl->getPhpName()] = $tbl;
 			if (strpos($tbl->getNamespace(), '\\') === 0) {
 				$tbl->setNamespace(substr($tbl->getNamespace(), 1));
 			} elseif ($namespace = $this->getNamespace()) {

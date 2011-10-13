@@ -14,6 +14,7 @@ include_once 'config/GeneratorConfig.php';
 include_once 'model/AppData.php';
 include_once 'model/Database.php';
 include_once 'builder/util/XmlToAppData.php';
+include_once 'util/PropelSchemaValidator.php';
 
 /**
  * An abstract base Propel task to perform work related to the XML schema file.
@@ -474,6 +475,15 @@ abstract class AbstractPropelDataModelTask extends Task
 
 		foreach ($this->dataModels as &$ad) {
 			$ad->doFinalInitialization();
+		}
+
+		if ($this->validate) {
+			foreach ($this->dataModels as $dataModel) {
+				$validator = new PropelSchemaValidator($dataModel);
+				if (!$validator->validate()) {
+					throw new EngineException(sprintf("The database schema contains errors:\n - %s", join("\n - ", $validator->getErrors())));
+				}
+			}
 		}
 
 		$this->dataModelsLoaded = true;
