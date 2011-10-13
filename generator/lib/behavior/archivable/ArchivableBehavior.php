@@ -35,6 +35,22 @@ class ArchivableBehavior extends Behavior
 	protected $objectBuilderModifier;
 	protected $queryBuilderModifier;
 
+	public function modifyDatabase()
+	{
+		foreach ($this->getDatabase()->getTables() as $table) {
+			if ($table->hasBehavior($this->getName())) {
+				// don't add the same behavior twice
+				continue;
+			}
+			if (property_exists($table, 'isArchiveTable')) {
+				// don't add the behavior to archive tables
+				continue;
+			}
+			$b = clone $this;
+			$table->addBehavior($b);
+		}
+	}
+
 	public function modifyTable()
 	{
 		if ($this->getParameter('archive_class') && $this->getParameter('archive_table')) {
@@ -58,6 +74,7 @@ class ArchivableBehavior extends Behavior
 				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
 			));
+			$archiveTable->isArchiveTable = true;
 			// copy all the columns
 			foreach ($table->getColumns() as $column) {
 				$columnInArchiveTable = clone $column;

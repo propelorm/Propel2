@@ -146,5 +146,22 @@ EOF;
 		$table = MyOldArchivableTest3Peer::getTableMap();
 		$this->assertFalse($table->hasColumn('archived_at'));
 	}
+	
+	public function testDatabaseLevelBehavior()
+	{
+			$schema = <<<EOF
+<database name="archivable_behavior_test_0">
+	<behavior name="archivable" />
+	<table name="archivable_test_01">
+		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+		<column name="title" type="VARCHAR" size="100" primaryString="true" />
+		<behavior name="archivable" />
+	</table>
+</database>
+EOF;
+			$builder = new PropelQuickBuilder();
+			$builder->setSchema($schema);
+			$builder->getSQL();
+	}
 
 }

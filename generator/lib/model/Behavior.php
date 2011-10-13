@@ -156,8 +156,11 @@ class Behavior extends XMLElement
 	 */
 	public function modifyDatabase()
 	{
-		foreach ($this->getDatabase()->getTables() as $table)
-		{
+		foreach ($this->getDatabase()->getTables() as $table) {
+			if ($table->hasBehavior($this->getName())) {
+				// don't add the same behavior twice
+				continue;
+			}
 			$b = clone $this;
 			$table->addBehavior($b);
 		}

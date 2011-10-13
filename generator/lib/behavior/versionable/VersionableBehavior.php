@@ -42,6 +42,22 @@ class VersionableBehavior extends Behavior
 
 	protected $tableModificationOrder = 80;
 
+	public function modifyDatabase()
+	{
+		foreach ($this->getDatabase()->getTables() as $table) {
+			if ($table->hasBehavior($this->getName())) {
+				// don't add the same behavior twice
+				continue;
+			}
+			if (property_exists($table, 'isVersionTable')) {
+				// don't add the behavior to version tables
+				continue;
+			}
+			$b = clone $this;
+			$table->addBehavior($b);
+		}
+	}
+
 	public function modifyTable()
 	{
 		$this->addVersionColumn();
@@ -102,6 +118,7 @@ class VersionableBehavior extends Behavior
 				'schema'    => $table->getSchema(),
 				'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
 			));
+			$versionTable->isVersionTable = true;
 			// every behavior adding a table should re-execute database behaviors
 			foreach ($database->getBehaviors() as $behavior) {
 				$behavior->modifyDatabase();
