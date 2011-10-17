@@ -20,16 +20,16 @@ use Propel\Generator\Util\PropelSqlManager;
  */
 class PropelSqlBuildTask extends AbstractPropelDataModelTask
 {
-	public function main()
-	{
-		$this->validate();
-		$this->packageObjectModel = true;
+    public function main()
+    {
+        $this->validate();
+        $this->packageObjectModel = true;
 
-		$manager = new PropelSqlManager();
-		$manager->setGeneratorConfig($this->getGeneratorConfig());
-		$manager->setDataModels($this->getDataModels());
-		$manager->setWorkingDirectory($this->getOutputDirectory());
+        $manager = new PropelSqlManager();
+        $manager->setGeneratorConfig($this->getGeneratorConfig());
+        $manager->setDataModels($this->getDataModels());
+        $manager->setWorkingDirectory($this->getOutputDirectory());
 
-		$manager->buildSql();
-	}
+        $manager->buildSql();
+    }
 }
