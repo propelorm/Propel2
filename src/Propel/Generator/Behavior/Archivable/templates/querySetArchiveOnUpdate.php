@@ -6,5 +6,5 @@
  */
 public function setArchiveOnUpdate($archiveOnUpdate)
 {
-	$this->archiveOnUpdate = $archiveOnUpdate;
+    $this->archiveOnUpdate = $archiveOnUpdate;
 }

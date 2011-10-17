@@ -8,10 +8,10 @@
  */
 public function compute<?php echo $column->getPhpName() ?>(PropelPDO $con)
 {
-	$stmt = $con->prepare('<?php echo $sql ?>');
+    $stmt = $con->prepare('<?php echo $sql ?>');
 <?php foreach ($bindings as $key => $binding): ?>
   $stmt->bindValue(':p<?php echo $key ?>', $this->get<?php echo $binding ?>());
 <?php endforeach; ?>
-	$stmt->execute();
-	return $stmt->fetchColumn();
+    $stmt->execute();
+    return $stmt->fetchColumn();
 }
