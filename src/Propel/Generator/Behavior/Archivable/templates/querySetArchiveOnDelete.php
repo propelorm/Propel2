@@ -6,5 +6,5 @@
  */
 public function setArchiveOnDelete($archiveOnDelete)
 {
-	$this->archiveOnDelete = $archiveOnDelete;
+    $this->archiveOnDelete = $archiveOnDelete;
 }

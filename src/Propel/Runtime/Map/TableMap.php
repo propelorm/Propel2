@@ -87,11 +87,11 @@ class TableMap
   public function __construct($name = null, $dbMap = null)
   {
     if (null !== $name) {
-    	$this->setName($name);
+        $this->setName($name);
     }
     if (null !== $dbMap) {
-    	$this->setDatabaseMap($dbMap);
-  	}
+        $this->setDatabaseMap($dbMap);
+      }
     $this->initialize();
   }
 
