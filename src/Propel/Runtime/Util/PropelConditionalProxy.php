@@ -35,15 +35,15 @@ namespace Propel\Runtime\Util;
  */
 class PropelConditionalProxy
 {
-	protected $criteria;
+    protected $criteria;
   protected $parent;
   protected $state;
   protected $wasTrue;
   protected $parentState;
 
-	public function __construct($criteria, $cond, $proxy = null)
-	{
-		$this->criteria = $criteria;
+    public function __construct($criteria, $cond, $proxy = null)
+    {
+        $this->criteria = $criteria;
     $this->wasTrue = false;
     $this->setConditionalState($cond);
     $this->parent = $proxy;
@@ -53,53 +53,53 @@ class PropelConditionalProxy
     } else {
       $this->parentState = $proxy->getConditionalState();
     }
-	}
+    }
 
-	/**
-	 * Returns a new level PropelConditionalProxy instance.
-	 * Allows for conditional statements in a fluid interface.
-	 *
-	 * @param      bool $cond
-	 *
-	 * @return     PropelConditionalProxy
-	 */
-	public function _if($cond)
-	{
-		return $this->criteria->_if($cond);
-	}
+    /**
+     * Returns a new level PropelConditionalProxy instance.
+     * Allows for conditional statements in a fluid interface.
+     *
+     * @param      bool $cond
+     *
+     * @return     PropelConditionalProxy
+     */
+    public function _if($cond)
+    {
+        return $this->criteria->_if($cond);
+    }
 
-	/**
-	 * Allows for conditional statements in a fluid interface.
-	 *
-	 * @param      bool $cond ignored
-	 *
-	 * @return     PropelConditionalProxy
-	 */
-	public function _elseif($cond)
-	{
+    /**
+     * Allows for conditional statements in a fluid interface.
+     *
+     * @param      bool $cond ignored
+     *
+     * @return     PropelConditionalProxy
+     */
+    public function _elseif($cond)
+    {
     return $this->setConditionalState(!$this->wasTrue && $cond);
-	}
+    }
 
-	/**
-	 * Allows for conditional statements in a fluid interface.
-	 *
-	 * @return     PropelConditionalProxy
-	 */
-	public function _else()
-	{
+    /**
+     * Allows for conditional statements in a fluid interface.
+     *
+     * @return     PropelConditionalProxy
+     */
+    public function _else()
+    {
     return $this->setConditionalState(!$this->state && !$this->wasTrue);
-	}
+    }
 
-	/**
-	 * Returns the parent object
-	 * Allows for conditional statements in a fluid interface.
-	 *
-	 * @return     PropelConditionalProxy|Criteria
-	 */
-	public function _endif()
-	{
-		return $this->criteria->_endif();
-	}
+    /**
+     * Returns the parent object
+     * Allows for conditional statements in a fluid interface.
+     *
+     * @return     PropelConditionalProxy|Criteria
+     */
+    public function _endif()
+    {
+        return $this->criteria->_endif();
+    }
 
   /**
    * return the current conditionnal status
@@ -132,8 +132,8 @@ class PropelConditionalProxy
     return $this;
   }
 
-	public function __call($name, $arguments)
-	{
-		return $this;
-	}
+    public function __call($name, $arguments)
+    {
+        return $this;
+    }
 }

@@ -35,15 +35,15 @@ use Propel\Runtime\Map\ValidatorMap;
  */
 class MaxLengthValidator implements BasicValidator
 {
-	/**
-	 * @param     ValidatorMap  $map
-	 * @param     string        $str
-	 *
-	 * @return    boolean
-	 */
-	public function isValid(ValidatorMap $map, $str)
-	{
-		$len = function_exists('mb_strlen') ? mb_strlen($str) : strlen($str);
-		return $len <= intval($map->getValue());
-	}
+    /**
+     * @param     ValidatorMap  $map
+     * @param     string        $str
+     *
+     * @return    boolean
+     */
+    public function isValid(ValidatorMap $map, $str)
+    {
+        $len = function_exists('mb_strlen') ? mb_strlen($str) : strlen($str);
+        return $len <= intval($map->getValue());
+    }
 }

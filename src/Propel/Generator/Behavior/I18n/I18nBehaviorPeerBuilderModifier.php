@@ -20,20 +20,20 @@ namespace Propel\Generator\Behavior\I18n;
  */
 class I18nBehaviorPeerBuilderModifier
 {
-	protected $behavior;
+    protected $behavior;
 
-	public function __construct($behavior)
-	{
-		$this->behavior = $behavior;
-	}
+    public function __construct($behavior)
+    {
+        $this->behavior = $behavior;
+    }
 
-	public function staticConstants()
-	{
-		return "
+    public function staticConstants()
+    {
+        return "
 /**
  * The default locale to use for translations
  * @var        string
  */
 const DEFAULT_LOCALE = '{$this->behavior->getDefaultLocale()}';";
-	}
+    }
 }
