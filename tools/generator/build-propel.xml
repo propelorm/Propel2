@@ -63,16 +63,16 @@
     classname="Propel.Generator.Task.PropelSQLDiffTaskCompat" />
   <taskdef
     name="propel-migration-status"
-    classname="Propel.Generator.Task.PropelMigrationStatusTask" />
+    classname="Propel.Generator.Task.PropelMigrationStatusTaskCompat" />
   <taskdef
     name="propel-migration-up"
-    classname="Propel.Generator.Task.PropelMigrationUpTask" />
+    classname="Propel.Generator.Task.PropelMigrationUpTaskCompat" />
   <taskdef
     name="propel-migration-down"
-    classname="Propel.Generator.Task.PropelMigrationDownTask" />
+    classname="Propel.Generator.Task.PropelMigrationDownTaskCompat" />
   <taskdef
     name="propel-migration"
-    classname="Propel.Generator.Task.PropelMigrationTask" />
+    classname="Propel.Generator.Task.PropelMigrationTaskCompat" />
   <taskdef
     name="propel-sql-exec"
     classname="Propel.Generator.Task.PropelSQLExecCompat" />
