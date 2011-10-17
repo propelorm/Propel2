@@ -8,8 +8,9 @@
  * @license    MIT License
  */
 
-require_once dirname(__FILE__) . '/BasePropelMigrationTask.php';
-require_once dirname(__FILE__) . '/../util/PropelMigrationManager.php';
+namespace Propel\Generator\Task;
+
+use Propel\Generator\Util\PropelMigrationManager;
 
 /**
  * This Task lists the migrations yet to be executed
