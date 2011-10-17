@@ -440,4 +440,37 @@ EOF;
 		$xmlstr = trim($doc->saveXML());
 		$this->assertSame($schema, $xmlstr);
 	}
+
+	public function testIsCrossRefAttribute()
+	{
+		$xmlToAppData = new XmlToAppData();
+		$schema = <<<EOF
+	<database name="iddb" defaultIdMethod="native">
+		<table name="table_native">
+			<column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
+			<column name="col_a" type="CHAR" size="5" />
+		</table>
+		<table name="table_is_cross_ref_true" isCrossRef="true">
+			<column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
+			<column name="col_a" type="CHAR" size="5" />
+		</table>
+		<table name="table_is_cross_ref_false" isCrossRef="false">
+			<column name="table_a_id" required="true" primaryKey="true" type="INTEGER" />
+			<column name="col_a" type="CHAR" size="5" />
+		</table>
+	</database>
+EOF;
+		$appData = $xmlToAppData->parseString($schema);
+
+		$db = $appData->getDatabase("iddb");
+
+		$table1 = $db->getTable("table_native");
+		$this->assertFalse($table1->getIsCrossRef());
+
+		$table2 = $db->getTable("table_is_cross_ref_true");
+		$this->assertTrue($table2->getIsCrossRef());
+
+		$table3 = $db->getTable("table_is_cross_ref_false");
+		$this->assertFalse($table3->getIsCrossRef());
+	}
 }
