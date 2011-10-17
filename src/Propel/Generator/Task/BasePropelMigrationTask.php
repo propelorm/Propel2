@@ -8,7 +8,12 @@
  * @license    MIT License
  */
 
+namespace Propel\Generator\Task;
+
 require_once 'phing/Task.php';
+use \Task;
+
+use \IOException;
 
 /**
  * This Task lists the migrations yet to be executed
