@@ -43,13 +43,13 @@ use Propel\Generator\Model\Behavior;
 class AlternativeCodingStandardsBehavior extends Behavior
 {
     // default parameters value
-  protected $parameters = array(
-      'brackets_newline'        => 'true',
-      'remove_closing_comments' => 'true',
-      'use_whitespace'          => 'true',
-      'tab_size'                => 2,
-      'strip_comments'          => 'false'
-  );
+    protected $parameters = array(
+        'brackets_newline'        => 'true',
+        'remove_closing_comments' => 'true',
+        'use_whitespace'          => 'true',
+        'tab_size'                => 2,
+        'strip_comments'          => 'false'
+    );
 
     public function objectFilter(&$script)
     {
