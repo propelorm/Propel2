@@ -18,7 +18,8 @@ namespace Propel\Generator\Behavior\Archivable;
  */
 class ArchivableBehaviorQueryBuilderModifier
 {
-    protected $behavior, $table;
+    protected $behavior;
+    protected $table;
 
     public function __construct($behavior)
     {

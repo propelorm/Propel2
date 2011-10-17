@@ -18,7 +18,9 @@ namespace Propel\Generator\Behavior\Archivable;
  */
 class ArchivableBehaviorObjectBuilderModifier
 {
-    protected $behavior, $table, $builder;
+    protected $behavior;
+    protected $table;
+    protected $builder;
 
     public function __construct($behavior)
     {

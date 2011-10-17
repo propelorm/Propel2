@@ -24,9 +24,9 @@ class AutoAddPkBehavior extends Behavior
 
     // default parameters value
     protected $parameters = array(
-        'name'                    => 'id',
+        'name'          => 'id',
         'autoIncrement' => 'true',
-        'type'                    => 'INTEGER'
+        'type'          => 'INTEGER'
     );
 
     /**

@@ -35,11 +35,10 @@ class I18nBehavior extends Behavior
 
     protected $tableModificationOrder = 70;
 
-    protected
-        $objectBuilderModifier,
-        $queryBuilderModifier,
-        $peerBuilderModifier,
-        $i18nTable;
+    protected $objectBuilderModifier;
+    protected $queryBuilderModifier;
+    protected $peerBuilderModifier;
+    protected $i18nTable;
 
     public function modifyDatabase()
     {

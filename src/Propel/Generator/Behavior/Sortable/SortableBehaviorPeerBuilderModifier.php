@@ -19,7 +19,11 @@ namespace Propel\Generator\Behavior\Sortable;
  */
 class SortableBehaviorPeerBuilderModifier
 {
-    protected $behavior, $table, $builder, $objectClassname, $peerClassname;
+    protected $behavior;
+    protected $table;
+    protected $builder;
+    protected $objectClassname;
+    protected $peerClassname;
 
     public function __construct($behavior)
     {

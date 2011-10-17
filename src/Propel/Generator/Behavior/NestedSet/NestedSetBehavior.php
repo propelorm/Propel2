@@ -30,7 +30,9 @@ class NestedSetBehavior extends Behavior
         'method_proxies' => 'false'
     );
 
-    protected $objectBuilderModifier, $queryBuilderModifier, $peerBuilderModifier;
+    protected $objectBuilderModifier;
+    protected $queryBuilderModifier;
+    protected $peerBuilderModifier;
 
     /**
      * Add the left, right and scope to the current table

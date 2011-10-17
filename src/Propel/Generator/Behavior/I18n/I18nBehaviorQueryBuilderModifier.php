@@ -20,7 +20,9 @@ namespace Propel\Generator\Behavior\I18n;
  */
 class I18nBehaviorQueryBuilderModifier
 {
-    protected $behavior, $table, $builder;
+    protected $behavior;
+    protected $table;
+    protected $builder;
 
     public function __construct($behavior)
     {

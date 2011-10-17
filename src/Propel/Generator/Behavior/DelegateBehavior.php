@@ -132,5 +132,4 @@ if (is_callable(array('$ARClassName', \$name))) {
         }
         return $script;
     }
-
 }
