@@ -48,7 +48,7 @@ class SoftDeleteBehavior extends Behavior
 
     public function objectMethods($builder)
     {
-        $builder->declareClassNamespace(
+        $builder->declareClass(
             '\Propel\Runtime\Connection\PropelPDO'
         );
 
