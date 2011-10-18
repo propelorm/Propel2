@@ -137,7 +137,7 @@ class PropelQuickBuilder
 
     public function buildClasses()
     {
-        eval($this->getClasses());
+		eval($this->getClasses());
     }
 
     public function getClasses()
@@ -154,7 +154,9 @@ class PropelQuickBuilder
         $script = '';
 
         foreach (array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub') as $target) {
-            $script .= $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+			$class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+			$class = "\nnamespace\n{\n" . $class . "\n}\n";
+            $script .= $this->fixNamespaceDeclarations($class);
         }
 
         if ($col = $table->getChildrenColumn()) {
@@ -163,34 +165,46 @@ class PropelQuickBuilder
                     if ($child->getAncestor()) {
                         $builder = $this->getConfig()->getConfiguredBuilder('queryinheritance', $target);
                         $builder->setChild($child);
-                        $script .= $builder->build();
+                        $class = $builder->build();
+						$class = "\nnamespace\n{\n" . $class . "\n}\n";
+						$script .= $this->fixNamespaceDeclarations($class);
                     }
                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                         $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                         $builder->setChild($child);
-                        $script .= $builder->build();
+                        $class = $builder->build();
+						$class = "\nnamespace\n{\n" . $class . "\n}\n";
+						$script .= $this->fixNamespaceDeclarations($class);
                     }
                 }
             }
         }
 
         if ($table->getInterface()) {
-            $script .= $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
+			$interface = $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
+			$interface = "\nnamespace\n{\n" . $interface . "\n}\n";
+			$script .= $this->fixNamespaceDeclarations($interface);
         }
 
         if ($table->treeMode()) {
             switch($table->treeMode()) {
             case 'NestedSet':
                 foreach (array('nestedsetpeer', 'nestedset') as $target) {
-                    $script .= $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+					$class = "\nnamespace\n{\n" . $class . "\n}\n";
+					$script .= $this->fixNamespaceDeclarations($class);
                 }
                 break;
             case 'MaterializedPath':
                 foreach (array('nodepeer', 'node') as $target) {
-                    $script .= $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+					$class = "\nnamespace\n{\n" . $class . "\n}\n";
+					$script .= $this->fixNamespaceDeclarations($class);
                 }
                 foreach (array('nodepeerstub', 'nodestub') as $target) {
-                    $script .= $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+                    $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+					$class = "\nnamespace\n{\n" . $class . "\n}\n";
+					$script .= $this->fixNamespaceDeclarations($class);
                 }
                 break;
             case 'AdjacencyList':
@@ -203,11 +217,12 @@ class PropelQuickBuilder
         if ($table->hasAdditionalBuilders()) {
             foreach ($table->getAdditionalBuilders() as $builderClass) {
                 $builder = new $builderClass($table);
-                $script .= $builder->build();
+                $class = $builder->build();
+				$class = "\nnamespace\n{\n" . $class . "\n}\n";
+				$script .= $this->fixNamespaceDeclarations($class);
             }
         }
 
-        // remove extra <?php
         $script = str_replace('<?php', '', $script);
         return $script;
     }
@@ -220,6 +235,55 @@ class PropelQuickBuilder
             if ($table->getName() == $tableName) {
                 echo $builder->getClassesForTable($table);
             }
-        }
-    }
+		}
+	}
+
+	/**
+ 	 * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+	 */
+	public function fixNamespaceDeclarations($source)
+	{
+		if (!function_exists('token_get_all')) {
+			return $source;
+		}
+
+		$output = '';
+		$inNamespace = false;
+		$tokens = token_get_all($source);
+
+		for ($i = 0, $max = count($tokens); $i < $max; $i++) {
+			$token = $tokens[$i];
+			if (is_string($token)) {
+				$output .= $token;
+			} elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
+				// strip comments
+				continue;
+			} elseif (T_NAMESPACE === $token[0]) {
+				if ($inNamespace) {
+					$output .= "}\n";
+				}
+				$output .= $token[1];
+
+				// namespace name and whitespaces
+				while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
+					$output .= $t[1];
+				}
+				if (is_string($t) && '{' === $t) {
+					$inNamespace = false;
+					--$i;
+				} else {
+					$output .= "\n{";
+					$inNamespace = true;
+				}
+			} else {
+				$output .= $token[1];
+			}
+		}
+
+		if ($inNamespace) {
+			$output .= "}\n";
+		}
+
+		return $output;
+	}
 }

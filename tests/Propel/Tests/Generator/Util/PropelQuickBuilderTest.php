@@ -9,9 +9,11 @@
  */
 
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\PropelQuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Om\BaseObject;
 
 /**
  *
@@ -69,8 +71,8 @@ DROP TABLE quick_build_foo_1;
 
 CREATE TABLE quick_build_foo_1
 (
-	id INTEGER NOT NULL PRIMARY KEY,
-	bar INTEGER
+    id INTEGER NOT NULL PRIMARY KEY,
+    bar INTEGER
 );
 
 EOF;
