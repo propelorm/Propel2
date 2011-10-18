@@ -14,6 +14,8 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IDMethod;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Platform\MssqlPlatform;
+use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PropelPlatformInterface;
 
 use \DateTime;
