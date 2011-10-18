@@ -33,7 +33,7 @@ class GeneratedObjectObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
 		PropelQuickBuilder::buildSchema($schema);
-		$e = new ComplexColumnTypeEntity1();
+		$e = new \ComplexColumnTypeEntity1();
 		$this->assertNull($e->getBar(), 'object columns are null by default');
 		$c = new FooColumnValue();
 		$c->bar = 1234;
@@ -43,8 +43,8 @@ EOF;
 		$this->assertNull($e->getBar(), 'object columns are nullable');
 		$e->setBar($c);
 		$e->save();
-		ComplexColumnTypeEntity1Peer::clearInstancePool();
-		$e = ComplexColumnTypeEntity1Query::create()->findOne();
+		\ComplexColumnTypeEntity1Peer::clearInstancePool();
+		$e = \ComplexColumnTypeEntity1Query::create()->findOne();
 		$this->assertEquals($c, $e->getBar(), 'object columns are persisted');
 	}
 }
