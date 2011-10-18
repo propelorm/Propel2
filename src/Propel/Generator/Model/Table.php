@@ -346,7 +346,7 @@ class Table extends ScopedElement implements IDMethod
 
         $this->reloadOnInsert = $this->booleanValue($this->getAttribute("reloadOnInsert"));
         $this->reloadOnUpdate = $this->booleanValue($this->getAttribute("reloadOnUpdate"));
-        $this->isCrossRef = $this->getAttribute("isCrossRef", false);
+        $this->isCrossRef = $this->booleanValue($this->getAttribute("isCrossRef", false));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat');
     }
 
