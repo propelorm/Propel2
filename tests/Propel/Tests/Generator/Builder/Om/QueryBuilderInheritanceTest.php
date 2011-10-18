@@ -13,6 +13,13 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
+use Propel\Tests\Bookstore\BookstoreCashier;
+use Propel\Tests\Bookstore\BookstoreCashierQuery;
+use Propel\Tests\Bookstore\BookstoreEmployee;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\BookstoreManager;
+use Propel\Tests\Bookstore\BookstoreManagerQuery;
+
 /**
  * Test class for MultiExtensionQueryBuilder.
  *
