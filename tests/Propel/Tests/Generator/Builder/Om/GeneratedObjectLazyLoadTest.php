@@ -41,13 +41,13 @@ EOF;
 
 	public function testNormalColumnsRequireNoQueryOnGetter()
 	{
-		$con = Propel::getconnection(LazyLoadActiveRecordPeer::DATABASE_NAME);
+		$con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
 		$con->useDebug(true);
-		$obj = new LazyLoadActiveRecord();
+		$obj = new \LazyLoadActiveRecord();
 		$obj->setFoo('hello');
 		$obj->save($con);
-		LazyLoadActiveRecordPeer::clearInstancePool();
-		$obj2 = LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
+		\LazyLoadActiveRecordPeer::clearInstancePool();
+		$obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
 		$count = $con->getQueryCount();
 		$this->assertEquals('hello', $obj2->getFoo());
 		$this->assertEquals($count, $con->getQueryCount());
@@ -55,13 +55,13 @@ EOF;
 
 	public function testLazyLoadedColumnsRequireAnAdditionalQueryOnGetter()
 	{
-		$con = Propel::getconnection(LazyLoadActiveRecordPeer::DATABASE_NAME);
+		$con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
 		$con->useDebug(true);
-		$obj = new LazyLoadActiveRecord();
+		$obj = new \LazyLoadActiveRecord();
 		$obj->setBar('hello');
 		$obj->save($con);
-		LazyLoadActiveRecordPeer::clearInstancePool();
-		$obj2 = LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
+		\LazyLoadActiveRecordPeer::clearInstancePool();
+		$obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
 		$count = $con->getQueryCount();
 		$this->assertEquals('hello', $obj2->getBar($con));
 		$this->assertEquals($count + 1, $con->getQueryCount());
@@ -69,13 +69,13 @@ EOF;
 
 	public function testLazyLoadedColumnsWithDefaultRequireAnAdditionalQueryOnGetter()
 	{
-		$con = Propel::getconnection(LazyLoadActiveRecordPeer::DATABASE_NAME);
+		$con = Propel::getconnection(\LazyLoadActiveRecordPeer::DATABASE_NAME);
 		$con->useDebug(true);
-		$obj = new LazyLoadActiveRecord();
+		$obj = new \LazyLoadActiveRecord();
 		$obj->setBaz('hello');
 		$obj->save($con);
-		LazyLoadActiveRecordPeer::clearInstancePool();
-		$obj2 = LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
+		\LazyLoadActiveRecordPeer::clearInstancePool();
+		$obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
 		$count = $con->getQueryCount();
 		$this->assertEquals('hello', $obj2->getBaz($con));
 		$this->assertEquals($count + 1, $con->getQueryCount());
