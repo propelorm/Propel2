@@ -243,7 +243,7 @@ class PropelQuickBuilder
     }
 
     /**
-      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
      */
     public function fixNamespaceDeclarations($source)
     {
