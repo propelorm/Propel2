@@ -18,6 +18,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\PropelPDO;
 
 use \PDO;
+use \PDOStatement;
 
 class PropelQuickBuilder
 {
@@ -78,6 +79,7 @@ class PropelQuickBuilder
     {
         $builder = new self;
         $builder->setSchema($schema);
+
         return $builder->build($dsn, $user, $pass, $adapter);
     }
 
@@ -100,6 +102,7 @@ class PropelQuickBuilder
         Propel::setDB($name, $adapter);
         Propel::setConnection($name, $con, Propel::CONNECTION_READ);
         Propel::setConnection($name, $con, Propel::CONNECTION_WRITE);
+
         return $con;
     }
 
@@ -137,7 +140,7 @@ class PropelQuickBuilder
 
     public function buildClasses()
     {
-		eval($this->getClasses());
+        eval($this->getClasses());
     }
 
     public function getClasses()
@@ -154,8 +157,8 @@ class PropelQuickBuilder
         $script = '';
 
         foreach (array('tablemap', 'peer', 'object', 'query', 'peerstub', 'objectstub', 'querystub') as $target) {
-			$class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-			$class = "\nnamespace\n{\n" . $class . "\n}\n";
+            $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+            $class = "\nnamespace\n{\n" . $class . "\n}\n";
             $script .= $this->fixNamespaceDeclarations($class);
         }
 
@@ -166,24 +169,24 @@ class PropelQuickBuilder
                         $builder = $this->getConfig()->getConfiguredBuilder('queryinheritance', $target);
                         $builder->setChild($child);
                         $class = $builder->build();
-						$class = "\nnamespace\n{\n" . $class . "\n}\n";
-						$script .= $this->fixNamespaceDeclarations($class);
+                        $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                        $script .= $this->fixNamespaceDeclarations($class);
                     }
                     foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
                         $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                         $builder->setChild($child);
                         $class = $builder->build();
-						$class = "\nnamespace\n{\n" . $class . "\n}\n";
-						$script .= $this->fixNamespaceDeclarations($class);
+                        $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                        $script .= $this->fixNamespaceDeclarations($class);
                     }
                 }
             }
         }
 
         if ($table->getInterface()) {
-			$interface = $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
-			$interface = "\nnamespace\n{\n" . $interface . "\n}\n";
-			$script .= $this->fixNamespaceDeclarations($interface);
+            $interface = $this->getConfig()->getConfiguredBuilder('interface', $target)->build();
+            $interface = "\nnamespace\n{\n" . $interface . "\n}\n";
+            $script .= $this->fixNamespaceDeclarations($interface);
         }
 
         if ($table->treeMode()) {
@@ -191,20 +194,20 @@ class PropelQuickBuilder
             case 'NestedSet':
                 foreach (array('nestedsetpeer', 'nestedset') as $target) {
                     $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-					$class = "\nnamespace\n{\n" . $class . "\n}\n";
-					$script .= $this->fixNamespaceDeclarations($class);
+                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                    $script .= $this->fixNamespaceDeclarations($class);
                 }
                 break;
             case 'MaterializedPath':
                 foreach (array('nodepeer', 'node') as $target) {
                     $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-					$class = "\nnamespace\n{\n" . $class . "\n}\n";
-					$script .= $this->fixNamespaceDeclarations($class);
+                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                    $script .= $this->fixNamespaceDeclarations($class);
                 }
                 foreach (array('nodepeerstub', 'nodestub') as $target) {
                     $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
-					$class = "\nnamespace\n{\n" . $class . "\n}\n";
-					$script .= $this->fixNamespaceDeclarations($class);
+                    $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                    $script .= $this->fixNamespaceDeclarations($class);
                 }
                 break;
             case 'AdjacencyList':
@@ -218,12 +221,13 @@ class PropelQuickBuilder
             foreach ($table->getAdditionalBuilders() as $builderClass) {
                 $builder = new $builderClass($table);
                 $class = $builder->build();
-				$class = "\nnamespace\n{\n" . $class . "\n}\n";
-				$script .= $this->fixNamespaceDeclarations($class);
+                $class = "\nnamespace\n{\n" . $class . "\n}\n";
+                $script .= $this->fixNamespaceDeclarations($class);
             }
         }
 
         $script = str_replace('<?php', '', $script);
+
         return $script;
     }
 
@@ -235,55 +239,55 @@ class PropelQuickBuilder
             if ($table->getName() == $tableName) {
                 echo $builder->getClassesForTable($table);
             }
-		}
-	}
+        }
+    }
 
-	/**
- 	 * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
-	 */
-	public function fixNamespaceDeclarations($source)
-	{
-		if (!function_exists('token_get_all')) {
-			return $source;
-		}
+    /**
+      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     */
+    public function fixNamespaceDeclarations($source)
+    {
+        if (!function_exists('token_get_all')) {
+            return $source;
+        }
 
-		$output = '';
-		$inNamespace = false;
-		$tokens = token_get_all($source);
+        $output = '';
+        $inNamespace = false;
+        $tokens = token_get_all($source);
 
-		for ($i = 0, $max = count($tokens); $i < $max; $i++) {
-			$token = $tokens[$i];
-			if (is_string($token)) {
-				$output .= $token;
-			} elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
-				// strip comments
-				continue;
-			} elseif (T_NAMESPACE === $token[0]) {
-				if ($inNamespace) {
-					$output .= "}\n";
-				}
-				$output .= $token[1];
+        for ($i = 0, $max = count($tokens); $i < $max; $i++) {
+            $token = $tokens[$i];
+            if (is_string($token)) {
+                $output .= $token;
+            } elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
+                // strip comments
+                continue;
+            } elseif (T_NAMESPACE === $token[0]) {
+                if ($inNamespace) {
+                    $output .= "}\n";
+                }
+                $output .= $token[1];
 
-				// namespace name and whitespaces
-				while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
-					$output .= $t[1];
-				}
-				if (is_string($t) && '{' === $t) {
-					$inNamespace = false;
-					--$i;
-				} else {
-					$output .= "\n{";
-					$inNamespace = true;
-				}
-			} else {
-				$output .= $token[1];
-			}
-		}
+                // namespace name and whitespaces
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
+                    $output .= $t[1];
+                }
+                if (is_string($t) && '{' === $t) {
+                    $inNamespace = false;
+                    --$i;
+                } else {
+                    $output .= "\n{";
+                    $inNamespace = true;
+                }
+            } else {
+                $output .= $token[1];
+            }
+        }
 
-		if ($inNamespace) {
-			$output .= "}\n";
-		}
+        if ($inNamespace) {
+            $output .= "}\n";
+        }
 
-		return $output;
-	}
+        return $output;
+    }
 }
