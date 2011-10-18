@@ -12,6 +12,12 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\EssayPeer;
+use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\PublisherPeer;
+
 use Propel\Runtime\Query\Criteria;
 
 /**
@@ -93,7 +99,7 @@ class GeneratedPeerTest extends BookstoreTestBase
 
 	public function testDefaultStringFormatConstant()
 	{
-		$this->assertTrue(defined('BookPeer::DEFAULT_STRING_FORMAT'), 'every Peer class has the DEFAULT_STRING_FORMAT constant');
+		$this->assertTrue(defined('Propel\Tests\Bookstore\BookPeer::DEFAULT_STRING_FORMAT'), 'every Peer class has the DEFAULT_STRING_FORMAT constant');
 		$this->assertEquals('YAML', AuthorPeer::DEFAULT_STRING_FORMAT, 'default string format is YAML by default');
 		$this->assertEquals('XML', PublisherPeer::DEFAULT_STRING_FORMAT, 'default string format can be customized using the defaultStringFormat attribute in the schema');
 	}
