@@ -15,6 +15,7 @@ use Propel\Generator\Builder\Om\OMBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Publisher;
 
 /**
  * Test class for OMBuilder.
