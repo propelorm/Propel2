@@ -11,8 +11,30 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookOpinion;
+use Propel\Tests\Bookstore\BookReader;
+use Propel\Tests\Bookstore\BookReaderPeer;
+use Propel\Tests\Bookstore\Bookstore;
+use Propel\Tests\Bookstore\BookstoreContest;
+use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\Contest;
+use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
+use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\ReaderFavorite;
+use Propel\Tests\Bookstore\ReaderFavoritePeer;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
 
 /**
  * Tests the delete methods of the generated Peer classes.
