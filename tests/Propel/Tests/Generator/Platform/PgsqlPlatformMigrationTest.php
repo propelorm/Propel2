@@ -48,10 +48,10 @@ ALTER TABLE foo3 RENAME TO foo4;
 
 CREATE TABLE foo5
 (
-	id serial NOT NULL,
-	lkdjfsh INTEGER,
-	dfgdsgf TEXT,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    lkdjfsh INTEGER,
+    dfgdsgf TEXT,
+    PRIMARY KEY (id)
 );
 
 ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
@@ -101,8 +101,8 @@ CREATE INDEX bar_FK ON foo (bar1);
 CREATE INDEX baz_FK ON foo (baz3);
 
 ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
-	FOREIGN KEY (bar1)
-	REFERENCES foo2 (bar);
+    FOREIGN KEY (bar1)
+    REFERENCES foo2 (bar);
 
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
@@ -169,14 +169,14 @@ END;
 ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
 
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_3
-	FOREIGN KEY (baz)
-	REFERENCES foo2 (baz);
+    FOREIGN KEY (baz)
+    REFERENCES foo2 (baz);
 
 ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
 
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
-	FOREIGN KEY (bar,id)
-	REFERENCES foo2 (bar,id);
+    FOREIGN KEY (bar,id)
+    REFERENCES foo2 (bar,id);
 
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
@@ -196,8 +196,8 @@ END;
 		$expected = <<<END
 
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_1
-	FOREIGN KEY (bar)
-	REFERENCES foo2 (bar);
+    FOREIGN KEY (bar)
+    REFERENCES foo2 (bar);
 
 END;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));

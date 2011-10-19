@@ -80,10 +80,10 @@ DROP TABLE book CASCADE;
 
 CREATE TABLE book
 (
-	id serial NOT NULL,
-	title VARCHAR(255) NOT NULL,
-	author_id INTEGER,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    author_id INTEGER,
+    PRIMARY KEY (id)
 );
 
 CREATE INDEX book_I_1 ON book (title);
@@ -96,15 +96,15 @@ DROP TABLE author CASCADE;
 
 CREATE TABLE author
 (
-	id serial NOT NULL,
-	first_name VARCHAR(100),
-	last_name VARCHAR(100),
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    PRIMARY KEY (id)
 );
 
 ALTER TABLE book ADD CONSTRAINT book_FK_1
-	FOREIGN KEY (author_id)
-	REFERENCES author (id);
+    FOREIGN KEY (author_id)
+    REFERENCES author (id);
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -162,8 +162,8 @@ SET search_path TO Woopah;
 
 CREATE TABLE table1
 (
-	id serial NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -176,8 +176,8 @@ DROP TABLE table2 CASCADE;
 
 CREATE TABLE table2
 (
-	id serial NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
@@ -194,8 +194,8 @@ SET search_path TO Yipee;
 
 CREATE TABLE table3
 (
-	id serial NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -220,10 +220,10 @@ DROP TABLE x.book CASCADE;
 
 CREATE TABLE x.book
 (
-	id serial NOT NULL,
-	title VARCHAR(255) NOT NULL,
-	author_id INTEGER,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    author_id INTEGER,
+    PRIMARY KEY (id)
 );
 
 CREATE INDEX book_I_1 ON x.book (title);
@@ -236,10 +236,10 @@ DROP TABLE y.author CASCADE;
 
 CREATE TABLE y.author
 (
-	id serial NOT NULL,
-	first_name VARCHAR(100),
-	last_name VARCHAR(100),
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
@@ -250,20 +250,20 @@ DROP TABLE x.book_summary CASCADE;
 
 CREATE TABLE x.book_summary
 (
-	id serial NOT NULL,
-	book_id INTEGER NOT NULL,
-	summary TEXT NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    book_id INTEGER NOT NULL,
+    summary TEXT NOT NULL,
+    PRIMARY KEY (id)
 );
 
 ALTER TABLE x.book ADD CONSTRAINT book_FK_1
-	FOREIGN KEY (author_id)
-	REFERENCES y.author (id);
+    FOREIGN KEY (author_id)
+    REFERENCES y.author (id);
 
 ALTER TABLE x.book_summary ADD CONSTRAINT book_summary_FK_1
-	FOREIGN KEY (book_id)
-	REFERENCES x.book (id)
-	ON DELETE CASCADE;
+    FOREIGN KEY (book_id)
+    REFERENCES x.book (id)
+    ON DELETE CASCADE;
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -279,9 +279,9 @@ EOF;
 
 CREATE TABLE foo
 (
-	id serial NOT NULL,
-	bar VARCHAR(255) NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    bar VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 COMMENT ON TABLE foo IS 'This is foo table';
@@ -300,10 +300,10 @@ EOF;
 
 CREATE TABLE foo
 (
-	foo INTEGER NOT NULL,
-	bar INTEGER NOT NULL,
-	baz VARCHAR(255) NOT NULL,
-	PRIMARY KEY (foo,bar)
+    foo INTEGER NOT NULL,
+    bar INTEGER NOT NULL,
+    baz VARCHAR(255) NOT NULL,
+    PRIMARY KEY (foo,bar)
 );
 
 EOF;
@@ -320,10 +320,10 @@ EOF;
 
 CREATE TABLE foo
 (
-	id serial NOT NULL,
-	bar INTEGER,
-	PRIMARY KEY (id),
-	CONSTRAINT foo_U_1 UNIQUE (bar)
+    id serial NOT NULL,
+    bar INTEGER,
+    PRIMARY KEY (id),
+    CONSTRAINT foo_U_1 UNIQUE (bar)
 );
 
 EOF;
@@ -349,8 +349,8 @@ SET search_path TO Woopah;
 
 CREATE TABLE foo
 (
-	id serial NOT NULL,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    PRIMARY KEY (id)
 );
 
 SET search_path TO public;
@@ -369,9 +369,9 @@ EOF;
 
 CREATE TABLE Woopah.foo
 (
-	id serial NOT NULL,
-	bar INTEGER,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    bar INTEGER,
+    PRIMARY KEY (id)
 );
 
 EOF;
@@ -395,8 +395,8 @@ CREATE SEQUENCE my_custom_sequence_name;
 
 CREATE TABLE foo
 (
-	id INTEGER NOT NULL,
-	PRIMARY KEY (id)
+    id INTEGER NOT NULL,
+    PRIMARY KEY (id)
 );
 
 EOF;
@@ -418,9 +418,9 @@ EOF;
 
 CREATE TABLE foo
 (
-	id serial NOT NULL,
-	bar INTEGER,
-	PRIMARY KEY (id)
+    id serial NOT NULL,
+    bar INTEGER,
+    PRIMARY KEY (id)
 );
 
 COMMENT ON COLUMN foo.id IS 'identifier column';
@@ -639,14 +639,14 @@ DROP INDEX babar;
 	{
 		$expected = "
 ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id)
-	REFERENCES bar (id)
-	ON DELETE CASCADE;
+    FOREIGN KEY (bar_id)
+    REFERENCES bar (id)
+    ON DELETE CASCADE;
 
 ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
-	FOREIGN KEY (baz_id)
-	REFERENCES baz (id)
-	ON DELETE SET NULL;
+    FOREIGN KEY (baz_id)
+    REFERENCES baz (id)
+    ON DELETE SET NULL;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
 	}
@@ -658,9 +658,9 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
 	{
 		$expected = "
 ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id)
-	REFERENCES bar (id)
-	ON DELETE CASCADE;
+    FOREIGN KEY (bar_id)
+    REFERENCES bar (id)
+    ON DELETE CASCADE;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
 	}
@@ -700,9 +700,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 	public function testGetForeignKeyDDL($fk)
 	{
 		$expected = "CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id)
-	REFERENCES bar (id)
-	ON DELETE CASCADE";
+    FOREIGN KEY (bar_id)
+    REFERENCES bar (id)
+    ON DELETE CASCADE";
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 

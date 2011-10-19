@@ -48,26 +48,26 @@ ALTER TABLE foo3 RENAME TO foo4;
 
 CREATE TABLE foo5
 (
-	id NUMBER NOT NULL,
-	lkdjfsh NUMBER,
-	dfgdsgf NVARCHAR2(2000)
+    id NUMBER NOT NULL,
+    lkdjfsh NUMBER,
+    dfgdsgf NVARCHAR2(2000)
 );
 
 ALTER TABLE foo5 ADD CONSTRAINT foo5_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo5_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
 
 ALTER TABLE foo2 MODIFY
 (
-	baz NVARCHAR2(12)
+    baz NVARCHAR2(12)
 );
 
 ALTER TABLE foo2 ADD
 (
-	baz3 NVARCHAR2(2000)
+    baz3 NVARCHAR2(2000)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
@@ -102,12 +102,12 @@ ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
 ALTER TABLE foo MODIFY
 (
-	baz NVARCHAR2(12)
+    baz NVARCHAR2(12)
 );
 
 ALTER TABLE foo ADD
 (
-	baz3 NVARCHAR2(2000)
+    baz3 NVARCHAR2(2000)
 );
 
 CREATE INDEX bar_FK ON foo (bar1);
@@ -115,7 +115,7 @@ CREATE INDEX bar_FK ON foo (bar1);
 CREATE INDEX baz_FK ON foo (baz3);
 
 ALTER TABLE foo ADD CONSTRAINT foo1_FK_1
-	FOREIGN KEY (bar1) REFERENCES foo2 (bar);
+    FOREIGN KEY (bar1) REFERENCES foo2 (bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
@@ -130,12 +130,12 @@ ALTER TABLE foo RENAME COLUMN bar TO bar1;
 
 ALTER TABLE foo MODIFY
 (
-	baz NVARCHAR2(12)
+    baz NVARCHAR2(12)
 );
 
 ALTER TABLE foo ADD
 (
-	baz3 NVARCHAR2(2000)
+    baz3 NVARCHAR2(2000)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
@@ -180,12 +180,12 @@ CREATE INDEX bar_baz_FK ON foo (id,bar,baz);
 ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
 
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_3
-	FOREIGN KEY (baz) REFERENCES foo2 (baz);
+    FOREIGN KEY (baz) REFERENCES foo2 (baz);
 
 ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_2;
 
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_2
-	FOREIGN KEY (bar,id) REFERENCES foo2 (bar,id);
+    FOREIGN KEY (bar,id) REFERENCES foo2 (bar,id);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 	}
@@ -201,7 +201,7 @@ ALTER TABLE foo1 DROP CONSTRAINT foo1_FK_1;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 		$expected = "
 ALTER TABLE foo1 ADD CONSTRAINT foo1_FK_1
-	FOREIGN KEY (bar) REFERENCES foo2 (bar);
+    FOREIGN KEY (bar) REFERENCES foo2 (bar);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
 	}
@@ -258,8 +258,8 @@ ALTER TABLE foo MODIFY bar FLOAT(3);
 		$expected = "
 ALTER TABLE foo MODIFY
 (
-	bar1 FLOAT(3),
-	bar2 INTEGER NOT NULL
+    bar1 FLOAT(3),
+    bar2 INTEGER NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
@@ -284,8 +284,8 @@ ALTER TABLE foo ADD bar NUMBER;
 		$expected = "
 ALTER TABLE foo ADD
 (
-	bar1 NUMBER,
-	bar2 FLOAT(3,2) DEFAULT -1 NOT NULL
+    bar1 NUMBER,
+    bar2 FLOAT(3,2) DEFAULT -1 NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
@@ -397,17 +397,17 @@ ALTER TABLE foo3 RENAME TO foo4;
 
 CREATE TABLE foo5
 (
-	id NUMBER NOT NULL,
-	lkdjfsh NUMBER,
-	dfgdsgf CLOB
+    id NUMBER NOT NULL,
+    lkdjfsh NUMBER,
+    dfgdsgf CLOB
 )
 PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -417,23 +417,23 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
 CREATE SEQUENCE foo5_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 CREATE INDEX lkdjfsh_IDX ON foo5 (lkdjfsh)
 PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -441,12 +441,12 @@ ALTER TABLE foo2 RENAME COLUMN bar TO bar1;
 
 ALTER TABLE foo2 MODIFY
 (
-	baz NVARCHAR2(12)
+    baz NVARCHAR2(12)
 );
 
 ALTER TABLE foo2 ADD
 (
-	baz3 CLOB
+    baz3 CLOB
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));

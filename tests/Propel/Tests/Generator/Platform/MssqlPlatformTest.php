@@ -67,39 +67,39 @@ class MssqlPlatformTest extends PlatformTestProvider
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_FK_1')
-	ALTER TABLE book DROP CONSTRAINT book_FK_1;
+    ALTER TABLE book DROP CONSTRAINT book_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'book')
 BEGIN
-	DECLARE @reftable_1 nvarchar(60), @constraintname_1 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'book'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_1, @constraintname_1
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_1+' drop constraint '+@constraintname_1)
-		FETCH NEXT from refcursor into @reftable_1, @constraintname_1
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE book
+    DECLARE @reftable_1 nvarchar(60), @constraintname_1 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'book'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_1, @constraintname_1
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_1+' drop constraint '+@constraintname_1)
+        FETCH NEXT from refcursor into @reftable_1, @constraintname_1
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE book
 END
 
 CREATE TABLE book
 (
-	id INT NOT NULL IDENTITY,
-	title VARCHAR(255) NOT NULL,
-	author_id INT NULL,
-	CONSTRAINT book_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    title VARCHAR(255) NOT NULL,
+    author_id INT NULL,
+    CONSTRAINT book_PK PRIMARY KEY (id)
 );
 
 CREATE INDEX book_I_1 ON book (title);
@@ -115,35 +115,35 @@ END
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'author')
 BEGIN
-	DECLARE @reftable_2 nvarchar(60), @constraintname_2 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'author'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_2, @constraintname_2
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_2+' drop constraint '+@constraintname_2)
-		FETCH NEXT from refcursor into @reftable_2, @constraintname_2
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE author
+    DECLARE @reftable_2 nvarchar(60), @constraintname_2 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'author'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_2, @constraintname_2
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_2+' drop constraint '+@constraintname_2)
+        FETCH NEXT from refcursor into @reftable_2, @constraintname_2
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE author
 END
 
 CREATE TABLE author
 (
-	id INT NOT NULL IDENTITY,
-	first_name VARCHAR(100) NULL,
-	last_name VARCHAR(100) NULL,
-	CONSTRAINT author_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    first_name VARCHAR(100) NULL,
+    last_name VARCHAR(100) NULL,
+    CONSTRAINT author_PK PRIMARY KEY (id)
 );
 
 EOF;
@@ -163,39 +163,39 @@ EOF;
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_FK_1')
-	ALTER TABLE x.book DROP CONSTRAINT book_FK_1;
+    ALTER TABLE x.book DROP CONSTRAINT book_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book')
 BEGIN
-	DECLARE @reftable_3 nvarchar(60), @constraintname_3 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'x.book'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_3, @constraintname_3
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_3+' drop constraint '+@constraintname_3)
-		FETCH NEXT from refcursor into @reftable_3, @constraintname_3
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE x.book
+    DECLARE @reftable_3 nvarchar(60), @constraintname_3 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'x.book'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_3+' drop constraint '+@constraintname_3)
+        FETCH NEXT from refcursor into @reftable_3, @constraintname_3
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE x.book
 END
 
 CREATE TABLE x.book
 (
-	id INT NOT NULL IDENTITY,
-	title VARCHAR(255) NOT NULL,
-	author_id INT NULL,
-	CONSTRAINT book_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    title VARCHAR(255) NOT NULL,
+    author_id INT NULL,
+    CONSTRAINT book_PK PRIMARY KEY (id)
 );
 
 CREATE INDEX book_I_1 ON x.book (title);
@@ -211,35 +211,35 @@ END
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'y.author')
 BEGIN
-	DECLARE @reftable_4 nvarchar(60), @constraintname_4 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'y.author'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_4, @constraintname_4
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_4+' drop constraint '+@constraintname_4)
-		FETCH NEXT from refcursor into @reftable_4, @constraintname_4
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE y.author
+    DECLARE @reftable_4 nvarchar(60), @constraintname_4 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'y.author'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_4, @constraintname_4
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_4+' drop constraint '+@constraintname_4)
+        FETCH NEXT from refcursor into @reftable_4, @constraintname_4
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE y.author
 END
 
 CREATE TABLE y.author
 (
-	id INT NOT NULL IDENTITY,
-	first_name VARCHAR(100) NULL,
-	last_name VARCHAR(100) NULL,
-	CONSTRAINT author_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    first_name VARCHAR(100) NULL,
+    last_name VARCHAR(100) NULL,
+    CONSTRAINT author_PK PRIMARY KEY (id)
 );
 
 -----------------------------------------------------------------------
@@ -247,39 +247,39 @@ CREATE TABLE y.author
 -----------------------------------------------------------------------
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_FK_1')
-	ALTER TABLE x.book_summary DROP CONSTRAINT book_summary_FK_1;
+    ALTER TABLE x.book_summary DROP CONSTRAINT book_summary_FK_1;
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book_summary')
 BEGIN
-	DECLARE @reftable_5 nvarchar(60), @constraintname_5 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'x.book_summary'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_5, @constraintname_5
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_5+' drop constraint '+@constraintname_5)
-		FETCH NEXT from refcursor into @reftable_5, @constraintname_5
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE x.book_summary
+    DECLARE @reftable_5 nvarchar(60), @constraintname_5 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'x.book_summary'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_5, @constraintname_5
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_5+' drop constraint '+@constraintname_5)
+        FETCH NEXT from refcursor into @reftable_5, @constraintname_5
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE x.book_summary
 END
 
 CREATE TABLE x.book_summary
 (
-	id INT NOT NULL IDENTITY,
-	book_id INT NOT NULL,
-	summary VARCHAR(MAX) NOT NULL,
-	CONSTRAINT book_summary_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    book_id INT NOT NULL,
+    summary VARCHAR(MAX) NOT NULL,
+    CONSTRAINT book_summary_PK PRIMARY KEY (id)
 );
 
 BEGIN
@@ -311,9 +311,9 @@ EOF;
 -- This is foo table
 CREATE TABLE foo
 (
-	id INT NOT NULL IDENTITY,
-	bar VARCHAR(255) NOT NULL,
-	CONSTRAINT foo_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    bar VARCHAR(255) NOT NULL,
+    CONSTRAINT foo_PK PRIMARY KEY (id)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -328,10 +328,10 @@ CREATE TABLE foo
 		$expected = "
 CREATE TABLE foo
 (
-	foo INT NOT NULL,
-	bar INT NOT NULL,
-	baz VARCHAR(255) NOT NULL,
-	CONSTRAINT foo_PK PRIMARY KEY (foo,bar)
+    foo INT NOT NULL,
+    bar INT NOT NULL,
+    baz VARCHAR(255) NOT NULL,
+    CONSTRAINT foo_PK PRIMARY KEY (foo,bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -346,10 +346,10 @@ CREATE TABLE foo
 		$expected = "
 CREATE TABLE foo
 (
-	id INT NOT NULL IDENTITY,
-	bar INT NULL,
-	CONSTRAINT foo_PK PRIMARY KEY (id),
-	UNIQUE (bar)
+    id INT NOT NULL IDENTITY,
+    bar INT NULL,
+    CONSTRAINT foo_PK PRIMARY KEY (id),
+    UNIQUE (bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -364,9 +364,9 @@ CREATE TABLE foo
 		$expected = "
 CREATE TABLE Woopah.foo
 (
-	id INT NOT NULL IDENTITY,
-	bar INT NULL,
-	CONSTRAINT foo_PK PRIMARY KEY (id)
+    id INT NOT NULL IDENTITY,
+    bar INT NULL,
+    CONSTRAINT foo_PK PRIMARY KEY (id)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -378,27 +378,27 @@ CREATE TABLE Woopah.foo
 		$expected = "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'foo')
 BEGIN
-	DECLARE @reftable_6 nvarchar(60), @constraintname_6 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'foo'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_6, @constraintname_6
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_6+' drop constraint '+@constraintname_6)
-		FETCH NEXT from refcursor into @reftable_6, @constraintname_6
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE foo
+    DECLARE @reftable_6 nvarchar(60), @constraintname_6 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'foo'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_6, @constraintname_6
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_6+' drop constraint '+@constraintname_6)
+        FETCH NEXT from refcursor into @reftable_6, @constraintname_6
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE foo
 END
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
@@ -413,27 +413,27 @@ END
 		$expected = "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'Woopah.foo')
 BEGIN
-	DECLARE @reftable_7 nvarchar(60), @constraintname_7 nvarchar(60)
-	DECLARE refcursor CURSOR FOR
-	select reftables.name tablename, cons.name constraintname
-		from sysobjects tables,
-			sysobjects reftables,
-			sysobjects cons,
-			sysreferences ref
-		where tables.id = ref.rkeyid
-			and cons.id = ref.constid
-			and reftables.id = ref.fkeyid
-			and tables.name = 'Woopah.foo'
-	OPEN refcursor
-	FETCH NEXT from refcursor into @reftable_7, @constraintname_7
-	while @@FETCH_STATUS = 0
-	BEGIN
-		exec ('alter table '+@reftable_7+' drop constraint '+@constraintname_7)
-		FETCH NEXT from refcursor into @reftable_7, @constraintname_7
-	END
-	CLOSE refcursor
-	DEALLOCATE refcursor
-	DROP TABLE Woopah.foo
+    DECLARE @reftable_7 nvarchar(60), @constraintname_7 nvarchar(60)
+    DECLARE refcursor CURSOR FOR
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
+            sysobjects cons,
+            sysreferences ref
+        where tables.id = ref.rkeyid
+            and cons.id = ref.constid
+            and reftables.id = ref.fkeyid
+            and tables.name = 'Woopah.foo'
+    OPEN refcursor
+    FETCH NEXT from refcursor into @reftable_7, @constraintname_7
+    while @@FETCH_STATUS = 0
+    BEGIN
+        exec ('alter table '+@reftable_7+' drop constraint '+@constraintname_7)
+        FETCH NEXT from refcursor into @reftable_7, @constraintname_7
+    END
+    CLOSE refcursor
+    DEALLOCATE refcursor
+    DROP TABLE Woopah.foo
 END
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));

@@ -75,15 +75,15 @@ DROP SEQUENCE book_SEQ;
 
 CREATE TABLE book
 (
-	id NUMBER NOT NULL,
-	title NVARCHAR2(255) NOT NULL,
-	author_id NUMBER
+    id NUMBER NOT NULL,
+    title NVARCHAR2(255) NOT NULL,
+    author_id NUMBER
 );
 
 ALTER TABLE book ADD CONSTRAINT book_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE book_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 CREATE INDEX book_I_1 ON book (title);
 
@@ -97,22 +97,22 @@ DROP SEQUENCE author_SEQ;
 
 CREATE TABLE author
 (
-	id NUMBER NOT NULL,
-	first_name NVARCHAR2(100),
-	last_name NVARCHAR2(100)
+    id NUMBER NOT NULL,
+    first_name NVARCHAR2(100),
+    last_name NVARCHAR2(100)
 );
 
 ALTER TABLE author ADD CONSTRAINT author_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE author_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 -----------------------------------------------------------------------
 -- Foreign Keys
 -----------------------------------------------------------------------
 
 ALTER TABLE book ADD CONSTRAINT book_FK_1
-	FOREIGN KEY (author_id) REFERENCES author (id);
+    FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;
 		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -141,14 +141,14 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 -- This is foo table
 CREATE TABLE foo
 (
-	id NUMBER NOT NULL,
-	bar NVARCHAR2(255) NOT NULL
+    id NUMBER NOT NULL,
+    bar NVARCHAR2(255) NOT NULL
 );
 
 ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -162,9 +162,9 @@ CREATE SEQUENCE foo_SEQ
 		$expected = "
 CREATE TABLE foo
 (
-	foo NUMBER NOT NULL,
-	bar NUMBER NOT NULL,
-	baz NVARCHAR2(255) NOT NULL
+    foo NUMBER NOT NULL,
+    bar NUMBER NOT NULL,
+    baz NVARCHAR2(255) NOT NULL
 );
 
 ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (foo,bar);
@@ -181,15 +181,15 @@ ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (foo,bar);
 		$expected = "
 CREATE TABLE foo
 (
-	id NUMBER NOT NULL,
-	bar NUMBER,
-	CONSTRAINT foo_U_1 UNIQUE (bar)
+    id NUMBER NOT NULL,
+    bar NUMBER,
+    CONSTRAINT foo_U_1 UNIQUE (bar)
 );
 
 ALTER TABLE foo ADD CONSTRAINT foo_PK PRIMARY KEY (id);
 
 CREATE SEQUENCE foo_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
@@ -345,12 +345,12 @@ DROP INDEX babar;
 	{
 		$expected = "
 ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id) REFERENCES bar (id)
-	ON DELETE CASCADE;
+    FOREIGN KEY (bar_id) REFERENCES bar (id)
+    ON DELETE CASCADE;
 
 ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
-	FOREIGN KEY (baz_id) REFERENCES baz (id)
-	ON DELETE SET NULL;
+    FOREIGN KEY (baz_id) REFERENCES baz (id)
+    ON DELETE SET NULL;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
 	}
@@ -362,8 +362,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_FK
 	{
 		$expected = "
 ALTER TABLE foo ADD CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id) REFERENCES bar (id)
-	ON DELETE CASCADE;
+    FOREIGN KEY (bar_id) REFERENCES bar (id)
+    ON DELETE CASCADE;
 ";
 		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
 	}
@@ -403,8 +403,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_FK;
 	public function testGetForeignKeyDDL($fk)
 	{
 		$expected = "CONSTRAINT foo_bar_FK
-	FOREIGN KEY (bar_id) REFERENCES bar (id)
-	ON DELETE CASCADE";
+    FOREIGN KEY (bar_id) REFERENCES bar (id)
+    ON DELETE CASCADE";
 		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
 	}
 
@@ -501,17 +501,17 @@ DROP SEQUENCE book_SEQ;
 
 CREATE TABLE book
 (
-	id NUMBER NOT NULL,
-	title NVARCHAR2(255) NOT NULL,
-	author_id NUMBER
+    id NUMBER NOT NULL,
+    title NVARCHAR2(255) NOT NULL,
+    author_id NUMBER
 )
 PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -521,23 +521,23 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
 CREATE SEQUENCE book_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 CREATE INDEX book_I_1 ON book (title)
 PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
@@ -551,17 +551,17 @@ DROP SEQUENCE author_SEQ;
 
 CREATE TABLE author
 (
-	id NUMBER NOT NULL,
-	first_name NVARCHAR2(100),
-	last_name NVARCHAR2(100)
+    id NUMBER NOT NULL,
+    first_name NVARCHAR2(100),
+    last_name NVARCHAR2(100)
 )
 PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE L_128K;
 
@@ -571,21 +571,21 @@ PCTFREE 20
 INITRANS 4
 STORAGE
 (
-	MINEXTENTS 1
-	MAXEXTENTS 99
-	PCTINCREASE 0
+    MINEXTENTS 1
+    MAXEXTENTS 99
+    PCTINCREASE 0
 )
 TABLESPACE IL_128K;
 
 CREATE SEQUENCE author_SEQ
-	INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
+    INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 
 -----------------------------------------------------------------------
 -- Foreign Keys
 -----------------------------------------------------------------------
 
 ALTER TABLE book ADD CONSTRAINT book_FK_1
-	FOREIGN KEY (author_id) REFERENCES author (id);
+    FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;
 

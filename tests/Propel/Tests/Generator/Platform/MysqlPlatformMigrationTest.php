@@ -50,15 +50,15 @@ ALTER TABLE `foo2` CHANGE `baz` `baz` VARCHAR(12);
 
 ALTER TABLE `foo2` ADD
 (
-	`baz3` TEXT
+    `baz3` TEXT
 );
 
 CREATE TABLE `foo5`
 (
-	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`lkdjfsh` INTEGER,
-	`dfgdsgf` TEXT,
-	PRIMARY KEY (`id`)
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `lkdjfsh` INTEGER,
+    `dfgdsgf` TEXT,
+    PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
@@ -80,7 +80,7 @@ RENAME TABLE `foo1` TO `foo2`;
 
 	/**
 	 * @dataProvider providerForTestGetModifyTableDDL
-	 */
+     */
 	public function testGetModifyTableDDL($tableDiff)
 	{
 		$expected = "
@@ -100,7 +100,7 @@ ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
 ALTER TABLE `foo` ADD
 (
-	`baz3` TEXT
+    `baz3` TEXT
 );
 
 CREATE INDEX `bar_FK` ON `foo` (`bar1`);
@@ -108,8 +108,8 @@ CREATE INDEX `bar_FK` ON `foo` (`bar1`);
 CREATE INDEX `baz_FK` ON `foo` (`baz3`);
 
 ALTER TABLE `foo` ADD CONSTRAINT `foo1_FK_1`
-	FOREIGN KEY (`bar1`)
-	REFERENCES `foo2` (`bar`);
+    FOREIGN KEY (`bar1`)
+    REFERENCES `foo2` (`bar`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
 	}
@@ -126,7 +126,7 @@ ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
 ALTER TABLE `foo` ADD
 (
-	`baz3` TEXT
+    `baz3` TEXT
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
@@ -171,14 +171,14 @@ CREATE INDEX `bar_baz_FK` ON `foo` (`id`,`bar`,`baz`);
 ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
 
 ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_3`
-	FOREIGN KEY (`baz`)
-	REFERENCES `foo2` (`baz`);
+    FOREIGN KEY (`baz`)
+    REFERENCES `foo2` (`baz`);
 
 ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_2`;
 
 ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_2`
-	FOREIGN KEY (`bar`,`id`)
-	REFERENCES `foo2` (`bar`,`id`);
+    FOREIGN KEY (`bar`,`id`)
+    REFERENCES `foo2` (`bar`,`id`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 	}
@@ -194,8 +194,8 @@ ALTER TABLE `foo1` DROP FOREIGN KEY `foo1_FK_1`;
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
 		$expected = "
 ALTER TABLE `foo1` ADD CONSTRAINT `foo1_FK_1`
-	FOREIGN KEY (`bar`)
-	REFERENCES `foo2` (`bar`);
+    FOREIGN KEY (`bar`)
+    REFERENCES `foo2` (`bar`);
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
 	}
@@ -276,8 +276,8 @@ ALTER TABLE `foo` ADD `bar` INTEGER;
 		$expected = "
 ALTER TABLE `foo` ADD
 (
-	`bar1` INTEGER,
-	`bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL
+    `bar1` INTEGER,
+    `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
