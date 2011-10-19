@@ -27,7 +27,7 @@ class ArchivableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_Tes
 {
 	public function setUp()
 	{
-		if (!class_exists('ArchivableTest10')) {
+		if (!class_exists('\ArchivableTest10')) {
 			$schema = <<<EOF
 <database name="archivable_behavior_test_10">
 
@@ -76,7 +76,7 @@ class ArchivableBehaviorObjectBuilderModifierTest extends \PHPUnit_Framework_Tes
 		<column name="title" type="VARCHAR" size="100" primaryString="true" />
 		<column name="age" type="INTEGER" />
 		<behavior name="archivable">
-			<parameter name="archive_class" value="FooArchive" />
+			<parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
 		</behavior>
 	</table>
 
@@ -88,18 +88,18 @@ EOF;
 
 	public function testHasGetArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'getArchive'));
+		$this->assertTrue(method_exists('\ArchivableTest10', 'getArchive'));
 	}
 
 	public function testGetArchiveReturnsNullOnNewObjects()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$this->assertNull($a->getArchive());
 	}
 
 	public function testGetArchiveReturnsNullWhenNoArchiveIsFound()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
@@ -108,11 +108,11 @@ EOF;
 
 	public function testGetArchiveReturnsExistingArchive()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		$archive = new ArchivableTest10Archive();
+		$archive = new \ArchivableTest10Archive();
 		$archive->setId($a->getId());
 		$archive->setTitle('bar');
 		$archive->save();
@@ -121,44 +121,44 @@ EOF;
 
 	public function testHasArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'archive'));
+		$this->assertTrue(method_exists('\ArchivableTest10', 'archive'));
 	}
 
 	public function testArchiveCreatesACopyByDefault()
 	{
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
-		$a = new ArchivableTest10();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
 		$a->archive();
-		$archive = ArchivableTest10ArchiveQuery::create()
+		$archive = \ArchivableTest10ArchiveQuery::create()
 			->filterById($a->getId())
 			->findOne();
-		$this->assertInstanceOf('ArchivableTest10Archive', $archive);
+		$this->assertInstanceOf('\ArchivableTest10Archive', $archive);
 		$this->assertEquals('foo', $archive->getTitle());
 		$this->assertEquals(12, $archive->getAge());
 	}
 
 	public function testArchiveUpdatesExistingArchive()
 	{
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
-		$a = new ArchivableTest10();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		$b = new ArchivableTest10Archive();
+		$b = new \ArchivableTest10Archive();
 		$b->setId($a->getId());
 		$b->setTitle('bar');
 		$b->save();
 		$a->archive();
-		$this->assertEquals(1, ArchivableTest10ArchiveQuery::create()->count());
+		$this->assertEquals(1, \ArchivableTest10ArchiveQuery::create()->count());
 		$this->assertEquals('foo', $b->getTitle());
 	}
 
 	public function testArchiveUsesArchiveClassIfSpecified()
 	{
-		$a = new ArchivableTest40();
+		$a = new \ArchivableTest40();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
@@ -171,35 +171,35 @@ EOF;
 
 	public function testArchiveReturnsArchivedObject()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->save();
 		$ret = $a->archive();
-		$this->assertInstanceOf('ArchivableTest10Archive', $ret);
+		$this->assertInstanceOf('\ArchivableTest10Archive', $ret);
 		$this->assertEquals($a->getPrimaryKey(), $ret->getPrimaryKey());
 		$this->assertEquals($a->getTitle(), $ret->getTitle());
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testArchiveThrowsExceptionOnNewObjects()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->archive();
 	}
 
 	public function testHasRestoreFromArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'restoreFromArchive'));
+		$this->assertTrue(method_exists('\ArchivableTest10', 'restoreFromArchive'));
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testRestoreFromArchiveThrowsExceptionOnUnarchivedObjects()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
@@ -208,11 +208,11 @@ EOF;
 
 	public function testRestoreFromArchiveChangesStateToTheArchiveState()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		$archive = new ArchivableTest10Archive();
+		$archive = new \ArchivableTest10Archive();
 		$archive->setId($a->getId());
 		$archive->setTitle('bar');
 		$archive->setAge(15);
@@ -224,223 +224,161 @@ EOF;
 
 	public function testHasPopulateFromArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'populateFromArchive'));
+		$this->assertTrue(method_exists('\ArchivableTest10', 'populateFromArchive'));
 	}
 
 	public function testPopulateFromArchiveReturnsCurrentObject()
 	{
-		$archive = new ArchivableTest10Archive();
-		$a = new ArchivableTest10();
+		$archive = new \ArchivableTest10Archive();
+		$a = new \ArchivableTest10();
 		$ret = $a->populateFromArchive($archive);
 		$this->assertSame($ret, $a);
 	}
 
 	public function testPopulateFromArchive()
 	{
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
-		ArchivableTest10Query::create()->deleteAllWithoutArchive();
-		$archive = new ArchivableTest10Archive();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
+		\ArchivableTest10Query::create()->deleteAllWithoutArchive();
+		$archive = new \ArchivableTest10Archive();
 		$archive->setId(123); // not autoincremented
 		$archive->setTitle('foo');
 		$archive->setAge(12);
 		$archive->save();
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->populateFromArchive($archive);
 		$this->assertNotEquals(123, $a->getId());
 		$this->assertEquals('foo', $a->getTitle());
 		$this->assertEquals(12, $a->getAge());
-		$b = new ArchivableTest10();
+		$b = new \ArchivableTest10();
 		$b->populateFromArchive($archive, true);
 		$this->assertEquals(123, $b->getId());
 	}
 
 	public function testInsertDoesNotCreateArchiveByDefault()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
 		$a->save();
-		$this->assertEquals(0, ArchivableTest10ArchiveQuery::create()->count());
+		$this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
 	}
 
 	public function testInsertCreatesArchiveIfSpecified()
 	{
-		$a = new ArchivableTest30();
+		$a = new \ArchivableTest30();
 		$a->setTitle('foo');
 		$a->setAge(12);
-		MyOldArchivableTest30Query::create()->deleteAll();
+		\MyOldArchivableTest30Query::create()->deleteAll();
 		$a->save();
-		$this->assertEquals(1, MyOldArchivableTest30Query::create()->count());
-		$archive = MyOldArchivableTest30Query::create()
+		$this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
+		$archive = \MyOldArchivableTest30Query::create()
 			->filterById($a->getId())
 			->findOne();
-		$this->assertInstanceOf('MyOldArchivableTest30', $archive);
+		$this->assertInstanceOf('\MyOldArchivableTest30', $archive);
 		$this->assertEquals('foo', $archive->getTitle());
 		$this->assertEquals(12, $archive->getAge());
 	}
 
 	public function testUpdateDoesNotCreateArchiveByDefault()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
 		$a->setTitle('bar');
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
 		$a->save();
-		$this->assertEquals(0, ArchivableTest10ArchiveQuery::create()->count());
+		$this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
 	}
 
 	public function testUpdateCreatesArchiveIfSpecified()
 	{
-		$a = new ArchivableTest30();
+		$a = new \ArchivableTest30();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
 		$a->setTitle('bar');
-		MyOldArchivableTest30Query::create()->deleteAll();
+		\MyOldArchivableTest30Query::create()->deleteAll();
 		$a->save();
-		$this->assertEquals(1, MyOldArchivableTest30Query::create()->count());
-		$archive = MyOldArchivableTest30Query::create()
+		$this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
+		$archive = \MyOldArchivableTest30Query::create()
 			->filterById($a->getId())
 			->findOne();
-		$this->assertInstanceOf('MyOldArchivableTest30', $archive);
+		$this->assertInstanceOf('\MyOldArchivableTest30', $archive);
 		$this->assertEquals('bar', $archive->getTitle());
 		$this->assertEquals(12, $archive->getAge());
 	}
 
 	public function testDeleteCreatesArchiveByDefault()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
 		$a->delete();
-		$this->assertEquals(1, ArchivableTest10ArchiveQuery::create()->count());
-		$archive = ArchivableTest10ArchiveQuery::create()
+		$this->assertEquals(1, \ArchivableTest10ArchiveQuery::create()->count());
+		$archive = \ArchivableTest10ArchiveQuery::create()
 			->filterById($a->getId())
 			->findOne();
-		$this->assertInstanceOf('ArchivableTest10Archive', $archive);
+		$this->assertInstanceOf('\ArchivableTest10Archive', $archive);
 		$this->assertEquals('foo', $archive->getTitle());
 		$this->assertEquals(12, $archive->getAge());
 	}
 
 	public function testDeleteDoesNotCreateArchiveIfSpecified()
 	{
-		$a = new ArchivableTest30();
+		$a = new \ArchivableTest30();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		MyOldArchivableTest30Query::create()->deleteAll();
+		\MyOldArchivableTest30Query::create()->deleteAll();
 		$a->delete();
-		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
+		$this->assertEquals(0, \MyOldArchivableTest30Query::create()->count());
 	}
 
 	public function testHasSaveWithoutArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest30', 'saveWithoutArchive'));
+		$this->assertTrue(method_exists('\ArchivableTest30', 'saveWithoutArchive'));
 	}
 
 	public function testSaveWithoutArchiveDoesNotCreateArchiveOnInsert()
 	{
-		$a = new ArchivableTest30();
+		$a = new \ArchivableTest30();
 		$a->setTitle('foo');
 		$a->setAge(12);
-		MyOldArchivableTest30Query::create()->deleteAll();
+		\MyOldArchivableTest30Query::create()->deleteAll();
 		$a->saveWithoutArchive();
-		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
+		$this->assertEquals(0, \MyOldArchivableTest30Query::create()->count());
 	}
 
 	public function testSaveWithoutArchiveDoesNotCreateArchiveOnUpdate()
 	{
-		$a = new ArchivableTest30();
+		$a = new \ArchivableTest30();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
 		$a->setTitle('bar');
-		MyOldArchivableTest30Query::create()->deleteAll();
+		\MyOldArchivableTest30Query::create()->deleteAll();
 		$a->saveWithoutArchive();
-		$this->assertEquals(0, MyOldArchivableTest30Query::create()->count());
+		$this->assertEquals(0, \MyOldArchivableTest30Query::create()->count());
 	}
 
 	public function testHasDeleteWithoutArchiveMethod()
 	{
-		$this->assertTrue(method_exists('ArchivableTest10', 'deleteWithoutArchive'));
+		$this->assertTrue(method_exists('\ArchivableTest10', 'deleteWithoutArchive'));
 	}
 
 	public function testDeleteWithoutArchiveDoesNotCreateArchive()
 	{
-		$a = new ArchivableTest10();
+		$a = new \ArchivableTest10();
 		$a->setTitle('foo');
 		$a->setAge(12);
 		$a->save();
-		ArchivableTest10ArchiveQuery::create()->deleteAll();
+		\ArchivableTest10ArchiveQuery::create()->deleteAll();
 		$a->deleteWithoutArchive();
-		$this->assertEquals(0, ArchivableTest10ArchiveQuery::create()->count());
+		$this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
 	}
 
-}
-
-
-class FooArchiveQuery
-{
-	protected $pk;
-
-	public static function create()
-	{
-		return new self();
-	}
-
-	public function filterByPrimaryKey($pk)
-	{
-		$this->pk = $pk;
-		return $this;
-	}
-
-	public function findOne()
-	{
-		$archive = FooArchiveCollection::getArchiveSingleton();
-		$archive->setId($this->pk);
-		return $archive;
-	}
-}
-
-class FooArchive
-{
-	public $id, $title, $age;
-
-	public function setId($value)
-	{
-		$this->id = $value;
-	}
-
-	public function setTitle($value)
-	{
-		$this->title = $value;
-	}
-
-	public function setAge($value)
-	{
-		$this->age = $value;
-	}
-
-	public function save()
-	{
-		return $this;
-	}
-}
-
-class FooArchiveCollection
-{
-	protected static $instance;
-
-	public static function getArchiveSingleton()
-	{
-		if (null === self::$instance) {
-			self::$instance = new FooArchive();
-		}
-		return self::$instance;
-	}
 }
