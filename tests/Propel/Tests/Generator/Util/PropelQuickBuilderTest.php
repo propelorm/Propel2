@@ -25,9 +25,9 @@ class PropelQuickBuilderTest extends \PHPUnit_Framework_TestCase
 	{
 		$builder = new PropelQuickBuilder();
 		$builder->setPlatform(new MysqlPlatform());
-		$this->assertTrue($builder->getPLatform() instanceof MysqlPlatform);
+		$this->assertTrue($builder->getPlatform() instanceof MysqlPlatform);
 		$builder = new PropelQuickBuilder();
-		$this->assertTrue($builder->getPLatform() instanceof SqlitePlatform);
+		$this->assertTrue($builder->getPlatform() instanceof SqlitePlatform);
 	}
 
 	public function simpleSchemaProvider()

@@ -68,24 +68,24 @@ class SqlitePlatform extends DefaultPlatform
 			$lines[] = $this->getColumnDDL($column);
 		}
 
-		if ($table->hasPrimaryKey()) {
-		  $pk = $table->getPrimaryKey();
-		  if (count($pk) > 1 || !$pk[0]->isAutoIncrement()) {
-		    $lines[] = $this->getPrimaryKeyDDL($table);
-		  }
-		}
+        if ($table->hasPrimaryKey()) {
+            $pk = $table->getPrimaryKey();
+            if (count($pk) > 1 || !$pk[0]->isAutoIncrement()) {
+                $lines[] = $this->getPrimaryKeyDDL($table);
+            }
+        }
 
-		foreach ($table->getUnices() as $unique) {
-			$lines[] = $this->getUniqueDDL($unique);
-		}
+        foreach ($table->getUnices() as $unique) {
+            $lines[] = $this->getUniqueDDL($unique);
+        }
 
-		$sep = ",
-	";
+        $sep = ",
+    ";
 
 		$pattern = "
 %sCREATE TABLE %s
 (
-	%s
+    %s
 );
 ";
 		return sprintf($pattern,

@@ -14,7 +14,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
-use PDO;
+use \PDO;
 
 /**
  * Interface for RDBMS platform specific behaviour.
