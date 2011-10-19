@@ -10,49 +10,41 @@
 
 namespace Propel\Tests\Runtime\Query;
 
-use Propel\Tests\Helpers\Schemas\SchemasTestBase;
+use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
 
-use Propel\Runtime\Om\BasePeer;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for ModelCriteria withs schemas.
+ * Test class for ModelCriteria with namespaces.
  *
- * @author     Francois Zaninotto
- * @version    $Id: ModelCriteriaTest.php 2090 2010-12-13 22:37:03Z francois $
+ * @author     Pierre-Yves LEBECQ <py.lebecq@gmail.com>
  * @package    runtime.query
  */
-class ModelCriteriaWithSchemaTest extends SchemasTestBase
+class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 {
-
-	protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
-	{
-		$params = array();
-		$result = BasePeer::createSelectSql($criteria, $params);
-
-		$this->assertEquals($expectedSql, $result, $message);
-		$this->assertEquals($expectedParams, $params, $message);
-	}
-
-	public static function conditionsForTestReplaceNamesWithSchemas()
+	public static function conditionsForTestReplaceNamesWithNamespaces()
 	{
 		return array(
-			array('ContestBookstoreContest.PrizeBookId = ?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID = ?'), // basic case
-			array('ContestBookstoreContest.PrizeBookId=?', 'PrizeBookId', 'contest.bookstore_contest.PRIZE_BOOK_ID=?'), // without spaces
-			array('ContestBookstoreContest.Id<= ?', 'Id', 'contest.bookstore_contest.ID<= ?'), // with non-equal comparator
-			array('ContestBookstoreContest.BookstoreId LIKE ?', 'BookstoreId', 'contest.bookstore_contest.BOOKSTORE_ID LIKE ?'), // with SQL keyword separator
-			array('(ContestBookstoreContest.BookstoreId) LIKE ?', 'BookstoreId', '(contest.bookstore_contest.BOOKSTORE_ID) LIKE ?'), // with parenthesis
-			array('(ContestBookstoreContest.Id*1.5)=1', 'Id', '(contest.bookstore_contest.ID*1.5)=1') // ignore numbers
+			array('Foo\\Bar\\NamespacedBook.Title = ?', 'Title', 'book.TITLE = ?'), // basic case
+			array('Foo\\Bar\\NamespacedBook.Title=?', 'Title', 'book.TITLE=?'), // without spaces
+			array('Foo\\Bar\\NamespacedBook.Id<= ?', 'Id', 'book.ID<= ?'), // with non-equal comparator
+			array('Foo\\Bar\\NamespacedBook.AuthorId LIKE ?', 'AuthorId', 'book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
+			array('(Foo\\Bar\\NamespacedBook.AuthorId) LIKE ?', 'AuthorId', '(book.AUTHOR_ID) LIKE ?'), // with parenthesis
+			array('(Foo\\Bar\\NamespacedBook.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
+			// dealing with quotes
+			array("Foo\\Bar\\NamespacedBook.Id + ' ' + Foo\\Bar\\NamespacedBook.AuthorId", null, "book.ID + ' ' + book.AUTHOR_ID"),
+			array("'Foo\\Bar\\NamespacedBook.Id' + Foo\\Bar\\NamespacedBook.AuthorId", null, "'Foo\\Bar\\NamespacedBook.Id' + book.AUTHOR_ID"),
+			array("Foo\\Bar\\NamespacedBook.Id + 'Foo\\Bar\\NamespacedBook.AuthorId'", null, "book.ID + 'Foo\\Bar\\NamespacedBook.AuthorId'"),
 		);
 	}
 
 	/**
-	 * @dataProvider conditionsForTestReplaceNamesWithSchemas
+	 * @dataProvider conditionsForTestReplaceNamesWithNamespaces
 	 */
-	public function testReplaceNamesWithSchemas($origClause, $columnPhpName = false, $modifiedClause)
+	public function testReplaceNamesWithNamespaces($origClause, $columnPhpName = false, $modifiedClause)
 	{
-		$c = new TestableModelCriteriaWithSchema('bookstore-schemas', 'ContestBookstoreContest');
-		$this->doTestReplaceNames($c, ContestBookstoreContestPeer::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
+		$c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', 'Foo\\Bar\\NamespacedBook');
+		$this->doTestReplaceNames($c, Foo\Bar\NamespacedBookPeer::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
 	}
 
 	public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
@@ -67,7 +59,7 @@ class ModelCriteriaWithSchemaTest extends SchemasTestBase
 
 }
 
-class TestableModelCriteriaWithSchema extends ModelCriteria
+class TestableModelCriteriaWithNamespace extends ModelCriteria
 {
 	public $joins = array();
 
@@ -75,5 +67,4 @@ class TestableModelCriteriaWithSchema extends ModelCriteria
 	{
 		return parent::replaceNames($clause);
 	}
-
 }

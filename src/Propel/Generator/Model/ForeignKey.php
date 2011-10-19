@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Model;
 
+use \DOMNode;
+use \DOMDocument;
+
 /**
  * A Class for information about foreign keys of a table.
  *

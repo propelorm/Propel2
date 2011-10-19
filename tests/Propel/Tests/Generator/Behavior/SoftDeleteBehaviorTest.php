@@ -43,10 +43,10 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 	{
 		$table2 = Table4Peer::getTableMap();
 		$this->assertEquals(count($table2->getColumns()), 3, 'SoftDelete adds one columns by default');
-		$this->assertTrue(method_exists('Table4', 'getDeletedAt'), 'SoftDelete adds an updated_at column by default');
+		$this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\Table4', 'getDeletedAt'), 'SoftDelete adds an updated_at column by default');
 		$table1 = Table5Peer::getTableMap();
 		$this->assertEquals(count($table1->getColumns()), 3, 'SoftDelete does not add a column when it already exists');
-		$this->assertTrue(method_exists('Table5', 'getDeletedOn'), 'SoftDelete allows customization of deleted_column name');
+		$this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\Table5', 'getDeletedOn'), 'SoftDelete allows customization of deleted_column name');
 	}
 
 	public function testStaticSoftDeleteStatus()

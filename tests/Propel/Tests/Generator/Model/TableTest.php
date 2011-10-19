@@ -153,7 +153,7 @@ EOF;
         $table = new Table();
         $column = new Column('Foo');
         $table->addColumn($column);
-        
+
         return array(
             array($table, $column)
         );

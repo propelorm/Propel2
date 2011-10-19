@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @license    MIT License
+ * @license		MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
@@ -18,9 +18,9 @@ use \DateTimeZone;
 /**
  * Test for DateTime subclass to support serialization.
  *
- * @author     Alan Pinstein
- * @author     Soenke Ruempler
- * @package    runtime.util
+ * @author		 Alan Pinstein
+ * @author		 Soenke Ruempler
+ * @package		runtime.util
  */
 class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 {
@@ -69,7 +69,7 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 	{
 
 		// Because of a PHP bug ()
-		// we cannot use a timestamp format that includes a timezone.  It gets weird. :)
+		// we cannot use a timestamp format that includes a timezone.	It gets weird. :)
 		$now = date('Y-m-d H:i:s');
 
 		$dt = new DateTime($now);
@@ -178,12 +178,12 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 	public function provideValidNewInstanceValues()
 	{
 		return array(
-			'Y-m-d'           => array('2011-08-10', '2011-08-10 00:00:00'),
+			'Y-m-d'		       => array('2011-08-10', '2011-08-10 00:00:00'),
 			// 1312960848 : Wed, 10 Aug 2011 07:20:48 GMT
-			'unix_timestamp'  => array('1312960848', '2011-08-10 07:20:48'),
-			'Y-m-d H:is'      => array('2011-08-10 10:22:15', '2011-08-10 10:22:15'),
-			'Ymd'             => array('20110810', '2011-08-10 00:00:00'),
-			'Ymd'             => array('20110720', '2011-07-20 00:00:00'),
+			'unix_timestamp'	=> array('1312960848', '2011-08-10 07:20:48'),
+			'Y-m-d H:is'		  => array('2011-08-10 10:22:15', '2011-08-10 10:22:15'),
+			'Ymd'		         => array('20110810', '2011-08-10 00:00:00'),
+			'Ymd'		         => array('20110720', '2011-07-20 00:00:00'),
 			'datetime_object' => array(new DateTime('2011-08-10 10:23:10'), '2011-08-10 10:23:10')
 		);
 	}
@@ -193,10 +193,25 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 		return array(
 			// "1312960848" : Wed, 10 Aug 2011 07:20:48 GMT
 			// "2011-08-10 09:20:48" : GMT+1 DST (= GMT +2)
-			'unix_timestamp'  => array('1312960848', '2011-08-10 09:20:48'),
+			'unix_timestamp'	=> array('1312960848', '2011-08-10 09:20:48'),
 			// "1323517115" : Sat, 10 Dec 2011 11:38:35 GMT
 			// "2011-12-10 12:38:35" : GMT +1
-			'unix_timestamp'  => array('1323517115', '2011-12-10 12:38:35'),
+			'unix_timestamp'	=> array('1323517115', '2011-12-10 12:38:35'),
 		);
+	}
+
+	public function testIsTimestamp()
+	{
+		$this->assertEquals(false, TestPropelDateTime::isTimestamp('20110325'));
+		$this->assertEquals(true, TestPropelDateTime::isTimestamp(1319580000));
+		$this->assertEquals(false, TestPropelDateTime::isTimestamp('2011-07-20 00:00:00'));
+	}
+}
+
+class TestPropelDateTime extends PropelDateTime
+{
+	public static function isTimestamp($value)
+	{
+		return parent::isTimestamp($value);
 	}
 }
