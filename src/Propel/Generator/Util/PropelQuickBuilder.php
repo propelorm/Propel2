@@ -110,6 +110,7 @@ class PropelQuickBuilder
     {
         if (null === $this->database) {
             $xtad = new XmlToAppData($this->getPlatform());
+            $xtad->setGeneratorConfig($this->getConfig());
             $appData = $xtad->parseString($this->schema);
             $this->database = $appData->getDatabase(); // does final initialization
         }

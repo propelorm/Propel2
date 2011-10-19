@@ -12,6 +12,8 @@ namespace Propel\Generator\Config;
 
 use Propel\Generator\Model\Table;
 
+use \PDO;
+
 /**
  *
  * @package      propel.generator.config
@@ -25,14 +27,14 @@ interface GeneratorConfigInterface
      * @param      string $type The type of builder ('ddl', 'sql', etc.)
      * @return     DataModelBuilder
      */
-    public function getConfiguredBuilder(Table $table, $type);
+    function getConfiguredBuilder(Table $table, $type);
 
     /**
     * Gets a configured Pluralizer class.
     *
     * @return     Pluralizer
     */
-    public function getConfiguredPluralizer();
+    function getConfiguredPluralizer();
 
     /**
      * Gets a specific propel (renamed) property from the build.
@@ -40,7 +42,7 @@ interface GeneratorConfigInterface
      * @param      string $name
      * @return     mixed
      */
-    public function getBuildProperty($name);
+    function getBuildProperty($name);
 
     /**
      * Sets a specific propel (renamed) property from the build.
@@ -48,6 +50,21 @@ interface GeneratorConfigInterface
      * @param      string $name
      * @param      mixed $value
      */
-    public function setBuildProperty($name, $value);
+    function setBuildProperty($name, $value);
 
+    /**
+     * Creates and configures a new Platform class.
+     *
+     * @param      PDO $con
+     * @return     Platform
+     */
+    function getConfiguredPlatform(PDO $con = null, $database = null);
+
+    /**
+     * Gets a configured behavior class
+     *
+     * @param string $name a behavior name
+     * @return string a behavior class name
+     */
+    function getConfiguredBehavior($name);
 }

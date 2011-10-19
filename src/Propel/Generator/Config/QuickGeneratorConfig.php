@@ -10,10 +10,12 @@
 
 namespace Propel\Generator\Config;
 
-use Propel\Generator\Builder\Util\DefaultEnglishPluralizer;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Builder\Util\DefaultEnglishPluralizer;
 use Propel\Generator\Model\Table;
 
+
+use \PDO;
 use \Exception;
 
 /**
@@ -149,4 +151,25 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
         $this->buildProperties[$name] = $value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfiguredPlatform(PDO $con = null, $database = null)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfiguredBehavior($name)
+    {
+        $propname = 'behavior' . ucfirst(strtolower($name)) . 'Class';
+
+        if ($class = $this->getBuildProperty($propname)) {
+            return $class;
+        }
+
+        return null;
+    }
 }
