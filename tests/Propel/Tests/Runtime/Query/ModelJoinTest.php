@@ -13,6 +13,11 @@ namespace Propel\Tests\Runtime\Query;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\BookOpinionPeer;
+use Propel\Tests\Bookstore\ReaderFavoritePeer;
+
 use Propel\Runtime\Query\ModelJoin;
 use Propel\Runtime\Map\TableMap;
 
