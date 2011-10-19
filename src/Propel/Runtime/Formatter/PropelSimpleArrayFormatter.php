@@ -10,6 +10,9 @@
 
 namespace Propel\Runtime\Formatter;
 
+use \PDO;
+use \PDOStatement;
+
 /**
  * Array formatter for Propel select query
  * format() returns a PropelArrayCollection of associative arrays, a string,
