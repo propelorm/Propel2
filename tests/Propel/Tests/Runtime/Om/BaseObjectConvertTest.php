@@ -116,18 +116,18 @@ Price: 12.99
 PublisherId: 1234
 AuthorId: 5678
 Publisher:
-  Id: 1234
-  Name: Penguin
-  Books:
-    Book_0: '*RECURSION*'
+    Id: 1234
+    Name: Penguin
+    Books:
+        Book_0: '*RECURSION*'
 Author:
-  Id: 5678
-  FirstName: George
-  LastName: Byron
-  Email: null
-  Age: null
-  Books:
-    Book_0: '*RECURSION*'
+    Id: 5678
+    FirstName: George
+    LastName: Byron
+    Email: null
+    Age: null
+    Books:
+        Book_0: '*RECURSION*'
 
 EOF;
 		return array(array($expected));
