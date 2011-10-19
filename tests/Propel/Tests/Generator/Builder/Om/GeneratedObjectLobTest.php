@@ -20,7 +20,7 @@ use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Runtime\Query\Criteria;
 
 if (!defined('TESTS_BASE_DIR')) {
-    define('TESTS_BASE_DIR', realpath(dirname(__FILE__) . '/../../../../..'));
+    define('TESTS_BASE_DIR', realpath(__DIR__ . '/../../../../..'));
 }
 
 /**
