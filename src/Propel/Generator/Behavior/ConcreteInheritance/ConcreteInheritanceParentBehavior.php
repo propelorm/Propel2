@@ -48,6 +48,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
     public function objectMethods($builder)
     {
         $this->builder = $builder;
+        $this->builder->declareClasses('Propel\Runtime\Query\PropelQuery');
         $script = '';
         $this->addHasChildObject($script);
         $this->addGetChildObject($script);
