@@ -132,7 +132,7 @@ class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 		$nbBooks = PropelQuery::from('\Propel\Tests\Bookstore\Book')->count();
 		$this->assertEquals(6, $nbBooks);
 
-		$booksByJane = PropelQuery::from('Book b')
+		$booksByJane = PropelQuery::from('\Propel\Tests\Bookstore\Book b')
 			->join('b.Author a')
 			->where('a.LastName = ?', 'Austen')
 			->count();

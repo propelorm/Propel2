@@ -105,19 +105,19 @@ EOF;
 	{
 		$expected = <<<EOF
 \Propel\Tests\Bookstore\Book_0:
-  Id: 9012
-  Title: 'Don Juan'
-  ISBN: '0140422161'
-  Price: 12.99
-  PublisherId: 1234
-  AuthorId: 5678
+    Id: 9012
+    Title: 'Don Juan'
+    ISBN: '0140422161'
+    Price: 12.99
+    PublisherId: 1234
+    AuthorId: 5678
 \Propel\Tests\Bookstore\Book_1:
-  Id: 58
-  Title: 'Harry Potter and the Order of the Phoenix'
-  ISBN: 043935806X
-  Price: 10.99
-  PublisherId: null
-  AuthorId: null
+    Id: 58
+    Title: 'Harry Potter and the Order of the Phoenix'
+    ISBN: 043935806X
+    Price: 10.99
+    PublisherId: null
+    AuthorId: null
 
 EOF;
 		return array(array($expected));

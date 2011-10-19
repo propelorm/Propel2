@@ -49,7 +49,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testSaveOnReadOnlyEntityThrowsException()
 	{
@@ -61,12 +61,12 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testDeleteOnReadOnlyEntityThrowsException()
 	{
 		$col = new PropelObjectCollection();
-		$col->setModel('ContestView');
+		$col->setModel('\Propel\Tests\Bookstore\ContestView');
 		$cv = new ContestView();
 		$cv->setNew(false);
 		$col []= $cv;
@@ -149,7 +149,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
 		AuthorPeer::clearInstancePool();
 		BookPeer::clearInstancePool();
 		$coll = new PropelObjectCollection();
-		$coll->setFormatter(new PropelObjectFormatter(new ModelCriteria(null, 'Author')));
+		$coll->setFormatter(new PropelObjectFormatter(new ModelCriteria(null, 'Propel\Tests\Bookstore\Author')));
 		$coll []= $author;
 		$books = $coll->populateRelation('Book', null, $this->con);
 		$this->assertEquals(0, $books->count());

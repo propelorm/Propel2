@@ -192,7 +192,7 @@ class PropelCollectionTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testGetUnknownOffset()
 	{
@@ -252,7 +252,7 @@ class PropelCollectionTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testRemoveUnknownOffset()
 	{
@@ -325,12 +325,12 @@ class PropelCollectionTest extends BookstoreTestBase
 	public function testGetPeerClass()
 	{
 		$col = new PropelCollection();
-		$col->setModel('Book');
-		$this->assertEquals('BookPeer', $col->getPeerClass(), 'getPeerClass() returns the Peer class for the collection model');
+		$col->setModel('\Propel\Tests\Bookstore\Book');
+		$this->assertEquals('Propel\Tests\Bookstore\BookPeer', $col->getPeerClass(), 'getPeerClass() returns the Peer class for the collection model');
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testGetPeerClassNoModel()
 	{
@@ -341,7 +341,7 @@ class PropelCollectionTest extends BookstoreTestBase
 	public function testGetConnection()
 	{
 		$col = new PropelCollection();
-		$col->setModel('Book');
+		$col->setModel('\Propel\Tests\Bookstore\Book');
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
 		$this->assertEquals($con, $col->getConnection(), 'getConnection() returns a connection for the collection model');
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -349,7 +349,7 @@ class PropelCollectionTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testGetConnectionNoModel()
 	{
