@@ -13,6 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\PropelQuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
 
 /**
  * Tests the generated queries for object column types filters
@@ -41,21 +42,21 @@ class GeneratedQueryObjectColumnTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
-			$e0 = new ComplexColumnTypeEntity10();
+			$e0 = new \ComplexColumnTypeEntity10();
 			$e0->save();
-			$e1 = new ComplexColumnTypeEntity10();
+			$e1 = new \ComplexColumnTypeEntity10();
 			$e1->setBar($this->c1);
 			$e1->save();
-			$e2 = new ComplexColumnTypeEntity10();
+			$e2 = new \ComplexColumnTypeEntity10();
 			$e2->setBar($this->c2);
 			$e2->save();
-			ComplexColumnTypeEntity10Peer::clearInstancePool();
+			\ComplexColumnTypeEntity10Peer::clearInstancePool();
 		}
 	}
 
 	public function testColumnHydration()
 	{
-		$e = ComplexColumnTypeEntity10Query::create()
+		$e = \ComplexColumnTypeEntity10Query::create()
 			->orderById()
 			->offset(1)
 			->findOne();
@@ -64,11 +65,11 @@ EOF;
 
 	public function testWhere()
 	{
-		$nb = ComplexColumnTypeEntity10Query::create()
+		$nb = \ComplexColumnTypeEntity10Query::create()
 			->where('ComplexColumnTypeEntity10.Bar LIKE ?', '%1234%')
 			->count();
 		$this->assertEquals(1, $nb, 'object columns are searchable by serialized object using where()');
-		$e = ComplexColumnTypeEntity10Query::create()
+		$e = \ComplexColumnTypeEntity10Query::create()
 			->where('ComplexColumnTypeEntity10.Bar = ?', $this->c1)
 			->findOne();
 		$this->assertEquals($this->c1, $e->getBar(), 'object columns are searchable by object using where()');
@@ -76,15 +77,15 @@ EOF;
 
 	public function testFilterByColumn()
 	{
-		$e = ComplexColumnTypeEntity10Query::create()
+		$e = \ComplexColumnTypeEntity10Query::create()
 			->filterByBar($this->c1)
 			->findOne();
 		$this->assertEquals($this->c1, $e->getBar(), 'object columns are searchable by object');
-		$e = ComplexColumnTypeEntity10Query::create()
+		$e = \ComplexColumnTypeEntity10Query::create()
 			->filterByBar($this->c2)
 			->findOne();
 		$this->assertEquals($this->c2, $e->getBar(), 'object columns are searchable by object');
-		$e = ComplexColumnTypeEntity10Query::create()
+		$e = \ComplexColumnTypeEntity10Query::create()
 			->filterByBar($this->c1, Criteria::NOT_EQUAL)
 			->findOne();
 		$this->assertEquals($this->c2, $e->getBar(), 'object columns are searchable by object');

@@ -15,8 +15,10 @@ use Propel\Runtime\Connection\PropelPDO;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\PropelFormatter;
 use Propel\Runtime\Formatter\PropelObjectFormatter;
+use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Query\Criteria;
 
 use \PDO;
 use \PDOStatement;

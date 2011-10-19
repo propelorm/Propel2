@@ -13,6 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Util\PropelQuickBuilder;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
 
 /**
  * Tests the generated queries for enum column types filters
@@ -24,7 +25,7 @@ class GeneratedQueryEnumColumnTest extends \PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		if (!class_exists('ComplexColumnTypeEntity13')) {
+		if (!class_exists('\ComplexColumnTypeEntity13')) {
 			$schema = <<<EOF
 <database name="generated_object_complex_type_test_13">
 	<table name="complex_column_type_entity_13">
@@ -35,21 +36,21 @@ class GeneratedQueryEnumColumnTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
 			PropelQuickBuilder::buildSchema($schema);
-			$e0 = new ComplexColumnTypeEntity13();
+			$e0 = new \ComplexColumnTypeEntity13();
 			$e0->save();
-			$e1 = new ComplexColumnTypeEntity13();
+			$e1 = new \ComplexColumnTypeEntity13();
 			$e1->setBar('baz');
 			$e1->save();
-			$e2 = new ComplexColumnTypeEntity13();
+			$e2 = new \ComplexColumnTypeEntity13();
 			$e2->setBar('4');
 			$e2->save();
-			ComplexColumnTypeEntity13Peer::clearInstancePool();
+			\ComplexColumnTypeEntity13Peer::clearInstancePool();
 		}
 	}
 
 	public function testColumnHydration()
 	{
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->orderById()
 			->offset(1)
 			->findOne();
@@ -58,12 +59,12 @@ EOF;
 
 	public function testWhere()
 	{
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->where('ComplexColumnTypeEntity13.Bar = ?', 'baz')
 			->find();
 		$this->assertEquals(1, $e->count(), 'object columns are searchable by enumerated value using where()');
 		$this->assertEquals('baz', $e[0]->getBar(), 'object columns are searchable by enumerated value using where()');
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->where('ComplexColumnTypeEntity13.Bar IN ?', array('baz', 4))
 			->find();
 		$this->assertEquals(2, $e->count(), 'object columns are searchable by enumerated value using where()');
@@ -71,23 +72,23 @@ EOF;
 
 	public function testFilterByColumn()
 	{
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->filterByBar('4')
 			->findOne();
 		$this->assertEquals('4', $e->getBar(), 'enum columns are searchable by enumerated value');
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->filterByBar('baz')
 			->findOne();
 		$this->assertEquals('baz', $e->getBar(), 'enum columns are searchable by enumerated value');
-		$e = ComplexColumnTypeEntity13Query::create()
+		$e = \ComplexColumnTypeEntity13Query::create()
 			->filterByBar('baz', Criteria::NOT_EQUAL)
 			->findOne();
 		$this->assertEquals('4', $e->getBar(), 'enum columns are searchable by enumerated value');
-		$nb = ComplexColumnTypeEntity13Query::create()
+		$nb = \ComplexColumnTypeEntity13Query::create()
 			->filterByBar(array('baz', '4'), Criteria::IN)
 			->count();
 		$this->assertEquals(2, $nb, 'enum columns are searchable by enumerated value');
-		$nb = ComplexColumnTypeEntity13Query::create()
+		$nb = \ComplexColumnTypeEntity13Query::create()
 			->filterByBar(array('baz', '4'))
 			->count();
 		$this->assertEquals(2, $nb, 'enum columns filters default to Criteria IN when passed an array');
