@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
+use Propel\Tests\Bookstore\Author;
+
 use Propel\Runtime\Connection\PropelPDO;
 
 class TestAuthor extends Author
@@ -65,25 +67,4 @@ class TestAuthor extends Author
 		parent::postDelete($con);
 		$this->setLastName("Post-Deleted");
 	}
-}
-
-class TestAuthorDeleteFalse extends TestAuthor
-{
-	public function preDelete(PropelPDO $con = null)
-	{
-		parent::preDelete($con);
-		$this->setFirstName("Pre-Deleted");
-		return false;
-	}
-}
-
-class TestAuthorSaveFalse extends TestAuthor
-{
-	public function preSave(PropelPDO $con = null)
-	{
-		parent::preSave($con);
-		$this->setEmail("pre@save.com");
-		return false;
-	}
-
 }
