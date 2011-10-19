@@ -8,6 +8,8 @@
  * @license    MIT License
  */
 
+namespace Propel\Tests\Generator\Builder;
+
 use Propel\Runtime\Propel;
 
 /**
@@ -21,9 +23,6 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
 {
 	protected function setUp()
 	{
-		if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-			$this->markTestSkipped('Namespace support requires PHP 5.3');
-		}
 		parent::setUp();
 		Propel::init(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
 	}
@@ -219,7 +218,7 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
 	{
 		\Foo\Bar\NamespacedBookQuery::create()->deleteAll();
 		\Baz\NamespacedBookClubQuery::create()->deleteAll();
-		NamespacedBookListRelQuery::create()->deleteAll();
+		\Baz\NamespacedBookListRelQuery::create()->deleteAll();
 		$book1 = new \Foo\Bar\NamespacedBook();
 		$book1->setTitle('bar');
 		$book1->setISBN('1234');
@@ -239,9 +238,9 @@ class NamespaceTest extends \PHPUnit_Framework_TestCase
 		$bookClub2->save();
 		$this->assertEquals(2, $book1->countNamespacedBookClubs());
 		$this->assertEquals(1, $book2->countNamespacedBookClubs());
-		$nbRels = NamespacedBookListRelQuery::create()->count();
+		$nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
 		$this->assertEquals(3, $nbRels);
-		$con = Propel::getConnection(NamespacedBookListRelPeer::DATABASE_NAME);
+		$con = Propel::getConnection(\Baz\NamespacedBookListRelPeer::DATABASE_NAME);
 		$books = \Foo\Bar\NamespacedBookQuery::create()
 			->orderByTitle()
 			->joinWith('NamespacedBookListRel')
