@@ -39,8 +39,8 @@ class PropelYAMLParserTest extends \PHPUnit_Framework_TestCase
 "- 1
 - 2
 -
-  - 3
-  - 4
+    - 3
+    - 4
 ", 'nested arrays'),
 			array(array('a' => 1, 'b' => 2),
 "a: 1
@@ -60,7 +60,7 @@ b: bar
 			array(array('a' => 1, 'b' => array('foo' => 2)),
 "a: 1
 b:
-  foo: 2
+    foo: 2
 ", 'nested associative arrays'),
 			array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),
 "Id: 123
@@ -68,9 +68,9 @@ Title: 'Pride and Prejudice'
 AuthorId: 456
 ISBN: '0553213105'
 Author:
-  Id: 456
-  FirstName: Jane
-  LastName: Austen
+    Id: 456
+    FirstName: Jane
+    LastName: Austen
 ", 'array resulting from an object conversion'),
 			array(array('a1' => 1, 'b2' => 2), "a1: 1
 b2: 2
@@ -123,32 +123,32 @@ b2: 2
 		);
 		$yaml = <<<EOF
 book0:
-  Id: 123
-  Title: 'Pride and Prejudice'
-  AuthorId: 456
-  ISBN: '0553213105'
-  Author:
-    Id: 456
-    FirstName: Jane
-    LastName: Austen
+    Id: 123
+    Title: 'Pride and Prejudice'
+    AuthorId: 456
+    ISBN: '0553213105'
+    Author:
+        Id: 456
+        FirstName: Jane
+        LastName: Austen
 book1:
-  Id: 82
-  Title: 'Anna Karenina'
-  AuthorId: 543
-  ISBN: '0143035002'
-  Author:
-    Id: 543
-    FirstName: Leo
-    LastName: Tolstoi
+    Id: 82
+    Title: 'Anna Karenina'
+    AuthorId: 543
+    ISBN: '0143035002'
+    Author:
+        Id: 543
+        FirstName: Leo
+        LastName: Tolstoi
 book2:
-  Id: 567
-  Title: 'War and Peace'
-  AuthorId: 543
-  ISBN: 067003469X
-  Author:
-    Id: 543
-    FirstName: Leo
-    LastName: Tolstoi
+    Id: 567
+    Title: 'War and Peace'
+    AuthorId: 543
+    ISBN: 067003469X
+    Author:
+        Id: 543
+        FirstName: Leo
+        LastName: Tolstoi
 
 EOF;
 		return array(array($list, $yaml));
