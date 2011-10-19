@@ -20,6 +20,9 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
+use Propel\Tests\Bookstore\BookReaderQuery;
+use Propel\Tests\Bookstore\BookSummaryQuery;
+use Propel\Tests\Bookstore\ReviewQuery;
 
 use Propel\Runtime\Query\ModelWith;
 
@@ -40,8 +43,8 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['Author'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getModelName(), 'Author', 'A ModelWith computes the model name from the join');
-		$this->assertEquals($with->getModelPeerName(), 'AuthorPeer', 'A ModelWith computes the model peer name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\AuthorPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
 	}
 
 	public function testModelNameOneToMany()
@@ -51,8 +54,8 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['Book'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getModelName(), 'Book', 'A ModelWith computes the model peer name from the join');
-		$this->assertEquals($with->getModelPeerName(), 'BookPeer', 'A ModelWith computes the model peer name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\Book', $with->getModelName(), 'A ModelWith computes the model peer name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\BookPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
 	}
 
 	public function testModelNameAlias()
@@ -62,8 +65,8 @@ class ModelWithTest extends BookstoreTestBase
 		$joins = $q->getJoins();
 		$join = $joins['a'];
 		$with = new ModelWith($join);
-		$this->assertEquals($with->getModelName(), 'Author', 'A ModelWith computes the model peer name from the join');
-		$this->assertEquals($with->getModelPeerName(), 'AuthorPeer', 'A ModelWith computes the model peer name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model peer name from the join');
+		$this->assertEquals('Propel\Tests\Bookstore\AuthorPeer', $with->getModelPeerName(), 'A ModelWith computes the model peer name from the join');
 	}
 
 	public function testRelationManyToOne()
@@ -120,7 +123,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertTrue($with->isPrimary(), 'A ModelWith initialized from a primary join is primary');
 
 		$q = AuthorQuery::create()
-			->join('Author.Book')
+			->join('Propel\Tests\Bookstore\Author.Book')
 			->join('Book.Publisher');
 		$joins = $q->getJoins();
 		$join = $joins['Publisher'];
@@ -152,7 +155,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertNull($with->getLeftPhpName(), 'A ModelWith initialized from a primary join with alias has a null left phpName');
 
 		$q = AuthorQuery::create()
-			->join('Author.Book')
+			->join('Propel\Tests\Bookstore\Author.Book')
 			->join('Book.Publisher');
 		$joins = $q->getJoins();
 		$join = $joins['Publisher'];
@@ -160,7 +163,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = ReviewQuery::create()
-			->join('Review.Book')
+			->join('Propel\Tests\Bookstore\Review.Book')
 			->join('Book.Author')
 			->join('Book.Publisher');
 		$joins = $q->getJoins();
@@ -169,7 +172,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = ReviewQuery::create()
-			->join('Review.Book')
+			->join('Propel\Tests\Bookstore\Review.Book')
 			->join('Book.BookOpinion')
 			->join('BookOpinion.BookReader');
 		$joins = $q->getJoins();
@@ -181,7 +184,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('BookOpinion', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = BookReaderQuery::create()
-			->join('BookReader.BookOpinion')
+			->join('Propel\Tests\Bookstore\BookReader.BookOpinion')
 			->join('BookOpinion.Book')
 			->join('Book.Author');
 		$joins = $q->getJoins();
@@ -193,7 +196,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('Book', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
 
 		$q = BookSummaryQuery::create()
-			->join('BookSummary.SummarizedBook')
+			->join('Propel\Tests\Bookstore\BookSummary.SummarizedBook')
 			->join('SummarizedBook.Author');
 		$joins = $q->getJoins();
 		$join = $joins['Author'];
@@ -225,7 +228,7 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('b', $with->getRightPhpName(), 'A ModelWith initialized from a primary join with alias uses the alias as right phpName');
 
 		$q = AuthorQuery::create()
-			->join('Author.Book')
+			->join('Propel\Tests\Bookstore\Author.Book')
 			->join('Book.Publisher');
 		$joins = $q->getJoins();
 		$join = $joins['Publisher'];
@@ -233,14 +236,14 @@ class ModelWithTest extends BookstoreTestBase
 		$this->assertEquals('Publisher', $with->getRightPhpName(), 'A ModelWith has a right phpName even when there are previous joins');
 
 		$q = BookSummaryQuery::create()
-			->join('BookSummary.SummarizedBook');
+			->join('Propel\Tests\Bookstore\BookSummary.SummarizedBook');
 		$joins = $q->getJoins();
 		$join = $joins['SummarizedBook'];
 		$with = new ModelWith($join);
 		$this->assertEquals('SummarizedBook', $with->getRightPhpName(), 'A ModelWith uses the relation name rather than the class phpName when it exists');
 
 		$q = BookSummaryQuery::create()
-			->join('BookSummary.SummarizedBook')
+			->join('Propel\Tests\Bookstore\BookSummary.SummarizedBook')
 			->join('SummarizedBook.Author');
 		$joins = $q->getJoins();
 		$join = $joins['Author'];
