@@ -45,13 +45,13 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 	public function testSelectStringNoResult()
 	{
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->where('Book.Title = ?', 'kdjfhlkdsh');
+		$c->where('Propel\Tests\Bookstore\Book.Title = ?', 'kdjfhlkdsh');
 		$c->select('Title');
 		$titles = $c->find($this->con);
 
 		$expectedSQL = 'SELECT book.TITLE AS "Title" FROM `book` WHERE book.TITLE = \'kdjfhlkdsh\'';
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(string) selects a single column');
-		$this->assertTrue($titles instanceof PropelArrayCollection, 'find() called after select(string) returns a PropelArrayCollection object');
+		$this->assertInstanceOf('Propel\Runtime\Collection\PropelArrayCollection', $titles, 'find() called after select(string) returns a PropelArrayCollection object');
 		$this->assertTrue(is_array($titles->getData()), 'find() called after select(string) returns an empty PropelArrayCollection object');
 		$this->assertEquals(0, count($titles), 'find() called after select(string) returns an empty array if no record is found');
 
@@ -71,7 +71,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select() accepts short column names');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->select('Book.Title');
+		$c->select('Propel\Tests\Bookstore\Book.Title');
 		$titles = $c->find();
 		$expectedSQL = 'SELECT book.TITLE AS "Book.Title" FROM `book`';
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select() accepts complete column names');
@@ -95,8 +95,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($titles->shift(), 'Harry Potter and the Order of the Phoenix', 'find() called after select(string) returns an array of column values');
 		$this->assertEquals($titles->shift(), 'Quicksilver', 'find() called after select(string) returns an array of column values');
 
-		$c = new ModelCriteria('bookstore', 'Author');
-		$c->where('Author.FirstName = ?', 'Neal');
+		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+		$c->where('Propel\Tests\Bookstore\Author.FirstName = ?', 'Neal');
 		$c->select('FirstName');
 		$authors = $c->find($this->con);
 		$this->assertEquals($authors->count(), 1, 'find() called after select(string) allows for where() statements');
@@ -117,8 +117,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertTrue(is_string($title),'findOne() called after select(string) returns a string');
 		$this->assertEquals($title, 'Harry Potter and the Order of the Phoenix', 'findOne() called after select(string) returns the column value of the first row matching the query');
 
-		$c = new ModelCriteria('bookstore', 'Author');
-		$c->where('Author.FirstName = ?', 'Neal');
+		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+		$c->where('Propel\Tests\Bookstore\Author.FirstName = ?', 'Neal');
 		$c->select('FirstName');
 		$author = $c->findOne($this->con);
 		$this->assertEquals(count($author), 1, 'findOne() called after select(string) allows for where() statements');
@@ -132,7 +132,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($this->con);
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select('Title');
 		$titles = $c->find($this->con);
@@ -141,14 +141,14 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(string) allows for join() statements');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select('Author.FirstName');
 		$titles = $c->find($this->con);
 		$this->assertEquals($titles->shift(), 'Neal', 'find() called after select(string) will return values from the joined table using complete column names');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select('Title');
 		$title = $c->findOne($this->con);
@@ -157,7 +157,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'findOne() called after select(string) allows for where() statements');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select('Author.FirstName');
 		$title = $c->findOne($this->con);
@@ -186,12 +186,12 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($this->con);
 
 		// fix for a bug/limitation in pdo_dblib where it truncates columnnames to a maximum of 31 characters when doing PDO::FETCH_ASSOC
-		$c = new ModelCriteria('bookstore', 'BookstoreEmployeeAccount');
+		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployeeAccount');
 		$c->select(array('BookstoreEmployeeAccount.Authenticator', 'BookstoreEmployeeAccount.Password'));
 		$account = $c->findOne($this->con);
 		$this->assertEquals($account, array('BookstoreEmployeeAccount.Authenticator' => 'Password', 'BookstoreEmployeeAccount.Password' => 'johnp4ss'), 'select() does not mind long column names');
 
-		$c = new ModelCriteria('bookstore', 'Author');
+		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select(array('FirstName', 'LastName'));
 		$authors = $c->find($this->con);
@@ -205,8 +205,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::depopulate($this->con);
 		BookstoreDataPopulator::populate($this->con);
 
-		$c = new ModelCriteria('bookstore', 'Author');
-		$c->where('Author.FirstName = ?', 'Neal');
+		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+		$c->where('Propel\Tests\Bookstore\Author.FirstName = ?', 'Neal');
 		$c->select(array('FirstName', 'LastName'));
 		$author = $c->findOne($this->con);
 		$this->assertEquals(count($author), 2, 'findOne() called after select(array) allows for where() statements');
@@ -220,7 +220,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($this->con);
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select(array('Title', 'ISBN'));
 		$titles = $c->find($this->con);
@@ -229,14 +229,14 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(array) allows for join() statements');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select(array('Author.FirstName', 'Author.LastName'));
 		$titles = $c->find($this->con);
 		$this->assertEquals(array_values($titles->shift()), array('Neal', 'Stephenson'), 'find() called after select(array) will return values from the joined table using complete column names');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select(array('Title', 'ISBN'));
 		$title = $c->findOne($this->con);
@@ -245,7 +245,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'findOne() called after select(array) allows for join() statements');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->where('Author.FirstName = ?', 'Neal');
 		$c->select(array('Author.FirstName', 'Author.LastName'));
 		$title = $c->findOne($this->con);
@@ -258,8 +258,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($this->con);
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
-		$c->orderBy('Book.Title');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
+		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
 		$c->select(array('Author.LastName', 'Book.Title'));
 		$rows = $c->find($this->con);
 		$expectedSQL = 'SELECT author.LAST_NAME AS "Author.LastName", book.TITLE AS "Book.Title" FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID) ORDER BY book.TITLE ASC';
@@ -321,10 +321,10 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		BookstoreDataPopulator::populate($this->con);
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->join('Book.Author');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->withColumn('LOWER(Book.Title)', 'LowercaseTitle');
 		$c->select(array('LowercaseTitle', 'Book.Title'));
-		$c->orderBy('Book.Title');
+		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
 		$rows = $c->find($this->con);
 		$expectedSQL = 'SELECT LOWER(book.TITLE) AS LowercaseTitle, book.TITLE AS "Book.Title" FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID) ORDER BY book.TITLE ASC';
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'find() called after select(array) can cope with a column added with withColumn()');
