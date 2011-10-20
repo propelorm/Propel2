@@ -135,7 +135,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testInsertAtNegativeRank()
 	{
@@ -145,7 +145,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testInsertAtOverMaxRank()
 	{
@@ -155,7 +155,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
   /**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testInsertAtNoScope()
 	{
@@ -179,7 +179,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
   /**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testInsertAtBottomNoScope()
 	{
@@ -222,7 +222,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testMoveToNewObject()
 	{
@@ -231,7 +231,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testMoveToNegativeRank()
 	{
@@ -240,7 +240,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends BookstoreSortab
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testMoveToOverMaxRank()
 	{

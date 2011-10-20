@@ -24,6 +24,7 @@ class SortableBehaviorObjectBuilderModifier
     protected $builder;
     protected $objectClassname;
     protected $peerClassname;
+    protected $peerFullClassname;
 
     public function __construct($behavior)
     {
@@ -52,6 +53,7 @@ class SortableBehaviorObjectBuilderModifier
         $this->objectClassname = $builder->getStubObjectBuilder()->getClassname();
         $this->queryClassname = $builder->getStubQueryBuilder()->getClassname();
         $this->peerClassname = $builder->getStubPeerBuilder()->getClassname();
+        $this->peerFullClassname = $builder->getStubPeerBuilder()->getFullyQualifiedClassname();
     }
 
     /**
@@ -295,7 +297,7 @@ public function getPrevious(PropelPDO \$con = null)
     protected function addInsertAtRank(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
+        $peerClassname = $this->peerFullClassname;
         $script .= "
 /**
  * Insert at specified rank
@@ -595,7 +597,7 @@ public function moveToBottom(PropelPDO \$con = null)
     protected function addRemoveFromList(&$script)
     {
         $useScope = $this->behavior->useScope();
-        $peerClassname = $this->peerClassname;
+        $peerClassname = $this->peerFullClassname;
         $script .= "
 /**
  * Removes the current object from the list.

@@ -60,7 +60,7 @@ class SortableBehaviorQueryBuilderModifierTest extends BookstoreSortableTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testOrderByRankIncorrectDirection()
 	{
