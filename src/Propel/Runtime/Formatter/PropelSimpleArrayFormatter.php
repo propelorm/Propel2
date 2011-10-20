@@ -23,7 +23,7 @@ use \PDOStatement;
  * @package    propel.runtime.formatter
  */
 class PropelSimpleArrayFormatter extends PropelFormatter {
-    protected $collectionName = 'PropelArrayCollection';
+    protected $collectionName = '\Propel\Runtime\Collection\PropelArrayCollection';
 
     public function format(PDOStatement $stmt) {
         $this->checkInit ();
