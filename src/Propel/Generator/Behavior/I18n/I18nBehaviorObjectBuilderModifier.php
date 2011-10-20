@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\PropelTypes;
+
 /**
  * Allows translation of text columns through transparent one-to-many relationship.
  * Modifier for the object builder.

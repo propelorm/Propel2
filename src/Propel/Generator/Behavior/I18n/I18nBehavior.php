@@ -11,6 +11,8 @@
 namespace Propel\Generator\Behavior\I18n;
 
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\PropelTypes;
 
 /**
  * Allows translation of text columns through transparent one-to-many relationship

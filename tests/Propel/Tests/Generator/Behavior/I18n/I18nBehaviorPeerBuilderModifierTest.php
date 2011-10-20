@@ -14,6 +14,7 @@ use Propel\Generator\Util\PropelQuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Util\BasePeer;
 
 /**
  * Tests for I18nBehavior class peer modifier
@@ -41,27 +42,27 @@ class I18nBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_TestCase
 </database>
 EOF;
 		PropelQuickBuilder::buildSchema($schema);
-		$this->assertEquals('en_EN', I18nBehaviorTest01Peer::DEFAULT_LOCALE);
-		$this->assertEquals('fr_FR', I18nBehaviorTest02Peer::DEFAULT_LOCALE);
-	}
+        $this->assertEquals('en_EN', \I18nBehaviorTest01Peer::DEFAULT_LOCALE);
+        $this->assertEquals('fr_FR', \I18nBehaviorTest02Peer::DEFAULT_LOCALE);
+    }
 
-	public function testFieldKeys()
-	{
-		$schema = <<<EOF
+    public function testFieldKeys()
+    {
+        $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-	<table name="i18n_behavior_test_03">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="foo1" type="VARCHAR" />
-		<column name="foo2" type="VARCHAR" />
-		<column name="foo3" type="VARCHAR" />
-		<behavior name="i18n">
-			<parameter name="i18n_columns" value="foo2" />
-		</behavior>
-	</table>
+    <table name="i18n_behavior_test_03">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="foo1" type="VARCHAR" />
+        <column name="foo2" type="VARCHAR" />
+        <column name="foo3" type="VARCHAR" />
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="foo2" />
+        </behavior>
+    </table>
 </database>
 EOF;
-		PropelQuickBuilder::buildSchema($schema);
-		$this->assertEquals(array(0, 1, 2), I18nBehaviorTest03Peer::getFieldNames(BasePeer::TYPE_NUM));
+        PropelQuickBuilder::buildSchema($schema);
+        $this->assertEquals(array(0, 1, 2), \I18nBehaviorTest03Peer::getFieldNames(BasePeer::TYPE_NUM));
 	}
 
 }

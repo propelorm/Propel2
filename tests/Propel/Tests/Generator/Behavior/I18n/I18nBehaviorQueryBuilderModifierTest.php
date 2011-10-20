@@ -14,6 +14,8 @@ use Propel\Generator\Util\PropelQuickBuilder;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Util\BasePeer;
 
 /**
  * Tests for I18nBehavior class query modifier
@@ -26,7 +28,7 @@ class I18nBehaviorQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		if (!class_exists('I18nBehaviorTest11')) {
+		if (!class_exists('\I18nBehaviorTest11')) {
 			$schema = <<<EOF
 <database name="i18n_behavior_test_10">
 	<table name="i18n_behavior_test_11">
@@ -59,7 +61,7 @@ EOF;
 
 	public function testJoinI18nUsesDefaultLocaleInJoinCondition()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->joinI18n();
 		$params = array();
 		$sql = BasePeer::createSelectSQL($q, $params);
@@ -70,7 +72,7 @@ EOF;
 
 	public function testJoinI18nUsesLocaleInJoinCondition()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->joinI18n('fr_FR');
 		$params = array();
 		$sql = BasePeer::createSelectSQL($q, $params);
@@ -81,7 +83,7 @@ EOF;
 
 	public function testJoinI18nAcceptsARelationAlias()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->joinI18n('en_EN', 'I18n');
 		$params = array();
 		$sql = BasePeer::createSelectSQL($q, $params);
@@ -92,7 +94,7 @@ EOF;
 
 	public function testJoinI18nAcceptsAJoinType()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->joinI18n('en_EN', null, Criteria::INNER_JOIN);
 		$params = array();
 		$sql = BasePeer::createSelectSQL($q, $params);
@@ -103,9 +105,9 @@ EOF;
 
 	public function testJoinI18nCreatesACorrectQuery()
 	{
-		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
+		$con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
-		I18nBehaviorTest11Query::create()
+		\I18nBehaviorTest11Query::create()
 			->joinI18n('fr_FR')
 			->find($con);
 		$expected = "SELECT i18n_behavior_test_11.ID, i18n_behavior_test_11.FOO FROM i18n_behavior_test_11 LEFT JOIN i18n_behavior_test_11_i18n ON (i18n_behavior_test_11.ID=i18n_behavior_test_11_i18n.ID AND i18n_behavior_test_11_i18n.LOCALE = 'fr_FR')";
@@ -115,7 +117,7 @@ EOF;
 
 	public function testUseI18nQueryAddsTheProperJoin()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->useI18nQuery('fr_FR')
 				->filterByBar('bar')
 			->endUse();
@@ -129,7 +131,7 @@ EOF;
 
 	public function testUseI18nQueryAcceptsARelationAlias()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->useI18nQuery('fr_FR', 'I18n')
 				->filterByBar('bar')
 			->endUse();
@@ -143,9 +145,9 @@ EOF;
 
 	public function testUseI18nQueryCreatesACorrectQuery()
 	{
-		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
+		$con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
-		I18nBehaviorTest11Query::create()
+		\I18nBehaviorTest11Query::create()
 			->useI18nQuery('fr_FR')
 				->filterByBar('bar')
 			->endUse()
@@ -157,7 +159,7 @@ EOF;
 
 	public function testJoinWithI18nAddsTheI18nColumns()
 	{
-		$q = I18nBehaviorTest11Query::create()
+		$q = \I18nBehaviorTest11Query::create()
 			->joinWithI18n();
 		$params = array();
 		$sql = BasePeer::createSelectSQL($q, $params);
@@ -168,12 +170,12 @@ EOF;
 
 	public function testJoinWithI18nDoesNotPruneResultsWithoutTranslation()
 	{
-		I18nBehaviorTest11Query::create()->deleteAll();
-		I18nBehaviorTest11I18nQuery::create()->deleteAll();
-		$o = new I18nBehaviorTest11();
+		\I18nBehaviorTest11Query::create()->deleteAll();
+		\I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		$o = new \I18nBehaviorTest11();
 		$o->setFoo(123);
 		$o->save();
-		$res = I18nBehaviorTest11Query::create()
+		$res = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN')
 			->findOne();
 		$this->assertEquals($o, $res);
@@ -181,12 +183,12 @@ EOF;
 
 	public function testJoinWithI18nPrunesResultsWithoutTranslationWhenUsingInnerJoin()
 	{
-		I18nBehaviorTest11Query::create()->deleteAll();
-		I18nBehaviorTest11I18nQuery::create()->deleteAll();
-		$o = new I18nBehaviorTest11();
+		\I18nBehaviorTest11Query::create()->deleteAll();
+		\I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		$o = new \I18nBehaviorTest11();
 		$o->setFoo(123);
 		$o->save();
-		$res = I18nBehaviorTest11Query::create()
+		$res = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN', Criteria::INNER_JOIN)
 			->findOne();
 		$this->assertNull($res);
@@ -194,20 +196,20 @@ EOF;
 
 	public function testJoinWithI18nHydratesRelatedObject()
 	{
-		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
+		$con = Propel::getConnection(\I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
-		I18nBehaviorTest11Query::create()->deleteAll();
-		I18nBehaviorTest11I18nQuery::create()->deleteAll();
-		$o = new I18nBehaviorTest11();
+		\I18nBehaviorTest11Query::create()->deleteAll();
+		\I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		$o = new \I18nBehaviorTest11();
 		$o->setFoo(123);
 		$o->setLocale('en_EN');
 		$o->setBar('hello');
 		$o->setLocale('fr_FR');
 		$o->setBar('bonjour');
 		$o->save();
-		I18nBehaviorTest11Peer::clearInstancePool();
-		I18nBehaviorTest11I18nPeer::clearInstancePool();
-		$o = I18nBehaviorTest11Query::create()
+		\I18nBehaviorTest11Peer::clearInstancePool();
+		\I18nBehaviorTest11I18nPeer::clearInstancePool();
+		$o = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN')
 			->findOne($con);
 		$count = $con->getQueryCount();
@@ -218,20 +220,20 @@ EOF;
 
 	public function testJoinWithI18nSetsTheLocaleOnResults()
 	{
-		I18nBehaviorTest11Query::create()->deleteAll();
-		I18nBehaviorTest11I18nQuery::create()->deleteAll();
-		$o = new I18nBehaviorTest11();
+		\I18nBehaviorTest11Query::create()->deleteAll();
+		\I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		$o = new \I18nBehaviorTest11();
 		$o->setFoo(123);
 		$o->setLocale('en_EN');
 		$o->setBar('hello');
 		$o->setLocale('fr_FR');
 		$o->setBar('bonjour');
 		$o->save();
-		$o1 = I18nBehaviorTest11Query::create()
+		$o1 = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN')
 			->findOne();
 		$this->assertEquals('en_EN', $o1->getLocale());
-		$o2 = I18nBehaviorTest11Query::create()
+		$o2 = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('fr_FR')
 			->findOne();
 		$this->assertEquals('fr_FR', $o2->getLocale());
@@ -239,11 +241,11 @@ EOF;
 
 	public function testJoinWithI18nAndLimitDoesNotThrowException()
 	{
-		$res = I18nBehaviorTest11Query::create()
+		$res = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN')
 			->limit(2)
 			->find();
-		$this->assertInstanceOf('PropelObjectCollection', $res);
+		$this->assertInstanceOf('\Propel\Runtime\Collection\PropelObjectCollection', $res);
 	}
 
 	// This is not a desired behavior, but there is no way to overcome it
@@ -260,11 +262,11 @@ EOF;
 		$this->markTestSkipped();
 		$con = Propel::getConnection(I18nBehaviorTest11Peer::DATABASE_NAME);
 		$con->useDebug(true);
-		I18nBehaviorTest11Query::create()->deleteAll();
-		I18nBehaviorTest11I18nQuery::create()->deleteAll();
+		\I18nBehaviorTest11Query::create()->deleteAll();
+		\I18nBehaviorTest11I18nQuery::create()->deleteAll();
 		$o = new I18nBehaviorTest11();
 		$o->save();
-		$o = I18nBehaviorTest11Query::create()
+		$o = \I18nBehaviorTest11Query::create()
 			->joinWithI18n('en_EN')
 			->findOne($con);
 		$count = $con->getQueryCount();
