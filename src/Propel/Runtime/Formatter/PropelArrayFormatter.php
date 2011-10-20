@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\Exception\PropelException;
+
 use \PDO;
 use \PDOStatement;
 
@@ -118,7 +120,7 @@ class PropelArrayFormatter extends PropelFormatter
             // determine class to use
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func(array($modelWith->getModelPeerName(), 'getOMClass'), $row, $col, false);
-                $refl = new ReflectionClass($class);
+                $refl = new \ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant($class . 'Peer::NUM_COLUMNS');
                     continue;
