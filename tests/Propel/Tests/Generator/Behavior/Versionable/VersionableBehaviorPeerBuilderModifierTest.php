@@ -27,7 +27,7 @@ class VersionableBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_Test
 
 	public function setUp()
 	{
-		if (!class_exists('VersionableBehaviorTest10')) {
+		if (!class_exists('\VersionableBehaviorTest10')) {
 			$schema = <<<EOF
 <database name="versionable_behavior_test_10">
 	<table name="versionable_behavior_test_10">
@@ -43,11 +43,11 @@ EOF;
 
 	public function testIsVersioningEnabled()
 	{
-		$this->assertTrue(VersionableBehaviorTest10Peer::isVersioningEnabled());
-		VersionableBehaviorTest10Peer::disableVersioning();
-		$this->assertFalse(VersionableBehaviorTest10Peer::isVersioningEnabled());
-		VersionableBehaviorTest10Peer::enableVersioning();
-		$this->assertTrue(VersionableBehaviorTest10Peer::isVersioningEnabled());
+		$this->assertTrue(\VersionableBehaviorTest10Peer::isVersioningEnabled());
+		\VersionableBehaviorTest10Peer::disableVersioning();
+		$this->assertFalse(\VersionableBehaviorTest10Peer::isVersioningEnabled());
+		\VersionableBehaviorTest10Peer::enableVersioning();
+		$this->assertTrue(\VersionableBehaviorTest10Peer::isVersioningEnabled());
 	}
 
 }
