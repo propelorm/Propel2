@@ -15,6 +15,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Test class for DatabaseMap.
@@ -134,7 +135,7 @@ class DatabaseMapTest extends BookstoreTestBase
 
   public function testGetTableByPhpNameNotLoaded()
   {
-		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
+		$this->assertEquals('book', Propel::getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the Peer class is generated and autoloaded');
   }
 
 }

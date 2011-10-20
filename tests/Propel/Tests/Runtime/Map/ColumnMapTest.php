@@ -17,6 +17,7 @@ use Propel\Tests\Bookstore\BookstoreEmployeePeer;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Test class for TableMap.
