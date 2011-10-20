@@ -15,6 +15,7 @@ use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 use Propel\Tests\Bookstore\Behavior\Table9;
 use Propel\Tests\Bookstore\Behavior\Table9Peer;
 
+use Propel\Runtime\Query\Criteria;
 
 /**
  * Tests for NestedSetBehaviorPeerBuilderModifier class
@@ -34,7 +35,7 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 
 	public function testRetrieveRoot()
 	{
-		$this->assertTrue(method_exists('Table9Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
 		Table9Peer::doDeleteAll();
 		$this->assertNull(Table9Peer::retrieveRoot(), 'retrieveRoot() returns null as long as no root node is defined');
 		$t1 = new Table9();
@@ -62,7 +63,7 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 
 	public function testIsValid()
 	{
-		$this->assertTrue(method_exists('Table9Peer', 'isValid'), 'nested_set adds an isValid() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Peer', 'isValid'), 'nested_set adds an isValid() method');
 		$this->assertFalse(Table9Peer::isValid(null), 'isValid() returns false when passed null ');
 		$t1 = new Table9();
 		$this->assertFalse(Table9Peer::isValid($t1), 'isValid() returns false when passed an empty node object');
@@ -266,7 +267,7 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 
 	public function testUpdateLoadedNodes()
 	{
-		$this->assertTrue(method_exists('Table9Peer', 'updateLoadedNodes'), 'nested_set adds a updateLoadedNodes() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Peer', 'updateLoadedNodes'), 'nested_set adds a updateLoadedNodes() method');
 		$fixtures = $this->initTree();
 		Table9Peer::shiftRLValues(1, 5);
 		$expected = array(
@@ -302,7 +303,7 @@ class NestedSetBehaviorPeerBuilderModifierTest extends BookstoreNestedSetTestBas
 
 	public function testMakeRoomForLeaf()
 	{
-		$this->assertTrue(method_exists('Table9Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1

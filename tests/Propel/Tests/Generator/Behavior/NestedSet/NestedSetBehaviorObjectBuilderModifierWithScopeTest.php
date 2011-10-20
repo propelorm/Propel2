@@ -11,12 +11,14 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
+use Propel\Tests\Helpers\Bookstore\Behavior\PublicTable10;
 
 use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 use Propel\Tests\Bookstore\Behavior\Table10Query;
 
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
@@ -35,7 +37,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testSaveRootInTreeWithExistingRootWithSameScope()
 	{
@@ -240,7 +242,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
 	public function testInsertAsFirstChildOf()
 	{
-		$this->assertTrue(method_exists('Table10', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
 		$fixtures = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1
@@ -309,7 +311,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
 	public function testInsertAsLastChildOf()
 	{
-		$this->assertTrue(method_exists('Table10', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
 		$fixtures = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1
@@ -378,7 +380,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
 	public function testInsertAsPrevSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table10', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
 		$fixtures = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1
@@ -458,7 +460,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends BookstoreNeste
 
 	public function testInsertAsNextSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table10', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
 		$fixtures = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1

@@ -217,6 +217,9 @@ if (\$this->isInTree()) {
         $this->addGetBranch($script);
         $this->addGetAncestors($script);
 
+        $this->builder->declareClass(
+            $builder->getStubObjectBuilder()->getFullyQualifiedClassname()
+        );
         $this->addAddChild($script);
         $this->addInsertAsFirstChildOf($script);
         $this->addInsertAsLastChildOf($script);
@@ -231,6 +234,9 @@ if (\$this->isInTree()) {
 
         $this->addDeleteDescendants($script);
 
+        $this->builder->declareClass(
+            '\Propel\Runtime\Om\NestedSetRecursiveIterator'
+        );
         $this->addGetIterator($script);
 
         if ($this->getParameter('method_proxies') == 'true')

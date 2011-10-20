@@ -12,8 +12,10 @@ namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 
-use Propel\Tests\Bookstore\Table9;
-use Propel\Tests\Bookstore\Table9Query;
+use Propel\Tests\Bookstore\Behavior\Table9;
+use Propel\Tests\Bookstore\Behavior\Table9Query;
+
+use Propel\Runtime\Collection\PropelObjectCollection;
 
 /**
  * Tests for NestedSetBehaviorQueryBuilderModifier class
@@ -252,7 +254,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends BookstoreNestedSetTestBa
 
 	public function testFindRoot()
 	{
-		$this->assertTrue(method_exists('Table9Query', 'findRoot'), 'nested_set adds a findRoot() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Query', 'findRoot'), 'nested_set adds a findRoot() method');
 		Table9Query::create()->deleteAll();
 		$this->assertNull(Table9Query::create()->findRoot(), 'findRoot() returns null as long as no root node is defined');
 		$t1 = new Table9();

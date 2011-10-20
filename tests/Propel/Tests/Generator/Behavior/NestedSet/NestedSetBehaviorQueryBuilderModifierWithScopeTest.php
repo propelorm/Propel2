@@ -15,6 +15,8 @@ use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
 use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Query;
 
+use Propel\Runtime\Collection\PropelObjectCollection;
+
 /**
  * Tests for NestedSetBehaviorQueryBuilderModifier class with scope enabled
  *
@@ -230,7 +232,7 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends BookstoreNested
 
 	public function testFindRoot()
 	{
-		$this->assertTrue(method_exists('Table10Query', 'findRoot'), 'nested_set adds a findRoot() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10Query', 'findRoot'), 'nested_set adds a findRoot() method');
 		Table10Query::create()->deleteAll();
 		$this->assertNull(Table10Query::create()->findRoot(1), 'findRoot() returns null as long as no root node is defined');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();

@@ -18,6 +18,8 @@ use Propel\Tests\Bookstore\Behavior\Table9Peer;
 use Propel\Tests\Bookstore\Behavior\Table10;
 use Propel\Tests\Bookstore\Behavior\Table10Peer;
 
+use Propel\Runtime\Query\Criteria;
+
 /**
  * Tests for NestedSetBehaviorPeerBuilderModifier class
  *
@@ -37,8 +39,8 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 
 	public function testRetrieveRoots()
 	{
-		$this->assertTrue(method_exists('Table10Peer', 'retrieveRoots'), 'nested_set adds a retrieveRoots() method for trees that use scope');
-		$this->assertFalse(method_exists('Table9Peer', 'retrieveRoots'), 'nested_set does not add a retrieveRoots() method for trees that don\'t use scope');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10Peer', 'retrieveRoots'), 'nested_set adds a retrieveRoots() method for trees that use scope');
+		$this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table9Peer', 'retrieveRoots'), 'nested_set does not add a retrieveRoots() method for trees that don\'t use scope');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1
@@ -62,7 +64,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 
   public function testRetrieveRoot()
 	{
-		$this->assertTrue(method_exists('Table10Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10Peer', 'retrieveRoot'), 'nested_set adds a retrieveRoot() method');
 		Table10Peer::doDeleteAll();
 		$t1 = new Table10();
 		$t1->setLeftValue(1);
@@ -119,7 +121,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 
 	public function testShiftRLValues()
 	{
-		$this->assertTrue(method_exists('Table10Peer', 'shiftRLValues'), 'nested_set adds a shiftRLValues() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10Peer', 'shiftRLValues'), 'nested_set adds a shiftRLValues() method');
 		$this->initTreeWithScope();
 		Table10Peer::shiftRLValues(1, 100, null, 1);
 		Table10Peer::clearInstancePool();
@@ -223,7 +225,7 @@ class NestedSetBehaviorPeerBuilderModifierWithScopeTest extends BookstoreNestedS
 
 	public function testMakeRoomForLeaf()
 	{
-		$this->assertTrue(method_exists('Table10Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10Peer', 'makeRoomForLeaf'), 'nested_set adds a makeRoomForLeaf() method');
 		$fixtures = $this->initTreeWithScope();
 		/* Tree used for tests
 		 Scope 1

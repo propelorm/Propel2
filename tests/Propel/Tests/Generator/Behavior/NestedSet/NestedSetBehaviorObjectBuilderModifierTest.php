@@ -11,6 +11,20 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Tests\Helpers\Bookstore\Behavior\BookstoreNestedSetTestBase;
+use Propel\Tests\Helpers\Bookstore\Behavior\PublicTable9;
+use Propel\Tests\Helpers\Bookstore\Behavior\PublicTable10;
+
+use Propel\Tests\Bookstore\Behavior\Table9;
+use Propel\Tests\Bookstore\Behavior\Table9Peer;
+use Propel\Tests\Bookstore\Behavior\Table9Query;
+use Propel\Tests\Bookstore\Behavior\Table10;
+use Propel\Tests\Bookstore\Behavior\Table10Peer;
+
+use Propel\Runtime\Propel;
+use Propel\Runtime\Collection\PropelObjectCollection;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Om\NestedSetRecursiveIterator;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
@@ -49,7 +63,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	{
 		$expectedAttributes = array('nestedSetQueries');
 		foreach ($expectedAttributes as $attribute) {
-			$this->assertClassHasAttribute($attribute, 'Table9');
+			$this->assertClassHasAttribute($attribute, '\Propel\Tests\Bookstore\Behavior\Table9');
 		}
 	}
 
@@ -89,7 +103,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testSaveRootInTreeWithExistingRoot()
 	{
@@ -109,7 +123,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 		try {
 			$t3->save();
 			$this->fail('Trying to save a node incorrectly updated throws an exception');
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->assertTrue(true, 'Trying to save a node incorrectly updated throws an exception');
 		}
 	}
@@ -724,7 +738,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testInsertAsFirstChildOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsFirstChildOf'), 'nested_set adds a insertAsFirstChildOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -789,7 +803,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testInsertAsLastChildOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsLastChildOf'), 'nested_set adds a insertAsLastChildOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -854,7 +868,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testInsertAsPrevSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsPrevSiblingOf'), 'nested_set adds a insertAsPrevSiblingOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -928,7 +942,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testInsertAsNextSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'insertAsNextSiblingOf'), 'nested_set adds a insertAsNextSiblingOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -1002,7 +1016,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testMoveToFirstChildOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToFirstChildOf'), 'nested_set adds a moveToFirstChildOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -1093,7 +1107,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testMoveToLastChildOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToLastChildOf'), 'nested_set adds a moveToLastChildOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -1184,7 +1198,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testMoveToPrevSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'moveToPrevSiblingOf'), 'nested_set adds a moveToPrevSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToPrevSiblingOf'), 'nested_set adds a moveToPrevSiblingOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -1335,7 +1349,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 
 	public function testMoveToNextSiblingOf()
 	{
-		$this->assertTrue(method_exists('Table9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'moveToNextSiblingOf'), 'nested_set adds a moveToNextSiblingOf() method');
 		list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
 		/* Tree used for tests
 		 t1
@@ -1464,7 +1478,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	public function testGetIterator()
 	{
 		$fixtures = $this->initTree();
-		$this->assertTrue(method_exists('Table9', 'getIterator'), 'nested_set adds a getIterator() method');
+		$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', 'getIterator'), 'nested_set adds a getIterator() method');
 		$root = Table9Peer::retrieveRoot();
 		$iterator = $root->getIterator();
 		$this->assertTrue($iterator instanceof NestedSetRecursiveIterator, 'getIterator() returns a NestedSetRecursiveIterator');
@@ -1478,8 +1492,8 @@ class NestedSetBehaviorObjectBuilderModifierTest extends BookstoreNestedSetTestB
 	{
 		$proxies = array('createRoot', 'retrieveParent', 'setParentNode', 'getNumberOfDescendants', 'getNumberOfChildren', 'retrievePrevSibling', 'retrieveNextSibling', 'retrieveFirstChild', 'retrieveLastChild', 'getPath');
 		foreach ($proxies as $method) {
-			$this->assertFalse(method_exists('Table9', $method), 'proxies are not enabled by default');
-			$this->assertTrue(method_exists('Table10', $method), 'setting method_proxies to true adds compatibility proxies');
+			$this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table9', $method), 'proxies are not enabled by default');
+			$this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table10', $method), 'setting method_proxies to true adds compatibility proxies');
 		}
 	}
 

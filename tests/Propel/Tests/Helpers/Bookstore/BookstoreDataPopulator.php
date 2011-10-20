@@ -274,23 +274,19 @@ class BookstoreDataPopulator
 		);
 		// free the memory from existing objects
 		foreach ($peerClasses as $peerClass) {
-			// $peerClass::$instances crashes on PHP 5.2, see http://www.propelorm.org/ticket/1388
-			$r = new \ReflectionClass($peerClass);
-			$p = $r->getProperty('instances');
-			foreach ($p->getValue() as $o) {
-				$o->clearAllReferences();
-			}
+            foreach ($peerClass::$instances as $i) {
+                $i->clearAllReferences();
+            }
 		}
 		// delete records from the database
-		if($con === null) {
-			$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		}
-		$con->beginTransaction();
-		foreach ($peerClasses as $peerClass) {
-			// $peerClass::doDeleteAll() crashes on PHP 5.2, see http://www.propelorm.org/ticket/1388
-			call_user_func(array($peerClass, 'doDeleteAll'), $con);
-		}
-		$con->commit();
+        if ($con === null) {
+            $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        }
+        $con->beginTransaction();
+        foreach ($peerClasses as $peerClass) {
+            $peerClass::doDeleteAll($con);
+        }
+        $con->commit();
 	}
 
 }

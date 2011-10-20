@@ -135,20 +135,3 @@ abstract class BookstoreNestedSetTestBase extends BookstoreTestBase
 		return $this->dumpNodes(Table10Peer::doSelect($c));
 	}
 }
-
-// we need this class to test protected methods
-class PublicTable9 extends Table9
-{
-	public $hasParentNode = null;
-	public $parentNode = null;
-	public $hasPrevSibling = null;
-	public $prevSibling = null;
-	public $hasNextSibling = null;
-	public $nextSibling = null;
-}
-
-class PublicTable10 extends Table10
-{
-	public $hasParentNode = null;
-	public $parentNode = null;
-}
