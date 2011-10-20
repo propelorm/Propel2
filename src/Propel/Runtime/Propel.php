@@ -90,7 +90,7 @@ class Propel
     /**
      * The class name for a PDO object.
      */
-    const CLASS_PDO = 'PDO';
+    const CLASS_PDO = '\PDO';
 
     /**
      * The class name for a PropelPDO object.

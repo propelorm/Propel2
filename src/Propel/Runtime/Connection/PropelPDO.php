@@ -293,11 +293,11 @@ class PropelPDO extends PDO
     }
 
     /**
-    * Rollback the whole transaction, even if this is a nested rollback
-    * and reset the nested transaction count to 0.
+     * Rollback the whole transaction, even if this is a nested rollback
+     * and reset the nested transaction count to 0.
      *
-    * @return    boolean  Whether operation was successful.
-    */
+     * @return    boolean  Whether operation was successful.
+     */
     public function forceRollBack()
     {
         $return = true;
@@ -330,11 +330,11 @@ class PropelPDO extends PDO
     public function setAttribute($attribute, $value)
     {
         switch($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                $this->cachePreparedStatements = $value;
-                break;
-            default:
-                parent::setAttribute($attribute, $value);
+        case self::PROPEL_ATTR_CACHE_PREPARES:
+            $this->cachePreparedStatements = $value;
+            break;
+        default:
+            parent::setAttribute($attribute, $value);
         }
     }
 
@@ -349,11 +349,11 @@ class PropelPDO extends PDO
     public function getAttribute($attribute)
     {
         switch($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                return $this->cachePreparedStatements;
-                break;
-            default:
-                return parent::getAttribute($attribute);
+        case self::PROPEL_ATTR_CACHE_PREPARES:
+            return $this->cachePreparedStatements;
+            break;
+        default:
+            return parent::getAttribute($attribute);
         }
     }
 
@@ -642,7 +642,7 @@ class PropelPDO extends PDO
                 'microtime'             => microtime(true),
                 'memory_get_usage'      => memory_get_usage($this->getLoggingConfig('realmemoryusage', false)),
                 'memory_get_peak_usage' => memory_get_peak_usage($this->getLoggingConfig('realmemoryusage', false)),
-                );
+            );
         } else {
             throw new PropelException('Should not get debug snapshot when not debugging');
         }
@@ -699,41 +699,41 @@ class PropelPDO extends PDO
             switch ($detailName) {
 
                 case 'slow';
-                    $value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig('details.slow.threshold', self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
-                    break;
+                $value = $now['microtime'] - $debugSnapshot['microtime'] >= $this->getLoggingConfig('details.slow.threshold', self::DEFAULT_SLOW_THRESHOLD) ? 'YES' : ' NO';
+                break;
 
-                case 'time':
-                    $value = number_format($now['microtime'] - $debugSnapshot['microtime'], $this->getLoggingConfig('details.time.precision', 3)) . ' sec';
-                    $value = str_pad($value, $this->getLoggingConfig('details.time.pad', 10), ' ', STR_PAD_LEFT);
-                    break;
+            case 'time':
+                $value = number_format($now['microtime'] - $debugSnapshot['microtime'], $this->getLoggingConfig('details.time.precision', 3)) . ' sec';
+                $value = str_pad($value, $this->getLoggingConfig('details.time.pad', 10), ' ', STR_PAD_LEFT);
+                break;
 
-                case 'mem':
-                    $value = self::getReadableBytes($now['memory_get_usage'], $this->getLoggingConfig('details.mem.precision', 1));
-                    $value = str_pad($value, $this->getLoggingConfig('details.mem.pad', 9), ' ', STR_PAD_LEFT);
-                    break;
+            case 'mem':
+                $value = self::getReadableBytes($now['memory_get_usage'], $this->getLoggingConfig('details.mem.precision', 1));
+                $value = str_pad($value, $this->getLoggingConfig('details.mem.pad', 9), ' ', STR_PAD_LEFT);
+                break;
 
-                case 'memdelta':
-                    $value = $now['memory_get_usage'] - $debugSnapshot['memory_get_usage'];
-                    $value = ($value > 0 ? '+' : '') . self::getReadableBytes($value, $this->getLoggingConfig('details.memdelta.precision', 1));
-                    $value = str_pad($value, $this->getLoggingConfig('details.memdelta.pad', 10), ' ', STR_PAD_LEFT);
-                    break;
+            case 'memdelta':
+                $value = $now['memory_get_usage'] - $debugSnapshot['memory_get_usage'];
+                $value = ($value > 0 ? '+' : '') . self::getReadableBytes($value, $this->getLoggingConfig('details.memdelta.precision', 1));
+                $value = str_pad($value, $this->getLoggingConfig('details.memdelta.pad', 10), ' ', STR_PAD_LEFT);
+                break;
 
-                case 'mempeak':
-                    $value = self::getReadableBytes($now['memory_get_peak_usage'], $this->getLoggingConfig('details.mempeak.precision', 1));
-                    $value = str_pad($value, $this->getLoggingConfig('details.mempeak.pad', 9), ' ', STR_PAD_LEFT);
-                    break;
+            case 'mempeak':
+                $value = self::getReadableBytes($now['memory_get_peak_usage'], $this->getLoggingConfig('details.mempeak.precision', 1));
+                $value = str_pad($value, $this->getLoggingConfig('details.mempeak.pad', 9), ' ', STR_PAD_LEFT);
+                break;
 
-                case 'querycount':
-                    $value = str_pad($this->getQueryCount(), $this->getLoggingConfig('details.querycount.pad', 2), ' ', STR_PAD_LEFT);
-                    break;
+            case 'querycount':
+                $value = str_pad($this->getQueryCount(), $this->getLoggingConfig('details.querycount.pad', 2), ' ', STR_PAD_LEFT);
+                break;
 
-                case 'method':
-                    $value = str_pad($methodName, $this->getLoggingConfig('details.method.pad', 28), ' ', STR_PAD_RIGHT);
-                    break;
+            case 'method':
+                $value = str_pad($methodName, $this->getLoggingConfig('details.method.pad', 28), ' ', STR_PAD_RIGHT);
+                break;
 
-                default:
-                    $value = 'n/a';
-                    break;
+            default:
+                $value = 'n/a';
+                break;
 
             }
 

@@ -180,9 +180,9 @@ class BasePeer
      * @param      string $tableName The name of the table to empty.
      * @param      PropelPDO $con A PropelPDO connection object.
      * @param      string $databaseName the name of the database.
-     * @return     int    The number of rows affected by the statement.  Note
-     *                 that the return value does require that this information
-     *                 is returned (supported) by the Propel db driver.
+     * @return     int      The number of rows affected by the statement. Note
+     *                      that the return value does require that this information
+     *                      is returned (supported) by the Propel db driver.
      * @throws     PropelException - wrapping SQLException caught from statement execution.
      */
     public static function doDeleteAll($tableName, PropelPDO $con, $databaseName = null)
@@ -282,8 +282,8 @@ class BasePeer
             }
 
             $sql = 'INSERT INTO ' . $tableName
-            . ' (' . implode(',', $columns) . ')'
-            . ' VALUES (';
+                . ' (' . implode(',', $columns) . ')'
+                . ' VALUES (';
             // . substr(str_repeat("?,", count($columns)), 0, -1) .
             for($p=1, $cnt=count($columns); $p <= $cnt; $p++) {
                 $sql .= ':p'.$p;
@@ -696,9 +696,9 @@ class BasePeer
                 }
 
                 if (($criteria->isIgnoreCase() || $attachedCriterion->isIgnoreCase())
-                && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
-                    $attachedCriterion->setIgnoreCase(true);
-                }
+                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()) {
+                        $attachedCriterion->setIgnoreCase(true);
+                    }
             }
 
             $criterion->setDB($db);
@@ -827,11 +827,11 @@ class BasePeer
 
         // Build the SQL from the arrays we compiled
         $sql =  $selectSql
-        ." FROM "  . $from
-        .($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
-        .($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
-        .($havingString ? " HAVING ".$havingString : "")
-        .($orderByClause ? " ORDER BY ".implode(",", $orderByClause) : "");
+            ." FROM "  . $from
+            .($whereClause ? " WHERE ".implode(" AND ", $whereClause) : "")
+            .($groupByClause ? " GROUP BY ".implode(",", $groupByClause) : "")
+            .($havingString ? " HAVING ".$havingString : "")
+            .($orderByClause ? " ORDER BY ".implode(",", $orderByClause) : "");
 
         // APPLY OFFSET & LIMIT to the query.
         if ($criteria->getLimit() || $criteria->getOffset()) {

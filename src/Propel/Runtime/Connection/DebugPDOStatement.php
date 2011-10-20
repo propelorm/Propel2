@@ -41,9 +41,9 @@ class DebugPDOStatement extends PDOStatement
      */
     protected static $typeMap = array(
         PDO::PARAM_BOOL => "PDO::PARAM_BOOL",
-        PDO::PARAM_INT => "PDO::PARAM_INT",
-        PDO::PARAM_STR => "PDO::PARAM_STR",
-        PDO::PARAM_LOB => "PDO::PARAM_LOB",
+        PDO::PARAM_INT  => "PDO::PARAM_INT",
+        PDO::PARAM_STR  => "PDO::PARAM_STR",
+        PDO::PARAM_LOB  => "PDO::PARAM_LOB",
         PDO::PARAM_NULL => "PDO::PARAM_NULL",
     );
 
@@ -91,8 +91,8 @@ class DebugPDOStatement extends PDOStatement
      */
     public function execute($input_parameters = null)
     {
-        $debug    = $this->pdo->getDebugSnapshot();
-        $return    = parent::execute($input_parameters);
+        $debug  = $this->pdo->getDebugSnapshot();
+        $return = parent::execute($input_parameters);
 
         $sql = $this->getExecutedQueryString();
         $this->pdo->log($sql, null, __METHOD__, $debug);
