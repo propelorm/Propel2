@@ -18,6 +18,7 @@ use Propel\Runtime\Formatter\PropelObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Util\BasePeer;
+use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
 
 use \PDO;

@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\PropelFormatter;
 
 use \PDO;
