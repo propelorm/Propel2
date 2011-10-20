@@ -170,6 +170,9 @@ class DatabaseMap
 
     public function getTableByPhpName($phpName)
     {
+        if ('\\' === substr($phpName, 0, 1)) {
+            $phpName = substr($phpName, 1);
+        }
         if (array_key_exists($phpName, $this->tablesByPhpName)) {
             return $this->tablesByPhpName[$phpName];
         } else if (class_exists($tmClass = $phpName . 'TableMap')) {
