@@ -83,9 +83,9 @@ DROP TABLE book;
 
 CREATE TABLE book
 (
-	id INTEGER NOT NULL PRIMARY KEY,
-	title VARCHAR(255) NOT NULL,
-	author_id INTEGER
+    id INTEGER NOT NULL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author_id INTEGER
 );
 
 CREATE INDEX book_I_1 ON book (title);
@@ -101,9 +101,9 @@ DROP TABLE author;
 
 CREATE TABLE author
 (
-	id INTEGER NOT NULL PRIMARY KEY,
-	first_name VARCHAR(100),
-	last_name VARCHAR(100)
+    id INTEGER NOT NULL PRIMARY KEY,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100)
 );
 
 EOF;
@@ -130,13 +130,13 @@ EOF;
 -- This is foo table
 CREATE TABLE foo
 (
-	id INTEGER NOT NULL PRIMARY KEY,
-	bar VARCHAR(255) NOT NULL
+    id INTEGER NOT NULL PRIMARY KEY,
+    bar VARCHAR(255) NOT NULL
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
 	}
-	
+
 	/**
 	 * @dataProvider providerForTestGetAddTableDDLNonIntegerPK
 	 */
@@ -147,9 +147,9 @@ CREATE TABLE foo
 -- This is foo table
 CREATE TABLE foo
 (
-	foo VARCHAR(255) NOT NULL,
-	bar VARCHAR(255) NOT NULL,
-	PRIMARY KEY (foo)
+    foo VARCHAR(255) NOT NULL,
+    bar VARCHAR(255) NOT NULL,
+    PRIMARY KEY (foo)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -164,10 +164,10 @@ CREATE TABLE foo
 		$expected = "
 CREATE TABLE foo
 (
-	foo INTEGER NOT NULL,
-	bar INTEGER NOT NULL,
-	baz VARCHAR(255) NOT NULL,
-	PRIMARY KEY (foo,bar)
+    foo INTEGER NOT NULL,
+    bar INTEGER NOT NULL,
+    baz VARCHAR(255) NOT NULL,
+    PRIMARY KEY (foo,bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -182,9 +182,9 @@ CREATE TABLE foo
 		$expected = "
 CREATE TABLE foo
 (
-	id INTEGER NOT NULL PRIMARY KEY,
-	bar INTEGER,
-	UNIQUE (bar)
+    id INTEGER NOT NULL PRIMARY KEY,
+    bar INTEGER,
+    UNIQUE (bar)
 );
 ";
 		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
