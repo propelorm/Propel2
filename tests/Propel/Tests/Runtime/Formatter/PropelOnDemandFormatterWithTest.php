@@ -61,10 +61,10 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-		$c->orderBy('Book.Title');
-		$c->join('Book.Author');
+		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->with('Author');
-		$c->join('Book.Publisher');
+		$c->join('Propel\Tests\Bookstore\Book.Publisher');
 		$c->with('Publisher');
 		$this->assertCorrectHydration1($c, 'without instance pool');
 	}
@@ -76,10 +76,10 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-		$c->orderBy('Book.Title');
-		$c->join('Book.Author a');
+		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
+		$c->join('Propel\Tests\Bookstore\Book.Author a');
 		$c->with('a');
-		$c->join('Book.Publisher p');
+		$c->join('Propel\Tests\Bookstore\Book.Publisher p');
 		$c->with('p');
 		$this->assertCorrectHydration1($c, 'with alias');
 	}
@@ -106,10 +106,10 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		// instance pool contains all objects by default, since they were just populated
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-		$c->orderBy('Book.Title');
-		$c->join('Book.Author');
+		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
+		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->with('Author');
-		$c->join('Book.Publisher');
+		$c->join('Propel\Tests\Bookstore\Book.Publisher');
 		$c->with('Publisher');
 		$this->assertCorrectHydration1($c, 'with instance pool');
 	}
@@ -122,8 +122,8 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
 		$b->save();
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
-		$c->where('Book.Title = ?', 'Foo');
-		$c->leftJoin('Book.Author');
+		$c->where('Propel\Tests\Bookstore\Book.Title = ?', 'Foo');
+		$c->leftJoin('Propel\Tests\Bookstore\Book.Author');
 		$c->with('Author');
 		$c->limit(1);
 		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
