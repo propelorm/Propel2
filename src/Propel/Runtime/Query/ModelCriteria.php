@@ -902,7 +902,7 @@ class ModelCriteria extends Criteria
         if (!isset($this->joins[$relationName])) {
             throw new PropelException('Unknown class or alias ' . $relationName);
         }
-        $className = $this->joins[$relationName]->getTableMap()->getPhpName();
+        $className = $this->joins[$relationName]->getTableMap()->getClassname();
         if (null === $secondaryCriteriaClass) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
