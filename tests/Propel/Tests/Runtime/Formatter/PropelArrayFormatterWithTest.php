@@ -131,7 +131,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 	{
 		BookstoreDataPopulator::populate();
 		BookstoreEmployeePeer::clearInstancePool();
-		$c = new ModelCriteria('bookstore', 'BookstoreEmployee');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookstoreEmployee');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->join('BookstoreEmployee.Supervisor s');
 		$c->with('s');
@@ -193,7 +193,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		EssayPeer::clearInstancePool();
 
-		$c = new ModelCriteria('bookstore', 'Essay');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Essay');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->join('Essay.AuthorRelatedByFirstAuthor');
 		$c->with('AuthorRelatedByFirstAuthor');
@@ -211,7 +211,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
-		$c = new ModelCriteria('bookstore', 'Review');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Review');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->where('Review.Recommended = ?', true);
 		$c->join('Review.Book');
@@ -233,7 +233,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
 		Propel::enableInstancePooling();
-		$c = new ModelCriteria('bookstore', 'BookSummary');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookSummary');
 		$c->joinWith('BookSummary.SummarizedBook');
 		$c->joinWith('SummarizedBook.Author');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
@@ -319,7 +319,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
-		$c = new ModelCriteria('bookstore', 'Author');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
 		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
 		$c->leftJoinWith('Author.Book');
 		$c->leftJoinWith('Book.Review');
@@ -343,7 +343,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		BookPeer::clearInstancePool();
 		AuthorPeer::clearInstancePool();
 		ReviewPeer::clearInstancePool();
-		$c = new ModelCriteria('bookstore', 'Author');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
 		$c->add(AuthorPeer::LAST_NAME, 'Rowling');
 		$c->leftJoinWith('Author.Book b');
 		$c->leftJoinWith('b.Review r');
@@ -370,7 +370,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		$freud->setFirstName("Sigmund");
 		$freud->setLastName("Freud");
 		$freud->save($this->con);
-		$c = new ModelCriteria('bookstore', 'Author');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->add(AuthorPeer::LAST_NAME, 'Freud');
 		$c->leftJoinWith('Author.Book');
@@ -387,7 +387,7 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
 		ReviewPeer::clearInstancePool();
 		$review = new Review();
 		$review->save($this->con);
-		$c = new ModelCriteria('bookstore', 'Review');
+		$c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Review');
 		$c->setFormatter(ModelCriteria::FORMAT_ARRAY);
 		$c->leftJoinWith('Review.Book');
 		$c->leftJoinWith('Book.Author');

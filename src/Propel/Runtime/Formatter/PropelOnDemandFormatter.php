@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\ModelCriteria;
 
 use \PDO;

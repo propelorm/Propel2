@@ -56,9 +56,9 @@ class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 		$formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookstoreEmployee'));
 		$emps = $formatter->format($stmt);
 		$expectedClass = array(
-			'b1' =>'BookstoreEmployee',
-			'b2' =>'BookstoreManager',
-			'b3' =>'BookstoreCashier'
+			'b1' =>'\Propel\Tests\Bookstore\BookstoreEmployee',
+			'b2' =>'\Propel\Tests\Bookstore\BookstoreManager',
+			'b3' =>'\Propel\Tests\Bookstore\BookstoreCashier'
 		);
 		foreach ($emps as $emp) {
 			$this->assertEquals($expectedClass[$emp->getName()], get_class($emp), 'format() creates objects of the correct class when using inheritance');
