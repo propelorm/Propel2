@@ -107,6 +107,7 @@ class PropelOnDemandFormatter extends PropelObjectFormatter
             $obj->setVirtualColumn($alias, $row[$col]);
             $col++;
         }
+
         return $obj;
     }
 

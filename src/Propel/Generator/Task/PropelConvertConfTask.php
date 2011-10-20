@@ -272,6 +272,7 @@ class PropelConvertConfTask extends AbstractPropelDataModelTask
         } elseif ($lwr === "true") {
             $value = true;
         }
+
         return $value;
     }
 

@@ -108,10 +108,12 @@ abstract class XMLElement
         if ($data instanceof VendorInfo) {
             $vi = $data;
             $this->vendorInfos[$vi->getType()] = $vi;
+
             return $vi;
         } else {
             $vi = new VendorInfo();
             $vi->loadFromXML($data);
+
             return $this->addVendorInfo($vi); // call self w/ different param
         }
     }
@@ -168,6 +170,7 @@ abstract class XMLElement
         $doc->formatOutput = true;
         $this->appendXml($doc);
         $xmlstr = $doc->saveXML();
+
         return trim(preg_replace('/<\?xml.*?\?>/', '', $xmlstr));
     }
 

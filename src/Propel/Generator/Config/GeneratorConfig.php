@@ -150,6 +150,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     public function getBuilderClassname($type)
     {
         $propname = 'builder' . ucfirst(strtolower($type)) . 'Class';
+
         return $this->getClassname($propname);
     }
 
@@ -182,6 +183,7 @@ class GeneratorConfig implements GeneratorConfigInterface
 
         $platform->setConnection($con);
         $platform->setGeneratorConfig($this);
+
         return $platform;
     }
 
@@ -200,6 +202,7 @@ class GeneratorConfig implements GeneratorConfigInterface
         $parser->setConnection($con);
         $parser->setMigrationTable($this->getBuildProperty('migrationTable'));
         $parser->setGeneratorConfig($this);
+
         return $parser;
     }
 
@@ -215,6 +218,7 @@ class GeneratorConfig implements GeneratorConfigInterface
         $classname = $this->getBuilderClassname($type);
         $builder = new $classname($table);
         $builder->setGeneratorConfig($this);
+
         return $builder;
     }
 
@@ -227,6 +231,7 @@ class GeneratorConfig implements GeneratorConfigInterface
     {
         $classname = $this->getBuilderClassname('pluralizer');
         $pluralizer = new $classname();
+
         return $pluralizer;
     }
 
@@ -245,6 +250,7 @@ class GeneratorConfig implements GeneratorConfigInterface
             // class path not configured
             $ret = false;
         }
+
         return $ret;
     }
 
@@ -269,6 +275,7 @@ class GeneratorConfig implements GeneratorConfigInterface
                 $this->buildConnections = array();
             }
         }
+
         return $this->buildConnections;
     }
 

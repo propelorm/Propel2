@@ -32,6 +32,7 @@ class PropelQuery
         if ($alias !== null) {
             $query->setModelAlias($alias);
         }
+
         return $query;
     }
 }

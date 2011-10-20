@@ -51,6 +51,7 @@ class ArchivableBehaviorObjectBuilderModifier
             $script .= "protected \$archiveOnDelete = true;
 ";
         }
+
         return $script;
     }
 
@@ -118,6 +119,7 @@ class ArchivableBehaviorObjectBuilderModifier
         if ($this->behavior->isArchiveOnDelete()) {
             $script .= $this->addDeleteWithoutArchive($builder);
         }
+
         return $script;
     }
 

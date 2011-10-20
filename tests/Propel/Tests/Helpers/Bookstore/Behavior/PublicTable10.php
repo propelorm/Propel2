@@ -6,6 +6,6 @@ use Propel\Tests\Bookstore\Behavior\Table10;
 
 class PublicTable10 extends Table10
 {
-	public $hasParentNode = null;
-	public $parentNode = null;
+    public $hasParentNode = null;
+    public $parentNode = null;
 }

@@ -116,6 +116,7 @@ abstract class DataSQLBuilder extends DataModelBuilder
     {
         $column = $colValue->getColumn();
         $method = 'get' . $column->getPhpNative() . 'Sql';
+
         return $this->$method($colValue->getValue());
     }
 

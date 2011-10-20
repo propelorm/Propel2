@@ -71,6 +71,7 @@ class ModelJoin extends Join
         {
             $this->tableMap = $this->relationMap->getRightTable();
         }
+
         return $this->tableMap;
     }
 
@@ -124,6 +125,7 @@ class ModelJoin extends Join
             $previousJoin = $this->getPreviousJoin();
             $previousObject = $previousJoin->getObjectToRelate($startObject);
             $method = 'get' . $previousJoin->getRelationMap()->getName();
+
             return $previousObject->$method();
         }
     }

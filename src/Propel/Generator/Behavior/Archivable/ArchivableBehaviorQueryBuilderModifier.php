@@ -43,6 +43,7 @@ class ArchivableBehaviorQueryBuilderModifier
             $script .= "protected \$archiveOnDelete = true;
 ";
         }
+
         return $script;
     }
 
@@ -87,6 +88,7 @@ if (\$this->archiveOnUpdate) {
             $script .= $this->addSetArchiveOnDelete($builder);
             $script .= $this->addDeleteWithoutArchive($builder);
         }
+
         return $script;
     }
 

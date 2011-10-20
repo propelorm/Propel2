@@ -170,6 +170,7 @@ class DBMSSQL extends DBAdapter
         // just grab the top $limit number of rows
         if($offset == 0) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
+
             return;
         }
 

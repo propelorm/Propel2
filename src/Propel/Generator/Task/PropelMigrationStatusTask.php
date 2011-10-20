@@ -85,12 +85,14 @@ class PropelMigrationStatusTask extends BasePropelMigrationTask
         } else {
             $this->log(sprintf('No migration file found in "%s".', $dir));
             $this->log('Make sure you run the sql-diff task.');
+
             return false;
         }
         $migrationTimestamps = $manager->getValidMigrationTimestamps();
         $nbNotYetExecutedMigrations = count($migrationTimestamps);
         if (!$nbNotYetExecutedMigrations) {
             $this->log('All migration files were already executed - Nothing to migrate.');
+
             return false;
         }
         $this->log(sprintf(

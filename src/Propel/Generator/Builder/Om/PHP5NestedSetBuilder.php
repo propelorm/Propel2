@@ -304,6 +304,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function makeRoot()
     {
         $peerClassname::createRoot(\$this);
+
         return \$this;
     }
 ";
@@ -324,6 +325,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (null === \$this->level) {
             \$this->level = $peerClassname::getLevel(\$this, \$con);
         }
+
         return \$this->level;
     }
 ";
@@ -342,6 +344,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function setLevel(\$level)
     {
         \$this->level = \$level;
+
         return \$this;
     }
 ";
@@ -360,6 +363,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function setChildren(array \$children)
     {
         \$this->_children = \$children;
+
         return \$this;
     }
 ";
@@ -379,6 +383,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function setParentNode(NodeObject \$parent = null)
     {
         \$this->parentNode = (true === (\$this->hasParentNode = $peerClassname::isValid(\$parent))) ? \$parent : null;
+
         return \$this;
     }
 ";
@@ -399,6 +404,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     {
         \$this->prevSibling = \$node;
         \$this->hasPrevSibling = $peerClassname::isValid(\$node);
+
         return \$this;
     }
 ";
@@ -419,6 +425,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     {
         \$this->nextSibling = \$node;
         \$this->hasNextSibling = $peerClassname::isValid(\$node);
+
         return \$this;
     }
 ";
@@ -581,6 +588,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (null === \$this->hasParentNode) {
             $peerClassname::hasParent(\$this, \$con);
         }
+
         return \$this->hasParentNode;
     }
 ";
@@ -617,6 +625,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (null === \$this->hasPrevSibling) {
             $peerClassname::hasPrevSibling(\$this, \$con);
         }
+
         return \$this->hasPrevSibling;
     }
 ";
@@ -637,6 +646,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (null === \$this->hasNextSibling) {
             $peerClassname::hasNextSibling(\$this, \$con);
         }
+
         return \$this->hasNextSibling;
     }
 ";
@@ -658,6 +668,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             \$this->parentNode = $peerClassname::retrieveParent(\$this, \$con);
             \$this->hasParentNode = $peerClassname::isValid(\$this->parentNode);
         }
+
         return \$this->parentNode;
     }
 ";
@@ -682,6 +693,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
 
             return $peerClassname::retrieveFirstChild(\$this, \$con);
         }
+
         return false;
     }
 ";
@@ -702,11 +714,13 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (\$this->hasChildren(\$con)) {
             if (is_array(\$this->_children)) {
                 \$last = count(\$this->_children) - 1;
+
                 return \$this->_children[\$last];
             }
 
             return $peerClassname::retrieveLastChild(\$this, \$con);
         }
+
         return false;
     }
 ";
@@ -726,6 +740,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (\$this->hasPrevSibling(\$con)) {
             return \$this->prevSibling;
         }
+
         return \$this->hasPrevSibling;
     }
 ";
@@ -745,6 +760,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         if (\$this->hasNextSibling(\$con)) {
             return \$this->nextSibling;
         }
+
         return \$this->hasNextSibling;
     }
 ";
@@ -770,6 +786,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must be new.\");
         }
         $peerClassname::insertAsFirstChildOf(\$this, \$parent, \$con);
+
         return \$this;
     }
 ";
@@ -795,6 +812,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must be new.\");
         }
         $peerClassname::insertAsLastChildOf(\$this, \$parent, \$con);
+
         return \$this;
     }
 ";
@@ -820,6 +838,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must be new.\");
         }
         $peerClassname::insertAsPrevSiblingOf(\$this, \$dest, \$con);
+
         return \$this;
     }
 ";
@@ -845,6 +864,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must be new.\");
         }
         $peerClassname::insertAsNextSiblingOf(\$this, \$dest, \$con);
+
         return \$this;
     }
 ";
@@ -869,6 +889,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must exist in tree.\");
         }
         $peerClassname::moveToFirstChildOf(\$parent, \$this, \$con);
+
         return \$this;
     }
 ";
@@ -893,6 +914,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must exist in tree.\");
         }
         $peerClassname::moveToLastChildOf(\$parent, \$this, \$con);
+
         return \$this;
     }
 ";
@@ -917,6 +939,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must exist in tree.\");
         }
         $peerClassname::moveToPrevSiblingOf(\$dest, \$this, \$con);
+
         return \$this;
     }
 ";
@@ -941,6 +964,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
             throw new PropelException(\"$objectClassName must exist in tree.\");
         }
         $peerClassname::moveToNextSiblingOf(\$dest, \$this, \$con);
+
         return \$this;
     }
 ";
@@ -961,6 +985,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function insertAsParentOf(NodeObject \$node, PropelPDO \$con = null)
     {
         $peerClassname::insertAsParentOf(\$this, \$node, \$con);
+
         return \$this;
     }
 ";
@@ -1036,9 +1061,11 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     {";
         if ($scope_col_getter_name) {
             $script .= "
+
         return \$this->$scope_col_getter_name();";
         } else {
             $script .= "
+
         return null;";
         }
         $script .= "
@@ -1068,6 +1095,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function setLeftValue(\$v)
     {
         \$this->$left_col_setter_name(\$v);
+
         return \$this;
     }
 ";
@@ -1095,6 +1123,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
     public function setRightValue(\$v)
     {
         \$this->$right_col_setter_name(\$v);
+
         return \$this;
     }
 ";
@@ -1127,6 +1156,7 @@ abstract class ".$this->getClassname()." extends ".$this->getObjectBuilder()->ge
         \$this->$scope_col_setter_name(\$v);";
         }
         $script .= "
+
         return \$this;
     }
 ";

@@ -111,6 +111,7 @@ BEGIN
     DROP TABLE " . $this->quoteIdentifier($table->getName()) . "
 END
 ";
+
         return $ret;
     }
 
@@ -118,6 +119,7 @@ END
     {
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
+
             return sprintf($pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
                 $this->getColumnListDDL($table->getPrimaryKey())
@@ -136,6 +138,7 @@ ALTER TABLE %s ADD %s
 END
 ;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->getForeignKeyDDL($fk)

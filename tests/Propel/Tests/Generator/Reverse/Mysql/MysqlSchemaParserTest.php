@@ -28,24 +28,24 @@ use Propel\Runtime\Propel;
  */
 class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
 {
-	protected function setUp()
-	{
-		parent::setUp();
+    protected function setUp()
+    {
+        parent::setUp();
 
-		$xmlDom = new \DOMDocument();
-		$xmlDom->load(__DIR__ . '/../../../../../Fixtures/reverse/mysql/runtime-conf.xml');
-		$xml = simplexml_load_string($xmlDom->saveXML());
-		$phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
+        $xmlDom = new \DOMDocument();
+        $xmlDom->load(__DIR__ . '/../../../../../Fixtures/reverse/mysql/runtime-conf.xml');
+        $xml = simplexml_load_string($xmlDom->saveXML());
+        $phpconf = OpenedPropelConvertConfTask::simpleXmlToArray($xml);
 
-		Propel::setConfiguration($phpconf);
+        Propel::setConfiguration($phpconf);
         Propel::initialize();
-	}
+    }
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		Propel::init(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-	}
+    protected function tearDown()
+    {
+        parent::tearDown();
+        Propel::init(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+    }
 
     public function testParse()
     {
@@ -57,19 +57,19 @@ class MysqlSchemaParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $parser->parse($database), 'One table and one view defined should return one as we exclude views');
 
-		$tables = $database->getTables();
-		$this->assertEquals(1, count($tables));
+        $tables = $database->getTables();
+        $this->assertEquals(1, count($tables));
 
-		$table = $tables[0];
-		$this->assertEquals('Book', $table->getPhpName());
-		$this->assertEquals(4, count($table->getColumns()));
+        $table = $tables[0];
+        $this->assertEquals('Book', $table->getPhpName());
+        $this->assertEquals(4, count($table->getColumns()));
     }
 }
 
 class OpenedPropelConvertConfTask extends PropelConvertConfTask
 {
-	public static function simpleXmlToArray($xml)
-	{
-		return parent::simpleXmlToArray($xml);
-	}
+    public static function simpleXmlToArray($xml)
+    {
+        return parent::simpleXmlToArray($xml);
+    }
 }

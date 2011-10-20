@@ -383,6 +383,7 @@ class XmlToAppData
     protected function peekCurrentSchemaTag()
     {
         $keys = array_keys($this->schemasTagsStack);
+
         return end($this->schemasTagsStack[end($keys)]);
     }
 

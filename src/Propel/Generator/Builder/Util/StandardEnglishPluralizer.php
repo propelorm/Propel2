@@ -131,6 +131,7 @@ class StandardEnglishPluralizer implements Pluralizer
                 if (preg_match('/^[A-Z]/', $root)) {
                     $replacement = ucfirst($replacement);
                 }
+
                 return $replacement;
             }
         }

@@ -34,6 +34,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
 
         if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
             $this->log('All migrations were already executed - nothing to migrate.');
+
             return false;
         }
 
@@ -49,6 +50,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
             $migration = $manager->getMigrationObject($timestamp);
             if (false === $migration->preUp($manager)) {
                 $this->log('preUp() returned false. Aborting migration.', Project::MSG_ERR);
+
                 return false;
             }
             foreach ($migration->getUpSQL() as $datasource => $sql) {
@@ -79,6 +81,7 @@ class PropelMigrationTask extends BasePropelMigrationTask
                         $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($timestamp)
                     ));
                     $this->log('Migration aborted', Project::MSG_ERR);
+
                     return false;
                 }
                 $this->log(sprintf(

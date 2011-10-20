@@ -323,6 +323,7 @@ class Criteria implements \IteratorAggregate
     public function addAsColumn($name, $clause)
     {
         $this->asColumns[$name] = $clause;
+
         return $this;
     }
 
@@ -519,8 +520,10 @@ class Criteria implements \IteratorAggregate
     {
         if($cnt = count($this->map)) {
             $map = array_values($this->map);
+
             return $map[$cnt - 1];
         }
+
         return null;
     }
 
@@ -550,6 +553,7 @@ class Criteria implements \IteratorAggregate
         if (isset($this->map[$name])) {
             return $this->map[$name]->getColumn();
         }
+
         return null;
     }
 
@@ -572,6 +576,7 @@ class Criteria implements \IteratorAggregate
             $tableName = substr($key, 0, strrpos($key, '.' ));
             $tables[$tableName][] = $key;
         }
+
         return $tables;
     }
 
@@ -586,6 +591,7 @@ class Criteria implements \IteratorAggregate
         if ( isset ( $this->map[$key] ) ) {
             return $this->map[$key]->getComparison();
         }
+
         return null;
     }
 
@@ -650,6 +656,7 @@ class Criteria implements \IteratorAggregate
         if (isset($this->map[$name])) {
             return $this->map[$name]->getTable();
         }
+
         return null;
     }
 
@@ -664,6 +671,7 @@ class Criteria implements \IteratorAggregate
         if (isset($this->map[$name])) {
             return $this->map[$name]->getValue();
         }
+
         return null;
     }
 
@@ -751,6 +759,7 @@ class Criteria implements \IteratorAggregate
             $criterion = new Criterion($this, $p1, $value, $comparison);
             $this->map[$p1] = $criterion;
         }
+
         return $this;
     }
 
@@ -785,6 +794,7 @@ class Criteria implements \IteratorAggregate
             $criterion = new Criterion($this, $p1, $value, $comparison);
             $this->namedCriterions[$name] = $criterion;
         }
+
         return $this;
     }
 
@@ -844,6 +854,7 @@ class Criteria implements \IteratorAggregate
                 $condition = array($value, $right[$key]);
                 $conditions []= $condition;
             }
+
             return $this->addMultipleJoin($conditions, $joinType);
         }
 
@@ -934,6 +945,7 @@ class Criteria implements \IteratorAggregate
         }
         $join->setJoinType($joinType);
         $join->setJoinCondition($joinCondition);
+
         return $this->addJoinObject($join);
     }
 
@@ -949,6 +961,7 @@ class Criteria implements \IteratorAggregate
       if (!in_array($join, $this->joins)) { // compare equality, NOT identity
             $this->joins[] = $join;
         }
+
         return $this;
     }
 
@@ -1028,6 +1041,7 @@ class Criteria implements \IteratorAggregate
         foreach ($this->getSelectQueries() as $c1) {
             $aliasNumber += $c1->forgeSelectQueryAlias();
         }
+
         return ++$aliasNumber;
     }
 
@@ -1109,6 +1123,7 @@ class Criteria implements \IteratorAggregate
     public function setIgnoreCase($b)
     {
         $this->ignoreCase = (boolean) $b;
+
         return $this;
     }
 
@@ -1137,6 +1152,7 @@ class Criteria implements \IteratorAggregate
     public function setSingleRecord($b)
     {
         $this->singleRecord = (boolean) $b;
+
         return $this;
     }
 
@@ -1160,6 +1176,7 @@ class Criteria implements \IteratorAggregate
     {
         // TODO: do we enforce int here? 32bit issue if we do
         $this->limit = $limit;
+
         return $this;
     }
 
@@ -1183,6 +1200,7 @@ class Criteria implements \IteratorAggregate
     public function setOffset($offset)
     {
         $this->offset = (int) $offset;
+
         return $this;
     }
 
@@ -1205,6 +1223,7 @@ class Criteria implements \IteratorAggregate
     public function addSelectColumn($name)
     {
         $this->selectColumns[] = $name;
+
         return $this;
     }
 
@@ -1263,6 +1282,7 @@ class Criteria implements \IteratorAggregate
     public function clearSelectColumns()
     {
         $this->selectColumns = $this->asColumns = array();
+
         return $this;
     }
 
@@ -1285,6 +1305,7 @@ class Criteria implements \IteratorAggregate
     public function addGroupByColumn($groupBy)
     {
         $this->groupByColumns[] = $groupBy;
+
         return $this;
     }
 
@@ -1297,6 +1318,7 @@ class Criteria implements \IteratorAggregate
     public function addAscendingOrderByColumn($name)
     {
         $this->orderByColumns[] = $name . ' ' . self::ASC;
+
         return $this;
     }
 
@@ -1309,6 +1331,7 @@ class Criteria implements \IteratorAggregate
     public function addDescendingOrderByColumn($name)
     {
         $this->orderByColumns[] = $name . ' ' . self::DESC;
+
         return $this;
     }
 
@@ -1330,6 +1353,7 @@ class Criteria implements \IteratorAggregate
     public function clearOrderByColumns()
     {
         $this->orderByColumns = array();
+
         return $this;
     }
 
@@ -1341,6 +1365,7 @@ class Criteria implements \IteratorAggregate
     public function clearGroupByColumns()
     {
         $this->groupByColumns = array();
+
         return $this;
     }
 
@@ -1378,6 +1403,7 @@ class Criteria implements \IteratorAggregate
             if ( $removed instanceof Criterion ) {
                 return $removed->getValue();
             }
+
             return $removed;
         }
     }
@@ -1469,11 +1495,13 @@ class Criteria implements \IteratorAggregate
                         return false;
                     }
                 }
+
                 return true;
             } else {
                 return false;
             }
         }
+
         return false;
     }
 
@@ -1585,6 +1613,7 @@ class Criteria implements \IteratorAggregate
     public function addHaving(Criterion $having)
     {
         $this->having = $having;
+
         return $this;
     }
 
@@ -1675,6 +1704,7 @@ class Criteria implements \IteratorAggregate
     {
         if ($this->defaultCombineOperator == Criteria::LOGICAL_OR) {
             $this->defaultCombineOperator = Criteria::LOGICAL_AND;
+
             return $this->addOr($p1, $value, $operator, $preferColumnCondition);
         } else {
             return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
@@ -1711,6 +1741,7 @@ class Criteria implements \IteratorAggregate
     public function _if($cond)
     {
         $this->conditionalProxy = new PropelConditionalProxy($this, $cond, $this->conditionalProxy);
+
     return $this->conditionalProxy->getCriteriaOrProxy();
     }
 

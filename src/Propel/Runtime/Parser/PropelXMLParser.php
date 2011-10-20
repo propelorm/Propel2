@@ -142,6 +142,7 @@ class PropelXMLParser extends PropelParser
         $doc = new DomDocument('1.0', 'UTF-8');
         $doc->loadXML($data);
         $element = $doc->documentElement;
+
         return $this->convertDOMElementToArray($element);
     }
 
@@ -191,6 +192,7 @@ class PropelXMLParser extends PropelParser
                 $array[$index] = $element->textContent;
             }
         }
+
         return $array;
     }
 
@@ -205,6 +207,7 @@ class PropelXMLParser extends PropelParser
                 return false;
             }
         }
+
         return true;
     }
 }

@@ -185,6 +185,7 @@ protected function createRawSlug()
         $script .= "
 }
 ";
+
         return $script;
     }
 
@@ -249,6 +250,7 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
     if (strlen(\$slug) > ($size - \$incrementReservedSpace)) {
         \$slug = substr(\$slug, 0, $size - \$incrementReservedSpace);
     }
+
     return \$slug;
 }
 ";

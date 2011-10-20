@@ -550,6 +550,7 @@ class Table extends ScopedElement implements IDMethod
             }
             $list[] = $col;
         }
+
         return implode($delim, $list);
     }
 
@@ -613,6 +614,7 @@ class Table extends ScopedElement implements IDMethod
         $inputs[] = $this->getCommonName();
         $inputs[] = $nameType;
         $inputs[] = $nbr;
+
         return NameFactory::generateName(NameFactory::CONSTRAINT_GENERATOR, $inputs);
     }
 
@@ -692,11 +694,13 @@ class Table extends ScopedElement implements IDMethod
             $this->columnsByPhpName[$col->getPhpName()] = $col;
             $col->setPosition(count($this->columnList));
             $this->needsTransactionInPostgres |= $col->requiresTransactionInPostgres();
+
             return $col;
         } else {
             $col = new Column();
             $col->setTable($this);
             $col->loadFromXML($data);
+
             return $this->addColumn($col); // call self w/ different param
         }
     }
@@ -754,11 +758,13 @@ class Table extends ScopedElement implements IDMethod
             $validator->setColumn($col);
             $validator->setTable($this);
             $this->validatorList[] = $validator;
+
             return $validator;
         } else {
             $validator = new Validator();
             $validator->setTable($this);
             $validator->loadFromXML($data);
+
             return $this->addValidator($validator);
         }
     }
@@ -794,11 +800,13 @@ class Table extends ScopedElement implements IDMethod
             if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
                 $this->foreignTableNames[] = $fk->getForeignTableName();
             }
+
             return $fk;
         } else {
             $fk = new ForeignKey();
             $fk->setTable($this);
             $fk->loadFromXML($fkdata);
+
             return $this->addForeignKey($fk);
         }
     }
@@ -828,6 +836,7 @@ class Table extends ScopedElement implements IDMethod
         for ($i = 0, $size=count($children); $i < $size; $i++) {
             $names[] = get_class($children[$i]);
         }
+
         return $names;
     }
 
@@ -935,6 +944,7 @@ class Table extends ScopedElement implements IDMethod
                 }
             }
         }
+
         return $crossFks;
     }
 
@@ -962,6 +972,7 @@ class Table extends ScopedElement implements IDMethod
         if ($this->foreignTableNames === null) {
             $this->foreignTableNames = array();
         }
+
         return $this->foreignTableNames;
     }
 
@@ -986,10 +997,12 @@ class Table extends ScopedElement implements IDMethod
                 $this->idMethodParameters = array();
             }
             $this->idMethodParameters[] = $imp;
+
             return $imp;
         } else {
             $imp = new IdMethodParameter();
             $imp->loadFromXML($impdata);
+
             return $this->addIdMethodParameter($imp); // call self w/ diff param
         }
     }
@@ -1005,10 +1018,12 @@ class Table extends ScopedElement implements IDMethod
             $index->setTable($this);
             $index->getName(); // we call this method so that the name is created now if it doesn't already exist.
             $this->indices[] = $index;
+
             return $index;
         } else {
             $index = new Index($this);
             $index->loadFromXML($idxdata);
+
             return $this->addIndex($index);
         }
     }
@@ -1024,10 +1039,12 @@ class Table extends ScopedElement implements IDMethod
             $unique->setTable($this);
             $unique->getName(); // we call this method so that the name is created now if it doesn't already exist.
             $this->unices[] = $unique;
+
             return $unique;
         } else {
             $unique = new Unique($this);
             $unique->loadFromXML($unqdata);
+
             return $this->addUnique($unique);
         }
     }
@@ -1052,11 +1069,13 @@ class Table extends ScopedElement implements IDMethod
             $behavior = $bdata;
             $behavior->setTable($this);
             $this->behaviors[$behavior->getName()] = $behavior;
+
             return $behavior;
         } else {
             $class = $this->getConfiguredBehavior($bdata['name']);
             $behavior = new $class();
             $behavior->loadFromXML($bdata);
+
             return $this->addBehavior($behavior);
         }
     }
@@ -1082,6 +1101,7 @@ class Table extends ScopedElement implements IDMethod
                 $behaviors[$name] = $behavior;
             }
         }
+
         return $behaviors;
     }
 
@@ -1195,6 +1215,7 @@ class Table extends ScopedElement implements IDMethod
                 print $e->getTraceAsString();
             }
         }
+
         return $this->phpName;
     }
 
@@ -1225,6 +1246,7 @@ class Table extends ScopedElement implements IDMethod
         if (strlen($phpname) > 1) {
             return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
         } else { // 0 or 1 chars (I suppose that's rare)
+
             return strtolower($phpname);
         }
     }
@@ -1266,6 +1288,7 @@ class Table extends ScopedElement implements IDMethod
         if (!$this->defaultStringFormat && $this->getDatabase() && $this->getDatabase()->getDefaultStringFormat()) {
             return $this->getDatabase()->getDefaultStringFormat();
         }
+
         return $this->defaultStringFormat;
     }
 
@@ -1455,6 +1478,7 @@ class Table extends ScopedElement implements IDMethod
                 $count++;
             }
         }
+
         return $count;
     }
 
@@ -1469,6 +1493,7 @@ class Table extends ScopedElement implements IDMethod
                 return true;
             }
         }
+
         return false;
     }
 
@@ -1552,6 +1577,7 @@ class Table extends ScopedElement implements IDMethod
                 return $this->columnsByName[$name];
             }
         }
+
         return null; // just to be explicit
     }
 
@@ -1564,6 +1590,7 @@ class Table extends ScopedElement implements IDMethod
         if (isset($this->columnsByPhpName[$phpName])) {
             return $this->columnsByPhpName[$phpName];
         }
+
         return null; // just to be explicit
     }
 
@@ -1580,6 +1607,7 @@ class Table extends ScopedElement implements IDMethod
                 $matches[] = $fk;
             }
         }
+
         return $matches;
     }
 
@@ -1597,6 +1625,7 @@ class Table extends ScopedElement implements IDMethod
                 $matches[] = $fk;
             }
         }
+
         return $matches;
     }
 
@@ -1794,6 +1823,7 @@ class Table extends ScopedElement implements IDMethod
                 $pk[] = $col;
             }
         }
+
         return $pk;
     }
 
@@ -1845,6 +1875,7 @@ class Table extends ScopedElement implements IDMethod
                 }
             }
         }
+
         return false;
     }
 
@@ -1863,6 +1894,7 @@ class Table extends ScopedElement implements IDMethod
                 }
             }
         }
+
         return null;
     }
 
@@ -1910,6 +1942,7 @@ class Table extends ScopedElement implements IDMethod
                 $result .= ($comma++ ? ',' : '') . $this->getDatabase()->getPlatform()->quoteIdentifier($col->getName());
             }
         }
+
         return $result;
     }
 

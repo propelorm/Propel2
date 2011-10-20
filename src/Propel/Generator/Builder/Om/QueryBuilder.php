@@ -349,6 +349,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         if (\$criteria instanceof Criteria) {
             \$query->mergeWith(\$criteria);
         }
+
         return \$query;";
     }
 
@@ -531,6 +532,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         \$stmt = \$criteria
             ->filterByPrimaryKey(\$key)
             ->doSelect(\$con);
+
         return \$criteria->getFormatter()->init(\$criteria)->formatOne(\$stmt);
     }
 ";
@@ -577,6 +579,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         \$stmt = \$criteria
             ->filterByPrimaryKeys(\$keys)
             ->doSelect(\$con);
+
         return \$criteria->getFormatter()->init(\$criteria)->format(\$stmt);
     }
 ";
@@ -605,6 +608,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
             $script .= "
+
         return \$this->addUsingAlias($const, \$key, Criteria::EQUAL);";
         } else {
             // composite primary key
@@ -647,6 +651,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             $col = $pks[0];
             $const = $this->getColumnConstant($col);
             $script .= "
+
         return \$this->addUsingAlias($const, \$keys, Criteria::IN);";
         } else {
             // composite primary key
@@ -806,6 +811,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
                     \$this->add(\$key, \$value, Criteria::LIKE);
                 }
             }
+
             return \$this;
         } elseif (\$comparison == Criteria::CONTAINS_SOME) {
             foreach (\$$variableName as \$value) {
@@ -816,6 +822,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
                     \$this->add(\$key, \$value, Criteria::LIKE);
                 }
             }
+
             return \$this;
         } elseif (\$comparison == Criteria::CONTAINS_NONE) {
             foreach (\$$variableName as \$value) {
@@ -827,6 +834,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
                 }
             }
             \$this->addOr(\$key, null, Criteria::ISNULL);
+
             return \$this;
         }";
         } elseif ($col->getType() == PropelTypes::ENUM) {
@@ -867,6 +875,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         }";
         }
         $script .= "
+
         return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
     }
 ";
@@ -908,8 +917,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
                 \$this->addAnd(\$key, \$$variableName, \$comparison);
             }
             \$this->addOr(\$key, null, Criteria::ISNULL);
+
             return \$this;
         }
+
         return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
     }
 ";
@@ -968,6 +979,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             if (null === \$comparison) {
                 \$comparison = Criteria::IN;
             }
+
             return \$this
                 ->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('PrimaryKey', '$foreignColumnName'), \$comparison);";
         }

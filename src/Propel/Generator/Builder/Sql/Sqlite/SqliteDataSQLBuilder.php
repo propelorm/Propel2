@@ -32,6 +32,7 @@ class SqliteDataSQLBuilder extends DataSQLBuilder
         if (is_object($blob)) {
             $blob = $blob->__toString();
         }
+
         return "'" . sqlite_udf_encode_binary($blob) . "'";
     }
 

@@ -10,7 +10,7 @@
       required="true"
       type="VARCHAR"
       size="128"
-	  default="Penguin"
+      default="Penguin"
       description="Publisher Name"/>
   </table>
 

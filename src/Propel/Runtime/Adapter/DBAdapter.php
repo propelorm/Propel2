@@ -78,6 +78,7 @@ abstract class DBAdapter
         $adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
         if ($adapterClass !== null) {
             $a = new $adapterClass();
+
             return $a;
         } else {
             throw new PropelException("Unsupported Propel driver: " . $driver . ": Check your configuration file");
@@ -302,6 +303,7 @@ abstract class DBAdapter
                 break;
             }
         }
+
         return $value;
     }
 
@@ -404,6 +406,7 @@ abstract class DBAdapter
             }
             $sql .= 'FROM ' . $tableName;
         }
+
         return $sql;
     }
 

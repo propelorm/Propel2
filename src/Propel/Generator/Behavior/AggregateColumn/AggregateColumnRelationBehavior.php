@@ -31,6 +31,7 @@ class AggregateColumnRelationBehavior extends Behavior
     public function postSave($builder)
     {
         $relationName = $this->getRelationName($builder);
+
         return "\$this->updateRelated{$relationName}(\$con);";
     }
 
@@ -40,6 +41,7 @@ class AggregateColumnRelationBehavior extends Behavior
     public function objectAttributes($builder)
     {
         $relationName = $this->getRelationName($builder);
+
         return "protected \$old{$relationName};
 ";
     }
@@ -53,6 +55,7 @@ class AggregateColumnRelationBehavior extends Behavior
     {
         $relationName = $this->getRelationName($builder);
         $updateMethodName = $this->getParameter('update_method');
+
         return $this->renderTemplate('objectUpdateRelated', array(
             'relationName'     => $relationName,
             'variableName'     => self::lcfirst($relationName),
@@ -87,6 +90,7 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function getFindRelated($builder)
     {
         $relationName = $this->getRelationName($builder);
+
         return "\$this->findRelated{$relationName}s(\$con);";
     }
 
@@ -103,6 +107,7 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function getUpdateRelated($builder)
     {
         $relationName = $this->getRelationName($builder);
+
         return "\$this->updateRelated{$relationName}s(\$con);";
     }
 
@@ -137,6 +142,7 @@ class AggregateColumnRelationBehavior extends Behavior
     protected function addQueryUpdateRelated($builder)
     {
         $relationName = $this->getRelationName($builder);
+
         return $this->renderTemplate('queryUpdateRelated', array(
             'relationName'     => $relationName,
             'variableName'     => self::lcfirst($relationName),
@@ -167,6 +173,7 @@ class AggregateColumnRelationBehavior extends Behavior
     {
         // no lcfirst in php<5.3...
         $input[0] = strtolower($input[0]);
+
         return $input;
     }
 }

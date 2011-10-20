@@ -127,9 +127,11 @@ if (is_callable(array('$ARClassName', \$name))) {
         \$delegate = new $ARClassName();
         \$this->set$relationName(\$delegate);
     }
+
     return call_user_func_array(array(\$delegate, \$name), \$params);
 }";
         }
+
         return $script;
     }
 }

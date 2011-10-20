@@ -29,7 +29,7 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
 
   protected function setUp()
   {
-  	parent::setUp();
+      parent::setUp();
     $this->databaseMap = Propel::getDatabaseMap('bookstore');
   }
 
@@ -143,19 +143,19 @@ class PHP5TableMapBuilderTest extends BookstoreTestBase
     $this->assertEquals($tmap->getBehaviors(), $expectedBehaviorParams, 'The map builder creates a getBehaviors() method to retrieve behaviors parameters when behaviors are registered');
   }
 
- 	public function testSingleTableInheritance()
-	{
-		$bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
-		$this->assertFalse($bookTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns false by default');
+     public function testSingleTableInheritance()
+    {
+        $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
+        $this->assertFalse($bookTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns false by default');
 
-		$empTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployee');
-		$this->assertTrue($empTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns true for tables using single table inheritance');
-	}
+        $empTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployee');
+        $this->assertTrue($empTable->isSingleTableInheritance(), 'isSingleTabkeInheritance() returns true for tables using single table inheritance');
+    }
 
-	public function testPrimaryString()
-	{
-		$bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
-		$this->assertTrue($bookTable->hasPrimaryStringColumn(), 'The map builder adds primaryString columns.');
-		$this->assertEquals($bookTable->getColumn('TITLE'), $bookTable->getPrimaryStringColumn(), 'The map builder maps the correct column as primaryString.');
-	}
+    public function testPrimaryString()
+    {
+        $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
+        $this->assertTrue($bookTable->hasPrimaryStringColumn(), 'The map builder adds primaryString columns.');
+        $this->assertEquals($bookTable->getColumn('TITLE'), $bookTable->getPrimaryStringColumn(), 'The map builder maps the correct column as primaryString.');
+    }
 }

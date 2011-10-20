@@ -559,6 +559,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
 
         self::shiftRLRange(\$dest->getLeftValue(), \$dest->getRightValue(), -1, \$con, \$sidv);
         self::shiftRLValues(\$dest->getRightValue() + 1, -2, \$con, \$sidv);
+
         return \$dest->delete(\$con);
     }
 ";
@@ -744,6 +745,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         }
         \$prevSibling = $peerClassname::doSelectOne(\$c, \$con);
         \$node->setPrevSibling(\$prevSibling);
+
         return \$prevSibling;
     }
 ";
@@ -770,6 +772,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         }
         \$nextSibling = $peerClassname::doSelectOne(\$c, \$con);
         \$node->setNextSibling(\$nextSibling);
+
         return \$nextSibling;
     }
 ";
@@ -807,8 +810,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             $peerClassname::addInstanceToPool(\$root);
 
             \$stmt->closeCursor();
+
             return \$root;
         }
+
         return false;
     }
 ";
@@ -974,6 +979,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         }
         \$stmt->execute();
         \$row = \$stmt->fetch();
+
         return \$row['lvl'];
     }
 ";
@@ -994,6 +1000,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
     public static function getNumberOfChildren(NodeObject \$node, PropelPDO \$con = null)
     {
         \$children = $peerClassname::retrieveChildren(\$node);
+
         return count(\$children);
     }
 ";
@@ -1016,6 +1023,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         \$right = \$node->getRightValue();
         \$left = \$node->getLeftValue();
         \$num = (\$right - \$left - 1) / 2;
+
         return \$num;
     }
 ";
@@ -1163,6 +1171,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         if (self::SCOPE_COL) {
             \$also = (\$node1->getScopeIdValue() === \$node2->getScopeIdValue());
         }
+
         return \$node1->getLeftValue() == \$node2->getLeftValue() && \$node1->getRightValue() == \$node2->getRightValue() && \$also;
     }
 ";
@@ -1299,6 +1308,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         } else {
             \$object = $peerClassname::retrieveByPK(\$node, \$con);
             \$rtn = is_object(\$object) ? \$object : false;
+
             return \$rtn;
         }
     }
@@ -1374,6 +1384,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             }
         }
         \$node->setChildren(\$children);
+
         return \$descendants;
     }
 ";
@@ -1434,6 +1445,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             }
         }
         \$node->setChildren(\$children);
+
         return \$children;
     }
 ";

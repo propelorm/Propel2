@@ -97,6 +97,7 @@ class VersionableBehaviorObjectBuilderModifier
         $script .= "
     \$createVersion = true; // for postSave hook
 }";
+
         return $script;
     }
 
@@ -115,6 +116,7 @@ class VersionableBehaviorObjectBuilderModifier
 {$this->getVersionQueryClassName()}::create()
     ->filterBy{$this->table->getPhpName()}(\$this)
     ->delete(\$con);";
+
             return $script;
         }
     }
@@ -136,6 +138,7 @@ class VersionableBehaviorObjectBuilderModifier
         $this->addGetOneVersion($script);
         $this->addGetAllVersions($script);
         $this->addCompareVersions($script);
+
         return $script;
     }
 
@@ -206,6 +209,7 @@ public function isVersioningNecessary(\$con = null)
 ";
         }
         $script .= "
+
     return false;
 }
 ";
@@ -356,6 +360,7 @@ public function populateFromVersion(\$version, \$con = null)
     }";
         }
         $script .= "
+
     return \$this;
 }
 ";
@@ -380,6 +385,7 @@ public function getLastVersionNumber(\$con = null)
     if (!\$v) {
         return 0;
     }
+
     return \$v->get{$this->getColumnPhpName()}();
 }
 ";
@@ -443,6 +449,7 @@ public function getAllVersions(\$con = null)
 {
     \$criteria = new Criteria();
     \$criteria->addAscendingOrderByColumn({$this->builder->getColumnConstant($versionForeignColumn)});
+
     return \$this->get{$relCol}(\$criteria, \$con);
 }
 ";
@@ -513,6 +520,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
             }
         }
     }
+
     return \$diff;
 }
 ";

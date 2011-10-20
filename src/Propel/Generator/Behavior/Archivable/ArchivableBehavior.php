@@ -173,6 +173,7 @@ class ArchivableBehavior extends Behavior
         if (is_null($this->objectBuilderModifier)) {
             $this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
         }
+
         return $this->objectBuilderModifier;
     }
 
@@ -181,6 +182,7 @@ class ArchivableBehavior extends Behavior
         if (is_null($this->queryBuilderModifier)) {
             $this->queryBuilderModifier = new ArchivableBehaviorQueryBuilderModifier($this);
         }
+
         return $this->queryBuilderModifier;
     }
 }

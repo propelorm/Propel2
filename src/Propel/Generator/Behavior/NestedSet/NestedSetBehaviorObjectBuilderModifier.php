@@ -64,6 +64,7 @@ class NestedSetBehaviorObjectBuilderModifier
     public function objectAttributes($builder)
     {
         $objectClassname = $builder->getStubObjectBuilder()->getClassname();
+
         return "
 /**
  * Queries to be executed in the save transaction
@@ -123,6 +124,7 @@ protected \$aNestedSetParent = null;
     public function preDelete($builder)
     {
         $peerClassname = $builder->getStubPeerBuilder()->getClassname();
+
         return "if (\$this->isRoot()) {
     throw new PropelException('Deletion of a root node is disabled for nested sets. Use $peerClassname::deleteTree(" . ($this->behavior->useScope() ? '$scope' : '') . ") instead to delete an entire tree');
 }
@@ -136,6 +138,7 @@ if (\$this->isInTree()) {
     public function postDelete($builder)
     {
         $peerClassname = $builder->getStubPeerBuilder()->getClassname();
+
         return "if (\$this->isInTree()) {
     // fill up the room that was used by the node
     $peerClassname::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->behavior->useScope() ? ", \$this->getScopeValue()" : "") . ", \$con);
@@ -413,6 +416,7 @@ public function makeRoot()
     \$this->setLeftValue(1);
     \$this->setRightValue(2);
     \$this->setLevel(0);
+
     return \$this;
 }
 ";
@@ -482,6 +486,7 @@ public function isDescendantOf(\$parent)
     }";
         }
         $script .= "
+
     return \$this->isInTree() && \$this->getLeftValue() > \$parent->getLeftValue() && \$this->getRightValue() < \$parent->getRightValue();
 }
 ";
@@ -535,6 +540,7 @@ public function hasParent(PropelPDO \$con = null)
 public function setParent(\$parent = null)
 {
     \$this->aNestedSetParent = \$parent;
+
     return \$this;
 }
 ";
@@ -559,6 +565,7 @@ public function getParent(PropelPDO \$con = null)
             ->orderByLevel(true)
             ->findOne(\$con);
     }
+
     return \$this->aNestedSetParent;
 }
 ";
@@ -580,6 +587,7 @@ public function hasPrevSibling(PropelPDO \$con = null)
     if (!{$this->peerClassname}::isValid(\$this)) {
         return false;
     }
+
     return $queryClassname::create()
         ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
         if ($this->behavior->useScope()) {
@@ -632,6 +640,7 @@ public function hasNextSibling(PropelPDO \$con = null)
     if (!{$this->peerClassname}::isValid(\$this)) {
         return false;
     }
+
     return $queryClassname::create()
         ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
         if ($this->behavior->useScope()) {
@@ -773,6 +782,7 @@ public function getChildren(\$criteria = null, PropelPDO \$con = null)
             \$this->collNestedSetChildren = \$collNestedSetChildren;
         }
     }
+
     return \$this->collNestedSetChildren;
 }
 ";
@@ -884,6 +894,7 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
         if (!\$includeNode) {
             \$query->prune(\$this);
         }
+
         return \$query->find(\$con);
     }
 }
@@ -1012,6 +1023,7 @@ public function addChild($objectClassname \$child)
         throw new PropelException('A $objectClassname object must not be new to accept children.');
     }
     \$child->insertAsFirstChildOf(\$this);
+
     return \$this;
 }
 ";
@@ -1023,6 +1035,7 @@ public function addChild($objectClassname \$child)
         if ($namespace = $this->builder->getStubPeerBuilder()->getNamespace()) {
             $peerClassname = '\\\\' . $namespace . '\\\\' . $peerClassname;
         }
+
         return $peerClassname;
     }
 
@@ -1066,6 +1079,7 @@ public function insertAsFirstChildOf(\$parent)
         'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
+
     return \$this;
 }
 ";
@@ -1111,6 +1125,7 @@ public function insertAsLastChildOf(\$parent)
         'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
+
     return \$this;
 }
 ";
@@ -1153,6 +1168,7 @@ public function insertAsPrevSiblingOf(\$sibling)
         'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
+
     return \$this;
 }
 ";
@@ -1195,6 +1211,7 @@ public function insertAsNextSiblingOf(\$sibling)
         'callable'  => array('$peerClassname', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
+
     return \$this;
 }
 ";
@@ -1596,6 +1613,7 @@ public function getPath(PropelPDO \$con = null)
 {
     \$path = \$this->getAncestors(null, \$con);
     \$path []= \$this;
+
     return \$path;
 }
 ";

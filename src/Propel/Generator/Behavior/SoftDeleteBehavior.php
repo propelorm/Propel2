@@ -56,6 +56,7 @@ class SoftDeleteBehavior extends Behavior
         $script = '';
         $this->addObjectForceDelete($script);
         $this->addObjectUndelete($script);
+
         return $script;
     }
 
@@ -90,6 +91,7 @@ public function forceDelete(PropelPDO \$con = null)
 public function unDelete(PropelPDO \$con = null)
 {
     \$this->{$this->getColumnSetter()}(null);
+
     return \$this->save(\$con);
 }
 ";
@@ -117,9 +119,11 @@ public function unDelete(PropelPDO \$con = null)
         $script .= "
     \$con->commit();
     {$builder->getStubPeerBuilder()->getClassname()}::removeInstanceFromPool(\$this);
+
     return;
 }
 ";
+
         return $script;
     }
 
@@ -160,6 +164,7 @@ protected \$localSoftDelete = true;
 public function includeDeleted()
 {
     \$this->localSoftDelete = false;
+
     return \$this;
 }
 ";
@@ -399,6 +404,7 @@ public static function doSoftDelete(\$values, PropelPDO \$con = null)
     \$selectCriteria->setDbName({$this->getTable()->getPhpName()}Peer::DATABASE_NAME);
     \$updateCriteria = new Criteria(self::DATABASE_NAME);
     \$updateCriteria->add({$this->builder->getColumnConstant($this->getColumnForParameter('deleted_column'))}, time());
+
      return {$this->builder->getBasePeerClassname()}::doUpdate(\$selectCriteria, \$updateCriteria, \$con);
 }
 ";
@@ -448,6 +454,7 @@ public static function doSoftDeleteAll(PropelPDO \$con = null)
     \$selectCriteria->setDbName({$this->builder->getPeerClassname()}::DATABASE_NAME);
     \$modifyCriteria = new Criteria();
     \$modifyCriteria->add({$this->builder->getColumnConstant($this->getColumnForParameter('deleted_column'))}, time());
+
     return BasePeer::doUpdate(\$selectCriteria, \$modifyCriteria, \$con);
 }
 ";

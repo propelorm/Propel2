@@ -20,35 +20,35 @@ use Propel\Generator\Builder\Util\StandardEnglishPluralizer;
  */
 class StandardEnglishPluralizerTest extends \PHPUnit_Framework_TestCase
 {
-	public function getPluralFormDataProvider()
-	{
-		return array(
-			array('', 's'),
-			array('user', 'users'),
-			array('users', 'userss'),
-			array('User', 'Users'),
-			array('sheep', 'sheep'),
-			array('Sheep', 'Sheep'),
-			array('wife', 'wives'),
-			array('Wife', 'Wives'),
-			array('country', 'countries'),
-			array('Country', 'Countries'),
-			array('Video', 'Videos'),
-			array('video', 'videos'),
-			array('Photo', 'Photos'),
-			array('photo', 'photos'),
-			array('Tomato', 'Tomatoes'),
-			array('tomato', 'tomatoes'),
-			array('Buffalo', 'Buffaloes'),
-			array('buffalo', 'buffaloes'),
-			array('typo', 'typos'),
-			array('Typo', 'Typos'),
-			array('apple', 'apples'),
-			array('Apple', 'Apples'),
-			array('Man', 'Men'),
-			array('man', 'men'),
-			array('numen', 'numina'),
-			array('Numen', 'Numina'),
+    public function getPluralFormDataProvider()
+    {
+        return array(
+            array('', 's'),
+            array('user', 'users'),
+            array('users', 'userss'),
+            array('User', 'Users'),
+            array('sheep', 'sheep'),
+            array('Sheep', 'Sheep'),
+            array('wife', 'wives'),
+            array('Wife', 'Wives'),
+            array('country', 'countries'),
+            array('Country', 'Countries'),
+            array('Video', 'Videos'),
+            array('video', 'videos'),
+            array('Photo', 'Photos'),
+            array('photo', 'photos'),
+            array('Tomato', 'Tomatoes'),
+            array('tomato', 'tomatoes'),
+            array('Buffalo', 'Buffaloes'),
+            array('buffalo', 'buffaloes'),
+            array('typo', 'typos'),
+            array('Typo', 'Typos'),
+            array('apple', 'apples'),
+            array('Apple', 'Apples'),
+            array('Man', 'Men'),
+            array('man', 'men'),
+            array('numen', 'numina'),
+            array('Numen', 'Numina'),
             array('bus', 'buses'),
             array('Bus', 'Buses'),
             array('news', 'news'),
@@ -90,15 +90,15 @@ class StandardEnglishPluralizerTest extends \PHPUnit_Framework_TestCase
             array('Tooth', 'Teeth'),
             array('tooth', 'teeth'),
             array('Foot', 'Feet'),
-		);
-	}
+        );
+    }
 
-	/**
-	 * @dataProvider getPluralFormDataProvider
-	 */
-	public function testgetPluralForm($input, $output)
-	{
-		$pluralizer = new StandardEnglishPluralizer();
-		$this->assertEquals($output, $pluralizer->getPluralForm($input));
-	}
+    /**
+     * @dataProvider getPluralFormDataProvider
+     */
+    public function testgetPluralForm($input, $output)
+    {
+        $pluralizer = new StandardEnglishPluralizer();
+        $this->assertEquals($output, $pluralizer->getPluralForm($input));
+    }
 }

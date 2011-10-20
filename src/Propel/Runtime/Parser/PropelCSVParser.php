@@ -99,6 +99,7 @@ class PropelCSVParser extends PropelParser
                     break;
             }
         }
+
         return $row;
     }
 
@@ -222,6 +223,7 @@ class PropelCSVParser extends PropelParser
     {
         $delim = preg_quote($this->delimiter, '/');
         preg_match_all('/(".+?"|[^' . $delim . ']+)(' . $delim . '|$)/', $row, $matches);
+
         return $matches[1];
     }
 
@@ -245,12 +247,14 @@ class PropelCSVParser extends PropelParser
             }
             $row[$key] = $column;
         }
+
         return $row;
     }
 
     protected function isQuoted($input)
     {
         $quote = preg_quote($this->quotechar, '/');
+
         return preg_match('/^' . $quote . '.*' . $quote . '$/', $input);
     }
 

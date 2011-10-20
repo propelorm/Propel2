@@ -24,28 +24,29 @@ use Propel\Runtime\Propel;
  */
 class VersionableBehaviorTest extends \PHPUnit_Framework_TestCase
 {
-	public function basicSchemaDataProvider()
-	{
-		$schema = <<<EOF
+    public function basicSchemaDataProvider()
+    {
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable" />
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable" />
+    </table>
 </database>
 EOF;
-		return array(array($schema));
-	}
 
-	/**
-	 * @dataProvider basicSchemaDataProvider
-	 */
-	public function testModifyTableAddsVersionColumn($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        return array(array($schema));
+    }
+
+    /**
+     * @dataProvider basicSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionColumn($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
 -----------------------------------------------------------------------
@@ -59,25 +60,25 @@ CREATE TABLE versionable_behavior_test_0
     version INTEGER DEFAULT 0
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function testModifyTableAddsVersionColumnCustomName()
-	{
-			$schema = <<<EOF
+    public function testModifyTableAddsVersionColumnCustomName()
+    {
+            $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable">
-			<parameter name="version_column" value="foo_ver" />
-		</behavior>
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable">
+            <parameter name="version_column" value="foo_ver" />
+        </behavior>
+    </table>
 </database>
 EOF;
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
 -----------------------------------------------------------------------
@@ -91,23 +92,23 @@ CREATE TABLE versionable_behavior_test_0
     foo_ver INTEGER DEFAULT 0
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function testModifyTableDoesNotAddVersionColumnIfExists()
-	{
-			$schema = <<<EOF
+    public function testModifyTableDoesNotAddVersionColumnIfExists()
+    {
+            $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<column name="version" type="BIGINT" />
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <column name="version" type="BIGINT" />
+    </table>
 </database>
 EOF;
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
 -----------------------------------------------------------------------
@@ -121,40 +122,41 @@ CREATE TABLE versionable_behavior_test_0
     version BIGINT
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function foreignTableSchemaDataProvider()
-	{
-		$schema = <<<EOF
+    public function foreignTableSchemaDataProvider()
+    {
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<column name="foreign_id" type="INTEGER" />
-		<foreign-key foreignTable="versionable_behavior_test_1">
-			<reference local="foreign_id" foreign="id" />
-		</foreign-key>
-		<behavior name="versionable" />
-	</table>
-	<table name="versionable_behavior_test_1">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable" />
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <column name="foreign_id" type="INTEGER" />
+        <foreign-key foreignTable="versionable_behavior_test_1">
+            <reference local="foreign_id" foreign="id" />
+        </foreign-key>
+        <behavior name="versionable" />
+    </table>
+    <table name="versionable_behavior_test_1">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable" />
+    </table>
 </database>
 EOF;
-		return array(array($schema));
-	}
 
-	/**
-	 * @dataProvider foreignTableSchemaDataProvider
-	 */
-	public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        return array(array($schema));
+    }
+
+    /**
+     * @dataProvider foreignTableSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
 -----------------------------------------------------------------------
@@ -169,8 +171,8 @@ CREATE TABLE versionable_behavior_test_0
     version INTEGER DEFAULT 0
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-		$expected = <<<EOF
+        $this->assertContains($expected, $builder->getSQL());
+        $expected = <<<EOF
 
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0_version
@@ -191,17 +193,17 @@ CREATE TABLE versionable_behavior_test_0_version
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	/**
-	 * @dataProvider foreignTableSchemaDataProvider
-	 */
-	public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+    /**
+     * @dataProvider foreignTableSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_1
 -----------------------------------------------------------------------
@@ -215,8 +217,8 @@ CREATE TABLE versionable_behavior_test_1
     version INTEGER DEFAULT 0
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-		$expected = <<<EOF
+        $this->assertContains($expected, $builder->getSQL());
+        $expected = <<<EOF
 
 -----------------------------------------------------------------------
 -- versionable_behavior_test_1_version
@@ -237,17 +239,17 @@ CREATE TABLE versionable_behavior_test_1_version
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (id) REFERENCES versionable_behavior_test_1 (id)
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	/**
-	 * @dataProvider basicSchemaDataProvider
-	 */
-	public function testModifyTableAddsVersionTable($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+    /**
+     * @dataProvider basicSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionTable($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
@@ -265,25 +267,25 @@ CREATE TABLE versionable_behavior_test_0_version
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function testModifyTableAddsVersionTableCustomName()
-	{
-		$schema = <<<EOF
+    public function testModifyTableAddsVersionTableCustomName()
+    {
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable">
-		  <parameter name="version_table" value="foo_ver" />
-		</behavior>
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable">
+          <parameter name="version_table" value="foo_ver" />
+        </behavior>
+    </table>
 </database>
 EOF;
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- foo_ver
 -----------------------------------------------------------------------
@@ -301,27 +303,27 @@ CREATE TABLE foo_ver
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function testModifyTableDoesNotAddVersionTableIfExists()
-	{
-		$schema = <<<EOF
+    public function testModifyTableDoesNotAddVersionTableIfExists()
+    {
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable" />
-	</table>
-	<table name="versionable_behavior_test_0_version">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="baz" type="INTEGER" />
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable" />
+    </table>
+    <table name="versionable_behavior_test_0_version">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="baz" type="INTEGER" />
+    </table>
 </database>
 EOF;
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
@@ -349,35 +351,36 @@ CREATE TABLE versionable_behavior_test_0_version
 );
 
 EOF;
-		$this->assertEquals($expected, $builder->getSQL());
-	}
+        $this->assertEquals($expected, $builder->getSQL());
+    }
 
-	public function logSchemaDataProvider()
-	{
-		$schema = <<<EOF
+    public function logSchemaDataProvider()
+    {
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-		<behavior name="versionable">
-		  <parameter name="log_created_at" value="true" />
-		  <parameter name="log_created_by" value="true" />
-		  <parameter name="log_comment" value="true" />
-		</behavior>
-	</table>
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable">
+          <parameter name="log_created_at" value="true" />
+          <parameter name="log_created_by" value="true" />
+          <parameter name="log_comment" value="true" />
+        </behavior>
+    </table>
 </database>
 EOF;
-		return array(array($schema));
-	}
 
-	/**
-	 * @dataProvider logSchemaDataProvider
-	 */
-	public function testModifyTableAddsLogColumns($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+        return array(array($schema));
+    }
+
+    /**
+     * @dataProvider logSchemaDataProvider
+     */
+    public function testModifyTableAddsLogColumns($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0
 -----------------------------------------------------------------------
@@ -394,17 +397,17 @@ CREATE TABLE versionable_behavior_test_0
     version_comment VARCHAR(255)
 );
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	/**
-	 * @dataProvider logSchemaDataProvider
-	 */
-	public function testModifyTableAddsVersionTableLogColumns($schema)
-	{
-		$builder = new PropelQuickBuilder();
-		$builder->setSchema($schema);
-		$expected = <<<EOF
+    /**
+     * @dataProvider logSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionTableLogColumns($schema)
+    {
+        $builder = new PropelQuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<EOF
 -----------------------------------------------------------------------
 -- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
@@ -425,23 +428,23 @@ CREATE TABLE versionable_behavior_test_0_version
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
 EOF;
-		$this->assertContains($expected, $builder->getSQL());
-	}
+        $this->assertContains($expected, $builder->getSQL());
+    }
 
-	public function testDatabaseLevelBehavior()
-	{
-			$schema = <<<EOF
+    public function testDatabaseLevelBehavior()
+    {
+            $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-	<behavior name="versionable" />
-	<table name="versionable_behavior_test_0">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<column name="bar" type="INTEGER" />
-	</table>
+    <behavior name="versionable" />
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+    </table>
 </database>
 EOF;
-			$builder = new PropelQuickBuilder();
-			$builder->setSchema($schema);
-			$builder->getSQL();
-	}
+            $builder = new PropelQuickBuilder();
+            $builder->setSchema($schema);
+            $builder->getSQL();
+    }
 
 }

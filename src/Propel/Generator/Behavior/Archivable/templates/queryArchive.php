@@ -37,6 +37,6 @@ public function archive($con = null, $useLittleMemory = true)
         $con->rollBack();
         throw $e;
     }
-    
+
     return $totalArchivedObjects;
 }

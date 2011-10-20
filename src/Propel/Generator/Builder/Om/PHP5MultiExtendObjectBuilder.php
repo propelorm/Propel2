@@ -66,6 +66,7 @@ class PHP5MultiExtendObjectBuilder extends ObjectBuilder
         if (!$this->child) {
             throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
+
         return $this->child;
     }
 

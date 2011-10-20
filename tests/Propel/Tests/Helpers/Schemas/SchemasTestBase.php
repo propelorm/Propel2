@@ -18,18 +18,18 @@ use Propel\Runtime\Propel;
 abstract class SchemasTestBase extends \PHPUnit_Framework_TestCase
 {
 
-	protected function setUp()
-	{
-		parent::setUp();
-		if (!file_exists(__DIR__ . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php')) {
-			$this->markTestSkipped('You must build the schemas project fot this tests to run');
-		}
-		Propel::init(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php');
-	}
+    protected function setUp()
+    {
+        parent::setUp();
+        if (!file_exists(__DIR__ . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php')) {
+            $this->markTestSkipped('You must build the schemas project fot this tests to run');
+        }
+        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/schemas/build/conf/bookstore-conf.php');
+    }
 
-	protected function tearDown()
-	{
-		parent::tearDown();
-		Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-	}
+    protected function tearDown()
+    {
+        parent::tearDown();
+        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+    }
 }

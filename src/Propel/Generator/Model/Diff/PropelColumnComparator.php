@@ -42,6 +42,7 @@ class PropelColumnComparator
             $columnDiff->setFromColumn($fromColumn);
             $columnDiff->setToColumn($toColumn);
             $columnDiff->setChangedProperties($changedProperties);
+
             return $columnDiff;
         } else {
             return false;

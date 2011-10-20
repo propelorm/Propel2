@@ -532,6 +532,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
 
         $script .= "
         }
+
         return \$this->$varName;
     }
 ";
@@ -807,6 +808,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
                 \$count = count(\$this->$collName);
             }
         }
+
         return \$count;
     }
 ";
@@ -904,6 +906,7 @@ class PHP5ObjectNoCollectionBuilder extends PHP5ObjectBuilder
             }
         }
         \$this->$lastCriteriaName = \$criteria;
+
         return \$this->$collName;
     }
 ";

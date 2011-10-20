@@ -52,6 +52,7 @@ class PropelMigrationManager
         if (!isset($this->connections[$datasource])) {
             throw new InvalidArgumentException(sprintf('Unkown datasource "%s"', $datasource));
         }
+
         return $this->connections[$datasource];
     }
 
@@ -83,6 +84,7 @@ class PropelMigrationManager
             dirname(__FILE__),
             $adapterClass
         );
+
         return new $adapterClass();
     }
 
@@ -163,6 +165,7 @@ class PropelMigrationManager
         $stmt = $pdo->prepare($sql);
         try {
             $stmt->execute();
+
             return true;
         } catch (PDOException $e) {
             return false;
@@ -258,6 +261,7 @@ class PropelMigrationManager
     public function getFirstUpMigrationTimestamp()
     {
         $validTimestamps = $this->getValidMigrationTimestamps();
+
         return array_shift($validTimestamps);
     }
 
@@ -278,6 +282,7 @@ class PropelMigrationManager
             $this->getMigrationDir(),
             $className
         );
+
         return new $className();
     }
 
@@ -343,6 +348,7 @@ class $migrationClassName
 
 }
 EOP;
+
         return $migrationClassBody;
     }
 
@@ -359,6 +365,7 @@ EOP;
                 return $currentUser['name'];
             }
         }
+
         return '';
     }
 }

@@ -256,6 +256,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
                 }
             }
         }
+
         return $packagedDataModels;
     }
 
@@ -273,6 +274,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 
         $clone = new Database();
         $clone->loadFromXML($attributes);
+
         return $clone;
     }
 }

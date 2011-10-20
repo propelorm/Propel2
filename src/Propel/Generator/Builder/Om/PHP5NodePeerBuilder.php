@@ -296,6 +296,7 @@ abstract class ".$this->getClassname()." {
     {
         \$criteria = $nodePeerClassname::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
         \$stmt = ".$this->getStubPeerBuilder()->getClassname()."::doSelectStmt(\$criteria, \$con);
+
         return self::populateNodes(\$stmt, \$criteria);
     }
 ";
@@ -353,6 +354,7 @@ abstract class ".$this->getClassname()." {
         \$criteria = self::buildFamilyCriteria(\$criteria, \$ancestors, \$descendants);
         \$stmt = $peerClassname::doSelectStmt(\$criteria, \$con);
         \$nodes = self::populateNodes(\$stmt, \$criteria);
+
         return (count(\$nodes) == 1 ? \$nodes[0] : null);
     }
 ";

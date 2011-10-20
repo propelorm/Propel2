@@ -99,6 +99,7 @@ class Rule extends XMLElement
         if ($this->classname === null && $this->name !== null) {
             return "\\Propel\\Runtime\\Validator\\" . ucfirst($this->name) . "Validator";
         }
+
         return $this->classname;
     }
 
@@ -166,6 +167,7 @@ class Rule extends XMLElement
     public function getMessage()
     {
         $message = str_replace('${value}', $this->getValue(), $this->message);
+
         return $message;
     }
 

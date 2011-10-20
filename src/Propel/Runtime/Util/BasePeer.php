@@ -195,6 +195,7 @@ class BasePeer
             $sql = "DELETE FROM " . $tableName;
             $stmt = $con->prepare($sql);
             $stmt->execute();
+
             return $stmt->rowCount();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -577,6 +578,7 @@ class BasePeer
                 }
             }
         }
+
         return (!empty($failureMap) ? $failureMap : true);
     }
 
@@ -607,6 +609,7 @@ class BasePeer
                 $pk = array_shift($pks);
             }
         }
+
         return $pk;
     }
 
@@ -628,6 +631,7 @@ class BasePeer
                 $columnNames[$columnName] = true;
             }
         }
+
         return false;
     }
 
@@ -857,6 +861,7 @@ class BasePeer
                 $params[] = array('column' => $crit->getColumn(), 'table' => $crit->getTable(), 'value' => $crit->getValue());
             }
         }
+
         return $params;
     }
 
@@ -876,6 +881,7 @@ class BasePeer
                 $v = new $cls();
                 self::$validatorMap[$classname] = $v;
             }
+
             return $v;
         } catch (Exception $e) {
             Propel::log("BasePeer::getValidator(): failed trying to instantiate " . $classname . ": ".$e->getMessage(), Propel::LOG_ERR);

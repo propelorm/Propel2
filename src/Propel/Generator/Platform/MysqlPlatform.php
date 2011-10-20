@@ -138,6 +138,7 @@ class MysqlPlatform extends DefaultPlatform
             $ret .= $this->getAddTableDDL($table);
         }
         $ret .= $this->getEndDDL();
+
         return $ret;
     }
 
@@ -212,6 +213,7 @@ CREATE TABLE %s
     %s
 ) %s=%s%s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines),
@@ -262,6 +264,7 @@ CREATE TABLE %s
                 );
             }
         }
+
         return $tableOptions;
     }
 
@@ -356,6 +359,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         foreach ($index->getColumns() as $col) {
             $list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
         }
+
         return implode(', ', $list);
     }
 
@@ -370,6 +374,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         $pattern = "
 ALTER TABLE %s DROP PRIMARY KEY;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName())
         );
@@ -386,6 +391,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
         $pattern = "
 CREATE %sINDEX %s ON %s (%s);
 ";
+
         return sprintf($pattern,
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
@@ -405,6 +411,7 @@ CREATE %sINDEX %s ON %s (%s);
         $pattern = "
 DROP INDEX %s ON %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName())
@@ -433,6 +440,7 @@ DROP INDEX %s ON %s;
         } elseif ($index->getIsUnique()) {
             $type = 'UNIQUE ';
         }
+
         return $type;
     }
 
@@ -452,6 +460,7 @@ DROP INDEX %s ON %s;
         $pattern = "
 ALTER TABLE %s DROP FOREIGN KEY %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->quoteIdentifier($fk->getName())
@@ -465,6 +474,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 -- %s
 -- ---------------------------------------------------------------------
 ";
+
         return sprintf($pattern, $comment);
     }
 
@@ -508,6 +518,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
         $pattern = "
 RENAME TABLE %s TO %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fromTableName),
             $this->quoteIdentifier($toTableName)
@@ -524,6 +535,7 @@ RENAME TABLE %s TO %s;
         $pattern = "
 ALTER TABLE %s DROP %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->quoteIdentifier($column->getName())
@@ -558,6 +570,7 @@ ALTER TABLE %s DROP %s;
         $pattern = "
 ALTER TABLE %s CHANGE %s %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
             $this->quoteIdentifier($fromColumn->getName()),

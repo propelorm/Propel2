@@ -195,6 +195,7 @@ class Criterion
     public function setIgnoreCase($b)
     {
         $this->ignoreStringCase = (boolean) $b;
+
         return $this;
     }
 
@@ -233,6 +234,7 @@ class Criterion
     {
         $this->clauses[] = $criterion;
         $this->conjunctions[] = self::UND;
+
         return $this;
     }
 
@@ -244,6 +246,7 @@ class Criterion
     {
         $this->clauses[] = $criterion;
         $this->conjunctions[] = self::ODER;
+
         return $this;
     }
 
@@ -507,6 +510,7 @@ class Criterion
     {
         $tables = array();
         $this->addCriterionTable($this, $tables);
+
         return $tables;
     }
 
@@ -534,6 +538,7 @@ class Criterion
         foreach ($this->getClauses() as $criterion) {
             $criterions = array_merge($criterions, $criterion->getAttachedCriterion());
         }
+
         return $criterions;
     }
 

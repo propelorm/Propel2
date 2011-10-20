@@ -54,6 +54,7 @@ class ClassTools
     public static function getFilePath($path, $classname = null, $extension = '.php')
     {
         $path = strtr(ltrim($path, '.'), '.', '/');
+
         return self::createFilePath($path, $classname, $extension);
     }
 
@@ -73,6 +74,7 @@ class ClassTools
             if ($path !== '') {
                 $path .= '/';
             }
+
             return $path . $classname . $extension;
         } else {
             return $path . $extension;
@@ -89,6 +91,7 @@ class ClassTools
         if ($class === null) {
             $class = "propel.util.BasePeer";
         }
+
         return $class;
     }
 
@@ -102,6 +105,7 @@ class ClassTools
         if ($class === null) {
             $class = "propel.om.BaseObject";
         }
+
         return $class;
     }
 
@@ -115,6 +119,7 @@ class ClassTools
         if ($interface === null && !$table->isReadOnly()) {
             $interface = "propel.om.Persistent";
         }
+
         return $interface;
     }
 

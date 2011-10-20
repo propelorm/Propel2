@@ -14,6 +14,7 @@ public function getTranslation($locale = '<?php echo $defaultLocale ?>', PropelP
             foreach ($this-><?php echo $i18nListVariable ?> as $translation) {
                 if ($translation->get<?php echo $localeColumnName ?>() == $locale) {
                     $this->currentTranslations[$locale] = $translation;
+
                     return $translation;
                 }
             }

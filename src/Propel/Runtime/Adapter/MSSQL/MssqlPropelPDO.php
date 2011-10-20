@@ -37,6 +37,7 @@ class MssqlPropelPDO extends PropelPDO
             $this->isUncommitable = false;
         }
         $this->nestedTransactionCount++;
+
         return $return;
     }
 
@@ -66,6 +67,7 @@ class MssqlPropelPDO extends PropelPDO
             }
             $this->nestedTransactionCount--;
         }
+
         return $return;
     }
 
@@ -92,6 +94,7 @@ class MssqlPropelPDO extends PropelPDO
             }
             $this->nestedTransactionCount--;
         }
+
         return $return;
     }
 
@@ -121,6 +124,7 @@ class MssqlPropelPDO extends PropelPDO
                 $this->log('Rollback transaction', null, __METHOD__);
             }
         }
+
         return $return;
     }
 
@@ -131,6 +135,7 @@ class MssqlPropelPDO extends PropelPDO
     public function lastInsertId($seqname = null)
     {
         $result = self::query('SELECT SCOPE_IDENTITY()');
+
         return (int) $result->fetchColumn();
     }
 

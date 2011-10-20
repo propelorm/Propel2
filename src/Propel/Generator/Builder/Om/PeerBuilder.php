@@ -185,6 +185,7 @@ abstract class PeerBuilder extends OMBuilder
                 }
             }
         }
+
         return false;
     }
 
@@ -202,6 +203,7 @@ abstract class PeerBuilder extends OMBuilder
                 }
             }
         }
+
         return false;
     }
 
@@ -214,6 +216,7 @@ abstract class PeerBuilder extends OMBuilder
     protected function isAddGenericMutators()
     {
         $table = $this->getTable();
+
         return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
     }
 
@@ -226,6 +229,7 @@ abstract class PeerBuilder extends OMBuilder
     protected function isAddGenericAccessors()
     {
         $table = $this->getTable();
+
         return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
     }
 
@@ -242,6 +246,7 @@ abstract class PeerBuilder extends OMBuilder
         } else {
             $retrieveMethod = "retrieveByPK";
         }
+
         return $retrieveMethod;
     }
 

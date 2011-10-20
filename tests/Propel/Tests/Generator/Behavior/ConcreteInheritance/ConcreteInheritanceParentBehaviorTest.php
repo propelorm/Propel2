@@ -35,35 +35,35 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
  */
 class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 {
-	public function testHasChildObject()
-	{
-		ConcreteArticleQuery::create()->deleteAll();
-		ConcreteQuizzQuery::create()->deleteAll();
-		ConcreteContentQuery::create()->deleteAll();
-		$content = new ConcreteContent();
-		$content->save();
-		$this->assertFalse($content->hasChildObject());
+    public function testHasChildObject()
+    {
+        ConcreteArticleQuery::create()->deleteAll();
+        ConcreteQuizzQuery::create()->deleteAll();
+        ConcreteContentQuery::create()->deleteAll();
+        $content = new ConcreteContent();
+        $content->save();
+        $this->assertFalse($content->hasChildObject());
 
-		$article = new ConcreteArticle();
-		$article->save();
-		$content = $article->getConcreteContent();
-		$this->assertTrue($content->hasChildObject());
-	}
+        $article = new ConcreteArticle();
+        $article->save();
+        $content = $article->getConcreteContent();
+        $this->assertTrue($content->hasChildObject());
+    }
 
-	public function testGetChildObject()
-	{
-		ConcreteArticleQuery::create()->deleteAll();
-		ConcreteQuizzQuery::create()->deleteAll();
-		ConcreteContentQuery::create()->deleteAll();
+    public function testGetChildObject()
+    {
+        ConcreteArticleQuery::create()->deleteAll();
+        ConcreteQuizzQuery::create()->deleteAll();
+        ConcreteContentQuery::create()->deleteAll();
 
-		$content = new ConcreteContent();
-		$content->save();
-		$this->assertNull($content->getChildObject());
+        $content = new ConcreteContent();
+        $content->save();
+        $this->assertNull($content->getChildObject());
 
-		$article = new ConcreteArticle();
-		$article->save();
-		$content = $article->getConcreteContent();
-		$this->assertEquals($article, $content->getChildObject());
-	}
+        $article = new ConcreteArticle();
+        $article->save();
+        $content = $article->getConcreteContent();
+        $this->assertEquals($article, $content->getChildObject());
+    }
 
 }

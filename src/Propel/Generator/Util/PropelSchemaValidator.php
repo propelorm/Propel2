@@ -47,6 +47,7 @@ class PropelSchemaValidator
         foreach ($this->appData->getDatabases() as $database) {
             $this->validateDatabaseTables($database);
         }
+
         return count($this->errors) == 0;
     }
 

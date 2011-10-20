@@ -124,6 +124,7 @@ class ConcreteInheritanceBehavior extends Behavior
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('schema')) {
             $tableName = $this->getParameter('schema').'.'.$tableName;
         }
+
         return $database->getTable($tableName);
     }
 
@@ -139,16 +140,19 @@ class ConcreteInheritanceBehavior extends Behavior
             case 'Propel\Generator\Builder\Om\PHP5ObjectBuilder':
                 $objectBuilder = $builder->getNewStubObjectBuilder($parentTable);
                 $builder->declareClass($objectBuilder->getFullyQualifiedClassname());
+
                 return $objectBuilder->getClassname();
                 break;
             case 'Propel\Generator\Builder\Om\QueryBuilder':
                 $queryBuilder = $builder->getNewStubQueryBuilder($parentTable);
                 $builder->declareClass($queryBuilder->getFullyQualifiedClassname());
+
                 return $queryBuilder->getClassname();
                 break;
             case 'Propel\Generator\Builder\Om\PHP5PeerBuilder':
                 $peerBuilder = $builder->getNewStubPeerBuilder($parentTable);
                 $builder->declareClass($peerBuilder->getFullyQualifiedClassname());
+
                 return $peerBuilder->getClassname();
                 break;
             default:
@@ -203,6 +207,7 @@ public function getParentOrCreate(\$con = null)
     if (\$this->isNew() && \$this->isPrimaryKeyNull()) {
         \$parent = new " . $parentClass . "();
         \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getFullyQualifiedClassname() . "');
+
         return \$parent;
     } else {
         return " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);

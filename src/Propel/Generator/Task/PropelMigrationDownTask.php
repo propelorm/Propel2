@@ -37,6 +37,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
         $previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
         if (!$nextMigrationTimestamp = array_pop($previousTimestamps)) {
             $this->log('No migration were ever executed on this database - nothing to reverse.');
+
             return false;
         }
         $this->log(sprintf(
@@ -53,6 +54,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
         $migration = $manager->getMigrationObject($nextMigrationTimestamp);
         if (false === $migration->preDown($manager)) {
             $this->log('preDown() returned false. Aborting migration.', Project::MSG_ERR);
+
             return false;
         }
 
@@ -84,6 +86,7 @@ class PropelMigrationDownTask extends BasePropelMigrationTask
                     $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
                 ));
                 $this->log('Migration aborted', Project::MSG_ERR);
+
                 return false;
             }
             $this->log(sprintf(

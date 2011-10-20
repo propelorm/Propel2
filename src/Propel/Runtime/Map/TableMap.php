@@ -314,6 +314,7 @@ class TableMap
   public function addConfiguredColumn($cmap)
   {
     $this->columns[ $cmap->getColumnName() ] = $cmap;
+
     return $cmap;
   }
 
@@ -331,6 +332,7 @@ class TableMap
     } elseif ($normalize) {
       $name = ColumnMap::normalizeName($name);
     }
+
     return isset($this->columns[$name]);
   }
 
@@ -350,6 +352,7 @@ class TableMap
     if (!$this->hasColumn($name, false)) {
       throw new PropelException("Cannot fetch ColumnMap for undefined column: " . $name);
     }
+
     return $this->columns[$name];
   }
 
@@ -376,6 +379,7 @@ class TableMap
     if (!isset($this->columnsByPhpName[$phpName])) {
       throw new PropelException("Cannot fetch ColumnMap for undefined column phpName: " . $phpName);
     }
+
     return $this->columnsByPhpName[$phpName];
   }
 
@@ -533,6 +537,7 @@ class TableMap
       );
     }
     $this->relations[$name] = $relation;
+
     return $relation;
   }
 
@@ -562,6 +567,7 @@ class TableMap
     {
       throw new PropelException('Calling getRelation() on an unknown relation, ' . $name);
     }
+
     return $this->relations[$name];
   }
 
@@ -578,6 +584,7 @@ class TableMap
       $this->buildRelations();
       $this->relationsBuilt = true;
     }
+
     return $this->relations;
   }
 
@@ -730,6 +737,7 @@ class TableMap
       $out .= ucfirst($tok);
       $tok = strtok('_');
     }
+
     return $out;
   }
 

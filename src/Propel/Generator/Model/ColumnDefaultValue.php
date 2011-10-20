@@ -109,6 +109,7 @@ class ColumnDefaultValue
         if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
             return true;
         }
+
         return false; // Can't help, they are different
     }
 

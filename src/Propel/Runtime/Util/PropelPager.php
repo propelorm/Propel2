@@ -349,6 +349,7 @@ class PropelPager implements \Countable, \Iterator
                 $this->pages = 0;
             }
         }
+
         return $this->pages;
     }
 
@@ -419,6 +420,7 @@ class PropelPager implements \Countable, \Iterator
         } else {
             $prev = false;
         }
+
         return $prev;
     }
 
@@ -433,6 +435,7 @@ class PropelPager implements \Countable, \Iterator
         } else {
             $next = false;
         }
+
         return $next;
     }
 
@@ -556,6 +559,7 @@ class PropelPager implements \Countable, \Iterator
         if (!isset($this->rs)) {
             $this->doRs();
         }
+
         return $this->rs[$this->currentKey];
     }
 
@@ -595,6 +599,7 @@ class PropelPager implements \Countable, \Iterator
         if (!isset($this->rs)) {
             $this->doRs();
         }
+
         return in_array($this->currentKey, array_keys($this->rs));
     }
 

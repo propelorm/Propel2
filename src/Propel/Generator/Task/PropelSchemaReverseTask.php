@@ -362,6 +362,7 @@ class PropelSchemaReverseTask extends PDOTask
 
         } catch (Exception $e) {
             $this->log("There was an error building XML from metadata: " . $e->getMessage(), Project::MSG_ERR);
+
             return false;
         }
 
@@ -378,6 +379,7 @@ class PropelSchemaReverseTask extends PDOTask
             $this->generatorConfig = new GeneratorConfig();
             $this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
         }
+
         return $this->generatorConfig;
     }
 
@@ -487,6 +489,7 @@ class PropelSchemaReverseTask extends PDOTask
             $rule->setValue($value);
         }
         $rule->setMessage($this->getRuleMessage($column, $type, $value));
+
         return $rule;
     }
 
@@ -506,6 +509,7 @@ class PropelSchemaReverseTask extends PDOTask
         $tmp = compact($msg['var']);
         array_unshift($tmp, $msg['msg']);
         $msg = call_user_func_array('sprintf', $tmp);
+
         return $msg;
     }
 
@@ -537,6 +541,7 @@ class PropelSchemaReverse_ValidatorSet
             $this->validators[$key] = new Validator();
             $this->validators[$key]->setColumn($column);
         }
+
         return $this->validators[$key];
     }
 

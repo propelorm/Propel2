@@ -25,55 +25,55 @@ use \PDO;
  */
 class SqlitePlatformTest extends PlatformTestProvider
 {
-	/**
-	 * Get the Platform object for this class
-	 *
-	 * @return     Platform
-	 */
-	protected function getPlatform()
-	{
-		return new SqlitePlatform();
-	}
+    /**
+     * Get the Platform object for this class
+     *
+     * @return     Platform
+     */
+    protected function getPlatform()
+    {
+        return new SqlitePlatform();
+    }
 
-	public function testQuoteConnected()
-	{
-		$p = $this->getPlatform();
-		$p->setConnection(new PDO("sqlite::memory:"));
+    public function testQuoteConnected()
+    {
+        $p = $this->getPlatform();
+        $p->setConnection(new PDO("sqlite::memory:"));
 
-		$unquoted = "Naughty ' string";
-		$quoted = $p->quote($unquoted);
+        $unquoted = "Naughty ' string";
+        $quoted = $p->quote($unquoted);
 
-		$expected = "'Naughty '' string'";
-		$this->assertEquals($expected, $quoted);
-	}
+        $expected = "'Naughty '' string'";
+        $this->assertEquals($expected, $quoted);
+    }
 
-	public function testGetSequenceNameDefault()
-	{
-		$table = new Table('foo');
-		$table->setIdMethod(IDMethod::NATIVE);
-		$expected = 'foo_SEQ';
-		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
-	}
+    public function testGetSequenceNameDefault()
+    {
+        $table = new Table('foo');
+        $table->setIdMethod(IDMethod::NATIVE);
+        $expected = 'foo_SEQ';
+        $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+    }
 
-	public function testGetSequenceNameCustom()
-	{
-		$table = new Table('foo');
-		$table->setIdMethod(IDMethod::NATIVE);
-		$idMethodParameter = new IdMethodParameter();
-		$idMethodParameter->setValue('foo_sequence');
-		$table->addIdMethodParameter($idMethodParameter);
-		$table->setIdMethod(IDMethod::NATIVE);
-		$expected = 'foo_sequence';
-		$this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
-	}
+    public function testGetSequenceNameCustom()
+    {
+        $table = new Table('foo');
+        $table->setIdMethod(IDMethod::NATIVE);
+        $idMethodParameter = new IdMethodParameter();
+        $idMethodParameter->setValue('foo_sequence');
+        $table->addIdMethodParameter($idMethodParameter);
+        $table->setIdMethod(IDMethod::NATIVE);
+        $expected = 'foo_sequence';
+        $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTablesDDL
-	 */
-	public function testGetAddTablesDDL($schema)
-	{
-		$database = $this->getDatabaseFromSchema($schema);
-		$expected = <<<EOF
+    /**
+     * @dataProvider providerForTestGetAddTablesDDL
+     */
+    public function testGetAddTablesDDL($schema)
+    {
+        $database = $this->getDatabaseFromSchema($schema);
+        $expected = <<<EOF
 
 -----------------------------------------------------------------------
 -- book
@@ -107,26 +107,26 @@ CREATE TABLE author
 );
 
 EOF;
-		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTablesSkipSQLDDL
-	 */
-	public function testGetAddTablesSkipSQLDDL($schema)
-	{
-		$database = $this->getDatabaseFromSchema($schema);
-		$expected = '';
-		$this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
-	}
+    /**
+     * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     */
+    public function testGetAddTablesSkipSQLDDL($schema)
+    {
+        $database = $this->getDatabaseFromSchema($schema);
+        $expected = '';
+        $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTableDDLSimplePK
-	 */
-	public function testGetAddTableDDLSimplePK($schema)
-	{
-		$table = $this->getTableFromSchema($schema);
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetAddTableDDLSimplePK
+     */
+    public function testGetAddTableDDLSimplePK($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = "
 -- This is foo table
 CREATE TABLE foo
 (
@@ -134,16 +134,16 @@ CREATE TABLE foo
     bar VARCHAR(255) NOT NULL
 );
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTableDDLNonIntegerPK
-	 */
-	public function testGetAddTableDDLNonIntegerPK($schema)
-	{
-		$table = $this->getTableFromSchema($schema);
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetAddTableDDLNonIntegerPK
+     */
+    public function testGetAddTableDDLNonIntegerPK($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = "
 -- This is foo table
 CREATE TABLE foo
 (
@@ -152,16 +152,16 @@ CREATE TABLE foo
     PRIMARY KEY (foo)
 );
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTableDDLCompositePK
-	 */
-	public function testGetAddTableDDLCompositePK($schema)
-	{
-		$table = $this->getTableFromSchema($schema);
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetAddTableDDLCompositePK
+     */
+    public function testGetAddTableDDLCompositePK($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = "
 CREATE TABLE foo
 (
     foo INTEGER NOT NULL,
@@ -170,16 +170,16 @@ CREATE TABLE foo
     PRIMARY KEY (foo,bar)
 );
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetAddTableDDLUniqueIndex
-	 */
-	public function testGetAddTableDDLUniqueIndex($schema)
-	{
-		$table = $this->getTableFromSchema($schema);
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     */
+    public function testGetAddTableDDLUniqueIndex($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = "
 CREATE TABLE foo
 (
     id INTEGER NOT NULL PRIMARY KEY,
@@ -187,195 +187,195 @@ CREATE TABLE foo
     UNIQUE (bar)
 );
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 
-	public function testGetDropTableDDL()
-	{
-		$table = new Table('foo');
-		$expected = "
+    public function testGetDropTableDDL()
+    {
+        $table = new Table('foo');
+        $expected = "
 DROP TABLE foo;
 ";
-		$this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+    }
 
-	public function testGetColumnDDL()
-	{
-		$c = new Column('foo');
-		$c->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
-		$c->getDomain()->replaceScale(2);
-		$c->getDomain()->replaceSize(3);
-		$c->setNotNull(true);
-		$c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-		$expected = 'foo DOUBLE(3,2) DEFAULT 123 NOT NULL';
-		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
-	}
+    public function testGetColumnDDL()
+    {
+        $c = new Column('foo');
+        $c->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
+        $c->getDomain()->replaceScale(2);
+        $c->getDomain()->replaceSize(3);
+        $c->setNotNull(true);
+        $c->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $expected = 'foo DOUBLE(3,2) DEFAULT 123 NOT NULL';
+        $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
+    }
 
-	public function testGetColumnDDLCustomSqlType()
-	{
-		$column = new Column('foo');
-		$column->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
-		$column->getDomain()->replaceScale(2);
-		$column->getDomain()->replaceSize(3);
-		$column->setNotNull(true);
-		$column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-		$column->getDomain()->replaceSqlType('DECIMAL(5,6)');
-		$expected = 'foo DECIMAL(5,6) DEFAULT 123 NOT NULL';
-		$this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
-	}
+    public function testGetColumnDDLCustomSqlType()
+    {
+        $column = new Column('foo');
+        $column->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
+        $column->getDomain()->replaceScale(2);
+        $column->getDomain()->replaceSize(3);
+        $column->setNotNull(true);
+        $column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $column->getDomain()->replaceSqlType('DECIMAL(5,6)');
+        $expected = 'foo DECIMAL(5,6) DEFAULT 123 NOT NULL';
+        $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+    }
 
-	public function testGetPrimaryKeyDDLSimpleKey()
-	{
-		$table = new Table('foo');
-		$column = new Column('bar');
-		$column->setPrimaryKey(true);
-		$table->addColumn($column);
-		$expected = 'PRIMARY KEY (bar)';
-		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
-	}
+    public function testGetPrimaryKeyDDLSimpleKey()
+    {
+        $table = new Table('foo');
+        $column = new Column('bar');
+        $column->setPrimaryKey(true);
+        $table->addColumn($column);
+        $expected = 'PRIMARY KEY (bar)';
+        $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
+    }
 
-	public function testGetPrimaryKeyDDLCompositeKey()
-	{
-		$table = new Table('foo');
-		$column1 = new Column('bar1');
-		$column1->setPrimaryKey(true);
-		$table->addColumn($column1);
-		$column2 = new Column('bar2');
-		$column2->setPrimaryKey(true);
-		$table->addColumn($column2);
-		$expected = 'PRIMARY KEY (bar1,bar2)';
-		$this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
-	}
+    public function testGetPrimaryKeyDDLCompositeKey()
+    {
+        $table = new Table('foo');
+        $column1 = new Column('bar1');
+        $column1->setPrimaryKey(true);
+        $table->addColumn($column1);
+        $column2 = new Column('bar2');
+        $column2->setPrimaryKey(true);
+        $table->addColumn($column2);
+        $expected = 'PRIMARY KEY (bar1,bar2)';
+        $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestPrimaryKeyDDL
-	 */
-	public function testGetDropPrimaryKeyDDL($table)
-	{
-		// not supported by SQLite
-		$expected = '';
-		$this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
-	}
+    /**
+     * @dataProvider providerForTestPrimaryKeyDDL
+     */
+    public function testGetDropPrimaryKeyDDL($table)
+    {
+        // not supported by SQLite
+        $expected = '';
+        $this->assertEquals($expected, $this->getPlatform()->getDropPrimaryKeyDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestPrimaryKeyDDL
-	 */
-	public function testGetAddPrimaryKeyDDL($table)
-	{
-		// not supported by SQLite
-		$expected = '';
-		$this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
-	}
+    /**
+     * @dataProvider providerForTestPrimaryKeyDDL
+     */
+    public function testGetAddPrimaryKeyDDL($table)
+    {
+        // not supported by SQLite
+        $expected = '';
+        $this->assertEquals($expected, $this->getPlatform()->getAddPrimaryKeyDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetIndicesDDL
-	 */
-	public function testAddIndicesDDL($table)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetIndicesDDL
+     */
+    public function testAddIndicesDDL($table)
+    {
+        $expected = "
 CREATE INDEX babar ON foo (bar1,bar2);
 
 CREATE INDEX foo_index ON foo (bar1);
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getAddIndicesDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetIndexDDL
-	 */
-	public function testAddIndexDDL($index)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetIndexDDL
+     */
+    public function testAddIndexDDL($index)
+    {
+        $expected = "
 CREATE INDEX babar ON foo (bar1,bar2);
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getAddIndexDDL($index));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetIndexDDL
-	 */
-	public function testDropIndexDDL($index)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetIndexDDL
+     */
+    public function testDropIndexDDL($index)
+    {
+        $expected = "
 DROP INDEX babar;
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getDropIndexDDL($index));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetIndexDDL
-	 */
-	public function testGetIndexDDL($index)
-	{
-		$expected = 'INDEX babar (bar1,bar2)';
-		$this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
-	}
+    /**
+     * @dataProvider providerForTestGetIndexDDL
+     */
+    public function testGetIndexDDL($index)
+    {
+        $expected = 'INDEX babar (bar1,bar2)';
+        $this->assertEquals($expected, $this->getPLatform()->getIndexDDL($index));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetUniqueDDL
-	 */
-	public function testGetUniqueDDL($index)
-	{
-		$expected = 'UNIQUE (bar1,bar2)';
-		$this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
-	}
+    /**
+     * @dataProvider providerForTestGetUniqueDDL
+     */
+    public function testGetUniqueDDL($index)
+    {
+        $expected = 'UNIQUE (bar1,bar2)';
+        $this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetForeignKeysDDL
-	 */
-	public function testGetAddForeignKeysDDL($table)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetForeignKeysDDL
+     */
+    public function testGetAddForeignKeysDDL($table)
+    {
+        $expected = "
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (bar_id) REFERENCES bar (id)
 
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (baz_id) REFERENCES baz (id)
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getAddForeignKeysDDL($table));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetForeignKeyDDL
-	 */
-	public function testGetAddForeignKeyDDL($fk)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetForeignKeyDDL
+     */
+    public function testGetAddForeignKeyDDL($fk)
+    {
+        $expected = "
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (bar_id) REFERENCES bar (id)
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getAddForeignKeyDDL($fk));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetForeignKeyDDL
-	 */
-	public function testGetDropForeignKeyDDL($fk)
-	{
-		$expected = '';
-		$this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
-	}
+    /**
+     * @dataProvider providerForTestGetForeignKeyDDL
+     */
+    public function testGetDropForeignKeyDDL($fk)
+    {
+        $expected = '';
+        $this->assertEquals($expected, $this->getPLatform()->getDropForeignKeyDDL($fk));
+    }
 
-	/**
-	 * @dataProvider providerForTestGetForeignKeyDDL
-	 */
-	public function testGetForeignKeyDDL($fk)
-	{
-		$expected = "
+    /**
+     * @dataProvider providerForTestGetForeignKeyDDL
+     */
+    public function testGetForeignKeyDDL($fk)
+    {
+        $expected = "
 -- SQLite does not support foreign keys; this is just for reference
 -- FOREIGN KEY (bar_id) REFERENCES bar (id)
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
+    }
 
-	public function testGetCommentBlockDDL()
-	{
-		$expected = "
+    public function testGetCommentBlockDDL()
+    {
+        $expected = "
 -----------------------------------------------------------------------
 -- foo bar
 -----------------------------------------------------------------------
 ";
-		$this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
-	}
+        $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
+    }
 
 }

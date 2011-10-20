@@ -158,8 +158,10 @@ class PropelPHPParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, '', $this->code);
+
             return $methodCode;
         }
+
         return false;
     }
 
@@ -175,8 +177,10 @@ class PropelPHPParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, $newCode, $this->code);
+
             return $methodCode;
         }
+
         return false;
     }
 
@@ -192,8 +196,10 @@ class PropelPHPParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, $methodCode. $newCode, $this->code);
+
             return $methodCode;
         }
+
         return false;
     }
 
@@ -209,8 +215,10 @@ class PropelPHPParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, $newCode . $methodCode, $this->code);
+
             return $methodCode;
         }
+
         return false;
     }
 }

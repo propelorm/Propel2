@@ -164,6 +164,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
 
         if (!$migrationsUp) {
             $this->log('Same XML and database structures for all datasource - no diff to generate');
+
             return;
         }
 

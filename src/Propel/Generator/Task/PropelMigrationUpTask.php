@@ -32,6 +32,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
 
         if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
             $this->log('All migrations were already executed - nothing to migrate.');
+
             return false;
         }
         $this->log(sprintf(
@@ -42,6 +43,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
         $migration = $manager->getMigrationObject($nextMigrationTimestamp);
         if (false === $migration->preUp($manager)) {
             $this->log('preUp() returned false. Aborting migration.', Project::MSG_ERR);
+
             return false;
         }
 
@@ -63,6 +65,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
                     $res++;
                 } catch (PDOException $e) {
                     $this->log(sprintf('Failed to execute SQL "%s". Aborting migration.', $statement), Project::MSG_ERR);
+
                     return false;
                     // continue
                 }
@@ -74,6 +77,7 @@ class PropelMigrationUpTask extends BasePropelMigrationTask
                     $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
                 ));
                 $this->log('Migration aborted', Project::MSG_ERR);
+
                 return false;
             }
             $this->log(sprintf(

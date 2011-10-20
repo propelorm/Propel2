@@ -21,8 +21,8 @@ namespace Propel\Tests\Helpers;
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
-	/**
-	 * Conditional compilation flag.
-	 */
-	const DEBUG = false;
+    /**
+     * Conditional compilation flag.
+     */
+    const DEBUG = false;
 }

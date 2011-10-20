@@ -110,6 +110,7 @@ class VendorInfo extends XMLElement
         if (isset($this->parameters[$name])) {
             return $this->parameters[$name];
         }
+
         return null; // just to be explicit
     }
 
@@ -163,6 +164,7 @@ class VendorInfo extends XMLElement
         $newParams = array_merge($this->getParameters(), $merge->getParameters());
         $newInfo = new VendorInfo($this->getType());
         $newInfo->setParameters($newParams);
+
         return $newInfo;
     }
 

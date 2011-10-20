@@ -34,211 +34,211 @@ use Propel\Runtime\Util\BasePeer;
  */
 class PropelArrayCollectionTest extends BookstoreEmptyTestBase
 {
-	protected function setUp()
-	{
-		parent::setUp();
-		BookstoreDataPopulator::populate($this->con);
-	}
+    protected function setUp()
+    {
+        parent::setUp();
+        BookstoreDataPopulator::populate($this->con);
+    }
 
-	public function testSave()
-	{
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
-		foreach ($books as &$book) {
-			$book['Title'] = 'foo';
-		}
-		$books->save();
-		// check that the modifications are persisted
-		BookPeer::clearInstancePool();
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
-		foreach ($books as $book) {
-			$this->assertEquals('foo', $book->getTitle('foo'));
-		}
-	}
+    public function testSave()
+    {
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
+        foreach ($books as &$book) {
+            $book['Title'] = 'foo';
+        }
+        $books->save();
+        // check that the modifications are persisted
+        BookPeer::clearInstancePool();
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        foreach ($books as $book) {
+            $this->assertEquals('foo', $book->getTitle('foo'));
+        }
+    }
 
-	/**
-	 * @expectedException \Propel\Runtime\Exception\PropelException
-	 */
-	public function testSaveOnReadOnlyEntityThrowsException()
-	{
-		$col = new PropelArrayCollection();
-		$col->setModel('ContestView');
-		$cv = new ContestView();
-		$col []= $cv;
-		$col->save();
-	}
+    /**
+     * @expectedException \Propel\Runtime\Exception\PropelException
+     */
+    public function testSaveOnReadOnlyEntityThrowsException()
+    {
+        $col = new PropelArrayCollection();
+        $col->setModel('ContestView');
+        $cv = new ContestView();
+        $col []= $cv;
+        $col->save();
+    }
 
-	public function testDelete()
-	{
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
-		$books->delete();
-		// check that the modifications are persisted
-		BookPeer::clearInstancePool();
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
-		$this->assertEquals(0, count($books));
-	}
+    public function testDelete()
+    {
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
+        $books->delete();
+        // check that the modifications are persisted
+        BookPeer::clearInstancePool();
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        $this->assertEquals(0, count($books));
+    }
 
-	/**
-	 * @expectedException \Propel\Runtime\Exception\PropelException
-	 */
-	public function testDeleteOnReadOnlyEntityThrowsException()
-	{
-		$col = new PropelArrayCollection();
-		$col->setModel('ContestView');
-		$cv = new ContestView();
-		$cv->setNew(false);
-		$col []= $cv;
-		$col->delete();
-	}
+    /**
+     * @expectedException \Propel\Runtime\Exception\PropelException
+     */
+    public function testDeleteOnReadOnlyEntityThrowsException()
+    {
+        $col = new PropelArrayCollection();
+        $col->setModel('ContestView');
+        $cv = new ContestView();
+        $cv->setNew(false);
+        $col []= $cv;
+        $col->delete();
+    }
 
-	public function testGetPrimaryKeys()
-	{
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
-		$pks = $books->getPrimaryKeys();
-		$this->assertEquals(4, count($pks));
+    public function testGetPrimaryKeys()
+    {
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
+        $pks = $books->getPrimaryKeys();
+        $this->assertEquals(4, count($pks));
 
-		$keys = array(
-			'Propel\Tests\Bookstore\Book_0',
-			'Propel\Tests\Bookstore\Book_1',
-			'Propel\Tests\Bookstore\Book_2',
-			'Propel\Tests\Bookstore\Book_3'
-		);
-		$this->assertEquals($keys, array_keys($pks));
+        $keys = array(
+            'Propel\Tests\Bookstore\Book_0',
+            'Propel\Tests\Bookstore\Book_1',
+            'Propel\Tests\Bookstore\Book_2',
+            'Propel\Tests\Bookstore\Book_3'
+        );
+        $this->assertEquals($keys, array_keys($pks));
 
-		$pks = $books->getPrimaryKeys(false);
-		$keys = array(0, 1, 2, 3);
-		$this->assertEquals($keys, array_keys($pks));
+        $pks = $books->getPrimaryKeys(false);
+        $keys = array(0, 1, 2, 3);
+        $this->assertEquals($keys, array_keys($pks));
 
-		$bookObjects = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
-		foreach ($pks as $key => $value) {
-			$this->assertEquals($bookObjects[$key]->getPrimaryKey(), $value);
-		}
-	}
+        $bookObjects = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        foreach ($pks as $key => $value) {
+            $this->assertEquals($bookObjects[$key]->getPrimaryKey(), $value);
+        }
+    }
 
-	public function testFromArray()
-	{
-		$author = new Author();
-		$author->setFirstName('Jane');
-		$author->setLastName('Austen');
-		$author->save();
-		$books = array(
-			array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
-			array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
-		);
-		$col = new PropelArrayCollection();
-		$col->setModel('\Propel\Tests\Bookstore\Book');
-		$col->fromArray($books);
-		$col->save();
+    public function testFromArray()
+    {
+        $author = new Author();
+        $author->setFirstName('Jane');
+        $author->setLastName('Austen');
+        $author->save();
+        $books = array(
+            array('Title' => 'Mansfield Park', 'AuthorId' => $author->getId()),
+            array('Title' => 'Pride And PRejudice', 'AuthorId' => $author->getId())
+        );
+        $col = new PropelArrayCollection();
+        $col->setModel('\Propel\Tests\Bookstore\Book');
+        $col->fromArray($books);
+        $col->save();
 
-		$nbBooks = PropelQuery::from('\Propel\Tests\Bookstore\Book')->count();
-		$this->assertEquals(6, $nbBooks);
+        $nbBooks = PropelQuery::from('\Propel\Tests\Bookstore\Book')->count();
+        $this->assertEquals(6, $nbBooks);
 
-		$booksByJane = PropelQuery::from('\Propel\Tests\Bookstore\Book b')
-			->join('b.Author a')
-			->where('a.LastName = ?', 'Austen')
-			->count();
-		$this->assertEquals(2, $booksByJane);
-	}
+        $booksByJane = PropelQuery::from('\Propel\Tests\Bookstore\Book b')
+            ->join('b.Author a')
+            ->where('a.LastName = ?', 'Austen')
+            ->count();
+        $this->assertEquals(2, $booksByJane);
+    }
 
-	public function testToArray()
-	{
-		$books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
-		$booksArray = $books->toArray();
-		$this->assertEquals(4, count($booksArray));
+    public function testToArray()
+    {
+        $books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
+        $booksArray = $books->toArray();
+        $this->assertEquals(4, count($booksArray));
 
-		$bookObjects = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
-		foreach ($booksArray as $key => $book) {
-			$this->assertEquals($bookObjects[$key]->toArray(), $book);
-		}
+        $bookObjects = PropelQuery::from('\Propel\Tests\Bookstore\Book')->find();
+        foreach ($booksArray as $key => $book) {
+            $this->assertEquals($bookObjects[$key]->toArray(), $book);
+        }
 
-		$booksArray = $books->toArray();
-		$keys = array(0, 1, 2, 3);
-		$this->assertEquals($keys, array_keys($booksArray));
+        $booksArray = $books->toArray();
+        $keys = array(0, 1, 2, 3);
+        $this->assertEquals($keys, array_keys($booksArray));
 
-		$booksArray = $books->toArray(null, true);
-		$keys = array(
-			'Propel\Tests\Bookstore\Book_0',
-			'Propel\Tests\Bookstore\Book_1',
-			'Propel\Tests\Bookstore\Book_2',
-			'Propel\Tests\Bookstore\Book_3'
-		);
-		$this->assertEquals($keys, array_keys($booksArray));
+        $booksArray = $books->toArray(null, true);
+        $keys = array(
+            'Propel\Tests\Bookstore\Book_0',
+            'Propel\Tests\Bookstore\Book_1',
+            'Propel\Tests\Bookstore\Book_2',
+            'Propel\Tests\Bookstore\Book_3'
+        );
+        $this->assertEquals($keys, array_keys($booksArray));
 
-		$booksArray = $books->toArray('Title');
-		$keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
-		$this->assertEquals($keys, array_keys($booksArray));
+        $booksArray = $books->toArray('Title');
+        $keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
+        $this->assertEquals($keys, array_keys($booksArray));
 
-		$booksArray = $books->toArray('Title', true);
-		$keys = array(
-			'Propel\Tests\Bookstore\Book_Harry Potter and the Order of the Phoenix',
-			'Propel\Tests\Bookstore\Book_Quicksilver',
-			'Propel\Tests\Bookstore\Book_Don Juan',
-			'Propel\Tests\Bookstore\Book_The Tin Drum'
-		);
-		$this->assertEquals($keys, array_keys($booksArray));
-	}
+        $booksArray = $books->toArray('Title', true);
+        $keys = array(
+            'Propel\Tests\Bookstore\Book_Harry Potter and the Order of the Phoenix',
+            'Propel\Tests\Bookstore\Book_Quicksilver',
+            'Propel\Tests\Bookstore\Book_Don Juan',
+            'Propel\Tests\Bookstore\Book_The Tin Drum'
+        );
+        $this->assertEquals($keys, array_keys($booksArray));
+    }
 
-	public function testToArrayDeep()
-	{
-		$author = new Author();
-		$author->setId(5678);
-		$author->setFirstName('George');
-		$author->setLastName('Byron');
-		$book = new Book();
-		$book->setId(9012);
-		$book->setTitle('Don Juan');
-		$book->setISBN('0140422161');
-		$book->setPrice(12.99);
-		$book->setAuthor($author);
+    public function testToArrayDeep()
+    {
+        $author = new Author();
+        $author->setId(5678);
+        $author->setFirstName('George');
+        $author->setLastName('Byron');
+        $book = new Book();
+        $book->setId(9012);
+        $book->setTitle('Don Juan');
+        $book->setISBN('0140422161');
+        $book->setPrice(12.99);
+        $book->setAuthor($author);
 
-		$coll = new PropelArrayCollection();
-		$coll->setModel('\Propel\Tests\Bookstore\Book');
-		$coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
-		$expected = array(array(
-			'Id' => 9012,
-			'Title' => 'Don Juan',
-			'ISBN' => '0140422161',
-			'Price' => 12.99,
-			'PublisherId' => null,
-			'AuthorId' => 5678,
-			'Author' => array(
-				'Id' => 5678,
-				'FirstName' => 'George',
-				'LastName' => 'Byron',
-				'Email' => null,
-				'Age' => null,
-				'Books' => array(
-					'Book_0' => '*RECURSION*',
-				)
-			),
-		));
-		$this->assertEquals($expected, $coll->toArray());
-	}
+        $coll = new PropelArrayCollection();
+        $coll->setModel('\Propel\Tests\Bookstore\Book');
+        $coll[]= $book->toArray(BasePeer::TYPE_PHPNAME, true, array(), true);
+        $expected = array(array(
+            'Id' => 9012,
+            'Title' => 'Don Juan',
+            'ISBN' => '0140422161',
+            'Price' => 12.99,
+            'PublisherId' => null,
+            'AuthorId' => 5678,
+            'Author' => array(
+                'Id' => 5678,
+                'FirstName' => 'George',
+                'LastName' => 'Byron',
+                'Email' => null,
+                'Age' => null,
+                'Books' => array(
+                    'Book_0' => '*RECURSION*',
+                )
+            ),
+        ));
+        $this->assertEquals($expected, $coll->toArray());
+    }
 
-	public function getWorkerObject()
-	{
-		$col = new TestablePropelArrayCollection();
-		$col->setModel('\Propel\Tests\Bookstore\Book');
-		$book = $col->getWorkerObject();
-		$this->assertTrue($book instanceof Book, 'getWorkerObject() returns an object of the collection model');
-		$book->foo = 'bar';
-		$this->assertEqual('bar', $col->getWorkerObject()->foo, 'getWorkerObject() returns always the same object');
-	}
+    public function getWorkerObject()
+    {
+        $col = new TestablePropelArrayCollection();
+        $col->setModel('\Propel\Tests\Bookstore\Book');
+        $book = $col->getWorkerObject();
+        $this->assertTrue($book instanceof Book, 'getWorkerObject() returns an object of the collection model');
+        $book->foo = 'bar';
+        $this->assertEqual('bar', $col->getWorkerObject()->foo, 'getWorkerObject() returns always the same object');
+    }
 
-	/**
-	 * @expectedException \Propel\Runtime\Exception\PropelException
-	 */
-	public function testGetWorkerObjectNoModel()
-	{
-		$col = new TestablePropelArrayCollection();
-		$col->getWorkerObject();
-	}
+    /**
+     * @expectedException \Propel\Runtime\Exception\PropelException
+     */
+    public function testGetWorkerObjectNoModel()
+    {
+        $col = new TestablePropelArrayCollection();
+        $col->getWorkerObject();
+    }
 
 }
 
 class TestablePropelArrayCollection extends PropelArrayCollection
 {
-	public function getWorkerObject()
-	{
-		return parent::getWorkerObject();
-	}
+    public function getWorkerObject()
+    {
+        return parent::getWorkerObject();
+    }
 }

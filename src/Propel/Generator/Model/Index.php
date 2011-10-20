@@ -222,6 +222,7 @@ class Index extends XMLElement
         if (isset($this->indexColumnSizes[$name])) {
             return $this->indexColumnSizes[$name];
         }
+
         return null; // just to be explicit
     }
 
@@ -285,6 +286,7 @@ class Index extends XMLElement
         if (null !== $size && $this->indexColumnSizes[$name] != $size) {
             return false;
         }
+
         return true;
     }
 

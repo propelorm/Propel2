@@ -14,5 +14,6 @@ public function joinWithI18n($locale = '<?php echo $defaultLocale ?>', $joinType
         ->joinI18n($locale, null, $joinType)
         ->with('<?php echo $i18nRelationName ?>');
     $this->with['<?php echo $i18nRelationName ?>']->setIsWithOneToMany(false);
+
     return $this;
 }

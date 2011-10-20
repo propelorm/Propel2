@@ -221,6 +221,7 @@ class TestableComment extends AggregateComment
             $affectedRows = $this->doSave($con);
             AggregateCommentPeer::addInstanceToPool($this);
             $con->commit();
+
             return $affectedRows;
         } catch (PropelException $e) {
             $con->rollBack();

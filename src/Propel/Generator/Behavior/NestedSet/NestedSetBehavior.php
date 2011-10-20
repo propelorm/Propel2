@@ -72,6 +72,7 @@ class NestedSetBehavior extends Behavior
         {
             $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
         }
+
         return $this->objectBuilderModifier;
     }
 
@@ -81,6 +82,7 @@ class NestedSetBehavior extends Behavior
         {
             $this->queryBuilderModifier = new NestedSetBehaviorQueryBuilderModifier($this);
         }
+
         return $this->queryBuilderModifier;
     }
 
@@ -90,6 +92,7 @@ class NestedSetBehavior extends Behavior
         {
             $this->peerBuilderModifier = new NestedSetBehaviorPeerBuilderModifier($this);
         }
+
         return $this->peerBuilderModifier;
     }
 

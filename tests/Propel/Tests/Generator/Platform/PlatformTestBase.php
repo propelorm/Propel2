@@ -19,18 +19,19 @@ use Propel\Generator\Builder\Util\XmlToAppData;
 abstract class PlatformTestBase extends \PHPUnit_Framework_TestCase
 {
 
-	abstract protected function getPlatform();
+    abstract protected function getPlatform();
 
-	protected function getDatabaseFromSchema($schema)
-	{
-		$xtad = new XmlToAppData($this->getPlatform());
-		$appData = $xtad->parseString($schema);
-		return $appData->getDatabase();
-	}
+    protected function getDatabaseFromSchema($schema)
+    {
+        $xtad = new XmlToAppData($this->getPlatform());
+        $appData = $xtad->parseString($schema);
 
-	protected function getTableFromSchema($schema, $tableName = 'foo')
-	{
-		return $this->getDatabaseFromSchema($schema)->getTable($tableName);
-	}
+        return $appData->getDatabase();
+    }
+
+    protected function getTableFromSchema($schema, $tableName = 'foo')
+    {
+        return $this->getDatabaseFromSchema($schema)->getTable($tableName);
+    }
 
 }

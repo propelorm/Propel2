@@ -71,6 +71,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
             $sql .= "SELECT pg_catalog.setval('$seqname', ".((int)$this->maxSeqVal).");
 ";
         }
+
         return $sql;
     }
 
@@ -84,6 +85,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
         if ($value === 'f' || $value === 'false' || $value === "0") {
             $value = false;
         }
+
         return ($value ? "'t'" : "'f'");
     }
 
@@ -98,6 +100,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
         if (is_object($blob)) {
             $blob = $blob->__toString();
         }
+
         return "'" . pg_escape_bytea($blob) . "'";
     }
 

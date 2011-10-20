@@ -133,6 +133,7 @@ abstract class OMBuilder extends DataModelBuilder
         } else {
             $path = $this->getClassname();
         }
+
         return $path;
     }
 
@@ -156,6 +157,7 @@ abstract class OMBuilder extends DataModelBuilder
         if (!$pkg) {
             $pkg = $this->getBuildProperty('targetPackage');
         }
+
         return $pkg;
     }
 
@@ -170,7 +172,8 @@ abstract class OMBuilder extends DataModelBuilder
         if (strpos($pkg, '/') !== false) {
             $pkg = preg_replace('#\.(map|om)$#', '/\1', $pkg);
             $pkg = preg_replace('#\.(Map|Om)$#', '/\1', $pkg);
-			return $pkg;
+
+            return $pkg;
         }
 
         return strtr($pkg, '.', '/');
@@ -252,6 +255,7 @@ abstract class OMBuilder extends DataModelBuilder
 ", $namespace, $class);
             }
         }
+
         return $script;
     }
 
@@ -312,6 +316,7 @@ abstract class OMBuilder extends DataModelBuilder
         } else {
             $const = strtoupper($col->getName());
         }
+
         return $classname.'::'.$const;
     }
 
@@ -325,6 +330,7 @@ abstract class OMBuilder extends DataModelBuilder
         if ($class === null) {
             $class = "propel.util.BasePeer";
         }
+
         return $class;
     }
 
@@ -354,6 +360,7 @@ abstract class OMBuilder extends DataModelBuilder
         if ($fk->isLocalColumnsRequired()) {
             return 'Criteria::INNER_JOIN';
         }
+
         return 'Criteria::LEFT_JOIN';
     }
 
@@ -380,6 +387,7 @@ abstract class OMBuilder extends DataModelBuilder
             if ($plural) {
                 $className = $this->getPluralizer()->getPluralForm($className);
             }
+
             return $className . $this->getRelatedBySuffix($fk);
         }
     }
@@ -440,6 +448,7 @@ abstract class OMBuilder extends DataModelBuilder
             if ($plural) {
                 $className = $this->getPluralizer()->getPluralForm($className);
             }
+
             return $className . $this->getRefRelatedBySuffix($fk);
         }
     }
@@ -497,6 +506,7 @@ abstract class OMBuilder extends DataModelBuilder
                 return true;
             }
         }
+
         return false;
     }
 

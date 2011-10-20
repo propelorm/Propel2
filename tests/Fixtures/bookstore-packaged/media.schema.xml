@@ -11,17 +11,17 @@
       type="BLOB"
       lazyLoad="true"
       description="The image of the book cover."/>
-	<column
+    <column
       name="excerpt"
       type="CLOB"
       lazyLoad="true"
       description="An excerpt from the book."/>
-	<column
-	  name="book_id"
-	  required="true"
-	  type="INTEGER"
-	  description="Book ID for this media collection."/>
-	<foreign-key foreignTable="book" onDelete="CASCADE">
+    <column
+      name="book_id"
+      required="true"
+      type="INTEGER"
+      description="Book ID for this media collection."/>
+    <foreign-key foreignTable="book" onDelete="CASCADE">
       <reference
         local="book_id"
         foreign="id"/>

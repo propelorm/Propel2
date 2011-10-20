@@ -434,6 +434,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if (!array_key_exists(\$type, self::\$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . \$type . ' was given.');
         }
+
         return self::\$fieldNames[\$type];
     }
 ";
@@ -460,6 +461,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if (\$key === null) {
             throw new PropelException(\"'\$name' could not be found in the field names of type '\$fromType'. These are: \" . print_r(self::\$fieldKeys[\$fromType], true));
         }
+
         return \$toNames[\$key];
     }
 ";
@@ -500,6 +502,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
     public static function getValueSet(\$colname)
     {
         \$valueSets = self::getValueSets();
+
         return \$valueSets[\$colname];
     }
 ";
@@ -691,6 +694,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$count = 0; // no rows returned; we infer that means 0 matches.
         }
         \$stmt->closeCursor();
+
         return \$count;
     }";
     }
@@ -719,6 +723,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if (\$objects) {
             return \$objects[0];
         }
+
         return null;
     }";
     }
@@ -810,6 +815,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         } else {
             $script .= "(string) " . $pkphp[0];
         }
+
         return $script;
     }
 
@@ -1000,6 +1006,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 return self::\$instances[\$key];
             }
         }
+
         return null; // just to be explicit
     }
     ";
@@ -1046,6 +1053,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if (".implode(' && ', $cond).") {
             return null;
         }
+
         return ".$this->getInstancePoolKeySnippet($pk).";
     }
 ";
@@ -1088,9 +1096,11 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             }
             if ($table->hasCompositePrimaryKey()) {
                 $script .= "
+
         return array(" . implode($pks, ', '). ");";
             } else {
                 $script .= "
+
         return " . $pk . ";";
             }
             $script .= "
@@ -1153,6 +1163,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             } // if key exists
         }
         \$stmt->closeCursor();
+
         return \$results;
     }";
     }
@@ -1204,6 +1215,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$col = \$obj->hydrate(\$row, \$startcol);
             " . $this->getPeerClassname() . "::addInstanceToPool(\$obj, \$key);
         }
+
         return array(\$obj, \$col);
     }
 ";
@@ -1265,6 +1277,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         } catch (\Exception \$e) {
             throw new PropelException('Unable to get OM class.', \$e);
         }
+
         return \$omClass;
     }
 ";
@@ -1483,6 +1496,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             ".$this->getPeerClassname()."::clearInstancePool();
             ".$this->getPeerClassname()."::clearRelatedInstancePool();
             \$con->commit();
+
             return \$affectedRows;
         } catch (PropelException \$e) {
             \$con->rollBack();
@@ -1643,6 +1657,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$affectedRows += {$this->basePeerClassname}::doDelete(\$criteria, \$con);
             ".$this->getPeerClassname()."::clearRelatedInstancePool();
             \$con->commit();
+
             return \$affectedRows;
         } catch (PropelException \$e) {
             \$con->rollBack();
@@ -1726,6 +1741,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         } // foreach foreign keys
         $script .= "
         }
+
         return \$affectedRows;
     }
 ";
@@ -1939,6 +1955,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         $script .= "
             \$objs = ".$this->getPeerClassname()."::doSelect(\$criteria, \$con);
         }
+
         return \$objs;
     }
 ";
@@ -2073,6 +2090,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             }
             $idx++;
         }
+
         return $offsets;
     }
 
@@ -2107,6 +2125,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $script .= "      ), \$join_behavior);
 ";
         }
+
         return $script;
   }
 
@@ -2235,6 +2254,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$results[] = \$obj1;
         }
         \$stmt->closeCursor();
+
         return \$results;
     }
 ";
@@ -2324,6 +2344,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$count = 0; // no rows returned; we infer that means 0 matches.
         }
         \$stmt->closeCursor();
+
         return \$count;
     }
 ";
@@ -2496,6 +2517,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$results[] = \$obj1;
         }
         \$stmt->closeCursor();
+
         return \$results;
     }
 ";
@@ -2573,6 +2595,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$count = 0; // no rows returned; we infer that means 0 matches.
         }
         \$stmt->closeCursor();
+
         return \$count;
     }";
     } // end addDoCountJoinAll()
@@ -2766,6 +2789,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$results[] = \$obj1;
         }
         \$stmt->closeCursor();
+
         return \$results;
     }
 ";
@@ -2861,6 +2885,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             \$count = 0; // no rows returned; we infer that means 0 matches.
         }
         \$stmt->closeCursor();
+
         return \$count;
     }
 ";

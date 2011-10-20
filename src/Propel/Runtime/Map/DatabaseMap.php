@@ -69,6 +69,7 @@ class DatabaseMap
     public function addTable($tableName)
     {
         $this->tables[$tableName] = new TableMap($tableName, $this);
+
         return $this->tables[$tableName];
     }
 
@@ -95,6 +96,7 @@ class DatabaseMap
         $table = new $tableMapClass();
         if(!$this->hasTable($table->getName())) {
             $this->addTableObject($table);
+
             return $table;
         } else {
             return $this->getTable($table->getName());
@@ -112,6 +114,7 @@ class DatabaseMap
         if ( strpos($name, '.') > 0) {
             $name = substr($name, 0, strpos($name, '.'));
         }
+
         return array_key_exists($name, $this->tables);
     }
 
@@ -127,6 +130,7 @@ class DatabaseMap
         if (!isset($this->tables[$name])) {
             throw new PropelException("Cannot fetch TableMap for undefined table: " . $name );
         }
+
         return $this->tables[$name];
     }
 
@@ -151,6 +155,7 @@ class DatabaseMap
     public function getColumn($qualifiedColumnName)
     {
         list($tableName, $columnName) = explode('.', $qualifiedColumnName);
+
         return $this->getTable($tableName)->getColumn($columnName, false);
     }
 
@@ -177,9 +182,11 @@ class DatabaseMap
             return $this->tablesByPhpName[$phpName];
         } else if (class_exists($tmClass = $phpName . 'TableMap')) {
             $this->addTableFromMapClass($tmClass);
+
             return $this->tablesByPhpName[$phpName];
         } else if (class_exists($tmClass = substr_replace($phpName, '\\map\\', strrpos($phpName, '\\'), 1) . 'TableMap')) {
             $this->addTableFromMapClass($tmClass);
+
             return $this->tablesByPhpName[$phpName];
         } else {
             throw new PropelException("Cannot fetch TableMap for undefined table phpName: " . $phpName);

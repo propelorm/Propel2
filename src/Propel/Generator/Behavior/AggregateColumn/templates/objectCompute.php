@@ -13,5 +13,6 @@ public function compute<?php echo $column->getPhpName() ?>(PropelPDO $con)
   $stmt->bindValue(':p<?php echo $key ?>', $this->get<?php echo $binding ?>());
 <?php endforeach; ?>
     $stmt->execute();
+
     return $stmt->fetchColumn();
 }

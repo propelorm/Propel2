@@ -21,9 +21,9 @@ use Propel\Tests\Bookstore\Behavior\AddClassTableFooClass;
  */
 class AddClassBehaviorTest extends BookstoreTestBase
 {
-	public function testClassExists()
-	{
-		$t = new AddClassTableFooClass();
-		$this->assertTrue($t instanceof AddClassTableFooClass, 'behaviors can generate classes that are autoloaded');
-	}
+    public function testClassExists()
+    {
+        $t = new AddClassTableFooClass();
+        $this->assertTrue($t instanceof AddClassTableFooClass, 'behaviors can generate classes that are autoloaded');
+    }
 }

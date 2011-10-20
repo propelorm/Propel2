@@ -349,6 +349,7 @@ class Propel
                 return $logger->debug($message);
             }
         }
+
         return true;
     }
 
@@ -692,6 +693,7 @@ class Propel
             // Determine default database name.
             self::$defaultDBName = isset(self::$configuration['datasources']['default']) && is_scalar(self::$configuration['datasources']['default']) ? self::$configuration['datasources']['default'] : self::DEFAULT_NAME;
         }
+
         return self::$defaultDBName;
     }
 
@@ -772,6 +774,7 @@ class Propel
             return false;
         }
         self::$instancePoolingEnabled = false;
+
         return true;
     }
 
@@ -787,6 +790,7 @@ class Propel
             return false;
         }
         self::$instancePoolingEnabled = true;
+
         return true;
     }
 

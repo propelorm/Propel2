@@ -134,6 +134,7 @@ class PropelSQLExec extends Task
                 'password' => $this->password,
             );
         }
+
         return $this->buildConnections[$database];
     }
 

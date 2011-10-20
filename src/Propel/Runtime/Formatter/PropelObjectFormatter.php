@@ -128,6 +128,7 @@ class PropelObjectFormatter extends PropelFormatter
             $obj->setVirtualColumn($alias, $row[$col]);
             $col++;
         }
+
         return $obj;
     }
 

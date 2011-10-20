@@ -20,14 +20,14 @@ use Propel\Tests\Bookstore\Behavior\Table3Peer;
  */
 class TableBehaviorTest extends \PHPUnit_Framework_TestCase
 {
-	protected function setUp()
-	{
-		parent::setUp();
-	}
+    protected function setUp()
+    {
+        parent::setUp();
+    }
 
-	public function testModifyTable()
-	{
-		$t = Table3Peer::getTableMap();
-		$this->assertTrue($t->hasColumn('test'), 'modifyTable hook is called when building the model structure');
-	}
+    public function testModifyTable()
+    {
+        $t = Table3Peer::getTableMap();
+        $this->assertTrue($t->hasColumn('test'), 'modifyTable hook is called when building the model structure');
+    }
 }

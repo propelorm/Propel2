@@ -94,6 +94,7 @@ class PropelSQLParser
                 $stmt->execute();
             }
         }
+
         return count($statements);
     }
 
@@ -156,6 +157,7 @@ class PropelSQLParser
         if (!file_exists($file)) {
             return array();
         }
+
         return self::parseString(file_get_contents($file));
     }
 

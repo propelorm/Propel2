@@ -96,22 +96,22 @@ class TestPropelConditionalProxy extends PropelConditionalProxy
 
 class ProxyTestCriteria extends Criteria
 {
-	protected $test = false;
+    protected $test = false;
 
-	public function test()
-	{
-		$this->test = true;
+    public function test()
+    {
+        $this->test = true;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function dummy()
-	{
-		return $this;
-	}
+    public function dummy()
+    {
+        return $this;
+    }
 
-	public function getTest()
-	{
-		return $this->test;
-	}
+    public function getTest()
+    {
+        return $this->test;
+    }
 }

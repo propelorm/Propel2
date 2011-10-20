@@ -78,6 +78,7 @@ class QueryInheritanceBuilder extends OMBuilder
         if (!$this->child) {
             throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
+
         return $this->child;
     }
 
@@ -204,6 +205,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
         if (\$criteria instanceof Criteria) {
             \$query->mergeWith(\$criteria);
         }
+
         return \$query;
     }
 ";
@@ -261,6 +263,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     {
         $child = $this->getChild();
         $col = $child->getColumn();
+
         return "\$this->addUsingAlias(" . $col->getConstantName() . ", " . $this->getPeerClassname()."::CLASSKEY_".strtoupper($child->getKey()).");";
     }
 

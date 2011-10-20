@@ -101,6 +101,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
 public function keepUpdateDateUnchanged()
 {
     \$this->modifiedColumns[] = " . $this->getColumnConstant('update_column', $builder) . ";
+
     return \$this;
 }
 ";
@@ -111,6 +112,7 @@ public function keepUpdateDateUnchanged()
         $queryClassName = $builder->getStubQueryBuilder()->getClassname();
         $updateColumnConstant = $this->getColumnConstant('update_column', $builder);
         $createColumnConstant = $this->getColumnConstant('create_column', $builder);
+
         return "
 /**
  * Filter by the latest updated

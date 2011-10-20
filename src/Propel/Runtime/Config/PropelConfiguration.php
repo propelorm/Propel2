@@ -112,6 +112,7 @@ class PropelConfiguration implements \ArrayAccess
         if (isset($flattenedParameters[$name])) {
             return $flattenedParameters[$name];
         }
+
         return $default;
     }
 
@@ -173,6 +174,7 @@ class PropelConfiguration implements \ArrayAccess
             $this->flattenParameters();
             $this->isFlattened = true;
         }
+
         return $this->flattenedParameters;
     }
 

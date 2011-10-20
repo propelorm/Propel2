@@ -33,6 +33,7 @@ class MssqlDataSQLBuilder extends DataSQLBuilder
             $blob = $blob->__toString();
         }
         $data = unpack("H*hex", $blob);
+
         return '0x'.$data['hex']; // no surrounding quotes!
     }
 

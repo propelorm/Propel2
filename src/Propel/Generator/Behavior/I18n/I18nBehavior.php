@@ -181,6 +181,7 @@ class I18nBehavior extends Behavior
                 unset($columnNames[$key]);
             }
         }
+
         return $columnNames;
     }
 
@@ -189,6 +190,7 @@ class I18nBehavior extends Behavior
         if (!$defaultLocale = $this->getParameter('default_locale')) {
             $defaultLocale = self::DEFAULT_LOCALE;
         }
+
         return $defaultLocale;
     }
 
@@ -237,6 +239,7 @@ class I18nBehavior extends Behavior
     public function replaceTokens($string)
     {
         $table = $this->getTable();
+
         return strtr($string, array(
             '%TABLE%'   => $table->getName(),
             '%PHPNAME%' => $table->getPhpName(),
@@ -248,6 +251,7 @@ class I18nBehavior extends Behavior
         if (is_null($this->objectBuilderModifier)) {
             $this->objectBuilderModifier = new I18nBehaviorObjectBuilderModifier($this);
         }
+
         return $this->objectBuilderModifier;
     }
 
@@ -256,6 +260,7 @@ class I18nBehavior extends Behavior
         if (is_null($this->queryBuilderModifier)) {
             $this->queryBuilderModifier = new I18nBehaviorQueryBuilderModifier($this);
         }
+
         return $this->queryBuilderModifier;
     }
 
@@ -264,6 +269,7 @@ class I18nBehavior extends Behavior
         if (is_null($this->peerBuilderModifier)) {
             $this->peerBuilderModifier = new I18nBehaviorPeerBuilderModifier($this);
         }
+
         return $this->peerBuilderModifier;
     }
 

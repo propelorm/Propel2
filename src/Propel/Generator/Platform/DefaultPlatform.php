@@ -102,6 +102,7 @@ class DefaultPlatform implements PropelPlatformInterface
         if ($this->generatorConfig !== null) {
             return $this->generatorConfig->getBuildProperty($name);
         }
+
         return null;
     }
 
@@ -141,6 +142,7 @@ class DefaultPlatform implements PropelPlatformInterface
         $reflClass = new \ReflectionClass($this);
         $clazz = $reflClass->getShortName();
         $pos = strpos($clazz, 'Platform');
+
         return strtolower(substr($clazz, 0, $pos));
     }
 
@@ -180,6 +182,7 @@ class DefaultPlatform implements PropelPlatformInterface
         if (!isset($this->schemaDomainMap[$propelType])) {
             throw new EngineException("Cannot map unknown Propel type " . var_export($propelType, true) . " to native database type.");
         }
+
         return $this->schemaDomainMap[$propelType];
     }
 
@@ -231,6 +234,7 @@ class DefaultPlatform implements PropelPlatformInterface
                 $result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
             }
         }
+
         return $result;
     }
 
@@ -251,6 +255,7 @@ class DefaultPlatform implements PropelPlatformInterface
             $ret .= $this->getAddForeignKeysDDL($table);
         }
         $ret .= $this->getEndDDL();
+
         return $ret;
     }
 
@@ -316,6 +321,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     %s
 );
 ";
+
         return sprintf($pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
@@ -400,6 +406,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
             }
             $list[] = $this->quoteIdentifier($column);
         }
+
         return implode($delimiter, $list);
     }
 
@@ -410,6 +417,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
     public function getPrimaryKeyName(Table $table)
     {
         $tableName = $table->getCommonName();
+
         return $tableName . '_PK';
     }
 
@@ -435,6 +443,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . ";
         $pattern = "
 ALTER TABLE %s DROP CONSTRAINT %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
             $this->quoteIdentifier($this->getPrimaryKeyName($table))
@@ -452,6 +461,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         $pattern = "
 ALTER TABLE %s ADD %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
             $this->getPrimaryKeyDDL($table)
@@ -470,6 +480,7 @@ ALTER TABLE %s ADD %s;
         foreach ($table->getIndices() as $fk) {
             $ret .= $this->getAddIndexDDL($fk);
         }
+
         return $ret;
     }
 
@@ -484,6 +495,7 @@ ALTER TABLE %s ADD %s;
         $pattern = "
 CREATE %sINDEX %s ON %s (%s);
 ";
+
         return sprintf($pattern,
             $index->getIsUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
@@ -503,6 +515,7 @@ CREATE %sINDEX %s ON %s (%s);
         $pattern = "
 DROP INDEX %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($index->getName())
         );
@@ -546,6 +559,7 @@ DROP INDEX %s;
         foreach ($table->getForeignKeys() as $fk) {
             $ret .= $this->getAddForeignKeyDDL($fk);
         }
+
         return $ret;
     }
 
@@ -563,6 +577,7 @@ DROP INDEX %s;
         $pattern = "
 ALTER TABLE %s ADD %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->getForeignKeyDDL($fk)
@@ -583,6 +598,7 @@ ALTER TABLE %s ADD %s;
         $pattern = "
 ALTER TABLE %s DROP CONSTRAINT %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->quoteIdentifier($fk->getName())
@@ -623,6 +639,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     {
         $pattern = "-- %s
 ";
+
         return sprintf($pattern, $comment);
     }
 
@@ -633,6 +650,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 -- %s
 -----------------------------------------------------------------------
 ";
+
         return sprintf($pattern, $comment);
     }
 
@@ -681,6 +699,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         $pattern = "
 ALTER TABLE %s RENAME TO %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fromTableName),
             $this->quoteIdentifier($toTableName)
@@ -863,6 +882,7 @@ ALTER TABLE %s RENAME TO %s;
         $pattern = "
 ALTER TABLE %s DROP COLUMN %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->quoteIdentifier($column->getName())
@@ -878,6 +898,7 @@ ALTER TABLE %s DROP COLUMN %s;
         $pattern = "
 ALTER TABLE %s RENAME COLUMN %s TO %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
             $this->quoteIdentifier($fromColumn->getName()),
@@ -896,6 +917,7 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
         $pattern = "
 ALTER TABLE %s MODIFY %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($toColumn->getTable()->getName()),
             $this->getColumnDDL($toColumn)
@@ -928,6 +950,7 @@ ALTER TABLE %s MODIFY
     %s
 );
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($tableName),
             implode($sep, $lines)
@@ -944,6 +967,7 @@ ALTER TABLE %s MODIFY
         $pattern = "
 ALTER TABLE %s ADD %s;
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->getColumnDDL($column)
@@ -975,6 +999,7 @@ ALTER TABLE %s ADD
     %s
 );
 ";
+
         return sprintf($pattern,
             $this->quoteIdentifier($tableName),
             implode($sep, $lines)
@@ -1114,6 +1139,7 @@ ALTER TABLE %s ADD
     public function getBooleanString($b)
     {
         $b = ($b === true || strtolower($b) === 'true' || $b === 1 || $b === '1' || strtolower($b) === 'y' || strtolower($b) === 'yes');
+
         return ($b ? '1' : '0');
     }
 

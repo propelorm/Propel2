@@ -55,6 +55,7 @@ class NameFactory
         if (!isset(self::$algorithms[$name])) {
             self::$algorithms[$name] = new $name();
         }
+
         return self::$algorithms[$name];
     }
 
@@ -71,6 +72,7 @@ class NameFactory
     public static function generateName($algorithmName, $inputs)
     {
         $algorithm = self::getAlgorithm($algorithmName);
+
         return $algorithm->generateName($inputs);
     }
 }

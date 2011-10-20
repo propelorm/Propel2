@@ -122,6 +122,7 @@ abstract class ObjectBuilder extends OMBuilder
         if ($class === null) {
             $class = "propel.om.BaseObject";
         }
+
         return $class;
     }
 
@@ -135,6 +136,7 @@ abstract class ObjectBuilder extends OMBuilder
         if ($interface === null && !$this->getTable()->isReadOnly()) {
             $interface = "propel.om.Persistent";
         }
+
         return $interface;
     }
 
@@ -146,6 +148,7 @@ abstract class ObjectBuilder extends OMBuilder
     protected function isAddGenericMutators()
     {
         $table = $this->getTable();
+
         return (!$table->isAlias() && $this->getBuildProperty('addGenericMutators') && !$table->isReadOnly());
     }
 
@@ -157,6 +160,7 @@ abstract class ObjectBuilder extends OMBuilder
     protected function isAddGenericAccessors()
     {
         $table = $this->getTable();
+
         return (!$table->isAlias() && $this->getBuildProperty('addGenericAccessors'));
     }
 
@@ -174,6 +178,7 @@ abstract class ObjectBuilder extends OMBuilder
         foreach ($this->getTable()->getColumns() as $col) {
             if($col->getDefaultValue() !== null) return true;
         }
+
         return false;
     }
 

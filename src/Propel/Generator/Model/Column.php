@@ -124,6 +124,7 @@ class Column extends XMLElement
             }
             $list[] = $platform->quoteIdentifier($col);
         }
+
         return implode(", ", $list);
     }
 
@@ -255,6 +256,7 @@ class Column extends XMLElement
         if ($this->domain === null) {
             $this->domain = new Domain();
         }
+
         return $this->domain;
     }
 
@@ -336,6 +338,7 @@ class Column extends XMLElement
         if ($this->phpName === null) {
             $this->setPhpName();
         }
+
         return $this->phpName;
     }
 
@@ -369,6 +372,7 @@ class Column extends XMLElement
         if (strlen($phpname) > 1) {
             return strtolower(substr($phpname, 0, 1)) . substr($phpname, 1);
         } else { // 0 or 1 chars (I suppose that's rare)
+
             return strtolower($phpname);
         }
     }
@@ -432,6 +436,7 @@ class Column extends XMLElement
     {
         $classname = $this->getTable()->getPhpName() . 'Peer';
         $const = $this->getConstantColumnName();
+
         return $classname.'::'.$const;
     }
 
@@ -474,6 +479,7 @@ class Column extends XMLElement
         if ($this->phpType !== null) {
             return $this->phpType;
         }
+
         return $this->getPhpNative();
     }
 
@@ -534,10 +540,12 @@ class Column extends XMLElement
                 $this->isEnumeratedClasses = true;
             }
             $this->inheritanceList[] = $inh;
+
             return $inh;
         } else {
             $inh = new Inheritance();
             $inh->loadFromXML($inhdata);
+
             return $this->addInheritance($inh);
         }
     }
@@ -783,6 +791,7 @@ class Column extends XMLElement
         if ($this->referrers === null) {
             $this->referrers = array();
         }
+
         return $this->referrers;
     }
 
@@ -863,6 +872,7 @@ class Column extends XMLElement
         if ($defaultSqlType == $this->getDomain()->getSqlType()) {
             return true;
         }
+
         return false;
     }
 
@@ -1088,6 +1098,7 @@ class Column extends XMLElement
         } else {
             $dflt = "null";
         }
+
         return $dflt;
     }
 

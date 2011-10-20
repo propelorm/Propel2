@@ -32,37 +32,37 @@ use Propel\Runtime\Query\ModelCriteria;
  */
 class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 {
-	protected function setUp()
-	{
-		parent::setUp();
-		$b1 = new BookstoreEmployee();
-		$b1->setName('b1');
-		$b1->save();
-		$b2 = new BookstoreManager();
-		$b2->setName('b2');
-		$b2->save();
-		$b3 = new BookstoreCashier();
-		$b3->setName('b3');
-		$b3->save();
-	}
+    protected function setUp()
+    {
+        parent::setUp();
+        $b1 = new BookstoreEmployee();
+        $b1->setName('b1');
+        $b1->save();
+        $b2 = new BookstoreManager();
+        $b2->setName('b2');
+        $b2->save();
+        $b3 = new BookstoreCashier();
+        $b3->setName('b3');
+        $b3->save();
+    }
 
-	public function testFormat()
-	{
-		$con = Propel::getConnection(BookPeer::DATABASE_NAME);
-		BookstoreEmployeePeer::clearInstancePool();
+    public function testFormat()
+    {
+        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        BookstoreEmployeePeer::clearInstancePool();
 
-		$stmt = $con->query('SELECT * FROM bookstore_employee');
-		$formatter = new PropelObjectFormatter();
-		$formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee'));
-		$emps = $formatter->format($stmt);
-		$expectedClass = array(
-			'b1' =>'Propel\Tests\Bookstore\BookstoreEmployee',
-			'b2' =>'Propel\Tests\Bookstore\BookstoreManager',
-			'b3' =>'Propel\Tests\Bookstore\BookstoreCashier'
-		);
-		foreach ($emps as $emp) {
-			$this->assertEquals($expectedClass[$emp->getName()], get_class($emp), 'format() creates objects of the correct class when using inheritance');
-		}
-	}
+        $stmt = $con->query('SELECT * FROM bookstore_employee');
+        $formatter = new PropelObjectFormatter();
+        $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee'));
+        $emps = $formatter->format($stmt);
+        $expectedClass = array(
+            'b1' =>'Propel\Tests\Bookstore\BookstoreEmployee',
+            'b2' =>'Propel\Tests\Bookstore\BookstoreManager',
+            'b3' =>'Propel\Tests\Bookstore\BookstoreCashier'
+        );
+        foreach ($emps as $emp) {
+            $this->assertEquals($expectedClass[$emp->getName()], get_class($emp), 'format() creates objects of the correct class when using inheritance');
+        }
+    }
 
 }

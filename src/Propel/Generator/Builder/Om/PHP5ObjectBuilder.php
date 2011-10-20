@@ -121,6 +121,7 @@ class PHP5ObjectBuilder extends ObjectBuilder
         } elseif ($col->getType() === PropelTypes::TIMESTAMP) {
             $fmt = $this->getPlatform()->getTimestampFormatter();
         }
+
         return $fmt;
     }
 
@@ -165,6 +166,7 @@ class PHP5ObjectBuilder extends ObjectBuilder
         } else {
             throw new EngineException("Cannot get default value string for " . $col->getFullyQualifiedName());
         }
+
         return $defaultValue;
     }
 
@@ -560,6 +562,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         if (self::\$peer === null) {
             " . $this->buildObjectInstanceCreationCode('self::$peer', $this->getPeerClassname()) . "
         }
+
         return self::\$peer;";
     }
 
@@ -819,6 +822,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             if ($def !== null && !$def->isExpression()) {
                 $defaultValueString = $this->getDefaultValueString($col);
             }
+
             return "
         if (!\$this->{$clo}_isLoaded && \$this->{$clo} === {$defaultValueString} && !\$this->isNew()) {
             \$this->load{$col->getPhpName()}(\$con);
@@ -967,6 +971,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         if (null == \$this->$cloUnserialized && null !== \$this->$clo) {
             \$this->$cloUnserialized = unserialize(\$this->$clo);
         }
+
         return \$this->$cloUnserialized;";
     }
 
@@ -1007,6 +1012,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             \$$cloUnserialized = substr(\$this->$clo, 2, -2);
             \$this->$cloUnserialized = \$$cloUnserialized ? explode(' | ', \$$cloUnserialized) : array();
         }
+
         return \$this->$cloUnserialized;";
     }
 
@@ -1046,6 +1052,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
+
         return \$valueSet[\$this->$clo];";
     }
 
@@ -1150,6 +1157,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
 
         $script .= "
+
         return \$this->$clo;";
     }
 
@@ -1445,6 +1453,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     protected function addMutatorCloseClose(&$script, Column $col) {
         $cfc = $col->getPhpName();
         $script .= "
+
         return \$this;
     } // set$cfc()
 ";
@@ -2189,6 +2198,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }";
         }
         $script .= "
+
         return \$result;
     }
 ";
@@ -2253,6 +2263,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
      **/
     protected function addGetByNameClose(&$script) {
         $script .= "
+
         return \$field;
     }
 ";
@@ -2350,6 +2361,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     public function setByName(\$name, \$value, \$type = BasePeer::TYPE_PHPNAME)
     {
         \$pos = ".$this->getPeerClassname()."::translateFieldName(\$name, \$type, BasePeer::TYPE_NUM);
+
         return \$this->setByPosition(\$pos, \$value);
     }
 ";
@@ -2904,6 +2916,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     {";
         if (count($pkeys) == 1) {
             $script .= "
+
         return null === \$this->get" . $pkeys[0]->getPhpName() . "();";
         } else {
             $tests = array();
@@ -2911,6 +2924,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 $tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
             }
             $script .= "
+
         return " . join(' && ', $tests) . ";";
         }
         $script .= "
@@ -3055,6 +3069,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
 
         $script .= "
+
         return \$this;
     }
 ";
@@ -3149,6 +3164,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 
         $script .= "
         }
+
         return \$this->$varName;
     }
 ";
@@ -3210,6 +3226,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
 ";
         }
         $script .= "
+
         return \$this;
     }
 ";
@@ -3511,6 +3528,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 if(\$distinct) {
                     \$query->distinct();
                 }
+
                 return \$query
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
                     ->count(\$con);
@@ -3571,6 +3589,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 \$this->$collName = \$$collName;
             }
         }
+
         return \$this->$collName;
     }
 ";
@@ -3917,6 +3936,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 \$this->$collName = \$$collName;
             }
         }
+
         return \$this->$collName;
     }
 ";
@@ -4014,6 +4034,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 if(\$distinct) {
                     \$query->distinct();
                 }
+
                 return \$query
                     ->filterBy{$selfRelationName}(\$this)
                     ->count(\$con);
@@ -4254,6 +4275,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         }
         $script .= "
         }
+
         return \$affectedRows;
     } // doSave()
 ";
@@ -4500,6 +4522,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     protected function addDoUpdate()
     {
         $basePeerClassname = $this->getNewPeerBuilder($this->getTable())->getBasePeerClassname();
+
         return "
     /**
      * Update the row in the database.
@@ -4663,6 +4686,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
                 \$affectedRows = 0;
             }
             \$con->commit();
+
             return \$affectedRows;";
         } else {
             // save without runtime hooks
@@ -4705,6 +4729,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $script .= "
             \$con->commit();
             ".$this->getPeerClassname()."::addInstanceToPool(\$this);
+
             return \$affectedRows;";
         }
 
@@ -4765,9 +4790,11 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         \$res = \$this->doValidate(\$columns);
         if (\$res === true) {
             \$this->validationFailures = array();
+
             return true;
         } else {
             \$this->validationFailures = \$res;
+
             return false;
         }
     }
@@ -4942,6 +4969,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         \$clazz = get_class(\$this);
         " . $this->buildObjectInstanceCreationCode('$copyObj', '$clazz') . "
         \$this->copyInto(\$copyObj, \$deepCopy);
+
         return \$copyObj;
     }
 ";
@@ -5185,6 +5213,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         return (string) \$this->get{$column->getPhpName()}();
     }
 ";
+
                 return;
             }
         }
@@ -5218,6 +5247,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
     public function __call(\$name, \$params)
     {
         $behaviorCallScript
+
         return parent::__call(\$name, \$params);
     }
 ";

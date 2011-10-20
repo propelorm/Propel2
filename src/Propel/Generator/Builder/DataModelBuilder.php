@@ -176,6 +176,7 @@ abstract class DataModelBuilder
         if (!isset($this->peerBuilder)) {
             $this->peerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peer');
         }
+
         return $this->peerBuilder;
     }
 
@@ -188,6 +189,7 @@ abstract class DataModelBuilder
         if (!isset($this->pluralizer)) {
             $this->pluralizer = $this->getGeneratorConfig()->getConfiguredPluralizer();
         }
+
         return $this->pluralizer;
     }
 
@@ -200,6 +202,7 @@ abstract class DataModelBuilder
         if (!isset($this->stubPeerBuilder)) {
             $this->stubPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'peerstub');
         }
+
         return $this->stubPeerBuilder;
     }
 
@@ -212,6 +215,7 @@ abstract class DataModelBuilder
         if (!isset($this->objectBuilder)) {
             $this->objectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
         }
+
         return $this->objectBuilder;
     }
 
@@ -224,6 +228,7 @@ abstract class DataModelBuilder
         if (!isset($this->stubObjectBuilder)) {
             $this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
         }
+
         return $this->stubObjectBuilder;
     }
 
@@ -236,6 +241,7 @@ abstract class DataModelBuilder
         if (!isset($this->queryBuilder)) {
             $this->queryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
         }
+
         return $this->queryBuilder;
     }
 
@@ -248,6 +254,7 @@ abstract class DataModelBuilder
         if (!isset($this->stubQueryBuilder)) {
             $this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
         }
+
         return $this->stubQueryBuilder;
     }
 
@@ -260,6 +267,7 @@ abstract class DataModelBuilder
         if (!isset($this->tablemapBuilder)) {
             $this->tablemapBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
         }
+
         return $this->tablemapBuilder;
     }
 
@@ -272,6 +280,7 @@ abstract class DataModelBuilder
         if (!isset($this->interfaceBuilder)) {
             $this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
         }
+
         return $this->interfaceBuilder;
     }
 
@@ -284,6 +293,7 @@ abstract class DataModelBuilder
         if (!isset($this->multiExtendObjectBuilder)) {
             $this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
         }
+
         return $this->multiExtendObjectBuilder;
     }
 
@@ -296,6 +306,7 @@ abstract class DataModelBuilder
         if (!isset($this->nodeBuilder)) {
             $this->nodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'node');
         }
+
         return $this->nodeBuilder;
     }
 
@@ -308,6 +319,7 @@ abstract class DataModelBuilder
         if (!isset($this->nodePeerBuilder)) {
             $this->nodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeer');
         }
+
         return $this->nodePeerBuilder;
     }
 
@@ -320,6 +332,7 @@ abstract class DataModelBuilder
         if (!isset($this->stubNodeBuilder)) {
             $this->stubNodeBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodestub');
         }
+
         return $this->stubNodeBuilder;
     }
 
@@ -332,6 +345,7 @@ abstract class DataModelBuilder
         if (!isset($this->stubNodePeerBuilder)) {
             $this->stubNodePeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nodepeerstub');
         }
+
         return $this->stubNodePeerBuilder;
     }
 
@@ -344,6 +358,7 @@ abstract class DataModelBuilder
         if (!isset($this->nestedSetBuilder)) {
             $this->nestedSetBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedset');
         }
+
         return $this->nestedSetBuilder;
     }
 
@@ -356,6 +371,7 @@ abstract class DataModelBuilder
         if (!isset($this->nestedSetPeerBuilder)) {
             $this->nestedSetPeerBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'nestedsetpeer');
         }
+
         return $this->nestedSetPeerBuilder;
     }
 
@@ -368,6 +384,7 @@ abstract class DataModelBuilder
         if (!isset($this->dataSqlBuilder)) {
             $this->dataSqlBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'datasql');
         }
+
         return $this->dataSqlBuilder;
     }
 
@@ -382,6 +399,7 @@ abstract class DataModelBuilder
     {
         $builder = new $classname($table);
         $builder->setGeneratorConfig($this);
+
         return $builder;
     }
 
@@ -477,6 +495,7 @@ abstract class DataModelBuilder
     {
         $queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritance');
         $queryInheritanceBuilder->setChild($child);
+
         return $queryInheritanceBuilder;
     }
 
@@ -488,6 +507,7 @@ abstract class DataModelBuilder
     {
         $stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritancestub');
         $stubQueryInheritanceBuilder->setChild($child);
+
         return $stubQueryInheritanceBuilder;
     }
 
@@ -512,6 +532,7 @@ abstract class DataModelBuilder
         if ($this->getGeneratorConfig()) {
             return $this->getGeneratorConfig()->getBuildProperty($name);
         }
+
         return null; // just to be explicit
     }
 
@@ -555,6 +576,7 @@ abstract class DataModelBuilder
                 $this->setPlatform($this->getTable()->getDatabase()->getPlatform());
             }
         }
+
         return $this->platform;
     }
 
@@ -612,6 +634,7 @@ abstract class DataModelBuilder
         if (!$this->getBuildProperty('disableIdentifierQuoting')) {
             return $this->getPlatform()->quoteIdentifier($text);
         }
+
         return $text;
     }
 

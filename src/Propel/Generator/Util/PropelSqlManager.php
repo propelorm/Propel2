@@ -74,6 +74,7 @@ class PropelSqlManager
         if (!$this->hasConnection($datasource)) {
             throw new InvalidArgumentException(sprintf('Unkown datasource "%s"', $datasource));
         }
+
         return $this->connections[$datasource];
     }
 
@@ -149,6 +150,7 @@ class PropelSqlManager
             }
             $this->databases = $databases;
         }
+
         return $this->databases;
     }
 

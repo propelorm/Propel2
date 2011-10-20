@@ -43,6 +43,7 @@ class PropelSimpleArrayFormatter extends PropelFormatter {
             }
         }
         $stmt->closeCursor ();
+
         return $collection;
     }
 
@@ -55,6 +56,7 @@ class PropelSimpleArrayFormatter extends PropelFormatter {
             }
         }
         $stmt->closeCursor ();
+
         return $result;
     }
 
@@ -72,6 +74,7 @@ class PropelSimpleArrayFormatter extends PropelFormatter {
         } else {
             $finalRow = $row[0];
         }
+
         return $finalRow;
     }
 }

@@ -115,6 +115,7 @@ class PropelConditionalProxy
   {
     $this->state = (bool) $cond;
     $this->wasTrue = $this->wasTrue || $this->state;
+
     return $this->getCriteriaOrProxy();
   }
 

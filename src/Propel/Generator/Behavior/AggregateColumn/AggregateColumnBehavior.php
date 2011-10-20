@@ -112,6 +112,7 @@ class AggregateColumnBehavior extends Behavior
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
             $tableName = $this->getParameter('foreign_schema'). '.' . $tableName;
         }
+
         return $database->getTable($tableName);
     }
 

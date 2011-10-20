@@ -90,6 +90,7 @@ class PgsqlPlatform extends DefaultPlatform
         // parent method does the checking for allowes tring
         // representations & returns integer
         $b = parent::getBooleanString($b);
+
         return ($b ? "'t'" : "'f'");
     }
 
@@ -126,6 +127,7 @@ class PgsqlPlatform extends DefaultPlatform
                 $result = $idMethodParams[0]->getValue();
             }
         }
+
         return $result;
     }
 
@@ -136,6 +138,7 @@ class PgsqlPlatform extends DefaultPlatform
             $pattern = "
 CREATE SEQUENCE %s;
 ";
+
             return sprintf($pattern,
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
             );
@@ -149,6 +152,7 @@ CREATE SEQUENCE %s;
             $pattern = "
 DROP SEQUENCE %s;
 ";
+
             return sprintf($pattern,
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
             );
@@ -166,6 +170,7 @@ DROP SEQUENCE %s;
                 $ret .= $this->getAddSchemaDDL($table);
             }
         }
+
         return $ret;
     }
 
@@ -176,6 +181,7 @@ DROP SEQUENCE %s;
             $pattern = "
 CREATE SCHEMA %s;
 ";
+
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
         };
     }
@@ -188,6 +194,7 @@ CREATE SCHEMA %s;
             $pattern = "
 SET search_path TO %s;
 ";
+
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
         }
     }
@@ -216,6 +223,7 @@ SET search_path TO public;
             $ret .= $this->getAddForeignKeysDDL($table);
         }
         $ret .= $this->getEndDDL();
+
         return $ret;
     }
 
@@ -274,6 +282,7 @@ COMMENT ON TABLE %s IS %s;
         foreach ($table->getColumns() as $column) {
             $ret .= $this->getAddColumnComment($column);
         }
+
         return $ret;
     }
 
@@ -301,12 +310,14 @@ DROP TABLE %s CASCADE;
         $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()));
         $ret .= $this->getDropSequenceDDL($table);
         $ret .= $this->getResetSchemaDDL($table);
+
         return $ret;
     }
 
     public function getPrimaryKeyName(Table $table)
     {
         $tableName = $table->getName();
+
         return $tableName . '_pkey';
     }
 
@@ -422,6 +433,7 @@ ALTER TABLE %s ALTER COLUMN %s;
                     break;
             }
         }
+
         return $ret;
     }
 
@@ -438,6 +450,7 @@ ALTER TABLE %s ALTER COLUMN %s;
         foreach ($columnDiffs as $columnDiff) {
             $ret .= $this->getModifyColumnDDL($columnDiff);
         }
+
         return $ret;
     }
 
@@ -454,6 +467,7 @@ ALTER TABLE %s ALTER COLUMN %s;
         foreach ($columns as $column) {
             $ret .= $this->getAddColumnDDL($column);
         }
+
         return $ret;
     }
 
@@ -470,6 +484,7 @@ ALTER TABLE %s ALTER COLUMN %s;
             $pattern = "
     ALTER TABLE %s DROP CONSTRAINT %s;
     ";
+
             return sprintf($pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
                 $this->quoteIdentifier($index->getName())

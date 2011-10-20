@@ -258,6 +258,7 @@ abstract class BaseObject
         if ($ok === null) {
             return crc32(serialize($this));
         }
+
         return crc32(serialize($ok)); // serialize because it could be an array ("ComboKey")
     }
 
@@ -293,6 +294,7 @@ abstract class BaseObject
         if (!$this->hasVirtualColumn($name)) {
             throw new PropelException('Cannot get value of inexistent virtual column ' . $name);
         }
+
         return $this->virtualColumns[$name];
     }
 
@@ -307,6 +309,7 @@ abstract class BaseObject
     public function setVirtualColumn($name, $value)
     {
         $this->virtualColumns[$name] = $value;
+
         return $this;
     }
 
@@ -340,6 +343,7 @@ abstract class BaseObject
         if (!$parser instanceof PropelParser) {
             $parser = PropelParser::getParser($parser);
         }
+
         return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
     }
 
@@ -360,6 +364,7 @@ abstract class BaseObject
         if (!$parser instanceof PropelParser) {
             $parser = PropelParser::getParser($parser);
         }
+
         return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));
     }
 
@@ -370,6 +375,7 @@ abstract class BaseObject
     public function __sleep()
     {
         $this->clearAllReferences();
+
         return array_keys(get_object_vars($this));
     }
 
@@ -402,6 +408,7 @@ abstract class BaseObject
         }
         if (preg_match('/^to(\w+)$/', $name, $matches)) {
             $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
+
             return $this->exportTo($matches[1], $includeLazyLoadColumns);
         }
         throw new PropelException('Call to undefined method: ' . $name);

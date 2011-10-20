@@ -53,6 +53,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
         foreach ($this->curNode->$method() as $node) {
             $key[] = $node->getPrimaryKey();
         }
+
         return implode('.', $key);
     }
 
@@ -74,6 +75,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
             }
             $this->curNode = $nextNode;
         }
+
         return $this->curNode;
     }
 
@@ -85,6 +87,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     public function getChildren()
     {
         $method = method_exists($this->curNode, 'retrieveFirstChild') ? 'retrieveFirstChild' : 'getFirstChild';
+
         return new NestedSetRecursiveIterator($this->curNode->$method());
     }
 }

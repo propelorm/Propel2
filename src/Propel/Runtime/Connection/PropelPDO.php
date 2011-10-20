@@ -172,6 +172,7 @@ class PropelPDO extends PDO
         if (null === $this->configuration) {
             $this->configuration = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
         }
+
         return $this->configuration;
     }
 
@@ -492,6 +493,7 @@ class PropelPDO extends PDO
         if ($this->getAttribute(PDO::ATTR_PERSISTENT)) {
             throw new PropelException('Extending PDOStatement is not supported with persistent connections. Count would be inaccurate, because we cannot count the PDOStatment::execute() calls. Either don\'t use persistent connections or don\'t call PropelPDO::getQueryCount()');
         }
+
         return $this->queryCount;
     }
 

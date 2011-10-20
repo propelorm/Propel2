@@ -249,9 +249,11 @@ public static function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "P
             $script .= "
     \$c = new Criteria($peerClassname::DATABASE_NAME);
     \$c->add($peerClassname::SCOPE_COL, \$scope, Criteria::EQUAL);
+
     return $peerClassname::doDelete(\$c, \$con);";
         } else {
             $script .= "
+
     return $peerClassname::doDeleteAll(\$con);";
         }
         $script .= "

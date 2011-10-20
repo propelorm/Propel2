@@ -159,6 +159,7 @@ abstract class AbstractPropelDataModelTask extends Task
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
         }
+
         return $this->dataModels;
     }
 
@@ -172,6 +173,7 @@ abstract class AbstractPropelDataModelTask extends Task
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
         }
+
         return $this->dataModelDbMap;
     }
 
@@ -343,6 +345,7 @@ abstract class AbstractPropelDataModelTask extends Task
             throw new BuildException("Cannot define more than one mapper.", $this->location);
         }
         $this->mapperElement = new Mapper($this->project);
+
         return $this->mapperElement;
     }
 
@@ -367,6 +370,7 @@ abstract class AbstractPropelDataModelTask extends Task
         // Mappers always return arrays since it's possible for some mappers to map to multiple names.
         $outFilename = array_shift($mapped);
         $outFile = new PhingFile($this->getOutputDirectory(), $outFilename);
+
         return $outFile;
     }
 
@@ -397,6 +401,7 @@ abstract class AbstractPropelDataModelTask extends Task
                 }
             }
         }
+
         return $this->conn;
     }
 
@@ -524,6 +529,7 @@ abstract class AbstractPropelDataModelTask extends Task
             }
             $nbIncludedSchemas++;
         }
+
         return $nbIncludedSchemas;
     }
 
@@ -553,6 +559,7 @@ abstract class AbstractPropelDataModelTask extends Task
             $this->generatorConfig = new GeneratorConfig();
             $this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
         }
+
         return $this->generatorConfig;
     }
 

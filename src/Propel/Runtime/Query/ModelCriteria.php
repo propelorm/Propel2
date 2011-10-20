@@ -190,6 +190,7 @@ class ModelCriteria extends Criteria
             $formatterClass = $this->defaultFormatterClass;
             $this->formatter = new $formatterClass();
         }
+
         return $this->formatter;
     }
 
@@ -737,6 +738,7 @@ class ModelCriteria extends Criteria
         } else {
             throw new PropelException(sprintf('Cannot add condition %s on join %s. setJoinCondition() expects either a Criterion, or a condition added by way of condition()', $condition, $name));
         }
+
         return $this;
     }
 
@@ -756,6 +758,7 @@ class ModelCriteria extends Criteria
                 $this->joins[$name] = $join;
             }
         }
+
         return $this;
     }
 
@@ -1022,6 +1025,7 @@ class ModelCriteria extends Criteria
             // so we can add selfSelectColumns
             $this->addSelfSelectColumns();
         }
+
         return $this;
     }
 
@@ -1068,6 +1072,7 @@ class ModelCriteria extends Criteria
         } else {
             $alias = null;
         }
+
         return array($class, $alias);
     }
 
@@ -1196,6 +1201,7 @@ class ModelCriteria extends Criteria
             }
             $ret = $this->getFormatter()->formatRecord($obj);
         }
+
         return $ret;
     }
 
@@ -1593,6 +1599,7 @@ class ModelCriteria extends Criteria
             }
             $this->basePostDelete($affectedRows, $con);
             $con->commit();
+
             return $affectedRows;
         } catch (PropelException $e) {
             $con->rollBack();
@@ -1788,6 +1795,7 @@ class ModelCriteria extends Criteria
             }
             $criterion = new Criterion($this, null, $clause, Criteria::CUSTOM);
         }
+
         return $criterion;
     }
 
@@ -1878,6 +1886,7 @@ class ModelCriteria extends Criteria
         }
 
         $clause = $parsedString;
+
         return $this->foundMatch;
     }
 
@@ -1897,6 +1906,7 @@ class ModelCriteria extends Criteria
         if ($column instanceof ColumnMap) {
             $this->replacedColumns[]= $column;
             $this->foundMatch = true;
+
             return $realColumnName;
         } else {
             return $key;
@@ -1949,6 +1959,7 @@ class ModelCriteria extends Criteria
             } else {
                 $realColumnName = $column->getFullyQualifiedName();
             }
+
             return array($column, $realColumnName);
         } elseif (isset($this->asColumns[$phpName])) {
             // aliased column
@@ -1972,6 +1983,7 @@ class ModelCriteria extends Criteria
         if ($tableMap->hasColumnByPhpName($phpName)) {
             $column = $tableMap->getColumnByPhpName($phpName);
             $realColumnName = $class . '.' . $column->getName();
+
             return array($column, $realColumnName);
         } elseif (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column
@@ -2106,6 +2118,7 @@ class ModelCriteria extends Criteria
                 } else {
                     array_unshift($arguments, $columns);
                 }
+
                 return call_user_func_array(array($this, $method), $arguments);
             }
         }
@@ -2121,6 +2134,7 @@ class ModelCriteria extends Criteria
             if(!$relation = substr($name, $pos + 8)) {
                 $relation = $arguments[0];
             }
+
             return $this->joinWith($relation, $joinType);
         }
 
@@ -2139,6 +2153,7 @@ class ModelCriteria extends Criteria
                 $method = substr($name, $pos);
                 // no lcfirst in php<5.3...
                 $method[0] = strtolower($method[0]);
+
                 return call_user_func_array(array($this, $method), $arguments);
             }
         }

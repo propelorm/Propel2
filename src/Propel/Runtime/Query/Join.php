@@ -187,6 +187,7 @@ class Join
           'right'    => $this->getRightColumn($i)
         );
       }
+
       return $conditions;
     }
 
@@ -293,6 +294,7 @@ class Join
         foreach ($this->left as $index => $column) {
             $columns []= $this->getLeftColumn($index);
         }
+
         return $columns;
     }
 
@@ -393,6 +395,7 @@ class Join
         foreach ($this->right as $index => $column) {
             $columns []= $this->getRightColumn($index);
         }
+
         return $columns;
     }
 
@@ -554,6 +557,7 @@ class Join
     public function toString()
     {
         $params = array();
+
         return $this->getClause($params);
     }
 

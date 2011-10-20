@@ -104,6 +104,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
             $this->results = $this->getQuery()
                 ->find($this->con);
         }
+
         return $this->results;
     }
 

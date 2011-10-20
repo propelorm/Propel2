@@ -23,43 +23,43 @@ use Propel\Generator\Behavior\AlternativeCodingStandardsBehavior;
  */
 class AlternativeCodingStandardsBehaviorTest extends \PHPUnit_Framework_TestCase
 {
-	public function convertBracketsNewlineDataProvider()
-	{
-		return array(
-			array("class Foo {
+    public function convertBracketsNewlineDataProvider()
+    {
+        return array(
+            array("class Foo {
 }", "class Foo
 {
 }"),
-			array("if (true) {
+            array("if (true) {
 }", "if (true)
 {
 }"),
-			array("} else {
+            array("} else {
 }", "}
 else
 {
 }"),
-			array("foreach (\$i as \$j) {
+            array("foreach (\$i as \$j) {
 }", "foreach (\$i as \$j)
 {
 }"),
-		);
-	}
+        );
+    }
 
-	/**
-	 * @dataProvider convertBracketsNewlineDataProvider
-	 */
-	public function testConvertBracketsNewline($input, $output)
-	{
-		$b = new TestableAlternativeCodingStandardsBehavior();
-		$b->filter($input);
-		$this->assertEquals($output, $input);
-	}
+    /**
+     * @dataProvider convertBracketsNewlineDataProvider
+     */
+    public function testConvertBracketsNewline($input, $output)
+    {
+        $b = new TestableAlternativeCodingStandardsBehavior();
+        $b->filter($input);
+        $this->assertEquals($output, $input);
+    }
 }
 
 class TestableAlternativeCodingStandardsBehavior extends AlternativeCodingStandardsBehavior {
-	public function filter(&$script)
-	{
-		return parent::filter($script);
-	}
+    public function filter(&$script)
+    {
+        return parent::filter($script);
+    }
 }

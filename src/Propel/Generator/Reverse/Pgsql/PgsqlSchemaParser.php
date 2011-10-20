@@ -303,6 +303,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
         {
             $arrRetVal['length'] = sprintf ("%ld", ($intTypmod - 4));
         } // else
+
         return $arrRetVal;
     } // private function processLengthScale ($intTypmod, $strName)
 
@@ -343,6 +344,7 @@ class PgsqlSchemaParser extends BaseSchemaParser
         $arrDomain['hasdefault'] = (strlen (trim ($row['typdefault'])) > 0) ? 't' : 'f';
 
         $stmt = null; // cleanup
+
         return $arrDomain;
     } // private function processDomain($strDomain)
 

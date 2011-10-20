@@ -209,6 +209,7 @@ class VersionableBehavior extends Behavior
                 }
             }
         }
+
         return $versionableFKs;
     }
 
@@ -222,6 +223,7 @@ class VersionableBehavior extends Behavior
                 }
             }
         }
+
         return $versionableReferrers;
     }
 
@@ -229,6 +231,7 @@ class VersionableBehavior extends Behavior
     {
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_ids';
+
         return $this->versionTable->getColumn($fkIdsColumnName);
     }
 
@@ -236,6 +239,7 @@ class VersionableBehavior extends Behavior
     {
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_versions';
+
         return $this->versionTable->getColumn($fkIdsColumnName);
     }
 
@@ -245,6 +249,7 @@ class VersionableBehavior extends Behavior
         {
             $this->objectBuilderModifier = new VersionableBehaviorObjectBuilderModifier($this);
         }
+
         return $this->objectBuilderModifier;
     }
 
@@ -254,6 +259,7 @@ class VersionableBehavior extends Behavior
         {
             $this->queryBuilderModifier = new VersionableBehaviorQueryBuilderModifier($this);
         }
+
         return $this->queryBuilderModifier;
     }
 
@@ -263,6 +269,7 @@ class VersionableBehavior extends Behavior
         {
             $this->peerBuilderModifier = new VersionableBehaviorPeerBuilderModifier($this);
         }
+
         return $this->peerBuilderModifier;
     }
 }

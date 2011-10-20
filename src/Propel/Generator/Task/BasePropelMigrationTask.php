@@ -101,6 +101,7 @@ abstract class BasePropelMigrationTask extends Task
             $this->generatorConfig = new GeneratorConfig();
             $this->generatorConfig->setBuildProperties($this->getProject()->getProperties());
         }
+
         return $this->generatorConfig;
     }
 

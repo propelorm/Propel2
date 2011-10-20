@@ -19,31 +19,31 @@ use Propel\Tests\Bookstore\Cms\PagePeer;
  */
 abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
 {
-	protected $con;
+    protected $con;
 
-	/**
-	 * This is run before each unit test; it populates the database.
-	 */
-	protected function setUp()
-	{
+    /**
+     * This is run before each unit test; it populates the database.
+     */
+    protected function setUp()
+    {
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
 
-		parent::setUp();
+        parent::setUp();
 
-		$this->con = Propel::getConnection(PagePeer::DATABASE_NAME);
-		$this->con->beginTransaction();
-		CmsDataPopulator::depopulate($this->con);
-		CmsDataPopulator::populate($this->con);
-	}
+        $this->con = Propel::getConnection(PagePeer::DATABASE_NAME);
+        $this->con->beginTransaction();
+        CmsDataPopulator::depopulate($this->con);
+        CmsDataPopulator::populate($this->con);
+    }
 
-	/**
-	 * This is run after each unit test.  It empties the database.
-	 */
-	protected function tearDown()
-	{
-		CmsDataPopulator::depopulate($this->con);
-		$this->con->commit();
-		parent::tearDown();
-	}
+    /**
+     * This is run after each unit test.  It empties the database.
+     */
+    protected function tearDown()
+    {
+        CmsDataPopulator::depopulate($this->con);
+        $this->con->commit();
+        parent::tearDown();
+    }
 
 }

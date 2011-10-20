@@ -67,6 +67,7 @@ class ExtensionQueryInheritanceBuilder extends OMBuilder
         if (!$this->child) {
             throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
+
         return $this->child;
     }
 

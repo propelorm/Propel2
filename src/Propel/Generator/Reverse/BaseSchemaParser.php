@@ -166,6 +166,7 @@ abstract class BaseSchemaParser implements SchemaParser
         if ($this->generatorConfig !== null) {
             return $this->generatorConfig->getBuildProperty($name);
         }
+
         return null;
     }
 
@@ -190,6 +191,7 @@ abstract class BaseSchemaParser implements SchemaParser
         if (isset($this->nativeToPropelTypeMap[$nativeType])) {
             return $this->nativeToPropelTypeMap[$nativeType];
         }
+
         return null;
     }
 
@@ -204,6 +206,7 @@ abstract class BaseSchemaParser implements SchemaParser
         if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
         }
+
         return isset($this->reverseTypeMap[$propelType]) ? $this->reverseTypeMap[$propelType] : null;
     }
 
@@ -217,6 +220,7 @@ abstract class BaseSchemaParser implements SchemaParser
         $type = $this->getPlatform()->getDatabaseType();
         $vi = new VendorInfo($type);
         $vi->setParameters($params);
+
         return $vi;
     }
 
@@ -231,6 +235,7 @@ abstract class BaseSchemaParser implements SchemaParser
       {
         $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
       }
+
       return $this->platform;
     }
 }

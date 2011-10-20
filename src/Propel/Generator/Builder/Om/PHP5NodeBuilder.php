@@ -212,6 +212,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
     public function __call(\$name, \$parms)
     {
         if (method_exists(\$this->obj, \$name))
+
             return call_user_func_array(array(\$this->obj, \$name), \$parms);
         else
             throw new PropelException('get method not defined: \$name');
@@ -266,6 +267,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
         \$itclass = ucfirst(strtolower(\$type)) . 'OrderNodeIterator';
 
     require_once('propel/om/' . \$itclass . '.php');
+
         return new \$itclass(\$this, \$opts);
     }
 ";
@@ -295,6 +297,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
     public function getNodePath()
     {
         \$getNodePath = 'get' . ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_PHPNAME;
+
         return \$this->obj->\$getNodePath();
     }
 ";
@@ -311,6 +314,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
     {
         \$npath =& \$this->getNodePath();
         \$sep = strrpos(\$npath, ".$this->getStubNodePeerBuilder()->getClassname()."::NPATH_SEP);
+
         return (int) (\$sep !== false ? substr(\$npath, \$sep+1) : \$npath);
     }
 ";
@@ -347,9 +351,11 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
         foreach (\$this->childNodes as \$childNode)
         {
             if (\$childNode->equals(\$node, \$strict))
+
                 return true;
 
             if (\$recurse && \$childNode->hasChildNode(\$node, \$recurse))
+
                 return true;
         }
 
@@ -491,15 +497,19 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
         else if (\$prev)
         {
             if (\$nidx > 1 && (\$parentNode = \$this->getParentNode(\$querydb, \$con)))
+
                 return \$parentNode->getChildNodeAt(\$nidx-1, \$querydb, \$con);
             else
+
                 return null;
         }
         else
         {
             if (\$parentNode = \$this->getParentNode(\$querydb, \$con))
+
                 return \$parentNode->getChildNodeAt(\$nidx+1, \$querydb, \$con);
             else
+
                 return null;
         }
     }
@@ -960,6 +970,7 @@ abstract class ".$this->getClassname()." implements IteratorAggregate {
         \$lastIdx = (\$lastNode !== null ? \$lastNode->getNodeIndex() : 0);
 
         if (\$lastNode === null || \$offsetIdx > \$lastIdx)
+
             return;
 
         if (\$con === null)

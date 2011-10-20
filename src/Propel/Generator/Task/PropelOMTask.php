@@ -79,6 +79,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
         // skip files already created once
         if ($_f->exists() && !$overwrite) {
             $this->log("\t-> (exists) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
+
             return 0;
         }
 
@@ -90,6 +91,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
         // skip unchanged files
         if ($_f->exists() && $script == $_f->contents()) {
             $this->log("\t-> (unchanged) " . $builder->getClassFilePath(), Project::MSG_VERBOSE);
+
             return 0;
         }
 
@@ -97,6 +99,7 @@ class PropelOMTask extends AbstractPropelDataModelTask
         $action = $_f->exists() ? 'Updating' : 'Creating';
         $this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
         file_put_contents($_f->getAbsolutePath(), $script);
+
         return 1;
     }
 

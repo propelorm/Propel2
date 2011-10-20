@@ -49,6 +49,7 @@ class PropelQuickBuilder
         if (null === $this->platform) {
             $this->platform = new \Propel\Generator\Platform\SqlitePlatform();
         }
+
         return $this->platform;
     }
 
@@ -72,6 +73,7 @@ class PropelQuickBuilder
         if (null === $this->config) {
             $this->config = new \Propel\Generator\Config\QuickGeneratorConfig();
         }
+
         return $this->config;
     }
 
@@ -114,6 +116,7 @@ class PropelQuickBuilder
             $appData = $xtad->parseString($this->schema);
             $this->database = $appData->getDatabase(); // does final initialization
         }
+
         return $this->database;
     }
 
@@ -131,6 +134,7 @@ class PropelQuickBuilder
                 $stmt->execute();
             }
         }
+
         return count($statements);
     }
 
@@ -150,6 +154,7 @@ class PropelQuickBuilder
         foreach ($this->getDatabase()->getTables() as $table) {
             $script .= $this->getClassesForTable($table);
         }
+
         return $script;
     }
 

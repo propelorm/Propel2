@@ -22,6 +22,7 @@ class TestAllHooksBehavior extends Behavior
         {
             $this->tableModifier = new TestAllHooksTableModifier($this);
         }
+
         return $this->tableModifier;
     }
 
@@ -31,6 +32,7 @@ class TestAllHooksBehavior extends Behavior
         {
             $this->objectBuilderModifier = new TestAllHooksObjectBuilderModifier($this);
         }
+
         return $this->objectBuilderModifier;
     }
 
@@ -40,6 +42,7 @@ class TestAllHooksBehavior extends Behavior
         {
             $this->peerBuilderModifier = new TestAllHooksPeerBuilderModifier($this);
         }
+
         return $this->peerBuilderModifier;
     }
 
@@ -49,6 +52,7 @@ class TestAllHooksBehavior extends Behavior
         {
             $this->queryBuilderModifier = new TestAllHooksQueryBuilderModifier($this);
         }
+
         return $this->queryBuilderModifier;
     }
 }

@@ -69,6 +69,7 @@ class QueryCacheBehavior extends Behavior
 public function setQueryKey(\$key)
 {
     \$this->queryKey = \$key;
+
     return \$this;
 }
 ";
@@ -92,10 +93,12 @@ public function cacheContains(\$key)
         switch ($this->getParameter('backend')) {
             case 'apc':
                 $script .= "
+
     return apc_fetch(\$key);";
                 break;
             case 'array':
                 $script .= "
+
     return isset(self::\$cacheBackend[\$key]);";
                 break;
             case 'custom':
@@ -143,10 +146,12 @@ public function cacheFetch(\$key)
         switch ($this->getParameter('backend')) {
             case 'apc':
                 $script .= "
+
     return apc_fetch(\$key);";
                 break;
             case 'array':
                 $script .= "
+
     return isset(self::\$cacheBackend[\$key]) ? self::\$cacheBackend[\$key] : null;";
                 break;
             case 'custom':

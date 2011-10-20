@@ -160,6 +160,7 @@ abstract class PropelFormatter
                 return true;
             }
         }
+
         return false;
     }
 
@@ -182,6 +183,7 @@ abstract class PropelFormatter
         } else {
             $this->currentObjects[$col] = new $class();
         }
+
         return $this->currentObjects[$col];
     }
 

@@ -77,12 +77,14 @@ class Validator extends XMLElement
             $rule = $data; // alias
             $rule->setValidator($this);
             $this->ruleList[] = $rule;
+
             return $rule;
         }
         else {
             $rule = new Rule();
             $rule->setValidator($this);
             $rule->loadFromXML($data);
+
             return $this->addRule($rule); // call self w/ different param
         }
     }

@@ -108,6 +108,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
             $ret .= $this->getCommentBlockDDL('Foreign Keys') . $ret2;
         }
         $ret .= $this->getEndDDL();
+
         return $ret;
     }
 
@@ -161,6 +162,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 CREATE SEQUENCE %s
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
+
             return sprintf($pattern,
                 $this->quoteIdentifier($this->getSequenceName($table))
             );
@@ -177,6 +179,7 @@ DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS
 DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 ";
         }
+
         return $ret;
     }
 
@@ -185,6 +188,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         $tableName = $table->getName();
         // pk constraint name must be 30 chars at most
         $tableName = substr($tableName, 0, min(27, strlen($tableName)));
+
         return $tableName . '_PK';
     }
 
@@ -192,6 +196,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     {
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)%s';
+
             return sprintf($pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
                 $this->getColumnListDDL($table->getPrimaryKey()),
@@ -315,6 +320,7 @@ USING INDEX
         if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
             $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
         }
+
         return $physicalParameters;
     }
 
@@ -334,6 +340,7 @@ USING INDEX
         $pattern = "
 CREATE %sINDEX %s ON %s (%s)%s;
 ";
+
         return sprintf($pattern,
             $index->getIsUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),

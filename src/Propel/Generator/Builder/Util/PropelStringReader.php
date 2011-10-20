@@ -61,6 +61,7 @@ class PropelStringReader extends Reader
             }
             $out = substr($this->_string, $this->currPos, $len);
             $this->currPos += $len;
+
             return $out;
         }
     }

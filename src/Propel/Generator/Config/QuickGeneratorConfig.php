@@ -74,6 +74,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
                 }
                 $properties[$property] = $value;
         }
+
         return $properties;
     }
 
@@ -89,6 +90,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
         $class = $this->builders[$type];
         $builder = new $class($table);
         $builder->setGeneratorConfig($this);
+
         return $builder;
     }
 
@@ -100,6 +102,7 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     public function getConfiguredPluralizer()
     {
         require_once dirname(__FILE__) . '/../builder/util/DefaultEnglishPluralizer.php';
+
         return new DefaultEnglishPluralizer();
     }
 

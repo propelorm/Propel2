@@ -151,6 +151,7 @@ class AppData
         if ($doFinalInit) {
             $this->doFinalInitialization();
         }
+
         return $this->dbList;
     }
 
@@ -188,6 +189,7 @@ class AppData
                 return $db;
             }
         }
+
         return null;
     }
 
@@ -204,6 +206,7 @@ class AppData
                 return true;
             }
         }
+
         return false;
     }
 
@@ -226,12 +229,14 @@ class AppData
                 }
             }
             $this->dbList[] = $db;
+
             return $db;
         } else {
             // XML attributes array / hash
             $d = new Database();
             $d->setAppData($this);
             $d->loadFromXML($db);
+
             return $this->addDatabase($d); // calls self w/ different param type
         }
 
@@ -295,6 +300,7 @@ class AppData
         foreach ($this->getDatabases() as $database) {
             $nb += $database->countTables();
         }
+
         return $nb;
     }
 

@@ -25,23 +25,23 @@ use Propel\Runtime\Util\BasePeer;
  */
 class I18nBehaviorPeerBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {
-	public function testDefaultLocaleConstant()
-	{
-		$schema = <<<EOF
+    public function testDefaultLocaleConstant()
+    {
+        $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-	<table name="i18n_behavior_test_01">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<behavior name="i18n" />
-	</table>
-	<table name="i18n_behavior_test_02">
-		<column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-		<behavior name="i18n">
-			<parameter name="default_locale" value="fr_FR" />
-		</behavior>
-	</table>
+    <table name="i18n_behavior_test_01">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <behavior name="i18n" />
+    </table>
+    <table name="i18n_behavior_test_02">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <behavior name="i18n">
+            <parameter name="default_locale" value="fr_FR" />
+        </behavior>
+    </table>
 </database>
 EOF;
-		PropelQuickBuilder::buildSchema($schema);
+        PropelQuickBuilder::buildSchema($schema);
         $this->assertEquals('en_EN', \I18nBehaviorTest01Peer::DEFAULT_LOCALE);
         $this->assertEquals('fr_FR', \I18nBehaviorTest02Peer::DEFAULT_LOCALE);
     }
@@ -63,6 +63,6 @@ EOF;
 EOF;
         PropelQuickBuilder::buildSchema($schema);
         $this->assertEquals(array(0, 1, 2), \I18nBehaviorTest03Peer::getFieldNames(BasePeer::TYPE_NUM));
-	}
+    }
 
 }

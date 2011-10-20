@@ -38,6 +38,7 @@ class I18nBehaviorObjectBuilderModifier
         $this->builder = $builder;
         if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('emulateForeignKeyConstraints')) {
             $i18nTable = $this->behavior->getI18nTable();
+
             return $this->behavior->renderTemplate('objectPostDelete', array(
                 'i18nQueryName'    => $builder->getNewStubQueryBuilder($i18nTable)->getClassname(),
                 'objectClassname' => $builder->getNewStubObjectBuilder($this->behavior->getTable())->getClassname(),
@@ -114,6 +115,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
+
         return $this->behavior->renderTemplate('objectGetTranslation', array(
             'i18nTablePhpName' => $this->builder->getNewStubObjectBuilder($i18nTable)->getClassname(),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
@@ -128,6 +130,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
+
         return $this->behavior->renderTemplate('objectRemoveTranslation', array(
             'objectClassname' => $this->builder->getStubObjectBuilder($this->table)->getClassname(),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
@@ -161,6 +164,7 @@ class I18nBehaviorObjectBuilderModifier
         $comment = preg_replace('/^\t/m', '', $comment);
         $functionStatement = preg_replace('/^\t/m', '', $functionStatement);
         preg_match_all('/\$[a-z]+/i', $functionStatement, $params);
+
         return $this->behavior->renderTemplate('objectTranslatedColumnGetter', array(
             'comment'           => $comment,
             'functionStatement' => $functionStatement,
@@ -189,6 +193,7 @@ class I18nBehaviorObjectBuilderModifier
         $comment = str_replace('@return     ' . $i18nTablePhpName, '@return     ' . $tablePhpName, $comment);
         $functionStatement = preg_replace('/^\t/m', '', $functionStatement);
         preg_match_all('/\$[a-z]+/i', $functionStatement, $params);
+
         return $this->behavior->renderTemplate('objectTranslatedColumnSetter', array(
             'comment'           => $comment,
             'functionStatement' => $functionStatement,

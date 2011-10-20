@@ -194,6 +194,7 @@ class DBMySQL extends DBAdapter
         if ($pdoType == PDO::PARAM_BOOL) {
             $value = (int) $value;
             $pdoType = PDO::PARAM_INT;
+
             return $stmt->bindValue($parameter, $value, $pdoType);
         } elseif ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

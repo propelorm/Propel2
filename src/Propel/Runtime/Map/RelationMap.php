@@ -198,6 +198,7 @@ class RelationMap
                 $h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
             }
         }
+
         return $h;
     }
 

@@ -97,6 +97,7 @@ class ForeignKey extends XMLElement
         if ($attrib == "SETNULL") {
             $attrib =  self::SETNULL;
         }
+
         return $attrib;
     }
 
@@ -373,6 +374,7 @@ class ForeignKey extends XMLElement
         foreach ($this->localColumns as $columnName) {
             $columns []= $localTable->getColumn($columnName);
         }
+
         return $columns;
     }
 
@@ -404,6 +406,7 @@ class ForeignKey extends XMLElement
         for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
             $h[$this->localColumns[$i]] = $this->foreignColumns[$i];
         }
+
         return $h;
     }
 
@@ -417,6 +420,7 @@ class ForeignKey extends XMLElement
         for ($i=0, $size=count($this->localColumns); $i < $size; $i++) {
             $h[$this->foreignColumns[$i]] = $this->localColumns[$i];
         }
+
         return $h;
     }
 
@@ -435,6 +439,7 @@ class ForeignKey extends XMLElement
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
             );
         }
+
         return $mapping;
     }
 
@@ -448,6 +453,7 @@ class ForeignKey extends XMLElement
         if (isset($m[$local])) {
             return $m[$local];
         }
+
         return null;
     }
 
@@ -461,6 +467,7 @@ class ForeignKey extends XMLElement
         if (isset($m[$foreign])) {
             return $m[$foreign];
         }
+
         return null;
     }
 
@@ -484,6 +491,7 @@ class ForeignKey extends XMLElement
         foreach ($this->foreignColumns as $columnName) {
             $columns []= $foreignTable->getColumn($columnName);
         }
+
         return $columns;
     }
 
@@ -517,6 +525,7 @@ class ForeignKey extends XMLElement
                 return false;
             }
         }
+
         return true;
     }
 
@@ -616,6 +625,7 @@ class ForeignKey extends XMLElement
         foreach ($foreignTable->getForeignKeys() as $refFK) {
             $fkMap = $refFK->getLocalForeignMapping();
             if ( ($refFK->getTableName() == $this->getTableName()) && ($map == $fkMap) ) { // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
+
                 return $refFK;
             }
         }
@@ -635,6 +645,7 @@ class ForeignKey extends XMLElement
                 $fks[]= $fk;
             }
         }
+
         return $fks;
     }
 

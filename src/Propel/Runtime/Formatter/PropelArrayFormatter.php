@@ -66,6 +66,7 @@ class PropelArrayFormatter extends PropelFormatter
         $this->currentObjects = array();
         $this->alreadyHydratedObjects = array();
         $stmt->closeCursor();
+
         return $result;
     }
 
