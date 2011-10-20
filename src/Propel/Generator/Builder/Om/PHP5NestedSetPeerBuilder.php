@@ -794,7 +794,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
         \$stmt = $peerClassname::doSelectStmt(\$c, \$con);
         if (false !== (\$row = \$stmt->fetch(PDO::FETCH_NUM))) {
             \$omClass = $peerClassname::getOMClass(\$row, 0);
-            \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+            \$cls = preg_replace('#\.#', '\\\\', \$cls);
 
             \$key = ".$peerClassname."::getPrimaryKeyHashFromRow(\$row, 0);
             if (null === (\$root = ".$peerClassname."::getInstanceFromPool(\$key))) {
@@ -1327,7 +1327,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             $script .= "
         // set the class once to avoid overhead in the loop
         \$cls = $peerClassname::getOMClass();
-        \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+        \$cls = preg_replace('#\.#', '\\\\', \$cls);
 ";
         }
 
@@ -1340,7 +1340,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             $script .= "
                 // class must be set each time from the record row
                 \$cls = ".$peerClassname."::getOMClass(\$row, 0);
-                \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+                \$cls = preg_replace('#\.#', '\\\\', \$cls);
 ";
         }
 
@@ -1400,7 +1400,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             $script .= "
         // set the class once to avoid overhead in the loop
         \$cls = $peerClassname::getOMClass();
-        \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+        \$cls = preg_replace('#\.#', '\\\\', \$cls);
 ";
         }
 
@@ -1413,7 +1413,7 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
             $script .= "
                 // class must be set each time from the record row
                 \$cls = ".$peerClassname."::getOMClass(\$row, 0);
-                \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+                \$cls = preg_replace('#\.#', '\\\\', \$cls);
 ";
         }
 

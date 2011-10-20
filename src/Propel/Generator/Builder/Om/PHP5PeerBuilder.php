@@ -1137,7 +1137,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $script .= "
                 // class must be set each time from the record row
                 \$cls = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-                \$cls = substr('.'.\$cls, strrpos('.'.\$cls, '.') + 1);
+                \$cls = preg_replace('#\.#', '\\\\', \$cls);
                 " . $this->buildObjectInstanceCreationCode('$obj', '$cls') . "
                 \$obj->hydrate(\$row);
                 \$results[] = \$obj;
@@ -1252,17 +1252,17 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             $script .= "
             } // switch
             if (!\$withPrefix) {
-                \$omClass = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                \$omClass = preg_replace('#\.#', '\\\\', \$omClass);
             }
 ";
         } else { /* if not enumerated */
             $script .= "
             \$omClass = \$row[\$colnum + ".($col->getPosition()-1)."];
-            \$omClass = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+            \$omClass = preg_replace('#\.#', '\\\\', '.'.\$omClass);
 ";
         }
         $script .= "
-        } catch (Exception \$e) {
+        } catch (\Exception \$e) {
             throw new PropelException('Unable to get OM class.', \$e);
         }
         return \$omClass;
@@ -2184,7 +2184,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         if ($table->getChildrenColumn()) {
                             $script .= "
                 \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-                \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                \$omClass = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                         } else {
                             $script .= "
@@ -2205,7 +2205,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                         if ($joinTable->getChildrenColumn()) {
                             $script .= "
                     \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol);
-                    \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                    \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                         } else {
                             $script .= "
@@ -2416,7 +2416,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
         if ($table->getChildrenColumn()) {
             $script .= "
                 \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-        \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                \$omClass = preg_replace('#\.#', '\\\\', \$omClass);
 ";
         } else {
             $script .= "
@@ -2463,7 +2463,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                 if ($joinTable->getChildrenColumn()) {
                     $script .= "
                     \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
-          \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                    \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                 } else {
                     $script .= "
@@ -2686,7 +2686,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
             if ($table->getChildrenColumn()) {
                 $script .= "
                 \$omClass = ".$this->getPeerClassname()."::getOMClass(\$row, 0);
-                \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
             } else {
                 $script .= "
@@ -2734,7 +2734,7 @@ abstract class ".$this->getClassname(). $extendingPeerClass . " {
                   if ($joinTable->getChildrenColumn()) {
                       $script .= "
                         \$omClass = ".$joinedTablePeerBuilder->getPeerClassname()."::getOMClass(\$row, \$startcol$index);
-            \$cls = substr('.'.\$omClass, strrpos('.'.\$omClass, '.') + 1);
+                        \$cls = preg_replace('#\.#', '\\\\', \$omClass);
 ";
                   } else {
                       $script .= "
