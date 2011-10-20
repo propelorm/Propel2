@@ -55,6 +55,7 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 		ConcreteArticleQuery::create()->deleteAll();
 		ConcreteQuizzQuery::create()->deleteAll();
 		ConcreteContentQuery::create()->deleteAll();
+
 		$content = new ConcreteContent();
 		$content->save();
 		$this->assertNull($content->getChildObject());

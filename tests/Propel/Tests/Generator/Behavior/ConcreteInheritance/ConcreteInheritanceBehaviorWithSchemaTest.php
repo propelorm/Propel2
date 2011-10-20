@@ -11,12 +11,9 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
-use Propel\Tests\Bookstore\Book;
-
+use Propel\Tests\BookstoreSchemas\Book;
 use Propel\Tests\BookstoreSchemas\SecondHandBook;
-
 use Propel\Tests\BookstoreSchemas\BookPeer;
-
 use Propel\Tests\Helpers\Schemas\SchemasTestBase;
 
 /**
@@ -41,7 +38,7 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends SchemasTestBase
 		$book = $second_hand_book->getParentOrCreate();
 		$this->assertTrue($book instanceof Book, 'getParentOrCreate() returns an instance of the parent class');
 		$this->assertTrue($book->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
-		$this->assertEquals('SecondHandBooksSecondHandBook', $book->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
+		$this->assertEquals('Propel\Tests\BookstoreSchemas\SecondHandBook', $book->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
 	}
 
 }

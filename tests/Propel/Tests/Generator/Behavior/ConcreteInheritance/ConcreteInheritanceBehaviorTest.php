@@ -87,7 +87,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 	}
 
 	/**
-	 * @expectedException PropelException
+	 * @expectedException \Propel\Runtime\Exception\PropelException
 	 */
 	public function testModifyTableNoCopyDataKeepsAutoIncrement()
 	{
@@ -120,22 +120,18 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 
 	public function testParentObjectClass()
 	{
-		$article = new ConcreteArticle(); // to autoload the BaseConcreteArticle class
 		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticle');
-		$this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
-		$quizz = new ConcreteQuizz(); // to autoload the BaseConcreteQuizz class
-		$r = new \ReflectionClass('BaseConcreteQuizz');
-		$this->assertEquals('ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
+		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizz');
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
 	}
 
 	public function testParentQueryClass()
 	{
-		$q = new ConcreteArticleQuery(); // to autoload the BaseConcreteArticleQuery class
 		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticleQuery');
-		$this->assertEquals('ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
-		$q = new ConcreteQuizzQuery(); // to autoload the BaseConcreteQuizzQuery class
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
 		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizzQuery');
-		$this->assertEquals('ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
 	}
 
 	/**
@@ -143,12 +139,10 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 	 */
 	public function testParentPeerClass()
 	{
-		$q = new ConcreteArticlePeer(); // to autoload the BaseConcreteArticlePeer class
 		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteArticlePeer');
-		$this->assertEquals('ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
-		$q = new ConcreteQuizzPeer(); // to autoload the BaseConcreteQuizzPeer class
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
 		$r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Om\BaseConcreteQuizzPeer');
-		$this->assertEquals('ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentPeer', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Peer Object to the parent object class');
 	}
 
 	public function testPreSaveCopyData()
@@ -187,7 +181,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 		$content = $article->getParentOrCreate();
 		$this->assertTrue($content instanceof ConcreteContent, 'getParentOrCreate() returns an instance of the parent class');
 		$this->assertTrue($content->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
-		$this->assertEquals('ConcreteArticle', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
+		$this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteArticle', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
 	}
 
 	public function testGetParentOrCreateExisting()
