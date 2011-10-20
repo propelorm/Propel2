@@ -56,7 +56,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$this->assertEquals(0, count($titles), 'find() called after select(string) returns an empty array if no record is found');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-		$c->where('Book.Title = ?', 'kdjfhlkdsh');
+		$c->where('Propel\Tests\Bookstore\Book.Title = ?', 'kdjfhlkdsh');
 		$c->select('Title');
 		$title = $c->findOne();
 		$this->assertTrue(is_null($title), 'findOne() called after select(string) returns null when no record is found');
@@ -187,12 +187,12 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 
 		// fix for a bug/limitation in pdo_dblib where it truncates columnnames to a maximum of 31 characters when doing PDO::FETCH_ASSOC
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployeeAccount');
-		$c->select(array('BookstoreEmployeeAccount.Authenticator', 'BookstoreEmployeeAccount.Password'));
+		$c->select(array('Propel\Tests\Bookstore\BookstoreEmployeeAccount.Authenticator', 'Propel\Tests\Bookstore\BookstoreEmployeeAccount.Password'));
 		$account = $c->findOne($this->con);
-		$this->assertEquals($account, array('BookstoreEmployeeAccount.Authenticator' => 'Password', 'BookstoreEmployeeAccount.Password' => 'johnp4ss'), 'select() does not mind long column names');
+		$this->assertEquals($account, array('Propel\Tests\Bookstore\BookstoreEmployeeAccount.Authenticator' => 'Password', 'Propel\Tests\Bookstore\BookstoreEmployeeAccount.Password' => 'johnp4ss'), 'select() does not mind long column names');
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-		$c->where('Author.FirstName = ?', 'Neal');
+		$c->where('Propel\Tests\Bookstore\Author.FirstName = ?', 'Neal');
 		$c->select(array('FirstName', 'LastName'));
 		$authors = $c->find($this->con);
 		$this->assertEquals($authors->count(), 1, 'find() called after select(array) allows for where() statements');
@@ -260,7 +260,7 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->join('Propel\Tests\Bookstore\Book.Author');
 		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
-		$c->select(array('Author.LastName', 'Book.Title'));
+		$c->select(array('Author.LastName', 'Propel\Tests\Bookstore\Book.Title'));
 		$rows = $c->find($this->con);
 		$expectedSQL = 'SELECT author.LAST_NAME AS "Author.LastName", book.TITLE AS "Book.Title" FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID) ORDER BY book.TITLE ASC';
 		$this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'select(array) can select columns from several tables (many-to-one)');
@@ -322,8 +322,8 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->join('Propel\Tests\Bookstore\Book.Author');
-		$c->withColumn('LOWER(Book.Title)', 'LowercaseTitle');
-		$c->select(array('LowercaseTitle', 'Book.Title'));
+		$c->withColumn('LOWER(Propel\Tests\Bookstore\Book.Title)', 'LowercaseTitle');
+		$c->select(array('LowercaseTitle', 'Propel\Tests\Bookstore\Book.Title'));
 		$c->orderBy('Propel\Tests\Bookstore\Book.Title');
 		$rows = $c->find($this->con);
 		$expectedSQL = 'SELECT LOWER(book.TITLE) AS LowercaseTitle, book.TITLE AS "Book.Title" FROM `book` INNER JOIN `author` ON (book.AUTHOR_ID=author.ID) ORDER BY book.TITLE ASC';
@@ -381,6 +381,13 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
 	{
 		$c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
 		$c->select('*');
-		$this->assertEquals(array('Book.Id', 'Book.Title', 'Book.ISBN', 'Book.Price', 'Book.PublisherId', 'Book.AuthorId'), $c->getSelect());
+        $this->assertEquals(array(
+            'Propel\Tests\Bookstore\Book.Id',
+            'Propel\Tests\Bookstore\Book.Title',
+            'Propel\Tests\Bookstore\Book.ISBN',
+            'Propel\Tests\Bookstore\Book.Price',
+            'Propel\Tests\Bookstore\Book.PublisherId',
+            'Propel\Tests\Bookstore\Book.AuthorId'
+        ), $c->getSelect());
 	}
 }
