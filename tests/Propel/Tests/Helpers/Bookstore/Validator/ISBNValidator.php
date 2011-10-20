@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Helpers\Bookstore\Validator;
 
+use Propel\Runtime\Map\ValidatorMap;
 use Propel\Runtime\Validator\BasicValidator;
 
 /**
@@ -21,13 +22,13 @@ use Propel\Runtime\Validator\BasicValidator;
  */
 class ISBNValidator implements BasicValidator
 {
-	const NOT_ISBN_REGEXP = '/[^0-9A-Z]/';
+    const NOT_ISBN_REGEXP = '/[^0-9A-Z]/';
 
-	/**
-	 * Whether the passed string matches regular expression.
-	 */
-	public function isValid (ValidatorMap $map, $str)
-	{
-		return !(preg_match(self::NOT_ISBN_REGEXP, $str));
-	}
+    /**
+     * Whether the passed string matches regular expression.
+     */
+    public function isValid (ValidatorMap $map, $str)
+    {
+        return !(preg_match(self::NOT_ISBN_REGEXP, $str));
+    }
 }

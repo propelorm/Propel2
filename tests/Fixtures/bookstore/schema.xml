@@ -22,7 +22,7 @@
 			<rule name="maxLength" value="255" message="Book title must not be longer than ${value} characters." />
 		</validator>
 		<validator column="isbn" translate="none">
-			<rule name="class" class="bookstore.validator.ISBNValidator" message="ISBN does not validate!"/>
+			<rule name="class" class="\Propel\Tests\Helpers\Bookstore\Validator\ISBNValidator" message="ISBN does not validate!"/>
 		</validator>
 	</table>
 
