@@ -11,9 +11,11 @@
     syntaxCheck="false"
     bootstrap="tests/bootstrap.php"
     >
+
     <testsuites>
         <testsuite name="Propel2 Test Suite">
-            <directory>./tests/Propel/</directory>
+            <directory>./tests/Propel/Tests/Generator/</directory>
+            <directory>./tests/Propel/Tests/Runtime/</directory>
         </testsuite>
     </testsuites>
 
