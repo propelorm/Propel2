@@ -89,6 +89,7 @@
 	<echo message="  up"/>
 	<echo message="  down"/>
 	<echo message="  reverse"/>
+	<echo message="  normalize"/>
 	<echo message="  ... and a few others."/>
 	<echo message="But you should start by creating a schema."/>
 	<echo message="=========================================================="/>
@@ -162,6 +163,10 @@
 
 <target name="reverse" depends="configure">
 	<phing phingfile="build-propel.xml" target="reverse"/>
+</target>
+
+<target name="normalize" depends="configure">
+	<phing phingfile="build-propel.xml" target="normalize"/>
 </target>
 
 <target name="datadump" depends="configure">

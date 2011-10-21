@@ -55,6 +55,9 @@
    <taskdef
     name="propel-schema-reverse"
     classname="Propel.Generator.Task.PropelSchemaReverseTaskCompat" />
+   <taskdef
+    name="propel-schema-normalize"
+    classname="Propel.Generator.Task.PropelSchemaNormalizeTask" classpathRef="propelclasses"/>
   <taskdef
     name="propel-sql"
     classname="Propel.Generator.Task.PropelSQLTaskCompat" />
@@ -289,6 +292,30 @@
       samePhpName="${propel.samePhpName}"
       addVendorInfo="${propel.addVendorInfo}"
       addValidators="${propel.addValidators}"
+    />
+
+    <propel-schema-normalize
+      schemaFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
+    />
+
+  </target>
+
+  <!-- ================================================================ -->
+  <!-- N O R M A L I Z E   S C H E M A                                  -->
+  <!-- ================================================================ -->
+
+  <target
+    name="normalize"
+    description="==> normalize xml file to consistent sort ordering">
+
+    <echo message="+-----------------------------------------------+"/>
+    <echo message="|                                               |"/>
+    <echo message="| Normalizing XML Schema !                      |"/>
+    <echo message="|                                               |"/>
+    <echo message="+-----------------------------------------------+"/>
+
+    <propel-schema-normalize
+      schemaFile="${propel.schema.dir}/${propel.default.schema.basename}.xml"
     />
 
   </target>
@@ -594,6 +621,11 @@
       </fileset>
       <mapper type="regexp" from="^(.*)\.xml$" to="\1.schema.xml"/>
     </xslt>
+
+    <propel-schema-normalize
+      schemaFile="${propel.schema.dir}/${propel.propel.dbd2propel.xsl.file}"
+    />
+
   </target>
 
   <target
