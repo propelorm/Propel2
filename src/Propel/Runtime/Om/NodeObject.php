@@ -10,6 +10,10 @@
 
 namespace Propel\Runtime\Om;
 
+use Propel\Runtime\Connection\PropelPDO;
+
+use \IteratorAggregate;
+
 /**
  * This interface defines methods that must be implemented by all
  * business objects within the system to handle Node object.

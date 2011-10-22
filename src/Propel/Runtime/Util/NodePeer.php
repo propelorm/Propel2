@@ -10,6 +10,9 @@
 
 namespace Propel\Runtime\Util;
 
+use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Om\NodeObject;
+
 /**
  * This is a utility interface for all generated NodePeer classes in the system.
  *
