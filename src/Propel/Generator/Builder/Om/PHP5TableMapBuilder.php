@@ -195,6 +195,11 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
         \$this->setSingleTableInheritance(true);";
         }
 
+        if ($this->getTable()->getIsCrossRef()) {
+            $script .= "
+        \$this->setIsCrossRef(true);";
+        }
+
         // Add columns to map
             $script .= "
         // columns";
