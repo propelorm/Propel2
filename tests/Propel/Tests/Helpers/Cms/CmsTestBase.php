@@ -31,6 +31,8 @@ abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->markTestSkipped('Deprecated feature');
+
         $this->con = Propel::getConnection(PagePeer::DATABASE_NAME);
         $this->con->beginTransaction();
         CmsDataPopulator::depopulate($this->con);
@@ -42,6 +44,8 @@ abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        $this->markTestSkipped('Deprecated feature');
+
         CmsDataPopulator::depopulate($this->con);
         $this->con->commit();
         parent::tearDown();
