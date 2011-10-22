@@ -47,6 +47,7 @@ class PropelParserTest extends \PHPUnit_Framework_TestCase
   <bar prop="0"/>
   <bar prop="1"/>
 </foo>
+
 EOF;
         $this->assertEquals($expectedContent, $content, 'PropelParser::load() executes PHP code in files');
     }
