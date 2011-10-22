@@ -11,6 +11,7 @@
 namespace Propel\Tests\Helpers\Bookstore;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\Query\Criteria;
 
 use Propel\Tests\Bookstore\AcctAccessRole;
 use Propel\Tests\Bookstore\Author;
@@ -21,6 +22,10 @@ use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListPeer;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\BookListRelPeer;
+use Propel\Tests\Bookstore\BookOpinion;
+use Propel\Tests\Bookstore\BookOpinionPeer;
+use Propel\Tests\Bookstore\BookReader;
+use Propel\Tests\Bookstore\BookReaderPeer;
 use Propel\Tests\Bookstore\BookSummary;
 use Propel\Tests\Bookstore\BookSummaryPeer;
 use Propel\Tests\Bookstore\Bookstore;
@@ -32,6 +37,8 @@ use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaPeer;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\ReaderFavorite;
+use Propel\Tests\Bookstore\ReaderFavoritePeer;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewPeer;
 
