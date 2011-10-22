@@ -31,11 +31,10 @@ use \Exception;
  *
  * @package    runtime.connection
  */
-class PropelPDOTest extends \PHPUnit_Framework_TestCase
+class PropelPDOTest extends BookstoreTestBase
 {
     protected function setUp()
     {
-        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 
     protected function tearDown()
