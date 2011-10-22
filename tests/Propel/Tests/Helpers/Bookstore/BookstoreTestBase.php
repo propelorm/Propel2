@@ -21,15 +21,16 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
 {
     protected $con;
 
+    public static function setUpBeforeClass()
+    {
+        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+    }
+
     /**
      * This is run before each unit test; it populates the database.
      */
     protected function setUp()
     {
-        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-
-        parent::setUp();
-
         $this->con = Propel::getConnection(BookPeer::DATABASE_NAME);
         $this->con->beginTransaction();
     }
