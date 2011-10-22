@@ -12,6 +12,7 @@ namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelConditionalProxy;
 
 /**
