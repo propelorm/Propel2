@@ -12,6 +12,7 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Config\PropelConfiguration;
+use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
 
@@ -119,9 +120,9 @@ class PropelPDO extends PDO
      * @var       array
      */
     protected static $defaultLogMethods = array(
-        'PropelPDO::exec',
-        'PropelPDO::query',
-        'DebugPDOStatement::execute',
+        'Propel\Runtime\Connection\PropelPDO::exec',
+        'Propel\Runtime\Connection\PropelPDO::query',
+        'Propel\Runtime\Connection\DebugPDOStatement::execute',
     );
 
     /**
@@ -436,11 +437,7 @@ class PropelPDO extends PDO
         }
 
         $args = func_get_args();
-        if (version_compare(PHP_VERSION, '5.3', '<')) {
-            $return = call_user_func_array(array($this, 'parent::query'), $args);
-        } else {
-            $return = call_user_func_array('parent::query', $args);
-        }
+        $return = call_user_func_array('parent::query', $args);
 
         if ($this->useDebug) {
             $sql = $args[0];
@@ -611,7 +608,9 @@ class PropelPDO extends PDO
         // Determine if this query is slow enough to warrant logging
         if ($this->getLoggingConfig("onlyslow", self::DEFAULT_ONLYSLOW_ENABLED)) {
             $now = $this->getDebugSnapshot();
-            if ($now['microtime'] - $debugSnapshot['microtime'] < $this->getLoggingConfig("details.slow.threshold", self::DEFAULT_SLOW_THRESHOLD)) return;
+            if ($now['microtime'] - $debugSnapshot['microtime'] < $this->getLoggingConfig("details.slow.threshold", self::DEFAULT_SLOW_THRESHOLD)) {
+                return;
+            }
         }
 
         // If the necessary additional parameters were given, get the debug log prefix for the log line
@@ -736,7 +735,6 @@ class PropelPDO extends PDO
             default:
                 $value = 'n/a';
                 break;
-
             }
 
             $prefix .= $detailName . $innerGlue . $value . $outerGlue;

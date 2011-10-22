@@ -565,7 +565,7 @@ class Propel
         }
 
         $dsn      = $conparams['dsn'];
-        $user      = isset($conparams['user']) ? $conparams['user'] : null;
+        $user     = isset($conparams['user']) ? $conparams['user'] : null;
         $password = isset($conparams['password']) ? $conparams['password'] : null;
 
         // load any driver options from the config file
