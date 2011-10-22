@@ -31,8 +31,16 @@ use \Exception;
  *
  * @package    runtime.connection
  */
-class PropelPDOTest extends BookstoreTestBase
+class PropelPDOTest extends \PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+    }
+
+    protected function tearDown()
+    {
+    }
 
     public function testSetAttribute()
     {
@@ -422,23 +430,24 @@ class PropelPDOTest extends BookstoreTestBase
 
         // save data to return to normal state after test
         $logger = $con->getLogger();
-
         $testLog = new myLogger();
+
         $con->setLogger($testLog);
 
         $logEverything = array(
-            'PropelPDO::exec',
-            'PropelPDO::query',
-            'PropelPDO::beginTransaction',
-            'PropelPDO::commit',
-            'PropelPDO::rollBack',
-            'DebugPDOStatement::execute'
+            'Propel\Runtime\Connection\PropelPDO::exec',
+            'Propel\Runtime\Connection\PropelPDO::query',
+            'Propel\Runtime\Connection\PropelPDO::beginTransaction',
+            'Propel\Runtime\Connection\PropelPDO::commit',
+            'Propel\Runtime\Connection\PropelPDO::rollBack',
+            'Propel\Runtime\Connection\DebugPDOStatement::execute'
         );
+
         Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
         $con->useDebug(true);
 
-        // test transaction log
         $con->beginTransaction();
+        // test transaction log
         $this->assertEquals('log: Begin transaction', $testLog->latestMessage, 'PropelPDO logs begin transation in debug mode');
 
         $con->commit();
