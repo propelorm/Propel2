@@ -135,6 +135,16 @@ class ModelCriteria extends Criteria
     }
 
     /**
+     * Return The short model name (the short Classname for classe with namespace)
+     *
+     * @return    string The short model name
+     */
+    public function getModelShortName()
+    {
+      return array_pop(explode('\\', $this->modelName));
+    }
+
+    /**
      * Returns the name of the Peer class for this model criteria
      *
      * @return string
@@ -1936,13 +1946,20 @@ class ModelCriteria extends Criteria
         } else {
             list($class, $phpName) = explode('.', $phpName);
         }
+        $shortClass = array_pop(explode('\\', $class));
 
         if ($class == $this->getModelAliasOrName()) {
+            // column of the Criteria's model
+            $tableMap = $this->getTableMap();
+        } elseif ($class == $this->getModelShortName()) {
             // column of the Criteria's model
             $tableMap = $this->getTableMap();
         } elseif (isset($this->joins[$class])) {
             // column of a relations's model
             $tableMap = $this->joins[$class]->getTableMap();
+        } elseif (isset($this->joins[$shortClass])) {
+            // column of a relations's model
+            $tableMap = $this->joins[$shortClass]->getTableMap();
         } elseif ($this->hasSelectQuery($class)) {
             return $this->getColumnFromSubQuery($class, $phpName, $failSilently);
         } elseif ($failSilently) {
