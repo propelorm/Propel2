@@ -11,6 +11,7 @@
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Platform\MysqlPlatform;
 
 use \DOMNode;
 use \DOMDocument;
@@ -927,7 +928,7 @@ class Table extends ScopedElement implements IDMethod
                 }
             }
 
-            if ($this->getDatabase()->getPlatform() instanceof MysqlPLatform) {
+            if ($this->getDatabase()->getPlatform() instanceof MysqlPlatform) {
                 $this->addExtraIndices();
             }
         } // foreach foreign keys
