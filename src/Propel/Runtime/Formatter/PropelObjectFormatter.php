@@ -13,6 +13,8 @@ namespace Propel\Runtime\Formatter;
 use \PDO;
 use \PDOStatement;
 
+use Propel\Runtime\Exception\PropelException;
+
 /**
  * Object formatter for Propel query
  * format() returns a PropelObjectCollection of Propel model objects

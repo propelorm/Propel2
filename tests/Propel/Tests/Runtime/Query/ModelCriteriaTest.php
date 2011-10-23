@@ -107,10 +107,23 @@ class ModelCriteriaTest extends BookstoreTestBase
             array('(Propel\Tests\Bookstore\Book.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
             // dealing with quotes
             array("Propel\Tests\Bookstore\Book.Id + ' ' + Propel\Tests\Bookstore\Book.AuthorId", null, "book.ID + ' ' + book.AUTHOR_ID"),
-            array("'Propel\Tests\Bookstore\Book.Id' + Propel\Tests\Bookstore\Book.AuthorId", null, "'Book.Id' + book.AUTHOR_ID"),
-            array("Propel\Tests\Bookstore\Book.Id + 'Propel\Tests\Bookstore\Book.AuthorId'", null, "book.ID + 'Book.AuthorId'"),
+            array("'Propel\Tests\Bookstore\Book.Id' + Propel\Tests\Bookstore\Book.AuthorId", null, "'Propel\Tests\Bookstore\Book.Id' + book.AUTHOR_ID"),
+            array("Propel\Tests\Bookstore\Book.Id + 'Propel\Tests\Bookstore\Book.AuthorId'", null, "book.ID + 'Propel\Tests\Bookstore\Book.AuthorId'"),
             array('1=1', null, '1=1'), // with no name
-            array('', null, '') // with empty string
+            array('', null, ''), // with empty string
+
+            //without NS
+            array('Book.Title = ?', 'Title', 'book.TITLE = ?'), // basic case
+            array('Book.Title=?', 'Title', 'book.TITLE=?'), // without spaces
+            array('Book.Id<= ?', 'Id', 'book.ID<= ?'), // with non-equal comparator
+            array('Book.AuthorId LIKE ?', 'AuthorId', 'book.AUTHOR_ID LIKE ?'), // with SQL keyword separator
+            array('(Book.AuthorId) LIKE ?', 'AuthorId', '(book.AUTHOR_ID) LIKE ?'), // with parenthesis
+            array('(Book.Id*1.5)=1', 'Id', '(book.ID*1.5)=1'), // ignore numbers
+            // dealing with quotes
+            array("Book.Id + ' ' + Book.AuthorId", null, "book.ID + ' ' + book.AUTHOR_ID"),
+            array("'Book.Id' + Book.AuthorId", null, "'Book.Id' + book.AUTHOR_ID"),
+            array("Book.Id + 'Book.AuthorId'", null, "book.ID + 'Book.AuthorId'"),
+
         );
     }
 
@@ -984,7 +997,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->with('Author');
         $withs = $c->getWith();
         $this->assertTrue(array_key_exists('Author', $withs), 'with() adds an entry to the internal list of Withs');
-        $this->assertTrue($withs['Author'] instanceof ModelWith, 'with() references the ModelWith object');
+        $this->assertInstanceOf('Propel\Runtime\Query\ModelWith', $withs['Author'], 'with() references the ModelWith object');
     }
 
     /**
@@ -1179,8 +1192,8 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testJoinWithSeveral()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
-        $c->joinWith('Propel\Tests\Bookstore\Review.Book');
-        $c->joinWith('Book.Author');
+        $c->joinWith('Review.Book');
+        $c->joinWith('Propel\Tests\Bookstore\Book.Author');
         $c->joinWith('Book.Publisher');
         $expectedColumns = array(
             ReviewPeer::ID,
@@ -1205,7 +1218,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         );
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the with');
         $joins = $c->getJoins();
-        $expectedJoinKeys = array('Propel\Tests\Bookstore\Book', 'Author', 'Publisher');
+        $expectedJoinKeys = array('Book', 'Author', 'Publisher');
         $this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
     }
 
@@ -1244,8 +1257,8 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         return array(
             array('Propel\Tests\Bookstore\Book.Title', 'BookTitle', 'book.TITLE AS BookTitle'),
-            array('Propel\Tests\Bookstore\Book.Title', null, 'book.TITLE AS BookTitle'),
-            array('UPPER(Propel\Tests\Bookstore\Book.Title)', null, 'UPPER(book.TITLE) AS UPPERBookTitle'),
+            array('Book.Title', null, 'book.TITLE AS BookTitle'),
+            array('UPPER(Book.Title)', null, 'UPPER(book.TITLE) AS UPPERBookTitle'),
             array('CONCAT(Propel\Tests\Bookstore\Book.Title, Propel\Tests\Bookstore\Book.ISBN)', 'foo', 'CONCAT(book.TITLE, book.ISBN) AS foo'),
         );
     }
@@ -2165,13 +2178,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testUseQueryJoinWithFind()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
-        $c->joinWith('Propel\Tests\Bookstore\Book');
+        $c->joinWith('Book');
 
-        $c2 = $c->useQuery('Propel\Tests\Bookstore\Book');
+        $c2 = $c->useQuery('Book');
 
         $joins = $c->getJoins();
         $this->assertEquals($c->getPreviousJoin(), null, 'The default value for previousJoin remains null');
-        $this->assertEquals($c2->getPreviousJoin(), $joins['Propel\Tests\Bookstore\Book'], 'useQuery() sets the previousJoin');
+        $this->assertEquals($c2->getPreviousJoin(), $joins['Book'], 'useQuery() sets the previousJoin');
 
         // join Book with Author, which is possible since previousJoin is set, which makes resolving of relations possible during hydration
         $c2->joinWith('Author');
@@ -2210,11 +2223,11 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = $c->useQuery('w');
         $this->assertTrue($c2 instanceof BookQuery, 'useQuery() returns a secondary Criteria');
         $this->assertEquals($c, $c2->getPrimaryCriteria(), 'useQuery() sets the primary Criteria os the secondary Criteria');
-        //$this->assertEquals(array('a' => 'author'), $c2->getAliases(), 'useQuery() sets the secondary Criteria alias correctly');
+        $this->assertEquals(array('w' => 'book'), $c2->getAliases(), 'useQuery() sets the secondary Criteria alias correctly');
         $c2->where('w.Title = ?', 'War And Peace');
 
         $c = $c2->endUse();
-        $this->assertEquals('BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
+        $this->assertEquals('Propel\Tests\Bookstore\BookstoreContest', $c->getModelName(), 'endUse() returns the Primary Criteria');
 
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
         $c->find($con);
@@ -2258,7 +2271,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
-        $this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
+        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
 
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2266,7 +2279,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
-        $this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
 
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c1->leftJoinWith('b.Author a');
@@ -2275,8 +2288,8 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->mergeWith($c2);
         $with = $c1->getWith();
         $this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
-        $this->assertEquals('modelName: Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
-        $this->assertEquals('modelName: Publisher, relationName: Publisher, relationMethod: setPublisher, leftPhpName: , rightPhpName: p', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
+        $this->assertEquals('modelName: Propel\Tests\Bookstore\Publisher, relationName: Publisher, relationMethod: setPublisher, leftPhpName: , rightPhpName: p', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
 
     }
 

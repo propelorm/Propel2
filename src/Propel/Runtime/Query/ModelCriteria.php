@@ -651,12 +651,16 @@ class ModelCriteria extends Criteria
             $tableMap = $this->getTableMap();
         } else {
             list($leftName, $relationName) = explode('.', $fullName);
+            $shortLeftName = array_pop(explode('\\', $leftName));
             // find the TableMap for the left table using the $leftName
-            if ($leftName == $this->getModelAliasOrName()) {
+            if ($leftName == $this->getModelAliasOrName() || $leftName == $this->getModelShortName()) {
                 $previousJoin = $this->getPreviousJoin();
                 $tableMap = $this->getTableMap();
             } elseif (isset($this->joins[$leftName])) {
                 $previousJoin = $this->joins[$leftName];
+                $tableMap = $previousJoin->getTableMap();
+            } elseif (isset($this->joins[$shortLeftName])) {
+                $previousJoin = $this->joins[$shortLeftName];
                 $tableMap = $previousJoin->getTableMap();
             } else {
                 throw new PropelException('Unknown table or alias ' . $leftName);
