@@ -2165,7 +2165,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testUseQueryJoinWithFind()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
-        $c->joinWith('Book');
+        $c->joinWith('Propel\Tests\Bookstore\Book');
 
         $c2 = $c->useQuery('Propel\Tests\Bookstore\Book');
 
