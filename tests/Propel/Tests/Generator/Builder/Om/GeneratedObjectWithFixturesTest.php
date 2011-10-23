@@ -11,6 +11,29 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
+
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Bookstore;
+use Propel\Tests\Bookstore\BookstorePeer;
+use Propel\Tests\Bookstore\BookstoreSale;
+use Propel\Tests\Bookstore\BookstoreEmployee;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
+use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\MediaPeer;
+use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\Bookstore\PublisherPeer;
+use Propel\Tests\Bookstore\Review;
+use Propel\Tests\Bookstore\ReviewPeer;
+
+
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Util\BasePeer;
 
 /**
  * Tests the generated Object classes.
@@ -26,13 +49,6 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  */
 class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        require_once dirname(__FILE__) . '/../../../tools/helpers/bookstore/behavior/TestAuthor.php';
-    }
-
-
     /**
      * Test the reload() method.
      */
@@ -157,9 +173,9 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertInternalType('integer', $r2->getId(), "Expected getId() to return an integer.");
         $this->assertInternalType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
         $this->assertInternalType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
-        $this->assertInstanceOf('Book', $r2->getBook(), "Expected getBook() to return a Book.");
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\Book', $r2->getBook(), "Expected getBook() to return a Book.");
         $this->assertInternalType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-        $this->assertInstanceOf('DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
+        $this->assertInstanceOf('\DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
 
     }
 
@@ -187,13 +203,13 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         try {
             $acct2->save();
             $this->fail("Expected PropelException in first attempt to save object with duplicate value for UNIQUE constraint.");
-        } catch (Exception $x) {
+        } catch (\Exception $x) {
             try {
                 // attempt to save it again
                 $acct3 = $acct->copy();
                 $acct3->save();
                 $this->fail("Expected PropelException in second attempt to save object with duplicate value for UNIQUE constraint.");
-            } catch (Exception $x) {
+            } catch (\Exception $x) {
                 // this is expected.
             }
             // now let's double check that it can succeed if we're not violating the constraint.
@@ -255,7 +271,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $reviews = $book->getReviews();
 
         $b2 = $book->copy(true);
-        $this->assertInstanceOf('Book', $b2);
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\Book', $b2);
         $this->assertNull($b2->getId());
 
         $r2 = $b2->getReviews();
@@ -266,7 +282,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $emp = BookstoreEmployeePeer::doSelectOne(new Criteria());
         $e2 = $emp->copy(true);
 
-        $this->assertInstanceOf('BookstoreEmployee', $e2);
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreEmployee', $e2);
         $this->assertNull($e2->getId());
 
         $this->assertEquals($emp->getBookstoreEmployeeAccount()->getLogin(), $e2->getBookstoreEmployeeAccount()->getLogin());

@@ -10,11 +10,35 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\Connection\PropelPDO;
-
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookPeer;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
+use Propel\Tests\Bookstore\BookClubListQuery;
+use Propel\Tests\Bookstore\BookOpinionQuery;
+use Propel\Tests\Bookstore\BookListRelPeer;
+use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\BookSummaryQuery;
+use Propel\Tests\Bookstore\EssayQuery;
+use Propel\Tests\Bookstore\ReviewPeer;
+use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Bookstore\ReaderFavoriteQuery;
+use Propel\Tests\Bookstore\PublisherPeer;
+
+use Propel\Runtime\Propel;
+use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Query\ModelCriteria;
+use Propel\Runtime\Query\ModelJoin;
+use Propel\Runtime\Util\BasePeer;
+
+use \ReflectionMethod;
 
 /**
  * Test class for QueryBuilder.
@@ -35,21 +59,21 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testConstructor()
     {
         $query = new BookQuery();
-        $this->assertEquals($query->getDbName(), 'bookstore', 'Constructor sets dabatase name');
-        $this->assertEquals($query->getModelName(), 'Book', 'Constructor sets model name');
+        $this->assertEquals('bookstore', $query->getDbName(), 'Constructor sets dabatase name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'Constructor sets model name');
     }
 
     public function testCreate()
     {
         $query = BookQuery::create();
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
-        $this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
-        $this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+        $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
         $query = BookQuery::create('foo');
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
         $this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
-        $this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
-        $this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
+        $this->assertEquals('foo', $query->getModelAlias(), 'create() can set the model alias');
     }
 
     public function testCreateCustom()
@@ -58,58 +82,58 @@ class QueryBuilderTest extends BookstoreTestBase
         $query = myCustomBookQuery::create();
         $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
-        $this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
-        $this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
+        $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
         $query = myCustomBookQuery::create('foo');
         $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
-        $this->assertEquals($query->getDbName(), 'bookstore', 'create() sets dabatase name');
-        $this->assertEquals($query->getModelName(), 'Book', 'create() sets model name');
-        $this->assertEquals($query->getModelAlias(), 'foo', 'create() can set the model alias');
+        $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
+        $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
+        $this->assertEquals('foo', $query->getModelAlias(), 'create() can set the model alias');
     }
 
     public function testBasePreSelect()
     {
-        $method = new ReflectionMethod('Table2Query', 'basePreSelect');
-        $this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreSelect() by default');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreSelect');
+        $this->assertEquals('Propel\Runtime\Query\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreSelect() by default');
 
-        $method = new ReflectionMethod('Table3Query', 'basePreSelect');
-        $this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreSelect() when a behavior is registered');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreSelect');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreSelect() when a behavior is registered');
     }
 
     public function testBasePreDelete()
     {
-        $method = new ReflectionMethod('Table2Query', 'basePreDelete');
-        $this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreDelete() by default');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreDelete');
+        $this->assertEquals('Propel\Runtime\Query\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreDelete() by default');
 
-        $method = new ReflectionMethod('Table3Query', 'basePreDelete');
-        $this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreDelete() when a behavior is registered');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreDelete');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreDelete() when a behavior is registered');
     }
 
     public function testBasePostDelete()
     {
-        $method = new ReflectionMethod('Table2Query', 'basePostDelete');
-        $this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostDelete() by default');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePostDelete');
+        $this->assertEquals('Propel\Runtime\Query\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostDelete() by default');
 
-        $method = new ReflectionMethod('Table3Query', 'basePostDelete');
-        $this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostDelete() when a behavior is registered');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePostDelete');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostDelete() when a behavior is registered');
     }
 
     public function testBasePreUpdate()
     {
-        $method = new ReflectionMethod('Table2Query', 'basePreUpdate');
-        $this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreUpdate() by default');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreUpdate');
+        $this->assertEquals('Propel\Runtime\Query\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreUpdate() by default');
 
-        $method = new ReflectionMethod('Table3Query', 'basePreUpdate');
-        $this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreUpdate() when a behavior is registered');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreUpdate');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePreUpdate() when a behavior is registered');
     }
 
     public function testBasePostUpdate()
     {
-        $method = new ReflectionMethod('Table2Query', 'basePostUpdate');
-        $this->assertEquals('ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostUpdate() by default');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePostUpdate');
+        $this->assertEquals('Propel\Runtime\Query\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostUpdate() by default');
 
-        $method = new ReflectionMethod('Table3Query', 'basePostUpdate');
-        $this->assertEquals('BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostUpdate() when a behavior is registered');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePostUpdate');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable3Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides basePostUpdate() when a behavior is registered');
     }
 
     public function testQuery()
@@ -129,8 +153,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFindPk()
     {
-        $method = new ReflectionMethod('Table4Query', 'findPk');
-        $this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table4Query', 'findPk');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPk()');
     }
 
     public function testFindPkReturnsCorrectObjectForSimplePrimaryKey()
@@ -165,7 +189,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();
@@ -174,7 +198,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
 
         // retrieve the test data
-        $c = new ModelCriteria('bookstore', 'BookListRel');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
         $bookListRelTest = $c->findOne();
         $pk = $bookListRelTest->getPrimaryKey();
 
@@ -249,8 +273,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFindPks()
     {
-        $method = new ReflectionMethod('Table4Query', 'findPks');
-        $this->assertEquals('BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPks()');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table4Query', 'findPks');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\Om\BaseTable4Query', $method->getDeclaringClass()->getName(), 'BaseQuery overrides findPks()');
     }
 
     public function testFindPksSimpleKey()
@@ -261,7 +285,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
 
         // prepare the test data
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $c->orderBy('Book.Id', 'desc');
         $testBooks = $c->find();
         $testBook1 = $testBooks->pop();
@@ -278,7 +302,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();
@@ -287,7 +311,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
 
         // retrieve the test data
-        $c = new ModelCriteria('bookstore', 'BookListRel');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
         $bookListRelTest = $c->find();
         $search = array();
         foreach ($bookListRelTest as $obj) {
@@ -303,7 +327,7 @@ class QueryBuilderTest extends BookstoreTestBase
     {
         foreach (BookPeer::getFieldNames(BasePeer::TYPE_PHPNAME) as $colName) {
             $filterMethod = 'filterBy' . $colName;
-            $this->assertTrue(method_exists('BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
+            $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', $filterMethod), 'QueryBuilder adds filterByColumn() methods for every column');
             $q = BookQuery::create()->$filterMethod(1);
             $this->assertTrue($q instanceof BookQuery, 'filterByColumn() returns the current query instance');
         }
@@ -326,7 +350,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();
@@ -335,7 +359,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
 
         // retrieve the test data
-        $c = new ModelCriteria('bookstore', 'BookListRel');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
         $bookListRelTest = $c->findOne();
         $pk = $bookListRelTest->getPrimaryKey();
 
@@ -365,7 +389,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();
@@ -374,7 +398,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookPeer::clearInstancePool();
 
         // retrieve the test data
-        $c = new ModelCriteria('bookstore', 'BookListRel');
+        $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\BookListRel');
         $bookListRelTest = $c->find();
         $search = array();
         foreach ($bookListRelTest as $obj) {
@@ -584,11 +608,11 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFilterByFk()
     {
-        $this->assertTrue(method_exists('BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
-        $this->assertTrue(method_exists('BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
 
-        $this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
-        $this->assertTrue(method_exists('EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
     }
 
     public function testFilterByFkSimpleKey()
@@ -659,11 +683,11 @@ class QueryBuilderTest extends BookstoreTestBase
 
         public function testFilterByRefFk()
     {
-        $this->assertTrue(method_exists('BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
-        $this->assertTrue(method_exists('BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
 
-        $this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
-        $this->assertTrue(method_exists('AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
     }
 
     public function testFilterByRefFkSimpleKey()
@@ -735,8 +759,8 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testFilterByCrossFK()
     {
-        $this->assertTrue(method_exists('BookQuery', 'filterByBookClubList'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
-        $this->assertFalse(method_exists('BookQuery', 'filterByBook'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByBookClubList'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
+        $this->assertFalse(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByBook'), 'Generated query handles filterByCrossRefFK() for many-to-many relationships');
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
         $blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
@@ -971,9 +995,9 @@ class QueryBuilderTest extends BookstoreTestBase
                 ->filterByName('Penguin')
             ->endUse();
         $q1 = BookQuery::create()
-            ->join('Book.Author', Criteria::LEFT_JOIN)
+            ->join('Propel\Tests\Bookstore\Book.Author', Criteria::LEFT_JOIN)
             ->add(AuthorPeer::FIRST_NAME, 'Leo', Criteria::EQUAL)
-            ->join('Book.Publisher', Criteria::LEFT_JOIN)
+            ->join('Propel\Tests\Bookstore\Book.Publisher', Criteria::LEFT_JOIN)
             ->add(PublisherPeer::NAME, 'Penguin', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on two relations creates two joins');
     }
@@ -1021,7 +1045,7 @@ class QueryBuilderTest extends BookstoreTestBase
         BookstoreDataPopulator::populate();
 
         // save all books to make sure related objects are also saved - BookstoreDataPopulator keeps some unsaved
-        $c = new ModelCriteria('bookstore', 'Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->find();
         foreach ($books as $book) {
             $book->save();
@@ -1062,7 +1086,7 @@ class mySecondBookQuery extends BookQuery
 {
     public static $preSelectWasCalled = false;
 
-    public function __construct($dbName = 'bookstore', $modelName = 'Book', $modelAlias = null)
+    public function __construct($dbName = 'bookstore', $modelName = '\Propel\Tests\Bookstore\Book', $modelAlias = null)
     {
         self::$preSelectWasCalled = false;
         parent::__construct($dbName, $modelName, $modelAlias);

@@ -69,11 +69,6 @@ use \DateTime;
  */
 class GeneratedObjectTest extends BookstoreTestBase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-    }
-
     /**
      * Test saving an object after setting default values for it.
      */
