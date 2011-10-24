@@ -19,11 +19,16 @@ use Propel\Tests\Bookstore\Cms\PagePeer;
  */
 abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
 {
+    static private $isInitialized = false;
+
     protected $con;
 
-    public static function setUpBeforeClass()
+    static public function setUpBeforeClass()
     {
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+        if (true !== self::$isInitialized) {
+            Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+            self::$isInitialized = true;
+        }
     }
 
     /**
@@ -35,6 +40,7 @@ abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
 
         $this->con = Propel::getConnection(PagePeer::DATABASE_NAME);
         $this->con->beginTransaction();
+
         CmsDataPopulator::depopulate($this->con);
         CmsDataPopulator::populate($this->con);
     }
@@ -44,12 +50,11 @@ abstract class CmsTestBase extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        $this->markTestSkipped('Deprecated feature');
+        if ($this->con) {
+            CmsDataPopulator::depopulate($this->con);
 
-        CmsDataPopulator::depopulate($this->con);
-        $this->con->commit();
-        parent::tearDown();
-
-        $this->con = null;
+            $this->con->commit();
+            $this->con = null;
+        }
     }
 }

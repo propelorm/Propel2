@@ -17,19 +17,32 @@ use Propel\Runtime\Propel;
  */
 abstract class NamespacesTestBase extends \PHPUnit_Framework_TestCase
 {
+    static private $isInitialized;
+
+    protected $con;
+
+    static public function setUpBeforeClass()
+    {
+        if (true !== self::$isInitialized) {
+            if (file_exists(dirname(__FILE__) . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php')) {
+                Propel::init(dirname(__FILE__) . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
+                self::$isInitialized = true;
+            }
+        }
+    }
+
+    static public function tearDownAfterClass()
+    {
+        if (true === self::$isInitialized) {
+            Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+            self::$isInitialized = false;
+        }
+    }
 
     protected function setUp()
     {
-        parent::setUp();
         if (!file_exists(dirname(__FILE__) . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php')) {
             $this->markTestSkipped('You must build the namespaced project fot this tests to run');
         }
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }
 }
