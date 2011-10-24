@@ -224,7 +224,7 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 
     public function testPostDeleteCopyData()
     {
-      ConcreteArticleQuery::create()->deleteAll();
+        ConcreteArticleQuery::create()->deleteAll();
         ConcreteQuizzQuery::create()->deleteAll();
         ConcreteContentQuery::create()->deleteAll();
         ConcreteCategoryQuery::create()->deleteAll();
@@ -234,8 +234,8 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         $article->setConcreteCategory($category);
         $article->save();
         $id = $article->getId();
-    $article->delete();
-    $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
+        $article->delete();
+        $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
     }
 
 }
