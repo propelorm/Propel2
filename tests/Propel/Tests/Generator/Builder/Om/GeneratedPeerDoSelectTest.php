@@ -11,8 +11,35 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
+use Propel\Tests\Bookstore\AcctAccessRole;
+use Propel\Tests\Bookstore\AcctAccessRolePeer;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorPeer;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookPeer;
+use Propel\Tests\Bookstore\Bookstore;
+use Propel\Tests\Bookstore\BookstoreEmployee;
+use Propel\Tests\Bookstore\BookstoreEmployeePeer;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccountPeer;
+use Propel\Tests\Bookstore\BookstoreCashier;
+use Propel\Tests\Bookstore\BookstoreManager;
+use Propel\Tests\Bookstore\BookOpinion;
+use Propel\Tests\Bookstore\BookReader;
+use Propel\Tests\Bookstore\BookstoreContest;
+use Propel\Tests\Bookstore\BookstoreContestPeer;
+use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookstoreContestEntryPeer;
+use Propel\tests\Bookstore\Contest;
+use Propel\tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\ReaderFavorite;
+use Propel\Tests\Bookstore\ReaderFavoritePeer;
+
+use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
+use Propel\Runtime\Util\BasePeer;
 
 /**
  * Tests the generated Peer classes.
@@ -144,7 +171,7 @@ class GeneratedPeerDoSelectTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, count($matches), "Expected 2 matches back from new books; got back " . count($matches));
 
         $this->assertNull($matches[0]->getAuthor(), "Expected first book author to be null");
-        $this->assertInstanceOf('Author', $matches[1]->getAuthor(), "Expected valid Author object for second book.");
+        $this->assertInstanceOf('Propel\Tests\Bookstore\Author', $matches[1]->getAuthor(), "Expected valid Author object for second book.");
     }
 
     public function testDoSelectJoinOneToOne()
