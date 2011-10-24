@@ -339,7 +339,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $blc1->save();
 
-     	$this->assertNotNull($blc1->getId(), 'BookClubList 1 was saved');
+         $this->assertNotNull($blc1->getId(), 'BookClubList 1 was saved');
 
         // init book club list 2 with 1 book
 
@@ -354,33 +354,33 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $blc2->save();
 
-     	$this->assertNotNull($blc2->getId(), 'BookClubList 2 was saved');
+         $this->assertNotNull($blc2->getId(), 'BookClubList 2 was saved');
 
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
         $crit->add(BookPeer::ID, $phoenix->getId());
         $phoenix = BookPeer::doSelectOne($crit);
-     	$this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
+         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
         $crit->add(BookClubListPeer::ID, $blc1->getId());
         $blc1 = BookClubListPeer::doSelectOne($crit);
-     	$this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
+         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
         $crit->add(BookClubListPeer::ID, $blc2->getId());
         $blc2 = BookClubListPeer::doSelectOne($crit);
-     	$this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
+         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
-     	$this->assertEquals(2, $relCount, "book 'phoenix' has 2 BookListRels");
+         $this->assertEquals(2, $relCount, "book 'phoenix' has 2 BookListRels");
 
         $relCount = $blc1->countBookListRels();
-     	$this->assertEquals(2, $relCount, 'BookClubList 1 has 2 BookListRels');
+         $this->assertEquals(2, $relCount, 'BookClubList 1 has 2 BookListRels');
 
         $relCount = $blc2->countBookListRels();
-     	$this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
+         $this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
 
         // Cleanup (tests DELETE)
         // ----------------------
@@ -765,7 +765,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $blc1->save();
 
-     	$this->assertNotNull($blc1->getId(), 'BookClubList 1 was saved');
+         $this->assertNotNull($blc1->getId(), 'BookClubList 1 was saved');
 
         // init book club list 2 with 1 book
 
@@ -780,33 +780,33 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $blc2->save();
 
-     	$this->assertNotNull($blc2->getId(), 'BookClubList 2 was saved');
+         $this->assertNotNull($blc2->getId(), 'BookClubList 2 was saved');
 
         // re-fetch books and lists from db to be sure that nothing is cached
 
         $crit = new Criteria();
         $crit->add(BookPeer::ID, $phoenix->getId());
         $phoenix = BookPeer::doSelectOne($crit);
-     	$this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
+         $this->assertNotNull($phoenix, "book 'phoenix' has been re-fetched from db");
 
         $crit = new Criteria();
         $crit->add(BookClubListPeer::ID, $blc1->getId());
         $blc1 = BookClubListPeer::doSelectOne($crit);
-     	$this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
+         $this->assertNotNull($blc1, 'BookClubList 1 has been re-fetched from db');
 
         $crit = new Criteria();
         $crit->add(BookClubListPeer::ID, $blc2->getId());
         $blc2 = BookClubListPeer::doSelectOne($crit);
-     	$this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
+         $this->assertNotNull($blc2, 'BookClubList 2 has been re-fetched from db');
 
         $relCount = $phoenix->countBookListRels();
-     	$this->assertEquals(2, $relCount, "book 'phoenix' has 2 BookListRels");
+         $this->assertEquals(2, $relCount, "book 'phoenix' has 2 BookListRels");
 
         $relCount = $blc1->countBookListRels();
-     	$this->assertEquals(2, $relCount, 'BookClubList 1 has 2 BookListRels');
+         $this->assertEquals(2, $relCount, 'BookClubList 1 has 2 BookListRels');
 
         $relCount = $blc2->countBookListRels();
-     	$this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
+         $this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
 
         // Cleanup (tests DELETE)
         // ----------------------
