@@ -706,7 +706,7 @@ public function clearNestedSetChildren()
 public function initNestedSetChildren()
 {
     \$this->collNestedSetChildren = new PropelObjectCollection();
-    \$this->collNestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getClassname() . "');
+    \$this->collNestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getFullyQualifiedClassname() . "');
 }
 ";
     }
