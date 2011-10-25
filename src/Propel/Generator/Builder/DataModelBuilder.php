@@ -12,7 +12,7 @@ namespace Propel\Generator\Builder;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 /**
  * This is the base class for any builder class that is using the data model.
@@ -154,7 +154,7 @@ abstract class DataModelBuilder
 
     /**
      * The platform class
-     * @var             PropelPlatformInterface
+     * @var             PlatformInterface
      */
     protected $platform;
 
@@ -566,7 +566,7 @@ abstract class DataModelBuilder
 
     /**
      * Convenience method to returns the Platform class for this table (database).
-     * @return     PropelPlatformInterface
+     * @return     PlatformInterface
      */
     public function getPlatform()
     {
@@ -583,9 +583,9 @@ abstract class DataModelBuilder
     /**
      * Platform setter
      *
-     * @param PropelPlatformInterface $platform
+     * @param PlatformInterface $platform
      */
-    public function setPlatform(PropelPlatformInterface $platform)
+    public function setPlatform(PlatformInterface $platform)
     {
         $this->platform = $platform;
     }

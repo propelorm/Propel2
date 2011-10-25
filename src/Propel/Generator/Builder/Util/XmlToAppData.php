@@ -13,7 +13,7 @@ namespace Propel\Generator\Builder\Util;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\AppData;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \Exception;
 
@@ -61,11 +61,11 @@ class XmlToAppData
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param      PropelPlatformInterface $defaultPlatform The default database platform for the application.
+     * @param      PlatformInterface $defaultPlatform The default database platform for the application.
      * @param      string $defaultPackage the default PHP package used for the om
      * @param      string $encoding The database encoding.
      */
-    public function __construct(PropelPlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
+    public function __construct(PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
     {
         $this->app = new AppData($defaultPlatform);
         $this->defaultPackage = $defaultPackage;

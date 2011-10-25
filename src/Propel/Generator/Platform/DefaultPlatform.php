@@ -33,7 +33,7 @@ use \PDO;
  * @version    $Revision$
  * @package    propel.generator.platform
  */
-class DefaultPlatform implements PropelPlatformInterface
+class DefaultPlatform implements PlatformInterface
 {
 
     /**
@@ -159,16 +159,16 @@ class DefaultPlatform implements PropelPlatformInterface
     /**
      * Returns the native IdMethod (sequence|identity)
      *
-     * @return     string The native IdMethod (PropelPlatformInterface:IDENTITY, PropelPlatformInterface::SEQUENCE).
+     * @return     string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
      */
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::IDENTITY;
+        return PlatformInterface::IDENTITY;
     }
 
     public function isNativeIdMethodAutoIncrement()
     {
-        return $this->getNativeIdMethod() == PropelPlatformInterface::IDENTITY;
+        return $this->getNativeIdMethod() == PlatformInterface::IDENTITY;
     }
 
     /**

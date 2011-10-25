@@ -21,7 +21,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 
 /**
- * Oracle PropelPlatformInterface implementation.
+ * Oracle PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -70,7 +70,7 @@ class OraclePlatform extends DefaultPlatform
 
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::SEQUENCE;
+        return PlatformInterface::SEQUENCE;
     }
 
     public function getAutoIncrement()

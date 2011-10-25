@@ -21,7 +21,7 @@ use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\PropelColumnDiff;
 
 /**
- * Postgresql PropelPlatformInterface implementation.
+ * Postgresql PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -58,7 +58,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::SERIAL;
+        return PlatformInterface::SERIAL;
     }
 
     public function getAutoIncrement()

@@ -11,7 +11,7 @@
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \DOMNode;
 use \DOMDocument;
@@ -115,7 +115,7 @@ class Column extends XMLElement
      * a list of <code>String</code> objects with column names.
      * @deprecated Use the Platform::getColumnListDDL() method instead
      */
-    public static function makeList($columns, PropelPlatformInterface $platform)
+    public static function makeList($columns, PlatformInterface $platform)
     {
         $list = array();
         foreach ($columns as $col) {
@@ -863,7 +863,7 @@ class Column extends XMLElement
         return $this->getType();
     }
 
-    public function isDefaultSqlType(PropelPlatformInterface $platform = null)
+    public function isDefaultSqlType(PlatformInterface $platform = null)
     {
         if (null === $this->domain || null === $this->domain->getSqlType() || null === $platform) {
             return true;

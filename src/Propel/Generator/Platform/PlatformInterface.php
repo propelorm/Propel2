@@ -24,7 +24,7 @@ use \PDO;
  * @version    $Revision$
  * @package    propel.generator.platform
  */
-interface PropelPlatformInterface
+interface PlatformInterface
 {
 
     /**
@@ -71,7 +71,7 @@ interface PropelPlatformInterface
     /**
      * Returns the native IdMethod (sequence|identity)
      *
-     * @return     string The native IdMethod (PropelPlatformInterface:IDENTITY, PropelPlatformInterface::SEQUENCE).
+     * @return     string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
      */
     public function getNativeIdMethod();
 
