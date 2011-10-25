@@ -19,7 +19,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class IdMethodParameter extends XMLElement
+class IdMethodParameter extends XmlElement
 {
 
     private $name;
@@ -93,7 +93,7 @@ class IdMethodParameter extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

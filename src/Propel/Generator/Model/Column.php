@@ -29,7 +29,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Column extends XMLElement
+class Column extends XmlElement
 {
 
     const DEFAULT_TYPE = "VARCHAR";
@@ -948,7 +948,7 @@ class Column extends XMLElement
     }
 
     /**
-     * @see                 XMLElement::appendXml(DOMNode)
+     * @see                 XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {
@@ -1161,7 +1161,7 @@ class Column extends XMLElement
      */
     public function getAutoIncrementString()
     {
-        if ($this->isAutoIncrement() && IDMethod::NATIVE === $this->getTable()->getIdMethod()) {
+        if ($this->isAutoIncrement() && IdMethod::NATIVE === $this->getTable()->getIdMethod()) {
             return $this->getPlatform()->getAutoIncrement();
         } elseif ($this->isAutoIncrement()) {
             throw new EngineException(sprintf(

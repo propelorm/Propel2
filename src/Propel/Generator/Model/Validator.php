@@ -19,7 +19,7 @@ use Propel\Generator\Exception\EngineException;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Validator extends XMLElement
+class Validator extends XmlElement
 {
 
     const TRANSLATE_NONE = "none";
@@ -165,7 +165,7 @@ class Validator extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

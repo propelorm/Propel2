@@ -396,7 +396,7 @@ class PropelSchemaReverseTask extends PDOTask
 
         $database = new Database($this->getDatabaseName());
         $database->setPlatform($config->getConfiguredPlatform($con));
-        $database->setDefaultIdMethod(IDMethod::NATIVE);
+        $database->setDefaultIdMethod(IdMethod::NATIVE);
         $parser = $config->getConfiguredSchemaParser($con);
         $nbTables = $parser->parse($database, $this);
 

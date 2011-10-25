@@ -22,7 +22,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class VendorInfo extends XMLElement
+class VendorInfo extends XmlElement
 {
 
     /**
@@ -169,7 +169,7 @@ class VendorInfo extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

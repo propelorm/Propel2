@@ -12,7 +12,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
@@ -37,7 +37,7 @@ class MssqlPlatformTest extends PlatformTestProvider
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $expected = 'foo_SEQ';
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }
@@ -45,11 +45,11 @@ class MssqlPlatformTest extends PlatformTestProvider
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $idMethodParameter = new IdMethodParameter();
         $idMethodParameter->setValue('foo_sequence');
         $table->addIdMethodParameter($idMethodParameter);
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $expected = 'foo_sequence';
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }

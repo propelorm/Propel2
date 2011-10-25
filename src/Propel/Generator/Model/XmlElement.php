@@ -17,7 +17,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-abstract class XMLElement
+abstract class XmlElement
 {
 
     /**

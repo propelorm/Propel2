@@ -17,7 +17,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-abstract class ScopedElement extends XMLElement
+abstract class ScopedElement extends XmlElement
 {
     /**
      * The package for the generated OM.

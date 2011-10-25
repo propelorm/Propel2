@@ -117,7 +117,7 @@ class PropelSQLDiffTask extends AbstractPropelDataModelTask
                 continue;
             }
             $database->setPlatform($platform);
-            $database->setDefaultIdMethod(IDMethod::NATIVE);
+            $database->setDefaultIdMethod(IdMethod::NATIVE);
             $parser = $generatorConfig->getConfiguredSchemaParser($pdo);
             $nbTables = $parser->parse($database, $this);
             $ad->addDatabase($database);

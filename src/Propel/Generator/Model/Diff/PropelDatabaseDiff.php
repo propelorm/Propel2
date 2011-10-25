@@ -247,8 +247,8 @@ class PropelDatabaseDiff
         // idMethod is not set for tables build from reverse engineering
         // FIXME: this should be handled by reverse classes
         foreach ($diff->getAddedTables() as $name => $table) {
-            if ($table->getIdMethod() == IDMethod::NO_ID_METHOD) {
-                $table->setIdMethod(IDMethod::NATIVE);
+            if ($table->getIdMethod() == IdMethod::NO_ID_METHOD) {
+                $table->setIdMethod(IdMethod::NATIVE);
             }
         }
         $diff->setRemovedTables($this->getAddedTables());

@@ -19,7 +19,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-interface IDMethod
+interface IdMethod
 {
 
     /**

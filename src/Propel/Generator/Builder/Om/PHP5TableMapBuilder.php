@@ -11,7 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Validator;
 use Propel\Generator\Platform\PlatformInterface;
 /**
@@ -185,7 +185,7 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
             $imp = $params[0];
             $script .= "
         \$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
-        } elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
+        } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $script .= "
         \$this->setPrimaryKeyMethodInfo('".$platform->getSequenceName($table)."');";
         }
