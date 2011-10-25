@@ -12,7 +12,7 @@ namespace Propel\Generator\Model;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 /**
  * A class for holding application data structures.
@@ -60,9 +60,9 @@ class AppData
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param      PropelPlatformInterface $platform The default platform object to use for any databases added to this application model.
+     * @param      PlatformInterface $platform The default platform object to use for any databases added to this application model.
      */
-    public function __construct(PropelPlatformInterface $defaultPlatform = null)
+    public function __construct(PlatformInterface $defaultPlatform = null)
     {
         if (null !== $defaultPlatform) {
             $this->platform = $defaultPlatform;
@@ -72,9 +72,9 @@ class AppData
     /**
      * Sets the platform object to use for any databases added to this application model.
      *
-     * @param PropelPlatformInterface $defaultPlatform
+     * @param PlatformInterface $defaultPlatform
      */
-    public function setPlatform(PropelPlatformInterface $defaultPlatform)
+    public function setPlatform(PlatformInterface $defaultPlatform)
     {
         $this->platform = $defaultPlatform;
     }

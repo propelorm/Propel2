@@ -15,7 +15,7 @@ use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
 
@@ -57,13 +57,13 @@ EOF;
         $appData = $xmlToAppData->parseString($schema);
 
         $db = $appData->getDatabase("iddb");
-        $this->assertEquals(IDMethod::NATIVE, $db->getDefaultIdMethod());
+        $this->assertEquals(IdMethod::NATIVE, $db->getDefaultIdMethod());
 
         $table1 = $db->getTable("table_native");
-        $this->assertEquals(IDMethod::NATIVE, $table1->getIdMethod());
+        $this->assertEquals(IdMethod::NATIVE, $table1->getIdMethod());
 
         $table2 = $db->getTable("table_none");
-        $this->assertEquals(IDMethod::NO_ID_METHOD, $table2->getIdMethod());
+        $this->assertEquals(IdMethod::NO_ID_METHOD, $table2->getIdMethod());
     }
 
     public function testGeneratorConfig()

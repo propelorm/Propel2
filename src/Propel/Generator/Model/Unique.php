@@ -35,7 +35,7 @@ class Unique extends Index
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

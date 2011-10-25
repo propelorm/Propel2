@@ -11,7 +11,7 @@
 namespace Propel\Generator\Config;
 
 use Propel\Generator\Model\Table;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \PDO;
 
@@ -177,8 +177,8 @@ class GeneratorConfig implements GeneratorConfigInterface
 
         $platform = new $clazz();
 
-        if (!$platform instanceof PropelPlatformInterface) {
-            throw new BuildException("Specified platform class ($clazz) does not implement the PropelPlatformInterface interface.");
+        if (!$platform instanceof PlatformInterface) {
+            throw new BuildException("Specified platform class ($clazz) does not implement the PlatformInterface interface.");
         }
 
         $platform->setConnection($con);

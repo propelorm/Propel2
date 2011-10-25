@@ -15,7 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
@@ -33,7 +33,7 @@ use \PDO;
  * @version    $Revision$
  * @package    propel.generator.platform
  */
-class DefaultPlatform implements PropelPlatformInterface
+class DefaultPlatform implements PlatformInterface
 {
 
     /**
@@ -159,16 +159,16 @@ class DefaultPlatform implements PropelPlatformInterface
     /**
      * Returns the native IdMethod (sequence|identity)
      *
-     * @return     string The native IdMethod (PropelPlatformInterface:IDENTITY, PropelPlatformInterface::SEQUENCE).
+     * @return     string The native IdMethod (PlatformInterface:IDENTITY, PlatformInterface::SEQUENCE).
      */
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::IDENTITY;
+        return PlatformInterface::IDENTITY;
     }
 
     public function isNativeIdMethodAutoIncrement()
     {
-        return $this->getNativeIdMethod() == PropelPlatformInterface::IDENTITY;
+        return $this->getNativeIdMethod() == PlatformInterface::IDENTITY;
     }
 
     /**
@@ -217,7 +217,7 @@ class DefaultPlatform implements PropelPlatformInterface
     {
         static $longNamesMap = array();
         $result = null;
-        if ($table->getIdMethod() == IDMethod::NATIVE) {
+        if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
             $maxIdentifierLength = $this->getMaxColumnNameLength();
             if (empty($idMethodParams)) {

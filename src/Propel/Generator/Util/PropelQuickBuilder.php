@@ -32,7 +32,7 @@ class PropelQuickBuilder
     /**
      * Setter for the platform property
      *
-     * @param PropelPlatformInterface $platform
+     * @param PlatformInterface $platform
      */
     public function setPlatform($platform)
     {
@@ -42,7 +42,7 @@ class PropelQuickBuilder
     /**
      * Getter for the platform property
      *
-     * @return PropelPlatformInterface
+     * @return PlatformInterface
      */
     public function getPlatform()
     {

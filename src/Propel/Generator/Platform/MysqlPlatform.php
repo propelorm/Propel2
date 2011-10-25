@@ -26,7 +26,7 @@ use Propel\Generator\Model\Diff\PropelDatabaseDiff;
 use \PDO;
 
 /**
- * MySql PropelPlatformInterface implementation.
+ * MySql PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)

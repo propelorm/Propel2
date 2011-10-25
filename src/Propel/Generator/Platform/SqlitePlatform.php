@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 
 /**
- * SQLite PropelPlatformInterface implementation.
+ * SQLite PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
  * @version    $Revision$

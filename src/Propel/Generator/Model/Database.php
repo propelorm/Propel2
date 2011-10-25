@@ -84,7 +84,7 @@ class Database extends ScopedElement
         $this->name = $this->getAttribute("name");
         $this->baseClass = $this->getAttribute("baseClass");
         $this->basePeer = $this->getAttribute("basePeer");
-        $this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IDMethod::NATIVE);
+        $this->defaultIdMethod = $this->getAttribute("defaultIdMethod", IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute("defaultPhpNamingMethod", NameGenerator::CONV_METHOD_UNDERSCORE);
         $this->defaultTranslateMethod = $this->getAttribute("defaultTranslateMethod", Validator::TRANSLATE_NONE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute("heavyIndexing"));
@@ -93,9 +93,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Returns the PropelPlatformInterface implementation for this database.
+     * Returns the PlatformInterface implementation for this database.
      *
-     * @return     PropelPlatformInterface a Platform implementation
+     * @return     PlatformInterface a Platform implementation
      */
     public function getPlatform()
     {
@@ -103,9 +103,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Sets the PropelPlatformInterface implementation for this database.
+     * Sets the PlatformInterface implementation for this database.
      *
-     * @param      PropelPlatformInterface $platform A Platform implementation
+     * @param      PlatformInterface $platform A Platform implementation
      */
     public function setPlatform($platform)
     {
@@ -614,7 +614,7 @@ class Database extends ScopedElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

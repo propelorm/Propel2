@@ -18,7 +18,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Inheritance extends XMLElement
+class Inheritance extends XmlElement
 {
 
     private $key;
@@ -130,7 +130,7 @@ class Inheritance extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

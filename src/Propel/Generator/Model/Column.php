@@ -11,7 +11,7 @@
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \DOMNode;
 use \DOMDocument;
@@ -29,7 +29,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Column extends XMLElement
+class Column extends XmlElement
 {
 
     const DEFAULT_TYPE = "VARCHAR";
@@ -115,7 +115,7 @@ class Column extends XMLElement
      * a list of <code>String</code> objects with column names.
      * @deprecated Use the Platform::getColumnListDDL() method instead
      */
-    public static function makeList($columns, PropelPlatformInterface $platform)
+    public static function makeList($columns, PlatformInterface $platform)
     {
         $list = array();
         foreach ($columns as $col) {
@@ -863,7 +863,7 @@ class Column extends XMLElement
         return $this->getType();
     }
 
-    public function isDefaultSqlType(PropelPlatformInterface $platform = null)
+    public function isDefaultSqlType(PlatformInterface $platform = null)
     {
         if (null === $this->domain || null === $this->domain->getSqlType() || null === $platform) {
             return true;
@@ -948,7 +948,7 @@ class Column extends XMLElement
     }
 
     /**
-     * @see                 XMLElement::appendXml(DOMNode)
+     * @see                 XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {
@@ -1161,7 +1161,7 @@ class Column extends XMLElement
      */
     public function getAutoIncrementString()
     {
-        if ($this->isAutoIncrement() && IDMethod::NATIVE === $this->getTable()->getIdMethod()) {
+        if ($this->isAutoIncrement() && IdMethod::NATIVE === $this->getTable()->getIdMethod()) {
             return $this->getPlatform()->getAutoIncrement();
         } elseif ($this->isAutoIncrement()) {
             throw new EngineException(sprintf(
