@@ -2372,4 +2372,22 @@ class ModelCriteriaTest extends BookstoreTestBase
         $sql = BasePeer::createSelectSql($bookQuery1, $params);
         $this->assertEquals('SELECT  FROM `book` WHERE book.PRICE=:p1', $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
     }
+
+    public function testMagicFindByObject()
+    {
+        $con = Propel::getConnection(BookPeer::DATABASE_NAME);
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+        $testAuthor = $c->findOne();
+        $q = BookQuery::create()
+            ->findByAuthor($testAuthor);
+        $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=" . $testAuthor->getId();
+        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXX($value) is turned into findBy(XXX, $value)');
+
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+        $testAuthor = $c->findOne();
+        $q = BookQuery::create()
+            ->findByAuthorAndISBN($testAuthor, 1234);
+        $expectedSQL = "SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=" . $testAuthor->getId() . " AND book.ISBN=1234";
+        $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX, YYY), $value)');
+    }
 }
