@@ -93,9 +93,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Returns the PropelPlatformInterface implementation for this database.
+     * Returns the PlatformInterface implementation for this database.
      *
-     * @return     PropelPlatformInterface a Platform implementation
+     * @return     PlatformInterface a Platform implementation
      */
     public function getPlatform()
     {
@@ -103,9 +103,9 @@ class Database extends ScopedElement
     }
 
     /**
-     * Sets the PropelPlatformInterface implementation for this database.
+     * Sets the PlatformInterface implementation for this database.
      *
-     * @param      PropelPlatformInterface $platform A Platform implementation
+     * @param      PlatformInterface $platform A Platform implementation
      */
     public function setPlatform($platform)
     {

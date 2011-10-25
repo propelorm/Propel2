@@ -16,7 +16,7 @@ use Propel\Generator\Model\IDMethod;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\MssqlPlatform;
 use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \DateTime;
 
@@ -4396,7 +4396,7 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
             $params = $table->getIdMethodParameters();
             $imp = $params[0];
             $primaryKeyMethodInfo = $imp->getValue();
-        } elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
+        } elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $primaryKeyMethodInfo = $platform->getSequenceName($table);
         }
         $query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';

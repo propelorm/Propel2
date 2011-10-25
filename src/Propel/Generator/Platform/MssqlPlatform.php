@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 
 /**
- * MS SQL PropelPlatformInterface implementation.
+ * MS SQL PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
