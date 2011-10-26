@@ -22,7 +22,7 @@ use \ReflectionObject;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Behavior extends XMLElement
+class Behavior extends XmlElement
 {
 
     protected $table;

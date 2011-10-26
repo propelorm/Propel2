@@ -11,9 +11,9 @@
 namespace Propel\Generator\Builder\Om;
 
 
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Validator;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 /**
  * Generates the PHP5 table map class for user object model (OM).
  *
@@ -185,7 +185,7 @@ class ".$this->getClassname()." extends \Propel\Runtime\Map\TableMap
             $imp = $params[0];
             $script .= "
         \$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
-        } elseif ($table->getIdMethod() == IDMethod::NATIVE && ($platform->getNativeIdMethod() == PropelPlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PropelPlatformInterface::SERIAL)) {
+        } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $script .= "
         \$this->setPrimaryKeyMethodInfo('".$platform->getSequenceName($table)."');";
         }

@@ -14,14 +14,14 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 
 /**
- * Oracle PropelPlatformInterface implementation.
+ * Oracle PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -70,7 +70,7 @@ class OraclePlatform extends DefaultPlatform
 
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::SEQUENCE;
+        return PlatformInterface::SEQUENCE;
     }
 
     public function getAutoIncrement()
@@ -174,7 +174,7 @@ CREATE SEQUENCE %s
         $ret = "
 DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS;
 ";
-        if ($table->getIdMethod() == IDMethod::NATIVE) {
+        if ($table->getIdMethod() == IdMethod::NATIVE) {
             $ret .= "
 DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 ";

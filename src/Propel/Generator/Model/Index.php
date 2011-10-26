@@ -23,7 +23,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Index extends XMLElement
+class Index extends XmlElement
 {
 
     /** enables debug output */
@@ -309,7 +309,7 @@ class Index extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

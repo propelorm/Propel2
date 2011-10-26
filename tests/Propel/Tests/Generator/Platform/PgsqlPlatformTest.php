@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
@@ -39,7 +39,7 @@ class PgsqlPlatformTest extends PlatformTestProvider
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $col = new Column('bar');
         $col->getDomain()->copy($this->getPlatform()->getDomainForType('INTEGER'));
         $col->setAutoIncrement(true);
@@ -51,11 +51,11 @@ class PgsqlPlatformTest extends PlatformTestProvider
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $idMethodParameter = new IdMethodParameter();
         $idMethodParameter->setValue('foo_sequence');
         $table->addIdMethodParameter($idMethodParameter);
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $col = new Column('bar');
         $col->getDomain()->copy($this->getPlatform()->getDomainForType('INTEGER'));
         $col->setAutoIncrement(true);
@@ -485,7 +485,7 @@ EOF;
         $idMethodParameter = new IdMethodParameter();
         $idMethodParameter->setValue('foo_sequence');
         $table->addIdMethodParameter($idMethodParameter);
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $expected = "
 DROP TABLE foo CASCADE;
 
@@ -511,7 +511,7 @@ DROP SEQUENCE foo_sequence;
         $database = new Database();
         $database->setPlatform($this->getPlatform());
         $table = new Table('foo_table');
-        $table->setIdMethod(IDMethod::NATIVE);
+        $table->setIdMethod(IdMethod::NATIVE);
         $database->addTable($table);
         $column = new Column('foo');
         $column->getDomain()->copy($this->getPlatform()->getDomainForType(PropelTypes::BIGINT));

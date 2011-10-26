@@ -23,7 +23,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class ForeignKey extends XMLElement
+class ForeignKey extends XmlElement
 {
 
     protected $foreignTableCommonName;
@@ -650,7 +650,7 @@ class ForeignKey extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {

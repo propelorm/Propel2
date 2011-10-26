@@ -14,7 +14,7 @@ use Propel\Generator\Model\AppData;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Platform\MssqlPlatform;
 use Propel\Generator\Platform\OraclePlatform;
-use Propel\Generator\Platform\PropelPlatformInterface;
+use Propel\Generator\Platform\PlatformInterface;
 
 use \PhingFile;
 use \Properties;
@@ -181,7 +181,7 @@ class PropelSQLTask extends AbstractPropelDataModelTask
 
     } // main()
 
-    public function getWarnings(Database $database, PropelPlatformInterface $platform)
+    public function getWarnings(Database $database, PlatformInterface $platform)
     {
         foreach ($database->getTablesForSql() as $table) {
             foreach ($table->getForeignKeys() as $fk) {

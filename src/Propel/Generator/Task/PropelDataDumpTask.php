@@ -306,10 +306,10 @@ class PropelDataDumpTask extends AbstractPropelDataModelTask
     /**
      * Gets PDOStatement of query to fetch all data from a table.
      * @param      string $tableName
-     * @param      PropelPlatformInterface $platform
+     * @param      PlatformInterface $platform
      * @return     PDOStatement
      */
-    private function getTableDataStmt($tableName, PropelPlatformInterface $platform)
+    private function getTableDataStmt($tableName, PlatformInterface $platform)
     {
         return $this->conn->query("SELECT * FROM " . $platform->quoteIdentifier( $tableName ) );
     }

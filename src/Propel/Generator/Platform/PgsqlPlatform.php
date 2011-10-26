@@ -14,14 +14,14 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\IDMethod;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\PropelColumnDiff;
 
 /**
- * Postgresql PropelPlatformInterface implementation.
+ * Postgresql PlatformInterface implementation.
  *
  * @author     Hans Lellelid <hans@xmpl.org> (Propel)
  * @author     Martin Poeschl <mpoeschl@marmot.at> (Torque)
@@ -58,7 +58,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     public function getNativeIdMethod()
     {
-        return PropelPlatformInterface::SERIAL;
+        return PlatformInterface::SERIAL;
     }
 
     public function getAutoIncrement()
@@ -111,7 +111,7 @@ class PgsqlPlatform extends DefaultPlatform
     {
         static $longNamesMap = array();
         $result = null;
-        if ($table->getIdMethod() == IDMethod::NATIVE) {
+        if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
             if (empty($idMethodParams)) {
                 $result = null;
@@ -133,7 +133,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     protected function getAddSequenceDDL(Table $table)
     {
-        if ($table->getIdMethod() == IDMethod::NATIVE
+        if ($table->getIdMethod() == IdMethod::NATIVE
          && $table->getIdMethodParameters() != null) {
             $pattern = "
 CREATE SEQUENCE %s;
@@ -147,7 +147,7 @@ CREATE SEQUENCE %s;
 
     protected function getDropSequenceDDL(Table $table)
     {
-        if ($table->getIdMethod() == IDMethod::NATIVE
+        if ($table->getIdMethod() == IdMethod::NATIVE
          && $table->getIdMethodParameters() != null) {
             $pattern = "
 DROP SEQUENCE %s;

@@ -29,7 +29,7 @@ use \DOMDocument;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Table extends ScopedElement implements IDMethod
+class Table extends ScopedElement implements IdMethod
 {
 
     /**
@@ -101,14 +101,14 @@ class Table extends ScopedElement implements IDMethod
     private $phpName;
 
     /**
-     * ID method for the table (e.g. IDMethod::NATIVE, IDMethod::NONE).
+     * ID method for the table (e.g. IdMethod::NATIVE, IdMethod::NONE).
      *
      * @var       string
      */
     private $idMethod;
 
     /**
-     * Wether an INSERT with set PK is allowed on tables with IDMethod::NATIVE
+     * Wether an INSERT with set PK is allowed on tables with IdMethod::NATIVE
      *
      * @var       boolean
      */
@@ -406,8 +406,8 @@ class Table extends ScopedElement implements IDMethod
                 $anyAutoInc = true;
             }
         }
-        if ($this->getIdMethod() === IDMethod::NATIVE && !$anyAutoInc) {
-            $this->setIdMethod(IDMethod::NO_ID_METHOD);
+        if ($this->getIdMethod() === IdMethod::NATIVE && !$anyAutoInc) {
+            $this->setIdMethod(IdMethod::NO_ID_METHOD);
         }
     }
 
@@ -1303,7 +1303,7 @@ class Table extends ScopedElement implements IDMethod
     public function getIdMethod()
     {
         if ($this->idMethod === null) {
-            return IDMethod::NO_ID_METHOD;
+            return IdMethod::NO_ID_METHOD;
         } else {
             return $this->idMethod;
         }
@@ -1868,7 +1868,7 @@ class Table extends ScopedElement implements IDMethod
      */
     public function hasAutoIncrementPrimaryKey()
     {
-        if ($this->getIdMethod() != IDMethod::NO_ID_METHOD) {
+        if ($this->getIdMethod() != IdMethod::NO_ID_METHOD) {
             $pks =$this->getPrimaryKey();
             foreach ($pks as $pk) {
                 if ($pk->isAutoIncrement()) {
@@ -1887,7 +1887,7 @@ class Table extends ScopedElement implements IDMethod
      */
     public function getAutoIncrementPrimaryKey()
     {
-        if ($this->getIdMethod() != IDMethod::NO_ID_METHOD) {
+        if ($this->getIdMethod() != IdMethod::NO_ID_METHOD) {
             $pks =$this->getPrimaryKey();
             foreach ($pks as $pk) {
                 if ($pk->isAutoIncrement()) {

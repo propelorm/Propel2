@@ -18,7 +18,7 @@ namespace Propel\Generator\Model;
  * @version    $Revision$
  * @package    propel.generator.model
  */
-class Domain extends XMLElement
+class Domain extends XmlElement
 {
 
     /**
@@ -347,7 +347,7 @@ class Domain extends XMLElement
     }
 
     /**
-     * @see        XMLElement::appendXml(DOMNode)
+     * @see        XmlElement::appendXml(DOMNode)
      */
     public function appendXml(DOMNode $node)
     {
