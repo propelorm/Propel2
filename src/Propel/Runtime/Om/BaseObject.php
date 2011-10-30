@@ -299,7 +299,7 @@ abstract class BaseObject
     }
 
     /**
-     * Get the value of a virtual column in this object
+     * Set the value of a virtual column in this object
      *
      * @param      string $name The virtual column name
      * @param      mixed  $value The value to give to the virtual column
