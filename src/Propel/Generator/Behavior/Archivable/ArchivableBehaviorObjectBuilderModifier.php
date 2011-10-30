@@ -143,6 +143,7 @@ class ArchivableBehaviorObjectBuilderModifier
             'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
             'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
             'archivedAtColumn'      => $this->behavior->getArchivedAtColumn(),
+            'hasArchiveClass'       => $this->behavior->hasArchiveClass()
         ));
     }
 
