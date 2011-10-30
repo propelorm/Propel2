@@ -20,6 +20,8 @@ use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\BookstoreManagerQuery;
 
+use Propel\Runtime\Propel;
+
 /**
  * Test class for MultiExtensionQueryBuilder.
  *
@@ -99,6 +101,31 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         BookstoreManagerQuery::create()->deleteAll();
         $nbCash = BookstoreEmployeeQuery::create()->count();
         $this->assertEquals(2, $nbCash, 'Delete in sub query affects only child results');
+    }
+
+    public function testFindPkSimpleWithSingleTableInheritanceReturnCorrectClass()
+    {
+        Propel::disableInstancePooling();
+
+        $employee = new BookstoreEmployee();
+        $employee->save($this->con);
+        $manager = new BookstoreManager();
+        $manager->save($this->con);
+        $cashier1 = new BookstoreCashier();
+        $cashier1->save($this->con);
+        $cashier2 = new BookstoreCashier();
+        $cashier2->save($this->con);
+
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreEmployee', BookstoreEmployeeQuery::create()->findPk($employee->getId()),
+            'findPk() return right object : BookstoreEmployee');
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreManager', BookstoreEmployeeQuery::create()->findPk($manager->getId()),
+            'findPk() return right object : BookstoreManager');
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreCashier', BookstoreEmployeeQuery::create()->findPk($cashier1->getId()),
+            'findPk() return right object : BookstoreCashier');
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreCashier', BookstoreEmployeeQuery::create()->findPk($cashier2->getId()),
+            'findPk() return right object : BookstoreCashier');
+
+        Propel::enableInstancePooling();
     }
 }
 

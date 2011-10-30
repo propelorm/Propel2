@@ -494,8 +494,17 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), \$e);
         }
         \$obj = null;
-        if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {
-            \$obj = new $ARClassname();
+        if (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {";
+
+        if ($col = $table->getChildrenColumn()) {
+            $script .="
+            \$cls = {$peerClassname}::getOMClass(\$row, 0, false);
+            \$obj = new \$cls();";
+        } else {
+            $script .="
+            \$obj = new $ARClassname();";
+        }
+        $script .= "
             \$obj->hydrate(\$row);
             {$peerClassname}::addInstanceToPool(\$obj, $pkHashFromRow);
         }
