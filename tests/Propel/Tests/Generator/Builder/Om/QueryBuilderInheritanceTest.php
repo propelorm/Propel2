@@ -19,6 +19,11 @@ use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\BookstoreManagerQuery;
+use Propel\Tests\Bookstore\DistributionPeer;
+use Propel\Tests\Bookstore\DistributionManager;
+use Propel\Tests\Bookstore\DistributionStore;
+use Propel\Tests\Bookstore\DistributionVirtualStore;
+use Propel\Tests\Bookstore\DistributionQuery;
 
 use Propel\Runtime\Propel;
 
@@ -68,8 +73,8 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $cashier2->save($this->con);
         BookstoreManagerQuery::create()->update(array('Name' => 'foo'), $this->con);
         $nbMan = BookstoreEmployeeQuery::create()
-          ->filterByName('foo')
-          ->count($this->con);
+            ->filterByName('foo')
+            ->count($this->con);
         $this->assertEquals(1, $nbMan, 'Update in sub query affects only child results');
     }
 
@@ -124,6 +129,49 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
             'findPk() return right object : BookstoreCashier');
         $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreCashier', BookstoreEmployeeQuery::create()->findPk($cashier2->getId()),
             'findPk() return right object : BookstoreCashier');
+
+        Propel::enableInstancePooling();
+    }
+
+    public function testGetCorrectTableMapClassWithAbstractSingleTableInheritance()
+    {
+        Propel::initialize();
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\Map\DistributionTableMap', DistributionPeer::getTableMap(), 'getTableMap should return the right table map');
+    }
+
+    /**
+     * This test prove failure with propel.emulateForeignKeyConstraints = true
+     */
+    public function testDeleteCascadeWithAbstractSingleTableInheritance()
+    {
+        $manager = new DistributionManager();
+        $manager->setName('test');
+        $manager->save();
+        $manager->delete();
+    }
+
+    public function  testFindPkSimpleWithAbstractSingleTableInheritanceReturnCorrectClass()
+    {
+        Propel::disableInstancePooling();
+
+        $manager = new DistributionManager();
+        $manager->setName('manager1');
+        $manager->save();
+
+        $distributionStore = new DistributionStore();
+        $distributionStore->setName('my store 1');
+        $distributionStore->setDistributionManager($manager);
+        $distributionStore->save();
+
+        $distributionVirtualStore = new DistributionVirtualStore();
+        $distributionVirtualStore->setName('my VirtualStore 1');
+        $distributionVirtualStore->setDistributionManager($manager);
+        $distributionVirtualStore->save();
+
+        $this->assertInstanceOf('Propel\Tests\Bookstore\DistributionStore', DistributionQuery::create()->findPk($distributionStore->getId()),
+            'findPk() return right object : DistributionStore');
+        $this->assertInstanceOf('Propel\Tests\Bookstore\DistributionVirtualStore', DistributionQuery::create()->findPk($distributionVirtualStore->getId()),
+            'findPk() return right object : DistributionVirtualStore');
 
         Propel::enableInstancePooling();
     }

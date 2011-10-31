@@ -59,7 +59,7 @@
         </foreign-key>
     </table>
 
-  <!-- This table exists to test validators -->
+    <!-- This table exists to test validators -->
     <table name="review" description="Book Review">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Review Id" />
         <column name="reviewed_by" required="true" type="VARCHAR" size="128" description="Reviewer Name" />
@@ -97,7 +97,7 @@
         </foreign-key>
     </table>
 
-  <!-- This table exists to test the related setters on identical table ("relatedByXXX" issues) when there is more than one self-referential foreign key -->
+    <!-- This table exists to test the related setters on identical table ("relatedByXXX" issues) when there is more than one self-referential foreign key -->
     <table name="composite_essay" >
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" required="true" primaryString="true" />
@@ -111,22 +111,22 @@
         </foreign-key>
     </table>
 
-  <!-- This table and the following exist to test the related setters ("relatedByXXX" issues) when two foreign keys exist on symmetrical tables -->
-  <table name="man" >
-    <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
-    <column name="wife_id" type="INTEGER"/>
-    <foreign-key foreignTable="woman" onDelete="setnull">
-      <reference local="wife_id" foreign="id"/>
-    </foreign-key>
-  </table>
+    <!-- This table and the following exist to test the related setters ("relatedByXXX" issues) when two foreign keys exist on symmetrical tables -->
+    <table name="man" >
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="wife_id" type="INTEGER"/>
+        <foreign-key foreignTable="woman" onDelete="setnull">
+            <reference local="wife_id" foreign="id"/>
+        </foreign-key>
+    </table>
 
-  <table name="woman" >
-    <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="husband_id" type="INTEGER"/>
-    <foreign-key foreignTable="man">
-      <reference local="husband_id" foreign="id"/>
-    </foreign-key>
-  </table>
+    <table name="woman" >
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+        <column name="husband_id" type="INTEGER"/>
+        <foreign-key foreignTable="man">
+            <reference local="husband_id" foreign="id"/>
+        </foreign-key>
+    </table>
 
     <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
     <table name="media">
@@ -343,6 +343,26 @@
         <column name="title" type="VARCHAR" />
         <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
         <column name="tags" type="ARRAY" />
+    </table>
+
+    <!-- Test single table inheritance with Abstract true -->
+    <table name="distribution" abstract="true">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="VARCHAR" />
+        <column name="type" type="INTEGER" required="true" default="0" inheritance="single">
+            <inheritance key="44" class="DistributionStore" />
+            <inheritance key="23" class="DistributionOnline" extends="DistributionStore" />
+            <inheritance key="3838" class="DistributionVirtualStore" extends="DistributionStore" />
+        </column>
+        <column name="distribution_manager_id" type="INTEGER" required="true"/>
+        <foreign-key foreignTable="distribution_manager" onDelete="cascade">
+            <reference local="distribution_manager_id" foreign="id" />
+        </foreign-key>
+    </table>
+
+    <table name="distribution_manager">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
+        <column name="name" type="VARCHAR" />
     </table>
 
 </database>

@@ -3467,6 +3467,10 @@ abstract class ".$this->getClassname()." extends ".$parentClass." ";
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
         $className = $joinedTableObjectBuilder->getObjectClassname();
 
+        if ($tblFK->getChildrenColumn()) {
+            $className = 'Base' . $className;
+        }
+
         $collName = $this->getRefFKCollVarName($refFK);
 
         $script .= "
