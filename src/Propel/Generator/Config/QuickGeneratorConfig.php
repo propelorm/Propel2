@@ -101,8 +101,6 @@ class QuickGeneratorConfig implements GeneratorConfigInterface
     */
     public function getConfiguredPluralizer()
     {
-        require_once dirname(__FILE__) . '/../Builder/Util/DefaultEnglishPluralizer.php';
-
         return new DefaultEnglishPluralizer();
     }
 
