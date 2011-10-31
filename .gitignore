@@ -1,7 +1,7 @@
-tests/fixtures/bookstore-packaged/build/
-tests/fixtures/bookstore/build/
-tests/fixtures/namespaced/build/
-tests/fixtures/nestedset/build/
-tests/fixtures/schemas/build/
+tests/Fixtures/bookstore-packaged/build/
+tests/Fixtures/bookstore/build/
+tests/Fixtures/namespaced/build/
+tests/Fixtures/nestedset/build/
+tests/Fixtures/schemas/build/
 tests/Fixtures/treetest/build/
 vendor/
