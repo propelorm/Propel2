@@ -23,6 +23,7 @@ use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\PropelColumnDiff;
 use Propel\Generator\Model\Diff\PropelDatabaseDiff;
 use Propel\Generator\Model\Diff\PropelTableDiff;
+use Propel\Generator\Exception\EngineException;
 
 use \PDO;
 
