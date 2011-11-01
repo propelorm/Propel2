@@ -15,7 +15,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\PropelPDO;
 
 use \PDO;
 use \PDOStatement;
@@ -93,7 +93,7 @@ class PropelQuickBuilder
         if (null === $adapter) {
             $adapter = new \Propel\Runtime\Adapter\DBSQLite();
         }
-        $con = new ConnectionInterface($dsn, $user, $pass);
+        $con = new PropelPDO($dsn, $user, $pass);
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $this->buildSQL($con);
         $this->buildClasses();
