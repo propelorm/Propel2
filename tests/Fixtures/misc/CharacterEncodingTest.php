@@ -77,7 +77,7 @@ class CharacterEncodingTest extends BookstoreTestBase
         $this->markTestSkipped();
 
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
-        if ($db instanceof DBSQLite) {
+        if ($db instanceof SqliteAdapter) {
             $this->markTestSkipped();
         }
 

@@ -15,7 +15,7 @@ use Propel\Tests\Helpers\BaseTestCase;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Util\BasePeer;
-use Propel\Runtime\Adapter\DBSQLite;
+use Propel\Runtime\Adapter\SqliteAdapter;
 
 /**
  * Test class for Criteria combinations.
@@ -46,7 +46,7 @@ class CriteriaCombineTest extends BaseTestCase
         parent::setUp();
         $this->c = new Criteria();
         $this->savedAdapter = Propel::getDB(null);
-        Propel::setDB(null, new DBSQLite());
+        Propel::setDB(null, new SqliteAdapter());
     }
 
     protected function tearDown()

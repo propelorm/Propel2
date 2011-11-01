@@ -17,7 +17,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBSQLite extends AbstractAdapter
+class SqliteAdapter extends AbstractAdapter
 {
 
     /**

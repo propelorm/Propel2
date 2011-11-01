@@ -16,7 +16,7 @@ use Propel\Tests\Bookstore\BookPeer;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\MysqlAdapter;
 use Propel\Runtime\Adapter\DBPostgres;
-use Propel\Runtime\Adapter\DBSQLite;
+use Propel\Runtime\Adapter\SqliteAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Join;
 use Propel\Runtime\Util\BasePeer;
@@ -50,7 +50,7 @@ class CriteriaTest extends BookstoreTestBase
         parent::setUp();
         $this->c = new Criteria();
         $this->savedAdapter = Propel::getDB(null);
-        Propel::setDB(null, new DBSQLite());
+        Propel::setDB(null, new SqliteAdapter());
     }
 
     protected function tearDown()

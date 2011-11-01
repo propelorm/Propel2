@@ -91,7 +91,7 @@ class PropelQuickBuilder
             $dsn = 'sqlite::memory:';
         }
         if (null === $adapter) {
-            $adapter = new \Propel\Runtime\Adapter\DBSQLite();
+            $adapter = new \Propel\Runtime\Adapter\SqliteAdapter();
         }
         $con = new PropelPDO($dsn, $user, $pass);
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);

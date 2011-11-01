@@ -60,7 +60,7 @@ abstract class AbstractAdapter
         'oracle' => '\Propel\Runtime\Adapter\OracleAdapter',
         'oci'    => '\Propel\Runtime\Adapter\OracleAdapter',
         'pgsql'  => '\Propel\Runtime\Adapter\DBPostgres',
-        'sqlite' => '\Propel\Runtime\Adapter\DBSQLite',
+        'sqlite' => '\Propel\Runtime\Adapter\SqliteAdapter',
         ''       => '\Propel\Runtime\Adapter\DBNone',
     );
 
