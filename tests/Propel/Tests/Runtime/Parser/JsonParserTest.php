@@ -11,15 +11,15 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Parser\PropelJSONParser;
+use Propel\Runtime\Parser\JsonParser;
 
 /**
- * Test for PropelJSONParser class
+ * Test for JsonParser class
  *
  * @author     Francois Zaninotto
  * @package    runtime.parser
  */
-class PropelJSONParserTest extends \PHPUnit_Framework_TestCase
+class JsonParserTest extends \PHPUnit_Framework_TestCase
 {
     public static function arrayJsonConversionDataProvider()
     {
@@ -43,8 +43,8 @@ class PropelJSONParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromArray($arrayData, $jsonData, $type)
     {
-        $parser = new PropelJSONParser();
-        $this->assertEquals($jsonData, $parser->fromArray($arrayData), 'PropelJSONParser::fromArray() converts from ' . $type . ' correctly');
+        $parser = new JsonParser();
+        $this->assertEquals($jsonData, $parser->fromArray($arrayData), 'JsonParser::fromArray() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -52,8 +52,8 @@ class PropelJSONParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToJSON($arrayData, $jsonData, $type)
     {
-        $parser = new PropelJSONParser();
-        $this->assertEquals($jsonData, $parser->toJSON($arrayData), 'PropelJSONParser::toJSON() converts from ' . $type . ' correctly');
+        $parser = new JsonParser();
+        $this->assertEquals($jsonData, $parser->toJSON($arrayData), 'JsonParser::toJSON() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -61,8 +61,8 @@ class PropelJSONParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToArray($arrayData, $jsonData, $type)
     {
-        $parser = new PropelJSONParser();
-        $this->assertEquals($arrayData, $parser->toArray($jsonData), 'PropelJSONParser::toArray() converts to ' . $type . ' correctly');
+        $parser = new JsonParser();
+        $this->assertEquals($arrayData, $parser->toArray($jsonData), 'JsonParser::toArray() converts to ' . $type . ' correctly');
     }
 
     /**
@@ -70,8 +70,8 @@ class PropelJSONParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromJSON($arrayData, $jsonData, $type)
     {
-        $parser = new PropelJSONParser();
-        $this->assertEquals($arrayData, $parser->fromJSON($jsonData), 'PropelJSONParser::fromJSON() converts to ' . $type . ' correctly');
+        $parser = new JsonParser();
+        $this->assertEquals($arrayData, $parser->fromJSON($jsonData), 'JsonParser::fromJSON() converts to ' . $type . ' correctly');
     }
 
     public static function listToJSONDataProvider()
@@ -93,7 +93,7 @@ EOF;
      */
     public function testListToJSON($list, $json)
     {
-        $parser = new PropelJSONParser();
+        $parser = new JsonParser();
         $this->assertEquals($json, $parser->toJSON($list));
     }
 
@@ -102,7 +102,7 @@ EOF;
      */
     public function testJSONToList($list, $json)
     {
-        $parser = new PropelJSONParser();
+        $parser = new JsonParser();
         $this->assertEquals($list, $parser->fromJSON($json));
     }
 }

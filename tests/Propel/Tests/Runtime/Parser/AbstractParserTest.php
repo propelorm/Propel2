@@ -15,7 +15,7 @@ use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\PropelXMLParser;
 
 /**
- * Test for PropelJSONParser class
+ * Test for JsonParser class
  *
  * @author     Francois Zaninotto
  * @package    runtime.parser
