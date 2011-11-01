@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\adapter;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Adapter\DBMySQL;
+use Propel\Runtime\Adapter\MysqlAdapter;
 
 /**
  * Tests the DbMySQL adapter
@@ -21,7 +21,7 @@ use Propel\Runtime\Adapter\DBMySQL;
  * @author     William Durand
  * @package    runtime.adapter
  */
-class DBMySQLTest extends BookstoreTestBase
+class MysqlAdapterTest extends BookstoreTestBase
 {
     public static function getConParams()
     {
@@ -49,7 +49,7 @@ class DBMySQLTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION >= 5.3.6, no need to throw an exception.');
         }
 
-        $db = new DBMySQL();
+        $db = new MysqlAdapter();
         $db->prepareParams($conparams);
     }
 
@@ -62,7 +62,7 @@ class DBMySQLTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
         }
 
-        $db = new DBMySQL();
+        $db = new MysqlAdapter();
         $params = $db->prepareParams($conparams);
 
         $this->assertTrue(is_array($params));
@@ -79,7 +79,7 @@ class DBMySQLTest extends BookstoreTestBase
             $this->markTestSkipped('PHP_VERSION < 5.3.6 will throw an exception.');
         }
 
-        $db = new DBMySQL();
+        $db = new MysqlAdapter();
         $params = $db->prepareParams($conparams);
 
         $settings = array();

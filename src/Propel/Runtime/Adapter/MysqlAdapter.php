@@ -26,7 +26,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBMySQL extends AbstractAdapter
+class MysqlAdapter extends AbstractAdapter
 {
     /**
      * This method is used to ignore case.

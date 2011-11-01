@@ -53,7 +53,7 @@ abstract class AbstractAdapter
      * @var array
      */
     private static $adapters = array(
-        'mysql'  => '\Propel\Runtime\Adapter\DBMySQL',
+        'mysql'  => '\Propel\Runtime\Adapter\MysqlAdapter',
         'mysqli' => '\Propel\Runtime\Adapter\DBMySQLi',
         'mssql'  => '\Propel\Runtime\Adapter\DBMSSQL',
         'sqlsrv' => '\Propel\Runtime\Adapter\DBSQLSRV',
