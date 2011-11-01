@@ -19,7 +19,7 @@ use Propel\Tests\Bookstore\Behavior\Table5;
 use Propel\Tests\Bookstore\Behavior\Table5Peer;
 
 use Propel\Runtime\Query\Criteria;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Tests for SoftDeleteBehavior class
@@ -404,7 +404,7 @@ class SoftDeleteBehaviorTest extends BookstoreTestBase
 
 class UndeletableTable4 extends Table4
 {
-    public function preDelete(PropelPDO $con = null)
+    public function preDelete(ConnectionInterface $con = null)
     {
         parent::preDelete($con);
         $this->setTitle('foo');
@@ -415,7 +415,7 @@ class UndeletableTable4 extends Table4
 
 class PostdeletehookedTable4 extends Table4
 {
-    public function postDelete(PropelPDO $con = null)
+    public function postDelete(ConnectionInterface $con = null)
     {
         parent::postDelete($con);
         $this->setTitle('post-deleted');

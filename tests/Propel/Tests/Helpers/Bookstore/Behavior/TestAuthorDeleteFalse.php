@@ -2,11 +2,11 @@
 
 namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 class TestAuthorDeleteFalse extends TestAuthor
 {
-    public function preDelete(PropelPDO $con = null)
+    public function preDelete(ConnectionInterface $con = null)
     {
         parent::preDelete($con);
         $this->setFirstName("Pre-Deleted");

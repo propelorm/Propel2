@@ -482,7 +482,7 @@ class PropelCollection extends ArrayObject implements Serializable
      * Get a connection object for the database containing the elements of the collection
      *
      * @param     string  $type  The connection type (Propel::CONNECTION_READ by default; can be Propel::connection_WRITE)
-     * @return    PropelPDO  A PropelPDO connection object
+     * @return    ConnectionInterface  A ConnectionInterface connection object
      */
     public function getConnection($type = Propel::CONNECTION_READ)
     {

@@ -14,7 +14,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 
 use Propel\Runtime\Query\ModelCriteria;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Test class for ModelCriteria.
@@ -146,7 +146,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 
 class ModelCriteriaWithPreSelectHook extends ModelCriteria
 {
-    public function preSelect(PropelPDO $con)
+    public function preSelect(ConnectionInterface $con)
     {
         $this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
     }
@@ -154,7 +154,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
 
 class ModelCriteriaWithPreDeleteHook extends ModelCriteria
 {
-    public function preDelete(PropelPDO $con)
+    public function preDelete(ConnectionInterface $con)
     {
         return 12;
     }
@@ -162,7 +162,7 @@ class ModelCriteriaWithPreDeleteHook extends ModelCriteria
 
 class ModelCriteriaWithPostDeleteHook extends ModelCriteria
 {
-    public function postDelete($affectedRows, PropelPDO $con)
+    public function postDelete($affectedRows, ConnectionInterface $con)
     {
         $con->lastAffectedRows = $affectedRows;
     }
@@ -170,7 +170,7 @@ class ModelCriteriaWithPostDeleteHook extends ModelCriteria
 
 class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteHook
 {
-    public function preDelete(PropelPDO $con)
+    public function preDelete(ConnectionInterface $con)
     {
         return 12;
     }
@@ -178,7 +178,7 @@ class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteH
 
 class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 {
-    public function preUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
+    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         $values['ISBN'] = '1234';
     }
@@ -186,7 +186,7 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 
 class ModelCriteriaWithPostUpdateHook extends ModelCriteria
 {
-    public function postUpdate($affectedRows, PropelPDO $con)
+    public function postUpdate($affectedRows, ConnectionInterface $con)
     {
         $con->lastAffectedRows = $affectedRows;
     }
@@ -194,7 +194,7 @@ class ModelCriteriaWithPostUpdateHook extends ModelCriteria
 
 class ModelCriteriaWithPreAndPostUpdateHook extends ModelCriteriaWithPostUpdateHook
 {
-    public function preUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
+    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         return 52;
     }

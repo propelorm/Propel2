@@ -133,8 +133,8 @@ class QueryBuilder extends OMBuilder
 
         // override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass findOne(PropelPDO \$con = null) Return the first $modelClass matching the query
- * @method     $modelClass findOneOrCreate(PropelPDO \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
+ * @method     $modelClass findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
+ * @method     $modelClass findOneOrCreate(ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
  *";
 
         // magic findBy() methods, for IDE completion
@@ -396,7 +396,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * </code>
      *
      * @param     " . $pkType . " \$key Primary key to use for the query
-     * @param     PropelPDO \$con an optional connection object
+     * @param     ConnectionInterface \$con an optional connection object
      *
      * @return    $class|array|mixed the result, formatted by the current formatter
      */
@@ -469,7 +469,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * Bypass doSelect() and the object formatter by using generated code.
      *
      * @param     mixed \$key Primary key to use for the query
-     * @param     PropelPDO \$con A connection object
+     * @param     ConnectionInterface \$con A connection object
      *
      * @return    $ARClassname A model object, or null if the key is not found
      */
@@ -515,13 +515,13 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
         $class = $class = $this->getStubObjectBuilder()->getClassname();
-        $this->declareClasses('\Propel\Runtime\Connection\PropelPDO');
+        $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
         $script .= "
     /**
      * Find object by primary key.
      *
      * @param     mixed \$key Primary key to use for the query
-     * @param     PropelPDO \$con A connection object
+     * @param     ConnectionInterface \$con A connection object
      *
      * @return    " . $class . "|array|mixed the result, formatted by the current formatter
      */
@@ -545,7 +545,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     protected function addFindPks(&$script)
     {
         $this->declareClasses(
-            '\Propel\Runtime\Connection\PropelPDO',
+            '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Propel'
         );
         $table = $this->getTable();
@@ -565,7 +565,7 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
         $script .= "
      * </code>
      * @param     array \$keys Primary keys to use for the query
-     * @param     PropelPDO \$con an optional connection object
+     * @param     ConnectionInterface \$con an optional connection object
      *
      * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
@@ -1285,9 +1285,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     /**
      * Code to execute before every SELECT statement
      *
-     * @param     PropelPDO \$con The connection object used by the query
+     * @param     ConnectionInterface \$con The connection object used by the query
      */
-    protected function basePreSelect(PropelPDO \$con)
+    protected function basePreSelect(ConnectionInterface \$con)
     {" . $behaviorCode . "
 
         return \$this->preSelect(\$con);
@@ -1310,9 +1310,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
     /**
      * Code to execute before every DELETE statement
      *
-     * @param     PropelPDO \$con The connection object used by the query
+     * @param     ConnectionInterface \$con The connection object used by the query
      */
-    protected function basePreDelete(PropelPDO \$con)
+    protected function basePreDelete(ConnectionInterface \$con)
     {" . $behaviorCode . "
 
         return \$this->preDelete(\$con);
@@ -1336,9 +1336,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * Code to execute after every DELETE statement
      *
      * @param     int \$affectedRows the number of deleted rows
-     * @param     PropelPDO \$con The connection object used by the query
+     * @param     ConnectionInterface \$con The connection object used by the query
      */
-    protected function basePostDelete(\$affectedRows, PropelPDO \$con)
+    protected function basePostDelete(\$affectedRows, ConnectionInterface \$con)
     {" . $behaviorCode . "
 
         return \$this->postDelete(\$affectedRows, \$con);
@@ -1362,10 +1362,10 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * Code to execute before every UPDATE statement
      *
      * @param     array \$values The associatiove array of columns and values for the update
-     * @param     PropelPDO \$con The connection object used by the query
+     * @param     ConnectionInterface \$con The connection object used by the query
      * @param     boolean \$forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      */
-    protected function basePreUpdate(&\$values, PropelPDO \$con, \$forceIndividualSaves = false)
+    protected function basePreUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {" . $behaviorCode . "
 
         return \$this->preUpdate(\$values, \$con, \$forceIndividualSaves);
@@ -1389,9 +1389,9 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      * Code to execute after every UPDATE statement
      *
      * @param     int \$affectedRows the number of udated rows
-     * @param     PropelPDO \$con The connection object used by the query
+     * @param     ConnectionInterface \$con The connection object used by the query
      */
-    protected function basePostUpdate(\$affectedRows, PropelPDO \$con)
+    protected function basePostUpdate(\$affectedRows, ConnectionInterface \$con)
     {" . $behaviorCode . "
 
         return \$this->postUpdate(\$affectedRows, \$con);

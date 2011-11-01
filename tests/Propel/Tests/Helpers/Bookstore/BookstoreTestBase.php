@@ -47,7 +47,7 @@ abstract class BookstoreTestBase extends \PHPUnit_Framework_TestCase
     {
         // Only commit if the transaction hasn't failed.
         // This is because tearDown() is also executed on a failed tests,
-        // and we don't want to call PropelPDO::commit() in that case
+        // and we don't want to call ConnectionInterface::commit() in that case
         // since it will trigger an exception on its own
         // ('Cannot commit because a nested transaction was rolled back')
         if ($this->con->isCommitable()) {

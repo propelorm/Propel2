@@ -12,7 +12,7 @@ namespace Propel\Runtime;
 
 use Propel\Runtime\Adapter\DBAdapter;
 use Propel\Runtime\Config\PropelConfiguration;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
@@ -420,10 +420,10 @@ class Propel
      * Sets a Connection for specified datasource name.
      *
      * @param      string $name The datasource name for the connection being set.
-     * @param      PropelPDO $con The PDO connection.
+     * @param      ConnectionInterface $con The PDO connection.
      * @param      string $mode Whether this is a READ or WRITE connection (Propel::CONNECTION_READ, Propel::CONNECTION_WRITE)
      */
-    public static function setConnection($name, PropelPDO $con, $mode = Propel::CONNECTION_WRITE)
+    public static function setConnection($name, ConnectionInterface $con, $mode = Propel::CONNECTION_WRITE)
     {
         if ($name === null) {
             $name = self::getDefaultDB();

@@ -165,7 +165,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     {
         $this->declareClassFromBuilder($this->getStubPeerBuilder());
         $this->declareClasses(
-            '\Propel\Runtime\Connection\PropelPDO',
+            '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Query\Criteria'
         );
         $this->addFactory($script);
@@ -220,7 +220,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     /**
      * Filters the query to target only " . $child->getClassname() . " objects.
      */
-    public function preSelect(PropelPDO \$con)
+    public function preSelect(ConnectionInterface \$con)
     {
         " . $this->getClassKeyCondition() . "
     }
@@ -236,7 +236,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     /**
      * Filters the query to target only " . $child->getClassname() . " objects.
      */
-    public function preUpdate(&\$values, PropelPDO \$con, \$forceIndividualSaves = false)
+    public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
     {
         " . $this->getClassKeyCondition() . "
     }
@@ -252,7 +252,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
     /**
      * Filters the query to target only " . $child->getClassname() . " objects.
      */
-    public function preDelete(PropelPDO \$con)
+    public function preDelete(ConnectionInterface \$con)
     {
         " . $this->getClassKeyCondition() . "
     }
@@ -277,7 +277,7 @@ class "  .$this->getClassname() . " extends " . $baseClassname . " {
      * Having the " . $child->getClassname() . " class.
      * This method is called by ModelCriteria::deleteAll() inside a transaction
      *
-     * @param PropelPDO \$con a connection object
+     * @param ConnectionInterface \$con a connection object
      *
      * @return integer the number of deleted rows
      */
