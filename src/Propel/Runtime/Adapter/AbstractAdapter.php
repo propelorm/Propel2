@@ -110,7 +110,7 @@ abstract class AbstractAdapter
      * @param     PDO    $con  A PDO connection instance.
      * @param     array  $settings  An array of settings.
      */
-    public function initConnection(PDO $con, array $settings)
+    public function initConnection($con, array $settings)
     {
         if (isset($settings['charset']['value'])) {
             $this->setCharset($con, $settings['charset']['value']);
@@ -135,7 +135,7 @@ abstract class AbstractAdapter
      * @param     PDO     $con  A $PDO PDO connection instance.
      * @param     string  $charset  The $string charset encoding.
      */
-    public function setCharset(PDO $con, $charset)
+    public function setCharset($con, $charset)
     {
         $con->exec("SET NAMES '" . $charset . "'");
     }
@@ -272,7 +272,7 @@ abstract class AbstractAdapter
      *
      * @return    mixed
      */
-    public function getId(PDO $con, $name = null)
+    public function getId($con, $name = null)
     {
         return $con->lastInsertId($name);
     }

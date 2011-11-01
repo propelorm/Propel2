@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 use \PDO;
 
 /**
- * PDO connection subclass that provides the basic fixes to PDO that are required by Propel.
+ * Connection wrapping around a PDO connection that provides the basic fixes to PDO that are required by Propel.
  *
  * This class was designed to work around the limitation in PDO where attempting to begin
  * a transaction when one has already been begun will trigger a PDOException.  Propel
@@ -36,7 +36,7 @@ use \PDO;
  * @since      2006-09-22
  * @package    propel.runtime.connection
  */
-class PropelPDO extends PDO implements ConnectionInterface
+class PropelPDO implements ConnectionInterface
 {
 
     /**
@@ -47,6 +47,12 @@ class PropelPDO extends PDO implements ConnectionInterface
     const DEFAULT_SLOW_THRESHOLD        = 0.1;
     const DEFAULT_ONLYSLOW_ENABLED      = false;
 
+    /**
+     * The underlying PDO instance
+     * @var PDO
+     */
+    protected $pdo;
+    
     /**
      * The current transaction depth.
      * @var       integer
@@ -146,7 +152,7 @@ class PropelPDO extends PDO implements ConnectionInterface
             $debug = $this->getDebugSnapshot();
         }
 
-        parent::__construct($dsn, $username, $password, $driver_options);
+        $this->pdo = new PDO($dsn, $username, $password, $driver_options);
 
         if ($this->useDebug) {
             $this->configureStatementClass('\Propel\Runtime\Connection\DebugPDOStatement', true);
@@ -208,6 +214,36 @@ class PropelPDO extends PDO implements ConnectionInterface
         return ($this->getNestedTransactionCount() > 0);
     }
 
+    public function inTransaction()
+    {
+        return $this->pdo->inTransaction();
+    }
+
+    public function errorCode()
+    {
+        return $this->pdo->errorCode();
+    }
+    
+    public function errorInfo()
+    {
+        return $this->pdo->errorInfo();
+    }
+    
+    public function quote($string, $parameter_type = 2)
+    {
+        return $this->pdo->quote($string, $parameter_type);
+    }
+    
+    static public function getAvailableDrivers()
+    {
+        return $this->pdo->getAvailableDrivers();
+    }
+    
+    public function lastInsertId($name = null)
+    {
+        return $this->pdo->lastInsertId($name);
+    }
+    
     /**
      * Check whether the connection contains a transaction that can be committed.
      * To be used in an evironment where Propelexceptions are caught.
@@ -228,7 +264,7 @@ class PropelPDO extends PDO implements ConnectionInterface
     {
         $return = true;
         if (!$this->nestedTransactionCount) {
-            $return = parent::beginTransaction();
+            $return = $this->pdo->beginTransaction();
             if ($this->useDebug) {
                 $this->log('Begin transaction', null, __METHOD__);
             }
@@ -255,7 +291,7 @@ class PropelPDO extends PDO implements ConnectionInterface
                 if ($this->isUncommitable) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
                 } else {
-                    $return = parent::commit();
+                    $return = $this->pdo->commit();
                     if ($this->useDebug) {
                         $this->log('Commit transaction', null, __METHOD__);
                     }
@@ -281,7 +317,7 @@ class PropelPDO extends PDO implements ConnectionInterface
 
         if ($opcount > 0) {
             if ($opcount === 1) {
-                $return = parent::rollBack();
+                $return = $this->pdo->rollBack();
                 if ($this->useDebug) {
                     $this->log('Rollback transaction', null, __METHOD__);
                 }
@@ -308,7 +344,7 @@ class PropelPDO extends PDO implements ConnectionInterface
         if ($this->nestedTransactionCount) {
             // If we're in a transaction, always roll it back
             // regardless of nesting level.
-            $return = parent::rollBack();
+            $return = $this->pdo->rollBack();
 
             // reset nested transaction count to 0 so that we don't
             // try to commit (or rollback) the transaction outside this scope.
@@ -332,12 +368,21 @@ class PropelPDO extends PDO implements ConnectionInterface
      */
     public function setAttribute($attribute, $value)
     {
+        if (is_string($attribute)) {
+            if (strpos($attribute, '::') === false) {
+                $attribute = '\PDO::' . $attribute;
+            }
+            if (!defined($attribute)) {
+                throw new PropelException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
+            }
+            $attribute = constant($attribute);
+        }
         switch($attribute) {
-        case self::PROPEL_ATTR_CACHE_PREPARES:
-            $this->cachePreparedStatements = $value;
-            break;
-        default:
-            parent::setAttribute($attribute, $value);
+            case self::PROPEL_ATTR_CACHE_PREPARES:
+                $this->cachePreparedStatements = $value;
+                break;
+            default:
+                $this->pdo->setAttribute($attribute, $value);
         }
     }
 
@@ -352,11 +397,11 @@ class PropelPDO extends PDO implements ConnectionInterface
     public function getAttribute($attribute)
     {
         switch($attribute) {
-        case self::PROPEL_ATTR_CACHE_PREPARES:
-            return $this->cachePreparedStatements;
-            break;
-        default:
-            return parent::getAttribute($attribute);
+            case self::PROPEL_ATTR_CACHE_PREPARES:
+                return $this->cachePreparedStatements;
+                break;
+            default:
+                return $this->pdo->getAttribute($attribute);
         }
     }
 
@@ -381,13 +426,13 @@ class PropelPDO extends PDO implements ConnectionInterface
 
         if ($this->cachePreparedStatements) {
             if (!isset($this->preparedStatements[$sql])) {
-                $return = parent::prepare($sql, $driver_options);
+                $return = $this->pdo->prepare($sql, $driver_options);
                 $this->preparedStatements[$sql] = $return;
             } else {
                 $return = $this->preparedStatements[$sql];
             }
         } else {
-            $return = parent::prepare($sql, $driver_options);
+            $return = $this->pdo->prepare($sql, $driver_options);
         }
 
         if ($this->useDebug) {
@@ -410,7 +455,7 @@ class PropelPDO extends PDO implements ConnectionInterface
             $debug = $this->getDebugSnapshot();
         }
 
-        $return = parent::exec($sql);
+        $return = $this->pdo->exec($sql);
 
         if ($this->useDebug) {
             $this->log($sql, null, __METHOD__, $debug);
@@ -438,7 +483,7 @@ class PropelPDO extends PDO implements ConnectionInterface
         }
 
         $args = func_get_args();
-        $return = call_user_func_array('parent::query', $args);
+        $return = call_user_func_array(array($this->pdo, 'query'), $args);
 
         if ($this->useDebug) {
             $sql = $args[0];
@@ -765,6 +810,11 @@ class PropelPDO extends PDO implements ConnectionInterface
         return number_format($bytes, $precision) . ' ' . $suffix[$i];
     }
 
+    public function close()
+    {
+        $this->pdo = null;
+    }
+    
     /**
      * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
      * Add PropelPDO::__destruct to $defaultLogMethods to see this message
@@ -776,5 +826,6 @@ class PropelPDO extends PDO implements ConnectionInterface
         if ($this->useDebug) {
             $this->log('Closing connection', null, __METHOD__, $this->getDebugSnapshot());
         }
+        $this->close();
     }
 }

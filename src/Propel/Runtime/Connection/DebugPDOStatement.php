@@ -26,11 +26,11 @@ use \PDOStatement;
 class DebugPDOStatement extends PDOStatement
 {
     /**
-     * The PDO connection from which this instance was created.
+     * The connection from which this instance was created.
      *
      * @var       ConnectionInterface
      */
-    protected $pdo;
+    protected $connection;
 
     /**
      * Hashmap for resolving the PDO::PARAM_* class constants to their human-readable names.
@@ -59,9 +59,9 @@ class DebugPDOStatement extends PDOStatement
      * @param     ConnectionInterface  $pdo  Reference to the parent PDO instance.
      * @return    DebugPDOStatement
      */
-    protected function __construct(ConnectionInterface $pdo)
+    protected function __construct(ConnectionInterface $connection)
     {
-        $this->pdo = $pdo;
+        $this->connection = $connection;
     }
 
     /**
@@ -91,13 +91,13 @@ class DebugPDOStatement extends PDOStatement
      */
     public function execute($input_parameters = null)
     {
-        $debug  = $this->pdo->getDebugSnapshot();
+        $debug  = $this->connection->getDebugSnapshot();
         $return = parent::execute($input_parameters);
 
         $sql = $this->getExecutedQueryString();
-        $this->pdo->log($sql, null, __METHOD__, $debug);
-        $this->pdo->setLastExecutedQuery($sql);
-        $this->pdo->incrementQueryCount();
+        $this->connection->log($sql, null, __METHOD__, $debug);
+        $this->connection->setLastExecutedQuery($sql);
+        $this->connection->incrementQueryCount();
 
         return $return;
     }
@@ -114,7 +114,7 @@ class DebugPDOStatement extends PDOStatement
      */
     public function bindValue($pos, $value, $type = PDO::PARAM_STR)
     {
-        $debug    = $this->pdo->getDebugSnapshot();
+        $debug    = $this->connection->getDebugSnapshot();
         $typestr  = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
         $return   = parent::bindValue($pos, $value, $type);
         $valuestr = $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
@@ -122,7 +122,7 @@ class DebugPDOStatement extends PDOStatement
 
         $this->boundValues[$pos] = $valuestr;
 
-        $this->pdo->log($msg, null, __METHOD__, $debug);
+        $this->connection->log($msg, null, __METHOD__, $debug);
 
         return $return;
     }
@@ -143,7 +143,7 @@ class DebugPDOStatement extends PDOStatement
      */
     public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
     {
-        $debug    = $this->pdo->getDebugSnapshot();
+        $debug    = $this->connection->getDebugSnapshot();
         $typestr  = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
         $return   = parent::bindParam($pos, $value, $type, $length, $driver_options);
         $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
@@ -151,7 +151,7 @@ class DebugPDOStatement extends PDOStatement
 
         $this->boundValues[$pos] = $valuestr;
 
-        $this->pdo->log($msg, null, __METHOD__, $debug);
+        $this->connection->log($msg, null, __METHOD__, $debug);
 
         return $return;
     }

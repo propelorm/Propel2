@@ -97,7 +97,7 @@ class MysqlAdapter extends AbstractAdapter
      *
      * @throws    PDOException  No Statement could be created or executed.
      */
-    public function lockTable(PDO $con, $table)
+    public function lockTable($con, $table)
     {
         $con->exec("LOCK TABLE " . $table . " WRITE");
     }
@@ -110,7 +110,7 @@ class MysqlAdapter extends AbstractAdapter
      *
      * @throws    PDOException  No Statement could be created or executed.
      */
-    public function unlockTable(PDO $con, $table)
+    public function unlockTable($con, $table)
     {
         $statement = $con->exec("UNLOCK TABLES");
     }
