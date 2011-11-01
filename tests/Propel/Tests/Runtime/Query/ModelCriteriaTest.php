@@ -30,7 +30,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\PropelCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Formatter\PropelStatementFormatter;
+use Propel\Runtime\Formatter\StatementFormatter;
 use Propel\Runtime\Util\BasePeer;
 use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\Query\Criteria;
@@ -73,7 +73,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setFormatter(ModelCriteria::FORMAT_STATEMENT);
-        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts the name of a AbstractFormatter class');
+        $this->assertTrue($c->getFormatter() instanceof StatementFormatter, 'setFormatter() accepts the name of a AbstractFormatter class');
 
         try {
             $c->setFormatter('Propel\Tests\Bookstore\Book');
@@ -82,9 +82,9 @@ class ModelCriteriaTest extends BookstoreTestBase
             $this->assertTrue(true, 'setFormatter() throws an exception when passed the name of a class not extending AbstractFormatter');
         }
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $formatter = new PropelStatementFormatter();
+        $formatter = new StatementFormatter();
         $c->setFormatter($formatter);
-        $this->assertTrue($c->getFormatter() instanceof PropelStatementFormatter, 'setFormatter() accepts a AbstractFormatter instance');
+        $this->assertTrue($c->getFormatter() instanceof StatementFormatter, 'setFormatter() accepts a AbstractFormatter instance');
 
         try {
             $formatter = new Book();

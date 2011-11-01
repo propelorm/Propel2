@@ -48,7 +48,7 @@ class ModelCriteria extends Criteria
     const MODEL_CLAUSE_LIKE     = "MODEL CLAUSE LIKE";
     const MODEL_CLAUSE_SEVERAL  = "MODEL CLAUSE SEVERAL";
 
-    const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\PropelStatementFormatter';
+    const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\StatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
     const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\ObjectFormatter';
     const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\OnDemandFormatter';
