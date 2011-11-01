@@ -55,7 +55,7 @@ abstract class AbstractAdapter
     private static $adapters = array(
         'mysql'  => '\Propel\Runtime\Adapter\MysqlAdapter',
         'mysqli' => '\Propel\Runtime\Adapter\DBMySQLi',
-        'mssql'  => '\Propel\Runtime\Adapter\DBMSSQL',
+        'mssql'  => '\Propel\Runtime\Adapter\MssqlAdapter',
         'sqlsrv' => '\Propel\Runtime\Adapter\DBSQLSRV',
         'oracle' => '\Propel\Runtime\Adapter\OracleAdapter',
         'oci'    => '\Propel\Runtime\Adapter\OracleAdapter',

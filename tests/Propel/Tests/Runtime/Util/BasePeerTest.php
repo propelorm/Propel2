@@ -138,7 +138,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitNoOffset()
     {
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof DBMSSQL))
+        if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped();
         }
@@ -164,7 +164,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffset()
     {
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof DBMSSQL))
+        if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped();
         }
@@ -188,7 +188,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffsetOrderByAggregate()
     {
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof DBMSSQL))
+        if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped();
         }
@@ -213,7 +213,7 @@ class BasePeerTest extends BookstoreTestBase
     public function testMssqlApplyLimitWithOffsetMultipleOrderBy()
     {
         $db = Propel::getDB(BookPeer::DATABASE_NAME);
-        if(! ($db instanceof DBMSSQL))
+        if(! ($db instanceof MssqlAdapter))
         {
             $this->markTestSkipped();
         }
