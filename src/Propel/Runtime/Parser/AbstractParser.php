@@ -94,7 +94,7 @@ abstract class AbstractParser
      */
     static public function getParser($type = 'XML')
     {
-        $class = sprintf('\Propel\Runtime\Parser\Propel%sParser', $type);
+        $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
         if (!class_exists($class)) {
             throw new PropelException(sprintf('Unknown parser class "%s"', $class));
         }
