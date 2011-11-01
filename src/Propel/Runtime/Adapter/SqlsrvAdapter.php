@@ -17,7 +17,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBSQLSRV extends MssqlAdapter
+class SqlsrvAdapter extends MssqlAdapter
 {
     /**
      * @see       parent::initConnection()

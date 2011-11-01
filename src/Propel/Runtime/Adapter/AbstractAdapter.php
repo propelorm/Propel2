@@ -56,7 +56,7 @@ abstract class AbstractAdapter
         'mysql'  => '\Propel\Runtime\Adapter\MysqlAdapter',
         'mysqli' => '\Propel\Runtime\Adapter\DBMySQLi',
         'mssql'  => '\Propel\Runtime\Adapter\MssqlAdapter',
-        'sqlsrv' => '\Propel\Runtime\Adapter\DBSQLSRV',
+        'sqlsrv' => '\Propel\Runtime\Adapter\SqlsrvAdapter',
         'oracle' => '\Propel\Runtime\Adapter\OracleAdapter',
         'oci'    => '\Propel\Runtime\Adapter\OracleAdapter',
         'pgsql'  => '\Propel\Runtime\Adapter\PgsqlAdapter',
