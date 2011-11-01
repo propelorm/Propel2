@@ -29,13 +29,13 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for PropelArrayFormatter when Criteria uses with().
+ * Test class for ArrayFormatter when Criteria uses with().
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelArrayFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: ArrayFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.formatter
  */
-class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
+class ArrayFormatterWithTest extends BookstoreEmptyTestBase
 {
     protected function assertCorrectHydration1($c, $msg)
     {
@@ -412,8 +412,8 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
         $book = $c->findOne($con);
         $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
-        $this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
-        $this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+        $this->assertEquals('Gunter', $book['AuthorName'], 'ArrayFormatter adds withColumns as columns');
+        $this->assertEquals('Grass', $book['AuthorName2'], 'ArrayFormatter correctly hydrates all as columns');
     }
 
     public function testFindOneWithClassAndColumn()
@@ -433,9 +433,9 @@ class PropelArrayFormatterWithTest extends BookstoreEmptyTestBase
         $book = $c->findOne($con);
         $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Author', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
-        $this->assertEquals('Gunter', $book['Author']['FirstName'], 'PropelArrayFormatter correctly hydrates withclass and columns');
-        $this->assertEquals('Gunter', $book['AuthorName'], 'PropelArrayFormatter adds withColumns as columns');
-        $this->assertEquals('Grass', $book['AuthorName2'], 'PropelArrayFormatter correctly hydrates all as columns');
+        $this->assertEquals('Gunter', $book['Author']['FirstName'], 'ArrayFormatter correctly hydrates withclass and columns');
+        $this->assertEquals('Gunter', $book['AuthorName'], 'ArrayFormatter adds withColumns as columns');
+        $this->assertEquals('Grass', $book['AuthorName2'], 'ArrayFormatter correctly hydrates all as columns');
     }
 
     public function testFindPkWithOneToMany()

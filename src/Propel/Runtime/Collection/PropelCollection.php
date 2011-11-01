@@ -526,10 +526,10 @@ class PropelCollection extends ArrayObject implements Serializable
      * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param     boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
      *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
-     *                                            Not supported by PropelArrayCollection, as PropelArrayFormatter has
+     *                                            Not supported by PropelArrayCollection, as ArrayFormatter has
      *                                            already created the array used here with integers as keys.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
-     *                                            Not supported by PropelArrayCollection, as PropelArrayFormatter has
+     *                                            Not supported by PropelArrayCollection, as ArrayFormatter has
      *                                            already included lazy-load columns in the array used here.
      * @return    string                          The exported data
      */

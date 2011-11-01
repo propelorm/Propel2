@@ -49,7 +49,7 @@ class ModelCriteria extends Criteria
     const MODEL_CLAUSE_SEVERAL  = "MODEL CLAUSE SEVERAL";
 
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\PropelStatementFormatter';
-    const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\PropelArrayFormatter';
+    const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
     const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\PropelObjectFormatter';
     const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\PropelOnDemandFormatter';
 
