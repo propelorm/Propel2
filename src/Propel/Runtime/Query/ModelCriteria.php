@@ -14,7 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Formatter\PropelObjectFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Util\BasePeer;
@@ -50,7 +50,7 @@ class ModelCriteria extends Criteria
 
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\PropelStatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
-    const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\PropelObjectFormatter';
+    const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\ObjectFormatter';
     const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\PropelOnDemandFormatter';
 
     protected $modelName;

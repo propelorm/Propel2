@@ -299,9 +299,9 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
         }
         $this->assertTrue($book instanceof Book, 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book->getTitle());
-        $this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'PropelObjectFormatter adds withColumns as virtual columns');
-        $this->assertEquals('Grass', $book->getVirtualColumn('AuthorName2'), 'PropelObjectFormatter correctly hydrates all virtual columns');
-        $this->assertEquals('Gunter', $book->getAuthorName(), 'PropelObjectFormatter adds withColumns as virtual columns');
+        $this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'ObjectFormatter adds withColumns as virtual columns');
+        $this->assertEquals('Grass', $book->getVirtualColumn('AuthorName2'), 'ObjectFormatter correctly hydrates all virtual columns');
+        $this->assertEquals('Gunter', $book->getAuthorName(), 'ObjectFormatter adds withColumns as virtual columns');
     }
 
     public function testFindOneWithClassAndColumn()
@@ -325,9 +325,9 @@ class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
         }
         $this->assertTrue($book instanceof Book, 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book->getTitle());
-        $this->assertTrue($book->getAuthor() instanceof Author, 'PropelObjectFormatter correctly hydrates with class');
-        $this->assertEquals('Gunter', $book->getAuthor()->getFirstName(), 'PropelObjectFormatter correctly hydrates with class');
-        $this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'PropelObjectFormatter adds withColumns as virtual columns');
-        $this->assertEquals('Grass', $book->getVirtualColumn('AuthorName2'), 'PropelObjectFormatter correctly hydrates all virtual columns');
+        $this->assertTrue($book->getAuthor() instanceof Author, 'ObjectFormatter correctly hydrates with class');
+        $this->assertEquals('Gunter', $book->getAuthor()->getFirstName(), 'ObjectFormatter correctly hydrates with class');
+        $this->assertEquals('Gunter', $book->getVirtualColumn('AuthorName'), 'ObjectFormatter adds withColumns as virtual columns');
+        $this->assertEquals('Grass', $book->getVirtualColumn('AuthorName2'), 'ObjectFormatter correctly hydrates all virtual columns');
     }
 }

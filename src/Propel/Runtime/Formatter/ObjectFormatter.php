@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelObjectFormatter extends AbstractFormatter
+class ObjectFormatter extends AbstractFormatter
 {
     protected $collectionName = '\Propel\Runtime\Collection\PropelObjectCollection';
 

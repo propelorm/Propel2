@@ -26,7 +26,7 @@ use \PDOStatement;
 class PropelOnDemandIterator implements \Iterator
 {
     /**
-     * @var       PropelObjectFormatter
+     * @var       ObjectFormatter
      */
     protected $formatter;
 
@@ -74,7 +74,7 @@ class PropelOnDemandIterator implements \Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
-     * @see       PropelObjectFormatter::getAllObjectsFromRow()
+     * @see       ObjectFormatter::getAllObjectsFromRow()
      *
      * @return    BaseObject
      */

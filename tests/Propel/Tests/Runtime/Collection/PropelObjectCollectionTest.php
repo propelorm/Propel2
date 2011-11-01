@@ -20,7 +20,7 @@ use Propel\Tests\Bookstore\ContestView;
 
 use Propel\Runtime\Collection\PropelObjectCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelObjectFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
@@ -149,7 +149,7 @@ class PropelObjectCollectionTest extends BookstoreTestBase
         AuthorPeer::clearInstancePool();
         BookPeer::clearInstancePool();
         $coll = new PropelObjectCollection();
-        $coll->setFormatter(new PropelObjectFormatter(new ModelCriteria(null, 'Propel\Tests\Bookstore\Author')));
+        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, 'Propel\Tests\Bookstore\Author')));
         $coll []= $author;
         $books = $coll->populateRelation('Book', null, $this->con);
         $this->assertEquals(0, $books->count());

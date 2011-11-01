@@ -20,17 +20,17 @@ use Propel\Tests\Bookstore\BookstoreCashier;
 use Propel\Tests\Bookstore\BookstoreManager;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Formatter\PropelObjectFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for PropelObjectFormatter.
+ * Test class for ObjectFormatter.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelObjectFormatterTest.php 1374 2009-12-26 23:21:37Z francois $
+ * @version    $Id: ObjectFormatterTest.php 1374 2009-12-26 23:21:37Z francois $
  * @package    runtime.formatter
  */
-class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
+class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -52,7 +52,7 @@ class PropelObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
         BookstoreEmployeePeer::clearInstancePool();
 
         $stmt = $con->query('SELECT * FROM bookstore_employee');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee'));
         $emps = $formatter->format($stmt);
         $expectedClass = array(

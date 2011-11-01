@@ -20,17 +20,17 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Collection\PropelCollection;
 use Propel\Runtime\Collection\PropelObjectCollection;
-use Propel\Runtime\Formatter\PropelObjectFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for PropelObjectFormatter.
+ * Test class for ObjectFormatter.
  *
  * @author     Francois Zaninotto
  * @version    $Id$
  * @package    runtime.formatter
  */
-class PropelObjectFormatterTest extends BookstoreEmptyTestBase
+class ObjectFormatterTest extends BookstoreEmptyTestBase
 {
     protected function setUp()
     {
@@ -43,19 +43,19 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         try {
             $books = $formatter->format($stmt);
-            $this->fail('PropelObjectFormatter::format() trows an exception when called with no valid criteria');
+            $this->fail('ObjectFormatter::format() trows an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'PropelObjectFormatter::format() trows an exception when called with no valid criteria');
+            $this->assertTrue(true,'ObjectFormatter::format() trows an exception when called with no valid criteria');
         }
     }
 
     public function testFormatValidClass()
     {
         $stmt = $this->con->query('SELECT * FROM book');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->setClass('\Propel\Tests\Bookstore\Book');
         $books = $formatter->format($stmt);
         $this->assertTrue($books instanceof PropelObjectCollection);
@@ -67,14 +67,14 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
-        $this->assertEquals(4, count($books), 'PropelObjectFormatter::format() returns as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelCollection, 'ObjectFormatter::format() returns a PropelCollection');
+        $this->assertEquals(4, count($books), 'ObjectFormatter::format() returns as many rows as the results in the query');
         foreach ($books as $book) {
-            $this->assertTrue($book instanceof Book, 'PropelObjectFormatter::format() returns an array of Model objects');
+            $this->assertTrue($book instanceof Book, 'ObjectFormatter::format() returns an array of Model objects');
         }
     }
 
@@ -83,15 +83,15 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
-        $this->assertEquals(1, count($books), 'PropelObjectFormatter::format() returns as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelCollection, 'ObjectFormatter::format() returns a PropelCollection');
+        $this->assertEquals(1, count($books), 'ObjectFormatter::format() returns as many rows as the results in the query');
         $book = $books->shift();
-        $this->assertTrue($book instanceof Book, 'PropelObjectFormatter::format() returns an array of Model objects');
-        $this->assertEquals('Quicksilver', $book->getTitle(), 'PropelObjectFormatter::format() returns the model objects matching the query');
+        $this->assertTrue($book instanceof Book, 'ObjectFormatter::format() returns an array of Model objects');
+        $this->assertEquals('Quicksilver', $book->getTitle(), 'ObjectFormatter::format() returns the model objects matching the query');
     }
 
     public function testFormatNoResult()
@@ -99,12 +99,12 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelCollection, 'PropelObjectFormatter::format() returns a PropelCollection');
-        $this->assertEquals(0, count($books), 'PropelObjectFormatter::format() returns as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelCollection, 'ObjectFormatter::format() returns a PropelCollection');
+        $this->assertEquals(0, count($books), 'ObjectFormatter::format() returns as many rows as the results in the query');
     }
 
     public function testFormatOneNoCriteria()
@@ -112,12 +112,12 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         try {
             $book = $formatter->formatOne($stmt);
-            $this->fail('PropelObjectFormatter::formatOne() throws an exception when called with no valid criteria');
+            $this->fail('ObjectFormatter::formatOne() throws an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'PropelObjectFormatter::formatOne() throws an exception when called with no valid criteria');
+            $this->assertTrue(true,'ObjectFormatter::formatOne() throws an exception when called with no valid criteria');
         }
     }
 
@@ -126,11 +126,11 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($stmt);
 
-        $this->assertTrue($book instanceof Book, 'PropelObjectFormatter::formatOne() returns a model object');
+        $this->assertTrue($book instanceof Book, 'ObjectFormatter::formatOne() returns a model object');
     }
 
     public function testFormatOneNoResult()
@@ -138,11 +138,11 @@ class PropelObjectFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
-        $formatter = new PropelObjectFormatter();
+        $formatter = new ObjectFormatter();
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($stmt);
 
-        $this->assertNull($book, 'PropelObjectFormatter::formatOne() returns null when no result');
+        $this->assertNull($book, 'ObjectFormatter::formatOne() returns null when no result');
     }
 
 }

@@ -19,13 +19,13 @@ use \PDOStatement;
 /**
  * Object formatter for Propel query
  * format() returns a PropelOnDemandCollection that hydrates objects as the use iterates on the collection
- * This formatter consumes less memory than the PropelObjectFormatter, but doesn't use Instance Pool
+ * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
  * @author     Francois Zaninotto
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelOnDemandFormatter extends PropelObjectFormatter
+class PropelOnDemandFormatter extends ObjectFormatter
 {
     protected $collectionName = '\Propel\Runtime\Collection\PropelOnDemandCollection';
     protected $isSingleTableInheritance = false;
