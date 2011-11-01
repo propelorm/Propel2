@@ -18,7 +18,7 @@ namespace Propel\Runtime\Parser;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelCSVParser extends AbstractParser
+class CsvParser extends AbstractParser
 {
     const QUOTE_NONE = 0;
     const QUOTE_ALL = 1;
@@ -159,7 +159,7 @@ class PropelCSVParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelCSVParser::fromArray()
+     * Alias for CsvParser::fromArray()
      *
      * @param  array   $array Source data to convert
      * @param  boolean $isList Whether the input data contains more than one row
@@ -292,7 +292,7 @@ class PropelCSVParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelCSVParser::toArray()
+     * Alias for CsvParser::toArray()
      *
      * @param  string  $data Source data to convert, as a CSV string
      * @param  boolean $isList Whether the input data contains more than one row

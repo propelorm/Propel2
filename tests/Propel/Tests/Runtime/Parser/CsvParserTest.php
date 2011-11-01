@@ -11,15 +11,15 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Parser\PropelCSVParser;
+use Propel\Runtime\Parser\CsvParser;
 
 /**
- * Test for PropelCSVParser class
+ * Test for CsvParser class
  *
  * @author     Francois Zaninotto
  * @package    runtime.parser
  */
-class PropelCSVParserTest extends \PHPUnit_Framework_TestCase
+class CsvParserTest extends \PHPUnit_Framework_TestCase
 {
     public static function arrayCsvConversionDataProvider()
     {
@@ -39,8 +39,8 @@ class PropelCSVParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromArray($arrayData, $csvData, $type)
     {
-        $parser = new PropelCSVParser();
-        $this->assertEquals($csvData, $parser->fromArray($arrayData), 'PropelCSVParser::fromArray() converts from ' . $type . ' correctly');
+        $parser = new CsvParser();
+        $this->assertEquals($csvData, $parser->fromArray($arrayData), 'CsvParser::fromArray() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -48,8 +48,8 @@ class PropelCSVParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToCSV($arrayData, $csvData, $type)
     {
-        $parser = new PropelCSVParser();
-        $this->assertEquals($csvData, $parser->toCSV($arrayData), 'PropelCSVParser::toCSV() converts from ' . $type . ' correctly');
+        $parser = new CsvParser();
+        $this->assertEquals($csvData, $parser->toCSV($arrayData), 'CsvParser::toCSV() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -57,8 +57,8 @@ class PropelCSVParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToArray($arrayData, $csvData, $type)
     {
-        $parser = new PropelCSVParser();
-        $this->assertEquals($arrayData, $parser->toArray($csvData), 'PropelCSVParser::toArray() converts to ' . $type . ' correctly');
+        $parser = new CsvParser();
+        $this->assertEquals($arrayData, $parser->toArray($csvData), 'CsvParser::toArray() converts to ' . $type . ' correctly');
     }
 
     /**
@@ -66,8 +66,8 @@ class PropelCSVParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromCSV($arrayData, $csvData, $type)
     {
-        $parser = new PropelCSVParser();
-        $this->assertEquals($arrayData, $parser->fromCSV($csvData), 'PropelCSVParser::fromCSV() converts to ' . $type . ' correctly');
+        $parser = new CsvParser();
+        $this->assertEquals($arrayData, $parser->fromCSV($csvData), 'CsvParser::fromCSV() converts to ' . $type . ' correctly');
     }
 
     public static function listToCSVDataProvider()
@@ -96,7 +96,7 @@ EOF;
      */
     public function testListToCSV($list, $heading, $csv)
     {
-        $parser = new PropelCSVParser();
+        $parser = new CsvParser();
         $parser->lineTerminator = "
 ";
         $this->assertEquals($csv, $parser->toCSV($list, true, false));
@@ -108,7 +108,7 @@ EOF;
      */
     public function testCSVToList($list, $heading, $csv)
     {
-        $parser = new PropelCSVParser();
+        $parser = new CsvParser();
         $parser->lineTerminator = "
 ";
         $this->assertEquals($list, $parser->fromCSV($heading . $csv, true, true));
