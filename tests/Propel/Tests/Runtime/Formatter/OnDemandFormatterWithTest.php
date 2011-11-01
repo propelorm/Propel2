@@ -28,13 +28,13 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for PropelOnDemandFormatter when Criteria uses with().
+ * Test class for OnDemandFormatter when Criteria uses with().
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelOnDemandFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
+ * @version    $Id: OnDemandFormatterWithTest.php 1348 2009-12-03 21:49:00Z francois $
  * @package    runtime.formatter
  */
-class PropelOnDemandFormatterWithTest extends BookstoreEmptyTestBase
+class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
 {
     protected function assertCorrectHydration1($c, $msg)
     {

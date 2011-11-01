@@ -20,17 +20,17 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\PropelCollection;
 use Propel\Runtime\Collection\PropelOnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Formatter\PropelOnDemandFormatter;
+use Propel\Runtime\Formatter\OnDemandFormatter;
 use Propel\Runtime\Query\ModelCriteria;
 
 /**
- * Test class for PropelOnDemandFormatter.
+ * Test class for OnDemandFormatter.
  *
  * @author     Francois Zaninotto
- * @version    $Id: PropelOnDemandFormatterTest.php 1374 2009-12-26 23:21:37Z francois $
+ * @version    $Id: OnDemandFormatterTest.php 1374 2009-12-26 23:21:37Z francois $
  * @package    runtime.formatter
  */
-class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
+class OnDemandFormatterTest extends BookstoreEmptyTestBase
 {
 
     public function testFormatNoCriteria()
@@ -38,12 +38,12 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         try {
             $books = $formatter->format($stmt);
-            $this->fail('PropelOnDemandFormatter::format() trows an exception when called with no valid criteria');
+            $this->fail('OnDemandFormatter::format() trows an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'PropelOnDemandFormatter::format() trows an exception when called with no valid criteria');
+            $this->assertTrue(true,'OnDemandFormatter::format() trows an exception when called with no valid criteria');
         }
     }
 
@@ -53,14 +53,14 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
-        $this->assertEquals(4, count($books), 'PropelOnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelOnDemandCollection, 'OnDemandFormatter::format() returns a PropelOnDemandCollection');
+        $this->assertEquals(4, count($books), 'OnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
         foreach ($books as $book) {
-            $this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::format() returns an traversable collection of Model objects');
+            $this->assertTrue($book instanceof Book, 'OnDemandFormatter::format() returns an traversable collection of Model objects');
         }
     }
 
@@ -73,7 +73,7 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
@@ -98,16 +98,16 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         }
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
-        $this->assertEquals($nbBooks, count($books), 'PropelOnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelOnDemandCollection, 'OnDemandFormatter::format() returns a PropelOnDemandCollection');
+        $this->assertEquals($nbBooks, count($books), 'OnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
         $i = 0;
         foreach ($books as $book) {
-            $this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::format() returns a collection of Model objects');
-            $this->assertEquals('BookTest' . $i, $book->getTitle(), 'PropelOnDemandFormatter::format() returns the model objects matching the query');
+            $this->assertTrue($book instanceof Book, 'OnDemandFormatter::format() returns a collection of Model objects');
+            $this->assertEquals('BookTest' . $i, $book->getTitle(), 'OnDemandFormatter::format() returns the model objects matching the query');
             $i++;
         }
         Propel::enableInstancePooling();
@@ -120,15 +120,15 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "Quicksilver"');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelOnDemandCollection');
-        $this->assertEquals(1, count($books), 'PropelOnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
+        $this->assertTrue($books instanceof PropelOnDemandCollection, 'OnDemandFormatter::format() returns a PropelOnDemandCollection');
+        $this->assertEquals(1, count($books), 'OnDemandFormatter::format() returns a collection that counts as many rows as the results in the query');
         foreach ($books as $book) {
-            $this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::format() returns a collection of Model objects');
-            $this->assertEquals('Quicksilver', $book->getTitle(), 'PropelOnDemandFormatter::format() returns the model objects matching the query');
+            $this->assertTrue($book instanceof Book, 'OnDemandFormatter::format() returns a collection of Model objects');
+            $this->assertEquals('Quicksilver', $book->getTitle(), 'OnDemandFormatter::format() returns the model objects matching the query');
         }
     }
 
@@ -137,14 +137,14 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
 
         $stmt = $con->query('SELECT * FROM book WHERE book.TITLE = "foo"');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $books = $formatter->format($stmt);
 
-        $this->assertTrue($books instanceof PropelOnDemandCollection, 'PropelOnDemandFormatter::format() returns a PropelCollection');
-        $this->assertEquals(0, count($books), 'PropelOnDemandFormatter::format() returns an empty collection when no record match the query');
+        $this->assertTrue($books instanceof PropelOnDemandCollection, 'OnDemandFormatter::format() returns a PropelCollection');
+        $this->assertEquals(0, count($books), 'OnDemandFormatter::format() returns an empty collection when no record match the query');
         foreach ($books as $book) {
-            $this->fail('PropelOnDemandFormatter returns an empty iterator when no record match the query');
+            $this->fail('OnDemandFormatter returns an empty iterator when no record match the query');
         }
     }
 
@@ -154,11 +154,11 @@ class PropelOnDemandFormatterTest extends BookstoreEmptyTestBase
         BookstoreDataPopulator::populate($con);
 
         $stmt = $con->query('SELECT * FROM book');
-        $formatter = new PropelOnDemandFormatter();
+        $formatter = new OnDemandFormatter();
         $formatter->init(new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book'));
         $book = $formatter->formatOne($stmt);
 
-        $this->assertTrue($book instanceof Book, 'PropelOnDemandFormatter::formatOne() returns a model object');
+        $this->assertTrue($book instanceof Book, 'OnDemandFormatter::formatOne() returns a model object');
     }
 
 }

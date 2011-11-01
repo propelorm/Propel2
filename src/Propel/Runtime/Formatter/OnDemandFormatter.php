@@ -25,7 +25,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelOnDemandFormatter extends ObjectFormatter
+class OnDemandFormatter extends ObjectFormatter
 {
     protected $collectionName = '\Propel\Runtime\Collection\PropelOnDemandCollection';
     protected $isSingleTableInheritance = false;
@@ -42,7 +42,7 @@ class PropelOnDemandFormatter extends ObjectFormatter
     {
         $this->checkInit();
         if ($this->isWithOneToMany()) {
-            throw new PropelException('PropelOnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
+            throw new PropelException('OnDemandFormatter cannot hydrate related objects using a one-to-many relationship. Try removing with() from your query.');
         }
         $class = $this->collectionName;
         $collection = new $class();

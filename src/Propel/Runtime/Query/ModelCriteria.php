@@ -51,7 +51,7 @@ class ModelCriteria extends Criteria
     const FORMAT_STATEMENT  = '\Propel\Runtime\Formatter\PropelStatementFormatter';
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
     const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\ObjectFormatter';
-    const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\PropelOnDemandFormatter';
+    const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\OnDemandFormatter';
 
     protected $modelName;
     protected $modelPeerName;
