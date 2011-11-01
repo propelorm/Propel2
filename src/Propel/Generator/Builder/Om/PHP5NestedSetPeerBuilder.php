@@ -260,10 +260,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Returns the root node for a given scope id
      *
      * @param      int \$scopeId        Scope id to determine which root node to return
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     $objectClassname            Propel object for root node
      */
-    public static function retrieveRoot(\$scopeId = null, PropelPDO \$con = null)
+    public static function retrieveRoot(\$scopeId = null, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
 
@@ -288,10 +288,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$child    Propel object for child node
      * @param      $objectClassname \$parent    Propel object for parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertAsFirstChildOf(NodeObject \$child, NodeObject \$parent, PropelPDO \$con = null)
+    public static function insertAsFirstChildOf(NodeObject \$child, NodeObject \$parent, ConnectionInterface \$con = null)
     {
         // Update \$child node properties
         \$child->setLeftValue(\$parent->getLeftValue() + 1);
@@ -322,10 +322,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$child        Propel object for child node
      * @param      $objectClassname \$parent    Propel object for parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertAsLastChildOf(NodeObject \$child, NodeObject \$parent, PropelPDO \$con = null)
+    public static function insertAsLastChildOf(NodeObject \$child, NodeObject \$parent, ConnectionInterface \$con = null)
     {
         // Update \$child node properties
         \$child->setLeftValue(\$parent->getRightValue());
@@ -356,10 +356,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$node        Propel object for destination node
      * @param      $objectClassname \$sibling    Propel object for source node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertAsPrevSiblingOf(NodeObject \$node, NodeObject \$sibling, PropelPDO \$con = null)
+    public static function insertAsPrevSiblingOf(NodeObject \$node, NodeObject \$sibling, ConnectionInterface \$con = null)
     {
         if (\$sibling->isRoot()) {
             throw new PropelException('Root nodes cannot have siblings');
@@ -393,10 +393,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$node        Propel object for destination node
      * @param      $objectClassname \$sibling    Propel object for source node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertAsNextSiblingOf(NodeObject \$node, NodeObject \$sibling, PropelPDO \$con = null)
+    public static function insertAsNextSiblingOf(NodeObject \$node, NodeObject \$sibling, ConnectionInterface \$con = null)
     {
         if (\$sibling->isRoot()) {
             throw new PropelException('Root nodes cannot have siblings');
@@ -430,10 +430,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$parent    Propel object for given parent node
      * @param      $objectClassname \$node    Propel object for given destination node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertAsParentOf(NodeObject \$parent, NodeObject \$node, PropelPDO \$con = null)
+    public static function insertAsParentOf(NodeObject \$parent, NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$sidv = null;
         if (self::SCOPE_COL) {
@@ -471,10 +471,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Inserts \$node as root node
      *
      * @param      $objectClassname \$node    Propel object as root node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertRoot(NodeObject \$node, PropelPDO \$con = null)
+    public static function insertRoot(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$sidv = null;
         if (self::SCOPE_COL) {
@@ -498,10 +498,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * @see        insertAsParentOf()
      * @param      $objectClassname \$child    Propel object to become child node
      * @param      $objectClassname \$parent    Propel object as parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function insertParent(NodeObject \$child, NodeObject \$parent, PropelPDO \$con = null)
+    public static function insertParent(NodeObject \$child, NodeObject \$parent, ConnectionInterface \$con = null)
     {
         self::insertAsParentOf(\$parent, \$child, \$con);
     }
@@ -515,10 +515,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
     /**
      * Delete root node
      *
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     boolean        Deletion status
      */
-    public static function deleteRoot(\$scopeId = null, PropelPDO \$con = null)
+    public static function deleteRoot(\$scopeId = null, ConnectionInterface \$con = null)
     {
         if (!self::SCOPE_COL) {
             \$scopeId = null;
@@ -542,10 +542,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Delete \$dest node
      *
      * @param      $objectClassname \$dest    Propel object node to delete
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     boolean        Deletion status
      */
-    public static function deleteNode(NodeObject \$dest, PropelPDO \$con = null)
+    public static function deleteNode(NodeObject \$dest, ConnectionInterface \$con = null)
     {
         if (\$dest->getLeftValue() == 1) {
             // deleting root implies conditions (see deleteRoot() method)
@@ -575,10 +575,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$parent    Propel object for parent node
      * @param      $objectClassname \$child        Propel object for child node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function moveToFirstChildOf(NodeObject \$parent, NodeObject \$child, PropelPDO \$con = null)
+    public static function moveToFirstChildOf(NodeObject \$parent, NodeObject \$child, ConnectionInterface \$con = null)
     {
         if (\$parent->getScopeIdValue() != \$child->getScopeIdValue()) {
             throw new PropelException('Moving nodes across trees is not supported');
@@ -602,10 +602,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$parent    Propel object for parent node
      * @param      $objectClassname \$child        Propel object for child node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function moveToLastChildOf(NodeObject \$parent, NodeObject \$child, PropelPDO \$con = null)
+    public static function moveToLastChildOf(NodeObject \$parent, NodeObject \$child, ConnectionInterface \$con = null)
     {
         if (\$parent->getScopeIdValue() != \$child->getScopeIdValue()) {
             throw new PropelException('Moving nodes across trees is not supported');
@@ -629,10 +629,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$dest    Propel object for destination node
      * @param      $objectClassname \$node    Propel object for source node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function moveToPrevSiblingOf(NodeObject \$dest, NodeObject \$node, PropelPDO \$con = null)
+    public static function moveToPrevSiblingOf(NodeObject \$dest, NodeObject \$node, ConnectionInterface \$con = null)
     {
         if (\$dest->getScopeIdValue() != \$node->getScopeIdValue()) {
             throw new PropelException('Moving nodes across trees is not supported');
@@ -656,10 +656,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$dest    Propel object for destination node
      * @param      $objectClassname \$node    Propel object for source node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     void
      */
-    public static function moveToNextSiblingOf(NodeObject \$dest, NodeObject \$node, PropelPDO \$con = null)
+    public static function moveToNextSiblingOf(NodeObject \$dest, NodeObject \$node, ConnectionInterface \$con = null)
     {
         if (\$dest->getScopeIdValue() != \$node->getScopeIdValue()) {
             throw new PropelException('Moving nodes across trees is not supported');
@@ -683,10 +683,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets first child for the given node if it exists
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveFirstChild(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveFirstChild(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->add(self::LEFT_COL, \$node->getLeftValue() + 1, Criteria::EQUAL);
@@ -708,10 +708,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets last child for the given node if it exists
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveLastChild(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveLastChild(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->add(self::RIGHT_COL, \$node->getRightValue() - 1, Criteria::EQUAL);
@@ -733,10 +733,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets prev sibling for the given node if it exists
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     mixed         Propel object if exists else null
      */
-    public static function retrievePrevSibling(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrievePrevSibling(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->add(self::RIGHT_COL, \$node->getLeftValue() - 1, Criteria::EQUAL);
@@ -760,10 +760,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets next sibling for the given node if it exists
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     mixed         Propel object if exists else false
      */
-    public static function retrieveNextSibling(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveNextSibling(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->add(self::LEFT_COL, \$node->getRightValue() + 1, Criteria::EQUAL);
@@ -785,9 +785,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
     /**
      * Retrieves the entire tree from root
      *
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      */
-    public static function retrieveTree(\$scopeId = null, PropelPDO \$con = null)
+    public static function retrieveTree(\$scopeId = null, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -828,9 +828,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Retrieves the entire tree from parent \$node
      *
      * @param      $objectClassname \$node    Propel object for parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      */
-    public static function retrieveBranch(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveBranch(NodeObject \$node, ConnectionInterface \$con = null)
     {
         return $peerClassname::retrieveDescendants(\$node, \$con);
     }
@@ -846,9 +846,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets direct children for the node
      *
      * @param      $objectClassname \$node    Propel object for parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      */
-    public static function retrieveChildren(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveChildren(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -873,9 +873,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets all descendants for the node
      *
      * @param      $objectClassname \$node    Propel object for parent node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      */
-    public static function retrieveDescendants(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveDescendants(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c->addAscendingOrderByColumn(self::LEFT_COL);
@@ -900,9 +900,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets all siblings for the node
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      */
-    public static function retrieveSiblings(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveSiblings(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$parent = $peerClassname::retrieveParent(\$node, \$con);
         \$siblings = $peerClassname::retrieveChildren(\$parent, \$con);
@@ -921,10 +921,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets immediate ancestor for the given node if it exists
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     mixed         Propel object if exists else null
      */
-    public static function retrieveParent(NodeObject \$node, PropelPDO \$con = null)
+    public static function retrieveParent(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$c = new Criteria($peerClassname::DATABASE_NAME);
         \$c1 = \$c->getNewCriterion(self::LEFT_COL, \$node->getLeftValue(), Criteria::LESS_THAN);
@@ -956,10 +956,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets level for the given node
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getLevel(NodeObject \$node, PropelPDO \$con = null)
+    public static function getLevel(NodeObject \$node, ConnectionInterface \$con = null)
     {
         if (\$con === null) {
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -994,10 +994,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets number of direct children for given node
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getNumberOfChildren(NodeObject \$node, PropelPDO \$con = null)
+    public static function getNumberOfChildren(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$children = $peerClassname::retrieveChildren(\$node);
 
@@ -1015,10 +1015,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Gets number of descendants for given node
      *
      * @param      $objectClassname \$node    Propel object for src node
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     int            Level for the given node
      */
-    public static function getNumberOfDescendants(NodeObject \$node, PropelPDO \$con = null)
+    public static function getNumberOfDescendants(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$right = \$node->getRightValue();
         \$left = \$node->getLeftValue();
@@ -1038,10 +1038,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Returns path to a specific node as an array, useful to create breadcrumbs
      *
      * @param      $objectClassname \$node    Propel object of node to create path to
-     * @param      PropelPDO \$con    Connection to use.
+     * @param      ConnectionInterface \$con    Connection to use.
      * @return     array            Array in order of heirarchy
      */
-    public static function getPath(NodeObject \$node, PropelPDO \$con = null)
+    public static function getPath(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$criteria = new Criteria();
         if (self::SCOPE_COL) {
@@ -1186,10 +1186,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Tests if \$node has an ancestor
      *
      * @param      $objectClassname \$node        Propel object for node
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      * @return     bool
      */
-    public static function hasParent(NodeObject \$node, PropelPDO \$con = null)
+    public static function hasParent(NodeObject \$node, ConnectionInterface \$con = null)
     {
         return $peerClassname::isValid($peerClassname::retrieveParent(\$node, \$con));
     }
@@ -1205,10 +1205,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Tests if \$node has prev sibling
      *
      * @param      $objectClassname \$node        Propel object for node
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      * @return     bool
      */
-    public static function hasPrevSibling(NodeObject \$node, PropelPDO \$con = null)
+    public static function hasPrevSibling(NodeObject \$node, ConnectionInterface \$con = null)
     {
         return $peerClassname::isValid($peerClassname::retrievePrevSibling(\$node, \$con));
     }
@@ -1224,10 +1224,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Tests if \$node has next sibling
      *
      * @param      $objectClassname \$node        Propel object for node
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      * @return     bool
      */
-    public static function hasNextSibling(NodeObject \$node, PropelPDO \$con = null)
+    public static function hasNextSibling(NodeObject \$node, ConnectionInterface \$con = null)
     {
         return $peerClassname::isValid($peerClassname::retrieveNextSibling(\$node, \$con));
     }
@@ -1261,9 +1261,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Deletes \$node and all of its descendants
      *
      * @param      $objectClassname \$node        Propel object for source node
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      */
-    public static function deleteDescendants(NodeObject \$node, PropelPDO \$con = null)
+    public static function deleteDescendants(NodeObject \$node, ConnectionInterface \$con = null)
     {
         \$left = \$node->getLeftValue();
         \$right = \$node->getRightValue();
@@ -1298,10 +1298,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * Returns a node given its primary key or the node itself
      *
      * @param      int/$objectClassname \$node    Primary key/instance of required node
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      * @return     object        Propel object for model
      */
-    public static function getNode(\$node, PropelPDO \$con = null)
+    public static function getNode(\$node, ConnectionInterface \$con = null)
     {
         if (is_object(\$node)) {
             return \$node;
@@ -1468,9 +1468,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * @deprecated 1.3 - 2008/03/11
      * @param      $objectClassname \$node    Propel object for parent node
      * @param      int \$delta    Value to be shifted by, can be negative
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      */
-    protected static function shiftRParent(NodeObject \$node, \$delta, PropelPDO \$con = null)
+    protected static function shiftRParent(NodeObject \$node, \$delta, ConnectionInterface \$con = null)
     {
         if (\$node->hasParent(\$con)) {
             \$parent = \$node->retrieveParent();
@@ -1493,9 +1493,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$node    Propel object for parent node
      * @param      int \$delta    Value to be shifted by, can be negative
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      */
-    protected static function updateLoadedNode(NodeObject \$node, \$delta, PropelPDO \$con = null)
+    protected static function updateLoadedNode(NodeObject \$node, \$delta, ConnectionInterface \$con = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
             \$keys = array();
@@ -1575,9 +1575,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      $objectClassname \$node Propel object for node to update
      * @param      int    \$destLeft Destination left value
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      */
-    protected static function updateDBNode(NodeObject \$node, \$destLeft, PropelPDO \$con = null)
+    protected static function updateDBNode(NodeObject \$node, \$destLeft, ConnectionInterface \$con = null)
     {
         \$left = \$node->getLeftValue();
         \$right = \$node->getRightValue();
@@ -1609,9 +1609,9 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      *
      * @param      int \$first        First node to be shifted
      * @param      int \$delta        Value to be shifted by, can be negative
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      */
-    protected static function shiftRLValues(\$first, \$delta, PropelPDO \$con = null, \$scopeId = null)
+    protected static function shiftRLValues(\$first, \$delta, ConnectionInterface \$con = null, \$scopeId = null)
     {
         if (\$con === null) {
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -1682,10 +1682,10 @@ abstract class ".$this->getClassname()." extends ".$this->getPeerBuilder()->getC
      * @param      int \$first    First node to be shifted (L value)
      * @param      int \$last    Last node to be shifted (L value)
      * @param      int \$delta    Value to be shifted by, can be negative
-     * @param      PropelPDO \$con        Connection to use.
+     * @param      ConnectionInterface \$con        Connection to use.
      * @return     array         Shifted L and R values
      */
-    protected static function shiftRLRange(\$first, \$last, \$delta, PropelPDO \$con = null, \$scopeId = null)
+    protected static function shiftRLRange(\$first, \$last, \$delta, ConnectionInterface \$con = null, \$scopeId = null)
     {
         if (\$con === null) {
             \$con = Propel::getConnection($peerClassname::DATABASE_NAME, Propel::CONNECTION_WRITE);

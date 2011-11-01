@@ -23,7 +23,7 @@ use Propel\Tests\Bookstore\Behavior\AggregatePoll;
 use Propel\Tests\Bookstore\Behavior\AggregatePollQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Tests for AggregateColumnBehavior class
@@ -214,7 +214,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 class TestableComment extends AggregateComment
 {
     // overrides the parent save() to bypass behavior hooks
-    public function save(PropelPDO $con = null)
+    public function save(ConnectionInterface $con = null)
     {
         $con->beginTransaction();
         try {
@@ -230,7 +230,7 @@ class TestableComment extends AggregateComment
     }
 
     // overrides the parent delete() to bypass behavior hooks
-    public function delete(PropelPDO $con = null)
+    public function delete(ConnectionInterface $con = null)
     {
         $con->beginTransaction();
         try {
@@ -255,13 +255,13 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
     }
 
     // overrides the parent basePreDelete() to bypass behavior hooks
-    protected function basePreDelete(PropelPDO $con)
+    protected function basePreDelete(ConnectionInterface $con)
     {
         return $this->preDelete($con);
     }
 
     // overrides the parent basePostDelete() to bypass behavior hooks
-    protected function basePostDelete($affectedRows, PropelPDO $con)
+    protected function basePostDelete($affectedRows, ConnectionInterface $con)
     {
         return $this->postDelete($affectedRows, $con);
     }

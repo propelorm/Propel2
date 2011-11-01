@@ -2,7 +2,7 @@
 /**
  * Finds the related <?php echo $foreignTable->getPhpName() ?> objects and keep them for later
  *
- * @param PropelPDO $con A connection object
+ * @param ConnectionInterface $con A connection object
  */
 protected function findRelated<?php echo $relationName ?>s($con)
 {

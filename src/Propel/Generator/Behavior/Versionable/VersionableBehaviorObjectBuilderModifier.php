@@ -223,7 +223,7 @@ public function isVersioningNecessary(\$con = null)
 /**
  * Creates a version of the current object and saves it.
  *
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  {$versionARClassname} A version object
  */
@@ -271,7 +271,7 @@ public function addVersion(\$con = null)
  * Sets the properties of the curent object to the value they had at a specific version
  *
  * @param   integer \$versionNumber The version number to read
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  {$ARclassName} The current object (for fluent API support)
  */
@@ -298,7 +298,7 @@ public function toVersion(\$versionNumber, \$con = null)
  * Sets the properties of the curent object to the value they had at a specific version
  *
  * @param   {$versionARClassname} \$version The version object to use
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  {$ARclassName} The current object (for fluent API support)
  */
@@ -372,7 +372,7 @@ public function populateFromVersion(\$version, \$con = null)
 /**
  * Gets the latest persisted version number for the current object
  *
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  integer
  */
@@ -397,7 +397,7 @@ public function getLastVersionNumber(\$con = null)
 /**
  * Checks whether the current object is the latest one
  *
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  Boolean
  */
@@ -416,7 +416,7 @@ public function isLastVersion(\$con = null)
  * Retrieves a version object for this entity and a version number
  *
  * @param   integer \$versionNumber The version number to read
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  {$versionARClassname} A version object
  */
@@ -441,7 +441,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
 /**
  * Gets all the versions of this object, in incremental order
  *
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  PropelObjectCollection A list of {$versionARClassname} objects
  */
@@ -476,7 +476,7 @@ public function getAllVersions(\$con = null)
  * @param   integer   \$fromVersionNumber
  * @param   integer   \$toVersionNumber
  * @param   string    \$keys Main key used for the result diff (versions|columns)
- * @param   PropelPDO \$con the connection to use
+ * @param   ConnectionInterface \$con the connection to use
  *
  * @return  array A list of differences
  */

@@ -2,11 +2,11 @@
 /**
  * Persists the object to the database without archiving it.
  *
- * @param PropelPDO $con Optional connection object
+ * @param ConnectionInterface $con Optional connection object
  *
  * @return     <?php echo $objectClassname ?> The current object (for fluent API support)
  */
-public function saveWithoutArchive(PropelPDO $con = null)
+public function saveWithoutArchive(ConnectionInterface $con = null)
 {
 <?php if (!$isArchiveOnInsert): ?>
     if (!$this->isNew()) {

@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Connection;
 
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Config\PropelConfiguration;
 use Propel\Runtime\Exception\PropelException;
@@ -35,7 +36,7 @@ use \PDO;
  * @since      2006-09-22
  * @package    propel.runtime.connection
  */
-class PropelPDO extends PDO
+class PropelPDO extends PDO implements ConnectionInterface
 {
 
     /**
@@ -430,7 +431,7 @@ class PropelPDO extends PDO
      *
      * @return    PDOStatement
      */
-    public function query()
+    public function query($statement)
     {
         if ($this->useDebug) {
             $debug = $this->getDebugSnapshot();

@@ -164,11 +164,11 @@ public function orderByRank(\$order = Criteria::ASC)
  * @param     int \$scope        Scope to determine which suite to consider";
         }
         $script .= "
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname}
  */
-public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
+public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     return \$this
         ->filterByRank(\$rank" . ($useScope ? ", \$scope" : "") . ")
@@ -189,7 +189,7 @@ public function findOneByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") 
  * @param      int \$scope        Scope to determine which list to return";
          }
         $script .= "
- * @param      PropelPDO \$con    Connection to use.
+ * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     mixed the list of results, formatted by the current formatter
  */
@@ -222,11 +222,11 @@ public function findList(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
  * @param      int \$scope        Scope to determine which suite to consider";
         }
         $script .= "
- * @param     PropelPDO optional connection
+ * @param     ConnectionInterface optional connection
  *
  * @return    integer highest position
  */
-public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPDO \$con = null)
+public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
@@ -260,11 +260,11 @@ public function getMaxRank(" . ($useScope ? "\$scope = null, " : "") . "PropelPD
  * So incoherent positions will result in an incoherent list
  *
  * @param     array     \$order id => rank pairs
- * @param     PropelPDO \$con   optional connection
+ * @param     ConnectionInterface \$con   optional connection
  *
  * @return    boolean true if the reordering took place, false if a database problem prevented it
  */
-public function reorder(array \$order, PropelPDO \$con = null)
+public function reorder(array \$order, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getConnection($peerClassname::DATABASE_NAME);

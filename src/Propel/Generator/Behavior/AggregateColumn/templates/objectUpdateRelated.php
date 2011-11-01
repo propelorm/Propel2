@@ -2,9 +2,9 @@
 /**
  * Update the aggregate column in the related <?php echo $relationName ?> object
  *
- * @param PropelPDO $con A connection object
+ * @param ConnectionInterface $con A connection object
  */
-protected function updateRelated<?php echo $relationName ?>(PropelPDO $con)
+protected function updateRelated<?php echo $relationName ?>(ConnectionInterface $con)
 {
     if ($<?php echo $variableName ?> = $this->get<?php echo $relationName ?>()) {
         $<?php echo $variableName ?>-><?php echo $updateMethodName ?>($con);

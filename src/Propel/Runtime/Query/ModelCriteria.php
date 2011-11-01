@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\PropelFormatter;
 use Propel\Runtime\Formatter\PropelObjectFormatter;
@@ -1142,14 +1142,14 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every SELECT statement
      *
-     * @param     PropelPDO $con The connection object used by the query
+     * @param     ConnectionInterface $con The connection object used by the query
      */
-    protected function basePreSelect(PropelPDO $con)
+    protected function basePreSelect(ConnectionInterface $con)
     {
         return $this->preSelect($con);
     }
 
-    protected function preSelect(PropelPDO $con)
+    protected function preSelect(ConnectionInterface $con)
     {
     }
 
@@ -1158,7 +1158,7 @@ class ModelCriteria extends Criteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
      *
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return     PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
@@ -1179,7 +1179,7 @@ class ModelCriteria extends Criteria
      * and format the result with the current formatter
      * By default, returns a model object
      *
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1201,7 +1201,7 @@ class ModelCriteria extends Criteria
      * and format the result with the current formatter
      * By default, returns a model object
      *
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1229,7 +1229,7 @@ class ModelCriteria extends Criteria
      * $bookOpinion = $c->findPk(array(34, 634), $con);
      * </code>
      * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1268,7 +1268,7 @@ class ModelCriteria extends Criteria
      * $bookOpinion = $c->findPks(array(array(34, 634), array(45, 518), array(34, 765)), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1297,7 +1297,7 @@ class ModelCriteria extends Criteria
     /**
      * Builds, binds and executes a SELECT query based on the current object.
      *
-     * @param  PropelPDO $con A connection object
+     * @param  ConnectionInterface $con A connection object
      *
      * @return PDOStatement A PDO statement executed using the connection, ready to be fetched
      */
@@ -1334,7 +1334,7 @@ class ModelCriteria extends Criteria
      *
      * @param     string    $column A string representing the column phpName, e.g. 'AuthorId'
      * @param     mixed     $value  A value for the condition
-     * @param     PropelPDO $con    An optional connection object
+     * @param     ConnectionInterface $con    An optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1359,7 +1359,7 @@ class ModelCriteria extends Criteria
      * @see       find()
      *
      * @param     mixed $conditions An array of conditions, using column phpNames as key
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1378,7 +1378,7 @@ class ModelCriteria extends Criteria
      *
      * @param     mixed $column A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param     mixed  $value A value for the condition
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the result, formatted by the current formatter
      */
@@ -1403,7 +1403,7 @@ class ModelCriteria extends Criteria
      * @see       findOne()
      *
      * @param     mixed $conditions An array of conditions, using column phpNames as key
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    mixed the list of results, formatted by the current formatter
      */
@@ -1417,7 +1417,7 @@ class ModelCriteria extends Criteria
     /**
      * Issue a SELECT COUNT(*) query based on the current ModelCriteria
      *
-     * @param PropelPDO $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return integer the number of results
      */
@@ -1499,7 +1499,7 @@ class ModelCriteria extends Criteria
      *
      * @param     int $page number of the page to start the pager on. Page 1 means no offset
      * @param     int $maxPerPage maximum number of results per page. Determines the limit
-     * @param     PropelPDO $con an optional connection object
+     * @param     ConnectionInterface $con an optional connection object
      *
      * @return    PropelModelPager a pager object, supporting iteration
      */
@@ -1516,14 +1516,14 @@ class ModelCriteria extends Criteria
     /**
      * Code to execute before every DELETE statement
      *
-     * @param     PropelPDO $con The connection object used by the query
+     * @param     ConnectionInterface $con The connection object used by the query
      */
-    protected function basePreDelete(PropelPDO $con)
+    protected function basePreDelete(ConnectionInterface $con)
     {
         return $this->preDelete($con);
     }
 
-    protected function preDelete(PropelPDO $con)
+    protected function preDelete(ConnectionInterface $con)
     {
     }
 
@@ -1531,14 +1531,14 @@ class ModelCriteria extends Criteria
      * Code to execute after every DELETE statement
      *
      * @param     int $affectedRows the number of deleted rows
-     * @param     PropelPDO $con The connection object used by the query
+     * @param     ConnectionInterface $con The connection object used by the query
      */
-    protected function basePostDelete($affectedRows, PropelPDO $con)
+    protected function basePostDelete($affectedRows, ConnectionInterface $con)
     {
         return $this->postDelete($affectedRows, $con);
     }
 
-    protected function postDelete($affectedRows, PropelPDO $con)
+    protected function postDelete($affectedRows, ConnectionInterface $con)
     {
     }
 
@@ -1546,7 +1546,7 @@ class ModelCriteria extends Criteria
      * Issue a DELETE query based on the current ModelCriteria
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @param PropelPDO $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return integer the number of deleted rows
      */
@@ -1582,7 +1582,7 @@ class ModelCriteria extends Criteria
      * Issue a DELETE query based on the current ModelCriteria
      * This method is called by ModelCriteria::delete() inside a transaction
      *
-     * @param PropelPDO $con a connection object
+     * @param ConnectionInterface $con a connection object
      *
      * @return integer the number of deleted rows
      */
@@ -1597,7 +1597,7 @@ class ModelCriteria extends Criteria
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @param PropelPDO $con an optional connection object
+     * @param ConnectionInterface $con an optional connection object
      *
      * @return integer the number of deleted rows
      */
@@ -1627,7 +1627,7 @@ class ModelCriteria extends Criteria
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
      * This method is called by ModelCriteria::deleteAll() inside a transaction
      *
-     * @param PropelPDO $con a connection object
+     * @param ConnectionInterface $con a connection object
      *
      * @return integer the number of deleted rows
      */
@@ -1642,15 +1642,15 @@ class ModelCriteria extends Criteria
      * Code to execute before every UPDATE statement
      *
      * @param     array $values The associatiove array of columns and values for the update
-     * @param     PropelPDO $con The connection object used by the query
+     * @param     ConnectionInterface $con The connection object used by the query
      * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      */
-    protected function basePreUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
+    protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         return $this->preUpdate($values, $con, $forceIndividualSaves);
     }
 
-    protected function preUpdate(&$values, PropelPDO $con, $forceIndividualSaves = false)
+    protected function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
     }
 
@@ -1658,14 +1658,14 @@ class ModelCriteria extends Criteria
      * Code to execute after every UPDATE statement
      *
      * @param     int $affectedRows the number of updated rows
-     * @param     PropelPDO $con The connection object used by the query
+     * @param     ConnectionInterface $con The connection object used by the query
      */
-    protected function basePostUpdate($affectedRows, PropelPDO $con)
+    protected function basePostUpdate($affectedRows, ConnectionInterface $con)
     {
         return $this->postUpdate($affectedRows, $con);
     }
 
-    protected function postUpdate($affectedRows, PropelPDO $con)
+    protected function postUpdate($affectedRows, ConnectionInterface $con)
     {
     }
 
@@ -1676,7 +1676,7 @@ class ModelCriteria extends Criteria
      * will only be triggered if you force individual saves, i.e. if you pass true as second argument.
      *
      * @param      array $values Associative array of keys and values to replace
-     * @param      PropelPDO $con an optional connection object
+     * @param      ConnectionInterface $con an optional connection object
      * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows
@@ -1719,7 +1719,7 @@ class ModelCriteria extends Criteria
      * This method is called by ModelCriteria::update() inside a transaction.
      *
      * @param      array $values Associative array of keys and values to replace
-     * @param      PropelPDO $con a connection object
+     * @param      ConnectionInterface $con a connection object
      * @param      boolean $forceIndividualSaves If false (default), the resulting call is a BasePeer::doUpdate(), ortherwise it is a series of save() calls on all the found objects
      *
      * @return     Integer Number of updated rows

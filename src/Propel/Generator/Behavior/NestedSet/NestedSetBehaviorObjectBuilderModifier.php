@@ -515,10 +515,10 @@ public function isAncestorOf(\$child)
 /**
  * Tests if object has an ancestor
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     bool
  */
-public function hasParent(PropelPDO \$con = null)
+public function hasParent(ConnectionInterface \$con = null)
 {
     return \$this->getLevel() > 0;
 }
@@ -554,10 +554,10 @@ public function setParent(\$parent = null)
  * Gets parent node for the current object if it exists
  * The result is cached so further calls to the same method don't issue any queries
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     mixed         Propel object if exists else false
  */
-public function getParent(PropelPDO \$con = null)
+public function getParent(ConnectionInterface \$con = null)
 {
     if (\$this->aNestedSetParent === null && \$this->hasParent()) {
         \$this->aNestedSetParent = {$this->queryClassname}::create()
@@ -579,10 +579,10 @@ public function getParent(PropelPDO \$con = null)
 /**
  * Determines if the node has previous sibling
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     bool
  */
-public function hasPrevSibling(PropelPDO \$con = null)
+public function hasPrevSibling(ConnectionInterface \$con = null)
 {
     if (!{$this->peerClassname}::isValid(\$this)) {
         return false;
@@ -607,10 +607,10 @@ public function hasPrevSibling(PropelPDO \$con = null)
 /**
  * Gets previous sibling for the given node if it exists
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     mixed         Propel object if exists else false
  */
-public function getPrevSibling(PropelPDO \$con = null)
+public function getPrevSibling(ConnectionInterface \$con = null)
 {
     return $queryClassname::create()
         ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
@@ -632,10 +632,10 @@ public function getPrevSibling(PropelPDO \$con = null)
 /**
  * Determines if the node has next sibling
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     bool
  */
-public function hasNextSibling(PropelPDO \$con = null)
+public function hasNextSibling(ConnectionInterface \$con = null)
 {
     if (!{$this->peerClassname}::isValid(\$this)) {
         return false;
@@ -660,10 +660,10 @@ public function hasNextSibling(PropelPDO \$con = null)
 /**
  * Gets next sibling for the given node if it exists
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     mixed         Propel object if exists else false
  */
-public function getNextSibling(PropelPDO \$con = null)
+public function getNextSibling(ConnectionInterface \$con = null)
 {
     return $queryClassname::create()
         ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
@@ -762,10 +762,10 @@ public function hasChildren()
  * Gets the children of the given node
  *
  * @param      Criteria  \$criteria Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array     List of $objectClassname objects
  */
-public function getChildren(\$criteria = null, PropelPDO \$con = null)
+public function getChildren(\$criteria = null, ConnectionInterface \$con = null)
 {
     if(null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
@@ -797,10 +797,10 @@ public function getChildren(\$criteria = null, PropelPDO \$con = null)
  * Gets number of children for the given node
  *
  * @param      Criteria  \$criteria Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     int       Number of children
  */
-public function countChildren(\$criteria = null, PropelPDO \$con = null)
+public function countChildren(\$criteria = null, ConnectionInterface \$con = null)
 {
     if(null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
@@ -826,10 +826,10 @@ public function countChildren(\$criteria = null, PropelPDO \$con = null)
  * Gets the first child of the given node
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array         List of $objectClassname objects
  */
-public function getFirstChild(\$query = null, PropelPDO \$con = null)
+public function getFirstChild(\$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isLeaf()) {
         return array();
@@ -852,10 +852,10 @@ public function getFirstChild(\$query = null, PropelPDO \$con = null)
  * Gets the last child of the given node
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array         List of $objectClassname objects
  */
-public function getLastChild(\$query = null, PropelPDO \$con = null)
+public function getLastChild(\$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isLeaf()) {
         return array();
@@ -879,11 +879,11 @@ public function getLastChild(\$query = null, PropelPDO \$con = null)
  *
  * @param      bool            \$includeNode Whether to include the current node or not
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  *
  * @return     array         List of $objectClassname objects
  */
-public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$con = null)
+public function getSiblings(\$includeNode = false, \$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isRoot()) {
         return array();
@@ -910,10 +910,10 @@ public function getSiblings(\$includeNode = false, \$query = null, PropelPDO \$c
  * Gets descendants for the given node
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array         List of $objectClassname objects
  */
-public function getDescendants(\$query = null, PropelPDO \$con = null)
+public function getDescendants(\$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isLeaf()) {
         return array();
@@ -936,10 +936,10 @@ public function getDescendants(\$query = null, PropelPDO \$con = null)
  * Gets number of descendants for the given node
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     int         Number of descendants
  */
-public function countDescendants(\$query = null, PropelPDO \$con = null)
+public function countDescendants(\$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isLeaf()) {
         // save one query
@@ -962,10 +962,10 @@ public function countDescendants(\$query = null, PropelPDO \$con = null)
  * Gets descendants for the given node, plus the current node
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array         List of $objectClassname objects
  */
-public function getBranch(\$query = null, PropelPDO \$con = null)
+public function getBranch(\$query = null, ConnectionInterface \$con = null)
 {
     return $queryClassname::create(null, \$query)
         ->branchOf(\$this)
@@ -985,10 +985,10 @@ public function getBranch(\$query = null, PropelPDO \$con = null)
  * Use it for breadcrumb paths for instance
  *
  * @param      Criteria \$query Criteria to filter results.
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  * @return     array         List of $objectClassname objects
  */
-public function getAncestors(\$query = null, PropelPDO \$con = null)
+public function getAncestors(\$query = null, ConnectionInterface \$con = null)
 {
     if(\$this->isRoot()) {
         // save one query
@@ -1226,11 +1226,11 @@ public function insertAsNextSiblingOf(\$sibling)
  * The modifications in the current object and the tree are immediate
  *
  * @param      $objectClassname \$parent    Propel object for parent node
- * @param      PropelPDO \$con    Connection to use.
+ * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToFirstChildOf(\$parent, PropelPDO \$con = null)
+public function moveToFirstChildOf(\$parent, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
@@ -1262,11 +1262,11 @@ public function moveToFirstChildOf(\$parent, PropelPDO \$con = null)
  * The modifications in the current object and the tree are immediate
  *
  * @param      $objectClassname \$parent    Propel object for parent node
- * @param      PropelPDO \$con    Connection to use.
+ * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToLastChildOf(\$parent, PropelPDO \$con = null)
+public function moveToLastChildOf(\$parent, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
@@ -1298,11 +1298,11 @@ public function moveToLastChildOf(\$parent, PropelPDO \$con = null)
  * The modifications in the current object and the tree are immediate
  *
  * @param      $objectClassname \$sibling    Propel object for sibling node
- * @param      PropelPDO \$con    Connection to use.
+ * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToPrevSiblingOf(\$sibling, PropelPDO \$con = null)
+public function moveToPrevSiblingOf(\$sibling, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
@@ -1337,11 +1337,11 @@ public function moveToPrevSiblingOf(\$sibling, PropelPDO \$con = null)
  * The modifications in the current object and the tree are immediate
  *
  * @param      $objectClassname \$sibling    Propel object for sibling node
- * @param      PropelPDO \$con    Connection to use.
+ * @param      ConnectionInterface \$con    Connection to use.
  *
  * @return     $objectClassname The current Propel object
  */
-public function moveToNextSiblingOf(\$sibling, PropelPDO \$con = null)
+public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassname object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
@@ -1378,9 +1378,9 @@ public function moveToNextSiblingOf(\$sibling, PropelPDO \$con = null)
  *
  * @param      int    \$destLeft Destination left value
  * @param      int    \$levelDelta Delta to add to the levels
- * @param      PropelPDO \$con        Connection to use.
+ * @param      ConnectionInterface \$con        Connection to use.
  */
-protected function moveSubtreeTo(\$destLeft, \$levelDelta, PropelPDO \$con = null)
+protected function moveSubtreeTo(\$destLeft, \$levelDelta, ConnectionInterface \$con = null)
 {
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
@@ -1441,11 +1441,11 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta, PropelPDO \$con = nul
  * Instance pooling is wiped out by this command,
  * so existing $objectClassname instances are probably invalid (except for the current one)
  *
- * @param      PropelPDO \$con Connection to use.
+ * @param      ConnectionInterface \$con Connection to use.
  *
  * @return     int         number of deleted nodes
  */
-public function deleteDescendants(PropelPDO \$con = null)
+public function deleteDescendants(ConnectionInterface \$con = null)
 {
     if(\$this->isLeaf()) {
         // save one query
@@ -1521,7 +1521,7 @@ public function createRoot()
  * @deprecated since 1.5
  * @see        getParent
  */
-public function retrieveParent(PropelPDO \$con = null)
+public function retrieveParent(ConnectionInterface \$con = null)
 {
     return \$this->getParent(\$con);
 }
@@ -1543,7 +1543,7 @@ public function setParentNode(\$parent = null)
  * @deprecated since 1.5
  * @see        setParent
  */
-public function getNumberOfDescendants(PropelPDO \$con = null)
+public function getNumberOfDescendants(ConnectionInterface \$con = null)
 {
     return \$this->countDescendants(null, \$con);
 }
@@ -1554,7 +1554,7 @@ public function getNumberOfDescendants(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        setParent
  */
-public function getNumberOfChildren(PropelPDO \$con = null)
+public function getNumberOfChildren(ConnectionInterface \$con = null)
 {
     return \$this->countChildren(null, \$con);
 }
@@ -1565,7 +1565,7 @@ public function getNumberOfChildren(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        getParent
  */
-public function retrievePrevSibling(PropelPDO \$con = null)
+public function retrievePrevSibling(ConnectionInterface \$con = null)
 {
     return \$this->getPrevSibling(\$con);
 }
@@ -1576,7 +1576,7 @@ public function retrievePrevSibling(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        getParent
  */
-public function retrieveNextSibling(PropelPDO \$con = null)
+public function retrieveNextSibling(ConnectionInterface \$con = null)
 {
     return \$this->getNextSibling(\$con);
 }
@@ -1587,7 +1587,7 @@ public function retrieveNextSibling(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        getParent
  */
-public function retrieveFirstChild(PropelPDO \$con = null)
+public function retrieveFirstChild(ConnectionInterface \$con = null)
 {
     return \$this->getFirstChild(null, \$con);
 }
@@ -1598,7 +1598,7 @@ public function retrieveFirstChild(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        getParent
  */
-public function retrieveLastChild(PropelPDO \$con = null)
+public function retrieveLastChild(ConnectionInterface \$con = null)
 {
     return \$this->getLastChild(null, \$con);
 }
@@ -1609,7 +1609,7 @@ public function retrieveLastChild(PropelPDO \$con = null)
  * @deprecated since 1.5
  * @see        getAncestors
  */
-public function getPath(PropelPDO \$con = null)
+public function getPath(ConnectionInterface \$con = null)
 {
     \$path = \$this->getAncestors(null, \$con);
     \$path []= \$this;

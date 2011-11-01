@@ -32,7 +32,7 @@ use Propel\Tests\Bookstore\ReaderFavoriteQuery;
 use Propel\Tests\Bookstore\PublisherPeer;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\ModelCriteria;
 use Propel\Runtime\Query\ModelJoin;
@@ -1092,7 +1092,7 @@ class mySecondBookQuery extends BookQuery
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
-    public function preSelect(PropelPDO $con)
+    public function preSelect(ConnectionInterface $con)
     {
         self::$preSelectWasCalled = true;
     }
