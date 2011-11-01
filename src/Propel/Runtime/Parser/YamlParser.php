@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Yaml;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelYAMLParser extends AbstractParser
+class YamlParser extends AbstractParser
 {
 
     /**
@@ -33,7 +33,7 @@ class PropelYAMLParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelYAMLParser::fromArray()
+     * Alias for YamlParser::fromArray()
      *
      * @param  array $array Source data to convert
      * @return string Converted data, as a YAML string
@@ -55,7 +55,7 @@ class PropelYAMLParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelYAMLParser::toArray()
+     * Alias for YamlParser::toArray()
      *
      * @param  string $data Source data to convert, as a YAML string
      * @return array Converted data

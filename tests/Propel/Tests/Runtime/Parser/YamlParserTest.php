@@ -11,15 +11,15 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Parser\PropelYAMLParser;
+use Propel\Runtime\Parser\YamlParser;
 
 /**
- * Test for PropelYAMLParser class
+ * Test for YamlParser class
  *
  * @author     Francois Zaninotto
  * @package    runtime.parser
  */
-class PropelYAMLParserTest extends \PHPUnit_Framework_TestCase
+class YamlParserTest extends \PHPUnit_Framework_TestCase
 {
     public static function arrayYAMLConversionDataProvider()
     {
@@ -83,8 +83,8 @@ b2: 2
      */
     public function testFromArray($arrayData, $YAMLData, $type)
     {
-        $parser = new PropelYAMLParser();
-        $this->assertEquals($YAMLData, $parser->fromArray($arrayData), 'PropelYAMLParser::fromArray() converts from ' . $type . ' correctly');
+        $parser = new YamlParser();
+        $this->assertEquals($YAMLData, $parser->fromArray($arrayData), 'YamlParser::fromArray() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -92,8 +92,8 @@ b2: 2
      */
     public function testToYAML($arrayData, $YAMLData, $type)
     {
-        $parser = new PropelYAMLParser();
-        $this->assertEquals($YAMLData, $parser->toYAML($arrayData), 'PropelYAMLParser::toYAML() converts from ' . $type . ' correctly');
+        $parser = new YamlParser();
+        $this->assertEquals($YAMLData, $parser->toYAML($arrayData), 'YamlParser::toYAML() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -101,8 +101,8 @@ b2: 2
      */
     public function testToArray($arrayData, $YAMLData, $type)
     {
-        $parser = new PropelYAMLParser();
-        $this->assertEquals($arrayData, $parser->toArray($YAMLData), 'PropelYAMLParser::toArray() converts to ' . $type . ' correctly');
+        $parser = new YamlParser();
+        $this->assertEquals($arrayData, $parser->toArray($YAMLData), 'YamlParser::toArray() converts to ' . $type . ' correctly');
     }
 
     /**
@@ -110,8 +110,8 @@ b2: 2
      */
     public function testFromYAML($arrayData, $YAMLData, $type)
     {
-        $parser = new PropelYAMLParser();
-        $this->assertEquals($arrayData, $parser->fromYAML($YAMLData), 'PropelYAMLParser::fromYAML() converts to ' . $type . ' correctly');
+        $parser = new YamlParser();
+        $this->assertEquals($arrayData, $parser->fromYAML($YAMLData), 'YamlParser::fromYAML() converts to ' . $type . ' correctly');
     }
 
     public static function listToYAMLDataProvider()
@@ -160,7 +160,7 @@ EOF;
      */
     public function testListToYAML($list, $yaml)
     {
-        $parser = new PropelYAMLParser();
+        $parser = new YamlParser();
         $this->assertEquals($yaml, $parser->toYAML($list));
     }
 
@@ -169,7 +169,7 @@ EOF;
      */
     public function testYAMLToList($list, $yaml)
     {
-        $parser = new PropelYAMLParser();
+        $parser = new YamlParser();
         $this->assertEquals($list, $parser->fromYAML($yaml));
     }
 }
