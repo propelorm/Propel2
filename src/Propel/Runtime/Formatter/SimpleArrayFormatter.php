@@ -22,7 +22,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.formatter
  */
-class PropelSimpleArrayFormatter extends AbstractFormatter {
+class SimpleArrayFormatter extends AbstractFormatter {
     protected $collectionName = '\Propel\Runtime\Collection\PropelArrayCollection';
 
     public function format(PDOStatement $stmt) {

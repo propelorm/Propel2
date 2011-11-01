@@ -559,8 +559,8 @@ class ModelCriteria extends Criteria
             return;
         }
 
-        // select() needs the PropelSimpleArrayFormatter
-        $this->setFormatter('\Propel\Runtime\Formatter\PropelSimpleArrayFormatter');
+        // select() needs the SimpleArrayFormatter
+        $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
 
         // clear only the selectColumns, clearSelectColumns() clears asColumns too
         $this->selectColumns = array();
