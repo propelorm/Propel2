@@ -12,7 +12,7 @@ namespace Propel\Runtime\Om;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Parser\PropelParser;
+use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
 
 /**
@@ -332,7 +332,7 @@ abstract class BaseObject
      * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param mixed  $parser A PropelParser instance,
+     * @param mixed  $parser A AbstractParser instance,
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data   The source data to import from
      *
@@ -340,8 +340,8 @@ abstract class BaseObject
      */
     public function importFrom($parser, $data)
     {
-        if (!$parser instanceof PropelParser) {
-            $parser = PropelParser::getParser($parser);
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
         }
 
         return $this->fromArray($parser->toArray($data), BasePeer::TYPE_PHPNAME);
@@ -355,14 +355,14 @@ abstract class BaseObject
      *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param     mixed   $parser                 A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @return    string                          The exported data
      */
     public function exportTo($parser, $includeLazyLoadColumns = true)
     {
-        if (!$parser instanceof PropelParser) {
-            $parser = PropelParser::getParser($parser);
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
         }
 
         return $parser->fromArray($this->toArray(BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns, array(), true));

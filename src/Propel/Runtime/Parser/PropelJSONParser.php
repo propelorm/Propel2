@@ -16,7 +16,7 @@ namespace Propel\Runtime\Parser;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelJSONParser extends PropelParser
+class PropelJSONParser extends AbstractParser
 {
 
     /**

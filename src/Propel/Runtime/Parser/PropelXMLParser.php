@@ -19,7 +19,7 @@ use DomNode;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelXMLParser extends PropelParser
+class PropelXMLParser extends AbstractParser
 {
 
     /**

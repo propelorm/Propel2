@@ -11,7 +11,7 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Parser\PropelParser;
+use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\PropelXMLParser;
 
 /**
@@ -20,11 +20,11 @@ use Propel\Runtime\Parser\PropelXMLParser;
  * @author     Francois Zaninotto
  * @package    runtime.parser
  */
-class PropelParserTest extends \PHPUnit_Framework_TestCase
+class AbstractParserTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetParser()
     {
-        $parser = PropelParser::getParser('XML');
+        $parser = AbstractParser::getParser('XML');
         $this->assertTrue($parser instanceof PropelXMLParser);
     }
 
@@ -33,13 +33,13 @@ class PropelParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {
-        $parser = PropelParser::getParser('Foo');
+        $parser = AbstractParser::getParser('Foo');
     }
 
     public function testLoad()
     {
         $fixtureFile = __DIR__ . '/fixtures/test_data.xml';
-        $parser = PropelParser::getParser('XML');
+        $parser = AbstractParser::getParser('XML');
         $content = $parser->load($fixtureFile);
         $expectedContent = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -49,14 +49,14 @@ class PropelParserTest extends \PHPUnit_Framework_TestCase
 </foo>
 
 EOF;
-        $this->assertEquals($expectedContent, $content, 'PropelParser::load() executes PHP code in files');
+        $this->assertEquals($expectedContent, $content, 'AbstractParser::load() executes PHP code in files');
     }
 
     public function testDump()
     {
         $testContent = "Foo Content";
         $testFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel_test_' . microtime();
-        $parser = PropelParser::getParser('XML');
+        $parser = AbstractParser::getParser('XML');
         $parser->dump($testContent, $testFile);
         $content = file_get_contents($testFile);
         $this->assertEquals($testContent, $content);

@@ -19,7 +19,7 @@ use Propel\Runtime\Exception\PropelException;
  * @author     Jonathan H. Wage <jwage@mac.com> (Doctrine_Parser)
  * @package    propel.runtime.parser
  */
-abstract class PropelParser
+abstract class AbstractParser
 {
     /**
      * Converts data from an associative array to the parser format.
@@ -86,11 +86,11 @@ abstract class PropelParser
     }
 
     /**
-     * Factory for getting an instance of a subclass of PropelParser
+     * Factory for getting an instance of a subclass of AbstractParser
      *
      * @param string $type Parser type, amon 'XML', 'YAML', 'JSON', and 'CSV'
      *
-     * @return PropelParser A PropelParser subclass instance
+     * @return AbstractParser A PropelParser subclass instance
      */
     static public function getParser($type = 'XML')
     {

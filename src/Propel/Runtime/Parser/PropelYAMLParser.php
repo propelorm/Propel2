@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Yaml;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelYAMLParser extends PropelParser
+class PropelYAMLParser extends AbstractParser
 {
 
     /**

@@ -14,7 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\PropelFormatter;
 use Propel\Runtime\Om\BaseObject;
-use Propel\Runtime\Parser\PropelParser;
+use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\BasePeer;
 
 use \ArrayObject;
@@ -499,15 +499,15 @@ class PropelCollection extends ArrayObject implements Serializable
      * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>
      *
-     * @param     mixed   $parser  A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param     mixed   $parser  A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param     string  $data    The source data to import from
      *
      * @return    BaseObject  The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
-        if (!$parser instanceof PropelParser) {
-            $parser = PropelParser::getParser($parser);
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
         }
 
         return $this->fromArray($parser->listToArray($data), BasePeer::TYPE_PHPNAME);
@@ -523,7 +523,7 @@ class PropelCollection extends ArrayObject implements Serializable
      *
      * A PropelOnDemandCollection cannot be exported. Any attempt will result in a PropelExecption being thrown.
      *
-     * @param     mixed   $parser                 A PropelParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param     mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param     boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
      *                                            model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      *                                            Not supported by PropelArrayCollection, as PropelArrayFormatter has
@@ -535,8 +535,8 @@ class PropelCollection extends ArrayObject implements Serializable
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {
-        if (!$parser instanceof PropelParser) {
-            $parser = PropelParser::getParser($parser);
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
         }
 
         return $parser->listFromArray($this->toArray(null, $usePrefix, BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns));

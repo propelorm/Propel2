@@ -18,7 +18,7 @@ namespace Propel\Runtime\Parser;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelCSVParser extends PropelParser
+class PropelCSVParser extends AbstractParser
 {
     const QUOTE_NONE = 0;
     const QUOTE_ALL = 1;
