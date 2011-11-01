@@ -228,11 +228,11 @@ public function isFirst()
 /**
  * Check if the object is last in the list, i.e. if its rank is the highest rank
  *
- * @param     PropelPDO  \$con      optional connection
+ * @param     ConnectionInterface  \$con      optional connection
  *
  * @return    boolean
  */
-public function isLast(PropelPDO \$con = null)
+public function isLast(ConnectionInterface \$con = null)
 {
     return \$this->{$this->getColumnGetter()}() == {$this->queryClassname}::create()->getMaxRank(" . ($useScope ? "\$this->{$this->getColumnGetter('scope_column')}(), " : '') . "\$con);
 }
@@ -246,11 +246,11 @@ public function isLast(PropelPDO \$con = null)
 /**
  * Get the next item in the list, i.e. the one for which rank is immediately higher
  *
- * @param     PropelPDO  \$con      optional connection
+ * @param     ConnectionInterface  \$con      optional connection
  *
  * @return    {$this->objectClassname}
  */
-public function getNext(PropelPDO \$con = null)
+public function getNext(ConnectionInterface \$con = null)
 {";
         if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
             $script .= "
@@ -277,11 +277,11 @@ public function getNext(PropelPDO \$con = null)
 /**
  * Get the previous item in the list, i.e. the one for which rank is immediately lower
  *
- * @param     PropelPDO  \$con      optional connection
+ * @param     ConnectionInterface  \$con      optional connection
  *
  * @return    {$this->objectClassname}
  */
-public function getPrevious(PropelPDO \$con = null)
+public function getPrevious(ConnectionInterface \$con = null)
 {";
         if ($this->behavior->getParameter('rank_column') == 'rank' && $useScope) {
             $script .= "
@@ -310,13 +310,13 @@ public function getPrevious(PropelPDO \$con = null)
  * The modifications are not persisted until the object is saved.
  *
  * @param     integer    \$rank rank value
- * @param     PropelPDO  \$con      optional connection
+ * @param     ConnectionInterface  \$con      optional connection
  *
  * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
-public function insertAtRank(\$rank, PropelPDO \$con = null)
+public function insertAtRank(\$rank, ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $script .= "
@@ -352,13 +352,13 @@ public function insertAtRank(\$rank, PropelPDO \$con = null)
  * Insert in the last rank
  * The modifications are not persisted until the object is saved.
  *
- * @param PropelPDO \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
-public function insertAtBottom(PropelPDO \$con = null)
+public function insertAtBottom(ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $script .= "
@@ -400,13 +400,13 @@ public function insertAtTop()
  * Of the objects inbetween the old and new rank accordingly
  *
  * @param     integer   \$newRank rank value
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  *
  * @throws    PropelException
  */
-public function moveToRank(\$newRank, PropelPDO \$con = null)
+public function moveToRank(\$newRank, ConnectionInterface \$con = null)
 {
     if (\$this->isNew()) {
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
@@ -451,13 +451,13 @@ public function moveToRank(\$newRank, PropelPDO \$con = null)
  * Exchange the rank of the object with the one passed as argument, and saves both objects
  *
  * @param     {$this->objectClassname} \$object
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
-public function swapWith(\$object, PropelPDO \$con = null)
+public function swapWith(\$object, ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getConnection({$this->peerClassname}::DATABASE_NAME);
@@ -487,11 +487,11 @@ public function swapWith(\$object, PropelPDO \$con = null)
 /**
  * Move the object higher in the list, i.e. exchanges its rank with the one of the previous object
  *
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  */
-public function moveUp(PropelPDO \$con = null)
+public function moveUp(ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
@@ -520,11 +520,11 @@ public function moveUp(PropelPDO \$con = null)
 /**
  * Move the object higher in the list, i.e. exchanges its rank with the one of the next object
  *
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  */
-public function moveDown(PropelPDO \$con = null)
+public function moveDown(ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return \$this;
@@ -553,11 +553,11 @@ public function moveDown(PropelPDO \$con = null)
 /**
  * Move the object to the top of the list
  *
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return    {$this->objectClassname} the current object
  */
-public function moveToTop(PropelPDO \$con = null)
+public function moveToTop(ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
@@ -575,11 +575,11 @@ public function moveToTop(PropelPDO \$con = null)
 /**
  * Move the object to the bottom of the list
  *
- * @param     PropelPDO \$con optional connection
+ * @param     ConnectionInterface \$con optional connection
  *
  * @return integer the old object's rank
  */
-public function moveToBottom(PropelPDO \$con = null)
+public function moveToBottom(ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return false;

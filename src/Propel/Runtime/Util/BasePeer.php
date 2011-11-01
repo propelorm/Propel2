@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Util;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Validator\ValidationFailed;
@@ -108,7 +108,7 @@ class BasePeer
      * Criteria.
      *
      * @param      Criteria $criteria The criteria to use.
-     * @param      PropelPDO $con A PropelPDO connection object.
+     * @param      ConnectionInterface $con A ConnectionInterface connection object.
      * @return     int    The number of rows affected by last statement execution.  For most
      *                 uses there is only one delete statement executed, so this number
      *                 will correspond to the number of rows affected by the call to this
@@ -116,7 +116,7 @@ class BasePeer
      *                 is returned (supported) by the PDO driver.
      * @throws     PropelException
      */
-    public static function doDelete(Criteria $criteria, PropelPDO $con)
+    public static function doDelete(Criteria $criteria, ConnectionInterface $con)
     {
         $db = Propel::getDB($criteria->getDbName());
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
@@ -178,14 +178,14 @@ class BasePeer
      * </code>
      *
      * @param      string $tableName The name of the table to empty.
-     * @param      PropelPDO $con A PropelPDO connection object.
+     * @param      ConnectionInterface $con A ConnectionInterface connection object.
      * @param      string $databaseName the name of the database.
      * @return     int      The number of rows affected by the statement. Note
      *                      that the return value does require that this information
      *                      is returned (supported) by the Propel db driver.
      * @throws     PropelException - wrapping SQLException caught from statement execution.
      */
-    public static function doDeleteAll($tableName, PropelPDO $con, $databaseName = null)
+    public static function doDeleteAll($tableName, ConnectionInterface $con, $databaseName = null)
     {
         try {
             $db = Propel::getDB($databaseName);
@@ -221,12 +221,12 @@ class BasePeer
      * inserted as specified in Criteria and null will be returned.
      *
      * @param      Criteria $criteria Object containing values to insert.
-     * @param      PropelPDO $con A PropelPDO connection.
+     * @param      ConnectionInterface $con A ConnectionInterface connection.
      * @return     mixed The primary key for the new row if (and only if!) the primary key
      *                is auto-generated.  Otherwise will return <code>null</code>.
      * @throws     PropelException
      */
-    public static function doInsert(Criteria $criteria, PropelPDO $con) {
+    public static function doInsert(Criteria $criteria, ConnectionInterface $con) {
 
         // the primary key
         $id = null;
@@ -330,7 +330,7 @@ class BasePeer
      *        clause.
      * @param      $updateValues A Criteria object containing values used in set
      *        clause.
-     * @param      PropelPDO $con The PropelPDO connection object to use.
+     * @param      ConnectionInterface $con The ConnectionInterface connection object to use.
      * @return     int    The number of rows affected by last update statement.  For most
      *                 uses there is only one update statement executed, so this number
      *                 will correspond to the number of rows affected by the call to this
@@ -338,7 +338,7 @@ class BasePeer
      *                 is returned (supported) by the Propel db driver.
      * @throws     PropelException
      */
-    public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, PropelPDO $con) {
+    public static function doUpdate(Criteria $selectCriteria, Criteria $updateValues, ConnectionInterface $con) {
 
         $db = Propel::getDB($selectCriteria->getDbName());
         $dbMap = Propel::getDatabaseMap($selectCriteria->getDbName());
@@ -455,12 +455,12 @@ class BasePeer
      * Executes query build by createSelectSql() and returns the resultset statement.
      *
      * @param      Criteria $criteria A Criteria.
-     * @param      PropelPDO $con A PropelPDO connection to use.
+     * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     PDOStatement The resultset.
      * @throws     PropelException
      * @see        createSelectSql()
      */
-    public static function doSelect(Criteria $criteria, PropelPDO $con = null)
+    public static function doSelect(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
         $db = Propel::getDB($criteria->getDbName());
@@ -497,12 +497,12 @@ class BasePeer
      * sub-select of the SQL created by createSelectSql() and returns the statement.
      *
      * @param      Criteria $criteria A Criteria.
-     * @param      PropelPDO $con A PropelPDO connection to use.
+     * @param      ConnectionInterface $con A ConnectionInterface connection to use.
      * @return     PDOStatement The resultset statement.
      * @throws     PropelException
      * @see        createSelectSql()
      */
-    public static function doCount(Criteria $criteria, PropelPDO $con = null)
+    public static function doCount(Criteria $criteria, ConnectionInterface $con = null)
     {
         $dbMap = Propel::getDatabaseMap($criteria->getDbName());
         $db = Propel::getDB($criteria->getDbName());

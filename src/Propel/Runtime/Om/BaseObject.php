@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Om;
 
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Parser\PropelParser;
 use Propel\Runtime\Util\BasePeer;
@@ -144,67 +144,67 @@ abstract class BaseObject
 
     /**
      * Code to be run before persisting the object
-     * @param PropelPDO $con
+     * @param ConnectionInterface $con
      * @return bloolean
      */
-    public function preSave(PropelPDO $con = null)
+    public function preSave(ConnectionInterface $con = null)
     {
         return true;
     }
 
     /**
      * Code to be run after persisting the object
-     * @param PropelPDO $con
+     * @param ConnectionInterface $con
      */
-    public function postSave(PropelPDO $con = null) { }
+    public function postSave(ConnectionInterface $con = null) { }
 
         /**
          * Code to be run before inserting to database
-         * @param PropelPDO $con
+         * @param ConnectionInterface $con
          * @return boolean
          */
-        public function preInsert(PropelPDO $con = null)
+        public function preInsert(ConnectionInterface $con = null)
         {
             return true;
         }
 
     /**
      * Code to be run after inserting to database
-     * @param PropelPDO $con
+     * @param ConnectionInterface $con
      */
-    public function postInsert(PropelPDO $con = null) { }
+    public function postInsert(ConnectionInterface $con = null) { }
 
         /**
          * Code to be run before updating the object in database
-         * @param PropelPDO $con
+         * @param ConnectionInterface $con
          * @return boolean
          */
-        public function preUpdate(PropelPDO $con = null)
+        public function preUpdate(ConnectionInterface $con = null)
         {
             return true;
         }
 
     /**
      * Code to be run after updating the object in database
-     * @param PropelPDO $con
+     * @param ConnectionInterface $con
      */
-    public function postUpdate(PropelPDO $con = null) { }
+    public function postUpdate(ConnectionInterface $con = null) { }
 
         /**
          * Code to be run before deleting the object in database
-         * @param PropelPDO $con
+         * @param ConnectionInterface $con
          * @return boolean
          */
-        public function preDelete(PropelPDO $con = null)
+        public function preDelete(ConnectionInterface $con = null)
         {
             return true;
         }
 
     /**
      * Code to be run after deleting the object in database
-     * @param PropelPDO $con
+     * @param ConnectionInterface $con
      */
-    public function postDelete(PropelPDO $con = null) { }
+    public function postDelete(ConnectionInterface $con = null) { }
 
         /**
          * Sets the modified state for the object to be false.

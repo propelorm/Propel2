@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Query\PropelQuery;
@@ -29,7 +29,7 @@ class PropelObjectCollection extends PropelCollection
     /**
      * Save all the elements in the collection
      *
-     * @param     PropelPDO  $con
+     * @param     ConnectionInterface  $con
      */
     public function save($con = null)
     {
@@ -55,7 +55,7 @@ class PropelObjectCollection extends PropelCollection
     /**
      * Delete all the elements in the collection
      *
-     * @param     PropelPDO  $con
+     * @param     ConnectionInterface  $con
      */
     public function delete($con = null)
     {
@@ -240,7 +240,7 @@ class PropelObjectCollection extends PropelCollection
      *
      * @param     string     $relation  Relation name (e.g. 'Book')
      * @param     Criteria   $criteria  Optional Criteria object to filter the related object collection
-     * @param     PropelPDO  $con       Optional connection object
+     * @param     ConnectionInterface  $con       Optional connection object
      *
      * @return    PropelObjectCollection  The list of related objects
      */

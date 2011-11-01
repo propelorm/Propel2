@@ -3,11 +3,11 @@
  * Returns the current translation for a given locale
  *
  * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
- * @param     PropelPDO $con an optional connection object
+ * @param     ConnectionInterface $con an optional connection object
  *
  * @return <?php echo $i18nTablePhpName ?>
  */
-public function getTranslation($locale = '<?php echo $defaultLocale ?>', PropelPDO $con = null)
+public function getTranslation($locale = '<?php echo $defaultLocale ?>', ConnectionInterface $con = null)
 {
     if (!isset($this->currentTranslations[$locale])) {
         if (null !== $this-><?php echo $i18nListVariable ?>) {

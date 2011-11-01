@@ -26,7 +26,7 @@ class PropelArrayCollection extends PropelCollection
     /**
      * Save all the elements in the collection
      *
-     * @param     PropelPDO  $con
+     * @param     ConnectionInterface  $con
      */
     public function save($con = null)
     {
@@ -54,7 +54,7 @@ class PropelArrayCollection extends PropelCollection
     /**
      * Delete all the elements in the collection
      *
-     * @param     PropelPDO  $con
+     * @param     ConnectionInterface  $con
      */
     public function delete($con = null)
     {

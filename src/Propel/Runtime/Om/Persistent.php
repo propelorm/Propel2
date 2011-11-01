@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Om;
 
-use Propel\Runtime\Connection\PropelPDO;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * This interface defines methods related to saving an object
@@ -96,17 +96,17 @@ interface Persistent
 
     /**
      * Deletes the object.
-     * @param      PropelPDO $con
+     * @param      ConnectionInterface $con
      * @return     void
      * @throws     Exception
      */
-    public function delete(PropelPDO $con = null);
+    public function delete(ConnectionInterface $con = null);
 
     /**
      * Saves the object.
-     * @param      PropelPDO $con
+     * @param      ConnectionInterface $con
      * @return     void
      * @throws     Exception
      */
-    public function save(PropelPDO $con = null);
+    public function save(ConnectionInterface $con = null);
 }

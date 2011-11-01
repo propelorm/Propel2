@@ -2,7 +2,7 @@
 /**
  * Delete records matching the current query without archiving them.
  *
- * @param      PropelPDO $con    Connection to use.
+ * @param      ConnectionInterface $con    Connection to use.
  *
  * @return integer the number of deleted rows
  */
@@ -16,7 +16,7 @@ public function deleteWithoutArchive($con = null)
 /**
  * Delete all records without archiving them.
  *
- * @param      PropelPDO $con    Connection to use.
+ * @param      ConnectionInterface $con    Connection to use.
  *
  * @return integer the number of deleted rows
  */
