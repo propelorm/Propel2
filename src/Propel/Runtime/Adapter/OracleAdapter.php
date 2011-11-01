@@ -29,7 +29,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBOracle extends AbstractAdapter
+class OracleAdapter extends AbstractAdapter
 {
     /**
      * This method is called after a connection was created to run necessary
