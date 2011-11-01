@@ -40,7 +40,7 @@ class BasePeerTest extends BookstoreTestBase
         try {
             $c = new Criteria();
             $c->setDistinct();
-            if ($db instanceof DBPostgres) {
+            if ($db instanceof PgsqlAdapter) {
                 $c->addSelectColumn("substring(".BookPeer::TITLE." from position('Potter' in ".BookPeer::TITLE.")) AS col");
             } else {
                 $this->markTestSkipped();

@@ -496,7 +496,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 
     /**
      * Get the PHP snippet for getting a Pk from the database.
-     * Warning: duplicates logic from DBPostgres::getId().
+     * Warning: duplicates logic from PgsqlAdapter::getId().
      * Any code modification here must be ported there.
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")

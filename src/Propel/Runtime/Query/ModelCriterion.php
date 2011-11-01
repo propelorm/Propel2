@@ -141,7 +141,7 @@ class ModelCriterion extends Criterion
     {
         // LIKE is case insensitive in mySQL and SQLite, but not in PostGres
         // If the column is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE
-        if ($this->ignoreStringCase && $this->getDb() instanceof DBPostgres) {
+        if ($this->ignoreStringCase && $this->getDb() instanceof PgsqlAdapter) {
             $this->clause = preg_replace('/LIKE \?$/i', 'ILIKE ?', $this->clause);
         }
         $this->appendModelClauseToPs($sb, $params);

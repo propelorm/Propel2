@@ -59,7 +59,7 @@ abstract class AbstractAdapter
         'sqlsrv' => '\Propel\Runtime\Adapter\DBSQLSRV',
         'oracle' => '\Propel\Runtime\Adapter\OracleAdapter',
         'oci'    => '\Propel\Runtime\Adapter\OracleAdapter',
-        'pgsql'  => '\Propel\Runtime\Adapter\DBPostgres',
+        'pgsql'  => '\Propel\Runtime\Adapter\PgsqlAdapter',
         'sqlite' => '\Propel\Runtime\Adapter\SqliteAdapter',
         ''       => '\Propel\Runtime\Adapter\DBNone',
     );

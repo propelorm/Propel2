@@ -15,7 +15,7 @@ use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\MysqlAdapter;
-use Propel\Runtime\Adapter\DBPostgres;
+use Propel\Runtime\Adapter\PgsqlAdapter;
 use Propel\Runtime\Adapter\SqliteAdapter;
 use Propel\Runtime\Query\Criteria;
 use Propel\Runtime\Query\Join;
@@ -315,7 +315,7 @@ class CriteriaTest extends BookstoreTestBase
     public function testCriterionIgnoreCase()
     {
         $originalDB = Propel::getDB();
-        $adapters = array(new MysqlAdapter(), new DBPostgres());
+        $adapters = array(new MysqlAdapter(), new PgsqlAdapter());
         $expectedIgnore = array("UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1");
 
         $i =0;

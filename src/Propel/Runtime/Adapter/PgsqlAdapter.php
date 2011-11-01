@@ -20,7 +20,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBPostgres extends AbstractAdapter
+class PgsqlAdapter extends AbstractAdapter
 {
 
     /**

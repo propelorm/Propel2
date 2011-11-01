@@ -12,7 +12,7 @@ namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\AbstractAdapter;
-use Propel\Runtime\Adapter\DBPostgres;
+use Propel\Runtime\Adapter\PgsqlAdapter;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -360,7 +360,7 @@ class Criterion
         // If selection is case insensitive use ILIKE for PostgreSQL or SQL
         // UPPER() function on column name for other databases.
         if ($this->ignoreStringCase) {
-            if ($db instanceof DBPostgres) {
+            if ($db instanceof PgsqlAdapter) {
                 if ($this->comparison === Criteria::LIKE) {
                     $this->comparison = Criteria::ILIKE;
                 } elseif ($this->comparison === Criteria::NOT_LIKE) {
@@ -377,7 +377,7 @@ class Criterion
 
         // If selection is case insensitive use SQL UPPER() function
         // on criteria or, if Postgres we are using ILIKE, so not necessary.
-        if ($this->ignoreStringCase && !($db instanceof DBPostgres)) {
+        if ($this->ignoreStringCase && !($db instanceof PgsqlAdapter)) {
             $sb .= $db->ignoreCase(':p'.count($params));
         } else {
             $sb .= ':p'.count($params);

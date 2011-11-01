@@ -90,7 +90,7 @@ class CharacterEncodingTest extends BookstoreTestBase
         $a->setLastName($authorNameWindows1251);
 
         // Different databases seem to handle invalid data differently (no surprise, I guess...)
-        if ($db instanceof DBPostgres) {
+        if ($db instanceof PgsqlAdapter) {
             try {
                 $a->save();
                 $this->fail("Expected an exception when saving non-UTF8 data to database.");
