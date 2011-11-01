@@ -12,7 +12,7 @@ namespace Propel\Runtime\Connection;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Config\PropelConfiguration;
+use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Exception\PropelException;
 
 use \PDO;
@@ -111,7 +111,7 @@ class PropelPDO extends PDO implements ConnectionInterface
     /**
      * The runtime configuration
      *
-     * @var       PropelConfiguration
+     * @var       Configuration
      */
     protected $configuration;
 
@@ -157,7 +157,7 @@ class PropelPDO extends PDO implements ConnectionInterface
     /**
      * Inject the runtime configuration
      *
-     * @param     PropelConfiguration  $configuration
+     * @param     Configuration  $configuration
      */
     public function setConfiguration($configuration)
     {
@@ -167,12 +167,12 @@ class PropelPDO extends PDO implements ConnectionInterface
     /**
      * Get the runtime configuration
      *
-     * @return    PropelConfiguration
+     * @return    Configuration
      */
     public function getConfiguration()
     {
         if (null === $this->configuration) {
-            $this->configuration = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
+            $this->configuration = Propel::getConfiguration(Configuration::TYPE_OBJECT);
         }
 
         return $this->configuration;

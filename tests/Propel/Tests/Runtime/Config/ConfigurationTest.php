@@ -10,16 +10,16 @@
 
 namespace Propel\Tests\Runtime\config;
 
-use Propel\Runtime\Config\PropelConfiguration;
-use Propel\Runtime\Config\PropelConfigurationIterator;
+use Propel\Runtime\Config\Configuration;
+use Propel\Runtime\Config\ConfigurationIterator;
 
 /**
- * Test for PropelConfiguration class
+ * Test for Configuration class
  *
  * @author     Francois Zaninotto
  * @package    runtime.config
  */
-class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     static public function configurationProvider()
     {
@@ -34,7 +34,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
                 )
             )
         );
-        $c = new PropelConfiguration($initialConf);
+        $c = new Configuration($initialConf);
 
         return array(array($c));
     }
@@ -61,7 +61,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayAccess()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $this->assertFalse(isset($c[1]));
         $c[1] = 2;
         $this->assertTrue(isset($c[1]));
@@ -72,14 +72,14 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testNullValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c[1] = null;
         $this->assertTrue(isset($c[1]));
     }
 
     public function testSetParameterSimpleKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('foo', 'bar');
         $this->assertEquals('bar', $c['foo']);
         $this->assertEquals('bar', $c->getParameter('foo'));
@@ -87,7 +87,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetParameterSimpleKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('foo', array('bar1' => 'baz1'));
         $this->assertEquals(array('bar1' => 'baz1'), $c['foo']);
         $this->assertNull($c->getParameter('foo'));
@@ -96,7 +96,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetParameterNamespacedKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('foo1.foo2', 'bar');
         $this->assertEquals('bar', $c['foo1']['foo2']);
         $this->assertEquals('bar', $c->getParameter('foo1.foo2'));
@@ -104,7 +104,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetParameterNamespacedKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('foo1.foo2', array('bar1' => 'baz1'));
         $this->assertEquals(array('bar1' => 'baz1'), $c['foo1']['foo2']);
         $this->assertNull($c->getParameter('foo1.foo2'));
@@ -113,7 +113,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetParameterMultiNamespacedKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('a.b.c', 'bar');
         $this->assertEquals('bar', $c['a']['b']['c']);
         $this->assertEquals('bar', $c->getParameter('a.b.c'));
@@ -121,7 +121,7 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testSetParameterMultiNamespacedKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c->setParameter('a.b.c', array('bar1' => 'baz1'));
         $this->assertEquals(array('bar1' => 'baz1'), $c['a']['b']['c']);
         $this->assertNull($c->getParameter('a.b.c'));
@@ -130,14 +130,14 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParameterSimpleKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['foo'] = 'bar';
         $this->assertEquals('bar', $c->getParameter('foo'));
     }
 
     public function testGetParameterSimpleKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['foo'] = array('bar1' => 'baz1');
         $this->assertNull($c->getParameter('foo'));
         $this->assertEquals('baz1', $c->getParameter('foo.bar1'));
@@ -145,14 +145,14 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParameterNamespacedKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['foo1'] = array('foo2' => 'bar');
         $this->assertEquals('bar', $c->getParameter('foo1.foo2'));
     }
 
     public function testGetParameterNamespacedKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['foo1'] = array('foo2' => array('bar1' => 'baz1'));
         $this->assertNull($c->getParameter('foo1.foo2'));
         $this->assertEquals('baz1', $c->getParameter('foo1.foo2.bar1'));
@@ -160,14 +160,14 @@ class PropelConfigurationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParameterMultiNamespacedKey()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['a'] = array('b' => array('c' => 'bar'));
         $this->assertEquals('bar', $c->getParameter('a.b.c'));
     }
 
     public function testGetParameterMultiNamespacedKeyArrayValue()
     {
-        $c = new PropelConfiguration();
+        $c = new Configuration();
         $c['a'] = array('b' => array('c' => array('bar1' => 'baz1')));
         $this->assertNull($c->getParameter('a.b.c'));
         $this->assertEquals('baz1', $c->getParameter('a.b.c.bar1'));

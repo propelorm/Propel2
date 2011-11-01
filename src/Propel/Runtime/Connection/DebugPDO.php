@@ -91,7 +91,7 @@ namespace Propel\Runtime\Connection;
  * which they will appear in the log file.
  *
  * @example    // Enable simple query profiling, flagging calls taking over 1.5 seconds as slow:
- *             $config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
+ *             $config = Propel::getConfiguration(Configuration::TYPE_OBJECT);
  *             $config->setParameter('debugpdo.logging.details.slow.enabled', true);
  *             $config->setParameter('debugpdo.logging.details.slow.threshold', 1.5);
  *             $config->setParameter('debugpdo.logging.details.time.enabled', true);

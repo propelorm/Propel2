@@ -11,7 +11,7 @@
 namespace Propel\Runtime;
 
 use Propel\Runtime\Adapter\AbstractAdapter;
-use Propel\Runtime\Config\PropelConfiguration;
+use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
@@ -133,7 +133,7 @@ class Propel
     private static $connectionMap = array();
 
     /**
-     * @var        PropelConfiguration Propel-specific configuration.
+     * @var        Configuration Propel-specific configuration.
      */
     private static $configuration;
 
@@ -250,7 +250,7 @@ class Propel
     /**
      * Sets the configuration for Propel and all dependencies.
      *
-     * @param      mixed The Configuration (array or PropelConfiguration)
+     * @param      mixed The Configuration (array or Configuration)
      */
     public static function setConfiguration($c)
     {
@@ -258,7 +258,7 @@ class Propel
             if (isset($c['propel']) && is_array($c['propel'])) {
                 $c = $c['propel'];
             }
-            $c = new PropelConfiguration($c);
+            $c = new Configuration($c);
         }
         self::$configuration = $c;
     }
@@ -266,14 +266,14 @@ class Propel
     /**
      * Get the configuration for this component.
      *
-     * @param      int - PropelConfiguration::TYPE_ARRAY: return the configuration as an array
+     * @param      int - Configuration::TYPE_ARRAY: return the configuration as an array
      *                   (for backward compatibility this is the default)
-     *                 - PropelConfiguration::TYPE_ARRAY_FLAT: return the configuration as a flat array
+     *                 - Configuration::TYPE_ARRAY_FLAT: return the configuration as a flat array
      *                   ($config['name.space.item'])
-     *                 - PropelConfiguration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
-     * @return     mixed The Configuration (array or PropelConfiguration)
+     *                 - Configuration::TYPE_OBJECT: return the configuration as a PropelConfiguration instance
+     * @return     mixed The Configuration (array or Configuration)
      */
-    public static function getConfiguration($type = PropelConfiguration::TYPE_ARRAY)
+    public static function getConfiguration($type = Configuration::TYPE_ARRAY)
     {
         return self::$configuration->getParameters($type);
     }

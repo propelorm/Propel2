@@ -18,7 +18,7 @@ use Propel\Tests\Bookstore\BookPeer;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\PropelPDO;
-use Propel\Runtime\Config\PropelConfiguration;
+use Propel\Runtime\Config\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Query\Criteria;
 
@@ -425,7 +425,7 @@ class PropelPDOTest extends BookstoreTestBase
     public function testDebugLog()
     {
         $con = Propel::getConnection(BookPeer::DATABASE_NAME);
-        $config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
+        $config = Propel::getConfiguration(Configuration::TYPE_OBJECT);
 
         // save data to return to normal state after test
         $logger = $con->getLogger();
@@ -442,7 +442,7 @@ class PropelPDOTest extends BookstoreTestBase
             'Propel\Runtime\Connection\DebugPDOStatement::execute'
         );
 
-        Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
+        Propel::getConfiguration(Configuration::TYPE_OBJECT)->setParameter("debugpdo.logging.methods", $logEverything, false);
         $con->useDebug(true);
 
         $con->beginTransaction();

@@ -13,18 +13,18 @@ namespace Propel\Runtime\Config;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * PropelConfiguration is a container for all Propel's runtime configuration data.
+ * Configuration is a container for all Propel's runtime configuration data.
  *
- * PropelConfiguration implements ArrayAccess interface so the configuration
+ * Configuration implements ArrayAccess interface so the configuration
  * can be accessed as an array or using a simple getter and setter. The whole
  * configuration can also be retrieved as a nested arrays, flat array or as a
- * PropelConfiguration instance.
+ * Configuration instance.
  *
  * @author     Veikko Mäkinen <veikko@veikko.fi>
  * @version    $Revision$
  * @package    propel.runtime.config
  */
-class PropelConfiguration implements \ArrayAccess
+class Configuration implements \ArrayAccess
 {
     const TYPE_ARRAY = 1;
     const TYPE_ARRAY_FLAT = 2;
@@ -151,14 +151,14 @@ class PropelConfiguration implements \ArrayAccess
      * @param     integer  $type
      * @return    mixed
      */
-    public function getParameters($type = PropelConfiguration::TYPE_ARRAY)
+    public function getParameters($type = Configuration::TYPE_ARRAY)
     {
         switch ($type) {
-            case PropelConfiguration::TYPE_ARRAY:
+            case Configuration::TYPE_ARRAY:
                 return $this->parameters;
-            case PropelConfiguration::TYPE_ARRAY_FLAT:
+            case Configuration::TYPE_ARRAY_FLAT:
                 return $this->getFlattenedParameters();
-            case PropelConfiguration::TYPE_OBJECT:
+            case Configuration::TYPE_OBJECT:
                 return $this;
             default:
                 throw new PropelException('Unknown configuration type: '. var_export($type, true));
@@ -181,10 +181,10 @@ class PropelConfiguration implements \ArrayAccess
     protected function flattenParameters()
     {
         $result = array();
-        $it = new PropelConfigurationIterator(new \RecursiveArrayIterator($this->parameters), \RecursiveIteratorIterator::SELF_FIRST);
+        $it = new ConfigurationIterator(new \RecursiveArrayIterator($this->parameters), \RecursiveIteratorIterator::SELF_FIRST);
         foreach($it as $key => $value) {
             $ns = $it->getDepth() ? $it->getNamespace() . '.'. $key : $key;
-            if ($it->getNodeType() == PropelConfigurationIterator::NODE_ITEM) {
+            if ($it->getNodeType() == ConfigurationIterator::NODE_ITEM) {
                 $result[$ns] = $value;
             }
         }
