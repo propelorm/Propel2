@@ -19,7 +19,7 @@ use DomNode;
  * @author     Francois Zaninotto
  * @package    propel.runtime.parser
  */
-class PropelXMLParser extends AbstractParser
+class XmlParser extends AbstractParser
 {
 
     /**
@@ -66,7 +66,7 @@ class PropelXMLParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelXMLParser::fromArray()
+     * Alias for XmlParser::fromArray()
      *
      * @param  array   $array Source data to convert
      * @param  string  $rootElementName Name of the root element of the XML document
@@ -80,7 +80,7 @@ class PropelXMLParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelXMLParser::listFromArray()
+     * Alias for XmlParser::listFromArray()
      *
      * @param  array   $array Source data to convert
      * @param  string  $rootElementName Name of the root element of the XML document
@@ -147,7 +147,7 @@ class PropelXMLParser extends AbstractParser
     }
 
     /**
-     * Alias for PropelXMLParser::toArray()
+     * Alias for XmlParser::toArray()
      *
      * @param  string $data Source data to convert, as an XML string
      * @return array Converted data

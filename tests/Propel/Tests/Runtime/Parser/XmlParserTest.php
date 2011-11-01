@@ -11,15 +11,15 @@
 namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Parser\PropelXMLParser;
+use Propel\Runtime\Parser\XmlParser;
 
 /**
- * Test for PropelXMLParser class
+ * Test for XmlParser class
  *
  * @author     Francois Zaninotto
  * @package    runtime.parser
  */
-class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
+class XmlParserTest extends \PHPUnit_Framework_TestCase
 {
     public static function arrayXmlConversionDataProvider()
     {
@@ -86,8 +86,8 @@ class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromArray($arrayData, $xmlData, $type)
     {
-        $parser = new PropelXMLParser();
-        $this->assertEquals($xmlData, $parser->fromArray($arrayData), 'PropelXMLParser::fromArray() converts from ' . $type . ' correctly');
+        $parser = new XmlParser();
+        $this->assertEquals($xmlData, $parser->fromArray($arrayData), 'XmlParser::fromArray() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -95,8 +95,8 @@ class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToXML($arrayData, $xmlData, $type)
     {
-        $parser = new PropelXMLParser();
-        $this->assertEquals($xmlData, $parser->toXML($arrayData), 'PropelXMLParser::toXML() converts from ' . $type . ' correctly');
+        $parser = new XmlParser();
+        $this->assertEquals($xmlData, $parser->toXML($arrayData), 'XmlParser::toXML() converts from ' . $type . ' correctly');
     }
 
     /**
@@ -104,8 +104,8 @@ class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testToArray($arrayData, $xmlData, $type)
     {
-        $parser = new PropelXMLParser();
-        $this->assertEquals($arrayData, $parser->toArray($xmlData), 'PropelXMLParser::toArray() converts to ' . $type . ' correctly');
+        $parser = new XmlParser();
+        $this->assertEquals($arrayData, $parser->toArray($xmlData), 'XmlParser::toArray() converts to ' . $type . ' correctly');
     }
 
     /**
@@ -113,8 +113,8 @@ class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromXML($arrayData, $xmlData, $type)
     {
-        $parser = new PropelXMLParser();
-        $this->assertEquals($arrayData, $parser->fromXML($xmlData), 'PropelXMLParser::fromXML() converts to ' . $type . ' correctly');
+        $parser = new XmlParser();
+        $this->assertEquals($arrayData, $parser->fromXML($xmlData), 'XmlParser::fromXML() converts to ' . $type . ' correctly');
     }
 
     public function testToArrayRespectsNullValues()
@@ -124,7 +124,7 @@ class PropelXMLParserTest extends \PHPUnit_Framework_TestCase
 <Id></Id>
 <Title><![CDATA[]]></Title>
 </data>";
-        $parser = new PropelXMLParser();
+        $parser = new XmlParser();
         $data = $parser->fromXML($xmlData);
         $this->assertNull($data['Id']);
         $this->assertSame('', $data['Title']);
@@ -185,7 +185,7 @@ EOF;
      */
     public function testListToXML($list, $xml)
     {
-        $parser = new PropelXMLParser();
+        $parser = new XmlParser();
         $this->assertEquals($xml, $parser->listToXML($list));
     }
 
@@ -194,7 +194,7 @@ EOF;
      */
     public function testXMLToList($list, $xml)
     {
-        $parser = new PropelXMLParser();
+        $parser = new XmlParser();
         $this->assertEquals($list, $parser->fromXML($xml));
     }
 }

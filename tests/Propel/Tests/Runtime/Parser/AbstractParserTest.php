@@ -12,7 +12,7 @@ namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Parser\PropelXMLParser;
+use Propel\Runtime\Parser\XmlParser;
 
 /**
  * Test for JsonParser class
@@ -25,7 +25,7 @@ class AbstractParserTest extends \PHPUnit_Framework_TestCase
     public function testGetParser()
     {
         $parser = AbstractParser::getParser('XML');
-        $this->assertTrue($parser instanceof PropelXMLParser);
+        $this->assertTrue($parser instanceof XmlParser);
     }
 
     /**
