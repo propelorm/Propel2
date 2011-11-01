@@ -26,7 +26,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBMySQL extends DBAdapter
+class DBMySQL extends AbstractAdapter
 {
     /**
      * This method is used to ignore case.
@@ -116,7 +116,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::quoteIdentifier()
+     * @see       AbstractAdapter::quoteIdentifier()
      *
      * @param     string  $text
      * @return    string
@@ -127,7 +127,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::quoteIdentifierTable()
+     * @see       AbstractAdapter::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string
@@ -139,7 +139,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::useQuoteIdentifier()
+     * @see       AbstractAdapter::useQuoteIdentifier()
      *
      * @return    boolean
      */
@@ -149,7 +149,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::applyLimit()
+     * @see       AbstractAdapter::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -165,7 +165,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::random()
+     * @see       AbstractAdapter::random()
      *
      * @param     string  $seed
      * @return    string
@@ -176,7 +176,7 @@ class DBMySQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::bindValue()
+     * @see       AbstractAdapter::bindValue()
      *
      * @param     PDOStatement  $stmt
      * @param     string        $parameter

@@ -17,7 +17,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBSQLite extends DBAdapter
+class DBSQLite extends AbstractAdapter
 {
 
     /**
@@ -94,7 +94,7 @@ class DBSQLite extends DBAdapter
     }
 
     /**
-     * @see        DBAdapter::quoteIdentifier()
+     * @see        AbstractAdapter::quoteIdentifier()
      *
      * @param     string  $text
      * @return    string
@@ -105,7 +105,7 @@ class DBSQLite extends DBAdapter
     }
 
     /**
-     * @see        DBAdapter::applyLimit()
+     * @see        AbstractAdapter::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset

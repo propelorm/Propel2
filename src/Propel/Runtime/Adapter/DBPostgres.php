@@ -20,7 +20,7 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBPostgres extends DBAdapter
+class DBPostgres extends AbstractAdapter
 {
 
     /**
@@ -84,13 +84,13 @@ class DBPostgres extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::getIdMethod()
+     * @see       AbstractAdapter::getIdMethod()
      *
      * @return    integer
      */
     protected function getIdMethod()
     {
-        return DBAdapter::ID_METHOD_SEQUENCE;
+        return AbstractAdapter::ID_METHOD_SEQUENCE;
     }
 
     /**
@@ -132,7 +132,7 @@ class DBPostgres extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::applyLimit()
+     * @see       AbstractAdapter::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -149,7 +149,7 @@ class DBPostgres extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::random()
+     * @see       AbstractAdapter::random()
      *
      * @param     string  $seed
      * @return    string
@@ -160,7 +160,7 @@ class DBPostgres extends DBAdapter
     }
 
     /**
-     * @see        DBAdapter::getDeleteFromClause()
+     * @see        AbstractAdapter::getDeleteFromClause()
 
      * @param     Criteria  $criteria
      * @param     string    $tableName
@@ -189,7 +189,7 @@ class DBPostgres extends DBAdapter
     }
 
     /**
-     * @see        DBAdapter::quoteIdentifierTable()
+     * @see        AbstractAdapter::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string

@@ -17,12 +17,12 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBMSSQL extends DBAdapter
+class DBMSSQL extends AbstractAdapter
 {
     /**
      * MS SQL Server does not support SET NAMES
      *
-     * @see       DBAdapter::setCharset()
+     * @see       AbstractAdapter::setCharset()
      *
      * @param     PDO     $con
      * @param     string  $charset
@@ -92,7 +92,7 @@ class DBMSSQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::quoteIdentifier()
+     * @see       AbstractAdapter::quoteIdentifier()
      *
      * @param     string  $text
      * @return    string
@@ -103,7 +103,7 @@ class DBMSSQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::quoteIdentifierTable()
+     * @see       AbstractAdapter::quoteIdentifierTable()
      *
      * @param     string  $table
      * @return    string
@@ -115,7 +115,7 @@ class DBMSSQL extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::random()
+     * @see       AbstractAdapter::random()
      *
      * @param     string  $seed
      * @return    string
@@ -131,7 +131,7 @@ class DBMSSQL extends DBAdapter
      * This rewrites the $sql query to apply the offset and limit.
      * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
      *
-     * @see       DBAdapter::applyLimit()
+     * @see       AbstractAdapter::applyLimit()
      * @author    Benjamin Runnels <kraven@kraven.org>
      *
      * @param     string   $sql

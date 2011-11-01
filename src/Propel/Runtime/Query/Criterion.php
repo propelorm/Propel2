@@ -11,7 +11,7 @@
 namespace Propel\Runtime\Query;
 
 use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\DBAdapter;
+use Propel\Runtime\Adapter\AbstractAdapter;
 use Propel\Runtime\Adapter\DBPostgres;
 
 /**
@@ -101,7 +101,7 @@ class Criterion
         } catch (Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a DBAdapter, sql may be wrong", Propel::LOG_ERR);
+            Propel::log("Could not get a AbstractAdapter, sql may be wrong", Propel::LOG_ERR);
         }
 
         // init $this->realtable
@@ -163,9 +163,9 @@ class Criterion
 
     /**
      * Get the value of db.
-     * The DBAdapter which might be used to get db specific
+     * The AbstractAdapter which might be used to get db specific
      * variations of sql.
-     * @return     DBAdapter value of db.
+     * @return     AbstractAdapter value of db.
      */
     public function getDB()
     {
@@ -174,11 +174,11 @@ class Criterion
 
     /**
      * Set the value of db.
-     * The DBAdapter might be used to get db specific variations of sql.
-     * @param      DBAdapter $v Value to assign to db.
+     * The AbstractAdapter might be used to get db specific variations of sql.
+     * @param      AbstractAdapter $v Value to assign to db.
      * @return     void
      */
-    public function setDB(DBAdapter $v)
+    public function setDB(AbstractAdapter $v)
     {
         $this->db = $v;
         foreach ( $this->clauses as $clause ) {

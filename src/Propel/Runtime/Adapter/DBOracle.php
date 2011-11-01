@@ -29,7 +29,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBOracle extends DBAdapter
+class DBOracle extends AbstractAdapter
 {
     /**
      * This method is called after a connection was created to run necessary
@@ -115,7 +115,7 @@ class DBOracle extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::applyLimit()
+     * @see       AbstractAdapter::applyLimit()
      *
      * @param     string   $sql
      * @param     integer  $offset
@@ -148,7 +148,7 @@ class DBOracle extends DBAdapter
      */
     protected function getIdMethod()
     {
-        return DBAdapter::ID_METHOD_SEQUENCE;
+        return AbstractAdapter::ID_METHOD_SEQUENCE;
     }
 
     /**
@@ -219,7 +219,7 @@ class DBOracle extends DBAdapter
     }
 
     /**
-     * @see       DBAdapter::bindValue()
+     * @see       AbstractAdapter::bindValue()
      *
      * @param     PDOStatement  $stmt
      * @param     string        $parameter

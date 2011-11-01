@@ -29,7 +29,7 @@ class CharacterEncodingTest extends BookstoreTestBase
 {
     /**
      * Database adapter.
-     * @var        DBAdapter
+     * @var        AbstractAdapter
      */
     private $adapter;
 

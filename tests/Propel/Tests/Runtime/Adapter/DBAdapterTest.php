@@ -23,7 +23,7 @@ use Propel\Tests\Bookstore\BookPeer;
  * @author     Francois EZaninotto
  * @package    runtime.adapter
  */
-class DBAdapterTest extends BookstoreTestBase
+class AbstractAdapterTest extends BookstoreTestBase
 {
 
     public function testTurnSelectColumnsToAliases()

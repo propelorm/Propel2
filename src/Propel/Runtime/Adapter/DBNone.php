@@ -19,11 +19,11 @@ namespace Propel\Runtime\Adapter;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-class DBNone extends DBAdapter
+class DBNone extends AbstractAdapter
 {
 
     /**
-     * @see        DBAdapter::initConnection()
+     * @see        AbstractAdapter::initConnection()
      *
      * @param     PDO    $con
      * @param     array  $settings

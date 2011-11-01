@@ -84,7 +84,7 @@ class DBSQLSRV extends DBMSSQL
     }
 
     /**
-     * @see       DBAdapter::bindValue()
+     * @see       AbstractAdapter::bindValue()
      *
      * @param     PDOStatement  $stmt
      * @param     string        $parameter

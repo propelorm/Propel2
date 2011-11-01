@@ -41,7 +41,7 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * DB adapter saved for later.
      *
-     * @var        DBAdapter
+     * @var        AbstractAdapter
      */
     private $savedAdapter;
 

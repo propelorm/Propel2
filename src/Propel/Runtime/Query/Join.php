@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Query;
 
-use Propel\Runtime\Adapter\DBAdapter;
+use Propel\Runtime\Adapter\AbstractAdapter;
 
 /**
  * Data object to describe a join between two tables, for example
@@ -440,9 +440,9 @@ class Join
 
     /**
      * Get the value of db.
-     * The DBAdapter which might be used to get db specific
+     * The AbstractAdapter which might be used to get db specific
      * variations of sql.
-     * @return     DBAdapter value of db.
+     * @return     AbstractAdapter value of db.
      */
     public function getDB()
     {
@@ -451,11 +451,11 @@ class Join
 
     /**
      * Set the value of db.
-     * The DBAdapter might be used to get db specific variations of sql.
-     * @param      DBAdapter $db Value to assign to db.
+     * The AbstractAdapter might be used to get db specific variations of sql.
+     * @param      AbstractAdapter $db Value to assign to db.
      * @return     void
      */
-    public function setDB(DBAdapter $db)
+    public function setDB(AbstractAdapter $db)
     {
         $this->db = $db;
     }

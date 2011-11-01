@@ -21,10 +21,10 @@ use \PDO;
 use \PDOStatement;
 
 /**
- * DBAdapter</code> defines the interface for a Propel database adapter.
+ * AbstractAdapter</code> defines the interface for a Propel database adapter.
  *
  * <p>Support for new databases is added by subclassing
- * <code>DBAdapter</code> and implementing its abstract interface, and by
+ * <code>AbstractAdapter</code> and implementing its abstract interface, and by
  * registering the new database adapter and corresponding Propel
  * driver in the private adapters map (array) in this class.</p>
  *
@@ -42,7 +42,7 @@ use \PDOStatement;
  * @version    $Revision$
  * @package    propel.runtime.adapter
  */
-abstract class DBAdapter
+abstract class AbstractAdapter
 {
     const ID_METHOD_NONE            = 0;
     const ID_METHOD_AUTOINCREMENT    = 1;
@@ -72,7 +72,7 @@ abstract class DBAdapter
      *                            for or a shorter form adapter key.
      *
      * @throws    PropelException  If the adapter could not be instantiated.
-     * @return    DBAdapter        An instance of a Propel database adapter.
+     * @return    AbstractAdapter        An instance of a Propel database adapter.
      */
     public static function factory($driver) {
         $adapterClass = isset(self::$adapters[$driver]) ? self::$adapters[$driver] : null;
@@ -237,11 +237,11 @@ abstract class DBAdapter
     /**
      * Returns the native ID method for this RDBMS.
      *
-     * @return    integer  One of DBAdapter:ID_METHOD_SEQUENCE, DBAdapter::ID_METHOD_AUTOINCREMENT.
+     * @return    integer  One of AbstractAdapter:ID_METHOD_SEQUENCE, AbstractAdapter::ID_METHOD_AUTOINCREMENT.
      */
     protected function getIdMethod()
     {
-        return DBAdapter::ID_METHOD_AUTOINCREMENT;
+        return AbstractAdapter::ID_METHOD_AUTOINCREMENT;
     }
 
     /**
@@ -251,7 +251,7 @@ abstract class DBAdapter
      */
     public function isGetIdBeforeInsert()
     {
-        return ($this->getIdMethod() === DBAdapter::ID_METHOD_SEQUENCE);
+        return ($this->getIdMethod() === AbstractAdapter::ID_METHOD_SEQUENCE);
     }
 
     /**
@@ -261,7 +261,7 @@ abstract class DBAdapter
      */
     public function isGetIdAfterInsert()
     {
-        return ($this->getIdMethod() === DBAdapter::ID_METHOD_AUTOINCREMENT);
+        return ($this->getIdMethod() === AbstractAdapter::ID_METHOD_AUTOINCREMENT);
     }
 
     /**
@@ -413,7 +413,7 @@ abstract class DBAdapter
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
-     * Move from BasePeer to DBAdapter and turn from static to non static
+     * Move from BasePeer to AbstractAdapter and turn from static to non static
      *
      * @param     Criteria  $criteria
      * @param     array     $fromClause
@@ -486,7 +486,7 @@ abstract class DBAdapter
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
      * This is necessary for queries on more than one table when the tables share a column name
-     * Moved from BasePeer to DBAdapter and turned from static to non static
+     * Moved from BasePeer to AbstractAdapter and turned from static to non static
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *

@@ -462,9 +462,9 @@ class ColumnMap
   /**
    * Performs DB-specific ignore case, but only if the column type necessitates it.
    * @param      string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
-   * @param      DBAdapter $db
+   * @param      AbstractAdapter $db
    */
-  public function ignoreCase($str, DBAdapter $db)
+  public function ignoreCase($str, AbstractAdapter $db)
   {
     if ($this->isText()) {
       return $db->ignoreCase($str);

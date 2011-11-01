@@ -403,7 +403,7 @@ abstract class ".$this->getClassname()." {
      * @todo       This is currently broken for simulated 'onCascadeDelete's.
      * @todo       Need to abstract the SQL better. The CONCAT sql function doesn't
      *       seem to be standardized (i.e. mssql), so maybe it needs to be moved
-     *       to DBAdapter.
+     *       to AbstractAdapter.
      */
     public static function moveNodeSubTree(\$srcPath, \$dstPath, ConnectionInterface \$con = null)
     {
